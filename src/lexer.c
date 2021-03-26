@@ -1,5 +1,4 @@
 #include <duc/common.h>
-#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lexer.h"
@@ -10,7 +9,7 @@ void lexer_free (lexer_t *lexer) {
   free(lexer);
 }
 
-bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, long long pos) {
+bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   switch (ch) {
@@ -28,15 +27,17 @@ bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, long long pos) {
     }
   }
 
-  lexer->raw = malloc(1);
-  lexer->str = malloc(1);
+  lexer->raw = malloc(2);
+  lexer->str = malloc(2);
   lexer->raw[0] = ch;
+  lexer->raw[1] = '\0';
   lexer->str[0] = ch;
+  lexer->str[1] = '\0';
 
   return true;
 }
 
-bool lexer_is_id (duc_file_t *file, lexer_t *lexer, long long pos) {
+bool lexer_is_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
   const char *chs_begin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz_$";
   const char *chs_end = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -57,7 +58,7 @@ bool lexer_is_id (duc_file_t *file, lexer_t *lexer, long long pos) {
   lexer->raw[len] = '\0';
 
   while (!duc_file_eof(file)) {
-    long long cur_pos = duc_file_position(file);
+    size_t cur_pos = duc_file_position(file);
     ch = duc_file_readchar(file);
 
     if (strchr(chs_end, ch) == NULL) {
@@ -76,7 +77,7 @@ bool lexer_is_id (duc_file_t *file, lexer_t *lexer, long long pos) {
   return true;
 }
 
-bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, long long pos) {
+bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   if (ch != '\'' && ch != '"') {
@@ -121,7 +122,7 @@ bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, long long pos) {
   return true;
 }
 
-bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, long long pos) {
+bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   if (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t') {
@@ -137,7 +138,7 @@ bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, long long pos) {
   lexer->raw[len] = '\0';
 
   while (!duc_file_eof(file)) {
-    long long cur_pos = duc_file_position(file);
+    size_t cur_pos = duc_file_position(file);
     ch = duc_file_readchar(file);
 
     if (ch != ' ' && ch != '\r' && ch != '\n' && ch != '\t') {
@@ -163,7 +164,7 @@ lexer_t *lexer_new (duc_file_t *file) {
   lexer->str = NULL;
   lexer->token = LEXER_UNKNOWN;
 
-  long long pos = duc_file_position(file);
+  size_t pos = duc_file_position(file);
 
   if (
     lexer_is_ws(file, lexer, pos) ||

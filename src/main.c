@@ -3,7 +3,7 @@
 #include "lexer.h"
 
 int main (DUC_UNUSED int argc, char *argv[]) {
-  duc_file_t *file = duc_file_new(argv[1], "r");
+  duc_file_t *file = duc_file_new(argv[1], DUC_FILE_READ);
 
   while (!duc_file_eof(file)) {
     lexer_t *lexer = lexer_new(file);

@@ -25,10 +25,10 @@ struct lexer_s {
 };
 
 void lexer_free (lexer_t *lexer);
-bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, long long pos);
-bool lexer_is_id (duc_file_t *file, lexer_t *lexer, long long pos);
-bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, long long pos);
-bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, long long pos);
+bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_id (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, size_t pos);
 lexer_t *lexer_new (duc_file_t *file);
 char *lexer_token_to_string (lexer_token token);
 

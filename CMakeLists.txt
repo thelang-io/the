@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 include(FetchContent)
 
-FetchContent_Declare(libduc GIT_REPOSITORY https://github.com/delasy/libduc.git GIT_TAG v3.3.1)
+FetchContent_Declare(libduc GIT_REPOSITORY https://github.com/delasy/libduc.git GIT_TAG v4.1.1)
 FetchContent_MakeAvailable(libduc)
 
-project(the-lang VERSION 0.1.0 LANGUAGES C)
+project(the-lang VERSION 0.0.1 LANGUAGES C)
 
 option(BUILD_TESTS "Build test programs" ON)
 
