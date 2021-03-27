@@ -145,6 +145,18 @@ DUC_TEST(lexer, is_litstr) {
   });
 }
 
+DUC_TEST(lexer, is_mark) {
+  LEXER_F(",", {
+    DUC_ASSERT_TRUE(lexer_is_mark(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_COMMA);
+    DUC_ASSERT_EQ(lexer->raw[0], ',');
+    DUC_ASSERT_EQ(lexer->raw[1], '\0');
+    DUC_ASSERT_EQ(lexer->str[0], ',');
+    DUC_ASSERT_EQ(lexer->str[1], '\0');
+  });
+}
+
 DUC_TEST(lexer, is_ws) {
   LEXER_F(" ", {
     DUC_ASSERT_TRUE(lexer_is_ws(file, lexer, 0));
@@ -190,16 +202,11 @@ DUC_TEST(lexer, new_and_free) {
   duc_file_remove(filepath);
 }
 
-DUC_TEST(lexer, token_to_string) {
-  DUC_ASSERT_STREQ(lexer_token_to_string(LEXER_UNKNOWN), "Unknown");
-  DUC_ASSERT_STREQ(lexer_token_to_string(LEXER_WS), "Whitespace");
-}
-
 int main () {
   DUC_TEST_RUN(lexer, is_bracket);
   DUC_TEST_RUN(lexer, is_id);
   DUC_TEST_RUN(lexer, is_litstr);
+  DUC_TEST_RUN(lexer, is_mark);
   DUC_TEST_RUN(lexer, is_ws);
   DUC_TEST_RUN(lexer, new_and_free);
-  DUC_TEST_RUN(lexer, token_to_string);
 }

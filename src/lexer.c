@@ -9,6 +9,10 @@ void lexer_free (lexer_t *lexer) {
   free(lexer);
 }
 
+void lexer_free_cb (void *it) {
+  lexer_free((lexer_t *) it);
+}
+
 bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
@@ -58,11 +62,11 @@ bool lexer_is_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len] = '\0';
 
   while (!duc_file_eof(file)) {
-    size_t cur_pos = duc_file_position(file);
+    size_t bu_pos = duc_file_position(file);
     ch = duc_file_readchar(file);
 
     if (strchr(chs_end, ch) == NULL) {
-      duc_file_seek(file, cur_pos);
+      duc_file_seek(file, bu_pos);
       break;
     }
 
@@ -122,6 +126,30 @@ bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
   return true;
 }
 
+bool lexer_is_mark (duc_file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch = duc_file_readchar(file);
+
+  switch (ch) {
+    case ',': {
+      lexer->token = LEXER_COMMA;
+      break;
+    }
+    default: {
+      duc_file_seek(file, pos);
+      return false;
+    }
+  }
+
+  lexer->raw = malloc(2);
+  lexer->str = malloc(2);
+  lexer->raw[0] = ch;
+  lexer->raw[1] = '\0';
+  lexer->str[0] = ch;
+  lexer->str[1] = '\0';
+
+  return true;
+}
+
 bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
@@ -138,11 +166,11 @@ bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len] = '\0';
 
   while (!duc_file_eof(file)) {
-    size_t cur_pos = duc_file_position(file);
+    size_t bu_pos = duc_file_position(file);
     ch = duc_file_readchar(file);
 
     if (ch != ' ' && ch != '\r' && ch != '\n' && ch != '\t') {
-      duc_file_seek(file, cur_pos);
+      duc_file_seek(file, bu_pos);
       break;
     }
 
@@ -170,6 +198,7 @@ lexer_t *lexer_new (duc_file_t *file) {
     lexer_is_ws(file, lexer, pos) ||
     lexer_is_bracket(file, lexer, pos) ||
     lexer_is_litstr(file, lexer, pos) ||
+    lexer_is_mark(file, lexer, pos) ||
     lexer_is_id(file, lexer, pos)
   ) {
     return lexer;
@@ -177,30 +206,4 @@ lexer_t *lexer_new (duc_file_t *file) {
 
   free(lexer);
   return NULL;
-}
-
-char *lexer_token_to_string (lexer_token token) {
-  switch (token) {
-    case LEXER_ID: {
-      return "Identifier";
-    }
-    case LEXER_LITSTR_DQ: {
-      return "Double-Quoted String Literal";
-    }
-    case LEXER_LITSTR_SQ: {
-      return "Single-Quoted String Literal";
-    }
-    case LEXER_LPAR: {
-      return "Left Parenthesis";
-    }
-    case LEXER_RPAR: {
-      return "Right Parenthesis";
-    }
-    case LEXER_WS: {
-      return "Whitespace";
-    }
-    default: {
-      return "Unknown";
-    }
-  }
 }
