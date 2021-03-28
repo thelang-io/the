@@ -6,6 +6,9 @@
   do { duc_writefile("../test.txt", text); \
   duc_file_t *file = duc_file_new("../test.txt", DUC_FILE_READ); \
   lexer_t *lexer = malloc(sizeof(lexer_t)); \
+  lexer->raw = NULL; \
+  lexer->str = NULL; \
+  lexer->token = LEXER_UNKNOWN; \
   body \
   lexer_free(lexer); \
   duc_file_free(file); \
@@ -61,6 +64,34 @@ DUC_TEST(lexer, is_id) {
     DUC_ASSERT_EQ(lexer->str[4], '1');
     DUC_ASSERT_EQ(lexer->str[5], '\0');
   });
+
+  LEXER_F("a(", {
+    DUC_ASSERT_TRUE(lexer_is_id(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_ID);
+    DUC_ASSERT_EQ(lexer->raw[0], 'a');
+    DUC_ASSERT_EQ(lexer->raw[1], '\0');
+    DUC_ASSERT_EQ(lexer->str[0], 'a');
+    DUC_ASSERT_EQ(lexer->str[1], '\0');
+  });
+
+  LEXER_F("$A_b1(", {
+    DUC_ASSERT_TRUE(lexer_is_id(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_ID);
+    DUC_ASSERT_EQ(lexer->raw[0], '$');
+    DUC_ASSERT_EQ(lexer->raw[1], 'A');
+    DUC_ASSERT_EQ(lexer->raw[2], '_');
+    DUC_ASSERT_EQ(lexer->raw[3], 'b');
+    DUC_ASSERT_EQ(lexer->raw[4], '1');
+    DUC_ASSERT_EQ(lexer->raw[5], '\0');
+    DUC_ASSERT_EQ(lexer->str[0], '$');
+    DUC_ASSERT_EQ(lexer->str[1], 'A');
+    DUC_ASSERT_EQ(lexer->str[2], '_');
+    DUC_ASSERT_EQ(lexer->str[3], 'b');
+    DUC_ASSERT_EQ(lexer->str[4], '1');
+    DUC_ASSERT_EQ(lexer->str[5], '\0');
+  });
 }
 
 DUC_TEST(lexer, is_litstr) {
@@ -82,6 +113,23 @@ DUC_TEST(lexer, is_litstr) {
     DUC_ASSERT_EQ(lexer->raw[1], '"');
     DUC_ASSERT_EQ(lexer->raw[2], '\0');
     DUC_ASSERT_EQ(lexer->str[0], '\0');
+  });
+
+  LEXER_F("'", {
+    DUC_ASSERT_FALSE(lexer_is_litstr(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  LEXER_F("\"", {
+    DUC_ASSERT_FALSE(lexer_is_litstr(file, lexer, 0));
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
 
   LEXER_F("'a'", {
@@ -106,6 +154,24 @@ DUC_TEST(lexer, is_litstr) {
     DUC_ASSERT_EQ(lexer->raw[3], '\0');
     DUC_ASSERT_EQ(lexer->str[0], 'a');
     DUC_ASSERT_EQ(lexer->str[1], '\0');
+  });
+
+  LEXER_F("'a", {
+    DUC_ASSERT_FALSE(lexer_is_litstr(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  LEXER_F("\"a", {
+    DUC_ASSERT_FALSE(lexer_is_litstr(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
 
   LEXER_F("'Test'", {
@@ -143,6 +209,24 @@ DUC_TEST(lexer, is_litstr) {
     DUC_ASSERT_EQ(lexer->str[3], 't');
     DUC_ASSERT_EQ(lexer->str[4], '\0');
   });
+
+  LEXER_F("'Test", {
+    DUC_ASSERT_FALSE(lexer_is_litstr(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  LEXER_F("\"Test", {
+    DUC_ASSERT_FALSE(lexer_is_litstr(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
 }
 
 DUC_TEST(lexer, is_mark) {
@@ -168,7 +252,29 @@ DUC_TEST(lexer, is_ws) {
     DUC_ASSERT_EQ(lexer->str[1], '\0');
   });
 
+  LEXER_F(" test", {
+    DUC_ASSERT_TRUE(lexer_is_ws(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_WS);
+    DUC_ASSERT_EQ(lexer->raw[0], ' ');
+    DUC_ASSERT_EQ(lexer->raw[1], '\0');
+    DUC_ASSERT_EQ(lexer->str[0], ' ');
+    DUC_ASSERT_EQ(lexer->str[1], '\0');
+  });
+
   LEXER_F("  ", {
+    DUC_ASSERT_TRUE(lexer_is_ws(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_WS);
+    DUC_ASSERT_EQ(lexer->raw[0], ' ');
+    DUC_ASSERT_EQ(lexer->raw[1], ' ');
+    DUC_ASSERT_EQ(lexer->raw[2], '\0');
+    DUC_ASSERT_EQ(lexer->str[0], ' ');
+    DUC_ASSERT_EQ(lexer->str[1], ' ');
+    DUC_ASSERT_EQ(lexer->str[2], '\0');
+  });
+
+  LEXER_F("  test", {
     DUC_ASSERT_TRUE(lexer_is_ws(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
     DUC_ASSERT_EQ(lexer->token, LEXER_WS);
@@ -197,6 +303,7 @@ DUC_TEST(lexer, new_and_free) {
   lexer = lexer_new(file);
 
   DUC_ASSERT_EQ(lexer, NULL);
+  DUC_ASSERT_EQ(duc_file_position(file), 0);
   duc_file_free(file);
 
   duc_file_remove(filepath);

@@ -1,4 +1,3 @@
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lexer.h"
@@ -84,7 +83,7 @@ bool lexer_is_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
 bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
-  if (ch != '\'' && ch != '"') {
+  if ((ch != '\'' && ch != '"') || duc_file_eof(file)) {
     duc_file_seek(file, pos);
     return false;
   } else if (ch == '"') {
@@ -97,10 +96,6 @@ bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw = malloc(len + 1);
   lexer->raw[len - 1] = ch;
   lexer->raw[len] = '\0';
-
-  if (duc_file_eof(file)) {
-    duc_throw("Unexpected end of file, expected end of string");
-  }
 
   while (true) {
     ch = duc_file_readchar(file);
@@ -115,7 +110,12 @@ bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
     if (dq_end || sq_end) {
       break;
     } else if (duc_file_eof(file)) {
-      duc_throw("Unexpected end of file, expected end of string");
+      lexer->token = LEXER_UNKNOWN;
+      free(lexer->raw);
+      lexer->raw = NULL;
+      duc_file_seek(file, pos);
+
+      return false;
     }
   }
 

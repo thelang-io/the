@@ -1,62 +1,51 @@
 #include <duc/testing.h>
 #include "../src/ast.h"
 
+#define AST_F(text, body) \
+  do { duc_writefile("../test.txt", text); \
+  duc_writefile("../test.txt", text); \
+  duc_file_t *file = duc_file_new("../test.txt", DUC_FILE_READ); \
+  ast_t* ast = ast_new(file); \
+  body \
+  if (ast != NULL) ast_free(ast); \
+  duc_file_free(file); \
+  duc_file_remove("../test.txt"); } while (0)
+
 DUC_TEST(ast, new_and_free) {
-  char *filepath = "../test.txt";
+  AST_F("", {
+    DUC_ASSERT_NE(ast, NULL);
+    DUC_ASSERT_TRUE(duc_array_empty(ast->parsers));
+  });
 
-  duc_writefile(filepath, "");
-  duc_file_t *file = duc_file_new(filepath, DUC_FILE_READ);
-  ast_t* ast = ast_new(file);
+  AST_F("(", {
+    DUC_ASSERT_EQ(ast, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
 
-  DUC_ASSERT_NE(ast, NULL);
-  DUC_ASSERT_TRUE(duc_array_empty(ast->parsers));
-  ast_free(ast);
-  duc_file_free(file);
+  AST_F(" ", {
+    DUC_ASSERT_NE(ast, NULL);
+    DUC_ASSERT_TRUE(duc_array_empty(ast->parsers));
+  });
 
-  duc_writefile(filepath, " ");
-  file = duc_file_new(filepath, DUC_FILE_READ);
-  ast = ast_new(file);
+  AST_F("test()", {
+    DUC_ASSERT_NE(ast, NULL);
+    DUC_ASSERT_EQ(duc_array_length(ast->parsers), 1);
+  });
 
-  DUC_ASSERT_NE(ast, NULL);
-  DUC_ASSERT_TRUE(duc_array_empty(ast->parsers));
-  ast_free(ast);
-  duc_file_free(file);
+  AST_F(" test()", {
+    DUC_ASSERT_NE(ast, NULL);
+    DUC_ASSERT_EQ(duc_array_length(ast->parsers), 1);
+  });
 
-  duc_writefile(filepath, "test()");
-  file = duc_file_new(filepath, DUC_FILE_READ);
-  ast = ast_new(file);
+  AST_F("test()test()", {
+    DUC_ASSERT_NE(ast, NULL);
+    DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
+  });
 
-  DUC_ASSERT_NE(ast, NULL);
-  DUC_ASSERT_EQ(duc_array_length(ast->parsers), 1);
-  ast_free(ast);
-  duc_file_free(file);
-
-  duc_writefile(filepath, " test()");
-  file = duc_file_new(filepath, DUC_FILE_READ);
-  ast = ast_new(file);
-
-  DUC_ASSERT_NE(ast, NULL);
-  DUC_ASSERT_EQ(duc_array_length(ast->parsers), 1);
-  ast_free(ast);
-  duc_file_free(file);
-
-  duc_writefile(filepath, "test()test()");
-  file = duc_file_new(filepath, DUC_FILE_READ);
-  ast = ast_new(file);
-
-  DUC_ASSERT_NE(ast, NULL);
-  DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
-  ast_free(ast);
-  duc_file_free(file);
-
-  duc_writefile(filepath, "test() test()");
-  file = duc_file_new(filepath, DUC_FILE_READ);
-  ast = ast_new(file);
-
-  DUC_ASSERT_NE(ast, NULL);
-  DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
-  ast_free(ast);
-  duc_file_free(file);
+  AST_F("test() test()", {
+    DUC_ASSERT_NE(ast, NULL);
+    DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
+  });
 }
 
 int main () {

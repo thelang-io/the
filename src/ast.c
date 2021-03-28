@@ -14,7 +14,8 @@ ast_t *ast_new (duc_file_t *file) {
     parser_t *parser = parser_new(file);
 
     if (parser == NULL) {
-      continue;
+      ast_free(ast);
+      return NULL;
     } else if (parser->token == PARSER_WS) {
       parser_free(parser);
       continue;
