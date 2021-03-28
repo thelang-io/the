@@ -20,6 +20,11 @@
   duc_file_remove("../test.txt"); } while (0)
 
 DUC_TEST(parser, arglist_new_free) {
+  PARSER_F("@", arglist, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
   PARSER_F("", arglist, {
     DUC_ASSERT_EQ(parser, NULL);
     DUC_ASSERT_EQ(duc_file_position(file), 0);
@@ -31,6 +36,11 @@ DUC_TEST(parser, arglist_new_free) {
   });
 
   PARSER_F("test", arglist, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  PARSER_F("test@", arglist, {
     DUC_ASSERT_EQ(parser, NULL);
     DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
@@ -80,6 +90,11 @@ DUC_TEST(parser, call_expr_new_free) {
     DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
 
+  PARSER_F("test1@", call_expr, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
   PARSER_F("test1)", call_expr, {
     DUC_ASSERT_EQ(parser, NULL);
     DUC_ASSERT_EQ(duc_file_position(file), 0);
@@ -96,6 +111,16 @@ DUC_TEST(parser, call_expr_new_free) {
   });
 
   PARSER_F("test2(test, 'test'", call_expr, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  PARSER_F("test2(test, 'test'@", call_expr, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  PARSER_F("test2(test, 'test'(", call_expr, {
     DUC_ASSERT_EQ(parser, NULL);
     DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
@@ -134,6 +159,11 @@ DUC_TEST(parser, expr_new_free) {
 }
 
 DUC_TEST(parser, id_new_free) {
+  PARSER_F("@", id, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
   PARSER_F("test", id, {
     DUC_ASSERT_NE(parser, NULL);
     DUC_ASSERT_NE(parser->lexer, NULL);
@@ -141,6 +171,11 @@ DUC_TEST(parser, id_new_free) {
 }
 
 DUC_TEST(parser, literal_new_free) {
+  PARSER_F("@", literal, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
   PARSER_F("'test'", literal, {
     DUC_ASSERT_NE(parser, NULL);
     DUC_ASSERT_NE(parser->lexer, NULL);
@@ -170,9 +205,19 @@ DUC_TEST(parser, new_and_free) {
 }
 
 DUC_TEST(parser, ws_new_free) {
+  PARSER_WS_F("@", true, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
   PARSER_WS_F("\t \r\n", true, {
     DUC_ASSERT_NE(parser, NULL);
     DUC_ASSERT_EQ(duc_array_length(parser->lexers), 1);
+  });
+
+  PARSER_WS_F("@", false, {
+    DUC_ASSERT_EQ(parser, NULL);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
 
   PARSER_WS_F("\t \r\n", false, {

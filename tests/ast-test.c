@@ -17,32 +17,27 @@ DUC_TEST(ast, new_and_free) {
     DUC_ASSERT_TRUE(duc_array_empty(ast->parsers));
   });
 
-  AST_F("(", {
-    DUC_ASSERT_EQ(ast, NULL);
-    DUC_ASSERT_EQ(duc_file_position(file), 0);
-  });
-
   AST_F(" ", {
     DUC_ASSERT_NE(ast, NULL);
     DUC_ASSERT_TRUE(duc_array_empty(ast->parsers));
   });
 
-  AST_F("test()", {
+  AST_F("print()", {
     DUC_ASSERT_NE(ast, NULL);
     DUC_ASSERT_EQ(duc_array_length(ast->parsers), 1);
   });
 
-  AST_F(" test()", {
+  AST_F(" print()", {
     DUC_ASSERT_NE(ast, NULL);
     DUC_ASSERT_EQ(duc_array_length(ast->parsers), 1);
   });
 
-  AST_F("test()test()", {
+  AST_F("print()println()", {
     DUC_ASSERT_NE(ast, NULL);
     DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
   });
 
-  AST_F("test() test()", {
+  AST_F("print() println()", {
     DUC_ASSERT_NE(ast, NULL);
     DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
   });
