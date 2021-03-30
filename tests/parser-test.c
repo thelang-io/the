@@ -67,12 +67,6 @@ DUC_TEST(parser, arglist_new_free) {
     DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
 
-  // TODO
-//  PARSER_F(" )", arglist, {
-//    DUC_ASSERT_NE(parser, NULL);
-//    DUC_ASSERT_TRUE(duc_array_empty(parser->exprs));
-//  });
-
   PARSER_F(")", arglist, {
     DUC_ASSERT_NE(parser, NULL);
     DUC_ASSERT_TRUE(duc_array_empty(parser->exprs));
@@ -144,13 +138,37 @@ DUC_TEST(parser, call_expr_new_free) {
     DUC_ASSERT_NE(parser->arglist, NULL);
   });
 
+  PARSER_F("test1( )", call_expr, {
+    DUC_ASSERT_NE(parser, NULL);
+    DUC_ASSERT_NE(parser->id, NULL);
+    DUC_ASSERT_NE(parser->arglist, NULL);
+  });
+
   PARSER_F("test2(test)", call_expr, {
     DUC_ASSERT_NE(parser, NULL);
     DUC_ASSERT_NE(parser->id, NULL);
     DUC_ASSERT_NE(parser->arglist, NULL);
   });
 
+  PARSER_F("test2( test )", call_expr, {
+    DUC_ASSERT_NE(parser, NULL);
+    DUC_ASSERT_NE(parser->id, NULL);
+    DUC_ASSERT_NE(parser->arglist, NULL);
+  });
+
+  PARSER_F("test2(test,'test')", call_expr, {
+    DUC_ASSERT_NE(parser, NULL);
+    DUC_ASSERT_NE(parser->id, NULL);
+    DUC_ASSERT_NE(parser->arglist, NULL);
+  });
+
   PARSER_F("test2(test, 'test')", call_expr, {
+    DUC_ASSERT_NE(parser, NULL);
+    DUC_ASSERT_NE(parser->id, NULL);
+    DUC_ASSERT_NE(parser->arglist, NULL);
+  });
+
+  PARSER_F("test2( test, 'test' )", call_expr, {
     DUC_ASSERT_NE(parser, NULL);
     DUC_ASSERT_NE(parser->id, NULL);
     DUC_ASSERT_NE(parser->arglist, NULL);

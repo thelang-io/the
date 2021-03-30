@@ -1,5 +1,3 @@
-# TODO
-
 # Grammar
 The syntax is specified using Extended Backus-Naur Form (EBNF) [edited by W3C](https://www.w3.org/TR/xml/#sec-notation).
 
@@ -11,23 +9,19 @@ Statement ::= WS | CallExpr
 
 CallExpr ::= ID _ LPAR _ ArgList _ RPAR
 
-ArgList ::= Expr (_ COMMA _ Expr)*
+ArgList ::= (Expr (_ COMMA)*)*
 
 Expr ::= Id | Literal
 Id ::= ID
 Literal ::= STRING_LITERAL
-```
 
-## Whitespace
-
-```txt
-_ ::= (WS)*
+_ ::= (WS)+
 ```
 
 ## Tokens
 
 ```txt
-WS ::= (CR | LF | SPACE | TAB)+
+COMMA ::= ','
 
 LPAR ::= '('
 RPAR ::= ')'
@@ -38,7 +32,7 @@ STRING_LITERAL ::= STRING_LITERAL_DQ | STRING_LITERAL_SQ
 STRING_LITERAL_DQ ::= '"' (ANY_CHAR - '"')* '"'
 STRING_LITERAL_SQ ::= '\'' (ANY_CHAR - '\'')* '\''
 
-COMMA ::= ','
+WS ::= (CR | LF | SPACE | TAB)+
 ```
 
 ## Primitives

@@ -37,6 +37,7 @@ parser_arglist_t *parser_arglist_new (duc_file_t *file) {
     }
 
     duc_array_push(parser->exprs, expr);
+    size_t bu_pos = duc_file_position(file);
     parser_ws_new(file, false);
 
     if (duc_file_eof(file)) {
@@ -45,7 +46,6 @@ parser_arglist_t *parser_arglist_new (duc_file_t *file) {
       return NULL;
     }
 
-    size_t bu_pos = duc_file_position(file);
     rpar = lexer_new(file);
 
     if (rpar == NULL) {
@@ -130,6 +130,14 @@ parser_call_expr_t *parser_call_expr_new (duc_file_t *file) {
   if ((parser->arglist = parser_arglist_new(file)) == NULL) {
     parser_id_free(parser->id);
     free(parser);
+    duc_file_seek(file, pos);
+    return NULL;
+  }
+
+  parser_ws_new(file, false);
+
+  if (duc_file_eof(file)) {
+    parser_call_expr_free(parser);
     duc_file_seek(file, pos);
     return NULL;
   }
