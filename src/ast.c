@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
@@ -41,11 +48,7 @@ ast_t *ast_new (duc_file_t *file) {
 
       parser_arglist_t *arglist = call_expr->arglist;
 
-      for (
-        size_t j = 0, size_arglist = duc_array_length(arglist->exprs);
-        j < size_arglist;
-        j++
-      ) {
+      for (size_t j = 0, size_arglist = duc_array_length(arglist->exprs); j < size_arglist; j++) {
         parser_expr_t *expr = duc_array_at(arglist->exprs, j);
 
         if (expr->token != PARSER_LITERAL) {

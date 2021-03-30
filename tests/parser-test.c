@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 #include <duc/testing.h>
 #include "../src/parser.h"
 
@@ -59,6 +66,12 @@ DUC_TEST(parser, arglist_new_free) {
     DUC_ASSERT_EQ(parser, NULL);
     DUC_ASSERT_EQ(duc_file_position(file), 0);
   });
+
+  // TODO
+//  PARSER_F(" )", arglist, {
+//    DUC_ASSERT_NE(parser, NULL);
+//    DUC_ASSERT_TRUE(duc_array_empty(parser->exprs));
+//  });
 
   PARSER_F(")", arglist, {
     DUC_ASSERT_NE(parser, NULL);
