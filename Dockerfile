@@ -12,7 +12,7 @@ RUN apt-get update && \
 WORKDIR /app
 COPY . .
 RUN mkdir -p build
-RUN (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug)
+RUN (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON)
 RUN cmake --build build
 
 ENTRYPOINT ["scripts/docker-entrypoint.sh"]
