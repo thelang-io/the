@@ -34,7 +34,18 @@
 #define CGM_FLAG_DYLDLINK 0x04
 #define CGM_FLAG_TWOLEVEL 0x80
 
-#define CGM_MAGIC 0xCFFAEDFE
+#define CGM_MAGIC 0xFEEDFACF
+
+#define CGM_DATA_INFILE_OFFSET 0x4000
+#define CGM_DATA_INFILE_SIZE 0x4000
+#define CGM_DATA_INMEM_OFFSET 0x0000000100004000
+#define CGM_DATA_INMEM_SIZE 0x4000
+#define CGM_LINKEDIT_INFILE_OFFSET 0x8000
+#define CGM_LINKEDIT_INFILE_SIZE 0x4000
+#define CGM_LINKEDIT_INMEM_OFFSET 0x0000000100008000
+#define CGM_LINKEDIT_INMEM_SIZE 0x4000
+#define CGM_PAGEZERO_INMEM_OFFSET 0x0000000000000000
+#define CGM_PAGEZERO_INMEM_SIZE 0x0000000100000000
 
 #define CGM_PROT_NONE 0x00
 #define CGM_PROT_READ 0x01
@@ -42,11 +53,24 @@
 #define CGM_PROT_EXECUTE 0x04
 #define CGM_PROT_DEFAULT (CGM_PROT_READ | CGM_PROT_WRITE)
 
+#define CGM_SECT_ATTR_PURE_INSTRUCTIONS 0x80000000
+#define CGM_SECT_ATTR_SOME_INSTRUCTIONS 0x00000400
+#define CGM_SECT_FLAG_REGULAR 0x00
+
+#define CGM_SECT_DATA "__data"
 #define CGM_SECT_TEXT "__text"
 
+#define CGM_SEG_DATA "__DATA"
 #define CGM_SEG_LINKEDIT "__LINKEDIT"
 #define CGM_SEG_PAGEZERO "__PAGEZERO"
 #define CGM_SEG_TEXT "__TEXT"
+
+#define CGM_SYM_EXECUTE "__mh_execute_header"
+
+#define CGM_SYM_TYPE_UNDF 0x00
+#define CGM_SYM_TYPE_EXT 0x01
+#define CGM_SYM_TYPE_ABS 0x02
+#define CGM_SYM_TYPE_SECT 0x0E
 
 typedef struct cgm_s cgm_t;
 typedef struct cgm_cmd_s cgm_cmd_t;
@@ -62,6 +86,8 @@ typedef struct cgm_cmd_symtab_s cgm_cmd_symtab_t;
 typedef struct cgm_cmd_ver_min_s cgm_cmd_ver_min_t;
 typedef struct cgm_dylib_s cgm_dylib_t;
 typedef struct cgm_header_s cgm_header_t;
+typedef struct cgm_sect_s cgm_sect_t;
+typedef struct cgm_sym_s cgm_sym_t;
 typedef union cgm_str_u cgm_str_t;
 
 union cgm_str_u {
@@ -191,12 +217,43 @@ struct cgm_header_s {
   uint32_t reserved;
 };
 
-struct cgm_s {
-  duc_array_t *cmds;
-  cgm_header_t header;
+struct cgm_sect_s {
+  char sect_name[16];
+  char seg_name[16];
+  uint64_t address;
+  uint64_t size;
+  uint32_t file_offset;
+  uint32_t align;
+  uint32_t reloc_offset;
+  uint32_t reloc_count;
+  uint32_t flags;
+  uint32_t reserved1;
+  uint32_t reserved2;
+  uint32_t reserved3;
 };
 
-duc_binary_t *cgm (const ast_t *ast);
+struct cgm_sym_s {
+  uint32_t strtab_idx;
+  uint8_t type;
+  uint8_t sect_idx;
+  uint16_t description;
+  uint64_t value;
+};
+
+struct cgm_s {
+  duc_array_t *cmds;
+  duc_binary_t *dyld_info;
+  cgm_header_t header;
+  duc_binary_t *sec_data;
+  duc_binary_t *sec_text;
+  duc_binary_t *strs;
+  duc_array_t *syms;
+};
+
+duc_binary_t *cgm_binary (const cgm_t *cgm);
+void cgm_free (cgm_t *cgm);
+cgm_t *cgm_new (const ast_t *ast);
+void cgm_sect (cgm_cmd_seg_t **cmd_seg, cgm_sect_t *sect);
 void cgm_str (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);
 
 #endif

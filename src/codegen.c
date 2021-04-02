@@ -9,5 +9,9 @@
 #include "codegen-macos.h"
 
 duc_binary_t *codegen (const ast_t *ast) {
-  return cgm(ast);
+  cgm_t *cg = cgm_new(ast);
+  duc_binary_t *bin = cgm_binary(cg);
+
+  cgm_free(cg);
+  return bin;
 }

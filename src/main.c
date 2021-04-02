@@ -17,6 +17,7 @@ int main (DUC_UNUSED int argc, char *argv[]) {
     duc_throw("Something went wrong");
   }
 
+  duc_binary_write(bin, "a.out");
   duc_binary_free(bin);
   ast_free(ast);
   duc_file_free(file);

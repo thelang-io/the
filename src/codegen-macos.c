@@ -5,13 +5,120 @@
  * Proprietary and confidential
  */
 
-#include <duc/helpers.h>
 #include <stdlib.h>
 #include <string.h>
 #include "codegen-macos.h"
 
-duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
+duc_binary_t *cgm_binary (const cgm_t *cgm) {
+  duc_binary_t *bin = duc_binary_new();
+  duc_binary_append_data(bin, &cgm->header, sizeof(cgm_header_t));
+
+  for (size_t i = 0, size = duc_array_length(cgm->cmds); i < size; i++) {
+    cgm_cmd_t *cmd = duc_array_at(cgm->cmds, i);
+    duc_binary_append_data(bin, cmd, cmd->size);
+  }
+
+  size_t zero = CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text) - duc_binary_size(bin);
+  duc_binary_append_times(bin, 0x00, zero);
+  duc_binary_append_binary(bin, cgm->sec_text);
+  duc_binary_append_binary(bin, cgm->sec_data);
+
+  zero = CGM_DATA_INFILE_OFFSET + CGM_DATA_INFILE_SIZE - duc_binary_size(bin);
+  duc_binary_append_times(bin, 0x00, zero);
+  duc_binary_append_binary(bin, cgm->dyld_info);
+
+  for (size_t i = 0, size = duc_array_length(cgm->syms); i < size; i++) {
+    cgm_sym_t *sym = duc_array_at(cgm->syms, i);
+    duc_binary_append_data(bin, sym, sizeof(cgm_sym_t));
+  }
+
+  duc_binary_append_binary(bin, cgm->strs);
+  return bin;
+}
+
+void cgm_free (cgm_t *cgm) {
+  duc_array_free(cgm->cmds, duc_free_simple);
+  duc_binary_free(cgm->dyld_info);
+  duc_binary_free(cgm->sec_data);
+  duc_binary_free(cgm->sec_text);
+  duc_binary_free(cgm->strs);
+  duc_array_free(cgm->syms, duc_free_simple);
+  free(cgm);
+}
+
+cgm_t *cgm_new (DUC_UNUSED const ast_t *ast) {
   cgm_t *cgm = malloc(sizeof(cgm_t));
+  cgm->cmds = duc_array_new();
+  cgm->dyld_info = duc_binary_new();
+  cgm->sec_data = duc_binary_new();
+  cgm->sec_text = duc_binary_new();
+  cgm->strs = duc_binary_new();
+  cgm->syms = duc_array_new();
+
+  duc_binary_append_uint8( // TODO Normalize into structure
+    cgm->dyld_info,
+    0x00, 0x01, 0x5F, 0x00, 0x05, 0x00, 0x02, 0x5F,
+    0x6D, 0x68, 0x5F, 0x65, 0x78, 0x65, 0x63, 0x75,
+    0x74, 0x65, 0x5F, 0x68, 0x65, 0x61, 0x64, 0x65,
+    0x72, 0x00, 0x21, 0x6D, 0x61, 0x69, 0x6E, 0x00,
+    0x25, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0xF4,
+    0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+  );
+
+  duc_binary_append_uint8(
+    cgm->sec_data,
+    0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x57,
+    0x6F, 0x72, 0x6C, 0x64, 0x21, 0x0A
+  );
+
+  duc_binary_append_uint8(
+    cgm->sec_text,
+    0xB8, 0x04, 0x00, 0x00, 0x02, // movl $0x200004, %eax
+    0xBF, 0x01, 0x00, 0x00, 0x00, // movl $0x000001, %edi
+    0x48, 0xBE, 0x00, 0x40, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, // movabsq $0x0000000100004000, %rsi
+    0xBA, 0x0E, 0x00, 0x00, 0x00, // movl $0x00000E, %edx
+    0x0F, 0x05, // syscall
+
+    0xB8, 0x01, 0x00, 0x00, 0x02, // movl $0x200001, %eax
+    0xBF, 0x00, 0x00, 0x00, 0x00, // movl $0x000000, %edi
+    0x0F, 0x05 // syscall
+  );
+
+  duc_binary_append_string(cgm->strs, " ");
+  duc_binary_append_string(cgm->strs, CGM_SYM_EXECUTE);
+  duc_binary_append_string(cgm->strs, "_main");
+  duc_binary_append_string(cgm->strs, "dyld_stub_binder");
+  duc_binary_append_times(cgm->strs, 0x00, 8 - duc_binary_size(cgm->strs) % 8);
+
+  cgm_sym_t *sym0 = malloc(sizeof(cgm_sym_t));
+
+  sym0->strtab_idx = 0x0002; // TODO
+  sym0->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_ABS;
+  sym0->sect_idx = 1;
+  sym0->description = 0x0010; // TODO
+  sym0->value = 0;
+
+  duc_array_push(cgm->syms, sym0);
+
+  cgm_sym_t *sym1 = malloc(sizeof(cgm_sym_t));
+
+  sym1->strtab_idx = 0x0016; // TODO
+  sym1->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_SECT;
+  sym1->sect_idx = 1;
+  sym1->description = 0x0000; // TODO
+  sym1->value = 0;
+
+  duc_array_push(cgm->syms, sym1);
+
+  cgm_sym_t *sym2 = malloc(sizeof(cgm_sym_t));
+
+  sym2->strtab_idx = 0x001C; // TODO
+  sym2->type = CGM_SYM_TYPE_UNDF | CGM_SYM_TYPE_EXT;
+  sym2->sect_idx = 0;
+  sym2->description = 0x0100; // TODO
+  sym2->value = 0;
+
+  duc_array_push(cgm->syms, sym2);
 
   // CMD: SEGMENT (__PAGEZERO)
   cgm_cmd_seg_t *cmd_seg_pagezero = malloc(sizeof(cgm_cmd_seg_t));
@@ -20,9 +127,9 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
   cmd_seg_pagezero->size = sizeof(cgm_cmd_seg_t);
   strcpy(cmd_seg_pagezero->name, CGM_SEG_PAGEZERO);
   cmd_seg_pagezero->vm_address = 0;
-  cmd_seg_pagezero->vm_size = 0; // TODO
-  cmd_seg_pagezero->file_offset = 0; // TODO
-  cmd_seg_pagezero->file_size = 0; // TODO
+  cmd_seg_pagezero->vm_size = 0;
+  cmd_seg_pagezero->file_offset = 0;
+  cmd_seg_pagezero->file_size = 0;
   cmd_seg_pagezero->prot_max = CGM_PROT_NONE;
   cmd_seg_pagezero->prot_initial = CGM_PROT_NONE;
   cmd_seg_pagezero->sects_count = 0;
@@ -36,16 +143,57 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
   cmd_seg_text->cmd = CGM_CMD_SEGMENT;
   cmd_seg_text->size = sizeof(cgm_cmd_seg_t);
   strcpy(cmd_seg_text->name, CGM_SEG_TEXT);
-  cmd_seg_text->vm_address = 0; // TODO
-  cmd_seg_text->vm_size = 0; // TODO
-  cmd_seg_text->file_offset = 0; // TODO
-  cmd_seg_text->file_size = 0; // TODO
+  cmd_seg_text->vm_address = 0;
+  cmd_seg_text->vm_size = 0;
+  cmd_seg_text->file_offset = 0;
+  cmd_seg_text->file_size = 0;
   cmd_seg_text->prot_max = CGM_PROT_READ | CGM_PROT_EXECUTE;
   cmd_seg_text->prot_initial = CGM_PROT_READ | CGM_PROT_EXECUTE;
-  cmd_seg_text->sects_count = 2; // TODO remove unwind_info
+  cmd_seg_text->sects_count = 0;
   cmd_seg_text->flags = 0;
 
+  cgm_sect_t cmd_seg_text_text;
+
+  strcpy(cmd_seg_text_text.sect_name, CGM_SECT_TEXT);
+  strcpy(cmd_seg_text_text.seg_name, CGM_SEG_TEXT);
+  cmd_seg_text_text.address = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text); // TODO Move to ext
+  cmd_seg_text_text.size = duc_binary_size(cgm->sec_text); // TODO Move to ext
+  cmd_seg_text_text.file_offset = (uint32_t) (CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text)); // TODO Move to ext
+  cmd_seg_text_text.align = 0;
+  cmd_seg_text_text.flags = CGM_SECT_FLAG_REGULAR |
+    CGM_SECT_ATTR_PURE_INSTRUCTIONS |
+    CGM_SECT_ATTR_SOME_INSTRUCTIONS;
+
+  cgm_sect(&cmd_seg_text, &cmd_seg_text_text);
   duc_array_push(cgm->cmds, cmd_seg_text);
+
+  // CMD: SEGMENT (__DATA)
+  cgm_cmd_seg_t *cmd_seg_data = malloc(sizeof(cgm_cmd_seg_t));
+
+  cmd_seg_data->cmd = CGM_CMD_SEGMENT;
+  cmd_seg_data->size = sizeof(cgm_cmd_seg_t);
+  strcpy(cmd_seg_data->name, CGM_SEG_DATA);
+  cmd_seg_data->vm_address = 0;
+  cmd_seg_data->vm_size = 0;
+  cmd_seg_data->file_offset = 0;
+  cmd_seg_data->file_size = 0;
+  cmd_seg_data->prot_max = CGM_PROT_DEFAULT;
+  cmd_seg_data->prot_initial = CGM_PROT_DEFAULT;
+  cmd_seg_data->sects_count = 0;
+  cmd_seg_data->flags = 0;
+
+  cgm_sect_t cmd_seg_data_data;
+
+  strcpy(cmd_seg_data_data.sect_name, CGM_SECT_DATA);
+  strcpy(cmd_seg_data_data.seg_name, CGM_SEG_DATA);
+  cmd_seg_data_data.address = CGM_DATA_INMEM_OFFSET; // TODO Move to ext
+  cmd_seg_data_data.size = duc_binary_size(cgm->sec_data); // TODO Move to ext
+  cmd_seg_data_data.file_offset = CGM_DATA_INFILE_OFFSET; // TODO Move to ext
+  cmd_seg_data_data.align = 0;
+  cmd_seg_data_data.flags = CGM_SECT_FLAG_REGULAR;
+
+  cgm_sect(&cmd_seg_data, &cmd_seg_data_data);
+  duc_array_push(cgm->cmds, cmd_seg_data);
 
   // CMD: SEGMENT (__LINKEDIT)
   cgm_cmd_seg_t *cmd_seg_linkedit = malloc(sizeof(cgm_cmd_seg_t));
@@ -53,10 +201,10 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
   cmd_seg_linkedit->cmd = CGM_CMD_SEGMENT;
   cmd_seg_linkedit->size = sizeof(cgm_cmd_seg_t);
   strcpy(cmd_seg_linkedit->name, CGM_SEG_LINKEDIT);
-  cmd_seg_linkedit->vm_address = 0; // TODO
-  cmd_seg_linkedit->vm_size = 0; // TODO
-  cmd_seg_linkedit->file_offset = 0; // TODO
-  cmd_seg_linkedit->file_size = 0; // TODO
+  cmd_seg_linkedit->vm_address = 0;
+  cmd_seg_linkedit->vm_size = 0;
+  cmd_seg_linkedit->file_offset = 0;
+  cmd_seg_linkedit->file_size = 0;
   cmd_seg_linkedit->prot_max = CGM_PROT_READ;
   cmd_seg_linkedit->prot_initial = CGM_PROT_READ;
   cmd_seg_linkedit->sects_count = 0;
@@ -77,8 +225,8 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
   cmd_dyld_info->weak_bind_size = 0;
   cmd_dyld_info->lazy_bind_offset = 0;
   cmd_dyld_info->lazy_bind_size = 0;
-  cmd_dyld_info->export_offset = 0; // TODO
-  cmd_dyld_info->export_size = 0; // TODO
+  cmd_dyld_info->export_offset = 0;
+  cmd_dyld_info->export_size = 0;
 
   duc_array_push(cgm->cmds, cmd_dyld_info);
 
@@ -87,10 +235,10 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
 
   cmd_symtab->cmd = CGM_CMD_SYMTAB;
   cmd_symtab->size = sizeof(cgm_cmd_symtab_t);
-  cmd_symtab->sym_offset = 0; // TODO
-  cmd_symtab->sym_count = 0; // TODO
-  cmd_symtab->str_offset = 0; // TODO
-  cmd_symtab->str_size = 0; // TODO
+  cmd_symtab->sym_offset = 0;
+  cmd_symtab->sym_count = 0;
+  cmd_symtab->str_offset = 0;
+  cmd_symtab->str_size = 0;
 
   duc_array_push(cgm->cmds, cmd_symtab);
 
@@ -101,10 +249,10 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
   cmd_dysymtab->size = sizeof(cgm_cmd_dysymtab_t);
   cmd_dysymtab->loc_idx = 0;
   cmd_dysymtab->loc_count = 0;
-  cmd_dysymtab->extdef_idx = 0; // TODO
-  cmd_dysymtab->extdef_count = 0; // TODO
-  cmd_dysymtab->undef_idx = 0; // TODO
-  cmd_dysymtab->undef_count = 0; // TODO
+  cmd_dysymtab->extdef_idx = 0;
+  cmd_dysymtab->extdef_count = 0;
+  cmd_dysymtab->undef_idx = 0;
+  cmd_dysymtab->undef_count = 0;
   cmd_dysymtab->contents_offset = 0;
   cmd_dysymtab->contents_count = 0;
   cmd_dysymtab->module_offset = 0;
@@ -134,8 +282,8 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
 
   cmd_ver_min_macos->cmd = CGM_CMD_VERSION_MIN_MACOS;
   cmd_ver_min_macos->size = sizeof(cgm_cmd_ver_min_t);
-  cmd_ver_min_macos->version = 0; // TODO in nibbles
-  cmd_ver_min_macos->sdk_version = 0; // TODO in nibbles
+  cmd_ver_min_macos->version = 0x000A0900; // TODO in nibbles
+  cmd_ver_min_macos->sdk_version = 0x000A1000; // TODO in nibbles
 
   duc_array_push(cgm->cmds, cmd_ver_min_macos);
 
@@ -153,7 +301,7 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
 
   cmd_main->cmd = CGM_CMD_MAIN;
   cmd_main->size = sizeof(cgm_cmd_main_t);
-  cmd_main->entry_offset = 0; // TODO
+  cmd_main->entry_offset = 0;
   cmd_main->stack_size = 0;
 
   duc_array_push(cgm->cmds, cmd_main);
@@ -163,9 +311,9 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
 
   cmd_dylib_system->cmd = CGM_CMD_LOAD_DYLIB;
   cmd_dylib_system->size = sizeof(cgm_cmd_dylib_t);
-  cmd_dylib_system->dylib.timestamp = 0x02;
-  cmd_dylib_system->dylib.current_version = 0x0; // TODO
-  cmd_dylib_system->dylib.compatibility_version = 0x010000;
+  cmd_dylib_system->dylib.timestamp = 0x00000000; // TODO return back 02?
+  cmd_dylib_system->dylib.current_version = 0x050C3C01; // TODO
+  cmd_dylib_system->dylib.compatibility_version = 0x00010000; // TODO
   cgm_str((cgm_cmd_t **) &cmd_dylib_system, &cmd_dylib_system->dylib.name, "/usr/lib/libSystem.B.dylib");
 
   duc_array_push(cgm->cmds, cmd_dylib_system);
@@ -173,9 +321,9 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
   // CMD: DATA_IN_CODE // TODO Remove
   cgm_cmd_linkedit_data_t *cmd_data_in_code = malloc(sizeof(cgm_cmd_linkedit_data_t));
 
-  cmd_data_in_code->cmd = CGM_CMD_LOAD_DYLIB;
+  cmd_data_in_code->cmd = CGM_CMD_DATA_IN_CODE;
   cmd_data_in_code->size = sizeof(cgm_cmd_linkedit_data_t);
-  cmd_data_in_code->data_offset = 0; // TODO
+  cmd_data_in_code->data_offset = 0;
   cmd_data_in_code->data_size = 0;
 
   duc_array_push(cgm->cmds, cmd_data_in_code);
@@ -195,9 +343,66 @@ duc_binary_t *cgm (DUC_UNUSED const ast_t *ast) {
   cgm->header.flags = CGM_FLAG_NOUNDEFS | CGM_FLAG_DYLDLINK | CGM_FLAG_TWOLEVEL;
   cgm->header.reserved = 0;
 
-  free(cgm);
-  duc_binary_t *bin = duc_binary_new();
-  return bin;
+  // Calculations TODO Optimize and simplify calculations
+  sym0->value = 0x0000000100000000;
+  sym1->value = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text);
+
+  cmd_seg_pagezero->vm_address = CGM_PAGEZERO_INMEM_OFFSET;
+  cmd_seg_pagezero->vm_size = CGM_PAGEZERO_INMEM_SIZE;
+  cmd_seg_pagezero->file_offset = 0;
+  cmd_seg_pagezero->file_size = 0;
+
+  cmd_seg_text->vm_address = 0x0000000100000000;
+  cmd_seg_text->vm_size = CGM_DATA_INMEM_SIZE;
+  cmd_seg_text->file_offset = 0;
+  cmd_seg_text->file_size = CGM_DATA_INFILE_SIZE;
+
+  cmd_seg_data->vm_address = CGM_DATA_INMEM_OFFSET;
+  cmd_seg_data->vm_size = CGM_DATA_INMEM_SIZE;
+  cmd_seg_data->file_offset = CGM_DATA_INFILE_OFFSET;
+  cmd_seg_data->file_size = CGM_DATA_INFILE_SIZE;
+
+  cmd_seg_linkedit->vm_address = CGM_LINKEDIT_INMEM_OFFSET;
+  cmd_seg_linkedit->vm_size = CGM_LINKEDIT_INMEM_SIZE;
+  cmd_seg_linkedit->file_offset = CGM_LINKEDIT_INFILE_OFFSET;
+  cmd_seg_linkedit->file_size = duc_binary_size(cgm->dyld_info) +
+    duc_array_length(cgm->syms) * sizeof(cgm_sym_t) +
+    duc_binary_size(cgm->strs);
+
+  cmd_dyld_info->export_offset = CGM_LINKEDIT_INFILE_OFFSET;
+  cmd_dyld_info->export_size = (uint32_t) duc_binary_size(cgm->dyld_info);
+
+  cmd_symtab->sym_offset = (uint32_t) (CGM_LINKEDIT_INFILE_OFFSET + duc_binary_size(cgm->dyld_info));
+  cmd_symtab->sym_count = (uint32_t) duc_array_length(cgm->syms);
+  cmd_symtab->str_offset = cmd_symtab->sym_offset + cmd_symtab->sym_count * sizeof(cgm_sym_t);
+  cmd_symtab->str_size = (uint32_t) duc_binary_size(cgm->strs);
+
+  cmd_dysymtab->extdef_idx = 0;
+  cmd_dysymtab->extdef_count = (uint32_t) (duc_array_length(cgm->syms) - 1);
+  cmd_dysymtab->undef_idx = (uint32_t) (duc_array_length(cgm->syms) - 1);
+  cmd_dysymtab->undef_count = 1;
+
+  cmd_main->entry_offset = CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text);
+  cmd_main->stack_size = 0;
+
+  cmd_data_in_code->data_offset = cmd_symtab->sym_offset;
+  cmd_data_in_code->data_size = 0;
+
+  return cgm;
+}
+
+void cgm_sect (cgm_cmd_seg_t **cmd_seg, cgm_sect_t *sect) {
+  uint32_t offset = (*cmd_seg)->size;
+  (*cmd_seg)->size += sizeof(cgm_sect_t);
+  (*cmd_seg)->sects_count += 1;
+  sect->reloc_offset = 0;
+  sect->reloc_count = 0;
+  sect->reserved1 = 0;
+  sect->reserved2 = 0;
+  sect->reserved3 = 0;
+
+  *cmd_seg = realloc(*cmd_seg, (*cmd_seg)->size);
+  memcpy((uint8_t *) *cmd_seg + offset, sect, sizeof(cgm_sect_t));
 }
 
 void cgm_str (cgm_cmd_t **cmd, cgm_str_t *str, const char *data) {
