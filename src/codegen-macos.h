@@ -253,7 +253,7 @@ struct cgm_s {
 duc_binary_t *cgm_binary (const cgm_t *cgm);
 void cgm_free (cgm_t *cgm);
 cgm_t *cgm_new (const ast_t *ast);
-void cgm_sect (cgm_cmd_seg_t **cmd_seg, cgm_sect_t *sect);
+cgm_sect_t *cgm_sect (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name);
 void cgm_str (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);
 
 #endif

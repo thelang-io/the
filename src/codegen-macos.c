@@ -152,19 +152,13 @@ cgm_t *cgm_new (DUC_UNUSED const ast_t *ast) {
   cmd_seg_text->sects_count = 0;
   cmd_seg_text->flags = 0;
 
-  cgm_sect_t cmd_seg_text_text;
+  cgm_sect_t *cmd_seg_text_text = cgm_sect(&cmd_seg_text, CGM_SECT_TEXT, CGM_SEG_TEXT);
 
-  strcpy(cmd_seg_text_text.sect_name, CGM_SECT_TEXT);
-  strcpy(cmd_seg_text_text.seg_name, CGM_SEG_TEXT);
-  cmd_seg_text_text.address = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text); // TODO Move to ext
-  cmd_seg_text_text.size = duc_binary_size(cgm->sec_text); // TODO Move to ext
-  cmd_seg_text_text.file_offset = (uint32_t) (CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text)); // TODO Move to ext
-  cmd_seg_text_text.align = 0;
-  cmd_seg_text_text.flags = CGM_SECT_FLAG_REGULAR |
+  cmd_seg_text_text->align = 0;
+  cmd_seg_text_text->flags = CGM_SECT_FLAG_REGULAR |
     CGM_SECT_ATTR_PURE_INSTRUCTIONS |
     CGM_SECT_ATTR_SOME_INSTRUCTIONS;
 
-  cgm_sect(&cmd_seg_text, &cmd_seg_text_text);
   duc_array_push(cgm->cmds, cmd_seg_text);
 
   // CMD: SEGMENT (__DATA)
@@ -182,17 +176,11 @@ cgm_t *cgm_new (DUC_UNUSED const ast_t *ast) {
   cmd_seg_data->sects_count = 0;
   cmd_seg_data->flags = 0;
 
-  cgm_sect_t cmd_seg_data_data;
+  cgm_sect_t *cmd_seg_data_data = cgm_sect(&cmd_seg_data, CGM_SECT_DATA, CGM_SEG_DATA);
 
-  strcpy(cmd_seg_data_data.sect_name, CGM_SECT_DATA);
-  strcpy(cmd_seg_data_data.seg_name, CGM_SEG_DATA);
-  cmd_seg_data_data.address = CGM_DATA_INMEM_OFFSET; // TODO Move to ext
-  cmd_seg_data_data.size = duc_binary_size(cgm->sec_data); // TODO Move to ext
-  cmd_seg_data_data.file_offset = CGM_DATA_INFILE_OFFSET; // TODO Move to ext
-  cmd_seg_data_data.align = 0;
-  cmd_seg_data_data.flags = CGM_SECT_FLAG_REGULAR;
+  cmd_seg_data_data->align = 0;
+  cmd_seg_data_data->flags = CGM_SECT_FLAG_REGULAR;
 
-  cgm_sect(&cmd_seg_data, &cmd_seg_data_data);
   duc_array_push(cgm->cmds, cmd_seg_data);
 
   // CMD: SEGMENT (__LINKEDIT)
@@ -311,7 +299,7 @@ cgm_t *cgm_new (DUC_UNUSED const ast_t *ast) {
 
   cmd_dylib_system->cmd = CGM_CMD_LOAD_DYLIB;
   cmd_dylib_system->size = sizeof(cgm_cmd_dylib_t);
-  cmd_dylib_system->dylib.timestamp = 0x00000000; // TODO return back 02?
+  cmd_dylib_system->dylib.timestamp = 0;
   cmd_dylib_system->dylib.current_version = 0x050C3C01; // TODO
   cmd_dylib_system->dylib.compatibility_version = 0x00010000; // TODO
   cgm_str((cgm_cmd_t **) &cmd_dylib_system, &cmd_dylib_system->dylib.name, "/usr/lib/libSystem.B.dylib");
@@ -357,10 +345,18 @@ cgm_t *cgm_new (DUC_UNUSED const ast_t *ast) {
   cmd_seg_text->file_offset = 0;
   cmd_seg_text->file_size = CGM_DATA_INFILE_SIZE;
 
+  cmd_seg_text_text->address = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text);
+  cmd_seg_text_text->size = duc_binary_size(cgm->sec_text);
+  cmd_seg_text_text->file_offset = (uint32_t) (CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text));
+
   cmd_seg_data->vm_address = CGM_DATA_INMEM_OFFSET;
   cmd_seg_data->vm_size = CGM_DATA_INMEM_SIZE;
   cmd_seg_data->file_offset = CGM_DATA_INFILE_OFFSET;
   cmd_seg_data->file_size = CGM_DATA_INFILE_SIZE;
+
+  cmd_seg_data_data->address = CGM_DATA_INMEM_OFFSET;
+  cmd_seg_data_data->size = duc_binary_size(cgm->sec_data);
+  cmd_seg_data_data->file_offset = CGM_DATA_INFILE_OFFSET;
 
   cmd_seg_linkedit->vm_address = CGM_LINKEDIT_INMEM_OFFSET;
   cmd_seg_linkedit->vm_size = CGM_LINKEDIT_INMEM_SIZE;
@@ -391,18 +387,25 @@ cgm_t *cgm_new (DUC_UNUSED const ast_t *ast) {
   return cgm;
 }
 
-void cgm_sect (cgm_cmd_seg_t **cmd_seg, cgm_sect_t *sect) {
+cgm_sect_t *cgm_sect (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name) {
   uint32_t offset = (*cmd_seg)->size;
   (*cmd_seg)->size += sizeof(cgm_sect_t);
   (*cmd_seg)->sects_count += 1;
+
+  *cmd_seg = realloc(*cmd_seg, (*cmd_seg)->size);
+  memset((uint8_t *) *cmd_seg + offset, 0, sizeof(cgm_sect_t));
+
+  cgm_sect_t *sect = (cgm_sect_t *) *cmd_seg + offset;
+
+  strcpy(sect->sect_name, sect_name);
+  strcpy(sect->seg_name, seg_name);
   sect->reloc_offset = 0;
   sect->reloc_count = 0;
   sect->reserved1 = 0;
   sect->reserved2 = 0;
   sect->reserved3 = 0;
 
-  *cmd_seg = realloc(*cmd_seg, (*cmd_seg)->size);
-  memcpy((uint8_t *) *cmd_seg + offset, sect, sizeof(cgm_sect_t));
+  return sect;
 }
 
 void cgm_str (cgm_cmd_t **cmd, cgm_str_t *str, const char *data) {
