@@ -62,21 +62,22 @@ struct parser_s {
   parser_ws_t *ws;
 };
 
-void parser_arglist_free (parser_arglist_t *parser);
-parser_arglist_t *parser_arglist_new (duc_file_t *file);
-void parser_call_expr_free (parser_call_expr_t *parser);
-parser_call_expr_t *parser_call_expr_new (duc_file_t *file);
-void parser_expr_free (parser_expr_t *parser);
-void parser_expr_free_cb (void *it);
-parser_expr_t *parser_expr_new (duc_file_t *file);
 void parser_free (parser_t *parser);
 void parser_free_cb (void *it);
-void parser_id_free (parser_id_t *parser);
-parser_id_t *parser_id_new (duc_file_t *file);
-void parser_literal_free (parser_literal_t *parser);
-parser_literal_t *parser_literal_new (duc_file_t *file);
 parser_t *parser_new (duc_file_t *file);
-void parser_ws_free (parser_ws_t *parser);
-parser_ws_t *parser_ws_new (duc_file_t *file, bool alloc);
+
+void parser_arglist_free_ (parser_arglist_t *parser);
+parser_arglist_t *parser_arglist_new_ (duc_file_t *file);
+void parser_call_expr_free_ (parser_call_expr_t *parser);
+parser_call_expr_t *parser_call_expr_new_ (duc_file_t *file);
+void parser_expr_free_ (parser_expr_t *parser);
+void parser_expr_free_cb_ (void *it);
+parser_expr_t *parser_expr_new_ (duc_file_t *file);
+void parser_id_free_ (parser_id_t *parser);
+parser_id_t *parser_id_new_ (duc_file_t *file);
+void parser_literal_free_ (parser_literal_t *parser);
+parser_literal_t *parser_literal_new_ (duc_file_t *file);
+void parser_ws_free_ (parser_ws_t *parser);
+parser_ws_t *parser_ws_new_ (duc_file_t *file, bool alloc);
 
 #endif

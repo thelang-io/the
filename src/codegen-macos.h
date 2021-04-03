@@ -16,6 +16,7 @@
 #define CGM_CMD_DYSYMTAB 0x0B
 #define CGM_CMD_LOAD_DYLIB 0x0C
 #define CGM_CMD_LOAD_DYLINKER 0x0E
+#define CGM_CMD_UUID 0x1B
 #define CGM_CMD_SEGMENT 0x19
 #define CGM_CMD_DYLD_INFO_ONLY (0x22 | CGM_CMD_REQ_DYLD)
 #define CGM_CMD_VERSION_MIN_MACOS 0x24
@@ -35,6 +36,7 @@
 
 #define CGM_MAGIC 0xFEEDFACF
 
+// TODO Remove
 #define CGM_DATA_INFILE_OFFSET 0x4000
 #define CGM_DATA_INFILE_SIZE 0x4000
 #define CGM_DATA_INMEM_OFFSET 0x0000000100004000
@@ -64,25 +66,22 @@
 #define CGM_SEG_PAGEZERO "__PAGEZERO"
 #define CGM_SEG_TEXT "__TEXT"
 
-#define CGM_SYM_EXECUTE "__mh_execute_header"
-
 #define CGM_SYM_TYPE_UNDF 0x00
 #define CGM_SYM_TYPE_EXT 0x01
-#define CGM_SYM_TYPE_ABS 0x02
 #define CGM_SYM_TYPE_SECT 0x0E
 
 typedef struct cgm_s cgm_t;
 typedef struct cgm_cmd_s cgm_cmd_t;
-typedef struct cgm_cmd_dyld_info_s cgm_cmd_dyld_info_t;
+//typedef struct cgm_cmd_dyld_info_s cgm_cmd_dyld_info_t;
 typedef struct cgm_cmd_dylib_s cgm_cmd_dylib_t;
 typedef struct cgm_cmd_dylinker_s cgm_cmd_dylinker_t;
 typedef struct cgm_cmd_dysymtab_s cgm_cmd_dysymtab_t;
-typedef struct cgm_cmd_linkedit_data_s cgm_cmd_linkedit_data_t;
 typedef struct cgm_cmd_main_s cgm_cmd_main_t;
 typedef struct cgm_cmd_seg_s cgm_cmd_seg_t;
 typedef struct cgm_cmd_src_ver_s cgm_cmd_src_ver_t;
 typedef struct cgm_cmd_symtab_s cgm_cmd_symtab_t;
 typedef struct cgm_cmd_ver_min_s cgm_cmd_ver_min_t;
+typedef struct cgm_cmd_uuid_s cgm_cmd_uuid_t;
 typedef struct cgm_dylib_s cgm_dylib_t;
 typedef struct cgm_header_s cgm_header_t;
 typedef struct cgm_sect_s cgm_sect_t;
@@ -155,13 +154,6 @@ struct cgm_cmd_dysymtab_s {
   uint32_t locrel_count;
 };
 
-struct cgm_cmd_linkedit_data_s {
-  uint32_t cmd;
-  uint32_t size;
-  uint32_t data_offset;
-  uint32_t data_size;
-};
-
 struct cgm_cmd_main_s {
   uint32_t cmd;
   uint32_t size;
@@ -205,6 +197,12 @@ struct cgm_cmd_ver_min_s {
   uint32_t sdk_version;
 };
 
+struct cgm_cmd_uuid_s {
+  uint32_t cmd;
+  uint32_t size;
+  uint8_t uuid[16];
+};
+
 struct cgm_header_s {
   uint32_t magic;
   int32_t cpu_type;
@@ -240,8 +238,23 @@ struct cgm_sym_s {
 };
 
 struct cgm_s {
+//  cgm_cmd_dyld_info_t *cmd_dyld_info;
+  cgm_cmd_dylib_t *cmd_dylib;
+  cgm_cmd_dylinker_t *cmd_dylinker;
+  cgm_cmd_dysymtab_t *cmd_dysymtab;
+  cgm_cmd_main_t *cmd_main;
+  cgm_cmd_seg_t *cmd_seg_data;
+  cgm_sect_t *cmd_seg_data_data;
+  cgm_cmd_seg_t *cmd_seg_pagezero;
+  cgm_cmd_seg_t *cmd_seg_text;
+  cgm_sect_t *cmd_seg_text_text;
+  cgm_cmd_seg_t *cmd_seg_linkedit;
+  cgm_cmd_src_ver_t *cmd_src_ver;
+  cgm_cmd_symtab_t *cmd_symtab;
+  cgm_cmd_ver_min_t *cmd_ver_min_macos;
+  cgm_cmd_uuid_t *cmd_uuid;
   duc_array_t *cmds;
-  duc_binary_t *dyld_info;
+//  duc_binary_t *dyld_info;
   cgm_header_t header;
   duc_binary_t *sec_data;
   duc_binary_t *sec_text;
@@ -249,10 +262,40 @@ struct cgm_s {
   duc_array_t *syms;
 };
 
-duc_binary_t *cgm_binary (const cgm_t *cgm);
-void cgm_free (cgm_t *cgm);
-cgm_t *cgm_new (const ast_t *ast);
-cgm_sect_t *cgm_sect (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name);
-void cgm_str (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);
+duc_binary_t *codegen_macos (const ast_t *ast);
+
+void cgm_calc_cmd_dyld_info_ (cgm_t *cgm);
+void cgm_calc_cmd_dylib_ (cgm_t *cgm);
+void cgm_calc_cmd_dylinker_ (cgm_t *cgm);
+void cgm_calc_cmd_dysymtab_ (cgm_t *cgm);
+void cgm_calc_cmd_main_ (cgm_t *cgm);
+void cgm_calc_cmd_seg_data_ (cgm_t *cgm);
+void cgm_calc_cmd_seg_linkedit_ (cgm_t *cgm);
+void cgm_calc_cmd_seg_pagezero_ (cgm_t *cgm);
+void cgm_calc_cmd_seg_text_ (cgm_t *cgm);
+void cgm_calc_cmd_src_ver_ (cgm_t *cgm);
+void cgm_calc_cmd_symtab_ (cgm_t *cgm);
+void cgm_calc_cmd_ver_min_macos_ (cgm_t *cgm);
+void cgm_calc_cmd_uuid_ (cgm_t *cgm);
+void cgm_calc_header_ (cgm_t *cgm);
+void *cgm_cmd_ (uint32_t id, size_t size);
+void cgm_free_ (cgm_t *cgm);
+void cgm_init_cmd_dyld_info_ (cgm_t *cgm);
+void cgm_init_cmd_dylib_ (cgm_t *cgm);
+void cgm_init_cmd_dylinker_ (cgm_t *cgm);
+void cgm_init_cmd_dysymtab_ (cgm_t *cgm);
+void cgm_init_cmd_main_ (cgm_t *cgm);
+void cgm_init_cmd_seg_data_ (cgm_t *cgm);
+void cgm_init_cmd_seg_linkedit_ (cgm_t *cgm);
+void cgm_init_cmd_seg_pagezero_ (cgm_t *cgm);
+void cgm_init_cmd_seg_text_ (cgm_t *cgm);
+void cgm_init_cmd_src_ver_ (cgm_t *cgm);
+void cgm_init_cmd_symtab_ (cgm_t *cgm);
+void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm);
+void cgm_init_cmd_uuid_ (cgm_t *cgm);
+void cgm_init_header_ (cgm_t *cgm);
+cgm_t *cgm_new_ ();
+cgm_sect_t *cgm_sect_ (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name);
+void cgm_str_ (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);
 
 #endif

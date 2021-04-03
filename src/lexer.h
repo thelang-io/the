@@ -31,11 +31,12 @@ struct lexer_s {
 
 void lexer_free (lexer_t *lexer);
 void lexer_free_cb (void *it);
-bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, size_t pos);
-bool lexer_is_id (duc_file_t *file, lexer_t *lexer, size_t pos);
-bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos);
-bool lexer_is_mark (duc_file_t *file, lexer_t *lexer, size_t pos);
-bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, size_t pos);
 lexer_t *lexer_new (duc_file_t *file);
+
+bool lexer_is_bracket_ (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_id_ (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_litstr_ (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_mark_ (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_ws_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 
 #endif

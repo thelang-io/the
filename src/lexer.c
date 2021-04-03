@@ -19,7 +19,30 @@ void lexer_free_cb (void *it) {
   lexer_free((lexer_t *) it);
 }
 
-bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, size_t pos) {
+lexer_t *lexer_new (duc_file_t *file) {
+  lexer_t *lexer = malloc(sizeof(lexer_t));
+
+  lexer->raw = NULL;
+  lexer->str = NULL;
+  lexer->token = LEXER_UNKNOWN;
+
+  size_t pos = duc_file_position(file);
+
+  if (
+    lexer_is_ws_(file, lexer, pos) ||
+    lexer_is_bracket_(file, lexer, pos) ||
+    lexer_is_litstr_(file, lexer, pos) ||
+    lexer_is_mark_(file, lexer, pos) ||
+    lexer_is_id_(file, lexer, pos)
+  ) {
+    return lexer;
+  }
+
+  free(lexer);
+  return NULL;
+}
+
+bool lexer_is_bracket_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   switch (ch) {
@@ -47,7 +70,7 @@ bool lexer_is_bracket (duc_file_t *file, lexer_t *lexer, size_t pos) {
   return true;
 }
 
-bool lexer_is_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
+bool lexer_is_id_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   const char *chs_begin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz_$";
   const char *chs_end = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -87,7 +110,7 @@ bool lexer_is_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
   return true;
 }
 
-bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
+bool lexer_is_litstr_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   if ((ch != '\'' && ch != '"') || duc_file_eof(file)) {
@@ -133,7 +156,7 @@ bool lexer_is_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
   return true;
 }
 
-bool lexer_is_mark (duc_file_t *file, lexer_t *lexer, size_t pos) {
+bool lexer_is_mark_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   switch (ch) {
@@ -157,7 +180,7 @@ bool lexer_is_mark (duc_file_t *file, lexer_t *lexer, size_t pos) {
   return true;
 }
 
-bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, size_t pos) {
+bool lexer_is_ws_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   if (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t') {
@@ -190,27 +213,4 @@ bool lexer_is_ws (duc_file_t *file, lexer_t *lexer, size_t pos) {
   memcpy(lexer->str, lexer->raw, len + 1);
 
   return true;
-}
-
-lexer_t *lexer_new (duc_file_t *file) {
-  lexer_t *lexer = malloc(sizeof(lexer_t));
-
-  lexer->raw = NULL;
-  lexer->str = NULL;
-  lexer->token = LEXER_UNKNOWN;
-
-  size_t pos = duc_file_position(file);
-
-  if (
-    lexer_is_ws(file, lexer, pos) ||
-    lexer_is_bracket(file, lexer, pos) ||
-    lexer_is_litstr(file, lexer, pos) ||
-    lexer_is_mark(file, lexer, pos) ||
-    lexer_is_id(file, lexer, pos)
-  ) {
-    return lexer;
-  }
-
-  free(lexer);
-  return NULL;
 }

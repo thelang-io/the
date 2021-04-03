@@ -11,18 +11,18 @@
 #define PARSER_F(text, token, body) \
   do { duc_writefile("../test.txt", text); \
   duc_file_t *file = duc_file_new("../test.txt", DUC_FILE_READ); \
-  parser_##token##_t *parser = parser_##token##_new(file); \
+  parser_##token##_t *parser = parser_##token##_new_(file); \
   body \
-  if (parser != NULL) parser_##token##_free(parser); \
+  if (parser != NULL) parser_##token##_free_(parser); \
   duc_file_free(file); \
   duc_file_remove("../test.txt"); } while (0)
 
 #define PARSER_WS_F(text, alloc, body) \
   do { duc_writefile("../test.txt", text); \
   duc_file_t *file = duc_file_new("../test.txt", DUC_FILE_READ); \
-  parser_ws_t *parser = parser_ws_new(file, alloc); \
+  parser_ws_t *parser = parser_ws_new_(file, alloc); \
   body \
-  if (parser != NULL) parser_ws_free(parser); \
+  if (parser != NULL) parser_ws_free_(parser); \
   duc_file_free(file); \
   duc_file_remove("../test.txt"); } while (0)
 
