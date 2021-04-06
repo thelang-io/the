@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include "codegen.h"
 
-int main (__unused int argc, char *argv[]) {
+int main (DUC_UNUSED int argc, char *argv[]) {
   duc_file_t *file = duc_file_new(argv[1], DUC_FILE_READ);
   ast_t *ast = ast_new(file);
   duc_binary_t *bin = codegen(ast);

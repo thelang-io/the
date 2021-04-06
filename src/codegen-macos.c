@@ -9,7 +9,7 @@
 #include <string.h>
 #include "codegen-macos.h"
 
-duc_binary_t *codegen_macos (__unused const ast_t *ast) {
+duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   cgm_t *cgm = cgm_new_();
 
   duc_binary_append_uint8(
@@ -107,10 +107,10 @@ duc_binary_t *codegen_macos (__unused const ast_t *ast) {
 
 // TODO Optimize calculations
 
-void cgm_calc_cmd_dylib_ (__unused cgm_t *cgm) {
+void cgm_calc_cmd_dylib_ (DUC_UNUSED cgm_t *cgm) {
 }
 
-void cgm_calc_cmd_dylinker_ (__unused cgm_t *cgm) {
+void cgm_calc_cmd_dylinker_ (DUC_UNUSED cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm) {
@@ -160,20 +160,21 @@ void cgm_calc_cmd_seg_text_ (cgm_t *cgm) {
   cgm->cmd_seg_text_text->file_offset = (uint32_t) (CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text));
 }
 
-void cgm_calc_cmd_src_ver_ (__unused cgm_t *cgm) {
+void cgm_calc_cmd_src_ver_ (DUC_UNUSED cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_symtab_ (cgm_t *cgm) {
   cgm->cmd_symtab->sym_offset = CGM_LINKEDIT_INFILE_OFFSET;
   cgm->cmd_symtab->sym_count = (uint32_t) duc_array_length(cgm->syms);
-  cgm->cmd_symtab->str_offset = cgm->cmd_symtab->sym_offset + cgm->cmd_symtab->sym_count * sizeof(cgm_sym_t);
+  cgm->cmd_symtab->str_offset = cgm->cmd_symtab->sym_offset +
+    cgm->cmd_symtab->sym_count * (uint32_t) sizeof(cgm_sym_t);
   cgm->cmd_symtab->str_size = (uint32_t) duc_binary_size(cgm->strs);
 }
 
-void cgm_calc_cmd_ver_min_macos_ (__unused cgm_t *cgm) {
+void cgm_calc_cmd_ver_min_macos_ (DUC_UNUSED cgm_t *cgm) {
 }
 
-void cgm_calc_cmd_uuid_ (__unused cgm_t *cgm) {
+void cgm_calc_cmd_uuid_ (DUC_UNUSED cgm_t *cgm) {
 }
 
 void cgm_calc_header_ (cgm_t *cgm) {
@@ -406,7 +407,7 @@ cgm_t *cgm_new_ () {
 
 cgm_sect_t *cgm_sect_ (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name) {
   uint32_t offset = (*cmd_seg)->size;
-  (*cmd_seg)->size += sizeof(cgm_sect_t);
+  (*cmd_seg)->size += (uint32_t) sizeof(cgm_sect_t);
   (*cmd_seg)->sects_count += 1;
 
   *cmd_seg = realloc(*cmd_seg, (*cmd_seg)->size);
@@ -419,7 +420,7 @@ cgm_sect_t *cgm_sect_ (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const cha
 }
 
 void cgm_str_ (cgm_cmd_t **cmd, cgm_str_t *str, const char *data) {
-  size_t len = strlen(data);
+  uint32_t len = (uint32_t) strlen(data);
   str->offset = (*cmd)->size;
   (*cmd)->size += len;
 
