@@ -1,13 +1,6 @@
 global _main
 
 section .text
- _main:
-  jmp printf
-
-  mov rax, 0x02000001
-  mov rdi, 0
-  syscall
-
  printf:
   mov rax, 0x02000004
   mov rdi, 1
@@ -15,6 +8,13 @@ section .text
   mov rdx, message.len
   syscall
   ret
+
+ _main:
+  call printf
+
+  mov rax, 0x02000001
+  mov rdi, 0
+  syscall
 
 section .data
   message: db "Hello, World!", 10

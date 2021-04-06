@@ -36,10 +36,14 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   );
 
   // TODO Move to some kind of container
+  duc_binary_append_string(cgm->strs, " ");
+  duc_binary_append_string(cgm->strs, "__mh_execute_header");
   duc_binary_append_string(cgm->strs, "_main");
-  duc_binary_append_times(cgm->strs, 0x00, 8 - duc_binary_size(cgm->strs) % 8);
+  duc_binary_append_string(cgm->strs, "dyld_stub_binder");
+  size_t carry = duc_binary_size(cgm->strs) % 8;
+  duc_binary_append_times(cgm->strs, 0x00, carry == 0 ? 0 : 8 - carry);
 
-  // TODO Move to calc / init
+  // TODO Move to calc / init, Add rest of symbols
   cgm_sym_t *sym1 = malloc(sizeof(cgm_sym_t));
   sym1->strtab_idx = 0x0000; // TODO Refer to real position of str
   sym1->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_SECT;
