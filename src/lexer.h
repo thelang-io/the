@@ -24,8 +24,8 @@ typedef enum {
 } lexer_token;
 
 struct lexer_s {
-  unsigned char *raw;
-  unsigned char *str;
+  uint8_t *raw;
+  uint8_t *str;
   lexer_token token;
 };
 

@@ -5,6 +5,7 @@
  * Proprietary and confidential
  */
 
+#include <sys/stat.h>
 #include "codegen.h"
 
 int main (__unused int argc, char *argv[]) {
@@ -17,6 +18,8 @@ int main (__unused int argc, char *argv[]) {
   }
 
   duc_binary_write(bin, "a.out");
+  chmod("a.out", 0755);
+
   duc_binary_free(bin);
   ast_free(ast);
   duc_file_free(file);

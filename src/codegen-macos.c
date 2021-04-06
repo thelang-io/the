@@ -9,8 +9,6 @@
 #include <string.h>
 #include "codegen-macos.h"
 
-// TODO Try to create more complex program in assembly and look at dyld_info
-
 duc_binary_t *codegen_macos (__unused const ast_t *ast) {
   cgm_t *cgm = cgm_new_();
 
@@ -24,41 +22,34 @@ duc_binary_t *codegen_macos (__unused const ast_t *ast) {
     cgm->sec_text,
     0xB8, 0x04, 0x00, 0x00, 0x02, // movl $0x200004, %eax
     0xBF, 0x01, 0x00, 0x00, 0x00, // movl $0x000001, %edi
-    0x48, 0xBE, 0x00, 0x40, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, // movabsq $0x0000000100004000, %rsi
+    0x48, 0xBE, 0x00, 0x40, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+    // movabsq $0x0000000100004000, %rsi
     0xBA, 0x0E, 0x00, 0x00, 0x00, // movl $0x00000E, %edx
-    0x0F, 0x05, // syscall
+    0x0F, 0x05 // syscall
+  );
 
+  duc_binary_append_uint8(
+    cgm->sec_text,
     0xB8, 0x01, 0x00, 0x00, 0x02, // movl $0x200001, %eax
     0xBF, 0x00, 0x00, 0x00, 0x00, // movl $0x000000, %edi
     0x0F, 0x05 // syscall
   );
 
-//  uint32_t dyld_info_tmp_size = (uint32_t) (CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text));
-
-//  duc_binary_append_uint8( // TODO Normalize into structure
-//    cgm->dyld_info,
-//    0x00, 0x01, 0x5F, 0x6D, 0x61, 0x69, 0x6E, 0x00, 0x09,
-//    0x03, 0x00,
-//    (uint8_t) (dyld_info_tmp_size >> 8 & 0xFF),
-//    (uint8_t) (dyld_info_tmp_size & 0xFF),
-//    0x00, 0x00, 0x00
-//  );
-
+  // TODO Move to some kind of container
   duc_binary_append_string(cgm->strs, "_main");
   duc_binary_append_times(cgm->strs, 0x00, 8 - duc_binary_size(cgm->strs) % 8);
 
+  // TODO Move to calc / init
   cgm_sym_t *sym1 = malloc(sizeof(cgm_sym_t));
-
-  sym1->strtab_idx = 0x0000;
+  sym1->strtab_idx = 0x0000; // TODO Refer to real position of str
   sym1->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_SECT;
   sym1->sect_idx = 1;
-  sym1->description = 0x0000; // TODO
+  sym1->description = 0;
   sym1->value = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text);
 
   duc_array_push(cgm->syms, sym1);
 
   cgm_init_header_(cgm);
-//  cgm_init_cmd_dyld_info_(cgm);
   cgm_init_cmd_dylib_(cgm);
   cgm_init_cmd_dylinker_(cgm);
   cgm_init_cmd_dysymtab_(cgm);
@@ -73,7 +64,6 @@ duc_binary_t *codegen_macos (__unused const ast_t *ast) {
   cgm_init_cmd_uuid_(cgm);
 
   cgm_calc_header_(cgm);
-//  cgm_calc_cmd_dyld_info_(cgm);
   cgm_calc_cmd_dylib_(cgm);
   cgm_calc_cmd_dylinker_(cgm);
   cgm_calc_cmd_dysymtab_(cgm);
@@ -96,13 +86,13 @@ duc_binary_t *codegen_macos (__unused const ast_t *ast) {
   }
 
   size_t zero = CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text) - duc_binary_size(bin);
+
   duc_binary_append_times(bin, 0x00, zero);
   duc_binary_append_binary(bin, cgm->sec_text);
   duc_binary_append_binary(bin, cgm->sec_data);
 
   zero = CGM_DATA_INFILE_OFFSET + CGM_DATA_INFILE_SIZE - duc_binary_size(bin);
   duc_binary_append_times(bin, 0x00, zero);
-//  duc_binary_append_binary(bin, cgm->dyld_info);
 
   for (size_t i = 0, size = duc_array_length(cgm->syms); i < size; i++) {
     cgm_sym_t *sym = duc_array_at(cgm->syms, i);
@@ -110,17 +100,12 @@ duc_binary_t *codegen_macos (__unused const ast_t *ast) {
   }
 
   duc_binary_append_binary(bin, cgm->strs);
-
   cgm_free_(cgm);
+
   return bin;
 }
 
 // TODO Optimize calculations
-
-void cgm_calc_cmd_dyld_info_ (__unused cgm_t *cgm) {
-//  cgm->cmd_dyld_info->export_offset = CGM_LINKEDIT_INFILE_OFFSET;
-//  cgm->cmd_dyld_info->export_size = (uint32_t) duc_binary_size(cgm->dyld_info);
-}
 
 void cgm_calc_cmd_dylib_ (__unused cgm_t *cgm) {
 }
@@ -130,7 +115,7 @@ void cgm_calc_cmd_dylinker_ (__unused cgm_t *cgm) {
 
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm) {
   cgm->cmd_dysymtab->extdef_idx = 0;
-  cgm->cmd_dysymtab->extdef_count = 1;
+  cgm->cmd_dysymtab->extdef_count = (uint32_t) duc_array_length(cgm->syms);
   cgm->cmd_dysymtab->undef_idx = 0;
   cgm->cmd_dysymtab->undef_count = 0;
 }
@@ -145,8 +130,8 @@ void cgm_calc_cmd_seg_data_ (cgm_t *cgm) {
   cgm->cmd_seg_data->file_offset = CGM_DATA_INFILE_OFFSET;
   cgm->cmd_seg_data->file_size = CGM_DATA_INFILE_SIZE;
 
-  cgm->cmd_seg_data_data->address = CGM_DATA_INMEM_OFFSET;
-  cgm->cmd_seg_data_data->size = duc_binary_size(cgm->sec_data);
+  cgm->cmd_seg_data_data->vm_address = CGM_DATA_INMEM_OFFSET;
+  cgm->cmd_seg_data_data->vm_size = duc_binary_size(cgm->sec_data);
   cgm->cmd_seg_data_data->file_offset = CGM_DATA_INFILE_OFFSET;
 }
 
@@ -155,7 +140,6 @@ void cgm_calc_cmd_seg_linkedit_ (cgm_t *cgm) {
   cgm->cmd_seg_linkedit->vm_size = CGM_LINKEDIT_INMEM_SIZE;
   cgm->cmd_seg_linkedit->file_offset = CGM_LINKEDIT_INFILE_OFFSET;
   cgm->cmd_seg_linkedit->file_size = duc_array_length(cgm->syms) * sizeof(cgm_sym_t) + duc_binary_size(cgm->strs);
-//  cgm->cmd_seg_linkedit->file_size = duc_binary_size(cgm->dyld_info) + duc_array_length(cgm->syms) * sizeof(cgm_sym_t) + duc_binary_size(cgm->strs);
 }
 
 void cgm_calc_cmd_seg_pagezero_ (cgm_t *cgm) {
@@ -166,13 +150,13 @@ void cgm_calc_cmd_seg_pagezero_ (cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_seg_text_ (cgm_t *cgm) {
-  cgm->cmd_seg_text->vm_address = 0x0000000100000000;
+  cgm->cmd_seg_text->vm_address = CGM_PAGEZERO_INMEM_OFFSET + CGM_PAGEZERO_INMEM_SIZE;
   cgm->cmd_seg_text->vm_size = CGM_DATA_INMEM_SIZE;
   cgm->cmd_seg_text->file_offset = 0;
   cgm->cmd_seg_text->file_size = CGM_DATA_INFILE_SIZE;
 
-  cgm->cmd_seg_text_text->address = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text);
-  cgm->cmd_seg_text_text->size = duc_binary_size(cgm->sec_text);
+  cgm->cmd_seg_text_text->vm_address = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text);
+  cgm->cmd_seg_text_text->vm_size = duc_binary_size(cgm->sec_text);
   cgm->cmd_seg_text_text->file_offset = (uint32_t) (CGM_DATA_INFILE_OFFSET - duc_binary_size(cgm->sec_text));
 }
 
@@ -180,7 +164,6 @@ void cgm_calc_cmd_src_ver_ (__unused cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_symtab_ (cgm_t *cgm) {
-//  cgm->cmd_symtab->sym_offset = (uint32_t) (CGM_LINKEDIT_INFILE_OFFSET + duc_binary_size(cgm->dyld_info));
   cgm->cmd_symtab->sym_offset = CGM_LINKEDIT_INFILE_OFFSET;
   cgm->cmd_symtab->sym_count = (uint32_t) duc_array_length(cgm->syms);
   cgm->cmd_symtab->str_offset = cgm->cmd_symtab->sym_offset + cgm->cmd_symtab->sym_count * sizeof(cgm_sym_t);
@@ -203,37 +186,18 @@ void cgm_calc_header_ (cgm_t *cgm) {
 
 void *cgm_cmd_ (uint32_t id, size_t size) {
   cgm_cmd_t *cmd = malloc(size);
-
   cmd->cmd = id;
   cmd->size = (uint32_t) size;
-
   return cmd;
 }
 
 void cgm_free_ (cgm_t *cgm) {
   duc_array_free(cgm->cmds, duc_free_simple);
-//  duc_binary_free(cgm->dyld_info);
   duc_binary_free(cgm->sec_data);
   duc_binary_free(cgm->sec_text);
   duc_binary_free(cgm->strs);
   duc_array_free(cgm->syms, duc_free_simple);
   free(cgm);
-}
-
-void cgm_init_cmd_dyld_info_ (__unused cgm_t *cgm) {
-//  cgm->cmd_dyld_info = cgm_cmd_(CGM_CMD_DYLD_INFO_ONLY, sizeof(cgm_cmd_dyld_info_t));
-//  cgm->cmd_dyld_info->rebase_offset = 0;
-//  cgm->cmd_dyld_info->rebase_size = 0;
-//  cgm->cmd_dyld_info->bind_offset = 0;
-//  cgm->cmd_dyld_info->bind_size = 0;
-//  cgm->cmd_dyld_info->weak_bind_offset = 0;
-//  cgm->cmd_dyld_info->weak_bind_size = 0;
-//  cgm->cmd_dyld_info->lazy_bind_offset = 0;
-//  cgm->cmd_dyld_info->lazy_bind_size = 0;
-//  cgm->cmd_dyld_info->export_offset = 0;
-//  cgm->cmd_dyld_info->export_size = 0;
-//
-//  duc_array_push(cgm->cmds, cgm->cmd_dyld_info);
 }
 
 void cgm_init_cmd_dylib_ (cgm_t *cgm) {
@@ -298,8 +262,8 @@ void cgm_init_cmd_seg_data_ (cgm_t *cgm) {
   cgm->cmd_seg_data->flags = 0;
 
   cgm->cmd_seg_data_data = cgm_sect_(&cgm->cmd_seg_data, CGM_SECT_DATA, CGM_SEG_DATA);
-  cgm->cmd_seg_data_data->address = 0;
-  cgm->cmd_seg_data_data->size = 0;
+  cgm->cmd_seg_data_data->vm_address = 0;
+  cgm->cmd_seg_data_data->vm_size = 0;
   cgm->cmd_seg_data_data->file_offset = 0;
   cgm->cmd_seg_data_data->align = 0;
   cgm->cmd_seg_data_data->reloc_offset = 0;
@@ -355,13 +319,15 @@ void cgm_init_cmd_seg_text_ (cgm_t *cgm) {
   cgm->cmd_seg_text->flags = 0;
 
   cgm->cmd_seg_text_text = cgm_sect_(&cgm->cmd_seg_text, CGM_SECT_TEXT, CGM_SEG_TEXT);
-  cgm->cmd_seg_text_text->address = 0;
-  cgm->cmd_seg_text_text->size = 0;
+  cgm->cmd_seg_text_text->vm_address = 0;
+  cgm->cmd_seg_text_text->vm_size = 0;
   cgm->cmd_seg_text_text->file_offset = 0;
   cgm->cmd_seg_text_text->align = 0;
   cgm->cmd_seg_text_text->reloc_offset = 0;
   cgm->cmd_seg_text_text->reloc_count = 0;
-  cgm->cmd_seg_text_text->flags = CGM_SECT_FLAG_REGULAR | CGM_SECT_ATTR_PURE_INSTRUCTIONS | CGM_SECT_ATTR_SOME_INSTRUCTIONS;
+  cgm->cmd_seg_text_text->flags = CGM_SECT_FLAG_REGULAR |
+    CGM_SECT_ATTR_PURE_INSTRUCTIONS |
+    CGM_SECT_ATTR_SOME_INSTRUCTIONS;
   cgm->cmd_seg_text_text->reserved1 = 0;
   cgm->cmd_seg_text_text->reserved2 = 0;
   cgm->cmd_seg_text_text->reserved3 = 0;
@@ -389,7 +355,7 @@ void cgm_init_cmd_symtab_ (cgm_t *cgm) {
 void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm) {
   cgm->cmd_ver_min_macos = cgm_cmd_(CGM_CMD_VERSION_MIN_MACOS, sizeof(cgm_cmd_ver_min_t));
   cgm->cmd_ver_min_macos->version = 0x000A0900; // TODO in nibbles
-  cgm->cmd_ver_min_macos->sdk_version = 0x000B0000; // TODO in nibbles
+  cgm->cmd_ver_min_macos->sdk_version = 0x000A1000; // TODO in nibbles
 
   duc_array_push(cgm->cmds, cgm->cmd_ver_min_macos);
 }
@@ -415,7 +381,6 @@ void cgm_init_header_ (cgm_t *cgm) {
 cgm_t *cgm_new_ () {
   cgm_t *cgm = malloc(sizeof(cgm_t));
 
-//  cgm->cmd_dyld_info = NULL;
   cgm->cmd_dylib = NULL;
   cgm->cmd_dylinker = NULL;
   cgm->cmd_dysymtab = NULL;
@@ -431,7 +396,6 @@ cgm_t *cgm_new_ () {
   cgm->cmd_ver_min_macos = NULL;
   cgm->cmd_uuid = NULL;
   cgm->cmds = duc_array_new();
-//  cgm->dyld_info = duc_binary_new();
   cgm->sec_data = duc_binary_new();
   cgm->sec_text = duc_binary_new();
   cgm->strs = duc_binary_new();

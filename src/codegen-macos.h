@@ -18,7 +18,6 @@
 #define CGM_CMD_LOAD_DYLINKER 0x0E
 #define CGM_CMD_UUID 0x1B
 #define CGM_CMD_SEGMENT 0x19
-#define CGM_CMD_DYLD_INFO_ONLY (0x22 | CGM_CMD_REQ_DYLD)
 #define CGM_CMD_VERSION_MIN_MACOS 0x24
 #define CGM_CMD_MAIN (0x28 | CGM_CMD_REQ_DYLD)
 #define CGM_CMD_SOURCE_VERSION 0x2A
@@ -66,13 +65,11 @@
 #define CGM_SEG_PAGEZERO "__PAGEZERO"
 #define CGM_SEG_TEXT "__TEXT"
 
-#define CGM_SYM_TYPE_UNDF 0x00
 #define CGM_SYM_TYPE_EXT 0x01
 #define CGM_SYM_TYPE_SECT 0x0E
 
 typedef struct cgm_s cgm_t;
 typedef struct cgm_cmd_s cgm_cmd_t;
-//typedef struct cgm_cmd_dyld_info_s cgm_cmd_dyld_info_t;
 typedef struct cgm_cmd_dylib_s cgm_cmd_dylib_t;
 typedef struct cgm_cmd_dylinker_s cgm_cmd_dylinker_t;
 typedef struct cgm_cmd_dysymtab_s cgm_cmd_dysymtab_t;
@@ -102,21 +99,6 @@ struct cgm_dylib_s {
 struct cgm_cmd_s {
   uint32_t cmd;
   uint32_t size;
-};
-
-struct cgm_cmd_dyld_info_s {
-  uint32_t cmd;
-  uint32_t size;
-  uint32_t rebase_offset;
-  uint32_t rebase_size;
-  uint32_t bind_offset;
-  uint32_t bind_size;
-  uint32_t weak_bind_offset;
-  uint32_t weak_bind_size;
-  uint32_t lazy_bind_offset;
-  uint32_t lazy_bind_size;
-  uint32_t export_offset;
-  uint32_t export_size;
 };
 
 struct cgm_cmd_dylib_s {
@@ -217,8 +199,8 @@ struct cgm_header_s {
 struct cgm_sect_s {
   char sect_name[16];
   char seg_name[16];
-  uint64_t address;
-  uint64_t size;
+  uint64_t vm_address;
+  uint64_t vm_size;
   uint32_t file_offset;
   uint32_t align;
   uint32_t reloc_offset;
@@ -238,7 +220,6 @@ struct cgm_sym_s {
 };
 
 struct cgm_s {
-//  cgm_cmd_dyld_info_t *cmd_dyld_info;
   cgm_cmd_dylib_t *cmd_dylib;
   cgm_cmd_dylinker_t *cmd_dylinker;
   cgm_cmd_dysymtab_t *cmd_dysymtab;
@@ -254,7 +235,6 @@ struct cgm_s {
   cgm_cmd_ver_min_t *cmd_ver_min_macos;
   cgm_cmd_uuid_t *cmd_uuid;
   duc_array_t *cmds;
-//  duc_binary_t *dyld_info;
   cgm_header_t header;
   duc_binary_t *sec_data;
   duc_binary_t *sec_text;
@@ -264,7 +244,6 @@ struct cgm_s {
 
 duc_binary_t *codegen_macos (const ast_t *ast);
 
-void cgm_calc_cmd_dyld_info_ (cgm_t *cgm);
 void cgm_calc_cmd_dylib_ (cgm_t *cgm);
 void cgm_calc_cmd_dylinker_ (cgm_t *cgm);
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm);
@@ -280,7 +259,6 @@ void cgm_calc_cmd_uuid_ (cgm_t *cgm);
 void cgm_calc_header_ (cgm_t *cgm);
 void *cgm_cmd_ (uint32_t id, size_t size);
 void cgm_free_ (cgm_t *cgm);
-void cgm_init_cmd_dyld_info_ (cgm_t *cgm);
 void cgm_init_cmd_dylib_ (cgm_t *cgm);
 void cgm_init_cmd_dylinker_ (cgm_t *cgm);
 void cgm_init_cmd_dysymtab_ (cgm_t *cgm);
