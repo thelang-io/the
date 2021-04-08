@@ -39,12 +39,12 @@ DUC_TEST(ast, new_and_free) {
     DUC_ASSERT_EQ(duc_array_length(ast->parsers), 1);
   });
 
-  AST_F("print()println()", {
+  AST_F("print()puts()", {
     DUC_ASSERT_NE(ast, NULL);
     DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
   });
 
-  AST_F("print() println()", {
+  AST_F("print() puts()", {
     DUC_ASSERT_NE(ast, NULL);
     DUC_ASSERT_EQ(duc_array_length(ast->parsers), 2);
   });

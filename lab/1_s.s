@@ -1,5 +1,9 @@
 global _main
 
+section .data
+  message: db "Hello, World!", 10
+  .len: equ $ - message
+
 section .text
  printf:
   mov rax, 0x02000004
@@ -11,11 +15,4 @@ section .text
 
  _main:
   call printf
-
-  mov rax, 0x02000001
-  mov rdi, 0
-  syscall
-
-section .data
-  message: db "Hello, World!", 10
-  .len: equ $ - message
+  ret
