@@ -8,48 +8,54 @@
 #include <stdlib.h>
 #include <string.h>
 #include "codegen-macos.h"
+#include "version.h"
 
 duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   cgm_t *cgm = cgm_new_();
 
-  duc_binary_append_uint8(
-    cgm->sec_data,
-    0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x57,
-    0x6F, 0x72, 0x6C, 0x64, 0x21, 0x0A
-  );
+  duc_binary_append_uint8(cgm->sec_data, 'H', 'e', 'l', 'l', 'o', ',', ' ');
+  duc_binary_append_uint8(cgm->sec_data, 'W', 'o', 'r', 'l', 'd', '!', '\n');
 
-  duc_binary_append_uint8(
-    cgm->sec_text,
-    0xB8, 0x04, 0x00, 0x00, 0x02, // movl $0x200004, %eax
-    0xBF, 0x01, 0x00, 0x00, 0x00, // movl $0x000001, %edi
-    0x48, 0xBE, 0x00, 0x40, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-    // movabsq $0x0000000100004000, %rsi
-    0xBA, 0x0E, 0x00, 0x00, 0x00, // movl $0x00000E, %edx
-    0x0F, 0x05 // syscall
-  );
+  // TODO Instructions to macros
+  duc_binary_append_uint8(cgm->sec_text, 0xE8); // call
+  duc_binary_append_uint32(cgm->sec_text, 0x01);
+  duc_binary_append_uint8(cgm->sec_text, 0xC3); // ret
 
-  duc_binary_append_uint8(
-    cgm->sec_text,
-    0xB8, 0x01, 0x00, 0x00, 0x02, // movl $0x200001, %eax
-    0xBF, 0x00, 0x00, 0x00, 0x00, // movl $0x000000, %edi
-    0x0F, 0x05 // syscall
-  );
+  duc_binary_append_uint8(cgm->sec_text, 0xB8); // mov eax
+  duc_binary_append_uint32(cgm->sec_text, 0x02000004);
+  duc_binary_append_uint8(cgm->sec_text, 0xBF); // mov edi
+  duc_binary_append_uint32(cgm->sec_text, 0x01);
+  duc_binary_append_uint16(cgm->sec_text, 0xBE48); // movabsq rsi
+  duc_binary_append_uint64(cgm->sec_text, 0x0000000100004000);
+  duc_binary_append_uint8(cgm->sec_text, 0xBA); // mov edx
+  duc_binary_append_uint32(cgm->sec_text, 0x0E);
+  duc_binary_append_uint16(cgm->sec_text, 0x050F); // syscall
+  duc_binary_append_uint8(cgm->sec_text, 0xC3); // ret
 
   // TODO Move to some kind of container
   duc_binary_append_string(cgm->strs, " ");
-  duc_binary_append_string(cgm->strs, "__mh_execute_header");
   duc_binary_append_string(cgm->strs, "_main");
-  duc_binary_append_string(cgm->strs, "dyld_stub_binder");
+  duc_binary_append_string(cgm->strs, "puts");
+
   size_t carry = duc_binary_size(cgm->strs) % 8;
   duc_binary_append_times(cgm->strs, 0x00, carry == 0 ? 0 : 8 - carry);
 
-  // TODO Move to calc / init, Add rest of symbols
+  // TODO Move to calc / init
+  cgm_sym_t *sym0 = malloc(sizeof(cgm_sym_t));
+  sym0->strtab_idx = 0x02; // TODO
+  sym0->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_SECT;
+  sym0->sect_idx = 1;
+  sym0->description = 0;
+  sym0->value = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text); // TODO
+
+  duc_array_push(cgm->syms, sym0);
+
   cgm_sym_t *sym1 = malloc(sizeof(cgm_sym_t));
-  sym1->strtab_idx = 0x0000; // TODO Refer to real position of str
+  sym1->strtab_idx = 0x08; // TODO
   sym1->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_SECT;
   sym1->sect_idx = 1;
   sym1->description = 0;
-  sym1->value = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text);
+  sym1->value = CGM_DATA_INMEM_OFFSET - duc_binary_size(cgm->sec_text) + 0x06; // TODO
 
   duc_array_push(cgm->syms, sym1);
 
@@ -120,8 +126,6 @@ void cgm_calc_cmd_dylinker_ (DUC_UNUSED cgm_t *cgm) {
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm) {
   cgm->cmd_dysymtab->extdef_idx = 0;
   cgm->cmd_dysymtab->extdef_count = (uint32_t) duc_array_length(cgm->syms);
-  cgm->cmd_dysymtab->undef_idx = 0;
-  cgm->cmd_dysymtab->undef_count = 0;
 }
 
 void cgm_calc_cmd_main_ (cgm_t *cgm) {
@@ -208,8 +212,8 @@ void cgm_free_ (cgm_t *cgm) {
 void cgm_init_cmd_dylib_ (cgm_t *cgm) {
   cgm->cmd_dylib = cgm_cmd_(CGM_CMD_LOAD_DYLIB, sizeof(cgm_cmd_dylib_t));
   cgm->cmd_dylib->dylib.timestamp = 0;
-  cgm->cmd_dylib->dylib.current_version = 0x050C3C01; // TODO
-  cgm->cmd_dylib->dylib.compatibility_version = 0x00010000; // TODO
+  cgm->cmd_dylib->dylib.current_version = cgm_ver32_("1292.60.1");
+  cgm->cmd_dylib->dylib.compatibility_version = cgm_ver32_("1.0.0");
   cgm_str_((cgm_cmd_t **) &cgm->cmd_dylib, &cgm->cmd_dylib->dylib.name, "/usr/lib/libSystem.B.dylib");
 
   duc_array_push(cgm->cmds, cgm->cmd_dylib);
@@ -342,7 +346,7 @@ void cgm_init_cmd_seg_text_ (cgm_t *cgm) {
 
 void cgm_init_cmd_src_ver_ (cgm_t *cgm) {
   cgm->cmd_src_ver = cgm_cmd_(CGM_CMD_SOURCE_VERSION, sizeof(cgm_cmd_src_ver_t));
-  cgm->cmd_src_ver->version = 0; // TODO pack as a24.b10.c10.d10.e10
+  cgm->cmd_src_ver->version = cgm_ver64_(VERSION);
 
   duc_array_push(cgm->cmds, cgm->cmd_src_ver);
 }
@@ -359,8 +363,8 @@ void cgm_init_cmd_symtab_ (cgm_t *cgm) {
 
 void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm) {
   cgm->cmd_ver_min_macos = cgm_cmd_(CGM_CMD_VERSION_MIN_MACOS, sizeof(cgm_cmd_ver_min_t));
-  cgm->cmd_ver_min_macos->version = 0x000A0900; // TODO in nibbles
-  cgm->cmd_ver_min_macos->sdk_version = 0x000A1000; // TODO in nibbles
+  cgm->cmd_ver_min_macos->version = cgm_ver32_("10.10");
+  cgm->cmd_ver_min_macos->sdk_version = cgm_ver32_("10.16");
 
   duc_array_push(cgm->cmds, cgm->cmd_ver_min_macos);
 }
@@ -434,4 +438,34 @@ void cgm_str_ (cgm_cmd_t **cmd, cgm_str_t *str, const char *data) {
 
   *cmd = realloc(*cmd, (*cmd)->size);
   memcpy((uint8_t *) *cmd + str->offset, data, len);
+}
+
+uint32_t cgm_ver32_ (const char *ver) {
+  uint16_t chunks[3] = { 0x00, 0x00, 0x00 };
+  size_t idx = 0;
+
+  for (size_t i = 0, size = strlen(ver); i < size; i++) {
+    if (ver[i] == '.') {
+      idx++;
+    } else {
+      chunks[idx] = (uint16_t) (chunks[idx] * 10 + (uint8_t) (ver[i] - '0'));
+    }
+  }
+
+  return (uint32_t) ((chunks[0] << 16) + (chunks[1] << 8) + chunks[2]);
+}
+
+uint64_t cgm_ver64_ (const char *ver) {
+  uint64_t chunks[5] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
+  size_t idx = 0;
+
+  for (size_t i = 0, size = strlen(ver); i < size; i++) {
+    if (ver[i] == '.') {
+      idx++;
+    } else {
+      chunks[idx] = (uint64_t) (chunks[idx] * 10 + (uint8_t) (ver[i] - '0'));
+    }
+  }
+
+  return (uint64_t) ((chunks[0] << 40) + (chunks[1] << 30) + (chunks[2] << 20) + (chunks[3] << 10) + chunks[4]);
 }

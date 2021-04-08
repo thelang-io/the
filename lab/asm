@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+MACOS_LIB_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib"
+
+entries=("0_empty" "1_hello_world")
+entry="${entries[$1 + 0]}"
+
+if [ -z "$entry" ]; then
+  echo "Entry is not specified"
+  exit 1
+fi
+
+nasm -f macho64 -o "$entry.o" "$entry.s"
+
+ld "-L$MACOS_LIB_PATH" -lSystem \
+  -arch x86_64 \
+  -dead_strip \
+  -macosx_version_min 10.10.0 \
+  -no_function_starts \
+  -no_pie \
+  -S \
+  -x \
+  -o "$entry.out" \
+  "$entry.o"
+
+rm "$entry.o"

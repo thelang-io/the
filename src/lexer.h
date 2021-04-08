@@ -9,6 +9,7 @@
 #define SRC_LEXER_H
 
 #include <duc/fs.h>
+#include <inttypes.h>
 #include <stdint.h>
 
 typedef struct lexer_s lexer_t;

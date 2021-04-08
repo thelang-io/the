@@ -275,5 +275,7 @@ void cgm_init_header_ (cgm_t *cgm);
 cgm_t *cgm_new_ ();
 cgm_sect_t *cgm_sect_ (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name);
 void cgm_str_ (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);
+uint32_t cgm_ver32_ (const char *ver);
+uint64_t cgm_ver64_ (const char *ver);
 
 #endif
