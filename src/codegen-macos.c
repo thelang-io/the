@@ -59,7 +59,9 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
 
   duc_array_push(cgm->syms, sym1);
 
+  cgm_init_dyld_info_export_(cgm);
   cgm_init_header_(cgm);
+  cgm_init_cmd_dyld_info_(cgm);
   cgm_init_cmd_dylib_(cgm);
   cgm_init_cmd_dylinker_(cgm);
   cgm_init_cmd_dysymtab_(cgm);
@@ -74,6 +76,7 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   cgm_init_cmd_uuid_(cgm);
 
   cgm_calc_header_(cgm);
+  cgm_calc_cmd_dyld_info_(cgm);
   cgm_calc_cmd_dylib_(cgm);
   cgm_calc_cmd_dylinker_(cgm);
   cgm_calc_cmd_dysymtab_(cgm);
@@ -86,6 +89,8 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   cgm_calc_cmd_symtab_(cgm);
   cgm_calc_cmd_ver_min_macos_(cgm);
   cgm_calc_cmd_uuid_(cgm);
+
+  cgm_calc_dyld_info_export_(cgm);
 
   duc_binary_t *bin = duc_binary_new();
   duc_binary_append_data(bin, &cgm->header, sizeof(cgm_header_t));
@@ -103,6 +108,7 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
 
   zero = CGM_DATA_INFILE_OFFSET + CGM_DATA_INFILE_SIZE - duc_binary_size(bin);
   duc_binary_append_times(bin, 0x00, zero);
+  duc_binary_append_data(bin, &cgm->dyld_info_export, sizeof(cgm_dyld_info_export_t));
 
   for (size_t i = 0, size = duc_array_length(cgm->syms); i < size; i++) {
     cgm_sym_t *sym = duc_array_at(cgm->syms, i);
@@ -116,6 +122,11 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
 }
 
 // TODO Optimize calculations
+
+void cgm_calc_cmd_dyld_info_ (cgm_t *cgm) {
+  cgm->cmd_dyld_info->export_offset = CGM_LINKEDIT_INFILE_OFFSET;
+  cgm->cmd_dyld_info->export_size = sizeof(cgm_dyld_info_export_t);
+}
 
 void cgm_calc_cmd_dylib_ (DUC_UNUSED cgm_t *cgm) {
 }
@@ -147,7 +158,9 @@ void cgm_calc_cmd_seg_linkedit_ (cgm_t *cgm) {
   cgm->cmd_seg_linkedit->vm_address = CGM_LINKEDIT_INMEM_OFFSET;
   cgm->cmd_seg_linkedit->vm_size = CGM_LINKEDIT_INMEM_SIZE;
   cgm->cmd_seg_linkedit->file_offset = CGM_LINKEDIT_INFILE_OFFSET;
-  cgm->cmd_seg_linkedit->file_size = duc_array_length(cgm->syms) * sizeof(cgm_sym_t) + duc_binary_size(cgm->strs);
+  cgm->cmd_seg_linkedit->file_size = sizeof(cgm_dyld_info_export_t) +
+    duc_array_length(cgm->syms) * sizeof(cgm_sym_t) +
+    duc_binary_size(cgm->strs);
 }
 
 void cgm_calc_cmd_seg_pagezero_ (cgm_t *cgm) {
@@ -172,7 +185,7 @@ void cgm_calc_cmd_src_ver_ (DUC_UNUSED cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_symtab_ (cgm_t *cgm) {
-  cgm->cmd_symtab->sym_offset = CGM_LINKEDIT_INFILE_OFFSET;
+  cgm->cmd_symtab->sym_offset = CGM_LINKEDIT_INFILE_OFFSET + sizeof(cgm_dyld_info_export_t);
   cgm->cmd_symtab->sym_count = (uint32_t) duc_array_length(cgm->syms);
   cgm->cmd_symtab->str_offset = cgm->cmd_symtab->sym_offset +
     cgm->cmd_symtab->sym_count * (uint32_t) sizeof(cgm_sym_t);
@@ -183,6 +196,10 @@ void cgm_calc_cmd_ver_min_macos_ (DUC_UNUSED cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_uuid_ (DUC_UNUSED cgm_t *cgm) {
+}
+
+void cgm_calc_dyld_info_export_ (cgm_t *cgm) {
+  cgm->dyld_info_export.root_next = 0x17;
 }
 
 void cgm_calc_header_ (cgm_t *cgm) {
@@ -207,6 +224,22 @@ void cgm_free_ (cgm_t *cgm) {
   duc_binary_free(cgm->strs);
   duc_array_free(cgm->syms, duc_free_simple);
   free(cgm);
+}
+
+void cgm_init_cmd_dyld_info_ (cgm_t *cgm) {
+  cgm->cmd_dyld_info = cgm_cmd_(CGM_CMD_DYLD_INFO_ONLY, sizeof(cgm_cmd_dyld_info_t));
+  cgm->cmd_dyld_info->rebase_offset = 0;
+  cgm->cmd_dyld_info->rebase_size = 0;
+  cgm->cmd_dyld_info->bind_offset = 0;
+  cgm->cmd_dyld_info->bind_size = 0;
+  cgm->cmd_dyld_info->weak_bind_offset = 0;
+  cgm->cmd_dyld_info->weak_bind_size = 0;
+  cgm->cmd_dyld_info->lazy_bind_offset = 0;
+  cgm->cmd_dyld_info->lazy_bind_size = 0;
+  cgm->cmd_dyld_info->export_offset = 0;
+  cgm->cmd_dyld_info->export_size = 0;
+
+  duc_array_push(cgm->cmds, cgm->cmd_dyld_info);
 }
 
 void cgm_init_cmd_dylib_ (cgm_t *cgm) {
@@ -334,9 +367,7 @@ void cgm_init_cmd_seg_text_ (cgm_t *cgm) {
   cgm->cmd_seg_text_text->align = 0;
   cgm->cmd_seg_text_text->reloc_offset = 0;
   cgm->cmd_seg_text_text->reloc_count = 0;
-  cgm->cmd_seg_text_text->flags = CGM_SECT_FLAG_REGULAR |
-    CGM_SECT_ATTR_PURE_INSTRUCTIONS |
-    CGM_SECT_ATTR_SOME_INSTRUCTIONS;
+  cgm->cmd_seg_text_text->flags = CGM_SECT_ATTR_PURE_INSTRUCTIONS | CGM_SECT_ATTR_SOME_INSTRUCTIONS;
   cgm->cmd_seg_text_text->reserved1 = 0;
   cgm->cmd_seg_text_text->reserved2 = 0;
   cgm->cmd_seg_text_text->reserved3 = 0;
@@ -376,6 +407,18 @@ void cgm_init_cmd_uuid_ (cgm_t *cgm) {
   duc_array_push(cgm->cmds, cgm->cmd_uuid);
 }
 
+void cgm_init_dyld_info_export_ (cgm_t *cgm) {
+  cgm->dyld_info_export.root_terminal_size = 0;
+  cgm->dyld_info_export.root_child_count = 1;
+  strcpy(cgm->dyld_info_export.root_label, "__mh_execute_header");
+  cgm->dyld_info_export.root_next = 0;
+  cgm->dyld_info_export.child_terminal_size = 2;
+  cgm->dyld_info_export.child_flags = CGM_DYLD_INFO_FLAG_REGULAR;
+  cgm->dyld_info_export.child_sym_offset = 0;
+  cgm->dyld_info_export.child_child_count = 0;
+  cgm->dyld_info_export.reserved = 0;
+}
+
 void cgm_init_header_ (cgm_t *cgm) {
   cgm->header.magic = CGM_MAGIC;
   cgm->header.cpu_type = CGM_CPU_TYPE_X86_64;
@@ -390,6 +433,7 @@ void cgm_init_header_ (cgm_t *cgm) {
 cgm_t *cgm_new_ () {
   cgm_t *cgm = malloc(sizeof(cgm_t));
 
+  cgm->cmd_dyld_info = NULL;
   cgm->cmd_dylib = NULL;
   cgm->cmd_dylinker = NULL;
   cgm->cmd_dysymtab = NULL;
@@ -468,4 +512,24 @@ uint64_t cgm_ver64_ (const char *ver) {
   }
 
   return (uint64_t) ((chunks[0] << 40) + (chunks[1] << 30) + (chunks[2] << 20) + (chunks[3] << 10) + chunks[4]);
+}
+
+uint64_t cgm_uleb128_ (uint64_t value) {
+  uint64_t result = 0;
+  size_t bit = 0;
+
+  do {
+    uint8_t byte = value & 0x7F;
+    value &= (uint64_t) ~0x7F;
+
+    if (value != 0) {
+      byte |= 0x80;
+    }
+
+    result |= (uint64_t) (byte << bit);
+    value >>= 7;
+    bit += 8;
+  } while (value != 0);
+
+  return result;
 }

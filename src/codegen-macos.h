@@ -18,6 +18,8 @@
 #define CGM_CMD_LOAD_DYLINKER 0x0E
 #define CGM_CMD_UUID 0x1B
 #define CGM_CMD_SEGMENT 0x19
+#define CGM_CMD_DYLD_INFO 0x22
+#define CGM_CMD_DYLD_INFO_ONLY (CGM_CMD_DYLD_INFO | CGM_CMD_REQ_DYLD)
 #define CGM_CMD_VERSION_MIN_MACOS 0x24
 #define CGM_CMD_MAIN (0x28 | CGM_CMD_REQ_DYLD)
 #define CGM_CMD_SOURCE_VERSION 0x2A
@@ -26,6 +28,8 @@
 #define CGM_CPU_SUBTYPE_X86_64 0x03
 #define CGM_CPU_TYPE_X86 0x07
 #define CGM_CPU_TYPE_X86_64 (CGM_CPU_TYPE_X86 | CGM_CPU_ARCH_ABI64)
+
+#define CGM_DYLD_INFO_FLAG_REGULAR 0x00
 
 #define CGM_FILE_TYPE_EXECUTE 0x02
 
@@ -70,6 +74,7 @@
 
 typedef struct cgm_s cgm_t;
 typedef struct cgm_cmd_s cgm_cmd_t;
+typedef struct cgm_cmd_dyld_info_s cgm_cmd_dyld_info_t;
 typedef struct cgm_cmd_dylib_s cgm_cmd_dylib_t;
 typedef struct cgm_cmd_dylinker_s cgm_cmd_dylinker_t;
 typedef struct cgm_cmd_dysymtab_s cgm_cmd_dysymtab_t;
@@ -79,6 +84,7 @@ typedef struct cgm_cmd_src_ver_s cgm_cmd_src_ver_t;
 typedef struct cgm_cmd_symtab_s cgm_cmd_symtab_t;
 typedef struct cgm_cmd_ver_min_s cgm_cmd_ver_min_t;
 typedef struct cgm_cmd_uuid_s cgm_cmd_uuid_t;
+typedef struct cgm_dyld_info_export_s cgm_dyld_info_export_t;
 typedef struct cgm_dylib_s cgm_dylib_t;
 typedef struct cgm_header_s cgm_header_t;
 typedef struct cgm_sect_s cgm_sect_t;
@@ -99,6 +105,21 @@ struct cgm_dylib_s {
 struct cgm_cmd_s {
   uint32_t cmd;
   uint32_t size;
+};
+
+struct cgm_cmd_dyld_info_s {
+  uint32_t cmd;
+  uint32_t size;
+  uint32_t rebase_offset;
+  uint32_t rebase_size;
+  uint32_t bind_offset;
+  uint32_t bind_size;
+  uint32_t weak_bind_offset;
+  uint32_t weak_bind_size;
+  uint32_t lazy_bind_offset;
+  uint32_t lazy_bind_size;
+  uint32_t export_offset;
+  uint32_t export_size;
 };
 
 struct cgm_cmd_dylib_s {
@@ -185,6 +206,18 @@ struct cgm_cmd_uuid_s {
   uint8_t uuid[16];
 };
 
+struct cgm_dyld_info_export_s {
+  uint8_t root_terminal_size;
+  uint8_t root_child_count;
+  char root_label[20];
+  uint8_t root_next;
+  uint8_t child_terminal_size;
+  uint8_t child_flags;
+  uint8_t child_sym_offset;
+  uint8_t child_child_count;
+  uint32_t reserved;
+};
+
 struct cgm_header_s {
   uint32_t magic;
   int32_t cpu_type;
@@ -220,6 +253,7 @@ struct cgm_sym_s {
 };
 
 struct cgm_s {
+  cgm_cmd_dyld_info_t *cmd_dyld_info;
   cgm_cmd_dylib_t *cmd_dylib;
   cgm_cmd_dylinker_t *cmd_dylinker;
   cgm_cmd_dysymtab_t *cmd_dysymtab;
@@ -235,6 +269,7 @@ struct cgm_s {
   cgm_cmd_ver_min_t *cmd_ver_min_macos;
   cgm_cmd_uuid_t *cmd_uuid;
   duc_array_t *cmds;
+  cgm_dyld_info_export_t dyld_info_export;
   cgm_header_t header;
   duc_binary_t *sec_data;
   duc_binary_t *sec_text;
@@ -244,6 +279,7 @@ struct cgm_s {
 
 duc_binary_t *codegen_macos (const ast_t *ast);
 
+void cgm_calc_cmd_dyld_info_ (cgm_t *cgm);
 void cgm_calc_cmd_dylib_ (cgm_t *cgm);
 void cgm_calc_cmd_dylinker_ (cgm_t *cgm);
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm);
@@ -256,9 +292,11 @@ void cgm_calc_cmd_src_ver_ (cgm_t *cgm);
 void cgm_calc_cmd_symtab_ (cgm_t *cgm);
 void cgm_calc_cmd_ver_min_macos_ (cgm_t *cgm);
 void cgm_calc_cmd_uuid_ (cgm_t *cgm);
+void cgm_calc_dyld_info_export_ (cgm_t *cgm);
 void cgm_calc_header_ (cgm_t *cgm);
 void *cgm_cmd_ (uint32_t id, size_t size);
 void cgm_free_ (cgm_t *cgm);
+void cgm_init_cmd_dyld_info_ (cgm_t *cgm);
 void cgm_init_cmd_dylib_ (cgm_t *cgm);
 void cgm_init_cmd_dylinker_ (cgm_t *cgm);
 void cgm_init_cmd_dysymtab_ (cgm_t *cgm);
@@ -271,11 +309,13 @@ void cgm_init_cmd_src_ver_ (cgm_t *cgm);
 void cgm_init_cmd_symtab_ (cgm_t *cgm);
 void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm);
 void cgm_init_cmd_uuid_ (cgm_t *cgm);
+void cgm_init_dyld_info_export_ (cgm_t *cgm);
 void cgm_init_header_ (cgm_t *cgm);
 cgm_t *cgm_new_ ();
 cgm_sect_t *cgm_sect_ (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name);
 void cgm_str_ (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);
 uint32_t cgm_ver32_ (const char *ver);
 uint64_t cgm_ver64_ (const char *ver);
+uint64_t cgm_uleb128_ (uint64_t value);
 
 #endif
