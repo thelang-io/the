@@ -13,26 +13,25 @@
 duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   cgm_t *cgm = cgm_new_();
 
+  // TODO Move everything to it's init/calc
   duc_binary_append_uint8(cgm->sec_data, 'H', 'e', 'l', 'l', 'o', ',', ' ');
   duc_binary_append_uint8(cgm->sec_data, 'W', 'o', 'r', 'l', 'd', '!', '\n');
 
-  // TODO Instructions to macros
-  duc_binary_append_uint8(cgm->sec_text, 0xE8); // call
+  duc_binary_append_uint8(cgm->sec_text, CGM_INSTR_CALLQ);
   duc_binary_append_uint32(cgm->sec_text, 0x01);
-  duc_binary_append_uint8(cgm->sec_text, 0xC3); // ret
+  duc_binary_append_uint8(cgm->sec_text, CGM_INSTR_RET);
 
-  duc_binary_append_uint8(cgm->sec_text, 0xB8); // mov eax
+  duc_binary_append_uint8(cgm->sec_text, CGM_INSTR_MOVL_EAX);
   duc_binary_append_uint32(cgm->sec_text, 0x02000004);
-  duc_binary_append_uint8(cgm->sec_text, 0xBF); // mov edi
+  duc_binary_append_uint8(cgm->sec_text, CGM_INSTR_MOVL_EDI);
   duc_binary_append_uint32(cgm->sec_text, 0x01);
-  duc_binary_append_uint16(cgm->sec_text, 0xBE48); // movabsq rsi
-  duc_binary_append_uint64(cgm->sec_text, 0x0000000100004000);
-  duc_binary_append_uint8(cgm->sec_text, 0xBA); // mov edx
-  duc_binary_append_uint32(cgm->sec_text, 0x0E);
-  duc_binary_append_uint16(cgm->sec_text, 0x050F); // syscall
-  duc_binary_append_uint8(cgm->sec_text, 0xC3); // ret
+  duc_binary_append_uint16(cgm->sec_text, CGM_INSTR_MOVABSQ_RSI);
+  duc_binary_append_uint64(cgm->sec_text, 0x0000000100004000); // TODO
+  duc_binary_append_uint8(cgm->sec_text, CGM_INSTR_MOVL_EDX);
+  duc_binary_append_uint32(cgm->sec_text, 0x0E); // TODO
+  duc_binary_append_uint16(cgm->sec_text, CGM_INSTR_SYSCALL);
+  duc_binary_append_uint8(cgm->sec_text, CGM_INSTR_RET);
 
-  // TODO Move to some kind of container
   duc_binary_append_string(cgm->strs, " ");
   duc_binary_append_string(cgm->strs, "_main");
   duc_binary_append_string(cgm->strs, "puts");
@@ -40,7 +39,6 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   size_t carry = duc_binary_size(cgm->strs) % 8;
   duc_binary_append_times(cgm->strs, 0x00, carry == 0 ? 0 : 8 - carry);
 
-  // TODO Move to calc / init
   cgm_sym_t *sym0 = malloc(sizeof(cgm_sym_t));
   sym0->strtab_idx = 0x02; // TODO
   sym0->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_SECT;
@@ -512,24 +510,4 @@ uint64_t cgm_ver64_ (const char *ver) {
   }
 
   return (uint64_t) ((chunks[0] << 40) + (chunks[1] << 30) + (chunks[2] << 20) + (chunks[3] << 10) + chunks[4]);
-}
-
-uint64_t cgm_uleb128_ (uint64_t value) {
-  uint64_t result = 0;
-  size_t bit = 0;
-
-  do {
-    uint8_t byte = value & 0x7F;
-    value &= (uint64_t) ~0x7F;
-
-    if (value != 0) {
-      byte |= 0x80;
-    }
-
-    result |= (uint64_t) (byte << bit);
-    value >>= 7;
-    bit += 8;
-  } while (value != 0);
-
-  return result;
 }

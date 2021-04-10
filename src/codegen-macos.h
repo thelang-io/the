@@ -37,6 +37,14 @@
 #define CGM_FLAG_DYLDLINK 0x04
 #define CGM_FLAG_TWOLEVEL 0x80
 
+#define CGM_INSTR_CALLQ 0xE8
+#define CGM_INSTR_MOVABSQ_RSI 0xBE48
+#define CGM_INSTR_MOVL_EAX 0xB8
+#define CGM_INSTR_MOVL_EDI 0xBF
+#define CGM_INSTR_MOVL_EDX 0xBA
+#define CGM_INSTR_RET 0xC3
+#define CGM_INSTR_SYSCALL 0x050F
+
 #define CGM_MAGIC 0xFEEDFACF
 
 // TODO Remove
@@ -316,6 +324,5 @@ cgm_sect_t *cgm_sect_ (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const cha
 void cgm_str_ (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);
 uint32_t cgm_ver32_ (const char *ver);
 uint64_t cgm_ver64_ (const char *ver);
-uint64_t cgm_uleb128_ (uint64_t value);
 
 #endif

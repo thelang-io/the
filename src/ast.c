@@ -40,7 +40,7 @@ ast_t *ast_new (duc_file_t *file) {
 
       if (
         memcmp(call_expr->id->lexer->str, "print", 6) != 0 &&
-        memcmp(call_expr->id->lexer->str, "puts", 5) != 0
+        memcmp(call_expr->id->lexer->str, "println", 8) != 0
       ) {
         ast_free(ast);
         duc_throw("Unexpected call expression");

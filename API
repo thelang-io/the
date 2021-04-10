@@ -1,0 +1,12 @@
+// t+#sjgprk
+
+bool
+float
+int
+str
+void
+nil
+
+
+fn print (message: str): void
+fn println (message: str): void
