@@ -37,27 +37,10 @@
 #define CGM_FLAG_DYLDLINK 0x04
 #define CGM_FLAG_TWOLEVEL 0x80
 
-#define CGM_INSTR_CALLQ 0xE8
-#define CGM_INSTR_MOVABSQ_RSI 0xBE48
-#define CGM_INSTR_MOVL_EAX 0xB8
-#define CGM_INSTR_MOVL_EDI 0xBF
-#define CGM_INSTR_MOVL_EDX 0xBA
-#define CGM_INSTR_RET 0xC3
-#define CGM_INSTR_SYSCALL 0x050F
+#define CGM_INSTR_RETQ 0xC3
+#define CGM_INSTR_XORL_EAX_EAX 0xC031
 
 #define CGM_MAGIC 0xFEEDFACF
-
-// TODO Remove
-#define CGM_DATA_INFILE_OFFSET 0x4000
-#define CGM_DATA_INFILE_SIZE 0x4000
-#define CGM_DATA_INMEM_OFFSET 0x0000000100004000
-#define CGM_DATA_INMEM_SIZE 0x4000
-#define CGM_LINKEDIT_INFILE_OFFSET 0x8000
-#define CGM_LINKEDIT_INFILE_SIZE 0x4000
-#define CGM_LINKEDIT_INMEM_OFFSET 0x0000000100008000
-#define CGM_LINKEDIT_INMEM_SIZE 0x4000
-#define CGM_PAGEZERO_INMEM_OFFSET 0x0000000000000000
-#define CGM_PAGEZERO_INMEM_SIZE 0x0000000100000000
 
 #define CGM_PROT_NONE 0x00
 #define CGM_PROT_READ 0x01
@@ -69,10 +52,8 @@
 #define CGM_SECT_ATTR_SOME_INSTRUCTIONS 0x00000400
 #define CGM_SECT_FLAG_REGULAR 0x00
 
-#define CGM_SECT_DATA "__data"
 #define CGM_SECT_TEXT "__text"
 
-#define CGM_SEG_DATA "__DATA"
 #define CGM_SEG_LINKEDIT "__LINKEDIT"
 #define CGM_SEG_PAGEZERO "__PAGEZERO"
 #define CGM_SEG_TEXT "__TEXT"
@@ -266,8 +247,6 @@ struct cgm_s {
   cgm_cmd_dylinker_t *cmd_dylinker;
   cgm_cmd_dysymtab_t *cmd_dysymtab;
   cgm_cmd_main_t *cmd_main;
-  cgm_cmd_seg_t *cmd_seg_data;
-  cgm_sect_t *cmd_seg_data_data;
   cgm_cmd_seg_t *cmd_seg_pagezero;
   cgm_cmd_seg_t *cmd_seg_text;
   cgm_sect_t *cmd_seg_text_text;
@@ -279,7 +258,6 @@ struct cgm_s {
   duc_array_t *cmds;
   cgm_dyld_info_export_t dyld_info_export;
   cgm_header_t header;
-  duc_binary_t *sec_data;
   duc_binary_t *sec_text;
   duc_binary_t *strs;
   duc_array_t *syms;
@@ -292,7 +270,6 @@ void cgm_calc_cmd_dylib_ (cgm_t *cgm);
 void cgm_calc_cmd_dylinker_ (cgm_t *cgm);
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm);
 void cgm_calc_cmd_main_ (cgm_t *cgm);
-void cgm_calc_cmd_seg_data_ (cgm_t *cgm);
 void cgm_calc_cmd_seg_linkedit_ (cgm_t *cgm);
 void cgm_calc_cmd_seg_pagezero_ (cgm_t *cgm);
 void cgm_calc_cmd_seg_text_ (cgm_t *cgm);
@@ -302,6 +279,8 @@ void cgm_calc_cmd_ver_min_macos_ (cgm_t *cgm);
 void cgm_calc_cmd_uuid_ (cgm_t *cgm);
 void cgm_calc_dyld_info_export_ (cgm_t *cgm);
 void cgm_calc_header_ (cgm_t *cgm);
+void cgm_calc_sects_ (cgm_t *cgm);
+void cgm_calc_tables_ (cgm_t *cgm);
 void *cgm_cmd_ (uint32_t id, size_t size);
 void cgm_free_ (cgm_t *cgm);
 void cgm_init_cmd_dyld_info_ (cgm_t *cgm);
@@ -309,7 +288,6 @@ void cgm_init_cmd_dylib_ (cgm_t *cgm);
 void cgm_init_cmd_dylinker_ (cgm_t *cgm);
 void cgm_init_cmd_dysymtab_ (cgm_t *cgm);
 void cgm_init_cmd_main_ (cgm_t *cgm);
-void cgm_init_cmd_seg_data_ (cgm_t *cgm);
 void cgm_init_cmd_seg_linkedit_ (cgm_t *cgm);
 void cgm_init_cmd_seg_pagezero_ (cgm_t *cgm);
 void cgm_init_cmd_seg_text_ (cgm_t *cgm);
@@ -319,6 +297,8 @@ void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm);
 void cgm_init_cmd_uuid_ (cgm_t *cgm);
 void cgm_init_dyld_info_export_ (cgm_t *cgm);
 void cgm_init_header_ (cgm_t *cgm);
+void cgm_init_sects_ (cgm_t *cgm);
+void cgm_init_tables_ (cgm_t *cgm);
 cgm_t *cgm_new_ ();
 cgm_sect_t *cgm_sect_ (cgm_cmd_seg_t **cmd_seg, const char *sect_name, const char *seg_name);
 void cgm_str_ (cgm_cmd_t **cmd, cgm_str_t *str, const char *data);

@@ -1,5 +1,8 @@
-global _main
+.macosx_version_min 10, 10 sdk_version 11, 1
 
-section .text
+.globl _main
+
+.section __TEXT,__text
  _main:
-  ret
+  xorl %eax, %eax
+  retq

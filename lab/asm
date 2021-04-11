@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 MACOS_LIB_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib"
 
 entries=("0_empty" "1_hello_world")
@@ -10,7 +12,7 @@ if [ -z "$entry" ]; then
   exit 1
 fi
 
-nasm -f macho64 -o "$entry.o" "$entry.s"
+as -o "$entry.o" "$entry.s"
 
 ld "-L$MACOS_LIB_PATH" -lSystem \
   -arch x86_64 \
@@ -24,3 +26,5 @@ ld "-L$MACOS_LIB_PATH" -lSystem \
   "$entry.o"
 
 rm "$entry.o"
+"./$entry.out"
+echo "Return Code: $?"

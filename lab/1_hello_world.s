@@ -1,18 +1,16 @@
-global print
-global _main
+.macosx_version_min 10, 10 sdk_version 11, 1
 
-section .data
-  message: db "Hello, World!", 0x10
+.globl _main
 
-section .text
+.section __TEXT,__text
  _main:
-  call print
-  ret
+  pushq %rbp
+  movq %rsp, %rbp
+  leaq str(%rip), %rdi
+  callq _puts
+  xorl %eax, %eax
+  popq %rbp
+  retq
 
- print:
-  mov eax, 0x02000004
-  mov edi, 0x01
-  mov rsi, message
-  mov edx, 0x0E
-  syscall
-  ret
+.section __DATA,__data
+  str: .asciz "Hello, World!"
