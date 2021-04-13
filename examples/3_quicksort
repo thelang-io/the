@@ -1,0 +1,20 @@
+fn quicksort (int[] arr, int begin? = 0, int end? = arr.len) {
+  if arr.len < 2 || begin >= end {
+    return
+  }
+
+  int i = begin
+
+  for j in begin + 1 .. end + 1 {
+    if arr[j] <= arr[begin] {
+      i++
+      swap(arr[i], arr[j])
+    }
+  }
+
+  swap(arr[begin], arr[i])
+  quicksort(arr, begin, i - 1)
+  quicksort(arr, i + 1, end)
+}
+
+quicksort([3, 4, 1, 8, 6, 7, 5, 10, 9, 2])

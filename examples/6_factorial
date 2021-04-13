@@ -1,0 +1,5 @@
+fn factorial (int num): int {
+  return num <= 0 ? 0 ? num + factorial(num - 1)
+}
+
+factorial(5)

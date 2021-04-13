@@ -1,0 +1,11 @@
+fn fibonacci (): int[] {
+  int[] result = [0, 1]
+
+  for i in 2..11 {
+    result[i] = result[i - 2] + result[i - 1]
+  }
+
+  return result
+}
+
+fibonacci()
