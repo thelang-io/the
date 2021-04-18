@@ -1,4 +1,4 @@
-.macosx_version_min 10, 10 sdk_version 11, 1
+.macosx_version_min 10, 10 sdk_version 11, 3
 
 .globl _main
 

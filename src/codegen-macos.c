@@ -318,7 +318,7 @@ void cgm_init_cmd_symtab_ (cgm_t *cgm) {
 void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm) {
   cgm->cmd_ver_min_macos = cgm_cmd_(CGM_CMD_VERSION_MIN_MACOS, sizeof(cgm_cmd_ver_min_t));
   cgm->cmd_ver_min_macos->version = cgm_ver32_("10.10");
-  cgm->cmd_ver_min_macos->sdk_version = cgm_ver32_("10.16");
+  cgm->cmd_ver_min_macos->sdk_version = cgm_ver32_("11.3");
 
   duc_array_push(cgm->cmds, cgm->cmd_ver_min_macos);
 }
