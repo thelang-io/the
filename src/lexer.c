@@ -72,9 +72,9 @@ bool lexer_is_bracket_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
 bool lexer_is_id_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   const char *chs_begin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz_$";
+    "abcdefghijklmnopqrstuvwxyz_";
   const char *chs_end = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz0123456789_$";
+    "abcdefghijklmnopqrstuvwxyz0123456789_";
 
   unsigned char ch = duc_file_readchar(file);
 

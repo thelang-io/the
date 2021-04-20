@@ -48,12 +48,12 @@ DUC_TEST(lexer, is_id) {
     DUC_ASSERT_MEMEQ(lexer->str, "a", 2);
   });
 
-  LEXER_F("$A_b1", {
+  LEXER_F("A_b1", {
     DUC_ASSERT_TRUE(lexer_is_id_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
     DUC_ASSERT_EQ(lexer->token, LEXER_ID);
-    DUC_ASSERT_MEMEQ(lexer->raw, "$A_b1", 6);
-    DUC_ASSERT_MEMEQ(lexer->str, "$A_b1", 6);
+    DUC_ASSERT_MEMEQ(lexer->raw, "A_b1", 5);
+    DUC_ASSERT_MEMEQ(lexer->str, "A_b1", 5);
   });
 
   LEXER_F("a(", {
@@ -64,12 +64,12 @@ DUC_TEST(lexer, is_id) {
     DUC_ASSERT_MEMEQ(lexer->str, "a", 2);
   });
 
-  LEXER_F("$A_b1(", {
+  LEXER_F("A_b1(", {
     DUC_ASSERT_TRUE(lexer_is_id_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
     DUC_ASSERT_EQ(lexer->token, LEXER_ID);
-    DUC_ASSERT_MEMEQ(lexer->raw, "$A_b1", 6);
-    DUC_ASSERT_MEMEQ(lexer->str, "$A_b1", 6);
+    DUC_ASSERT_MEMEQ(lexer->raw, "A_b1", 5);
+    DUC_ASSERT_MEMEQ(lexer->str, "A_b1", 5);
   });
 }
 
