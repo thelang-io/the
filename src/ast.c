@@ -9,7 +9,7 @@
 #include <string.h>
 #include "ast.h"
 
-void ast_free(ast_t *ast) {
+void ast_free (ast_t *ast) {
   duc_array_free(ast->parsers, parser_free_cb);
   free(ast);
 }
