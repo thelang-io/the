@@ -105,6 +105,25 @@ DUC_TEST(lexer, is_id) {
   });
 }
 
+DUC_TEST(lexer, is_keyword) {
+  LEXER_F("main", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_MAIN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "main", 5);
+    DUC_ASSERT_MEMEQ(lexer->str, "main", 5);
+  });
+
+  LEXER_F("mains", {
+    DUC_ASSERT_FALSE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+}
+
 DUC_TEST(lexer, is_litstr) {
   LEXER_F("\"\"", {
     DUC_ASSERT_TRUE(lexer_is_litstr_(file, lexer, 0));
@@ -200,6 +219,7 @@ DUC_TEST(lexer, new_and_free) {
 int main () {
   DUC_TEST_RUN(lexer, is_bracket);
   DUC_TEST_RUN(lexer, is_id);
+  DUC_TEST_RUN(lexer, is_keyword);
   DUC_TEST_RUN(lexer, is_litstr);
   DUC_TEST_RUN(lexer, is_mark);
   DUC_TEST_RUN(lexer, is_ws);

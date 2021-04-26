@@ -21,6 +21,7 @@ typedef enum {
   LEXER_LBRACE,
   LEXER_LBRACK,
   LEXER_LPAR,
+  LEXER_MAIN,
   LEXER_RBRACE,
   LEXER_RBRACK,
   LEXER_RPAR,
@@ -34,12 +35,15 @@ struct lexer_s {
   lexer_token token;
 };
 
+bool lexer_char_is_id (unsigned char ch);
+bool lexer_char_is_id_start (unsigned char ch);
 void lexer_free (lexer_t *lexer);
 void lexer_free_cb (void *it);
 lexer_t *lexer_new (duc_file_t *file);
 
 bool lexer_is_bracket_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_id_ (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_keyword_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_litstr_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_mark_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_ws_ (duc_file_t *file, lexer_t *lexer, size_t pos);
