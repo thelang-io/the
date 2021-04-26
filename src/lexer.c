@@ -5,6 +5,7 @@
  * Proprietary and confidential
  */
 
+#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lexer.h"
@@ -140,12 +141,7 @@ bool lexer_is_litstr_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
     if (dq_end || sq_end) {
       break;
     } else if (duc_file_eof(file)) {
-      lexer->token = LEXER_UNKNOWN;
-      free(lexer->raw);
-      lexer->raw = NULL;
-      duc_file_seek(file, pos);
-
-      return false;
+      duc_throw("SyntaxError: Unexpected end of file, expected end of string");
     }
   }
 
