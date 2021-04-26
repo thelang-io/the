@@ -22,12 +22,44 @@
   duc_file_remove("../test.txt"); } while (0)
 
 DUC_TEST(lexer, is_bracket) {
+  LEXER_F("{", {
+    DUC_ASSERT_TRUE(lexer_is_bracket_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_LBRACE);
+    DUC_ASSERT_MEMEQ(lexer->raw, "{", 2);
+    DUC_ASSERT_MEMEQ(lexer->str, "{", 2);
+  });
+
+  LEXER_F("[", {
+    DUC_ASSERT_TRUE(lexer_is_bracket_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_LBRACK);
+    DUC_ASSERT_MEMEQ(lexer->raw, "[", 2);
+    DUC_ASSERT_MEMEQ(lexer->str, "[", 2);
+  });
+
   LEXER_F("(", {
     DUC_ASSERT_TRUE(lexer_is_bracket_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
     DUC_ASSERT_EQ(lexer->token, LEXER_LPAR);
     DUC_ASSERT_MEMEQ(lexer->raw, "(", 2);
     DUC_ASSERT_MEMEQ(lexer->str, "(", 2);
+  });
+
+  LEXER_F("}", {
+    DUC_ASSERT_TRUE(lexer_is_bracket_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_RBRACE);
+    DUC_ASSERT_MEMEQ(lexer->raw, "}", 2);
+    DUC_ASSERT_MEMEQ(lexer->str, "}", 2);
+  });
+
+  LEXER_F("]", {
+    DUC_ASSERT_TRUE(lexer_is_bracket_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_RBRACK);
+    DUC_ASSERT_MEMEQ(lexer->raw, "]", 2);
+    DUC_ASSERT_MEMEQ(lexer->str, "]", 2);
   });
 
   LEXER_F(")", {

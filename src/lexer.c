@@ -47,8 +47,24 @@ bool lexer_is_bracket_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   switch (ch) {
+    case '{': {
+      lexer->token = LEXER_LBRACE;
+      break;
+    }
+    case '[': {
+      lexer->token = LEXER_LBRACK;
+      break;
+    }
     case '(': {
       lexer->token = LEXER_LPAR;
+      break;
+    }
+    case '}': {
+      lexer->token = LEXER_RBRACE;
+      break;
+    }
+    case ']': {
+      lexer->token = LEXER_RBRACK;
       break;
     }
     case ')': {
