@@ -20,6 +20,10 @@ typedef enum {
   LEXER_FN,
   LEXER_ID,
   LEXER_IN,
+  LEXER_LITINT_BIN,
+  LEXER_LITINT_DEC,
+  LEXER_LITINT_HEX,
+  LEXER_LITINT_OCT,
   LEXER_LITSTR,
   LEXER_LBRACE,
   LEXER_LBRACK,
@@ -50,6 +54,7 @@ lexer_t *lexer_new (duc_file_t *file);
 bool lexer_is_bracket_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_id_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_keyword_ (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lexer_is_litint_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_litstr_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_mark_ (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_is_ws_ (duc_file_t *file, lexer_t *lexer, size_t pos);
