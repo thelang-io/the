@@ -106,6 +106,81 @@ DUC_TEST(lexer, is_id) {
 }
 
 DUC_TEST(lexer, is_keyword) {
+  LEXER_F("fn", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_FN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "fn", 3);
+    DUC_ASSERT_MEMEQ(lexer->str, "fn", 3);
+  });
+
+  LEXER_F("fn ", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_FN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "fn", 3);
+    DUC_ASSERT_MEMEQ(lexer->str, "fn", 3);
+  });
+
+  LEXER_F("fns", {
+    DUC_ASSERT_FALSE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  LEXER_F("in", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_IN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "in", 3);
+    DUC_ASSERT_MEMEQ(lexer->str, "in", 3);
+  });
+
+  LEXER_F("in ", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_IN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "in", 3);
+    DUC_ASSERT_MEMEQ(lexer->str, "in", 3);
+  });
+
+  LEXER_F("ins", {
+    DUC_ASSERT_FALSE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  LEXER_F("loop", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_LOOP);
+    DUC_ASSERT_MEMEQ(lexer->raw, "loop", 5);
+    DUC_ASSERT_MEMEQ(lexer->str, "loop", 5);
+  });
+
+  LEXER_F("loop ", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_LOOP);
+    DUC_ASSERT_MEMEQ(lexer->raw, "loop", 5);
+    DUC_ASSERT_MEMEQ(lexer->str, "loop", 5);
+  });
+
+  LEXER_F("loops", {
+    DUC_ASSERT_FALSE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
   LEXER_F("main", {
     DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
@@ -114,7 +189,65 @@ DUC_TEST(lexer, is_keyword) {
     DUC_ASSERT_MEMEQ(lexer->str, "main", 5);
   });
 
-  LEXER_F("mains", {
+  LEXER_F("main ", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_MAIN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "main", 5);
+    DUC_ASSERT_MEMEQ(lexer->str, "main", 5);
+  });
+
+  LEXER_F("mainly", {
+    DUC_ASSERT_FALSE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  LEXER_F("mut", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_MUT);
+    DUC_ASSERT_MEMEQ(lexer->raw, "mut", 4);
+    DUC_ASSERT_MEMEQ(lexer->str, "mut", 4);
+  });
+
+  LEXER_F("mut ", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_MUT);
+    DUC_ASSERT_MEMEQ(lexer->raw, "mut", 4);
+    DUC_ASSERT_MEMEQ(lexer->str, "mut", 4);
+  });
+
+  LEXER_F("mute", {
+    DUC_ASSERT_FALSE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->raw, NULL);
+    DUC_ASSERT_EQ(lexer->str, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+    DUC_ASSERT_EQ(duc_file_position(file), 0);
+  });
+
+  LEXER_F("return", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_RETURN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "return", 7);
+    DUC_ASSERT_MEMEQ(lexer->str, "return", 7);
+  });
+
+  LEXER_F("return ", {
+    DUC_ASSERT_TRUE(lexer_is_keyword_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_RETURN);
+    DUC_ASSERT_MEMEQ(lexer->raw, "return", 7);
+    DUC_ASSERT_MEMEQ(lexer->str, "return", 7);
+  });
+
+  LEXER_F("returns", {
     DUC_ASSERT_FALSE(lexer_is_keyword_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
     DUC_ASSERT_EQ(lexer->raw, NULL);
