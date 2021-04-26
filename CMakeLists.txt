@@ -44,12 +44,21 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wconversion -Werror -Wextra -Wshadow 
 set(
   sources
 
+  src/lexer/bracket.c src/lexer/bracket.h
+  src/lexer/id.c src/lexer/id.h
+  src/lexer/keyword.c src/lexer/keyword.h
+  src/lexer/litfloat.c src/lexer/litfloat.h
+  src/lexer/litint.c src/lexer/litint.h
+  src/lexer/litstr.c src/lexer/litstr.h
+  src/lexer/mark.c src/lexer/mark.h
+  src/lexer/ws.c src/lexer/ws.h
   src/ast.c src/ast.h
   src/codegen.c src/codegen.h
   src/codegen-macos.c src/codegen-macos.h
   src/lexer.c src/lexer.h
   src/parser.c src/parser.h
-  src/version.h)
+  src/version.h
+)
 
 add_executable(${PROJECT_NAME} ${sources} src/main.c)
 target_include_directories(${PROJECT_NAME} PRIVATE "${libduc_SOURCE_DIR}/include")
@@ -60,12 +69,29 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes")
 
   include(CTest)
-  set(tests ast codegen codegen-macos lexer parser)
+  set(
+    tests
+
+    lexer/bracket
+    lexer/id
+    lexer/keyword
+    lexer/litfloat
+    lexer/litint
+    lexer/litstr
+    lexer/mark
+    lexer/ws
+    ast
+    codegen
+    codegen-macos
+    lexer
+    parser
+  )
 
   foreach (test ${tests})
-    add_executable(${PROJECT_NAME}-test-${test} ${sources} tests/${test}-test.c)
-    target_include_directories(${PROJECT_NAME}-test-${test} PRIVATE "${libduc_SOURCE_DIR}/include")
-    target_link_libraries(${PROJECT_NAME}-test-${test} PRIVATE duc)
-    add_test(${test} ${PROJECT_NAME}-test-${test})
+    string(REPLACE "/" "-" test_name ${test})
+    add_executable(${PROJECT_NAME}-test-${test_name} ${sources} tests/${test}-test.c tests/utilities.h)
+    target_include_directories(${PROJECT_NAME}-test-${test_name} PRIVATE "${libduc_SOURCE_DIR}/include")
+    target_link_libraries(${PROJECT_NAME}-test-${test_name} PRIVATE duc)
+    add_test(${test_name} ${PROJECT_NAME}-test-${test_name})
   endforeach ()
 endif ()

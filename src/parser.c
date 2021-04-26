@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include "parser.h"
 
+// TODO Code split
+
 void parser_free (parser_t *parser) {
   if (parser->token == PARSER_CALL_EXPR) {
     parser_call_expr_free_(parser->call_expr);
