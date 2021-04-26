@@ -373,6 +373,10 @@ bool lexer_is_mark_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   switch (ch) {
+    case ':': {
+      lexer->token = LEXER_COLON;
+      break;
+    }
     case ',': {
       lexer->token = LEXER_COMMA;
       break;

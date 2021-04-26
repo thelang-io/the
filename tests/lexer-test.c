@@ -284,6 +284,14 @@ DUC_TEST(lexer, is_litstr) {
 }
 
 DUC_TEST(lexer, is_mark) {
+  LEXER_F(":", {
+    DUC_ASSERT_TRUE(lexer_is_mark_(file, lexer, 0));
+    DUC_ASSERT_NE(lexer, NULL);
+    DUC_ASSERT_EQ(lexer->token, LEXER_COLON);
+    DUC_ASSERT_MEMEQ(lexer->raw, ":", 2);
+    DUC_ASSERT_MEMEQ(lexer->str, ":", 2);
+  });
+
   LEXER_F(",", {
     DUC_ASSERT_TRUE(lexer_is_mark_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
