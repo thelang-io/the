@@ -14,7 +14,7 @@ int main (DUC_UNUSED int argc, char *argv[]) {
   duc_binary_t *bin = codegen(ast);
 
   if (bin == NULL) {
-    duc_throw("Something went wrong");
+    duc_throw("Error: Something went wrong");
   }
 
   duc_binary_write(bin, "a.out");
