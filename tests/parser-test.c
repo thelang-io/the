@@ -8,6 +8,8 @@
 #include <duc/testing.h>
 #include "../src/parser.h"
 
+// TODO Decrease size by packing into macros
+
 #define PARSER_F(text, token, body) \
   do { duc_writefile("../test.txt", text); \
   duc_file_t *file = duc_file_new("../test.txt", DUC_FILE_READ); \
