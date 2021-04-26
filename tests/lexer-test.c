@@ -74,50 +74,26 @@ DUC_TEST(lexer, is_id) {
 }
 
 DUC_TEST(lexer, is_litstr) {
-  LEXER_F("''", {
-    DUC_ASSERT_TRUE(lexer_is_litstr_(file, lexer, 0));
-    DUC_ASSERT_NE(lexer, NULL);
-    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR_SQ);
-    DUC_ASSERT_MEMEQ(lexer->raw, "''", 3);
-    DUC_ASSERT_MEMEQ(lexer->str, "", 1);
-  });
-
   LEXER_F("\"\"", {
     DUC_ASSERT_TRUE(lexer_is_litstr_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
-    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR_DQ);
+    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR);
     DUC_ASSERT_MEMEQ(lexer->raw, "\"\"", 3);
     DUC_ASSERT_MEMEQ(lexer->str, "", 1);
-  });
-
-  LEXER_F("'a'", {
-    DUC_ASSERT_TRUE(lexer_is_litstr_(file, lexer, 0));
-    DUC_ASSERT_NE(lexer, NULL);
-    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR_SQ);
-    DUC_ASSERT_MEMEQ(lexer->raw, "'a'", 4);
-    DUC_ASSERT_MEMEQ(lexer->str, "a", 2);
   });
 
   LEXER_F("\"a\"", {
     DUC_ASSERT_TRUE(lexer_is_litstr_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
-    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR_DQ);
+    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR);
     DUC_ASSERT_MEMEQ(lexer->raw, "\"a\"", 4);
     DUC_ASSERT_MEMEQ(lexer->str, "a", 2);
-  });
-
-  LEXER_F("'Test'", {
-    DUC_ASSERT_TRUE(lexer_is_litstr_(file, lexer, 0));
-    DUC_ASSERT_NE(lexer, NULL);
-    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR_SQ);
-    DUC_ASSERT_MEMEQ(lexer->raw, "'Test'", 7);
-    DUC_ASSERT_MEMEQ(lexer->str, "Test", 5);
   });
 
   LEXER_F("\"Test\"", {
     DUC_ASSERT_TRUE(lexer_is_litstr_(file, lexer, 0));
     DUC_ASSERT_NE(lexer, NULL);
-    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR_DQ);
+    DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR);
     DUC_ASSERT_MEMEQ(lexer->raw, "\"Test\"", 7);
     DUC_ASSERT_MEMEQ(lexer->str, "Test", 5);
   });

@@ -17,8 +17,7 @@ typedef struct lexer_s lexer_t;
 typedef enum {
   LEXER_COMMA,
   LEXER_ID,
-  LEXER_LITSTR_DQ,
-  LEXER_LITSTR_SQ,
+  LEXER_LITSTR,
   LEXER_LPAR,
   LEXER_RPAR,
   LEXER_UNKNOWN,

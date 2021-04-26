@@ -114,13 +114,11 @@ bool lexer_is_id_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
 bool lexer_is_litstr_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
-  if ((ch != '\'' && ch != '"') || duc_file_eof(file)) {
+  if (ch != '"' || duc_file_eof(file)) {
     duc_file_seek(file, pos);
     return false;
-  } else if (ch == '"') {
-    lexer->token = LEXER_LITSTR_DQ;
   } else {
-    lexer->token = LEXER_LITSTR_SQ;
+    lexer->token = LEXER_LITSTR;
   }
 
   size_t len = 1;
@@ -135,10 +133,7 @@ bool lexer_is_litstr_ (duc_file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw[len - 1] = ch;
     lexer->raw[len] = '\0';
 
-    bool dq_end = lexer->token == LEXER_LITSTR_DQ && ch == '"';
-    bool sq_end = lexer->token == LEXER_LITSTR_SQ && ch == '\'';
-
-    if (dq_end || sq_end) {
+    if (ch == '"') {
       break;
     } else if (duc_file_eof(file)) {
       duc_throw("SyntaxError: Unexpected end of file, expected end of string");

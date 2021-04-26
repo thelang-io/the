@@ -262,10 +262,7 @@ parser_literal_t *parser_literal_new_ (duc_file_t *file) {
     free(parser);
     duc_file_seek(file, pos);
     return NULL;
-  } else if (
-    parser->lexer->token != LEXER_LITSTR_SQ &&
-    parser->lexer->token != LEXER_LITSTR_DQ
-  ) {
+  } else if (parser->lexer->token != LEXER_LITSTR) {
     parser_literal_free_(parser);
     duc_file_seek(file, pos);
     return NULL;
