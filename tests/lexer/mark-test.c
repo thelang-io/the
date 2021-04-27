@@ -12,6 +12,7 @@
 DUC_TEST(lexer_mark, works) {
   LEXER_FS(":", LEXER_COLON);
   LEXER_FS(",", LEXER_COMMA);
+  LEXER_FS(".", LEXER_DOT);
 }
 
 int main () {

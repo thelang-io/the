@@ -36,11 +36,11 @@ lexer_t *lexer_new (duc_file_t *file) {
 
   if (
     lexer_ws(file, lexer, pos) ||
-    lexer_bracket(file, lexer, pos) ||
-    lexer_mark(file, lexer, pos) ||
     lexer_litfloat(file, lexer, pos) ||
     lexer_litint(file, lexer, pos) ||
     lexer_litstr(file, lexer, pos) ||
+    lexer_bracket(file, lexer, pos) ||
+    lexer_mark(file, lexer, pos) ||
     lexer_keyword(file, lexer, pos) ||
     lexer_id(file, lexer, pos)
   ) {

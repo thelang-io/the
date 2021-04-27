@@ -21,6 +21,10 @@ bool lexer_mark (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_COMMA;
       break;
     }
+    case '.': {
+      lexer->token = LEXER_DOT;
+      break;
+    }
     default: {
       duc_file_seek(file, pos);
       return false;
