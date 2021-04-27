@@ -16,7 +16,10 @@ bool lexer_litint (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
   if (ch1 == '0') {
     if (duc_file_eof(file)) {
-      goto lexer_is_litint_dec;
+      lexer->raw = malloc(len + 1);
+      lexer->raw[len - 1] = ch1;
+      lexer->raw[len] = '\0';
+      lexer->token = LEXER_LITINT_DEC;
     } else {
       size_t bu_pos = duc_file_position(file);
       unsigned char ch2 = duc_file_readchar(file);
@@ -67,7 +70,6 @@ bool lexer_litint (duc_file_t *file, lexer_t *lexer, size_t pos) {
       }
     }
   } else if (strchr("123456789", ch1) != NULL) {
-lexer_is_litint_dec:
     lexer->raw = malloc(len + 1);
     lexer->raw[len - 1] = ch1;
     lexer->raw[len] = '\0';

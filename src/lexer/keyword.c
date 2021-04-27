@@ -17,16 +17,19 @@ bool lexer_keyword (duc_file_t *file, lexer_t *lexer, size_t pos) {
     unsigned char ch2 = duc_file_readchar(file);
 
     if (ch2 == 'n') {
+      bool is_fn = true;
+
       if (!duc_file_eof(file)) {
         size_t bu_pos = duc_file_position(file);
         unsigned char ch_id = duc_file_readchar(file);
         duc_file_seek(file, bu_pos);
 
-        if (!lexer_id_is_char(ch_id)) {
-          goto lexer_is_keyword_fn;
+        if (lexer_id_is_char(ch_id)) {
+          is_fn = false;
         }
-      } else {
-lexer_is_keyword_fn:
+      }
+
+      if (is_fn) {
         lexer->raw = malloc(3);
         lexer->str = malloc(3);
         lexer->raw[0] = ch1;
@@ -42,16 +45,19 @@ lexer_is_keyword_fn:
     unsigned char ch2 = duc_file_readchar(file);
 
     if (ch2 == 'n') {
+      bool is_in = true;
+
       if (!duc_file_eof(file)) {
         size_t bu_pos = duc_file_position(file);
         unsigned char ch_id = duc_file_readchar(file);
         duc_file_seek(file, bu_pos);
 
-        if (!lexer_id_is_char(ch_id)) {
-          goto lexer_is_keyword_in;
+        if (lexer_id_is_char(ch_id)) {
+          is_in = false;
         }
-      } else {
-lexer_is_keyword_in:
+      }
+
+      if (is_in) {
         lexer->raw = malloc(3);
         lexer->str = malloc(3);
         lexer->raw[0] = ch1;
@@ -73,16 +79,19 @@ lexer_is_keyword_in:
         unsigned char ch4 = duc_file_readchar(file);
 
         if (ch4 == 'p') {
+          bool is_loop = true;
+
           if (!duc_file_eof(file)) {
             size_t bu_pos = duc_file_position(file);
             unsigned char ch_id = duc_file_readchar(file);
             duc_file_seek(file, bu_pos);
 
-            if (!lexer_id_is_char(ch_id)) {
-              goto lexer_is_keyword_loop;
+            if (lexer_id_is_char(ch_id)) {
+              is_loop = false;
             }
-          } else {
-lexer_is_keyword_loop:
+          }
+
+          if (is_loop) {
             lexer->raw = malloc(5);
             lexer->str = malloc(5);
             lexer->raw[0] = ch1;
@@ -108,16 +117,19 @@ lexer_is_keyword_loop:
         unsigned char ch4 = duc_file_readchar(file);
 
         if (ch4 == 'n') {
+          bool is_main = true;
+
           if (!duc_file_eof(file)) {
             size_t bu_pos = duc_file_position(file);
             unsigned char ch_id = duc_file_readchar(file);
             duc_file_seek(file, bu_pos);
 
-            if (!lexer_id_is_char(ch_id)) {
-              goto lexer_is_keyword_main;
+            if (lexer_id_is_char(ch_id)) {
+              is_main = false;
             }
-          } else {
-lexer_is_keyword_main:
+          }
+
+          if (is_main) {
             lexer->raw = malloc(5);
             lexer->str = malloc(5);
             lexer->raw[0] = ch1;
@@ -136,16 +148,19 @@ lexer_is_keyword_main:
       unsigned char ch3 = duc_file_readchar(file);
 
       if (ch3 == 't') {
+        bool is_mut = true;
+
         if (!duc_file_eof(file)) {
           size_t bu_pos = duc_file_position(file);
           unsigned char ch_id = duc_file_readchar(file);
           duc_file_seek(file, bu_pos);
 
-          if (!lexer_id_is_char(ch_id)) {
-            goto lexer_is_keyword_mut;
+          if (lexer_id_is_char(ch_id)) {
+            is_mut = false;
           }
-        } else {
-lexer_is_keyword_mut:
+        }
+
+        if (is_mut) {
           lexer->raw = malloc(4);
           lexer->str = malloc(4);
           lexer->raw[0] = ch1;
@@ -175,16 +190,19 @@ lexer_is_keyword_mut:
             unsigned char ch6 = duc_file_readchar(file);
 
             if (ch6 == 'n') {
+              bool is_return = true;
+
               if (!duc_file_eof(file)) {
                 size_t bu_pos = duc_file_position(file);
                 unsigned char ch_id = duc_file_readchar(file);
                 duc_file_seek(file, bu_pos);
 
-                if (!lexer_id_is_char(ch_id)) {
-                  goto lexer_is_keyword_return;
+                if (lexer_id_is_char(ch_id)) {
+                  is_return = false;
                 }
-              } else {
-lexer_is_keyword_return:
+              }
+
+              if (is_return) {
                 lexer->raw = malloc(7);
                 lexer->str = malloc(7);
                 lexer->raw[0] = ch1;
