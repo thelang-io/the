@@ -67,7 +67,6 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes")
 
   # TODO Create dylib and link with tests
-  # TODO Add lexer.h parsing
 
   include(CTest)
 
@@ -87,13 +86,18 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/parser-test.c
   )
 
-  foreach (test_path ${tests})
-    string(LENGTH ${test_path} test_len)
+  foreach (test_file ${tests})
+    string(LENGTH ${test_file} test_len)
     math(EXPR test_len "${test_len} - 13")
-    string(SUBSTRING ${test_path} 6 ${test_len} test)
+    string(SUBSTRING ${test_file} 6 ${test_len} test)
     string(REPLACE "/" "-" test ${test})
+    set(test_files ${test_file})
 
-    add_executable(${PROJECT_NAME}-test-${test} ${sources} ${test_path} tests/lexer/utilities.h)
+    if (test_file MATCHES tests/lexer*)
+      list(APPEND test_files tests/lexer-test.h)
+    endif()
+
+    add_executable(${PROJECT_NAME}-test-${test} ${sources} ${test_files})
     target_include_directories(${PROJECT_NAME}-test-${test} PRIVATE "${libduc_SOURCE_DIR}/include")
     target_link_libraries(${PROJECT_NAME}-test-${test} PRIVATE duc)
     add_test(${test} ${PROJECT_NAME}-test-${test})

@@ -7,7 +7,7 @@
 
 #include <duc/testing.h>
 #include "../../src/lexer/op.h"
-#include "utilities.h"
+#include "../lexer-test.h"
 
 DUC_TEST(lex_op, works) {
   LEX_FS(":", LEXER_OP_COLON);

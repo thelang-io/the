@@ -7,7 +7,7 @@
 
 #include <duc/testing.h>
 #include "../../src/lexer/lit-float.h"
-#include "utilities.h"
+#include "../lexer-test.h"
 
 #define LEX_LIT_FLOAT_F(t) \
   LEX_FS(t, LEXER_LIT_FLOAT); \

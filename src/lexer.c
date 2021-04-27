@@ -14,8 +14,14 @@
 #include "lexer/ws.h"
 
 void lexer_free (lexer_t *lexer) {
-  free(lexer->raw);
-  free(lexer->str);
+  if (lexer->raw != NULL) {
+    free(lexer->raw);
+  }
+
+  if (lexer->str != NULL) {
+    free(lexer->str);
+  }
+
   free(lexer);
 }
 

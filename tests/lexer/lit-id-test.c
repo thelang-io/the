@@ -7,7 +7,7 @@
 
 #include <duc/testing.h>
 #include "../../src/lexer/lit-id.h"
-#include "utilities.h"
+#include "../lexer-test.h"
 
 DUC_TEST(lex_lit_id, works) {
   LEX_FS("a", LEXER_LIT_ID);

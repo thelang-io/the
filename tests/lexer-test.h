@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef TESTS_LEXER_UTILITIES_H
-#define TESTS_LEXER_UTILITIES_H
+#ifndef TESTS_LEXER_TEST_H
+#define TESTS_LEXER_TEST_H
 
 #define LEX_F(text, body) \
   do { duc_writefile("../test.txt", text); \

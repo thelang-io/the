@@ -11,9 +11,9 @@
 // TODO Code split
 
 void parser_free (parser_t *parser) {
-  if (parser->token == PARSER_CALL_EXPR) {
+  if (parser->token == PARSER_CALL_EXPR && parser->call_expr != NULL) {
     parser_call_expr_free_(parser->call_expr);
-  } else if (parser->token == PARSER_WS) {
+  } else if (parser->token == PARSER_WS && parser->ws != NULL) {
     parser_ws_free_(parser->ws);
   }
 

@@ -7,7 +7,7 @@
 
 #include <duc/testing.h>
 #include "../../src/lexer/lit-str.h"
-#include "utilities.h"
+#include "../lexer-test.h"
 
 #define LEX_LIT_STR_F(raw_text, str_text) \
   LEX_F(raw_text, { \

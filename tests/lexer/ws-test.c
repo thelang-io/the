@@ -7,7 +7,7 @@
 
 #include <duc/testing.h>
 #include "../../src/lexer/ws.h"
-#include "utilities.h"
+#include "../lexer-test.h"
 
 #define LEX_WS_F(text) \
   LEX_F(text, { \

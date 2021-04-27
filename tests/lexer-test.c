@@ -7,6 +7,7 @@
 
 #include <duc/testing.h>
 #include "../src/lexer.h"
+#include "lexer-test.h"
 
 DUC_TEST(lexer, new_and_free) {
   char *filepath = "../test.txt";
@@ -28,6 +29,8 @@ DUC_TEST(lexer, new_and_free) {
   DUC_ASSERT_EQ(lexer->str, NULL);
   DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
   DUC_ASSERT_EQ(duc_file_position(file), 0);
+
+  lexer_free(lexer);
   duc_file_free(file);
 
   duc_file_remove(filepath);

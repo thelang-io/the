@@ -235,6 +235,8 @@ DUC_TEST(parser, new_and_free) {
   DUC_ASSERT_EQ(parser->token, PARSER_UNKNOWN);
   DUC_ASSERT_EQ(parser->ws, NULL);
   DUC_ASSERT_EQ(duc_file_position(file), 0);
+
+  parser_free(parser);
   duc_file_free(file);
 
   duc_file_remove(filepath);
