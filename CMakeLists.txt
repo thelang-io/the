@@ -44,13 +44,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wconversion -Werror -Wextra -Wshadow 
 set(
   sources
 
-  src/lexer/bracket.c src/lexer/bracket.h
-  src/lexer/id.c src/lexer/id.h
-  src/lexer/keyword.c src/lexer/keyword.h
-  src/lexer/litfloat.c src/lexer/litfloat.h
-  src/lexer/litint.c src/lexer/litint.h
-  src/lexer/litstr.c src/lexer/litstr.h
-  src/lexer/mark.c src/lexer/mark.h
+  src/lexer/lit-float.c src/lexer/lit-float.h
+  src/lexer/lit-id.c src/lexer/lit-id.h
+  src/lexer/lit-int.c src/lexer/lit-int.h
+  src/lexer/lit-str.c src/lexer/lit-str.h
+  src/lexer/op.c src/lexer/op.h
   src/lexer/ws.c src/lexer/ws.h
   src/ast.c src/ast.h
   src/codegen.c src/codegen.h
@@ -68,30 +66,37 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(CTEST_MEMORYCHECK_COMMAND valgrind)
   set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes")
 
+  # TODO Create dylib and link with tests
+  # TODO Add lexer.h parsing
+  # TODO Remove checks of null lexer in parser and ast
+
   include(CTest)
+
   set(
     tests
 
-    lexer/bracket
-    lexer/id
-    lexer/keyword
-    lexer/litfloat
-    lexer/litint
-    lexer/litstr
-    lexer/mark
-    lexer/ws
-    ast
-    codegen
-    codegen-macos
-    lexer
-    parser
+    tests/lexer/lit-float-test.c
+    tests/lexer/lit-id-test.c
+    tests/lexer/lit-int-test.c
+    tests/lexer/lit-str-test.c
+    tests/lexer/op-test.c
+    tests/lexer/ws-test.c
+    tests/ast-test.c
+    tests/codegen-test.c
+    tests/codegen-macos-test.c
+    tests/lexer-test.c
+    tests/parser-test.c
   )
 
-  foreach (test ${tests})
-    string(REPLACE "/" "-" test_name ${test})
-    add_executable(${PROJECT_NAME}-test-${test_name} ${sources} tests/${test}-test.c tests/utilities.h)
-    target_include_directories(${PROJECT_NAME}-test-${test_name} PRIVATE "${libduc_SOURCE_DIR}/include")
-    target_link_libraries(${PROJECT_NAME}-test-${test_name} PRIVATE duc)
-    add_test(${test_name} ${PROJECT_NAME}-test-${test_name})
+  foreach (test_path ${tests})
+    string(LENGTH ${test_path} test_len)
+    math(EXPR test_len "${test_len} - 13")
+    string(SUBSTRING ${test_path} 6 ${test_len} test)
+    string(REPLACE "/" "-" test ${test})
+
+    add_executable(${PROJECT_NAME}-test-${test} ${sources} ${test_path} tests/lexer/utilities.h)
+    target_include_directories(${PROJECT_NAME}-test-${test} PRIVATE "${libduc_SOURCE_DIR}/include")
+    target_link_libraries(${PROJECT_NAME}-test-${test} PRIVATE duc)
+    add_test(${test} ${PROJECT_NAME}-test-${test})
   endforeach ()
 endif ()

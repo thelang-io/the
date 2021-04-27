@@ -61,7 +61,7 @@ parser_arglist_t *parser_arglist_new_ (duc_file_t *file) {
     return NULL;
   }
 
-  while (rpar->token != LEXER_RPAR) {
+  while (rpar->token != LEXER_OP_RPAR) {
     lexer_free(rpar);
     parser_expr_t *expr = parser_expr_new_(file);
 
@@ -87,7 +87,7 @@ parser_arglist_t *parser_arglist_new_ (duc_file_t *file) {
       parser_arglist_free_(parser);
       duc_file_seek(file, pos);
       return NULL;
-    } else if (rpar->token == LEXER_COMMA) {
+    } else if (rpar->token == LEXER_OP_COMMA) {
       parser_ws_new_(file, false);
 
       if (duc_file_eof(file)) {
@@ -98,7 +98,7 @@ parser_arglist_t *parser_arglist_new_ (duc_file_t *file) {
       }
 
       continue;
-    } else if (rpar->token != LEXER_RPAR) {
+    } else if (rpar->token != LEXER_OP_RPAR) {
       lexer_free(rpar);
       parser_arglist_free_(parser);
       duc_file_seek(file, pos);
@@ -144,7 +144,7 @@ parser_call_expr_t *parser_call_expr_new_ (duc_file_t *file) {
     free(parser);
     duc_file_seek(file, pos);
     return NULL;
-  } else if (lpar->token != LEXER_LPAR) {
+  } else if (lpar->token != LEXER_OP_LPAR) {
     lexer_free(lpar);
     parser_id_free_(parser->id);
     free(parser);
@@ -183,7 +183,7 @@ parser_call_expr_t *parser_call_expr_new_ (duc_file_t *file) {
     parser_call_expr_free_(parser);
     duc_file_seek(file, pos);
     return NULL;
-  } else if (rpar->token != LEXER_RPAR) {
+  } else if (rpar->token != LEXER_OP_RPAR) {
     lexer_free(rpar);
     parser_call_expr_free_(parser);
     duc_file_seek(file, pos);
@@ -241,7 +241,7 @@ parser_id_t *parser_id_new_ (duc_file_t *file) {
     free(parser);
     duc_file_seek(file, pos);
     return NULL;
-  } else if (parser->lexer->token != LEXER_ID) {
+  } else if (parser->lexer->token != LEXER_LIT_ID) {
     parser_id_free_(parser);
     duc_file_seek(file, pos);
     return NULL;
@@ -264,7 +264,7 @@ parser_literal_t *parser_literal_new_ (duc_file_t *file) {
     free(parser);
     duc_file_seek(file, pos);
     return NULL;
-  } else if (parser->lexer->token != LEXER_LITSTR) {
+  } else if (parser->lexer->token != LEXER_LIT_STR) {
     parser_literal_free_(parser);
     duc_file_seek(file, pos);
     return NULL;

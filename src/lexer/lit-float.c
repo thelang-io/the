@@ -8,9 +8,11 @@
 #include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
-#include "litfloat.h"
+#include "lit-float.h"
 
-bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
+// TODO Test breakpoints and try to optimize
+
+bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch1 = duc_file_readchar(file);
   size_t len = 1;
   bool with_exp = false;
@@ -19,13 +21,15 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw = malloc(len + 1);
     lexer->raw[len - 1] = ch1;
     lexer->raw[len] = '\0';
-    lexer->token = LEXER_LITFLOAT;
+    lexer->token = LEXER_LIT_FLOAT;
   } else if (ch1 == '0' && !duc_file_eof(file)) {
     unsigned char ch2 = duc_file_readchar(file);
 
-    if (ch2 == 'E' || ch2 == 'e') {
-      with_exp = true;
-    } else if (ch2 != '.') {
+    if (lexer_lit_float_is_char_special(ch2)) {
+      if (ch2 == 'E' || ch2 == 'e') {
+        with_exp = true;
+      }
+    } else {
       duc_file_seek(file, pos);
       return false;
     }
@@ -34,7 +38,7 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw[len - 2] = ch1;
     lexer->raw[len - 1] = ch2;
     lexer->raw[len] = '\0';
-    lexer->token = LEXER_LITFLOAT;
+    lexer->token = LEXER_LIT_FLOAT;
   } else if (strchr("123456789", ch1) != NULL && !duc_file_eof(file)) {
     unsigned char *raw = malloc(len + 1);
     raw[len - 1] = ch1;
@@ -47,10 +51,11 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
       raw[len - 1] = ch;
       raw[len] = '\0';
 
-      if (ch == 'E' || ch == 'e') {
-        with_exp = true;
-        break;
-      } else if (ch == '.') {
+      if (lexer_lit_float_is_char_special(ch)) {
+        if (ch == 'E' || ch == 'e') {
+          with_exp = true;
+        }
+
         break;
       } else if (strchr("123456789", ch1) == NULL || duc_file_eof(file)) {
         free(raw);
@@ -60,7 +65,7 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
     }
 
     lexer->raw = raw;
-    lexer->token = LEXER_LITFLOAT;
+    lexer->token = LEXER_LIT_FLOAT;
   } else {
     duc_file_seek(file, pos);
     return false;
@@ -127,4 +132,8 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
   memcpy(lexer->str, lexer->raw, len + 1);
 
   return true;
+}
+
+bool lexer_lit_float_is_char_special (unsigned char ch) {
+  return ch == 'E' || ch == 'e' || ch == '.';
 }

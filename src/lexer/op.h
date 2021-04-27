@@ -5,11 +5,11 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_LEXER_LITSTR_H
-#define SRC_LEXER_LITSTR_H
+#ifndef SRC_LEXER_OP_H
+#define SRC_LEXER_OP_H
 
 #include "../lexer.h"
 
-bool lexer_litstr (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos);
 
 #endif

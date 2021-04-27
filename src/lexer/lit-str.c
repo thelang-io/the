@@ -8,16 +8,16 @@
 #include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
-#include "litstr.h"
+#include "lit-str.h"
 
-bool lexer_litstr (duc_file_t *file, lexer_t *lexer, size_t pos) {
+bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   if (ch != '"' || duc_file_eof(file)) {
     duc_file_seek(file, pos);
     return false;
   } else {
-    lexer->token = LEXER_LITSTR;
+    lexer->token = LEXER_LIT_STR;
   }
 
   size_t len = 1;

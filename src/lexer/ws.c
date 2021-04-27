@@ -9,7 +9,7 @@
 #include <string.h>
 #include "ws.h"
 
-bool lexer_ws (duc_file_t *file, lexer_t *lexer, size_t pos) {
+bool lex_ws (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   if (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t') {

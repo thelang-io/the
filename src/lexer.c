@@ -6,13 +6,11 @@
  */
 
 #include <stdlib.h>
-#include "lexer/bracket.h"
-#include "lexer/id.h"
-#include "lexer/keyword.h"
-#include "lexer/litfloat.h"
-#include "lexer/litint.h"
-#include "lexer/litstr.h"
-#include "lexer/mark.h"
+#include "lexer/lit-float.h"
+#include "lexer/lit-id.h"
+#include "lexer/lit-int.h"
+#include "lexer/lit-str.h"
+#include "lexer/op.h"
 #include "lexer/ws.h"
 
 void lexer_free (lexer_t *lexer) {
@@ -27,26 +25,22 @@ void lexer_free_cb (void *it) {
 
 lexer_t *lexer_new (duc_file_t *file) {
   lexer_t *lexer = malloc(sizeof(lexer_t));
-
-  lexer->raw = NULL;
-  lexer->str = NULL;
-  lexer->token = LEXER_UNKNOWN;
-
   size_t pos = duc_file_position(file);
 
   if (
-    lexer_ws(file, lexer, pos) ||
-    lexer_litfloat(file, lexer, pos) ||
-    lexer_litint(file, lexer, pos) ||
-    lexer_litstr(file, lexer, pos) ||
-    lexer_bracket(file, lexer, pos) ||
-    lexer_mark(file, lexer, pos) ||
-    lexer_keyword(file, lexer, pos) ||
-    lexer_id(file, lexer, pos)
+    lex_ws(file, lexer, pos) ||
+    lex_lit_id(file, lexer, pos) ||
+    lex_op(file, lexer, pos) ||
+    lex_lit_str(file, lexer, pos) ||
+    lex_lit_int(file, lexer, pos) ||
+    lex_lit_float(file, lexer, pos)
   ) {
     return lexer;
+  } else {
+    lexer->raw = NULL;
+    lexer->str = NULL;
+    lexer->token = LEXER_UNKNOWN;
   }
 
-  free(lexer);
-  return NULL;
+  return lexer;
 }

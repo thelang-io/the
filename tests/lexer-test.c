@@ -23,7 +23,10 @@ DUC_TEST(lexer, new_and_free) {
   file = duc_file_new(filepath, DUC_FILE_READ);
   lexer = lexer_new(file);
 
-  DUC_ASSERT_EQ(lexer, NULL);
+  DUC_ASSERT_NE(lexer, NULL);
+  DUC_ASSERT_EQ(lexer->raw, NULL);
+  DUC_ASSERT_EQ(lexer->str, NULL);
+  DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
   DUC_ASSERT_EQ(duc_file_position(file), 0);
   duc_file_free(file);
 

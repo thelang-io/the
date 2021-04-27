@@ -5,11 +5,11 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_LEXER_BRACKET_H
-#define SRC_LEXER_BRACKET_H
+#ifndef SRC_LEXER_LIT_STR_H
+#define SRC_LEXER_LIT_STR_H
 
 #include "../lexer.h"
 
-bool lexer_bracket (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos);
 
 #endif
