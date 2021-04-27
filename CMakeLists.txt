@@ -68,7 +68,6 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
 
   # TODO Create dylib and link with tests
   # TODO Add lexer.h parsing
-  # TODO Remove checks of null lexer in parser and ast
 
   include(CTest)
 

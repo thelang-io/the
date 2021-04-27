@@ -27,20 +27,17 @@ void parser_free_cb (void *it) {
 parser_t *parser_new (duc_file_t *file) {
   parser_t *parser = malloc(sizeof(parser_t));
 
-  parser->call_expr = NULL;
-  parser->token = PARSER_UNKNOWN;
-  parser->ws = NULL;
-
   if ((parser->ws = parser_ws_new_(file, true)) != NULL) {
     parser->token = PARSER_WS;
-    return parser;
   } else if ((parser->call_expr = parser_call_expr_new_(file)) != NULL) {
     parser->token = PARSER_CALL_EXPR;
-    return parser;
+  } else {
+    parser->call_expr = NULL;
+    parser->token = PARSER_UNKNOWN;
+    parser->ws = NULL;
   }
 
-  free(parser);
-  return NULL;
+  return parser;
 }
 
 void parser_arglist_free_ (parser_arglist_t *parser) {
@@ -55,11 +52,6 @@ parser_arglist_t *parser_arglist_new_ (duc_file_t *file) {
   size_t pos = duc_file_position(file);
   lexer_t *rpar = lexer_new(file);
   duc_file_seek(file, pos);
-
-  if (rpar == NULL) {
-    parser_arglist_free_(parser);
-    return NULL;
-  }
 
   while (rpar->token != LEXER_OP_RPAR) {
     lexer_free(rpar);
@@ -83,11 +75,7 @@ parser_arglist_t *parser_arglist_new_ (duc_file_t *file) {
 
     rpar = lexer_new(file);
 
-    if (rpar == NULL) {
-      parser_arglist_free_(parser);
-      duc_file_seek(file, pos);
-      return NULL;
-    } else if (rpar->token == LEXER_OP_COMMA) {
+    if (rpar->token == LEXER_OP_COMMA) {
       parser_ws_new_(file, false);
 
       if (duc_file_eof(file)) {
@@ -139,12 +127,7 @@ parser_call_expr_t *parser_call_expr_new_ (duc_file_t *file) {
 
   lexer_t *lpar = lexer_new(file);
 
-  if (lpar == NULL) {
-    parser_id_free_(parser->id);
-    free(parser);
-    duc_file_seek(file, pos);
-    return NULL;
-  } else if (lpar->token != LEXER_OP_LPAR) {
+  if (lpar->token != LEXER_OP_LPAR) {
     lexer_free(lpar);
     parser_id_free_(parser->id);
     free(parser);
@@ -179,11 +162,7 @@ parser_call_expr_t *parser_call_expr_new_ (duc_file_t *file) {
 
   lexer_t *rpar = lexer_new(file);
 
-  if (rpar == NULL) {
-    parser_call_expr_free_(parser);
-    duc_file_seek(file, pos);
-    return NULL;
-  } else if (rpar->token != LEXER_OP_RPAR) {
+  if (rpar->token != LEXER_OP_RPAR) {
     lexer_free(rpar);
     parser_call_expr_free_(parser);
     duc_file_seek(file, pos);
@@ -237,11 +216,7 @@ parser_id_t *parser_id_new_ (duc_file_t *file) {
   size_t pos = duc_file_position(file);
   parser->lexer = lexer_new(file);
 
-  if (parser->lexer == NULL) {
-    free(parser);
-    duc_file_seek(file, pos);
-    return NULL;
-  } else if (parser->lexer->token != LEXER_LIT_ID) {
+  if (parser->lexer->token != LEXER_LIT_ID) {
     parser_id_free_(parser);
     duc_file_seek(file, pos);
     return NULL;
@@ -260,11 +235,7 @@ parser_literal_t *parser_literal_new_ (duc_file_t *file) {
   size_t pos = duc_file_position(file);
   parser->lexer = lexer_new(file);
 
-  if (parser->lexer == NULL) {
-    free(parser);
-    duc_file_seek(file, pos);
-    return NULL;
-  } else if (parser->lexer->token != LEXER_LIT_STR) {
+  if (parser->lexer->token != LEXER_LIT_STR) {
     parser_literal_free_(parser);
     duc_file_seek(file, pos);
     return NULL;
@@ -290,14 +261,7 @@ parser_ws_t *parser_ws_new_ (duc_file_t *file, bool alloc) {
     size_t bu_pos = duc_file_position(file);
     lexer_t *ws = lexer_new(file);
 
-    if (ws == NULL) {
-      if (alloc) {
-        parser_ws_free_(parser);
-      }
-
-      duc_file_seek(file, bu_pos);
-      return NULL;
-    } else if (ws->token != LEXER_WS) {
+    if (ws->token != LEXER_WS) {
       lexer_free(ws);
 
       if (i == 0) {

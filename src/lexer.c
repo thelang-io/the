@@ -28,15 +28,13 @@ lexer_t *lexer_new (duc_file_t *file) {
   size_t pos = duc_file_position(file);
 
   if (
-    lex_ws(file, lexer, pos) ||
-    lex_lit_id(file, lexer, pos) ||
-    lex_op(file, lexer, pos) ||
-    lex_lit_str(file, lexer, pos) ||
-    lex_lit_int(file, lexer, pos) ||
-    lex_lit_float(file, lexer, pos)
+    !lex_ws(file, lexer, pos) &&
+    !lex_lit_id(file, lexer, pos) &&
+    !lex_op(file, lexer, pos) &&
+    !lex_lit_str(file, lexer, pos) &&
+    !lex_lit_int(file, lexer, pos) &&
+    !lex_lit_float(file, lexer, pos)
   ) {
-    return lexer;
-  } else {
     lexer->raw = NULL;
     lexer->str = NULL;
     lexer->token = LEXER_UNKNOWN;

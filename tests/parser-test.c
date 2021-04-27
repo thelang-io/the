@@ -226,11 +226,14 @@ DUC_TEST(parser, new_and_free) {
   parser_free(parser);
   duc_file_free(file);
 
-  duc_writefile(filepath, "test");
+  duc_writefile(filepath, "@");
   file = duc_file_new(filepath, DUC_FILE_READ);
   parser = parser_new(file);
 
-  DUC_ASSERT_EQ(parser, NULL);
+  DUC_ASSERT_NE(parser, NULL);
+  DUC_ASSERT_EQ(parser->call_expr, NULL);
+  DUC_ASSERT_EQ(parser->token, PARSER_UNKNOWN);
+  DUC_ASSERT_EQ(parser->ws, NULL);
   DUC_ASSERT_EQ(duc_file_position(file), 0);
   duc_file_free(file);
 
