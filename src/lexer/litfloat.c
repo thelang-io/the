@@ -13,7 +13,7 @@
 bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch1 = duc_file_readchar(file);
   size_t len = 1;
-  bool parsing_exponent = false;
+  bool with_exp = false;
 
   if (ch1 == '.' && !duc_file_eof(file)) {
     lexer->raw = malloc(len + 1);
@@ -24,7 +24,7 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
     unsigned char ch2 = duc_file_readchar(file);
 
     if (ch2 == 'E' || ch2 == 'e') {
-      parsing_exponent = true;
+      with_exp = true;
     } else if (ch2 != '.') {
       duc_file_seek(file, pos);
       return false;
@@ -48,7 +48,7 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
       raw[len] = '\0';
 
       if (ch == 'E' || ch == 'e') {
-        parsing_exponent = true;
+        with_exp = true;
         break;
       } else if (ch == '.') {
         break;
@@ -66,13 +66,13 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
     return false;
   }
 
-  if (!parsing_exponent) {
+  if (!with_exp) {
     while (!duc_file_eof(file)) {
       size_t bu_pos = duc_file_position(file);
       unsigned char ch = duc_file_readchar(file);
 
       if (ch == 'E' || ch == 'e') {
-        parsing_exponent = true;
+        with_exp = true;
         lexer->raw = realloc(lexer->raw, ++len + 1);
         lexer->raw[len - 1] = ch;
         lexer->raw[len] = '\0';
@@ -89,7 +89,7 @@ bool lexer_litfloat (duc_file_t *file, lexer_t *lexer, size_t pos) {
     }
   }
 
-  if (parsing_exponent) {
+  if (with_exp) {
     if (duc_file_eof(file)) {
       duc_throw("Unexpected end of file, expected floating-point literal exponent");
     }
