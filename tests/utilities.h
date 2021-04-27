@@ -25,15 +25,6 @@
     DUC_ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
   })
 
-#define LEXER_FSN(text) \
-  LEXER_F(text, { \
-    DUC_ASSERT_NE(lexer, NULL); \
-    DUC_ASSERT_EQ(lexer->raw, NULL); \
-    DUC_ASSERT_EQ(lexer->str, NULL); \
-    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN); \
-    DUC_ASSERT_EQ(duc_file_position(file), 0); \
-  })
-
 #define LEXER_FSS(text, tok) \
   LEXER_FS(text, tok); \
   LEXER_F(text " ", { \
