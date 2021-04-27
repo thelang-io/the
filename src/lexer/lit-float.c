@@ -10,8 +10,6 @@
 #include <string.h>
 #include "lit-float.h"
 
-// TODO Test breakpoints and try to optimize
-
 bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch1 = duc_file_readchar(file);
   size_t len = 1;
@@ -78,11 +76,6 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
       if (ch == 'E' || ch == 'e') {
         with_exp = true;
-        lexer->raw = realloc(lexer->raw, ++len + 1);
-        lexer->raw[len - 1] = ch;
-        lexer->raw[len] = '\0';
-
-        break;
       } else if (strchr("0123456789", ch) == NULL) {
         duc_file_seek(file, bu_pos);
         break;
@@ -91,6 +84,10 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->raw = realloc(lexer->raw, ++len + 1);
       lexer->raw[len - 1] = ch;
       lexer->raw[len] = '\0';
+
+      if (ch == 'E' || ch == 'e') {
+        break;
+      }
     }
   }
 
@@ -105,13 +102,25 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
       if (duc_file_eof(file)) {
         duc_throw("Unexpected end of file, expected floating-point literal exponent");
       }
+
+      unsigned char ch_dec = duc_file_readchar(file);
+
+      if (strchr("0123456789", ch_dec) == NULL) {
+        duc_throw("Unexpected token, expected floating-point literal exponent");
+      }
+
+      len += 2;
+      lexer->raw = realloc(lexer->raw, len + 1);
+      lexer->raw[len - 2] = ch_op;
+      lexer->raw[len - 1] = ch_dec;
+      lexer->raw[len] = '\0';
     } else if (strchr("0123456789", ch_op) == NULL) {
       duc_throw("Unexpected token, expected floating-point literal exponent");
+    } else {
+      lexer->raw = realloc(lexer->raw, ++len + 1);
+      lexer->raw[len - 1] = ch_op;
+      lexer->raw[len] = '\0';
     }
-
-    lexer->raw = realloc(lexer->raw, ++len + 1);
-    lexer->raw[len - 1] = ch_op;
-    lexer->raw[len] = '\0';
 
     while (!duc_file_eof(file)) {
       size_t bu_pos = duc_file_position(file);
