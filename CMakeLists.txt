@@ -66,9 +66,10 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(CTEST_MEMORYCHECK_COMMAND valgrind)
   set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes")
 
-  # TODO Create dylib and link with tests
-
   include(CTest)
+  add_library(${PROJECT_NAME}-lib SHARED ${sources})
+  target_include_directories(${PROJECT_NAME}-lib PRIVATE "${libduc_SOURCE_DIR}/include")
+  target_link_libraries(${PROJECT_NAME}-lib PRIVATE duc)
 
   set(
     tests
@@ -97,9 +98,9 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
       list(APPEND test_files tests/lexer-test.h)
     endif()
 
-    add_executable(${PROJECT_NAME}-test-${test} ${sources} ${test_files})
+    add_executable(${PROJECT_NAME}-test-${test} ${test_files})
     target_include_directories(${PROJECT_NAME}-test-${test} PRIVATE "${libduc_SOURCE_DIR}/include")
-    target_link_libraries(${PROJECT_NAME}-test-${test} PRIVATE duc)
+    target_link_libraries(${PROJECT_NAME}-test-${test} PRIVATE duc ${PROJECT_NAME}-lib)
     add_test(${test} ${PROJECT_NAME}-test-${test})
   endforeach ()
 endif ()
