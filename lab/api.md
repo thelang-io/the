@@ -1,70 +1,3 @@
-# Builtin
-```the
-const Program program
-const str __dirname
-const int __filecol
-const int __fileline
-const str __filename
-
-class Array {
-  pub bool empty
-  pub int len
-
-  pub mut str () clear
-  pub mut str () reverse
-  pub str () str
-}
-
-class Char {
-  pub str () str
-}
-
-class Map<T, U> {
-  pub str () str
-}
-
-class NaN {
-  pub str () str
-}
-
-class Infinity
-
-class Number {
-  pub str () str
-}
-
-class Object {
-  pub str () str
-}
-
-class Program {
-  int argc
-  str[] argv
-  str argv0
-}
-
-class Range<T> {
-  pub str () str
-}
-
-class String {
-  pub bool empty
-
-  pub at (int) char
-  pub empty () bool
-  pub toStr () str
-  len prop
-  to lower
-  to upper
-  ucfirst
-  to title
-  to kebab
-  to snake
-}
-
-fn print (any... items, str separator = ' ', str terminator = '\n') void
-```
-
 # Clock
 ```the
 export obj Timer {}
@@ -76,10 +9,6 @@ export fn setTimeout (fn () void cb, int delay) Timer
 export fn time () u64
 export fn hrtime () u64
 ```
-
-# Date
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
-Global_Objects/Date
 
 # Error
 ```the
@@ -256,17 +185,6 @@ export fn round (float x) int
 export fn sqrt (int x) float
 ```
 
-# RegEx
-```the
-```
-
-# Socket
-```the
-tcp\udp
-```
-https://nodejs.org/api/http.html#http_http_get_url_options_callback
-https://nodejs.org/api/dgram.html
-
 # System
 ```the
 enum Arch {
@@ -332,11 +250,6 @@ export fn signal (Signal sig, fn (int) void cb) void
 export fn spawn (str cmd, ChildProcessSpawnOptions options) async ChildProcess
 
 os.hostname()
-```
-
-# Util
-```the
-swap
 ```
 
 # Window
