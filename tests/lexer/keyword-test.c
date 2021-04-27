@@ -9,24 +9,19 @@
 #include "../../src/lexer/keyword.h"
 #include "../utilities.h"
 
-#define LEXER_KEYWORD_F(text, tok) \
-  LEXER_FSS(text, keyword, tok); \
-  LEXER_F(text "s", { \
-    DUC_ASSERT_FALSE(lexer_keyword(file, lexer, 0)); \
-    DUC_ASSERT_NE(lexer, NULL); \
-    DUC_ASSERT_EQ(lexer->raw, NULL); \
-    DUC_ASSERT_EQ(lexer->str, NULL); \
-    DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN); \
-    DUC_ASSERT_EQ(duc_file_position(file), 0); \
-  })
-
 DUC_TEST(lexer_keyword, works) {
-  LEXER_KEYWORD_F("fn", LEXER_FN);
-  LEXER_KEYWORD_F("in", LEXER_IN);
-  LEXER_KEYWORD_F("loop", LEXER_LOOP);
-  LEXER_KEYWORD_F("main", LEXER_MAIN);
-  LEXER_KEYWORD_F("mut", LEXER_MUT);
-  LEXER_KEYWORD_F("return", LEXER_RETURN);
+  LEXER_FSS("fn", LEXER_FN);
+  LEXER_FSS("fns", LEXER_ID);
+  LEXER_FSS("in", LEXER_IN);
+  LEXER_FSS("ins", LEXER_ID);
+  LEXER_FSS("loop", LEXER_LOOP);
+  LEXER_FSS("loops", LEXER_ID);
+  LEXER_FSS("main", LEXER_MAIN);
+  LEXER_FSS("mains", LEXER_ID);
+  LEXER_FSS("mut", LEXER_MUT);
+  LEXER_FSS("mute", LEXER_ID);
+  LEXER_FSS("return", LEXER_RETURN);
+  LEXER_FSS("returns", LEXER_ID);
 }
 
 int main () {

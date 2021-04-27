@@ -10,9 +10,8 @@
 #include "../utilities.h"
 
 #define LEXER_WS_F(text) \
-  LEXER_FS(text, ws, LEXER_WS); \
+  LEXER_FS(text, LEXER_WS); \
   LEXER_F(text "t", { \
-    DUC_ASSERT_TRUE(lexer_ws(file, lexer, 0)); \
     DUC_ASSERT_NE(lexer, NULL); \
     DUC_ASSERT_EQ(lexer->token, LEXER_WS); \
     DUC_ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \

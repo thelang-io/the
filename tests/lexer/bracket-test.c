@@ -10,12 +10,12 @@
 #include "../utilities.h"
 
 DUC_TEST(lexer_bracket, works) {
-  LEXER_FS("{", bracket, LEXER_LBRACE);
-  LEXER_FS("[", bracket, LEXER_LBRACK);
-  LEXER_FS("(", bracket, LEXER_LPAR);
-  LEXER_FS("}", bracket, LEXER_RBRACE);
-  LEXER_FS("]", bracket, LEXER_RBRACK);
-  LEXER_FS(")", bracket, LEXER_RPAR);
+  LEXER_FS("{", LEXER_LBRACE);
+  LEXER_FS("[", LEXER_LBRACK);
+  LEXER_FS("(", LEXER_LPAR);
+  LEXER_FS("}", LEXER_RBRACE);
+  LEXER_FS("]", LEXER_RBRACK);
+  LEXER_FS(")", LEXER_RPAR);
 }
 
 int main () {

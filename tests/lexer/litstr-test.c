@@ -11,14 +11,12 @@
 
 #define LEXER_LITSTR_F(raw_text, str_text) \
   LEXER_F(raw_text, { \
-    DUC_ASSERT_TRUE(lexer_litstr(file, lexer, 0)); \
     DUC_ASSERT_NE(lexer, NULL); \
     DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR); \
     DUC_ASSERT_MEMEQ(lexer->raw, raw_text, strlen(raw_text) + 1); \
     DUC_ASSERT_MEMEQ(lexer->str, str_text, strlen(str_text) + 1); \
   }); \
   LEXER_F(raw_text " ", { \
-    DUC_ASSERT_TRUE(lexer_litstr(file, lexer, 0)); \
     DUC_ASSERT_NE(lexer, NULL); \
     DUC_ASSERT_EQ(lexer->token, LEXER_LITSTR); \
     DUC_ASSERT_MEMEQ(lexer->raw, raw_text, strlen(raw_text) + 1); \

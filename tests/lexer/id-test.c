@@ -10,9 +10,9 @@
 #include "../utilities.h"
 
 DUC_TEST(lexer_id, works) {
-  LEXER_FSS("a", id, LEXER_ID);
-  LEXER_FSS("A_b1", id, LEXER_ID);
-  LEXER_FSS("_Ab1", id, LEXER_ID);
+  LEXER_FSS("a", LEXER_ID);
+  LEXER_FSS("A_b1", LEXER_ID);
+  LEXER_FSS("_Ab1", LEXER_ID);
 }
 
 DUC_TEST(lexer_id, is_char_and_is_char_start) {
