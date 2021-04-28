@@ -53,7 +53,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '!': {
-      LEX_OP_EQ(LEXER_OP_EXCL, LEXER_OP_EXCLEQ);
+      LEX_OP_EQ_BEFORE('!', LEXER_OP_EXCL, LEXER_OP_EXCLEQ, LEXER_OP_EXCLEXCL);
       break;
     }
     case '>': {
@@ -77,7 +77,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '-': {
-      LEX_OP_EQ(LEXER_OP_MINUS, LEXER_OP_MINUSEQ);
+      LEX_OP_EQ_BEFORE('-', LEXER_OP_MINUS, LEXER_OP_MINUSEQ, LEXER_OP_MINUSMINUS);
       break;
     }
     case '|': {
@@ -89,7 +89,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '+': {
-      LEX_OP_EQ(LEXER_OP_PLUS, LEXER_OP_PLUSEQ);
+      LEX_OP_EQ_BEFORE('+', LEXER_OP_PLUS, LEXER_OP_PLUSEQ, LEXER_OP_PLUSPLUS);
       break;
     }
     case '?': {
@@ -151,14 +151,17 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
     case LEXER_OP_COLONEQ:
     case LEXER_OP_EQEQ:
     case LEXER_OP_EXCLEQ:
+    case LEXER_OP_EXCLEXCL:
     case LEXER_OP_GTEQ:
     case LEXER_OP_LSHIFT:
     case LEXER_OP_LTEQ:
     case LEXER_OP_MINUSEQ:
+    case LEXER_OP_MINUSMINUS:
     case LEXER_OP_OREQ:
     case LEXER_OP_OROR:
     case LEXER_OP_PERCENTEQ:
     case LEXER_OP_PLUSEQ:
+    case LEXER_OP_PLUSPLUS:
     case LEXER_OP_QNQN:
     case LEXER_OP_RSHIFT:
     case LEXER_OP_SLASHEQ:
