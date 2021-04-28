@@ -10,19 +10,22 @@
 #include "op.h"
 
 bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch = duc_file_readchar(file);
+  unsigned char ch1 = duc_file_readchar(file);
+  unsigned char ch2 = 0;
+  unsigned char ch3 = 0;
+  size_t len = 1;
 
-  switch (ch) {
+  switch (ch1) {
     case '&': {
-      lexer->token = LEXER_OP_AND;
+      LEX_OP_EQ2(LEXER_OP_AND, LEXER_OP_ANDEQ);
       break;
     }
     case '^': {
-      lexer->token = LEXER_OP_CARET;
+      LEX_OP_EQ2(LEXER_OP_CARET, LEXER_OP_CARETEQ);
       break;
     }
     case ':': {
-      lexer->token = LEXER_OP_COLON;
+      LEX_OP_EQ2(LEXER_OP_COLON, LEXER_OP_COLONEQ);
       break;
     }
     case ',': {
@@ -46,15 +49,15 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '=': {
-      lexer->token = LEXER_OP_EQ;
+      LEX_OP_EQ2(LEXER_OP_EQ, LEXER_OP_EQEQ);
       break;
     }
     case '!': {
-      lexer->token = LEXER_OP_EXCL;
+      LEX_OP_EQ2(LEXER_OP_EXCL, LEXER_OP_EXCLEQ);
       break;
     }
     case '>': {
-      lexer->token = LEXER_OP_GT;
+      LEX_OP_EQ3('>', LEXER_OP_GT, LEXER_OP_GTEQ, LEXER_OP_RSHIFT, LEXER_OP_RSHIFTEQ);
       break;
     }
     case '{': {
@@ -70,23 +73,23 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '<': {
-      lexer->token = LEXER_OP_LT;
+      LEX_OP_EQ3('<', LEXER_OP_LT, LEXER_OP_LTEQ, LEXER_OP_LSHIFT, LEXER_OP_LSHIFTEQ);
       break;
     }
     case '-': {
-      lexer->token = LEXER_OP_MINUS;
+      LEX_OP_EQ2(LEXER_OP_MINUS, LEXER_OP_MINUSEQ);
       break;
     }
     case '|': {
-      lexer->token = LEXER_OP_OR;
+      LEX_OP_EQ2(LEXER_OP_OR, LEXER_OP_OREQ);
       break;
     }
     case '%': {
-      lexer->token = LEXER_OP_PERCENT;
+      LEX_OP_EQ2(LEXER_OP_PERCENT, LEXER_OP_PERCENTEQ);
       break;
     }
     case '+': {
-      lexer->token = LEXER_OP_PLUS;
+      LEX_OP_EQ2(LEXER_OP_PLUS, LEXER_OP_PLUSEQ);
       break;
     }
     case '?': {
@@ -110,11 +113,11 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '/': {
-      lexer->token = LEXER_OP_SLASH;
+      LEX_OP_EQ2(LEXER_OP_SLASH, LEXER_OP_SLASHEQ);
       break;
     }
     case '*': {
-      lexer->token = LEXER_OP_STAR;
+      LEX_OP_EQ2(LEXER_OP_STAR, LEXER_OP_STAREQ);
       break;
     }
     case '~': {
@@ -127,11 +130,45 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
     }
   }
 
-  lexer->raw = malloc(2);
-  lexer->raw[0] = ch;
-  lexer->raw[1] = '\0';
-  lexer->str = malloc(2);
-  memcpy(lexer->str, lexer->raw, 2);
+  lexer->raw = malloc(len + 1);
+
+  switch (lexer->token) {
+    case LEXER_OP_LSHIFTEQ:
+    case LEXER_OP_RSHIFTEQ: {
+      lexer->raw[len - 3] = ch1;
+      lexer->raw[len - 2] = ch2;
+      lexer->raw[len - 1] = ch3;
+      lexer->raw[len] = '\0';
+      break;
+    }
+    case LEXER_OP_ANDEQ:
+    case LEXER_OP_CARETEQ:
+    case LEXER_OP_COLONEQ:
+    case LEXER_OP_EQEQ:
+    case LEXER_OP_EXCLEQ:
+    case LEXER_OP_GTEQ:
+    case LEXER_OP_LSHIFT:
+    case LEXER_OP_LTEQ:
+    case LEXER_OP_MINUSEQ:
+    case LEXER_OP_OREQ:
+    case LEXER_OP_PERCENTEQ:
+    case LEXER_OP_PLUSEQ:
+    case LEXER_OP_RSHIFT:
+    case LEXER_OP_SLASHEQ:
+    case LEXER_OP_STAREQ: {
+      lexer->raw[len - 2] = ch1;
+      lexer->raw[len - 1] = ch2;
+      lexer->raw[len] = '\0';
+      break;
+    }
+    default: {
+      lexer->raw[len - 1] = ch1;
+      lexer->raw[len] = '\0';
+    }
+  }
+
+  lexer->str = malloc(len + 1);
+  memcpy(lexer->str, lexer->raw, len + 1);
 
   return true;
 }
