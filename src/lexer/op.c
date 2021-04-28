@@ -13,6 +13,10 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = duc_file_readchar(file);
 
   switch (ch) {
+    case '&': {
+      lexer->token = LEXER_OP_AND;
+      break;
+    }
     case ':': {
       lexer->token = LEXER_OP_COLON;
       break;
@@ -41,6 +45,14 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_OP_EQ;
       break;
     }
+    case '!': {
+      lexer->token = LEXER_OP_EXCL;
+      break;
+    }
+    case '>': {
+      lexer->token = LEXER_OP_GT;
+      break;
+    }
     case '{': {
       lexer->token = LEXER_OP_LBRACE;
       break;
@@ -53,8 +65,16 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_OP_LPAR;
       break;
     }
+    case '<': {
+      lexer->token = LEXER_OP_LT;
+      break;
+    }
     case '-': {
       lexer->token = LEXER_OP_MINUS;
+      break;
+    }
+    case '|': {
+      lexer->token = LEXER_OP_OR;
       break;
     }
     case '%': {
