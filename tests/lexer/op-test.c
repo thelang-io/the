@@ -16,9 +16,13 @@ DUC_TEST(lex_op, works) {
   LEX_FS("{", LEXER_OP_LBRACE);
   LEX_FS("[", LEXER_OP_LBRACK);
   LEX_FS("(", LEXER_OP_LPAR);
+  LEX_FS("-", LEXER_OP_MINUS);
+  LEX_FS("+", LEXER_OP_PLUS);
   LEX_FS("}", LEXER_OP_RBRACE);
   LEX_FS("]", LEXER_OP_RBRACK);
   LEX_FS(")", LEXER_OP_RPAR);
+  LEX_FS("/", LEXER_OP_SLASH);
+  LEX_FS("*", LEXER_OP_STAR);
 }
 
 int main () {

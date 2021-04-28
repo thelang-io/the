@@ -49,6 +49,14 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_OP_LPAR;
       break;
     }
+    case '-': {
+      lexer->token = LEXER_OP_MINUS;
+      break;
+    }
+    case '+': {
+      lexer->token = LEXER_OP_PLUS;
+      break;
+    }
     case '}': {
       lexer->token = LEXER_OP_RBRACE;
       break;
@@ -59,6 +67,14 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
     }
     case ')': {
       lexer->token = LEXER_OP_RPAR;
+      break;
+    }
+    case '/': {
+      lexer->token = LEXER_OP_SLASH;
+      break;
+    }
+    case '*': {
+      lexer->token = LEXER_OP_STAR;
       break;
     }
     default: {
