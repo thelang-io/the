@@ -25,7 +25,7 @@
     lexer->token = tok1; \
   } } while (0)
 
-#define LEX_OP_EQ3_AFTER(ch, tok1, tok2, tok3) \
+#define LEX_OP_EQ_AFTER(ch, tok1, tok2, tok3) \
   do { if (!duc_file_eof(file)) { \
     size_t bu_pos2 = duc_file_position(file); \
     ch2 = duc_file_readchar(file); \
@@ -51,7 +51,7 @@
     lexer->token = tok1; \
   } } while (0)
 
-#define LEX_OP_EQ4(ch, tok1, tok2, tok3, tok4) \
+#define LEX_OP_EQ2(ch, tok1, tok2, tok3, tok4) \
   do { if (!duc_file_eof(file)) { \
     size_t bu_pos2 = duc_file_position(file); \
     ch2 = duc_file_readchar(file); \

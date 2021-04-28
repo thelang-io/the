@@ -17,7 +17,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
   switch (ch1) {
     case '&': {
-      LEX_OP_EQ4('&', LEXER_OP_AND, LEXER_OP_ANDEQ, LEXER_OP_ANDAND, LEXER_OP_ANDANDEQ);
+      LEX_OP_EQ2('&', LEXER_OP_AND, LEXER_OP_ANDEQ, LEXER_OP_ANDAND, LEXER_OP_ANDANDEQ);
       break;
     }
     case '^': {
@@ -57,7 +57,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '>': {
-      LEX_OP_EQ4('>', LEXER_OP_GT, LEXER_OP_GTEQ, LEXER_OP_RSHIFT, LEXER_OP_RSHIFTEQ);
+      LEX_OP_EQ2('>', LEXER_OP_GT, LEXER_OP_GTEQ, LEXER_OP_RSHIFT, LEXER_OP_RSHIFTEQ);
       break;
     }
     case '{': {
@@ -73,7 +73,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '<': {
-      LEX_OP_EQ4('<', LEXER_OP_LT, LEXER_OP_LTEQ, LEXER_OP_LSHIFT, LEXER_OP_LSHIFTEQ);
+      LEX_OP_EQ2('<', LEXER_OP_LT, LEXER_OP_LTEQ, LEXER_OP_LSHIFT, LEXER_OP_LSHIFTEQ);
       break;
     }
     case '-': {
@@ -81,7 +81,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '|': {
-      LEX_OP_EQ4('|', LEXER_OP_OR, LEXER_OP_OREQ, LEXER_OP_OROR, LEXER_OP_OROREQ);
+      LEX_OP_EQ2('|', LEXER_OP_OR, LEXER_OP_OREQ, LEXER_OP_OROR, LEXER_OP_OROREQ);
       break;
     }
     case '%': {
@@ -93,7 +93,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '?': {
-      LEX_OP_EQ3_AFTER('?', LEXER_OP_QN, LEXER_OP_QNQN, LEXER_OP_QNQNEQ);
+      LEX_OP_EQ_AFTER('?', LEXER_OP_QN, LEXER_OP_QNQN, LEXER_OP_QNQNEQ);
       break;
     }
     case '}': {
@@ -117,7 +117,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '*': {
-      LEX_OP_EQ4('*', LEXER_OP_STAR, LEXER_OP_STAREQ, LEXER_OP_STARSTAR, LEXER_OP_STARSTAREQ);
+      LEX_OP_EQ2('*', LEXER_OP_STAR, LEXER_OP_STAREQ, LEXER_OP_STARSTAR, LEXER_OP_STARSTAREQ);
       break;
     }
     case '~': {
