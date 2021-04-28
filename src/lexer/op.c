@@ -34,18 +34,39 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
     }
     case '.': {
       if (!duc_file_eof(file)) {
-        size_t bu_pos = duc_file_position(file);
-        unsigned char ch_next = duc_file_readchar(file);
+        size_t bu_pos2 = duc_file_position(file);
+        ch2 = duc_file_readchar(file);
 
-        if (strchr("0123456789", ch_next) == NULL) {
-          duc_file_seek(file, bu_pos);
-        } else {
+        if (strchr("0123456789", ch2) != NULL) {
           duc_file_seek(file, pos);
           return false;
+        } else if (ch2 != '.') {
+          duc_file_seek(file, bu_pos2);
+          lexer->token = LEXER_OP_DOT;
+        } else if (!duc_file_eof(file)) {
+          size_t bu_pos3 = duc_file_position(file);
+          ch3 = duc_file_readchar(file);
+
+          if (ch3 != '.' && ch3 != '=') {
+            duc_file_seek(file, bu_pos3);
+            lexer->token = LEXER_OP_DOTDOT;
+            len += 1;
+          } else if (ch3 == '=') {
+            duc_file_seek(file, bu_pos3);
+            lexer->token = LEXER_OP_DOTDOTEQ;
+            len += 2;
+          } else {
+            lexer->token = LEXER_OP_DOTDOTDOT;
+            len += 2;
+          }
+        } else {
+          lexer->token = LEXER_OP_DOTDOT;
+          len += 1;
         }
+      } else {
+        lexer->token = LEXER_OP_DOT;
       }
 
-      lexer->token = LEXER_OP_DOT;
       break;
     }
     case '=': {
@@ -93,7 +114,36 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '?': {
-      LEX_OP_EQ_AFTER('?', LEXER_OP_QN, LEXER_OP_QNQN, LEXER_OP_QNQNEQ);
+      if (!duc_file_eof(file)) {
+        size_t bu_pos2 = duc_file_position(file);
+        ch2 = duc_file_readchar(file);
+
+        if (ch2 != '?' && ch2 != '.') {
+          duc_file_seek(file, bu_pos2);
+          lexer->token = LEXER_OP_QN;
+        } else if (ch2 == '.') {
+          lexer->token = LEXER_OP_QNDOT;
+          len += 1;
+        } else if (!duc_file_eof(file)) {
+          size_t bu_pos3 = duc_file_position(file);
+          ch3 = duc_file_readchar(file);
+
+          if (ch3 != '=') {
+            duc_file_seek(file, bu_pos3);
+            lexer->token = LEXER_OP_QNQN;
+            len += 1;
+          } else {
+            lexer->token = LEXER_OP_QNQNEQ;
+            len += 2;
+          }
+        } else {
+          lexer->token = LEXER_OP_QNQN;
+          len += 1;
+        }
+      } else {
+        lexer->token = LEXER_OP_QN;
+      }
+
       break;
     }
     case '}': {
@@ -134,6 +184,8 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
   switch (lexer->token) {
     case LEXER_OP_ANDANDEQ:
+    case LEXER_OP_DOTDOTDOT:
+    case LEXER_OP_DOTDOTEQ:
     case LEXER_OP_LSHIFTEQ:
     case LEXER_OP_OROREQ:
     case LEXER_OP_QNQNEQ:
@@ -149,6 +201,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
     case LEXER_OP_ANDEQ:
     case LEXER_OP_CARETEQ:
     case LEXER_OP_COLONEQ:
+    case LEXER_OP_DOTDOT:
     case LEXER_OP_EQEQ:
     case LEXER_OP_EXCLEQ:
     case LEXER_OP_EXCLEXCL:
@@ -162,6 +215,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
     case LEXER_OP_PERCENTEQ:
     case LEXER_OP_PLUSEQ:
     case LEXER_OP_PLUSPLUS:
+    case LEXER_OP_QNDOT:
     case LEXER_OP_QNQN:
     case LEXER_OP_RSHIFT:
     case LEXER_OP_SLASHEQ:

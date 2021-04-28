@@ -36,6 +36,9 @@ DUC_TEST(lex_op, works) {
 
   LEX_FS(",", LEXER_OP_COMMA);
   LEX_FS(".", LEXER_OP_DOT);
+  LEX_FS("..", LEXER_OP_DOTDOT);
+  LEX_FS("...", LEXER_OP_DOTDOTDOT);
+  LEX_FS("..=", LEXER_OP_DOTDOTEQ);
   LEX_FS("!!", LEXER_OP_EXCLEXCL);
   LEX_FS("{", LEXER_OP_LBRACE);
   LEX_FS("[", LEXER_OP_LBRACK);
@@ -43,6 +46,7 @@ DUC_TEST(lex_op, works) {
   LEX_FS("--", LEXER_OP_MINUSMINUS);
   LEX_FS("++", LEXER_OP_PLUSPLUS);
   LEX_FS("?", LEXER_OP_QN);
+  LEX_FS("?.", LEXER_OP_QNDOT);
   LEX_FS("}", LEXER_OP_RBRACE);
   LEX_FS("]", LEXER_OP_RBRACK);
   LEX_FS(")", LEXER_OP_RPAR);
