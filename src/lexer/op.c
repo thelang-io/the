@@ -17,6 +17,10 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_OP_AND;
       break;
     }
+    case '^': {
+      lexer->token = LEXER_OP_CARET;
+      break;
+    }
     case ':': {
       lexer->token = LEXER_OP_COLON;
       break;
@@ -85,6 +89,10 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_OP_PLUS;
       break;
     }
+    case '?': {
+      lexer->token = LEXER_OP_QN;
+      break;
+    }
     case '}': {
       lexer->token = LEXER_OP_RBRACE;
       break;
@@ -97,12 +105,20 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_OP_RPAR;
       break;
     }
+    case ';': {
+      lexer->token = LEXER_OP_SEMI;
+      break;
+    }
     case '/': {
       lexer->token = LEXER_OP_SLASH;
       break;
     }
     case '*': {
       lexer->token = LEXER_OP_STAR;
+      break;
+    }
+    case '~': {
+      lexer->token = LEXER_OP_TILDE;
       break;
     }
     default: {

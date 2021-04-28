@@ -11,6 +11,7 @@
 
 DUC_TEST(lex_op, works) {
   LEX_FS("&", LEXER_OP_AND);
+  LEX_FS("^", LEXER_OP_CARET);
   LEX_FS(":", LEXER_OP_COLON);
   LEX_FS(",", LEXER_OP_COMMA);
   LEX_FS(".", LEXER_OP_DOT);
@@ -25,11 +26,14 @@ DUC_TEST(lex_op, works) {
   LEX_FS("|", LEXER_OP_OR);
   LEX_FS("%", LEXER_OP_PERCENT);
   LEX_FS("+", LEXER_OP_PLUS);
+  LEX_FS("?", LEXER_OP_QN);
   LEX_FS("}", LEXER_OP_RBRACE);
   LEX_FS("]", LEXER_OP_RBRACK);
   LEX_FS(")", LEXER_OP_RPAR);
+  LEX_FS(";", LEXER_OP_SEMI);
   LEX_FS("/", LEXER_OP_SLASH);
   LEX_FS("*", LEXER_OP_STAR);
+  LEX_FS("~", LEXER_OP_TILDE);
 }
 
 int main () {
