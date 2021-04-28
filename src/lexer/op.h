@@ -10,13 +10,13 @@
 
 #include "../lexer.h"
 
-#define LEX_OP_EQ2(tok1, tok2) \
+#define LEX_OP_EQ(tok1, tok2) \
   do { if (!duc_file_eof(file)) { \
     size_t bu_pos = duc_file_position(file); \
     ch2 = duc_file_readchar(file); \
     if (ch2 != '=') { \
-      lexer->token = tok1; \
       duc_file_seek(file, bu_pos); \
+      lexer->token = tok1; \
     } else { \
       lexer->token = tok2; \
       len += 1; \
@@ -25,13 +25,39 @@
     lexer->token = tok1; \
   } } while (0)
 
-#define LEX_OP_EQ3(ch, tok1, tok2, tok3, tok4) \
+#define LEX_OP_EQ3_AFTER(ch, tok1, tok2, tok3) \
+  do { if (!duc_file_eof(file)) { \
+    size_t bu_pos2 = duc_file_position(file); \
+    ch2 = duc_file_readchar(file); \
+    if (ch2 != ch) { \
+      duc_file_seek(file, bu_pos2); \
+      lexer->token = tok1; \
+    } else if (!duc_file_eof(file)) { \
+      size_t bu_pos3 = duc_file_position(file); \
+      ch3 = duc_file_readchar(file); \
+      if (ch3 != '=') { \
+        duc_file_seek(file, bu_pos3); \
+        lexer->token = tok2; \
+        len += 1; \
+      } else { \
+        lexer->token = tok3; \
+        len += 2; \
+      } \
+    } else { \
+      lexer->token = tok2; \
+      len += 1; \
+    } \
+  } else { \
+    lexer->token = tok1; \
+  } } while (0)
+
+#define LEX_OP_EQ4(ch, tok1, tok2, tok3, tok4) \
   do { if (!duc_file_eof(file)) { \
     size_t bu_pos2 = duc_file_position(file); \
     ch2 = duc_file_readchar(file); \
     if (ch2 != ch && ch2 != '=') { \
-      lexer->token = tok1; \
       duc_file_seek(file, bu_pos2); \
+      lexer->token = tok1; \
     } else if (ch2 == '=') { \
       lexer->token = tok2; \
       len += 1; \
@@ -39,8 +65,8 @@
       size_t bu_pos3 = duc_file_position(file); \
       ch3 = duc_file_readchar(file); \
       if (ch3 != '=') { \
-        lexer->token = tok3; \
         duc_file_seek(file, bu_pos3); \
+        lexer->token = tok3; \
         len += 1; \
       } else { \
         lexer->token = tok4; \

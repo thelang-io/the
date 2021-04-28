@@ -15,6 +15,7 @@
 
 DUC_TEST(lex_op, works) {
   LEX_OP_F("&", LEXER_OP_AND);
+  LEX_OP_F("&&", LEXER_OP_ANDAND);
   LEX_OP_F("^", LEXER_OP_CARET);
   LEX_OP_F(":", LEXER_OP_COLON);
   LEX_OP_F("=", LEXER_OP_EQ);
@@ -24,11 +25,14 @@ DUC_TEST(lex_op, works) {
   LEX_OP_F("<", LEXER_OP_LT);
   LEX_OP_F("-", LEXER_OP_MINUS);
   LEX_OP_F("|", LEXER_OP_OR);
+  LEX_OP_F("||", LEXER_OP_OROR);
   LEX_OP_F("%", LEXER_OP_PERCENT);
   LEX_OP_F("+", LEXER_OP_PLUS);
+  LEX_OP_F("??", LEXER_OP_QNQN);
   LEX_OP_F(">>", LEXER_OP_RSHIFT);
   LEX_OP_F("/", LEXER_OP_SLASH);
   LEX_OP_F("*", LEXER_OP_STAR);
+  LEX_OP_F("**", LEXER_OP_STARSTAR);
 
   LEX_FS(",", LEXER_OP_COMMA);
   LEX_FS(".", LEXER_OP_DOT);
