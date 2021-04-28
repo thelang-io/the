@@ -37,6 +37,10 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->token = LEXER_OP_DOT;
       break;
     }
+    case '=': {
+      lexer->token = LEXER_OP_EQ;
+      break;
+    }
     case '{': {
       lexer->token = LEXER_OP_LBRACE;
       break;
@@ -51,6 +55,10 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
     }
     case '-': {
       lexer->token = LEXER_OP_MINUS;
+      break;
+    }
+    case '%': {
+      lexer->token = LEXER_OP_PERCENT;
       break;
     }
     case '+': {
