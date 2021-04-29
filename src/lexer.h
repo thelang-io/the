@@ -9,91 +9,104 @@
 #define SRC_LEXER_H
 
 #include <duc/fs.h>
+#include <duc/helpers.h>
+
+#define FOREACH_LEXER_TOKEN(f) \
+  f(COMMENT_BLOCK) \
+  f(COMMENT_LINE) \
+  \
+  f(KW_FN) \
+  f(KW_IN) \
+  f(KW_LOOP) \
+  f(KW_MAIN) \
+  f(KW_MUT) \
+  f(KW_RETURN) \
+  \
+  f(LIT_CHAR) \
+  f(LIT_FLOAT) \
+  f(LIT_ID) \
+  f(LIT_INT_BIN) \
+  f(LIT_INT_DEC) \
+  f(LIT_INT_HEX) \
+  f(LIT_INT_OCT) \
+  f(LIT_STR) \
+  \
+  f(OP_AND) \
+  f(OP_ANDAND) \
+  f(OP_ANDANDEQ) \
+  f(OP_ANDEQ) \
+  f(OP_CARET) \
+  f(OP_CARETEQ) \
+  f(OP_COLON) \
+  f(OP_COLONEQ) \
+  f(OP_COMMA) \
+  f(OP_DOT) \
+  f(OP_DOTDOT) \
+  f(OP_DOTDOTDOT) \
+  f(OP_DOTDOTEQ) \
+  f(OP_EQ) \
+  f(OP_EQEQ) \
+  f(OP_EXCL) \
+  f(OP_EXCLEQ) \
+  f(OP_EXCLEXCL) \
+  f(OP_GT) \
+  f(OP_GTEQ) \
+  f(OP_LBRACE) \
+  f(OP_LBRACK) \
+  f(OP_LPAR) \
+  f(OP_LSHIFT) \
+  f(OP_LSHIFTEQ) \
+  f(OP_LT) \
+  f(OP_LTEQ) \
+  f(OP_MINUS) \
+  f(OP_MINUSEQ) \
+  f(OP_MINUSMINUS) \
+  f(OP_OR) \
+  f(OP_OREQ) \
+  f(OP_OROR) \
+  f(OP_OROREQ) \
+  f(OP_PERCENT) \
+  f(OP_PERCENTEQ) \
+  f(OP_PLUS) \
+  f(OP_PLUSEQ) \
+  f(OP_PLUSPLUS) \
+  f(OP_QN) \
+  f(OP_QNDOT) \
+  f(OP_QNQN) \
+  f(OP_QNQNEQ) \
+  f(OP_RBRACE) \
+  f(OP_RBRACK) \
+  f(OP_RPAR) \
+  f(OP_RSHIFT) \
+  f(OP_RSHIFTEQ) \
+  f(OP_SEMI) \
+  f(OP_SLASH) \
+  f(OP_SLASHEQ) \
+  f(OP_STAR) \
+  f(OP_STAREQ) \
+  f(OP_STARSTAR) \
+  f(OP_STARSTAREQ) \
+  f(OP_TILDE) \
+  \
+  f(UNKNOWN) \
+  f(WS)
+
+#define GEN_LEXER_TOKEN_ENUM(x) LEXER_##x,
 
 typedef struct lexer_s lexer_t;
 
 typedef enum {
-  LEXER_KW_FN,
-  LEXER_KW_IN,
-  LEXER_KW_LOOP,
-  LEXER_KW_MAIN,
-  LEXER_KW_MUT,
-  LEXER_KW_RETURN,
-
-  LEXER_LIT_CHAR,
-  LEXER_LIT_FLOAT,
-  LEXER_LIT_ID,
-  LEXER_LIT_INT_BIN,
-  LEXER_LIT_INT_DEC,
-  LEXER_LIT_INT_HEX,
-  LEXER_LIT_INT_OCT,
-  LEXER_LIT_STR,
-
-  LEXER_OP_AND,
-  LEXER_OP_ANDAND,
-  LEXER_OP_ANDANDEQ,
-  LEXER_OP_ANDEQ,
-  LEXER_OP_CARET,
-  LEXER_OP_CARETEQ,
-  LEXER_OP_COLON,
-  LEXER_OP_COLONEQ,
-  LEXER_OP_COMMA,
-  LEXER_OP_DOT,
-  LEXER_OP_DOTDOT,
-  LEXER_OP_DOTDOTDOT,
-  LEXER_OP_DOTDOTEQ,
-  LEXER_OP_EQ,
-  LEXER_OP_EQEQ,
-  LEXER_OP_EXCL,
-  LEXER_OP_EXCLEQ,
-  LEXER_OP_EXCLEXCL,
-  LEXER_OP_GT,
-  LEXER_OP_GTEQ,
-  LEXER_OP_LBRACE,
-  LEXER_OP_LBRACK,
-  LEXER_OP_LPAR,
-  LEXER_OP_LSHIFT,
-  LEXER_OP_LSHIFTEQ,
-  LEXER_OP_LT,
-  LEXER_OP_LTEQ,
-  LEXER_OP_MINUS,
-  LEXER_OP_MINUSEQ,
-  LEXER_OP_MINUSMINUS,
-  LEXER_OP_OR,
-  LEXER_OP_OREQ,
-  LEXER_OP_OROR,
-  LEXER_OP_OROREQ,
-  LEXER_OP_PERCENT,
-  LEXER_OP_PERCENTEQ,
-  LEXER_OP_PLUS,
-  LEXER_OP_PLUSEQ,
-  LEXER_OP_PLUSPLUS,
-  LEXER_OP_QN,
-  LEXER_OP_QNDOT,
-  LEXER_OP_QNQN,
-  LEXER_OP_QNQNEQ,
-  LEXER_OP_RBRACE,
-  LEXER_OP_RBRACK,
-  LEXER_OP_RPAR,
-  LEXER_OP_RSHIFT,
-  LEXER_OP_RSHIFTEQ,
-  LEXER_OP_SEMI,
-  LEXER_OP_SLASH,
-  LEXER_OP_SLASHEQ,
-  LEXER_OP_STAR,
-  LEXER_OP_STAREQ,
-  LEXER_OP_STARSTAR,
-  LEXER_OP_STARSTAREQ,
-  LEXER_OP_TILDE,
-
-  LEXER_UNKNOWN,
-  LEXER_WS
+  FOREACH_LEXER_TOKEN(GEN_LEXER_TOKEN_ENUM)
 } lexer_token;
 
 struct lexer_s {
   unsigned char *raw;
   unsigned char *str;
   lexer_token token;
+};
+
+DUC_UNUSED static const char *lexer_token_str[] = { // TODO Remove DUC_UNUSED
+  FOREACH_LEXER_TOKEN(DUC_GEN_ENUM_STR)
 };
 
 void lexer_free (lexer_t *lexer);

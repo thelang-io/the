@@ -11,8 +11,8 @@
 
 bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch1 = duc_file_readchar(file);
-  unsigned char ch2 = 0;
-  unsigned char ch3 = 0;
+  unsigned char ch2;
+  unsigned char ch3;
   size_t len = 1;
 
   switch (ch1) {
@@ -163,7 +163,24 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '/': {
-      LEX_OP_EQ(LEXER_OP_SLASH, LEXER_OP_SLASHEQ);
+      if (!duc_file_eof(file)) {
+        size_t bu_pos = duc_file_position(file);
+        ch2 = duc_file_readchar(file);
+
+        if (ch2 == '/' || ch2 == '*') {
+          duc_file_seek(file, pos);
+          return false;
+        } else if (ch2 != '=') {
+          duc_file_seek(file, bu_pos);
+          lexer->token = LEXER_OP_SLASH;
+        } else {
+          lexer->token = LEXER_OP_SLASHEQ;
+          len += 1;
+        }
+      } else {
+        lexer->token = LEXER_OP_SLASH;
+      }
+
       break;
     }
     case '*': {

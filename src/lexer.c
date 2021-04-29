@@ -6,6 +6,8 @@
  */
 
 #include <stdlib.h>
+#include "lexer/comment-block.h"
+#include "lexer/comment-line.h"
 #include "lexer/lit-char.h"
 #include "lexer/lit-float.h"
 #include "lexer/lit-id.h"
@@ -41,7 +43,9 @@ lexer_t *lexer_new (duc_file_t *file) {
     !lex_lit_str(file, lexer, pos) &&
     !lex_lit_char(file, lexer, pos) &&
     !lex_lit_int(file, lexer, pos) &&
-    !lex_lit_float(file, lexer, pos)
+    !lex_lit_float(file, lexer, pos) &&
+    !lex_comment_line(file, lexer, pos) &&
+    !lex_comment_block(file, lexer, pos)
   ) {
     lexer->raw = NULL;
     lexer->str = NULL;

@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.14)
 include(FetchContent)
 
-FetchContent_Declare(libduc GIT_REPOSITORY https://github.com/delasy/libduc.git GIT_TAG v4.6.0)
+FetchContent_Declare(libduc GIT_REPOSITORY https://github.com/delasy/libduc.git GIT_TAG v4.7.0)
 FetchContent_MakeAvailable(libduc)
 
 file(
@@ -44,6 +44,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wconversion -Werror -Wextra -Wshadow 
 set(
   sources
 
+  src/lexer/comment-block.c src/lexer/comment-block.h
+  src/lexer/comment-line.c src/lexer/comment-line.h
   src/lexer/lit-char.c src/lexer/lit-char.h
   src/lexer/lit-float.c src/lexer/lit-float.h
   src/lexer/lit-id.c src/lexer/lit-id.h
@@ -75,6 +77,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(
     tests
 
+    tests/lexer/comment-block-test.c
+    tests/lexer/comment-line-test.c
     tests/lexer/lit-char-test.c
     tests/lexer/lit-float-test.c
     tests/lexer/lit-id-test.c
