@@ -18,7 +18,7 @@ bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos) {
     duc_file_seek(file, pos);
     return false;
   } else if (duc_file_eof(file)) {
-    duc_throw("Unterminated character literal");
+    duc_throw("SyntaxError: Unterminated character literal");
   }
 
   lexer->raw = malloc(len + 1);
@@ -29,16 +29,16 @@ bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch2 = duc_file_readchar(file);
 
   if (ch2 == '\'') {
-    duc_throw("Empty character literal");
+    duc_throw("SyntaxError: Empty character literal");
   } else if (ch2 == '\\') {
     if (duc_file_eof(file)) {
-      duc_throw("Unterminated character literal");
+      duc_throw("SyntaxError: Unterminated character literal");
     }
 
     unsigned char ch_esc = duc_file_readchar(file);
 
     if (!lexer_lit_char_is_escape(ch_esc)) {
-      duc_throw("Illegal character escape");
+      duc_throw("SyntaxError: Illegal character escape");
     }
 
     len += 2;
@@ -53,13 +53,13 @@ bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos) {
   }
 
   if (duc_file_eof(file)) {
-    duc_throw("Unterminated character literal");
+    duc_throw("SyntaxError: Unterminated character literal");
   }
 
   unsigned char ch3 = duc_file_readchar(file);
 
   if (ch3 != '\'') {
-    duc_throw("Too many characters in a character literal");
+    duc_throw("SyntaxError: Too many characters in a character literal");
   }
 
   lexer->raw = realloc(lexer->raw, ++len + 1);

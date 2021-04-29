@@ -43,7 +43,7 @@ bool lex_lit_int (duc_file_t *file, lexer_t *lexer, size_t pos) {
         return false;
       } else if (is_bin || is_hex || is_oct) {
         if (duc_file_eof(file)) {
-          duc_throw("Invalid number");
+          duc_throw("SyntaxError: Invalid number");
         }
 
         unsigned char ch3 = duc_file_readchar(file);
@@ -53,7 +53,7 @@ bool lex_lit_int (duc_file_t *file, lexer_t *lexer, size_t pos) {
           (is_oct && strchr("01234567", ch3) == NULL) ||
           (is_hex && strchr("0123456789abcdefABCDEF", ch3) == NULL)
         ) {
-          duc_throw("Invalid number");
+          duc_throw("SyntaxError: Invalid number");
         }
 
         len += 2;
@@ -69,7 +69,7 @@ bool lex_lit_int (duc_file_t *file, lexer_t *lexer, size_t pos) {
         raw[len] = '\0';
         is_oct = true;
       } else if (strchr("089", ch2) != NULL) {
-        duc_throw("Invalid number");
+        duc_throw("SyntaxError: Invalid number");
       } else {
         duc_file_seek(file, bu_pos);
 
