@@ -44,6 +44,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wconversion -Werror -Wextra -Wshadow 
 set(
   sources
 
+  src/lexer/lit-char.c src/lexer/lit-char.h
   src/lexer/lit-float.c src/lexer/lit-float.h
   src/lexer/lit-id.c src/lexer/lit-id.h
   src/lexer/lit-int.c src/lexer/lit-int.h
@@ -74,6 +75,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(
     tests
 
+    tests/lexer/lit-char-test.c
     tests/lexer/lit-float-test.c
     tests/lexer/lit-id-test.c
     tests/lexer/lit-int-test.c

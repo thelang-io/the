@@ -6,6 +6,7 @@
  */
 
 #include <stdlib.h>
+#include "lexer/lit-char.h"
 #include "lexer/lit-float.h"
 #include "lexer/lit-id.h"
 #include "lexer/lit-int.h"
@@ -38,6 +39,7 @@ lexer_t *lexer_new (duc_file_t *file) {
     !lex_lit_id(file, lexer, pos) &&
     !lex_op(file, lexer, pos) &&
     !lex_lit_str(file, lexer, pos) &&
+    !lex_lit_char(file, lexer, pos) &&
     !lex_lit_int(file, lexer, pos) &&
     !lex_lit_float(file, lexer, pos)
   ) {
