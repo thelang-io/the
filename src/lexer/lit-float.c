@@ -93,20 +93,20 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
   if (with_exp) {
     if (duc_file_eof(file)) {
-      duc_throw("SyntaxError: Unexpected end of file, expected floating-point literal exponent");
+      duc_throw("SyntaxError: Unexpected end of file, expected float literal exponent");
     }
 
     unsigned char ch_op = duc_file_readchar(file);
 
     if (ch_op == '+' || ch_op == '-') {
       if (duc_file_eof(file)) {
-        duc_throw("SyntaxError: Unexpected end of file, expected floating-point literal exponent");
+        duc_throw("SyntaxError: Unexpected end of file, expected float literal exponent");
       }
 
       unsigned char ch_dec = duc_file_readchar(file);
 
       if (strchr("0123456789", ch_dec) == NULL) {
-        duc_throw("SyntaxError: Unexpected token, expected floating-point literal exponent");
+        duc_throw("SyntaxError: Unexpected token, expected float literal exponent");
       }
 
       len += 2;
@@ -115,7 +115,7 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->raw[len - 1] = ch_dec;
       lexer->raw[len] = '\0';
     } else if (strchr("0123456789", ch_op) == NULL) {
-      duc_throw("SyntaxError: Unexpected token, expected floating-point literal exponent");
+      duc_throw("SyntaxError: Unexpected token, expected float literal exponent");
     } else {
       lexer->raw = realloc(lexer->raw, ++len + 1);
       lexer->raw[len - 1] = ch_op;
@@ -144,5 +144,5 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
 }
 
 bool lexer_lit_float_is_char_special (unsigned char ch) {
-  return ch == 'E' || ch == 'e' || ch == '.';
+  return strchr("Ee.", ch) != NULL;
 }
