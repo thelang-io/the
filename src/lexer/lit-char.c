@@ -12,7 +12,6 @@
 
 bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch1 = duc_file_readchar(file);
-  size_t len = 1;
 
   if (ch1 != '\'') {
     duc_file_seek(file, pos);
@@ -21,6 +20,7 @@ bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos) {
     duc_throw("SyntaxError: Unterminated character literal");
   }
 
+  size_t len = 1;
   lexer->raw = malloc(len + 1);
   lexer->raw[len - 1] = ch1;
   lexer->raw[len] = '\0';
