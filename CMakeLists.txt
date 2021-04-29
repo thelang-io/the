@@ -49,7 +49,10 @@ set(
   src/lexer/lit-char.c src/lexer/lit-char.h
   src/lexer/lit-float.c src/lexer/lit-float.h
   src/lexer/lit-id.c src/lexer/lit-id.h
-  src/lexer/lit-int.c src/lexer/lit-int.h
+  src/lexer/lit-int-bin.c src/lexer/lit-int-bin.h
+  src/lexer/lit-int-dec.c src/lexer/lit-int-dec.h
+  src/lexer/lit-int-hex.c src/lexer/lit-int-hex.h
+  src/lexer/lit-int-oct.c src/lexer/lit-int-oct.h
   src/lexer/lit-str.c src/lexer/lit-str.h
   src/lexer/op.c src/lexer/op.h
   src/lexer/ws.c src/lexer/ws.h
@@ -82,7 +85,10 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/lexer/lit-char-test.c
     tests/lexer/lit-float-test.c
     tests/lexer/lit-id-test.c
-    tests/lexer/lit-int-test.c
+    tests/lexer/lit-int-bin-test.c
+    tests/lexer/lit-int-dec-test.c
+    tests/lexer/lit-int-hex-test.c
+    tests/lexer/lit-int-oct-test.c
     tests/lexer/lit-str-test.c
     tests/lexer/op-test.c
     tests/lexer/ws-test.c

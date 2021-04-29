@@ -73,11 +73,5 @@ bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos) {
 }
 
 bool lexer_lit_char_is_escape (unsigned char ch) {
-  return ch == '0' ||
-    ch == 't' ||
-    ch == 'n' ||
-    ch == 'r' ||
-    ch == '"' ||
-    ch == '\'' ||
-    ch == '\\';
+  return strchr("0tnr\"'\\", ch) != NULL;
 }

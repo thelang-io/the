@@ -11,7 +11,10 @@
 #include "lexer/lit-char.h"
 #include "lexer/lit-float.h"
 #include "lexer/lit-id.h"
-#include "lexer/lit-int.h"
+#include "lexer/lit-int-bin.h"
+#include "lexer/lit-int-dec.h"
+#include "lexer/lit-int-hex.h"
+#include "lexer/lit-int-oct.h"
 #include "lexer/lit-str.h"
 #include "lexer/op.h"
 #include "lexer/ws.h"
@@ -42,7 +45,10 @@ lexer_t *lexer_new (duc_file_t *file) {
     !lex_op(file, lexer, pos) &&
     !lex_lit_str(file, lexer, pos) &&
     !lex_lit_char(file, lexer, pos) &&
-    !lex_lit_int(file, lexer, pos) &&
+    !lex_lit_int_bin(file, lexer, pos) &&
+    !lex_lit_int_dec(file, lexer, pos) &&
+    !lex_lit_int_hex(file, lexer, pos) &&
+    !lex_lit_int_oct(file, lexer, pos) &&
     !lex_lit_float(file, lexer, pos) &&
     !lex_comment_line(file, lexer, pos) &&
     !lex_comment_block(file, lexer, pos)
