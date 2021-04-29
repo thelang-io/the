@@ -14,6 +14,7 @@
 bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch1 = duc_file_readchar(file);
   unsigned char ch2;
+  bool is_lit = false;
 
   if (ch1 == '0' && !duc_file_eof(file)) {
     ch2 = duc_file_readchar(file);
@@ -23,13 +24,13 @@ bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
         duc_throw("SyntaxError: Invalid octal literal");
       }
 
-      lexer->token = LEXER_LIT_INT_OCT;
+      is_lit = true;
     } else if (strchr("89", ch2) != NULL) {
       duc_throw("SyntaxError: Invalid octal literal");
     }
   }
 
-  if (lexer->token != LEXER_LIT_INT_OCT) {
+  if (!is_lit) {
     duc_file_seek(file, pos);
     return false;
   }
@@ -39,6 +40,7 @@ bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len - 2] = ch1;
   lexer->raw[len - 1] = ch2;
   lexer->raw[len] = '\0';
+  lexer->token = LEXER_LIT_INT_OCT;
 
   while (!duc_file_eof(file)) {
     size_t bu_pos = duc_file_position(file);
