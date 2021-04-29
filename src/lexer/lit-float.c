@@ -16,8 +16,16 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
   bool with_exp = false;
 
   if (ch1 == '.' && !duc_file_eof(file)) {
-    lexer->raw = malloc(len + 1);
-    lexer->raw[len - 1] = ch1;
+    unsigned char ch2 = duc_file_readchar(file);
+
+    if (strchr("0123456789", ch2) == NULL) {
+      duc_file_seek(file, pos);
+      return false;
+    }
+
+    lexer->raw = malloc(++len + 1);
+    lexer->raw[len - 2] = ch1;
+    lexer->raw[len - 1] = ch2;
     lexer->raw[len] = '\0';
     lexer->token = LEXER_LIT_FLOAT;
   } else if (ch1 == '0' && !duc_file_eof(file)) {
