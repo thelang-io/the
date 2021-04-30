@@ -24,15 +24,22 @@
   f(KW_CATCH) \
   f(KW_CLASS) \
   f(KW_CONST) \
+  f(KW_CONTINUE) \
+  f(KW_DEFAULT) \
+  f(KW_DEINIT) \
   f(KW_ELIF) \
   f(KW_ELSE) \
   f(KW_ENUM) \
+  f(KW_EXPORT) \
+  f(KW_FALLTHROUGH) \
   f(KW_FALSE) \
   f(KW_FN) \
   f(KW_FROM) \
   f(KW_IF) \
+  f(KW_IMPORT) \
   f(KW_IN) \
   f(KW_INIT) \
+  f(KW_INTERFACE) \
   f(KW_IS) \
   f(KW_LOOP) \
   f(KW_MAIN) \
@@ -42,10 +49,12 @@
   f(KW_NIL) \
   f(KW_OBJ) \
   f(KW_OP) \
+  f(KW_OVERRIDE) \
   f(KW_PRIV) \
   f(KW_PROT) \
   f(KW_PUB) \
   f(KW_RETURN) \
+  f(KW_STATIC) \
   f(KW_SUPER) \
   f(KW_THIS) \
   f(KW_THROW) \

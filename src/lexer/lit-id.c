@@ -149,8 +149,46 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case 6: {
-      if (memcmp(lexer->str, "return", len + 1) == 0) {
+      if (memcmp(lexer->str, "deinit", len + 1) == 0) {
+        lexer->token = LEXER_KW_DEINIT;
+      } else if (memcmp(lexer->str, "export", len + 1) == 0) {
+        lexer->token = LEXER_KW_EXPORT;
+      } else if (memcmp(lexer->str, "import", len + 1) == 0) {
+        lexer->token = LEXER_KW_IMPORT;
+      } else if (memcmp(lexer->str, "return", len + 1) == 0) {
         lexer->token = LEXER_KW_RETURN;
+      } else if (memcmp(lexer->str, "static", len + 1) == 0) {
+        lexer->token = LEXER_KW_STATIC;
+      }
+
+      break;
+    }
+    case 7: {
+      if (memcmp(lexer->str, "default", len + 1) == 0) {
+        lexer->token = LEXER_KW_DEFAULT;
+      }
+
+      break;
+    }
+    case 8: {
+      if (memcmp(lexer->str, "continue", len + 1) == 0) {
+        lexer->token = LEXER_KW_CONTINUE;
+      } else if (memcmp(lexer->str, "override", len + 1) == 0) {
+        lexer->token = LEXER_KW_OVERRIDE;
+      }
+
+      break;
+    }
+    case 9: {
+      if (memcmp(lexer->str, "interface", len + 1) == 0) {
+        lexer->token = LEXER_KW_INTERFACE;
+      }
+
+      break;
+    }
+    case 11: {
+      if (memcmp(lexer->str, "fallthrough", len + 1) == 0) {
+        lexer->token = LEXER_KW_FALLTHROUGH;
       }
 
       break;
