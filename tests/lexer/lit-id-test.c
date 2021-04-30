@@ -27,8 +27,13 @@ DUC_TEST(lex_lit_id, works) {
   LEX_LIT_KW_F("loop", LEXER_KW_LOOP);
   LEX_LIT_KW_F("main", LEXER_KW_MAIN);
   LEX_LIT_KW_F("mut", LEXER_KW_MUT);
+  LEX_LIT_KW_F("new", LEXER_KW_NEW);
+  LEX_LIT_KW_F("nil", LEXER_KW_NIL);
+  LEX_LIT_KW_F("obj", LEXER_KW_OBJ);
   LEX_LIT_KW_F("op", LEXER_KW_OP);
+  LEX_LIT_KW_F("pub", LEXER_KW_PUB);
   LEX_LIT_KW_F("return", LEXER_KW_RETURN);
+  LEX_LIT_KW_F("try", LEXER_KW_TRY);
 }
 
 DUC_TEST(lexer_lit_id, is_char_and_is_char_start) {

@@ -78,6 +78,16 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
     case 3: {
       if (memcmp(lexer->str, "mut", len + 1) == 0) {
         lexer->token = LEXER_KW_MUT;
+      } else if (memcmp(lexer->str, "new", len + 1) == 0) {
+        lexer->token = LEXER_KW_NEW;
+      } else if (memcmp(lexer->str, "nil", len + 1) == 0) {
+        lexer->token = LEXER_KW_NIL;
+      } else if (memcmp(lexer->str, "obj", len + 1) == 0) {
+        lexer->token = LEXER_KW_OBJ;
+      } else if (memcmp(lexer->str, "pub", len + 1) == 0) {
+        lexer->token = LEXER_KW_PUB;
+      } else if (memcmp(lexer->str, "try", len + 1) == 0) {
+        lexer->token = LEXER_KW_TRY;
       }
 
       break;

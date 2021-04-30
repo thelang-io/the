@@ -24,8 +24,13 @@
   f(KW_LOOP) \
   f(KW_MAIN) \
   f(KW_MUT) \
+  f(KW_NEW) \
+  f(KW_NIL) \
+  f(KW_OBJ) \
   f(KW_OP) \
+  f(KW_PUB) \
   f(KW_RETURN) \
+  f(KW_TRY) \
   \
   f(LIT_CHAR) \
   f(LIT_FLOAT) \
