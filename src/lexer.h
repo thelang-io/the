@@ -15,11 +15,16 @@
   f(COMMENT_BLOCK) \
   f(COMMENT_LINE) \
   \
+  f(KW_AS) \
+  f(KW_AS_SAFE) \
   f(KW_FN) \
+  f(KW_IF) \
   f(KW_IN) \
+  f(KW_IS) \
   f(KW_LOOP) \
   f(KW_MAIN) \
   f(KW_MUT) \
+  f(KW_OP) \
   f(KW_RETURN) \
   \
   f(LIT_CHAR) \

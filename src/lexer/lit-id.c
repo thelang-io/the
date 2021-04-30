@@ -43,10 +43,34 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
   switch (len) {
     case 2: {
-      if (memcmp(lexer->str, "fn", len + 1) == 0) {
+      if (memcmp(lexer->str, "as", len + 1) == 0) {
+        if (!duc_file_eof(file)) {
+          size_t bu_pos = duc_file_position(file);
+          unsigned char ch_safe = duc_file_readchar(file);
+
+          if (ch_safe == '?') {
+            lexer->raw = realloc(lexer->raw, ++len + 1);
+            lexer->str = realloc(lexer->str, len + 1);
+            lexer->raw[len - 1] = lexer->str[len - 1] = ch_safe;
+            lexer->raw[len] = lexer->str[len] = '\0';
+            lexer->token = LEXER_KW_AS_SAFE;
+          } else {
+            duc_file_seek(file, bu_pos);
+            lexer->token = LEXER_KW_AS;
+          }
+        } else {
+          lexer->token = LEXER_KW_AS;
+        }
+      } else if (memcmp(lexer->str, "fn", len + 1) == 0) {
         lexer->token = LEXER_KW_FN;
+      } else if (memcmp(lexer->str, "if", len + 1) == 0) {
+        lexer->token = LEXER_KW_IF;
       } else if (memcmp(lexer->str, "in", len + 1) == 0) {
         lexer->token = LEXER_KW_IN;
+      } else if (memcmp(lexer->str, "is", len + 1) == 0) {
+        lexer->token = LEXER_KW_IS;
+      } else if (memcmp(lexer->str, "op", len + 1) == 0) {
+        lexer->token = LEXER_KW_OP;
       }
 
       break;
