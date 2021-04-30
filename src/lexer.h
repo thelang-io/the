@@ -17,9 +17,15 @@
   \
   f(KW_AS) \
   f(KW_AS_SAFE) \
+  f(KW_CASE) \
+  f(KW_ELIF) \
+  f(KW_ELSE) \
+  f(KW_ENUM) \
   f(KW_FN) \
+  f(KW_FROM) \
   f(KW_IF) \
   f(KW_IN) \
+  f(KW_INIT) \
   f(KW_IS) \
   f(KW_LOOP) \
   f(KW_MAIN) \

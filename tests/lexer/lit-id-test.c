@@ -20,9 +20,15 @@ DUC_TEST(lex_lit_id, works) {
 
   LEX_LIT_KW_F("as", LEXER_KW_AS);
   LEX_FS("as?", LEXER_KW_AS_SAFE);
+  LEX_LIT_KW_F("case", LEXER_KW_CASE);
+  LEX_LIT_KW_F("elif", LEXER_KW_ELIF);
+  LEX_LIT_KW_F("else", LEXER_KW_ELSE);
+  LEX_LIT_KW_F("enum", LEXER_KW_ENUM);
   LEX_LIT_KW_F("fn", LEXER_KW_FN);
+  LEX_LIT_KW_F("from", LEXER_KW_FROM);
   LEX_LIT_KW_F("if", LEXER_KW_IF);
   LEX_LIT_KW_F("in", LEXER_KW_IN);
+  LEX_LIT_KW_F("init", LEXER_KW_INIT);
   LEX_LIT_KW_F("is", LEXER_KW_IS);
   LEX_LIT_KW_F("loop", LEXER_KW_LOOP);
   LEX_LIT_KW_F("main", LEXER_KW_MAIN);

@@ -93,7 +93,19 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case 4: {
-      if (memcmp(lexer->str, "loop", len + 1) == 0) {
+      if (memcmp(lexer->str, "case", len + 1) == 0) {
+        lexer->token = LEXER_KW_CASE;
+      } else if (memcmp(lexer->str, "elif", len + 1) == 0) {
+        lexer->token = LEXER_KW_ELIF;
+      } else if (memcmp(lexer->str, "else", len + 1) == 0) {
+        lexer->token = LEXER_KW_ELSE;
+      } else if (memcmp(lexer->str, "enum", len + 1) == 0) {
+        lexer->token = LEXER_KW_ENUM;
+      } else if (memcmp(lexer->str, "from", len + 1) == 0) {
+        lexer->token = LEXER_KW_FROM;
+      } else if (memcmp(lexer->str, "init", len + 1) == 0) {
+        lexer->token = LEXER_KW_INIT;
+      } else if (memcmp(lexer->str, "loop", len + 1) == 0) {
         lexer->token = LEXER_KW_LOOP;
       } else if (memcmp(lexer->str, "main", len + 1) == 0) {
         lexer->token = LEXER_KW_MAIN;
