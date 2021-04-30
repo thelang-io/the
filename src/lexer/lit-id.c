@@ -109,6 +109,14 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
         lexer->token = LEXER_KW_LOOP;
       } else if (memcmp(lexer->str, "main", len + 1) == 0) {
         lexer->token = LEXER_KW_MAIN;
+      } else if (memcmp(lexer->str, "priv", len + 1) == 0) {
+        lexer->token = LEXER_KW_PRIV;
+      } else if (memcmp(lexer->str, "prot", len + 1) == 0) {
+        lexer->token = LEXER_KW_PROT;
+      } else if (memcmp(lexer->str, "this", len + 1) == 0) {
+        lexer->token = LEXER_KW_THIS;
+      } else if (memcmp(lexer->str, "true", len + 1) == 0) {
+        lexer->token = LEXER_KW_TRUE;
       }
 
       break;

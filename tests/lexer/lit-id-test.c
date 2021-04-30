@@ -37,8 +37,12 @@ DUC_TEST(lex_lit_id, works) {
   LEX_LIT_KW_F("nil", LEXER_KW_NIL);
   LEX_LIT_KW_F("obj", LEXER_KW_OBJ);
   LEX_LIT_KW_F("op", LEXER_KW_OP);
+  LEX_LIT_KW_F("priv", LEXER_KW_PRIV);
+  LEX_LIT_KW_F("prot", LEXER_KW_PROT);
   LEX_LIT_KW_F("pub", LEXER_KW_PUB);
   LEX_LIT_KW_F("return", LEXER_KW_RETURN);
+  LEX_LIT_KW_F("this", LEXER_KW_THIS);
+  LEX_LIT_KW_F("true", LEXER_KW_TRUE);
   LEX_LIT_KW_F("try", LEXER_KW_TRY);
 }
 

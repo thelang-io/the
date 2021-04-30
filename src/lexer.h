@@ -34,8 +34,12 @@
   f(KW_NIL) \
   f(KW_OBJ) \
   f(KW_OP) \
+  f(KW_PRIV) \
+  f(KW_PROT) \
   f(KW_PUB) \
   f(KW_RETURN) \
+  f(KW_THIS) \
+  f(KW_TRUE) \
   f(KW_TRY) \
   \
   f(LIT_CHAR) \
