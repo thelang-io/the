@@ -121,6 +121,33 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
 
       break;
     }
+    case 5: {
+      if (memcmp(lexer->str, "async", len + 1) == 0) {
+        lexer->token = LEXER_KW_ASYNC;
+      } else if (memcmp(lexer->str, "await", len + 1) == 0) {
+        lexer->token = LEXER_KW_AWAIT;
+      } else if (memcmp(lexer->str, "break", len + 1) == 0) {
+        lexer->token = LEXER_KW_BREAK;
+      } else if (memcmp(lexer->str, "catch", len + 1) == 0) {
+        lexer->token = LEXER_KW_CATCH;
+      } else if (memcmp(lexer->str, "class", len + 1) == 0) {
+        lexer->token = LEXER_KW_CLASS;
+      } else if (memcmp(lexer->str, "const", len + 1) == 0) {
+        lexer->token = LEXER_KW_CONST;
+      } else if (memcmp(lexer->str, "false", len + 1) == 0) {
+        lexer->token = LEXER_KW_FALSE;
+      } else if (memcmp(lexer->str, "match", len + 1) == 0) {
+        lexer->token = LEXER_KW_MATCH;
+      } else if (memcmp(lexer->str, "super", len + 1) == 0) {
+        lexer->token = LEXER_KW_SUPER;
+      } else if (memcmp(lexer->str, "throw", len + 1) == 0) {
+        lexer->token = LEXER_KW_THROW;
+      } else if (memcmp(lexer->str, "union", len + 1) == 0) {
+        lexer->token = LEXER_KW_UNION;
+      }
+
+      break;
+    }
     case 6: {
       if (memcmp(lexer->str, "return", len + 1) == 0) {
         lexer->token = LEXER_KW_RETURN;

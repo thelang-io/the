@@ -17,10 +17,17 @@
   \
   f(KW_AS) \
   f(KW_AS_SAFE) \
+  f(KW_ASYNC) \
+  f(KW_AWAIT) \
+  f(KW_BREAK) \
   f(KW_CASE) \
+  f(KW_CATCH) \
+  f(KW_CLASS) \
+  f(KW_CONST) \
   f(KW_ELIF) \
   f(KW_ELSE) \
   f(KW_ENUM) \
+  f(KW_FALSE) \
   f(KW_FN) \
   f(KW_FROM) \
   f(KW_IF) \
@@ -29,6 +36,7 @@
   f(KW_IS) \
   f(KW_LOOP) \
   f(KW_MAIN) \
+  f(KW_MATCH) \
   f(KW_MUT) \
   f(KW_NEW) \
   f(KW_NIL) \
@@ -38,9 +46,12 @@
   f(KW_PROT) \
   f(KW_PUB) \
   f(KW_RETURN) \
+  f(KW_SUPER) \
   f(KW_THIS) \
+  f(KW_THROW) \
   f(KW_TRUE) \
   f(KW_TRY) \
+  f(KW_UNION) \
   \
   f(LIT_CHAR) \
   f(LIT_FLOAT) \

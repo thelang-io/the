@@ -20,10 +20,17 @@ DUC_TEST(lex_lit_id, works) {
 
   LEX_LIT_KW_F("as", LEXER_KW_AS);
   LEX_FS("as?", LEXER_KW_AS_SAFE);
+  LEX_LIT_KW_F("async", LEXER_KW_ASYNC);
+  LEX_LIT_KW_F("await", LEXER_KW_AWAIT);
+  LEX_LIT_KW_F("break", LEXER_KW_BREAK);
   LEX_LIT_KW_F("case", LEXER_KW_CASE);
+  LEX_LIT_KW_F("catch", LEXER_KW_CATCH);
+  LEX_LIT_KW_F("class", LEXER_KW_CLASS);
+  LEX_LIT_KW_F("const", LEXER_KW_CONST);
   LEX_LIT_KW_F("elif", LEXER_KW_ELIF);
   LEX_LIT_KW_F("else", LEXER_KW_ELSE);
   LEX_LIT_KW_F("enum", LEXER_KW_ENUM);
+  LEX_LIT_KW_F("false", LEXER_KW_FALSE);
   LEX_LIT_KW_F("fn", LEXER_KW_FN);
   LEX_LIT_KW_F("from", LEXER_KW_FROM);
   LEX_LIT_KW_F("if", LEXER_KW_IF);
@@ -32,6 +39,7 @@ DUC_TEST(lex_lit_id, works) {
   LEX_LIT_KW_F("is", LEXER_KW_IS);
   LEX_LIT_KW_F("loop", LEXER_KW_LOOP);
   LEX_LIT_KW_F("main", LEXER_KW_MAIN);
+  LEX_LIT_KW_F("match", LEXER_KW_MATCH);
   LEX_LIT_KW_F("mut", LEXER_KW_MUT);
   LEX_LIT_KW_F("new", LEXER_KW_NEW);
   LEX_LIT_KW_F("nil", LEXER_KW_NIL);
@@ -41,9 +49,12 @@ DUC_TEST(lex_lit_id, works) {
   LEX_LIT_KW_F("prot", LEXER_KW_PROT);
   LEX_LIT_KW_F("pub", LEXER_KW_PUB);
   LEX_LIT_KW_F("return", LEXER_KW_RETURN);
+  LEX_LIT_KW_F("super", LEXER_KW_SUPER);
   LEX_LIT_KW_F("this", LEXER_KW_THIS);
+  LEX_LIT_KW_F("throw", LEXER_KW_THROW);
   LEX_LIT_KW_F("true", LEXER_KW_TRUE);
   LEX_LIT_KW_F("try", LEXER_KW_TRY);
+  LEX_LIT_KW_F("union", LEXER_KW_UNION);
 }
 
 DUC_TEST(lexer_lit_id, is_char_and_is_char_start) {
