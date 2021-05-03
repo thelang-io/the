@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.14)
 include(FetchContent)
 
-FetchContent_Declare(libduc GIT_REPOSITORY https://github.com/delasy/libduc.git GIT_TAG v4.7.0)
+FetchContent_Declare(libduc GIT_REPOSITORY https://github.com/delasy/libduc.git GIT_TAG v4.7.1)
 FetchContent_MakeAvailable(libduc)
 
 file(
