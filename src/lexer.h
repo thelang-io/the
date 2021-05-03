@@ -145,7 +145,7 @@ struct lexer_s {
   lexer_token token;
 };
 
-DUC_UNUSED static const char *lexer_token_str[] = { // TODO Remove DUC_UNUSED
+static const char *lexer_token_str[] = {
   FOREACH_LEXER_TOKEN(DUC_GEN_ENUM_STR)
 };
 
