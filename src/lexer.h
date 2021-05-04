@@ -145,9 +145,7 @@ struct lexer_s {
   lexer_token token;
 };
 
-static const char *lexer_token_str[] = {
-  FOREACH_LEXER_TOKEN(DUC_GEN_ENUM_STR)
-};
+extern const char *lexer_token_str[];
 
 void lexer_free (lexer_t *lexer);
 void lexer_free_cb (void *it);
