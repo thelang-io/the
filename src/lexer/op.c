@@ -52,7 +52,6 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
             lexer->token = LEXER_OP_DOTDOT;
             len += 1;
           } else if (ch3 == '=') {
-            duc_file_seek(file, bu_pos3);
             lexer->token = LEXER_OP_DOTDOTEQ;
             len += 2;
           } else {
