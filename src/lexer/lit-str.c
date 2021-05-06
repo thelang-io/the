@@ -27,7 +27,7 @@ bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len] = '\0';
   lexer->token = LEXER_LIT_STR;
 
-  lex_lit_str_block_(file, lexer, &len);
+  lexer_lit_str_process_(file, lexer, &len);
 
   lexer->str = malloc(len - 1);
   memcpy(lexer->str, lexer->raw + 1, len - 2);
@@ -36,7 +36,7 @@ bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos) {
   return true;
 }
 
-void lex_lit_str_block_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
+void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
   size_t blocks = 0;
 
   while (true) {

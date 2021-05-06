@@ -11,6 +11,6 @@
 #include "../lexer.h"
 
 bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos);
-void lex_lit_str_block_ (duc_file_t *file, lexer_t *lexer, size_t *len);
+void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len);
 
 #endif
