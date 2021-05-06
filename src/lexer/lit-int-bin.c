@@ -47,6 +47,15 @@ bool lex_lit_int_bin (duc_file_t *file, lexer_t *lexer, size_t pos) {
     if (strchr("23456789", ch) != NULL) {
       duc_throw("SyntaxError: Invalid digit for binary literal");
     } else if (lexer_lit_float_is_char_special(ch)) {
+      if (ch == '.' && !duc_file_eof(file)) {
+        unsigned char ch_next = duc_file_readchar(file);
+
+        if (ch_next == '.') {
+          duc_file_seek(file, bu_pos);
+          break;
+        }
+      }
+
       duc_throw("SyntaxError: Binary float literal is not supported");
     } else if (strchr("01", ch) == NULL) {
       if (len == 2) {
