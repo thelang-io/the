@@ -12,5 +12,6 @@
 
 bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_lit_char_is_escape (unsigned char ch);
+void lexer_lit_char_process_ (duc_file_t *file, lexer_t *lexer, size_t *len);
 
 #endif

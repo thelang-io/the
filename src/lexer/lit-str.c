@@ -80,8 +80,10 @@ void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
       lexer->raw[*len] = '\0';
     }
 
-    if (ch == '"' && blocks != 0) {
-      lex_lit_str_block_(file, lexer, len);
+    if (ch == '\'' && blocks != 0) {
+      lexer_lit_char_process_(file, lexer, len);
+    } else if (ch == '"' && blocks != 0) {
+      lexer_lit_str_process_(file, lexer, len);
     } else if (ch == '{' && blocks != 0) {
       blocks += 1;
     } else if (ch == '}' && blocks != 0) {
