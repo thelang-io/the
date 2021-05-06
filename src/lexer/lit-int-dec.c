@@ -24,8 +24,16 @@ bool lex_lit_int_dec (duc_file_t *file, lexer_t *lexer, size_t pos) {
       size_t bu_pos = duc_file_position(file);
       unsigned char ch_next = duc_file_readchar(file);
 
-      if (
-        !lexer_lit_float_is_char_special(ch_next) &&
+      if (lexer_lit_float_is_char_special(ch_next)) {
+        if (ch_next == '.' && !duc_file_eof(file)) {
+          unsigned char ch_next2 = duc_file_readchar(file);
+
+          if (ch_next2 == '.') {
+            duc_file_seek(file, bu_pos);
+            is_lit = true;
+          }
+        }
+      } else if (
         !lexer_lit_int_bin_is_special(ch_next) &&
         !lexer_lit_int_hex_is_special(ch_next) &&
         !lexer_lit_int_oct_is_special(ch_next)
@@ -54,6 +62,15 @@ bool lex_lit_int_dec (duc_file_t *file, lexer_t *lexer, size_t pos) {
       unsigned char ch = duc_file_readchar(file);
 
       if (lexer_lit_float_is_char_special(ch)) {
+        if (ch == '.' && !duc_file_eof(file)) {
+          unsigned char ch_next = duc_file_readchar(file);
+
+          if (ch_next == '.') {
+            duc_file_seek(file, bu_pos);
+            break;
+          }
+        }
+
         free(raw);
         duc_file_seek(file, pos);
         return false;
