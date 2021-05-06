@@ -9,17 +9,32 @@
 #include "../../src/lexer/lit-int-hex.h"
 #include "../lexer-test.h"
 
+#define LEX_LIT_INT_HEX_F(text) \
+  LEX_FS(text, LEXER_LIT_INT_HEX); \
+  LEX_F(text "..", { \
+    DUC_ASSERT_NE(lexer, NULL); \
+    DUC_ASSERT_EQ(lexer->token, LEXER_LIT_INT_HEX); \
+    DUC_ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
+    DUC_ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
+  }); \
+  LEX_F(text ".. ", { \
+    DUC_ASSERT_NE(lexer, NULL); \
+    DUC_ASSERT_EQ(lexer->token, LEXER_LIT_INT_HEX); \
+    DUC_ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
+    DUC_ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
+  })
+
 DUC_TEST(lex_lit_int_hex, works) {
-  LEX_FS("0X0", LEXER_LIT_INT_HEX);
-  LEX_FS("0x0", LEXER_LIT_INT_HEX);
-  LEX_FS("0X1", LEXER_LIT_INT_HEX);
-  LEX_FS("0x1", LEXER_LIT_INT_HEX);
-  LEX_FS("0X9", LEXER_LIT_INT_HEX);
-  LEX_FS("0x9", LEXER_LIT_INT_HEX);
-  LEX_FS("0XF", LEXER_LIT_INT_HEX);
-  LEX_FS("0xF", LEXER_LIT_INT_HEX);
-  LEX_FS("0XFFFFFFFF", LEXER_LIT_INT_HEX);
-  LEX_FS("0xFFFFFFFF", LEXER_LIT_INT_HEX);
+  LEX_LIT_INT_HEX_F("0X0");
+  LEX_LIT_INT_HEX_F("0x0");
+  LEX_LIT_INT_HEX_F("0X1");
+  LEX_LIT_INT_HEX_F("0x1");
+  LEX_LIT_INT_HEX_F("0X9");
+  LEX_LIT_INT_HEX_F("0x9");
+  LEX_LIT_INT_HEX_F("0XF");
+  LEX_LIT_INT_HEX_F("0xF");
+  LEX_LIT_INT_HEX_F("0XFFFFFFFF");
+  LEX_LIT_INT_HEX_F("0xFFFFFFFF");
 }
 
 DUC_TEST(lexer_lit_int_hex, is_special) {

@@ -45,6 +45,15 @@ bool lex_lit_int_hex (duc_file_t *file, lexer_t *lexer, size_t pos) {
     unsigned char ch = duc_file_readchar(file);
 
     if (lexer_lit_float_is_char_special(ch)) {
+      if (ch == '.' && !duc_file_eof(file)) {
+        unsigned char ch_next = duc_file_readchar(file);
+
+        if (ch_next == '.') {
+          duc_file_seek(file, bu_pos);
+          break;
+        }
+      }
+
       duc_throw("SyntaxError: Hexadecimal float literal is not supported");
     } else if (strchr("0123456789ABCDEFabcdef", ch) == NULL) {
       unsigned char ch_prev = lexer->raw[len - 1];
