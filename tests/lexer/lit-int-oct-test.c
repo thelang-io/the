@@ -9,22 +9,37 @@
 #include "../../src/lexer/lit-int-oct.h"
 #include "../lexer-test.h"
 
+#define LEX_LIT_INT_OCT_F(text) \
+  LEX_FS(text, LEXER_LIT_INT_OCT); \
+  LEX_F(text "..", { \
+    DUC_ASSERT_NE(lexer, NULL); \
+    DUC_ASSERT_EQ(lexer->token, LEXER_LIT_INT_OCT); \
+    DUC_ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
+    DUC_ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
+  }); \
+  LEX_F(text ".. ", { \
+    DUC_ASSERT_NE(lexer, NULL); \
+    DUC_ASSERT_EQ(lexer->token, LEXER_LIT_INT_OCT); \
+    DUC_ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
+    DUC_ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
+  })
+
 DUC_TEST(lex_lit_int_oct, works) {
-  LEX_FS("00", LEXER_LIT_INT_OCT);
-  LEX_FS("0O0", LEXER_LIT_INT_OCT);
-  LEX_FS("0o0", LEXER_LIT_INT_OCT);
+  LEX_LIT_INT_OCT_F("00");
+  LEX_LIT_INT_OCT_F("0O0");
+  LEX_LIT_INT_OCT_F("0o0");
 
-  LEX_FS("01", LEXER_LIT_INT_OCT);
-  LEX_FS("0O1", LEXER_LIT_INT_OCT);
-  LEX_FS("0o1", LEXER_LIT_INT_OCT);
+  LEX_LIT_INT_OCT_F("01");
+  LEX_LIT_INT_OCT_F("0O1");
+  LEX_LIT_INT_OCT_F("0o1");
 
-  LEX_FS("07", LEXER_LIT_INT_OCT);
-  LEX_FS("0O7", LEXER_LIT_INT_OCT);
-  LEX_FS("0o7", LEXER_LIT_INT_OCT);
+  LEX_LIT_INT_OCT_F("07");
+  LEX_LIT_INT_OCT_F("0O7");
+  LEX_LIT_INT_OCT_F("0o7");
 
-  LEX_FS("017777777777", LEXER_LIT_INT_OCT);
-  LEX_FS("0O17777777777", LEXER_LIT_INT_OCT);
-  LEX_FS("0o17777777777", LEXER_LIT_INT_OCT);
+  LEX_LIT_INT_OCT_F("017777777777");
+  LEX_LIT_INT_OCT_F("0O17777777777");
+  LEX_LIT_INT_OCT_F("0o17777777777");
 }
 
 DUC_TEST(lexer_lit_int_oct, is_special) {

@@ -49,6 +49,15 @@ bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
     if (strchr("89", ch) != NULL) {
       duc_throw("SyntaxError: Invalid octal literal");
     } else if (lexer_lit_float_is_char_special(ch)) {
+      if (ch == '.' && !duc_file_eof(file)) {
+        unsigned char ch_next = duc_file_readchar(file);
+
+        if (ch_next == '.') {
+          duc_file_seek(file, bu_pos);
+          break;
+        }
+      }
+
       duc_throw("SyntaxError: Octal float literal is not supported");
     } else if (strchr("01234567", ch) == NULL) {
       unsigned char ch_prev = lexer->raw[len - 1];
