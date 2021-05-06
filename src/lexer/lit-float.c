@@ -31,10 +31,20 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
   } else if (ch1 == '0' && !duc_file_eof(file)) {
     unsigned char ch2 = duc_file_readchar(file);
 
-    if (lexer_lit_float_is_char_special(ch2)) {
-      if (ch2 == 'E' || ch2 == 'e') {
-        with_exp = true;
+    if (ch2 == '.') {
+      if (!duc_file_eof(file)) {
+        size_t bu_pos = duc_file_position(file);
+        unsigned char ch_next = duc_file_readchar(file);
+
+        if (ch_next == '.') {
+          duc_file_seek(file, pos);
+          return false;
+        }
+
+        duc_file_seek(file, bu_pos);
       }
+    } else if (ch2 == 'E' || ch2 == 'e') {
+      with_exp = true;
     } else {
       duc_file_seek(file, pos);
       return false;
@@ -57,11 +67,23 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
       raw[len - 1] = ch;
       raw[len] = '\0';
 
-      if (lexer_lit_float_is_char_special(ch)) {
-        if (ch == 'E' || ch == 'e') {
-          with_exp = true;
+      if (ch == '.') {
+        if (!duc_file_eof(file)) {
+          size_t bu_pos = duc_file_position(file);
+          unsigned char ch_next = duc_file_readchar(file);
+
+          if (ch_next == '.') {
+            free(raw);
+            duc_file_seek(file, pos);
+            return false;
+          }
+
+          duc_file_seek(file, bu_pos);
         }
 
+        break;
+      } else if (ch == 'E' || ch == 'e') {
+        with_exp = true;
         break;
       } else if (strchr("123456789", ch1) == NULL || duc_file_eof(file)) {
         free(raw);
