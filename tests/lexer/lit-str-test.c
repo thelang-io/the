@@ -19,11 +19,32 @@ DUC_TEST(lex_lit_str, works) {
   LEX_FE("\"\"", "", LEXER_LIT_STR);
   LEX_FE("\"a\"", "a", LEXER_LIT_STR);
   LEX_FE("\"Test\"", "Test", LEXER_LIT_STR);
+
   LEX_FE("\"$test\"", "$test", LEXER_LIT_STR);
   LEX_FE("\"${test.name}\"", "${test.name}", LEXER_LIT_STR);
+  LEX_FE("\"${test.name + \"Test\"}\"", "${test.name + \"Test\"}", LEXER_LIT_STR);
+  LEX_FE("\"${Node{}}\"", "${Node{}}", LEXER_LIT_STR);
+  LEX_FE("\"${Node{} + \"Test\"}\"", "${Node{} + \"Test\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"Te}xt\"}\"", "${\"Te}xt\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"Te}xt\" + \"Test\"}\"", "${\"Te}xt\" + \"Test\"}", LEXER_LIT_STR);
+
+  LEX_FE("\"${\"$test\"}\"", "${\"$test\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${test.name}\"}\"", "${\"${test.name}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${test.name + \"Test\"}\"}\"", "${\"${test.name + \"Test\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${Node{}}\"}\"", "${\"${Node{}}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${Node{} + \"Test\"}\"}\"", "${\"${Node{} + \"Test\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"Te}xt\"}\"}\"", "${\"${\"Te}xt\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"Te}xt\" + \"Test\"}\"}\"", "${\"${\"Te}xt\" + \"Test\"}\"}", LEXER_LIT_STR);
+
+  LEX_FE("\"${\"${\"$test\"}\"}\"", "${\"${\"$test\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"${test.name}\"}\"}\"", "${\"${\"${test.name}\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"${test.name + \"Test\"}\"}\"}\"", "${\"${\"${test.name + \"Test\"}\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"${Node{}}\"}\"}\"", "${\"${\"${Node{}}\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"${Node{} + \"Test\"}\"}\"}\"", "${\"${\"${Node{} + \"Test\"}\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"${\"Te}xt\"}\"}\"}\"", "${\"${\"${\"Te}xt\"}\"}\"}", LEXER_LIT_STR);
+  LEX_FE("\"${\"${\"${\"Te}xt\" + \"Test\"}\"}\"}\"", "${\"${\"${\"Te}xt\" + \"Test\"}\"}\"}", LEXER_LIT_STR);
 
   LEX_LIT_STR_F("\\$");
-  LEX_LIT_STR_F("\\$name");
   LEX_LIT_STR_F("\\0");
   LEX_LIT_STR_F("\\t");
   LEX_LIT_STR_F("\\n");
