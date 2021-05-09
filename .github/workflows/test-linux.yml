@@ -1,0 +1,23 @@
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt install -y valgrind
+      - run: |
+          mkdir -p build
+          (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON)
+          cmake --build build
+      - run: |
+          cd build
+          if ! ctest -T memcheck --output-on-failure; then
+            find Testing/Temporary -name "MemoryChecker.*.log" -exec cat {} +
+            exit 1
+          fi
