@@ -34,10 +34,30 @@ jobs:
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Release)
       - run: cmake --build build
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - id: ip
+        uses: haythem/public-ip@v1.2
+      - run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id ${{ secrets.AWS_EC2_SG }} \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
       - uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.REMOTE_KEY }}
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USER }}
+          key: ${{ secrets.AWS_EC2_KEY }}
           source: build/the-core
           target: the
+      - if: always()
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id ${{ secrets.AWS_EC2_SG }} \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
