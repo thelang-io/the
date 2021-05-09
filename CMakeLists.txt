@@ -66,16 +66,16 @@ set(
 
 add_executable(${PROJECT_NAME} ${sources} src/main.c)
 target_include_directories(${PROJECT_NAME} PRIVATE "${libduc_SOURCE_DIR}/include")
-target_link_libraries(${PROJECT_NAME} PRIVATE duc)
+target_link_libraries(${PROJECT_NAME} PRIVATE duc_a)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(CTEST_MEMORYCHECK_COMMAND valgrind)
   set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes")
 
   include(CTest)
-  add_library(${PROJECT_NAME}-lib SHARED ${sources})
-  target_include_directories(${PROJECT_NAME}-lib PRIVATE "${libduc_SOURCE_DIR}/include")
-  target_link_libraries(${PROJECT_NAME}-lib PRIVATE duc)
+  add_library(${PROJECT_NAME}-lib_a STATIC ${sources})
+  target_include_directories(${PROJECT_NAME}-lib_a PRIVATE "${libduc_SOURCE_DIR}/include")
+  target_link_libraries(${PROJECT_NAME}-lib_a PRIVATE duc_a)
 
   set(
     tests
@@ -112,7 +112,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
 
     add_executable(${PROJECT_NAME}-test-${test} ${test_files})
     target_include_directories(${PROJECT_NAME}-test-${test} PRIVATE "${libduc_SOURCE_DIR}/include")
-    target_link_libraries(${PROJECT_NAME}-test-${test} PRIVATE duc ${PROJECT_NAME}-lib)
+    target_link_libraries(${PROJECT_NAME}-test-${test} PRIVATE duc ${PROJECT_NAME}-lib_a)
     add_test(${test} ${PROJECT_NAME}-test-${test})
   endforeach ()
 endif ()
