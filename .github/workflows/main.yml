@@ -2,6 +2,10 @@ on:
   push:
     branches: [main]
 
+env:
+  REMOTE_KEY: ${{ secrets.REMOTE_KEY }}
+  REMOTE_URI: ${{ secrets.REMOTE_URI }}
+
 jobs:
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -34,4 +38,5 @@ jobs:
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Release)
       - run: cmake --build build
-      - run: ls -a build
+      - run: printf "%s" "$REMOTE_KEY" > key.pem
+      - run: scp -i key.pem build/the-core "$REMOTE_URI:the"
