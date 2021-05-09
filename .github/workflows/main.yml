@@ -34,6 +34,11 @@ jobs:
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Release)
       - run: cmake --build build
-      - run: ssh-agent -s
-      - run: ssh-add - <<< "${{ secrets.REMOTE_KEY }}"
-      - run: scp build/the-core "${{ secrets.REMOTE_URI }}:the"
+      - run: mkdir -p ~/.ssh
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_USER }}
+          source: build/the-core
+          target: the
