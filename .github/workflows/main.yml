@@ -1,19 +1,50 @@
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
 
 jobs:
-  ubuntu:
-    name: Build and Test
-    runs-on: ubuntu-latest
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-10.15, ubuntu-18.04, ubuntu-20.04]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set variables
-        run: echo "DOCKER_TAG=${GITHUB_REF#refs/heads/}:$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+      - name: Install dependencies
+        if: runner.os == 'Linux'
+        run: apt install -y valgrind
       - name: Build
-        run: docker build -t $DOCKER_TAG .
-      - name: Test
-        run: docker run $DOCKER_TAG
+        run: |
+          mkdir -p build &&
+            cd build &&
+            cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON &&
+            cmake --build .
+      - name: Test Linux
+        if: runner.os == 'Linux'
+        run: |
+          cd build
+          if ! ctest -T memcheck --output-on-failure; then
+            find Testing/Temporary -name "MemoryChecker.*.log" -exec cat {} +
+            exit 1
+          fi
+      - name: Test MacOS
+        if: runner.os == 'macOS'
+        run: cd build && ctest --output-on-failure
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: |
+          mkdir -p build &&
+            cd build &&
+            cmake .. -DCMAKE_BUILD_TYPE=Release &&
+            cmake --build build
+      - name: Deploy
+        run: echo Deploy
