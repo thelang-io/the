@@ -1,6 +1,8 @@
+name: "Deploy"
+
 on:
   workflow_run:
-    workflows: [test-linux]
+    workflows: ["Test Linux"]
     types: [completed]
 
 jobs:

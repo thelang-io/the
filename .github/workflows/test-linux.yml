@@ -1,9 +1,11 @@
+name: "Test Linux"
+
 on:
   push:
     branches: [main]
 
 jobs:
-  test-linux:
+  build-and-test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
