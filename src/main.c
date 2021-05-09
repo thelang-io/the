@@ -20,7 +20,7 @@ int main (int argc, char *argv[]) {
       lexer_t *lexer = lexer_new(file);
 
       if (lexer->token == LEXER_UNKNOWN) {
-        duc_throw("SyntaxError: Unexpected expression");
+        duc_throw("SyntaxError: Unexpected token");
       } else if (lexer->token != LEXER_WS) {
         printf("%s: %s\n", lexer_token_str[lexer->token], lexer->raw);
       }
