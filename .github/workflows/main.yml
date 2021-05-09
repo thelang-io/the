@@ -34,5 +34,6 @@ jobs:
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Release)
       - run: cmake --build build
+      - run: ssh-agent -s
       - run: ssh-add - <<< "${{ secrets.REMOTE_KEY }}"
       - run: scp build/the-core "${{ secrets.REMOTE_URI }}:the"
