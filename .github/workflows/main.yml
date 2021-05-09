@@ -1,6 +1,7 @@
 on:
   push:
     branches: [main]
+    paths: ["src/**", "CMakeLists.txt"]
 
 jobs:
   build-and-test:
@@ -54,8 +55,8 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           passphrase: ${{ secrets.AWS_EC2_PASSPHRASE }}
           source: build/the-core
-          target: the
-          strip_components: 2
+          target: .
+          strip_components: 1
       - if: always()
         run: |
           aws ec2 revoke-security-group-ingress \
