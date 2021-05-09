@@ -52,8 +52,10 @@ jobs:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.AWS_EC2_KEY }}
+          passphrase: ${{ secrets.AWS_EC2_PASSPHRASE }}
           source: build/the-core
           target: the
+          strip_components: 2
       - if: always()
         run: |
           aws ec2 revoke-security-group-ingress \
