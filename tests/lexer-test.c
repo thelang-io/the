@@ -5,18 +5,17 @@
  * Proprietary and confidential
  */
 
-#include <duc/testing.h>
 #include "../src/lexer.h"
 #include "lexer-test.h"
 
-DUC_TEST(lexer, new_and_free) {
+TEST(lexer, new_and_free) {
   char *filepath = "../test.txt";
 
   duc_writefile(filepath, " ");
   duc_file_t *file = duc_file_new(filepath, DUC_FILE_READ);
   lexer_t *lexer = lexer_new(file);
 
-  DUC_ASSERT_NE(lexer, NULL);
+  ASSERT_NE(lexer, NULL);
   lexer_free(lexer);
   duc_file_free(file);
 
@@ -24,11 +23,11 @@ DUC_TEST(lexer, new_and_free) {
   file = duc_file_new(filepath, DUC_FILE_READ);
   lexer = lexer_new(file);
 
-  DUC_ASSERT_NE(lexer, NULL);
-  DUC_ASSERT_EQ(lexer->raw, NULL);
-  DUC_ASSERT_EQ(lexer->str, NULL);
-  DUC_ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
-  DUC_ASSERT_EQ(duc_file_position(file), 0);
+  ASSERT_NE(lexer, NULL);
+  ASSERT_EQ(lexer->raw, NULL);
+  ASSERT_EQ(lexer->str, NULL);
+  ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+  ASSERT_EQ(duc_file_position(file), 0);
 
   lexer_free(lexer);
   duc_file_free(file);
@@ -37,5 +36,5 @@ DUC_TEST(lexer, new_and_free) {
 }
 
 int main () {
-  DUC_TEST_RUN(lexer, new_and_free);
+  TEST_RUN(lexer, new_and_free);
 }

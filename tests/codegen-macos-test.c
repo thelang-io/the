@@ -5,13 +5,13 @@
  * Proprietary and confidential
  */
 
-#include <duc/testing.h>
 #include "../src/codegen-macos.h"
+#include "testing.h"
 
-DUC_TEST(codegen_macos, test) {
+TEST(codegen_macos, test) {
   // TODO
 }
 
 int main () {
-  DUC_TEST_RUN(codegen_macos, test);
+  TEST_RUN(codegen_macos, test);
 }

@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/testing.h>
 #include "../../src/lexer/lit-str.h"
 #include "../lexer-test.h"
 
@@ -15,7 +14,7 @@
   LEX_FE("\"" text "Test\"", text "Test", LEXER_LIT_STR); \
   LEX_FE("\"Test" text "Test\"", "Test" text "Test", LEXER_LIT_STR)
 
-DUC_TEST(lex_lit_str, works) {
+TEST(lex_lit_str, works) {
   LEX_FE("\"\"", "", LEXER_LIT_STR);
   LEX_FE("\"a\"", "a", LEXER_LIT_STR);
   LEX_FE("\"Test\"", "Test", LEXER_LIT_STR);
@@ -55,5 +54,5 @@ DUC_TEST(lex_lit_str, works) {
 }
 
 int main () {
-  DUC_TEST_RUN(lex_lit_str, works);
+  TEST_RUN(lex_lit_str, works);
 }

@@ -5,11 +5,10 @@
  * Proprietary and confidential
  */
 
-#include <duc/testing.h>
 #include "../../src/lexer/comment-block.h"
 #include "../lexer-test.h"
 
-DUC_TEST(lex_comment_block, works) {
+TEST(lex_comment_block, works) {
   LEX_FE("/**/", "", LEXER_COMMENT_BLOCK);
   LEX_FE("/***/", "*", LEXER_COMMENT_BLOCK);
   LEX_FE("/* */", " ", LEXER_COMMENT_BLOCK);
@@ -20,5 +19,5 @@ DUC_TEST(lex_comment_block, works) {
 }
 
 int main () {
-  DUC_TEST_RUN(lex_comment_block, works);
+  TEST_RUN(lex_comment_block, works);
 }

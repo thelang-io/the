@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/testing.h>
 #include "../../src/lexer/lit-float.h"
 #include "../lexer-test.h"
 
@@ -39,7 +38,7 @@
   LEX_FS(t "e-9", LEXER_LIT_FLOAT); \
   LEX_FS(t "e-308", LEXER_LIT_FLOAT)
 
-DUC_TEST(lex_lit_float, works) {
+TEST(lex_lit_float, works) {
   LEX_LIT_FLOAT_FS("0");
   LEX_LIT_FLOAT_FS("1");
   LEX_LIT_FLOAT_FS("9");
@@ -73,14 +72,14 @@ DUC_TEST(lex_lit_float, works) {
   LEX_LIT_FLOAT_F("9223372036854775807.9223372036854775807");
 }
 
-DUC_TEST(lexer_lit_float, is_char_special) {
-  DUC_ASSERT_TRUE(lexer_lit_float_is_char_special('E'));
-  DUC_ASSERT_TRUE(lexer_lit_float_is_char_special('e'));
-  DUC_ASSERT_TRUE(lexer_lit_float_is_char_special('.'));
-  DUC_ASSERT_FALSE(lexer_lit_float_is_char_special('@'));
+TEST(lexer_lit_float, is_char_special) {
+  ASSERT_TRUE(lexer_lit_float_is_char_special('E'));
+  ASSERT_TRUE(lexer_lit_float_is_char_special('e'));
+  ASSERT_TRUE(lexer_lit_float_is_char_special('.'));
+  ASSERT_FALSE(lexer_lit_float_is_char_special('@'));
 }
 
 int main () {
-  DUC_TEST_RUN(lex_lit_float, works);
-  DUC_TEST_RUN(lexer_lit_float, is_char_special);
+  TEST_RUN(lex_lit_float, works);
+  TEST_RUN(lexer_lit_float, is_char_special);
 }

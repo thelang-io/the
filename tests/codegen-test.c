@@ -5,13 +5,13 @@
  * Proprietary and confidential
  */
 
-#include <duc/testing.h>
 #include "../src/codegen.h"
+#include "testing.h"
 
-DUC_TEST(codegen, test) {
+TEST(codegen, test) {
   // TODO
 }
 
 int main () {
-  DUC_TEST_RUN(codegen, test);
+  TEST_RUN(codegen, test);
 }

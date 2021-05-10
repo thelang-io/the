@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/testing.h>
 #include "../../src/lexer/op.h"
 #include "../lexer-test.h"
 
@@ -13,7 +12,7 @@
   LEX_FS(op, tok); \
   LEX_FS(op "=", tok##EQ)
 
-DUC_TEST(lex_op, works) {
+TEST(lex_op, works) {
   LEX_OP_F("&", LEXER_OP_AND);
   LEX_OP_F("&&", LEXER_OP_ANDAND);
   LEX_OP_F("^", LEXER_OP_CARET);
@@ -55,5 +54,5 @@ DUC_TEST(lex_op, works) {
 }
 
 int main () {
-  DUC_TEST_RUN(lex_op, works);
+  TEST_RUN(lex_op, works);
 }
