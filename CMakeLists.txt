@@ -8,9 +8,6 @@
 cmake_minimum_required(VERSION 3.14)
 include(FetchContent)
 
-FetchContent_Declare(libduc GIT_REPOSITORY https://github.com/delasy/libduc.git GIT_TAG v4.7.1)
-FetchContent_MakeAvailable(libduc)
-
 file(
   STRINGS src/version.h VERSION_STRING
   LIMIT_COUNT 1
@@ -69,17 +66,13 @@ set(
 )
 
 add_executable(${PROJECT_NAME} ${sources} src/main.c)
-target_include_directories(${PROJECT_NAME} PRIVATE "${libduc_SOURCE_DIR}/include")
-target_link_libraries(${PROJECT_NAME} PRIVATE duc_a)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(CTEST_MEMORYCHECK_COMMAND valgrind)
   set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes")
-
   include(CTest)
-  add_library(${PROJECT_NAME}-lib_a STATIC ${sources})
-  target_include_directories(${PROJECT_NAME}-lib_a PRIVATE "${libduc_SOURCE_DIR}/include")
-  target_link_libraries(${PROJECT_NAME}-lib_a PRIVATE duc_a)
+
+  add_library(${PROJECT_NAME}-lib SHARED ${sources})
 
   set(
     tests
@@ -119,8 +112,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     endif()
 
     add_executable(${test_name} ${test_files} tests/testing.h)
-    target_include_directories(${test_name} PRIVATE "${libduc_SOURCE_DIR}/include")
-    target_link_libraries(${test_name} PRIVATE duc ${PROJECT_NAME}-lib_a)
-    add_test(${test} ${PROJECT_NAME}-test-${test})
+    target_link_libraries(${test_name} PRIVATE ${PROJECT_NAME}-lib)
+    add_test(${test} ${test_name})
   endforeach ()
 endif ()
