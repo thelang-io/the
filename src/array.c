@@ -26,11 +26,11 @@ bool array_empty (const array_t *arr) {
   return arr->size == 0;
 }
 
-void array_free (array_t *arr, duc_free_cb free_cb) {
+void array_free (array_t *arr, free_cb cb) {
   while (arr->items != NULL) {
     array_item_t *next = arr->items->next;
 
-    free_cb(arr->items->value);
+    cb(arr->items->value);
     free(arr->items);
     arr->items = next;
   }

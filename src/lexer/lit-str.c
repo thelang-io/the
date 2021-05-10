@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lit-char.h"
@@ -18,7 +17,7 @@ bool lex_lit_str (file_t *file, lexer_t *lexer, size_t pos) {
     file_seek(file, pos);
     return false;
   } else if (file_eof(file)) {
-    duc_throw("SyntaxError: Unterminated string literal");
+    throw("SyntaxError: Unterminated string literal");
   }
 
   size_t len = 1;
@@ -45,13 +44,13 @@ void lexer_lit_str_process_ (file_t *file, lexer_t *lexer, size_t *len) {
 
     if (ch == '\\') {
       if (file_eof(file)) {
-        duc_throw("SyntaxError: Unterminated string literal");
+        throw("SyntaxError: Unterminated string literal");
       }
 
       unsigned char ch_esc = file_readchar(file);
 
       if (!lexer_lit_char_is_escape(ch_esc) && ch_esc != '{') {
-        duc_throw("SyntaxError: Illegal character escape");
+        throw("SyntaxError: Illegal character escape");
       }
 
       *len += 2;
@@ -80,7 +79,7 @@ void lexer_lit_str_process_ (file_t *file, lexer_t *lexer, size_t *len) {
     } else if (ch == '"') {
       break;
     } else if (file_eof(file)) {
-      duc_throw("SyntaxError: Unterminated string literal");
+      throw("SyntaxError: Unterminated string literal");
     }
   }
 }

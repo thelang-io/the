@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lit-float.h"
@@ -21,7 +20,7 @@ bool lex_lit_int_hex (file_t *file, lexer_t *lexer, size_t pos) {
 
     if (lexer_lit_int_hex_is_special(ch2)) {
       if (file_eof(file)) {
-        duc_throw("SyntaxError: Invalid hexadecimal literal");
+        throw("SyntaxError: Invalid hexadecimal literal");
       }
 
       is_lit = true;
@@ -54,12 +53,12 @@ bool lex_lit_int_hex (file_t *file, lexer_t *lexer, size_t pos) {
         }
       }
 
-      duc_throw("SyntaxError: Hexadecimal float literal is not supported");
+      throw("SyntaxError: Hexadecimal float literal is not supported");
     } else if (strchr("0123456789ABCDEFabcdef", ch) == NULL) {
       unsigned char ch_prev = lexer->raw[len - 1];
 
       if (len == 2 && (ch_prev == 'X' || ch_prev == 'x')) {
-        duc_throw("SyntaxError: Invalid hexadecimal literal");
+        throw("SyntaxError: Invalid hexadecimal literal");
       } else {
         file_seek(file, bu_pos);
       }

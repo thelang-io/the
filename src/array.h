@@ -8,9 +8,9 @@
 #ifndef SRC_ARRAY_H
 #define SRC_ARRAY_H
 
-#include <duc/common.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include "helpers.h"
 
 typedef struct array_s array_t;
 typedef struct array_item_s array_item_t;
@@ -27,7 +27,7 @@ struct array_item_s {
 
 void *array_at (const array_t *arr, size_t index);
 bool array_empty (const array_t *arr);
-void array_free (array_t *arr, duc_free_cb free_cb);
+void array_free (array_t *arr, free_cb cb);
 size_t array_length (const array_t *arr);
 array_t *array_new ();
 void array_push (array_t *arr, void *value);

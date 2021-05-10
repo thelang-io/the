@@ -22,7 +22,7 @@ ast_t *ast_new (file_t *file) {
     parser_t *parser = parser_new(file);
 
     if (parser->token == PARSER_UNKNOWN) {
-      duc_throw("SyntaxError: Unexpected expression");
+      throw("SyntaxError: Unexpected expression");
     } else if (parser->token == PARSER_WS) {
       parser_free(parser);
       continue;
@@ -38,7 +38,7 @@ ast_t *ast_new (file_t *file) {
       parser_call_expr_t *call_expr = parser->call_expr;
 
       if (memcmp(call_expr->id->lexer->str, "print", 6) != 0) {
-        duc_throw("SyntaxError: Unexpected call expression");
+        throw("SyntaxError: Unexpected call expression");
       }
 
       parser_arglist_t *arglist = call_expr->arglist;
@@ -47,7 +47,7 @@ ast_t *ast_new (file_t *file) {
         parser_expr_t *expr = array_at(arglist->exprs, j);
 
         if (expr->token != PARSER_LITERAL) {
-          duc_throw("SyntaxError: Unexpected call expression argument");
+          throw("SyntaxError: Unexpected call expression argument");
         }
       }
     }

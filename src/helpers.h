@@ -13,6 +13,11 @@
 #define NARG(...) NARG_(__VA_ARGS__, NUMBERS_1024_)
 #define NARG_(...) NARG1024_(__VA_ARGS__)
 
+typedef void (*free_cb) (void *);
+
+void free_simple (void *it);
+void throw (const char *message);
+
 #define NUMBERS_1024_ 1024, 1023, 1022, 1021, 1020, 1019, 1018, 1017, \
   1016, 1015, 1014, 1013, 1012, 1011, 1010, 1009, 1008, 1007, 1006, 1005, \
   1004, 1003, 1002, 1001, 1000, 999, 998, 997, 996, 995, 994, 993, 992, 991, \

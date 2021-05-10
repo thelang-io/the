@@ -5,11 +5,11 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include "fs.h"
+#include "helpers.h"
 
 bool file_eof (const file_t *file) {
   return file->eof;
@@ -147,7 +147,7 @@ char *readfile (const char *filepath) {
   char *result = malloc(size + 1);
 
   if (fread(result, 1, size, fp) != size) {
-    duc_throw("Failed to read from file");
+    throw("Failed to read from file");
   }
 
   result[size] = '\0';

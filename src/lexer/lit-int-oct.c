@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lit-float.h"
@@ -21,12 +20,12 @@ bool lex_lit_int_oct (file_t *file, lexer_t *lexer, size_t pos) {
 
     if (lexer_lit_int_oct_is_special(ch2)) {
       if ((ch2 == 'O' || ch2 == 'o') && file_eof(file)) {
-        duc_throw("SyntaxError: Invalid octal literal");
+        throw("SyntaxError: Invalid octal literal");
       }
 
       is_lit = true;
     } else if (strchr("89", ch2) != NULL) {
-      duc_throw("SyntaxError: Invalid octal literal");
+      throw("SyntaxError: Invalid octal literal");
     }
   }
 
@@ -47,7 +46,7 @@ bool lex_lit_int_oct (file_t *file, lexer_t *lexer, size_t pos) {
     unsigned char ch = file_readchar(file);
 
     if (strchr("89", ch) != NULL) {
-      duc_throw("SyntaxError: Invalid octal literal");
+      throw("SyntaxError: Invalid octal literal");
     } else if (lexer_lit_float_is_char_special(ch)) {
       if (ch == '.' && !file_eof(file)) {
         unsigned char ch_next = file_readchar(file);
@@ -58,12 +57,12 @@ bool lex_lit_int_oct (file_t *file, lexer_t *lexer, size_t pos) {
         }
       }
 
-      duc_throw("SyntaxError: Octal float literal is not supported");
+      throw("SyntaxError: Octal float literal is not supported");
     } else if (strchr("01234567", ch) == NULL) {
       unsigned char ch_prev = lexer->raw[len - 1];
 
       if (len == 2 && (ch_prev == 'O' || ch_prev == 'o')) {
-        duc_throw("SyntaxError: Invalid octal literal");
+        throw("SyntaxError: Invalid octal literal");
       } else {
         file_seek(file, bu_pos);
       }

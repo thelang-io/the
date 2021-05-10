@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lit-char.h"
@@ -17,7 +16,7 @@ bool lex_lit_char (file_t *file, lexer_t *lexer, size_t pos) {
     file_seek(file, pos);
     return false;
   } else if (file_eof(file)) {
-    duc_throw("SyntaxError: Unterminated character literal");
+    throw("SyntaxError: Unterminated character literal");
   }
 
   size_t len = 1;
@@ -43,16 +42,16 @@ void lexer_lit_char_process_ (file_t *file, lexer_t *lexer, size_t *len) {
   unsigned char ch2 = file_readchar(file);
 
   if (ch2 == '\'') {
-    duc_throw("SyntaxError: Empty character literal");
+    throw("SyntaxError: Empty character literal");
   } else if (ch2 == '\\') {
     if (file_eof(file)) {
-      duc_throw("SyntaxError: Unterminated character literal");
+      throw("SyntaxError: Unterminated character literal");
     }
 
     unsigned char ch_esc = file_readchar(file);
 
     if (!lexer_lit_char_is_escape(ch_esc)) {
-      duc_throw("SyntaxError: Illegal character escape");
+      throw("SyntaxError: Illegal character escape");
     }
 
     *len += 2;
@@ -68,13 +67,13 @@ void lexer_lit_char_process_ (file_t *file, lexer_t *lexer, size_t *len) {
   }
 
   if (file_eof(file)) {
-    duc_throw("SyntaxError: Unterminated character literal");
+    throw("SyntaxError: Unterminated character literal");
   }
 
   unsigned char ch3 = file_readchar(file);
 
   if (ch3 != '\'') {
-    duc_throw("SyntaxError: Too many characters in a character literal");
+    throw("SyntaxError: Too many characters in a character literal");
   }
 
   *len += 1;

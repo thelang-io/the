@@ -12,7 +12,7 @@
 
 int main (int argc, char *argv[]) {
   if (argc < 2) {
-    duc_throw("Error: Action is not set");
+    throw("Error: Action is not set");
   } else if (strcmp(argv[1], "lex") == 0) {
     file_t *file = file_new(argv[2], FILE_READ);
 
@@ -20,7 +20,7 @@ int main (int argc, char *argv[]) {
       lexer_t *lexer = lexer_new(file);
 
       if (lexer->token == LEXER_UNKNOWN) {
-        duc_throw("SyntaxError: Unexpected token");
+        throw("SyntaxError: Unexpected token");
       } else if (lexer->token != LEXER_WS) {
         printf("%s: %s\n", lexer_token_str[lexer->token], lexer->raw);
       }
@@ -37,7 +37,7 @@ int main (int argc, char *argv[]) {
   binary_t *bin = codegen(ast);
 
   if (bin == NULL) {
-    duc_throw("Error: Something went wrong");
+    throw("Error: Something went wrong");
   }
 
   binary_write(bin, "a.out");

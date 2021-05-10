@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lit-float.h"
@@ -21,7 +20,7 @@ bool lex_lit_int_bin (file_t *file, lexer_t *lexer, size_t pos) {
 
     if (lexer_lit_int_bin_is_special(ch2)) {
       if (file_eof(file)) {
-        duc_throw("SyntaxError: Invalid binary literal");
+        throw("SyntaxError: Invalid binary literal");
       }
 
       is_lit = true;
@@ -45,7 +44,7 @@ bool lex_lit_int_bin (file_t *file, lexer_t *lexer, size_t pos) {
     unsigned char ch = file_readchar(file);
 
     if (strchr("23456789", ch) != NULL) {
-      duc_throw("SyntaxError: Invalid digit for binary literal");
+      throw("SyntaxError: Invalid digit for binary literal");
     } else if (lexer_lit_float_is_char_special(ch)) {
       if (ch == '.' && !file_eof(file)) {
         unsigned char ch_next = file_readchar(file);
@@ -56,10 +55,10 @@ bool lex_lit_int_bin (file_t *file, lexer_t *lexer, size_t pos) {
         }
       }
 
-      duc_throw("SyntaxError: Binary float literal is not supported");
+      throw("SyntaxError: Binary float literal is not supported");
     } else if (strchr("01", ch) == NULL) {
       if (len == 2) {
-        duc_throw("SyntaxError: Invalid binary literal");
+        throw("SyntaxError: Invalid binary literal");
       } else {
         file_seek(file, bu_pos);
         break;

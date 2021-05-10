@@ -28,7 +28,7 @@ TEST(array, at) {
   ASSERT_EQ(array_at(arr, 3), NULL);
   ASSERT_EQ(array_at(arr, 4), NULL);
 
-  array_free(arr, duc_free_simple);
+  array_free(arr, free_simple);
 }
 
 TEST(array, empty_and_length) {
@@ -45,7 +45,7 @@ TEST(array, empty_and_length) {
   ASSERT_FALSE(array_empty(arr));
   ASSERT_EQ(array_length(arr), 2);
 
-  array_free(arr, duc_free_simple);
+  array_free(arr, free_simple);
 }
 
 TEST(array, new_and_free) {
@@ -55,8 +55,8 @@ TEST(array, new_and_free) {
   array_push(arr, NULL);
   array_push(arr, NULL);
   array_push(arr, NULL);
-  array_free(arr, duc_free_simple);
-  array_free(array_new(), duc_free_simple);
+  array_free(arr, free_simple);
+  array_free(array_new(), free_simple);
 }
 
 TEST(array, push_and_shift) {
@@ -75,7 +75,7 @@ TEST(array, push_and_shift) {
   ASSERT_EQ(array_shift(arr), NULL);
   ASSERT_EQ(array_length(arr), 0);
 
-  array_free(arr, duc_free_simple);
+  array_free(arr, free_simple);
 }
 
 int main () {

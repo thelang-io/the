@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "comment-block.h"
@@ -37,7 +36,7 @@ bool lex_comment_block (file_t *file, lexer_t *lexer, size_t pos) {
 
   while (true) {
     if (file_eof(file)) {
-      duc_throw("SyntaxError: Unterminated block comment");
+      throw("SyntaxError: Unterminated block comment");
     }
 
     unsigned char ch = file_readchar(file);

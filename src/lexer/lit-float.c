@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <duc/common.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lit-float.h"
@@ -123,20 +122,20 @@ bool lex_lit_float (file_t *file, lexer_t *lexer, size_t pos) {
 
   if (with_exp) {
     if (file_eof(file)) {
-      duc_throw("SyntaxError: Unexpected end of file, expected float literal exponent");
+      throw("SyntaxError: Unexpected end of file, expected float literal exponent");
     }
 
     unsigned char ch_op = file_readchar(file);
 
     if (ch_op == '+' || ch_op == '-') {
       if (file_eof(file)) {
-        duc_throw("SyntaxError: Unexpected end of file, expected float literal exponent");
+        throw("SyntaxError: Unexpected end of file, expected float literal exponent");
       }
 
       unsigned char ch_dec = file_readchar(file);
 
       if (strchr("0123456789", ch_dec) == NULL) {
-        duc_throw("SyntaxError: Unexpected token, expected float literal exponent");
+        throw("SyntaxError: Unexpected token, expected float literal exponent");
       }
 
       len += 2;
@@ -145,7 +144,7 @@ bool lex_lit_float (file_t *file, lexer_t *lexer, size_t pos) {
       lexer->raw[len - 1] = ch_dec;
       lexer->raw[len] = '\0';
     } else if (strchr("0123456789", ch_op) == NULL) {
-      duc_throw("SyntaxError: Unexpected token, expected float literal exponent");
+      throw("SyntaxError: Unexpected token, expected float literal exponent");
     } else {
       lexer->raw = realloc(lexer->raw, ++len + 1);
       lexer->raw[len - 1] = ch_op;

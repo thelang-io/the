@@ -169,10 +169,10 @@ void *cgm_cmd_ (uint32_t id, size_t size) {
 }
 
 void cgm_free_ (cgm_t *cgm) {
-  array_free(cgm->cmds, duc_free_simple);
+  array_free(cgm->cmds, free_simple);
   binary_free(cgm->sec_text);
   binary_free(cgm->strs);
-  array_free(cgm->syms, duc_free_simple);
+  array_free(cgm->syms, free_simple);
   free(cgm);
 }
 

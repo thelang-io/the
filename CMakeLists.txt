@@ -62,6 +62,7 @@ set(
   src/codegen.c src/codegen.h
   src/codegen-macos.c src/codegen-macos.h
   src/fs.c src/fs.h
+  src/helpers.c src/helpers.h
   src/lexer.c src/lexer.h
   src/parser.c src/parser.h
   src/version.h
