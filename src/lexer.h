@@ -9,7 +9,7 @@
 #define SRC_LEXER_H
 
 #include <duc/fs.h>
-#include <duc/helpers.h>
+#include "helpers.h"
 
 #define FOREACH_LEXER_TOKEN(f) \
   f(COMMENT_BLOCK) \

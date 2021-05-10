@@ -10,7 +10,7 @@
 #include "codegen-macos.h"
 #include "version.h"
 
-binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
+binary_t *codegen_macos (__attribute__((unused)) const ast_t *ast) {
   cgm_t *cgm = cgm_new_();
 
   cgm_init_header_(cgm);
@@ -75,10 +75,10 @@ void cgm_calc_cmd_dyld_info_ (cgm_t *cgm) {
   cgm->cmd_dyld_info->export_size = sizeof(cgm_dyld_info_export_t);
 }
 
-void cgm_calc_cmd_dylib_ (DUC_UNUSED cgm_t *cgm) {
+void cgm_calc_cmd_dylib_ (__attribute__((unused)) cgm_t *cgm) {
 }
 
-void cgm_calc_cmd_dylinker_ (DUC_UNUSED cgm_t *cgm) {
+void cgm_calc_cmd_dylinker_ (__attribute__((unused)) cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm) {
@@ -124,7 +124,7 @@ void cgm_calc_cmd_seg_text_ (cgm_t *cgm) {
   cgm->cmd_seg_text_text->file_offset = (uint32_t) (cgm->cmd_seg_text->file_size - cgm->cmd_seg_text_text->vm_size);
 }
 
-void cgm_calc_cmd_src_ver_ (DUC_UNUSED cgm_t *cgm) {
+void cgm_calc_cmd_src_ver_ (__attribute__((unused)) cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_symtab_ (cgm_t *cgm) {
@@ -135,10 +135,10 @@ void cgm_calc_cmd_symtab_ (cgm_t *cgm) {
   cgm->cmd_symtab->str_size = (uint32_t) binary_size(cgm->strs);
 }
 
-void cgm_calc_cmd_ver_min_macos_ (DUC_UNUSED cgm_t *cgm) {
+void cgm_calc_cmd_ver_min_macos_ (__attribute__((unused)) cgm_t *cgm) {
 }
 
-void cgm_calc_cmd_uuid_ (DUC_UNUSED cgm_t *cgm) {
+void cgm_calc_cmd_uuid_ (__attribute__((unused)) cgm_t *cgm) {
 }
 
 void cgm_calc_dyld_info_export_ (cgm_t *cgm) {
@@ -153,7 +153,7 @@ void cgm_calc_header_ (cgm_t *cgm) {
   }
 }
 
-void cgm_calc_sects_ (DUC_UNUSED cgm_t *cgm) {
+void cgm_calc_sects_ (__attribute__((unused)) cgm_t *cgm) {
 }
 
 void cgm_calc_tables_ (cgm_t *cgm) {

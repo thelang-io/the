@@ -20,7 +20,7 @@
 #include "lexer/ws.h"
 
 const char *lexer_token_str[] = {
-  FOREACH_LEXER_TOKEN(DUC_GEN_ENUM_STR)
+  FOREACH_LEXER_TOKEN(GEN_ENUM_STR)
 };
 
 void lexer_free (lexer_t *lexer) {

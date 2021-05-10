@@ -8,35 +8,35 @@
 #ifndef SRC_BINARY_H
 #define SRC_BINARY_H
 
-#include <duc/helpers.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "helpers.h"
 
 #define binary_append_int8(binary, ...) \
-  binary_append_int8_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_int8_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define binary_append_int16(binary, ...) \
-  binary_append_int16_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_int16_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define binary_append_int32(binary, ...) \
-  binary_append_int32_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_int32_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define binary_append_int64(binary, ...) \
-  binary_append_int64_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_int64_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define binary_append_uint8(binary, ...) \
-  binary_append_uint8_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_uint8_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define binary_append_uint16(binary, ...) \
-  binary_append_uint16_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_uint16_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define binary_append_uint32(binary, ...) \
-  binary_append_uint32_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_uint32_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define binary_append_uint64(binary, ...) \
-  binary_append_uint64_(binary, DUC_NARG(__VA_ARGS__), __VA_ARGS__)
+  binary_append_uint64_(binary, NARG(__VA_ARGS__), __VA_ARGS__)
 
 typedef struct binary_s binary_t;
 
