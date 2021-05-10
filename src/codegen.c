@@ -8,6 +8,6 @@
 #include "codegen.h"
 #include "codegen-macos.h"
 
-duc_binary_t *codegen (const ast_t *ast) {
+binary_t *codegen (const ast_t *ast) {
   return codegen_macos(ast);
 }

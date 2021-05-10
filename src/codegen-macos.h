@@ -8,8 +8,8 @@
 #ifndef SRC_CODEGEN_MACOS_H
 #define SRC_CODEGEN_MACOS_H
 
-#include <duc/binary.h>
 #include "ast.h"
+#include "binary.h"
 
 #define CGM_CMD_REQ_DYLD 0x80000000
 #define CGM_CMD_SYMTAB 0x02
@@ -258,12 +258,12 @@ struct cgm_s {
   array_t *cmds;
   cgm_dyld_info_export_t dyld_info_export;
   cgm_header_t header;
-  duc_binary_t *sec_text;
-  duc_binary_t *strs;
+  binary_t *sec_text;
+  binary_t *strs;
   array_t *syms;
 };
 
-duc_binary_t *codegen_macos (const ast_t *ast);
+binary_t *codegen_macos (const ast_t *ast);
 
 void cgm_calc_cmd_dyld_info_ (cgm_t *cgm);
 void cgm_calc_cmd_dylib_ (cgm_t *cgm);

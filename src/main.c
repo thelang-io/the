@@ -34,16 +34,16 @@ int main (int argc, char *argv[]) {
 
   duc_file_t *file = duc_file_new(argv[1], DUC_FILE_READ);
   ast_t *ast = ast_new(file);
-  duc_binary_t *bin = codegen(ast);
+  binary_t *bin = codegen(ast);
 
   if (bin == NULL) {
     duc_throw("Error: Something went wrong");
   }
 
-  duc_binary_write(bin, "a.out");
+  binary_write(bin, "a.out");
   chmod("a.out", 0755);
 
-  duc_binary_free(bin);
+  binary_free(bin);
   ast_free(ast);
   duc_file_free(file);
 

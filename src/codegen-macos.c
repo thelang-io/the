@@ -10,7 +10,7 @@
 #include "codegen-macos.h"
 #include "version.h"
 
-duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
+binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   cgm_t *cgm = cgm_new_();
 
   cgm_init_header_(cgm);
@@ -47,24 +47,24 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   cgm_calc_tables_(cgm);
   cgm_calc_sects_(cgm);
 
-  duc_binary_t *bin = duc_binary_new();
-  duc_binary_append_data(bin, &cgm->header, sizeof(cgm_header_t));
+  binary_t *bin = binary_new();
+  binary_append_data(bin, &cgm->header, sizeof(cgm_header_t));
 
   for (size_t i = 0, size = array_length(cgm->cmds); i < size; i++) {
     cgm_cmd_t *cmd = array_at(cgm->cmds, i);
-    duc_binary_append_data(bin, cmd, cmd->size);
+    binary_append_data(bin, cmd, cmd->size);
   }
 
-  duc_binary_append_times(bin, 0x00, cgm->cmd_seg_text_text->file_offset - duc_binary_size(bin));
-  duc_binary_append_binary(bin, cgm->sec_text);
-  duc_binary_append_data(bin, &cgm->dyld_info_export, sizeof(cgm_dyld_info_export_t));
+  binary_append_times(bin, 0x00, cgm->cmd_seg_text_text->file_offset - binary_size(bin));
+  binary_append_binary(bin, cgm->sec_text);
+  binary_append_data(bin, &cgm->dyld_info_export, sizeof(cgm_dyld_info_export_t));
 
   for (size_t i = 0, size = array_length(cgm->syms); i < size; i++) {
     cgm_sym_t *sym = array_at(cgm->syms, i);
-    duc_binary_append_data(bin, sym, sizeof(cgm_sym_t));
+    binary_append_data(bin, sym, sizeof(cgm_sym_t));
   }
 
-  duc_binary_append_binary(bin, cgm->strs);
+  binary_append_binary(bin, cgm->strs);
   cgm_free_(cgm);
 
   return bin;
@@ -95,7 +95,7 @@ void cgm_calc_cmd_seg_linkedit_ (cgm_t *cgm) {
   cgm->cmd_seg_linkedit->file_offset = cgm->cmd_seg_text->file_offset + cgm->cmd_seg_text->file_size;
   cgm->cmd_seg_linkedit->file_size = sizeof(cgm_dyld_info_export_t) +
     array_length(cgm->syms) * sizeof(cgm_sym_t) +
-    duc_binary_size(cgm->strs);
+    binary_size(cgm->strs);
   cgm->cmd_seg_linkedit->vm_size = ((cgm->cmd_seg_linkedit->file_size / 0x1000) + 1) * 0x1000;
 }
 
@@ -107,7 +107,7 @@ void cgm_calc_cmd_seg_pagezero_ (cgm_t *cgm) {
 }
 
 void cgm_calc_cmd_seg_text_ (cgm_t *cgm) {
-  cgm->cmd_seg_text_text->vm_size = duc_binary_size(cgm->sec_text);
+  cgm->cmd_seg_text_text->vm_size = binary_size(cgm->sec_text);
 
   cgm->cmd_seg_text->vm_address = cgm->cmd_seg_pagezero->vm_address + cgm->cmd_seg_pagezero->vm_size;
   cgm->cmd_seg_text->file_offset = cgm->cmd_seg_pagezero->file_offset + cgm->cmd_seg_pagezero->file_size;
@@ -132,7 +132,7 @@ void cgm_calc_cmd_symtab_ (cgm_t *cgm) {
   cgm->cmd_symtab->sym_count = (uint32_t) array_length(cgm->syms);
   cgm->cmd_symtab->str_offset = cgm->cmd_symtab->sym_offset +
     cgm->cmd_symtab->sym_count * (uint32_t) sizeof(cgm_sym_t);
-  cgm->cmd_symtab->str_size = (uint32_t) duc_binary_size(cgm->strs);
+  cgm->cmd_symtab->str_size = (uint32_t) binary_size(cgm->strs);
 }
 
 void cgm_calc_cmd_ver_min_macos_ (DUC_UNUSED cgm_t *cgm) {
@@ -170,8 +170,8 @@ void *cgm_cmd_ (uint32_t id, size_t size) {
 
 void cgm_free_ (cgm_t *cgm) {
   array_free(cgm->cmds, duc_free_simple);
-  duc_binary_free(cgm->sec_text);
-  duc_binary_free(cgm->strs);
+  binary_free(cgm->sec_text);
+  binary_free(cgm->strs);
   array_free(cgm->syms, duc_free_simple);
   free(cgm);
 }
@@ -354,23 +354,23 @@ void cgm_init_header_ (cgm_t *cgm) {
 }
 
 void cgm_init_sects_ (cgm_t *cgm) {
-  duc_binary_append_uint16(cgm->sec_text, CGM_INSTR_XORL_EAX_EAX);
-  duc_binary_append_uint8(cgm->sec_text, CGM_INSTR_RETQ);
+  binary_append_uint16(cgm->sec_text, CGM_INSTR_XORL_EAX_EAX);
+  binary_append_uint8(cgm->sec_text, CGM_INSTR_RETQ);
 }
 
 void cgm_init_tables_ (cgm_t *cgm) {
-  duc_binary_append_string(cgm->strs, " ");
+  binary_append_string(cgm->strs, " ");
 
   cgm_sym_t *sym0 = malloc(sizeof(cgm_sym_t));
-  sym0->strtab_idx = (uint32_t) duc_binary_size(cgm->strs);
+  sym0->strtab_idx = (uint32_t) binary_size(cgm->strs);
   sym0->type = CGM_SYM_TYPE_EXT | CGM_SYM_TYPE_SECT;
   sym0->sect_idx = 1;
   sym0->description = 0;
   sym0->value = 0;
   array_push(cgm->syms, sym0);
 
-  duc_binary_append_string(cgm->strs, "_main");
-  duc_binary_append_times(cgm->strs, 0x00, duc_binary_size(cgm->strs) % 8);
+  binary_append_string(cgm->strs, "_main");
+  binary_append_times(cgm->strs, 0x00, binary_size(cgm->strs) % 8);
 }
 
 cgm_t *cgm_new_ () {
@@ -390,8 +390,8 @@ cgm_t *cgm_new_ () {
   cgm->cmd_ver_min_macos = NULL;
   cgm->cmd_uuid = NULL;
   cgm->cmds = array_new();
-  cgm->sec_text = duc_binary_new();
-  cgm->strs = duc_binary_new();
+  cgm->sec_text = binary_new();
+  cgm->strs = binary_new();
   cgm->syms = array_new();
 
   return cgm;

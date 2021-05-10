@@ -8,9 +8,9 @@
 #ifndef SRC_CODEGEN_H
 #define SRC_CODEGEN_H
 
-#include <duc/binary.h>
 #include "ast.h"
+#include "binary.h"
 
-duc_binary_t *codegen (const ast_t *ast);
+binary_t *codegen (const ast_t *ast);
 
 #endif
