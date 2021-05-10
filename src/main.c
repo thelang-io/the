@@ -7,12 +7,20 @@
 
 #include <sys/stat.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "codegen.h"
+#include "version.h"
 
 int main (int argc, char *argv[]) {
   if (argc < 2) {
     throw("Error: Action is not set");
+  } else if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-v") == 0) {
+    puts("The Programming Language");
+    puts("Version " VERSION " (" VERSION_NAME ")");
+    puts("Copyright (c) Aaron Delasy");
+
+    return EXIT_SUCCESS;
   } else if (strcmp(argv[1], "lex") == 0) {
     file_t *file = file_new(argv[2], FILE_READ);
 
@@ -29,7 +37,7 @@ int main (int argc, char *argv[]) {
     }
 
     file_free(file);
-    return 0;
+    return EXIT_SUCCESS;
   }
 
   file_t *file = file_new(argv[1], FILE_READ);
@@ -47,5 +55,5 @@ int main (int argc, char *argv[]) {
   ast_free(ast);
   file_free(file);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
