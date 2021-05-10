@@ -5,9 +5,9 @@
  * Proprietary and confidential
  */
 
-#include <duc/fs.h>
 #include <stdlib.h>
 #include "../src/binary.h"
+#include "../src/fs.h"
 #include "testing.h"
 
 TEST(binary, append_at_size) {
@@ -317,12 +317,12 @@ TEST(binary, write) {
   binary_write(binary, "../test.txt");
   binary_free(binary);
 
-  ASSERT_TRUE(duc_file_exists("../test.txt"));
-  char *content = duc_readfile("../test.txt");
+  ASSERT_TRUE(file_exists("../test.txt"));
+  char *content = readfile("../test.txt");
 
   ASSERT_STREQ(content, string);
   free(content);
-  duc_file_remove("../test.txt");
+  file_remove("../test.txt");
 }
 
 int main () {

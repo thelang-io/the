@@ -17,6 +17,6 @@ struct ast_s {
 };
 
 void ast_free (ast_t *ast);
-ast_t *ast_new (duc_file_t *file);
+ast_t *ast_new (file_t *file);
 
 #endif

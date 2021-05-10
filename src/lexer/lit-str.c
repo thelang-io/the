@@ -11,13 +11,13 @@
 #include "lit-char.h"
 #include "lit-str.h"
 
-bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch1 = duc_file_readchar(file);
+bool lex_lit_str (file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch1 = file_readchar(file);
 
   if (ch1 != '"') {
-    duc_file_seek(file, pos);
+    file_seek(file, pos);
     return false;
-  } else if (duc_file_eof(file)) {
+  } else if (file_eof(file)) {
     duc_throw("SyntaxError: Unterminated string literal");
   }
 
@@ -36,19 +36,19 @@ bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos) {
   return true;
 }
 
-void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
+void lexer_lit_str_process_ (file_t *file, lexer_t *lexer, size_t *len) {
   size_t blocks = 0;
 
   while (true) {
-    unsigned char ch = duc_file_readchar(file);
+    unsigned char ch = file_readchar(file);
     bool is_processed = false;
 
     if (ch == '\\') {
-      if (duc_file_eof(file)) {
+      if (file_eof(file)) {
         duc_throw("SyntaxError: Unterminated string literal");
       }
 
-      unsigned char ch_esc = duc_file_readchar(file);
+      unsigned char ch_esc = file_readchar(file);
 
       if (!lexer_lit_char_is_escape(ch_esc) && ch_esc != '{') {
         duc_throw("SyntaxError: Illegal character escape");
@@ -79,7 +79,7 @@ void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
       lexer_lit_str_process_(file, lexer, len);
     } else if (ch == '"') {
       break;
-    } else if (duc_file_eof(file)) {
+    } else if (file_eof(file)) {
       duc_throw("SyntaxError: Unterminated string literal");
     }
   }

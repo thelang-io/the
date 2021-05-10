@@ -39,9 +39,9 @@ void lexer_free_cb (void *it) {
   lexer_free((lexer_t *) it);
 }
 
-lexer_t *lexer_new (duc_file_t *file) {
+lexer_t *lexer_new (file_t *file) {
   lexer_t *lexer = malloc(sizeof(lexer_t));
-  size_t pos = duc_file_position(file);
+  size_t pos = file_position(file);
 
   if (
     !lex_ws(file, lexer, pos) &&

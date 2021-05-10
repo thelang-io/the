@@ -9,8 +9,8 @@
 #include <string.h>
 #include "op.h"
 
-bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch1 = duc_file_readchar(file);
+bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch1 = file_readchar(file);
   unsigned char ch2;
   unsigned char ch3;
   size_t len = 1;
@@ -33,22 +33,22 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '.': {
-      if (!duc_file_eof(file)) {
-        size_t bu_pos2 = duc_file_position(file);
-        ch2 = duc_file_readchar(file);
+      if (!file_eof(file)) {
+        size_t bu_pos2 = file_position(file);
+        ch2 = file_readchar(file);
 
         if (strchr("0123456789", ch2) != NULL) {
-          duc_file_seek(file, pos);
+          file_seek(file, pos);
           return false;
         } else if (ch2 != '.') {
-          duc_file_seek(file, bu_pos2);
+          file_seek(file, bu_pos2);
           lexer->token = LEXER_OP_DOT;
-        } else if (!duc_file_eof(file)) {
-          size_t bu_pos3 = duc_file_position(file);
-          ch3 = duc_file_readchar(file);
+        } else if (!file_eof(file)) {
+          size_t bu_pos3 = file_position(file);
+          ch3 = file_readchar(file);
 
           if (ch3 != '.' && ch3 != '=') {
-            duc_file_seek(file, bu_pos3);
+            file_seek(file, bu_pos3);
             lexer->token = LEXER_OP_DOTDOT;
             len += 1;
           } else if (ch3 == '=') {
@@ -113,22 +113,22 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '?': {
-      if (!duc_file_eof(file)) {
-        size_t bu_pos2 = duc_file_position(file);
-        ch2 = duc_file_readchar(file);
+      if (!file_eof(file)) {
+        size_t bu_pos2 = file_position(file);
+        ch2 = file_readchar(file);
 
         if (ch2 != '?' && ch2 != '.') {
-          duc_file_seek(file, bu_pos2);
+          file_seek(file, bu_pos2);
           lexer->token = LEXER_OP_QN;
         } else if (ch2 == '.') {
           lexer->token = LEXER_OP_QNDOT;
           len += 1;
-        } else if (!duc_file_eof(file)) {
-          size_t bu_pos3 = duc_file_position(file);
-          ch3 = duc_file_readchar(file);
+        } else if (!file_eof(file)) {
+          size_t bu_pos3 = file_position(file);
+          ch3 = file_readchar(file);
 
           if (ch3 != '=') {
-            duc_file_seek(file, bu_pos3);
+            file_seek(file, bu_pos3);
             lexer->token = LEXER_OP_QNQN;
             len += 1;
           } else {
@@ -162,15 +162,15 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '/': {
-      if (!duc_file_eof(file)) {
-        size_t bu_pos = duc_file_position(file);
-        ch2 = duc_file_readchar(file);
+      if (!file_eof(file)) {
+        size_t bu_pos = file_position(file);
+        ch2 = file_readchar(file);
 
         if (ch2 == '/' || ch2 == '*') {
-          duc_file_seek(file, pos);
+          file_seek(file, pos);
           return false;
         } else if (ch2 != '=') {
-          duc_file_seek(file, bu_pos);
+          file_seek(file, bu_pos);
           lexer->token = LEXER_OP_SLASH;
         } else {
           lexer->token = LEXER_OP_SLASHEQ;
@@ -191,7 +191,7 @@ bool lex_op (duc_file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     default: {
-      duc_file_seek(file, pos);
+      file_seek(file, pos);
       return false;
     }
   }

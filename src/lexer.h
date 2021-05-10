@@ -8,7 +8,7 @@
 #ifndef SRC_LEXER_H
 #define SRC_LEXER_H
 
-#include <duc/fs.h>
+#include "fs.h"
 #include "helpers.h"
 
 #define FOREACH_LEXER_TOKEN(f) \
@@ -149,6 +149,6 @@ extern const char *lexer_token_str[];
 
 void lexer_free (lexer_t *lexer);
 void lexer_free_cb (void *it);
-lexer_t *lexer_new (duc_file_t *file);
+lexer_t *lexer_new (file_t *file);
 
 #endif

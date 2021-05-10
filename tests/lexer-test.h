@@ -11,14 +11,14 @@
 #include "testing.h"
 
 #define LEX_F(text, body) \
-  do { duc_writefile("../test.txt", text); \
-  duc_file_t *file = duc_file_new("../test.txt", DUC_FILE_READ); \
+  do { writefile("../test.txt", text); \
+  file_t *file = file_new("../test.txt", FILE_READ); \
   lexer_t *lexer = lexer_new(file); \
   printf("tok: %s, raw: %s, str: %s\n", lexer_token_str[lexer->token], lexer->raw, lexer->str); \
   body \
   lexer_free(lexer); \
-  duc_file_free(file); \
-  duc_file_remove("../test.txt"); } while (0)
+  file_free(file); \
+  file_remove("../test.txt"); } while (0)
 
 #define LEX_FE(raw_text, str_text, tok) \
   LEX_F(raw_text, { \

@@ -10,16 +10,16 @@
 #include <string.h>
 #include "lit-float.h"
 
-bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch1 = duc_file_readchar(file);
+bool lex_lit_float (file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch1 = file_readchar(file);
   size_t len = 1;
   bool with_exp = false;
 
-  if (ch1 == '.' && !duc_file_eof(file)) {
-    unsigned char ch2 = duc_file_readchar(file);
+  if (ch1 == '.' && !file_eof(file)) {
+    unsigned char ch2 = file_readchar(file);
 
     if (strchr("0123456789", ch2) == NULL) {
-      duc_file_seek(file, pos);
+      file_seek(file, pos);
       return false;
     }
 
@@ -28,25 +28,25 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw[len - 1] = ch2;
     lexer->raw[len] = '\0';
     lexer->token = LEXER_LIT_FLOAT;
-  } else if (ch1 == '0' && !duc_file_eof(file)) {
-    unsigned char ch2 = duc_file_readchar(file);
+  } else if (ch1 == '0' && !file_eof(file)) {
+    unsigned char ch2 = file_readchar(file);
 
     if (ch2 == '.') {
-      if (!duc_file_eof(file)) {
-        size_t bu_pos = duc_file_position(file);
-        unsigned char ch_next = duc_file_readchar(file);
+      if (!file_eof(file)) {
+        size_t bu_pos = file_position(file);
+        unsigned char ch_next = file_readchar(file);
 
         if (ch_next == '.') {
-          duc_file_seek(file, pos);
+          file_seek(file, pos);
           return false;
         }
 
-        duc_file_seek(file, bu_pos);
+        file_seek(file, bu_pos);
       }
     } else if (ch2 == 'E' || ch2 == 'e') {
       with_exp = true;
     } else {
-      duc_file_seek(file, pos);
+      file_seek(file, pos);
       return false;
     }
 
@@ -55,39 +55,39 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw[len - 1] = ch2;
     lexer->raw[len] = '\0';
     lexer->token = LEXER_LIT_FLOAT;
-  } else if (strchr("123456789", ch1) != NULL && !duc_file_eof(file)) {
+  } else if (strchr("123456789", ch1) != NULL && !file_eof(file)) {
     unsigned char *raw = malloc(len + 1);
     raw[len - 1] = ch1;
     raw[len] = '\0';
 
     while (true) {
-      unsigned char ch = duc_file_readchar(file);
+      unsigned char ch = file_readchar(file);
 
       raw = realloc(raw, ++len + 1);
       raw[len - 1] = ch;
       raw[len] = '\0';
 
       if (ch == '.') {
-        if (!duc_file_eof(file)) {
-          size_t bu_pos = duc_file_position(file);
-          unsigned char ch_next = duc_file_readchar(file);
+        if (!file_eof(file)) {
+          size_t bu_pos = file_position(file);
+          unsigned char ch_next = file_readchar(file);
 
           if (ch_next == '.') {
             free(raw);
-            duc_file_seek(file, pos);
+            file_seek(file, pos);
             return false;
           }
 
-          duc_file_seek(file, bu_pos);
+          file_seek(file, bu_pos);
         }
 
         break;
       } else if (ch == 'E' || ch == 'e') {
         with_exp = true;
         break;
-      } else if (strchr("123456789", ch1) == NULL || duc_file_eof(file)) {
+      } else if (strchr("123456789", ch1) == NULL || file_eof(file)) {
         free(raw);
-        duc_file_seek(file, pos);
+        file_seek(file, pos);
         return false;
       }
     }
@@ -95,19 +95,19 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw = raw;
     lexer->token = LEXER_LIT_FLOAT;
   } else {
-    duc_file_seek(file, pos);
+    file_seek(file, pos);
     return false;
   }
 
   if (!with_exp) {
-    while (!duc_file_eof(file)) {
-      size_t bu_pos = duc_file_position(file);
-      unsigned char ch = duc_file_readchar(file);
+    while (!file_eof(file)) {
+      size_t bu_pos = file_position(file);
+      unsigned char ch = file_readchar(file);
 
       if (ch == 'E' || ch == 'e') {
         with_exp = true;
       } else if (strchr("0123456789", ch) == NULL) {
-        duc_file_seek(file, bu_pos);
+        file_seek(file, bu_pos);
         break;
       }
 
@@ -122,18 +122,18 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
   }
 
   if (with_exp) {
-    if (duc_file_eof(file)) {
+    if (file_eof(file)) {
       duc_throw("SyntaxError: Unexpected end of file, expected float literal exponent");
     }
 
-    unsigned char ch_op = duc_file_readchar(file);
+    unsigned char ch_op = file_readchar(file);
 
     if (ch_op == '+' || ch_op == '-') {
-      if (duc_file_eof(file)) {
+      if (file_eof(file)) {
         duc_throw("SyntaxError: Unexpected end of file, expected float literal exponent");
       }
 
-      unsigned char ch_dec = duc_file_readchar(file);
+      unsigned char ch_dec = file_readchar(file);
 
       if (strchr("0123456789", ch_dec) == NULL) {
         duc_throw("SyntaxError: Unexpected token, expected float literal exponent");
@@ -152,12 +152,12 @@ bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos) {
       lexer->raw[len] = '\0';
     }
 
-    while (!duc_file_eof(file)) {
-      size_t bu_pos = duc_file_position(file);
-      unsigned char ch = duc_file_readchar(file);
+    while (!file_eof(file)) {
+      size_t bu_pos = file_position(file);
+      unsigned char ch = file_readchar(file);
 
       if (strchr("0123456789", ch) == NULL) {
-        duc_file_seek(file, bu_pos);
+        file_seek(file, bu_pos);
         break;
       }
 

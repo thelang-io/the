@@ -10,7 +10,7 @@
 
 #include "../lexer.h"
 
-bool lex_lit_str (duc_file_t *file, lexer_t *lexer, size_t pos);
-void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len);
+bool lex_lit_str (file_t *file, lexer_t *lexer, size_t pos);
+void lexer_lit_str_process_ (file_t *file, lexer_t *lexer, size_t *len);
 
 #endif

@@ -9,14 +9,14 @@
 #include "testing.h"
 
 #define AST_F(text, body) \
-  do { duc_writefile("../test.txt", text); \
-  duc_writefile("../test.txt", text); \
-  duc_file_t *file = duc_file_new("../test.txt", DUC_FILE_READ); \
+  do { writefile("../test.txt", text); \
+  writefile("../test.txt", text); \
+  file_t *file = file_new("../test.txt", FILE_READ); \
   ast_t* ast = ast_new(file); \
   body \
   if (ast != NULL) ast_free(ast); \
-  duc_file_free(file); \
-  duc_file_remove("../test.txt"); } while (0)
+  file_free(file); \
+  file_remove("../test.txt"); } while (0)
 
 TEST(ast, new_and_free) {
   AST_F("", {

@@ -9,13 +9,13 @@
 #include <string.h>
 #include "lit-id.h"
 
-bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch = duc_file_readchar(file);
+bool lex_lit_id (file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch = file_readchar(file);
 
   if (lexer_lit_id_is_char_start(ch)) {
     lexer->token = LEXER_LIT_ID;
   } else {
-    duc_file_seek(file, pos);
+    file_seek(file, pos);
     return false;
   }
 
@@ -24,12 +24,12 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len - 1] = ch;
   lexer->raw[len] = '\0';
 
-  while (!duc_file_eof(file)) {
-    size_t bu_pos = duc_file_position(file);
-    ch = duc_file_readchar(file);
+  while (!file_eof(file)) {
+    size_t bu_pos = file_position(file);
+    ch = file_readchar(file);
 
     if (!lexer_lit_id_is_char(ch)) {
-      duc_file_seek(file, bu_pos);
+      file_seek(file, bu_pos);
       break;
     }
 
@@ -44,9 +44,9 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
   switch (len) {
     case 2: {
       if (memcmp(lexer->str, "as", len + 1) == 0) {
-        if (!duc_file_eof(file)) {
-          size_t bu_pos = duc_file_position(file);
-          unsigned char ch_safe = duc_file_readchar(file);
+        if (!file_eof(file)) {
+          size_t bu_pos = file_position(file);
+          unsigned char ch_safe = file_readchar(file);
 
           if (ch_safe == '?') {
             lexer->raw = realloc(lexer->raw, ++len + 1);
@@ -55,7 +55,7 @@ bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos) {
             lexer->raw[len] = lexer->str[len] = '\0';
             lexer->token = LEXER_KW_AS_SAFE;
           } else {
-            duc_file_seek(file, bu_pos);
+            file_seek(file, bu_pos);
             lexer->token = LEXER_KW_AS;
           }
         } else {

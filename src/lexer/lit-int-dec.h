@@ -10,6 +10,6 @@
 
 #include "../lexer.h"
 
-bool lex_lit_int_dec (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lex_lit_int_dec (file_t *file, lexer_t *lexer, size_t pos);
 
 #endif

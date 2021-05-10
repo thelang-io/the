@@ -11,28 +11,28 @@
 TEST(lexer, new_and_free) {
   char *filepath = "../test.txt";
 
-  duc_writefile(filepath, " ");
-  duc_file_t *file = duc_file_new(filepath, DUC_FILE_READ);
+  writefile(filepath, " ");
+  file_t *file = file_new(filepath, FILE_READ);
   lexer_t *lexer = lexer_new(file);
 
   ASSERT_NE(lexer, NULL);
   lexer_free(lexer);
-  duc_file_free(file);
+  file_free(file);
 
-  duc_writefile(filepath, "@");
-  file = duc_file_new(filepath, DUC_FILE_READ);
+  writefile(filepath, "@");
+  file = file_new(filepath, FILE_READ);
   lexer = lexer_new(file);
 
   ASSERT_NE(lexer, NULL);
   ASSERT_EQ(lexer->raw, NULL);
   ASSERT_EQ(lexer->str, NULL);
   ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
-  ASSERT_EQ(duc_file_position(file), 0);
+  ASSERT_EQ(file_position(file), 0);
 
   lexer_free(lexer);
-  duc_file_free(file);
+  file_free(file);
 
-  duc_file_remove(filepath);
+  file_remove(filepath);
 }
 
 int main () {

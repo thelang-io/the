@@ -11,16 +11,16 @@
 #include "lit-float.h"
 #include "lit-int-bin.h"
 
-bool lex_lit_int_bin (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch1 = duc_file_readchar(file);
+bool lex_lit_int_bin (file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch1 = file_readchar(file);
   unsigned char ch2;
   bool is_lit = false;
 
-  if (ch1 == '0' && !duc_file_eof(file)) {
-    ch2 = duc_file_readchar(file);
+  if (ch1 == '0' && !file_eof(file)) {
+    ch2 = file_readchar(file);
 
     if (lexer_lit_int_bin_is_special(ch2)) {
-      if (duc_file_eof(file)) {
+      if (file_eof(file)) {
         duc_throw("SyntaxError: Invalid binary literal");
       }
 
@@ -29,7 +29,7 @@ bool lex_lit_int_bin (duc_file_t *file, lexer_t *lexer, size_t pos) {
   }
 
   if (!is_lit) {
-    duc_file_seek(file, pos);
+    file_seek(file, pos);
     return false;
   }
 
@@ -40,18 +40,18 @@ bool lex_lit_int_bin (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len] = '\0';
   lexer->token = LEXER_LIT_INT_BIN;
 
-  while (!duc_file_eof(file)) {
-    size_t bu_pos = duc_file_position(file);
-    unsigned char ch = duc_file_readchar(file);
+  while (!file_eof(file)) {
+    size_t bu_pos = file_position(file);
+    unsigned char ch = file_readchar(file);
 
     if (strchr("23456789", ch) != NULL) {
       duc_throw("SyntaxError: Invalid digit for binary literal");
     } else if (lexer_lit_float_is_char_special(ch)) {
-      if (ch == '.' && !duc_file_eof(file)) {
-        unsigned char ch_next = duc_file_readchar(file);
+      if (ch == '.' && !file_eof(file)) {
+        unsigned char ch_next = file_readchar(file);
 
         if (ch_next == '.') {
-          duc_file_seek(file, bu_pos);
+          file_seek(file, bu_pos);
           break;
         }
       }
@@ -61,7 +61,7 @@ bool lex_lit_int_bin (duc_file_t *file, lexer_t *lexer, size_t pos) {
       if (len == 2) {
         duc_throw("SyntaxError: Invalid binary literal");
       } else {
-        duc_file_seek(file, bu_pos);
+        file_seek(file, bu_pos);
         break;
       }
     }

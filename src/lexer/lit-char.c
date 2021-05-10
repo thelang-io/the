@@ -10,13 +10,13 @@
 #include <string.h>
 #include "lit-char.h"
 
-bool lex_lit_char (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch1 = duc_file_readchar(file);
+bool lex_lit_char (file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch1 = file_readchar(file);
 
   if (ch1 != '\'') {
-    duc_file_seek(file, pos);
+    file_seek(file, pos);
     return false;
-  } else if (duc_file_eof(file)) {
+  } else if (file_eof(file)) {
     duc_throw("SyntaxError: Unterminated character literal");
   }
 
@@ -39,17 +39,17 @@ bool lexer_lit_char_is_escape (unsigned char ch) {
   return strchr("0tnr\"'\\", ch) != NULL;
 }
 
-void lexer_lit_char_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
-  unsigned char ch2 = duc_file_readchar(file);
+void lexer_lit_char_process_ (file_t *file, lexer_t *lexer, size_t *len) {
+  unsigned char ch2 = file_readchar(file);
 
   if (ch2 == '\'') {
     duc_throw("SyntaxError: Empty character literal");
   } else if (ch2 == '\\') {
-    if (duc_file_eof(file)) {
+    if (file_eof(file)) {
       duc_throw("SyntaxError: Unterminated character literal");
     }
 
-    unsigned char ch_esc = duc_file_readchar(file);
+    unsigned char ch_esc = file_readchar(file);
 
     if (!lexer_lit_char_is_escape(ch_esc)) {
       duc_throw("SyntaxError: Illegal character escape");
@@ -67,11 +67,11 @@ void lexer_lit_char_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
     lexer->raw[*len] = '\0';
   }
 
-  if (duc_file_eof(file)) {
+  if (file_eof(file)) {
     duc_throw("SyntaxError: Unterminated character literal");
   }
 
-  unsigned char ch3 = duc_file_readchar(file);
+  unsigned char ch3 = file_readchar(file);
 
   if (ch3 != '\'') {
     duc_throw("SyntaxError: Too many characters in a character literal");

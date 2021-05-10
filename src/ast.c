@@ -14,11 +14,11 @@ void ast_free (ast_t *ast) {
   free(ast);
 }
 
-ast_t *ast_new (duc_file_t *file) {
+ast_t *ast_new (file_t *file) {
   ast_t *ast = malloc(sizeof(ast_t));
   ast->parsers = array_new();
 
-  while (!duc_file_eof(file)) {
+  while (!file_eof(file)) {
     parser_t *parser = parser_new(file);
 
     if (parser->token == PARSER_UNKNOWN) {

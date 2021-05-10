@@ -10,7 +10,7 @@
 
 #include "../lexer.h"
 
-bool lex_lit_id (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lex_lit_id (file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_lit_id_is_char (unsigned char ch);
 bool lexer_lit_id_is_char_start (unsigned char ch);
 

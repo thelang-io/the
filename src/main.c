@@ -14,9 +14,9 @@ int main (int argc, char *argv[]) {
   if (argc < 2) {
     duc_throw("Error: Action is not set");
   } else if (strcmp(argv[1], "lex") == 0) {
-    duc_file_t *file = duc_file_new(argv[2], DUC_FILE_READ);
+    file_t *file = file_new(argv[2], FILE_READ);
 
-    while (!duc_file_eof(file)) {
+    while (!file_eof(file)) {
       lexer_t *lexer = lexer_new(file);
 
       if (lexer->token == LEXER_UNKNOWN) {
@@ -28,11 +28,11 @@ int main (int argc, char *argv[]) {
       lexer_free(lexer);
     }
 
-    duc_file_free(file);
+    file_free(file);
     return 0;
   }
 
-  duc_file_t *file = duc_file_new(argv[1], DUC_FILE_READ);
+  file_t *file = file_new(argv[1], FILE_READ);
   ast_t *ast = ast_new(file);
   binary_t *bin = codegen(ast);
 
@@ -45,7 +45,7 @@ int main (int argc, char *argv[]) {
 
   binary_free(bin);
   ast_free(ast);
-  duc_file_free(file);
+  file_free(file);
 
   return 0;
 }

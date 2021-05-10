@@ -10,7 +10,7 @@
 
 #include "../lexer.h"
 
-bool lex_lit_int_bin (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lex_lit_int_bin (file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_lit_int_bin_is_special (unsigned char ch);
 
 #endif

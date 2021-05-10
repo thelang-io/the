@@ -10,7 +10,7 @@
 
 #include "../lexer.h"
 
-bool lex_lit_float (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lex_lit_float (file_t *file, lexer_t *lexer, size_t pos);
 bool lexer_lit_float_is_char_special (unsigned char ch);
 
 #endif

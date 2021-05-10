@@ -11,16 +11,16 @@
 #include "lit-float.h"
 #include "lit-int-oct.h"
 
-bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
-  unsigned char ch1 = duc_file_readchar(file);
+bool lex_lit_int_oct (file_t *file, lexer_t *lexer, size_t pos) {
+  unsigned char ch1 = file_readchar(file);
   unsigned char ch2;
   bool is_lit = false;
 
-  if (ch1 == '0' && !duc_file_eof(file)) {
-    ch2 = duc_file_readchar(file);
+  if (ch1 == '0' && !file_eof(file)) {
+    ch2 = file_readchar(file);
 
     if (lexer_lit_int_oct_is_special(ch2)) {
-      if ((ch2 == 'O' || ch2 == 'o') && duc_file_eof(file)) {
+      if ((ch2 == 'O' || ch2 == 'o') && file_eof(file)) {
         duc_throw("SyntaxError: Invalid octal literal");
       }
 
@@ -31,7 +31,7 @@ bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
   }
 
   if (!is_lit) {
-    duc_file_seek(file, pos);
+    file_seek(file, pos);
     return false;
   }
 
@@ -42,18 +42,18 @@ bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len] = '\0';
   lexer->token = LEXER_LIT_INT_OCT;
 
-  while (!duc_file_eof(file)) {
-    size_t bu_pos = duc_file_position(file);
-    unsigned char ch = duc_file_readchar(file);
+  while (!file_eof(file)) {
+    size_t bu_pos = file_position(file);
+    unsigned char ch = file_readchar(file);
 
     if (strchr("89", ch) != NULL) {
       duc_throw("SyntaxError: Invalid octal literal");
     } else if (lexer_lit_float_is_char_special(ch)) {
-      if (ch == '.' && !duc_file_eof(file)) {
-        unsigned char ch_next = duc_file_readchar(file);
+      if (ch == '.' && !file_eof(file)) {
+        unsigned char ch_next = file_readchar(file);
 
         if (ch_next == '.') {
-          duc_file_seek(file, bu_pos);
+          file_seek(file, bu_pos);
           break;
         }
       }
@@ -65,7 +65,7 @@ bool lex_lit_int_oct (duc_file_t *file, lexer_t *lexer, size_t pos) {
       if (len == 2 && (ch_prev == 'O' || ch_prev == 'o')) {
         duc_throw("SyntaxError: Invalid octal literal");
       } else {
-        duc_file_seek(file, bu_pos);
+        file_seek(file, bu_pos);
       }
 
       break;

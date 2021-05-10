@@ -10,6 +10,6 @@
 
 #include "../lexer.h"
 
-bool lex_comment_line (duc_file_t *file, lexer_t *lexer, size_t pos);
+bool lex_comment_line (file_t *file, lexer_t *lexer, size_t pos);
 
 #endif
