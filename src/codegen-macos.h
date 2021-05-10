@@ -255,12 +255,12 @@ struct cgm_s {
   cgm_cmd_symtab_t *cmd_symtab;
   cgm_cmd_ver_min_t *cmd_ver_min_macos;
   cgm_cmd_uuid_t *cmd_uuid;
-  duc_array_t *cmds;
+  array_t *cmds;
   cgm_dyld_info_export_t dyld_info_export;
   cgm_header_t header;
   duc_binary_t *sec_text;
   duc_binary_t *strs;
-  duc_array_t *syms;
+  array_t *syms;
 };
 
 duc_binary_t *codegen_macos (const ast_t *ast);

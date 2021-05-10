@@ -21,32 +21,32 @@
 TEST(ast, new_and_free) {
   AST_F("", {
     ASSERT_NE(ast, NULL);
-    ASSERT_TRUE(duc_array_empty(ast->parsers));
+    ASSERT_TRUE(array_empty(ast->parsers));
   });
 
   AST_F(" ", {
     ASSERT_NE(ast, NULL);
-    ASSERT_TRUE(duc_array_empty(ast->parsers));
+    ASSERT_TRUE(array_empty(ast->parsers));
   });
 
   AST_F("print()", {
     ASSERT_NE(ast, NULL);
-    ASSERT_EQ(duc_array_length(ast->parsers), 1);
+    ASSERT_EQ(array_length(ast->parsers), 1);
   });
 
   AST_F(" print()", {
     ASSERT_NE(ast, NULL);
-    ASSERT_EQ(duc_array_length(ast->parsers), 1);
+    ASSERT_EQ(array_length(ast->parsers), 1);
   });
 
   AST_F("print()print()", {
     ASSERT_NE(ast, NULL);
-    ASSERT_EQ(duc_array_length(ast->parsers), 2);
+    ASSERT_EQ(array_length(ast->parsers), 2);
   });
 
   AST_F("print() print()", {
     ASSERT_NE(ast, NULL);
-    ASSERT_EQ(duc_array_length(ast->parsers), 2);
+    ASSERT_EQ(array_length(ast->parsers), 2);
   });
 }
 

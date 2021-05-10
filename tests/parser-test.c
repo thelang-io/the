@@ -71,20 +71,20 @@ TEST(parser, arglist_new_free) {
 
   PARSER_F(")", arglist, {
     ASSERT_NE(parser, NULL);
-    ASSERT_TRUE(duc_array_empty(parser->exprs));
+    ASSERT_TRUE(array_empty(parser->exprs));
   });
 
   PARSER_F("test)", arglist, {
     ASSERT_NE(parser, NULL);
-    ASSERT_EQ(duc_array_length(parser->exprs), 1);
-    ASSERT_NE(duc_array_at(parser->exprs, 0), NULL);
+    ASSERT_EQ(array_length(parser->exprs), 1);
+    ASSERT_NE(array_at(parser->exprs, 0), NULL);
   });
 
   PARSER_F("test, \"test\")", arglist, {
     ASSERT_NE(parser, NULL);
-    ASSERT_EQ(duc_array_length(parser->exprs), 2);
-    ASSERT_NE(duc_array_at(parser->exprs, 0), NULL);
-    ASSERT_NE(duc_array_at(parser->exprs, 1), NULL);
+    ASSERT_EQ(array_length(parser->exprs), 2);
+    ASSERT_NE(array_at(parser->exprs, 0), NULL);
+    ASSERT_NE(array_at(parser->exprs, 1), NULL);
   });
 }
 
@@ -250,7 +250,7 @@ TEST(parser, ws_new_free) {
 
   PARSER_WS_F("\t \r\n", true, {
     ASSERT_NE(parser, NULL);
-    ASSERT_EQ(duc_array_length(parser->lexers), 1);
+    ASSERT_EQ(array_length(parser->lexers), 1);
   });
 
   PARSER_WS_F("@", false, {

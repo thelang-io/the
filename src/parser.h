@@ -8,7 +8,7 @@
 #ifndef SRC_PARSER_H
 #define SRC_PARSER_H
 
-#include <duc/array.h>
+#include "array.h"
 #include "lexer.h"
 
 typedef struct parser_s parser_t;
@@ -44,7 +44,7 @@ struct parser_expr_s {
 };
 
 struct parser_arglist_s {
-  duc_array_t *exprs;
+  array_t *exprs;
 };
 
 struct parser_call_expr_s {
@@ -53,7 +53,7 @@ struct parser_call_expr_s {
 };
 
 struct parser_ws_s {
-  duc_array_t *lexers;
+  array_t *lexers;
 };
 
 struct parser_s {

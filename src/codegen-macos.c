@@ -50,8 +50,8 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   duc_binary_t *bin = duc_binary_new();
   duc_binary_append_data(bin, &cgm->header, sizeof(cgm_header_t));
 
-  for (size_t i = 0, size = duc_array_length(cgm->cmds); i < size; i++) {
-    cgm_cmd_t *cmd = duc_array_at(cgm->cmds, i);
+  for (size_t i = 0, size = array_length(cgm->cmds); i < size; i++) {
+    cgm_cmd_t *cmd = array_at(cgm->cmds, i);
     duc_binary_append_data(bin, cmd, cmd->size);
   }
 
@@ -59,8 +59,8 @@ duc_binary_t *codegen_macos (DUC_UNUSED const ast_t *ast) {
   duc_binary_append_binary(bin, cgm->sec_text);
   duc_binary_append_data(bin, &cgm->dyld_info_export, sizeof(cgm_dyld_info_export_t));
 
-  for (size_t i = 0, size = duc_array_length(cgm->syms); i < size; i++) {
-    cgm_sym_t *sym = duc_array_at(cgm->syms, i);
+  for (size_t i = 0, size = array_length(cgm->syms); i < size; i++) {
+    cgm_sym_t *sym = array_at(cgm->syms, i);
     duc_binary_append_data(bin, sym, sizeof(cgm_sym_t));
   }
 
@@ -83,7 +83,7 @@ void cgm_calc_cmd_dylinker_ (DUC_UNUSED cgm_t *cgm) {
 
 void cgm_calc_cmd_dysymtab_ (cgm_t *cgm) {
   cgm->cmd_dysymtab->extdef_idx = 0;
-  cgm->cmd_dysymtab->extdef_count = (uint32_t) duc_array_length(cgm->syms);
+  cgm->cmd_dysymtab->extdef_count = (uint32_t) array_length(cgm->syms);
 }
 
 void cgm_calc_cmd_main_ (cgm_t *cgm) {
@@ -94,7 +94,7 @@ void cgm_calc_cmd_seg_linkedit_ (cgm_t *cgm) {
   cgm->cmd_seg_linkedit->vm_address = cgm->cmd_seg_text->vm_address + cgm->cmd_seg_text->vm_size;
   cgm->cmd_seg_linkedit->file_offset = cgm->cmd_seg_text->file_offset + cgm->cmd_seg_text->file_size;
   cgm->cmd_seg_linkedit->file_size = sizeof(cgm_dyld_info_export_t) +
-    duc_array_length(cgm->syms) * sizeof(cgm_sym_t) +
+    array_length(cgm->syms) * sizeof(cgm_sym_t) +
     duc_binary_size(cgm->strs);
   cgm->cmd_seg_linkedit->vm_size = ((cgm->cmd_seg_linkedit->file_size / 0x1000) + 1) * 0x1000;
 }
@@ -129,7 +129,7 @@ void cgm_calc_cmd_src_ver_ (DUC_UNUSED cgm_t *cgm) {
 
 void cgm_calc_cmd_symtab_ (cgm_t *cgm) {
   cgm->cmd_symtab->sym_offset = cgm->cmd_dyld_info->export_offset + cgm->cmd_dyld_info->export_size;
-  cgm->cmd_symtab->sym_count = (uint32_t) duc_array_length(cgm->syms);
+  cgm->cmd_symtab->sym_count = (uint32_t) array_length(cgm->syms);
   cgm->cmd_symtab->str_offset = cgm->cmd_symtab->sym_offset +
     cgm->cmd_symtab->sym_count * (uint32_t) sizeof(cgm_sym_t);
   cgm->cmd_symtab->str_size = (uint32_t) duc_binary_size(cgm->strs);
@@ -146,10 +146,10 @@ void cgm_calc_dyld_info_export_ (cgm_t *cgm) {
 }
 
 void cgm_calc_header_ (cgm_t *cgm) {
-  cgm->header.cmds_count = (uint32_t) duc_array_length(cgm->cmds);
+  cgm->header.cmds_count = (uint32_t) array_length(cgm->cmds);
 
-  for (size_t i = 0, size = duc_array_length(cgm->cmds); i < size; i++) {
-    cgm->header.cmds_size += ((cgm_cmd_t *) duc_array_at(cgm->cmds, i))->size;
+  for (size_t i = 0, size = array_length(cgm->cmds); i < size; i++) {
+    cgm->header.cmds_size += ((cgm_cmd_t *) array_at(cgm->cmds, i))->size;
   }
 }
 
@@ -157,7 +157,7 @@ void cgm_calc_sects_ (DUC_UNUSED cgm_t *cgm) {
 }
 
 void cgm_calc_tables_ (cgm_t *cgm) {
-  cgm_sym_t *sym0 = duc_array_at(cgm->syms, 0);
+  cgm_sym_t *sym0 = array_at(cgm->syms, 0);
   sym0->value = cgm->cmd_seg_text_text->vm_address;
 }
 
@@ -169,10 +169,10 @@ void *cgm_cmd_ (uint32_t id, size_t size) {
 }
 
 void cgm_free_ (cgm_t *cgm) {
-  duc_array_free(cgm->cmds, duc_free_simple);
+  array_free(cgm->cmds, duc_free_simple);
   duc_binary_free(cgm->sec_text);
   duc_binary_free(cgm->strs);
-  duc_array_free(cgm->syms, duc_free_simple);
+  array_free(cgm->syms, duc_free_simple);
   free(cgm);
 }
 
@@ -189,7 +189,7 @@ void cgm_init_cmd_dyld_info_ (cgm_t *cgm) {
   cgm->cmd_dyld_info->export_offset = 0;
   cgm->cmd_dyld_info->export_size = 0;
 
-  duc_array_push(cgm->cmds, cgm->cmd_dyld_info);
+  array_push(cgm->cmds, cgm->cmd_dyld_info);
 }
 
 void cgm_init_cmd_dylib_ (cgm_t *cgm) {
@@ -199,14 +199,14 @@ void cgm_init_cmd_dylib_ (cgm_t *cgm) {
   cgm->cmd_dylib->dylib.compatibility_version = cgm_ver32_("1.0.0");
   cgm_str_((cgm_cmd_t **) &cgm->cmd_dylib, &cgm->cmd_dylib->dylib.name, "/usr/lib/libSystem.B.dylib");
 
-  duc_array_push(cgm->cmds, cgm->cmd_dylib);
+  array_push(cgm->cmds, cgm->cmd_dylib);
 }
 
 void cgm_init_cmd_dylinker_ (cgm_t *cgm) {
   cgm->cmd_dylinker = cgm_cmd_(CGM_CMD_LOAD_DYLINKER, sizeof(cgm_cmd_dylinker_t));
   cgm_str_((cgm_cmd_t **) &cgm->cmd_dylinker, &cgm->cmd_dylinker->name, "/usr/lib/dyld");
 
-  duc_array_push(cgm->cmds, cgm->cmd_dylinker);
+  array_push(cgm->cmds, cgm->cmd_dylinker);
 }
 
 void cgm_init_cmd_dysymtab_ (cgm_t *cgm) {
@@ -230,7 +230,7 @@ void cgm_init_cmd_dysymtab_ (cgm_t *cgm) {
   cgm->cmd_dysymtab->locrel_offset = 0;
   cgm->cmd_dysymtab->locrel_count = 0;
 
-  duc_array_push(cgm->cmds, cgm->cmd_dysymtab);
+  array_push(cgm->cmds, cgm->cmd_dysymtab);
 }
 
 void cgm_init_cmd_main_ (cgm_t *cgm) {
@@ -238,7 +238,7 @@ void cgm_init_cmd_main_ (cgm_t *cgm) {
   cgm->cmd_main->entry_offset = 0;
   cgm->cmd_main->stack_size = 0;
 
-  duc_array_push(cgm->cmds, cgm->cmd_main);
+  array_push(cgm->cmds, cgm->cmd_main);
 }
 
 void cgm_init_cmd_seg_linkedit_ (cgm_t *cgm) {
@@ -253,7 +253,7 @@ void cgm_init_cmd_seg_linkedit_ (cgm_t *cgm) {
   cgm->cmd_seg_linkedit->sects_count = 0;
   cgm->cmd_seg_linkedit->flags = 0;
 
-  duc_array_push(cgm->cmds, cgm->cmd_seg_linkedit);
+  array_push(cgm->cmds, cgm->cmd_seg_linkedit);
 }
 
 void cgm_init_cmd_seg_pagezero_ (cgm_t *cgm) {
@@ -268,7 +268,7 @@ void cgm_init_cmd_seg_pagezero_ (cgm_t *cgm) {
   cgm->cmd_seg_pagezero->sects_count = 0;
   cgm->cmd_seg_pagezero->flags = 0;
 
-  duc_array_push(cgm->cmds, cgm->cmd_seg_pagezero);
+  array_push(cgm->cmds, cgm->cmd_seg_pagezero);
 }
 
 void cgm_init_cmd_seg_text_ (cgm_t *cgm) {
@@ -295,14 +295,14 @@ void cgm_init_cmd_seg_text_ (cgm_t *cgm) {
   cgm->cmd_seg_text_text->reserved2 = 0;
   cgm->cmd_seg_text_text->reserved3 = 0;
 
-  duc_array_push(cgm->cmds, cgm->cmd_seg_text);
+  array_push(cgm->cmds, cgm->cmd_seg_text);
 }
 
 void cgm_init_cmd_src_ver_ (cgm_t *cgm) {
   cgm->cmd_src_ver = cgm_cmd_(CGM_CMD_SOURCE_VERSION, sizeof(cgm_cmd_src_ver_t));
   cgm->cmd_src_ver->version = cgm_ver64_(VERSION);
 
-  duc_array_push(cgm->cmds, cgm->cmd_src_ver);
+  array_push(cgm->cmds, cgm->cmd_src_ver);
 }
 
 void cgm_init_cmd_symtab_ (cgm_t *cgm) {
@@ -312,7 +312,7 @@ void cgm_init_cmd_symtab_ (cgm_t *cgm) {
   cgm->cmd_symtab->str_offset = 0;
   cgm->cmd_symtab->str_size = 0;
 
-  duc_array_push(cgm->cmds, cgm->cmd_symtab);
+  array_push(cgm->cmds, cgm->cmd_symtab);
 }
 
 void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm) {
@@ -320,14 +320,14 @@ void cgm_init_cmd_ver_min_macos_ (cgm_t *cgm) {
   cgm->cmd_ver_min_macos->version = cgm_ver32_("10.10");
   cgm->cmd_ver_min_macos->sdk_version = cgm_ver32_("11.3");
 
-  duc_array_push(cgm->cmds, cgm->cmd_ver_min_macos);
+  array_push(cgm->cmds, cgm->cmd_ver_min_macos);
 }
 
 void cgm_init_cmd_uuid_ (cgm_t *cgm) {
   cgm->cmd_uuid = cgm_cmd_(CGM_CMD_UUID, sizeof(cgm_cmd_uuid_t));
   cgm->cmd_uuid->uuid[0] = 0; // TODO Generate random
 
-  duc_array_push(cgm->cmds, cgm->cmd_uuid);
+  array_push(cgm->cmds, cgm->cmd_uuid);
 }
 
 void cgm_init_dyld_info_export_ (cgm_t *cgm) {
@@ -367,7 +367,7 @@ void cgm_init_tables_ (cgm_t *cgm) {
   sym0->sect_idx = 1;
   sym0->description = 0;
   sym0->value = 0;
-  duc_array_push(cgm->syms, sym0);
+  array_push(cgm->syms, sym0);
 
   duc_binary_append_string(cgm->strs, "_main");
   duc_binary_append_times(cgm->strs, 0x00, duc_binary_size(cgm->strs) % 8);
@@ -389,10 +389,10 @@ cgm_t *cgm_new_ () {
   cgm->cmd_symtab = NULL;
   cgm->cmd_ver_min_macos = NULL;
   cgm->cmd_uuid = NULL;
-  cgm->cmds = duc_array_new();
+  cgm->cmds = array_new();
   cgm->sec_text = duc_binary_new();
   cgm->strs = duc_binary_new();
-  cgm->syms = duc_array_new();
+  cgm->syms = array_new();
 
   return cgm;
 }

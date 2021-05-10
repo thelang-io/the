@@ -13,7 +13,7 @@
 typedef struct ast_s ast_t;
 
 struct ast_s {
-  duc_array_t *parsers;
+  array_t *parsers;
 };
 
 void ast_free (ast_t *ast);

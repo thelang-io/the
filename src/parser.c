@@ -41,13 +41,13 @@ parser_t *parser_new (duc_file_t *file) {
 }
 
 void parser_arglist_free_ (parser_arglist_t *parser) {
-  duc_array_free(parser->exprs, parser_expr_free_cb_);
+  array_free(parser->exprs, parser_expr_free_cb_);
   free(parser);
 }
 
 parser_arglist_t *parser_arglist_new_ (duc_file_t *file) {
   parser_arglist_t *parser = malloc(sizeof(parser_arglist_t));
-  parser->exprs = duc_array_new();
+  parser->exprs = array_new();
 
   size_t pos = duc_file_position(file);
   lexer_t *rpar = lexer_new(file);
@@ -63,7 +63,7 @@ parser_arglist_t *parser_arglist_new_ (duc_file_t *file) {
       return NULL;
     }
 
-    duc_array_push(parser->exprs, expr);
+    array_push(parser->exprs, expr);
     size_t bu_pos = duc_file_position(file);
     parser_ws_new_(file, false);
 
@@ -245,7 +245,7 @@ parser_literal_t *parser_literal_new_ (duc_file_t *file) {
 }
 
 void parser_ws_free_ (parser_ws_t *parser) {
-  duc_array_free(parser->lexers, lexer_free_cb);
+  array_free(parser->lexers, lexer_free_cb);
   free(parser);
 }
 
@@ -254,7 +254,7 @@ parser_ws_t *parser_ws_new_ (duc_file_t *file, bool alloc) {
 
   if (alloc) {
     parser = malloc(sizeof(parser_ws_t));
-    parser->lexers = duc_array_new();
+    parser->lexers = array_new();
   }
 
   for (size_t i = 0; !duc_file_eof(file); i++) {
@@ -276,7 +276,7 @@ parser_ws_t *parser_ws_new_ (duc_file_t *file, bool alloc) {
         break;
       }
     } else if (alloc) {
-      duc_array_push(parser->lexers, ws);
+      array_push(parser->lexers, ws);
     } else {
       lexer_free(ws);
     }

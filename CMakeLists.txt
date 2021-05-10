@@ -56,6 +56,7 @@ set(
   src/lexer/lit-str.c src/lexer/lit-str.h
   src/lexer/op.c src/lexer/op.h
   src/lexer/ws.c src/lexer/ws.h
+  src/array.c src/array.h
   src/ast.c src/ast.h
   src/codegen.c src/codegen.h
   src/codegen-macos.c src/codegen-macos.h
@@ -92,6 +93,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/lexer/lit-str-test.c
     tests/lexer/op-test.c
     tests/lexer/ws-test.c
+    tests/array-test.c
     tests/ast-test.c
     tests/codegen-test.c
     tests/codegen-macos-test.c

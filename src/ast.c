@@ -10,13 +10,13 @@
 #include "ast.h"
 
 void ast_free (ast_t *ast) {
-  duc_array_free(ast->parsers, parser_free_cb);
+  array_free(ast->parsers, parser_free_cb);
   free(ast);
 }
 
 ast_t *ast_new (duc_file_t *file) {
   ast_t *ast = malloc(sizeof(ast_t));
-  ast->parsers = duc_array_new();
+  ast->parsers = array_new();
 
   while (!duc_file_eof(file)) {
     parser_t *parser = parser_new(file);
@@ -28,11 +28,11 @@ ast_t *ast_new (duc_file_t *file) {
       continue;
     }
 
-    duc_array_push(ast->parsers, parser);
+    array_push(ast->parsers, parser);
   }
 
-  for (size_t i = 0, size = duc_array_length(ast->parsers); i < size; i++) {
-    parser_t *parser = duc_array_at(ast->parsers, i);
+  for (size_t i = 0, size = array_length(ast->parsers); i < size; i++) {
+    parser_t *parser = array_at(ast->parsers, i);
 
     if (parser->token == PARSER_CALL_EXPR) {
       parser_call_expr_t *call_expr = parser->call_expr;
@@ -43,8 +43,8 @@ ast_t *ast_new (duc_file_t *file) {
 
       parser_arglist_t *arglist = call_expr->arglist;
 
-      for (size_t j = 0, size_arglist = duc_array_length(arglist->exprs); j < size_arglist; j++) {
-        parser_expr_t *expr = duc_array_at(arglist->exprs, j);
+      for (size_t j = 0, size_arglist = array_length(arglist->exprs); j < size_arglist; j++) {
+        parser_expr_t *expr = array_at(arglist->exprs, j);
 
         if (expr->token != PARSER_LITERAL) {
           duc_throw("SyntaxError: Unexpected call expression argument");
