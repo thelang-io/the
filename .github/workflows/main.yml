@@ -51,10 +51,10 @@ jobs:
             --protocol tcp \
             --port 22 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
-      - run: mkdir -p ~/.ssh/
-      - run: ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+      - run: mkdir -p ~/.ssh
+      - run: ssh-agent -a $SSH_AUTH_SOCK
       - run: ssh-add - <<< "${{ secrets.AWS_EC2_KEY }}"
-      - run: scp -o StrictHostKeyChecking=no the "${{ secrets.AWS_EC2_URL }}:"
+      - run: scp -o StrictHostKeyChecking=no build/the "${{ secrets.AWS_EC2_URL }}:"
       - if: always()
         run: |
           aws ec2 revoke-security-group-ingress \
