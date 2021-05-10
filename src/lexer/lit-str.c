@@ -43,10 +43,14 @@ void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
     unsigned char ch = duc_file_readchar(file);
     bool is_processed = false;
 
-    if (ch == '\\' && !duc_file_eof(file)) {
+    if (ch == '\\') {
+      if (duc_file_eof(file)) {
+        duc_throw("SyntaxError: Unterminated string literal");
+      }
+
       unsigned char ch_esc = duc_file_readchar(file);
 
-      if (!lexer_lit_char_is_escape(ch_esc) && ch_esc != '$') {
+      if (!lexer_lit_char_is_escape(ch_esc) && ch_esc != '{') {
         duc_throw("SyntaxError: Illegal character escape");
       }
 
@@ -56,21 +60,6 @@ void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
       lexer->raw[*len - 1] = ch_esc;
       lexer->raw[*len] = '\0';
       is_processed = true;
-    } else if (ch == '$' && !duc_file_eof(file)) {
-      size_t bu_pos = duc_file_position(file);
-      unsigned char ch_lpar = duc_file_readchar(file);
-
-      if (ch_lpar == '{') {
-        *len += 2;
-        lexer->raw = realloc(lexer->raw, *len + 1);
-        lexer->raw[*len - 2] = ch;
-        lexer->raw[*len - 1] = ch_lpar;
-        lexer->raw[*len] = '\0';
-        blocks += 1;
-        is_processed = true;
-      } else {
-        duc_file_seek(file, bu_pos);
-      }
     }
 
     if (!is_processed) {
@@ -80,14 +69,14 @@ void lexer_lit_str_process_ (duc_file_t *file, lexer_t *lexer, size_t *len) {
       lexer->raw[*len] = '\0';
     }
 
-    if (ch == '\'' && blocks != 0) {
-      lexer_lit_char_process_(file, lexer, len);
-    } else if (ch == '"' && blocks != 0) {
-      lexer_lit_str_process_(file, lexer, len);
-    } else if (ch == '{' && blocks != 0) {
+    if (ch == '{') {
       blocks += 1;
     } else if (ch == '}' && blocks != 0) {
       blocks -= 1;
+    } else if (ch == '\'' && blocks != 0) {
+      lexer_lit_char_process_(file, lexer, len);
+    } else if (ch == '"' && blocks != 0) {
+      lexer_lit_str_process_(file, lexer, len);
     } else if (ch == '"') {
       break;
     } else if (duc_file_eof(file)) {
