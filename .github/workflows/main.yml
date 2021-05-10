@@ -1,7 +1,7 @@
 on:
   push:
     branches: [main]
-    paths: ["src/**", "CMakeLists.txt"]
+    paths: [".github/workflows/**", "src/**", "CMakeLists.txt"]
 
 jobs:
   build-and-test:
