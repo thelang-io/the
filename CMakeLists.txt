@@ -30,9 +30,9 @@ else ()
 endif ()
 
 if (VERSION_PATCH STREQUAL "0")
-  project(the-core VERSION ${VERSION_MAJOR}.${VERSION_MINOR} LANGUAGES C)
+  project(the VERSION ${VERSION_MAJOR}.${VERSION_MINOR} LANGUAGES C)
 else ()
-  project(the-core VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH} LANGUAGES C)
+  project(the VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH} LANGUAGES C)
 endif ()
 
 option(BUILD_TESTS "Build test programs" OFF)

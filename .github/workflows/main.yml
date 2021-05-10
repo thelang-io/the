@@ -3,6 +3,9 @@ on:
     branches: [main]
     paths: [".github/workflows/**", "src/**", "CMakeLists.txt"]
 
+env:
+  SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
 jobs:
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -35,28 +38,23 @@ jobs:
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Release)
       - run: cmake --build build
+      - id: ip
+        uses: haythem/public-ip@v1.2
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - id: ip
-        uses: haythem/public-ip@v1.2
       - run: |
           aws ec2 authorize-security-group-ingress \
             --group-id ${{ secrets.AWS_EC2_SG }} \
             --protocol tcp \
             --port 22 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
-      - uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.AWS_EC2_HOST }}
-          username: ${{ secrets.AWS_EC2_USER }}
-          key: ${{ secrets.AWS_EC2_KEY }}
-          passphrase: ${{ secrets.AWS_EC2_PASSPHRASE }}
-          source: build/the-core
-          target: .
-          strip_components: 1
+      - run: mkdir -p ~/.ssh/
+      - run: ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+      - run: ssh-add - <<< "${{ secrets.AWS_EC2_KEY }}"
+      - run: scp -o StrictHostKeyChecking=no the "${{ secrets.AWS_EC2_URL }}:"
       - if: always()
         run: |
           aws ec2 revoke-security-group-ingress \
