@@ -38,66 +38,6 @@ parser_t *parser_new (file_t *file) {
   return parser;
 }
 
-void parser_arglist_free_ (parser_arglist_t *parser) {
-  array_free(parser->exprs, parser_expr_free_cb_);
-  free(parser);
-}
-
-parser_arglist_t *parser_arglist_new_ (file_t *file) {
-  parser_arglist_t *parser = malloc(sizeof(parser_arglist_t));
-  parser->exprs = array_new();
-
-  size_t pos = file_position(file);
-  lexer_t *rpar = lexer_new(file);
-  file_seek(file, pos);
-
-  while (rpar->token != LEXER_OP_RPAR) {
-    lexer_free(rpar);
-    parser_expr_t *expr = parser_expr_new_(file);
-
-    if (expr == NULL) {
-      parser_arglist_free_(parser);
-      file_seek(file, pos);
-      return NULL;
-    }
-
-    array_push(parser->exprs, expr);
-    size_t bu_pos = file_position(file);
-    parser_ws_new_(file, false);
-
-    if (file_eof(file)) {
-      parser_arglist_free_(parser);
-      file_seek(file, pos);
-      return NULL;
-    }
-
-    rpar = lexer_new(file);
-
-    if (rpar->token == LEXER_OP_COMMA) {
-      parser_ws_new_(file, false);
-
-      if (file_eof(file)) {
-        lexer_free(rpar);
-        parser_arglist_free_(parser);
-        file_seek(file, pos);
-        return NULL;
-      }
-
-      continue;
-    } else if (rpar->token != LEXER_OP_RPAR) {
-      lexer_free(rpar);
-      parser_arglist_free_(parser);
-      file_seek(file, pos);
-      return NULL;
-    }
-
-    file_seek(file, bu_pos);
-  }
-
-  lexer_free(rpar);
-  return parser;
-}
-
 void parser_call_expr_free_ (parser_call_expr_t *parser) {
   parser_arglist_free_(parser->arglist);
   parser_id_free_(parser->id);

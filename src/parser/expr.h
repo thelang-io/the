@@ -14,7 +14,7 @@
 typedef struct parser_expr_s parser_expr_t;
 
 struct parser_expr_s {
-  parser_token token;
+  parser_token tok;
   parser_t *parser;
 };
 

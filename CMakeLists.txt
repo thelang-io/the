@@ -53,7 +53,11 @@ set(
   src/lexer/lit-str.c src/lexer/lit-str.h
   src/lexer/op.c src/lexer/op.h
   src/lexer/ws.c src/lexer/ws.h
+  src/parser/arglist.c src/parser/arglist.h
+  src/parser/expr.c src/parser/expr.h
   src/parser/id.c src/parser/id.h
+  src/parser/literal.c src/parser/literal.h
+  src/parser/ws.c src/parser/ws.h
   src/array.c src/array.h
   src/ast.c src/ast.h
   src/binary.c src/binary.h
@@ -64,7 +68,7 @@ set(
   src/lexer.c src/lexer.h
   src/parser.c src/parser.h
   src/version.h
-  src/parser/literal.c src/parser/literal.h src/parser/ws.c src/parser/ws.h src/parser/expr.c src/parser/expr.h)
+)
 
 add_executable(${PROJECT_NAME} ${sources} src/main.c)
 
@@ -90,6 +94,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/lexer/lit-str-test.c
     tests/lexer/op-test.c
     tests/lexer/ws-test.c
+    tests/parser/arglist-test.c
     tests/parser/expr-test.c
     tests/parser/id-test.c
     tests/parser/literal-test.c

@@ -34,7 +34,7 @@ parser_t *parser_expr_new (file_t *file) {
   }
 
   parser_expr_t *parser_expr = malloc(sizeof(parser_expr_t));
-  parser_expr->token = PARSER_EXPR;
+  parser_expr->tok = PARSER_EXPR;
   parser_expr->parser = parser;
   return (parser_t *) parser_expr;
 }

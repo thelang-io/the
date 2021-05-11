@@ -149,6 +149,7 @@ extern const char *lexer_token_str[];
 
 void lexer_free (lexer_t *lexer);
 void lexer_free_cb (void *it);
+lexer_token lexer_lookup (file_t *file);
 lexer_t *lexer_new (file_t *file);
 
 #endif

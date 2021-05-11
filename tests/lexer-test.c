@@ -8,6 +8,22 @@
 #include "../src/lexer.h"
 #include "lexer-test.h"
 
+TEST(lexer, lookup) {
+  char *filepath = "../test.out";
+
+  writefile(filepath, " ");
+  file_t *file = file_new(filepath, FILE_READ);
+  ASSERT_EQ(lexer_lookup(file), LEXER_WS);
+  file_free(file);
+
+  writefile(filepath, "@");
+  file = file_new(filepath, FILE_READ);
+  ASSERT_EQ(lexer_lookup(file), LEXER_UNKNOWN);
+  file_free(file);
+
+  file_remove(filepath);
+}
+
 TEST(lexer, new_and_free) {
   char *filepath = "../test.out";
 
@@ -36,5 +52,6 @@ TEST(lexer, new_and_free) {
 }
 
 int main () {
+  TEST_RUN(lexer, lookup);
   TEST_RUN(lexer, new_and_free);
 }

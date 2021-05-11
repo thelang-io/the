@@ -8,66 +8,6 @@
 #include "../src/parser.h"
 #include "testing.h"
 
-TEST(parser, arglist_new_free) {
-  PARSER_F("@", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F("", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F(",", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F("test", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F("test@", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F("test,", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F("test, \"test\"", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F("test, \"test\"(", arglist, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F(")", arglist, {
-    ASSERT_NE(parser, NULL);
-    ASSERT_TRUE(array_empty(parser->exprs));
-  });
-
-  PARSER_F("test)", arglist, {
-    ASSERT_NE(parser, NULL);
-    ASSERT_EQ(array_length(parser->exprs), 1);
-    ASSERT_NE(array_at(parser->exprs, 0), NULL);
-  });
-
-  PARSER_F("test, \"test\")", arglist, {
-    ASSERT_NE(parser, NULL);
-    ASSERT_EQ(array_length(parser->exprs), 2);
-    ASSERT_NE(array_at(parser->exprs, 0), NULL);
-    ASSERT_NE(array_at(parser->exprs, 1), NULL);
-  });
-}
-
 TEST(parser, call_expr_new_free) {
   PARSER_F(" ", call_expr, {
     ASSERT_EQ(parser, NULL);
@@ -185,7 +125,6 @@ TEST(parser, new_and_free) {
 }
 
 int main () {
-  TEST_RUN(parser, arglist_new_free);
   TEST_RUN(parser, call_expr_new_free);
   TEST_RUN(parser, new_and_free);
 }

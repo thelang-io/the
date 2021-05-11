@@ -12,7 +12,6 @@
 #include "lexer.h"
 
 typedef struct parser_s parser_t;
-typedef struct parser_arglist_s parser_arglist_t;
 typedef struct parser_call_expr_s parser_call_expr_t;
 
 typedef enum {
@@ -24,10 +23,6 @@ typedef enum {
   PARSER_UNKNOWN,
   PARSER_WS
 } parser_token;
-
-struct parser_arglist_s {
-  array_t *exprs;
-};
 
 struct parser_call_expr_s {
   parser_arglist_t *arglist;
@@ -42,8 +37,6 @@ void parser_free (parser_t *parser);
 void parser_free_cb (void *it);
 parser_t *parser_new (file_t *file);
 
-void parser_arglist_free_ (parser_arglist_t *parser);
-parser_arglist_t *parser_arglist_new_ (file_t *file);
 void parser_call_expr_free_ (parser_call_expr_t *parser);
 parser_call_expr_t *parser_call_expr_new_ (file_t *file);
 

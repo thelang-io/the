@@ -39,6 +39,20 @@ void lexer_free_cb (void *it) {
   lexer_free((lexer_t *) it);
 }
 
+lexer_token lexer_lookup (file_t *file) {
+  size_t pos = file_position(file);
+  lexer_t *lexer = lexer_new(file);
+  lexer_token tok = LEXER_UNKNOWN;
+
+  if (lexer != NULL) {
+    tok = lexer->token;
+    lexer_free(lexer);
+  }
+
+  file_seek(file, pos);
+  return tok;
+}
+
 lexer_t *lexer_new (file_t *file) {
   lexer_t *lexer = malloc(sizeof(lexer_t));
   size_t pos = file_position(file);
