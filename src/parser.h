@@ -15,7 +15,6 @@ typedef struct parser_s parser_t;
 typedef struct parser_arglist_s parser_arglist_t;
 typedef struct parser_call_expr_s parser_call_expr_t;
 typedef struct parser_expr_s parser_expr_t;
-typedef struct parser_id_s parser_id_t;
 typedef struct parser_literal_s parser_literal_t;
 typedef struct parser_ws_s parser_ws_t;
 
@@ -28,10 +27,6 @@ typedef enum {
   PARSER_UNKNOWN,
   PARSER_WS
 } parser_token;
-
-struct parser_id_s {
-  lexer_t *lexer;
-};
 
 struct parser_literal_s {
   lexer_t *lexer;
@@ -57,9 +52,7 @@ struct parser_ws_s {
 };
 
 struct parser_s {
-  parser_call_expr_t *call_expr;
   parser_token token;
-  parser_ws_t *ws;
 };
 
 void parser_free (parser_t *parser);
@@ -73,8 +66,6 @@ parser_call_expr_t *parser_call_expr_new_ (file_t *file);
 void parser_expr_free_ (parser_expr_t *parser);
 void parser_expr_free_cb_ (void *it);
 parser_expr_t *parser_expr_new_ (file_t *file);
-void parser_id_free_ (parser_id_t *parser);
-parser_id_t *parser_id_new_ (file_t *file);
 void parser_literal_free_ (parser_literal_t *parser);
 parser_literal_t *parser_literal_new_ (file_t *file);
 void parser_ws_free_ (parser_ws_t *parser);

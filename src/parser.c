@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include "parser.h"
 
-// TODO Code split
-
 void parser_free (parser_t *parser) {
   if (parser->token == PARSER_CALL_EXPR && parser->call_expr != NULL) {
     parser_call_expr_free_(parser->call_expr);
@@ -206,24 +204,6 @@ parser_expr_t *parser_expr_new_ (file_t *file) {
   return NULL;
 }
 
-void parser_id_free_ (parser_id_t *parser) {
-  lexer_free(parser->lexer);
-  free(parser);
-}
-
-parser_id_t *parser_id_new_ (file_t *file) {
-  parser_id_t *parser = malloc(sizeof(parser_id_t));
-  size_t pos = file_position(file);
-  parser->lexer = lexer_new(file);
-
-  if (parser->lexer->token != LEXER_LIT_ID) {
-    parser_id_free_(parser);
-    file_seek(file, pos);
-    return NULL;
-  }
-
-  return parser;
-}
 
 void parser_literal_free_ (parser_literal_t *parser) {
   lexer_free(parser->lexer);

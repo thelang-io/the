@@ -53,6 +53,7 @@ set(
   src/lexer/lit-str.c src/lexer/lit-str.h
   src/lexer/op.c src/lexer/op.h
   src/lexer/ws.c src/lexer/ws.h
+  src/parser/id.c src/parser/id.h
   src/array.c src/array.h
   src/ast.c src/ast.h
   src/binary.c src/binary.h
@@ -89,6 +90,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/lexer/lit-str-test.c
     tests/lexer/op-test.c
     tests/lexer/ws-test.c
+    tests/parser/id-test.c
     tests/array-test.c
     tests/ast-test.c
     tests/binary-test.c
@@ -107,8 +109,10 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     set(test_files ${test_file})
     set(test_name ${PROJECT_NAME}-test-${test})
 
-    if (test_file MATCHES tests/lexer*)
+    if (test_name MATCHES ${PROJECT_NAME}-test-lexer*)
       list(APPEND test_files tests/lexer-test.h)
+    elseif (test_name MATCHES ${PROJECT_NAME}-test-parser*)
+      list(APPEND test_files tests/parser-test.h)
     endif()
 
     add_executable(${test_name} ${test_files} tests/testing.h)
