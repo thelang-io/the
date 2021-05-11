@@ -314,15 +314,15 @@ TEST(binary, write) {
   char string[] = "Hello, World!";
 
   binary_append_string(binary, string);
-  binary_write(binary, "../test.txt");
+  binary_write(binary, "../test.out");
   binary_free(binary);
 
-  ASSERT_TRUE(file_exists("../test.txt"));
-  char *content = readfile("../test.txt");
+  ASSERT_TRUE(file_exists("../test.out"));
+  char *content = readfile("../test.out");
 
   ASSERT_STREQ(content, string);
   free(content);
-  file_remove("../test.txt");
+  file_remove("../test.out");
 }
 
 int main () {

@@ -9,7 +9,7 @@
 #include "lexer-test.h"
 
 TEST(lexer, new_and_free) {
-  char *filepath = "../test.txt";
+  char *filepath = "../test.out";
 
   writefile(filepath, " ");
   file_t *file = file_new(filepath, FILE_READ);

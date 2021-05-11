@@ -10,11 +10,11 @@
 #include "testing.h"
 
 #define FILE_F(text, body) \
-  do { writefile("../test.txt", text); \
-  file_t *file = file_new("../test.txt", FILE_READ); \
+  do { writefile("../test.out", text); \
+  file_t *file = file_new("../test.out", FILE_READ); \
   body \
   file_free(file); \
-  file_remove("../test.txt"); } while (0)
+  file_remove("../test.out"); } while (0)
 
 TEST(file, eof_and_read) {
   FILE_F("", {
@@ -123,7 +123,7 @@ TEST(file, eof_and_read) {
 }
 
 TEST(file, exists_remove_write) {
-  char *filepath = "../test.txt";
+  char *filepath = "../test.out";
   ASSERT_FALSE(file_exists(filepath));
 
   file_t *file = file_new(filepath, FILE_WRITE);
@@ -145,10 +145,10 @@ TEST(file, exists_remove_write) {
 }
 
 TEST(file, new_and_free) {
-  file_t *file = file_new("../fake.txt", FILE_READ);
+  file_t *file = file_new("../fake.out", FILE_READ);
   ASSERT_EQ(file, NULL);
 
-  char *filepath = "../test.txt";
+  char *filepath = "../test.out";
 
   file = file_new(filepath, FILE_WRITE);
   ASSERT_NE(file, NULL);
@@ -193,7 +193,7 @@ TEST(path, cwd_and_real) {
 }
 
 TEST(read_write, file) {
-  char *filepath = "../test.txt";
+  char *filepath = "../test.out";
 
   ASSERT_FALSE(file_exists(filepath));
   writefile(filepath, "Hello, World!\n");

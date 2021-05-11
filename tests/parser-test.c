@@ -11,22 +11,22 @@
 // TODO Decrease size by packing into macros
 
 #define PARSER_F(text, token, body) \
-  do { writefile("../test.txt", text); \
-  file_t *file = file_new("../test.txt", FILE_READ); \
+  do { writefile("../test.out", text); \
+  file_t *file = file_new("../test.out", FILE_READ); \
   parser_##token##_t *parser = parser_##token##_new_(file); \
   body \
   if (parser != NULL) parser_##token##_free_(parser); \
   file_free(file); \
-  file_remove("../test.txt"); } while (0)
+  file_remove("../test.out"); } while (0)
 
 #define PARSER_WS_F(text, alloc, body) \
-  do { writefile("../test.txt", text); \
-  file_t *file = file_new("../test.txt", FILE_READ); \
+  do { writefile("../test.out", text); \
+  file_t *file = file_new("../test.out", FILE_READ); \
   parser_ws_t *parser = parser_ws_new_(file, alloc); \
   body \
   if (parser != NULL) parser_ws_free_(parser); \
   file_free(file); \
-  file_remove("../test.txt"); } while (0)
+  file_remove("../test.out"); } while (0)
 
 TEST(parser, arglist_new_free) {
   PARSER_F("@", arglist, {
@@ -216,7 +216,7 @@ TEST(parser, literal_new_free) {
 }
 
 TEST(parser, new_and_free) {
-  char *filepath = "../test.txt";
+  char *filepath = "../test.out";
 
   writefile(filepath, " ");
   file_t *file = file_new(filepath, FILE_READ);
