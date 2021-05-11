@@ -17,7 +17,7 @@ struct parser_id_s {
   lexer_t *lexer;
 };
 
-void parser_id_free (parser_t *parser);
+void parser_id_free (parser_id_t *parser);
 parser_t *parser_id_new (file_t *file);
 
 #endif

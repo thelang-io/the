@@ -9,10 +9,9 @@
 #include "arglist.h"
 #include "ws.h"
 
-void parser_arglist_free (parser_t *parser) {
-  parser_arglist_t *parser_arglist = (parser_arglist_t *) parser;
-  array_free(parser_arglist->exprs, parser_expr_free_cb);
-  free(parser_arglist);
+void parser_arglist_free (parser_arglist_t *parser) {
+  array_free(parser->exprs, parser_expr_free_cb);
+  free(parser);
 }
 
 parser_t *parser_arglist_new (file_t *file) {

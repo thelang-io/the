@@ -8,10 +8,9 @@
 #include <stdlib.h>
 #include "ws.h"
 
-void parser_ws_free (parser_t *parser) {
-  parser_ws_t *parser_ws = (parser_ws_t *) parser;
-  array_free(parser_ws->lexers, lexer_free_cb);
-  free(parser_ws);
+void parser_ws_free (parser_ws_t *parser) {
+  array_free(parser->lexers, lexer_free_cb);
+  free(parser);
 }
 
 parser_t *parser_ws_new (file_t *file, bool alloc) {

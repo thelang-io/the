@@ -17,7 +17,7 @@ struct parser_literal_s {
   lexer_t *lexer;
 };
 
-void parser_literal_free (parser_t *parser);
+void parser_literal_free (parser_literal_t *parser);
 parser_t *parser_literal_new (file_t *file);
 
 #endif

@@ -8,10 +8,9 @@
 #include <stdlib.h>
 #include "literal.h"
 
-void parser_literal_free (parser_t *parser) {
-  parser_literal_t *parser_literal = (parser_literal_t *) parser;
-  lexer_free(parser_literal->lexer);
-  free(parser_literal);
+void parser_literal_free (parser_literal_t *parser) {
+  lexer_free(parser->lexer);
+  free(parser);
 }
 
 parser_t *parser_literal_new (file_t *file) {

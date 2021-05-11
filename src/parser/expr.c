@@ -8,20 +8,18 @@
 #include <stdlib.h>
 #include "expr.h"
 
-void parser_expr_free (parser_t *parser) {
-  parser_expr_t *parser_expr = (parser_expr_t *) parser;
-
-  if (parser_expr->parser->token == PARSER_ID) {
-    parser_id_free(parser_expr->parser);
-  } else if (parser_expr->parser->token == PARSER_LITERAL) {
-    parser_literal_free(parser_expr->parser);
+void parser_expr_free (parser_expr_t *parser) {
+  if (parser->parser->token == PARSER_ID) {
+    parser_id_free((parser_id_t *) parser->parser);
+  } else if (parser->parser->token == PARSER_LITERAL) {
+    parser_literal_free((parser_literal_t *) parser->parser);
   }
 
-  free(parser_expr);
+  free(parser);
 }
 
 void parser_expr_free_cb (void *it) {
-  parser_expr_free((parser_t *) it);
+  parser_expr_free((parser_expr_t *) it);
 }
 
 parser_t *parser_expr_new (file_t *file) {
