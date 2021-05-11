@@ -24,7 +24,7 @@ bool lex_lit_str (file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw = malloc(len + 1);
   lexer->raw[len - 1] = ch1;
   lexer->raw[len] = '\0';
-  lexer->token = LEXER_LIT_STR;
+  lexer->tok = LEXER_LIT_STR;
 
   lexer_lit_str_process_(file, lexer, &len);
 

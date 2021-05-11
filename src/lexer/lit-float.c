@@ -26,7 +26,7 @@ bool lex_lit_float (file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw[len - 2] = ch1;
     lexer->raw[len - 1] = ch2;
     lexer->raw[len] = '\0';
-    lexer->token = LEXER_LIT_FLOAT;
+    lexer->tok = LEXER_LIT_FLOAT;
   } else if (ch1 == '0' && !file_eof(file)) {
     unsigned char ch2 = file_readchar(file);
 
@@ -53,7 +53,7 @@ bool lex_lit_float (file_t *file, lexer_t *lexer, size_t pos) {
     lexer->raw[len - 2] = ch1;
     lexer->raw[len - 1] = ch2;
     lexer->raw[len] = '\0';
-    lexer->token = LEXER_LIT_FLOAT;
+    lexer->tok = LEXER_LIT_FLOAT;
   } else if (strchr("123456789", ch1) != NULL && !file_eof(file)) {
     unsigned char *raw = malloc(len + 1);
     raw[len - 1] = ch1;
@@ -92,7 +92,7 @@ bool lex_lit_float (file_t *file, lexer_t *lexer, size_t pos) {
     }
 
     lexer->raw = raw;
-    lexer->token = LEXER_LIT_FLOAT;
+    lexer->tok = LEXER_LIT_FLOAT;
   } else {
     file_seek(file, pos);
     return false;

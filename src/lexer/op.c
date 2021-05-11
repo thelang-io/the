@@ -29,7 +29,7 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case ',': {
-      lexer->token = LEXER_OP_COMMA;
+      lexer->tok = LEXER_OP_COMMA;
       break;
     }
     case '.': {
@@ -42,28 +42,28 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
           return false;
         } else if (ch2 != '.') {
           file_seek(file, bu_pos2);
-          lexer->token = LEXER_OP_DOT;
+          lexer->tok = LEXER_OP_DOT;
         } else if (!file_eof(file)) {
           size_t bu_pos3 = file_position(file);
           ch3 = file_readchar(file);
 
           if (ch3 != '.' && ch3 != '=') {
             file_seek(file, bu_pos3);
-            lexer->token = LEXER_OP_DOTDOT;
+            lexer->tok = LEXER_OP_DOTDOT;
             len += 1;
           } else if (ch3 == '=') {
-            lexer->token = LEXER_OP_DOTDOTEQ;
+            lexer->tok = LEXER_OP_DOTDOTEQ;
             len += 2;
           } else {
-            lexer->token = LEXER_OP_DOTDOTDOT;
+            lexer->tok = LEXER_OP_DOTDOTDOT;
             len += 2;
           }
         } else {
-          lexer->token = LEXER_OP_DOTDOT;
+          lexer->tok = LEXER_OP_DOTDOT;
           len += 1;
         }
       } else {
-        lexer->token = LEXER_OP_DOT;
+        lexer->tok = LEXER_OP_DOT;
       }
 
       break;
@@ -81,15 +81,15 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '{': {
-      lexer->token = LEXER_OP_LBRACE;
+      lexer->tok = LEXER_OP_LBRACE;
       break;
     }
     case '[': {
-      lexer->token = LEXER_OP_LBRACK;
+      lexer->tok = LEXER_OP_LBRACK;
       break;
     }
     case '(': {
-      lexer->token = LEXER_OP_LPAR;
+      lexer->tok = LEXER_OP_LPAR;
       break;
     }
     case '<': {
@@ -119,9 +119,9 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
 
         if (ch2 != '?' && ch2 != '.') {
           file_seek(file, bu_pos2);
-          lexer->token = LEXER_OP_QN;
+          lexer->tok = LEXER_OP_QN;
         } else if (ch2 == '.') {
-          lexer->token = LEXER_OP_QNDOT;
+          lexer->tok = LEXER_OP_QNDOT;
           len += 1;
         } else if (!file_eof(file)) {
           size_t bu_pos3 = file_position(file);
@@ -129,36 +129,36 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
 
           if (ch3 != '=') {
             file_seek(file, bu_pos3);
-            lexer->token = LEXER_OP_QNQN;
+            lexer->tok = LEXER_OP_QNQN;
             len += 1;
           } else {
-            lexer->token = LEXER_OP_QNQNEQ;
+            lexer->tok = LEXER_OP_QNQNEQ;
             len += 2;
           }
         } else {
-          lexer->token = LEXER_OP_QNQN;
+          lexer->tok = LEXER_OP_QNQN;
           len += 1;
         }
       } else {
-        lexer->token = LEXER_OP_QN;
+        lexer->tok = LEXER_OP_QN;
       }
 
       break;
     }
     case '}': {
-      lexer->token = LEXER_OP_RBRACE;
+      lexer->tok = LEXER_OP_RBRACE;
       break;
     }
     case ']': {
-      lexer->token = LEXER_OP_RBRACK;
+      lexer->tok = LEXER_OP_RBRACK;
       break;
     }
     case ')': {
-      lexer->token = LEXER_OP_RPAR;
+      lexer->tok = LEXER_OP_RPAR;
       break;
     }
     case ';': {
-      lexer->token = LEXER_OP_SEMI;
+      lexer->tok = LEXER_OP_SEMI;
       break;
     }
     case '/': {
@@ -171,13 +171,13 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
           return false;
         } else if (ch2 != '=') {
           file_seek(file, bu_pos);
-          lexer->token = LEXER_OP_SLASH;
+          lexer->tok = LEXER_OP_SLASH;
         } else {
-          lexer->token = LEXER_OP_SLASHEQ;
+          lexer->tok = LEXER_OP_SLASHEQ;
           len += 1;
         }
       } else {
-        lexer->token = LEXER_OP_SLASH;
+        lexer->tok = LEXER_OP_SLASH;
       }
 
       break;
@@ -187,7 +187,7 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
       break;
     }
     case '~': {
-      lexer->token = LEXER_OP_TILDE;
+      lexer->tok = LEXER_OP_TILDE;
       break;
     }
     default: {
@@ -198,7 +198,7 @@ bool lex_op (file_t *file, lexer_t *lexer, size_t pos) {
 
   lexer->raw = malloc(len + 1);
 
-  switch (lexer->token) {
+  switch (lexer->tok) {
     case LEXER_OP_ANDANDEQ:
     case LEXER_OP_DOTDOTDOT:
     case LEXER_OP_DOTDOTEQ:

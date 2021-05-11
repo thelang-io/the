@@ -9,9 +9,9 @@
 #include "expr.h"
 
 void parser_expr_free (parser_expr_t *parser) {
-  if (parser->parser->token == PARSER_ID) {
+  if (parser->parser->tok == PARSER_ID) {
     parser_id_free((parser_id_t *) parser->parser);
-  } else if (parser->parser->token == PARSER_LITERAL) {
+  } else if (parser->parser->tok == PARSER_LITERAL) {
     parser_literal_free((parser_literal_t *) parser->parser);
   }
 

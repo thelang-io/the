@@ -42,15 +42,15 @@ void lexer_free_cb (void *it) {
 lexer_token lexer_lookup (file_t *file) {
   size_t pos = file_position(file);
   lexer_t *lexer = lexer_new(file);
-  lexer_token tok = LEXER_UNKNOWN;
+  lexer_token token = LEXER_UNKNOWN;
 
   if (lexer != NULL) {
-    tok = lexer->token;
+    token = lexer->tok;
     lexer_free(lexer);
   }
 
   file_seek(file, pos);
-  return tok;
+  return token;
 }
 
 lexer_t *lexer_new (file_t *file) {
@@ -73,7 +73,7 @@ lexer_t *lexer_new (file_t *file) {
   ) {
     lexer->raw = NULL;
     lexer->str = NULL;
-    lexer->token = LEXER_UNKNOWN;
+    lexer->tok = LEXER_UNKNOWN;
   }
 
   return lexer;

@@ -88,7 +88,7 @@ bool lex_lit_int_dec (file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw = raw;
   lexer->str = malloc(len + 1);
   memcpy(lexer->str, lexer->raw, len + 1);
-  lexer->token = LEXER_LIT_INT_DEC;
+  lexer->tok = LEXER_LIT_INT_DEC;
 
   return true;
 }

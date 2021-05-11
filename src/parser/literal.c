@@ -17,7 +17,7 @@ parser_t *parser_literal_new (file_t *file) {
   size_t pos = file_position(file);
   lexer_t *lexer = lexer_new(file);
 
-  if (lexer->token != LEXER_LIT_STR) {
+  if (lexer->tok != LEXER_LIT_STR) {
     lexer_free(lexer);
     file_seek(file, pos);
     return NULL;

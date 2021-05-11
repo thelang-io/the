@@ -27,10 +27,10 @@ int main (int argc, char *argv[]) {
     while (!file_eof(file)) {
       lexer_t *lexer = lexer_new(file);
 
-      if (lexer->token == LEXER_UNKNOWN) {
+      if (lexer->tok == LEXER_UNKNOWN) {
         throw("SyntaxError: Unexpected token");
-      } else if (lexer->token != LEXER_WS) {
-        printf("%s: %s\n", lexer_token_str[lexer->token], lexer->raw);
+      } else if (lexer->tok != LEXER_WS) {
+        printf("%s: %s\n", lexer_token_str[lexer->tok], lexer->raw);
       }
 
       lexer_free(lexer);

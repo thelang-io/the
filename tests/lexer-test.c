@@ -42,7 +42,7 @@ TEST(lexer, new_and_free) {
   ASSERT_NE(lexer, NULL);
   ASSERT_EQ(lexer->raw, NULL);
   ASSERT_EQ(lexer->str, NULL);
-  ASSERT_EQ(lexer->token, LEXER_UNKNOWN);
+  ASSERT_EQ(lexer->tok, LEXER_UNKNOWN);
   ASSERT_EQ(file_position(file), 0);
 
   lexer_free(lexer);

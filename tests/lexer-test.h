@@ -19,30 +19,30 @@
   file_free(file); \
   file_remove("../test.out"); } while (0)
 
-#define LEX_FE(raw_text, str_text, tok) \
+#define LEX_FE(raw_text, str_text, token) \
   LEX_F(raw_text, { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, tok); \
+    ASSERT_EQ(lexer->tok, token); \
     ASSERT_MEMEQ(lexer->raw, raw_text, strlen(raw_text) + 1); \
     ASSERT_MEMEQ(lexer->str, str_text, strlen(str_text) + 1); \
   }); \
   LEX_F(raw_text " ", { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, tok); \
+    ASSERT_EQ(lexer->tok, token); \
     ASSERT_MEMEQ(lexer->raw, raw_text, strlen(raw_text) + 1); \
     ASSERT_MEMEQ(lexer->str, str_text, strlen(str_text) + 1); \
   })
 
-#define LEX_FS(text, tok) \
+#define LEX_FS(text, token) \
   LEX_F(text, { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, tok); \
+    ASSERT_EQ(lexer->tok, token); \
     ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
     ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
   }); \
   LEX_F(text " ", { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, tok); \
+    ASSERT_EQ(lexer->tok, token); \
     ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
     ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
   })

@@ -41,7 +41,7 @@ parser_t *parser_arglist_new (file_t *file) {
 
       lexer_t *lexer = lexer_new(file);
 
-      if (lexer->token == LEXER_OP_COMMA) {
+      if (lexer->tok == LEXER_OP_COMMA) {
         parser_ws_new(file, false);
         lexer_free(lexer);
 
@@ -52,7 +52,7 @@ parser_t *parser_arglist_new (file_t *file) {
         }
 
         continue;
-      } else if (lexer->token == LEXER_OP_RPAR) {
+      } else if (lexer->tok == LEXER_OP_RPAR) {
         file_seek(file, bu_pos);
         lexer_free(lexer);
         break;

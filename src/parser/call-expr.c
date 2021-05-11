@@ -35,7 +35,7 @@ parser_t *parser_call_expr_new (file_t *file) {
 
   lexer_t *lpar = lexer_new(file);
 
-  if (lpar->token != LEXER_OP_LPAR) {
+  if (lpar->tok != LEXER_OP_LPAR) {
     file_seek(file, pos);
     parser_id_free(parser_id);
     lexer_free(lpar);
@@ -68,7 +68,7 @@ parser_t *parser_call_expr_new (file_t *file) {
 
   lexer_t *rpar = lexer_new(file);
 
-  if (rpar->token != LEXER_OP_RPAR) {
+  if (rpar->tok != LEXER_OP_RPAR) {
     file_seek(file, pos);
     parser_id_free(parser_id);
     parser_arglist_free(parser_arglist);

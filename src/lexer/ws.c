@@ -13,7 +13,7 @@ bool lex_ws (file_t *file, lexer_t *lexer, size_t pos) {
   unsigned char ch = file_readchar(file);
 
   if (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t') {
-    lexer->token = LEXER_WS;
+    lexer->tok = LEXER_WS;
   } else {
     file_seek(file, pos);
     return false;

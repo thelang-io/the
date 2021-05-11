@@ -11,42 +11,42 @@
 TEST(lex_comment_line, works) {
   LEX_F("//", {
     ASSERT_NE(lexer, NULL);
-    ASSERT_EQ(lexer->token, LEXER_COMMENT_LINE);
+    ASSERT_EQ(lexer->tok, LEXER_COMMENT_LINE);
     ASSERT_MEMEQ(lexer->raw, "//", strlen("//") + 1);
     ASSERT_MEMEQ(lexer->str, "", 1);
   });
 
   LEX_F("//\n", {
     ASSERT_NE(lexer, NULL);
-    ASSERT_EQ(lexer->token, LEXER_COMMENT_LINE);
+    ASSERT_EQ(lexer->tok, LEXER_COMMENT_LINE);
     ASSERT_MEMEQ(lexer->raw, "//", strlen("//") + 1);
     ASSERT_MEMEQ(lexer->str, "", 1);
   });
 
   LEX_F("// ", {
     ASSERT_NE(lexer, NULL);
-    ASSERT_EQ(lexer->token, LEXER_COMMENT_LINE);
+    ASSERT_EQ(lexer->tok, LEXER_COMMENT_LINE);
     ASSERT_MEMEQ(lexer->raw, "// ", strlen("// ") + 1);
     ASSERT_MEMEQ(lexer->str, " ", strlen(" ") + 1);
   });
 
   LEX_F("// \n", {
     ASSERT_NE(lexer, NULL);
-    ASSERT_EQ(lexer->token, LEXER_COMMENT_LINE);
+    ASSERT_EQ(lexer->tok, LEXER_COMMENT_LINE);
     ASSERT_MEMEQ(lexer->raw, "// ", strlen("// ") + 1);
     ASSERT_MEMEQ(lexer->str, " ", strlen(" ") + 1);
   });
 
   LEX_F("//Test", {
     ASSERT_NE(lexer, NULL);
-    ASSERT_EQ(lexer->token, LEXER_COMMENT_LINE);
+    ASSERT_EQ(lexer->tok, LEXER_COMMENT_LINE);
     ASSERT_MEMEQ(lexer->raw, "//Test", strlen("//Test") + 1);
     ASSERT_MEMEQ(lexer->str, "Test", strlen("Test") + 1);
   });
 
   LEX_F("//Test\n", {
     ASSERT_NE(lexer, NULL);
-    ASSERT_EQ(lexer->token, LEXER_COMMENT_LINE);
+    ASSERT_EQ(lexer->tok, LEXER_COMMENT_LINE);
     ASSERT_MEMEQ(lexer->raw, "//Test", strlen("//Test") + 1);
     ASSERT_MEMEQ(lexer->str, "Test", strlen("Test") + 1);
   });

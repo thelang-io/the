@@ -11,13 +11,13 @@
 #define LEX_WS_F(text) \
   LEX_F(text, { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, LEXER_WS); \
+    ASSERT_EQ(lexer->tok, LEXER_WS); \
     ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
     ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
   }); \
   LEX_F(text "t", { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, LEXER_WS); \
+    ASSERT_EQ(lexer->tok, LEXER_WS); \
     ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
     ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
   })

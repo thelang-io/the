@@ -37,7 +37,7 @@ bool lex_lit_int_hex (file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw[len - 2] = ch1;
   lexer->raw[len - 1] = ch2;
   lexer->raw[len] = '\0';
-  lexer->token = LEXER_LIT_INT_HEX;
+  lexer->tok = LEXER_LIT_INT_HEX;
 
   while (!file_eof(file)) {
     size_t bu_pos = file_position(file);

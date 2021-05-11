@@ -12,13 +12,13 @@
   LEX_FS(text, LEXER_LIT_INT_DEC); \
   LEX_F(text "..", { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, LEXER_LIT_INT_DEC); \
+    ASSERT_EQ(lexer->tok, LEXER_LIT_INT_DEC); \
     ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
     ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
   }); \
   LEX_F(text ".. ", { \
     ASSERT_NE(lexer, NULL); \
-    ASSERT_EQ(lexer->token, LEXER_LIT_INT_DEC); \
+    ASSERT_EQ(lexer->tok, LEXER_LIT_INT_DEC); \
     ASSERT_MEMEQ(lexer->raw, text, strlen(text) + 1); \
     ASSERT_MEMEQ(lexer->str, text, strlen(text) + 1); \
   })

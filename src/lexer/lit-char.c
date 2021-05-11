@@ -23,7 +23,7 @@ bool lex_lit_char (file_t *file, lexer_t *lexer, size_t pos) {
   lexer->raw = malloc(len + 1);
   lexer->raw[len - 1] = ch1;
   lexer->raw[len] = '\0';
-  lexer->token = LEXER_LIT_CHAR;
+  lexer->tok = LEXER_LIT_CHAR;
 
   lexer_lit_char_process_(file, lexer, &len);
 

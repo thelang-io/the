@@ -20,7 +20,7 @@ parser_t *parser_ws_new (file_t *file, bool alloc) {
     size_t pos = file_position(file);
     lexer_t *lexer = lexer_new(file);
 
-    if (lexer->token != LEXER_WS) {
+    if (lexer->tok != LEXER_WS) {
       file_seek(file, pos);
       lexer_free(lexer);
 

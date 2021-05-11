@@ -12,25 +12,25 @@ TEST(parser_literal, new_and_free) {
   PARSER_F("1.", literal, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_LITERAL);
-    ASSERT_EQ(parser->lexer->token, LEXER_LIT_FLOAT);
+    ASSERT_EQ(parser->lexer->tok, LEXER_LIT_FLOAT);
   });
 
   PARSER_F("2", literal, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_LITERAL);
-    ASSERT_EQ(parser->lexer->token, LEXER_LIT_INT_DEC);
+    ASSERT_EQ(parser->lexer->tok, LEXER_LIT_INT_DEC);
   });
 
   PARSER_F("'c'", literal, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_LITERAL);
-    ASSERT_EQ(parser->lexer->token, LEXER_LIT_CHAR);
+    ASSERT_EQ(parser->lexer->tok, LEXER_LIT_CHAR);
   });
 
   PARSER_F("\"str\"", literal, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_LITERAL);
-    ASSERT_EQ(parser->lexer->token, LEXER_LIT_STR);
+    ASSERT_EQ(parser->lexer->tok, LEXER_LIT_STR);
   });
 }
 

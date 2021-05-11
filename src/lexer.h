@@ -142,7 +142,7 @@ typedef enum {
 struct lexer_s {
   unsigned char *raw;
   unsigned char *str;
-  lexer_token token;
+  lexer_token tok;
 };
 
 extern const char *lexer_token_str[];
