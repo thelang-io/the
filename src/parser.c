@@ -204,26 +204,6 @@ parser_expr_t *parser_expr_new_ (file_t *file) {
   return NULL;
 }
 
-
-void parser_literal_free_ (parser_literal_t *parser) {
-  lexer_free(parser->lexer);
-  free(parser);
-}
-
-parser_literal_t *parser_literal_new_ (file_t *file) {
-  parser_literal_t *parser = malloc(sizeof(parser_literal_t));
-  size_t pos = file_position(file);
-  parser->lexer = lexer_new(file);
-
-  if (parser->lexer->token != LEXER_LIT_STR) {
-    parser_literal_free_(parser);
-    file_seek(file, pos);
-    return NULL;
-  }
-
-  return parser;
-}
-
 void parser_ws_free_ (parser_ws_t *parser) {
   array_free(parser->lexers, lexer_free_cb);
   free(parser);

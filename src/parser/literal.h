@@ -5,19 +5,19 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_PARSER_ID_H
-#define SRC_PARSER_ID_H
+#ifndef SRC_PARSER_LITERAL_H
+#define SRC_PARSER_LITERAL_H
 
 #include "../parser.h"
 
-typedef struct parser_id_s parser_id_t;
+typedef struct parser_literal_s parser_literal_t;
 
-struct parser_id_s {
+struct parser_literal_s {
   parser_token tok;
   lexer_t *lexer;
 };
 
-void parser_id_free (parser_t *parser);
-parser_t *parser_id_new (file_t *file);
+void parser_literal_free (parser_t *parser);
+parser_t *parser_literal_new (file_t *file);
 
 #endif

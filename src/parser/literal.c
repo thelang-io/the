@@ -6,25 +6,25 @@
  */
 
 #include <stdlib.h>
-#include "id.h"
+#include "literal.h"
 
-void parser_id_free (parser_t *parser) {
-  lexer_free(((parser_id_t *) parser)->lexer);
+void parser_literal_free (parser_t *parser) {
+  lexer_free(((parser_literal_t *) parser)->lexer);
   free(parser);
 }
 
-parser_t *parser_id_new (file_t *file) {
+parser_t *parser_literal_new (file_t *file) {
   size_t pos = file_position(file);
   lexer_t *lexer = lexer_new(file);
 
-  if (lexer->token != LEXER_LIT_ID) {
+  if (lexer->token != LEXER_LIT_STR) {
     lexer_free(lexer);
     file_seek(file, pos);
     return NULL;
   }
 
-  parser_id_t *parser = malloc(sizeof(parser_id_t));
-  parser->tok = PARSER_ID;
+  parser_literal_t *parser = malloc(sizeof(parser_literal_t));
+  parser->tok = PARSER_LITERAL;
   parser->lexer = lexer;
   return (parser_t *) parser;
 }

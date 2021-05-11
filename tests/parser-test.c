@@ -191,18 +191,6 @@ TEST(parser, expr_new_free) {
   });
 }
 
-TEST(parser, literal_new_free) {
-  PARSER_F("@", literal, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_F("\"test\"", literal, {
-    ASSERT_NE(parser, NULL);
-    ASSERT_NE(parser->lexer, NULL);
-  });
-}
-
 TEST(parser, new_and_free) {
   char *filepath = "../test.out";
 
@@ -255,7 +243,6 @@ int main () {
   TEST_RUN(parser, arglist_new_free);
   TEST_RUN(parser, call_expr_new_free);
   TEST_RUN(parser, expr_new_free);
-  TEST_RUN(parser, literal_new_free);
   TEST_RUN(parser, new_and_free);
   TEST_RUN(parser, ws_new_free);
 }
