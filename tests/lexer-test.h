@@ -14,7 +14,6 @@
   do { writefile("../test.out", text); \
   file_t *file = file_new("../test.out", FILE_READ); \
   lexer_t *lexer = lexer_new(file); \
-  printf("tok: %s, raw: %s, str: %s\n", lexer_token_str[lexer->token], lexer->raw, lexer->str); \
   body \
   lexer_free(lexer); \
   file_free(file); \
