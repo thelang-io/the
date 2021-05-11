@@ -64,7 +64,7 @@ set(
   src/lexer.c src/lexer.h
   src/parser.c src/parser.h
   src/version.h
-  src/parser/literal.c src/parser/literal.h)
+  src/parser/literal.c src/parser/literal.h src/parser/ws.c src/parser/ws.h)
 
 add_executable(${PROJECT_NAME} ${sources} src/main.c)
 
@@ -92,6 +92,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/lexer/ws-test.c
     tests/parser/id-test.c
     tests/parser/literal-test.c
+    tests/parser/ws-test.c
     tests/array-test.c
     tests/ast-test.c
     tests/binary-test.c

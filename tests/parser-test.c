@@ -19,15 +19,6 @@
   file_free(file); \
   file_remove("../test.out"); } while (0)
 
-#define PARSER_WS_F(text, alloc, body) \
-  do { writefile("../test.out", text); \
-  file_t *file = file_new("../test.out", FILE_READ); \
-  parser_ws_t *parser = parser_ws_new_(file, alloc); \
-  body \
-  if (parser != NULL) parser_ws_free_(parser); \
-  file_free(file); \
-  file_remove("../test.out"); } while (0)
-
 TEST(parser, arglist_new_free) {
   PARSER_F("@", arglist, {
     ASSERT_EQ(parser, NULL);
@@ -218,31 +209,9 @@ TEST(parser, new_and_free) {
   file_remove(filepath);
 }
 
-TEST(parser, ws_new_free) {
-  PARSER_WS_F("@", true, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_WS_F("\t \r\n", true, {
-    ASSERT_NE(parser, NULL);
-    ASSERT_EQ(array_length(parser->lexers), 1);
-  });
-
-  PARSER_WS_F("@", false, {
-    ASSERT_EQ(parser, NULL);
-    ASSERT_EQ(file_position(file), 0);
-  });
-
-  PARSER_WS_F("\t \r\n", false, {
-    ASSERT_EQ(parser, NULL);
-  });
-}
-
 int main () {
   TEST_RUN(parser, arglist_new_free);
   TEST_RUN(parser, call_expr_new_free);
   TEST_RUN(parser, expr_new_free);
   TEST_RUN(parser, new_and_free);
-  TEST_RUN(parser, ws_new_free);
 }

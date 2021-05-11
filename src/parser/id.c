@@ -9,8 +9,9 @@
 #include "id.h"
 
 void parser_id_free (parser_t *parser) {
-  lexer_free(((parser_id_t *) parser)->lexer);
-  free(parser);
+  parser_id_t *parser_id = (parser_id_t *) parser;
+  lexer_free(parser_id->lexer);
+  free(parser_id);
 }
 
 parser_t *parser_id_new (file_t *file) {
