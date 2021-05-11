@@ -54,6 +54,7 @@ set(
   src/lexer/op.c src/lexer/op.h
   src/lexer/ws.c src/lexer/ws.h
   src/parser/arglist.c src/parser/arglist.h
+  src/parser/call-expr.c src/parser/call-expr.h
   src/parser/expr.c src/parser/expr.h
   src/parser/id.c src/parser/id.h
   src/parser/literal.c src/parser/literal.h
@@ -95,6 +96,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/lexer/op-test.c
     tests/lexer/ws-test.c
     tests/parser/arglist-test.c
+    tests/parser/call-expr-test.c
     tests/parser/expr-test.c
     tests/parser/id-test.c
     tests/parser/literal-test.c
