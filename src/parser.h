@@ -14,7 +14,6 @@
 typedef struct parser_s parser_t;
 typedef struct parser_arglist_s parser_arglist_t;
 typedef struct parser_call_expr_s parser_call_expr_t;
-typedef struct parser_expr_s parser_expr_t;
 
 typedef enum {
   PARSER_ARGLIST,
@@ -25,12 +24,6 @@ typedef enum {
   PARSER_UNKNOWN,
   PARSER_WS
 } parser_token;
-
-struct parser_expr_s {
-  parser_id_t *id;
-  parser_literal_t *literal;
-  parser_token token;
-};
 
 struct parser_arglist_s {
   array_t *exprs;
@@ -53,8 +46,5 @@ void parser_arglist_free_ (parser_arglist_t *parser);
 parser_arglist_t *parser_arglist_new_ (file_t *file);
 void parser_call_expr_free_ (parser_call_expr_t *parser);
 parser_call_expr_t *parser_call_expr_new_ (file_t *file);
-void parser_expr_free_ (parser_expr_t *parser);
-void parser_expr_free_cb_ (void *it);
-parser_expr_t *parser_expr_new_ (file_t *file);
 
 #endif

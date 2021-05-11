@@ -11,13 +11,13 @@
 TEST(parser_id, new_and_free) {
   PARSER_F("_", id, {
     ASSERT_NE(parser, NULL);
-    ASSERT_NE(parser->tok, PARSER_ID);
+    ASSERT_EQ(parser->tok, PARSER_ID);
     ASSERT_EQ(parser->lexer->token, LEXER_LIT_ID);
   });
 
-  PARSER_F("test", id, {
+  PARSER_F("id", id, {
     ASSERT_NE(parser, NULL);
-    ASSERT_NE(parser->tok, PARSER_ID);
+    ASSERT_EQ(parser->tok, PARSER_ID);
     ASSERT_EQ(parser->lexer->token, LEXER_LIT_ID);
   });
 }

@@ -170,36 +170,3 @@ parser_call_expr_t *parser_call_expr_new_ (file_t *file) {
   lexer_free(rpar);
   return parser;
 }
-
-void parser_expr_free_ (parser_expr_t *parser) {
-  if (parser->token == PARSER_ID) {
-    parser_id_free_(parser->id);
-  } else if (parser->token == PARSER_LITERAL) {
-    parser_literal_free_(parser->literal);
-  }
-
-  free(parser);
-}
-
-void parser_expr_free_cb_ (void *it) {
-  parser_expr_free_((parser_expr_t *) it);
-}
-
-parser_expr_t *parser_expr_new_ (file_t *file) {
-  parser_expr_t *parser = malloc(sizeof(parser_expr_t));
-
-  parser->id = NULL;
-  parser->literal = NULL;
-  parser->token = PARSER_UNKNOWN;
-
-  if ((parser->id = parser_id_new_(file)) != NULL) {
-    parser->token = PARSER_ID;
-    return parser;
-  } else if ((parser->literal = parser_literal_new_(file)) != NULL) {
-    parser->token = PARSER_LITERAL;
-    return parser;
-  }
-
-  free(parser);
-  return NULL;
-}

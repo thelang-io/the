@@ -8,17 +8,6 @@
 #include "../src/parser.h"
 #include "testing.h"
 
-// TODO Decrease size by packing into macros
-
-#define PARSER_F(text, token, body) \
-  do { writefile("../test.out", text); \
-  file_t *file = file_new("../test.out", FILE_READ); \
-  parser_##token##_t *parser = parser_##token##_new_(file); \
-  body \
-  if (parser != NULL) parser_##token##_free_(parser); \
-  file_free(file); \
-  file_remove("../test.out"); } while (0)
-
 TEST(parser, arglist_new_free) {
   PARSER_F("@", arglist, {
     ASSERT_EQ(parser, NULL);
@@ -168,20 +157,6 @@ TEST(parser, call_expr_new_free) {
   });
 }
 
-TEST(parser, expr_new_free) {
-  PARSER_F("test", expr, {
-    ASSERT_NE(parser, NULL);
-    ASSERT_NE(parser->id, NULL);
-    ASSERT_EQ(parser->token, PARSER_ID);
-  });
-
-  PARSER_F("\"test\"", expr, {
-    ASSERT_NE(parser, NULL);
-    ASSERT_NE(parser->literal, NULL);
-    ASSERT_EQ(parser->token, PARSER_LITERAL);
-  });
-}
-
 TEST(parser, new_and_free) {
   char *filepath = "../test.out";
 
@@ -212,6 +187,5 @@ TEST(parser, new_and_free) {
 int main () {
   TEST_RUN(parser, arglist_new_free);
   TEST_RUN(parser, call_expr_new_free);
-  TEST_RUN(parser, expr_new_free);
   TEST_RUN(parser, new_and_free);
 }
