@@ -54,7 +54,6 @@ jobs:
       - run: mkdir -p ~/.ssh
       - run: ssh-agent -a $SSH_AUTH_SOCK
       - run: ssh-add - <<< "${{ secrets.AWS_EC2_KEY }}"
-      - run: scp -o StrictHostKeyChecking=no build/the "${{ secrets.AWS_EC2_URL }}:the@latest"
       - run: scp -o StrictHostKeyChecking=no build/the "${{ secrets.AWS_EC2_URL }}:the@0.2.0"
       - if: always()
         run: |
