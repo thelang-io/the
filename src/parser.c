@@ -9,6 +9,10 @@
 #include "parser/ws.h"
 #include "parser.h"
 
+const char *parser_token_str[] = {
+  FOREACH_PARSER_TOKEN(GEN_ENUM_STR)
+};
+
 void parser_free (parser_t *parser) {
   if (parser->tok == PARSER_ARGLIST) {
     parser_arglist_free((parser_arglist_t *) parser);
