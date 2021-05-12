@@ -11,11 +11,11 @@
 TEST(parser, new_and_free) {
   char *filepath = "../test.out";
 
-  writefile(filepath, "id");
+  writefile(filepath, " ");
   file_t *file = file_new(filepath, FILE_READ);
   parser_t *parser = parser_new(file);
   ASSERT_NE(parser, NULL);
-  ASSERT_EQ(parser->tok, PARSER_ID);
+  ASSERT_EQ(parser->tok, PARSER_WS);
   parser_free(parser);
   file_free(file);
 
