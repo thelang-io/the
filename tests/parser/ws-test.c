@@ -11,20 +11,20 @@
 #define PARSER_WS_F(text, alloc, body) \
   do { writefile("../test.out", text); \
   file_t *file = file_new("../test.out", FILE_READ); \
-  parser_ws_t *parser = parser_ws_new_(file, alloc); \
+  parser_ws_t *parser = parser_ws_new(file, alloc); \
   body \
-  if (parser != NULL) parser_ws_free_(parser); \
+  if (parser != NULL) parser_ws_free(parser); \
   file_free(file); \
   file_remove("../test.out"); } while (0)
 
 TEST(parser_ws, new_and_free) {
-  PARSER_WS_F(" \n\r\t", true, {
+  PARSER_WS_F(" \n\r\t/**/", true, {
     ASSERT_NE(parser, NULL);
-    ASSERT_NE(parser->tok, PARSER_WS);
-    ASSERT_EQ(array_length(parser->lexers), 1);
+    ASSERT_EQ(parser->tok, PARSER_WS);
+    ASSERT_EQ(array_length(parser->lexers), 2);
   });
 
-  PARSER_WS_F(" \n\r\t", false, {
+  PARSER_WS_F(" \n\r\t/**/", false, {
     ASSERT_EQ(parser, NULL);
   });
 }

@@ -16,11 +16,17 @@ void parser_ws_free (parser_ws_t *parser) {
 parser_ws_t *parser_ws_new (file_t *file, bool alloc) {
   array_t *lexers = alloc ? array_new() : NULL;
 
-  for (size_t i = 0; !file_eof(file); i++) {
+  for (size_t i = 0;; i++) {
     size_t pos = file_position(file);
     lexer_t *lexer = lexer_new(file);
 
-    if (lexer->tok != LEXER_WS) {
+    if (
+      lexer == NULL || (
+        lexer->tok != LEXER_COMMENT_BLOCK &&
+        lexer->tok != LEXER_COMMENT_LINE &&
+        lexer->tok != LEXER_WS
+      )
+    ) {
       file_seek(file, pos);
       lexer_free(lexer);
 
