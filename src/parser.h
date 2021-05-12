@@ -19,7 +19,6 @@ typedef enum {
   PARSER_EXPR,
   PARSER_ID,
   PARSER_LITERAL,
-  PARSER_UNKNOWN,
   PARSER_WS
 } parser_token;
 
