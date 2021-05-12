@@ -33,20 +33,20 @@ int main (int argc, char *argv[]) {
     return EXIT_SUCCESS;
   }
 
-//  file_t *file = file_new(argv[1], FILE_READ);
-//  ast_t *ast = ast_new(file);
-//  binary_t *bin = codegen(ast);
-//
-//  if (bin == NULL) {
-//    throw("Error: Something went wrong");
-//  }
-//
-//  binary_write(bin, "a.out");
-//  chmod("a.out", 0755);
-//
-//  binary_free(bin);
-//  ast_free(ast);
-//  file_free(file);
+/*  file_t *file = file_new(argv[1], FILE_READ);
+  ast_t *ast = ast_new(file);
+  binary_t *bin = codegen(ast);
+
+  if (bin == NULL) {
+    throw("Error: Something went wrong");
+  }
+
+  binary_write(bin, "a.out");
+  chmod("a.out", 0755);
+
+  binary_free(bin);
+  ast_free(ast);
+  file_free(file); */
 
   return EXIT_SUCCESS;
 }
