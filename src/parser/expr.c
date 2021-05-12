@@ -25,8 +25,8 @@ void parser_expr_free_cb (void *it) {
 parser_expr_t *parser_expr_new (file_t *file) {
   parser_t *parser = NULL;
 
-  if ((parser = parser_id_new(file)) == NULL) {
-    if ((parser = parser_literal_new(file)) == NULL) {
+  if ((parser = (parser_t *) parser_id_new(file)) == NULL) {
+    if ((parser = (parser_t *) parser_literal_new(file)) == NULL) {
       return NULL;
     }
   }
