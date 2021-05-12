@@ -9,20 +9,20 @@
 #include "../parser-test.h"
 
 TEST(parser_arglist, new_and_free) {
-  PARSER_F(")", arglist, {
+  PARSER_FI(")", arglist, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_ARGLIST);
     ASSERT_TRUE(array_empty(parser->exprs));
   });
 
-  PARSER_F("test)", arglist, {
+  PARSER_FI("test)", arglist, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_ARGLIST);
     ASSERT_EQ(array_length(parser->exprs), 1);
     ASSERT_NE(array_at(parser->exprs, 0), NULL);
   });
 
-  PARSER_F("test, \"test\")", arglist, {
+  PARSER_FI("test, \"test\")", arglist, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_ARGLIST);
     ASSERT_EQ(array_length(parser->exprs), 2);

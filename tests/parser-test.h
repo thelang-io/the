@@ -20,4 +20,14 @@
   file_free(file); \
   file_remove("../test.out"); } while (0)
 
+#define PARSER_FI(text, token, body) \
+  do { writefile("../test.out", text); \
+  file_t *file = file_new("../test.out", FILE_READ); \
+  parser_##token##_t *parser = parser_##token##_new(file); \
+  if (parser != NULL) printf("Tok: %s", parser_token_str[parser->tok]); \
+  body \
+  if (parser != NULL) parser_free((parser_t *) parser); \
+  file_free(file); \
+  file_remove("../test.out"); } while (0)
+
 #endif

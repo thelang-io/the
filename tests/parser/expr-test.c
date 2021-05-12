@@ -9,13 +9,13 @@
 #include "../parser-test.h"
 
 TEST(parser_expr, new_and_free) {
-  PARSER_F("id", expr, {
+  PARSER_FI("id", expr, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_EXPR);
     ASSERT_EQ(parser->parser->tok, PARSER_ID);
   });
 
-  PARSER_F("\"str\"", expr, {
+  PARSER_FI("\"str\"", expr, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_EXPR);
     ASSERT_EQ(parser->parser->tok, PARSER_LITERAL);

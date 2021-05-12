@@ -38,11 +38,7 @@ parser_t *parser_new (file_t *file) {
 
   if (
     (parser = (parser_t *) parser_ws_new(file, true)) != NULL ||
-    (parser = (parser_t *) parser_call_expr_new(file)) != NULL ||
-    (parser = (parser_t *) parser_arglist_new(file)) != NULL ||
-    (parser = (parser_t *) parser_expr_new(file)) != NULL ||
-    (parser = (parser_t *) parser_id_new(file)) != NULL ||
-    (parser = (parser_t *) parser_literal_new(file)) != NULL
+    (parser = (parser_t *) parser_call_expr_new(file)) != NULL
   ) {
     return parser;
   }
