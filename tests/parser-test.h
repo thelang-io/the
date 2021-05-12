@@ -13,9 +13,9 @@
 #define PARSER_F(text, token, body) \
   do { writefile("../test.out", text); \
   file_t *file = file_new("../test.out", FILE_READ); \
-  parser_##token##_t *parser = parser_##token##_new_(file); \
+  parser_##token##_t *parser = (parser_##token##_t *) parser_new(file); \
   body \
-  if (parser != NULL) parser_##token##_free_(parser); \
+  if (parser != NULL) parser_free((parser_t *) parser); \
   file_free(file); \
   file_remove("../test.out"); } while (0)
 
