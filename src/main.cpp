@@ -5,13 +5,8 @@
  * Proprietary and confidential
  */
 
-#include "../src/codegen-macos.h"
-#include "testing.h"
-
-TEST(codegen_macos, test) {
-  // TODO
-}
+#include <stdlib>
 
 int main () {
-  TEST_RUN(codegen_macos, test);
+  return EXIT_SUCCESS;
 }

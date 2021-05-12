@@ -5,11 +5,10 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_LEXER_LIT_INT_DEC_H
-#define SRC_LEXER_LIT_INT_DEC_H
+#ifndef SRC_VERSION_HPP
+#define SRC_VERSION_HPP
 
-#include "../lexer.h"
-
-bool lex_lit_int_dec (file_t *file, lexer_t *lexer, size_t pos);
+#define VERSION "0.2.0"
+#define VERSION_NAME "Threadsnake"
 
 #endif
