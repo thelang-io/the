@@ -13,7 +13,7 @@ void parser_id_free (parser_id_t *parser) {
   free(parser);
 }
 
-parser_t *parser_id_new (file_t *file) {
+parser_id_t *parser_id_new (file_t *file) {
   size_t pos = file_position(file);
   lexer_t *lexer = lexer_new(file);
 
@@ -26,5 +26,5 @@ parser_t *parser_id_new (file_t *file) {
   parser_id_t *parser = malloc(sizeof(parser_id_t));
   parser->tok = PARSER_ID;
   parser->lexer = lexer;
-  return (parser_t *) parser;
+  return parser;
 }

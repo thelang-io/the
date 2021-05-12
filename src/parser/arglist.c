@@ -14,14 +14,14 @@ void parser_arglist_free (parser_arglist_t *parser) {
   free(parser);
 }
 
-parser_t *parser_arglist_new (file_t *file) {
+parser_arglist_t *parser_arglist_new (file_t *file) {
   array_t *exprs = array_new();
   size_t pos = file_position(file);
   lexer_token rpar_tok = lexer_lookup(file);
 
   if (rpar_tok != LEXER_OP_RPAR) {
     while (true) {
-      parser_t *expr = parser_expr_new(file);
+      parser_expr_t *expr = parser_expr_new(file);
 
       if (expr == NULL) {
         array_free(exprs, parser_expr_free_cb);
@@ -68,5 +68,5 @@ parser_t *parser_arglist_new (file_t *file) {
   parser_arglist_t *parser_arglist = malloc(sizeof(parser_arglist_t));
   parser_arglist->tok = PARSER_ARGLIST;
   parser_arglist->exprs = exprs;
-  return (parser_t *) parser_arglist;
+  return parser_arglist;
 }

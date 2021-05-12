@@ -18,6 +18,6 @@ struct parser_ws_s {
 };
 
 void parser_ws_free (parser_ws_t *parser);
-parser_t *parser_ws_new (file_t *file, bool alloc);
+parser_ws_t *parser_ws_new (file_t *file, bool alloc);
 
 #endif

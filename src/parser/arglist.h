@@ -18,6 +18,6 @@ struct parser_arglist_s {
 };
 
 void parser_arglist_free (parser_arglist_t *parser);
-parser_t *parser_arglist_new (file_t *file);
+parser_arglist_t *parser_arglist_new (file_t *file);
 
 #endif

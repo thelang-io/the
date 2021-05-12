@@ -18,6 +18,6 @@ struct parser_id_s {
 };
 
 void parser_id_free (parser_id_t *parser);
-parser_t *parser_id_new (file_t *file);
+parser_id_t *parser_id_new (file_t *file);
 
 #endif

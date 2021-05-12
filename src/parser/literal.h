@@ -18,6 +18,6 @@ struct parser_literal_s {
 };
 
 void parser_literal_free (parser_literal_t *parser);
-parser_t *parser_literal_new (file_t *file);
+parser_literal_t *parser_literal_new (file_t *file);
 
 #endif

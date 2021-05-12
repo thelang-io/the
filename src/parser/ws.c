@@ -13,7 +13,7 @@ void parser_ws_free (parser_ws_t *parser) {
   free(parser);
 }
 
-parser_t *parser_ws_new (file_t *file, bool alloc) {
+parser_ws_t *parser_ws_new (file_t *file, bool alloc) {
   array_t *lexers = alloc ? array_new() : NULL;
 
   for (size_t i = 0; !file_eof(file); i++) {
@@ -40,5 +40,5 @@ parser_t *parser_ws_new (file_t *file, bool alloc) {
   parser_ws_t *parser = malloc(sizeof(parser_ws_t));
   parser->tok = PARSER_WS;
   parser->lexers = lexers;
-  return (parser_t *) parser;
+  return parser;
 }

@@ -15,12 +15,12 @@ void parser_call_expr_free (parser_call_expr_t *parser) {
   free(parser);
 }
 
-parser_t *parser_call_expr_new (file_t *file) {
+parser_call_expr_t *parser_call_expr_new (file_t *file) {
   parser_arglist_t *parser_arglist = NULL;
   parser_id_t *parser_id = NULL;
   size_t pos = file_position(file);
 
-  if ((parser_id = (parser_id_t *) parser_id_new(file)) == NULL) {
+  if ((parser_id = parser_id_new(file)) == NULL) {
     file_seek(file, pos);
     return NULL;
   }
@@ -51,7 +51,7 @@ parser_t *parser_call_expr_new (file_t *file) {
     return NULL;
   }
 
-  if ((parser_arglist = (parser_arglist_t *) parser_arglist_new(file)) == NULL) {
+  if ((parser_arglist = parser_arglist_new(file)) == NULL) {
     file_seek(file, pos);
     parser_id_free(parser_id);
     return NULL;
@@ -82,5 +82,5 @@ parser_t *parser_call_expr_new (file_t *file) {
   parser->tok = PARSER_CALL_EXPR;
   parser->arglist = parser_arglist;
   parser->id = parser_id;
-  return (parser_t *) parser;
+  return parser;
 }

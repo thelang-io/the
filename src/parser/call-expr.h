@@ -19,6 +19,6 @@ struct parser_call_expr_s {
 };
 
 void parser_call_expr_free (parser_call_expr_t *parser);
-parser_t *parser_call_expr_new (file_t *file);
+parser_call_expr_t *parser_call_expr_new (file_t *file);
 
 #endif

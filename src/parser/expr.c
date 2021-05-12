@@ -22,7 +22,7 @@ void parser_expr_free_cb (void *it) {
   parser_expr_free((parser_expr_t *) it);
 }
 
-parser_t *parser_expr_new (file_t *file) {
+parser_expr_t *parser_expr_new (file_t *file) {
   parser_t *parser = NULL;
 
   if ((parser = parser_id_new(file)) == NULL) {
@@ -34,5 +34,5 @@ parser_t *parser_expr_new (file_t *file) {
   parser_expr_t *parser_expr = malloc(sizeof(parser_expr_t));
   parser_expr->tok = PARSER_EXPR;
   parser_expr->parser = parser;
-  return (parser_t *) parser_expr;
+  return parser_expr;
 }
