@@ -17,7 +17,15 @@ parser_literal_t *parser_literal_new (file_t *file) {
   size_t pos = file_position(file);
   lexer_t *lexer = lexer_new(file);
 
-  if (lexer->tok != LEXER_LIT_STR) {
+  if (
+    lexer->tok != LEXER_LIT_CHAR &&
+    lexer->tok != LEXER_LIT_FLOAT &&
+    lexer->tok != LEXER_LIT_INT_BIN &&
+    lexer->tok != LEXER_LIT_INT_DEC &&
+    lexer->tok != LEXER_LIT_INT_HEX &&
+    lexer->tok != LEXER_LIT_INT_OCT &&
+    lexer->tok != LEXER_LIT_STR
+  ) {
     lexer_free(lexer);
     file_seek(file, pos);
     return NULL;

@@ -15,10 +15,28 @@ TEST(parser_literal, new_and_free) {
     ASSERT_EQ(parser->lexer->tok, LEXER_LIT_FLOAT);
   });
 
-  PARSER_FI("2", literal, {
+  PARSER_FI("0b10", literal, {
+    ASSERT_NE(parser, NULL);
+    ASSERT_EQ(parser->tok, PARSER_LITERAL);
+    ASSERT_EQ(parser->lexer->tok, LEXER_LIT_INT_BIN);
+  });
+
+  PARSER_FI("3", literal, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_LITERAL);
     ASSERT_EQ(parser->lexer->tok, LEXER_LIT_INT_DEC);
+  });
+
+  PARSER_FI("0x04", literal, {
+    ASSERT_NE(parser, NULL);
+    ASSERT_EQ(parser->tok, PARSER_LITERAL);
+    ASSERT_EQ(parser->lexer->tok, LEXER_LIT_INT_HEX);
+  });
+
+  PARSER_FI("0o05", literal, {
+    ASSERT_NE(parser, NULL);
+    ASSERT_EQ(parser->tok, PARSER_LITERAL);
+    ASSERT_EQ(parser->lexer->tok, LEXER_LIT_INT_OCT);
   });
 
   PARSER_FI("'c'", literal, {
