@@ -20,13 +20,14 @@ parser_ws_t *parser_ws_new (file_t *file, bool alloc) {
     size_t pos = file_position(file);
     lexer_t *lexer = lexer_new(file);
 
-    if (
-      lexer == NULL || lexer->tok == LEXER_UNKNOWN || (
-        lexer->tok != LEXER_COMMENT_BLOCK &&
-        lexer->tok != LEXER_COMMENT_LINE &&
-        lexer->tok != LEXER_WS
-      )
-    ) {
+    const bool is_ws = (
+      lexer != NULL &&
+      lexer->tok != LEXER_COMMENT_BLOCK &&
+      lexer->tok != LEXER_COMMENT_LINE &&
+      lexer->tok != LEXER_WS
+    );
+
+    if (lexer == NULL || lexer->tok == LEXER_UNKNOWN || is_ws) {
       file_seek(file, pos);
       lexer_free(lexer);
 
