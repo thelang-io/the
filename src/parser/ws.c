@@ -21,7 +21,7 @@ parser_ws_t *parser_ws_new (file_t *file, bool alloc) {
     lexer_t *lexer = lexer_new(file);
 
     if (
-      lexer == NULL || (
+      lexer == NULL || lexer->tok == LEXER_UNKNOWN || (
         lexer->tok != LEXER_COMMENT_BLOCK &&
         lexer->tok != LEXER_COMMENT_LINE &&
         lexer->tok != LEXER_WS
@@ -41,6 +41,14 @@ parser_ws_t *parser_ws_new (file_t *file, bool alloc) {
     }
 
     alloc ? array_push(lexers, lexer) : lexer_free(lexer);
+
+    if (file_eof(file)) {
+      if (alloc) {
+        break;
+      } else {
+        return NULL;
+      }
+    }
   }
 
   parser_ws_t *parser = malloc(sizeof(parser_ws_t));

@@ -18,10 +18,20 @@
   file_remove("../test.out"); } while (0)
 
 TEST(parser_ws, new_and_free) {
+  PARSER_WS_F(" ", true, {
+    ASSERT_NE(parser, NULL);
+    ASSERT_EQ(parser->tok, PARSER_WS);
+    ASSERT_EQ(array_length(parser->lexers), 1);
+  });
+
   PARSER_WS_F(" \n\r\t/**/", true, {
     ASSERT_NE(parser, NULL);
     ASSERT_EQ(parser->tok, PARSER_WS);
     ASSERT_EQ(array_length(parser->lexers), 2);
+  });
+
+  PARSER_WS_F(" ", false, {
+    ASSERT_EQ(parser, NULL);
   });
 
   PARSER_WS_F(" \n\r\t/**/", false, {
