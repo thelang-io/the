@@ -20,7 +20,7 @@ int main (int argc, const char *argv[]) {
       throw Error("File path is not set");
     }
 
-    Reader reader(argv[2]);
+    auto reader = Reader(argv[2]);
 
     while (!reader.eof()) {
       std::cout << reader.next();

@@ -21,11 +21,11 @@ class ReaderTest : public ::testing::Test {
   const std::string c2_ = "Lorem ipsum\ndolor sit amet\n";
 
   void SetUp () override {
-    std::ofstream f0(this->p0_);
+    auto f0 = std::ofstream(this->p0_);
     f0 << this->c0_;
-    std::ofstream f1(this->p1_);
+    auto f1 = std::ofstream(this->p1_);
     f1 << this->c1_;
-    std::ofstream f2(this->p2_);
+    auto f2 = std::ofstream(this->p2_);
     f2 << this->c2_;
   }
 
@@ -37,21 +37,21 @@ class ReaderTest : public ::testing::Test {
 };
 
 TEST_F(ReaderTest, Read) {
-  const ReaderLocation rl{};
+  const auto rl = ReaderLocation{};
 
-  const Reader r0(this->p0_);
+  const auto r0 = Reader(this->p0_);
   EXPECT_EQ(r0.content(), this->c0_);
   EXPECT_TRUE(r0.eof());
   EXPECT_EQ(r0.loc(), rl);
   EXPECT_EQ(r0.path(), this->p0_);
 
-  const Reader r1(this->p1_);
+  const auto r1 = Reader(this->p1_);
   EXPECT_EQ(r1.content(), this->c1_);
   EXPECT_FALSE(r1.eof());
   EXPECT_EQ(r1.loc(), rl);
   EXPECT_EQ(r1.path(), this->p1_);
 
-  const Reader r2(this->p2_);
+  const auto r2 = Reader(this->p2_);
   EXPECT_EQ(r2.content(), this->c2_);
   EXPECT_FALSE(r2.eof());
   EXPECT_EQ(r2.loc(), rl);
@@ -59,9 +59,9 @@ TEST_F(ReaderTest, Read) {
 }
 
 TEST_F(ReaderTest, Throw) {
-  const fs::path nilFile = this->tmp_ / "test_0.out";
-  const fs::path directory = this->tmp_ / "test_1";
-  const fs::path protFile = this->p1_;
+  const auto nilFile = this->tmp_ / "test_0.out";
+  const auto directory = this->tmp_ / "test_1";
+  const auto protFile = this->p1_;
 
   fs::create_directory(directory);
   fs::permissions(protFile, fs::perms::none);
@@ -71,12 +71,12 @@ TEST_F(ReaderTest, Throw) {
   EXPECT_THROW((Reader(protFile)), Error);
   fs::remove(directory);
 
-  Reader r0(this->p0_);
+  auto r0 = Reader(this->p0_);
   EXPECT_THROW(r0.next(), Error);
 }
 
 TEST_F(ReaderTest, ReadCharByChar) {
-  Reader r1(this->p1_);
+  auto r1 = Reader(this->p1_);
 
   for (size_t i = 0; !r1.eof(); i++) {
     EXPECT_EQ(r1.next(), this->c1_[i]);
@@ -84,7 +84,7 @@ TEST_F(ReaderTest, ReadCharByChar) {
   }
 
   EXPECT_TRUE(r1.eof());
-  Reader r2(this->p2_);
+  auto r2 = Reader(this->p2_);
 
   for (size_t i = 0; !r2.eof(); i++) {
     EXPECT_EQ(r2.next(), this->c2_[i]);
@@ -95,11 +95,11 @@ TEST_F(ReaderTest, ReadCharByChar) {
 }
 
 TEST_F(ReaderTest, Location) {
-  Reader r2(this->p2_);
-  ReaderLocation rl{};
+  auto r2 = Reader(this->p2_);
+  auto rl = ReaderLocation{};
 
   while (!r2.eof()) {
-    char ch = r2.next();
+    auto ch = r2.next();
 
     if (ch == '\n') {
       rl.col = 0;
@@ -114,11 +114,10 @@ TEST_F(ReaderTest, Location) {
 }
 
 TEST_F(ReaderTest, Seek) {
-  Reader r2(this->p2_);
-  const ReaderLocation beg = r2.loc();
-  ReaderLocation mid;
-  const size_t midPos = this->c2_.length() / 2;
-  ReaderLocation end;
+  auto r2 = Reader(this->p2_);
+  const auto beg = r2.loc();
+  auto mid = ReaderLocation{};
+  const auto midPos = this->c2_.length() / 2;
 
   while (!r2.eof()) {
     r2.next();
@@ -128,7 +127,7 @@ TEST_F(ReaderTest, Seek) {
     }
   }
 
-  end = r2.loc();
+  auto end = r2.loc();
   r2.seek(beg);
 
   for (size_t i = 0; !r2.eof(); i++) {

@@ -9,6 +9,6 @@
 #include "../src/Error.hpp"
 
 TEST(ErrorTest, AddsPrefix) {
-  Error err("An error occurred");
+  auto err = Error("An error occurred");
   EXPECT_STREQ(err.what(), "Error: An error occurred");
 }

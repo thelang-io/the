@@ -20,15 +20,16 @@ Reader::Reader (const fs::path &path) {
     throw Error("Path '" + path.string() + "' is not a file");
   }
 
-  std::ifstream file(this->_path);
+  auto file = std::ifstream(this->_path);
 
   if (!file) {
     throw Error("Unable to read '" + path.string() + "'");
   }
 
   file.seekg(0, std::ios::end);
-  std::ifstream::pos_type size = file.tellg();
+  auto size = file.tellg();
   file.seekg(0, std::ios::beg);
+
   this->_content.resize(static_cast<std::string::size_type>(size));
   file.read(&this->_content[0], size);
 }
@@ -50,7 +51,7 @@ char Reader::next () {
     throw Error("Tried to read on file end");
   }
 
-  char ch = this->_content[this->_loc.pos];
+  auto ch = this->_content[this->_loc.pos];
 
   if (ch == '\n') {
     this->_loc.col = 0;
