@@ -20,17 +20,21 @@ struct ReaderLocation {
 
 class Reader {
  public:
-  explicit Reader (const fs::path &path);
+  Reader (const fs::path &path);
 
+  std::string content () const;
   bool eof () const;
   ReaderLocation loc () const;
   char next ();
-  void seek (ReaderLocation loc);
+  fs::path path () const;
+  void seek (const ReaderLocation loc);
 
  private:
   std::string _content;
   ReaderLocation _loc;
   fs::path _path;
 };
+
+bool operator== (const ReaderLocation &lhs, const ReaderLocation &rhs);
 
 #endif

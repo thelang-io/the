@@ -33,6 +33,10 @@ Reader::Reader (const fs::path &path) {
   file.read(&this->_content[0], size);
 }
 
+std::string Reader::content () const {
+  return this->_content;
+}
+
 bool Reader::eof () const {
   return this->_loc.pos >= this->_content.size();
 }
@@ -43,7 +47,7 @@ ReaderLocation Reader::loc () const {
 
 char Reader::next () {
   if (this->eof()) {
-    return -1;
+    throw Error("Tried to read on file end");
   }
 
   char ch = this->_content[this->_loc.pos];
@@ -59,6 +63,14 @@ char Reader::next () {
   return ch;
 }
 
-void Reader::seek (ReaderLocation loc) {
+fs::path Reader::path () const {
+  return this->_path;
+}
+
+void Reader::seek (const ReaderLocation loc) {
   this->_loc = loc;
+}
+
+bool operator== (const ReaderLocation &lhs, const ReaderLocation &rhs) {
+  return lhs.col == rhs.col && lhs.line == rhs.line && lhs.pos == rhs.pos;
 }
