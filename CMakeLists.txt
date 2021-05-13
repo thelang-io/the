@@ -14,13 +14,23 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(-Wall)
+add_compile_options(-Wconversion)
+add_compile_options(-Weffc++)
 add_compile_options(-Werror)
 add_compile_options(-Wextra)
+add_compile_options(-Wextra-semi)
+add_compile_options(-Wold-style-cast)
+add_compile_options(-Wparentheses)
+add_compile_options(-Wshadow)
+add_compile_options(-Wundef)
+add_compile_options(-Wunreachable-code)
 add_compile_options(-pedantic-errors)
 
 set(
   sources
 
+  src/Error.cpp src/Error.hpp
+  src/Reader.cpp src/Reader.hpp
   src/version.hpp
 )
 
