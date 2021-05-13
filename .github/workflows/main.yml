@@ -14,22 +14,10 @@ jobs:
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
-      - if: runner.os == 'Linux'
-        run: sudo apt install -y valgrind
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON)
       - run: cmake --build build
-      - if: runner.os == 'macOS'
-        run: (cd build && ctest --output-on-failure)
-      - if: runner.os == 'Linux'
-        run: |
-          (
-            cd build
-            if ! ctest -T memcheck --output-on-failure; then
-              find Testing/Temporary -name "MemoryChecker.*.log" -exec cat {} +
-              exit 1
-            fi
-          )
+      - run: (cd build && ctest --output-on-failure)
   deploy:
     needs: [build-and-test]
     runs-on: ubuntu-latest
