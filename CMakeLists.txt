@@ -13,18 +13,6 @@ option(BUILD_TESTS "Build test programs" OFF)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-Wall)
-add_compile_options(-Wconversion)
-add_compile_options(-Werror)
-add_compile_options(-Wextra)
-add_compile_options(-Wextra-semi)
-add_compile_options(-Wold-style-cast)
-add_compile_options(-Wparentheses)
-add_compile_options(-Wshadow)
-add_compile_options(-Wundef)
-add_compile_options(-Wunreachable-code)
-add_compile_options(-pedantic-errors)
-
 set(
   sources
 
@@ -33,4 +21,51 @@ set(
   src/version.hpp
 )
 
+function (target_add_flags target)
+  target_compile_options(${target} PRIVATE -Wall)
+  target_compile_options(${target} PRIVATE -Wconversion)
+  target_compile_options(${target} PRIVATE -Werror)
+  target_compile_options(${target} PRIVATE -Wextra)
+  target_compile_options(${target} PRIVATE -Wextra-semi)
+  target_compile_options(${target} PRIVATE -Wold-style-cast)
+  target_compile_options(${target} PRIVATE -Wparentheses)
+  target_compile_options(${target} PRIVATE -Wshadow)
+  target_compile_options(${target} PRIVATE -Wundef)
+  target_compile_options(${target} PRIVATE -Wunreachable-code)
+  target_compile_options(${target} PRIVATE -pedantic-errors)
+endfunction()
+
 add_executable(${PROJECT_NAME} ${sources} src/main.cpp)
+target_add_flags(${PROJECT_NAME})
+
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
+  include(CTest)
+  include(FetchContent)
+  include(GoogleTest)
+
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+  )
+
+  FetchContent_MakeAvailable(googletest)
+
+  set(
+    tests
+
+    tests/ReaderTest.cpp
+  )
+
+  add_library(${PROJECT_NAME}-lib SHARED ${sources})
+  target_add_flags(${PROJECT_NAME}-lib)
+
+  foreach (test ${tests})
+    string(REGEX REPLACE "^tests/([A-Za-z_/-]+).cpp$" "\\1" test_name ${test})
+    string(REPLACE "/" "-" test_name ${test_name})
+
+    add_executable(${test_name} ${test})
+    target_add_flags(${test_name})
+    target_link_libraries(${test_name} PRIVATE gtest_main ${PROJECT_NAME}-lib)
+    gtest_discover_tests(${test_name})
+  endforeach()
+endif()
