@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Error.hpp"
-#include "Reader.hpp"
+#include "Lexer.hpp"
 
 int main (int argc, const char *argv[]) {
   try {
@@ -21,9 +21,16 @@ int main (int argc, const char *argv[]) {
     }
 
     auto reader = Reader(argv[2]);
+    auto lexer = Lexer(&reader);
 
-    while (!reader.eof()) {
-      std::cout << reader.next();
+    while (true) {
+      const auto tok = lexer.next();
+
+      if (tok == eof) {
+        break;
+      }
+
+      std::cout << tok.val << ": " << tok.str() << std::endl;
     }
   } catch (const Error &err) {
     std::cerr << err.what() << std::endl;
