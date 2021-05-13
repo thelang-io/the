@@ -139,6 +139,8 @@ enum TokenType {
 
 class Token {
  public:
+  static bool isIdContinue (char ch);
+  static bool isIdStart (char ch);
   static bool isWhitespace (char ch);
 
   const TokenType type;

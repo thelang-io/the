@@ -17,10 +17,9 @@ Token Lexer::next () {
   }
 
   auto ch = this->_reader->next();
+  auto val = std::string{ch};
 
   if (Token::isWhitespace(ch)) {
-    auto val = std::string{ch};
-
     while (!this->_reader->eof()) {
       const auto loc = this->_reader->loc();
       ch = this->_reader->next();
@@ -34,6 +33,20 @@ Token Lexer::next () {
     }
 
     return Token(whitespace, val);
+  } else if (Token::isIdStart(ch)) {
+    while (!this->_reader->eof()) {
+      const auto loc = this->_reader->loc();
+      ch = this->_reader->next();
+
+      if (!Token::isIdContinue(ch)) {
+        this->_reader->seek(loc);
+        break;
+      }
+
+      val += ch;
+    }
+
+    return Token(litId, val);
   }
 
   return Token(unknown, "");
