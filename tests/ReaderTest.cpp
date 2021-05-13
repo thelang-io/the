@@ -79,7 +79,7 @@ TEST_F(ReaderTest, ReadCharByChar) {
   Reader r1(this->p1_);
 
   for (size_t i = 0; !r1.eof(); i++) {
-    ASSERT_EQ(r1.next(), this->c1_[i]);
+    EXPECT_EQ(r1.next(), this->c1_[i]);
     EXPECT_EQ(r1.loc().pos, i + 1);
   }
 
@@ -87,7 +87,7 @@ TEST_F(ReaderTest, ReadCharByChar) {
   Reader r2(this->p2_);
 
   for (size_t i = 0; !r2.eof(); i++) {
-    ASSERT_EQ(r2.next(), this->c2_[i]);
+    EXPECT_EQ(r2.next(), this->c2_[i]);
     EXPECT_EQ(r2.loc().pos, i + 1);
   }
 
@@ -132,14 +132,14 @@ TEST_F(ReaderTest, Seek) {
   r2.seek(beg);
 
   for (size_t i = 0; !r2.eof(); i++) {
-    ASSERT_EQ(r2.next(), this->c2_[i]);
+    EXPECT_EQ(r2.next(), this->c2_[i]);
     EXPECT_EQ(r2.loc().pos, i + 1);
   }
 
   r2.seek(mid);
 
   for (size_t i = midPos; !r2.eof(); i++) {
-    ASSERT_EQ(r2.next(), this->c2_[i]);
+    EXPECT_EQ(r2.next(), this->c2_[i]);
     EXPECT_EQ(r2.loc().pos, i + 1);
   }
 

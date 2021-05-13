@@ -52,6 +52,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   set(
     tests
 
+    tests/ErrorTest.cpp
     tests/ReaderTest.cpp
   )
 
