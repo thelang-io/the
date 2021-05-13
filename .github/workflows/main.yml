@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-10.15, ubuntu-18.04, ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
       - run: mkdir -p build
