@@ -15,8 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - if: matrix.os == 'ubuntu-18.04'
-        run: echo "CXX=g++-9" >> $GITHUB_ENV
-      - run: ls /usr/bin
+        run: echo "CC=gcc-9" >> $GITHUB_ENV && echo "CXX=g++-9" >> $GITHUB_ENV
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON)
       - run: cmake --build build
