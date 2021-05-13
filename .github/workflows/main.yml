@@ -12,10 +12,6 @@ jobs:
     strategy:
       matrix:
         os: [macos-10.15, ubuntu-18.04, ubuntu-latest]
-        include:
-          - runs-on: ubuntu-18.04
-            compiler: gcc
-            gcc: 8
     steps:
       - uses: actions/checkout@v2
       - run: mkdir -p build
@@ -27,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - if: runner.os == "Linux"
+        run: export CC="gcc-9 CXX="g++-9""
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Release)
       - run: cmake --build build
