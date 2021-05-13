@@ -16,5 +16,25 @@ Token Lexer::next () {
     return Token(eof, "\0");
   }
 
-  return Token(eof, "");
+  auto ch = this->_reader->next();
+
+  if (Token::isWhitespace(ch)) {
+    auto val = std::string{ch};
+
+    while (!this->_reader->eof()) {
+      const auto loc = this->_reader->loc();
+      ch = this->_reader->next();
+
+      if (!Token::isWhitespace(ch)) {
+        this->_reader->seek(loc);
+        break;
+      }
+
+      val += ch;
+    }
+
+    return Token(whitespace, val);
+  }
+
+  return Token(unknown, "");
 }

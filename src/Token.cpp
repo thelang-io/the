@@ -13,7 +13,7 @@ static const char *token_type[] = {
   #undef GEN_TOKEN_STR
 };
 
-bool Token::isWhiteSpace (char ch) {
+bool Token::isWhitespace (char ch) {
   return ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t';
 }
 

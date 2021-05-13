@@ -12,7 +12,8 @@
 
 #define FOREACH_TOKEN(fn) \
   fn(eof) \
-  fn(whiteSpace) \
+  fn(unknown) \
+  fn(whitespace) \
   \
   fn(commentBlock) \
   fn(commentLine) \
@@ -138,7 +139,7 @@ enum TokenType {
 
 class Token {
  public:
-  static bool isWhiteSpace (char ch);
+  static bool isWhitespace (char ch);
 
   const TokenType type;
   const std::string val;
