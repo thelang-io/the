@@ -3,19 +3,11 @@ on:
     branches: [main]
     paths: [".github/workflows/**", "src/**", "CMakeLists.txt"]
 
-env:
-  SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-
 jobs:
   build-and-test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-10.15, ubuntu-18.04, ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - if: matrix.os == 'ubuntu-18.04'
-        run: echo "CC=gcc-9" >> $GITHUB_ENV && echo "CXX=g++-9" >> $GITHUB_ENV
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON)
       - run: cmake --build build
@@ -42,7 +34,7 @@ jobs:
             --port 22 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
       - run: mkdir -p ~/.ssh
-      - run: ssh-agent -a $SSH_AUTH_SOCK
+      - run: ssh-agent -a /tmp/ssh_agent.sock
       - run: ssh-add - <<< "${{ secrets.AWS_EC2_KEY }}"
       - run: scp -o StrictHostKeyChecking=no build/the "${{ secrets.AWS_EC2_URL }}:the@0.2.0"
       - if: always()
