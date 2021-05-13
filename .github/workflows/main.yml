@@ -37,7 +37,7 @@ jobs:
             --port 22 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
       - run: mkdir -p ~/.ssh
-      - run: ssh-agent
+      - run: ssh-agent -a $SSH_AUTH_SOCK
       - run: ssh-add - <<< "${{ secrets.AWS_EC2_KEY }}"
       - run: scp -o StrictHostKeyChecking=no build/the "${{ secrets.AWS_EC2_URL }}:the@0.2.0"
       - if: always()
