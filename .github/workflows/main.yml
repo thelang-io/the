@@ -1,7 +1,7 @@
 on:
   push:
     branches: [main]
-    paths: [".github/workflows/**", "src/**", "CMakeLists.txt"]
+    paths: [".github/workflows/**", "src/**", "tests/**", "CMakeLists.txt"]
 
 env:
   SSH_AUTH_SOCK: /tmp/ssh_agent.sock
