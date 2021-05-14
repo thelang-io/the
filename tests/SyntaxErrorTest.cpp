@@ -34,13 +34,13 @@ TEST(SyntaxErrorTest, GenerateMessageStart) {
 
   EXPECT_CALL(reader, path())
     .Times(1)
-    .WillOnce(::testing::Return("/var/tmp/test.out"));
+    .WillOnce(::testing::Return("/tmp/test.out"));
 
   auto err = SyntaxError(&reader, "Inside test");
 
   EXPECT_STREQ(
     err.what(),
-    "/var/tmp/test.out:1:1: Inside test\n  1 | @\n    | ^\n"
+    "/tmp/test.out:1:1: Inside test\n  1 | @\n    | ^\n"
   );
 }
 
@@ -76,12 +76,12 @@ TEST(SyntaxErrorTest, GenerateMessageContinue) {
 
   EXPECT_CALL(reader, path())
     .Times(1)
-    .WillOnce(::testing::Return("/var/tmp/test.out"));
+    .WillOnce(::testing::Return("/tmp/test.out"));
 
   auto err = SyntaxError(&reader, "Inside test");
 
   EXPECT_STREQ(
     err.what(),
-    "/var/tmp/test.out:11:3: Inside test\n  11 |   @main {\n     |   ^\n"
+    "/tmp/test.out:11:3: Inside test\n  11 |   @main {\n     |   ^\n"
   );
 }

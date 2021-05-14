@@ -12,7 +12,7 @@
 
 class MockReader : public Reader {
  public:
-  MockReader () : Reader(fs::temp_directory_path() / "test.out") {
+  MockReader () : Reader("/bin/sh") {
   }
 
   MOCK_METHOD(std::string, content, (), (const, override));
