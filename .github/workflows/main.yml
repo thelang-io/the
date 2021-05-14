@@ -8,9 +8,14 @@ env:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-10.15, ubuntu-18.04, ubuntu-20.04]
     steps:
       - uses: actions/checkout@v2
+      - if: matrix.os == 'ubuntu-18.04'
+        run: echo "CC=gcc-9" >> $GITHUB_ENV && echo "CXX=g++-9" >> $GITHUB_ENV
       - run: mkdir -p build
       - run: (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON)
       - run: cmake --build build
