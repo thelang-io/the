@@ -27,7 +27,7 @@ Reader::Reader (const fs::path &path) {
   }
 
   file.seekg(0, std::ios::end);
-  auto size = file.tellg();
+  const auto size = file.tellg();
   file.seekg(0, std::ios::beg);
 
   this->_content.resize(static_cast<std::string::size_type>(size));
@@ -51,7 +51,7 @@ char Reader::next () {
     throw Error("Tried to read on file end");
   }
 
-  auto ch = this->_content[this->_loc.pos];
+  const auto ch = this->_content[this->_loc.pos];
 
   if (ch == '\n') {
     this->_loc.col = 0;
