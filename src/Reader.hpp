@@ -21,6 +21,8 @@ struct ReaderLocation {
 class Reader {
  public:
   Reader (const fs::path &path);
+  Reader (const Reader &) = delete;
+  Reader &operator= (const Reader &) = delete;
 
   virtual std::string content () const;
   virtual bool eof () const;
