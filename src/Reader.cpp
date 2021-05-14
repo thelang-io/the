@@ -68,7 +68,7 @@ fs::path Reader::path () const {
   return this->_path;
 }
 
-void Reader::seek (const ReaderLocation loc) {
+void Reader::seek (const ReaderLocation &loc) {
   this->_loc = loc;
 }
 

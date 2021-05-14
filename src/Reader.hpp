@@ -27,7 +27,7 @@ class Reader {
   ReaderLocation loc () const;
   char next ();
   fs::path path () const;
-  void seek (const ReaderLocation loc);
+  void seek (const ReaderLocation &loc);
 
  private:
   std::string _content;
