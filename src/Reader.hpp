@@ -13,7 +13,7 @@
 namespace fs = std::filesystem;
 
 struct ReaderLocation {
-  size_t col = 1;
+  size_t col = 0;
   size_t line = 1;
   size_t pos = 0;
 };
