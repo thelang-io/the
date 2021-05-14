@@ -8,7 +8,6 @@
 #ifndef SRC_LEXER_HPP
 #define SRC_LEXER_HPP
 
-#include "Reader.hpp"
 #include "Token.hpp"
 
 class Lexer {
@@ -17,11 +16,14 @@ class Lexer {
   Token next ();
 
  private:
+  ReaderLocation _end;
   Reader *_reader;
+  ReaderLocation _start;
+  std::string _val;
 
-  Token _lexOpEq (const char ch, const TokenType tt1, const TokenType tt2);
+  Token _opEq (const TokenType tt1, const TokenType tt2);
 
-  Token _lexOpEq2 (
+  Token _opEq2 (
     const char ch,
     const TokenType tt1,
     const TokenType tt2,
@@ -29,12 +31,14 @@ class Lexer {
     const TokenType tt4
   );
 
-  Token _lexOpEqDouble (
+  Token _opEqDouble (
     const char ch,
     const TokenType tt1,
     const TokenType tt2,
     const TokenType tt3
   );
+
+  Token _token (const TokenType tt);
 };
 
 #endif
