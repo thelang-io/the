@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include "../src/Error.hpp"
 
 TEST(ErrorTest, AddsPrefix) {
