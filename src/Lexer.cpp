@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#include "Error.hpp"
 #include "Lexer.hpp"
+#include "SyntaxError.hpp"
 
 Lexer::Lexer (Reader *reader) {
   this->_reader = reader;
@@ -143,12 +143,7 @@ Token Lexer::next () {
     return this->_token(litId);
   }
 
-  throw Error(
-    "Unexpected token",
-    this->_reader->path(),
-    this->_start.line,
-    this->_start.col
-  );
+  throw SyntaxError(this->_reader, "Unexpected token");
 }
 
 Token Lexer::_opEq (const TokenType tt1, const TokenType tt2) {
