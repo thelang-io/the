@@ -16,16 +16,10 @@ class Error : private std::exception {
  public:
   const std::string message;
 
-  Error (const std::string &msg);
-  Error (const std::string &msg, const fs::path &path);
-  Error (const std::string &msg, const fs::path &path, size_t line);
-
-  Error (
-    const std::string &msg,
-    const fs::path &path,
-    size_t line,
-    size_t col
-  );
+  Error (const std::string &m);
+  Error (const std::string &m, const fs::path &path);
+  Error (const std::string &m, const fs::path &path, size_t line);
+  Error (const std::string &m, const fs::path &path, size_t line, size_t col);
 };
 
 #endif

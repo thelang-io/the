@@ -34,11 +34,11 @@ bool Token::isWhitespace (const char ch) {
 }
 
 Token::Token (
-  const TokenType type,
-  const std::string &val,
-  const ReaderLocation &start,
-  const ReaderLocation &end
-) : end(end), start(start), type(type), val(val) {
+  const TokenType &t,
+  const std::string &v,
+  const ReaderLocation &s,
+  const ReaderLocation &e
+) : end(e), start(s), type(t), val(v) {
 }
 
 bool Token::operator== (const TokenType &rhs) const {

@@ -148,10 +148,10 @@ class Token {
   const std::string val;
 
   Token (
-    const TokenType type,
-    const std::string &val,
-    const ReaderLocation &start,
-    const ReaderLocation &end
+    const TokenType &t,
+    const std::string &v,
+    const ReaderLocation &s,
+    const ReaderLocation &e
   );
 
   bool operator== (const TokenType &rhs) const;
