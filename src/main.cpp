@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <iostream>
+
 #include "Error.hpp"
 #include "Lexer.hpp"
 
@@ -22,18 +23,28 @@ int main (int argc, const char *argv[]) {
 
     auto reader = Reader(argv[2]);
     auto lexer = Lexer(&reader);
+    auto result = std::string();
 
     while (true) {
       const auto tok = lexer.next();
 
-      if (tok == eof) {
+      if (tok == whitespace) {
+        continue;
+      } else if (tok == eof) {
         break;
       }
 
-      std::cout << tok.val << ": " << tok.str() << std::endl;
+      result += tok.str();
+      result += '(' + std::to_string(tok.start.line);
+      result += ':' + std::to_string(tok.start.col);
+      result += '-' + std::to_string(tok.end.line);
+      result += ':' + std::to_string(tok.end.col);
+      result += "): " + tok.val + '\n';
     }
+
+    std::cout << result;
   } catch (const Error &err) {
-    std::cerr << err.what() << std::endl;
+    std::cerr << err.message << std::endl;
     return EXIT_FAILURE;
   }
 
