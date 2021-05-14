@@ -100,7 +100,7 @@ TEST_F(ReaderTest, Location) {
   auto rl = ReaderLocation{};
 
   while (!r2.eof()) {
-    auto ch = r2.next();
+    const auto ch = r2.next();
 
     if (ch == '\n') {
       rl.col = 0;
@@ -128,7 +128,7 @@ TEST_F(ReaderTest, Seek) {
     }
   }
 
-  auto end = r2.loc();
+  const auto end = r2.loc();
   r2.seek(beg);
 
   for (size_t i = 0; !r2.eof(); i++) {
@@ -151,7 +151,7 @@ TEST_F(ReaderTest, Seek) {
 TEST(ReaderLocationTest, EqualsAnotherLocation) {
   EXPECT_EQ(ReaderLocation{}, ReaderLocation{});
 
-  auto rl1 = ReaderLocation{2, 2, 4};
-  auto rl2 = ReaderLocation{2, 2, 4};
+  const auto rl1 = ReaderLocation{2, 2, 4};
+  const auto rl2 = ReaderLocation{2, 2, 4};
   EXPECT_EQ(rl1, rl2);
 }
