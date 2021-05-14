@@ -7,7 +7,9 @@
 
 #include <gmock/gmock.h>
 #include <fstream>
+
 #include "../src/Error.hpp"
+#include "../src/Reader.hpp"
 
 class ReaderTest : public ::testing::Test {
  protected:
@@ -144,4 +146,12 @@ TEST_F(ReaderTest, Seek) {
   r2.seek(beg);
   r2.seek(end);
   EXPECT_TRUE(r2.eof());
+}
+
+TEST(ReaderLocationTest, EqualsAnotherLocation) {
+  EXPECT_EQ(ReaderLocation{}, ReaderLocation{});
+
+  auto rl1 = ReaderLocation{2, 2, 4};
+  auto rl2 = ReaderLocation{2, 2, 4};
+  EXPECT_EQ(rl1, rl2);
 }
