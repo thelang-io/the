@@ -8,18 +8,16 @@
 #ifndef SRC_ERROR_HPP
 #define SRC_ERROR_HPP
 
-#include <filesystem>
+#include <string>
 
-namespace fs = std::filesystem;
-
-class Error : private std::exception {
+class Error : public std::exception {
  public:
-  const std::string message;
+  std::string message;
+  std::string name = "Error";
 
-  Error (const std::string &m);
-  Error (const std::string &m, const fs::path &path);
-  Error (const std::string &m, const fs::path &path, size_t line);
-  Error (const std::string &m, const fs::path &path, size_t line, size_t col);
+  Error () = default;
+  Error (const std::string &msg);
+  virtual const char *what () const noexcept override;
 };
 
 #endif
