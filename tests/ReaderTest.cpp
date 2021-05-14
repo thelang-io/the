@@ -5,10 +5,9 @@
  * Proprietary and confidential
  */
 
-#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <fstream>
 #include "../src/Error.hpp"
-#include "../src/Reader.hpp"
 
 class ReaderTest : public ::testing::Test {
  protected:

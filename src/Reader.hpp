@@ -22,12 +22,12 @@ class Reader {
  public:
   Reader (const fs::path &path);
 
-  std::string content () const;
-  bool eof () const;
-  ReaderLocation loc () const;
-  char next ();
-  fs::path path () const;
-  void seek (const ReaderLocation &loc);
+  virtual std::string content () const;
+  virtual bool eof () const;
+  virtual ReaderLocation loc () const;
+  virtual char next ();
+  virtual fs::path path () const;
+  virtual void seek (const ReaderLocation &loc);
 
  private:
   std::string _content;
