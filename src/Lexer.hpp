@@ -18,6 +18,23 @@ class Lexer {
 
  private:
   Reader *_reader;
+
+  Token _lexOpEq (const char ch, const TokenType tt1, const TokenType tt2);
+
+  Token _lexOpEq2 (
+    const char ch,
+    const TokenType tt1,
+    const TokenType tt2,
+    const TokenType tt3,
+    const TokenType tt4
+  );
+
+  Token _lexOpEqDouble (
+    const char ch,
+    const TokenType tt1,
+    const TokenType tt2,
+    const TokenType tt3
+  );
 };
 
 #endif

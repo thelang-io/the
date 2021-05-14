@@ -75,60 +75,60 @@
   fn(litStr) \
   \
   fn(opAnd) \
-  fn(opAndand) \
-  fn(opAndandeq) \
-  fn(opAndeq) \
+  fn(opAndAnd) \
+  fn(opAndAndEq) \
+  fn(opAndEq) \
   fn(opCaret) \
-  fn(opCareteq) \
+  fn(opCaretEq) \
   fn(opColon) \
-  fn(opColoneq) \
+  fn(opColonEq) \
   fn(opComma) \
   fn(opDot) \
-  fn(opDotdot) \
-  fn(opDotdotdot) \
-  fn(opDotdoteq) \
+  fn(opDotDot) \
+  fn(opDotDotDot) \
+  fn(opDotDotEq) \
   fn(opEq) \
-  fn(opEqeq) \
+  fn(opEqEq) \
   fn(opExcl) \
-  fn(opExcleq) \
-  fn(opExclexcl) \
+  fn(opExclEq) \
+  fn(opExclExcl) \
   fn(opGt) \
-  fn(opGteq) \
-  fn(opLbrace) \
-  fn(opLbrack) \
-  fn(opLpar) \
-  fn(opLshift) \
-  fn(opLshifteq) \
+  fn(opGtEq) \
+  fn(opLBrace) \
+  fn(opLBrack) \
+  fn(opLPar) \
+  fn(opLShift) \
+  fn(opLShiftEq) \
   fn(opLt) \
-  fn(opLteq) \
+  fn(opLtEq) \
   fn(opMinus) \
-  fn(opMinuseq) \
-  fn(opMinusminus) \
+  fn(opMinusEq) \
+  fn(opMinusMinus) \
   fn(opOr) \
-  fn(opOreq) \
-  fn(opOror) \
-  fn(opOroreq) \
+  fn(opOrEq) \
+  fn(opOrOr) \
+  fn(opOrOrEq) \
   fn(opPercent) \
-  fn(opPercenteq) \
+  fn(opPercentEq) \
   fn(opPlus) \
-  fn(opPluseq) \
-  fn(opPlusplus) \
+  fn(opPlusEq) \
+  fn(opPlusPlus) \
   fn(opQn) \
-  fn(opQndot) \
-  fn(opQnqn) \
-  fn(opQnqneq) \
-  fn(opRbrace) \
-  fn(opRbrack) \
-  fn(opRpar) \
-  fn(opRshift) \
-  fn(opRshifteq) \
+  fn(opQnDot) \
+  fn(opQnQn) \
+  fn(opQnQnEq) \
+  fn(opRBrace) \
+  fn(opRBrack) \
+  fn(opRPar) \
+  fn(opRShift) \
+  fn(opRShiftEq) \
   fn(opSemi) \
   fn(opSlash) \
-  fn(opSlasheq) \
+  fn(opSlashEq) \
   fn(opStar) \
-  fn(opStareq) \
-  fn(opStarstar) \
-  fn(opStarstareq) \
+  fn(opStarEq) \
+  fn(opStarStar) \
+  fn(opStarStarEq) \
   fn(opTilde)
 
 enum TokenType {
@@ -139,13 +139,14 @@ enum TokenType {
 
 class Token {
  public:
-  static bool isIdContinue (char ch);
-  static bool isIdStart (char ch);
-  static bool isWhitespace (char ch);
+  static bool isIdContinue (const char ch);
+  static bool isIdStart (const char ch);
+  static bool isWhitespace (const char ch);
 
   const TokenType type;
   const std::string val;
 
+  Token (const TokenType type, const char ch);
   Token (const TokenType type, const std::string &val);
   bool operator== (const TokenType rhs) const;
   bool operator!= (const TokenType rhs) const;

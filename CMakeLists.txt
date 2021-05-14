@@ -17,7 +17,9 @@ set(
   sources
 
   src/Error.cpp src/Error.hpp
+  src/Lexer.cpp src/Lexer.hpp
   src/Reader.cpp src/Reader.hpp
+  src/Token.cpp src/Token.hpp
   src/version.hpp
 )
 
@@ -53,7 +55,9 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests
 
     tests/ErrorTest.cpp
+    tests/LexerTest.cpp
     tests/ReaderTest.cpp
+    tests/TokenTest.cpp
   )
 
   add_library(${PROJECT_NAME}-lib SHARED ${sources})

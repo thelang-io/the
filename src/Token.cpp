@@ -13,7 +13,7 @@ static const char *token_type[] = {
   #undef GEN_TOKEN_STR
 };
 
-bool Token::isIdContinue (char ch) {
+bool Token::isIdContinue (const char ch) {
   const auto chs = std::string(
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
   );
@@ -21,7 +21,7 @@ bool Token::isIdContinue (char ch) {
   return chs.find(ch) != std::string::npos;
 }
 
-bool Token::isIdStart (char ch) {
+bool Token::isIdStart (const char ch) {
   const auto chs = std::string(
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"
   );
@@ -29,8 +29,12 @@ bool Token::isIdStart (char ch) {
   return chs.find(ch) != std::string::npos;
 }
 
-bool Token::isWhitespace (char ch) {
+bool Token::isWhitespace (const char ch) {
   return std::string("\r\n\t ").find(ch) != std::string::npos;
+}
+
+Token::Token (const TokenType type, const char ch)
+  : type(type), val{ch} {
 }
 
 Token::Token (const TokenType type, const std::string &val)
