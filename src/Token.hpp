@@ -8,11 +8,10 @@
 #ifndef SRC_TOKEN_HPP
 #define SRC_TOKEN_HPP
 
-#include <string>
+#include "Reader.hpp"
 
 #define FOREACH_TOKEN(fn) \
   fn(eof) \
-  fn(unknown) \
   fn(whitespace) \
   \
   fn(commentBlock) \
@@ -143,13 +142,20 @@ class Token {
   static bool isIdStart (const char ch);
   static bool isWhitespace (const char ch);
 
+  const ReaderLocation end;
+  const ReaderLocation start;
   const TokenType type;
   const std::string val;
 
-  Token (const TokenType type, const char ch);
-  Token (const TokenType type, const std::string &val);
-  bool operator== (const TokenType rhs) const;
-  bool operator!= (const TokenType rhs) const;
+  Token (
+    const TokenType type,
+    const std::string &val,
+    const ReaderLocation &start,
+    const ReaderLocation &end
+  );
+
+  bool operator== (const TokenType &rhs) const;
+  bool operator!= (const TokenType &rhs) const;
 
   std::string str () const;
 };

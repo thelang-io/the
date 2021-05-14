@@ -33,19 +33,19 @@ bool Token::isWhitespace (const char ch) {
   return std::string("\r\n\t ").find(ch) != std::string::npos;
 }
 
-Token::Token (const TokenType type, const char ch)
-  : type(type), val{ch} {
+Token::Token (
+  const TokenType type,
+  const std::string &val,
+  const ReaderLocation &start,
+  const ReaderLocation &end
+) : end(end), start(start), type(type), val(val) {
 }
 
-Token::Token (const TokenType type, const std::string &val)
-  : type(type), val(val) {
-}
-
-bool Token::operator== (const TokenType rhs) const {
+bool Token::operator== (const TokenType &rhs) const {
   return this->type == rhs;
 }
 
-bool Token::operator!= (const TokenType rhs) const {
+bool Token::operator!= (const TokenType &rhs) const {
   return this->type != rhs;
 }
 
