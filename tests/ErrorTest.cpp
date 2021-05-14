@@ -10,5 +10,5 @@
 
 TEST(ErrorTest, AddsPrefix) {
   auto err = Error("An error occurred");
-  EXPECT_STREQ(err.what(), "Error: An error occurred");
+  EXPECT_EQ(err.message, "Error: An error occurred");
 }

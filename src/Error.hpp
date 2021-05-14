@@ -12,11 +12,8 @@
 
 class Error : std::exception {
  public:
+  const std::string message;
   explicit Error (const std::string &message);
-  const char *what () const noexcept override;
-
- private:
-  std::string _message;
 };
 
 #endif
