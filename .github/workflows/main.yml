@@ -3,9 +3,6 @@ on:
     branches: [main]
     paths: [".github/workflows/**", "src/**", "tests/**", "CMakeLists.txt"]
 
-env:
-  SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -20,6 +17,8 @@ jobs:
   deploy:
     needs: [build-and-test]
     runs-on: ubuntu-latest
+    env:
+      SSH_AUTH_SOCK: /tmp/ssh_agent.sock
     steps:
       - uses: actions/checkout@v2
       - run: mkdir -p build
@@ -41,7 +40,9 @@ jobs:
       - run: mkdir -p ~/.ssh
       - run: ssh-agent -a $SSH_AUTH_SOCK
       - run: ssh-add - <<< "${{ secrets.AWS_EC2_KEY }}"
-      - run: scp -o StrictHostKeyChecking=no build/the "${{ secrets.AWS_EC2_URL }}:the@0.2.0"
+      - run: |
+          scp -o StrictHostKeyChecking=no build/the \
+            "${{ secrets.AWS_EC2_URL }}:the@0.2.0"
       - if: always()
         run: |
           aws ec2 revoke-security-group-ingress \
