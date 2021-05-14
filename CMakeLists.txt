@@ -19,6 +19,7 @@ set(
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Reader.cpp src/Reader.hpp
+  src/SyntaxError.cpp src/SyntaxError.hpp
   src/Token.cpp src/Token.hpp
   src/version.hpp
 )
@@ -57,6 +58,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests/ErrorTest.cpp
     tests/LexerTest.cpp
     tests/ReaderTest.cpp
+    tests/SyntaxErrorTest.cpp
     tests/TokenTest.cpp
   )
 
