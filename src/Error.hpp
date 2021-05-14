@@ -10,10 +10,10 @@
 
 #include <string>
 
-class Error : std::exception {
+class Error : private std::exception {
  public:
   const std::string message;
-  explicit Error (const std::string &message);
+  Error (const std::string &message);
 };
 
 #endif
