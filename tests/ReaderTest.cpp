@@ -148,7 +148,7 @@ TEST_F(ReaderTest, Seek) {
   EXPECT_TRUE(r2.eof());
 }
 
-TEST(ReaderLocationTest, EqualsAnotherLocation) {
+TEST(ReaderLocationTest, EqualAnotherLocation) {
   EXPECT_EQ(ReaderLocation{}, ReaderLocation{});
 
   const auto rl1 = ReaderLocation{2, 2, 4};

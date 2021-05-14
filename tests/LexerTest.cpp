@@ -8,6 +8,6 @@
 #include <gmock/gmock.h>
 #include "../src/Lexer.hpp"
 
-TEST(LexerTest, Works) {
+TEST(LexerTest, Work) {
   // TODO
 }

@@ -8,6 +8,6 @@
 #include <gmock/gmock.h>
 #include "../src/Token.hpp"
 
-TEST(TokenTest, Works) {
+TEST(TokenTest, Work) {
   // TODO
 }
