@@ -28,8 +28,8 @@ jobs:
         uses: haythem/public-ip@v1.2
       - uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
           aws-region: ${{ secrets.AWS_REGION }}
       - run: |
           aws ec2 authorize-security-group-ingress \
@@ -39,10 +39,9 @@ jobs:
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
       - run: mkdir -p ~/.ssh
       - run: ssh-agent -a $SSH_AUTH_SOCK
-      - run: ssh-add - <<< "${{ secrets.AWS_EC2_KEY }}"
-      - run: |
-          scp -o StrictHostKeyChecking=no build/the \
-            "${{ secrets.AWS_EC2_URL }}:the@0.2.0"
+      - run: ssh-add - <<< "${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}"
+      - run: echo "${{ secrets.AWS_EC2_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+      - run: scp build/the "${{ secrets.AWS_EC2_URL }}:the@0.2.0"
       - if: always()
         run: |
           aws ec2 revoke-security-group-ingress \
