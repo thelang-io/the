@@ -51,6 +51,21 @@ Token Lexer::next () {
     return this->_opEq2('|', opOr, opOrEq, opOrOr, opOrOrEq);
   } else if (ch == '+') {
     return this->_opEqDouble('+', opPlus, opPlusEq, opPlusPlus);
+  } else if (ch == '/') {
+    if (this->_reader->eof()) {
+      return this->_token(opSlash);
+    }
+
+    const auto loc1 = this->_reader->loc();
+    const auto ch1 = this->_reader->next();
+
+    if (ch1 == '=') {
+      this->_val += ch1;
+      return this->_token(opSlashEq);
+    } else if (ch1 != '/' && ch1 != '*') {
+      this->_val += ch1;
+      return this->_token(opSlash);
+    }
   } else if (ch == '*') {
     return this->_opEq2('*', opStar, opStarEq, opStarStar, opStarStarEq);
   }
