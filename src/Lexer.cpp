@@ -66,6 +66,40 @@ Token Lexer::next () {
       this->_val += ch1;
       return this->_token(opSlash);
     }
+
+    this->_reader->seek(loc1);
+  } else if (ch == '?') {
+    if (this->_reader->eof()) {
+      return this->_token(opQn);
+    }
+
+    const auto loc1 = this->_reader->loc();
+    const auto ch1 = this->_reader->next();
+
+    if (ch1 == '.') {
+      this->_val += ch1;
+      return this->_token(opQnDot);
+    } else if (ch1 == ch) {
+      this->_val += ch1;
+
+      if (this->_reader->eof()) {
+        return this->_token(opQnQn);
+      }
+
+      const auto loc2 = this->_reader->loc();
+      const auto ch2 = this->_reader->next();
+
+      if (ch2 == '=') {
+        this->_val += ch2;
+        return this->_token(opQnQnEq);
+      } else {
+        this->_reader->seek(loc2);
+        return this->_token(opQnQn);
+      }
+    } else {
+      this->_reader->seek(loc1);
+      return this->_token(opQn);
+    }
   } else if (ch == '*') {
     return this->_opEq2('*', opStar, opStarEq, opStarStar, opStarStarEq);
   }
