@@ -50,5 +50,9 @@ bool Token::operator!= (const TokenType &rhs) const {
 }
 
 std::string Token::str () const {
-  return token_type[this->type];
+  return std::string(token_type[this->type]) + '(' +
+    std::to_string(this->start.line) + ':' +
+    std::to_string(this->start.col) + '-' +
+    std::to_string(this->end.line) + ':' +
+    std::to_string(this->end.col) + ')';
 }

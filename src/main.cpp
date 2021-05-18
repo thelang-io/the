@@ -34,12 +34,7 @@ int main (int argc, const char *argv[]) {
         break;
       }
 
-      result += tok.str();
-      result += '(' + std::to_string(tok.start.line);
-      result += ':' + std::to_string(tok.start.col);
-      result += '-' + std::to_string(tok.end.line);
-      result += ':' + std::to_string(tok.end.col);
-      result += "): " + tok.val + '\n';
+      result += tok.str() + ": " + tok.val + '\n';
     }
 
     std::cout << result;
