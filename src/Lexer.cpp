@@ -90,41 +90,41 @@ Token Lexer::next () {
       return this->_token(opSlash);
     }
 
-    const auto loc1 = this->_reader->loc();
-    const auto ch1 = this->_reader->next();
+    const auto loc = this->_reader->loc();
+    ch = this->_reader->next();
 
-    if (ch1 == '=') {
-      this->_val += ch1;
+    if (ch == '=') {
+      this->_val += ch;
       return this->_token(opSlashEq);
-    } else if (ch1 != '/' && ch1 != '*') {
-      this->_val += ch1;
+    } else if (ch != '/' && ch != '*') {
+      this->_val += ch;
       return this->_token(opSlash);
     }
 
-    this->_reader->seek(loc1);
+    this->_reader->seek(loc);
   } else if (ch == '?') {
     if (this->_reader->eof()) {
       return this->_token(opQn);
     }
 
     const auto loc1 = this->_reader->loc();
-    const auto ch1 = this->_reader->next();
+    ch = this->_reader->next();
 
-    if (ch1 == '.') {
-      this->_val += ch1;
+    if (ch == '.') {
+      this->_val += ch;
       return this->_token(opQnDot);
-    } else if (ch1 == ch) {
-      this->_val += ch1;
+    } else if (ch == '?') {
+      this->_val += ch;
 
       if (this->_reader->eof()) {
         return this->_token(opQnQn);
       }
 
       const auto loc2 = this->_reader->loc();
-      const auto ch2 = this->_reader->next();
+      ch = this->_reader->next();
 
-      if (ch2 == '=') {
-        this->_val += ch2;
+      if (ch == '=') {
+        this->_val += ch;
         return this->_token(opQnQnEq);
       } else {
         this->_reader->seek(loc2);
@@ -234,14 +234,14 @@ Token Lexer::_opEq (const TokenType tt1, const TokenType tt2) {
     return this->_token(tt1);
   }
 
-  const auto loc1 = this->_reader->loc();
-  const auto ch1 = this->_reader->next();
+  const auto loc = this->_reader->loc();
+  const auto ch = this->_reader->next();
 
-  if (ch1 == '=') {
-    this->_val += ch1;
+  if (ch == '=') {
+    this->_val += ch;
     return this->_token(tt2);
   } else {
-    this->_reader->seek(loc1);
+    this->_reader->seek(loc);
     return this->_token(tt1);
   }
 }
@@ -296,7 +296,7 @@ Token Lexer::_opEqDouble (
     return this->_token(tt1);
   }
 
-  const auto loc1 = this->_reader->loc();
+  const auto loc = this->_reader->loc();
   const auto ch1 = this->_reader->next();
 
   if (ch1 == '=') {
@@ -306,7 +306,7 @@ Token Lexer::_opEqDouble (
     this->_val += ch1;
     return this->_token(tt3);
   } else {
-    this->_reader->seek(loc1);
+    this->_reader->seek(loc);
     return this->_token(tt1);
   }
 }
