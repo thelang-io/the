@@ -108,7 +108,7 @@ TEST(SyntaxErrorTest, GenerateMessageStartWithLocation) {
     .Times(1)
     .WillOnce(::testing::Return("/tmp/test.out"));
 
-  auto err = SyntaxError(&reader, ReaderLocation{1, 1, 1}, "Inside test");
+  auto err = SyntaxError(&reader, {1, 1, 1}, "Inside test");
 
   EXPECT_STREQ(
     err.what(),
@@ -146,7 +146,7 @@ TEST(SyntaxErrorTest, GenerateMessageContinueWithLocation) {
     .Times(1)
     .WillOnce(::testing::Return("/tmp/test.out"));
 
-  auto err = SyntaxError(&reader, ReaderLocation{14, 11, 3}, "Inside test");
+  auto err = SyntaxError(&reader, {14, 11, 3}, "Inside test");
 
   EXPECT_STREQ(
     err.what(),

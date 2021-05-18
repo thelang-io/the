@@ -43,3 +43,10 @@ TEST(TokenTest, CtorSetConstMembers) {
   EXPECT_EQ(tok.type, litId);
   EXPECT_EQ(tok.val, "_");
 }
+
+TEST(TokenTest, StrWithLocation) {
+  const auto tok1 = Token(litId, "_", {1, 1, 1}, {2, 1, 2});
+  EXPECT_EQ(tok1.str(), "litId(1:1-1:2)");
+  const auto tok2 = Token(litId, "a_b", {14, 11, 3}, {17, 11, 6});
+  EXPECT_EQ(tok2.str(), "litId(11:3-11:6)");
+}
