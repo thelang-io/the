@@ -39,6 +39,40 @@ Token Lexer::next () {
 
   if (ch == '&') {
     return this->_opEq2('&', opAnd, opAndEq, opAndAnd, opAndAndEq);
+  } else if (ch == '.') {
+    if (this->_reader->eof()) {
+      return this->_token(opDot);
+    }
+
+    const auto loc1 = this->_reader->loc();
+    const auto ch1 = this->_reader->next();
+
+    if (isdigit(ch1)) {
+      this->_reader->seek(loc1);
+    } else if (ch1 == '.') {
+      this->_val += ch1;
+
+      if (this->_reader->eof()) {
+        return this->_token(opDotDot);
+      }
+
+      const auto loc2 = this->_reader->loc();
+      const auto ch2 = this->_reader->next();
+
+      if (ch2 == '.') {
+        this->_val += ch2;
+        return this->_token(opDotDotDot);
+      } else if (ch2 == '=') {
+        this->_val += ch2;
+        return this->_token(opDotDotEq);
+      } else {
+        this->_reader->seek(loc2);
+        return this->_token(opDotDot);
+      }
+    } else {
+      this->_reader->seek(loc1);
+      return this->_token(opDot);
+    }
   } else if (ch == '!') {
     return this->_opEqDouble('!', opExcl, opExclEq, opExclExcl);
   } else if (ch == '>') {
