@@ -224,6 +224,29 @@ Token Lexer::next () {
     if (this->_val == "union") return this->_token(kwUnion);
 
     return this->_token(litId);
+  } else if (ch == '/' && !this->_reader->eof()) {
+    const auto loc1 = this->_reader->loc();
+    ch = this->_reader->next();
+
+    if (ch == '/') {
+      this->_val += ch;
+
+      while (!this->_reader->eof()) {
+        const auto loc = this->_reader->loc();
+        ch = this->_reader->next();
+
+        if (ch == '\n') {
+          this->_reader->seek(loc);
+          break;
+        }
+
+        this->_val += ch;
+      }
+
+      return this->_token(commentLine);
+    } else {
+      this->_reader->seek(loc1);
+    }
   }
 
   throw SyntaxError(this->_reader, "Unexpected token");
