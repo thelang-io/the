@@ -142,10 +142,10 @@ class Token {
   static bool isIdStart (const char ch);
   static bool isWhitespace (const char ch);
 
-  const ReaderLocation end;
-  const ReaderLocation start;
   const TokenType type;
   const std::string val;
+  const ReaderLocation start;
+  const ReaderLocation end;
 
   Token (
     const TokenType &t,

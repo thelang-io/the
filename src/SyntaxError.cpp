@@ -16,7 +16,7 @@ SyntaxError::SyntaxError (
   const ReaderLocation &loc,
   const std::string &msg
 ) {
-  reader->seek({0, loc.line, loc.pos - loc.col});
+  reader->seek({loc.pos - loc.col, loc.line});
   auto lineContent = std::string();
 
   while (!reader->eof()) {

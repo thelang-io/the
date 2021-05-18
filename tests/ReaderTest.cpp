@@ -151,7 +151,7 @@ TEST_F(ReaderTest, Seek) {
 TEST(ReaderLocationTest, EqualAnotherLocation) {
   EXPECT_EQ(ReaderLocation{}, ReaderLocation{});
 
-  const auto rl1 = ReaderLocation{2, 2, 4};
-  const auto rl2 = ReaderLocation{2, 2, 4};
+  const auto rl1 = ReaderLocation{4, 2, 2};
+  const auto rl2 = ReaderLocation{4, 2, 2};
   EXPECT_EQ(rl1, rl2);
 }

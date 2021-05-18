@@ -49,9 +49,9 @@ TEST(SyntaxErrorTest, GenerateMessageContinue) {
 
   EXPECT_CALL(reader, loc())
     .Times(1)
-    .WillOnce(::testing::Return(ReaderLocation{3, 11, 7}));
+    .WillOnce(::testing::Return(ReaderLocation{14, 11, 3}));
 
-  EXPECT_CALL(reader, seek(ReaderLocation{0, 11, 4}))
+  EXPECT_CALL(reader, seek(ReaderLocation{11, 11, 0}))
     .Times(1);
 
   EXPECT_CALL(reader, eof())
@@ -71,7 +71,7 @@ TEST(SyntaxErrorTest, GenerateMessageContinue) {
     .WillOnce(::testing::Return('{'))
     .WillOnce(::testing::Return('\n'));
 
-  EXPECT_CALL(reader, seek(ReaderLocation{3, 11, 7}))
+  EXPECT_CALL(reader, seek(ReaderLocation{14, 11, 3}))
     .Times(1);
 
   EXPECT_CALL(reader, path())
@@ -119,7 +119,7 @@ TEST(SyntaxErrorTest, GenerateMessageStartWithLocation) {
 TEST(SyntaxErrorTest, GenerateMessageContinueWithLocation) {
   auto reader = ::testing::StrictMock<MockReader>();
 
-  EXPECT_CALL(reader, seek(ReaderLocation{0, 11, 4}))
+  EXPECT_CALL(reader, seek(ReaderLocation{11, 11, 0}))
     .Times(1);
 
   EXPECT_CALL(reader, eof())
@@ -139,14 +139,14 @@ TEST(SyntaxErrorTest, GenerateMessageContinueWithLocation) {
     .WillOnce(::testing::Return('{'))
     .WillOnce(::testing::Return('\n'));
 
-  EXPECT_CALL(reader, seek(ReaderLocation{3, 11, 7}))
+  EXPECT_CALL(reader, seek(ReaderLocation{14, 11, 3}))
     .Times(1);
 
   EXPECT_CALL(reader, path())
     .Times(1)
     .WillOnce(::testing::Return("/tmp/test.out"));
 
-  auto err = SyntaxError(&reader, ReaderLocation{3, 11, 7}, "Inside test");
+  auto err = SyntaxError(&reader, ReaderLocation{14, 11, 3}, "Inside test");
 
   EXPECT_STREQ(
     err.what(),

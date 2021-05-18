@@ -38,7 +38,7 @@ Token::Token (
   const std::string &v,
   const ReaderLocation &s,
   const ReaderLocation &e
-) : end(e), start(s), type(t), val(v) {
+) : type(t), val(v), start(s), end(e) {
 }
 
 bool Token::operator== (const TokenType &rhs) const {
