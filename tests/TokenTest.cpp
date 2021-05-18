@@ -48,6 +48,10 @@ TEST(TokenTest, EqualTokenType) {
   EXPECT_EQ(Token(litId, "_", {}, {}), litId);
 }
 
+TEST(TokenTest, NotEqualTokenType) {
+  EXPECT_NE(Token(litId, "_", {}, {}), litFloat);
+}
+
 TEST(TokenTest, StrWithLocation) {
   const auto tok1 = Token(litId, "_", {1, 1, 1}, {2, 1, 2});
   EXPECT_EQ(tok1.str(), "litId(1:1-1:2)");
