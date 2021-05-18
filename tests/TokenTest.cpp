@@ -27,8 +27,8 @@ TEST(TokenTest, IsIdStart) {
 }
 
 TEST(TokenTest, IsWhitespace) {
-  EXPECT_TRUE(Token::isIdStart('\r'));
-  EXPECT_TRUE(Token::isIdStart('\n'));
-  EXPECT_TRUE(Token::isIdStart('\t'));
-  EXPECT_TRUE(Token::isIdStart(' '));
+  EXPECT_TRUE(Token::isWhitespace('\r'));
+  EXPECT_TRUE(Token::isWhitespace('\n'));
+  EXPECT_TRUE(Token::isWhitespace('\t'));
+  EXPECT_TRUE(Token::isWhitespace(' '));
 }
