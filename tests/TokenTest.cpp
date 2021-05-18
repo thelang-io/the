@@ -32,3 +32,14 @@ TEST(TokenTest, IsWhitespace) {
   EXPECT_TRUE(Token::isWhitespace('\t'));
   EXPECT_TRUE(Token::isWhitespace(' '));
 }
+
+TEST(TokenTest, CtorSetConstMembers) {
+  const auto start = ReaderLocation{1, 1, 1};
+  const auto end = ReaderLocation{2, 1, 2};
+  const auto tok = Token(litId, "_", start, end);
+
+  EXPECT_EQ(tok.end, end);
+  EXPECT_EQ(tok.start, start);
+  EXPECT_EQ(tok.type, litId);
+  EXPECT_EQ(tok.val, "_");
+}
