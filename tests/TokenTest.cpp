@@ -17,3 +17,11 @@ TEST(TokenTest, IsIdContinue) {
   EXPECT_TRUE(Token::isIdContinue('9'));
   EXPECT_TRUE(Token::isIdContinue('_'));
 }
+
+TEST(TokenTest, IsIdStart) {
+  EXPECT_TRUE(Token::isIdStart('A'));
+  EXPECT_TRUE(Token::isIdStart('Z'));
+  EXPECT_TRUE(Token::isIdStart('a'));
+  EXPECT_TRUE(Token::isIdStart('z'));
+  EXPECT_TRUE(Token::isIdStart('_'));
+}
