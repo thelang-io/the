@@ -25,3 +25,10 @@ TEST(TokenTest, IsIdStart) {
   EXPECT_TRUE(Token::isIdStart('z'));
   EXPECT_TRUE(Token::isIdStart('_'));
 }
+
+TEST(TokenTest, IsWhitespace) {
+  EXPECT_TRUE(Token::isIdStart('\r'));
+  EXPECT_TRUE(Token::isIdStart('\n'));
+  EXPECT_TRUE(Token::isIdStart('\t'));
+  EXPECT_TRUE(Token::isIdStart(' '));
+}
