@@ -14,6 +14,12 @@
 class SyntaxError : public Error {
  public:
   SyntaxError (Reader *reader, const std::string &msg);
+
+  SyntaxError (
+    Reader *reader,
+    const ReaderLocation &loc,
+    const std::string &msg
+  );
 };
 
 #endif

@@ -7,8 +7,15 @@
 
 #include "SyntaxError.hpp"
 
-SyntaxError::SyntaxError (Reader *reader, const std::string &msg) {
-  const auto loc = reader->loc();
+SyntaxError::SyntaxError (Reader *reader, const std::string &msg)
+  : SyntaxError(reader, reader->loc(), msg) {
+}
+
+SyntaxError::SyntaxError (
+  Reader *reader,
+  const ReaderLocation &loc,
+  const std::string &msg
+) {
   reader->seek({0, loc.line, loc.pos - loc.col});
   auto lineContent = std::string();
 
