@@ -225,14 +225,14 @@ Token Lexer::next () {
 
     return this->_token(litId);
   } else if (ch == '/' && !this->_reader->eof()) {
-    const auto loc1 = this->_reader->loc();
+    auto loc = this->_reader->loc();
     ch = this->_reader->next();
 
     if (ch == '/') {
       this->_val += ch;
 
       while (!this->_reader->eof()) {
-        const auto loc = this->_reader->loc();
+        loc = this->_reader->loc();
         ch = this->_reader->next();
 
         if (ch == '\n') {
@@ -244,8 +244,37 @@ Token Lexer::next () {
       }
 
       return this->_token(commentLine);
+    } else if (ch == '*') {
+      this->_val += ch;
+
+      while (true) {
+        const auto ch1 = this->_reader->next();
+
+        if (this->_reader->eof()) {
+          throw SyntaxError(
+            this->_reader,
+            this->_start,
+            "Unexpected end-of-file, expected end of block comment"
+          );
+        } else if (ch1 == '*') {
+          loc = this->_reader->loc();
+          const auto ch2 = this->_reader->next();
+
+          if (ch2 == '/') {
+            this->_val += ch1;
+            this->_val += ch2;
+            break;
+          } else {
+            this->_reader->seek(loc);
+          }
+        }
+
+        this->_val += ch1;
+      }
+
+      return this->_token(commentBlock);
     } else {
-      this->_reader->seek(loc1);
+      this->_reader->seek(loc);
     }
   }
 
