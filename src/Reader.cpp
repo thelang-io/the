@@ -76,3 +76,7 @@ void Reader::seek (const ReaderLocation &loc) {
 bool operator== (const ReaderLocation &lhs, const ReaderLocation &rhs) {
   return lhs.col == rhs.col && lhs.line == rhs.line && lhs.pos == rhs.pos;
 }
+
+bool operator!= (const ReaderLocation &lhs, const ReaderLocation &rhs) {
+  return !(lhs == rhs);
+}

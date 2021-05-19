@@ -38,5 +38,6 @@ class Reader {
 };
 
 bool operator== (const ReaderLocation &lhs, const ReaderLocation &rhs);
+bool operator!= (const ReaderLocation &lhs, const ReaderLocation &rhs);
 
 #endif
