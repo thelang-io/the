@@ -8,7 +8,7 @@
 #include <gmock/gmock.h>
 #include "../src/Token.hpp"
 
-TEST(TokenTest, IsCharEscape) {
+TEST(TokenTest, IsLitCharEscape) {
   EXPECT_TRUE(Token::isCharEscape('0'));
   EXPECT_TRUE(Token::isCharEscape('t'));
   EXPECT_TRUE(Token::isCharEscape('n'));
@@ -34,6 +34,17 @@ TEST(TokenTest, IsIdStart) {
   EXPECT_TRUE(Token::isIdStart('a'));
   EXPECT_TRUE(Token::isIdStart('z'));
   EXPECT_TRUE(Token::isIdStart('_'));
+}
+
+TEST(TokenTest, IsStringEscape) {
+  EXPECT_TRUE(Token::isStringEscape('0'));
+  EXPECT_TRUE(Token::isStringEscape('t'));
+  EXPECT_TRUE(Token::isStringEscape('n'));
+  EXPECT_TRUE(Token::isStringEscape('r'));
+  EXPECT_TRUE(Token::isStringEscape('"'));
+  EXPECT_TRUE(Token::isStringEscape('\''));
+  EXPECT_TRUE(Token::isStringEscape('\\'));
+  EXPECT_TRUE(Token::isStringEscape('{'));
 }
 
 TEST(TokenTest, IsWhitespace) {
