@@ -42,7 +42,10 @@ Token::Token (
 }
 
 bool Token::operator== (const Token &rhs) const {
-  return this->type == rhs.type;
+  return this->end == rhs.end &&
+    this->start == rhs.start &&
+    this->type == rhs.type &&
+    this->val == rhs.val;
 }
 
 bool Token::operator!= (const Token &rhs) const {
