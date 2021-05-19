@@ -44,6 +44,10 @@ TEST(TokenTest, CtorSetConstMembers) {
   EXPECT_EQ(tok.val, "_");
 }
 
+TEST(TokenTest, EqualAnnotherToken) {
+  EXPECT_EQ(Token(litId, "_", {}, {}), Token(litId, "_", {}, {}));
+}
+
 TEST(TokenTest, EqualTokenType) {
   EXPECT_EQ(Token(litId, "_", {}, {}), litId);
 }

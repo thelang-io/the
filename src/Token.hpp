@@ -154,6 +154,8 @@ class Token {
     const ReaderLocation &e
   );
 
+  bool operator== (const Token &rhs) const;
+  bool operator!= (const Token &rhs) const;
   bool operator== (const TokenType &rhs) const;
   bool operator!= (const TokenType &rhs) const;
 
