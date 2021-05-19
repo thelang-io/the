@@ -20,160 +20,160 @@ Token Lexer::next () {
     return this->_token(eof);
   }
 
-  auto ch = this->_reader->next();
-  this->_val = ch;
+  const auto ch1 = this->_reader->next();
+  this->_val = ch1;
 
-  if (ch == '^') return this->_opEq(opCaret, opCaretEq);
-  if (ch == ':') return this->_opEq(opColon, opColonEq);
-  if (ch == ',') return this->_token(opComma);
-  if (ch == '=') return this->_opEq(opEq, opEqEq);
-  if (ch == '{') return this->_token(opLBrace);
-  if (ch == '[') return this->_token(opLBrack);
-  if (ch == '(') return this->_token(opLPar);
-  if (ch == '%') return this->_opEq(opPercent, opPercentEq);
-  if (ch == '}') return this->_token(opRBrace);
-  if (ch == ']') return this->_token(opRBrack);
-  if (ch == ')') return this->_token(opRPar);
-  if (ch == ';') return this->_token(opSemi);
-  if (ch == '~') return this->_token(opTilde);
+  if (ch1 == '^') return this->_opEq(opCaret, opCaretEq);
+  if (ch1 == ':') return this->_opEq(opColon, opColonEq);
+  if (ch1 == ',') return this->_token(opComma);
+  if (ch1 == '=') return this->_opEq(opEq, opEqEq);
+  if (ch1 == '{') return this->_token(opLBrace);
+  if (ch1 == '[') return this->_token(opLBrack);
+  if (ch1 == '(') return this->_token(opLPar);
+  if (ch1 == '%') return this->_opEq(opPercent, opPercentEq);
+  if (ch1 == '}') return this->_token(opRBrace);
+  if (ch1 == ']') return this->_token(opRBrack);
+  if (ch1 == ')') return this->_token(opRPar);
+  if (ch1 == ';') return this->_token(opSemi);
+  if (ch1 == '~') return this->_token(opTilde);
 
-  if (ch == '&') {
+  if (ch1 == '&') {
     return this->_opEq2('&', opAnd, opAndEq, opAndAnd, opAndAndEq);
-  } else if (ch == '.') {
+  } else if (ch1 == '.') {
     if (this->_reader->eof()) {
       return this->_token(opDot);
     }
 
-    const auto loc1 = this->_reader->loc();
-    const auto ch1 = this->_reader->next();
+    const auto loc2 = this->_reader->loc();
+    const auto ch2 = this->_reader->next();
 
-    if (isdigit(ch1)) {
-      this->_reader->seek(loc1);
-    } else if (ch1 == '.') {
-      this->_val += ch1;
+    if (isdigit(ch2)) {
+      this->_reader->seek(loc2);
+    } else if (ch2 == '.') {
+      this->_val += ch2;
 
       if (this->_reader->eof()) {
         return this->_token(opDotDot);
       }
 
-      const auto loc2 = this->_reader->loc();
-      const auto ch2 = this->_reader->next();
+      const auto loc3 = this->_reader->loc();
+      const auto ch3 = this->_reader->next();
 
-      if (ch2 == '.') {
-        this->_val += ch2;
+      if (ch3 == '.') {
+        this->_val += ch3;
         return this->_token(opDotDotDot);
-      } else if (ch2 == '=') {
-        this->_val += ch2;
+      } else if (ch3 == '=') {
+        this->_val += ch3;
         return this->_token(opDotDotEq);
       } else {
-        this->_reader->seek(loc2);
+        this->_reader->seek(loc3);
         return this->_token(opDotDot);
       }
     } else {
-      this->_reader->seek(loc1);
+      this->_reader->seek(loc2);
       return this->_token(opDot);
     }
-  } else if (ch == '!') {
+  } else if (ch1 == '!') {
     return this->_opEqDouble('!', opExcl, opExclEq, opExclExcl);
-  } else if (ch == '>') {
+  } else if (ch1 == '>') {
     return this->_opEq2('>', opGt, opGtEq, opRShift, opRShiftEq);
-  } else if (ch == '<') {
+  } else if (ch1 == '<') {
     return this->_opEq2('<', opLt, opLtEq, opLShift, opLShiftEq);
-  } else if (ch == '-') {
+  } else if (ch1 == '-') {
     return this->_opEqDouble('-', opMinus, opMinusEq, opMinusMinus);
-  } else if (ch == '|') {
+  } else if (ch1 == '|') {
     return this->_opEq2('|', opOr, opOrEq, opOrOr, opOrOrEq);
-  } else if (ch == '+') {
+  } else if (ch1 == '+') {
     return this->_opEqDouble('+', opPlus, opPlusEq, opPlusPlus);
-  } else if (ch == '/') {
+  } else if (ch1 == '/') {
     if (this->_reader->eof()) {
       return this->_token(opSlash);
     }
 
-    const auto loc = this->_reader->loc();
-    ch = this->_reader->next();
+    const auto loc2 = this->_reader->loc();
+    const auto ch2 = this->_reader->next();
 
-    if (ch == '=') {
-      this->_val += ch;
+    if (ch2 == '=') {
+      this->_val += ch2;
       return this->_token(opSlashEq);
-    } else if (ch != '/' && ch != '*') {
-      this->_val += ch;
+    } else if (ch2 != '/' && ch2 != '*') {
+      this->_reader->seek(loc2);
       return this->_token(opSlash);
+    } else {
+      this->_reader->seek(loc2);
     }
-
-    this->_reader->seek(loc);
-  } else if (ch == '?') {
+  } else if (ch1 == '?') {
     if (this->_reader->eof()) {
       return this->_token(opQn);
     }
 
-    const auto loc1 = this->_reader->loc();
-    ch = this->_reader->next();
+    const auto loc2 = this->_reader->loc();
+    const auto ch2 = this->_reader->next();
 
-    if (ch == '.') {
-      this->_val += ch;
+    if (ch2 == '.') {
+      this->_val += ch2;
       return this->_token(opQnDot);
-    } else if (ch == '?') {
-      this->_val += ch;
+    } else if (ch2 == '?') {
+      this->_val += ch2;
 
       if (this->_reader->eof()) {
         return this->_token(opQnQn);
       }
 
-      const auto loc2 = this->_reader->loc();
-      ch = this->_reader->next();
+      const auto loc3 = this->_reader->loc();
+      const auto ch3 = this->_reader->next();
 
-      if (ch == '=') {
-        this->_val += ch;
+      if (ch3 == '=') {
+        this->_val += ch3;
         return this->_token(opQnQnEq);
       } else {
-        this->_reader->seek(loc2);
+        this->_reader->seek(loc3);
         return this->_token(opQnQn);
       }
     } else {
-      this->_reader->seek(loc1);
+      this->_reader->seek(loc2);
       return this->_token(opQn);
     }
-  } else if (ch == '*') {
+  } else if (ch1 == '*') {
     return this->_opEq2('*', opStar, opStarEq, opStarStar, opStarStarEq);
   }
 
-  if (Token::isWhitespace(ch)) {
+  if (Token::isWhitespace(ch1)) {
     while (!this->_reader->eof()) {
-      const auto loc = this->_reader->loc();
-      ch = this->_reader->next();
+      const auto loc2 = this->_reader->loc();
+      const auto ch2 = this->_reader->next();
 
-      if (!Token::isWhitespace(ch)) {
-        this->_reader->seek(loc);
+      if (!Token::isWhitespace(ch2)) {
+        this->_reader->seek(loc2);
         break;
       }
 
-      this->_val += ch;
+      this->_val += ch2;
     }
 
     return this->_token(whitespace);
-  } else if (Token::isIdStart(ch)) {
+  } else if (Token::isIdStart(ch1)) {
     while (!this->_reader->eof()) {
-      const auto loc = this->_reader->loc();
-      ch = this->_reader->next();
+      const auto loc2 = this->_reader->loc();
+      const auto ch2 = this->_reader->next();
 
-      if (!Token::isIdContinue(ch)) {
-        this->_reader->seek(loc);
+      if (!Token::isIdContinue(ch2)) {
+        this->_reader->seek(loc2);
         break;
       }
 
-      this->_val += ch;
+      this->_val += ch2;
     }
 
     if (this->_val == "as") {
-      const auto loc = this->_reader->loc();
-      ch = this->_reader->next();
+      const auto loc2 = this->_reader->loc();
+      const auto ch2 = this->_reader->next();
 
-      if (ch == '?') {
-        this->_val += ch;
+      if (ch2 == '?') {
+        this->_val += ch2;
         return this->_token(kwAsSafe);
       } else {
-        this->_reader->seek(loc);
+        this->_reader->seek(loc2);
         return this->_token(kwAs);
       }
     }
@@ -224,31 +224,31 @@ Token Lexer::next () {
     if (this->_val == "union") return this->_token(kwUnion);
 
     return this->_token(litId);
-  } else if (ch == '/' && !this->_reader->eof()) {
-    auto loc = this->_reader->loc();
-    ch = this->_reader->next();
+  } else if (ch1 == '/' && !this->_reader->eof()) {
+    const auto loc2 = this->_reader->loc();
+    const auto ch2 = this->_reader->next();
 
-    if (ch == '/') {
-      this->_val += ch;
+    if (ch2 == '/') {
+      this->_val += ch2;
 
       while (!this->_reader->eof()) {
-        loc = this->_reader->loc();
-        ch = this->_reader->next();
+        const auto loc3 = this->_reader->loc();
+        const auto ch3 = this->_reader->next();
 
-        if (ch == '\n') {
-          this->_reader->seek(loc);
+        if (ch3 == '\n') {
+          this->_reader->seek(loc3);
           break;
         }
 
-        this->_val += ch;
+        this->_val += ch3;
       }
 
       return this->_token(commentLine);
-    } else if (ch == '*') {
-      this->_val += ch;
+    } else if (ch2 == '*') {
+      this->_val += ch2;
 
       while (true) {
-        const auto ch1 = this->_reader->next();
+        const auto ch3 = this->_reader->next();
 
         if (this->_reader->eof()) {
           throw SyntaxError(
@@ -256,25 +256,25 @@ Token Lexer::next () {
             this->_start,
             "Unexpected end-of-file, expected end of block comment"
           );
-        } else if (ch1 == '*') {
-          loc = this->_reader->loc();
-          const auto ch2 = this->_reader->next();
+        } else if (ch3 == '*') {
+          const auto loc4 = this->_reader->loc();
+          const auto ch4 = this->_reader->next();
 
-          if (ch2 == '/') {
-            this->_val += ch1;
-            this->_val += ch2;
+          if (ch4 == '/') {
+            this->_val += ch3;
+            this->_val += ch4;
             break;
           } else {
-            this->_reader->seek(loc);
+            this->_reader->seek(loc4);
           }
         }
 
-        this->_val += ch1;
+        this->_val += ch3;
       }
 
       return this->_token(commentBlock);
     } else {
-      this->_reader->seek(loc);
+      this->_reader->seek(loc2);
     }
   }
 
@@ -286,20 +286,20 @@ Token Lexer::_opEq (const TokenType tt1, const TokenType tt2) {
     return this->_token(tt1);
   }
 
-  const auto loc = this->_reader->loc();
-  const auto ch = this->_reader->next();
+  const auto loc2 = this->_reader->loc();
+  const auto ch2 = this->_reader->next();
 
-  if (ch == '=') {
-    this->_val += ch;
+  if (ch2 == '=') {
+    this->_val += ch2;
     return this->_token(tt2);
   } else {
-    this->_reader->seek(loc);
+    this->_reader->seek(loc2);
     return this->_token(tt1);
   }
 }
 
 Token Lexer::_opEq2 (
-  const char ch,
+  const char ch1,
   const TokenType tt1,
   const TokenType tt2,
   const TokenType tt3,
@@ -309,37 +309,37 @@ Token Lexer::_opEq2 (
     return this->_token(tt1);
   }
 
-  const auto loc1 = this->_reader->loc();
-  const auto ch1 = this->_reader->next();
+  const auto loc2 = this->_reader->loc();
+  const auto ch2 = this->_reader->next();
 
-  if (ch1 == '=') {
-    this->_val += ch1;
+  if (ch2 == '=') {
+    this->_val += ch2;
     return this->_token(tt2);
-  } else if (ch1 == ch) {
-    this->_val += ch1;
+  } else if (ch2 == ch1) {
+    this->_val += ch2;
 
     if (this->_reader->eof()) {
       return this->_token(tt3);
     }
 
-    const auto loc2 = this->_reader->loc();
-    const auto ch2 = this->_reader->next();
+    const auto loc3 = this->_reader->loc();
+    const auto ch3 = this->_reader->next();
 
-    if (ch2 == '=') {
-      this->_val += ch2;
+    if (ch3 == '=') {
+      this->_val += ch3;
       return this->_token(tt4);
     } else {
-      this->_reader->seek(loc2);
+      this->_reader->seek(loc3);
       return this->_token(tt3);
     }
   } else {
-    this->_reader->seek(loc1);
+    this->_reader->seek(loc2);
     return this->_token(tt1);
   }
 }
 
 Token Lexer::_opEqDouble (
-  const char ch,
+  const char ch1,
   const TokenType tt1,
   const TokenType tt2,
   const TokenType tt3
@@ -348,17 +348,17 @@ Token Lexer::_opEqDouble (
     return this->_token(tt1);
   }
 
-  const auto loc = this->_reader->loc();
-  const auto ch1 = this->_reader->next();
+  const auto loc2 = this->_reader->loc();
+  const auto ch2 = this->_reader->next();
 
-  if (ch1 == '=') {
-    this->_val += ch1;
+  if (ch2 == '=') {
+    this->_val += ch2;
     return this->_token(tt2);
-  } else if (ch1 == ch) {
-    this->_val += ch1;
+  } else if (ch2 == ch1) {
+    this->_val += ch2;
     return this->_token(tt3);
   } else {
-    this->_reader->seek(loc);
+    this->_reader->seek(loc2);
     return this->_token(tt1);
   }
 }
