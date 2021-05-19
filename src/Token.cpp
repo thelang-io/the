@@ -45,6 +45,10 @@ bool Token::operator== (const Token &rhs) const {
   return this->type == rhs.type;
 }
 
+bool Token::operator!= (const Token &rhs) const {
+  return !(*this == rhs);
+}
+
 bool Token::operator== (const TokenType &rhs) const {
   return this->type == rhs;
 }
