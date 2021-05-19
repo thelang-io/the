@@ -15,7 +15,7 @@ class ReaderTest : public ::testing::Test {
  protected:
   const fs::path tmp_ = fs::canonical(fs::temp_directory_path());
   const fs::path p0_ = this->tmp_ / "test0.out";
-  const std::string c0_ = "";
+  const std::string c0_;
   const fs::path p1_ = this->tmp_ / "test1.out";
   const std::string c1_ = "Lorem ipsum dolor sit amet";
   const fs::path p2_ = this->tmp_ / "test2.out";

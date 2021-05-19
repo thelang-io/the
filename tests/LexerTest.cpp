@@ -28,6 +28,5 @@ TEST(LexerTest, Operators) {
     .WillOnce(::testing::Return(';'));
 
   auto lexer = Lexer(&reader);
-
   EXPECT_EQ(lexer.next(), Token(opSemi, ";", {1, 1, 1}, {2, 1, 2}));
 }

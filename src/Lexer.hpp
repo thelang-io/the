@@ -12,7 +12,7 @@
 
 class Lexer {
  public:
-  Lexer (Reader *reader);
+  explicit Lexer (Reader *);
   Token next ();
 
  private:
@@ -21,24 +21,10 @@ class Lexer {
   ReaderLocation _start;
   std::string _val;
 
-  Token _opEq (const TokenType tt1, const TokenType tt2);
-
-  Token _opEq2 (
-    const char ch,
-    const TokenType tt1,
-    const TokenType tt2,
-    const TokenType tt3,
-    const TokenType tt4
-  );
-
-  Token _opEqDouble (
-    const char ch,
-    const TokenType tt1,
-    const TokenType tt2,
-    const TokenType tt3
-  );
-
-  Token _token (const TokenType tt);
+  Token _opEq (TokenType, TokenType);
+  Token _opEq2 (char, TokenType, TokenType, TokenType, TokenType);
+  Token _opEqDouble (char, TokenType, TokenType, TokenType);
+  Token _token (TokenType);
 };
 
 #endif

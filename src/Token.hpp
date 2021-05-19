@@ -138,11 +138,11 @@ enum TokenType {
 
 class Token {
  public:
-  static bool isIdContinue (const char ch);
-  static bool isIdStart (const char ch);
-  static bool isLitCharEscape (const char ch);
-  static bool isLitStrEscape (const char ch);
-  static bool isWhitespace (const char ch);
+  static bool isIdContinue (char);
+  static bool isIdStart (char);
+  static bool isLitCharEscape (char);
+  static bool isLitStrEscape (char);
+  static bool isWhitespace (char);
 
   const TokenType type;
   const std::string val;
@@ -150,18 +150,18 @@ class Token {
   const ReaderLocation end;
 
   Token (
-    const TokenType &t,
-    const std::string &v,
-    const ReaderLocation &s,
-    const ReaderLocation &e
+    TokenType,
+    const std::string &,
+    const ReaderLocation &,
+    const ReaderLocation &
   );
 
-  bool operator== (const Token &rhs) const;
-  bool operator!= (const Token &rhs) const;
-  bool operator== (const TokenType &rhs) const;
-  bool operator!= (const TokenType &rhs) const;
+  bool operator== (const Token &) const;
+  bool operator!= (const Token &) const;
+  bool operator== (TokenType) const;
+  bool operator!= (TokenType) const;
 
-  std::string str () const;
+  [[nodiscard]] std::string str () const;
 };
 
 #endif

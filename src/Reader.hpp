@@ -20,16 +20,16 @@ struct ReaderLocation {
 
 class Reader {
  public:
-  Reader (const fs::path &path);
+  explicit Reader (const fs::path &);
   Reader (const Reader &) = delete;
   Reader &operator= (const Reader &) = delete;
 
-  virtual std::string content () const;
-  virtual bool eof () const;
-  virtual ReaderLocation loc () const;
+  [[nodiscard]] virtual std::string content () const;
+  [[nodiscard]] virtual bool eof () const;
+  [[nodiscard]] virtual ReaderLocation loc () const;
   virtual char next ();
-  virtual fs::path path () const;
-  virtual void seek (const ReaderLocation &loc);
+  [[nodiscard]] virtual fs::path path () const;
+  virtual void seek (const ReaderLocation &);
 
  private:
   std::string _content;
@@ -37,7 +37,7 @@ class Reader {
   fs::path _path;
 };
 
-bool operator== (const ReaderLocation &lhs, const ReaderLocation &rhs);
-bool operator!= (const ReaderLocation &lhs, const ReaderLocation &rhs);
+bool operator== (const ReaderLocation &, const ReaderLocation &);
+bool operator!= (const ReaderLocation &, const ReaderLocation &);
 
 #endif

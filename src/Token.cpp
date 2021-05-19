@@ -42,7 +42,7 @@ bool Token::isWhitespace (const char ch) {
 }
 
 Token::Token (
-  const TokenType &t,
+  TokenType t,
   const std::string &v,
   const ReaderLocation &s,
   const ReaderLocation &e
@@ -60,11 +60,11 @@ bool Token::operator!= (const Token &rhs) const {
   return !(*this == rhs);
 }
 
-bool Token::operator== (const TokenType &rhs) const {
+bool Token::operator== (TokenType rhs) const {
   return this->type == rhs;
 }
 
-bool Token::operator!= (const TokenType &rhs) const {
+bool Token::operator!= (TokenType rhs) const {
   return !(*this == rhs);
 }
 

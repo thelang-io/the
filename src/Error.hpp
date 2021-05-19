@@ -16,8 +16,8 @@ class Error : public std::exception {
   std::string name = "Error";
 
   Error () = default;
-  Error (const std::string &msg);
-  virtual const char *what () const noexcept override;
+  explicit Error (const std::string &);
+  [[nodiscard]] const char *what () const noexcept override;
 };
 
 #endif
