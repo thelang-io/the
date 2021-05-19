@@ -41,12 +41,16 @@ Token::Token (
 ) : type(t), val(v), start(s), end(e) {
 }
 
+bool Token::operator== (const Token &rhs) const {
+  return this->type == rhs.type;
+}
+
 bool Token::operator== (const TokenType &rhs) const {
   return this->type == rhs;
 }
 
 bool Token::operator!= (const TokenType &rhs) const {
-  return this->type != rhs;
+  return !(*this == rhs);
 }
 
 std::string Token::str () const {
