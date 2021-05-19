@@ -6,8 +6,20 @@
  */
 
 #include <gmock/gmock.h>
+#include <fstream>
+
 #include "../src/Lexer.hpp"
 
-TEST(LexerTest, Work) {
-  // TODO
+#define LEX_START(text) \
+  do { std::ofstream f("test.out"); \
+  f << text; \
+  f.close(); } while (0);
+
+#define LEX_END() fs::remove("test.out");
+
+TEST(LexerTest, Operators) {
+  const char *text = "test";
+
+  LEX_START(text)
+  LEX_END()
 }
