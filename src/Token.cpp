@@ -13,14 +13,6 @@ static const char *token_type[] = {
   #undef GEN_TOKEN_STR
 };
 
-bool Token::isCharEscape (const char ch) {
-  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
-}
-
-bool Token::isStringEscape (const char ch) {
-  return Token::isCharEscape(ch) || ch == '{';
-}
-
 bool Token::isIdContinue (const char ch) {
   const auto chs = std::string(
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
@@ -35,6 +27,14 @@ bool Token::isIdStart (const char ch) {
   );
 
   return chs.find(ch) != std::string::npos;
+}
+
+bool Token::isLitCharEscape (const char ch) {
+  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
+}
+
+bool Token::isLitStrEscape (const char ch) {
+  return Token::isLitCharEscape(ch) || ch == '{';
 }
 
 bool Token::isWhitespace (const char ch) {

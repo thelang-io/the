@@ -8,16 +8,6 @@
 #include <gmock/gmock.h>
 #include "../src/Token.hpp"
 
-TEST(TokenTest, IsLitCharEscape) {
-  EXPECT_TRUE(Token::isCharEscape('0'));
-  EXPECT_TRUE(Token::isCharEscape('t'));
-  EXPECT_TRUE(Token::isCharEscape('n'));
-  EXPECT_TRUE(Token::isCharEscape('r'));
-  EXPECT_TRUE(Token::isCharEscape('"'));
-  EXPECT_TRUE(Token::isCharEscape('\''));
-  EXPECT_TRUE(Token::isCharEscape('\\'));
-}
-
 TEST(TokenTest, IsIdContinue) {
   EXPECT_TRUE(Token::isIdContinue('A'));
   EXPECT_TRUE(Token::isIdContinue('Z'));
@@ -36,15 +26,25 @@ TEST(TokenTest, IsIdStart) {
   EXPECT_TRUE(Token::isIdStart('_'));
 }
 
-TEST(TokenTest, IsStringEscape) {
-  EXPECT_TRUE(Token::isStringEscape('0'));
-  EXPECT_TRUE(Token::isStringEscape('t'));
-  EXPECT_TRUE(Token::isStringEscape('n'));
-  EXPECT_TRUE(Token::isStringEscape('r'));
-  EXPECT_TRUE(Token::isStringEscape('"'));
-  EXPECT_TRUE(Token::isStringEscape('\''));
-  EXPECT_TRUE(Token::isStringEscape('\\'));
-  EXPECT_TRUE(Token::isStringEscape('{'));
+TEST(TokenTest, IsLitCharEscape) {
+  EXPECT_TRUE(Token::isLitCharEscape('0'));
+  EXPECT_TRUE(Token::isLitCharEscape('t'));
+  EXPECT_TRUE(Token::isLitCharEscape('n'));
+  EXPECT_TRUE(Token::isLitCharEscape('r'));
+  EXPECT_TRUE(Token::isLitCharEscape('"'));
+  EXPECT_TRUE(Token::isLitCharEscape('\''));
+  EXPECT_TRUE(Token::isLitCharEscape('\\'));
+}
+
+TEST(TokenTest, IsLitStrEscape) {
+  EXPECT_TRUE(Token::isLitStrEscape('0'));
+  EXPECT_TRUE(Token::isLitStrEscape('t'));
+  EXPECT_TRUE(Token::isLitStrEscape('n'));
+  EXPECT_TRUE(Token::isLitStrEscape('r'));
+  EXPECT_TRUE(Token::isLitStrEscape('"'));
+  EXPECT_TRUE(Token::isLitStrEscape('\''));
+  EXPECT_TRUE(Token::isLitStrEscape('\\'));
+  EXPECT_TRUE(Token::isLitStrEscape('{'));
 }
 
 TEST(TokenTest, IsWhitespace) {
