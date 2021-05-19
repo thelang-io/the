@@ -139,6 +139,7 @@ enum TokenType {
 class Token {
  public:
   static bool isCharEscape (const char ch);
+  static bool isStringEscape (const char ch);
   static bool isIdContinue (const char ch);
   static bool isIdStart (const char ch);
   static bool isWhitespace (const char ch);

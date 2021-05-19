@@ -17,6 +17,10 @@ bool Token::isCharEscape (const char ch) {
   return std::string("0tnr\"'\\").find(ch) != std::string::npos;
 }
 
+bool Token::isStringEscape (const char ch) {
+  return Token::isCharEscape(ch) || ch == '{';
+}
+
 bool Token::isIdContinue (const char ch) {
   const auto chs = std::string(
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
