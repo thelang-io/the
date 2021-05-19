@@ -254,7 +254,7 @@ Token Lexer::next () {
           throw SyntaxError(
             this->_reader,
             this->_start,
-            "Unexpected end-of-file, expected end of block comment"
+            "Unterminated block comment"
           );
         } else if (ch3 == '*') {
           const auto loc4 = this->_reader->loc();
@@ -276,6 +276,64 @@ Token Lexer::next () {
     } else {
       this->_reader->seek(loc2);
     }
+  } else if (ch1 == '\'') {
+    if (this->_reader->eof()) {
+      throw SyntaxError(
+        this->_reader,
+        this->_start,
+        "Unterminated character literal"
+      );
+    }
+
+    const auto ch2 = this->_reader->next();
+
+    if (ch2 == '\'') {
+      throw SyntaxError(
+        this->_reader,
+        this->_start,
+        "Empty character literal"
+      );
+    } else if (this->_reader->eof()) {
+      throw SyntaxError(
+        this->_reader,
+        this->_start,
+        "Unterminated character literal"
+      );
+    } else if (ch2 == '\\') {
+      const auto ch3 = this->_reader->next();
+
+      if (!Token::isLitCharEscape(ch3)) {
+        throw SyntaxError(
+          this->_reader,
+          this->_start,
+          "Illegal character escape"
+        );
+      } else if (this->_reader->eof()) {
+        throw SyntaxError(
+          this->_reader,
+          this->_start,
+          "Unterminated character literal"
+        );
+      }
+
+      this->_val += ch2;
+      this->_val += ch3;
+    } else {
+      this->_val += ch2;
+    }
+
+    const auto ch4 = this->_reader->next();
+
+    if (ch4 != '\'') {
+      throw SyntaxError(
+        this->_reader,
+        this->_start,
+        "Too many characters in character literal"
+      );
+    }
+
+    this->_val += ch4;
+    return this->_token(litChar);
   }
 
   throw SyntaxError(this->_reader, "Unexpected token");
