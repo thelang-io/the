@@ -13,6 +13,10 @@ static const char *token_type[] = {
   #undef GEN_TOKEN_STR
 };
 
+bool Token::isCharEscape (const char ch) {
+  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
+}
+
 bool Token::isIdContinue (const char ch) {
   const auto chs = std::string(
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
