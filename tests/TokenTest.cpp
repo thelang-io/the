@@ -8,6 +8,16 @@
 #include <gmock/gmock.h>
 #include "../src/Token.hpp"
 
+TEST(TokenTest, IsCharEscape) {
+  EXPECT_TRUE(Token::isCharEscape('0'));
+  EXPECT_TRUE(Token::isCharEscape('t'));
+  EXPECT_TRUE(Token::isCharEscape('n'));
+  EXPECT_TRUE(Token::isCharEscape('r'));
+  EXPECT_TRUE(Token::isCharEscape('"'));
+  EXPECT_TRUE(Token::isCharEscape('\''));
+  EXPECT_TRUE(Token::isCharEscape('\\'));
+}
+
 TEST(TokenTest, IsIdContinue) {
   EXPECT_TRUE(Token::isIdContinue('A'));
   EXPECT_TRUE(Token::isIdContinue('Z'));
