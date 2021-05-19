@@ -9,17 +9,25 @@
 #include <fstream>
 
 #include "../src/Lexer.hpp"
-
-#define LEX_START(text) \
-  do { std::ofstream f("test.out"); \
-  f << text; \
-  f.close();
-
-#define LEX_END() fs::remove("test.out"); } while (0);
+#include "ReaderMock.hpp"
 
 TEST(LexerTest, Operators) {
-  const char *text = "test";
+  auto reader = ::testing::StrictMock<MockReader>();
 
-  LEX_START(text)
-  LEX_END()
+  EXPECT_CALL(reader, eof())
+    .Times(1)
+    .WillRepeatedly(::testing::Return(false));
+
+  EXPECT_CALL(reader, loc())
+    .Times(2)
+    .WillOnce(::testing::Return(ReaderLocation{1, 1, 1}))
+    .WillOnce(::testing::Return(ReaderLocation{2, 1, 2}));
+
+  EXPECT_CALL(reader, next())
+    .Times(1)
+    .WillOnce(::testing::Return(';'));
+
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.next(), Token(opSemi, ";", {1, 1, 1}, {2, 1, 2}));
 }
