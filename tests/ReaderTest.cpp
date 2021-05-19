@@ -155,3 +155,9 @@ TEST(ReaderLocationTest, EqualAnotherLocation) {
   const auto rl2 = ReaderLocation{4, 2, 2};
   EXPECT_EQ(rl1, rl2);
 }
+
+TEST(ReaderLocationTest, NotEqualAnotherLocation) {
+  const auto rl1 = ReaderLocation{4, 2, 2};
+  const auto rl2 = ReaderLocation{2, 2, 2};
+  EXPECT_NE(rl1, rl2);
+}
