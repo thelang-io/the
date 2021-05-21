@@ -195,7 +195,6 @@ Token Lexer::next () {
   } else if (isdigit(ch1)) {
     if (ch1 == '0') {
       if (this->_reader->eof()) {
-        this->_lookupInvalidLitInt();
         return this->_token(litIntDec);
       }
 
@@ -213,25 +212,22 @@ Token Lexer::next () {
         );
       } else if (ch2 == 'B' || ch2 == 'b') {
         this->_val += ch2;
-        return this->_lexLitInt(litIntBin, Token::isLitIntBin);
+        return this->_lexLitInt(Token::isLitIntBin, litIntBin);
       } else if (ch2 == 'X' || ch2 == 'x') {
         this->_val += ch2;
-        return this->_lexLitInt(litIntHex, Token::isLitIntHex);
+        return this->_lexLitInt(Token::isLitIntHex, litIntHex);
       } else if (ch2 == 'O' || ch2 == 'o') {
         this->_val += ch2;
-        return this->_lexLitInt(litIntOct, Token::isLitIntOct);
+        return this->_lexLitInt(Token::isLitIntOct, litIntOct);
       } else {
         this->_reader->seek(loc2);
       }
 
-      this->_lookupInvalidLitInt();
-      return this->_token(litIntDec);
+      return this->_lexLitInt(Token::isLitIntDec, litIntDec);
     }
 
     this->_walk(Token::isLitIntDec);
-    this->_lookupInvalidLitInt();
-
-    return this->_token(litIntDec);
+    return this->_lexLitInt(Token::isLitIntDec, litIntDec);
   } else if (ch1 == '/' && !this->_reader->eof()) {
     const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();
@@ -327,21 +323,38 @@ Token Lexer::next () {
   throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unexpected token");
 }
 
-Token Lexer::_lexLitInt (TokenType tt, const std::function<bool (char)> &fn) {
-  if (this->_reader->eof()) {
-    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid numeric literal");
+Token Lexer::_lexLitInt (const std::function<bool (char)> &fn, TokenType tt) {
+  const std::string name = Token::litIntToStr(tt);
+
+  if (tt != litIntDec) {
+    if (this->_reader->eof()) {
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
+    }
+
+    const auto ch = this->_reader->next();
+
+    if (!fn(ch)) {
+      this->_walk(isalnum);
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
+    }
+
+    this->_val += ch;
+    this->_walk(fn);
   }
 
+  if (this->_reader->eof()) {
+    return this->_token(tt);
+  }
+
+  const auto loc = this->_reader->loc();
   const auto ch = this->_reader->next();
 
-  if (!fn(ch)) {
+  if (isalnum(ch)) {
     this->_walk(isalnum);
-    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid numeric literal");
+    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
+  } else {
+    this->_reader->seek(loc);
   }
-
-  this->_val += ch;
-  this->_walk(fn);
-  this->_lookupInvalidLitInt();
 
   return this->_token(tt);
 }
@@ -420,22 +433,6 @@ Token Lexer::_lexOpEqDouble (const char ch1, const TokenType tt1, const TokenTyp
   } else {
     this->_reader->seek(loc2);
     return this->_token(tt1);
-  }
-}
-
-void Lexer::_lookupInvalidLitInt () {
-  if (this->_reader->eof()) {
-    return;
-  }
-
-  const auto loc = this->_reader->loc();
-  const auto ch = this->_reader->next();
-
-  if (isalnum(ch)) {
-    this->_walk(isalnum);
-    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid numeric literal");
-  } else {
-    this->_reader->seek(loc);
   }
 }
 
