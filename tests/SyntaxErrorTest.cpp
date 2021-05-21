@@ -113,5 +113,28 @@ TEST(SyntaxErrorTest, EndAfterEOL) {
   EXPECT_STREQ(err1.what(), "/tmp/test.out:1:1: Inside test\n  1 | 0123\n    | ^~~~\n");
 }
 
-//TEST(SyntaxErrorTest, EndOnNextLine) {
-//}
+TEST(SyntaxErrorTest, EndOnNextLine) {
+  auto reader = ::testing::StrictMock<MockReader>();
+
+  EXPECT_CALL(reader, seek(ReaderLocation{0, 1, 0}))
+    .Times(2);
+
+  EXPECT_CALL(reader, eof())
+    .Times(5)
+    .WillRepeatedly(::testing::Return(false));
+
+  EXPECT_CALL(reader, next())
+    .Times(5)
+    .WillOnce(::testing::Return('0'))
+    .WillOnce(::testing::Return('1'))
+    .WillOnce(::testing::Return('2'))
+    .WillOnce(::testing::Return('3'))
+    .WillOnce(::testing::Return('\n'));
+
+  EXPECT_CALL(reader, path())
+    .Times(1)
+    .WillOnce(::testing::Return("/tmp/test.out"));
+
+  const auto err1 = SyntaxError(&reader, {0, 1, 0}, {6, 2, 1}, "Inside test");
+  EXPECT_STREQ(err1.what(), "/tmp/test.out:1:1: Inside test\n  1 | 0123\n    | ^~~~\n");
+}
