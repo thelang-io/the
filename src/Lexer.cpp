@@ -142,17 +142,7 @@ Token Lexer::next () {
 
     return this->_token(whitespace);
   } else if (Token::isLitIdStart(ch1)) {
-    while (!this->_reader->eof()) {
-      const auto loc2 = this->_reader->loc();
-      const auto ch2 = this->_reader->next();
-
-      if (!Token::isLitIdContinue(ch2)) {
-        this->_reader->seek(loc2);
-        break;
-      }
-
-      this->_val += ch2;
-    }
+    this->_walk(Token::isLitIdContinue);
 
     if (this->_val == "as") {
       const auto loc2 = this->_reader->loc();
@@ -223,34 +213,27 @@ Token Lexer::next () {
       const auto ch2 = this->_reader->next();
 
       if (Token::isLitIntDec(ch2)) {
+        this->_walk(Token::isLitIntDec);
+
         throw SyntaxError(
           this->_reader,
           this->_start,
-          this->_start,
+          this->_reader->loc(),
           "Numeric literals with leading zero are not allowed"
         );
       } else if (ch2 == 'X' || ch2 == 'x') {
+        const auto trailingErrorText = std::string("Hexadecimal literals with trailing '") + ch2 + "' are not allowed";
         this->_val += ch2;
 
         if (this->_reader->eof()) {
-          throw SyntaxError(
-            this->_reader,
-            this->_start,
-            this->_reader->loc(),
-            std::string("Hexadecimal literals with trailing '") + ch2 + "' are not allowed"
-          );
+          throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), trailingErrorText);
         }
 
         const auto loc3 = this->_reader->loc();
         const auto ch3 = this->_reader->next();
 
         if (!Token::isLitIntHex(ch3)) {
-          throw SyntaxError(
-            this->_reader,
-            this->_start,
-            loc3,
-            std::string("Hexadecimal literals with trailing '") + ch2 + "' are not allowed"
-          );
+          throw SyntaxError(this->_reader, this->_start, loc3, trailingErrorText);
         }
 
         this->_val += ch3;
@@ -275,18 +258,7 @@ Token Lexer::next () {
       return this->_token(litIntDec);
     }
 
-    while (!this->_reader->eof()) {
-      const auto loc2 = this->_reader->loc();
-      const auto ch2 = this->_reader->next();
-
-      if (!Token::isLitIntDec(ch2)) {
-        this->_reader->seek(loc2);
-        break;
-      }
-
-      this->_val += ch2;
-    }
-
+    this->_walk(Token::isLitIntDec);
     return this->_token(litIntDec);
   } else if (ch1 == '/' && !this->_reader->eof()) {
     const auto loc2 = this->_reader->loc();
@@ -311,11 +283,15 @@ Token Lexer::next () {
     } else if (ch2 == '*') {
       this->_val += ch2;
 
+      if (this->_reader->eof()) {
+        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated block comment");
+      }
+
       while (true) {
         const auto ch3 = this->_reader->next();
 
         if (this->_reader->eof()) {
-          throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated block comment");
+          throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated block comment");
         } else if (ch3 == '*') {
           const auto loc4 = this->_reader->loc();
           const auto ch4 = this->_reader->next();
@@ -338,22 +314,28 @@ Token Lexer::next () {
     }
   } else if (ch1 == '\'') {
     if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated character literal");
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated character literal");
     }
 
     const auto ch2 = this->_reader->next();
 
     if (ch2 == '\'') {
-      throw SyntaxError(this->_reader, this->_start, this->_start, "Empty character literal");
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Empty character literal");
     } else if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated character literal");
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated character literal");
     } else if (ch2 == '\\') {
       const auto ch3 = this->_reader->next();
 
       if (!Token::isLitCharEscape(ch3)) {
-        throw SyntaxError(this->_reader, this->_start, this->_start, "Illegal character escape");
+        while (!this->_reader->eof()) {
+          if (this->_reader->next() == '\'') {
+            break;
+          }
+        }
+
+        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Illegal character escape");
       } else if (this->_reader->eof()) {
-        throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated character literal");
+        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated character literal");
       }
 
       this->_val += ch2;
@@ -365,7 +347,13 @@ Token Lexer::next () {
     const auto ch4 = this->_reader->next();
 
     if (ch4 != '\'') {
-      throw SyntaxError(this->_reader, this->_start, this->_start, "Too many characters in character literal");
+      while (!this->_reader->eof()) {
+        if (this->_reader->next() == '\'') {
+          break;
+        }
+      }
+
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Too many characters in character literal");
     }
 
     this->_val += ch4;
@@ -455,4 +443,18 @@ Token Lexer::_lexOpEqDouble (const char ch1, const TokenType tt1, const TokenTyp
 Token Lexer::_token (const TokenType tt) {
   this->_end = this->_reader->loc();
   return Token(tt, this->_val, this->_start, this->_end);
+}
+
+void Lexer::_walk (const std::function<bool (char)> &fn) {
+  while (!this->_reader->eof()) {
+    const auto loc = this->_reader->loc();
+    const auto ch = this->_reader->next();
+
+    if (!fn(ch)) {
+      this->_reader->seek(loc);
+      break;
+    }
+
+    this->_val += ch;
+  }
 }

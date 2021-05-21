@@ -8,6 +8,7 @@
 #ifndef SRC_LEXER_HPP
 #define SRC_LEXER_HPP
 
+#include <functional>
 #include "Token.hpp"
 
 class Lexer {
@@ -25,6 +26,7 @@ class Lexer {
   Token _lexOpEq2 (char, TokenType, TokenType, TokenType, TokenType);
   Token _lexOpEqDouble (char, TokenType, TokenType, TokenType);
   Token _token (TokenType);
+  void _walk (const std::function<bool (char)> &);
 };
 
 #endif
