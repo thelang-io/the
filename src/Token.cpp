@@ -50,6 +50,13 @@ bool Token::isWhitespace (const char ch) {
   return std::string("\r\n\t ").find(ch) != std::string::npos;
 }
 
+std::string Token::litIntToStr (TokenType tt) {
+  if (tt == litIntBin) return "binary";
+  if (tt == litIntHex) return "hexadecimal";
+  if (tt == litIntOct) return "octal";
+  return "decimal";
+}
+
 Token::Token (TokenType t, const std::string &v, const ReaderLocation &s, const ReaderLocation &e)
   : type(t), val(v), start(s), end(e) {
 }

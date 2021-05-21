@@ -87,6 +87,14 @@ TEST(TokenTest, IsWhitespace) {
   EXPECT_FALSE(Token::isWhitespace('a'));
 }
 
+TEST(TokenTest, LitIntToStr) {
+  EXPECT_EQ(Token::litIntToStr(litIntBin), "binary");
+  EXPECT_EQ(Token::litIntToStr(litIntDec), "decimal");
+  EXPECT_EQ(Token::litIntToStr(litIntHex), "hexadecimal");
+  EXPECT_EQ(Token::litIntToStr(litIntOct), "octal");
+  EXPECT_EQ(Token::litIntToStr(litId), "decimal");
+}
+
 TEST(TokenTest, CtorSetConstMembers) {
   const auto start = ReaderLocation{1, 1, 1};
   const auto end = ReaderLocation{2, 1, 2};

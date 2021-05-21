@@ -147,6 +147,7 @@ class Token {
   static bool isLitIntOct (char);
   static bool isLitStrEscape (char);
   static bool isWhitespace (char);
+  static std::string litIntToStr (TokenType);
 
   const TokenType type;
   const std::string val;
