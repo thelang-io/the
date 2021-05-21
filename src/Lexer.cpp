@@ -128,18 +128,7 @@ Token Lexer::next () {
   }
 
   if (Token::isWhitespace(ch1)) {
-    while (!this->_reader->eof()) {
-      const auto loc2 = this->_reader->loc();
-      const auto ch2 = this->_reader->next();
-
-      if (!Token::isWhitespace(ch2)) {
-        this->_reader->seek(loc2);
-        break;
-      }
-
-      this->_val += ch2;
-    }
-
+    this->_walk(Token::isWhitespace);
     return this->_token(whitespace);
   } else if (Token::isLitIdStart(ch1)) {
     this->_walk(Token::isLitIdContinue);
@@ -237,18 +226,7 @@ Token Lexer::next () {
         }
 
         this->_val += ch3;
-
-        while (!this->_reader->eof()) {
-          const auto loc4 = this->_reader->loc();
-          const auto ch4 = this->_reader->next();
-
-          if (!Token::isLitIntHex(ch4)) {
-            this->_reader->seek(loc4);
-            break;
-          }
-
-          this->_val += ch4;
-        }
+        this->_walk(Token::isLitIntHex);
 
         return this->_token(litIntHex);
       } else {
@@ -267,17 +245,9 @@ Token Lexer::next () {
     if (ch2 == '/') {
       this->_val += ch2;
 
-      while (!this->_reader->eof()) {
-        const auto loc3 = this->_reader->loc();
-        const auto ch3 = this->_reader->next();
-
-        if (ch3 == '\n') {
-          this->_reader->seek(loc3);
-          break;
-        }
-
-        this->_val += ch3;
-      }
+      this->_walk([] (char ch) -> bool {
+        return ch != '\n';
+      });
 
       return this->_token(commentLine);
     } else if (ch2 == '*') {
