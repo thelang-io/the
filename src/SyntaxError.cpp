@@ -7,9 +7,14 @@
 
 #include "SyntaxError.hpp"
 
-SyntaxError::SyntaxError (Reader *reader, const ReaderLocation &loc, const std::string &msg) {
-  reader->seek({loc.pos - loc.col, loc.line});
-  auto lineContent = std::string();
+SyntaxError::SyntaxError (
+  Reader *reader,
+  const ReaderLocation &start,
+  const ReaderLocation &end,
+  const std::string &msg
+) {
+  reader->seek({start.pos - start.col, start.line});
+  auto line = std::string();
 
   while (!reader->eof()) {
     char ch = reader->next();
@@ -18,19 +23,25 @@ SyntaxError::SyntaxError (Reader *reader, const ReaderLocation &loc, const std::
       break;
     }
 
-    lineContent += ch;
+    line += ch;
   }
 
-  reader->seek(loc);
+  reader->seek(start);
 
-  const auto colStr = std::to_string(loc.col + 1);
-  const auto lineStr = std::to_string(loc.line);
+  const auto colNumStr = std::to_string(start.col + 1);
+  const auto lineNumStr = std::to_string(start.line);
+  const auto underlineLen = start.line == end.line ? end.col - start.col : line.length() - start.col;
 
-  this->message = reader->path().string() + ":" +
-    lineStr + ":" + colStr + ": " + msg + "\n" +
-    "  " + lineStr + " | " + lineContent + "\n" +
-    "  " + std::string(lineStr.length(), ' ') +
-    " | " + std::string(loc.col, ' ') + "^\n";
+  this->message = reader->path().string() + ':' +
+    lineNumStr + ':' + colNumStr + ": " + msg + "\n" +
+    "  " + lineNumStr + " | " + line + '\n' +
+    "  " + std::string(lineNumStr.length(), ' ') +
+    " | " + std::string(start.col, ' ') + '^';
 
+  if (underlineLen != 0) {
+    this->message += std::string(underlineLen - 1, '~');
+  }
+
+  this->message += '\n';
   this->name = "SyntaxError";
 }

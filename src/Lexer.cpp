@@ -223,7 +223,7 @@ Token Lexer::next () {
       const auto ch2 = this->_reader->next();
 
       if (isdigit(ch2)) {
-        throw SyntaxError(this->_reader, this->_start, "Numeric literal can't start with zero");
+        throw SyntaxError(this->_reader, this->_start, this->_start, "Numeric literal can't start with zero");
       } else {
         this->_reader->seek(loc2);
       }
@@ -271,7 +271,7 @@ Token Lexer::next () {
         const auto ch3 = this->_reader->next();
 
         if (this->_reader->eof()) {
-          throw SyntaxError(this->_reader, this->_start, "Unterminated block comment");
+          throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated block comment");
         } else if (ch3 == '*') {
           const auto loc4 = this->_reader->loc();
           const auto ch4 = this->_reader->next();
@@ -294,22 +294,22 @@ Token Lexer::next () {
     }
   } else if (ch1 == '\'') {
     if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
+      throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated character literal");
     }
 
     const auto ch2 = this->_reader->next();
 
     if (ch2 == '\'') {
-      throw SyntaxError(this->_reader, this->_start, "Empty character literal");
+      throw SyntaxError(this->_reader, this->_start, this->_start, "Empty character literal");
     } else if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
+      throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated character literal");
     } else if (ch2 == '\\') {
       const auto ch3 = this->_reader->next();
 
       if (!Token::isLitCharEscape(ch3)) {
-        throw SyntaxError(this->_reader, this->_start, "Illegal character escape");
+        throw SyntaxError(this->_reader, this->_start, this->_start, "Illegal character escape");
       } else if (this->_reader->eof()) {
-        throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
+        throw SyntaxError(this->_reader, this->_start, this->_start, "Unterminated character literal");
       }
 
       this->_val += ch2;
@@ -321,14 +321,14 @@ Token Lexer::next () {
     const auto ch4 = this->_reader->next();
 
     if (ch4 != '\'') {
-      throw SyntaxError(this->_reader, this->_start, "Too many characters in character literal");
+      throw SyntaxError(this->_reader, this->_start, this->_start, "Too many characters in character literal");
     }
 
     this->_val += ch4;
     return this->_token(litChar);
   }
 
-  throw SyntaxError(this->_reader, this->_start, "Unexpected token");
+  throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unexpected token");
 }
 
 Token Lexer::_lexOpEq (const TokenType tt1, const TokenType tt2) {
