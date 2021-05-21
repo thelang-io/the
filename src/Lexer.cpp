@@ -23,14 +23,14 @@ Token Lexer::next () {
   const auto ch1 = this->_reader->next();
   this->_val = ch1;
 
-  if (ch1 == '^') return this->_opEq(opCaret, opCaretEq);
-  if (ch1 == ':') return this->_opEq(opColon, opColonEq);
+  if (ch1 == '^') return this->_lexOpEq(opCaret, opCaretEq);
+  if (ch1 == ':') return this->_lexOpEq(opColon, opColonEq);
   if (ch1 == ',') return this->_token(opComma);
-  if (ch1 == '=') return this->_opEq(opEq, opEqEq);
+  if (ch1 == '=') return this->_lexOpEq(opEq, opEqEq);
   if (ch1 == '{') return this->_token(opLBrace);
   if (ch1 == '[') return this->_token(opLBrack);
   if (ch1 == '(') return this->_token(opLPar);
-  if (ch1 == '%') return this->_opEq(opPercent, opPercentEq);
+  if (ch1 == '%') return this->_lexOpEq(opPercent, opPercentEq);
   if (ch1 == '}') return this->_token(opRBrace);
   if (ch1 == ']') return this->_token(opRBrack);
   if (ch1 == ')') return this->_token(opRPar);
@@ -38,7 +38,7 @@ Token Lexer::next () {
   if (ch1 == '~') return this->_token(opTilde);
 
   if (ch1 == '&') {
-    return this->_opEq2('&', opAnd, opAndEq, opAndAnd, opAndAndEq);
+    return this->_lexOpEq2('&', opAnd, opAndEq, opAndAnd, opAndAndEq);
   } else if (ch1 == '.') {
     if (this->_reader->eof()) {
       return this->_token(opDot);
@@ -74,17 +74,17 @@ Token Lexer::next () {
       return this->_token(opDot);
     }
   } else if (ch1 == '!') {
-    return this->_opEqDouble('!', opExcl, opExclEq, opExclExcl);
+    return this->_lexOpEqDouble('!', opExcl, opExclEq, opExclExcl);
   } else if (ch1 == '>') {
-    return this->_opEq2('>', opGt, opGtEq, opRShift, opRShiftEq);
+    return this->_lexOpEq2('>', opGt, opGtEq, opRShift, opRShiftEq);
   } else if (ch1 == '<') {
-    return this->_opEq2('<', opLt, opLtEq, opLShift, opLShiftEq);
+    return this->_lexOpEq2('<', opLt, opLtEq, opLShift, opLShiftEq);
   } else if (ch1 == '-') {
-    return this->_opEqDouble('-', opMinus, opMinusEq, opMinusMinus);
+    return this->_lexOpEqDouble('-', opMinus, opMinusEq, opMinusMinus);
   } else if (ch1 == '|') {
-    return this->_opEq2('|', opOr, opOrEq, opOrOr, opOrOrEq);
+    return this->_lexOpEq2('|', opOr, opOrEq, opOrOr, opOrOrEq);
   } else if (ch1 == '+') {
-    return this->_opEqDouble('+', opPlus, opPlusEq, opPlusPlus);
+    return this->_lexOpEqDouble('+', opPlus, opPlusEq, opPlusPlus);
   } else if (ch1 == '/') {
     if (this->_reader->eof()) {
       return this->_token(opSlash);
@@ -135,7 +135,7 @@ Token Lexer::next () {
       return this->_token(opQn);
     }
   } else if (ch1 == '*') {
-    return this->_opEq2('*', opStar, opStarEq, opStarStar, opStarStarEq);
+    return this->_lexOpEq2('*', opStar, opStarEq, opStarStar, opStarStarEq);
   }
 
   if (Token::isWhitespace(ch1)) {
@@ -339,7 +339,7 @@ Token Lexer::next () {
   throw SyntaxError(this->_reader, this->_start, "Unexpected token");
 }
 
-Token Lexer::_opEq (const TokenType tt1, const TokenType tt2) {
+Token Lexer::_lexOpEq (const TokenType tt1, const TokenType tt2) {
   if (this->_reader->eof()) {
     return this->_token(tt1);
   }
@@ -356,7 +356,7 @@ Token Lexer::_opEq (const TokenType tt1, const TokenType tt2) {
   }
 }
 
-Token Lexer::_opEq2 (
+Token Lexer::_lexOpEq2 (
   const char ch1,
   const TokenType tt1,
   const TokenType tt2,
@@ -396,7 +396,7 @@ Token Lexer::_opEq2 (
   }
 }
 
-Token Lexer::_opEqDouble (
+Token Lexer::_lexOpEqDouble (
   const char ch1,
   const TokenType tt1,
   const TokenType tt2,
