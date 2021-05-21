@@ -52,9 +52,7 @@ Token Lexer::next () {
     const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();
 
-    if (isdigit(ch2)) { // TODO Remove
-      this->_reader->seek(loc2);
-    } else if (ch2 == '.') {
+    if (ch2 == '.') {
       this->_val += ch2;
 
       if (this->_reader->eof()) {
