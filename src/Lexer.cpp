@@ -217,6 +217,9 @@ Token Lexer::next () {
       } else if (ch2 == 'X' || ch2 == 'x') {
         this->_val += ch2;
         return this->_lexLitInt(litIntHex, Token::isLitIntHex);
+      } else if (ch2 == 'O' || ch2 == 'o') {
+        this->_val += ch2;
+        return this->_lexLitInt(litIntOct, Token::isLitIntOct);
       } else {
         this->_reader->seek(loc2);
       }
@@ -329,11 +332,11 @@ Token Lexer::_lexLitInt (TokenType tt, const std::function<bool (char)> &fn) {
     throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid numeric literal");
   }
 
-  const auto loc = this->_reader->loc();
   const auto ch = this->_reader->next();
 
   if (!fn(ch)) {
-    throw SyntaxError(this->_reader, this->_start, loc, "Invalid numeric literal");
+    this->_walk(isalnum);
+    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid numeric literal");
   }
 
   this->_val += ch;
