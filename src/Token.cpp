@@ -14,18 +14,12 @@ static const char *token_type[] = {
 };
 
 bool Token::isIdContinue (const char ch) {
-  const auto chs = std::string(
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
-  );
-
+  const auto chs = std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_");
   return chs.find(ch) != std::string::npos;
 }
 
 bool Token::isIdStart (const char ch) {
-  const auto chs = std::string(
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"
-  );
-
+  const auto chs = std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_");
   return chs.find(ch) != std::string::npos;
 }
 
@@ -41,19 +35,12 @@ bool Token::isWhitespace (const char ch) {
   return std::string("\r\n\t ").find(ch) != std::string::npos;
 }
 
-Token::Token (
-  TokenType t,
-  const std::string &v,
-  const ReaderLocation &s,
-  const ReaderLocation &e
-) : type(t), val(v), start(s), end(e) {
+Token::Token (TokenType t, const std::string &v, const ReaderLocation &s, const ReaderLocation &e)
+  : type(t), val(v), start(s), end(e) {
 }
 
 bool Token::operator== (const Token &rhs) const {
-  return this->end == rhs.end &&
-    this->start == rhs.start &&
-    this->type == rhs.type &&
-    this->val == rhs.val;
+  return this->end == rhs.end && this->start == rhs.start && this->type == rhs.type && this->val == rhs.val;
 }
 
 bool Token::operator!= (const Token &rhs) const {
@@ -70,8 +57,6 @@ bool Token::operator!= (TokenType rhs) const {
 
 std::string Token::str () const {
   return std::string(token_type[this->type]) + '(' +
-    std::to_string(this->start.line) + ':' +
-    std::to_string(this->start.col + 1) + '-' +
-    std::to_string(this->end.line) + ':' +
-    std::to_string(this->end.col + 1) + ')';
+    std::to_string(this->start.line) + ':' + std::to_string(this->start.col + 1) + '-' +
+    std::to_string(this->end.line) + ':' + std::to_string(this->end.col + 1) + ')';
 }

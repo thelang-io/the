@@ -23,23 +23,28 @@ Token Lexer::next () {
   const auto ch1 = this->_reader->next();
   this->_val = ch1;
 
+  if (ch1 == '&') return this->_lexOpEq2('&', opAnd, opAndEq, opAndAnd, opAndAndEq);
   if (ch1 == '^') return this->_lexOpEq(opCaret, opCaretEq);
   if (ch1 == ':') return this->_lexOpEq(opColon, opColonEq);
   if (ch1 == ',') return this->_token(opComma);
   if (ch1 == '=') return this->_lexOpEq(opEq, opEqEq);
+  if (ch1 == '!') return this->_lexOpEqDouble('!', opExcl, opExclEq, opExclExcl);
   if (ch1 == '{') return this->_token(opLBrace);
   if (ch1 == '[') return this->_token(opLBrack);
   if (ch1 == '(') return this->_token(opLPar);
+  if (ch1 == '<') return this->_lexOpEq2('<', opLt, opLtEq, opLShift, opLShiftEq);
+  if (ch1 == '-') return this->_lexOpEqDouble('-', opMinus, opMinusEq, opMinusMinus);
+  if (ch1 == '|') return this->_lexOpEq2('|', opOr, opOrEq, opOrOr, opOrOrEq);
   if (ch1 == '%') return this->_lexOpEq(opPercent, opPercentEq);
+  if (ch1 == '+') return this->_lexOpEqDouble('+', opPlus, opPlusEq, opPlusPlus);
   if (ch1 == '}') return this->_token(opRBrace);
   if (ch1 == ']') return this->_token(opRBrack);
   if (ch1 == ')') return this->_token(opRPar);
   if (ch1 == ';') return this->_token(opSemi);
+  if (ch1 == '*') return this->_lexOpEq2('*', opStar, opStarEq, opStarStar, opStarStarEq);
   if (ch1 == '~') return this->_token(opTilde);
 
-  if (ch1 == '&') {
-    return this->_lexOpEq2('&', opAnd, opAndEq, opAndAnd, opAndAndEq);
-  } else if (ch1 == '.') {
+  if (ch1 == '.') {
     if (this->_reader->eof()) {
       return this->_token(opDot);
     }
@@ -47,7 +52,7 @@ Token Lexer::next () {
     const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();
 
-    if (isdigit(ch2)) {
+    if (isdigit(ch2)) { // TODO Remove
       this->_reader->seek(loc2);
     } else if (ch2 == '.') {
       this->_val += ch2;
@@ -73,18 +78,6 @@ Token Lexer::next () {
       this->_reader->seek(loc2);
       return this->_token(opDot);
     }
-  } else if (ch1 == '!') {
-    return this->_lexOpEqDouble('!', opExcl, opExclEq, opExclExcl);
-  } else if (ch1 == '>') {
-    return this->_lexOpEq2('>', opGt, opGtEq, opRShift, opRShiftEq);
-  } else if (ch1 == '<') {
-    return this->_lexOpEq2('<', opLt, opLtEq, opLShift, opLShiftEq);
-  } else if (ch1 == '-') {
-    return this->_lexOpEqDouble('-', opMinus, opMinusEq, opMinusMinus);
-  } else if (ch1 == '|') {
-    return this->_lexOpEq2('|', opOr, opOrEq, opOrOr, opOrOrEq);
-  } else if (ch1 == '+') {
-    return this->_lexOpEqDouble('+', opPlus, opPlusEq, opPlusPlus);
   } else if (ch1 == '/') {
     if (this->_reader->eof()) {
       return this->_token(opSlash);
@@ -134,8 +127,6 @@ Token Lexer::next () {
       this->_reader->seek(loc2);
       return this->_token(opQn);
     }
-  } else if (ch1 == '*') {
-    return this->_lexOpEq2('*', opStar, opStarEq, opStarStar, opStarStarEq);
   }
 
   if (Token::isWhitespace(ch1)) {
@@ -251,11 +242,7 @@ Token Lexer::next () {
         const auto ch3 = this->_reader->next();
 
         if (this->_reader->eof()) {
-          throw SyntaxError(
-            this->_reader,
-            this->_start,
-            "Unterminated block comment"
-          );
+          throw SyntaxError(this->_reader, this->_start, "Unterminated block comment");
         } else if (ch3 == '*') {
           const auto loc4 = this->_reader->loc();
           const auto ch4 = this->_reader->next();
@@ -278,42 +265,22 @@ Token Lexer::next () {
     }
   } else if (ch1 == '\'') {
     if (this->_reader->eof()) {
-      throw SyntaxError(
-        this->_reader,
-        this->_start,
-        "Unterminated character literal"
-      );
+      throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
     }
 
     const auto ch2 = this->_reader->next();
 
     if (ch2 == '\'') {
-      throw SyntaxError(
-        this->_reader,
-        this->_start,
-        "Empty character literal"
-      );
+      throw SyntaxError(this->_reader, this->_start, "Empty character literal");
     } else if (this->_reader->eof()) {
-      throw SyntaxError(
-        this->_reader,
-        this->_start,
-        "Unterminated character literal"
-      );
+      throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
     } else if (ch2 == '\\') {
       const auto ch3 = this->_reader->next();
 
       if (!Token::isLitCharEscape(ch3)) {
-        throw SyntaxError(
-          this->_reader,
-          this->_start,
-          "Illegal character escape"
-        );
+        throw SyntaxError(this->_reader, this->_start, "Illegal character escape");
       } else if (this->_reader->eof()) {
-        throw SyntaxError(
-          this->_reader,
-          this->_start,
-          "Unterminated character literal"
-        );
+        throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
       }
 
       this->_val += ch2;
@@ -325,11 +292,7 @@ Token Lexer::next () {
     const auto ch4 = this->_reader->next();
 
     if (ch4 != '\'') {
-      throw SyntaxError(
-        this->_reader,
-        this->_start,
-        "Too many characters in character literal"
-      );
+      throw SyntaxError(this->_reader, this->_start, "Too many characters in character literal");
     }
 
     this->_val += ch4;
@@ -396,12 +359,7 @@ Token Lexer::_lexOpEq2 (
   }
 }
 
-Token Lexer::_lexOpEqDouble (
-  const char ch1,
-  const TokenType tt1,
-  const TokenType tt2,
-  const TokenType tt3
-) {
+Token Lexer::_lexOpEqDouble (const char ch1, const TokenType tt1, const TokenType tt2, const TokenType tt3) {
   if (this->_reader->eof()) {
     return this->_token(tt1);
   }

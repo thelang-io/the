@@ -30,11 +30,7 @@ TEST(SyntaxErrorTest, GenerateMessageStart) {
     .WillOnce(::testing::Return("/tmp/test.out"));
 
   auto err = SyntaxError(&reader, {0, 1, 0}, "Inside test");
-
-  EXPECT_STREQ(
-    err.what(),
-    "/tmp/test.out:1:1: Inside test\n  1 | @\n    | ^\n"
-  );
+  EXPECT_STREQ(err.what(), "/tmp/test.out:1:1: Inside test\n  1 | @\n    | ^\n");
 }
 
 TEST(SyntaxErrorTest, GenerateMessageContinue) {
@@ -68,9 +64,5 @@ TEST(SyntaxErrorTest, GenerateMessageContinue) {
     .WillOnce(::testing::Return("/tmp/test.out"));
 
   auto err = SyntaxError(&reader, {13, 11, 2}, "Inside test");
-
-  EXPECT_STREQ(
-    err.what(),
-    "/tmp/test.out:11:3: Inside test\n  11 |   @main {\n     |   ^\n"
-  );
+  EXPECT_STREQ(err.what(), "/tmp/test.out:11:3: Inside test\n  11 |   @main {\n     |   ^\n");
 }

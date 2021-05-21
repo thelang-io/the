@@ -149,13 +149,7 @@ class Token {
   const ReaderLocation start;
   const ReaderLocation end;
 
-  Token (
-    TokenType,
-    const std::string &,
-    const ReaderLocation &,
-    const ReaderLocation &
-  );
-
+  Token (TokenType, const std::string &, const ReaderLocation &, const ReaderLocation &);
   bool operator== (const Token &) const;
   bool operator!= (const Token &) const;
   bool operator== (TokenType) const;
