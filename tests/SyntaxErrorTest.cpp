@@ -10,7 +10,7 @@
 #include "../src/SyntaxError.hpp"
 #include "ReaderMock.hpp"
 
-TEST(SyntaxErrorTest, GenerateMessageLoc) {
+TEST(SyntaxErrorTest, StartEqualEnd) {
   auto reader = ::testing::StrictMock<MockReader>();
 
   EXPECT_CALL(reader, seek(ReaderLocation{0, 1, 0}))
@@ -29,36 +29,34 @@ TEST(SyntaxErrorTest, GenerateMessageLoc) {
     .Times(1)
     .WillOnce(::testing::Return("/tmp/test.out"));
 
-  const auto err1 = SyntaxError(&reader, {0, 1, 0}, "Inside test");
+  const auto err1 = SyntaxError(&reader, {0, 1, 0}, {0, 1, 0}, "Inside test");
   EXPECT_STREQ(err1.what(), "/tmp/test.out:1:1: Inside test\n  1 | @\n    | ^\n");
+}
 
-  EXPECT_CALL(reader, seek(ReaderLocation{11, 11, 0}))
+TEST(SyntaxErrorTest, StartEqualEndPlusOne) {
+  auto reader = ::testing::StrictMock<MockReader>();
+
+  EXPECT_CALL(reader, seek(ReaderLocation{0, 1, 0}))
     .Times(1);
 
   EXPECT_CALL(reader, eof())
-    .Times(10)
+    .Times(4)
     .WillRepeatedly(::testing::Return(false));
 
   EXPECT_CALL(reader, next())
-    .Times(10)
-    .WillOnce(::testing::Return(' '))
-    .WillOnce(::testing::Return(' '))
-    .WillOnce(::testing::Return('@'))
-    .WillOnce(::testing::Return('m'))
-    .WillOnce(::testing::Return('a'))
-    .WillOnce(::testing::Return('i'))
-    .WillOnce(::testing::Return('n'))
-    .WillOnce(::testing::Return(' '))
-    .WillOnce(::testing::Return('{'))
+    .Times(4)
+    .WillOnce(::testing::Return('0'))
+    .WillOnce(::testing::Return('1'))
+    .WillOnce(::testing::Return('2'))
     .WillOnce(::testing::Return('\n'));
 
-  EXPECT_CALL(reader, seek(ReaderLocation{13, 11, 2}))
+  EXPECT_CALL(reader, seek(ReaderLocation{1, 1, 1}))
     .Times(1);
 
   EXPECT_CALL(reader, path())
     .Times(1)
     .WillOnce(::testing::Return("/tmp/test.out"));
 
-  const auto err2 = SyntaxError(&reader, {13, 11, 2}, "Inside test");
-  EXPECT_STREQ(err2.what(), "/tmp/test.out:11:3: Inside test\n  11 |   @main {\n     |   ^\n");
+  const auto err1 = SyntaxError(&reader, {1, 1, 1}, {2, 1, 2}, "Inside test");
+  EXPECT_STREQ(err1.what(), "/tmp/test.out:1:2: Inside test\n  1 | 012\n    |  ^\n");
 }
