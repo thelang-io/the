@@ -76,23 +76,6 @@ Token Lexer::next () {
       this->_reader->seek(loc2);
       return this->_token(opDot);
     }
-  } else if (ch1 == '/') {
-    if (this->_reader->eof()) {
-      return this->_token(opSlash);
-    }
-
-    const auto loc2 = this->_reader->loc();
-    const auto ch2 = this->_reader->next();
-
-    if (ch2 == '=') {
-      this->_val += ch2;
-      return this->_token(opSlashEq);
-    } else if (ch2 != '/' && ch2 != '*') {
-      this->_reader->seek(loc2);
-      return this->_token(opSlash);
-    } else {
-      this->_reader->seek(loc2);
-    }
   } else if (ch1 == '?') {
     if (this->_reader->eof()) {
       return this->_token(opQn);
@@ -124,6 +107,23 @@ Token Lexer::next () {
     } else {
       this->_reader->seek(loc2);
       return this->_token(opQn);
+    }
+  } else if (ch1 == '/') {
+    if (this->_reader->eof()) {
+      return this->_token(opSlash);
+    }
+
+    const auto loc2 = this->_reader->loc();
+    const auto ch2 = this->_reader->next();
+
+    if (ch2 == '=') {
+      this->_val += ch2;
+      return this->_token(opSlashEq);
+    } else if (ch2 != '/' && ch2 != '*') {
+      this->_reader->seek(loc2);
+      return this->_token(opSlash);
+    } else {
+      this->_reader->seek(loc2);
     }
   }
 
