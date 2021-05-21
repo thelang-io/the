@@ -16,6 +16,7 @@ TEST(TokenTest, IsIdContinue) {
   EXPECT_TRUE(Token::isIdContinue('0'));
   EXPECT_TRUE(Token::isIdContinue('9'));
   EXPECT_TRUE(Token::isIdContinue('_'));
+  EXPECT_FALSE(Token::isIdContinue('@'));
 }
 
 TEST(TokenTest, IsIdStart) {
@@ -24,6 +25,7 @@ TEST(TokenTest, IsIdStart) {
   EXPECT_TRUE(Token::isIdStart('a'));
   EXPECT_TRUE(Token::isIdStart('z'));
   EXPECT_TRUE(Token::isIdStart('_'));
+  EXPECT_FALSE(Token::isIdStart('@'));
 }
 
 TEST(TokenTest, IsLitCharEscape) {

@@ -213,6 +213,37 @@ Token Lexer::next () {
     if (this->_val == "union") return this->_token(kwUnion);
 
     return this->_token(litId);
+  } else if (isdigit(ch1)) {
+    if (ch1 == '0') {
+      if (this->_reader->eof()) {
+        return this->_token(litIntDec);
+      }
+
+      const auto loc2 = this->_reader->loc();
+      const auto ch2 = this->_reader->next();
+
+      if (isdigit(ch2)) {
+        throw SyntaxError(this->_reader, this->_start, "Numeric literal can't start with zero");
+      } else {
+        this->_reader->seek(loc2);
+      }
+
+      return this->_token(litIntDec);
+    }
+
+    while (!this->_reader->eof()) {
+      const auto loc2 = this->_reader->loc();
+      const auto ch2 = this->_reader->next();
+
+      if (!isdigit(ch2)) {
+        this->_reader->seek(loc2);
+        break;
+      }
+
+      this->_val += ch2;
+    }
+
+    return this->_token(litIntDec);
   } else if (ch1 == '/' && !this->_reader->eof()) {
     const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();

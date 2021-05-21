@@ -14,13 +14,11 @@ static const char *token_type[] = {
 };
 
 bool Token::isIdContinue (const char ch) {
-  const auto chs = std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_");
-  return chs.find(ch) != std::string::npos;
+  return isalnum(ch) || ch == '_';
 }
 
 bool Token::isIdStart (const char ch) {
-  const auto chs = std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_");
-  return chs.find(ch) != std::string::npos;
+  return isalpha(ch) || ch == '_';
 }
 
 bool Token::isLitCharEscape (const char ch) {
