@@ -13,16 +13,32 @@ static const char *token_type[] = {
   #undef GEN_TOKEN_STR
 };
 
-bool Token::isIdContinue (const char ch) {
+bool Token::isLitCharEscape (const char ch) {
+  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
+}
+
+bool Token::isLitIdContinue (const char ch) {
   return isalnum(ch) || ch == '_';
 }
 
-bool Token::isIdStart (const char ch) {
+bool Token::isLitIdStart (const char ch) {
   return isalpha(ch) || ch == '_';
 }
 
-bool Token::isLitCharEscape (const char ch) {
-  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
+bool Token::isLitIntBin (const char ch) {
+  return ch == '0' || ch == '1';
+}
+
+bool Token::isLitIntDec (const char ch) {
+  return isdigit(ch);
+}
+
+bool Token::isLitIntHex (const char ch) {
+  return std::string("ABCDEFabcdef0123456789").find(ch) != std::string::npos;
+}
+
+bool Token::isLitIntOct (const char ch) {
+  return std::string("01234567").find(ch) != std::string::npos;
 }
 
 bool Token::isLitStrEscape (const char ch) {
