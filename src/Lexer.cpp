@@ -336,7 +336,7 @@ Token Lexer::next () {
     return this->_token(litChar);
   }
 
-  throw SyntaxError(this->_reader, "Unexpected token");
+  throw SyntaxError(this->_reader, this->_start, "Unexpected token");
 }
 
 Token Lexer::_opEq (const TokenType tt1, const TokenType tt2) {

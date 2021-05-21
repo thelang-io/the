@@ -71,7 +71,7 @@ bool Token::operator!= (TokenType rhs) const {
 std::string Token::str () const {
   return std::string(token_type[this->type]) + '(' +
     std::to_string(this->start.line) + ':' +
-    std::to_string(this->start.col) + '-' +
+    std::to_string(this->start.col + 1) + '-' +
     std::to_string(this->end.line) + ':' +
-    std::to_string(this->end.col) + ')';
+    std::to_string(this->end.col + 1) + ')';
 }

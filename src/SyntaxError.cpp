@@ -7,10 +7,6 @@
 
 #include "SyntaxError.hpp"
 
-SyntaxError::SyntaxError (Reader *reader, const std::string &msg)
-  : SyntaxError(reader, reader->loc(), msg) {
-}
-
 SyntaxError::SyntaxError (
   Reader *reader,
   const ReaderLocation &loc,
@@ -30,14 +26,14 @@ SyntaxError::SyntaxError (
   }
 
   reader->seek(loc);
-  const auto colStr = std::to_string(loc.col);
+  const auto colStr = std::to_string(loc.col + 1);
   const auto lineStr = std::to_string(loc.line);
 
   this->message = reader->path().string() + ":" +
     lineStr + ":" + colStr + ": " + msg + "\n" +
     "  " + lineStr + " | " + lineContent + "\n" +
     "  " + std::string(lineStr.length(), ' ') +
-    " | " + std::string(loc.col - 1, ' ') + "^\n";
+    " | " + std::string(loc.col, ' ') + "^\n";
 
   this->name = "SyntaxError";
 }

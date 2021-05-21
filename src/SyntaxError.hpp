@@ -13,7 +13,6 @@
 
 class SyntaxError : public Error {
  public:
-  SyntaxError (Reader *, const std::string &);
   SyntaxError (Reader *, const ReaderLocation &, const std::string &);
 };
 
