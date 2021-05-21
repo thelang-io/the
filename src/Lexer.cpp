@@ -141,12 +141,12 @@ Token Lexer::next () {
     }
 
     return this->_token(whitespace);
-  } else if (Token::isIdStart(ch1)) {
+  } else if (Token::isLitIdStart(ch1)) {
     while (!this->_reader->eof()) {
       const auto loc2 = this->_reader->loc();
       const auto ch2 = this->_reader->next();
 
-      if (!Token::isIdContinue(ch2)) {
+      if (!Token::isLitIdContinue(ch2)) {
         this->_reader->seek(loc2);
         break;
       }
@@ -222,8 +222,52 @@ Token Lexer::next () {
       const auto loc2 = this->_reader->loc();
       const auto ch2 = this->_reader->next();
 
-      if (isdigit(ch2)) {
-        throw SyntaxError(this->_reader, this->_start, this->_start, "Numeric literal can't start with zero");
+      if (Token::isLitIntDec(ch2)) {
+        throw SyntaxError(
+          this->_reader,
+          this->_start,
+          this->_start,
+          "Numeric literals with leading zero are not allowed"
+        );
+      } else if (ch2 == 'X' || ch2 == 'x') {
+        this->_val += ch2;
+
+        if (this->_reader->eof()) {
+          throw SyntaxError(
+            this->_reader,
+            this->_start,
+            this->_reader->loc(),
+            std::string("Hexadecimal literals with trailing '") + ch2 + "' are not allowed"
+          );
+        }
+
+        const auto loc3 = this->_reader->loc();
+        const auto ch3 = this->_reader->next();
+
+        if (!Token::isLitIntHex(ch3)) {
+          throw SyntaxError(
+            this->_reader,
+            this->_start,
+            loc3,
+            std::string("Hexadecimal literals with trailing '") + ch2 + "' are not allowed"
+          );
+        }
+
+        this->_val += ch3;
+
+        while (!this->_reader->eof()) {
+          const auto loc4 = this->_reader->loc();
+          const auto ch4 = this->_reader->next();
+
+          if (!Token::isLitIntHex(ch4)) {
+            this->_reader->seek(loc4);
+            break;
+          }
+
+          this->_val += ch4;
+        }
+
+        return this->_token(litIntHex);
       } else {
         this->_reader->seek(loc2);
       }
@@ -235,7 +279,7 @@ Token Lexer::next () {
       const auto loc2 = this->_reader->loc();
       const auto ch2 = this->_reader->next();
 
-      if (!isdigit(ch2)) {
+      if (!Token::isLitIntDec(ch2)) {
         this->_reader->seek(loc2);
         break;
       }
