@@ -211,26 +211,12 @@ Token Lexer::next () {
           this->_reader->loc(),
           "Numeric literals with leading zero are not allowed"
         );
-      } else if (ch2 == 'X' || ch2 == 'x') {
-        const auto trailingErrorText = std::string("Hexadecimal literals with trailing '") + ch2 + "' are not allowed";
+      } else if (ch2 == 'B' || ch2 == 'b') {
         this->_val += ch2;
-
-        if (this->_reader->eof()) {
-          throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), trailingErrorText);
-        }
-
-        const auto loc3 = this->_reader->loc();
-        const auto ch3 = this->_reader->next();
-
-        if (!Token::isLitIntHex(ch3)) {
-          throw SyntaxError(this->_reader, this->_start, loc3, trailingErrorText);
-        }
-
-        this->_val += ch3;
-        this->_walk(Token::isLitIntHex);
-        this->_lookupInvalidLitInt();
-
-        return this->_token(litIntHex);
+        return this->_lexLitInt(litIntBin, Token::isLitIntBin);
+      } else if (ch2 == 'X' || ch2 == 'x') {
+        this->_val += ch2;
+        return this->_lexLitInt(litIntHex, Token::isLitIntHex);
       } else {
         this->_reader->seek(loc2);
       }
@@ -336,6 +322,25 @@ Token Lexer::next () {
   }
 
   throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unexpected token");
+}
+
+Token Lexer::_lexLitInt (TokenType tt, const std::function<bool (char)> &fn) {
+  if (this->_reader->eof()) {
+    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid numeric literal");
+  }
+
+  const auto loc = this->_reader->loc();
+  const auto ch = this->_reader->next();
+
+  if (!fn(ch)) {
+    throw SyntaxError(this->_reader, this->_start, loc, "Invalid numeric literal");
+  }
+
+  this->_val += ch;
+  this->_walk(fn);
+  this->_lookupInvalidLitInt();
+
+  return this->_token(tt);
 }
 
 Token Lexer::_lexOpEq (const TokenType tt1, const TokenType tt2) {
