@@ -30,7 +30,16 @@ SyntaxError::SyntaxError (
 
   const auto colNumStr = std::to_string(start.col + 1);
   const auto lineNumStr = std::to_string(start.line);
-  const auto underlineLen = start.line == end.line ? end.col - start.col : line.length() - start.col;
+
+  const auto underlineLen = start.line == end.line
+    ? line.length() > end.col
+      ? end.col - start.col
+      : line.length() > start.col
+        ? line.length() - start.col
+        : 0
+    : line.length() > start.col
+      ? line.length() - start.col
+      : 0;
 
   this->message = reader->path().string() + ':' +
     lineNumStr + ':' + colNumStr + ": " + msg + "\n" +
