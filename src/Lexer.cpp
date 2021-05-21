@@ -195,6 +195,7 @@ Token Lexer::next () {
   } else if (isdigit(ch1)) {
     if (ch1 == '0') {
       if (this->_reader->eof()) {
+        this->_lookupInvalidLitInt();
         return this->_token(litIntDec);
       }
 
@@ -227,16 +228,20 @@ Token Lexer::next () {
 
         this->_val += ch3;
         this->_walk(Token::isLitIntHex);
+        this->_lookupInvalidLitInt();
 
         return this->_token(litIntHex);
       } else {
         this->_reader->seek(loc2);
       }
 
+      this->_lookupInvalidLitInt();
       return this->_token(litIntDec);
     }
 
     this->_walk(Token::isLitIntDec);
+    this->_lookupInvalidLitInt();
+
     return this->_token(litIntDec);
   } else if (ch1 == '/' && !this->_reader->eof()) {
     const auto loc2 = this->_reader->loc();
@@ -407,6 +412,22 @@ Token Lexer::_lexOpEqDouble (const char ch1, const TokenType tt1, const TokenTyp
   } else {
     this->_reader->seek(loc2);
     return this->_token(tt1);
+  }
+}
+
+void Lexer::_lookupInvalidLitInt () {
+  if (this->_reader->eof()) {
+    return;
+  }
+
+  const auto loc = this->_reader->loc();
+  const auto ch = this->_reader->next();
+
+  if (isalnum(ch)) {
+    this->_walk(isalnum);
+    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid numeric literal");
+  } else {
+    this->_reader->seek(loc);
   }
 }
 
