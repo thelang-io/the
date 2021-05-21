@@ -14,7 +14,7 @@ TEST(SyntaxErrorTest, EndOffset0) {
   auto reader = ::testing::StrictMock<MockReader>();
 
   EXPECT_CALL(reader, seek(ReaderLocation{0, 1, 0}))
-    .Times(2);
+    .Times(1);
 
   EXPECT_CALL(reader, eof())
     .Times(2)
@@ -50,9 +50,6 @@ TEST(SyntaxErrorTest, EndOffset1) {
     .WillOnce(::testing::Return('2'))
     .WillOnce(::testing::Return('\n'));
 
-  EXPECT_CALL(reader, seek(ReaderLocation{1, 1, 1}))
-    .Times(1);
-
   EXPECT_CALL(reader, path())
     .Times(1)
     .WillOnce(::testing::Return("/tmp/test.out"));
@@ -65,7 +62,7 @@ TEST(SyntaxErrorTest, EndOffset4) {
   auto reader = ::testing::StrictMock<MockReader>();
 
   EXPECT_CALL(reader, seek(ReaderLocation{0, 1, 0}))
-    .Times(2);
+    .Times(1);
 
   EXPECT_CALL(reader, eof())
     .Times(5)
@@ -91,7 +88,7 @@ TEST(SyntaxErrorTest, EndAfterEOL) {
   auto reader = ::testing::StrictMock<MockReader>();
 
   EXPECT_CALL(reader, seek(ReaderLocation{0, 1, 0}))
-    .Times(2);
+    .Times(1);
 
   EXPECT_CALL(reader, eof())
     .Times(5)
@@ -117,7 +114,7 @@ TEST(SyntaxErrorTest, EndOnNextLine) {
   auto reader = ::testing::StrictMock<MockReader>();
 
   EXPECT_CALL(reader, seek(ReaderLocation{0, 1, 0}))
-    .Times(2);
+    .Times(1);
 
   EXPECT_CALL(reader, eof())
     .Times(5)

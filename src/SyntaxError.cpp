@@ -26,8 +26,6 @@ SyntaxError::SyntaxError (
     line += ch;
   }
 
-  reader->seek(start);
-
   const auto colNumStr = std::to_string(start.col + 1);
   const auto lineNumStr = std::to_string(start.line);
 
