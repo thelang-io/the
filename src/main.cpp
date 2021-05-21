@@ -34,7 +34,7 @@ int main (int argc, const char *argv[]) {
         break;
       }
 
-      result += tok.str() + ": " + tok.val + '\n';
+      result += tok.str() + '\n';
     }
 
     std::cout << result;
