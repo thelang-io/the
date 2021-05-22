@@ -28,6 +28,22 @@
   } \
   EXPECT_EQ(Lexer(&reader).next(), Token(t, val, start, end)); } while (0)
 
+TEST(LexerTest, Eof) {
+  auto reader = ::testing::StrictMock<MockReader>();
+  const auto seq = ::testing::InSequence();
+
+  EXPECT_CALL(reader, loc())
+    .WillOnce(::testing::Return(ReaderLocation{0, 1, 0}));
+
+  EXPECT_CALL(reader, eof())
+    .WillOnce(::testing::Return(true));
+
+  EXPECT_CALL(reader, loc())
+    .WillOnce(::testing::Return(ReaderLocation{1, 1, 1}));
+
+  EXPECT_EQ(Lexer(&reader).next(), Token(eof, std::string(1, 1), {0, 1, 0}, {1, 1, 1}));
+}
+
 TEST(LexerTest, Operators) {
   LEX_OP(opComma, ",");
   LEX_OP(opLBrace, "{");
