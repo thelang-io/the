@@ -29,5 +29,6 @@
   EXPECT_EQ(Lexer(&reader).next(), Token(t, val, start, end)); } while (0)
 
 TEST(LexerTest, Operators) {
+  LEX_OP(opComma, ",");
   LEX_OP(opSemi, ";");
 }
