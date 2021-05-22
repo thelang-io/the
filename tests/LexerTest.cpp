@@ -48,6 +48,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opLBrace, "{");
   LEX_OP(opLBrack, "[");
   LEX_OP(opLPar, "(");
+  LEX_OP(opLtEq, "<=");
   LEX_OP(opRBrace, "}");
   LEX_OP(opRBrack, "]");
   LEX_OP(opRPar, ")");
