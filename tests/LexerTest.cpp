@@ -39,7 +39,7 @@ TEST(LexerTest, Eof) {
   EXPECT_CALL(reader, loc())
     .WillOnce(::testing::Return(ReaderLocation{1, 1, 1}));
 
-  EXPECT_EQ(Lexer(&reader).next(), Token(eof, std::string(1, 1), {0, 1, 0}, {1, 1, 1}));
+  EXPECT_EQ(Lexer(&reader).next(), Token(eof, std::string(1, -1), {0, 1, 0}, {1, 1, 1}));
 }
 
 TEST(LexerTest, Operators) {
