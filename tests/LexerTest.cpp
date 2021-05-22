@@ -30,5 +30,7 @@
 
 TEST(LexerTest, Operators) {
   LEX_OP(opComma, ",");
+  LEX_OP(opLBrace, "{");
+  LEX_OP(opRBrace, "}");
   LEX_OP(opSemi, ";");
 }
