@@ -50,6 +50,22 @@ TEST(LexerTest, Comments) {
   LEX_WS(commentBlock, "/*text\ntext\ntext*/");
 }
 
+TEST(LexerTest, Literals) {
+  LEX_WS(litChar, "' '");
+  LEX_WS(litChar, "'!'");
+  LEX_WS(litChar, "'A'");
+  LEX_WS(litChar, "'a'");
+  LEX_WS(litChar, "'0'");
+  LEX_WS(litChar, "'9'");
+  LEX_WS(litChar, "'\\0'");
+  LEX_WS(litChar, "'\\t'");
+  LEX_WS(litChar, "'\\n'");
+  LEX_WS(litChar, "'\\r'");
+  LEX_WS(litChar, "'\\\"'");
+  LEX_WS(litChar, "'\\''");
+  LEX_WS(litChar, "'\\\\'");
+}
+
 TEST(LexerTest, Operators) {
   LEX_WS(opAnd, "&");
   LEX_WS(opAndAnd, "&&");
