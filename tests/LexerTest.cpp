@@ -31,7 +31,11 @@
 
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
+  LEX(whitespace, "\n", "\n");
+  LEX(whitespace, "\r", "\r");
+  LEX(whitespace, "\t", "\t");
   LEX(whitespace, " ", " ");
+  LEX(whitespace, "  ", "  ");
   LEX(whitespace, "\n\r\t ", "\n\r\t ");
 }
 
