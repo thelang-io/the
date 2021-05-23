@@ -6,14 +6,24 @@
  */
 
 #include <gmock/gmock.h>
-#include <fstream>
 
 #include "../src/Lexer.hpp"
 #include "ReaderMock.hpp"
 
 #define LEX(t, c, v) \
   do { auto r = ::testing::NiceMock<MockReader>(c); \
-  EXPECT_EQ(Lexer(&r).next(), Token(t, v, {0, 1, 0}, {sizeof(v) - 1, 1, sizeof(v) - 1})); } while (0)
+  const auto val = std::string(v); \
+  size_t line = 1; \
+  size_t col = 0; \
+  for (size_t i = 0, size = val.length(); i < size; i++) { \
+    if (val[i] == '\n') { \
+      col = 0; \
+      line += 1; \
+    } else { \
+      col += 1; \
+    } \
+  } \
+  EXPECT_EQ(Lexer(&r).next(), Token(t, v, {0, 1, 0}, {sizeof(v) - 1, line, col})); } while (0)
 
 #define LEX_WS(t, v) \
   LEX(t, v, v); \
@@ -21,11 +31,8 @@
 
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
-
-  auto r1 = ::testing::NiceMock<MockReader>(" ");
-  EXPECT_EQ(Lexer(&r1).next(), Token(whitespace, " ", {0, 1, 0}, {1, 1, 1}));
-  auto r2 = ::testing::NiceMock<MockReader>("\n\r\t ");
-  EXPECT_EQ(Lexer(&r2).next(), Token(whitespace, "\n\r\t ", {0, 1, 0}, {4, 2, 3}));
+  LEX(whitespace, " ", " ");
+  LEX(whitespace, "\n\r\t ", "\n\r\t ");
 }
 
 TEST(LexerTest, Operators) {
