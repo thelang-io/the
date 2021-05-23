@@ -98,5 +98,6 @@ TEST(LexerTest, Operators) {
   LEX_OP(opStar, "*");
   LEX_OP(opStarEq, "*=");
   LEX_OP(opStarStar, "**");
+  LEX_OP(opStarStarEq, "**=");
   LEX_OP(opTilde, "~");
 }
