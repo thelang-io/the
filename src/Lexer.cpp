@@ -236,7 +236,7 @@ Token Lexer::next () {
     if (ch2 == '/') {
       this->_val += ch2;
 
-      this->_walk([] (char ch) -> bool {
+      this->_walk([] (char ch) {
         return ch != '\n';
       });
 
