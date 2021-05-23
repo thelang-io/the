@@ -8,6 +8,13 @@
 #include <gmock/gmock.h>
 #include "../src/Token.hpp"
 
+TEST(TokenTest, IsDigit) {
+  EXPECT_TRUE(Token::isDigit('0'));
+  EXPECT_TRUE(Token::isDigit('5'));
+  EXPECT_TRUE(Token::isDigit('9'));
+  EXPECT_FALSE(Token::isDigit('A'));
+}
+
 TEST(TokenTest, IsLitCharEscape) {
   EXPECT_TRUE(Token::isLitCharEscape('0'));
   EXPECT_TRUE(Token::isLitCharEscape('t'));
@@ -16,6 +23,7 @@ TEST(TokenTest, IsLitCharEscape) {
   EXPECT_TRUE(Token::isLitCharEscape('"'));
   EXPECT_TRUE(Token::isLitCharEscape('\''));
   EXPECT_TRUE(Token::isLitCharEscape('\\'));
+  EXPECT_FALSE(Token::isLitCharEscape('{'));
 }
 
 TEST(TokenTest, IsLitIdContinue) {

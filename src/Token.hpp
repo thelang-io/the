@@ -138,6 +138,7 @@ enum TokenType {
 
 class Token {
  public:
+  static bool isDigit (char);
   static bool isLitCharEscape (char);
   static bool isLitIdContinue (char);
   static bool isLitIdStart (char);

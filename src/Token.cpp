@@ -14,6 +14,10 @@ static const char *token_type[] = {
   #undef GEN_TOKEN_STR
 };
 
+bool Token::isDigit (const char ch) {
+  return std::string("0123456789").find(ch) != std::string::npos;
+}
+
 bool Token::isLitCharEscape (const char ch) {
   return std::string("0tnr\"'\\").find(ch) != std::string::npos;
 }
@@ -31,7 +35,7 @@ bool Token::isLitIntBin (const char ch) {
 }
 
 bool Token::isLitIntDec (const char ch) {
-  return isdigit(ch);
+  return Token::isDigit(ch);
 }
 
 bool Token::isLitIntHex (const char ch) {
