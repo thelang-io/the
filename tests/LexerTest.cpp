@@ -13,7 +13,7 @@
 
 #define LEX(t, c, v) \
   do { auto r = ::testing::NiceMock<MockReader>(c); \
-  EXPECT_EQ(Lexer(&r).next(), Token(t, v, {0, 1, 0}, {sizeof(v), 1, sizeof(v)})); } while (0)
+  EXPECT_EQ(Lexer(&r).next(), Token(t, v, {0, 1, 0}, {sizeof(v) - 1, 1, sizeof(v) - 1})); } while (0)
 
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
