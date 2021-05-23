@@ -228,7 +228,7 @@ Token Lexer::next () {
 
     this->_walk(Token::isLitIntDec);
     return this->_lexLitInt(Token::isLitIntDec, litIntDec);
-  } else if (ch1 == '/' && !this->_reader->eof()) {
+  } else if (ch1 == '/') {
     const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();
 
