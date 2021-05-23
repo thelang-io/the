@@ -21,6 +21,11 @@
 
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
+
+  auto r1 = ::testing::NiceMock<MockReader>(" ");
+  EXPECT_EQ(Lexer(&r1).next(), Token(whitespace, " ", {0, 1, 0}, {1, 1, 1}));
+  auto r2 = ::testing::NiceMock<MockReader>("\n\r\t ");
+  EXPECT_EQ(Lexer(&r2).next(), Token(whitespace, "\n\r\t ", {0, 1, 0}, {4, 2, 3}));
 }
 
 TEST(LexerTest, Operators) {
