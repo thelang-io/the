@@ -212,22 +212,22 @@ Token Lexer::next () {
         );
       } else if (ch2 == 'B' || ch2 == 'b') {
         this->_val += ch2;
-        return this->_lexLitInt(Token::isLitIntBin, litIntBin);
+        return this->_lexLitNum(Token::isLitIntBin, litIntBin);
       } else if (ch2 == 'X' || ch2 == 'x') {
         this->_val += ch2;
-        return this->_lexLitInt(Token::isLitIntHex, litIntHex);
+        return this->_lexLitNum(Token::isLitIntHex, litIntHex);
       } else if (ch2 == 'O' || ch2 == 'o') {
         this->_val += ch2;
-        return this->_lexLitInt(Token::isLitIntOct, litIntOct);
+        return this->_lexLitNum(Token::isLitIntOct, litIntOct);
       } else {
         this->_reader->seek(loc2);
       }
 
-      return this->_lexLitInt(Token::isLitIntDec, litIntDec);
+      return this->_lexLitNum(Token::isLitIntDec, litIntDec);
     }
 
     this->_walk(Token::isLitIntDec);
-    return this->_lexLitInt(Token::isLitIntDec, litIntDec);
+    return this->_lexLitNum(Token::isLitIntDec, litIntDec);
   } else if (ch1 == '/') {
     const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();
@@ -323,7 +323,7 @@ Token Lexer::next () {
   throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unexpected token");
 }
 
-Token Lexer::_lexLitInt (const std::function<bool (char)> &fn, TokenType tt) {
+Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
   const std::string name = Token::litIntToStr(tt);
 
   if (tt != litIntDec) {
@@ -331,14 +331,14 @@ Token Lexer::_lexLitInt (const std::function<bool (char)> &fn, TokenType tt) {
       throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
     }
 
-    const auto ch = this->_reader->next();
+    const auto ch1 = this->_reader->next();
 
-    if (!fn(ch)) {
+    if (!fn(ch1)) {
       this->_walk(isalnum);
       throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
     }
 
-    this->_val += ch;
+    this->_val += ch1;
     this->_walk(fn);
   }
 
@@ -346,14 +346,14 @@ Token Lexer::_lexLitInt (const std::function<bool (char)> &fn, TokenType tt) {
     return this->_token(tt);
   }
 
-  const auto loc = this->_reader->loc();
-  const auto ch = this->_reader->next();
+  const auto loc2 = this->_reader->loc();
+  const auto ch2 = this->_reader->next();
 
-  if (isalnum(ch)) {
-    this->_walk(isalnum);
+  if (Token::isLitIdContinue(ch2)) {
+    this->_walk(Token::isLitIdContinue);
     throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
   } else {
-    this->_reader->seek(loc);
+    this->_reader->seek(loc2);
   }
 
   return this->_token(tt);
