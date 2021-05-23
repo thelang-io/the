@@ -13,6 +13,33 @@
 class MockReader : public Reader {
  public:
   MockReader () : Reader("/bin/sh") {
+    ON_CALL(*this, content).WillByDefault([this] () {
+      return this->Reader::content();
+    });
+
+    ON_CALL(*this, eof).WillByDefault([this] () {
+      return this->Reader::eof();
+    });
+
+    ON_CALL(*this, loc).WillByDefault([this] () {
+      return this->Reader::loc();
+    });
+
+    ON_CALL(*this, next).WillByDefault([this] () {
+      return this->Reader::next();
+    });
+
+    ON_CALL(*this, path).WillByDefault([this] () {
+      return this->Reader::path();
+    });
+
+    ON_CALL(*this, seek).WillByDefault([this] (const ReaderLocation &arg1) {
+      return this->Reader::seek(arg1);
+    });
+  }
+
+  explicit MockReader (const std::string &content) : MockReader() {
+    this->content_ = content;
   }
 
   MOCK_METHOD(std::string, content, (), (const, override));
