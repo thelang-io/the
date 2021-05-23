@@ -50,6 +50,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opAndEq, "&=");
   LEX_OP(opCaret, "^");
   LEX_OP(opCaretEq, "^=");
+  LEX_OP(opColon, ":");
   LEX_OP(opColonEq, ":=");
   LEX_OP(opComma, ",");
   LEX_OP(opEqEq, "==");
