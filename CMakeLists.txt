@@ -57,21 +57,14 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
 
     tests/ErrorTest.cpp
     tests/LexerTest.cpp
+    tests/ReaderMock.hpp
     tests/ReaderTest.cpp
     tests/SyntaxErrorTest.cpp
     tests/TokenTest.cpp
   )
 
-  add_library(${PROJECT_NAME}-lib SHARED ${sources})
-  target_add_flags(${PROJECT_NAME}-lib)
-
-  foreach (test ${tests})
-    string(REGEX REPLACE "^tests/([A-Za-z_/-]+).cpp$" "\\1" test_name ${test})
-    string(REPLACE "/" "-" test_name ${test_name})
-
-    add_executable(${test_name} ${test} tests/ReaderMock.hpp)
-    target_add_flags(${test_name})
-    target_link_libraries(${test_name} PRIVATE gmock_main ${PROJECT_NAME}-lib)
-    gtest_discover_tests(${test_name})
-  endforeach()
+  add_executable(${PROJECT_NAME}-tests ${sources} ${tests})
+  target_add_flags(${PROJECT_NAME}-tests)
+  target_link_libraries(${PROJECT_NAME}-tests PRIVATE gmock_main)
+  gtest_discover_tests(${PROJECT_NAME}-tests)
 endif()
