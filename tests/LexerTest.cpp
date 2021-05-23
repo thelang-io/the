@@ -44,6 +44,7 @@ TEST(LexerTest, Eof) {
 }
 
 TEST(LexerTest, Operators) {
+  LEX_OP(opAnd, "&");
   LEX_OP(opAndEq, "&=");
   LEX_OP(opCaretEq, "^=");
   LEX_OP(opColonEq, ":=");
