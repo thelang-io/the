@@ -352,6 +352,7 @@ Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
   if (Token::isLitIdContinue(ch2)) {
     this->_walk(Token::isLitIdContinue);
     throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
+  } else if (ch2 == '.') {
   } else {
     this->_reader->seek(loc2);
   }
@@ -364,14 +365,14 @@ Token Lexer::_lexOpEq (const TokenType tt1, const TokenType tt2) {
     return this->_token(tt1);
   }
 
-  const auto loc2 = this->_reader->loc();
-  const auto ch2 = this->_reader->next();
+  const auto loc = this->_reader->loc();
+  const auto ch = this->_reader->next();
 
-  if (ch2 == '=') {
-    this->_val += ch2;
+  if (ch == '=') {
+    this->_val += ch;
     return this->_token(tt2);
   } else {
-    this->_reader->seek(loc2);
+    this->_reader->seek(loc);
     return this->_token(tt1);
   }
 }
