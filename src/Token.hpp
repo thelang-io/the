@@ -65,13 +65,13 @@
   fn(kwUnion) \
   \
   fn(litChar) \
-  fn(litFloat) \
+  fn(litFloat) /* TODO */ \
   fn(litId) \
   fn(litIntBin) \
   fn(litIntDec) \
   fn(litIntHex) \
   fn(litIntOct) \
-  fn(litStr) \
+  fn(litStr) /* TODO */ \
   \
   fn(opAnd) \
   fn(opAndAnd) \

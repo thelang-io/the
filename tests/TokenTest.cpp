@@ -111,7 +111,7 @@ TEST(TokenTest, EqualAnnotherToken) {
 }
 
 TEST(TokenTest, NotEqualAnnotherToken) {
-  EXPECT_NE(Token(litId, "_", {}, {}), Token(litFloat, "_", {}, {}));
+  EXPECT_NE(Token(litId, "_", {}, {}), Token(litChar, "_", {}, {}));
   EXPECT_NE(Token(litId, "_", {}, {}), Token(litId, "a", {}, {}));
   EXPECT_NE(Token(litId, "_", {1, 1, 1}, {}), Token(litId, "_", {2, 2, 2}, {}));
   EXPECT_NE(Token(litId, "_", {}, {1, 1, 1}), Token(litId, "_", {}, {2, 2, 2}));
@@ -122,7 +122,7 @@ TEST(TokenTest, EqualTokenType) {
 }
 
 TEST(TokenTest, NotEqualTokenType) {
-  EXPECT_NE(Token(litId, "_", {}, {}), litFloat);
+  EXPECT_NE(Token(litId, "_", {}, {}), litChar);
 }
 
 TEST(TokenTest, StrWithLocation) {
