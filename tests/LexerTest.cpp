@@ -91,6 +91,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opRBrack, "]");
   LEX_OP(opRPar, ")");
   LEX_OP(opRShift, ">>");
+  LEX_OP(opRShiftEq, ">>=");
   LEX_OP(opSemi, ";");
   LEX_OP(opTilde, "~");
 }
