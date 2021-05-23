@@ -55,6 +55,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opComma, ",");
   LEX_OP(opDot, ".");
   LEX_OP(opDotDot, "..");
+  LEX_OP(opDotDotDot, "...");
   LEX_OP(opDotDotEq, "..=");
   LEX_OP(opEqEq, "==");
   LEX_OP(opExclEq, "!=");
