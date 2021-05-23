@@ -90,6 +90,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opRBrace, "}");
   LEX_OP(opRBrack, "]");
   LEX_OP(opRPar, ")");
+  LEX_OP(opRShift, ">>");
   LEX_OP(opSemi, ";");
   LEX_OP(opTilde, "~");
 }
