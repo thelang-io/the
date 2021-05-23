@@ -80,31 +80,31 @@ TEST(LexerTest, Literals) {
   LEX_NUM(litIntBin, "0b0");
   LEX_NUM(litIntBin, "0B1");
   LEX_NUM(litIntBin, "0b1");
-  LEX_NUM(litIntBin, "0B01111111111111111111111111111111");
-  LEX_NUM(litIntBin, "0b01111111111111111111111111111111");
-  LEX_NUM(litIntBin, "0B11111111111111111111111111111111");
+  LEX_NUM(litIntBin, "0B00000000000000000000000000000000");
   LEX_NUM(litIntBin, "0b11111111111111111111111111111111");
 
   LEX_NUM(litIntDec, "0");
-  LEX_NUM(litIntDec, "1");
   LEX_NUM(litIntDec, "9");
   LEX_NUM(litIntDec, "9223372036854775807");
   LEX_NUM(litIntDec, "18446744073709551615");
 
   LEX_NUM(litIntHex, "0X0");
   LEX_NUM(litIntHex, "0x0");
-  LEX_NUM(litIntHex, "0X1");
-  LEX_NUM(litIntHex, "0x1");
   LEX_NUM(litIntHex, "0X9");
   LEX_NUM(litIntHex, "0x9");
   LEX_NUM(litIntHex, "0XA");
   LEX_NUM(litIntHex, "0xa");
   LEX_NUM(litIntHex, "0XF");
   LEX_NUM(litIntHex, "0xf");
-  LEX_NUM(litIntHex, "0X01");
-  LEX_NUM(litIntHex, "0x0f");
-  LEX_NUM(litIntHex, "0X1111111111111111");
+  LEX_NUM(litIntHex, "0X0000000000000000");
   LEX_NUM(litIntHex, "0xffffffffffffffff");
+
+  LEX_NUM(litIntOct, "0O0");
+  LEX_NUM(litIntOct, "0o0");
+  LEX_NUM(litIntOct, "0O7");
+  LEX_NUM(litIntOct, "0o7");
+  LEX_NUM(litIntOct, "0O000000000000000000000");
+  LEX_NUM(litIntOct, "0o777777777777777777777");
 }
 
 TEST(LexerTest, Operators) {
