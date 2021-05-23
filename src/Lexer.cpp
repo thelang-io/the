@@ -29,6 +29,7 @@ Token Lexer::next () {
   if (ch1 == ',') return this->_token(opComma);
   if (ch1 == '=') return this->_lexOpEq(opEq, opEqEq);
   if (ch1 == '!') return this->_lexOpEqDouble('!', opExcl, opExclEq, opExclExcl);
+  if (ch1 == '>') return this->_lexOpEq2('<', opGt, opGtEq, opRShift, opRShiftEq);
   if (ch1 == '{') return this->_token(opLBrace);
   if (ch1 == '[') return this->_token(opLBrack);
   if (ch1 == '(') return this->_token(opLPar);

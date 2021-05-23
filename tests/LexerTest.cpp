@@ -62,6 +62,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opExcl, "!");
   LEX_OP(opExclEq, "!=");
   LEX_OP(opExclExcl, "!!");
+  LEX_OP(opGt, ">");
   LEX_OP(opLBrace, "{");
   LEX_OP(opLBrack, "[");
   LEX_OP(opLPar, "(");
