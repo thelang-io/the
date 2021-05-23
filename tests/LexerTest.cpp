@@ -29,6 +29,11 @@
   LEX(t, v, v); \
   LEX(t, v "\n", v)
 
+#define LEX_NUM(t, v) \
+  LEX(t, v, v); \
+  LEX(t, v "\n", v); \
+  LEX(t, v "..", v)
+
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
   LEX(whitespace, "\n", "\n");
@@ -70,6 +75,15 @@ TEST(LexerTest, Literals) {
   LEX_WS(litId, "a");
   LEX_WS(litId, "Aa_09");
   LEX_WS(litId, "_zZ12");
+
+  LEX_NUM(litIntBin, "0B0");
+  LEX_NUM(litIntBin, "0b0");
+  LEX_NUM(litIntBin, "0B1");
+  LEX_NUM(litIntBin, "0b1");
+  LEX_NUM(litIntBin, "0B01111111111111111111111111111111");
+  LEX_NUM(litIntBin, "0b01111111111111111111111111111111");
+  LEX_NUM(litIntBin, "0B11111111111111111111111111111111");
+  LEX_NUM(litIntBin, "0b11111111111111111111111111111111");
 }
 
 TEST(LexerTest, Operators) {
