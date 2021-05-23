@@ -79,6 +79,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opOrOr, "||");
   LEX_OP(opOrOrEq, "||=");
   LEX_OP(opPercent, "%");
+  LEX_OP(opPercentEq, "%=");
   LEX_OP(opRBrace, "}");
   LEX_OP(opRBrack, "]");
   LEX_OP(opRPar, ")");
