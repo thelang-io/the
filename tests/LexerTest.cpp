@@ -64,6 +64,11 @@ TEST(LexerTest, Literals) {
   LEX_WS(litChar, "'\\\"'");
   LEX_WS(litChar, "'\\''");
   LEX_WS(litChar, "'\\\\'");
+
+  LEX_WS(litId, "_");
+  LEX_WS(litId, "A");
+  LEX_WS(litId, "a");
+  LEX_WS(litId, "Aa_09");
 }
 
 TEST(LexerTest, Operators) {
