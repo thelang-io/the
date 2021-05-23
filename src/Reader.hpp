@@ -31,8 +31,10 @@ class Reader {
   [[nodiscard]] virtual fs::path path () const;
   virtual void seek (const ReaderLocation &);
 
+ protected:
+  std::string content_;
+
  private:
-  std::string _content;
   ReaderLocation _loc;
   fs::path _path;
 };
