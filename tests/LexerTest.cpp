@@ -69,6 +69,7 @@ TEST(LexerTest, Literals) {
   LEX_WS(litId, "A");
   LEX_WS(litId, "a");
   LEX_WS(litId, "Aa_09");
+  LEX_WS(litId, "_zZ12");
 }
 
 TEST(LexerTest, Operators) {
