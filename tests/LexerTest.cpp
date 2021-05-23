@@ -27,12 +27,23 @@
 
 #define LEX_WS(t, v) \
   LEX(t, v, v); \
-  LEX(t, v " ", v)
+  LEX(t, v "\n", v)
 
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
   LEX(whitespace, " ", " ");
   LEX(whitespace, "\n\r\t ", "\n\r\t ");
+}
+
+TEST(LexerTest, Comments) {
+  LEX_WS(commentLine, "//");
+  LEX_WS(commentLine, "//text");
+  LEX_WS(commentBlock, "/**/");
+  LEX_WS(commentBlock, "/*text*/");
+  LEX_WS(commentBlock, "/*\n*/");
+  LEX_WS(commentBlock, "/*text\ntext*/");
+  LEX_WS(commentBlock, "/*\n\n*/");
+  LEX_WS(commentBlock, "/*text\ntext\ntext*/");
 }
 
 TEST(LexerTest, Operators) {
