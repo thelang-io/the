@@ -48,6 +48,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opAndAnd, "&&");
   LEX_OP(opAndAndEq, "&&=");
   LEX_OP(opAndEq, "&=");
+  LEX_OP(opCaret, "^");
   LEX_OP(opCaretEq, "^=");
   LEX_OP(opColonEq, ":=");
   LEX_OP(opComma, ",");
