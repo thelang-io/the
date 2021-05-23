@@ -16,7 +16,7 @@
   EXPECT_EQ(Lexer(&r).next(), Token(t, v, {0, 1, 0}, {sizeof(v), 1, sizeof(v)})); } while (0)
 
 TEST(LexerTest, Misc) {
-  // LEX(eof, "", "");
+  LEX(eof, "", "");
 }
 
 TEST(LexerTest, Operators) {
