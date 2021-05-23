@@ -76,6 +76,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opMinusMinus, "--");
   LEX_OP(opOr, "|");
   LEX_OP(opOrEq, "|=");
+  LEX_OP(opOrOr, "||");
   LEX_OP(opRBrace, "}");
   LEX_OP(opRBrack, "]");
   LEX_OP(opRPar, ")");
