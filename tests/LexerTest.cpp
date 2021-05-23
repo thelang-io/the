@@ -53,6 +53,7 @@ TEST(LexerTest, Operators) {
   LEX_OP(opColon, ":");
   LEX_OP(opColonEq, ":=");
   LEX_OP(opComma, ",");
+  LEX_OP(opComma, ".");
   LEX_OP(opEqEq, "==");
   LEX_OP(opExclEq, "!=");
   LEX_OP(opExclExcl, "!!");
