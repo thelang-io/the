@@ -16,8 +16,7 @@ Token Lexer::next () {
   this->_start = this->_reader->loc();
 
   if (this->_reader->eof()) {
-    this->_val = static_cast<char>(-1);
-    return this->_token(eof);
+    return Token(eof, "", this->_start, this->_start);
   }
 
   const auto ch1 = this->_reader->next();

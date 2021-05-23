@@ -11,93 +11,69 @@
 #include "../src/Lexer.hpp"
 #include "ReaderMock.hpp"
 
-#define LEX_OP(t, s) \
-  do { auto reader = ::testing::NiceMock<MockReader>(); \
-  const auto val = std::string(s); \
-  const auto len = val.length(); \
-  const auto start = ReaderLocation{0, 1, 0}; \
-  const auto end = ReaderLocation{len, 1, len}; \
-  EXPECT_CALL(reader, eof()).WillRepeatedly(::testing::Return(true)); \
-  EXPECT_CALL(reader, eof()) \
-    .Times(static_cast<int>(len)) \
-    .WillRepeatedly(::testing::Return(false)) \
-    .RetiresOnSaturation(); \
-  { \
-    const auto seq = ::testing::InSequence(); \
-    for (size_t i = 0; i < len; i++) { \
-      EXPECT_CALL(reader, next()).WillOnce(::testing::Return(val[i])); \
-      EXPECT_CALL(reader, loc()).WillOnce(::testing::Return(ReaderLocation{i + 1, 1, i + 1})); \
-    } \
-  } \
-  EXPECT_CALL(reader, loc()).WillOnce(::testing::Return(start)).RetiresOnSaturation(); \
-  EXPECT_EQ(Lexer(&reader).next(), Token(t, val, start, end)); } while (0)
+#define LEX(t, c, v) \
+  do { auto r = ::testing::NiceMock<MockReader>(c); \
+  EXPECT_EQ(Lexer(&r).next(), Token(t, v, {0, 1, 0}, {sizeof(v), 1, sizeof(v)})); } while (0)
 
-TEST(LexerTest, Eof) {
-  auto reader = ::testing::NiceMock<MockReader>();
-
-  EXPECT_CALL(reader, loc())
-    .WillOnce(::testing::Return(ReaderLocation{0, 1, 0}))
-    .WillOnce(::testing::Return(ReaderLocation{1, 1, 1}));
-
-  EXPECT_CALL(reader, eof()).WillOnce(::testing::Return(true));
-  EXPECT_EQ(Lexer(&reader).next(), Token(eof, std::string(1, -1), {0, 1, 0}, {1, 1, 1}));
+TEST(LexerTest, Misc) {
+  // LEX(eof, "", "");
 }
 
 TEST(LexerTest, Operators) {
-  LEX_OP(opAnd, "&");
-  LEX_OP(opAndAnd, "&&");
-  LEX_OP(opAndAndEq, "&&=");
-  LEX_OP(opAndEq, "&=");
-  LEX_OP(opCaret, "^");
-  LEX_OP(opCaretEq, "^=");
-  LEX_OP(opColon, ":");
-  LEX_OP(opColonEq, ":=");
-  LEX_OP(opComma, ",");
-  LEX_OP(opDot, ".");
-  LEX_OP(opDotDot, "..");
-  LEX_OP(opDotDotDot, "...");
-  LEX_OP(opDotDotEq, "..=");
-  LEX_OP(opEq, "=");
-  LEX_OP(opEqEq, "==");
-  LEX_OP(opExcl, "!");
-  LEX_OP(opExclEq, "!=");
-  LEX_OP(opExclExcl, "!!");
-  LEX_OP(opGt, ">");
-  LEX_OP(opGtEq, ">=");
-  LEX_OP(opLBrace, "{");
-  LEX_OP(opLBrack, "[");
-  LEX_OP(opLPar, "(");
-  LEX_OP(opLShift, "<<");
-  LEX_OP(opLShiftEq, "<<=");
-  LEX_OP(opLt, "<");
-  LEX_OP(opLtEq, "<=");
-  LEX_OP(opMinus, "-");
-  LEX_OP(opMinusEq, "-=");
-  LEX_OP(opMinusMinus, "--");
-  LEX_OP(opOr, "|");
-  LEX_OP(opOrEq, "|=");
-  LEX_OP(opOrOr, "||");
-  LEX_OP(opOrOrEq, "||=");
-  LEX_OP(opPercent, "%");
-  LEX_OP(opPercentEq, "%=");
-  LEX_OP(opPlus, "+");
-  LEX_OP(opPlusEq, "+=");
-  LEX_OP(opPlusPlus, "++");
-  LEX_OP(opQn, "?");
-  LEX_OP(opQnDot, "?.");
-  LEX_OP(opQnQn, "??");
-  LEX_OP(opQnQnEq, "\?\?=");
-  LEX_OP(opRBrace, "}");
-  LEX_OP(opRBrack, "]");
-  LEX_OP(opRPar, ")");
-  LEX_OP(opRShift, ">>");
-  LEX_OP(opRShiftEq, ">>=");
-  LEX_OP(opSemi, ";");
-  LEX_OP(opSlash, "/");
-  LEX_OP(opSlashEq, "/=");
-  LEX_OP(opStar, "*");
-  LEX_OP(opStarEq, "*=");
-  LEX_OP(opStarStar, "**");
-  LEX_OP(opStarStarEq, "**=");
-  LEX_OP(opTilde, "~");
+  LEX(opAnd, "&", "&");
+  LEX(opAndAnd, "&&", "&&");
+  LEX(opAndAndEq, "&&=", "&&=");
+  LEX(opAndEq, "&=", "&=");
+  LEX(opCaret, "^", "^");
+  LEX(opCaretEq, "^=", "^=");
+  LEX(opColon, ":", ":");
+  LEX(opColonEq, ":=", ":=");
+  LEX(opComma, ",", ",");
+  LEX(opDot, ".", ".");
+  LEX(opDotDot, "..", "..");
+  LEX(opDotDotDot, "...", "...");
+  LEX(opDotDotEq, "..=", "..=");
+  LEX(opEq, "=", "=");
+  LEX(opEqEq, "==", "==");
+  LEX(opExcl, "!", "!");
+  LEX(opExclEq, "!=", "!=");
+  LEX(opExclExcl, "!!", "!!");
+  LEX(opGt, ">", ">");
+  LEX(opGtEq, ">=", ">=");
+  LEX(opLBrace, "{", "{");
+  LEX(opLBrack, "[", "[");
+  LEX(opLPar, "(", "(");
+  LEX(opLShift, "<<", "<<");
+  LEX(opLShiftEq, "<<=", "<<=");
+  LEX(opLt, "<", "<");
+  LEX(opLtEq, "<=", "<=");
+  LEX(opMinus, "-", "-");
+  LEX(opMinusEq, "-=", "-=");
+  LEX(opMinusMinus, "--", "--");
+  LEX(opOr, "|", "|");
+  LEX(opOrEq, "|=", "|=");
+  LEX(opOrOr, "||", "||");
+  LEX(opOrOrEq, "||=", "||=");
+  LEX(opPercent, "%", "%");
+  LEX(opPercentEq, "%=", "%=");
+  LEX(opPlus, "+", "+");
+  LEX(opPlusEq, "+=", "+=");
+  LEX(opPlusPlus, "++", "++");
+  LEX(opQn, "?", "?");
+  LEX(opQnDot, "?.", "?.");
+  LEX(opQnQn, "??", "??");
+  LEX(opQnQnEq, "\?\?=", "\?\?=");
+  LEX(opRBrace, "}", "}");
+  LEX(opRBrack, "]", "]");
+  LEX(opRPar, ")", ")");
+  LEX(opRShift, ">>", ">>");
+  LEX(opRShiftEq, ">>=", ">>=");
+  LEX(opSemi, ";", ";");
+  LEX(opSlash, "/", "/");
+  LEX(opSlashEq, "/=", "/=");
+  LEX(opStar, "*", "*");
+  LEX(opStarEq, "*=", "*=");
+  LEX(opStarStar, "**", "**");
+  LEX(opStarStarEq, "**=", "**=");
+  LEX(opTilde, "~", "~");
 }
