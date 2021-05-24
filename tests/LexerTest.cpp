@@ -25,6 +25,18 @@
   } \
   EXPECT_EQ(Lexer(&r).next(), Token(t, v, {0, 1, 0}, {sizeof(v) - 1, line, col})); } while (0)
 
+#define LEX_FLOAT(t, v) \
+  LEX_WS(t, v); \
+  LEX_FLOAT_EXP(t, v)
+
+#define LEX_FLOAT_EXP(t, v) \
+  LEX_WS(t, v "E0"); \
+  LEX_WS(t, v "e1"); \
+  LEX_WS(t, v "e308"); \
+  LEX_WS(t, v "E+0"); \
+  LEX_WS(t, v "e+1"); \
+  LEX_WS(t, v "e-308")
+
 #define LEX_NUM(t, v) \
   LEX(t, v, v); \
   LEX(t, v "\n", v); \
@@ -82,6 +94,7 @@ TEST(LexerTest, Literals) {
   LEX_NUM(litIntBin, "0b11111111111111111111111111111111");
 
   LEX_NUM(litIntDec, "0");
+  LEX_NUM(litIntDec, "1");
   LEX_NUM(litIntDec, "9223372036854775807");
 
   LEX_NUM(litIntHex, "0X0");
@@ -95,6 +108,18 @@ TEST(LexerTest, Literals) {
   LEX_NUM(litIntOct, "0o7");
   LEX_NUM(litIntOct, "0O000000000000000000000");
   LEX_NUM(litIntOct, "0o777777777777777777777");
+
+  LEX_FLOAT_EXP(litFloat, "0");
+  LEX_FLOAT_EXP(litFloat, "1");
+  LEX_FLOAT_EXP(litFloat, "9223372036854775807");
+
+  LEX_FLOAT_EXP(litFloat, "0.");
+  LEX_FLOAT_EXP(litFloat, "1.");
+  LEX_FLOAT_EXP(litFloat, "9223372036854775807.");
+
+  LEX_FLOAT(litFloat, "0.0");
+  LEX_FLOAT(litFloat, "1.1");
+  LEX_FLOAT(litFloat, "9223372036854775807.9223372036854775807");
 }
 
 TEST(LexerTest, Operators) {
