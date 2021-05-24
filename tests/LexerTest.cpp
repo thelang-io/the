@@ -73,6 +73,7 @@ TEST(LexerTest, Comments) {
 TEST(LexerTest, Keywords) {
   LEX_KW(kwAs, "as");
   LEX_WS(kwAsSafe, "as?");
+  LEX_KW(kwAsync, "async");
 }
 
 TEST(LexerTest, Literals) {
