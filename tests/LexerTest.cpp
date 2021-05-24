@@ -83,6 +83,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwContinue, "continue");
   LEX_KW(kwDefault, "default");
   LEX_KW(kwDeinit, "deinit");
+  LEX_KW(kwElif, "elif");
 }
 
 TEST(LexerTest, Literals) {
