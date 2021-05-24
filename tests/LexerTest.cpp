@@ -81,6 +81,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwClass, "class");
   LEX_KW(kwConst, "const");
   LEX_KW(kwContinue, "continue");
+  LEX_KW(kwDefault, "default");
 }
 
 TEST(LexerTest, Literals) {
