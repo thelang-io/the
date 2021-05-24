@@ -77,6 +77,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwAwait, "await");
   LEX_KW(kwBreak, "break");
   LEX_KW(kwCase, "case");
+  LEX_KW(kwCatch, "catch");
 }
 
 TEST(LexerTest, Literals) {
