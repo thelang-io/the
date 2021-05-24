@@ -30,6 +30,7 @@ class Lexer {
   Token _token (TokenType);
   void _walk (const std::function<bool (char)> &);
   void _walkLitFloatExp ();
+  void _walkLitStr ();
 };
 
 #endif

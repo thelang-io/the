@@ -233,6 +233,13 @@ Token Lexer::next () {
 
     this->_walk(Token::isLitIntDec);
     return this->_lexLitNum(Token::isLitIntDec, litIntDec);
+  } else if (ch1 == '"') {
+    if (this->_reader->eof()) {
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated string literal");
+    }
+
+    this->_walkLitStr();
+    return this->_token(litStr);
   } else if (ch1 == '/') {
     const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();
@@ -571,5 +578,45 @@ void Lexer::_walkLitFloatExp () {
     }
 
     this->_val += ch3;
+  }
+}
+
+void Lexer::_walkLitStr () {
+  auto blocks = 0;
+  auto insideChar = false;
+
+  while (true) {
+    const auto ch1 = this->_reader->next();
+    this->_val += ch1;
+
+    if (ch1 == '\\' && blocks == 0) {
+      if (this->_reader->eof()) {
+        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated string literal");
+      }
+
+      const auto ch2 = this->_reader->next();
+
+      if (!Token::isLitStrEscape(ch2)) {
+        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Illegal string escape");
+      }
+
+      this->_val += ch2;
+    }
+
+    if (ch1 == '{' && !insideChar) {
+      blocks += 1;
+    } else if (ch1 == '}' && blocks != 0 && !insideChar) {
+      blocks -= 1;
+    } else if (ch1 == '\'' && insideChar) {
+      insideChar = false;
+    } else if (ch1 == '\'' && blocks != 0) {
+      insideChar = true;
+    } else if (ch1 == '"' && blocks != 0) {
+      this->_walkLitStr();
+    } else if (ch1 == '"') {
+      break;
+    } else if (this->_reader->eof()) {
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated string literal");
+    }
   }
 }
