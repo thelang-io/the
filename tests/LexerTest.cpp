@@ -101,6 +101,18 @@ TEST(LexerTest, Literals) {
   LEX_WS(litChar, "'\\''");
   LEX_WS(litChar, "'\\\\'");
 
+  LEX_FLOAT_EXP(litFloat, "0");
+  LEX_FLOAT_EXP(litFloat, "1");
+  LEX_FLOAT_EXP(litFloat, "9223372036854775807");
+
+  LEX_FLOAT_EXP(litFloat, "0.");
+  LEX_FLOAT_EXP(litFloat, "1.");
+  LEX_FLOAT_EXP(litFloat, "9223372036854775807.");
+
+  LEX_FLOAT(litFloat, "0.0");
+  LEX_FLOAT(litFloat, "1.1");
+  LEX_FLOAT(litFloat, "9223372036854775807.9223372036854775807");
+
   LEX_WS(litId, "_");
   LEX_WS(litId, "A");
   LEX_WS(litId, "a");
@@ -127,18 +139,6 @@ TEST(LexerTest, Literals) {
   LEX_NUM(litIntOct, "0o7");
   LEX_NUM(litIntOct, "0O000000000000000000000");
   LEX_NUM(litIntOct, "0o777777777777777777777");
-
-  LEX_FLOAT_EXP(litFloat, "0");
-  LEX_FLOAT_EXP(litFloat, "1");
-  LEX_FLOAT_EXP(litFloat, "9223372036854775807");
-
-  LEX_FLOAT_EXP(litFloat, "0.");
-  LEX_FLOAT_EXP(litFloat, "1.");
-  LEX_FLOAT_EXP(litFloat, "9223372036854775807.");
-
-  LEX_FLOAT(litFloat, "0.0");
-  LEX_FLOAT(litFloat, "1.1");
-  LEX_FLOAT(litFloat, "9223372036854775807.9223372036854775807");
 }
 
 TEST(LexerTest, Operators) {
