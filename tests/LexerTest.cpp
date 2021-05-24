@@ -80,6 +80,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwCatch, "catch");
   LEX_KW(kwClass, "class");
   LEX_KW(kwConst, "const");
+  LEX_KW(kwContinue, "continue");
 }
 
 TEST(LexerTest, Literals) {
