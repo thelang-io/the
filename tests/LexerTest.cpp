@@ -74,6 +74,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwAs, "as");
   LEX_WS(kwAsSafe, "as?");
   LEX_KW(kwAsync, "async");
+  LEX_KW(kwAwait, "await");
 }
 
 TEST(LexerTest, Literals) {
