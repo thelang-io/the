@@ -82,12 +82,13 @@ bool Token::operator!= (TokenType rhs) const {
 }
 
 std::string Token::str () const {
-  auto escVal = std::regex_replace(this->val, std::regex("\\n"), "\\\\n");
-  escVal = std::regex_replace(escVal, std::regex("\\r"), "\\\\r");
-  escVal = std::regex_replace(escVal, std::regex("\\t"), "\\\\t");
-  escVal = std::regex_replace(escVal, std::regex("\n"), "\\n");
-  escVal = std::regex_replace(escVal, std::regex("\r"), "\\r");
-  escVal = std::regex_replace(escVal, std::regex("\t"), "\\t");
+  auto escVal = std::regex_replace(this->val, std::regex("\\\\0"), "\\\\0");
+  escVal = std::regex_replace(escVal, std::regex("\\\\n"), "\\\\n");
+  escVal = std::regex_replace(escVal, std::regex("\\\\r"), "\\\\r");
+  escVal = std::regex_replace(escVal, std::regex("\\\\t"), "\\\\t");
+  escVal = std::regex_replace(escVal, std::regex("\\n"), "\\n");
+  escVal = std::regex_replace(escVal, std::regex("\\r"), "\\r");
+  escVal = std::regex_replace(escVal, std::regex("\\t"), "\\t");
 
   return std::string(token_type[this->type]) + '(' +
     std::to_string(this->start.line) + ':' + std::to_string(this->start.col + 1) + '-' +
