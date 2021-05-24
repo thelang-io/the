@@ -79,6 +79,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwCase, "case");
   LEX_KW(kwCatch, "catch");
   LEX_KW(kwClass, "class");
+  LEX_KW(kwConst, "const");
 }
 
 TEST(LexerTest, Literals) {
