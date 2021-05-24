@@ -65,7 +65,7 @@
   fn(kwUnion) \
   \
   fn(litChar) \
-  fn(litFloat) /* TODO */ \
+  fn(litFloat) \
   fn(litId) \
   fn(litIntBin) \
   fn(litIntDec) \

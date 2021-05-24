@@ -127,6 +127,7 @@ Token Lexer::next () {
     }
   }
 
+
   if (Token::isWhitespace(ch1)) {
     this->_walk(Token::isWhitespace);
     return this->_token(whitespace);
@@ -134,6 +135,10 @@ Token Lexer::next () {
     this->_walk(Token::isLitIdContinue);
 
     if (this->_val == "as") {
+      if (this->_reader->eof()) {
+        return this->_token(kwAs);
+      }
+
       const auto loc2 = this->_reader->loc();
       const auto ch2 = this->_reader->next();
 

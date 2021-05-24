@@ -30,21 +30,24 @@
   LEX_FLOAT_EXP(t, v)
 
 #define LEX_FLOAT_EXP(t, v) \
-  LEX_WS(t, v "E0"); \
-  LEX_WS(t, v "e1"); \
-  LEX_WS(t, v "e308"); \
-  LEX_WS(t, v "E+0"); \
-  LEX_WS(t, v "e+1"); \
-  LEX_WS(t, v "e-308")
+  LEX_WS(t, v"E0"); \
+  LEX_WS(t, v"e1"); \
+  LEX_WS(t, v"e308"); \
+  LEX_WS(t, v"E+0"); \
+  LEX_WS(t, v"e+1"); \
+  LEX_WS(t, v"e-308")
+
+#define LEX_KW(t, v) \
+  LEX_WS(t, v); \
+  LEX(litId, v"a", v"a")
 
 #define LEX_NUM(t, v) \
-  LEX(t, v, v); \
-  LEX(t, v "\n", v); \
-  LEX(t, v "..", v)
+  LEX_WS(t, v); \
+  LEX(t, v"..", v)
 
 #define LEX_WS(t, v) \
   LEX(t, v, v); \
-  LEX(t, v "\n", v)
+  LEX(t, v"\n", v)
 
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
@@ -65,6 +68,11 @@ TEST(LexerTest, Comments) {
   LEX_WS(commentBlock, "/*text\ntext*/");
   LEX_WS(commentBlock, "/*\n\n*/");
   LEX_WS(commentBlock, "/*text\ntext\ntext*/");
+}
+
+TEST(LexerTest, Keywords) {
+  LEX_KW(kwAs, "as");
+  LEX_WS(kwAsSafe, "as?");
 }
 
 TEST(LexerTest, Literals) {
