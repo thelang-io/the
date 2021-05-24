@@ -30,24 +30,31 @@
   LEX_FLOAT_EXP(t, v)
 
 #define LEX_FLOAT_EXP(t, v) \
-  LEX_WS(t, v"E0"); \
-  LEX_WS(t, v"e1"); \
-  LEX_WS(t, v"e308"); \
-  LEX_WS(t, v"E+0"); \
-  LEX_WS(t, v"e+1"); \
-  LEX_WS(t, v"e-308")
+  LEX_WS(t, v "E0"); \
+  LEX_WS(t, v "e1"); \
+  LEX_WS(t, v "e308"); \
+  LEX_WS(t, v "E+0"); \
+  LEX_WS(t, v "e+1"); \
+  LEX_WS(t, v "e-308")
 
 #define LEX_KW(t, v) \
   LEX_WS(t, v); \
-  LEX(litId, v"a", v"a")
+  LEX(litId, v "a", v "a")
 
 #define LEX_NUM(t, v) \
   LEX_WS(t, v); \
-  LEX(t, v"..", v)
+  LEX(t, v "..", v)
+
+#define LEX_STR(t, v) \
+  LEX_WS(t, "\"" v "\""); \
+  LEX_WS(t, "\"text" v "\""); \
+  LEX_WS(t, "\"" v "text\""); \
+  LEX_WS(t, "\"text" v "text\""); \
+  LEX_WS(t, "\"text" v "text" v "text\"")
 
 #define LEX_WS(t, v) \
   LEX(t, v, v); \
-  LEX(t, v"\n", v)
+  LEX(t, v "\n", v)
 
 TEST(LexerTest, Misc) {
   LEX(eof, "", "");
@@ -139,6 +146,20 @@ TEST(LexerTest, Literals) {
   LEX_NUM(litIntOct, "0o7");
   LEX_NUM(litIntOct, "0O000000000000000000000");
   LEX_NUM(litIntOct, "0o777777777777777777777");
+
+  LEX_STR(litStr, R"()");
+  LEX_STR(litStr, R"({var})");
+  LEX_STR(litStr, R"({var.method})");
+  LEX_STR(litStr, R"({"}" + var.method})");
+  LEX_STR(litStr, R"({"text" + '{' + Node{} + "}"})");
+  LEX_STR(litStr, R"(\\0)");
+  LEX_STR(litStr, R"(\\t)");
+  LEX_STR(litStr, R"(\\n)");
+  LEX_STR(litStr, R"(\\r)");
+  LEX_STR(litStr, R"(\")");
+  LEX_STR(litStr, R"(\')");
+  LEX_STR(litStr, R"(\\)");
+  LEX_STR(litStr, R"(\{)");
 }
 
 TEST(LexerTest, Operators) {
