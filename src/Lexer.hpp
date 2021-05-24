@@ -22,12 +22,14 @@ class Lexer {
   ReaderLocation _start;
   std::string _val;
 
+  Token _lexLitFloat (TokenType);
   Token _lexLitNum (const std::function<bool (char)> &, TokenType);
   Token _lexOpEq (TokenType, TokenType);
   Token _lexOpEq2 (char, TokenType, TokenType, TokenType, TokenType);
   Token _lexOpEqDouble (char, TokenType, TokenType, TokenType);
   Token _token (TokenType);
   void _walk (const std::function<bool (char)> &);
+  void _walkLitFloatExp ();
 };
 
 #endif

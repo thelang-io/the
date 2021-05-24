@@ -192,7 +192,7 @@ Token Lexer::next () {
     if (this->_val == "union") return this->_token(kwUnion);
 
     return this->_token(litId);
-  } else if (isdigit(ch1)) {
+  } else if (Token::isDigit(ch1)) {
     if (ch1 == '0') {
       if (this->_reader->eof()) {
         return this->_token(litIntDec);
@@ -323,6 +323,31 @@ Token Lexer::next () {
   throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unexpected token");
 }
 
+Token Lexer::_lexLitFloat (TokenType tt) {
+  if (!this->_reader->eof()) {
+    const auto loc = this->_reader->loc();
+    const auto ch = this->_reader->next();
+
+    if (Token::isLitIdContinue(ch)) {
+      this->_walk(Token::isLitIdContinue);
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+    } else {
+      this->_reader->seek(loc);
+    }
+  }
+
+  if (tt == litIntBin || tt == litIntHex || tt == litIntOct) {
+    throw SyntaxError(
+      this->_reader,
+      this->_start,
+      this->_reader->loc(),
+      "Float literal as " + Token::litIntToStr(tt) + " is not allowed"
+    );
+  }
+
+  return this->_token(litFloat);
+}
+
 Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
   const std::string name = Token::litIntToStr(tt);
 
@@ -349,10 +374,56 @@ Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
   const auto loc2 = this->_reader->loc();
   const auto ch2 = this->_reader->next();
 
-  if (Token::isLitIdContinue(ch2)) {
+  if (ch2 == 'E' || ch2 == 'e') {
+    this->_val += ch2;
+    this->_walkLitFloatExp();
+    return this->_lexLitFloat(tt);
+  } else if (ch2 == '.') {
+    if (this->_reader->eof()) {
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+    }
+
+    const auto ch3 = this->_reader->next();
+
+    if (ch3 == '.') {
+      this->_reader->seek(loc2);
+    } else if (ch3 == 'E' || ch3 == 'e') {
+      this->_val += ch2;
+      this->_val += ch3;
+      this->_walkLitFloatExp();
+      return this->_lexLitFloat(tt);
+    } else if (!Token::isDigit(ch3)) {
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+    } else {
+      bool withExp = false;
+      this->_val += ch2;
+      this->_val += ch3;
+
+      while (!this->_reader->eof()) {
+        const auto loc4 = this->_reader->loc();
+        const auto ch4 = this->_reader->next();
+
+        if (ch4 == 'E' || ch4 == 'e') {
+          withExp = true;
+          this->_val += ch4;
+          break;
+        } else if (!Token::isDigit(ch4)) {
+          this->_reader->seek(loc4);
+          break;
+        }
+
+        this->_val += ch4;
+      }
+
+      if (withExp) {
+        this->_walkLitFloatExp();
+      }
+
+      return this->_lexLitFloat(tt);
+    }
+  } else if (Token::isLitIdContinue(ch2)) {
     this->_walk(Token::isLitIdContinue);
     throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
-  } else if (ch2 == '.') {
   } else {
     this->_reader->seek(loc2);
   }
@@ -453,5 +524,47 @@ void Lexer::_walk (const std::function<bool (char)> &fn) {
     }
 
     this->_val += ch;
+  }
+}
+
+void Lexer::_walkLitFloatExp () {
+  if (this->_reader->eof()) {
+    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+  }
+
+  const auto ch1 = this->_reader->next();
+
+  if (ch1 == '+' || ch1 == '-') {
+    this->_val += ch1;
+
+    if (this->_reader->eof()) {
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+    }
+
+    const auto ch2 = this->_reader->next();
+
+    if (!Token::isDigit(ch2)) {
+      this->_walk(Token::isLitIdContinue);
+      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+    }
+
+    this->_val += ch2;
+  } else if (Token::isDigit(ch1)) {
+    this->_val += ch1;
+  } else {
+    this->_walk(Token::isLitIdContinue);
+    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+  }
+
+  while (!this->_reader->eof()) {
+    const auto loc3 = this->_reader->loc();
+    const auto ch3 = this->_reader->next();
+
+    if (!Token::isDigit(ch3)) {
+      this->_reader->seek(loc3);
+      break;
+    }
+
+    this->_val += ch3;
   }
 }
