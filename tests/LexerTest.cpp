@@ -238,5 +238,7 @@ TEST(LexerTest, Operators) {
 }
 
 TEST(LexerTest, Throws) {
-  LEX_THROW("\\", E0000.c_str());
+  LEX_THROW("\\", E0000);
+  LEX_THROW("/*", E0001);
+  LEX_THROW("/*text", E0001);
 }

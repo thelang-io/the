@@ -127,7 +127,6 @@ Token Lexer::next () {
     }
   }
 
-
   if (Token::isWhitespace(ch1)) {
     this->_walk(Token::isWhitespace);
     return this->_token(whitespace);
@@ -231,7 +230,6 @@ Token Lexer::next () {
     this->_walkLitStr();
     return this->_token(litStr);
   } else if (ch1 == '/') {
-    const auto loc2 = this->_reader->loc();
     const auto ch2 = this->_reader->next();
 
     if (ch2 == '/') {
@@ -242,7 +240,7 @@ Token Lexer::next () {
       });
 
       return this->_token(commentLine);
-    } else if (ch2 == '*') {
+    } else {
       this->_val += ch2;
 
       if (this->_reader->eof()) {
@@ -271,8 +269,6 @@ Token Lexer::next () {
       }
 
       return this->_token(commentBlock);
-    } else {
-      this->_reader->seek(loc2);
     }
   } else if (ch1 == '\'') {
     if (this->_reader->eof()) {
