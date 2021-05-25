@@ -114,6 +114,8 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwFalse, "false");
   LEX_KW(kwFn, "fn");
   LEX_KW(kwFrom, "from");
+  LEX_KW(kwIf, "if");
+  LEX_KW(kwImport, "import");
 }
 
 TEST(LexerTest, Literals) {
