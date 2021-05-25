@@ -394,6 +394,10 @@ Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
       this->_walkLitFloatExp();
       return this->_lexLitFloat(tt);
     } else if (!Token::isDigit(ch3)) {
+      if (Token::isLitIdContinue(ch3)) {
+        this->_walk(Token::isLitIdContinue);
+      }
+
       throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
     } else {
       bool withExp = false;
@@ -575,6 +579,7 @@ void Lexer::_walkLitStr () {
   auto insideChar = false;
 
   while (true) {
+    const auto loc1 = this->_reader->loc();
     const auto ch1 = this->_reader->next();
     this->_val += ch1;
 
@@ -586,7 +591,7 @@ void Lexer::_walkLitStr () {
       const auto ch2 = this->_reader->next();
 
       if (!Token::isLitStrEscape(ch2)) {
-        throw SyntaxError(this->_reader, this->_start, "Illegal string escape");
+        throw SyntaxError(this->_reader, loc1, "Illegal string escape");
       }
 
       this->_val += ch2;
