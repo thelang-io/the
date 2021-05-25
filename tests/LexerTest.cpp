@@ -107,6 +107,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwDefault, "default");
   LEX_KW(kwDeinit, "deinit");
   LEX_KW(kwElif, "elif");
+  LEX_KW(kwElse, "else");
 }
 
 TEST(LexerTest, Literals) {
