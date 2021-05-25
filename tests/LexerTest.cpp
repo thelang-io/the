@@ -111,6 +111,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwEnum, "enum");
   LEX_KW(kwExport, "export");
   LEX_KW(kwFallthrough, "fallthrough");
+  LEX_KW(kwFalse, "false");
 }
 
 TEST(LexerTest, Literals) {
