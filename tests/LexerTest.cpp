@@ -238,7 +238,15 @@ TEST(LexerTest, Operators) {
 }
 
 TEST(LexerTest, Throws) {
-  LEX_THROW("\\", E0000);
-  LEX_THROW("/*", E0001);
-  LEX_THROW("/*text", E0001);
+  LEX_THROW(R"(\)", E0000);
+  LEX_THROW(R"(/*)", E0001);
+  LEX_THROW(R"(/*text)", E0001);
+  LEX_THROW(R"(')", E0002);
+  LEX_THROW(R"('')", E0004);
+  LEX_THROW(R"('a)", E0002);
+  LEX_THROW(R"('\)", E0002);
+  LEX_THROW(R"('\n)", E0002);
+  LEX_THROW(R"('\m)", E0005);
+  LEX_THROW(R"('man)", E0006);
+  LEX_THROW(R"('man')", E0006);
 }
