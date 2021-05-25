@@ -126,6 +126,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwMut, "mut");
   LEX_KW(kwNew, "new");
   LEX_KW(kwNil, "nil");
+  LEX_KW(kwObj, "obj");
 }
 
 TEST(LexerTest, Literals) {
