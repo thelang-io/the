@@ -247,6 +247,11 @@ TEST(LexerTest, Throws) {
   LEX_THROW(R"('\)", E0002);
   LEX_THROW(R"('\n)", E0002);
   LEX_THROW(R"('\m)", E0005);
-  LEX_THROW(R"('man)", E0006);
-  LEX_THROW(R"('man')", E0006);
+  LEX_THROW(R"('char)", E0006);
+  LEX_THROW(R"('char')", E0006);
+  LEX_THROW(R"(")", E0003);
+  LEX_THROW(R"("text)", E0003);
+  LEX_THROW(R"("text\)", E0003);
+  LEX_THROW(R"("text\m")", E0005);
+  LEX_THROW(R"("text{"\m"}")", E0005);
 }
