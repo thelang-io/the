@@ -208,13 +208,7 @@ Token Lexer::next () {
 
       if (Token::isLitIntDec(ch2)) {
         this->_walk(Token::isLitIntDec);
-
-        throw SyntaxError(
-          this->_reader,
-          this->_start,
-          this->_reader->loc(),
-          "Numeric literals with leading zero are not allowed"
-        );
+        throw SyntaxError(this->_reader, this->_start, "Numeric literals with leading zero are not allowed");
       } else if (ch2 == 'B' || ch2 == 'b') {
         this->_val += ch2;
         return this->_lexLitNum(Token::isLitIntBin, litIntBin);
@@ -235,7 +229,7 @@ Token Lexer::next () {
     return this->_lexLitNum(Token::isLitIntDec, litIntDec);
   } else if (ch1 == '"') {
     if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated string literal");
+      throw SyntaxError(this->_reader, this->_start, "Unterminated string literal");
     }
 
     this->_walkLitStr();
@@ -256,14 +250,14 @@ Token Lexer::next () {
       this->_val += ch2;
 
       if (this->_reader->eof()) {
-        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated block comment");
+        throw SyntaxError(this->_reader, this->_start, "Unterminated block comment");
       }
 
       while (true) {
         const auto ch3 = this->_reader->next();
 
         if (this->_reader->eof()) {
-          throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated block comment");
+          throw SyntaxError(this->_reader, this->_start, "Unterminated block comment");
         } else if (ch3 == '*') {
           const auto loc4 = this->_reader->loc();
           const auto ch4 = this->_reader->next();
@@ -286,15 +280,15 @@ Token Lexer::next () {
     }
   } else if (ch1 == '\'') {
     if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated character literal");
+      throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
     }
 
     const auto ch2 = this->_reader->next();
 
     if (ch2 == '\'') {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Empty character literal");
+      throw SyntaxError(this->_reader, this->_start, "Empty character literal");
     } else if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated character literal");
+      throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
     } else if (ch2 == '\\') {
       const auto ch3 = this->_reader->next();
 
@@ -305,9 +299,9 @@ Token Lexer::next () {
           }
         }
 
-        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Illegal character escape");
+        throw SyntaxError(this->_reader, this->_start, "Illegal character escape");
       } else if (this->_reader->eof()) {
-        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated character literal");
+        throw SyntaxError(this->_reader, this->_start, "Unterminated character literal");
       }
 
       this->_val += ch2;
@@ -325,14 +319,14 @@ Token Lexer::next () {
         }
       }
 
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Too many characters in character literal");
+      throw SyntaxError(this->_reader, this->_start, "Too many characters in character literal");
     }
 
     this->_val += ch4;
     return this->_token(litChar);
   }
 
-  throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unexpected token");
+  throw SyntaxError(this->_reader, this->_start, "Unexpected token");
 }
 
 Token Lexer::_lexLitFloat (TokenType tt) {
@@ -342,19 +336,14 @@ Token Lexer::_lexLitFloat (TokenType tt) {
 
     if (Token::isLitIdContinue(ch)) {
       this->_walk(Token::isLitIdContinue);
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+      throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
     } else {
       this->_reader->seek(loc);
     }
   }
 
   if (tt == litIntBin || tt == litIntHex || tt == litIntOct) {
-    throw SyntaxError(
-      this->_reader,
-      this->_start,
-      this->_reader->loc(),
-      "Float literal as " + Token::litIntToStr(tt) + " is not allowed"
-    );
+    throw SyntaxError(this->_reader, this->_start, "Float literal as " + Token::litIntToStr(tt) + " is not allowed");
   }
 
   return this->_token(litFloat);
@@ -365,14 +354,14 @@ Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
 
   if (tt != litIntDec) {
     if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
+      throw SyntaxError(this->_reader, this->_start, "Invalid " + name + " literal");
     }
 
     const auto ch1 = this->_reader->next();
 
     if (!fn(ch1)) {
       this->_walk(isalnum);
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
+      throw SyntaxError(this->_reader, this->_start, "Invalid " + name + " literal");
     }
 
     this->_val += ch1;
@@ -392,7 +381,7 @@ Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
     return this->_lexLitFloat(tt);
   } else if (ch2 == '.') {
     if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+      throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
     }
 
     const auto ch3 = this->_reader->next();
@@ -405,7 +394,7 @@ Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
       this->_walkLitFloatExp();
       return this->_lexLitFloat(tt);
     } else if (!Token::isDigit(ch3)) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+      throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
     } else {
       bool withExp = false;
       this->_val += ch2;
@@ -435,7 +424,7 @@ Token Lexer::_lexLitNum (const std::function<bool (char)> &fn, TokenType tt) {
     }
   } else if (Token::isLitIdContinue(ch2)) {
     this->_walk(Token::isLitIdContinue);
-    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid " + name + " literal");
+    throw SyntaxError(this->_reader, this->_start, "Invalid " + name + " literal");
   } else {
     this->_reader->seek(loc2);
   }
@@ -541,7 +530,7 @@ void Lexer::_walk (const std::function<bool (char)> &fn) {
 
 void Lexer::_walkLitFloatExp () {
   if (this->_reader->eof()) {
-    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+    throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
   }
 
   const auto ch1 = this->_reader->next();
@@ -550,14 +539,14 @@ void Lexer::_walkLitFloatExp () {
     this->_val += ch1;
 
     if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+      throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
     }
 
     const auto ch2 = this->_reader->next();
 
     if (!Token::isDigit(ch2)) {
       this->_walk(Token::isLitIdContinue);
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+      throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
     }
 
     this->_val += ch2;
@@ -565,7 +554,7 @@ void Lexer::_walkLitFloatExp () {
     this->_val += ch1;
   } else {
     this->_walk(Token::isLitIdContinue);
-    throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Invalid float literal");
+    throw SyntaxError(this->_reader, this->_start, "Invalid float literal");
   }
 
   while (!this->_reader->eof()) {
@@ -591,13 +580,13 @@ void Lexer::_walkLitStr () {
 
     if (ch1 == '\\' && blocks == 0) {
       if (this->_reader->eof()) {
-        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated string literal");
+        throw SyntaxError(this->_reader, this->_start, "Unterminated string literal");
       }
 
       const auto ch2 = this->_reader->next();
 
       if (!Token::isLitStrEscape(ch2)) {
-        throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Illegal string escape");
+        throw SyntaxError(this->_reader, this->_start, "Illegal string escape");
       }
 
       this->_val += ch2;
@@ -616,7 +605,7 @@ void Lexer::_walkLitStr () {
     } else if (ch1 == '"') {
       break;
     } else if (this->_reader->eof()) {
-      throw SyntaxError(this->_reader, this->_start, this->_reader->loc(), "Unterminated string literal");
+      throw SyntaxError(this->_reader, this->_start, "Unterminated string literal");
     }
   }
 }

@@ -11,8 +11,10 @@
 #include "ReaderMock.hpp"
 
 #define SYNTAX_ERROR(t, s0, s1, s2, e1, e2, e3, w) \
-  do { auto r = ::testing::NiceMock<MockReader>(t); \
-  EXPECT_STREQ(SyntaxError(&r, {s0, s1, s2}, {e1, e2, e3}, "Test").what(), "/bin/sh:" w); } while (0)
+  do { const auto path = fs::canonical("/bin/sh").string(); \
+  auto r = ::testing::NiceMock<MockReader>(t); \
+  r.seek({e1, e2, e3}); \
+  EXPECT_STREQ(SyntaxError(&r, {s0, s1, s2}, "Test").what(), std::string(path + ":" w).c_str()); } while (0)
 
 TEST(SyntaxErrorTest, SameLine) {
   SYNTAX_ERROR("@", 0, 1, 0, 0, 1, 0, "1:1: Test\n  1 | @\n    | ^\n");
