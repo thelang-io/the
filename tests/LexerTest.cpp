@@ -7,6 +7,7 @@
 
 #include <gmock/gmock.h>
 
+#include "../src/Error.hpp"
 #include "../src/Lexer.hpp"
 #include "ReaderMock.hpp"
 
@@ -51,6 +52,19 @@
   LEX_WS(t, "\"" v "text\""); \
   LEX_WS(t, "\"text" v "text\""); \
   LEX_WS(t, "\"text" v "text" v "text\"")
+
+#define LEX_THROW(c, m) \
+  do { auto r = ::testing::NiceMock<MockReader>(c); \
+  EXPECT_THROW({ \
+    try { \
+      Lexer(&r).next(); \
+    } catch (const Error &err) { \
+      const auto w = std::string(err.what()); \
+      const auto p = w.find(':', w.find(':', w.find(':') + 1) + 1) + 2; \
+      EXPECT_EQ(w.substr(p, w.find('\n') - p), m); \
+      throw; \
+    } \
+  }, Error); } while (0)
 
 #define LEX_WS(t, v) \
   LEX(t, v, v); \
@@ -221,4 +235,8 @@ TEST(LexerTest, Operators) {
   LEX_WS(opStarStar, "**");
   LEX_WS(opStarStarEq, "**=");
   LEX_WS(opTilde, "~");
+}
+
+TEST(LexerTest, Throws) {
+  LEX_THROW("\\", E0000.c_str());
 }
