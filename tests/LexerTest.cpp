@@ -254,4 +254,7 @@ TEST(LexerTest, Throws) {
   LEX_THROW(R"("text\)", E0003);
   LEX_THROW(R"("text\m")", E0005);
   LEX_THROW(R"("text{"\m"}")", E0005);
+  LEX_THROW("04", E0007);
+  LEX_THROW("0400", E0007);
+  LEX_THROW("1234f", E0009);
 }

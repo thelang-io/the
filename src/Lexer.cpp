@@ -227,6 +227,10 @@ Token Lexer::next () {
     this->_walk(Token::isLitIntDec);
     return this->_lexLitNum(Token::isLitIntDec, litIntDec);
   } else if (ch1 == '"') {
+    if (this->_reader->eof()) {
+      throw SyntaxError(this->_reader, this->_start, E0003);
+    }
+
     this->_walkLitStr();
     return this->_token(litStr);
   } else if (ch1 == '/') {
@@ -286,12 +290,6 @@ Token Lexer::next () {
       const auto ch3 = this->_reader->next();
 
       if (!Token::isLitCharEscape(ch3)) {
-        while (!this->_reader->eof()) {
-          if (this->_reader->next() == '\'') {
-            break;
-          }
-        }
-
         throw SyntaxError(this->_reader, loc2, E0005);
       } else if (this->_reader->eof()) {
         throw SyntaxError(this->_reader, this->_start, E0002);
@@ -598,9 +596,7 @@ void Lexer::_walkLitStr () {
       }
 
       this->_val += ch2;
-    }
-
-    if (ch1 == '{' && !insideChar) {
+    } else if (ch1 == '{' && !insideChar) {
       blocks += 1;
     } else if (ch1 == '}' && blocks != 0 && !insideChar) {
       blocks -= 1;
