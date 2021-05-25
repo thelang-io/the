@@ -122,6 +122,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwIs, "is");
   LEX_KW(kwLoop, "loop");
   LEX_KW(kwMain, "main");
+  LEX_KW(kwMatch, "match");
 }
 
 TEST(LexerTest, Literals) {
