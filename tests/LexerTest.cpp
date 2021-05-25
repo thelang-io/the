@@ -119,6 +119,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwIn, "in");
   LEX_KW(kwInit, "init");
   LEX_KW(kwInterface, "interface");
+  LEX_KW(kwIs, "is");
 }
 
 TEST(LexerTest, Literals) {
