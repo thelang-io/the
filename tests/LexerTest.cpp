@@ -130,6 +130,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwOp, "op");
   LEX_KW(kwOverride, "override");
   LEX_KW(kwPriv, "priv");
+  LEX_KW(kwProt, "prot");
 }
 
 TEST(LexerTest, Literals) {
