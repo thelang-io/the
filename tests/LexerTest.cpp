@@ -70,6 +70,8 @@ TEST(LexerTest, Comments) {
   LEX_WS(commentLine, "//");
   LEX_WS(commentLine, "//text");
   LEX_WS(commentBlock, "/**/");
+  LEX_WS(commentBlock, "/***/");
+  LEX_WS(commentBlock, "/*!*/");
   LEX_WS(commentBlock, "/*text*/");
   LEX_WS(commentBlock, "/*\n*/");
   LEX_WS(commentBlock, "/*text\ntext*/");
