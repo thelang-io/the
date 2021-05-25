@@ -112,6 +112,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwExport, "export");
   LEX_KW(kwFallthrough, "fallthrough");
   LEX_KW(kwFalse, "false");
+  LEX_KW(kwFn, "fn");
 }
 
 TEST(LexerTest, Literals) {
