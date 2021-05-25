@@ -264,4 +264,8 @@ TEST(LexerTest, Throws) {
   LEX_THROW("0b", E0008);
   LEX_THROW("0bG", E0008);
   LEX_THROW("0B1g", E0008);
+
+  LEX_THROW("0x", E0010);
+  LEX_THROW("0xG", E0010);
+  LEX_THROW("0Xag", E0010);
 }
