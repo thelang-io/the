@@ -45,11 +45,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   include(FetchContent)
   include(GoogleTest)
 
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-  )
-
+  FetchContent_Declare(googletest GIT_REPOSITORY https://github.com/google/googletest.git)
   FetchContent_MakeAvailable(googletest)
 
   set(
