@@ -108,6 +108,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwDeinit, "deinit");
   LEX_KW(kwElif, "elif");
   LEX_KW(kwElse, "else");
+  LEX_KW(kwEnum, "enum");
 }
 
 TEST(LexerTest, Literals) {
