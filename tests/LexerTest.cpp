@@ -113,6 +113,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwFallthrough, "fallthrough");
   LEX_KW(kwFalse, "false");
   LEX_KW(kwFn, "fn");
+  LEX_KW(kwFrom, "from");
 }
 
 TEST(LexerTest, Literals) {
