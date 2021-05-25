@@ -121,6 +121,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwInterface, "interface");
   LEX_KW(kwIs, "is");
   LEX_KW(kwLoop, "loop");
+  LEX_KW(kwMain, "main");
 }
 
 TEST(LexerTest, Literals) {
