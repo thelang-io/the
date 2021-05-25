@@ -131,6 +131,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwOverride, "override");
   LEX_KW(kwPriv, "priv");
   LEX_KW(kwProt, "prot");
+  LEX_KW(kwPub, "pub");
 }
 
 TEST(LexerTest, Literals) {
