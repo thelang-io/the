@@ -239,8 +239,10 @@ TEST(LexerTest, Operators) {
 
 TEST(LexerTest, Throws) {
   LEX_THROW(R"(\)", E0000);
+
   LEX_THROW(R"(/*)", E0001);
   LEX_THROW(R"(/*text)", E0001);
+
   LEX_THROW(R"(')", E0002);
   LEX_THROW(R"('')", E0004);
   LEX_THROW(R"('a)", E0002);
@@ -254,7 +256,12 @@ TEST(LexerTest, Throws) {
   LEX_THROW(R"("text\)", E0003);
   LEX_THROW(R"("text\m")", E0005);
   LEX_THROW(R"("text{"\m"}")", E0005);
+
   LEX_THROW("04", E0007);
   LEX_THROW("0400", E0007);
-  LEX_THROW("1234f", E0009);
+  LEX_THROW("1234g", E0009);
+
+  LEX_THROW("0b", E0008);
+  LEX_THROW("0bG", E0008);
+  LEX_THROW("0B1g", E0008);
 }
