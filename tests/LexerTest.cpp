@@ -138,6 +138,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwThis, "this");
   LEX_KW(kwThrow, "throw");
   LEX_KW(kwTrue, "true");
+  LEX_KW(kwTry, "try");
 }
 
 TEST(LexerTest, Literals) {
