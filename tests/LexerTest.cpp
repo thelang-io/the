@@ -132,6 +132,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwPriv, "priv");
   LEX_KW(kwProt, "prot");
   LEX_KW(kwPub, "pub");
+  LEX_KW(kwReturn, "return");
 }
 
 TEST(LexerTest, Literals) {
