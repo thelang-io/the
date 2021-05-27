@@ -133,6 +133,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwProt, "prot");
   LEX_KW(kwPub, "pub");
   LEX_KW(kwReturn, "return");
+  LEX_KW(kwStatic, "static");
 }
 
 TEST(LexerTest, Literals) {
