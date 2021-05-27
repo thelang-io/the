@@ -135,6 +135,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwReturn, "return");
   LEX_KW(kwStatic, "static");
   LEX_KW(kwSuper, "super");
+  LEX_KW(kwThis, "this");
 }
 
 TEST(LexerTest, Literals) {
