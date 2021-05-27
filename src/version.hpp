@@ -9,6 +9,6 @@
 #define SRC_VERSION_HPP
 
 #define VERSION "0.2.0"
-#define VERSION_NAME "Threadsnake"
+#define VERSION_NAME "Nematode"
 
 #endif
