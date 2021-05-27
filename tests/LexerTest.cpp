@@ -139,6 +139,7 @@ TEST(LexerTest, Keywords) {
   LEX_KW(kwThrow, "throw");
   LEX_KW(kwTrue, "true");
   LEX_KW(kwTry, "try");
+  LEX_KW(kwUnion, "union");
 }
 
 TEST(LexerTest, Literals) {
