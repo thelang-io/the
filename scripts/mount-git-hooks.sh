@@ -1,17 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-set -e
+#
+# Copyright (c) Aaron Delasy
+#
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+#
 
 cat > .git/hooks/pre-commit << EOF
-#!/usr/bin/env bash
-
-if [ ! -d build ]; then
-  mkdir -p build
-  (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON)
-fi
-
-cmake --build build
-(cd build && ctest --output-on-failure)
+#!/bin/sh
+make
 EOF
 
 chmod +x .git/hooks/pre-commit

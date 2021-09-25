@@ -1,14 +1,14 @@
-/**
+/*!
  * Copyright (c) Aaron Delasy
  *
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
 
-#ifndef SRC_TOKEN_HPP
-#define SRC_TOKEN_HPP
+#ifndef SRC_TOKEN_H
+#define SRC_TOKEN_H
 
-#include "Reader.hpp"
+#include "reader.h"
 
 #define FOREACH_TOKEN(fn) \
   fn(eof) \
@@ -71,7 +71,7 @@
   fn(litIntDec) \
   fn(litIntHex) \
   fn(litIntOct) \
-  fn(litStr) /* TODO */ \
+  fn(litStr) \
   \
   fn(opAnd) \
   fn(opAndAnd) \
@@ -130,38 +130,33 @@
   fn(opStarStarEq) \
   fn(opTilde)
 
-enum TokenType {
+typedef struct token_s token_t;
+
+typedef enum {
   #define GEN_TOKEN_ENUM(x) x,
   FOREACH_TOKEN(GEN_TOKEN_ENUM)
   #undef GEN_TOKEN_ENUM
+} token_type_t;
+
+struct token_s {
+  token_type_t type;
+  char *val;
+  reader_location_t start;
+  reader_location_t end;
 };
 
-class Token {
- public:
-  static bool isDigit (char);
-  static bool isLitCharEscape (char);
-  static bool isLitIdContinue (char);
-  static bool isLitIdStart (char);
-  static bool isLitIntBin (char);
-  static bool isLitIntDec (char);
-  static bool isLitIntHex (char);
-  static bool isLitIntOct (char);
-  static bool isLitStrEscape (char);
-  static bool isWhitespace (char);
-  static std::string litIntToStr (TokenType);
+bool token_is_digit (char ch);
+bool token_is_lit_char_escape (char ch);
+bool token_is_lit_id_continue (char ch);
+bool token_is_lit_id_start (char ch);
+bool token_is_lit_int_bin (char ch);
+bool token_is_lit_int_dec (char ch);
+bool token_is_lit_int_hex (char ch);
+bool token_is_lit_int_oct (char ch);
+bool token_is_lit_str_escape (char ch);
+bool token_is_whitespace (char ch);
 
-  const TokenType type;
-  const std::string val;
-  const ReaderLocation start;
-  const ReaderLocation end;
-
-  Token (TokenType, const std::string &, const ReaderLocation &, const ReaderLocation &);
-  bool operator== (const Token &) const;
-  bool operator!= (const Token &) const;
-  bool operator== (TokenType) const;
-  bool operator!= (TokenType) const;
-
-  [[nodiscard]] std::string str () const;
-};
+token_t *token_init (token_type_t type, const char *val, reader_location_t start, reader_location_t end);
+void token_free (token_t *token);
 
 #endif
