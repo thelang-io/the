@@ -140,9 +140,9 @@ typedef enum {
 
 struct token_s {
   token_type_t type;
-  char *val;
   reader_location_t start;
   reader_location_t end;
+  char *val;
 };
 
 bool token_is_digit (char ch);
@@ -154,9 +154,12 @@ bool token_is_lit_int_dec (char ch);
 bool token_is_lit_int_hex (char ch);
 bool token_is_lit_int_oct (char ch);
 bool token_is_lit_str_escape (char ch);
+bool token_is_not_newline (char ch);
 bool token_is_whitespace (char ch);
 
 token_t *token_init (token_type_t type, const char *val, reader_location_t start, reader_location_t end);
-void token_free (token_t *token);
+void token_free (token_t *this);
+
+char *token_str (token_t *this);
 
 #endif

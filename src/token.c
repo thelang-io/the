@@ -8,7 +8,14 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include "error.h"
 #include "token.h"
+
+const char *token_type[] = {
+  #define GEN_TOKEN_STR(x) #x,
+  FOREACH_TOKEN(GEN_TOKEN_STR)
+  #undef GEN_TOKEN_STR
+};
 
 bool token_is_digit (char ch) {
   return strchr("0123456789", ch) != NULL;
@@ -46,35 +53,68 @@ bool token_is_lit_str_escape (char ch) {
   return token_is_lit_char_escape(ch) || ch == '{';
 }
 
+bool token_is_not_newline (char ch) {
+  return ch != '\n';
+}
+
 bool token_is_whitespace (char ch) {
   return strchr("\r\n\t ", ch) != NULL;
 }
 
 token_t *token_init (token_type_t type, const char *val, reader_location_t start, reader_location_t end) {
-  token_t *token = malloc(sizeof(token_t));
+  token_t *this = malloc(sizeof(token_t));
 
-  if (token == NULL) {
-    fprintf(stderr, "Unable to allocate memory for token\n");
-    exit(EXIT_FAILURE);
+  if (this == NULL) {
+    throw_error("Unable to allocate memory for token");
   }
 
-  const size_t val_length = strlen(val) + 1;
-  token->val = malloc(val_length);
+  size_t val_length = strlen(val) + 1;
+  this->val = malloc(val_length);
 
-  if (token->val == NULL) {
-    fprintf(stderr, "Unable to allocate %lu bytes for token value\n", val_length);
-    exit(EXIT_FAILURE);
+  if (this->val == NULL) {
+    throw_error("Unable to allocate %lu bytes for token value", val_length);
   }
 
-  token->type = type;
-  strcpy(token->val, val);
-  token->start = start;
-  token->end = end;
+  this->type = type;
+  this->start = start;
+  this->end = end;
+  strcpy(this->val, val);
 
-  return token;
+  return this;
 }
 
-void token_free (token_t *token) {
-  free(token->val);
-  free(token);
+void token_free (token_t *this) {
+  free(this->val);
+  free(this);
+}
+
+char *token_str (token_t *this) {
+  char *fmt = "%s(%lu:%lu-%lu:%lu): %s";
+
+  size_t len = (size_t) snprintf(
+    NULL,
+    0,
+    fmt,
+    token_type[this->type],
+    this->start.line,
+    this->start.col + 1,
+    this->end.line,
+    this->end.col + 1,
+    this->val
+  );
+
+  char *buf = malloc(len + 1);
+
+  sprintf(
+    buf,
+    fmt,
+    token_type[this->type],
+    this->start.line,
+    this->start.col + 1,
+    this->end.line,
+    this->end.col + 1,
+    this->val
+  );
+
+  return buf;
 }

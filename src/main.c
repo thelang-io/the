@@ -5,16 +5,35 @@
  * Proprietary and confidential
  */
 
-#include "reader.h"
+// TODO Go through codebase and check code style
+
+#include <stdlib.h>
+#include "lexer.h"
 
 int main () {
   reader_t *reader = reader_init("reader-test.adl");
+  lexer_t *lexer = lexer_init(reader);
 
-  while (!reader_eof(reader)) {
-    const char ch = reader_next(reader);
-    printf("%c", ch);
+  while (true) {
+    token_t *tok = lexer_next(lexer);
+
+    if (tok->type == whitespace) {
+      token_free(tok);
+      continue;
+    } else if (tok->type == eof) {
+      token_free(tok);
+      break;
+    }
+
+    char *tok_str = token_str(tok);
+    printf("%s\n", tok_str);
+
+    free(tok_str);
+    token_free(tok);
   }
 
+  lexer_free(lexer);
   reader_free(reader);
+
   return 0;
 }

@@ -5,10 +5,10 @@
 # Proprietary and confidential
 #
 
-PROJECT_NAME=language
+PROJECT_NAME=the-core
 BUILD_DIR=build
 SOURCE_DIR=src
-SOURCES=src/main.c src/reader.c src/token.c
+SOURCES=src/error.c src/lexer.c src/main.c src/reader.c src/token.c
 
 CC=gcc
 CFLAGS=-Wall -Wconversion -Werror -Wextra -Wparentheses -Wshadow -Wundef -Wunreachable-code -pedantic-errors -std=c11 -g

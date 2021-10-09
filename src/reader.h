@@ -21,18 +21,20 @@ struct reader_location_s {
 };
 
 struct reader_s {
-  char *content;
-  reader_location_t loc;
-  FILE *fp;
   char *path;
+  FILE *fp;
+  char *content;
   size_t size;
+  reader_location_t loc;
 };
 
 reader_t *reader_init (const char *path);
-void reader_free (reader_t *reader);
+void reader_free (reader_t *this);
 
-bool reader_eof (const reader_t *reader);
-char reader_next (reader_t *reader);
-void reader_seek (reader_t *reader, reader_location_t loc);
+bool reader_eof (const reader_t *this);
+char reader_next (reader_t *this);
+void reader_seek (reader_t *this, reader_location_t loc);
+
+reader_location_t reader_location_init ();
 
 #endif
