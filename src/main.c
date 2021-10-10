@@ -9,11 +9,10 @@
 #include "lexer.h"
 
 int main () {
-  reader_t *reader = reader_init("reader-test.adl");
-  lexer_t *lexer = lexer_init(reader);
+  reader_t *reader = reader_init("program.adl");
 
   while (true) {
-    token_t *tok = lexer_next(lexer);
+    token_t *tok = lexer_next(reader);
 
     if (tok->type == whitespace) {
       token_free(tok);
@@ -29,8 +28,6 @@ int main () {
     token_free(tok);
   }
 
-  lexer_free(lexer);
   reader_free(reader);
-
   return 0;
 }

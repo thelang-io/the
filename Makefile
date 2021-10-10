@@ -25,12 +25,9 @@ clean:
 
 dir:
 	$(MKDIR) $(BUILD_DIR)
-.PHONY: dir
 
 $(OBJECTS): $(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/$(PROJECT_NAME): $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@
-
-.PHONY: all clean dir

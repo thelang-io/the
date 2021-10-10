@@ -61,24 +61,21 @@ bool token_is_whitespace (char ch) {
   return strchr("\r\n\t ", ch) != NULL;
 }
 
-token_t *token_init (token_type_t type, const char *val, reader_location_t start, reader_location_t end) {
+token_t *token_init (reader_location_t loc) {
   token_t *this = malloc(sizeof(token_t));
 
   if (this == NULL) {
     throw_error("Unable to allocate memory for token");
   }
 
-  size_t val_length = strlen(val) + 1;
-  this->val = malloc(val_length);
+  this->start = loc;
+  this->end = loc;
+  this->val_len = 0;
+  this->val = malloc(this->val_len + 1);
 
   if (this->val == NULL) {
-    throw_error("Unable to allocate %lu bytes for token value", val_length);
+    throw_error("Unable to allocate memory for token value");
   }
-
-  this->type = type;
-  this->start = start;
-  this->end = end;
-  strcpy(this->val, val);
 
   return this;
 }
