@@ -97,6 +97,6 @@ void reader_seek (reader_t *this, reader_location_t loc) {
 }
 
 reader_location_t reader_location_init () {
-  reader_location_t rl = { 0, 1, 0 };
+  reader_location_t rl = {0, 1, 0};
   return rl;
 }

@@ -97,6 +97,7 @@ token_t *lexer_next (lexer_t *this) {
         this->val = realloc(this->val, ++this->val_len + 1);
         this->val[this->val_len - 1] = ch2;
         this->val[this->val_len] = '\0';
+
         return lexer_token(this, ch2 == '.' ? opDotDotDot : opDotDotEq);
       } else {
         reader_seek(this->reader, loc2);
@@ -158,6 +159,7 @@ token_t *lexer_next (lexer_t *this) {
       this->val = realloc(this->val, ++this->val_len + 1);
       this->val[this->val_len - 1] = ch1;
       this->val[this->val_len] = '\0';
+
       return lexer_token(this, opSlashEq);
     } else if (ch1 != '/' && ch1 != '*') {
       reader_seek(this->reader, loc1);
@@ -185,6 +187,7 @@ token_t *lexer_next (lexer_t *this) {
         this->val = realloc(this->val, ++this->val_len + 1);
         this->val[this->val_len - 1] = ch1;
         this->val[this->val_len] = '\0';
+
         return lexer_token(this, kwAsSafe);
       } else {
         reader_seek(this->reader, loc1);
@@ -373,6 +376,7 @@ token_t *lexer_next (lexer_t *this) {
     this->val = realloc(this->val, ++this->val_len + 1);
     this->val[this->val_len - 1] = ch3;
     this->val[this->val_len] = '\0';
+
     return lexer_token(this, litChar);
   }
 

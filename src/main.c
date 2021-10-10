@@ -5,8 +5,6 @@
  * Proprietary and confidential
  */
 
-// TODO Go through codebase and check code style
-
 #include <stdlib.h>
 #include "lexer.h"
 
@@ -27,7 +25,6 @@ int main () {
 
     char *tok_str = token_str(tok);
     printf("%s\n", tok_str);
-
     free(tok_str);
     token_free(tok);
   }
