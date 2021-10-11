@@ -10,6 +10,342 @@
 #include "error.h"
 #include "lexer.h"
 
+token_t *lexer_token (reader_t *reader, token_t *tok, token_type_t type) {
+  tok->type = type;
+  tok->end = reader->loc;
+  return tok;
+}
+
+void lexer_walk (reader_t *reader, token_t *tok, bool (*fn) (char)) {
+  while (!reader_eof(reader)) {
+    reader_location_t loc = reader->loc;
+    char ch = reader_next(reader);
+
+    if (!fn(ch)) {
+      reader_seek(reader, loc);
+      break;
+    }
+
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch;
+    tok->val[tok->val_len] = '\0';
+  }
+}
+
+void lexer_walk_lit_float_exp (reader_t *reader, token_t *tok) {
+  if (reader_eof(reader)) {
+    throw_syntax_error(reader, tok->start, E0013);
+  }
+
+  char ch1 = reader_next(reader);
+
+  if (ch1 == '+' || ch1 == '-') {
+    if (reader_eof(reader)) {
+      throw_syntax_error(reader, tok->start, E0013);
+    }
+
+    char ch2 = reader_next(reader);
+
+    if (!token_is_digit(ch2)) {
+      lexer_walk(reader, tok, token_is_lit_id_continue);
+      throw_syntax_error(reader, tok->start, E0013);
+    }
+
+    tok->val_len += 2;
+    tok->val = realloc(tok->val, tok->val_len + 1);
+    tok->val[tok->val_len - 2] = ch1;
+    tok->val[tok->val_len - 1] = ch2;
+    tok->val[tok->val_len] = '\0';
+  } else if (token_is_digit(ch1)) {
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch1;
+    tok->val[tok->val_len] = '\0';
+  } else {
+    lexer_walk(reader, tok, token_is_lit_id_continue);
+    throw_syntax_error(reader, tok->start, E0013);
+  }
+
+  while (!reader_eof(reader)) {
+    reader_location_t loc3 = reader->loc;
+    char ch3 = reader_next(reader);
+
+    if (!token_is_digit(ch3)) {
+      reader_seek(reader, loc3);
+      break;
+    }
+
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch3;
+    tok->val[tok->val_len] = '\0';
+  }
+}
+
+void lexer_walk_lit_str (reader_t *reader, token_t *tok) {
+  size_t blocks = 0;
+  bool inside_char = false;
+
+  while (true) {
+    reader_location_t loc1 = reader->loc;
+    char ch1 = reader_next(reader);
+
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch1;
+    tok->val[tok->val_len] = '\0';
+
+    if (ch1 == '\\' && blocks == 0) {
+      if (reader_eof(reader)) {
+        throw_syntax_error(reader, tok->start, E0003);
+      }
+
+      char ch2 = reader_next(reader);
+
+      if (!token_is_lit_str_escape(ch2)) {
+        throw_syntax_error(reader, loc1, E0005);
+      }
+
+      tok->val = realloc(tok->val, ++tok->val_len + 1);
+      tok->val[tok->val_len - 1] = ch2;
+      tok->val[tok->val_len] = '\0';
+    } else if (ch1 == '{' && !inside_char) {
+      blocks += 1;
+    } else if (ch1 == '}' && blocks != 0 && !inside_char) {
+      blocks -= 1;
+    } else if (ch1 == '\'' && inside_char) {
+      inside_char = false;
+    } else if (ch1 == '\'' && blocks != 0) {
+      inside_char = true;
+    } else if (ch1 == '"' && blocks != 0) {
+      lexer_walk_lit_str(reader, tok);
+    } else if (ch1 == '"') {
+      break;
+    } else if (reader_eof(reader)) {
+      throw_syntax_error(reader, tok->start, E0003);
+    }
+  }
+}
+
+token_t *lexer_lit_float (reader_t *reader, token_t *tok, token_type_t type) {
+  if (!reader_eof(reader)) {
+    reader_location_t loc = reader->loc;
+    char ch = reader_next(reader);
+
+    if (token_is_lit_id_continue(ch)) {
+      lexer_walk(reader, tok, token_is_lit_id_continue);
+      throw_syntax_error(reader, tok->start, E0012);
+    } else {
+      reader_seek(reader, loc);
+    }
+  }
+
+  if (type == litIntBin) {
+    throw_syntax_error(reader, tok->start, E0014);
+  } else if (type == litIntHex) {
+    throw_syntax_error(reader, tok->start, E0015);
+  } else if (type == litIntOct) {
+    throw_syntax_error(reader, tok->start, E0016);
+  }
+
+  return lexer_token(reader, tok, litFloat);
+}
+
+token_t *lexer_lit_num (reader_t *reader, token_t *tok, bool (*fn) (char), token_type_t type) {
+  char *err_code = type == litIntBin ? E0008 : type == litIntDec ? E0009 : type == litIntHex ? E0010 : E0011;
+
+  if (type != litIntDec) {
+    if (reader_eof(reader)) {
+      throw_syntax_error(reader, tok->start, err_code);
+    }
+
+    char ch1 = reader_next(reader);
+
+    if (!fn(ch1)) {
+      lexer_walk(reader, tok, token_is_lit_id_continue);
+      throw_syntax_error(reader, tok->start, err_code);
+    }
+
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch1;
+    tok->val[tok->val_len] = '\0';
+    lexer_walk(reader, tok, fn);
+  }
+
+  if (reader_eof(reader)) {
+    return lexer_token(reader, tok, type);
+  }
+
+  reader_location_t loc2 = reader->loc;
+  char ch2 = reader_next(reader);
+
+  if (ch2 == 'E' || ch2 == 'e') {
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch2;
+    tok->val[tok->val_len] = '\0';
+    lexer_walk_lit_float_exp(reader, tok);
+
+    return lexer_lit_float(reader, tok, type);
+  } else if (ch2 == '.') {
+    if (reader_eof(reader)) {
+      throw_syntax_error(reader, tok->start, E0012);
+    }
+
+    char ch3 = reader_next(reader);
+
+    if (ch3 == '.') {
+      reader_seek(reader, loc2);
+    } else if (ch3 == 'E' || ch3 == 'e') {
+      tok->val_len += 2;
+      tok->val = realloc(tok->val, tok->val_len + 1);
+      tok->val[tok->val_len - 2] = ch2;
+      tok->val[tok->val_len - 1] = ch3;
+      tok->val[tok->val_len] = '\0';
+      lexer_walk_lit_float_exp(reader, tok);
+
+      return lexer_lit_float(reader, tok, type);
+    } else if (!token_is_lit_id_continue(ch3)) {
+      if (token_is_lit_id_continue(ch3)) {
+        lexer_walk(reader, tok, token_is_lit_id_continue);
+      }
+
+      throw_syntax_error(reader, tok->start, E0012);
+    } else {
+      bool with_exp = false;
+      tok->val_len += 2;
+      tok->val = realloc(tok->val, tok->val_len + 1);
+      tok->val[tok->val_len - 2] = ch2;
+      tok->val[tok->val_len - 1] = ch3;
+      tok->val[tok->val_len] = '\0';
+
+      while (!reader_eof(reader)) {
+        reader_location_t loc4 = reader->loc;
+        char ch4 = reader_next(reader);
+
+        if (ch4 == 'E' || ch4 == 'e') {
+          with_exp = true;
+        } else if (!token_is_digit(ch4)) {
+          reader_seek(reader, loc4);
+          break;
+        }
+
+        tok->val = realloc(tok->val, ++tok->val_len + 1);
+        tok->val[tok->val_len - 1] = ch4;
+        tok->val[tok->val_len] = '\0';
+
+        if (with_exp) {
+          break;
+        }
+      }
+
+      if (with_exp) {
+        lexer_walk_lit_float_exp(reader, tok);
+      }
+
+      return lexer_lit_float(reader, tok, type);
+    }
+  } else if (token_is_lit_id_continue(ch2)) {
+    lexer_walk(reader, tok, token_is_lit_id_continue);
+    throw_syntax_error(reader, tok->start, err_code);
+  } else {
+    reader_seek(reader, loc2);
+  }
+
+  return lexer_token(reader, tok, type);
+}
+
+token_t *lexer_op_eq (reader_t *reader, token_t *tok, token_type_t type1, token_type_t type2) {
+  if (reader_eof(reader)) {
+    return lexer_token(reader, tok, type1);
+  }
+
+  reader_location_t loc = reader->loc;
+  char ch = reader_next(reader);
+
+  if (ch == '=') {
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch;
+    tok->val[tok->val_len] = '\0';
+
+    return lexer_token(reader, tok, type2);
+  } else {
+    reader_seek(reader, loc);
+    return lexer_token(reader, tok, type1);
+  }
+}
+
+token_t *lexer_op_eq2 (
+  reader_t *reader,
+  token_t *tok,
+  char ch,
+  token_type_t type1,
+  token_type_t type2,
+  token_type_t type3,
+  token_type_t type4
+) {
+  if (reader_eof(reader)) {
+    return lexer_token(reader, tok, type1);
+  }
+
+  reader_location_t loc1 = reader->loc;
+  char ch1 = reader_next(reader);
+
+  if (ch1 == '=' || reader_eof(reader)) {
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch1;
+    tok->val[tok->val_len] = '\0';
+
+    return lexer_token(reader, tok, ch1 == '=' ? type2 : type3);
+  } else if (ch1 == ch) {
+    reader_location_t loc2 = reader->loc;
+    char ch2 = reader_next(reader);
+
+    if (ch2 == '=') {
+      tok->val_len += 2;
+      tok->val = realloc(tok->val, tok->val_len + 1);
+      tok->val[tok->val_len - 2] = ch1;
+      tok->val[tok->val_len - 1] = ch2;
+      tok->val[tok->val_len] = '\0';
+
+      return lexer_token(reader, tok, type4);
+    } else {
+      tok->val = realloc(tok->val, ++tok->val_len + 1);
+      tok->val[tok->val_len - 1] = ch1;
+      tok->val[tok->val_len] = '\0';
+      reader_seek(reader, loc2);
+
+      return lexer_token(reader, tok, type3);
+    }
+  } else {
+    reader_seek(reader, loc1);
+    return lexer_token(reader, tok, type1);
+  }
+}
+
+token_t *lexer_op_eq_double (
+  reader_t *reader,
+  token_t *tok,
+  char ch,
+  token_type_t type1,
+  token_type_t type2,
+  token_type_t type3
+) {
+  if (reader_eof(reader)) {
+    return lexer_token(reader, tok, type1);
+  }
+
+  reader_location_t loc2 = reader->loc;
+  char ch1 = reader_next(reader);
+
+  if (ch1 == '=' || ch1 == ch) {
+    tok->val = realloc(tok->val, ++tok->val_len + 1);
+    tok->val[tok->val_len - 1] = ch1;
+    tok->val[tok->val_len] = '\0';
+
+    return lexer_token(reader, tok, ch1 == '=' ? type2 : type3);
+  } else {
+    reader_seek(reader, loc2);
+    return lexer_token(reader, tok, type1);
+  }
+}
+
 token_t *lexer_next (reader_t *reader) {
   token_t *tok = token_init(reader->loc);
 
@@ -354,340 +690,4 @@ token_t *lexer_next (reader_t *reader) {
   }
 
   throw_syntax_error(reader, tok->start, E0000);
-}
-
-token_t *lexer_lit_float (reader_t *reader, token_t *tok, token_type_t type) {
-  if (!reader_eof(reader)) {
-    reader_location_t loc = reader->loc;
-    char ch = reader_next(reader);
-
-    if (token_is_lit_id_continue(ch)) {
-      lexer_walk(reader, tok, token_is_lit_id_continue);
-      throw_syntax_error(reader, tok->start, E0012);
-    } else {
-      reader_seek(reader, loc);
-    }
-  }
-
-  if (type == litIntBin) {
-    throw_syntax_error(reader, tok->start, E0014);
-  } else if (type == litIntHex) {
-    throw_syntax_error(reader, tok->start, E0015);
-  } else if (type == litIntOct) {
-    throw_syntax_error(reader, tok->start, E0016);
-  }
-
-  return lexer_token(reader, tok, litFloat);
-}
-
-token_t *lexer_lit_num (reader_t *reader, token_t *tok, bool (*fn) (char), token_type_t type) {
-  char *err_code = type == litIntBin ? E0008 : type == litIntDec ? E0009 : type == litIntHex ? E0010 : E0011;
-
-  if (type != litIntDec) {
-    if (reader_eof(reader)) {
-      throw_syntax_error(reader, tok->start, err_code);
-    }
-
-    char ch1 = reader_next(reader);
-
-    if (!fn(ch1)) {
-      lexer_walk(reader, tok, token_is_lit_id_continue);
-      throw_syntax_error(reader, tok->start, err_code);
-    }
-
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch1;
-    tok->val[tok->val_len] = '\0';
-    lexer_walk(reader, tok, fn);
-  }
-
-  if (reader_eof(reader)) {
-    return lexer_token(reader, tok, type);
-  }
-
-  reader_location_t loc2 = reader->loc;
-  char ch2 = reader_next(reader);
-
-  if (ch2 == 'E' || ch2 == 'e') {
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch2;
-    tok->val[tok->val_len] = '\0';
-    lexer_walk_lit_float_exp(reader, tok);
-
-    return lexer_lit_float(reader, tok, type);
-  } else if (ch2 == '.') {
-    if (reader_eof(reader)) {
-      throw_syntax_error(reader, tok->start, E0012);
-    }
-
-    char ch3 = reader_next(reader);
-
-    if (ch3 == '.') {
-      reader_seek(reader, loc2);
-    } else if (ch3 == 'E' || ch3 == 'e') {
-      tok->val_len += 2;
-      tok->val = realloc(tok->val, tok->val_len + 1);
-      tok->val[tok->val_len - 2] = ch2;
-      tok->val[tok->val_len - 1] = ch3;
-      tok->val[tok->val_len] = '\0';
-      lexer_walk_lit_float_exp(reader, tok);
-
-      return lexer_lit_float(reader, tok, type);
-    } else if (!token_is_lit_id_continue(ch3)) {
-      if (token_is_lit_id_continue(ch3)) {
-        lexer_walk(reader, tok, token_is_lit_id_continue);
-      }
-
-      throw_syntax_error(reader, tok->start, E0012);
-    } else {
-      bool with_exp = false;
-      tok->val_len += 2;
-      tok->val = realloc(tok->val, tok->val_len + 1);
-      tok->val[tok->val_len - 2] = ch2;
-      tok->val[tok->val_len - 1] = ch3;
-      tok->val[tok->val_len] = '\0';
-
-      while (!reader_eof(reader)) {
-        reader_location_t loc4 = reader->loc;
-        char ch4 = reader_next(reader);
-
-        if (ch4 == 'E' || ch4 == 'e') {
-          with_exp = true;
-        } else if (!token_is_digit(ch4)) {
-          reader_seek(reader, loc4);
-          break;
-        }
-
-        tok->val = realloc(tok->val, ++tok->val_len + 1);
-        tok->val[tok->val_len - 1] = ch4;
-        tok->val[tok->val_len] = '\0';
-
-        if (with_exp) {
-          break;
-        }
-      }
-
-      if (with_exp) {
-        lexer_walk_lit_float_exp(reader, tok);
-      }
-
-      return lexer_lit_float(reader, tok, type);
-    }
-  } else if (token_is_lit_id_continue(ch2)) {
-    lexer_walk(reader, tok, token_is_lit_id_continue);
-    throw_syntax_error(reader, tok->start, err_code);
-  } else {
-    reader_seek(reader, loc2);
-  }
-
-  return lexer_token(reader, tok, type);
-}
-
-token_t *lexer_op_eq (reader_t *reader, token_t *tok, token_type_t type1, token_type_t type2) {
-  if (reader_eof(reader)) {
-    return lexer_token(reader, tok, type1);
-  }
-
-  reader_location_t loc = reader->loc;
-  char ch = reader_next(reader);
-
-  if (ch == '=') {
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch;
-    tok->val[tok->val_len] = '\0';
-
-    return lexer_token(reader, tok, type2);
-  } else {
-    reader_seek(reader, loc);
-    return lexer_token(reader, tok, type1);
-  }
-}
-
-token_t *lexer_op_eq2 (
-  reader_t *reader,
-  token_t *tok,
-  char ch,
-  token_type_t type1,
-  token_type_t type2,
-  token_type_t type3,
-  token_type_t type4
-) {
-  if (reader_eof(reader)) {
-    return lexer_token(reader, tok, type1);
-  }
-
-  reader_location_t loc1 = reader->loc;
-  char ch1 = reader_next(reader);
-
-  if (ch1 == '=' || reader_eof(reader)) {
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch1;
-    tok->val[tok->val_len] = '\0';
-
-    return lexer_token(reader, tok, ch1 == '=' ? type2 : type3);
-  } else if (ch1 == ch) {
-    reader_location_t loc2 = reader->loc;
-    char ch2 = reader_next(reader);
-
-    if (ch2 == '=') {
-      tok->val_len += 2;
-      tok->val = realloc(tok->val, tok->val_len + 1);
-      tok->val[tok->val_len - 2] = ch1;
-      tok->val[tok->val_len - 1] = ch2;
-      tok->val[tok->val_len] = '\0';
-
-      return lexer_token(reader, tok, type4);
-    } else {
-      tok->val = realloc(tok->val, ++tok->val_len + 1);
-      tok->val[tok->val_len - 1] = ch1;
-      tok->val[tok->val_len] = '\0';
-      reader_seek(reader, loc2);
-
-      return lexer_token(reader, tok, type3);
-    }
-  } else {
-    reader_seek(reader, loc1);
-    return lexer_token(reader, tok, type1);
-  }
-}
-
-token_t *lexer_op_eq_double (
-  reader_t *reader,
-  token_t *tok,
-  char ch,
-  token_type_t type1,
-  token_type_t type2,
-  token_type_t type3
-) {
-  if (reader_eof(reader)) {
-    return lexer_token(reader, tok, type1);
-  }
-
-  reader_location_t loc2 = reader->loc;
-  char ch1 = reader_next(reader);
-
-  if (ch1 == '=' || ch1 == ch) {
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch1;
-    tok->val[tok->val_len] = '\0';
-
-    return lexer_token(reader, tok, ch1 == '=' ? type2 : type3);
-  } else {
-    reader_seek(reader, loc2);
-    return lexer_token(reader, tok, type1);
-  }
-}
-
-token_t *lexer_token (reader_t *reader, token_t *tok, token_type_t type) {
-  tok->type = type;
-  tok->end = reader->loc;
-  return tok;
-}
-
-void lexer_walk (reader_t *reader, token_t *tok, bool (*fn) (char)) {
-  while (!reader_eof(reader)) {
-    reader_location_t loc = reader->loc;
-    char ch = reader_next(reader);
-
-    if (!fn(ch)) {
-      reader_seek(reader, loc);
-      break;
-    }
-
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch;
-    tok->val[tok->val_len] = '\0';
-  }
-}
-
-void lexer_walk_lit_float_exp (reader_t *reader, token_t *tok) {
-  if (reader_eof(reader)) {
-    throw_syntax_error(reader, tok->start, E0013);
-  }
-
-  char ch1 = reader_next(reader);
-
-  if (ch1 == '+' || ch1 == '-') {
-    if (reader_eof(reader)) {
-      throw_syntax_error(reader, tok->start, E0013);
-    }
-
-    char ch2 = reader_next(reader);
-
-    if (!token_is_digit(ch2)) {
-      lexer_walk(reader, tok, token_is_lit_id_continue);
-      throw_syntax_error(reader, tok->start, E0013);
-    }
-
-    tok->val_len += 2;
-    tok->val = realloc(tok->val, tok->val_len + 1);
-    tok->val[tok->val_len - 2] = ch1;
-    tok->val[tok->val_len - 1] = ch2;
-    tok->val[tok->val_len] = '\0';
-  } else if (token_is_digit(ch1)) {
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch1;
-    tok->val[tok->val_len] = '\0';
-  } else {
-    lexer_walk(reader, tok, token_is_lit_id_continue);
-    throw_syntax_error(reader, tok->start, E0013);
-  }
-
-  while (!reader_eof(reader)) {
-    reader_location_t loc3 = reader->loc;
-    char ch3 = reader_next(reader);
-
-    if (!token_is_digit(ch3)) {
-      reader_seek(reader, loc3);
-      break;
-    }
-
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch3;
-    tok->val[tok->val_len] = '\0';
-  }
-}
-
-void lexer_walk_lit_str (reader_t *reader, token_t *tok) {
-  size_t blocks = 0;
-  bool inside_char = false;
-
-  while (true) {
-    reader_location_t loc1 = reader->loc;
-    char ch1 = reader_next(reader);
-
-    tok->val = realloc(tok->val, ++tok->val_len + 1);
-    tok->val[tok->val_len - 1] = ch1;
-    tok->val[tok->val_len] = '\0';
-
-    if (ch1 == '\\' && blocks == 0) {
-      if (reader_eof(reader)) {
-        throw_syntax_error(reader, tok->start, E0003);
-      }
-
-      char ch2 = reader_next(reader);
-
-      if (!token_is_lit_str_escape(ch2)) {
-        throw_syntax_error(reader, loc1, E0005);
-      }
-
-      tok->val = realloc(tok->val, ++tok->val_len + 1);
-      tok->val[tok->val_len - 1] = ch2;
-      tok->val[tok->val_len] = '\0';
-    } else if (ch1 == '{' && !inside_char) {
-      blocks += 1;
-    } else if (ch1 == '}' && blocks != 0 && !inside_char) {
-      blocks -= 1;
-    } else if (ch1 == '\'' && inside_char) {
-      inside_char = false;
-    } else if (ch1 == '\'' && blocks != 0) {
-      inside_char = true;
-    } else if (ch1 == '"' && blocks != 0) {
-      lexer_walk_lit_str(reader, tok);
-    } else if (ch1 == '"') {
-      break;
-    } else if (reader_eof(reader)) {
-      throw_syntax_error(reader, tok->start, E0003);
-    }
-  }
 }

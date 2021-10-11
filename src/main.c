@@ -6,26 +6,23 @@
  */
 
 #include <stdlib.h>
-#include "lexer.h"
+#include "parser.h"
 
 int main () {
   reader_t *reader = reader_init("program.adl");
 
   while (true) {
-    token_t *tok = lexer_next(reader);
+    stmt_t *stmt = parser_next(reader);
 
-    if (tok->type == whitespace) {
-      token_free(tok);
-      continue;
-    } else if (tok->type == eof) {
-      token_free(tok);
+    if (stmt->type == stmtEnd) {
+      stmt_free(stmt);
       break;
     }
 
-    char *tok_str = token_str(tok);
-    printf("%s\n", tok_str);
-    free(tok_str);
-    token_free(tok);
+    char *buf = stmt_str(stmt, 0);
+    printf("%s\n", buf);
+    free(buf);
+    stmt_free(stmt);
   }
 
   reader_free(reader);

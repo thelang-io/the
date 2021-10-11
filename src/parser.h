@@ -5,11 +5,11 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_LEXER_H
-#define SRC_LEXER_H
+#ifndef SRC_PARSER_H
+#define SRC_PARSER_H
 
-#include "token.h"
+#include "stmt.h"
 
-token_t *lexer_next (reader_t *reader);
+stmt_t *parser_next (reader_t *reader);
 
 #endif
