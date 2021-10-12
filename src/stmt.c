@@ -48,14 +48,6 @@ void stmt_free (stmt_t *this) {
 
     token_free(stmt_call_expr->callee);
     free(stmt_call_expr->args);
-  } else if (this->type == stmtMain) {
-    stmt_main_t *stmt_main = (stmt_main_t *) this;
-
-    for (size_t i = 0; i < stmt_main->body_len; i++) {
-      stmt_free(stmt_main->body[i]);
-    }
-
-    free(stmt_main->body);
   }
 
   free(this);
