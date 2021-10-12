@@ -17,6 +17,8 @@ void parser_stmt_whitespace (reader_t *reader) {
   if (tok->type != whitespace) {
     reader_seek(reader, loc);
   }
+
+  token_free(tok);
 }
 
 stmt_t *parser_next (reader_t *reader) {
@@ -30,28 +32,32 @@ stmt_t *parser_next (reader_t *reader) {
   token_t *tok = lexer_next(reader);
 
   if (tok->type == kwMain) {
+    token_free(tok);
     parser_stmt_whitespace(reader);
-    token_t *l_brace = lexer_next(reader);
+    token_t *lbrace = lexer_next(reader);
 
-    if (l_brace->type != opLBrace) {
+    if (lbrace->type != opLBrace) {
       // TODO throw
     }
 
+    token_free(lbrace);
     stmt_t **body = NULL;
     size_t body_len = 0;
 
     while (true) {
       parser_stmt_whitespace(reader);
-      reader_location_t r_brace_loc = reader->loc;
-      token_t *r_brace = lexer_next(reader);
+      reader_location_t rbrace_loc = reader->loc;
+      token_t *rbrace = lexer_next(reader);
 
-      if (r_brace->type == opRBrace) {
+      if (rbrace->type == opRBrace) {
+        token_free(rbrace);
         break;
-      } else if (r_brace->type == eof) {
+      } else if (rbrace->type == eof) {
         // TODO throw
       }
 
-      reader_seek(reader, r_brace_loc);
+      token_free(rbrace);
+      reader_seek(reader, rbrace_loc);
 
       if (body_len == 0) {
         body = malloc(++body_len * sizeof(stmt_t));
@@ -69,25 +75,26 @@ stmt_t *parser_next (reader_t *reader) {
     return (stmt_t *) main_stmt;
   } else if (tok->type == litId) {
     parser_stmt_whitespace(reader);
-    token_t *l_par = lexer_next(reader);
+    token_t *lpar = lexer_next(reader);
 
-    if (l_par->type != opLPar) {
+    if (lpar->type != opLPar) {
       // TODO throw
     }
 
+    token_free(lpar);
     parser_stmt_whitespace(reader);
-    token_t *r_par = lexer_next(reader);
+    token_t *rpar = lexer_next(reader);
     expr_t **args = NULL;
     size_t args_len = 0;
 
-    while (r_par->type != opRPar) {
-      if (r_par->type == eof) {
+    while (rpar->type != opRPar) {
+      if (rpar->type == eof) {
         // TODO throw
       }
 
-      if (r_par->type == litStr) {
+      if (rpar->type == litStr) {
         expr_literal_t *expr = (expr_literal_t *) expr_init(exprLiteral, start, reader->loc);
-        expr->tok = r_par;
+        expr->tok = rpar;
 
         if (args_len == 0) {
           args = malloc(++args_len * sizeof(expr_t));
@@ -101,14 +108,16 @@ stmt_t *parser_next (reader_t *reader) {
       }
 
       parser_stmt_whitespace(reader);
-      r_par = lexer_next(reader);
+      rpar = lexer_next(reader);
 
-      if (r_par->type == opComma) {
+      if (rpar->type == opComma) {
+        token_free(rpar);
         parser_stmt_whitespace(reader);
-        r_par = lexer_next(reader);
+        rpar = lexer_next(reader);
       }
     }
 
+    token_free(rpar);
     stmt_call_expr_t *call_expr_stmt = (stmt_call_expr_t *) stmt_init(stmtCallExpr, start, reader->loc);
     call_expr_stmt->args = args;
     call_expr_stmt->args_len = args_len;

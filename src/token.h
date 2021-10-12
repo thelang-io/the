@@ -161,6 +161,4 @@ bool token_is_whitespace (char ch);
 token_t *token_init (reader_location_t loc);
 void token_free (token_t *this);
 
-char *token_str (token_t *this);
-
 #endif

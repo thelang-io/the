@@ -29,7 +29,7 @@
 #define E0016 "E0016 - Octal float literals are not allowed"
 #define E0100 "E0100 - Unexpected statement"
 
-void throw_error (const char *fmt, ...) __dead2;
-void throw_syntax_error (reader_t *reader, reader_location_t start, const char *fmt) __dead2;
+void throw_error (const char *fmt, ...) __attribute__((noreturn));
+void throw_syntax_error (reader_t *reader, reader_location_t start, const char *fmt) __attribute__((noreturn));
 
 #endif

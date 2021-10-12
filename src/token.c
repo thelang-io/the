@@ -84,34 +84,3 @@ void token_free (token_t *this) {
   free(this->val);
   free(this);
 }
-
-char *token_str (token_t *this) {
-  char *fmt = "%s(%lu:%lu-%lu:%lu): %s";
-
-  size_t len = (size_t) snprintf(
-    NULL,
-    0,
-    fmt,
-    token_type[this->type],
-    this->start.line,
-    this->start.col + 1,
-    this->end.line,
-    this->end.col + 1,
-    this->val
-  );
-
-  char *buf = malloc(len + 1);
-
-  sprintf(
-    buf,
-    fmt,
-    token_type[this->type],
-    this->start.line,
-    this->start.col + 1,
-    this->end.line,
-    this->end.col + 1,
-    this->val
-  );
-
-  return buf;
-}

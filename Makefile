@@ -11,7 +11,7 @@ SOURCE_DIR=src
 SOURCES=src/error.c src/expr.c src/lexer.c src/main.c src/parser.c src/reader.c src/stmt.c src/token.c
 
 CC=gcc
-CFLAGS=-Wall -Wconversion -Werror -Wextra -Wparentheses -Wshadow -Wundef -Wunreachable-code -pedantic-errors -std=c11 -g
+CFLAGS=-Wall -Wconversion -Werror -Wextra -Wparentheses -Wshadow -Wundef -Wunreachable-code -pedantic-errors -std=gnu99 -g
 MKDIR=mkdir -p
 OBJECTS=$(SOURCES:$(SOURCE_DIR)/%.c=$(BUILD_DIR)/%.o)
 RM=rm -f

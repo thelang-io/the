@@ -47,12 +47,15 @@ void stmt_free (stmt_t *this) {
     }
 
     token_free(stmt_call_expr->callee);
+    free(stmt_call_expr->args);
   } else if (this->type == stmtMain) {
     stmt_main_t *stmt_main = (stmt_main_t *) this;
 
     for (size_t i = 0; i < stmt_main->body_len; i++) {
       stmt_free(stmt_main->body[i]);
     }
+
+    free(stmt_main->body);
   }
 
   free(this);
@@ -70,9 +73,10 @@ char *stmt_str (stmt_t *this, size_t indent) {
     stmt_call_expr_t *stmt_call_expr = (stmt_call_expr_t *) this;
     char *fmt = "%s<call_expr callee=\"%s\">%s%s%s</call_expr>";
     char *indent_start = stmt_call_expr->args_len == 0 ? "" : "\n";
+    char *indent_end = stmt_call_expr->args_len == 0 ? "" : indent_spaces;
     size_t content_len = 0;
     char *content = malloc(content_len + 1);
-    content[content_len - 1] = '\0';
+    content[0] = '\0';
 
     for (size_t i = 0; i < stmt_call_expr->args_len; i++) {
       expr_t *expr = stmt_call_expr->args[i];
@@ -102,12 +106,13 @@ char *stmt_str (stmt_t *this, size_t indent) {
       stmt_call_expr->callee->val,
       indent_start,
       content,
-      indent_spaces
+      indent_end
     );
 
     char *buf = malloc(len + 1);
-    sprintf(buf, fmt, indent_spaces, stmt_call_expr->callee->val, indent_start, content, indent_spaces);
+    sprintf(buf, fmt, indent_spaces, stmt_call_expr->callee->val, indent_start, content, indent_end);
 
+    free(content);
     free(indent_spaces);
     free(indent_inside_spaces);
 
@@ -116,22 +121,23 @@ char *stmt_str (stmt_t *this, size_t indent) {
     stmt_main_t *stmt_main = (stmt_main_t *) this;
     char *fmt = "%s<main>%s%s%s</main>";
     char *indent_start = stmt_main->body_len == 0 ? "" : "\n";
+    char *indent_end = stmt_main->body_len == 0 ? "" : indent_spaces;
     size_t content_len = 0;
     char *content = malloc(content_len + 1);
-    content[content_len - 1] = '\0';
+    content[0] = '\0';
 
     for (size_t i = 0; i < stmt_main->body_len; i++) {
       char *stmt_buf = stmt_str(stmt_main->body[i], indent + 2);
-      content_len += strlen(stmt_buf);
-      content = realloc(content, content_len + 2);
+      content_len += strlen(stmt_buf) + 1;
+      content = realloc(content, content_len + 1);
       strcat(content, stmt_buf);
       strcat(content, "\n");
       free(stmt_buf);
     }
 
-    size_t len = (size_t) snprintf(NULL, 0, fmt, indent_spaces, indent_start, content, indent_spaces);
+    size_t len = (size_t) snprintf(NULL, 0, fmt, indent_spaces, indent_start, content, indent_end);
     char *buf = malloc(len + 1);
-    sprintf(buf, fmt, indent_spaces, indent_start, content, indent_spaces);
+    sprintf(buf, fmt, indent_spaces, indent_start, content, indent_end);
 
     free(content);
     free(indent_spaces);
