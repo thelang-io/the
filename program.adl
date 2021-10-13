@@ -1,5 +1,5 @@
 main {
   print()
-  print("Hello, World!")
+  print("Hello, World!\n")
   print("Hello", "World!")
 }

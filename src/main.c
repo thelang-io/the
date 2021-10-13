@@ -5,7 +5,9 @@
  * Proprietary and confidential
  */
 
+#include <stdlib.h>
 #include "ast.h"
+#include "codegen.h"
 #include "parser.h"
 
 int main () {
@@ -24,8 +26,16 @@ int main () {
     stmt_free(stmt);
   }
 
+  char *code = codegen(ast);
   ast_free(ast);
   reader_free(reader);
+
+  FILE *fp = fopen("output.c", "w+");
+  fputs(code, fp);
+  fclose(fp);
+  free(code);
+  system("gcc output.c -o a.out");
+  // remove("output.c");
 
   return 0;
 }
