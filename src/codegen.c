@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "codegen.h"
+#include "var_map.h"
 
 typedef struct codegen_headers_s codegen_headers_t;
 
@@ -28,15 +29,98 @@ char *codegen_expr (expr_t *expr) {
   }
 }
 
-const char *codegen_expr_type (expr_t *expr) {
+const char *codegen_expr_fmt (var_map_t *var_map, expr_t *expr) {
   if (expr->type == exprLiteral) {
-    return "const char *";
-  } else {
-    return "const void *";
+    expr_literal_t *expr_literal = (expr_literal_t *) expr;
+
+    if (expr_literal->tok->type == litChar) {
+      return "%c";
+    } else if (expr_literal->tok->type == litFloat) {
+      return "%f";
+    } else if (expr_literal->tok->type == litId) {
+      const var_map_item_t *var = var_map_get(var_map, expr_literal->tok->val);
+
+      if (var == NULL) {
+        // TODO throw
+      } else if (var->type == varChar) {
+        return "%c";
+      } else if (var->type == varFloat) {
+        return "%f";
+      } else if (var->type == varIntDec) {
+        return "%lu";
+      } else if (var->type == varStr) {
+        return "%s";
+      }
+    } else if (expr_literal->tok->type == litIntDec) {
+      return "%lu";
+    } else if (expr_literal->tok->type == litStr) {
+      return "%s";
+    }
   }
+
+  return "%p";
+}
+
+var_map_item_type_t codegen_expr_type (var_map_t *var_map, expr_t *expr) {
+  if (expr->type == exprLiteral) {
+    expr_literal_t *expr_literal = (expr_literal_t *) expr;
+
+    if (expr_literal->tok->type == litChar) {
+      return varChar;
+    } else if (expr_literal->tok->type == litFloat) {
+      return varFloat;
+    } else if (expr_literal->tok->type == litId) {
+      const var_map_item_t *var = var_map_get(var_map, expr_literal->tok->val);
+
+      if (var == NULL) {
+        // TODO throw
+      }
+
+      return var->type;
+    } else if (expr_literal->tok->type == litIntDec) {
+      return varIntDec;
+    } else if (expr_literal->tok->type == litStr) {
+      return varStr;
+    }
+  }
+
+  return varUnknown;
+}
+
+const char *codegen_expr_type_str (var_map_t *var_map, expr_t *expr) {
+  if (expr->type == exprLiteral) {
+    expr_literal_t *expr_literal = (expr_literal_t *) expr;
+
+    if (expr_literal->tok->type == litChar) {
+      return "const char ";
+    } else if (expr_literal->tok->type == litFloat) {
+      return "const float ";
+    } else if (expr_literal->tok->type == litId) {
+      const var_map_item_t *var = var_map_get(var_map, expr_literal->tok->val);
+
+      if (var == NULL) {
+        // TODO throw
+      } else if (var->type == varChar) {
+        return "const char ";
+      } else if (var->type == varFloat) {
+        return "const float ";
+      } else if (var->type == varIntDec) {
+        return "const unsigned long ";
+      } else if (var->type == varStr) {
+        return "const char *";
+      }
+    } else if (expr_literal->tok->type == litIntDec) {
+      return "const unsigned long ";
+    } else if (expr_literal->tok->type == litStr) {
+      return "const char *";
+    }
+  }
+
+  return "const void *";
 }
 
 char *codegen (ast_t *ast) {
+  var_map_t *var_map = var_map_init();
   codegen_headers_t headers = { false };
   size_t main_body_len = 0;
   char *main_body = malloc(1);
@@ -73,16 +157,28 @@ char *codegen (ast_t *ast) {
           print_buf = realloc(print_buf, print_buf_len + 1);
           strcat(print_buf, "\"\\n\"");
 
-          size_t args_len = stmt_call_expr->args_len;
-          size_t print_args_len = args_len + (args_len == 0 ? 0 : args_len - 1) + 1;
-          char *buf = malloc(14 + print_args_len * 2 + print_buf_len + 1);
-          strcpy(buf, "printf(\"");
+          size_t buf_len = 0;
 
-          for (size_t j = 0; j < print_args_len; j++) {
-            strcat(buf, "%s");
+          for (size_t j = 0; j < stmt_call_expr->args_len; j++) {
+            if (j != 0) {
+              buf_len += 2;
+            }
+
+            buf_len += strlen(codegen_expr_fmt(var_map, stmt_call_expr->args[j]));
           }
 
-          strcat(buf, "\", ");
+          char *buf = malloc(16 + buf_len + print_buf_len + 1);
+          strcpy(buf, "printf(\"");
+
+          for (size_t j = 0; j < stmt_call_expr->args_len; j++) {
+            if (j != 0) {
+              strcat(buf, "%s");
+            }
+
+            strcat(buf, codegen_expr_fmt(var_map, stmt_call_expr->args[j]));
+          }
+
+          strcat(buf, "%s\", ");
           strcat(buf, print_buf);
           strcat(buf, ");\n");
 
@@ -90,25 +186,28 @@ char *codegen (ast_t *ast) {
           main_body = realloc(main_body, main_body_len + 1);
           strcat(main_body, buf);
 
-          free(print_buf);
           free(buf);
+          free(print_buf);
         } else {
           // TODO throw
         }
       } else if (stmt->type == stmtShortVarDecl) {
         stmt_short_var_decl_t *stmt_short_var_decl = (stmt_short_var_decl_t *) stmt;
-        const char *var_type_str = codegen_expr_type(stmt_short_var_decl->init);
+        char *var_name = stmt_short_var_decl->id->val;
+        var_map_item_type_t var_type = codegen_expr_type(var_map, stmt_short_var_decl->init);
+        const char *var_type_str = codegen_expr_type_str(var_map, stmt_short_var_decl->init);
         char *expr_buf = codegen_expr(stmt_short_var_decl->init);
         const char *fmt = "%s%s = %s;\n";
-        size_t buf_len = (size_t) snprintf(NULL, 0, fmt, var_type_str, stmt_short_var_decl->id->val, expr_buf);
+        size_t buf_len = (size_t) snprintf(NULL, 0, fmt, var_type_str, var_name, expr_buf);
         main_body_len += buf_len;
         char *buf = malloc(buf_len + 1);
         main_body = realloc(main_body, main_body_len + 1);
-        sprintf(buf, fmt, var_type_str, stmt_short_var_decl->id->val, expr_buf);
+        sprintf(buf, fmt, var_type_str, var_name, expr_buf);
         strcat(main_body, buf);
 
         free(buf);
         free(expr_buf);
+        var_map_add(var_map, var_type, var_name, stmt_short_var_decl->init);
       } else {
         // TODO throw
       }
@@ -128,6 +227,7 @@ char *codegen (ast_t *ast) {
 
   free(headers_code);
   free(main_body);
+  var_map_free(var_map);
 
   return code;
 }

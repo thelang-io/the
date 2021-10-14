@@ -14,7 +14,13 @@ expr_t *parser_expr (reader_t *reader) {
   reader_location_t start = reader->loc;
   token_t *tok = lexer_next(reader);
 
-  if (tok->type == litStr) {
+  if (
+    tok->type == litChar ||
+    tok->type == litFloat ||
+    tok->type == litId ||
+    tok->type == litIntDec ||
+    tok->type == litStr
+  ) {
     expr_literal_t *expr = (expr_literal_t *) expr_init(exprLiteral, start, reader->loc);
     expr->tok = tok;
     return (expr_t *) expr;

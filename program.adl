@@ -1,8 +1,15 @@
 main {
-  a := "Hello, World!"
-  b := "Hello my name is:"
+  a := 'x'
+  b := 3.14159
+  c := 7
+  d := "Hello, World!"
+  e := a
+  f := b
+  g := c
+  h := d
 
   print()
-  print("Hello, World!")
-  print("Hello,", "World!")
+  print(d)
+  print(a, b, c)
+  print(e, f, g, h)
 }
