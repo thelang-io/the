@@ -10,132 +10,127 @@
 
 #include "reader.h"
 
-#define FOREACH_TOKEN(fn) \
-  fn(eof) \
-  fn(whitespace) \
-  \
-  fn(commentBlock) \
-  fn(commentLine) \
-  \
-  fn(kwAs) \
-  fn(kwAsSafe) \
-  fn(kwAsync) \
-  fn(kwAwait) \
-  fn(kwBreak) \
-  fn(kwCase) \
-  fn(kwCatch) \
-  fn(kwClass) \
-  fn(kwConst) \
-  fn(kwContinue) \
-  fn(kwDefault) \
-  fn(kwDeinit) \
-  fn(kwElif) \
-  fn(kwElse) \
-  fn(kwEnum) \
-  fn(kwExport) \
-  fn(kwFallthrough) \
-  fn(kwFalse) \
-  fn(kwFn) \
-  fn(kwFrom) \
-  fn(kwIf) \
-  fn(kwImport) \
-  fn(kwIn) \
-  fn(kwInit) \
-  fn(kwInterface) \
-  fn(kwIs) \
-  fn(kwLoop) \
-  fn(kwMain) \
-  fn(kwMatch) \
-  fn(kwMut) \
-  fn(kwNew) \
-  fn(kwNil) \
-  fn(kwObj) \
-  fn(kwOp) \
-  fn(kwOverride) \
-  fn(kwPriv) \
-  fn(kwProt) \
-  fn(kwPub) \
-  fn(kwReturn) \
-  fn(kwStatic) \
-  fn(kwSuper) \
-  fn(kwThis) \
-  fn(kwThrow) \
-  fn(kwTrue) \
-  fn(kwTry) \
-  fn(kwUnion) \
-  \
-  fn(litChar) \
-  fn(litFloat) \
-  fn(litId) \
-  fn(litIntBin) \
-  fn(litIntDec) \
-  fn(litIntHex) \
-  fn(litIntOct) \
-  fn(litStr) \
-  \
-  fn(opAnd) \
-  fn(opAndAnd) \
-  fn(opAndAndEq) \
-  fn(opAndEq) \
-  fn(opCaret) \
-  fn(opCaretEq) \
-  fn(opColon) \
-  fn(opColonEq) \
-  fn(opComma) \
-  fn(opDot) \
-  fn(opDotDot) \
-  fn(opDotDotDot) \
-  fn(opDotDotEq) \
-  fn(opEq) \
-  fn(opEqEq) \
-  fn(opExcl) \
-  fn(opExclEq) \
-  fn(opExclExcl) \
-  fn(opGt) \
-  fn(opGtEq) \
-  fn(opLBrace) \
-  fn(opLBrack) \
-  fn(opLPar) \
-  fn(opLShift) \
-  fn(opLShiftEq) \
-  fn(opLt) \
-  fn(opLtEq) \
-  fn(opMinus) \
-  fn(opMinusEq) \
-  fn(opMinusMinus) \
-  fn(opOr) \
-  fn(opOrEq) \
-  fn(opOrOr) \
-  fn(opOrOrEq) \
-  fn(opPercent) \
-  fn(opPercentEq) \
-  fn(opPlus) \
-  fn(opPlusEq) \
-  fn(opPlusPlus) \
-  fn(opQn) \
-  fn(opQnDot) \
-  fn(opQnQn) \
-  fn(opQnQnEq) \
-  fn(opRBrace) \
-  fn(opRBrack) \
-  fn(opRPar) \
-  fn(opRShift) \
-  fn(opRShiftEq) \
-  fn(opSemi) \
-  fn(opSlash) \
-  fn(opSlashEq) \
-  fn(opStar) \
-  fn(opStarEq) \
-  fn(opStarStar) \
-  fn(opStarStarEq) \
-  fn(opTilde)
-
 typedef struct token_s token_t;
 
 typedef enum {
-  #define GEN_TOKEN_ENUM(x) x,
-  FOREACH_TOKEN(GEN_TOKEN_ENUM)
-  #undef GEN_TOKEN_ENUM
+  eof,
+  whitespace,
+
+  commentBlock,
+  commentLine,
+
+  kwAs,
+  kwAsSafe,
+  kwAsync,
+  kwAwait,
+  kwBreak,
+  kwCase,
+  kwCatch,
+  kwClass,
+  kwConst,
+  kwContinue,
+  kwDefault,
+  kwDeinit,
+  kwElif,
+  kwElse,
+  kwEnum,
+  kwExport,
+  kwFallthrough,
+  kwFalse,
+  kwFn,
+  kwFrom,
+  kwIf,
+  kwImport,
+  kwIn,
+  kwInit,
+  kwInterface,
+  kwIs,
+  kwLoop,
+  kwMain,
+  kwMatch,
+  kwMut,
+  kwNew,
+  kwNil,
+  kwObj,
+  kwOp,
+  kwOverride,
+  kwPriv,
+  kwProt,
+  kwPub,
+  kwReturn,
+  kwStatic,
+  kwSuper,
+  kwThis,
+  kwThrow,
+  kwTrue,
+  kwTry,
+  kwUnion,
+
+  litChar,
+  litFloat,
+  litId,
+  litIntBin,
+  litIntDec,
+  litIntHex,
+  litIntOct,
+  litStr,
+
+  opAnd,
+  opAndAnd,
+  opAndAndEq,
+  opAndEq,
+  opCaret,
+  opCaretEq,
+  opColon,
+  opColonEq,
+  opComma,
+  opDot,
+  opDotDot,
+  opDotDotDot,
+  opDotDotEq,
+  opEq,
+  opEqEq,
+  opExcl,
+  opExclEq,
+  opExclExcl,
+  opGt,
+  opGtEq,
+  opLBrace,
+  opLBrack,
+  opLPar,
+  opLShift,
+  opLShiftEq,
+  opLt,
+  opLtEq,
+  opMinus,
+  opMinusEq,
+  opMinusMinus,
+  opOr,
+  opOrEq,
+  opOrOr,
+  opOrOrEq,
+  opPercent,
+  opPercentEq,
+  opPlus,
+  opPlusEq,
+  opPlusPlus,
+  opQn,
+  opQnDot,
+  opQnQn,
+  opQnQnEq,
+  opRBrace,
+  opRBrack,
+  opRPar,
+  opRShift,
+  opRShiftEq,
+  opSemi,
+  opSlash,
+  opSlashEq,
+  opStar,
+  opStarEq,
+  opStarStar,
+  opStarStarEq,
+  opTilde
 } token_type_t;
 
 struct token_s {

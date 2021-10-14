@@ -10,16 +10,11 @@
 
 #include "token.h"
 
-#define FOREACH_EXPR(fn) \
-  fn(exprLiteral)
-
 typedef struct expr_s expr_t;
 typedef struct expr_literal_s expr_literal_t;
 
 typedef enum {
-  #define GEN_TOKEN_ENUM(x) x,
-  FOREACH_EXPR(GEN_TOKEN_ENUM)
-  #undef GEN_TOKEN_ENUM
+  exprLiteral
 } expr_type_t;
 
 struct expr_s {

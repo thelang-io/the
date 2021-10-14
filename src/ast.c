@@ -37,10 +37,9 @@ void ast_free (ast_t *this) {
 
 void ast_add (ast_t *this, stmt_t *stmt) {
   if (stmt->type == stmtMain) {
-    stmt_main_t *main_stmt = (stmt_main_t *) stmt;
-
+    stmt_main_t *stmt_main = (stmt_main_t *) stmt;
     this->main_present = true;
-    this->main_body = main_stmt->body;
-    this->main_body_len = main_stmt->body_len;
+    this->main_body = stmt_main->body;
+    this->main_body_len = stmt_main->body_len;
   }
 }

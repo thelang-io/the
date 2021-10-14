@@ -11,12 +11,6 @@
 #include "error.h"
 #include "token.h"
 
-const char *token_type[] = {
-  #define GEN_TOKEN_STR(x) #x,
-  FOREACH_TOKEN(GEN_TOKEN_STR)
-  #undef GEN_TOKEN_STR
-};
-
 bool token_is_digit (char ch) {
   return strchr("0123456789", ch) != NULL;
 }

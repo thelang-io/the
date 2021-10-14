@@ -31,8 +31,8 @@ expr_t *expr_init (expr_type_t type, reader_location_t start, reader_location_t 
 
 void expr_free (expr_t *this) {
   if (this->type == exprLiteral) {
-    expr_literal_t *literal_expr = (expr_literal_t *) this;
-    token_free(literal_expr->tok);
+    expr_literal_t *expr_literal = (expr_literal_t *) this;
+    token_free(expr_literal->tok);
   }
 
   free(this);

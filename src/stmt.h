@@ -10,20 +10,17 @@
 
 #include "expr.h"
 
-#define FOREACH_STMT(fn) \
-  fn(stmtEnd) \
-  \
-  fn(stmtCallExpr) \
-  fn(stmtMain)
-
 typedef struct stmt_s stmt_t;
 typedef struct stmt_call_expr_s stmt_call_expr_t;
 typedef struct stmt_main_s stmt_main_t;
+typedef struct stmt_short_var_decl_s stmt_short_var_decl_t;
 
 typedef enum {
-  #define GEN_TOKEN_ENUM(x) x,
-  FOREACH_STMT(GEN_TOKEN_ENUM)
-  #undef GEN_TOKEN_ENUM
+  stmtEnd,
+
+  stmtCallExpr,
+  stmtMain,
+  stmtShortVarDecl
 } stmt_type_t;
 
 struct stmt_s {
@@ -49,9 +46,15 @@ struct stmt_main_s {
   size_t body_len;
 };
 
+struct stmt_short_var_decl_s {
+  stmt_type_t type;
+  reader_location_t start;
+  reader_location_t end;
+  token_t *id;
+  expr_t *init;
+};
+
 stmt_t *stmt_init (stmt_type_t type, reader_location_t start, reader_location_t end);
 void stmt_free (stmt_t *this);
-
-char *stmt_str (stmt_t *this, size_t indent);
 
 #endif
