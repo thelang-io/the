@@ -9,9 +9,14 @@
 #define SRC_READER_HPP
 
 #include <filesystem>
-#include "ReaderLocation.hpp"
 
 namespace fs = std::filesystem;
+
+struct ReaderLocation {
+  std::size_t pos = 0;
+  std::size_t line = 1;
+  std::size_t col = 0;
+};
 
 class Reader {
  public:
@@ -22,7 +27,7 @@ class Reader {
 
   bool eof () const;
   char next ();
-  void seek (const ReaderLocation &location);
+  void seek (ReaderLocation loc);
 
  private:
   std::string _content;

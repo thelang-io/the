@@ -7,21 +7,20 @@
 
 #include <iostream>
 #include "Error.hpp"
-#include "Reader.hpp"
+#include "Lexer.hpp"
 
 int main () {
   try {
-    Reader reader("program.adl");
-    ReaderLocation loc = reader.loc;
+    auto reader = Reader("program.adl");
 
     while (!reader.eof()) {
-      std::cout << reader.next();
-    }
+      auto tok = lex(&reader);
 
-    reader.seek(loc);
+      if (tok == tkWhitespace) {
+        continue;
+      }
 
-    while (!reader.eof()) {
-      std::cout << reader.next();
+      std::cout << tok.str() << std::endl;
     }
 
     return 0;

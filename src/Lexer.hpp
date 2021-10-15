@@ -5,4 +5,11 @@
  * Proprietary and confidential
  */
 
-#include "ReaderLocation.hpp"
+#ifndef SRC_LEXER_HPP
+#define SRC_LEXER_HPP
+
+#include "Token.hpp"
+
+Token lex (Reader *reader);
+
+#endif

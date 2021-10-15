@@ -4,14 +4,6 @@ project(the-core LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(
-  sources
-
-  src/Error.cpp src/Error.hpp
-  src/Reader.cpp src/Reader.hpp
-  src/ReaderLocation.cpp src/ReaderLocation.hpp
-)
-
 function (target_add_flags target)
   target_compile_options(${target} PRIVATE -Wall)
   target_compile_options(${target} PRIVATE -Wconversion)
@@ -24,6 +16,15 @@ function (target_add_flags target)
   target_compile_options(${target} PRIVATE -Wunreachable-code)
   target_compile_options(${target} PRIVATE -pedantic-errors)
 endfunction()
+
+set(
+  sources
+
+  src/Error.cpp src/Error.hpp
+  src/Lexer.cpp src/Lexer.hpp
+  src/Reader.cpp src/Reader.hpp
+  src/Token.cpp src/Token.hpp
+)
 
 add_executable(${PROJECT_NAME} ${sources} src/main.cpp)
 target_add_flags(${PROJECT_NAME})

@@ -23,14 +23,13 @@ Reader::Reader (const fs::path &path) {
     throw Error("Path \"" + canonicalPath.string() + "\" is not a file");
   }
 
-  std::ifstream f(canonicalPath);
+  auto f = std::ifstream(canonicalPath);
 
   if (f.fail()) {
     throw Error("Unable to read file \"" + canonicalPath.string() + "\"");
   }
 
-  std::stringstream content;
-  content << f.rdbuf();
+  auto content = std::stringstream() << f.rdbuf();
 
   this->loc = ReaderLocation();
   this->path = canonicalPath;
@@ -60,6 +59,6 @@ char Reader::next () {
   return ch;
 }
 
-void Reader::seek (const ReaderLocation &location) {
-  this->loc = location;
+void Reader::seek (ReaderLocation l) {
+  this->loc = l;
 }
