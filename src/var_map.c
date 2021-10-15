@@ -34,7 +34,7 @@ void var_map_free (var_map_t *this) {
   free(this);
 }
 
-void var_map_add (var_map_t *this, var_map_item_type_t type, const char *name, expr_t *val) {
+void var_map_add (var_map_t *this, var_map_item_type_t type, const char *name) {
   if (this->items_len == 0) {
     this->items = malloc(++this->items_len * sizeof(var_map_item_t));
   } else {
@@ -53,7 +53,6 @@ void var_map_add (var_map_t *this, var_map_item_type_t type, const char *name, e
 
   it->type = type;
   it->name = malloc(strlen(name) + 1);
-  it->val = val;
 
   if (it->name == NULL) {
     throw_error("Unable to allocate memory for var map item name");

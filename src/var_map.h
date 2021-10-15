@@ -29,13 +29,12 @@ struct var_map_s {
 struct var_map_item_s {
   var_map_item_type_t type;
   char *name;
-  expr_t *val;
 };
 
 var_map_t *var_map_init ();
 void var_map_free (var_map_t *this);
 
-void var_map_add (var_map_t *this, var_map_item_type_t type, const char *name, expr_t *val);
+void var_map_add (var_map_t *this, var_map_item_type_t type, const char *name);
 const var_map_item_t *var_map_get (var_map_t *this, const char *name);
 
 #endif

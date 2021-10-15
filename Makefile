@@ -22,7 +22,7 @@ SOURCES= \
 	src/var_map.c
 
 CC=gcc
-CFLAGS=-Wall -Wconversion -Werror -Wextra -Wparentheses -Wshadow -Wundef -Wunreachable-code -pedantic-errors -std=gnu99 -g
+CFLAGS=-Wall -Wconversion -Werror -Wextra -Wparentheses -Wshadow -Wundef -Wunreachable-code -pedantic-errors -std=gnu11 -g
 MKDIR=mkdir -p
 OBJECTS=$(SOURCES:$(SOURCE_DIR)/%.c=$(BUILD_DIR)/%.o)
 RM=rm -f

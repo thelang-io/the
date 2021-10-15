@@ -10,16 +10,18 @@
 #include "expr.h"
 
 expr_t *expr_init (expr_type_t type, reader_location_t start, reader_location_t end) {
-  expr_t *this;
-
-  if (type == exprLiteral) {
-    this = malloc(sizeof(expr_literal_t));
-  } else {
-    this = malloc(sizeof(expr_t));
-  }
+  expr_t *this = malloc(sizeof(expr_t));
 
   if (this == NULL) {
     throw_error("Unable to allocate memory for expr");
+  }
+
+  if (type == exprLiteral) {
+    this->literal = malloc(sizeof(expr_literal_t));
+
+    if (this->literal == NULL) {
+      throw_error("Unable to allocate memory for expr literal");
+    }
   }
 
   this->type = type;
@@ -31,8 +33,8 @@ expr_t *expr_init (expr_type_t type, reader_location_t start, reader_location_t 
 
 void expr_free (expr_t *this) {
   if (this->type == exprLiteral) {
-    expr_literal_t *expr_literal = (expr_literal_t *) this;
-    token_free(expr_literal->tok);
+    token_free(this->literal->tok);
+    free(this->literal);
   }
 
   free(this);

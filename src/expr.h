@@ -21,12 +21,13 @@ struct expr_s {
   expr_type_t type;
   reader_location_t start;
   reader_location_t end;
+
+  union {
+    expr_literal_t *literal;
+  };
 };
 
 struct expr_literal_s {
-  expr_type_t type;
-  reader_location_t start;
-  reader_location_t end;
   token_t *tok;
 };
 
