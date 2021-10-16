@@ -21,9 +21,12 @@ set(
   sources
 
   src/Error.cpp src/Error.hpp
+  src/Expr.hpp
   src/Lexer.cpp src/Lexer.hpp
+  src/Parser.cpp src/Parser.hpp
   src/Reader.cpp src/Reader.hpp
-  src/Token.cpp src/Token.hpp
+  src/Stmt.hpp
+  src/Token.hpp
 )
 
 add_executable(${PROJECT_NAME} ${sources} src/main.cpp)

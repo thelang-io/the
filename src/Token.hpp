@@ -8,15 +8,13 @@
 #ifndef SRC_TOKEN_HPP
 #define SRC_TOKEN_HPP
 
-#include <string>
 #include "Reader.hpp"
 
 enum TokenType {
-  tkEof,
-  tkWhitespace,
-
   tkCommentBlock,
   tkCommentLine,
+  tkEof,
+  tkWhitespace,
 
   tkKwAs,
   tkKwAsSafe,
@@ -132,30 +130,55 @@ enum TokenType {
   tkOpTilde
 };
 
-class Token {
- public:
-  static bool isDigit (char ch);
-  static bool isLitCharEscape (char ch);
-  static bool isLitIdContinue (char ch);
-  static bool isLitIdStart (char ch);
-  static bool isLitIntBin (char ch);
-  static bool isLitIntDec (char ch);
-  static bool isLitIntHex (char ch);
-  static bool isLitIntOct (char ch);
-  static bool isLitStrEscape (char ch);
-  static bool isNotNewline (char ch);
-  static bool isWhitespace (char ch);
-
-  const TokenType type;
-  const ReaderLocation start;
+struct Token {
+  TokenType type;
+  ReaderLocation start;
   ReaderLocation end;
   std::string val;
-
-  Token (TokenType type, ReaderLocation start, ReaderLocation end, const std::string &val);
-  bool operator== (TokenType type) const;
-  bool operator!= (TokenType type) const;
-
-  std::string str () const;
 };
+
+inline bool tokenIsDigit (char ch) {
+  return std::isdigit(ch);
+}
+
+inline bool tokenIsLitCharEscape (char ch) {
+  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
+}
+
+inline bool tokenIsLitIdContinue (char ch) {
+  return std::isalnum(ch) || ch == '_';
+}
+
+inline bool tokenIsLitIdStart (char ch) {
+  return std::isalpha(ch) || ch == '_';
+}
+
+inline bool tokenIsLitIntBin (char ch) {
+  return ch == '0' || ch == '1';
+}
+
+inline bool tokenIsLitIntDec (char ch) {
+  return std::isdigit(ch);
+}
+
+inline bool tokenIsLitIntHex (char ch) {
+  return std::string("ABCDEFabcdef0123456789").find(ch) != std::string::npos;
+}
+
+inline bool tokenIsLitIntOct (char ch) {
+  return std::string("01234567").find(ch) != std::string::npos;
+}
+
+inline bool tokenIsLitStrEscape (char ch) {
+  return tokenIsLitCharEscape(ch) || ch == '{';
+}
+
+inline bool tokenIsNotNewline (char ch) {
+  return ch != '\n';
+}
+
+inline bool tokenIsWhitespace (char ch) {
+  return std::isspace(ch);
+}
 
 #endif

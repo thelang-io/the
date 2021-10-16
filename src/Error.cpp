@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <utility>
 #include "Error.hpp"
 
 Error::Error (const std::string &message) {

@@ -7,20 +7,20 @@
 
 #include <iostream>
 #include "Error.hpp"
-#include "Lexer.hpp"
+#include "Parser.hpp"
 
 int main () {
   try {
     auto reader = Reader("program.adl");
 
     while (!reader.eof()) {
-      auto tok = lex(&reader);
+      auto stmt = parse(&reader);
 
-      if (tok == tkWhitespace) {
-        continue;
+      if (stmt.type == stmtEnd) {
+        break;
       }
 
-      std::cout << tok.str() << std::endl;
+      std::cout << stmtStr(stmt) << std::endl;
     }
 
     return 0;

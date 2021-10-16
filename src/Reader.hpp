@@ -31,7 +31,7 @@ class Reader {
 
  private:
   std::string _content;
-  size_t _size;
+  std::size_t _size;
 };
 
 #endif

@@ -8,7 +8,6 @@
 #ifndef SRC_ERROR_HPP
 #define SRC_ERROR_HPP
 
-#include <string>
 #include "Reader.hpp"
 
 #define E0000 "E0000 - Unexpected token"

@@ -5,16 +5,11 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_LEXER_HPP
-#define SRC_LEXER_HPP
+#ifndef SRC_PARSER_HPP
+#define SRC_PARSER_HPP
 
-#include "Token.hpp"
+#include "Stmt.hpp"
 
-struct Lexer {
-  ReaderLocation start;
-  std::string val;
-};
-
-Token lex (Reader *reader);
+Stmt parse (Reader *reader);
 
 #endif
