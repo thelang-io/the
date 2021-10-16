@@ -20,6 +20,7 @@ endfunction()
 set(
   sources
 
+  src/AST.cpp src/AST.hpp
   src/Error.cpp src/Error.hpp
   src/Expr.hpp
   src/Lexer.cpp src/Lexer.hpp

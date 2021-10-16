@@ -6,12 +6,14 @@
  */
 
 #include <iostream>
+#include "AST.hpp"
 #include "Error.hpp"
 #include "Parser.hpp"
 
 int main () {
   try {
     auto reader = Reader("program.adl");
+    auto ast = AST();
 
     while (!reader.eof()) {
       auto stmt = parse(&reader);
@@ -21,11 +23,12 @@ int main () {
       }
 
       std::cout << stmtStr(stmt) << std::endl;
+      ast.add(stmt);
     }
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const Error &err) {
     std::cerr << err.what() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
