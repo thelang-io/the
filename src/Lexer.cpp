@@ -71,6 +71,7 @@ void lexWalkLitStr (Reader *reader, Lexer &lexer) {
   while (true) {
     auto loc1 = reader->loc;
     auto ch1 = reader->next();
+
     lexer.val += ch1;
 
     if (ch1 == '\\' && blocks == 0) {
@@ -156,6 +157,7 @@ Token lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)> 
   if (ch2 == 'E' || ch2 == 'e') {
     lexer.val += ch2;
     lexWalkLitFloatExp(reader, lexer);
+
     return lexLitFloat(reader, lexer, type);
   } else if (ch2 == '.') {
     if (reader->eof()) {
@@ -180,6 +182,7 @@ Token lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)> 
       throw SyntaxError(reader, lexer.start, E0012);
     } else {
       auto withExp = false;
+
       lexer.val += ch2;
       lexer.val += ch3;
 
@@ -260,10 +263,12 @@ Token lexOpEq2 (
     if (ch2 == '=') {
       lexer.val += ch1;
       lexer.val += ch2;
+
       return {type4, lexer.start, reader->loc, lexer.val};
     } else {
       lexer.val += ch1;
       reader->seek(loc2);
+
       return {type3, lexer.start, reader->loc, lexer.val};
     }
   } else {
@@ -514,6 +519,7 @@ Token lex (Reader *reader) {
     if (ch1 == '/') {
       lexer.val += ch1;
       lexWalk(reader, lexer, tokenIsNotNewline);
+
       return {tkCommentLine, lexer.start, reader->loc, lexer.val};
     } else {
       lexer.val += ch1;
@@ -534,6 +540,7 @@ Token lex (Reader *reader) {
           if (ch3 == '/') {
             lexer.val += ch2;
             lexer.val += ch3;
+
             break;
           } else {
             reader->seek(loc3);

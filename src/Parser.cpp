@@ -61,6 +61,7 @@ Stmt parse (Reader *reader) {
 
     while (true) {
       parseStmtWhitespace(reader);
+
       auto loc3 = reader->loc;
       auto tok3 = lex(reader);
 
@@ -69,7 +70,7 @@ Stmt parse (Reader *reader) {
       }
 
       reader->seek(loc3);
-      body.emplace_back(parse(reader));
+      body.push_back(parse(reader));
     }
 
     return {stmtMain, start, reader->loc, StmtMain{body}};
@@ -84,6 +85,7 @@ Stmt parse (Reader *reader) {
       if (tok3.type == tkOpColonEq) {
         parseStmtWhitespace(reader);
         auto expr = parseExpr(reader);
+
         return {stmtShortVarDecl, start, reader->loc, StmtShortVarDecl{tok2, expr, true}};
       }
     }
@@ -94,21 +96,23 @@ Stmt parse (Reader *reader) {
     if (tok2.type == tkOpColonEq) {
       parseStmtWhitespace(reader);
       auto expr = parseExpr(reader);
+
       return {stmtShortVarDecl, start, reader->loc, StmtShortVarDecl{tok1, expr, false}};
     } else if (tok2.type == tkOpEq) {
       parseStmtWhitespace(reader);
       auto expr = parseExpr(reader);
+
       return {stmtAssignExpr, start, reader->loc, StmtAssignExpr{tok1, expr}};
     } else if (tok2.type == tkOpLPar) {
       parseStmtWhitespace(reader);
+
       auto loc3 = reader->loc;
       auto tok3 = lex(reader);
       auto args = std::vector<Expr>();
 
       while (tok3.type != tkOpRPar) {
         reader->seek(loc3);
-        auto expr = parseExpr(reader);
-        args.emplace_back(expr);
+        args.push_back(parseExpr(reader));
 
         parseStmtWhitespace(reader);
         tok3 = lex(reader);

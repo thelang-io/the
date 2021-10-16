@@ -16,17 +16,17 @@ Reader::Reader (const fs::path &p) {
   try {
     canonicalPath = fs::canonical(p);
   } catch (const std::exception &ex) {
-    throw Error("No such file \"" + p.string() + "\"");
+    throw Error(R"(No such file ")" + p.string() + R"(")");
   }
 
   if (!fs::is_regular_file(canonicalPath)) {
-    throw Error("Path \"" + canonicalPath.string() + "\" is not a file");
+    throw Error(R"(Path ")" + canonicalPath.string() + R"(" is not a file)");
   }
 
   auto f = std::ifstream(canonicalPath);
 
   if (f.fail()) {
-    throw Error("Unable to read file \"" + canonicalPath.string() + "\"");
+    throw Error(R"(Unable to read file ")" + canonicalPath.string() + R"(")");
   }
 
   std::stringstream content;
@@ -44,7 +44,7 @@ bool Reader::eof () const {
 
 char Reader::next () {
   if (this->eof()) {
-    throw Error("Tried to read on reader eof");
+    throw Error("Tried to read on Reader eof");
   }
 
   auto ch = this->_content[this->loc.pos];

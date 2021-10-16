@@ -5,8 +5,10 @@
  * Proprietary and confidential
  */
 
+#include <fstream>
 #include <iostream>
 #include "AST.hpp"
+#include "Codegen.hpp"
 #include "Error.hpp"
 #include "Parser.hpp"
 
@@ -22,9 +24,16 @@ int main () {
         break;
       }
 
-      std::cout << stmtStr(stmt) << std::endl;
       ast.add(stmt);
     }
+
+    auto code = codegen(ast);
+    auto f = std::ofstream("output.c");
+
+    f << code;
+    f.close();
+    system("gcc output.c -o a.out");
+    fs::remove("output.c");
 
     return EXIT_SUCCESS;
   } catch (const Error &err) {

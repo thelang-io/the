@@ -26,13 +26,4 @@ struct Expr {
   std::variant<ExprLiteral> body;
 };
 
-inline std::string exprStr (const Expr &expr) {
-  if (expr.type == exprLiteral) {
-    auto exprLiteral = std::get<ExprLiteral>(expr.body);
-    return exprLiteral.tok.val;
-  }
-
-  return "";
-}
-
 #endif
