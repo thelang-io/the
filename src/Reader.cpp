@@ -10,13 +10,13 @@
 #include "Error.hpp"
 #include "Reader.hpp"
 
-Reader::Reader (const fs::path &path) {
+Reader::Reader (const fs::path &p) {
   fs::path canonicalPath;
 
   try {
-    canonicalPath = fs::canonical(path);
+    canonicalPath = fs::canonical(p);
   } catch (const std::exception &ex) {
-    throw Error("No such file \"" + path.string() + "\"");
+    throw Error("No such file \"" + p.string() + "\"");
   }
 
   if (!fs::is_regular_file(canonicalPath)) {
@@ -29,7 +29,8 @@ Reader::Reader (const fs::path &path) {
     throw Error("Unable to read file \"" + canonicalPath.string() + "\"");
   }
 
-  auto content = std::stringstream() << f.rdbuf();
+  std::stringstream content;
+  content << f.rdbuf();
 
   this->loc = ReaderLocation();
   this->path = canonicalPath;

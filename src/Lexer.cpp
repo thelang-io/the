@@ -5,6 +5,7 @@
  * Proprietary and confidential
  */
 
+#include <functional>
 #include "Error.hpp"
 #include "Lexer.hpp"
 
