@@ -7,123 +7,147 @@
 
 #include "Codegen.hpp"
 #include "Error.hpp"
-#include "VarMap.hpp"
 
-std::string codegenExpr (const Expr &expr) {
-  if (expr.type == exprLiteral) {
-    auto exprLiteral = std::get<ExprLiteral>(expr.body);
-    return exprLiteral.tok.val;
-  }
+VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmtExpr) {
+  if (stmtExpr->type == STMT_EXPR_EXPR) {
+    auto expr = std::get<Expr *>(stmtExpr->body);
 
-  throw Error("Tried to access unknown expr type");
-}
+    if (expr->type == EXPR_ASSIGN) {
+      auto exprAssign = std::get<ExprAssign *>(expr->body);
+      return codegen->varMap->get(exprAssign->left->val).type;
+    }
+  } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
+    auto id = std::get<Identifier *>(stmtExpr->body);
+    return codegen->varMap->get(id->name->val).type;
+  } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
+    auto lit = std::get<Literal *>(stmtExpr->body);
 
-VarMapItemType codegenExprType (const VarMap &varMap, const Expr &expr) {
-  if (expr.type == exprLiteral) {
-    auto exprLiteral = std::get<ExprLiteral>(expr.body);
-
-    if (exprLiteral.tok.type == tkLitChar) {
-      return varChar;
-    } else if (exprLiteral.tok.type == tkLitFloat) {
-      return varFloat;
-    } else if (exprLiteral.tok.type == tkLitId) {
-      return varMap.get(exprLiteral.tok.val).type;
-    } else if (exprLiteral.tok.type == tkLitIntDec) {
-      return varIntDec;
-    } else if (exprLiteral.tok.type == tkLitStr) {
-      return varStr;
+    if (lit->val->type == TK_LIT_CHAR) {
+      return VAR_CHAR;
+    } else if (lit->val->type == TK_LIT_FLOAT) {
+      return VAR_FLOAT;
+    } else if (lit->val->type == TK_LIT_INT_DEC) {
+      return VAR_INT_DEC;
+    } else if (lit->val->type == TK_LIT_STR) {
+      return VAR_STR;
     }
   }
 
   throw Error("Tried to access unknown expr type");
 }
 
-std::string codegenExprTypeFmt (const VarMap &varMap, const Expr &expr) {
-  auto type = codegenExprType(varMap, expr);
+void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
+  if (stmtExpr->type == STMT_EXPR_EXPR) {
+    auto expr = std::get<Expr *>(stmtExpr->body);
 
-  switch (type) {
-    case varChar: {
-      return "%c";
-    }
-    case varFloat: {
-      return "%f";
-    }
-    case varIntDec: {
-      return "%lu";
-    }
-    default: {
-      return "%s";
-    }
-  }
-}
+    if (expr->type == EXPR_ASSIGN) {
+      auto exprAssign = std::get<ExprAssign *>(expr->body);
+      auto varName = exprAssign->left->val;
 
-const char *codegenExprTypeStr (VarMapItemType type, bool mut) {
-  switch (type) {
-    case varChar: {
-      return mut ? "char " : "const char ";
-    }
-    case varFloat: {
-      return mut ? "float " : "const float ";
-    }
-    case varIntDec: {
-      return mut ? "unsigned long " : "const unsigned long ";
-    }
-    default: {
-      return mut ? "char *" : "const char *";
-    }
-  }
-}
+      codegen->mainBody += varName + " = ";
+      codegenStmtExpr(codegen, exprAssign->right);
+      codegen->mainBody += ";\n";
+    } else if (expr->type == EXPR_CALL) {
+      auto exprCall = std::get<ExprCall *>(expr->body);
 
-std::string codegen (const AST &ast) {
-  auto varMap = VarMap();
-  auto headers = CodegenHeaders{false};
-  auto mainBody = std::string();
+      if (exprCall->callee->val == "print") {
+        codegen->headers.stdio = true;
+        codegen->mainBody += R"(printf(")";
 
-  if (ast.mainPresent) {
-    for (const auto &stmt : ast.mainBody) {
-      if (stmt.type == stmtAssignExpr) {
-        auto stmtAssignExpr = std::get<StmtAssignExpr>(stmt.body);
-        auto varName = stmtAssignExpr.left.val;
+        auto argIdx = 0;
 
-        mainBody += varName + " = " + codegenExpr(stmtAssignExpr.right) + ";\n";
-        continue;
-      } else if (stmt.type == stmtCallExpr) {
-        auto stmtCallExpr = std::get<StmtCallExpr>(stmt.body);
+        for (const auto &arg : exprCall->args) {
+          codegen->mainBody += (argIdx != 0 ? "%s" : "");
+          auto exprType = codegenStmtExprType(codegen, arg);
 
-        if (stmtCallExpr.callee.val == "print") {
-          headers.stdio = true;
-          mainBody += R"(printf(")";
-
-          auto argIdx = 0;
-
-          for (const auto &arg : stmtCallExpr.args) {
-            mainBody += (argIdx != 0 ? "%s" : "") + codegenExprTypeFmt(varMap, arg);
-            argIdx++;
+          switch (exprType) {
+            case VAR_CHAR: {
+              codegen->mainBody += "%c";
+              break;
+            }
+            case VAR_FLOAT: {
+              codegen->mainBody += "%f";
+              break;
+            }
+            case VAR_INT_DEC: {
+              codegen->mainBody += "%lu";
+              break;
+            }
+            default: {
+              codegen->mainBody += "%s";
+              break;
+            }
           }
 
-          mainBody += R"(%s", )";
-          argIdx = 0;
-
-          for (const auto &arg : stmtCallExpr.args) {
-            mainBody += (argIdx != 0 ? R"(" ", )" : "") + codegenExpr(arg) + ", ";
-            argIdx++;
-          }
-
-          mainBody += R"("\n");)";
-          mainBody += "\n";
-
-          continue;
+          argIdx++;
         }
 
-        throw Error("Tried to access unknown built-in function");
-      } else if (stmt.type == stmtShortVarDecl) {
-        auto stmtShortVarDecl = std::get<StmtShortVarDecl>(stmt.body);
-        auto varType = codegenExprType(varMap, stmtShortVarDecl.init);
-        auto varTypeStr = codegenExprTypeStr(varType, stmtShortVarDecl.mut);
-        auto varName = stmtShortVarDecl.id.val;
+        codegen->mainBody += R"(%s", )";
+        argIdx = 0;
 
-        mainBody += varTypeStr + varName + " = " + codegenExpr(stmtShortVarDecl.init) + ";\n";
-        varMap.add(varType, varName);
+        for (const auto &arg : exprCall->args) {
+          codegen->mainBody += (argIdx != 0 ? R"(" ", )" : "");
+          codegenStmtExpr(codegen, arg);
+          codegen->mainBody += ", ";
+
+          argIdx++;
+        }
+
+        codegen->mainBody += R"("\n");)";
+        codegen->mainBody += "\n";
+      } else {
+        throw Error("Tried to access unknown built-in function");
+      }
+    }
+  } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
+    auto id = std::get<Identifier *>(stmtExpr->body);
+    codegen->mainBody += id->name->val;
+  } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
+    auto lit = std::get<Literal *>(stmtExpr->body);
+    codegen->mainBody += lit->val->val;
+  } else {
+    throw Error("Tried to access unknown expr type");
+  }
+}
+
+std::string codegen (const AST *ast) {
+  auto codegen = new Codegen{{}, "", new VarMap{}};
+
+  if (ast->mainPresent) {
+    for (const auto &stmt : ast->mainBody) {
+      if (stmt->type == STMT_EXPR) {
+        auto stmtExpr = std::get<StmtExpr *>(stmt->body);
+        codegenStmtExpr(codegen, stmtExpr);
+
+        continue;
+      } else if (stmt->type == STMT_SHORT_VAR_DECL) {
+        auto stmtShortVarDecl = std::get<StmtShortVarDecl *>(stmt->body);
+        auto varName = stmtShortVarDecl->id->val;
+        auto varType = codegenStmtExprType(codegen, stmtShortVarDecl->init);
+
+        switch (varType) {
+          case VAR_CHAR: {
+            codegen->mainBody += stmtShortVarDecl->mut ? "char " : "const char ";
+            break;
+          }
+          case VAR_FLOAT: {
+            codegen->mainBody += stmtShortVarDecl->mut ? "float " : "const float ";
+            break;
+          }
+          case VAR_INT_DEC: {
+            codegen->mainBody += stmtShortVarDecl->mut ? "unsigned long " : "const unsigned long ";
+            break;
+          }
+          default: {
+            codegen->mainBody += stmtShortVarDecl->mut ? "char *" : "const char *";
+            break;
+          }
+        }
+
+        codegen->mainBody += varName + " = ";
+        codegenStmtExpr(codegen, stmtShortVarDecl->init);
+        codegen->mainBody += ";\n";
+        codegen->varMap->add(varType, varName);
 
         continue;
       }
@@ -132,6 +156,9 @@ std::string codegen (const AST &ast) {
     }
   }
 
-  auto headersCode = std::string(headers.stdio ? "#include <stdio.h>\n" : "");
-  return headersCode + "\nint main (const int argc, const char **argv) {\n" + mainBody + "return 0;\n}\n";
+  auto code = std::string(codegen->headers.stdio ? "#include <stdio.h>\n" : "") +
+    "\nint main (const int argc, const char **argv) {\n" + codegen->mainBody + "return 0;\n}\n";
+
+  delete codegen;
+  return code;
 }

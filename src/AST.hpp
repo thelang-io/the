@@ -8,14 +8,15 @@
 #ifndef SRC_AST_HPP
 #define SRC_AST_HPP
 
-#include "Stmt.hpp"
+#include "Parser.hpp"
 
 class AST {
  public:
   bool mainPresent = false;
-  std::vector<Stmt> mainBody;
+  std::vector<Stmt *> mainBody;
 
-  void add (const Stmt &stmt);
+  ~AST ();
+  void add (Stmt *stmt);
 };
 
 #endif

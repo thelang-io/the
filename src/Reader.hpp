@@ -24,6 +24,8 @@ class Reader {
   fs::path path;
 
   explicit Reader (const fs::path &path);
+  Reader (const Reader &) = delete;
+  Reader &operator= (const Reader &) = delete;
 
   bool eof () const;
   char next ();

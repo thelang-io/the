@@ -7,11 +7,17 @@
 
 #include "AST.hpp"
 
-void AST::add (const Stmt &stmt) {
-  if (stmt.type == stmtMain) {
-    auto stmtMain = std::get<StmtMain>(stmt.body);
+AST::~AST () {
+  for (const auto &stmt : this->mainBody) {
+    delete stmt;
+  }
+}
+
+void AST::add (Stmt *stmt) {
+  if (stmt->type == STMT_MAIN) {
+    auto stmtMain = std::get<StmtMain *>(stmt->body);
 
     this->mainPresent = true;
-    this->mainBody = stmtMain.body;
+    this->mainBody = stmtMain->body;
   }
 }

@@ -7,24 +7,24 @@
 
 #include <fstream>
 #include <iostream>
-#include "AST.hpp"
 #include "Codegen.hpp"
 #include "Error.hpp"
-#include "Parser.hpp"
 
 int main () {
   try {
     auto reader = Reader("program.adl");
-    auto ast = AST();
+    auto ast = new AST();
 
     while (!reader.eof()) {
       auto stmt = parse(&reader);
 
-      if (stmt.type == stmtEnd) {
+      if (stmt->type == STMT_END) {
+        delete stmt;
         break;
       }
 
-      ast.add(stmt);
+      ast->add(stmt);
+      delete stmt;
     }
 
     auto code = codegen(ast);
@@ -35,7 +35,11 @@ int main () {
     system("gcc output.c -o a.out");
     fs::remove("output.c");
 
+    delete ast;
     return EXIT_SUCCESS;
+  } catch (const SyntaxError &err) {
+    std::cerr << err.what() << std::endl;
+    return EXIT_FAILURE;
   } catch (const Error &err) {
     std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;

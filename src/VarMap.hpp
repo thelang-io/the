@@ -8,14 +8,13 @@
 #ifndef SRC_VAR_MAP_HPP
 #define SRC_VAR_MAP_HPP
 
-#include <string>
 #include <vector>
 
 enum VarMapItemType {
-  varChar,
-  varFloat,
-  varIntDec,
-  varStr
+  VAR_CHAR,
+  VAR_FLOAT,
+  VAR_INT_DEC,
+  VAR_STR
 };
 
 struct VarMapItem {

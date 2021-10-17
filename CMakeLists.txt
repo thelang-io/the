@@ -23,12 +23,9 @@ set(
   src/AST.cpp src/AST.hpp
   src/Codegen.cpp src/Codegen.hpp
   src/Error.cpp src/Error.hpp
-  src/Expr.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
   src/Reader.cpp src/Reader.hpp
-  src/Stmt.hpp
-  src/Token.hpp
   src/VarMap.cpp src/VarMap.hpp
 )
 

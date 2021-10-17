@@ -6,127 +6,198 @@
  */
 
 #include "Error.hpp"
-#include "Lexer.hpp"
 #include "Parser.hpp"
 
-Expr parseExpr (Reader *reader) {
-  auto start = reader->loc;
-  auto tok = lex(reader);
-
-  if (
-    tok.type == tkLitChar ||
-    tok.type == tkLitFloat ||
-    tok.type == tkLitId ||
-    tok.type == tkLitIntDec ||
-    tok.type == tkLitStr
-  ) {
-    return {exprLiteral, start, reader->loc, ExprLiteral{tok}};
-  }
-
-  reader->seek(start);
-  throw Error("TODO");
+ExprAssign::~ExprAssign () {
+  delete this->left;
+  delete this->right;
 }
 
-void parseStmtWhitespace (Reader *reader) {
+ExprCall::~ExprCall () {
+  for (auto &arg : this->args) {
+    delete arg;
+  }
+
+  delete this->callee;
+}
+
+void parseWalkWhitespace (Reader *reader) {
   while (true) {
     auto loc = reader->loc;
     auto tok = lex(reader);
 
-    if (tok.type != tkCommentBlock && tok.type != tkCommentLine && tok.type != tkWhitespace) {
+    if (tok->type != TK_COMMENT_BLOCK && tok->type != TK_COMMENT_LINE && tok->type != TK_WHITESPACE) {
       reader->seek(loc);
+      delete tok;
+
       break;
     }
+
+    delete tok;
   }
 }
 
-Stmt parse (Reader *reader) {
-  parseStmtWhitespace(reader);
-  auto start = reader->loc;
-
-  if (reader->eof()) {
-    return {stmtEnd, start, reader->loc, StmtEnd{}};
-  }
-
+StmtExpr *parseStmtExpr (Reader *reader) {
   auto tok1 = lex(reader);
 
-  if (tok1.type == tkKwMain) {
-    parseStmtWhitespace(reader);
+  if (
+    tok1->type == TK_LIT_CHAR ||
+    tok1->type == TK_LIT_FLOAT ||
+    tok1->type == TK_LIT_INT_DEC ||
+    tok1->type == TK_LIT_STR
+  ) {
+    auto lit = new Literal{tok1};
+    return new StmtExpr{STMT_EXPR_LITERAL, lit};
+  } else if (tok1->type == TK_LIT_ID) {
+    parseWalkWhitespace(reader);
+
+    auto loc2 = reader->loc;
     auto tok2 = lex(reader);
 
-    if (tok2.type != tkOpLBrace) {
-      throw Error("TODO");
-    }
+    if (tok2->type == TK_OP_EQ) {
+      parseWalkWhitespace(reader);
+      auto stmtExpr = parseStmtExpr(reader);
+      auto exprAssign = new ExprAssign{tok1, stmtExpr};
+      auto expr = new Expr{EXPR_ASSIGN, exprAssign};
 
-    auto body = std::vector<Stmt>();
-
-    while (true) {
-      parseStmtWhitespace(reader);
+      delete tok2;
+      return new StmtExpr{STMT_EXPR_EXPR, expr};
+    } else if (tok2->type == TK_OP_LPAR) {
+      parseWalkWhitespace(reader);
 
       auto loc3 = reader->loc;
       auto tok3 = lex(reader);
+      auto args = std::vector<StmtExpr *>();
 
-      if (tok3.type == tkOpRBrace) {
-        break;
-      }
-
-      reader->seek(loc3);
-      body.push_back(parse(reader));
-    }
-
-    return {stmtMain, start, reader->loc, StmtMain{body}};
-  } else if (tok1.type == tkKwMut) {
-    parseStmtWhitespace(reader);
-    auto tok2 = lex(reader);
-
-    if (tok2.type == tkLitId) {
-      parseStmtWhitespace(reader);
-      auto tok3 = lex(reader);
-
-      if (tok3.type == tkOpColonEq) {
-        parseStmtWhitespace(reader);
-        auto expr = parseExpr(reader);
-
-        return {stmtShortVarDecl, start, reader->loc, StmtShortVarDecl{tok2, expr, true}};
-      }
-    }
-  } else if (tok1.type == tkLitId) {
-    parseStmtWhitespace(reader);
-    auto tok2 = lex(reader);
-
-    if (tok2.type == tkOpColonEq) {
-      parseStmtWhitespace(reader);
-      auto expr = parseExpr(reader);
-
-      return {stmtShortVarDecl, start, reader->loc, StmtShortVarDecl{tok1, expr, false}};
-    } else if (tok2.type == tkOpEq) {
-      parseStmtWhitespace(reader);
-      auto expr = parseExpr(reader);
-
-      return {stmtAssignExpr, start, reader->loc, StmtAssignExpr{tok1, expr}};
-    } else if (tok2.type == tkOpLPar) {
-      parseStmtWhitespace(reader);
-
-      auto loc3 = reader->loc;
-      auto tok3 = lex(reader);
-      auto args = std::vector<Expr>();
-
-      while (tok3.type != tkOpRPar) {
+      while (tok3->type != TK_OP_RPAR) {
         reader->seek(loc3);
-        args.push_back(parseExpr(reader));
+        args.push_back(parseStmtExpr(reader));
 
-        parseStmtWhitespace(reader);
+        parseWalkWhitespace(reader);
+        delete tok3;
+
         tok3 = lex(reader);
 
-        if (tok3.type == tkOpComma) {
-          parseStmtWhitespace(reader);
+        if (tok3->type == TK_OP_COMMA) {
+          parseWalkWhitespace(reader);
+          delete tok3;
+
           loc3 = reader->loc;
           tok3 = lex(reader);
         }
       }
 
-      return {stmtCallExpr, start, reader->loc, StmtCallExpr{args, tok1}};
+      auto exprCall = new ExprCall{args, tok1};
+      auto expr = new Expr{EXPR_CALL, exprCall};
+
+      delete tok2;
+      delete tok3;
+
+      return new StmtExpr{STMT_EXPR_EXPR, expr};
     }
+
+    reader->seek(loc2);
+    delete tok2;
+
+    auto id = new Identifier{tok1};
+    return new StmtExpr{STMT_EXPR_IDENTIFIER, id};
   }
 
-  throw SyntaxError(reader, start, E0100);
+  throw Error("TODO");
+}
+
+Stmt *parse (Reader *reader) {
+  parseWalkWhitespace(reader);
+
+  if (reader->eof()) {
+    auto stmtEnd = new StmtEnd{};
+    return new Stmt{STMT_END, stmtEnd};
+  }
+
+  auto loc1 = reader->loc;
+  auto tok1 = lex(reader);
+
+  if (tok1->type == TK_KW_MAIN) {
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type != TK_OP_LBRACE) {
+      throw Error("TODO");
+    }
+
+    delete tok1;
+    delete tok2;
+
+    auto body = std::vector<Stmt *>();
+
+    while (true) {
+      parseWalkWhitespace(reader);
+
+      auto loc3 = reader->loc;
+      auto tok3 = lex(reader);
+
+      if (tok3->type == TK_OP_RBRACE) {
+        delete tok3;
+        break;
+      }
+
+      reader->seek(loc3);
+      body.push_back(parse(reader));
+
+      delete tok3;
+    }
+
+    auto stmtMain = new StmtMain{body};
+    return new Stmt{STMT_MAIN, stmtMain};
+  } else if (tok1->type == TK_KW_MUT) {
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type == TK_LIT_ID) {
+      parseWalkWhitespace(reader);
+      auto tok3 = lex(reader);
+
+      if (tok3->type == TK_OP_COLON_EQ) {
+        parseWalkWhitespace(reader);
+        auto stmtExpr = parseStmtExpr(reader);
+        auto stmtShortVarDecl = new StmtShortVarDecl{tok2, stmtExpr, true};
+
+        delete tok1;
+        delete tok3;
+
+        return new Stmt{STMT_SHORT_VAR_DECL, stmtShortVarDecl};
+      }
+
+      delete tok3;
+    }
+
+    delete tok2;
+  } else if (tok1->type == TK_LIT_ID) {
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type == TK_OP_COLON_EQ) {
+      parseWalkWhitespace(reader);
+      delete tok2;
+
+      auto stmtExpr = parseStmtExpr(reader);
+      auto stmtShortVarDecl = new StmtShortVarDecl{tok1, stmtExpr};
+
+      return new Stmt{STMT_SHORT_VAR_DECL, stmtShortVarDecl};
+    }
+
+    delete tok2;
+  }
+
+  delete tok1;
+  reader->seek(loc1);
+
+  try {
+    auto stmtExpr = parseStmtExpr(reader);
+    return new Stmt{STMT_EXPR, stmtExpr};
+  } catch (const Error &err) {
+    reader->seek(loc1);
+  }
+
+  throw SyntaxError(reader, loc1, E0100);
 }
