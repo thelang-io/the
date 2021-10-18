@@ -142,8 +142,6 @@ struct Lexer {
   std::string val;
 };
 
-Token *lex (Reader *reader);
-
 inline bool tokenIsDigit (char ch) {
   return std::isdigit(ch);
 }
@@ -187,5 +185,7 @@ inline bool tokenIsNotNewline (char ch) {
 inline bool tokenIsWhitespace (char ch) {
   return std::isspace(ch);
 }
+
+Token *lex (Reader *reader);
 
 #endif

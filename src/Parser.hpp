@@ -17,6 +17,7 @@ struct StmtExpr;
 
 enum ExprType {
   EXPR_ASSIGN,
+  EXPR_BINARY,
   EXPR_CALL,
   EXPR_UNARY
 };
@@ -28,9 +29,17 @@ struct ExprAssign {
   ~ExprAssign ();
 };
 
+struct ExprBinary {
+  StmtExpr *left;
+  Token *op;
+  StmtExpr *right;
+
+  ~ExprBinary ();
+};
+
 struct ExprCall {
-  std::vector<StmtExpr *> args;
   Token *callee;
+  std::vector<StmtExpr *> args;
 
   ~ExprCall ();
 };
@@ -45,33 +54,21 @@ struct ExprUnary {
 
 struct Expr {
   ExprType type;
-  std::variant<ExprAssign *, ExprCall *, ExprUnary *> body;
+  std::variant<ExprAssign *, ExprBinary *, ExprCall *, ExprUnary *> body;
 
-  inline ~Expr () {
-    if (this->type == EXPR_ASSIGN) {
-      delete std::get<ExprAssign *>(this->body);
-    } else if (this->type == EXPR_CALL) {
-      delete std::get<ExprCall *>(this->body);
-    } else if (this->type == EXPR_UNARY) {
-      delete std::get<ExprUnary *>(this->body);
-    }
-  }
+  ~Expr ();
 };
 
 struct Identifier {
   Token *name;
 
-  inline ~Identifier () {
-    delete this->name;
-  }
+  ~Identifier ();
 };
 
 struct Literal {
   Token *val;
 
-  inline ~Literal () {
-    delete this->val;
-  }
+  ~Literal ();
 };
 
 enum StmtType {
@@ -94,15 +91,7 @@ struct StmtExpr {
   StmtExprType type;
   std::variant<Expr *, Identifier *, Literal *> body;
 
-  inline ~StmtExpr () {
-    if (this->type == STMT_EXPR_EXPR) {
-      delete std::get<Expr *>(this->body);
-    } else if (this->type == STMT_EXPR_IDENTIFIER) {
-      delete std::get<Identifier *>(this->body);
-    } else if (this->type == STMT_EXPR_LITERAL) {
-      delete std::get<Literal *>(this->body);
-    }
-  }
+  ~StmtExpr ();
 };
 
 struct StmtMain {
@@ -114,27 +103,14 @@ struct StmtShortVarDecl {
   StmtExpr *init;
   bool mut = false;
 
-  inline ~StmtShortVarDecl () {
-    delete this->id;
-    delete this->init;
-  }
+  ~StmtShortVarDecl ();
 };
 
 struct Stmt {
   StmtType type;
   std::variant<StmtEnd *, StmtExpr *, StmtMain *, StmtShortVarDecl *> body;
 
-  inline ~Stmt () {
-    if (this->type == STMT_END) {
-      delete std::get<StmtEnd *>(this->body);
-    } else if (this->type == STMT_EXPR) {
-      delete std::get<StmtExpr *>(this->body);
-    } else if (this->type == STMT_MAIN) {
-      delete std::get<StmtMain *>(this->body);
-    } else if (this->type == STMT_SHORT_VAR_DECL) {
-      delete std::get<StmtShortVarDecl *>(this->body);
-    }
-  }
+  ~Stmt ();
 };
 
 Stmt *parse (Reader *reader);

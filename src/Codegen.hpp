@@ -20,9 +20,7 @@ struct Codegen {
   std::string mainBody;
   VarMap *varMap;
 
-  inline ~Codegen () {
-    delete this->varMap;
-  }
+  ~Codegen ();
 };
 
 std::string codegen (const AST *ast);

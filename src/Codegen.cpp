@@ -8,6 +8,10 @@
 #include "Codegen.hpp"
 #include "Error.hpp"
 
+Codegen::~Codegen () {
+  delete this->varMap;
+}
+
 VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmtExpr) {
   if (stmtExpr->type == STMT_EXPR_EXPR) {
     auto expr = std::get<Expr *>(stmtExpr->body);
@@ -15,12 +19,33 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
     if (expr->type == EXPR_ASSIGN) {
       auto exprAssign = std::get<ExprAssign *>(expr->body);
       return codegen->varMap->get(exprAssign->left->val).type;
+    } else if (expr->type == EXPR_BINARY) {
+      auto exprBinary = std::get<ExprBinary *>(expr->body);
+      auto exprBinaryLeftType = codegenStmtExprType(codegen, exprBinary->left);
+      auto exprBinaryRightType = codegenStmtExprType(codegen, exprBinary->right);
+
+      auto exprBinaryConcat = exprBinaryLeftType == VAR_CHAR ||
+        exprBinaryLeftType == VAR_STR ||
+        exprBinaryRightType == VAR_CHAR ||
+        exprBinaryRightType == VAR_STR;
+
+      if (exprBinaryConcat) {
+        if (exprBinary->op->type == TK_OP_PLUS) {
+          return VAR_STR;
+        } else {
+          throw Error("Tried operation other than concatenation on string");
+        }
+      } else if (exprBinaryLeftType == VAR_FLOAT || exprBinaryRightType == VAR_FLOAT) {
+        return VAR_FLOAT;
+      } else {
+        return VAR_INT;
+      }
     } else if (expr->type == EXPR_UNARY) {
       auto exprUnary = std::get<ExprUnary *>(expr->body);
       auto exprType = codegenStmtExprType(codegen, exprUnary->arg);
 
-      if (exprType != VAR_FLOAT && exprType != VAR_INT_DEC) {
-        return VAR_INT_DEC;
+      if (exprType != VAR_FLOAT && exprType != VAR_INT) {
+        return VAR_INT;
       }
 
       return exprType;
@@ -36,7 +61,7 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
     } else if (lit->val->type == TK_LIT_FLOAT) {
       return VAR_FLOAT;
     } else if (lit->val->type == TK_LIT_INT_DEC) {
-      return VAR_INT_DEC;
+      return VAR_INT;
     } else if (lit->val->type == TK_LIT_STR) {
       return VAR_STR;
     }
@@ -56,6 +81,12 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
       codegen->mainBody += varName + " = ";
       codegenStmtExpr(codegen, exprAssign->right);
       codegen->mainBody += ";\n";
+    } else if (expr->type == EXPR_BINARY) {
+      auto exprBinary = std::get<ExprBinary *>(expr->body);
+
+      codegenStmtExpr(codegen, exprBinary->left);
+      codegen->mainBody += " " + exprBinary->op->val + " ";
+      codegenStmtExpr(codegen, exprBinary->right);
     } else if (expr->type == EXPR_CALL) {
       auto exprCall = std::get<ExprCall *>(expr->body);
 
@@ -78,7 +109,7 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
               codegen->mainBody += "%f";
               break;
             }
-            case VAR_INT_DEC: {
+            case VAR_INT: {
               codegen->mainBody += "%ld";
               break;
             }
@@ -153,7 +184,7 @@ std::string codegen (const AST *ast) {
             codegen->mainBody += stmtShortVarDecl->mut ? "double " : "const double ";
             break;
           }
-          case VAR_INT_DEC: {
+          case VAR_INT: {
             codegen->mainBody += stmtShortVarDecl->mut ? "long " : "const long ";
             break;
           }

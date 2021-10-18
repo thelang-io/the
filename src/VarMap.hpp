@@ -13,7 +13,7 @@
 enum VarMapItemType {
   VAR_CHAR,
   VAR_FLOAT,
-  VAR_INT_DEC,
+  VAR_INT,
   VAR_STR
 };
 

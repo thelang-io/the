@@ -1,7 +1,7 @@
 main {
-  a := '1'
+  a := 'a'
   b := 3.14159
-  c := 7
+  c := 700
   d := "Hello, World!"
   e := a
   f := b
@@ -9,22 +9,48 @@ main {
   h := d
   mut i := 0
   j := !3
-  k := ~4
-  l := !~5
-  m := -!!1
-  n := +~~5
-  o := i++
-  p := i--
-  q := ++i
-  r := --i
+  k := !0
+  l := ~4
+  m := -4
+  n := ~0
+  o := !~5
+  p := !-5
+  q := -~0
+  r := -!!1
+  s := +~~5
+  t := i++
+  u := i--
+  v := ++i
+  w := --i
+  aa := 1 + 2
+  ab := ~2 + 3
+  ac := 0 // TODO ~(1 + 1)
+  ad := 1 - 2
+  ae := 1 - 2 - 3
+  af := 2 - -1
+  ag := 4 / 2
+  ah := 6 / 3 / 2
+  ai := -12 / 5
+  aj := 2 * 3
+  ak := 2 + 3 * 4
+  al := 2 // TODO * (3 + 4)
 
   print()
   print(d)
-  print("a:", a, "b:", b, "c:", c)
-  print("e:", e, "f:", f, "g:", g, "h:", h)
   print("i:", i)
   i = 1
   print("i:", i)
+
+  print("a:", a, "b:", b, "c:", c, "d:", d)
+  print("e:", e, "f:", f, "g:", g, "h:", h)
   print("j:", j, "k:", k, "l:", l, "m:", m)
-  print("n:", n, "o:", o, "p:", p, "q:", q, "r:", r)
+  print("n:", n, "o:", o, "p:", p, "q:", q)
+  print("r:", r, "s:", s, "t:", t, "u:", u)
+  print("v:", v, "w:", w)
+
+  print("aa:", aa, "ab:", ab, "ac:", ac, "ad:", ad)
+  print("ae:", ae, "af:", af, "ag:", ag, "ah:", ah)
+  print("ai:", ai, "aj:", aj, "ak:", ak, "al:", al)
+
+  // TODO Return statement
 }
