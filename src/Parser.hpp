@@ -17,7 +17,8 @@ struct StmtExpr;
 
 enum ExprType {
   EXPR_ASSIGN,
-  EXPR_CALL
+  EXPR_CALL,
+  EXPR_UNARY
 };
 
 struct ExprAssign {
@@ -34,15 +35,25 @@ struct ExprCall {
   ~ExprCall ();
 };
 
+struct ExprUnary {
+  StmtExpr *arg;
+  Token *op;
+  bool prefix = false;
+
+  ~ExprUnary ();
+};
+
 struct Expr {
   ExprType type;
-  std::variant<ExprAssign *, ExprCall *> body;
+  std::variant<ExprAssign *, ExprCall *, ExprUnary *> body;
 
   inline ~Expr () {
     if (this->type == EXPR_ASSIGN) {
       delete std::get<ExprAssign *>(this->body);
     } else if (this->type == EXPR_CALL) {
       delete std::get<ExprCall *>(this->body);
+    } else if (this->type == EXPR_UNARY) {
+      delete std::get<ExprUnary *>(this->body);
     }
   }
 };

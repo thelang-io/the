@@ -15,6 +15,15 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
     if (expr->type == EXPR_ASSIGN) {
       auto exprAssign = std::get<ExprAssign *>(expr->body);
       return codegen->varMap->get(exprAssign->left->val).type;
+    } else if (expr->type == EXPR_UNARY) {
+      auto exprUnary = std::get<ExprUnary *>(expr->body);
+      auto exprType = codegenStmtExprType(codegen, exprUnary->arg);
+
+      if (exprType != VAR_FLOAT && exprType != VAR_INT_DEC) {
+        return VAR_INT_DEC;
+      }
+
+      return exprType;
     }
   } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
     auto id = std::get<Identifier *>(stmtExpr->body);
@@ -70,7 +79,7 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
               break;
             }
             case VAR_INT_DEC: {
-              codegen->mainBody += "%lu";
+              codegen->mainBody += "%ld";
               break;
             }
             default: {
@@ -98,6 +107,16 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
       } else {
         throw Error("Tried to access unknown built-in function");
       }
+    } else if (expr->type == EXPR_UNARY) {
+      auto exprUnary = std::get<ExprUnary *>(expr->body);
+
+      if (exprUnary->prefix) {
+        codegen->mainBody += exprUnary->op->val;
+        codegenStmtExpr(codegen, exprUnary->arg);
+      } else {
+        codegenStmtExpr(codegen, exprUnary->arg);
+        codegen->mainBody += exprUnary->op->val;
+      }
     }
   } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
     auto id = std::get<Identifier *>(stmtExpr->body);
@@ -106,7 +125,7 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
     auto lit = std::get<Literal *>(stmtExpr->body);
     codegen->mainBody += lit->val->val;
   } else {
-    throw Error("Tried to access unknown expr type");
+    throw Error("Tried to access unknown expr");
   }
 }
 
@@ -123,19 +142,19 @@ std::string codegen (const AST *ast) {
       } else if (stmt->type == STMT_SHORT_VAR_DECL) {
         auto stmtShortVarDecl = std::get<StmtShortVarDecl *>(stmt->body);
         auto varName = stmtShortVarDecl->id->val;
-        auto varType = codegenStmtExprType(codegen, stmtShortVarDecl->init);
+        auto exprType = codegenStmtExprType(codegen, stmtShortVarDecl->init);
 
-        switch (varType) {
+        switch (exprType) {
           case VAR_CHAR: {
             codegen->mainBody += stmtShortVarDecl->mut ? "char " : "const char ";
             break;
           }
           case VAR_FLOAT: {
-            codegen->mainBody += stmtShortVarDecl->mut ? "float " : "const float ";
+            codegen->mainBody += stmtShortVarDecl->mut ? "double " : "const double ";
             break;
           }
           case VAR_INT_DEC: {
-            codegen->mainBody += stmtShortVarDecl->mut ? "unsigned long " : "const unsigned long ";
+            codegen->mainBody += stmtShortVarDecl->mut ? "long " : "const long ";
             break;
           }
           default: {
@@ -147,7 +166,7 @@ std::string codegen (const AST *ast) {
         codegen->mainBody += varName + " = ";
         codegenStmtExpr(codegen, stmtShortVarDecl->init);
         codegen->mainBody += ";\n";
-        codegen->varMap->add(varType, varName);
+        codegen->varMap->add(exprType, varName);
 
         continue;
       }

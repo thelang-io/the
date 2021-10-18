@@ -21,6 +21,11 @@ ExprCall::~ExprCall () {
   delete this->callee;
 }
 
+ExprUnary::~ExprUnary () {
+  delete this->arg;
+  delete this->op;
+}
+
 void parseWalkWhitespace (Reader *reader) {
   while (true) {
     auto loc = reader->loc;
@@ -94,6 +99,13 @@ StmtExpr *parseStmtExpr (Reader *reader) {
       delete tok3;
 
       return new StmtExpr{STMT_EXPR_EXPR, expr};
+    } else if (tok2->type == TK_OP_MINUS_MINUS || tok2->type == TK_OP_PLUS_PLUS) {
+      auto id = new Identifier{tok1};
+      auto stmtExpr = new StmtExpr{STMT_EXPR_IDENTIFIER, id};
+      auto exprUnary = new ExprUnary{stmtExpr, tok2};
+      auto expr = new Expr{EXPR_UNARY, exprUnary};
+
+      return new StmtExpr{STMT_EXPR_EXPR, expr};
     }
 
     reader->seek(loc2);
@@ -101,6 +113,22 @@ StmtExpr *parseStmtExpr (Reader *reader) {
 
     auto id = new Identifier{tok1};
     return new StmtExpr{STMT_EXPR_IDENTIFIER, id};
+  } else if (
+    tok1->type == TK_OP_EXCL ||
+    tok1->type == TK_OP_EXCL_EXCL ||
+    tok1->type == TK_OP_MINUS ||
+    tok1->type == TK_OP_MINUS_MINUS ||
+    tok1->type == TK_OP_PLUS ||
+    tok1->type == TK_OP_PLUS_PLUS ||
+    tok1->type == TK_OP_TILDE
+  ) {
+    parseWalkWhitespace(reader);
+
+    auto stmtExpr = parseStmtExpr(reader);
+    auto exprUnary = new ExprUnary{stmtExpr, tok1, true};
+    auto expr = new Expr{EXPR_UNARY, exprUnary};
+
+    return new StmtExpr{STMT_EXPR_EXPR, expr};
   }
 
   throw Error("TODO");
