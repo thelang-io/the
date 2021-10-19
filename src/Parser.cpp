@@ -62,6 +62,8 @@ Stmt::~Stmt () {
     delete std::get<StmtExpr *>(this->body);
   } else if (this->type == STMT_MAIN) {
     delete std::get<StmtMain *>(this->body);
+  } else if (this->type == STMT_RETURN) {
+    delete std::get<StmtReturn *>(this->body);
   } else if (this->type == STMT_SHORT_VAR_DECL) {
     delete std::get<StmtShortVarDecl *>(this->body);
   }
@@ -75,6 +77,16 @@ StmtExpr::~StmtExpr () {
   } else if (this->type == STMT_EXPR_LITERAL) {
     delete std::get<Literal *>(this->body);
   }
+}
+
+StmtMain::~StmtMain () {
+  for (auto &stmt : this->body) {
+    delete stmt;
+  }
+}
+
+StmtReturn::~StmtReturn () {
+  delete this->arg;
 }
 
 StmtShortVarDecl::~StmtShortVarDecl () {
@@ -359,6 +371,14 @@ Stmt *parse (Reader *reader) {
     }
 
     delete tok2;
+  } else if (tok1->type == TK_KW_RETURN) {
+    parseWalkWhitespace(reader);
+    delete tok1;
+
+    auto stmtExpr = parseStmtExpr(reader);
+    auto stmtReturn = new StmtReturn{stmtExpr};
+
+    return new Stmt{STMT_RETURN, stmtReturn};
   } else if (tok1->type == TK_LIT_ID) {
     parseWalkWhitespace(reader);
     auto tok2 = lex(reader);

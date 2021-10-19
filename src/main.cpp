@@ -28,12 +28,11 @@ int main () {
     }
 
     auto code = codegen(ast);
-    auto f = std::ofstream("output.c");
+    auto f = std::ofstream("build/output.c");
 
     f << code;
     f.close();
-    system("gcc output.c -Wno-constant-logical-operand -lm -o a.out");
-    fs::remove("output.c");
+    system("gcc build/output.c -Wno-constant-logical-operand -lm -o build/a.out");
 
     delete ast;
     return EXIT_SUCCESS;

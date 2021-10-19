@@ -74,6 +74,7 @@ enum StmtType {
   STMT_END,
   STMT_EXPR,
   STMT_MAIN,
+  STMT_RETURN,
   STMT_SHORT_VAR_DECL
 };
 
@@ -96,6 +97,14 @@ struct StmtExpr {
 
 struct StmtMain {
   std::vector<Stmt *> body;
+
+  ~StmtMain();
+};
+
+struct StmtReturn {
+  StmtExpr *arg;
+
+  ~StmtReturn ();
 };
 
 struct StmtShortVarDecl {
@@ -108,7 +117,13 @@ struct StmtShortVarDecl {
 
 struct Stmt {
   StmtType type;
-  std::variant<StmtEnd *, StmtExpr *, StmtMain *, StmtShortVarDecl *> body;
+  std::variant<
+    StmtEnd *,
+    StmtExpr *,
+    StmtMain *,
+    StmtReturn *,
+    StmtShortVarDecl *
+  > body;
 
   ~Stmt ();
 };

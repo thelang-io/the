@@ -209,6 +209,13 @@ std::string codegen (const AST *ast) {
         codegen->mainBody += ";\n";
 
         continue;
+      } else if (stmt->type == STMT_RETURN) {
+        auto stmtReturn = std::get<StmtReturn *>(stmt->body);
+        codegen->mainBody += "return ";
+        codegenStmtExpr(codegen, stmtReturn->arg);
+        codegen->mainBody += ";\n";
+
+        continue;
       } else if (stmt->type == STMT_SHORT_VAR_DECL) {
         auto stmtShortVarDecl = std::get<StmtShortVarDecl *>(stmt->body);
         auto varName = stmtShortVarDecl->id->val;
@@ -247,7 +254,7 @@ std::string codegen (const AST *ast) {
 
   auto code = std::string(codegen->headers.math ? "#include <math.h>\n" : "") +
     std::string(codegen->headers.stdio ? "#include <stdio.h>\n" : "") +
-    "\nint main (const int argc, const char **argv) {\n" + codegen->mainBody + "return 0;\n}\n";
+    "\nint main (const int argc, const char **argv) {\n" + codegen->mainBody + "}\n";
 
   delete codegen;
   return code;

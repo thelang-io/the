@@ -18,6 +18,6 @@ void AST::add (Stmt *stmt) {
     auto stmtMain = std::get<StmtMain *>(stmt->body);
 
     this->mainPresent = true;
-    this->mainBody = stmtMain->body;
+    stmtMain->body.swap(this->mainBody);
   }
 }
