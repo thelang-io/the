@@ -8,15 +8,15 @@
 #include "Codegen.hpp"
 #include "Error.hpp"
 
-void codegenStmt (Codegen *codegen, const Stmt *stmt);
+void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent);
 
 Codegen::~Codegen () {
   delete this->varMap;
 }
 
-void codegenBlock (Codegen *codegen, const Block *block) {
+void codegenBlock (Codegen *codegen, const Block *block, std::size_t indent) {
   for (const auto &stmt : block->body) {
-    codegenStmt(codegen, stmt);
+    codegenStmt(codegen, stmt, indent);
   }
 }
 
@@ -206,36 +206,39 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
   }
 }
 
-void codegenStmtIf (Codegen *codegen, const StmtIf *stmtIf) {
+void codegenStmtIf (Codegen *codegen, const StmtIf *stmtIf, std::size_t indent) {
   codegen->mainBody += "if (";
   codegenStmtExpr(codegen, stmtIf->cond);
   codegen->mainBody += ") {\n";
-  codegenBlock(codegen, stmtIf->body);
+  codegenBlock(codegen, stmtIf->body, indent + 2);
 
   if (stmtIf->alt != nullptr) {
-    codegen->mainBody += "} else ";
+    codegen->mainBody += std::string(indent, ' ') + "} else ";
 
     if (stmtIf->alt->type == STMT_IF_ALT_BLOCK) {
       codegen->mainBody += "{\n";
-      codegenBlock(codegen, std::get<Block *>(stmtIf->alt->body));
-      codegen->mainBody += "}";
+      codegenBlock(codegen, std::get<Block *>(stmtIf->alt->body), indent + 2);
+      codegen->mainBody += std::string(indent, ' ') + "}";
     } else if (stmtIf->alt->type == STMT_IF_ALT_STMT_IF) {
-      codegenStmtIf(codegen, std::get<StmtIf *>(stmtIf->alt->body));
+      codegenStmtIf(codegen, std::get<StmtIf *>(stmtIf->alt->body), indent);
     }
   } else {
-    codegen->mainBody += "}";
+    codegen->mainBody += std::string(indent, ' ') + "}";
   }
 }
 
-void codegenStmt (Codegen *codegen, const Stmt *stmt) {
+void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
+  codegen->mainBody += std::string(indent, ' ');
+
   if (stmt->type == STMT_EXPR) {
     codegenStmtExpr(codegen, std::get<StmtExpr *>(stmt->body));
     codegen->mainBody += ";\n";
   } else if (stmt->type == STMT_IF) {
-    codegenStmtIf(codegen, std::get<StmtIf *>(stmt->body));
+    codegenStmtIf(codegen, std::get<StmtIf *>(stmt->body), indent);
     codegen->mainBody += "\n";
   } else if (stmt->type == STMT_RETURN) {
     auto stmtReturn = std::get<StmtReturn *>(stmt->body);
+
     codegen->mainBody += "return ";
     codegenStmtExpr(codegen, stmtReturn->arg);
     codegen->mainBody += ";\n";
@@ -276,7 +279,7 @@ std::string codegen (const AST *ast) {
   auto codegen = new Codegen{{}, "", new VarMap{}};
 
   if (ast->mainPresent) {
-    codegenBlock(codegen, ast->mainBody);
+    codegenBlock(codegen, ast->mainBody, 2);
   }
 
   auto code = std::string(codegen->headers.math ? "#include <math.h>\n" : "") +
