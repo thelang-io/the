@@ -61,13 +61,11 @@ struct Expr {
 
 struct Identifier {
   Token *name;
-
   ~Identifier ();
 };
 
 struct Literal {
   Token *val;
-
   ~Literal ();
 };
 
@@ -90,6 +88,7 @@ enum StmtExprType {
 struct StmtExpr {
   StmtExprType type;
   std::variant<Expr *, Identifier *, Literal *> body;
+  bool parenthesized = false;
 
   ~StmtExpr ();
 };

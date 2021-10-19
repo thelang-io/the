@@ -71,6 +71,10 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
 }
 
 void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
+  if (stmtExpr->parenthesized) {
+    codegen->mainBody += "(";
+  }
+
   if (stmtExpr->type == STMT_EXPR_EXPR) {
     auto expr = std::get<Expr *>(stmtExpr->body);
 
@@ -157,6 +161,10 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
     codegen->mainBody += lit->val->val;
   } else {
     throw Error("Tried to access unknown expr");
+  }
+
+  if (stmtExpr->parenthesized) {
+    codegen->mainBody += ")";
   }
 }
 

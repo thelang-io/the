@@ -123,7 +123,10 @@ StmtExpr *parseStmtExprBinary (Reader *reader, StmtExpr *stmtExpr) {
       if (expr2->type == EXPR_BINARY) {
         auto exprBinary2 = std::get<ExprBinary *>(expr2->body);
 
-        if (parseStmtExprBinaryOpPrecedence(tok) >= parseStmtExprBinaryOpPrecedence(exprBinary2->op)) {
+        if (
+          parseStmtExprBinaryOpPrecedence(tok) >= parseStmtExprBinaryOpPrecedence(exprBinary2->op) &&
+          !stmtExpr2->parenthesized
+        ) {
           auto exprBinaryLeft = new ExprBinary{stmtExpr, tok, exprBinary2->left};
           auto exprLeft = new Expr{EXPR_BINARY, exprBinaryLeft};
           auto stmtExprLeft = new StmtExpr{STMT_EXPR_EXPR, exprLeft};
@@ -241,6 +244,23 @@ StmtExpr *parseStmtExpr (Reader *reader) {
     auto expr = new Expr{EXPR_UNARY, exprUnary};
 
     return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
+  } else if (tok1->type == TK_OP_LPAR) {
+    parseWalkWhitespace(reader);
+    delete tok1;
+
+    auto stmtExpr = parseStmtExpr(reader);
+    parseWalkWhitespace(reader);
+
+    auto tok2 = lex(reader);
+
+    if (tok2->type != TK_OP_RPAR) {
+      throw Error("Expected right parentheses");
+    }
+
+    delete tok2;
+    stmtExpr->parenthesized = true;
+
+    return parseStmtExprBinary(reader, stmtExpr);
   }
 
   throw Error("Unknown expression statement");
