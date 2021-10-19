@@ -32,7 +32,7 @@ int main () {
 
     f << code;
     f.close();
-    system("gcc output.c -o a.out");
+    system("gcc output.c -Wno-constant-logical-operand -lm -o a.out");
     fs::remove("output.c");
 
     delete ast;

@@ -3,11 +3,14 @@ main {
   b := 3.14159
   c := 700
   d := "Hello, World!"
+
   e := a
   f := b
   g := c
   h := d
+
   mut i := 0
+
   j := !3
   k := !0
   l := ~4
@@ -22,18 +25,90 @@ main {
   u := i--
   v := ++i
   w := --i
+
   aa := 1 + 2
   ab := ~2 + 3
   ac := ~(1 + 1)
   ad := 1 - 2
   ae := 1 - 2 - 3
   af := 2 - -1
-  ag := 4 / 2
+  ag := 5 / 2
   ah := 6 / 3 / 2
   ai := -12 / 5
   aj := 2 * 3
   ak := 2 + 3 * 4
   al := (2 * (3 + 4) + 4 / 2) * 3
+
+  b0 := 0
+  b1 := 1
+  ba := 1 && 0
+  bb := 1 && -1
+  bc := 1 == 2
+  bd := 1 == 1
+  be := 1 >= 2
+  bf := 1 >= 1
+  bg := 1 > 2
+  bh := 1 > 0
+  bi := 1 <= -1
+  bj := 0 <= 2
+  bk := 2 < 1
+  bl := 1 < 2
+  bm := 0 != 0
+  bn := -1 != -2
+  bo := 0 || 0
+  bp := 1 || 0
+  bq := 0 & 1
+  br := 1 & 0
+  bs := 0 | 1
+  bt := 1 | 0
+  bu := 0 ^ 1
+  bv := 1 ^ 0
+  bw := 0 >> 2
+  bx := 2 >> 0
+  by := 0 << 2
+  bz := 2 << 0
+  ca := 4 % 2
+  cb := 5 % 2
+  cc := 2 ** 4
+  cd := 1 || 0 && 2
+  ce := (1 || 0) && 0
+  cf := 2 == 2 > 0
+  cg := 2 == 2 || 0
+  mut ch_a := 0
+  ch := ch_a || (ch_a = 3) || (ch_a = 4)
+  mut ci_a := 0
+  ci := b0 && (ci_a = 5)
+  mut cj_a := 0
+  cj := b1 || (cj_a = 5)
+
+  mut da := 1
+  mut db := 2
+  mut dc := 3
+  mut dd := 4
+  mut de := 5
+  mut df := 6
+  mut dg := 7
+  mut dh := 8
+  mut di := 9
+  mut dj := 10
+  mut dk := 11
+  mut dl := 12
+  mut dm := 13
+  mut dn := 14
+
+  da **= 2
+  db %= 15
+  dc /= 16
+  dd *= 17
+  de -= 18
+  df += 19
+  dg >>= 20
+  dh <<= 21
+  di &= 22
+  dj ^= 23
+  dk |= 24
+  dl &&= 25
+  dm ||= 26
 
   print()
   print(d)
@@ -51,6 +126,21 @@ main {
   print("aa:", aa, "ab:", ab, "ac:", ac, "ad:", ad)
   print("ae:", ae, "af:", af, "ag:", ag, "ah:", ah)
   print("ai:", ai, "aj:", aj, "ak:", ak, "al:", al)
+
+  print("ba:", ba, "bb:", bb, "bc:", bc, "bd:", bd)
+  print("be:", be, "bf:", bf, "bg:", bg, "bh:", bh)
+  print("bi:", bi, "bj:", bj, "bk:", bk, "bl:", bl)
+  print("bm:", bm, "bn:", bn, "bo:", bo, "bp:", bp)
+  print("bq:", bq, "br:", br, "bs:", bs, "bt:", bt)
+  print("bu:", bu, "bv:", bv, "bw:", bw, "bx:", bx)
+  print("by:", by, "bz:", bz, "ca:", ca, "cb:", cb)
+  print("cc:", cc, "cd:", cd, "ce:", ce, "cf:", cf)
+  print("cg:", cg, "ch:", ch, "ci:", ci, "cj:", cj)
+
+  print("da:", da, "db:", db, "dc:", dc, "dd:", dd)
+  print("de:", de, "df:", df, "dg:", dg, "dh:", dh)
+  print("di:", di, "dj:", dj, "dk:", dk, "dl:", dl)
+  print("dm:", dm)
 
   // TODO Return statement
 }

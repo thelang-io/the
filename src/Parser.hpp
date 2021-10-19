@@ -24,6 +24,7 @@ enum ExprType {
 
 struct ExprAssign {
   Token *left;
+  Token *op;
   StmtExpr *right;
 
   ~ExprAssign ();

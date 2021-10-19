@@ -24,6 +24,7 @@ Expr::~Expr () {
 
 ExprAssign::~ExprAssign () {
   delete this->left;
+  delete this->op;
   delete this->right;
 }
 
@@ -97,23 +98,34 @@ void parseWalkWhitespace (Reader *reader) {
   }
 }
 
-int parseStmtExprBinaryOpPrecedence (Token *op) {
-  if (op->type == TK_OP_SLASH || op->type == TK_OP_STAR) {
-    return 2;
-  } else if (op->type == TK_OP_MINUS || op->type == TK_OP_PLUS) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
 StmtExpr *parseStmtExprBinary (Reader *reader, StmtExpr *stmtExpr) {
   auto loc = reader->loc;
   parseWalkWhitespace(reader);
 
   auto tok = lex(reader);
 
-  if (tok->type == TK_OP_MINUS || tok->type == TK_OP_PLUS || tok->type == TK_OP_SLASH || tok->type == TK_OP_STAR) {
+  if (
+    tok->type == TK_OP_AND ||
+    tok->type == TK_OP_AND_AND ||
+    tok->type == TK_OP_CARET ||
+    tok->type == TK_OP_EQ_EQ ||
+    tok->type == TK_OP_EXCL_EQ ||
+    tok->type == TK_OP_GT ||
+    tok->type == TK_OP_GT_EQ ||
+    tok->type == TK_OP_LSHIFT ||
+    tok->type == TK_OP_LT ||
+    tok->type == TK_OP_LT_EQ ||
+    tok->type == TK_OP_OR ||
+    tok->type == TK_OP_OR_OR ||
+    tok->type == TK_OP_MINUS ||
+    tok->type == TK_OP_PERCENT ||
+    tok->type == TK_OP_PLUS ||
+    tok->type == TK_OP_QN_QN ||
+    tok->type == TK_OP_RSHIFT ||
+    tok->type == TK_OP_SLASH ||
+    tok->type == TK_OP_STAR ||
+    tok->type == TK_OP_STAR_STAR
+  ) {
     parseWalkWhitespace(reader);
     auto stmtExpr2 = parseStmtExpr(reader);
 
@@ -123,10 +135,7 @@ StmtExpr *parseStmtExprBinary (Reader *reader, StmtExpr *stmtExpr) {
       if (expr2->type == EXPR_BINARY) {
         auto exprBinary2 = std::get<ExprBinary *>(expr2->body);
 
-        if (
-          parseStmtExprBinaryOpPrecedence(tok) >= parseStmtExprBinaryOpPrecedence(exprBinary2->op) &&
-          !stmtExpr2->parenthesized
-        ) {
+        if (tokenPrecedence(tok) >= tokenPrecedence(exprBinary2->op) && !stmtExpr2->parenthesized) {
           auto exprBinaryLeft = new ExprBinary{stmtExpr, tok, exprBinary2->left};
           auto exprLeft = new Expr{EXPR_BINARY, exprBinaryLeft};
           auto stmtExprLeft = new StmtExpr{STMT_EXPR_EXPR, exprLeft};
@@ -172,14 +181,29 @@ StmtExpr *parseStmtExpr (Reader *reader) {
 
     auto tok2 = lex(reader);
 
-    if (tok2->type == TK_OP_EQ) {
+    if (
+      tok2->type == TK_OP_AND_AND_EQ ||
+      tok2->type == TK_OP_AND_EQ ||
+      tok2->type == TK_OP_CARET_EQ ||
+      tok2->type == TK_OP_EQ ||
+      tok2->type == TK_OP_LSHIFT_EQ ||
+      tok2->type == TK_OP_MINUS_EQ ||
+      tok2->type == TK_OP_OR_EQ ||
+      tok2->type == TK_OP_OR_OR_EQ ||
+      tok2->type == TK_OP_PERCENT_EQ ||
+      tok2->type == TK_OP_PLUS_EQ ||
+      tok2->type == TK_OP_QN_QN_EQ ||
+      tok2->type == TK_OP_RSHIFT_EQ ||
+      tok2->type == TK_OP_SLASH_EQ ||
+      tok2->type == TK_OP_STAR_EQ ||
+      tok2->type == TK_OP_STAR_STAR_EQ
+    ) {
       parseWalkWhitespace(reader);
 
       auto stmtExpr = parseStmtExpr(reader);
-      auto exprAssign = new ExprAssign{tok1, stmtExpr};
+      auto exprAssign = new ExprAssign{tok1, tok2, stmtExpr};
       auto expr = new Expr{EXPR_ASSIGN, exprAssign};
 
-      delete tok2;
       return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
     } else if (tok2->type == TK_OP_LPAR) {
       auto loc3 = reader->loc;

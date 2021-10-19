@@ -35,7 +35,13 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
         } else {
           throw Error("Tried operation other than concatenation on string");
         }
-      } else if (exprBinaryLeftType == VAR_FLOAT || exprBinaryRightType == VAR_FLOAT) {
+      } else if (
+        exprBinaryLeftType == VAR_FLOAT ||
+        exprBinaryRightType == VAR_FLOAT ||
+        exprBinary->op->type == TK_OP_SLASH ||
+        exprBinary->op->type == TK_OP_STAR ||
+        exprBinary->op->type == TK_OP_STAR_STAR
+      ) {
         return VAR_FLOAT;
       } else {
         return VAR_INT;
@@ -82,15 +88,40 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
       auto exprAssign = std::get<ExprAssign *>(expr->body);
       auto varName = exprAssign->left->val;
 
-      codegen->mainBody += varName + " = ";
-      codegenStmtExpr(codegen, exprAssign->right);
-      codegen->mainBody += ";\n";
+      if (exprAssign->op->type == TK_OP_STAR_STAR_EQ) {
+        codegen->mainBody += varName + " = pow(" + varName + ", ";
+        codegenStmtExpr(codegen, exprAssign->right);
+        codegen->mainBody += ")";
+      } else if (exprAssign->op->type == TK_OP_AND_AND_EQ) {
+        codegen->mainBody += varName + " = " + varName + " && ";
+        codegenStmtExpr(codegen, exprAssign->right);
+      } else if (exprAssign->op->type == TK_OP_OR_OR_EQ) {
+        codegen->mainBody += varName + " = " + varName + " || ";
+        codegenStmtExpr(codegen, exprAssign->right);
+      } else {
+        codegen->mainBody += varName + " " + exprAssign->op->val + " ";
+        codegenStmtExpr(codegen, exprAssign->right);
+      }
     } else if (expr->type == EXPR_BINARY) {
       auto exprBinary = std::get<ExprBinary *>(expr->body);
 
-      codegenStmtExpr(codegen, exprBinary->left);
-      codegen->mainBody += " " + exprBinary->op->val + " ";
-      codegenStmtExpr(codegen, exprBinary->right);
+      if (exprBinary->op->type == TK_OP_STAR_STAR) {
+        codegen->headers.math = true;
+        codegen->mainBody += "pow(";
+        codegenStmtExpr(codegen, exprBinary->left);
+        codegen->mainBody += ", ";
+        codegenStmtExpr(codegen, exprBinary->right);
+        codegen->mainBody += ")";
+      } else if (exprBinary->op->type == TK_OP_SLASH || exprBinary->op->type == TK_OP_STAR) {
+        codegen->mainBody += "(double) ";
+        codegenStmtExpr(codegen, exprBinary->left);
+        codegen->mainBody += " " + exprBinary->op->val + " (double) ";
+        codegenStmtExpr(codegen, exprBinary->right);
+      } else {
+        codegenStmtExpr(codegen, exprBinary->left);
+        codegen->mainBody += " " + exprBinary->op->val + " ";
+        codegenStmtExpr(codegen, exprBinary->right);
+      }
     } else if (expr->type == EXPR_CALL) {
       auto exprCall = std::get<ExprCall *>(expr->body);
 
@@ -137,8 +168,7 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
           argIdx++;
         }
 
-        codegen->mainBody += R"("\n");)";
-        codegen->mainBody += "\n";
+        codegen->mainBody += R"("\n"))";
       } else {
         throw Error("Tried to access unknown built-in function");
       }
@@ -176,6 +206,7 @@ std::string codegen (const AST *ast) {
       if (stmt->type == STMT_EXPR) {
         auto stmtExpr = std::get<StmtExpr *>(stmt->body);
         codegenStmtExpr(codegen, stmtExpr);
+        codegen->mainBody += ";\n";
 
         continue;
       } else if (stmt->type == STMT_SHORT_VAR_DECL) {
@@ -214,7 +245,8 @@ std::string codegen (const AST *ast) {
     }
   }
 
-  auto code = std::string(codegen->headers.stdio ? "#include <stdio.h>\n" : "") +
+  auto code = std::string(codegen->headers.math ? "#include <math.h>\n" : "") +
+    std::string(codegen->headers.stdio ? "#include <stdio.h>\n" : "") +
     "\nint main (const int argc, const char **argv) {\n" + codegen->mainBody + "return 0;\n}\n";
 
   delete codegen;

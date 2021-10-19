@@ -12,6 +12,7 @@
 #include "VarMap.hpp"
 
 struct CodegenHeaders {
+  bool math = false;
   bool stdio = false;
 };
 
