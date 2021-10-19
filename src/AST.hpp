@@ -13,7 +13,7 @@
 class AST {
  public:
   bool mainPresent = false;
-  std::vector<Stmt *> mainBody;
+  Block *mainBody;
 
   ~AST ();
   void add (Stmt *stmt);

@@ -1,16 +1,20 @@
 main {
+  print()
+  print("Hello, World!")
+
+  mut i := 0
+  print("i:", i)
+  i = 1
+  print("i:", i)
+
   a := 'a'
   b := 3.14159
   c := 700
   d := "Hello, World!"
-
   e := a
   f := b
   g := c
   h := d
-
-  mut i := 0
-
   j := !3
   k := !0
   l := ~4
@@ -26,6 +30,13 @@ main {
   v := ++i
   w := --i
 
+  print("a:", a, "b:", b, "c:", c, "d:", d)
+  print("e:", e, "f:", f, "g:", g, "h:", h)
+  print("j:", j, "k:", k, "l:", l, "m:", m)
+  print("n:", n, "o:", o, "p:", p, "q:", q)
+  print("r:", r, "s:", s, "t:", t, "u:", u)
+  print("v:", v, "w:", w)
+
   aa := 1 + 2
   ab := ~2 + 3
   ac := ~(1 + 1)
@@ -38,6 +49,10 @@ main {
   aj := 2 * 3
   ak := 2 + 3 * 4
   al := (2 * (3 + 4) + 4 / 2) * 3
+
+  print("aa:", aa, "ab:", ab, "ac:", ac, "ad:", ad)
+  print("ae:", ae, "af:", af, "ag:", ag, "ah:", ah)
+  print("ai:", ai, "aj:", aj, "ak:", ak, "al:", al)
 
   b0 := 0
   b1 := 1
@@ -81,6 +96,16 @@ main {
   mut cj_a := 0
   cj := b1 || (cj_a = 5)
 
+  print("ba:", ba, "bb:", bb, "bc:", bc, "bd:", bd)
+  print("be:", be, "bf:", bf, "bg:", bg, "bh:", bh)
+  print("bi:", bi, "bj:", bj, "bk:", bk, "bl:", bl)
+  print("bm:", bm, "bn:", bn, "bo:", bo, "bp:", bp)
+  print("bq:", bq, "br:", br, "bs:", bs, "bt:", bt)
+  print("bu:", bu, "bv:", bv, "bw:", bw, "bx:", bx)
+  print("by:", by, "bz:", bz, "ca:", ca, "cb:", cb)
+  print("cc:", cc, "cd:", cd, "ce:", ce, "cf:", cf)
+  print("cg:", cg, "ch:", ch, "ci:", ci, "cj:", cj)
+
   mut da := 1
   mut db := 2
   mut dc := 3
@@ -110,35 +135,60 @@ main {
   dl &&= 25
   dm ||= 26
 
-  print()
-  print(d)
-  print("i:", i)
-  i = 1
-  print("i:", i)
-
-  print("a:", a, "b:", b, "c:", c, "d:", d)
-  print("e:", e, "f:", f, "g:", g, "h:", h)
-  print("j:", j, "k:", k, "l:", l, "m:", m)
-  print("n:", n, "o:", o, "p:", p, "q:", q)
-  print("r:", r, "s:", s, "t:", t, "u:", u)
-  print("v:", v, "w:", w)
-
-  print("aa:", aa, "ab:", ab, "ac:", ac, "ad:", ad)
-  print("ae:", ae, "af:", af, "ag:", ag, "ah:", ah)
-  print("ai:", ai, "aj:", aj, "ak:", ak, "al:", al)
-
-  print("ba:", ba, "bb:", bb, "bc:", bc, "bd:", bd)
-  print("be:", be, "bf:", bf, "bg:", bg, "bh:", bh)
-  print("bi:", bi, "bj:", bj, "bk:", bk, "bl:", bl)
-  print("bm:", bm, "bn:", bn, "bo:", bo, "bp:", bp)
-  print("bq:", bq, "br:", br, "bs:", bs, "bt:", bt)
-  print("bu:", bu, "bv:", bv, "bw:", bw, "bx:", bx)
-  print("by:", by, "bz:", bz, "ca:", ca, "cb:", cb)
-  print("cc:", cc, "cd:", cd, "ce:", ce, "cf:", cf)
-  print("cg:", cg, "ch:", ch, "ci:", ci, "cj:", cj)
-
   print("da:", da, "db:", db, "dc:", dc, "dd:", dd)
   print("de:", de, "df:", df, "dg:", dg, "dh:", dh)
   print("di:", di, "dj:", dj, "dk:", dk, "dl:", dl)
   print("dm:", dm)
+
+  if 0 {
+    print("False condition")
+  }
+
+  if 1 {
+    print("True condition")
+  }
+
+  if 0 {
+    print("False condition")
+  } else {
+    print("True condition")
+  }
+
+  if 0 {
+    print("False condition")
+  } elif 1 {
+    print("True condition")
+  }
+
+  if 1 {
+    print("True condition")
+  } elif 0 {
+    print("False condition")
+  }
+
+  if 1 {
+    if 0 {
+      print("False condition")
+    } else {
+      print("True condition")
+    }
+  }
+
+  if 1 {
+    if 2 {
+      print("True condition")
+    } elif 0 {
+      print("False condition")
+    }
+  }
+
+  if 0 {
+    if 0 {
+      print("False condition")
+    } elif 0 {
+      print("False condition")
+    }
+  } else {
+    print("True condition")
+  }
 }

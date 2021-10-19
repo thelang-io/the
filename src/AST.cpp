@@ -8,9 +8,7 @@
 #include "AST.hpp"
 
 AST::~AST () {
-  for (const auto &stmt : this->mainBody) {
-    delete stmt;
-  }
+  delete this->mainBody;
 }
 
 void AST::add (Stmt *stmt) {
@@ -18,6 +16,7 @@ void AST::add (Stmt *stmt) {
     auto stmtMain = std::get<StmtMain *>(stmt->body);
 
     this->mainPresent = true;
-    stmtMain->body.swap(this->mainBody);
+    this->mainBody = stmtMain->body;
+    stmtMain->body = nullptr;
   }
 }

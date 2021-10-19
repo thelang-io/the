@@ -10,6 +10,12 @@
 
 StmtExpr *parseStmtExpr (Reader *reader);
 
+Block::~Block () {
+  for (auto &stmt : this->body) {
+    delete stmt;
+  }
+}
+
 Expr::~Expr () {
   if (this->type == EXPR_ASSIGN) {
     delete std::get<ExprAssign *>(this->body);
@@ -60,6 +66,8 @@ Stmt::~Stmt () {
     delete std::get<StmtEnd *>(this->body);
   } else if (this->type == STMT_EXPR) {
     delete std::get<StmtExpr *>(this->body);
+  } else if (this->type == STMT_IF) {
+    delete std::get<StmtIf *>(this->body);
   } else if (this->type == STMT_MAIN) {
     delete std::get<StmtMain *>(this->body);
   } else if (this->type == STMT_RETURN) {
@@ -79,10 +87,22 @@ StmtExpr::~StmtExpr () {
   }
 }
 
-StmtMain::~StmtMain () {
-  for (auto &stmt : this->body) {
-    delete stmt;
+StmtIf::~StmtIf () {
+  delete this->cond;
+  delete this->body;
+  delete this->alt;
+}
+
+StmtIfAlt::~StmtIfAlt () {
+  if (this->type == STMT_IF_ALT_BLOCK) {
+    delete std::get<Block *>(this->body);
+  } else if (this->type == STMT_IF_ALT_STMT_IF) {
+    delete std::get<StmtIf *>(this->body);
   }
+}
+
+StmtMain::~StmtMain () {
+  delete this->body;
 }
 
 StmtReturn::~StmtReturn () {
@@ -110,7 +130,42 @@ void parseWalkWhitespace (Reader *reader) {
   }
 }
 
-StmtExpr *parseStmtExprBinary (Reader *reader, StmtExpr *stmtExpr) {
+Block *parseBlock (Reader *reader) {
+  parseWalkWhitespace(reader);
+  auto tok1 = lex(reader);
+
+  if (tok1->type != TK_OP_LBRACE) {
+    throw Error("Expected left brace");
+  }
+
+  delete tok1;
+  auto body = std::vector<Stmt *>();
+
+  while (true) {
+    auto loc2 = reader->loc;
+    parseWalkWhitespace(reader);
+
+    auto tok2 = lex(reader);
+
+    if (tok2->type == TK_EOF) {
+      throw Error("Expected right brace");
+    } else if (tok2->type == TK_OP_RBRACE) {
+      delete tok2;
+      break;
+    }
+
+    reader->seek(loc2);
+
+    auto stmt = parse(reader);
+    body.push_back(stmt);
+
+    delete tok2;
+  }
+
+  return new Block{body};
+}
+
+StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
   auto loc = reader->loc;
   parseWalkWhitespace(reader);
 
@@ -186,7 +241,7 @@ StmtExpr *parseStmtExpr (Reader *reader) {
     tok1->type == TK_LIT_STR
   ) {
     auto lit = new Literal{tok1};
-    return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_LITERAL, lit});
+    return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_LITERAL, lit});
   } else if (tok1->type == TK_LIT_ID) {
     auto loc2 = reader->loc;
     parseWalkWhitespace(reader);
@@ -216,7 +271,7 @@ StmtExpr *parseStmtExpr (Reader *reader) {
       auto exprAssign = new ExprAssign{tok1, tok2, stmtExpr};
       auto expr = new Expr{EXPR_ASSIGN, exprAssign};
 
-      return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
+      return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
     } else if (tok2->type == TK_OP_LPAR) {
       auto loc3 = reader->loc;
       parseWalkWhitespace(reader);
@@ -249,21 +304,21 @@ StmtExpr *parseStmtExpr (Reader *reader) {
       delete tok2;
       delete tok3;
 
-      return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
+      return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
     } else if (tok2->type == TK_OP_MINUS_MINUS || tok2->type == TK_OP_PLUS_PLUS) {
       auto id = new Identifier{tok1};
       auto stmtExpr = new StmtExpr{STMT_EXPR_IDENTIFIER, id};
       auto exprUnary = new ExprUnary{stmtExpr, tok2};
       auto expr = new Expr{EXPR_UNARY, exprUnary};
 
-      return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
+      return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
     }
 
     reader->seek(loc2);
     delete tok2;
 
     auto id = new Identifier{tok1};
-    return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_IDENTIFIER, id});
+    return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_IDENTIFIER, id});
   } else if (
     tok1->type == TK_OP_EXCL ||
     tok1->type == TK_OP_EXCL_EXCL ||
@@ -279,7 +334,7 @@ StmtExpr *parseStmtExpr (Reader *reader) {
     auto exprUnary = new ExprUnary{stmtExpr, tok1, true};
     auto expr = new Expr{EXPR_UNARY, exprUnary};
 
-    return parseStmtExprBinary(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
+    return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
   } else if (tok1->type == TK_OP_LPAR) {
     parseWalkWhitespace(reader);
     delete tok1;
@@ -296,7 +351,7 @@ StmtExpr *parseStmtExpr (Reader *reader) {
     delete tok2;
     stmtExpr->parenthesized = true;
 
-    return parseStmtExprBinary(reader, stmtExpr);
+    return parsePostStmtExpr(reader, stmtExpr);
   }
 
   throw Error("Unknown expression statement");
@@ -313,39 +368,65 @@ Stmt *parse (Reader *reader) {
   auto loc1 = reader->loc;
   auto tok1 = lex(reader);
 
-  if (tok1->type == TK_KW_MAIN) {
-    parseWalkWhitespace(reader);
-    auto tok2 = lex(reader);
-
-    if (tok2->type != TK_OP_LBRACE) {
-      throw Error("Expected left brace");
-    }
-
+  if (tok1->type == TK_KW_IF) {
     delete tok1;
-    delete tok2;
+    parseWalkWhitespace(reader);
 
-    auto body = std::vector<Stmt *>();
+    auto stmtExpr = parseStmtExpr(reader);
+    auto block = parseBlock(reader);
+    auto alt = static_cast<StmtIfAlt *>(nullptr);
+    auto altTail = static_cast<StmtIfAlt *>(nullptr);
 
     while (true) {
-      auto loc3 = reader->loc;
+      auto loc2 = reader->loc;
       parseWalkWhitespace(reader);
+      auto tok2 = lex(reader);
 
-      auto tok3 = lex(reader);
+      if (tok2->type == TK_KW_ELIF) {
+        delete tok2;
+        parseWalkWhitespace(reader);
 
-      if (tok3->type == TK_OP_RBRACE) {
-        delete tok3;
-        break;
+        auto stmtExprElif = parseStmtExpr(reader);
+        auto blockElif = parseBlock(reader);
+        auto stmtElif = new StmtIf{stmtExprElif, blockElif, nullptr};
+        auto stmtElifAlt = new StmtIfAlt{STMT_IF_ALT_STMT_IF, stmtElif};
+
+        if (alt == nullptr && altTail == nullptr) {
+          alt = stmtElifAlt;
+          altTail = stmtElifAlt;
+        } else {
+          std::get<StmtIf *>(altTail->body)->alt = stmtElifAlt;
+          altTail = stmtElifAlt;
+        }
+
+        continue;
+      } else if (tok2->type == TK_KW_ELSE) {
+        parseWalkWhitespace(reader);
+
+        auto blockElse = parseBlock(reader);
+        auto stmtElseAlt = new StmtIfAlt{STMT_IF_ALT_BLOCK, blockElse};
+
+        if (alt == nullptr && altTail == nullptr) {
+          alt = stmtElseAlt;
+        } else {
+          std::get<StmtIf *>(altTail->body)->alt = stmtElseAlt;
+        }
+      } else {
+        reader->seek(loc2);
       }
 
-      reader->seek(loc3);
-
-      auto stmt = parse(reader);
-      body.push_back(stmt);
-
-      delete tok3;
+      delete tok2;
+      break;
     }
 
-    auto stmtMain = new StmtMain{body};
+    auto stmtIf = new StmtIf{stmtExpr, block, alt};
+    return new Stmt{STMT_IF, stmtIf};
+  } else if (tok1->type == TK_KW_MAIN) {
+    delete tok1;
+
+    auto block = parseBlock(reader);
+    auto stmtMain = new StmtMain{block};
+
     return new Stmt{STMT_MAIN, stmtMain};
   } else if (tok1->type == TK_KW_MUT) {
     parseWalkWhitespace(reader);
@@ -372,8 +453,8 @@ Stmt *parse (Reader *reader) {
 
     delete tok2;
   } else if (tok1->type == TK_KW_RETURN) {
-    parseWalkWhitespace(reader);
     delete tok1;
+    parseWalkWhitespace(reader);
 
     auto stmtExpr = parseStmtExpr(reader);
     auto stmtReturn = new StmtReturn{stmtExpr};
