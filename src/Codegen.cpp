@@ -54,6 +54,16 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
       } else {
         return VAR_INT;
       }
+    } else if (expr->type == EXPR_COND) {
+      auto exprCond = std::get<ExprCond *>(expr->body);
+      auto exprCondBodyType = codegenStmtExprType(codegen, exprCond->body);
+      auto exprCondAltType = codegenStmtExprType(codegen, exprCond->alt);
+
+      if (exprCondBodyType != exprCondAltType) {
+        throw Error("Incompatible operand types");
+      }
+
+      return exprCondBodyType;
     } else if (expr->type == EXPR_UNARY) {
       auto exprUnary = std::get<ExprUnary *>(expr->body);
       auto exprType = codegenStmtExprType(codegen, exprUnary->arg);
@@ -180,6 +190,14 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
       } else {
         throw Error("Tried to access unknown built-in function");
       }
+    } else if (expr->type == EXPR_COND) {
+      auto exprCond = std::get<ExprCond *>(expr->body);
+
+      codegenStmtExpr(codegen, exprCond->cond);
+      codegen->mainBody += " ? ";
+      codegenStmtExpr(codegen, exprCond->body);
+      codegen->mainBody += " : ";
+      codegenStmtExpr(codegen, exprCond->alt);
     } else if (expr->type == EXPR_UNARY) {
       auto exprUnary = std::get<ExprUnary *>(expr->body);
 
@@ -215,11 +233,11 @@ void codegenStmtIf (Codegen *codegen, const StmtIf *stmtIf, std::size_t indent) 
   if (stmtIf->alt != nullptr) {
     codegen->mainBody += std::string(indent, ' ') + "} else ";
 
-    if (stmtIf->alt->type == STMT_IF_ALT_BLOCK) {
+    if (stmtIf->alt->type == COND_BLOCK) {
       codegen->mainBody += "{\n";
       codegenBlock(codegen, std::get<Block *>(stmtIf->alt->body), indent + 2);
       codegen->mainBody += std::string(indent, ' ') + "}";
-    } else if (stmtIf->alt->type == STMT_IF_ALT_STMT_IF) {
+    } else if (stmtIf->alt->type == COND_STMT_IF) {
       codegenStmtIf(codegen, std::get<StmtIf *>(stmtIf->alt->body), indent);
     }
   } else {

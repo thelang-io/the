@@ -70,7 +70,7 @@ main {
   bl := 1 < 2
   bm := 0 != 0
   bn := -1 != -2
-  bo := 0 || 0
+  bo := 0 || 1
   bp := 1 || 0
   bq := 0 & 1
   br := 1 & 0
@@ -191,4 +191,25 @@ main {
   } else {
     print("True condition")
   }
+
+  ea := 1 ? 2 : 3
+  eb := 1 > 2 ? 3 : 4
+  ec := 1 > 2 ? 5 : 0 ? 6 : 7
+  ed := 0 > 2 ? 0 ? 6 : 7 : 3
+  ee := 1 ? 2 ? 3 : 4 : 5
+  ef := 0 ? 2 ? 3 : 4 : 5
+  mut eg_a := 0
+  eg := 1 ? eg_a = 1 : (eg_a = 0)
+  eh := 0 > -1 ? 4 : 5
+  mut ei_a := 0
+  ei := 1 ? (ei_a = 1) : (ei_a = 2)
+  mut ej_a := 0
+  ej := 0 ? (ej_a = 1) : (ej_a = 2)
+
+  print("ea:", ea, "eb:", eb, "ec:", ec, "ed:", ed)
+  print("ee:", ee, "ef:", ef, "eg:", eg, "eh:", eh)
+  print("ei:", ei, "ej:", ej)
+
+  1 ? print("True condition") : print("False condition")
+  0 ? print("False condition") : print("True condition")
 }

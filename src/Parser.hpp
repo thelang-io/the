@@ -14,17 +14,30 @@
 
 struct Stmt;
 struct StmtExpr;
-struct StmtIfAlt;
+struct StmtIf;
 
 struct Block {
   std::vector<Stmt *> body;
   ~Block();
 };
 
+enum CondType {
+  COND_BLOCK,
+  COND_STMT_IF
+};
+
+struct Cond {
+  CondType type;
+  std::variant<Block *, StmtIf *> body;
+
+  ~Cond ();
+};
+
 enum ExprType {
   EXPR_ASSIGN,
   EXPR_BINARY,
   EXPR_CALL,
+  EXPR_COND,
   EXPR_UNARY
 };
 
@@ -51,6 +64,14 @@ struct ExprCall {
   ~ExprCall ();
 };
 
+struct ExprCond {
+  StmtExpr *cond;
+  StmtExpr *body;
+  StmtExpr *alt;
+
+  ~ExprCond ();
+};
+
 struct ExprUnary {
   StmtExpr *arg;
   Token *op;
@@ -61,7 +82,13 @@ struct ExprUnary {
 
 struct Expr {
   ExprType type;
-  std::variant<ExprAssign *, ExprBinary *, ExprCall *, ExprUnary *> body;
+  std::variant<
+    ExprAssign *,
+    ExprBinary *,
+    ExprCall *,
+    ExprCond *,
+    ExprUnary *
+  > body;
 
   ~Expr ();
 };
@@ -105,21 +132,9 @@ struct StmtExpr {
 struct StmtIf {
   StmtExpr *cond;
   Block *body;
-  StmtIfAlt *alt;
+  Cond *alt;
 
   ~StmtIf ();
-};
-
-enum StmtIfAltType {
-  STMT_IF_ALT_BLOCK,
-  STMT_IF_ALT_STMT_IF
-};
-
-struct StmtIfAlt {
-  StmtIfAltType type;
-  std::variant<Block *, StmtIf *> body;
-
-  ~StmtIfAlt ();
 };
 
 struct StmtMain {

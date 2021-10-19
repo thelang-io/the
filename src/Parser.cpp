@@ -16,6 +16,14 @@ Block::~Block () {
   }
 }
 
+Cond::~Cond () {
+  if (this->type == COND_BLOCK) {
+    delete std::get<Block *>(this->body);
+  } else if (this->type == COND_STMT_IF) {
+    delete std::get<StmtIf *>(this->body);
+  }
+}
+
 Expr::~Expr () {
   if (this->type == EXPR_ASSIGN) {
     delete std::get<ExprAssign *>(this->body);
@@ -23,6 +31,8 @@ Expr::~Expr () {
     delete std::get<ExprBinary *>(this->body);
   } else if (this->type == EXPR_CALL) {
     delete std::get<ExprCall *>(this->body);
+  } else if (this->type == EXPR_COND) {
+    delete std::get<ExprCond *>(this->body);
   } else if (this->type == EXPR_UNARY) {
     delete std::get<ExprUnary *>(this->body);
   }
@@ -46,6 +56,12 @@ ExprCall::~ExprCall () {
   }
 
   delete this->callee;
+}
+
+ExprCond::~ExprCond () {
+  delete this->cond;
+  delete this->body;
+  delete this->alt;
 }
 
 ExprUnary::~ExprUnary () {
@@ -91,14 +107,6 @@ StmtIf::~StmtIf () {
   delete this->cond;
   delete this->body;
   delete this->alt;
-}
-
-StmtIfAlt::~StmtIfAlt () {
-  if (this->type == STMT_IF_ALT_BLOCK) {
-    delete std::get<Block *>(this->body);
-  } else if (this->type == STMT_IF_ALT_STMT_IF) {
-    delete std::get<StmtIf *>(this->body);
-  }
 }
 
 StmtMain::~StmtMain () {
@@ -169,29 +177,29 @@ StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
   auto loc = reader->loc;
   parseWalkWhitespace(reader);
 
-  auto tok = lex(reader);
+  auto tok1 = lex(reader);
 
   if (
-    tok->type == TK_OP_AND ||
-    tok->type == TK_OP_AND_AND ||
-    tok->type == TK_OP_CARET ||
-    tok->type == TK_OP_EQ_EQ ||
-    tok->type == TK_OP_EXCL_EQ ||
-    tok->type == TK_OP_GT ||
-    tok->type == TK_OP_GT_EQ ||
-    tok->type == TK_OP_LSHIFT ||
-    tok->type == TK_OP_LT ||
-    tok->type == TK_OP_LT_EQ ||
-    tok->type == TK_OP_OR ||
-    tok->type == TK_OP_OR_OR ||
-    tok->type == TK_OP_MINUS ||
-    tok->type == TK_OP_PERCENT ||
-    tok->type == TK_OP_PLUS ||
-    tok->type == TK_OP_QN_QN ||
-    tok->type == TK_OP_RSHIFT ||
-    tok->type == TK_OP_SLASH ||
-    tok->type == TK_OP_STAR ||
-    tok->type == TK_OP_STAR_STAR
+    tok1->type == TK_OP_AND ||
+    tok1->type == TK_OP_AND_AND ||
+    tok1->type == TK_OP_CARET ||
+    tok1->type == TK_OP_EQ_EQ ||
+    tok1->type == TK_OP_EXCL_EQ ||
+    tok1->type == TK_OP_GT ||
+    tok1->type == TK_OP_GT_EQ ||
+    tok1->type == TK_OP_LSHIFT ||
+    tok1->type == TK_OP_LT ||
+    tok1->type == TK_OP_LT_EQ ||
+    tok1->type == TK_OP_OR ||
+    tok1->type == TK_OP_OR_OR ||
+    tok1->type == TK_OP_MINUS ||
+    tok1->type == TK_OP_PERCENT ||
+    tok1->type == TK_OP_PLUS ||
+    tok1->type == TK_OP_QN_QN ||
+    tok1->type == TK_OP_RSHIFT ||
+    tok1->type == TK_OP_SLASH ||
+    tok1->type == TK_OP_STAR ||
+    tok1->type == TK_OP_STAR_STAR
   ) {
     parseWalkWhitespace(reader);
     auto stmtExpr2 = parseStmtExpr(reader);
@@ -202,8 +210,8 @@ StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
       if (expr2->type == EXPR_BINARY) {
         auto exprBinary2 = std::get<ExprBinary *>(expr2->body);
 
-        if (tokenPrecedence(tok) >= tokenPrecedence(exprBinary2->op) && !stmtExpr2->parenthesized) {
-          auto exprBinaryLeft = new ExprBinary{stmtExpr, tok, exprBinary2->left};
+        if (tokenPrecedence(tok1) >= tokenPrecedence(exprBinary2->op) && !stmtExpr2->parenthesized) {
+          auto exprBinaryLeft = new ExprBinary{stmtExpr, tok1, exprBinary2->left};
           auto exprLeft = new Expr{EXPR_BINARY, exprBinaryLeft};
           auto stmtExprLeft = new StmtExpr{STMT_EXPR_EXPR, exprLeft};
           auto exprBinaryRight = new ExprBinary{stmtExprLeft, exprBinary2->op, exprBinary2->right};
@@ -219,14 +227,35 @@ StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
       }
     }
 
-    auto exprBinary = new ExprBinary{stmtExpr, tok, stmtExpr2};
+    auto exprBinary = new ExprBinary{stmtExpr, tok1, stmtExpr2};
     auto expr = new Expr{EXPR_BINARY, exprBinary};
+
+    return new StmtExpr{STMT_EXPR_EXPR, expr};
+  } else if (tok1->type == TK_OP_QN) {
+    delete tok1;
+    parseWalkWhitespace(reader);
+
+    auto stmtExpr2 = parseStmtExpr(reader);
+    parseWalkWhitespace(reader);
+
+    auto tok2 = lex(reader);
+
+    if (tok2->type != TK_OP_COLON) {
+      throw Error("Expected colon");
+    }
+
+    delete tok2;
+    parseWalkWhitespace(reader);
+
+    auto stmtExpr3 = parseStmtExpr(reader);
+    auto exprCond = new ExprCond{stmtExpr, stmtExpr2, stmtExpr3};
+    auto expr = new Expr{EXPR_COND, exprCond};
 
     return new StmtExpr{STMT_EXPR_EXPR, expr};
   }
 
   reader->seek(loc);
-  delete tok;
+  delete tok1;
 
   return stmtExpr;
 }
@@ -374,8 +403,8 @@ Stmt *parse (Reader *reader) {
 
     auto stmtExpr = parseStmtExpr(reader);
     auto block = parseBlock(reader);
-    auto alt = static_cast<StmtIfAlt *>(nullptr);
-    auto altTail = static_cast<StmtIfAlt *>(nullptr);
+    auto alt = static_cast<Cond *>(nullptr);
+    auto altTail = static_cast<Cond *>(nullptr);
 
     while (true) {
       auto loc2 = reader->loc;
@@ -389,14 +418,14 @@ Stmt *parse (Reader *reader) {
         auto stmtExprElif = parseStmtExpr(reader);
         auto blockElif = parseBlock(reader);
         auto stmtElif = new StmtIf{stmtExprElif, blockElif, nullptr};
-        auto stmtElifAlt = new StmtIfAlt{STMT_IF_ALT_STMT_IF, stmtElif};
+        auto condElif = new Cond{COND_STMT_IF, stmtElif};
 
         if (alt == nullptr && altTail == nullptr) {
-          alt = stmtElifAlt;
-          altTail = stmtElifAlt;
+          alt = condElif;
+          altTail = condElif;
         } else {
-          std::get<StmtIf *>(altTail->body)->alt = stmtElifAlt;
-          altTail = stmtElifAlt;
+          std::get<StmtIf *>(altTail->body)->alt = condElif;
+          altTail = condElif;
         }
 
         continue;
@@ -404,12 +433,12 @@ Stmt *parse (Reader *reader) {
         parseWalkWhitespace(reader);
 
         auto blockElse = parseBlock(reader);
-        auto stmtElseAlt = new StmtIfAlt{STMT_IF_ALT_BLOCK, blockElse};
+        auto condElse = new Cond{COND_BLOCK, blockElse};
 
         if (alt == nullptr && altTail == nullptr) {
-          alt = stmtElseAlt;
+          alt = condElse;
         } else {
-          std::get<StmtIf *>(altTail->body)->alt = stmtElseAlt;
+          std::get<StmtIf *>(altTail->body)->alt = condElse;
         }
       } else {
         reader->seek(loc2);
