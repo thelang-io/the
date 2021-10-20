@@ -248,12 +248,43 @@ void codegenStmtIf (Codegen *codegen, const StmtIf *stmtIf, std::size_t indent) 
 void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
   codegen->mainBody += std::string(indent, ' ');
 
-  if (stmt->type == STMT_EXPR) {
+  if (stmt->type == STMT_BREAK) {
+    codegen->mainBody += "break;\n";
+  } else if (stmt->type == STMT_CONTINUE) {
+    codegen->mainBody += "continue;\n";
+  } else if (stmt->type == STMT_EXPR) {
     codegenStmtExpr(codegen, std::get<StmtExpr *>(stmt->body));
     codegen->mainBody += ";\n";
   } else if (stmt->type == STMT_IF) {
     codegenStmtIf(codegen, std::get<StmtIf *>(stmt->body), indent);
     codegen->mainBody += "\n";
+  } else if (stmt->type == STMT_LOOP) {
+    auto stmtLoop = std::get<StmtLoop *>(stmt->body);
+    codegen->mainBody += "for (";
+
+    if (stmtLoop->init != nullptr) {
+      codegenStmt(codegen, stmtLoop->init, 0);
+      codegen->mainBody.pop_back();
+      codegen->mainBody.pop_back();
+    }
+
+    codegen->mainBody += ";";
+
+    if (stmtLoop->cond != nullptr) {
+      codegen->mainBody += " ";
+      codegenStmtExpr(codegen, stmtLoop->cond);
+    }
+
+    codegen->mainBody += ";";
+
+    if (stmtLoop->upd != nullptr) {
+      codegen->mainBody += " ";
+      codegenStmtExpr(codegen, stmtLoop->upd);
+    }
+
+    codegen->mainBody += ") {\n";
+    codegenBlock(codegen, stmtLoop->body, indent + 2);
+    codegen->mainBody += std::string(indent, ' ') + "}\n";
   } else if (stmt->type == STMT_RETURN) {
     auto stmtReturn = std::get<StmtReturn *>(stmt->body);
 

@@ -2,21 +2,21 @@ main {
   print()
   print("Hello, World!")
 
-  mut i := 0
-  print("i:", i)
-  i = 1
-  print("i:", i)
+  mut zi := 0
+  print("zi:", zi)
+  zi = 1
+  print("zi:", zi)
 
   a := 'a'
-  b := 3.14159
+  zb := 3.14159
   c := 700
   d := "Hello, World!"
   e := a
-  f := b
+  f := zb
   g := c
   h := d
-  j := !3
-  k := !0
+  zj := !3
+  zk := !0
   l := ~4
   m := -4
   n := ~0
@@ -25,14 +25,14 @@ main {
   q := -~0
   r := -!!1
   s := +~~5
-  t := i++
-  u := i--
-  v := ++i
-  w := --i
+  t := zi++
+  u := zi--
+  v := ++zi
+  w := --zi
 
-  print("a:", a, "b:", b, "c:", c, "d:", d)
+  print("a:", a, "zb:", zb, "c:", c, "d:", d)
   print("e:", e, "f:", f, "g:", g, "h:", h)
-  print("j:", j, "k:", k, "l:", l, "m:", m)
+  print("zj:", zj, "zk:", zk, "l:", l, "m:", m)
   print("n:", n, "o:", o, "p:", p, "q:", q)
   print("r:", r, "s:", s, "t:", t, "u:", u)
   print("v:", v, "w:", w)
@@ -212,4 +212,131 @@ main {
 
   1 ? print("True condition") : print("False condition")
   0 ? print("False condition") : print("True condition")
+
+  mut fa := 0
+  mut fb := 0
+  mut fc := 0
+  mut fd := 0
+  mut fe := 0
+  mut ff := 0
+  mut fg := 0
+  mut fh := 0
+  mut fi := 0
+  mut fj := 0
+  mut fk := 0
+  mut fl := 0
+  mut fm := 1
+  mut fo := 1
+
+  loop ; zi < 10; zi++ {
+  }
+
+  loop ; zi < 10; {
+    zi++
+  }
+
+  loop mut i := 0; i < 10; {
+    i++
+  }
+
+  loop ;; zi++ {
+    if zi > 10 {
+      break
+    }
+  }
+
+  loop ;; {
+    if zi > 10 {
+      break
+    }
+
+    zi++
+  }
+
+  loop mut i := 0; i < 10; i++ {
+    fa += i
+
+    if fa > 10 {
+      break
+    }
+  }
+
+  loop mut i := 0; i < 10; i++ {
+    if (fb / 2) * 2 != fb {
+      continue
+    }
+
+    fb += i
+  }
+
+  loop mut i := 0; i < 10; {
+    i++
+
+    if i % 2 {
+      continue
+    }
+
+    fc += i
+  }
+
+  loop mut i := 0; i < 10; i++ {}
+
+  loop fd = 0; fd < 3; fd++ {
+    fd *= 2
+  }
+
+  loop mut i := 0; i < 3; i++ {
+    fe++
+  }
+
+  loop mut ff := 100; ff > 0; ff-- {
+    ff := 0
+    fg := fg * 2 + ff
+  }
+
+  loop fh = 0; fh < 10; fh++ {
+    k := fh
+
+    loop mut fh := k; fh < 10; fh++ {
+      fi++
+    }
+  }
+
+  loop mut i := 0; i < 10; i++ {
+    loop mut j := 0; j < 10; j++ {
+      if (i / 2) * 2 == i {
+        break
+      }
+
+      fj += i
+    }
+  }
+
+  loop {
+    break
+  }
+
+  loop fk < 5 {
+    fk += 2
+  }
+
+  loop fl < 5 {
+    fl += 2
+    fm *= fl
+  }
+
+  loop fo / 3 < 20 {
+    mut b := 1
+
+    loop b < 10 {
+      b *= 2
+    }
+
+    fo += b
+  }
+
+  print("fa:", fa, "fb:", fb, "fc:", fc, "fd:", fd)
+  print("fe:", fe, "ff:", ff, "fg:", fg, "fh:", fh)
+  print("fi:", fi, "fj:", fj, "fk:", fk, "fl:", fl)
+  print("fm:", fm, "fo:", fo)
 }

@@ -78,12 +78,18 @@ Literal::~Literal () {
 }
 
 Stmt::~Stmt () {
-  if (this->type == STMT_END) {
+  if (this->type == STMT_BREAK) {
+    delete std::get<StmtBreak *>(this->body);
+  } else if (this->type == STMT_CONTINUE) {
+    delete std::get<StmtContinue *>(this->body);
+  } else if (this->type == STMT_END) {
     delete std::get<StmtEnd *>(this->body);
   } else if (this->type == STMT_EXPR) {
     delete std::get<StmtExpr *>(this->body);
   } else if (this->type == STMT_IF) {
     delete std::get<StmtIf *>(this->body);
+  } else if (this->type == STMT_LOOP) {
+    delete std::get<StmtLoop *>(this->body);
   } else if (this->type == STMT_MAIN) {
     delete std::get<StmtMain *>(this->body);
   } else if (this->type == STMT_RETURN) {
@@ -107,6 +113,13 @@ StmtIf::~StmtIf () {
   delete this->cond;
   delete this->body;
   delete this->alt;
+}
+
+StmtLoop::~StmtLoop () {
+  delete this->init;
+  delete this->cond;
+  delete this->upd;
+  delete this->body;
 }
 
 StmtMain::~StmtMain () {
@@ -152,7 +165,6 @@ Block *parseBlock (Reader *reader) {
   while (true) {
     auto loc2 = reader->loc;
     parseWalkWhitespace(reader);
-
     auto tok2 = lex(reader);
 
     if (tok2->type == TK_EOF) {
@@ -166,7 +178,6 @@ Block *parseBlock (Reader *reader) {
 
     auto stmt = parse(reader);
     body.push_back(stmt);
-
     delete tok2;
   }
 
@@ -176,7 +187,6 @@ Block *parseBlock (Reader *reader) {
 StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
   auto loc = reader->loc;
   parseWalkWhitespace(reader);
-
   auto tok1 = lex(reader);
 
   if (
@@ -237,7 +247,6 @@ StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
 
     auto stmtExpr2 = parseStmtExpr(reader);
     parseWalkWhitespace(reader);
-
     auto tok2 = lex(reader);
 
     if (tok2->type != TK_OP_COLON) {
@@ -274,7 +283,6 @@ StmtExpr *parseStmtExpr (Reader *reader) {
   } else if (tok1->type == TK_LIT_ID) {
     auto loc2 = reader->loc;
     parseWalkWhitespace(reader);
-
     auto tok2 = lex(reader);
 
     if (
@@ -304,7 +312,6 @@ StmtExpr *parseStmtExpr (Reader *reader) {
     } else if (tok2->type == TK_OP_LPAR) {
       auto loc3 = reader->loc;
       parseWalkWhitespace(reader);
-
       auto tok3 = lex(reader);
       auto args = std::vector<StmtExpr *>();
 
@@ -312,10 +319,9 @@ StmtExpr *parseStmtExpr (Reader *reader) {
         reader->seek(loc3);
         parseWalkWhitespace(reader);
         args.push_back(parseStmtExpr(reader));
-
         parseWalkWhitespace(reader);
-        delete tok3;
 
+        delete tok3;
         tok3 = lex(reader);
 
         if (tok3->type == TK_OP_COMMA) {
@@ -386,6 +392,50 @@ StmtExpr *parseStmtExpr (Reader *reader) {
   throw Error("Unknown expression statement");
 }
 
+Stmt *parseStmtLoopFor (Reader *reader, Stmt *stmt) {
+  auto stmtExpr2 = static_cast<StmtExpr *>(nullptr);
+  auto stmtExpr3 = static_cast<StmtExpr *>(nullptr);
+
+  auto loc1 = reader->loc;
+  parseWalkWhitespace(reader);
+  auto tok1 = lex(reader);
+
+  if (tok1->type != TK_OP_SEMI) {
+    reader->seek(loc1);
+    parseWalkWhitespace(reader);
+
+    stmtExpr2 = parseStmtExpr(reader);
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type != TK_OP_SEMI) {
+      throw Error("Expected semicolon after loop condition");
+    }
+
+    delete tok2;
+  }
+
+  delete tok1;
+
+  auto loc3 = reader->loc;
+  parseWalkWhitespace(reader);
+  auto tok3 = lex(reader);
+
+  reader->seek(loc3);
+
+  if (tok3->type != TK_OP_LBRACE) {
+    parseWalkWhitespace(reader);
+    stmtExpr3 = parseStmtExpr(reader);
+  }
+
+  delete tok3;
+
+  auto block = parseBlock(reader);
+  auto stmtLoop = new StmtLoop{stmt, stmtExpr2, stmtExpr3, block};
+
+  return new Stmt{STMT_LOOP, stmtLoop};
+}
+
 Stmt *parse (Reader *reader) {
   parseWalkWhitespace(reader);
 
@@ -397,7 +447,17 @@ Stmt *parse (Reader *reader) {
   auto loc1 = reader->loc;
   auto tok1 = lex(reader);
 
-  if (tok1->type == TK_KW_IF) {
+  if (tok1->type == TK_KW_BREAK) {
+    delete tok1;
+    auto stmtBreak = new StmtBreak{};
+
+    return new Stmt{STMT_BREAK, stmtBreak};
+  } else if (tok1->type == TK_KW_CONTINUE) {
+    delete tok1;
+    auto stmtContinue = new StmtContinue{};
+
+    return new Stmt{STMT_CONTINUE, stmtContinue};
+  } else if (tok1->type == TK_KW_IF) {
     delete tok1;
     parseWalkWhitespace(reader);
 
@@ -450,6 +510,59 @@ Stmt *parse (Reader *reader) {
 
     auto stmtIf = new StmtIf{stmtExpr, block, alt};
     return new Stmt{STMT_IF, stmtIf};
+  } else if (tok1->type == TK_KW_LOOP) {
+    delete tok1;
+
+    auto loc2 = reader->loc;
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type == TK_OP_LBRACE) {
+      delete tok2;
+      reader->seek(loc2);
+
+      auto block = parseBlock(reader);
+      auto stmtLoop = new StmtLoop{nullptr, nullptr, nullptr, block};
+
+      return new Stmt{STMT_LOOP, stmtLoop};
+    } else if (tok2->type == TK_OP_SEMI) {
+      delete tok2;
+      return parseStmtLoopFor(reader, nullptr);
+    } else {
+      delete tok2;
+      reader->seek(loc2);
+
+      auto stmt = parse(reader);
+
+      if (stmt->type != STMT_EXPR && stmt->type != STMT_SHORT_VAR_DECL) {
+        throw Error("Unexpected statement in loop condition");
+      }
+
+      auto loc3 = reader->loc;
+      parseWalkWhitespace(reader);
+      auto tok3 = lex(reader);
+
+      if (stmt->type == STMT_SHORT_VAR_DECL && tok3->type != TK_OP_SEMI) {
+        throw Error("Expected semicolon after loop initialization");
+      } else if (stmt->type == STMT_EXPR && tok3->type != TK_OP_LBRACE && tok3->type != TK_OP_SEMI) {
+        throw Error("Unexpected token after loop initialization");
+      } else if (stmt->type == STMT_EXPR && tok3->type == TK_OP_LBRACE) {
+        delete tok3;
+        reader->seek(loc3);
+
+        auto stmtExpr = std::get<StmtExpr *>(stmt->body);
+        auto block = parseBlock(reader);
+        auto stmtLoop = new StmtLoop{nullptr, stmtExpr, nullptr, block};
+
+        stmt->body = static_cast<StmtExpr *>(nullptr);
+        delete stmt;
+
+        return new Stmt{STMT_LOOP, stmtLoop};
+      }
+
+      delete tok3;
+      return parseStmtLoopFor(reader, stmt);
+    }
   } else if (tok1->type == TK_KW_MAIN) {
     delete tok1;
 

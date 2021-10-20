@@ -104,12 +104,21 @@ struct Literal {
 };
 
 enum StmtType {
+  STMT_BREAK,
+  STMT_CONTINUE,
   STMT_END,
   STMT_EXPR,
   STMT_IF,
+  STMT_LOOP,
   STMT_MAIN,
   STMT_RETURN,
   STMT_SHORT_VAR_DECL
+};
+
+struct StmtBreak {
+};
+
+struct StmtContinue {
 };
 
 struct StmtEnd {
@@ -137,6 +146,15 @@ struct StmtIf {
   ~StmtIf ();
 };
 
+struct StmtLoop {
+  Stmt *init;
+  StmtExpr *cond;
+  StmtExpr *upd;
+  Block *body;
+
+  ~StmtLoop();
+};
+
 struct StmtMain {
   Block *body;
   ~StmtMain();
@@ -158,9 +176,12 @@ struct StmtShortVarDecl {
 struct Stmt {
   StmtType type;
   std::variant<
+    StmtBreak *,
+    StmtContinue *,
     StmtEnd *,
     StmtExpr *,
     StmtIf *,
+    StmtLoop *,
     StmtMain *,
     StmtReturn *,
     StmtShortVarDecl *
