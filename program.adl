@@ -1,3 +1,47 @@
+fn ga () int {
+  return 3
+}
+
+fn gb (x: int) int {
+  return 2 * x
+}
+
+fn gc (x: int) int {
+  return x + 1
+}
+
+fn gd (a: int, b: int) int {
+  return a + b
+}
+
+fn ge (a: int, b: int) int {
+  return a + b
+}
+
+fn gf (x: int, y: int, z: int) int {
+  return x - y - z
+}
+
+fn gg_2 (b: float) float {
+  if b <= 0 {
+    return b
+  }
+
+  return b + gg_2(b / 2)
+}
+
+fn gg_1 (a: float) float {
+  if a <= 0 {
+    return a
+  }
+
+  return a + gg_2(a - 1)
+}
+
+fn gh (n: int) int {
+  return n == 0 || n == 1 ? n : gh(n - 1) + gh(n - 2)
+}
+
 main {
   print()
   print("Hello, World!")
@@ -339,4 +383,19 @@ main {
   print("fe:", fe, "ff:", ff, "fg:", fg, "fh:", fh)
   print("fi:", fi, "fj:", fj, "fk:", fk, "fl:", fl)
   print("fm:", fm, "fo:", fo)
+
+  ha := ga()
+  hb := gb(3)
+  hc_a := 1
+  hc := gc(hc_a)
+  hd_a := gd(1, 2) - (gd(1, 2) / 2) * 2
+  hd_b := 2 * gd(3, 4) + gd(1, 2)
+  hd := hd_b - hd_a
+  he := ge(1 + 2, 4)
+  hf := gf(10, 4, 2)
+  hg := gg_1(5)
+  hh := gh(5)
+
+  print("ha:", ha, "hb:", hb, "hc:", hc, "hd:", hd)
+  print("he:", he, "hf:", hf, "hg:", hg, "hh:", hh)
 }

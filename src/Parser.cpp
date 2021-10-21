@@ -86,6 +86,8 @@ Stmt::~Stmt () {
     delete std::get<StmtEnd *>(this->body);
   } else if (this->type == STMT_EXPR) {
     delete std::get<StmtExpr *>(this->body);
+  } else if (this->type == STMT_FN_DECL) {
+    delete std::get<StmtFnDecl *>(this->body);
   } else if (this->type == STMT_IF) {
     delete std::get<StmtIf *>(this->body);
   } else if (this->type == STMT_LOOP) {
@@ -107,6 +109,19 @@ StmtExpr::~StmtExpr () {
   } else if (this->type == STMT_EXPR_LITERAL) {
     delete std::get<Literal *>(this->body);
   }
+}
+
+StmtFnDecl::~StmtFnDecl () {
+  for (auto &param : this->params) {
+    delete param->name;
+    delete param->type;
+    delete param->init;
+    delete param;
+  }
+
+  delete this->id;
+  delete this->type;
+  delete this->body;
 }
 
 StmtIf::~StmtIf () {
@@ -182,6 +197,10 @@ Block *parseBlock (Reader *reader) {
   }
 
   return new Block{body};
+}
+
+Identifier *parseGenIdentifier (Token *tok) {
+  return new Identifier{tok};
 }
 
 StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
@@ -305,7 +324,7 @@ StmtExpr *parseStmtExpr (Reader *reader) {
       parseWalkWhitespace(reader);
 
       auto stmtExpr = parseStmtExpr(reader);
-      auto exprAssign = new ExprAssign{tok1, tok2, stmtExpr};
+      auto exprAssign = new ExprAssign{parseGenIdentifier(tok1), tok2, stmtExpr};
       auto expr = new Expr{EXPR_ASSIGN, exprAssign};
 
       return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
@@ -333,7 +352,7 @@ StmtExpr *parseStmtExpr (Reader *reader) {
         }
       }
 
-      auto exprCall = new ExprCall{tok1, args};
+      auto exprCall = new ExprCall{parseGenIdentifier(tok1), args};
       auto expr = new Expr{EXPR_CALL, exprCall};
 
       delete tok2;
@@ -457,6 +476,92 @@ Stmt *parse (Reader *reader) {
     auto stmtContinue = new StmtContinue{};
 
     return new Stmt{STMT_CONTINUE, stmtContinue};
+  } else if (tok1->type == TK_KW_FN) {
+    delete tok1;
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type != TK_LIT_ID) {
+      throw Error("Expected function identifier");
+    }
+
+    parseWalkWhitespace(reader);
+    auto tok3 = lex(reader);
+
+    if (tok3->type != TK_OP_LPAR) {
+      throw Error("Expected left parentheses");
+    }
+
+    delete tok3;
+    parseWalkWhitespace(reader);
+    auto tok4 = lex(reader);
+    auto params = std::vector<StmtFnDeclParam *>();
+
+    while (tok4->type != TK_OP_RPAR) {
+      if (tok4->type != TK_LIT_ID) {
+        throw Error("Expected identifier as function parameter name");
+      }
+
+      parseWalkWhitespace(reader);
+      auto tok5 = lex(reader);
+      auto type = static_cast<Identifier *>(nullptr);
+      auto init = static_cast<StmtExpr *>(nullptr);
+
+      if (tok5->type == TK_OP_COLON) {
+        parseWalkWhitespace(reader);
+        auto tok6 = lex(reader);
+
+        if (tok6->type != TK_LIT_ID) {
+          throw Error("Expected parameter type after colon");
+        }
+
+        type = new Identifier{tok6};
+
+        auto loc7 = reader->loc;
+        parseWalkWhitespace(reader);
+        auto tok7 = lex(reader);
+
+        if (tok7->type == TK_OP_EQ) {
+          parseWalkWhitespace(reader);
+          init = parseStmtExpr(reader);
+        } else {
+          reader->seek(loc7);
+        }
+
+        delete tok7;
+      } else if (tok5->type == TK_OP_COLON_EQ) {
+        parseWalkWhitespace(reader);
+        init = parseStmtExpr(reader);
+      } else {
+        throw Error("Expected parameter type after parameter name");
+      }
+
+      delete tok5;
+      auto param = new StmtFnDeclParam{parseGenIdentifier(tok4), type, init};
+      params.push_back(param);
+
+      parseWalkWhitespace(reader);
+      tok4 = lex(reader);
+
+      if (tok4->type == TK_OP_COMMA) {
+        delete tok4;
+        parseWalkWhitespace(reader);
+        tok4 = lex(reader);
+      }
+    }
+
+    delete tok4;
+    parseWalkWhitespace(reader);
+    auto tok8 = lex(reader);
+
+    if (tok8->type != TK_LIT_ID) {
+      throw Error("Expected function return type after parameters list");
+    }
+
+    auto block = parseBlock(reader);
+    auto stmtFnDecl = new StmtFnDecl{parseGenIdentifier(tok2), params, parseGenIdentifier(tok8), block};
+
+    return new Stmt{STMT_FN_DECL, stmtFnDecl};
   } else if (tok1->type == TK_KW_IF) {
     delete tok1;
     parseWalkWhitespace(reader);
@@ -582,7 +687,7 @@ Stmt *parse (Reader *reader) {
         parseWalkWhitespace(reader);
 
         auto stmtExpr = parseStmtExpr(reader);
-        auto stmtShortVarDecl = new StmtShortVarDecl{tok2, stmtExpr, true};
+        auto stmtShortVarDecl = new StmtShortVarDecl{parseGenIdentifier(tok2), stmtExpr, true};
 
         delete tok1;
         delete tok3;
@@ -611,7 +716,7 @@ Stmt *parse (Reader *reader) {
       delete tok2;
 
       auto stmtExpr = parseStmtExpr(reader);
-      auto stmtShortVarDecl = new StmtShortVarDecl{tok1, stmtExpr};
+      auto stmtShortVarDecl = new StmtShortVarDecl{parseGenIdentifier(tok1), stmtExpr};
 
       return new Stmt{STMT_SHORT_VAR_DECL, stmtShortVarDecl};
     }

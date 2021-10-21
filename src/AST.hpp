@@ -12,6 +12,7 @@
 
 class AST {
  public:
+  std::vector<Stmt *> topLevelStmts;
   bool mainPresent = false;
   Block *mainBody;
 

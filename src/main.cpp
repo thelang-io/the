@@ -24,7 +24,6 @@ int main () {
       }
 
       ast->add(stmt);
-      delete stmt;
     }
 
     auto code = codegen(ast);

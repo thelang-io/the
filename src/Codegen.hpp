@@ -18,7 +18,7 @@ struct CodegenHeaders {
 
 struct Codegen {
   CodegenHeaders headers;
-  std::string mainBody;
+  std::string body;
   VarMap *varMap;
 
   ~Codegen ();

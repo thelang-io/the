@@ -12,6 +12,7 @@
 #include <vector>
 #include "Lexer.hpp"
 
+struct Identifier;
 struct Stmt;
 struct StmtExpr;
 struct StmtIf;
@@ -42,7 +43,7 @@ enum ExprType {
 };
 
 struct ExprAssign {
-  Token *left;
+  Identifier *left;
   Token *op;
   StmtExpr *right;
 
@@ -58,7 +59,7 @@ struct ExprBinary {
 };
 
 struct ExprCall {
-  Token *callee;
+  Identifier *callee;
   std::vector<StmtExpr *> args;
 
   ~ExprCall ();
@@ -108,6 +109,7 @@ enum StmtType {
   STMT_CONTINUE,
   STMT_END,
   STMT_EXPR,
+  STMT_FN_DECL,
   STMT_IF,
   STMT_LOOP,
   STMT_MAIN,
@@ -138,6 +140,21 @@ struct StmtExpr {
   ~StmtExpr ();
 };
 
+struct StmtFnDeclParam {
+  Identifier *name;
+  Identifier *type;
+  StmtExpr *init;
+};
+
+struct StmtFnDecl {
+  Identifier *id;
+  std::vector<StmtFnDeclParam *> params;
+  Identifier *type;
+  Block *body;
+
+  ~StmtFnDecl ();
+};
+
 struct StmtIf {
   StmtExpr *cond;
   Block *body;
@@ -166,7 +183,7 @@ struct StmtReturn {
 };
 
 struct StmtShortVarDecl {
-  Token *id;
+  Identifier *id;
   StmtExpr *init;
   bool mut = false;
 
@@ -180,6 +197,7 @@ struct Stmt {
     StmtContinue *,
     StmtEnd *,
     StmtExpr *,
+    StmtFnDecl *,
     StmtIf *,
     StmtLoop *,
     StmtMain *,
