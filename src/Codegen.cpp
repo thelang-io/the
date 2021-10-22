@@ -364,31 +364,40 @@ void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
     codegen->body += "\n";
   } else if (stmt->type == STMT_LOOP) {
     auto stmtLoop = std::get<StmtLoop *>(stmt->body);
-
     codegen->varMap->save();
-    codegen->body += "for (";
 
-    if (stmtLoop->init != nullptr) {
-      codegenStmt(codegen, stmtLoop->init, 0);
-      codegen->body.pop_back();
-      codegen->body.pop_back();
-    }
-
-    codegen->body += ";";
-
-    if (stmtLoop->cond != nullptr) {
-      codegen->body += " ";
+    if (stmtLoop->init == nullptr && stmtLoop->cond == nullptr && stmtLoop->upd == nullptr) {
+      codegen->body += "while (1) {\n";
+    } else if (stmtLoop->init == nullptr && stmtLoop->upd == nullptr) {
+      codegen->body += "while (";
       codegenStmtExpr(codegen, stmtLoop->cond);
+      codegen->body += ") {\n";
+    } else {
+      codegen->body += "for (";
+
+      if (stmtLoop->init != nullptr) {
+        codegenStmt(codegen, stmtLoop->init, 0);
+        codegen->body.pop_back();
+        codegen->body.pop_back();
+      }
+
+      codegen->body += ";";
+
+      if (stmtLoop->cond != nullptr) {
+        codegen->body += " ";
+        codegenStmtExpr(codegen, stmtLoop->cond);
+      }
+
+      codegen->body += ";";
+
+      if (stmtLoop->upd != nullptr) {
+        codegen->body += " ";
+        codegenStmtExpr(codegen, stmtLoop->upd);
+      }
+
+      codegen->body += ") {\n";
     }
 
-    codegen->body += ";";
-
-    if (stmtLoop->upd != nullptr) {
-      codegen->body += " ";
-      codegenStmtExpr(codegen, stmtLoop->upd);
-    }
-
-    codegen->body += ") {\n";
     codegenBlock(codegen, stmtLoop->body, indent + 2);
     codegen->body += std::string(indent, ' ') + "}\n";
     codegen->varMap->restore();
