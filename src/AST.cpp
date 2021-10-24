@@ -8,7 +8,7 @@
 #include "AST.hpp"
 
 AST::~AST () {
-  for (auto &topLevelStmt : this->topLevelStmts) {
+  for (auto topLevelStmt : this->topLevelStmts) {
     delete topLevelStmt;
   }
 

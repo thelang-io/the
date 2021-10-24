@@ -9,9 +9,9 @@
 #include "VarMap.hpp"
 
 VarMap::~VarMap () {
-  for (auto &it : this->items) {
+  for (auto it : this->items) {
     if (it->type == VAR_FN) {
-      for (auto &param : it->fn->params) {
+      for (auto param : it->fn->params) {
         delete param;
       }
 
@@ -37,7 +37,7 @@ void VarMap::addFn (
 }
 
 const VarMapItem &VarMap::get (const std::string &name) const {
-  for (const auto &it : this->items) {
+  for (auto it : this->items) {
     if (it->name == name) {
       return *it;
     }
@@ -47,7 +47,7 @@ const VarMapItem &VarMap::get (const std::string &name) const {
 }
 
 const VarMapItemFn &VarMap::getFn (const std::string &name) const {
-  for (const auto &it : this->items) {
+  for (auto it : this->items) {
     if (it->type == VAR_FN && it->name == name) {
       return *it->fn;
     }
@@ -62,7 +62,7 @@ void VarMap::restore () {
 
     if (item->frame == this->frame) {
       if (item->type == VAR_FN) {
-        for (auto &param : item->fn->params) {
+        for (auto param : item->fn->params) {
           delete param;
         }
 

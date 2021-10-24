@@ -418,9 +418,9 @@ main {
   mc1 := lc(2)
   mc2 := lc(2, 4)
   mc3 := lc(4, 5, 6)
-  mc4 := 0 // TODO lc(4, b: 4)
-  mc5 := 0 // TODO lc(6, c: 5)
-  mc6 := 0 // TODO lc(6, c: 5, b: 10)
+  mc4 := lc(4, b: 4)
+  mc5 := lc(6, c: 5)
+  mc6 := lc(6, c: 5, b: 10)
 
   print("ma1:", ma1, "ma2:", ma2, "mb1:", mb1, "mb2:", mb2)
   print("mc1:", mc1, "mc2:", mc2, "mc3:", mc3, "mc4:", mc4)

@@ -58,9 +58,14 @@ struct ExprBinary {
   ~ExprBinary ();
 };
 
+struct ExprCallArg {
+  Identifier *id;
+  StmtExpr *expr;
+};
+
 struct ExprCall {
   Identifier *callee;
-  std::vector<StmtExpr *> args;
+  std::vector<ExprCallArg *> args;
 
   ~ExprCall ();
 };

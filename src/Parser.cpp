@@ -11,7 +11,7 @@
 StmtExpr *parseStmtExpr (Reader *reader);
 
 Block::~Block () {
-  for (auto &stmt : this->body) {
+  for (auto stmt : this->body) {
     delete stmt;
   }
 }
@@ -51,7 +51,9 @@ ExprBinary::~ExprBinary () {
 }
 
 ExprCall::~ExprCall () {
-  for (auto &arg : this->args) {
+  for (auto arg : this->args) {
+    delete arg->id;
+    delete arg->expr;
     delete arg;
   }
 
@@ -112,7 +114,7 @@ StmtExpr::~StmtExpr () {
 }
 
 StmtFnDecl::~StmtFnDecl () {
-  for (auto &param : this->params) {
+  for (auto param : this->params) {
     delete param->name;
     delete param->type;
     delete param->init;
@@ -332,12 +334,36 @@ StmtExpr *parseStmtExpr (Reader *reader) {
       auto loc3 = reader->loc;
       parseWalkWhitespace(reader);
       auto tok3 = lex(reader);
-      auto args = std::vector<StmtExpr *>();
+      auto args = std::vector<ExprCallArg *>();
 
       while (tok3->type != TK_OP_RPAR) {
         reader->seek(loc3);
+
+        auto argId = static_cast<Identifier *>(nullptr);
+        auto loc4 = reader->loc;
         parseWalkWhitespace(reader);
-        args.push_back(parseStmtExpr(reader));
+        auto tok4 = lex(reader);
+
+        if (tok4->type == TK_LIT_ID) {
+          parseWalkWhitespace(reader);
+          auto tok5 = lex(reader);
+
+          if (tok5->type == TK_OP_COLON) {
+            argId = parseGenIdentifier(tok4);
+          }
+
+          delete tok5;
+        }
+
+        if (argId == nullptr) {
+          delete tok4;
+          reader->seek(loc4);
+        }
+
+        parseWalkWhitespace(reader);
+        auto stmtExpr = parseStmtExpr(reader);
+
+        args.push_back(new ExprCallArg{argId, stmtExpr});
         parseWalkWhitespace(reader);
 
         delete tok3;

@@ -20,6 +20,7 @@ enum VarMapItemType {
 };
 
 struct VarMapItemParam {
+  std::string name;
   VarMapItemType type;
   bool required = false;
 };

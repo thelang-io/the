@@ -12,7 +12,7 @@
 void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent);
 
 Codegen::~Codegen () {
-  for (auto &fnDecl : this->fnDecls) {
+  for (auto fnDecl : this->fnDecls) {
     delete fnDecl;
   }
 
@@ -36,7 +36,7 @@ std::string randomId () {
 }
 
 void codegenBlock (Codegen *codegen, const Block *block, std::size_t indent) {
-  for (const auto &stmt : block->body) {
+  for (auto stmt : block->body) {
     codegenStmt(codegen, stmt, indent);
   }
 }
@@ -221,9 +221,9 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
 
         auto argIdx = 0;
 
-        for (const auto &arg : exprCall->args) {
+        for (auto arg : exprCall->args) {
           codegen->body += (argIdx != 0 ? "%s" : "");
-          auto exprType = codegenStmtExprType(codegen, arg);
+          auto exprType = codegenStmtExprType(codegen, arg->expr);
 
           if (exprType == VAR_CHAR) {
             codegen->body += "%c";
@@ -241,9 +241,9 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
         codegen->body += R"(%s", )";
         argIdx = 0;
 
-        for (const auto &arg : exprCall->args) {
+        for (auto arg : exprCall->args) {
           codegen->body += (argIdx != 0 ? R"(" ", )" : "");
-          codegenStmtExpr(codegen, arg);
+          codegenStmtExpr(codegen, arg->expr);
           codegen->body += ", ";
 
           argIdx++;
@@ -261,11 +261,27 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
           codegen->body += paramIdx == 0 ? "" : ", ";
           auto param = *it;
 
-          if (paramIdx >= exprCall->args.size()) {
-            if (param->required) {
-              throw Error("Missing required function parameter in function call");
-            }
+          if (param->required && paramIdx >= exprCall->args.size()) {
+            throw Error("Missing required function parameter in function call");
+          } else if (param->required) {
+            codegenStmtExpr(codegen, exprCall->args[paramIdx]->expr);
+            continue;
+          }
 
+          auto foundArg = static_cast<ExprCallArg *>(nullptr);
+
+          if (paramIdx < exprCall->args.size() && exprCall->args[paramIdx]->id == nullptr) {
+            foundArg = exprCall->args[paramIdx];
+          } else {
+            for (auto arg : exprCall->args) {
+              if (arg->id != nullptr && arg->id->name->val == param->name) {
+                foundArg = arg;
+                break;
+              }
+            }
+          }
+
+          if (foundArg == nullptr) {
             if (param->type == VAR_CHAR) {
               codegen->body += R"('\0')";
             } else if (param->type == VAR_FLOAT || param->type == VAR_INT) {
@@ -274,7 +290,7 @@ void codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
               codegen->body += R"("")";
             }
           } else {
-            codegenStmtExpr(codegen, exprCall->args[paramIdx]);
+            codegenStmtExpr(codegen, foundArg->expr);
           }
         }
 
@@ -365,7 +381,9 @@ void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
 
       codegen->body += idx == 0 ? "" : ", ";
       codegenTypeStr(codegen, paramType);
-      params.push_back(new VarMapItemParam{codegenType(codegen, param), param->init == nullptr});
+
+      auto itParam = new VarMapItemParam{param->name->name->val, codegenType(codegen, param), param->init == nullptr};
+      params.push_back(itParam);
 
       if (codegen->body.back() == ' ') {
         codegen->body.pop_back();
@@ -388,11 +406,11 @@ void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
     codegen->varMap->save();
 
     if (stmtLoop->init == nullptr && stmtLoop->cond == nullptr && stmtLoop->upd == nullptr) {
-      codegen->body += "while (1) {\n";
+      codegen->body += "while (1)";
     } else if (stmtLoop->init == nullptr && stmtLoop->upd == nullptr) {
       codegen->body += "while (";
       codegenStmtExpr(codegen, stmtLoop->cond);
-      codegen->body += ") {\n";
+      codegen->body += ")";
     } else {
       codegen->body += "for (";
 
@@ -416,11 +434,17 @@ void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
         codegenStmtExpr(codegen, stmtLoop->upd);
       }
 
-      codegen->body += ") {\n";
+      codegen->body += ")";
     }
 
-    codegenBlock(codegen, stmtLoop->body, indent + 2);
-    codegen->body += std::string(indent, ' ') + "}\n";
+    if (stmtLoop->body->body.empty()) {
+      codegen->body += ";\n";
+    } else {
+      codegen->body += " {\n";
+      codegenBlock(codegen, stmtLoop->body, indent + 2);
+      codegen->body += std::string(indent, ' ') + "}\n";
+    }
+
     codegen->varMap->restore();
   } else if (stmt->type == STMT_RETURN) {
     auto stmtReturn = std::get<StmtReturn *>(stmt->body);
@@ -447,7 +471,7 @@ void codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
 std::string codegen (const AST *ast) {
   auto codegen = new Codegen{{}, "", {}, new VarMap{}};
 
-  for (const auto &stmt : ast->topLevelStmts) {
+  for (auto stmt : ast->topLevelStmts) {
     codegenStmt(codegen, stmt, 0);
   }
 
@@ -461,13 +485,10 @@ std::string codegen (const AST *ast) {
   codegen->body += "}\n";
   codegen->varMap->restore();
 
-  if (!codegen->fnDecls.empty()) {
-    codegen->body += "\n";
-  }
-
-  for (const auto &fnDecl : codegen->fnDecls) {
+  for (auto fnDecl : codegen->fnDecls) {
     auto returnType = codegenIdentifierType(fnDecl->stmt->type);
 
+    codegen->body += "\n";
     codegenTypeStr(codegen, returnType);
     codegen->body += fnDecl->hiddenName + " (";
     codegen->varMap->save();
