@@ -1,3 +1,6 @@
+na := 0
+nb := "Hello, World!"
+
 fn ga () int {
   return 3
 }
@@ -439,4 +442,6 @@ main {
   print("Hello", terminator: ", ")
   print("World!", terminator: "")
   print()
+
+  print("na:", na, "nb:", nb)
 }

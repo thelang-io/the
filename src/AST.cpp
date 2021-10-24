@@ -25,5 +25,7 @@ void AST::add (Stmt *stmt) {
     this->mainBody = stmtMain->body;
     stmtMain->body = nullptr;
     delete stmt;
+  } else if (stmt->type == STMT_SHORT_VAR_DECL) {
+    this->topLevelStmts.push_back(stmt);
   }
 }
