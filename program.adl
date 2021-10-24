@@ -408,7 +408,16 @@ main {
   }
 
   fn lc (a: int, b := 1, c := 2) int {
-    return a + b + c
+    fn lc2 (d: int, e: int, f := 3, g := 4) int {
+      return d + e + f + g
+    }
+
+    return a + b + c +
+      lc2(5, 6) +
+      lc2(7, 8, f: 9) +
+      lc2(10, 11, g: 12) +
+      lc2(13, 14, g: 15, f: 16) +
+      lc2(17, 18, 19, 20)
   }
 
   ma1 := la()

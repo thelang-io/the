@@ -521,7 +521,8 @@ std::string codegen (const AST *ast) {
   codegen->body += "}\n";
   codegen->varMap->restore();
 
-  for (auto fnDecl : codegen->fnDecls) {
+  for (auto it1 = codegen->fnDecls.begin(); it1 != codegen->fnDecls.end(); it1++) {
+    auto fnDecl = *it1;
     auto returnType = codegenIdentifierType(fnDecl->stmt->type);
 
     codegen->body += "\n";
@@ -536,9 +537,9 @@ std::string codegen (const AST *ast) {
       auto paramsCode = std::string();
       auto optionalParamsCode = std::string();
 
-      for (auto it = fnDecl->stmt->params.begin(); it != fnDecl->stmt->params.end(); it++) {
-        auto idx = it - fnDecl->stmt->params.begin();
-        auto param = *it;
+      for (auto it2 = fnDecl->stmt->params.begin(); it2 != fnDecl->stmt->params.end(); it2++) {
+        auto idx = it2 - fnDecl->stmt->params.begin();
+        auto param = *it2;
         auto paramName = codegenIdentifier(param->name);
         auto paramType = codegenType(codegen, param);
         auto paramTypeStr = codegenTypeStr(paramType);
