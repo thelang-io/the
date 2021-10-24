@@ -229,8 +229,26 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
         code += R"(printf(")";
 
         auto argIdx = 0;
+        auto separator = std::string(R"(" ")");
+        auto terminator = std::string(R"("\n")");
 
         for (auto arg : exprCall->args) {
+          if (arg->id == nullptr) {
+            continue;
+          } else if (arg->id->name->val == "separator") {
+            separator = codegenStmtExpr(codegen, arg->expr);
+          } else if (arg->id->name->val == "terminator") {
+            terminator = codegenStmtExpr(codegen, arg->expr);
+          } else {
+            throw Error("Unknown print argument");
+          }
+        }
+
+        for (auto arg : exprCall->args) {
+          if (arg->id != nullptr) {
+            continue;
+          }
+
           code += (argIdx != 0 ? "%s" : "");
           auto exprType = codegenStmtExprType(codegen, arg->expr);
 
@@ -251,14 +269,18 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
         argIdx = 0;
 
         for (auto arg : exprCall->args) {
-          code += (argIdx != 0 ? R"(" ", )" : "");
+          if (arg->id != nullptr) {
+            continue;
+          }
+
+          code += argIdx != 0 ? separator + ", " : "";
           code += codegenStmtExpr(codegen, arg->expr);
           code += ", ";
 
           argIdx++;
         }
 
-        code += R"("\n"))";
+        code += terminator + ")";
       } else {
         auto fnMapIt = codegen->varMap->getFn(exprCall->callee->name->val);
 

@@ -43,7 +43,6 @@ fn gh (n: int) int {
 }
 
 main {
-  print()
   print("Hello, World!")
 
   mut zi := 0
@@ -434,4 +433,10 @@ main {
   print("ma1:", ma1, "ma2:", ma2, "mb1:", mb1, "mb2:", mb2)
   print("mc1:", mc1, "mc2:", mc2, "mc3:", mc3, "mc4:", mc4)
   print("mc5:", mc5, "mc6:", mc6)
+
+  print("apple", "banana", "orange", separator: ",")
+  print("Aaron", "Julia", "Michael", "Martin", separator: "\n")
+  print("Hello", terminator: ", ")
+  print("World!", terminator: "")
+  print()
 }
