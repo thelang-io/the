@@ -470,13 +470,6 @@ std::string codegen (const AST *ast) {
 
     codegenTypeStr(codegen, returnType);
     codegen->body += fnDecl->hiddenName + " (";
-
-    auto params = std::vector<VarMapItemParam *>();
-
-    for (const auto &param : fnDecl->stmt->params) {
-      params.push_back(new VarMapItemParam{codegenType(codegen, param), param->init == nullptr});
-    }
-
     codegen->varMap->save();
 
     for (auto it = fnDecl->stmt->params.begin(); it != fnDecl->stmt->params.end(); it++) {
