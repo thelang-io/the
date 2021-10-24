@@ -22,20 +22,20 @@ fn gf (x: int, y: int, z: int) int {
   return x - y - z
 }
 
-fn gg_2 (b: float) float {
-  if b <= 0 {
-    return b
-  }
-
-  return b + gg_2(b / 2)
-}
-
 fn gg_1 (a: float) float {
   if a <= 0 {
     return a
   }
 
   return a + gg_2(a - 1)
+}
+
+fn gg_2 (b: float) float {
+  if b <= 0 {
+    return b
+  }
+
+  return b + gg_2(b / 2)
 }
 
 fn gh (n: int) int {
@@ -398,4 +398,31 @@ main {
 
   print("ha:", ha, "hb:", hb, "hc:", hc, "hd:", hd)
   print("he:", he, "hf:", hf, "hg:", hg, "hh:", hh)
+
+  fn la (a := 0) int {
+    return a + 3
+  }
+
+  fn lb (a: int, b := 0) int {
+    return a + b
+  }
+
+  fn lc (a: int, b := 1, c := 2) int {
+    return a + b + c
+  }
+
+  ma1 := la()
+  ma2 := la(4)
+  mb1 := lb(5)
+  mb2 := lb(5, 2)
+  mc1 := lc(2)
+  mc2 := lc(2, 4)
+  mc3 := lc(4, 5, 6)
+  mc4 := 0 // TODO lc(4, b: 4)
+  mc5 := 0 // TODO lc(6, c: 5)
+  mc6 := 0 // TODO lc(6, c: 5, b: 10)
+
+  print("ma1:", ma1, "ma2:", ma2, "mb1:", mb1, "mb2:", mb2)
+  print("mc1:", mc1, "mc2:", mc2, "mc3:", mc3, "mc4:", mc4)
+  print("mc5:", mc5, "mc6:", mc6)
 }

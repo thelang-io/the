@@ -26,8 +26,13 @@ void VarMap::add (VarMapItemType type, const std::string &name) {
   this->items.push_back(new VarMapItem{type, name, nullptr, this->frame});
 }
 
-void VarMap::addFn (const std::string &name, VarMapItemType returnType, const std::vector<VarMapItemParam *> &params) {
-  auto fn = new VarMapItemFn{name, returnType, params};
+void VarMap::addFn (
+  const std::string &name,
+  const std::string &hiddenName,
+  VarMapItemType returnType,
+  const std::vector<VarMapItemParam *> &params
+) {
+  auto fn = new VarMapItemFn{hiddenName, returnType, params};
   this->items.push_back(new VarMapItem{VAR_FN, name, fn, this->frame});
 }
 
@@ -43,7 +48,7 @@ const VarMapItem &VarMap::get (const std::string &name) const {
 
 const VarMapItemFn &VarMap::getFn (const std::string &name) const {
   for (const auto &it : this->items) {
-    if (it->name == name && it->type == VAR_FN) {
+    if (it->type == VAR_FN && it->name == name) {
       return *it->fn;
     }
   }
