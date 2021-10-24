@@ -29,6 +29,7 @@ struct VarMapItemFn {
   std::string hiddenName;
   VarMapItemType returnType;
   std::vector<VarMapItemParam *> params;
+  std::size_t optionalParams;
 };
 
 struct VarMapItem {
@@ -46,12 +47,15 @@ class VarMap {
   ~VarMap ();
 
   void add (VarMapItemType type, const std::string &name);
+
   void addFn (
     const std::string &name,
     const std::string &hiddenName,
     VarMapItemType returnType,
-    const std::vector<VarMapItemParam *> &params
+    const std::vector<VarMapItemParam *> &params,
+    std::size_t optionalParams
   );
+
   const VarMapItem &get (const std::string &name) const;
   const VarMapItemFn &getFn (const std::string &name) const;
   void restore ();
