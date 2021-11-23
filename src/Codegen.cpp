@@ -27,7 +27,7 @@ std::string randomId () {
 
   result.reserve(10);
 
-  for (auto i = 0; i < 32; i++) {
+  for (auto i = 0; i < 6; i++) {
     auto idx = dist(mt);
     result += letters[static_cast<std::size_t>(idx)];
   }

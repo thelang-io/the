@@ -614,7 +614,7 @@ Stmt *parse (Reader *reader) {
         if (alt == nullptr && altTail == nullptr) {
           alt = condElif;
           altTail = condElif;
-        } else {
+        } else if (altTail != nullptr) {
           std::get<StmtIf *>(altTail->body)->alt = condElif;
           altTail = condElif;
         }
@@ -628,7 +628,7 @@ Stmt *parse (Reader *reader) {
 
         if (alt == nullptr && altTail == nullptr) {
           alt = condElse;
-        } else {
+        } else if (altTail != nullptr) {
           std::get<StmtIf *>(altTail->body)->alt = condElse;
         }
       } else {

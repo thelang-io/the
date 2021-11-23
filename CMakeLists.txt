@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core LANGUAGES CXX)
+project(
+  the-core
+  VERSION 1.0.1
+  LANGUAGES CXX
+)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-function (target_add_flags target)
+function(target_add_flags target)
   target_compile_options(${target} PRIVATE -Wall)
   target_compile_options(${target} PRIVATE -Wconversion)
   target_compile_options(${target} PRIVATE -Werror)
