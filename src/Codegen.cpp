@@ -19,22 +19,6 @@ Codegen::~Codegen () {
   delete this->varMap;
 }
 
-std::string randomId () {
-  auto letters = std::string("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-  auto result = std::string();
-  auto mt = std::mt19937{std::random_device{}()};
-  auto dist = std::uniform_real_distribution<double>{0, 61};
-
-  result.reserve(10);
-
-  for (auto i = 0; i < 6; i++) {
-    auto idx = dist(mt);
-    result += letters[static_cast<std::size_t>(idx)];
-  }
-
-  return result;
-}
-
 std::string codegenBlock (Codegen *codegen, const Block *block, std::size_t indent) {
   auto code = std::string();
 
@@ -58,7 +42,7 @@ VarMapItemType codegenIdentifierType (const Identifier *id) {
 }
 
 std::string codegenIdentifier (const Identifier *id) {
-  return id->name->val;
+  return "__THE_" + id->name->val;
 }
 
 VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmtExpr) {
@@ -67,7 +51,9 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
 
     if (expr->type == EXPR_ASSIGN) {
       auto exprAssign = std::get<ExprAssign *>(expr->body);
-      return codegen->varMap->get(exprAssign->left->name->val).type;
+      auto name = codegenIdentifier(exprAssign->left);
+
+      return codegen->varMap->get(name).type;
     } else if (expr->type == EXPR_BINARY) {
       auto exprBinary = std::get<ExprBinary *>(expr->body);
       auto exprBinaryLeftType = codegenStmtExprType(codegen, exprBinary->left);
@@ -97,7 +83,9 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
       }
     } else if (expr->type == EXPR_CALL) {
       auto exprCall = std::get<ExprCall *>(expr->body);
-      return codegen->varMap->getFn(exprCall->callee->name->val).returnType;
+      auto name = codegenIdentifier(exprCall->callee);
+
+      return codegen->varMap->getFn(name).returnType;
     } else if (expr->type == EXPR_COND) {
       auto exprCond = std::get<ExprCond *>(expr->body);
       auto exprCondBodyType = codegenStmtExprType(codegen, exprCond->body);
@@ -120,7 +108,9 @@ VarMapItemType codegenStmtExprType (const Codegen *codegen, const StmtExpr *stmt
     }
   } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
     auto id = std::get<Identifier *>(stmtExpr->body);
-    return codegen->varMap->get(id->name->val).type;
+    auto name = codegenIdentifier(id);
+
+    return codegen->varMap->get(name).type;
   } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
     auto lit = std::get<Literal *>(stmtExpr->body);
 
@@ -282,9 +272,10 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
 
         code += terminator + ")";
       } else {
-        auto fnMapIt = codegen->varMap->getFn(exprCall->callee->name->val);
+        auto fnName = codegenIdentifier(exprCall->callee);
+        auto fnMapIt = codegen->varMap->getFn(fnName);
 
-        code += fnMapIt.hiddenName;
+        code += fnName;
         code += "(";
 
         auto argsCode = std::string();
@@ -308,7 +299,7 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
             foundArg = exprCall->args[paramIdx];
           } else {
             for (auto arg : exprCall->args) {
-              if (arg->id != nullptr && arg->id->name->val == param->name) {
+              if (arg->id != nullptr && codegenIdentifier(arg->id) == param->name) {
                 foundArg = arg;
                 break;
               }
@@ -360,7 +351,8 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
       }
     }
   } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
-    code += std::get<Identifier *>(stmtExpr->body)->name->val;
+    auto id = std::get<Identifier *>(stmtExpr->body);
+    code += codegenIdentifier(id);
   } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
     code += std::get<Literal *>(stmtExpr->body)->val->val;
   } else {
@@ -414,10 +406,10 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
   } else if (stmt->type == STMT_FN_DECL) {
     auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
     auto returnType = codegenIdentifierType(stmtFnDecl->type);
-    auto hiddenName = "__THE_" + randomId();
+    auto fnName = codegenIdentifier(stmtFnDecl->id);
 
     code += codegenTypeStr(returnType);
-    code += hiddenName + " (";
+    code += fnName + " (";
 
     auto params = std::vector<VarMapItemParam *>();
     auto optionalParams = static_cast<std::size_t>(0);
@@ -431,13 +423,14 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
         auto idx = it - stmtFnDecl->params.begin();
         auto param = *it;
         auto paramType = codegenType(codegen, param);
+        auto paramName = codegenIdentifier(param->name);
         auto paramRequired = param->init == nullptr;
 
         paramsCode += idx == 0 ? "" : ", ";
         auto paramCode = codegenTypeStr(paramType);
         paramsCode += paramCode.back() == ' ' ? paramCode.substr(0, paramCode.length() - 1) : paramCode;
 
-        auto itParam = new VarMapItemParam{param->name->name->val, codegenType(codegen, param), paramRequired};
+        auto itParam = new VarMapItemParam{paramName, codegenType(codegen, param), paramRequired};
         params.push_back(itParam);
 
         if (!paramRequired) {
@@ -453,8 +446,8 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
     }
 
     code += ");\n";
-    codegen->varMap->addFn(stmtFnDecl->id->name->val, hiddenName, returnType, params, optionalParams);
-    codegen->fnDecls.push_back(new CodegenFnDecl{hiddenName, stmtFnDecl});
+    codegen->varMap->addFn(fnName, returnType, params, optionalParams);
+    codegen->fnDecls.push_back(new CodegenFnDecl{fnName, stmtFnDecl});
   } else if (stmt->type == STMT_IF) {
     code += codegenStmtIf(codegen, std::get<StmtIf *>(stmt->body), indent);
     code += "\n";
@@ -511,14 +504,15 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
   } else if (stmt->type == STMT_SHORT_VAR_DECL) {
     auto stmtShortVarDecl = std::get<StmtShortVarDecl *>(stmt->body);
     auto exprType = codegenStmtExprType(codegen, stmtShortVarDecl->init);
+    auto name = codegenIdentifier(stmtShortVarDecl->id);
 
     code += codegenTypeStr(exprType, stmtShortVarDecl->mut);
-    code += codegenIdentifier(stmtShortVarDecl->id);
+    code += name;
     code += " = ";
     code += codegenStmtExpr(codegen, stmtShortVarDecl->init);
     code += ";\n";
 
-    codegen->varMap->add(exprType, stmtShortVarDecl->id->name->val);
+    codegen->varMap->add(exprType, name);
   } else {
     throw Error("Tried to access unknown stmt type");
   }
@@ -563,19 +557,19 @@ std::string codegen (const AST *ast) {
         auto idx = it2 - fnDecl->stmt->params.begin();
         auto param = *it2;
         auto paramName = codegenIdentifier(param->name);
+        auto optionalParamName = "OP_" + std::to_string(optionalParams + 1);
         auto paramType = codegenType(codegen, param);
         auto paramTypeStr = codegenTypeStr(paramType);
         auto paramRequired = param->init == nullptr;
 
         paramsCode += idx == 0 ? "" : ", ";
         paramsCode += paramTypeStr;
-        paramsCode += (paramRequired ? "" : "_") + paramName;
+        paramsCode += paramRequired ? paramName : optionalParamName;
 
         if (!paramRequired) {
           optionalParamsCode += std::string(2, ' ') + paramTypeStr;
-          optionalParamsCode += paramName + " = __THE_opt_params[" + std::to_string(optionalParams) + "] == 0 ? ";
-          optionalParamsCode += codegenStmtExpr(codegen, param->init);
-          optionalParamsCode += " : _" + paramName;
+          optionalParamsCode += paramName + " = OP[" + std::to_string(optionalParams) + "] == 0 ? ";
+          optionalParamsCode += codegenStmtExpr(codegen, param->init) + " : " + optionalParamName;
           optionalParamsCode += ";\n";
 
           optionalParams++;
@@ -585,7 +579,7 @@ std::string codegen (const AST *ast) {
       }
 
       if (optionalParams > 0) {
-        codegen->body += "const char __THE_opt_params[" + std::to_string(optionalParams) + "], ";
+        codegen->body += "const char OP[" + std::to_string(optionalParams) + "], ";
       }
 
       codegen->body += paramsCode;

@@ -26,7 +26,6 @@ struct VarMapItemParam {
 };
 
 struct VarMapItemFn {
-  std::string hiddenName;
   VarMapItemType returnType;
   std::vector<VarMapItemParam *> params;
   std::size_t optionalParams;
@@ -50,7 +49,6 @@ class VarMap {
 
   void addFn (
     const std::string &name,
-    const std::string &hiddenName,
     VarMapItemType returnType,
     const std::vector<VarMapItemParam *> &params,
     std::size_t optionalParams

@@ -28,12 +28,11 @@ void VarMap::add (VarMapItemType type, const std::string &name) {
 
 void VarMap::addFn (
   const std::string &name,
-  const std::string &hiddenName,
   VarMapItemType returnType,
   const std::vector<VarMapItemParam *> &params,
   std::size_t optionalParams
 ) {
-  auto fn = new VarMapItemFn{hiddenName, returnType, params, optionalParams};
+  auto fn = new VarMapItemFn{returnType, params, optionalParams};
   this->items.push_back(new VarMapItem{VAR_FN, name, fn, this->frame});
 }
 
