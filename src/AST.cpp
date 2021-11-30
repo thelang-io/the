@@ -16,7 +16,7 @@ AST::~AST () {
 }
 
 void AST::add (Stmt *stmt) {
-  if (stmt->type == STMT_FN_DECL || stmt->type == STMT_SHORT_VAR_DECL) {
+  if (stmt->type == STMT_FN_DECL || stmt->type == STMT_OBJ_DECL || stmt->type == STMT_SHORT_VAR_DECL) {
     this->topLevelStmts.push_back(stmt);
   } else if (stmt->type == STMT_MAIN) {
     auto stmtMain = std::get<StmtMain *>(stmt->body);

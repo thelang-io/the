@@ -16,6 +16,12 @@ VarMap::~VarMap () {
       }
 
       delete it->fn;
+    } else if (it->type == VAR_OBJ) {
+      for (auto field : it->obj->fields) {
+        delete field;
+      }
+
+      delete it->obj;
     }
 
     delete it;
@@ -23,17 +29,22 @@ VarMap::~VarMap () {
 }
 
 void VarMap::add (VarMapItemType type, const std::string &name) {
-  this->items.push_back(new VarMapItem{type, name, nullptr, this->frame});
+  this->items.push_back(new VarMapItem{type, name, nullptr, this->frame, nullptr});
 }
 
 void VarMap::addFn (
   const std::string &name,
   VarMapItemType returnType,
-  const std::vector<VarMapItemParam *> &params,
+  const std::vector<VarMapFnParam *> &params,
   std::size_t optionalParams
 ) {
-  auto fn = new VarMapItemFn{returnType, params, optionalParams};
-  this->items.push_back(new VarMapItem{VAR_FN, name, fn, this->frame});
+  auto fn = new VarMapFn{returnType, params, optionalParams};
+  this->items.push_back(new VarMapItem{VAR_FN, name, fn, this->frame, nullptr});
+}
+
+void VarMap::addObj (const std::string &name, const std::vector<VarMapObjField *> &fields) {
+  auto obj = new VarMapObj{fields};
+  this->items.push_back(new VarMapItem{VAR_OBJ, name, nullptr, this->frame, obj});
 }
 
 const VarMapItem &VarMap::get (const std::string &name) const {
@@ -46,14 +57,24 @@ const VarMapItem &VarMap::get (const std::string &name) const {
   throw Error("Tried to access non existing VarMap item");
 }
 
-const VarMapItemFn &VarMap::getFn (const std::string &name) const {
+const VarMapFn &VarMap::getFn (const std::string &name) const {
   for (auto it : this->items) {
     if (it->type == VAR_FN && it->name == name) {
       return *it->fn;
     }
   }
 
-  throw Error("Tried to access non existing VarMap function item");
+  throw Error("Tried to access non existing VarMap function");
+}
+
+const VarMapObj &VarMap::getObj (const std::string &name) const {
+  for (auto it : this->items) {
+    if (it->type == VAR_OBJ && it->name == name) {
+      return *it->obj;
+    }
+  }
+
+  throw Error("Tried to access non existing VarMap object");
 }
 
 void VarMap::restore () {
@@ -67,6 +88,12 @@ void VarMap::restore () {
         }
 
         delete item->fn;
+      } else if (item->type == VAR_OBJ) {
+        for (auto field : item->obj->fields) {
+          delete field;
+        }
+
+        delete item->obj;
       }
 
       delete item;

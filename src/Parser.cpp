@@ -25,7 +25,9 @@ Cond::~Cond () {
 }
 
 Expr::~Expr () {
-  if (this->type == EXPR_ASSIGN) {
+  if (this->type == EXPR_ACCESS) {
+    delete std::get<ExprAccess *>(this->body);
+  } else if (this->type == EXPR_ASSIGN) {
     delete std::get<ExprAssign *>(this->body);
   } else if (this->type == EXPR_BINARY) {
     delete std::get<ExprBinary *>(this->body);
@@ -33,8 +35,20 @@ Expr::~Expr () {
     delete std::get<ExprCall *>(this->body);
   } else if (this->type == EXPR_COND) {
     delete std::get<ExprCond *>(this->body);
+  } else if (this->type == EXPR_MEMBER) {
+    delete std::get<ExprMember *>(this->body);
+  } else if (this->type == EXPR_OBJ) {
+    delete std::get<ExprObj *>(this->body);
   } else if (this->type == EXPR_UNARY) {
     delete std::get<ExprUnary *>(this->body);
+  }
+}
+
+ExprAccess::~ExprAccess () {
+  if (this->type == EXPR_ACCESS_EXPR_MEMBER) {
+    delete std::get<ExprMember *>(this->body);
+  } else if (this->type == EXPR_ACCESS_IDENTIFIER) {
+    delete std::get<Identifier *>(this->body);
   }
 }
 
@@ -64,6 +78,21 @@ ExprCond::~ExprCond () {
   delete this->cond;
   delete this->body;
   delete this->alt;
+}
+
+ExprMember::~ExprMember () {
+  delete this->obj;
+  delete this->prop;
+}
+
+ExprObj::~ExprObj () {
+  for (auto prop : this->props) {
+    delete prop->id;
+    delete prop->init;
+    delete prop;
+  }
+
+  delete this->type;
 }
 
 ExprUnary::~ExprUnary () {
@@ -96,6 +125,8 @@ Stmt::~Stmt () {
     delete std::get<StmtLoop *>(this->body);
   } else if (this->type == STMT_MAIN) {
     delete std::get<StmtMain *>(this->body);
+  } else if (this->type == STMT_OBJ_DECL) {
+    delete std::get<StmtObjDecl *>(this->body);
   } else if (this->type == STMT_RETURN) {
     delete std::get<StmtReturn *>(this->body);
   } else if (this->type == STMT_SHORT_VAR_DECL) {
@@ -115,14 +146,14 @@ StmtExpr::~StmtExpr () {
 
 StmtFnDecl::~StmtFnDecl () {
   for (auto param : this->params) {
-    delete param->name;
+    delete param->id;
     delete param->type;
     delete param->init;
     delete param;
   }
 
   delete this->id;
-  delete this->type;
+  delete this->returnType;
   delete this->body;
 }
 
@@ -141,6 +172,16 @@ StmtLoop::~StmtLoop () {
 
 StmtMain::~StmtMain () {
   delete this->body;
+}
+
+StmtObjDecl::~StmtObjDecl () {
+  for (auto field : this->fields) {
+    delete field->id;
+    delete field->type;
+    delete field;
+  }
+
+  delete this->id;
 }
 
 StmtReturn::~StmtReturn () {
@@ -201,12 +242,38 @@ Block *parseBlock (Reader *reader) {
   return new Block{body};
 }
 
-Identifier *parseGenIdentifier (Token *tok) {
-  return new Identifier{tok};
+ExprAccess *parseExprAccess (Reader *reader, ExprAccess *exprAccess) {
+  auto loc1 = reader->loc;
+  parseWalkWhitespace(reader);
+  auto tok1 = lex(reader);
+
+  while (tok1->type == TK_OP_DOT) {
+    delete tok1;
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type != TK_LIT_ID) {
+      throw Error("Expected property name after dot");
+    }
+
+    auto id = new Identifier{tok2};
+    auto exprMember = new ExprMember{exprAccess, id};
+    exprAccess = new ExprAccess{EXPR_ACCESS_EXPR_MEMBER, exprMember};
+
+    loc1 = reader->loc;
+    parseWalkWhitespace(reader);
+    tok1 = lex(reader);
+  }
+
+  delete tok1;
+  reader->seek(loc1);
+
+  return exprAccess;
 }
 
 StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
-  auto loc = reader->loc;
+  auto isExprAccess = stmtExpr->type == STMT_EXPR_EXPR && std::get<Expr *>(stmtExpr->body)->type == EXPR_ACCESS;
+  auto loc1 = reader->loc;
   parseWalkWhitespace(reader);
   auto tok1 = lex(reader);
 
@@ -282,9 +349,176 @@ StmtExpr *parsePostStmtExpr (Reader *reader, StmtExpr *stmtExpr) {
     auto expr = new Expr{EXPR_COND, exprCond};
 
     return new StmtExpr{STMT_EXPR_EXPR, expr};
+  } else if (isExprAccess && tok1->type == TK_OP_DOT) {
+    reader->seek(loc1);
+    delete tok1;
+
+    auto expr = std::get<Expr *>(stmtExpr->body);
+    auto exprAccess = std::get<ExprAccess *>(expr->body);
+    expr->body = parseExprAccess(reader, exprAccess);
+    return parsePostStmtExpr(reader, stmtExpr);
+  } else if (isExprAccess && (
+    tok1->type == TK_OP_AND_AND_EQ ||
+    tok1->type == TK_OP_AND_EQ ||
+    tok1->type == TK_OP_CARET_EQ ||
+    tok1->type == TK_OP_EQ ||
+    tok1->type == TK_OP_LSHIFT_EQ ||
+    tok1->type == TK_OP_MINUS_EQ ||
+    tok1->type == TK_OP_OR_EQ ||
+    tok1->type == TK_OP_OR_OR_EQ ||
+    tok1->type == TK_OP_PERCENT_EQ ||
+    tok1->type == TK_OP_PLUS_EQ ||
+    tok1->type == TK_OP_QN_QN_EQ ||
+    tok1->type == TK_OP_RSHIFT_EQ ||
+    tok1->type == TK_OP_SLASH_EQ ||
+    tok1->type == TK_OP_STAR_EQ ||
+    tok1->type == TK_OP_STAR_STAR_EQ
+  )) {
+    parseWalkWhitespace(reader);
+
+    auto expr = std::get<Expr *>(stmtExpr->body);
+    auto exprAccess = std::get<ExprAccess *>(expr->body);
+    auto rightStmtExpr = parseStmtExpr(reader);
+    auto exprAssign = new ExprAssign{exprAccess, tok1, rightStmtExpr};
+
+    expr->type = EXPR_ASSIGN;
+    expr->body = exprAssign;
+
+    return parsePostStmtExpr(reader, stmtExpr);
+  } else if (isExprAccess && tok1->type == TK_OP_LBRACE) {
+    delete tok1;
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+    auto props = std::vector<ExprObjProp *>();
+
+    while (tok2->type != TK_OP_RBRACE) {
+      if (tok2->type != TK_LIT_ID && props.empty()) {
+        reader->seek(loc1);
+        delete tok2;
+        return stmtExpr;
+      } else if (tok2->type != TK_LIT_ID) {
+        throw Error("Expected object property name");
+      }
+
+      parseWalkWhitespace(reader);
+      auto tok3 = lex(reader);
+
+      if (tok3->type != TK_OP_COLON && props.empty()) {
+        reader->seek(loc1);
+        delete tok2;
+        delete tok3;
+        return stmtExpr;
+      } else if (tok3->type != TK_OP_COLON) {
+        throw Error("Expected colon after object property name");
+      }
+
+      delete tok3;
+      parseWalkWhitespace(reader);
+
+      auto init = parseStmtExpr(reader);
+      auto id = new Identifier{tok2};
+      auto prop = new ExprObjProp{id, init};
+      props.push_back(prop);
+
+      parseWalkWhitespace(reader);
+      tok2 = lex(reader);
+
+      if (tok2->type == TK_OP_COMMA) {
+        delete tok2;
+        parseWalkWhitespace(reader);
+        tok2 = lex(reader);
+      }
+    }
+
+    delete tok2;
+    auto expr = std::get<Expr *>(stmtExpr->body);
+    auto exprAccess = std::get<ExprAccess *>(expr->body);
+
+    if (exprAccess->type != EXPR_ACCESS_IDENTIFIER) {
+      throw Error("Only identifiers accepted as object names");
+    }
+
+    auto id = std::get<Identifier *>(exprAccess->body);
+    auto exprObj = new ExprObj{id, props};
+
+    expr->type = EXPR_OBJ;
+    expr->body = exprObj;
+    exprAccess->body = static_cast<Identifier *>(nullptr);
+
+    delete exprAccess;
+    return parsePostStmtExpr(reader, stmtExpr);
+  } else if (isExprAccess && tok1->type == TK_OP_LPAR) {
+    delete tok1;
+    auto loc2 = reader->loc;
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+    auto args = std::vector<ExprCallArg *>();
+
+    while (tok2->type != TK_OP_RPAR) {
+      reader->seek(loc2);
+
+      auto argId = static_cast<Identifier *>(nullptr);
+      auto loc3 = reader->loc;
+      parseWalkWhitespace(reader);
+      auto tok3 = lex(reader);
+
+      if (tok3->type == TK_LIT_ID) {
+        parseWalkWhitespace(reader);
+        auto tok4 = lex(reader);
+
+        if (tok4->type == TK_OP_COLON) {
+          argId = new Identifier{tok3};
+        }
+
+        delete tok4;
+      }
+
+      if (argId == nullptr) {
+        delete tok3;
+        reader->seek(loc3);
+      }
+
+      parseWalkWhitespace(reader);
+      auto argStmtExpr = parseStmtExpr(reader);
+
+      args.push_back(new ExprCallArg{argId, argStmtExpr});
+      parseWalkWhitespace(reader);
+
+      delete tok2;
+      tok2 = lex(reader);
+
+      if (tok2->type == TK_OP_COMMA) {
+        loc2 = reader->loc;
+        parseWalkWhitespace(reader);
+
+        delete tok2;
+        tok2 = lex(reader);
+      }
+    }
+
+    delete tok2;
+    auto expr = std::get<Expr *>(stmtExpr->body);
+    auto exprAccess = std::get<ExprAccess *>(expr->body);
+    auto exprCall = new ExprCall{exprAccess, args};
+
+    expr->type = EXPR_CALL;
+    expr->body = exprCall;
+
+    return parsePostStmtExpr(reader, stmtExpr);
+  } else if (tok1->type == TK_OP_MINUS_MINUS || tok1->type == TK_OP_PLUS_PLUS) {
+    if (stmtExpr->type != STMT_EXPR_EXPR) {
+      throw Error("Only expressions can be used with increment/decrement operators");
+    } else if (std::get<Expr *>(stmtExpr->body)->type != EXPR_ACCESS) {
+      throw Error("Only access expressions can be used with increment/decrement operators");
+    }
+
+    auto exprUnary = new ExprUnary{stmtExpr, tok1};
+    auto expr = new Expr{EXPR_UNARY, exprUnary};
+
+    return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
   }
 
-  reader->seek(loc);
+  reader->seek(loc1);
   delete tok1;
 
   return stmtExpr;
@@ -302,103 +536,11 @@ StmtExpr *parseStmtExpr (Reader *reader) {
     auto lit = new Literal{tok1};
     return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_LITERAL, lit});
   } else if (tok1->type == TK_LIT_ID) {
-    auto loc2 = reader->loc;
-    parseWalkWhitespace(reader);
-    auto tok2 = lex(reader);
-
-    if (
-      tok2->type == TK_OP_AND_AND_EQ ||
-      tok2->type == TK_OP_AND_EQ ||
-      tok2->type == TK_OP_CARET_EQ ||
-      tok2->type == TK_OP_EQ ||
-      tok2->type == TK_OP_LSHIFT_EQ ||
-      tok2->type == TK_OP_MINUS_EQ ||
-      tok2->type == TK_OP_OR_EQ ||
-      tok2->type == TK_OP_OR_OR_EQ ||
-      tok2->type == TK_OP_PERCENT_EQ ||
-      tok2->type == TK_OP_PLUS_EQ ||
-      tok2->type == TK_OP_QN_QN_EQ ||
-      tok2->type == TK_OP_RSHIFT_EQ ||
-      tok2->type == TK_OP_SLASH_EQ ||
-      tok2->type == TK_OP_STAR_EQ ||
-      tok2->type == TK_OP_STAR_STAR_EQ
-    ) {
-      parseWalkWhitespace(reader);
-
-      auto stmtExpr = parseStmtExpr(reader);
-      auto exprAssign = new ExprAssign{parseGenIdentifier(tok1), tok2, stmtExpr};
-      auto expr = new Expr{EXPR_ASSIGN, exprAssign};
-
-      return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
-    } else if (tok2->type == TK_OP_LPAR) {
-      auto loc3 = reader->loc;
-      parseWalkWhitespace(reader);
-      auto tok3 = lex(reader);
-      auto args = std::vector<ExprCallArg *>();
-
-      while (tok3->type != TK_OP_RPAR) {
-        reader->seek(loc3);
-
-        auto argId = static_cast<Identifier *>(nullptr);
-        auto loc4 = reader->loc;
-        parseWalkWhitespace(reader);
-        auto tok4 = lex(reader);
-
-        if (tok4->type == TK_LIT_ID) {
-          parseWalkWhitespace(reader);
-          auto tok5 = lex(reader);
-
-          if (tok5->type == TK_OP_COLON) {
-            argId = parseGenIdentifier(tok4);
-          }
-
-          delete tok5;
-        }
-
-        if (argId == nullptr) {
-          delete tok4;
-          reader->seek(loc4);
-        }
-
-        parseWalkWhitespace(reader);
-        auto stmtExpr = parseStmtExpr(reader);
-
-        args.push_back(new ExprCallArg{argId, stmtExpr});
-        parseWalkWhitespace(reader);
-
-        delete tok3;
-        tok3 = lex(reader);
-
-        if (tok3->type == TK_OP_COMMA) {
-          loc3 = reader->loc;
-          parseWalkWhitespace(reader);
-
-          delete tok3;
-          tok3 = lex(reader);
-        }
-      }
-
-      auto exprCall = new ExprCall{parseGenIdentifier(tok1), args};
-      auto expr = new Expr{EXPR_CALL, exprCall};
-
-      delete tok2;
-      delete tok3;
-
-      return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
-    } else if (tok2->type == TK_OP_MINUS_MINUS || tok2->type == TK_OP_PLUS_PLUS) {
-      auto id = new Identifier{tok1};
-      auto stmtExpr = new StmtExpr{STMT_EXPR_IDENTIFIER, id};
-      auto exprUnary = new ExprUnary{stmtExpr, tok2};
-      auto expr = new Expr{EXPR_UNARY, exprUnary};
-
-      return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
-    }
-
-    reader->seek(loc2);
-    delete tok2;
-
     auto id = new Identifier{tok1};
-    return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_IDENTIFIER, id});
+    auto exprAccess = new ExprAccess{EXPR_ACCESS_IDENTIFIER, id};
+    auto expr = new Expr{EXPR_ACCESS, exprAccess};
+
+    return parsePostStmtExpr(reader, new StmtExpr{STMT_EXPR_EXPR, expr});
   } else if (
     tok1->type == TK_OP_EXCL ||
     tok1->type == TK_OP_EXCL_EXCL ||
@@ -538,7 +680,7 @@ Stmt *parse (Reader *reader) {
         auto tok6 = lex(reader);
 
         if (tok6->type != TK_LIT_ID) {
-          throw Error("Expected parameter type after colon");
+          throw Error("Expected function parameter type after colon");
         }
 
         type = new Identifier{tok6};
@@ -559,11 +701,12 @@ Stmt *parse (Reader *reader) {
         parseWalkWhitespace(reader);
         init = parseStmtExpr(reader);
       } else {
-        throw Error("Expected parameter type after parameter name");
+        throw Error("Expected function parameter type after parameter name");
       }
 
       delete tok5;
-      auto param = new StmtFnDeclParam{parseGenIdentifier(tok4), type, init};
+      auto paramId = new Identifier{tok4};
+      auto param = new StmtFnDeclParam{paramId, type, init};
       params.push_back(param);
 
       parseWalkWhitespace(reader);
@@ -585,7 +728,9 @@ Stmt *parse (Reader *reader) {
     }
 
     auto block = parseBlock(reader);
-    auto stmtFnDecl = new StmtFnDecl{parseGenIdentifier(tok2), params, parseGenIdentifier(tok8), block};
+    auto id = new Identifier{tok2};
+    auto returnType = new Identifier{tok8};
+    auto stmtFnDecl = new StmtFnDecl{id, params, returnType, block};
 
     return new Stmt{STMT_FN_DECL, stmtFnDecl};
   } else if (tok1->type == TK_KW_IF) {
@@ -713,7 +858,8 @@ Stmt *parse (Reader *reader) {
         parseWalkWhitespace(reader);
 
         auto stmtExpr = parseStmtExpr(reader);
-        auto stmtShortVarDecl = new StmtShortVarDecl{parseGenIdentifier(tok2), stmtExpr, true};
+        auto id = new Identifier{tok2};
+        auto stmtShortVarDecl = new StmtShortVarDecl{id, stmtExpr, true};
 
         delete tok1;
         delete tok3;
@@ -725,6 +871,72 @@ Stmt *parse (Reader *reader) {
     }
 
     delete tok2;
+  } else if (tok1->type == TK_KW_OBJ) {
+    delete tok1;
+    parseWalkWhitespace(reader);
+    auto tok2 = lex(reader);
+
+    if (tok2->type != TK_LIT_ID) {
+      throw Error("Expected object identifier");
+    }
+
+    parseWalkWhitespace(reader);
+    auto tok3 = lex(reader);
+
+    if (tok3->type != TK_OP_LBRACE) {
+      throw Error("Expected left brace after object identifier");
+    }
+
+    delete tok3;
+    parseWalkWhitespace(reader);
+    auto tok4 = lex(reader);
+    auto fields = std::vector<StmtObjDeclField *>();
+
+    while (tok4->type != TK_OP_RBRACE) {
+      if (tok4->type != TK_LIT_ID) {
+        throw Error("Expected object field name");
+      }
+
+      parseWalkWhitespace(reader);
+      auto tok5 = lex(reader);
+
+      if (tok5->type != TK_OP_COLON) {
+        throw Error("Expected colon after object field name");
+      }
+
+      delete tok5;
+      parseWalkWhitespace(reader);
+      auto tok6 = lex(reader);
+
+      if (tok6->type != TK_LIT_ID) {
+        throw Error("Expected object field type after field name");
+      }
+
+      auto fieldId = new Identifier{tok4};
+      auto fieldType = new Identifier{tok6};
+      auto field = new StmtObjDeclField{fieldId, fieldType};
+      fields.push_back(field);
+
+      parseWalkWhitespace(reader);
+      tok4 = lex(reader);
+
+      if (tok4->type == TK_OP_COMMA) {
+        delete tok4;
+        parseWalkWhitespace(reader);
+        tok4 = lex(reader);
+      }
+    }
+
+    delete tok4;
+
+    if (fields.empty()) {
+      throw Error("Object declaration without fields is not allowed");
+    }
+
+    auto id = new Identifier{tok2};
+    auto stmtObjDecl = new StmtObjDecl{id, fields};
+
+    return new Stmt{STMT_OBJ_DECL, stmtObjDecl};
   } else if (tok1->type == TK_KW_RETURN) {
     delete tok1;
     parseWalkWhitespace(reader);
@@ -742,7 +954,8 @@ Stmt *parse (Reader *reader) {
       delete tok2;
 
       auto stmtExpr = parseStmtExpr(reader);
-      auto stmtShortVarDecl = new StmtShortVarDecl{parseGenIdentifier(tok1), stmtExpr};
+      auto id = new Identifier{tok1};
+      auto stmtShortVarDecl = new StmtShortVarDecl{id, stmtExpr};
 
       return new Stmt{STMT_SHORT_VAR_DECL, stmtShortVarDecl};
     }

@@ -12,6 +12,7 @@
 #include <vector>
 #include "Lexer.hpp"
 
+struct ExprMember;
 struct Identifier;
 struct Stmt;
 struct StmtExpr;
@@ -35,15 +36,30 @@ struct Cond {
 };
 
 enum ExprType {
+  EXPR_ACCESS,
   EXPR_ASSIGN,
   EXPR_BINARY,
   EXPR_CALL,
   EXPR_COND,
+  EXPR_MEMBER,
+  EXPR_OBJ,
   EXPR_UNARY
 };
 
+enum ExprAccessType {
+  EXPR_ACCESS_EXPR_MEMBER,
+  EXPR_ACCESS_IDENTIFIER
+};
+
+struct ExprAccess {
+  ExprAccessType type;
+  std::variant<ExprMember *, Identifier *> body;
+
+  ~ExprAccess ();
+};
+
 struct ExprAssign {
-  Identifier *left;
+  ExprAccess *left;
   Token *op;
   StmtExpr *right;
 
@@ -64,7 +80,7 @@ struct ExprCallArg {
 };
 
 struct ExprCall {
-  Identifier *callee;
+  ExprAccess *callee;
   std::vector<ExprCallArg *> args;
 
   ~ExprCall ();
@@ -78,6 +94,25 @@ struct ExprCond {
   ~ExprCond ();
 };
 
+struct ExprMember {
+  ExprAccess *obj;
+  Identifier *prop;
+
+  ~ExprMember ();
+};
+
+struct ExprObjProp {
+  Identifier *id;
+  StmtExpr *init;
+};
+
+struct ExprObj {
+  Identifier *type;
+  std::vector<ExprObjProp *> props;
+
+  ~ExprObj ();
+};
+
 struct ExprUnary {
   StmtExpr *arg;
   Token *op;
@@ -89,10 +124,13 @@ struct ExprUnary {
 struct Expr {
   ExprType type;
   std::variant<
+    ExprAccess *,
     ExprAssign *,
     ExprBinary *,
     ExprCall *,
     ExprCond *,
+    ExprMember *,
+    ExprObj *,
     ExprUnary *
   > body;
 
@@ -118,6 +156,7 @@ enum StmtType {
   STMT_IF,
   STMT_LOOP,
   STMT_MAIN,
+  STMT_OBJ_DECL,
   STMT_RETURN,
   STMT_SHORT_VAR_DECL
 };
@@ -146,7 +185,7 @@ struct StmtExpr {
 };
 
 struct StmtFnDeclParam {
-  Identifier *name;
+  Identifier *id;
   Identifier *type;
   StmtExpr *init;
 };
@@ -154,7 +193,7 @@ struct StmtFnDeclParam {
 struct StmtFnDecl {
   Identifier *id;
   std::vector<StmtFnDeclParam *> params;
-  Identifier *type;
+  Identifier *returnType;
   Block *body;
 
   ~StmtFnDecl ();
@@ -182,6 +221,18 @@ struct StmtMain {
   ~StmtMain();
 };
 
+struct StmtObjDeclField {
+  Identifier *id;
+  Identifier *type;
+};
+
+struct StmtObjDecl {
+  Identifier *id;
+  std::vector<StmtObjDeclField *> fields;
+
+  ~StmtObjDecl();
+};
+
 struct StmtReturn {
   StmtExpr *arg;
   ~StmtReturn ();
@@ -206,6 +257,7 @@ struct Stmt {
     StmtIf *,
     StmtLoop *,
     StmtMain *,
+    StmtObjDecl *,
     StmtReturn *,
     StmtShortVarDecl *
   > body;

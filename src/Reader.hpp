@@ -8,9 +8,7 @@
 #ifndef SRC_READER_HPP
 #define SRC_READER_HPP
 
-#include <filesystem>
-
-namespace fs = std::filesystem;
+#include <string>
 
 struct ReaderLocation {
   std::size_t pos = 0;
@@ -21,9 +19,9 @@ struct ReaderLocation {
 class Reader {
  public:
   ReaderLocation loc;
-  fs::path path;
+  std::string path;
 
-  explicit Reader (const fs::path &path);
+  explicit Reader (const std::string &path);
   Reader (const Reader &) = delete;
   Reader &operator= (const Reader &) = delete;
 

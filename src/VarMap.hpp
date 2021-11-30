@@ -16,26 +16,37 @@ enum VarMapItemType {
   VAR_FLOAT,
   VAR_FN,
   VAR_INT,
+  VAR_OBJ,
   VAR_STR
 };
 
-struct VarMapItemParam {
+struct VarMapFnParam {
   std::string name;
   VarMapItemType type;
   bool required = false;
 };
 
-struct VarMapItemFn {
+struct VarMapFn {
   VarMapItemType returnType;
-  std::vector<VarMapItemParam *> params;
+  std::vector<VarMapFnParam *> params;
   std::size_t optionalParams;
+};
+
+struct VarMapObjField {
+  std::string name;
+  VarMapItemType type;
+};
+
+struct VarMapObj {
+  std::vector<VarMapObjField *> fields;
 };
 
 struct VarMapItem {
   VarMapItemType type;
   std::string name;
-  VarMapItemFn *fn;
+  VarMapFn *fn;
   std::size_t frame = 0;
+  VarMapObj *obj;
 };
 
 class VarMap {
@@ -50,12 +61,14 @@ class VarMap {
   void addFn (
     const std::string &name,
     VarMapItemType returnType,
-    const std::vector<VarMapItemParam *> &params,
+    const std::vector<VarMapFnParam *> &params,
     std::size_t optionalParams
   );
 
+  void addObj (const std::string &name, const std::vector<VarMapObjField *> &fields);
   const VarMapItem &get (const std::string &name) const;
-  const VarMapItemFn &getFn (const std::string &name) const;
+  const VarMapFn &getFn (const std::string &name) const;
+  const VarMapObj &getObj (const std::string &name) const;
   void restore ();
   void save ();
 };

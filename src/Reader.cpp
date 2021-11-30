@@ -5,28 +5,29 @@
  * Proprietary and confidential
  */
 
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include "Error.hpp"
 #include "Reader.hpp"
 
-Reader::Reader (const fs::path &p) {
-  fs::path canonicalPath;
+Reader::Reader (const std::string &p) {
+  std::string canonicalPath;
 
   try {
-    canonicalPath = fs::canonical(p);
+    canonicalPath = std::filesystem::canonical(p);
   } catch (const std::exception &ex) {
-    throw Error(R"(No such file ")" + p.string() + R"(")");
+    throw Error(R"(No such file ")" + p + R"(")");
   }
 
-  if (!fs::is_regular_file(canonicalPath)) {
-    throw Error(R"(Path ")" + canonicalPath.string() + R"(" is not a file)");
+  if (!std::filesystem::is_regular_file(canonicalPath)) {
+    throw Error(R"(Path ")" + canonicalPath + R"(" is not a file)");
   }
 
   auto f = std::ifstream(canonicalPath);
 
   if (f.fail()) {
-    throw Error(R"(Unable to read file ")" + canonicalPath.string() + R"(")");
+    throw Error(R"(Unable to read file ")" + canonicalPath + R"(")");
   }
 
   std::stringstream content;

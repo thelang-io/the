@@ -43,7 +43,7 @@ SyntaxError::SyntaxError (Reader *reader, ReaderLocation start, const std::strin
       ? line.length() - start.col
       : 0;
 
-  this->_message = reader->path.string() + ':' +
+  this->_message = reader->path + ':' +
     lineNumStr + ':' + colNumStr + ": " + message + "\n" +
     "  " + lineNumStr + " | " + line + '\n' +
     "  " + std::string(lineNumStr.length(), ' ') +
