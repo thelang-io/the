@@ -12,12 +12,24 @@
 #include <vector>
 
 enum VarMapItemType {
+  VAR_BOOL,
+  VAR_BYTE,
   VAR_CHAR,
   VAR_FLOAT,
+  VAR_F32,
+  VAR_F64,
   VAR_FN,
   VAR_INT,
+  VAR_I8,
+  VAR_I16,
+  VAR_I32,
+  VAR_I64,
   VAR_OBJ,
-  VAR_STR
+  VAR_STR,
+  VAR_U8,
+  VAR_U16,
+  VAR_U32,
+  VAR_U64
 };
 
 struct VarMapFnParam {

@@ -129,8 +129,8 @@ Stmt::~Stmt () {
     delete std::get<StmtObjDecl *>(this->body);
   } else if (this->type == STMT_RETURN) {
     delete std::get<StmtReturn *>(this->body);
-  } else if (this->type == STMT_SHORT_VAR_DECL) {
-    delete std::get<StmtShortVarDecl *>(this->body);
+  } else if (this->type == STMT_VAR_DECL) {
+    delete std::get<StmtVarDecl *>(this->body);
   }
 }
 
@@ -188,8 +188,9 @@ StmtReturn::~StmtReturn () {
   delete this->arg;
 }
 
-StmtShortVarDecl::~StmtShortVarDecl () {
+StmtVarDecl::~StmtVarDecl () {
   delete this->id;
+  delete this->type;
   delete this->init;
 }
 
@@ -528,9 +529,14 @@ StmtExpr *parseStmtExpr (Reader *reader) {
   auto tok1 = lex(reader);
 
   if (
+    tok1->type == TK_KW_FALSE ||
+    tok1->type == TK_KW_TRUE ||
     tok1->type == TK_LIT_CHAR ||
     tok1->type == TK_LIT_FLOAT ||
+    tok1->type == TK_LIT_INT_BIN ||
     tok1->type == TK_LIT_INT_DEC ||
+    tok1->type == TK_LIT_INT_HEX ||
+    tok1->type == TK_LIT_INT_OCT ||
     tok1->type == TK_LIT_STR
   ) {
     auto lit = new Literal{tok1};
@@ -810,7 +816,7 @@ Stmt *parse (Reader *reader) {
 
       auto stmt = parse(reader);
 
-      if (stmt->type != STMT_EXPR && stmt->type != STMT_SHORT_VAR_DECL) {
+      if (stmt->type != STMT_EXPR && stmt->type != STMT_VAR_DECL) {
         throw Error("Unexpected statement in loop condition");
       }
 
@@ -818,7 +824,7 @@ Stmt *parse (Reader *reader) {
       parseWalkWhitespace(reader);
       auto tok3 = lex(reader);
 
-      if (stmt->type == STMT_SHORT_VAR_DECL && tok3->type != TK_OP_SEMI) {
+      if (stmt->type == STMT_VAR_DECL && tok3->type != TK_OP_SEMI) {
         throw Error("Expected semicolon after loop initialization");
       } else if (stmt->type == STMT_EXPR && tok3->type != TK_OP_LBRACE && tok3->type != TK_OP_SEMI) {
         throw Error("Unexpected token after loop initialization");
@@ -854,17 +860,44 @@ Stmt *parse (Reader *reader) {
       parseWalkWhitespace(reader);
       auto tok3 = lex(reader);
 
-      if (tok3->type == TK_OP_COLON_EQ) {
+      if (tok3->type == TK_OP_COLON) {
+        parseWalkWhitespace(reader);
+        auto tok4 = lex(reader);
+
+        if (tok4->type != TK_LIT_ID) {
+          throw Error("Expected variable type after colon");
+        }
+
+        parseWalkWhitespace(reader);
+        auto tok5 = lex(reader);
+
+        if (tok5->type != TK_OP_EQ) {
+          throw Error("Expected equals operator after variable type");
+        }
+
+        delete tok5;
         parseWalkWhitespace(reader);
 
-        auto stmtExpr = parseStmtExpr(reader);
+        auto initStmtExpr = parseStmtExpr(reader);
+        auto type = new Identifier{tok4};
         auto id = new Identifier{tok2};
-        auto stmtShortVarDecl = new StmtShortVarDecl{id, stmtExpr, true};
+        auto stmtVarDecl = new StmtVarDecl{id, type, initStmtExpr, true};
 
         delete tok1;
         delete tok3;
 
-        return new Stmt{STMT_SHORT_VAR_DECL, stmtShortVarDecl};
+        return new Stmt{STMT_VAR_DECL, stmtVarDecl};
+      } else if (tok3->type == TK_OP_COLON_EQ) {
+        parseWalkWhitespace(reader);
+
+        auto stmtExpr = parseStmtExpr(reader);
+        auto id = new Identifier{tok2};
+        auto stmtVarDecl = new StmtVarDecl{id, nullptr, stmtExpr, true};
+
+        delete tok1;
+        delete tok3;
+
+        return new Stmt{STMT_VAR_DECL, stmtVarDecl};
       }
 
       delete tok3;
@@ -949,15 +982,40 @@ Stmt *parse (Reader *reader) {
     parseWalkWhitespace(reader);
     auto tok2 = lex(reader);
 
-    if (tok2->type == TK_OP_COLON_EQ) {
+    if (tok2->type == TK_OP_COLON) {
+      parseWalkWhitespace(reader);
+      delete tok2;
+      auto tok3 = lex(reader);
+
+      if (tok3->type != TK_LIT_ID) {
+        throw Error("Expected variable type after colon");
+      }
+
+      parseWalkWhitespace(reader);
+      auto tok4 = lex(reader);
+
+      if (tok4->type != TK_OP_EQ) {
+        throw Error("Expected equals operator after variable type");
+      }
+
+      delete tok4;
+      parseWalkWhitespace(reader);
+
+      auto initStmtExpr = parseStmtExpr(reader);
+      auto type = new Identifier{tok3};
+      auto id = new Identifier{tok1};
+      auto stmtVarDecl = new StmtVarDecl{id, type, initStmtExpr};
+
+      return new Stmt{STMT_VAR_DECL, stmtVarDecl};
+    } else if (tok2->type == TK_OP_COLON_EQ) {
       parseWalkWhitespace(reader);
       delete tok2;
 
       auto stmtExpr = parseStmtExpr(reader);
       auto id = new Identifier{tok1};
-      auto stmtShortVarDecl = new StmtShortVarDecl{id, stmtExpr};
+      auto stmtVarDecl = new StmtVarDecl{id, nullptr, stmtExpr};
 
-      return new Stmt{STMT_SHORT_VAR_DECL, stmtShortVarDecl};
+      return new Stmt{STMT_VAR_DECL, stmtVarDecl};
     }
 
     delete tok2;
@@ -968,10 +1026,15 @@ Stmt *parse (Reader *reader) {
 
   try {
     auto stmtExpr = parseStmtExpr(reader);
-    return new Stmt{STMT_EXPR, stmtExpr};
+
+    if (stmtExpr->type == STMT_EXPR_EXPR) {
+      return new Stmt{STMT_EXPR, stmtExpr};
+    }
+
+    delete stmtExpr;
   } catch (const Error &err) {
-    reader->seek(loc1);
   }
 
+  reader->seek(loc1);
   throw SyntaxError(reader, loc1, E0100);
 }

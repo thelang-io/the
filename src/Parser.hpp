@@ -158,7 +158,7 @@ enum StmtType {
   STMT_MAIN,
   STMT_OBJ_DECL,
   STMT_RETURN,
-  STMT_SHORT_VAR_DECL
+  STMT_VAR_DECL
 };
 
 struct StmtBreak {
@@ -238,12 +238,13 @@ struct StmtReturn {
   ~StmtReturn ();
 };
 
-struct StmtShortVarDecl {
+struct StmtVarDecl {
   Identifier *id;
+  Identifier *type;
   StmtExpr *init;
   bool mut = false;
 
-  ~StmtShortVarDecl ();
+  ~StmtVarDecl ();
 };
 
 struct Stmt {
@@ -259,7 +260,7 @@ struct Stmt {
     StmtMain *,
     StmtObjDecl *,
     StmtReturn *,
-    StmtShortVarDecl *
+    StmtVarDecl *
   > body;
 
   ~Stmt ();

@@ -529,4 +529,70 @@ main {
   }
 
   print("sa.name:", sa.name, "sa.age", sa.age)
+
+  ta: bool = true
+  tb: byte = 2
+  tc: char = -2
+  td: float = 3.14
+  te: f32 = 3.14
+  tf: f64 = 3.14
+  tg: int = 5
+  th: i8 = -1
+  ti: i16 = -10
+  tj: i32 = -100
+  tk: i64 = -1000
+  tl: str = "Hello, World!"
+  tm: u8 = 1
+  tn: u16 = 10
+  to: u32 = 100
+  tp: u64 = 1000
+
+  obj Tq {
+    t1: int
+    t2: str
+  }
+
+  print("ta:", ta, "tb:", tb, "tc:", tc, "td:", td)
+  print("te:", te, "tf:", tf, "tg:", tg, "th:", th)
+  print("ti:", ti, "tj:", tj, "tk:", tk, "tl:", tl)
+  print("tm:", tm, "to:", to, "tp:", tp)
+
+  mut ua: bool = true
+  mut ub: byte = 2
+  mut uc: char = -2
+  mut ud: float = 3.14
+  mut ue: f32 = 3.14
+  mut uf: f64 = 3.14
+  mut ug: int = 5
+  mut uh: i8 = -1
+  mut ui: i16 = -10
+  mut uj: i32 = -100
+  mut uk: i64 = -1000
+  mut ul: str = "Hello, World!"
+  mut um: u8 = 1
+  mut un: u16 = 10
+  mut uo: u32 = 100
+  mut up: u64 = 1000
+
+  ua = false
+  ub = 0x4
+  uc = -9
+  ud = -3.14
+  ue = -3.14
+  uf = -3.14
+  ug = -5
+  uh = -9
+  ui = -99
+  uj = -999
+  uk = -9999
+  ul = "Hello, Earth!"
+  um = 9
+  un = 99
+  uo = 999
+  up = 9999
+
+  print("ua:", ua, "ub:", ub, "uc:", uc, "ud:", ud)
+  print("ue:", ue, "uf:", uf, "ug:", ug, "uh:", uh)
+  print("ui:", ui, "uj:", uj, "uk:", uk, "ul:", ul)
+  print("um:", um, "uo:", uo, "up:", up)
 }

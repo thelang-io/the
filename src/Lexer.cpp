@@ -64,46 +64,6 @@ void lexWalkLitFloatExp (Reader *reader, Lexer &lexer) {
   }
 }
 
-void lexWalkLitStr (Reader *reader, Lexer &lexer) {
-  auto blocks = 0;
-  auto insideChar = false;
-
-  while (true) {
-    auto loc1 = reader->loc;
-    auto ch1 = reader->next();
-
-    lexer.val += ch1;
-
-    if (ch1 == '\\' && blocks == 0) {
-      if (reader->eof()) {
-        throw SyntaxError(reader, lexer.start, E0003);
-      }
-
-      auto ch2 = reader->next();
-
-      if (!tokenIsLitStrEscape(ch2)) {
-        throw SyntaxError(reader, loc1, E0005);
-      }
-
-      lexer.val += ch2;
-    } else if (ch1 == '{' && !insideChar) {
-      blocks += 1;
-    } else if (ch1 == '}' && blocks != 0 && !insideChar) {
-      blocks -= 1;
-    } else if (ch1 == '\'' && insideChar) {
-      insideChar = false;
-    } else if (ch1 == '\'' && blocks != 0) {
-      insideChar = true;
-    } else if (ch1 == '"' && blocks != 0) {
-      lexWalkLitStr(reader, lexer);
-    } else if (ch1 == '"') {
-      break;
-    } else if (reader->eof()) {
-      throw SyntaxError(reader, lexer.start, E0003);
-    }
-  }
-}
-
 Token *lexLitFloat (Reader *reader, Lexer &lexer, TokenType type) {
   if (!reader->eof()) {
     auto loc = reader->loc;
@@ -517,7 +477,29 @@ Token *lex (Reader *reader) {
       throw SyntaxError(reader, lexer.start, E0003);
     }
 
-    lexWalkLitStr(reader, lexer);
+    while (true) {
+      auto loc1 = reader->loc;
+      auto ch1 = reader->next();
+
+      lexer.val += ch1;
+
+      if (ch1 == '\\') {
+        if (reader->eof()) {
+          throw SyntaxError(reader, lexer.start, E0003);
+        }
+
+        auto ch2 = reader->next();
+
+        if (!tokenIsLitStrEscape(ch2)) {
+          throw SyntaxError(reader, loc1, E0005);
+        }
+
+        lexer.val += ch2;
+      } else if (ch1 == '"') {
+        break;
+      }
+    }
+
     return new Token{TK_LIT_STR, lexer.start, reader->loc, lexer.val};
   } else if (ch == '/') {
     auto ch1 = reader->next();
