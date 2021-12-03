@@ -213,12 +213,12 @@ struct StmtLoop {
   StmtExpr *upd;
   Block *body;
 
-  ~StmtLoop();
+  ~StmtLoop ();
 };
 
 struct StmtMain {
   Block *body;
-  ~StmtMain();
+  ~StmtMain ();
 };
 
 struct StmtObjDeclField {
@@ -230,7 +230,7 @@ struct StmtObjDecl {
   Identifier *id;
   std::vector<StmtObjDeclField *> fields;
 
-  ~StmtObjDecl();
+  ~StmtObjDecl ();
 };
 
 struct StmtReturn {

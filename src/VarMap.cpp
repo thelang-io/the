@@ -8,69 +8,109 @@
 #include "Error.hpp"
 #include "VarMap.hpp"
 
-VarMap::~VarMap () {
-  for (auto it : this->items) {
-    if (it->type == VAR_FN) {
-      for (auto param : it->fn->params) {
-        delete param;
-      }
-
-      delete it->fn;
-    } else if (it->type == VAR_OBJ) {
-      for (auto field : it->obj->fields) {
-        delete field;
-      }
-
-      delete it->obj;
+VarMapItem::~VarMapItem () {
+  if (this->type == VAR_FN) {
+    for (auto param : this->fn->params) {
+      delete param;
     }
 
+    delete this->fn;
+  } else if (this->type == VAR_OBJ) {
+    for (auto field : this->obj->fields) {
+      delete field;
+    }
+
+    delete this->obj;
+  }
+}
+
+VarMap::~VarMap () {
+  for (auto it : this->items) {
     delete it;
   }
 }
 
 void VarMap::add (VarMapItemType type, const std::string &name) {
-  this->items.push_back(new VarMapItem{type, name, nullptr, this->frame, nullptr});
+  this->items.push_back(new VarMapItem{type, name, nullptr, nullptr, this->frame});
 }
 
 void VarMap::addFn (
   const std::string &name,
+  const std::string &hiddenName,
   VarMapItemType returnType,
   const std::vector<VarMapFnParam *> &params,
   std::size_t optionalParams
 ) {
-  auto fn = new VarMapFn{returnType, params, optionalParams};
-  this->items.push_back(new VarMapItem{VAR_FN, name, fn, this->frame, nullptr});
+  auto fn = new VarMapFn{hiddenName, returnType, params, optionalParams};
+  this->items.push_back(new VarMapItem{VAR_FN, name, fn, nullptr, this->frame});
 }
 
-void VarMap::addObj (const std::string &name, const std::vector<VarMapObjField *> &fields) {
-  auto obj = new VarMapObj{fields};
-  this->items.push_back(new VarMapItem{VAR_OBJ, name, nullptr, this->frame, obj});
+void VarMap::addObj (
+  const std::string &name,
+  const std::string &hiddenName,
+  const std::vector<VarMapObjField *> &fields
+) {
+  auto obj = new VarMapObj{hiddenName, fields};
+  this->items.push_back(new VarMapItem{VAR_OBJ, name, nullptr, obj, this->frame});
 }
 
-const VarMapItem &VarMap::get (const std::string &name) const {
+std::string VarMap::genId (const std::vector<std::string> &stack, const std::string &id) const {
+  auto result = std::string();
+
+  for (auto it : stack) {
+    result += (it.substr(0, 6) == "__THE_" ? it.substr(6) : it) + "SD";
+  }
+
+  result = "__THE_" + result + (id.substr(0, 6) == "__THE_" ? id.substr(6) : id) + "_";
+
+  for (auto idx = static_cast<std::size_t>(0);; idx++) {
+    auto name = result + std::to_string(idx);
+    auto exists = false;
+
+    for (auto it : this->items) {
+      if (it->name == name) {
+        exists = true;
+        break;
+      }
+    }
+
+    if (!exists) {
+      result = name;
+      break;
+    }
+  }
+
+  return result;
+}
+
+const VarMapItem *VarMap::get (const std::string &name) const {
   for (auto it : this->items) {
-    if (it->name == name) {
-      return *it;
+    if (
+      it->name == name ||
+      (it->type == VAR_FN && it->fn->hiddenName == name && it->frame != -1) ||
+      (it->type == VAR_OBJ && it->obj->hiddenName == name)
+    ) {
+      return it;
     }
   }
 
   throw Error("Tried to access non existing VarMap item");
 }
 
-const VarMapFn &VarMap::getFn (const std::string &name) const {
+const VarMapItem *VarMap::getFn (const std::string &name) const {
   for (auto it : this->items) {
-    if (it->type == VAR_FN && it->name == name) {
-      return *it->fn;
+    if (it->type == VAR_FN && it->fn->hiddenName == name && it->frame != -1) {
+      return it;
     }
   }
 
   throw Error("Tried to access non existing VarMap function");
 }
 
-const VarMapObj &VarMap::getObj (const std::string &name) const {
+const VarMapItem *VarMap::getObj (const std::string &name) const {
   for (auto it : this->items) {
-    if (it->type == VAR_OBJ && it->name == name) {
-      return *it->obj;
+    if (it->type == VAR_OBJ && it->obj->hiddenName == name) {
+      return it;
     }
   }
 
@@ -81,23 +121,12 @@ void VarMap::restore () {
   for (auto it = this->items.begin(); it != this->items.end();) {
     auto item = *it;
 
-    if (item->frame == this->frame) {
-      if (item->type == VAR_FN) {
-        for (auto param : item->fn->params) {
-          delete param;
-        }
-
-        delete item->fn;
-      } else if (item->type == VAR_OBJ) {
-        for (auto field : item->obj->fields) {
-          delete field;
-        }
-
-        delete item->obj;
-      }
-
+    if (item->frame == this->frame && item->type == VAR_FN) {
+      item->frame = -1;
+    } else if (item->frame == this->frame) {
       delete item;
       this->items.erase(it);
+
       continue;
     }
 

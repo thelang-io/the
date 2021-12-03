@@ -664,4 +664,40 @@ main {
 
   // TODO Doesn't work
   // print("wa:", wa, "wb:", wb, "wb_do:", Vb_do(wb))
+
+  if 1 == 1 {
+    fn xa () int { return 2 }
+    print("xa-1:", xa(), "", terminator: "")
+  }
+
+  if 1 == 1 {
+    fn xa () int { return 3 }
+    print("xa-2:", xa(), "", terminator: "")
+  }
+
+  // if 1 == 1 {
+  //   obj Xb {a: int}
+  //   xb: Xb = {a: 2} // TODO
+  //   print("xb-1:", xb.a, "", terminator: "")
+  // }
+
+  // if 1 == 1 {
+  //   obj Xb {a: int}
+  //   xb: Xb = {a: 3} // TODO
+  //   print("xb-2:", xb.a, "", terminator: "")
+  // }
+
+  fn xc () int {
+    fn xd () int {
+      fn xe () int {
+        return 4
+      }
+
+      return xe()
+    }
+
+    return xd()
+  }
+
+  print("xc:", xc())
 }

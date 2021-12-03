@@ -17,16 +17,13 @@ struct CodegenHeaders {
   bool stdio = false;
 };
 
-struct CodegenFnDecl {
-  std::string hiddenName;
-  const StmtFnDecl *stmt;
-};
-
 struct Codegen {
-  CodegenHeaders headers;
-  std::string body;
-  std::vector<CodegenFnDecl *> fnDecls;
   VarMap *varMap;
+  std::vector<std::string> stack;
+  CodegenHeaders headers;
+  std::string topLevel;
+  std::string main;
+  std::string definitions;
 
   ~Codegen ();
 };
