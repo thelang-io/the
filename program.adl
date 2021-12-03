@@ -532,7 +532,7 @@ main {
 
   ta: bool = true
   tb: byte = 2
-  tc: char = -2
+  tc: char = '2'
   td: float = 3.14
   te: f32 = 3.14
   tf: f64 = 3.14
@@ -559,7 +559,7 @@ main {
 
   mut ua: bool = true
   mut ub: byte = 2
-  mut uc: char = -2
+  mut uc: char = '2'
   mut ud: float = 3.14
   mut ue: f32 = 3.14
   mut uf: f64 = 3.14
@@ -576,7 +576,7 @@ main {
 
   ua = false
   ub = 0x4
-  uc = -9
+  uc = '3'
   ud = -3.14
   ue = -3.14
   uf = -3.14
@@ -595,4 +595,73 @@ main {
   print("ue:", ue, "uf:", uf, "ug:", ug, "uh:", uh)
   print("ui:", ui, "uj:", uj, "uk:", uk, "ul:", ul)
   print("um:", um, "uo:", uo, "up:", up)
+
+  obj Va {
+    name: str
+    age: int
+  }
+
+  obj Vb_1 {
+    a0: byte
+    a1: float
+    a2: f32
+    a3: f64
+    a4: int
+    a5: i8
+    a6: i16
+    a7: i32
+    a8: i64
+    a9: u8
+    a10: u16
+    a11: u32
+    a12: u64
+  }
+
+  obj Vb_2 {
+    b1: char
+    b2: str
+  }
+
+  obj Vb {
+    t1: Vb_1
+    t2: Vb_2
+    t3: int
+  }
+
+  // TODO Doesn't work
+  // fn Vb_do (it: Vb) float {
+  //   return it.t1.a0 + it.t1.a1 + it.t1.a2 + it.t1.a3 + it.t1.a4 + it.t1.a5 + it.t1.a6 +
+  //     it.t1.a7 + it.t1.a8 + it.t1.a9 + it.t1.a10 + it.t1.a11 + it.t1.a12
+  // }
+
+  wa := Va{
+    name: "Tristan",
+    age: 12
+  }
+
+  wb := Vb{
+    t1: Vb_1{
+      a0: 0x1,
+      a1: 2,
+      a2: 0b10,
+      a3: 0o10,
+      a4: 5,
+      a5: 6,
+      a6: 7,
+      a7: 8,
+      a8: 9,
+      a9: 10,
+      a10: 11,
+      a11: 12,
+      a12: 13
+    },
+    t2: Vb_2{
+      b1: 'a',
+      b2: "Mama mia"
+    },
+    t3: 2
+  }
+
+  // TODO Doesn't work
+  // print("wa:", wa, "wb:", wb, "wb_do:", Vb_do(wb))
 }

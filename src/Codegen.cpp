@@ -29,31 +29,6 @@ std::string codegenBlock (Codegen *codegen, const Block *block, std::size_t inde
   return code;
 }
 
-VarMapItemType codegenIdentifierType (Codegen *codegen, const Identifier *id) {
-  if (id->name->val == "bool") {
-    codegen->headers.boolean = true;
-    return VAR_BOOL;
-  }
-
-  if (id->name->val == "byte") return VAR_BYTE;
-  if (id->name->val == "char") return VAR_CHAR;
-  if (id->name->val == "float") return VAR_FLOAT;
-  if (id->name->val == "f32") return VAR_F32;
-  if (id->name->val == "f64") return VAR_F64;
-  if (id->name->val == "int") return VAR_INT;
-  if (id->name->val == "i8") return VAR_I8;
-  if (id->name->val == "i16") return VAR_I16;
-  if (id->name->val == "i32") return VAR_I32;
-  if (id->name->val == "i64") return VAR_I64;
-  if (id->name->val == "str") return VAR_STR;
-  if (id->name->val == "u8") return VAR_U8;
-  if (id->name->val == "u16") return VAR_U16;
-  if (id->name->val == "u32") return VAR_U32;
-  if (id->name->val == "u64") return VAR_U64;
-
-  throw Error("Tried to access unknown identifier type");
-}
-
 std::string codegenIdentifier (const Identifier *id) {
   return "__THE_" + id->name->val;
 }
@@ -149,83 +124,92 @@ VarMapItemType codegenStmtExprType (Codegen *codegen, const StmtExpr *stmtExpr) 
 
     if (lit->val->type == TK_KW_FALSE || lit->val->type == TK_KW_TRUE) {
       codegen->headers.boolean = true;
-      return VAR_BOOL;
     }
 
+    if (lit->val->type == TK_KW_FALSE) return VAR_BOOL;
+    if (lit->val->type == TK_KW_TRUE) return VAR_BOOL;
     if (lit->val->type == TK_LIT_CHAR) return VAR_CHAR;
     if (lit->val->type == TK_LIT_FLOAT) return VAR_FLOAT;
+    if (lit->val->type == TK_LIT_INT_BIN) return VAR_INT;
     if (lit->val->type == TK_LIT_INT_DEC) return VAR_INT;
+    if (lit->val->type == TK_LIT_INT_HEX) return VAR_INT;
+    if (lit->val->type == TK_LIT_INT_OCT) return VAR_INT;
     if (lit->val->type == TK_LIT_STR) return VAR_STR;
   }
 
   throw Error("Tried to access unknown expr type");
 }
 
-VarMapItemType codegenType (Codegen *codegen, const StmtFnDeclParam *param) {
-  if (param->type != nullptr && param->type->name->val == "bool") {
-    codegen->headers.boolean = true;
-    return VAR_BOOL;
+VarMapItemType codegenType (Codegen *codegen, const Identifier *type, const StmtExpr *init = nullptr) {
+  if (type != nullptr) {
+    if (type->name->val == "bool") {
+      codegen->headers.boolean = true;
+      return VAR_BOOL;
+    }
+
+    if (type->name->val == "bool") return VAR_BOOL;
+    if (type->name->val == "byte") return VAR_BYTE;
+    if (type->name->val == "char") return VAR_CHAR;
+    if (type->name->val == "float") return VAR_FLOAT;
+    if (type->name->val == "f32") return VAR_F32;
+    if (type->name->val == "f64") return VAR_F64;
+    if (type->name->val == "int") return VAR_INT;
+    if (type->name->val == "i8") return VAR_I8;
+    if (type->name->val == "i16") return VAR_I16;
+    if (type->name->val == "i32") return VAR_I32;
+    if (type->name->val == "i64") return VAR_I64;
+    if (type->name->val == "str") return VAR_STR;
+    if (type->name->val == "u8") return VAR_U8;
+    if (type->name->val == "u16") return VAR_U16;
+    if (type->name->val == "u32") return VAR_U32;
+    if (type->name->val == "u64") return VAR_U64;
+
+    try {
+      auto name = codegenIdentifier(type);
+      return codegen->varMap->get(name).type;
+    } catch (const Error &err) {
+    }
   }
 
-  if (param->type != nullptr && param->type->name->val == "byte") return VAR_BYTE;
-  if (param->type != nullptr && param->type->name->val == "char") return VAR_CHAR;
-  if (param->type != nullptr && param->type->name->val == "float") return VAR_FLOAT;
-  if (param->type != nullptr && param->type->name->val == "f32") return VAR_F32;
-  if (param->type != nullptr && param->type->name->val == "f64") return VAR_F64;
-  if (param->type != nullptr && param->type->name->val == "int") return VAR_INT;
-  if (param->type != nullptr && param->type->name->val == "i8") return VAR_I8;
-  if (param->type != nullptr && param->type->name->val == "i16") return VAR_I16;
-  if (param->type != nullptr && param->type->name->val == "i32") return VAR_I32;
-  if (param->type != nullptr && param->type->name->val == "i64") return VAR_I64;
-  if (param->type != nullptr && param->type->name->val == "str") return VAR_STR;
-  if (param->type != nullptr && param->type->name->val == "u8") return VAR_U8;
-  if (param->type != nullptr && param->type->name->val == "u16") return VAR_U16;
-  if (param->type != nullptr && param->type->name->val == "u32") return VAR_U32;
-  if (param->type != nullptr && param->type->name->val == "u64") return VAR_U64;
+  if (init != nullptr) {
+    return codegenStmtExprType(codegen, init);
+  }
 
-  return codegenStmtExprType(codegen, param->init);
+  throw Error("Tried to access unknown type");
 }
 
-VarMapItemType codegenType (Codegen *codegen, const StmtObjDeclField *field) {
-  if (field->type->name->val == "bool") {
-    codegen->headers.boolean = true;
-    return VAR_BOOL;
-  }
+std::string codegenTypeFormat (VarMapItemType type) {
+  if (type == VAR_BOOL) return "%s";
+  if (type == VAR_BYTE) return "%x";
+  if (type == VAR_CHAR) return "%c";
+  if (type == VAR_FLOAT) return "%f";
+  if (type == VAR_F32) return "%f";
+  if (type == VAR_F64) return "%f";
+  if (type == VAR_INT) return "%ld";
+  if (type == VAR_I8) return "%d";
+  if (type == VAR_I16) return "%d";
+  if (type == VAR_I32) return "%ld";
+  if (type == VAR_I64) return "%lld";
+  if (type == VAR_STR) return "%s";
+  if (type == VAR_U8) return "%u";
+  if (type == VAR_U16) return "%u";
+  if (type == VAR_U32) return "%lu";
+  if (type == VAR_U64) return "%llu";
 
-  if (field->type->name->val == "byte") return VAR_BYTE;
-  if (field->type->name->val == "char") return VAR_CHAR;
-  if (field->type->name->val == "float") return VAR_FLOAT;
-  if (field->type->name->val == "f32") return VAR_F32;
-  if (field->type->name->val == "f64") return VAR_F64;
-  if (field->type->name->val == "int") return VAR_INT;
-  if (field->type->name->val == "i8") return VAR_I8;
-  if (field->type->name->val == "i16") return VAR_I16;
-  if (field->type->name->val == "i32") return VAR_I32;
-  if (field->type->name->val == "i64") return VAR_I64;
-  if (field->type->name->val == "str") return VAR_STR;
-  if (field->type->name->val == "u8") return VAR_U8;
-  if (field->type->name->val == "u16") return VAR_U16;
-  if (field->type->name->val == "u32") return VAR_U32;
-  if (field->type->name->val == "u64") return VAR_U64;
-
-  try {
-    auto name = codegenIdentifier(field->type);
-    codegen->varMap->getObj(name);
-    return VAR_OBJ;
-  } catch (const Error &err) {
-    throw Error("Tried to access unknown type");
-  }
+  throw Error("Unknown print argument type");
 }
 
 std::string codegenTypeStr (VarMapItemType type, bool mut = false) {
   if (type == VAR_BOOL) return mut ? "bool " : "const bool ";
   if (type == VAR_BYTE) return mut ? "unsigned char " : "const unsigned char ";
   if (type == VAR_CHAR) return mut ? "char " : "const char ";
-  if (type == VAR_FLOAT || type == VAR_F64) return mut ? "double " : "const double ";
+  if (type == VAR_FLOAT) return mut ? "double " : "const double ";
   if (type == VAR_F32) return mut ? "float " : "const float ";
-  if (type == VAR_INT || type == VAR_I32) return mut ? "long " : "const long ";
+  if (type == VAR_F64) return mut ? "double " : "const double ";
+  if (type == VAR_INT) return mut ? "long " : "const long ";
   if (type == VAR_I8) return mut ? "char " : "const char ";
   if (type == VAR_I16) return mut ? "short " : "const short ";
+  if (type == VAR_I32) return mut ? "long " : "const long ";
   if (type == VAR_I64) return mut ? "long long " : "const long long ";
   if (type == VAR_STR) return mut ? "char *" : "const char *";
   if (type == VAR_U8) return mut ? "unsigned char " : "const unsigned char ";
@@ -234,6 +218,14 @@ std::string codegenTypeStr (VarMapItemType type, bool mut = false) {
   if (type == VAR_U64) return mut ? "unsigned long long " : "const unsigned long long ";
 
   throw Error("Tried to access unknown type str");
+}
+
+VarMapItemType codegenTypeFnDeclParam (Codegen *codegen, const StmtFnDeclParam *param) {
+  return codegenType(codegen, param->type, param->init);
+}
+
+VarMapItemType codegenTypeObjDeclField (Codegen *codegen, const StmtObjDeclField *field) {
+  return codegenType(codegen, field->type);
 }
 
 std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
@@ -303,9 +295,9 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
         codegen->headers.stdio = true;
         code += R"(printf(")";
 
-        auto argIdx = 0;
         auto separator = std::string(R"(" ")");
         auto terminator = std::string(R"("\n")");
+        auto argIdx = static_cast<std::size_t>(0);
 
         for (auto arg : exprCall->args) {
           if (arg->id == nullptr) {
@@ -326,18 +318,7 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
 
           code += (argIdx != 0 ? "%s" : "");
           auto exprType = codegenStmtExprType(codegen, arg->expr);
-
-          if (exprType == VAR_BOOL || exprType == VAR_STR) code += "%s";
-          else if (exprType == VAR_BYTE) code += "%x";
-          else if (exprType == VAR_CHAR) code += "%c";
-          else if (exprType == VAR_FLOAT || exprType == VAR_F32 || exprType == VAR_F64) code += "%f";
-          else if (exprType == VAR_INT || exprType == VAR_I32) code += "%ld";
-          else if (exprType == VAR_I8 || exprType == VAR_I16) code += "%d";
-          else if (exprType == VAR_I64) code += "%lld";
-          else if (exprType == VAR_U8 || exprType == VAR_U16) code += "%u";
-          else if (exprType == VAR_U32) code += "%lu";
-          else if (exprType == VAR_U64) code += "%llu";
-          else throw Error("Unknown print argument type");
+          code += codegenTypeFormat(exprType);
 
           argIdx++;
         }
@@ -378,23 +359,23 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
 
         auto argsCode = std::string();
         auto optionalArgsCode = std::string();
+        auto idx = static_cast<std::size_t>(0);
 
-        for (auto it = fnMapIt.params.begin(); it != fnMapIt.params.end(); it++) {
-          auto paramIdx = static_cast<std::size_t>(it - fnMapIt.params.begin());
-          argsCode += paramIdx == 0 ? "" : ", ";
-          auto param = *it;
+        for (auto param : fnMapIt.params) {
+          argsCode += idx == 0 ? "" : ", ";
 
-          if (param->required && paramIdx >= exprCall->args.size()) {
+          if (param->required && idx >= exprCall->args.size()) {
             throw Error("Missing required function parameter in function call");
           } else if (param->required) {
-            argsCode += codegenStmtExpr(codegen, exprCall->args[paramIdx]->expr);
+            argsCode += codegenStmtExpr(codegen, exprCall->args[idx]->expr);
+            idx++;
             continue;
           }
 
           auto foundArg = static_cast<ExprCallArg *>(nullptr);
 
-          if (paramIdx < exprCall->args.size() && exprCall->args[paramIdx]->id == nullptr) {
-            foundArg = exprCall->args[paramIdx];
+          if (idx < exprCall->args.size() && exprCall->args[idx]->id == nullptr) {
+            foundArg = exprCall->args[idx];
           } else {
             for (auto arg : exprCall->args) {
               if (arg->id != nullptr && codegenIdentifier(arg->id) == param->name) {
@@ -418,6 +399,7 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
 
           optionalArgsCode += optionalArgsCode.empty() ? "" : ", ";
           optionalArgsCode += foundArg == nullptr ? "0" : "1";
+          idx++;
         }
 
         if (fnMapIt.optionalParams > 0) {
@@ -452,7 +434,18 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
     auto id = std::get<Identifier *>(stmtExpr->body);
     code += codegenIdentifier(id);
   } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
-    code += std::get<Literal *>(stmtExpr->body)->val->val;
+    auto lit = std::get<Literal *>(stmtExpr->body);
+
+    if (lit->val->type == TK_LIT_INT_OCT) {
+      auto val = lit->val->val;
+
+      val.erase(std::remove(val.begin(), val.end(), 'O'), val.end());
+      val.erase(std::remove(val.begin(), val.end(), 'o'), val.end());
+
+      code += val;
+    } else {
+      code += lit->val->val;
+    }
   } else {
     throw Error("Tried to access unknown expr");
   }
@@ -553,7 +546,7 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
     code += ";\n";
   } else if (stmt->type == STMT_FN_DECL) {
     auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
-    auto returnType = codegenIdentifierType(codegen, stmtFnDecl->returnType);
+    auto returnType = codegenType(codegen, stmtFnDecl->returnType);
     auto fnName = codegenIdentifier(stmtFnDecl->id);
 
     code += std::string(indent, ' ');
@@ -567,24 +560,25 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
       code += "void";
     } else {
       auto paramsCode = std::string();
+      auto idx = static_cast<std::size_t>(0);
 
-      for (auto it = stmtFnDecl->params.begin(); it != stmtFnDecl->params.end(); it++) {
-        auto idx = it - stmtFnDecl->params.begin();
-        auto param = *it;
-        auto paramType = codegenType(codegen, param);
+      for (auto param : stmtFnDecl->params) {
         auto paramName = codegenIdentifier(param->id);
+        auto paramType = codegenTypeFnDeclParam(codegen, param);
         auto paramRequired = param->init == nullptr;
 
         paramsCode += idx == 0 ? "" : ", ";
-        auto paramCode = codegenTypeStr(paramType);
-        paramsCode += paramCode.back() == ' ' ? paramCode.substr(0, paramCode.length() - 1) : paramCode;
+        auto paramTypeStr = codegenTypeStr(paramType);
+        paramsCode += paramTypeStr.back() == ' ' ? paramTypeStr.substr(0, paramTypeStr.length() - 1) : paramTypeStr;
 
-        auto itParam = new VarMapFnParam{paramName, codegenType(codegen, param), paramRequired};
-        params.push_back(itParam);
+        auto fnParam = new VarMapFnParam{paramName, paramType, paramRequired};
+        params.push_back(fnParam);
 
         if (!paramRequired) {
           optionalParams++;
         }
+
+        idx++;
       }
 
       if (optionalParams > 0) {
@@ -652,9 +646,11 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
     auto name = codegenIdentifier(stmtObjDecl->id);
     auto fields = std::vector<VarMapObjField *>();
 
-    for (auto stmtField : stmtObjDecl->fields) {
-      auto field = new VarMapObjField{stmtField->id->name->val, codegenType(codegen, stmtField)};
-      fields.push_back(field);
+    for (auto field : stmtObjDecl->fields) {
+      auto fieldType = codegenTypeObjDeclField(codegen, field);
+      auto objField = new VarMapObjField{field->id->name->val, fieldType};
+
+      fields.push_back(objField);
     }
 
     codegen->varMap->addObj(name, fields);
@@ -667,7 +663,10 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
     code += ";\n";
   } else if (stmt->type == STMT_VAR_DECL) {
     auto stmtVarDecl = std::get<StmtVarDecl *>(stmt->body);
-    auto exprType = codegenStmtExprType(codegen, stmtVarDecl->init);
+
+    auto exprType = stmtVarDecl->type == nullptr
+      ? codegenStmtExprType(codegen, stmtVarDecl->init)
+      : codegenType(codegen, stmtVarDecl->type);
 
     if (exprType == VAR_OBJ) {
       code += codegenStmtObjVarDecl(
@@ -719,7 +718,7 @@ std::string codegen (const AST *ast) {
 
   for (auto it1 = codegen->fnDecls.begin(); it1 != codegen->fnDecls.end(); it1++) {
     auto fnDecl = *it1;
-    auto returnType = codegenIdentifierType(codegen, fnDecl->stmt->returnType);
+    auto returnType = codegenType(codegen, fnDecl->stmt->returnType);
 
     codegen->body += "\n";
     codegen->body += codegenTypeStr(returnType);
@@ -732,14 +731,14 @@ std::string codegen (const AST *ast) {
       auto optionalParams = static_cast<std::size_t>(0);
       auto paramsCode = std::string();
       auto optionalParamsCode = std::string();
-      auto idx = 0;
+      auto idx = static_cast<std::size_t>(0);
 
       for (auto param : fnDecl->stmt->params) {
         auto paramName = codegenIdentifier(param->id);
         auto optionalParamName = "OP_" + std::to_string(optionalParams + 1);
-        auto paramType = codegenType(codegen, param);
-        auto paramTypeStr = codegenTypeStr(paramType);
+        auto paramType = codegenTypeFnDeclParam(codegen, param);
         auto paramRequired = param->init == nullptr;
+        auto paramTypeStr = codegenTypeStr(paramType);
 
         paramsCode += idx == 0 ? "" : ", ";
         paramsCode += paramTypeStr;
