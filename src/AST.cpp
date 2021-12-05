@@ -8,7 +8,7 @@
 #include "AST.hpp"
 
 AST::~AST () {
-  for (auto topLevelStmt : this->topLevelStmts) {
+  for (auto topLevelStmt : this->topLevelStatements) {
     delete topLevelStmt;
   }
 
@@ -16,14 +16,14 @@ AST::~AST () {
 }
 
 void AST::add (Stmt *stmt) {
-  if (stmt->type == STMT_FN_DECL || stmt->type == STMT_OBJ_DECL || stmt->type == STMT_VAR_DECL) {
-    this->topLevelStmts.push_back(stmt);
-  } else if (stmt->type == STMT_MAIN) {
+  if (stmt->type == STMT_MAIN) {
     auto stmtMain = std::get<StmtMain *>(stmt->body);
 
     this->mainPresent = true;
     this->mainBody = stmtMain->body;
     stmtMain->body = nullptr;
     delete stmt;
+  } else {
+    this->topLevelStatements.push_back(stmt);
   }
 }

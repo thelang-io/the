@@ -12,7 +12,7 @@
 
 class AST {
  public:
-  std::vector<Stmt *> topLevelStmts;
+  std::vector<Stmt *> topLevelStatements;
   bool mainPresent = false;
   Block *mainBody;
 

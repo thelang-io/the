@@ -58,7 +58,7 @@ std::string VarMap::genId (const std::vector<std::string> &stack, const std::str
   auto result = std::string();
 
   for (auto it : stack) {
-    result += (it.substr(0, 6) == "__THE_" ? it.substr(6) : it) + "SD";
+    result += (it.substr(0, 6) == "__THE_" ? it.substr(6) : it) + "_SD_";
   }
 
   result = "__THE_" + result + (id.substr(0, 6) == "__THE_" ? id.substr(6) : id) + "_";

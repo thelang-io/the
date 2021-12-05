@@ -205,7 +205,7 @@ main {
   print("da:", da, "db:", db, "dc:", dc, "dd:", dd)
   print("de:", de, "df:", df, "dg:", dg, "dh:", dh)
   print("di:", di, "dj:", dj, "dk:", dk, "dl:", dl)
-  print("dm:", dm)
+  print("dm:", dm, "dn:", dn)
 
   if 0 {
     print("False condition")
@@ -594,7 +594,7 @@ main {
   print("ua:", ua, "ub:", ub, "uc:", uc, "ud:", ud)
   print("ue:", ue, "uf:", uf, "ug:", ug, "uh:", uh)
   print("ui:", ui, "uj:", uj, "uk:", uk, "ul:", ul)
-  print("um:", um, "uo:", uo, "up:", up)
+  print("um:", um, "un:", un, "uo:", uo, "up:", up)
 
   obj Va {
     name: str

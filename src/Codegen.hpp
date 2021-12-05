@@ -11,19 +11,19 @@
 #include "AST.hpp"
 #include "VarMap.hpp"
 
-struct CodegenHeaders {
-  bool boolean = false;
-  bool math = false;
-  bool stdio = false;
+struct CodegenPolyfills {
+  bool pow = false;
+  bool printf = false;
 };
 
 struct Codegen {
   VarMap *varMap;
-  std::vector<std::string> stack;
-  CodegenHeaders headers;
-  std::string topLevel;
-  std::string main;
-  std::string definitions;
+  std::vector<std::string> stack = {};
+  CodegenPolyfills polyfills = {};
+  std::string functionDeclarationsCode = "";
+  std::string topLevelStatementsCode = "";
+  std::string functionDefinitionsCode = "";
+  std::string mainBodyCode = "";
 
   ~Codegen ();
 };
