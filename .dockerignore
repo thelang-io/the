@@ -1,4 +1,5 @@
 *
 !src/
 !CMakeLists.txt
+!entrypoint.sh
 !program.adl

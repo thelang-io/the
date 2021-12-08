@@ -7,47 +7,54 @@
 
 #include <algorithm>
 #include <climits>
+#include <tuple>
 #include "Codegen.hpp"
 #include "Error.hpp"
 
-void codegenFunctionDeclarations (Codegen *codegen, const std::vector<Stmt *> &body);
-void codegenFunctionDefinitions (Codegen *codegen, const std::vector<Stmt *> &body);
-std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent);
+void codegenDeclarations (Codegen *codegen, const std::vector<Stmt *> &body);
+void codegenDefinitions (Codegen *codegen, const std::vector<Stmt *> &body);
+std::tuple<std::string, std::string> codegenStmt (Codegen *codegen, const Stmt *stmt);
 
 Codegen::~Codegen () {
   delete this->varMap;
 }
 
-std::string codegenBlock (Codegen *codegen, const Block *block, std::size_t indent) {
+std::string codegenBlock (Codegen *codegen, const Block *block) {
   auto code = std::string();
+  auto cleanup = std::string();
+  codegen->indent += 2;
 
   for (auto stmt : block->body) {
-    code += codegenStmt(codegen, stmt, indent);
+    auto [stmtCode, stmtCleanup] = codegenStmt(codegen, stmt);
+
+    code += stmtCode;
+    cleanup += stmtCleanup;
   }
 
-  codegenFunctionDeclarations(codegen, block->body);
-  codegenFunctionDefinitions(codegen, block->body);
+  codegen->indent -= 2;
+  codegenDeclarations(codegen, block->body);
+  codegenDefinitions(codegen, block->body);
 
-  return code;
+  return code + cleanup;
 }
 
 std::string codegenIdentifier (const Identifier *id) {
   return "__THE_" + id->name->val;
 }
 
-std::string codegenExprMember (const std::string &obj, const std::string &prop) {
-  return obj + "_MA_" + prop;
-}
-
 std::string codegenExprAccess (const ExprAccess *exprAccess) {
   if (exprAccess->type == EXPR_ACCESS_EXPR_MEMBER) {
     auto exprMemberObj = std::get<ExprMember *>(exprAccess->body);
-    return codegenExprMember(codegenExprAccess(exprMemberObj->obj), exprMemberObj->prop->name->val);
+    return codegenExprAccess(exprMemberObj->obj) + "->" + exprMemberObj->prop->name->val;
   } else if (exprAccess->type == EXPR_ACCESS_IDENTIFIER) {
     return codegenIdentifier(std::get<Identifier *>(exprAccess->body));
   }
 
   throw Error("Tried to access unknown expression access");
+}
+
+std::string codegenObjInitFn (const std::string &name) {
+  return name.substr(6) + "_init";
 }
 
 VarMapItemType codegenStmtExprType (Codegen *codegen, const StmtExpr *stmtExpr) {
@@ -124,6 +131,10 @@ VarMapItemType codegenStmtExprType (Codegen *codegen, const StmtExpr *stmtExpr) 
   } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
     auto lit = std::get<Literal *>(stmtExpr->body);
 
+    if (lit->val->type == TK_KW_FALSE || lit->val->type == TK_KW_TRUE) {
+      codegen->headers.stdbool = true;
+    }
+
     if (lit->val->type == TK_KW_FALSE) return VAR_BOOL;
     if (lit->val->type == TK_KW_TRUE) return VAR_BOOL;
     if (lit->val->type == TK_LIT_CHAR) return VAR_CHAR;
@@ -140,6 +151,10 @@ VarMapItemType codegenStmtExprType (Codegen *codegen, const StmtExpr *stmtExpr) 
 
 VarMapItemType codegenType (Codegen *codegen, const Identifier *type, const StmtExpr *init = nullptr) {
   if (type != nullptr) {
+    if (type->name->val == "bool") {
+      codegen->headers.stdbool = true;
+    }
+
     if (type->name->val == "bool") return VAR_BOOL;
     if (type->name->val == "byte") return VAR_BYTE;
     if (type->name->val == "char") return VAR_CHAR;
@@ -193,28 +208,37 @@ std::string codegenTypeFormat (VarMapItemType type) {
 }
 
 std::string codegenTypeStr (VarMapItemType type, bool mut = false) {
-  if (type == VAR_BOOL) return mut ? "char " : "const char ";
-  if (type == VAR_BYTE) return mut ? "unsigned char " : "const unsigned char ";
-  if (type == VAR_CHAR) return mut ? "char " : "const char ";
-  if (type == VAR_FLOAT) return mut ? "double " : "const double ";
-  if (type == VAR_F32) return mut ? "float " : "const float ";
-  if (type == VAR_F64) return mut ? "double " : "const double ";
-  if (type == VAR_INT) return mut ? "long " : "const long ";
-  if (type == VAR_I8) return mut ? "char " : "const char ";
-  if (type == VAR_I16) return mut ? "short " : "const short ";
-  if (type == VAR_I32) return mut ? "long " : "const long ";
-  if (type == VAR_I64) return mut ? "long long " : "const long long ";
-  if (type == VAR_STR) return mut ? "char *" : "const char *";
-  if (type == VAR_U8) return mut ? "unsigned char " : "const unsigned char ";
-  if (type == VAR_U16) return mut ? "unsigned short " : "const unsigned short ";
-  if (type == VAR_U32) return mut ? "unsigned long " : "const unsigned long ";
-  if (type == VAR_U64) return mut ? "unsigned long long " : "const unsigned long long ";
+  if (type == VAR_BOOL) return std::string(mut ? "" : "const ") + "bool ";
+  if (type == VAR_BYTE) return std::string(mut ? "" : "const ") + "unsigned char ";
+  if (type == VAR_CHAR) return std::string(mut ? "" : "const ") + "char ";
+  if (type == VAR_FLOAT) return std::string(mut ? "" : "const ") + "double ";
+  if (type == VAR_F32) return std::string(mut ? "" : "const ") + "float ";
+  if (type == VAR_F64) return std::string(mut ? "" : "const ") + "double ";
+  if (type == VAR_INT) return std::string(mut ? "" : "const ") + "long ";
+  if (type == VAR_I8) return std::string(mut ? "" : "const ") + "char ";
+  if (type == VAR_I16) return std::string(mut ? "" : "const ") + "short ";
+  if (type == VAR_I32) return std::string(mut ? "" : "const ") + "long ";
+  if (type == VAR_I64) return std::string(mut ? "" : "const ") + "long long ";
+  if (type == VAR_STR) return std::string(mut ? "" : "const ") + "char *";
+  if (type == VAR_U8) return std::string(mut ? "" : "const ") + "unsigned char ";
+  if (type == VAR_U16) return std::string(mut ? "" : "const ") + "unsigned short ";
+  if (type == VAR_U32) return std::string(mut ? "" : "const ") + "unsigned long ";
+  if (type == VAR_U64) return std::string(mut ? "" : "const ") + "unsigned long long ";
 
   throw Error("Tried to access unknown type str");
 }
 
-std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
+std::string codegenTypeStr (VarMapItemType type, const std::string &name, bool mut = false) {
+  if (type == VAR_OBJ) {
+    return std::string(mut ? "" : "const ") + "struct " + name + " *";
+  }
+
+  return codegenTypeStr(type, mut);
+}
+
+std::tuple<std::string, std::string> codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
   auto code = std::string();
+  auto cleanup = std::string();
 
   if (stmtExpr->parenthesized) {
     code += "(";
@@ -227,49 +251,37 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
       code += codegenExprAccess(std::get<ExprAccess *>(expr->body));
     } else if (expr->type == EXPR_ASSIGN) {
       auto exprAssign = std::get<ExprAssign *>(expr->body);
+      auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, exprAssign->right);
+
       code += codegenExprAccess(exprAssign->left);
 
       if (exprAssign->op->type == TK_OP_STAR_STAR_EQ) {
-        code += " = pow(";
-        code += codegenExprAccess(exprAssign->left);
-        code += ", ";
-        code += codegenStmtExpr(codegen, exprAssign->right);
-        code += ")";
+        code += " = pow(" + codegenExprAccess(exprAssign->left) + ", " + stmtExprCode + ")";
       } else if (exprAssign->op->type == TK_OP_AND_AND_EQ) {
-        code += " = ";
-        code += codegenExprAccess(exprAssign->left);
-        code += " && ";
-        code += codegenStmtExpr(codegen, exprAssign->right);
+        code += " = " + codegenExprAccess(exprAssign->left) + " && " + stmtExprCode;
       } else if (exprAssign->op->type == TK_OP_OR_OR_EQ) {
-        code += " = ";
-        code += codegenExprAccess(exprAssign->left);
-        code += " || ";
-        code += codegenStmtExpr(codegen, exprAssign->right);
+        code += " = " + codegenExprAccess(exprAssign->left) + " || " + stmtExprCode;
       } else {
-        code += " " + exprAssign->op->val + " ";
-        code += codegenStmtExpr(codegen, exprAssign->right);
+        code += " " + exprAssign->op->val + " " + stmtExprCode;
       }
+
+      cleanup += stmtExprCleanup;
     } else if (expr->type == EXPR_BINARY) {
       auto exprBinary = std::get<ExprBinary *>(expr->body);
+      auto [stmtExprLeftCode, stmtExprLeftCleanup] = codegenStmtExpr(codegen, exprBinary->left);
+      auto [stmtExprRightCode, stmtExprRightCleanup] = codegenStmtExpr(codegen, exprBinary->right);
 
       if (exprBinary->op->type == TK_OP_STAR_STAR) {
-        codegen->polyfills.pow = true;
-
-        code += "pow(";
-        code += codegenStmtExpr(codegen, exprBinary->left);
-        code += ", ";
-        code += codegenStmtExpr(codegen, exprBinary->right);
-        code += ")";
+        codegen->headers.math = true;
+        code += "pow(" + stmtExprLeftCode + ", " + stmtExprRightCode + ")";
       } else if (exprBinary->op->type == TK_OP_SLASH || exprBinary->op->type == TK_OP_STAR) {
-        code += "(double) ";
-        code += codegenStmtExpr(codegen, exprBinary->left);
-        code += " " + exprBinary->op->val + " (double) ";
-        code += codegenStmtExpr(codegen, exprBinary->right);
+        code += "(double) " + stmtExprLeftCode + " " + exprBinary->op->val + " (double) " + stmtExprRightCode;
       } else {
-        code += codegenStmtExpr(codegen, exprBinary->left);
-        code += " " + exprBinary->op->val + " ";
-        code += codegenStmtExpr(codegen, exprBinary->right);
+        code += stmtExprLeftCode + " " + exprBinary->op->val + " " + stmtExprRightCode;
       }
+
+      cleanup += stmtExprRightCleanup;
+      cleanup += stmtExprLeftCleanup;
     } else if (expr->type == EXPR_CALL) {
       auto exprCall = std::get<ExprCall *>(expr->body);
 
@@ -277,7 +289,7 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
         exprCall->callee->type == EXPR_ACCESS_IDENTIFIER &&
         std::get<Identifier *>(exprCall->callee->body)->name->val == "print"
       ) {
-        codegen->polyfills.printf = true;
+        codegen->headers.stdio = true;
         code += R"(printf(")";
 
         auto separator = std::string(R"(" ")");
@@ -288,9 +300,15 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
           if (arg->id == nullptr) {
             continue;
           } else if (arg->id->name->val == "separator") {
-            separator = codegenStmtExpr(codegen, arg->expr);
+            auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, arg->expr);
+
+            separator = stmtExprCode;
+            cleanup += stmtExprCleanup;
           } else if (arg->id->name->val == "terminator") {
-            terminator = codegenStmtExpr(codegen, arg->expr);
+            auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, arg->expr);
+
+            terminator = stmtExprCode;
+            cleanup += stmtExprCleanup;
           } else {
             throw Error("Unknown print argument");
           }
@@ -316,20 +334,23 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
             continue;
           }
 
+          auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, arg->expr);
           auto exprType = codegenStmtExprType(codegen, arg->expr);
+
           code += argIdx != 0 ? separator + ", " : "";
 
           if (exprType == VAR_BOOL) {
             code += "(";
           }
 
-          code += codegenStmtExpr(codegen, arg->expr);
+          code += stmtExprCode;
 
           if (exprType == VAR_BOOL) {
-            code += R"() == 1 ? "true" : "false")";
+            code += R"() == true ? "true" : "false")";
           }
 
           code += ", ";
+          cleanup += stmtExprCleanup;
 
           argIdx++;
         }
@@ -352,7 +373,11 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
           if (param->required && idx >= exprCall->args.size()) {
             throw Error("Missing required function parameter in function call");
           } else if (param->required) {
-            argsCode += codegenStmtExpr(codegen, exprCall->args[idx]->expr);
+            auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, exprCall->args[idx]->expr);
+
+            argsCode += stmtExprCode;
+            cleanup += stmtExprCleanup;
+
             idx++;
             continue;
           }
@@ -379,7 +404,10 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
               argsCode += R"("")";
             }
           } else {
-            argsCode += codegenStmtExpr(codegen, foundArg->expr);
+            auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, foundArg->expr);
+
+            argsCode += stmtExprCode;
+            cleanup += stmtExprCleanup;
           }
 
           optionalArgsCode += optionalArgsCode.empty() ? "" : ", ";
@@ -398,22 +426,32 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
       }
     } else if (expr->type == EXPR_COND) {
       auto exprCond = std::get<ExprCond *>(expr->body);
+      auto [stmtExprCondCode, stmtExprCondCleanup] = codegenStmtExpr(codegen, exprCond->cond);
+      auto [stmtExprBodyCode, stmtExprBodyCleanup] = codegenStmtExpr(codegen, exprCond->body);
+      auto [stmtExprAltCode, stmtExprAltCleanup] = codegenStmtExpr(codegen, exprCond->alt);
 
-      code += codegenStmtExpr(codegen, exprCond->cond);
+      code += stmtExprCondCode;
       code += " ? ";
-      code += codegenStmtExpr(codegen, exprCond->body);
+      code += stmtExprBodyCode;
       code += " : ";
-      code += codegenStmtExpr(codegen, exprCond->alt);
+      code += stmtExprAltCode;
+
+      cleanup += stmtExprCondCleanup;
+      cleanup += stmtExprBodyCleanup;
+      cleanup += stmtExprAltCleanup;
     } else if (expr->type == EXPR_UNARY) {
       auto exprUnary = std::get<ExprUnary *>(expr->body);
+      auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, exprUnary->arg);
 
       if (exprUnary->prefix) {
         code += exprUnary->op->val;
-        code += codegenStmtExpr(codegen, exprUnary->arg);
+        code += stmtExprCode;
       } else {
-        code += codegenStmtExpr(codegen, exprUnary->arg);
+        code += stmtExprCode;
         code += exprUnary->op->val;
       }
+
+      cleanup += stmtExprCleanup;
     }
   } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
     auto id = std::get<Identifier *>(stmtExpr->body);
@@ -421,11 +459,7 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
   } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
     auto lit = std::get<Literal *>(stmtExpr->body);
 
-    if (lit->val->type == TK_KW_FALSE) {
-      code += "0";
-    } else if (lit->val->type == TK_KW_TRUE) {
-      code += "1";
-    } else if (lit->val->type == TK_LIT_INT_OCT) {
+    if (lit->val->type == TK_LIT_INT_OCT) {
       auto val = lit->val->val;
 
       val.erase(std::remove(val.begin(), val.end(), 'O'), val.end());
@@ -443,154 +477,204 @@ std::string codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
     code += ")";
   }
 
-  return code;
+  return std::make_tuple(code, cleanup);
 }
 
-void codegenFunctionDeclarations (Codegen *codegen, const std::vector<Stmt *> &body) {
-  auto code = std::string();
-
+void codegenDeclarations (Codegen *codegen, const std::vector<Stmt *> &body) {
   for (auto stmt : body) {
-    if (stmt->type != STMT_FN_DECL) {
-      continue;
-    }
+    if (stmt->type == STMT_FN_DECL) {
+      auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
+      auto hiddenName = codegenIdentifier(stmtFnDecl->id);
+      auto fnVar = codegen->varMap->getFn(hiddenName);
 
-    auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
-    auto hiddenName = codegenIdentifier(stmtFnDecl->id);
-    auto fnVar = codegen->varMap->getFn(hiddenName);
+      codegen->functionDeclarationsCode += codegenTypeStr(fnVar->fn->returnType);
+      codegen->functionDeclarationsCode += fnVar->name + " (";
 
-    code += codegenTypeStr(fnVar->fn->returnType);
-    code += fnVar->name + " (";
+      if (fnVar->fn->params.empty()) {
+        codegen->functionDeclarationsCode += "void";
+      } else {
+        auto paramsCode = std::string();
+        auto idx = static_cast<std::size_t>(0);
 
-    if (fnVar->fn->params.empty()) {
-      code += "void";
-    } else {
-      auto paramsCode = std::string();
-      auto idx = static_cast<std::size_t>(0);
+        for (auto param : fnVar->fn->params) {
+          auto paramTypeStr = codegenTypeStr(param->type);
 
-      for (auto param : fnVar->fn->params) {
-        auto paramTypeStr = codegenTypeStr(param->type);
-
-        paramsCode += idx == 0 ? "" : ", ";
-        paramsCode += paramTypeStr.back() == ' ' ? paramTypeStr.substr(0, paramTypeStr.length() - 1) : paramTypeStr;
-        idx++;
-      }
-
-      if (fnVar->fn->optionalParams > 0) {
-        code += "const char [" + std::to_string(fnVar->fn->optionalParams) + "], ";
-      }
-
-      code += paramsCode;
-    }
-
-    code += ");\n";
-  }
-
-  codegen->functionDeclarationsCode += code;
-}
-
-void codegenFunctionDefinitions (Codegen *codegen, const std::vector<Stmt *> &body) {
-  auto code = std::string();
-
-  for (auto stmt : body) {
-    if (stmt->type != STMT_FN_DECL) {
-      continue;
-    }
-
-    auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
-    auto hiddenName = codegenIdentifier(stmtFnDecl->id);
-    auto fnVar = codegen->varMap->getFn(hiddenName);
-
-    codegen->varMap->save();
-    codegen->stack.emplace_back(fnVar->fn->hiddenName);
-    code += codegenTypeStr(fnVar->fn->returnType);
-    code += fnVar->name + " (";
-
-    if (stmtFnDecl->params.empty()) {
-      code += ") {\n";
-    } else {
-      auto paramsCode = std::string();
-      auto optionalParams = static_cast<std::size_t>(0);
-      auto optionalParamsCode = std::string();
-      auto idx = static_cast<std::size_t>(0);
-
-      for (auto param : fnVar->fn->params) {
-        auto stmtParam = stmtFnDecl->params[idx];
-        auto optionalParamName = "OP_" + std::to_string(optionalParams + 1);
-        auto paramTypeStr = codegenTypeStr(param->type);
-
-        paramsCode += idx == 0 ? "" : ", ";
-        paramsCode += paramTypeStr;
-        paramsCode += param->required ? param->name : optionalParamName;
-
-        if (!param->required) {
-          optionalParamsCode += std::string(2, ' ') + paramTypeStr;
-          optionalParamsCode += param->name + " = OP[" + std::to_string(optionalParams) + "] == 0 ? ";
-          optionalParamsCode += codegenStmtExpr(codegen, stmtParam->init) + " : " + optionalParamName;
-          optionalParamsCode += ";\n";
-          optionalParams++;
+          paramsCode += idx == 0 ? "" : ", ";
+          paramsCode += paramTypeStr.back() == ' ' ? paramTypeStr.substr(0, paramTypeStr.length() - 1) : paramTypeStr;
+          idx++;
         }
 
-        codegen->varMap->add(param->type, param->name);
-        idx++;
+        if (fnVar->fn->optionalParams > 0) {
+          codegen->functionDeclarationsCode += "const char [" + std::to_string(fnVar->fn->optionalParams) + "], ";
+        }
+
+        codegen->functionDeclarationsCode += paramsCode;
       }
 
-      if (optionalParams > 0) {
-        code += "const char OP[" + std::to_string(optionalParams) + "], ";
+      codegen->functionDeclarationsCode += ");\n";
+    } else if (stmt->type == STMT_OBJ_DECL) {
+      codegen->headers.stdlib = true;
+
+      auto stmtObjDecl = std::get<StmtObjDecl *>(stmt->body);
+      auto hiddenName = codegenIdentifier(stmtObjDecl->id);
+      auto objVar = codegen->varMap->getObj(hiddenName);
+
+      codegen->structDeclarationsCode += "struct " + objVar->name + " {\n";
+
+      for (auto field : objVar->obj->fields) {
+        codegen->structDeclarationsCode += "  " + codegenTypeStr(field->type, field->typeName, true);
+        codegen->structDeclarationsCode += field->name;
+        codegen->structDeclarationsCode += ";\n";
       }
 
-      code += paramsCode;
-      code += ") {\n";
-      code += optionalParamsCode;
+      codegen->structDeclarationsCode += "};\n\n";
+      codegen->functionDeclarationsCode += "struct " + objVar->name + " *";
+      codegen->functionDeclarationsCode += codegenObjInitFn(objVar->name) + " (struct " + objVar->name + ");\n";
     }
-
-    code += codegenBlock(codegen, stmtFnDecl->body, 2);
-    code += "}\n\n";
-    codegen->stack.pop_back();
-    codegen->varMap->restore();
   }
-
-  codegen->functionDefinitionsCode += code;
 }
 
-std::string codegenStmtIf (Codegen *codegen, const StmtIf *stmtIf, std::size_t indent) {
+void codegenDefinitions (Codegen *codegen, const std::vector<Stmt *> &body) {
+  for (auto stmt : body) {
+    if (stmt->type == STMT_FN_DECL) {
+      auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
+      auto hiddenName = codegenIdentifier(stmtFnDecl->id);
+      auto fnVar = codegen->varMap->getFn(hiddenName);
+      auto code = std::string();
+      auto cleanup = std::string();
+
+      codegen->varMap->save();
+      codegen->stack.emplace_back(fnVar->fn->hiddenName);
+      code += codegenTypeStr(fnVar->fn->returnType);
+      code += fnVar->name + " (";
+
+      if (stmtFnDecl->params.empty()) {
+        code += ") {\n";
+      } else {
+        auto paramsCode = std::string();
+        auto optionalParams = static_cast<std::size_t>(0);
+        auto optionalParamsCode = std::string();
+        auto idx = static_cast<std::size_t>(0);
+
+        for (auto param : fnVar->fn->params) {
+          auto stmtParam = stmtFnDecl->params[idx];
+          auto optionalParamName = "OP_" + std::to_string(optionalParams + 1);
+          auto paramTypeStr = codegenTypeStr(param->type);
+
+          paramsCode += idx == 0 ? "" : ", ";
+          paramsCode += paramTypeStr;
+          paramsCode += param->required ? param->name : optionalParamName;
+
+          if (!param->required) {
+            auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, stmtParam->init);
+
+            optionalParamsCode += "  " + paramTypeStr;
+            optionalParamsCode += param->name + " = OP[" + std::to_string(optionalParams) + "] == 0 ? ";
+            optionalParamsCode += stmtExprCode + " : ";
+            optionalParamsCode += optionalParamName + ";\n";
+
+            cleanup += stmtExprCleanup;
+            optionalParams++;
+          }
+
+          codegen->varMap->add(param->type, param->name);
+          idx++;
+        }
+
+        if (optionalParams > 0) {
+          code += "const char OP[" + std::to_string(optionalParams) + "], ";
+        }
+
+        code += paramsCode + ") {\n";
+        code += optionalParamsCode;
+      }
+
+      code += codegenBlock(codegen, stmtFnDecl->body);
+      code += cleanup;
+      code += "}\n\n";
+      codegen->stack.pop_back();
+      codegen->varMap->restore();
+
+      codegen->functionDefinitionsCode += code;
+    } else if (stmt->type == STMT_OBJ_DECL) {
+      codegen->headers.stdio = true;
+      codegen->headers.stdlib = true;
+      codegen->headers.string = true;
+
+      auto stmtObjDecl = std::get<StmtObjDecl *>(stmt->body);
+      auto hiddenName = codegenIdentifier(stmtObjDecl->id);
+      auto objVar = codegen->varMap->getObj(hiddenName);
+      auto code = std::string();
+
+      code += "struct " + objVar->name + " *";
+      code += codegenObjInitFn(objVar->name) + " (struct " + objVar->name + " x) {\n";
+      code += "  size_t l = sizeof(struct " + objVar->name + ");\n";
+      code += "  " + codegenTypeStr(objVar->type, objVar->name, true) + "n = malloc(l);\n";
+      code += "  if (n == (void *) 0) {\n";
+      code += R"(    fprintf(stderr, "Error: Failed to allocate %zu bytes for object \")";
+      code += stmtObjDecl->id->name->val + R"(\"\n", l);)" + "\n";
+      code += "    exit(EXIT_FAILURE);\n";
+      code += "  }\n";
+      code += "  memcpy(n, &x, l);\n";
+      code += "  return n;\n";
+      code += "}\n\n";
+
+      codegen->functionDefinitionsCode += code;
+    }
+  }
+}
+
+std::string codegenStmtIf (Codegen *codegen, const StmtIf *stmtIf) {
   auto code = std::string();
+  auto cleanup = std::string();
+  auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, stmtIf->cond);
 
   codegen->varMap->save();
   code += "if (";
-  code += codegenStmtExpr(codegen, stmtIf->cond);
+  code += stmtExprCode;
   code += ") {\n";
-  code += codegenBlock(codegen, stmtIf->body, indent + 2);
+  code += codegenBlock(codegen, stmtIf->body);
+  code += stmtExprCleanup;
 
   if (stmtIf->alt != nullptr) {
-    code += std::string(indent, ' ') + "} else ";
+    code += std::string(codegen->indent, ' ') + "} else ";
 
     if (stmtIf->alt->type == COND_BLOCK) {
       code += "{\n";
-      code += codegenBlock(codegen, std::get<Block *>(stmtIf->alt->body), indent + 2);
-      code += std::string(indent, ' ') + "}";
+      code += codegenBlock(codegen, std::get<Block *>(stmtIf->alt->body));
+      code += std::string(codegen->indent, ' ') + "}";
     } else if (stmtIf->alt->type == COND_STMT_IF) {
-      code += codegenStmtIf(codegen, std::get<StmtIf *>(stmtIf->alt->body), indent);
+      code += codegenStmtIf(codegen, std::get<StmtIf *>(stmtIf->alt->body));
     }
   } else {
-    code += std::string(indent, ' ') + "}";
+    code += std::string(codegen->indent, ' ') + "}";
   }
 
   codegen->varMap->restore();
   return code;
 }
 
-std::string codegenStmtObjVarDecl (
+std::tuple<std::string, std::string> codegenStmtObjVarDecl (
   Codegen *codegen,
-  const Expr *expr,
+  bool rootDecl,
   const std::string &id,
   bool mut,
-  std::size_t indent
+  const ExprObj *exprObj
 ) {
+  auto objName = codegenIdentifier(exprObj->type);
+  auto objVar = codegen->varMap->getObj(objName);
   auto code = std::string();
-  auto exprObj = std::get<ExprObj *>(expr->body);
-  auto varObj = codegen->varMap->getObj(codegenIdentifier(exprObj->type));
+  auto cleanup = std::string();
 
-  for (auto field : varObj->obj->fields) {
+  if (rootDecl) {
+    code += std::string(codegen->indent, ' ');
+    code += codegenTypeStr(objVar->type, objVar->name, mut) + id + " = ";
+  }
+
+  code += codegenObjInitFn(objVar->name) + "((struct " + objVar->name + ") {";
+  auto idx = static_cast<std::size_t>(0);
+
+  for (auto field : objVar->obj->fields) {
     auto propFound = std::find_if(exprObj->props.begin(), exprObj->props.end(), [&field] (auto it) -> bool {
       return it->id->name->val == field->name;
     });
@@ -599,41 +683,62 @@ std::string codegenStmtObjVarDecl (
       throw Error("Object literal field is not set");
     }
 
+    code += idx == 0 ? "" : ", ";
     auto prop = *propFound;
 
     if (field->type == VAR_OBJ) {
-      auto init = std::get<Expr *>(prop->init->body);
-      code += codegenStmtObjVarDecl(codegen, init, codegenExprMember(id, field->name), mut, indent);
+      auto exprInit = std::get<Expr *>(prop->init->body);
+      auto exprObjInit = std::get<ExprObj *>(exprInit->body);
+
+      auto [stmtObjVarDeclCode, stmtObjVarDeclCleanup] = codegenStmtObjVarDecl(
+        codegen,
+        false,
+        id + "->" + field->name,
+        mut,
+        exprObjInit
+      );
+
+      code += stmtObjVarDeclCode;
+      cleanup += stmtObjVarDeclCleanup;
     } else {
-      auto propName = codegenExprMember(id, field->name);
+      auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, prop->init);
+      auto propName = id + "->" + field->name;
 
-      code += std::string(indent, ' ');
-      code += codegenTypeStr(field->type, mut);
-      code += propName;
-      code += " = ";
-      code += codegenStmtExpr(codegen, prop->init);
-      code += ";\n";
-
+      code += stmtExprCode;
+      cleanup += stmtExprCleanup;
       codegen->varMap->add(field->type, propName);
     }
+
+    idx++;
   }
 
-  return code;
+  code += "})";
+
+  if (rootDecl) {
+    code += ";\n";
+  }
+
+  return std::make_tuple(code, cleanup);
 }
 
-std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent) {
+std::tuple<std::string, std::string> codegenStmt (Codegen *codegen, const Stmt *stmt) {
   auto code = std::string();
+  auto cleanup = std::string();
 
   if (stmt->type == STMT_BREAK) {
-    code += std::string(indent, ' ');
+    code += std::string(codegen->indent, ' ');
     code += "break;\n";
   } else if (stmt->type == STMT_CONTINUE) {
-    code += std::string(indent, ' ');
+    code += std::string(codegen->indent, ' ');
     code += "continue;\n";
   } else if (stmt->type == STMT_EXPR) {
-    code += std::string(indent, ' ');
-    code += codegenStmtExpr(codegen, std::get<StmtExpr *>(stmt->body));
+    auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, std::get<StmtExpr *>(stmt->body));
+
+    code += std::string(codegen->indent, ' ');
+    code += stmtExprCode;
     code += ";\n";
+
+    cleanup += stmtExprCleanup;
   } else if (stmt->type == STMT_FN_DECL) {
     auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
     auto hiddenName = codegenIdentifier(stmtFnDecl->id);
@@ -657,52 +762,72 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
 
     codegen->varMap->addFn(fnName, hiddenName, returnType, params, optionalParams);
   } else if (stmt->type == STMT_IF) {
-    code += std::string(indent, ' ');
-    code += codegenStmtIf(codegen, std::get<StmtIf *>(stmt->body), indent);
+    code += std::string(codegen->indent, ' ');
+    code += codegenStmtIf(codegen, std::get<StmtIf *>(stmt->body));
     code += "\n";
   } else if (stmt->type == STMT_LOOP) {
     auto stmtLoop = std::get<StmtLoop *>(stmt->body);
+    auto stmtLoopCleanup = std::string();
 
     codegen->varMap->save();
-    code += std::string(indent, ' ');
+    code += std::string(codegen->indent, ' ');
 
     if (stmtLoop->init == nullptr && stmtLoop->cond == nullptr && stmtLoop->upd == nullptr) {
       code += "while (1)";
     } else if (stmtLoop->init == nullptr && stmtLoop->upd == nullptr) {
+      auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, stmtLoop->cond);
+      // TODO How do you clean here?
+
       code += "while (";
-      code += codegenStmtExpr(codegen, stmtLoop->cond);
+      code += stmtExprCode;
       code += ")";
+
+      stmtLoopCleanup += stmtExprCleanup;
     } else {
       code += "for (";
 
       if (stmtLoop->init != nullptr) {
-        auto stmtCode = codegenStmt(codegen, stmtLoop->init, 0);
+        auto prevIndent = codegen->indent;
+
+        codegen->indent = 0;
+        auto [stmtCode, stmtCleanup] = codegenStmt(codegen, stmtLoop->init);
+        codegen->indent = prevIndent;
+        // TODO How do you clean here?
+
         code += stmtCode.substr(0, stmtCode.length() - 2);
+        stmtLoopCleanup += stmtCleanup;
       }
 
       code += ";";
 
       if (stmtLoop->cond != nullptr) {
-        code += " ";
-        code += codegenStmtExpr(codegen, stmtLoop->cond);
+        auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, stmtLoop->cond);
+        // TODO How do you clean here?
+
+        code += " " + stmtExprCode;
+        stmtLoopCleanup += stmtExprCleanup;
       }
 
       code += ";";
 
       if (stmtLoop->upd != nullptr) {
-        code += " ";
-        code += codegenStmtExpr(codegen, stmtLoop->upd);
+        auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, stmtLoop->upd);
+        // TODO How do you clean here?
+
+        code += " " + stmtExprCode;
+        stmtLoopCleanup += stmtExprCleanup;
       }
 
       code += ")";
     }
 
-    if (stmtLoop->body->body.empty()) {
+    if (stmtLoop->body->body.empty() && stmtLoopCleanup.empty()) {
       code += ";\n";
     } else {
       code += " {\n";
-      code += codegenBlock(codegen, stmtLoop->body, indent + 2);
-      code += std::string(indent, ' ') + "}\n";
+      code += codegenBlock(codegen, stmtLoop->body);
+      code += stmtLoopCleanup;
+      code += std::string(codegen->indent, ' ') + "}\n";
     }
 
     codegen->varMap->restore();
@@ -716,17 +841,27 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
       auto fieldType = codegenType(codegen, field->type);
       auto objField = new VarMapObjField{field->id->name->val, fieldType};
 
+      if (fieldType == VAR_OBJ) {
+        auto fieldObjTypeName = codegenIdentifier(field->type);
+        auto objVar = codegen->varMap->getObj(fieldObjTypeName);
+
+        objField->typeName = objVar->name;
+      }
+
       fields.push_back(objField);
     }
 
     codegen->varMap->addObj(objName, hiddenName, fields);
   } else if (stmt->type == STMT_RETURN) {
     auto stmtReturn = std::get<StmtReturn *>(stmt->body);
+    auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, stmtReturn->arg);
+    // TODO How do you clean here?
 
-    code += std::string(indent, ' ');
+    code += std::string(codegen->indent, ' ');
     code += "return ";
-    code += codegenStmtExpr(codegen, stmtReturn->arg);
+    code += stmtExprCode;
     code += ";\n";
+    cleanup += stmtExprCleanup;
   } else if (stmt->type == STMT_VAR_DECL) {
     auto stmtVarDecl = std::get<StmtVarDecl *>(stmt->body);
 
@@ -735,25 +870,38 @@ std::string codegenStmt (Codegen *codegen, const Stmt *stmt, std::size_t indent)
       : codegenType(codegen, stmtVarDecl->type);
 
     if (exprType == VAR_OBJ) {
-      auto init = std::get<Expr *>(stmtVarDecl->init->body);
-      code += codegenStmtObjVarDecl(codegen, init, codegenIdentifier(stmtVarDecl->id), stmtVarDecl->mut, indent);
-    } else {
-      auto name = codegenIdentifier(stmtVarDecl->id);
+      auto expr = std::get<Expr *>(stmtVarDecl->init->body);
+      auto exprObj = std::get<ExprObj *>(expr->body);
 
-      code += std::string(indent, ' ');
-      code += codegenTypeStr(exprType, stmtVarDecl->mut);
-      code += name;
+      auto [stmtObjVarDeclCode, stmtObjVarDeclCleanup] = codegenStmtObjVarDecl(
+        codegen,
+        true,
+        codegenIdentifier(stmtVarDecl->id),
+        stmtVarDecl->mut,
+        exprObj
+      );
+
+      code += stmtObjVarDeclCode;
+      cleanup += stmtObjVarDeclCleanup;
+    } else {
+      auto [stmtExprCode, stmtExprCleanup] = codegenStmtExpr(codegen, stmtVarDecl->init);
+      auto varName = codegenIdentifier(stmtVarDecl->id);
+
+      code += std::string(codegen->indent, ' ');
+      code += codegenTypeStr(exprType, varName, stmtVarDecl->mut);
+      code += varName;
       code += " = ";
-      code += codegenStmtExpr(codegen, stmtVarDecl->init);
+      code += stmtExprCode;
       code += ";\n";
 
-      codegen->varMap->add(exprType, name);
+      cleanup += stmtExprCleanup;
+      codegen->varMap->add(exprType, varName);
     }
   } else {
     throw Error("Tried to access unknown stmt type");
   }
 
-  return code;
+  return std::make_tuple(code, cleanup);
 }
 
 std::string codegen (const AST *ast) {
@@ -761,18 +909,24 @@ std::string codegen (const AST *ast) {
   codegen->stack.reserve(SHRT_MAX);
 
   for (auto stmt : ast->topLevelStatements) {
-    codegen->topLevelStatementsCode += codegenStmt(codegen, stmt, 0);
+    auto [stmtCode, stmtCleanup] = codegenStmt(codegen, stmt);
+
+    if (!stmtCleanup.empty()) {
+      throw Error("Global statement code generator returned cleanup data");
+    }
+
+    codegen->topLevelStatementsCode += stmtCode;
   }
 
-  codegenFunctionDeclarations(codegen, ast->topLevelStatements);
-  codegenFunctionDefinitions(codegen, ast->topLevelStatements);
+  codegenDeclarations(codegen, ast->topLevelStatements);
+  codegenDefinitions(codegen, ast->topLevelStatements);
 
   codegen->varMap->save();
   codegen->stack.emplace_back("main");
   codegen->mainBodyCode += "int main () {\n";
 
   if (ast->mainPresent) {
-    codegen->mainBodyCode += codegenBlock(codegen, ast->mainBody, 2);
+    codegen->mainBodyCode += codegenBlock(codegen, ast->mainBody);
   }
 
   codegen->mainBodyCode += "}\n";
@@ -786,15 +940,18 @@ std::string codegen (const AST *ast) {
     " * Proprietary and confidential\n"+
     " */\n\n";
 
-  auto polyfills = std::string(codegen->polyfills.pow ? "double pow (double, double);\n" : "") +
-    std::string(codegen->polyfills.printf ? "int printf (const char *, ...);\n" : "");
-
-  auto functionDeclarationsCode = polyfills + codegen->functionDeclarationsCode;
+  auto headers = std::string(codegen->headers.math ? "#include <math.h>\n" : "") +
+    std::string(codegen->headers.stdbool ? "#include <stdbool.h>\n" : "") +
+    std::string(codegen->headers.stdio ? "#include <stdio.h>\n" : "") +
+    std::string(codegen->headers.stdlib ? "#include <stdlib.h>\n" : "") +
+    std::string(codegen->headers.string ? "#include <string.h>\n" : "");
 
   auto code = banner +
-    (functionDeclarationsCode.empty() ? "" : functionDeclarationsCode + "\n") +
-    (codegen->topLevelStatementsCode.empty() ? "" : codegen->topLevelStatementsCode + "\n") +
+    (headers.empty() ? "" : headers + "\n") +
+    codegen->structDeclarationsCode +
+    (codegen->functionDeclarationsCode.empty() ? "" : codegen->functionDeclarationsCode + "\n") +
     codegen->functionDefinitionsCode +
+    (codegen->topLevelStatementsCode.empty() ? "" : codegen->topLevelStatementsCode + "\n") +
     codegen->mainBodyCode;
 
   delete codegen;

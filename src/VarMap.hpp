@@ -48,6 +48,7 @@ struct VarMapFn {
 struct VarMapObjField {
   std::string name;
   VarMapItemType type;
+  std::string typeName = "";
 };
 
 struct VarMapObj {
