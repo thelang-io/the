@@ -85,11 +85,11 @@ std::string VarMap::genId (const std::vector<std::string> &stack, const std::str
 
 const VarMapItem *VarMap::get (const std::string &name) const {
   for (auto it : this->items) {
-    if (
-      it->name == name ||
+    auto nameMatches = it->name == name ||
       (it->type == VAR_FN && it->fn->hiddenName == name && it->frame != -1) ||
-      (it->type == VAR_OBJ && it->obj->hiddenName == name)
-    ) {
+      (it->type == VAR_OBJ && it->obj->hiddenName == name);
+
+    if (nameMatches && !it->builtin) {
       return it;
     }
   }
@@ -99,7 +99,7 @@ const VarMapItem *VarMap::get (const std::string &name) const {
 
 const VarMapItem *VarMap::getFn (const std::string &name) const {
   for (auto it : this->items) {
-    if (it->type == VAR_FN && it->fn->hiddenName == name && it->frame != -1) {
+    if (it->type == VAR_FN && it->fn->hiddenName == name && it->frame != -1 && !it->builtin) {
       return it;
     }
   }
@@ -109,12 +109,19 @@ const VarMapItem *VarMap::getFn (const std::string &name) const {
 
 const VarMapItem *VarMap::getObj (const std::string &name) const {
   for (auto it : this->items) {
-    if (it->type == VAR_OBJ && it->obj->hiddenName == name) {
+    if (it->type == VAR_OBJ && it->obj->hiddenName == name && !it->builtin) {
       return it;
     }
   }
 
   throw Error("Tried to access non existing VarMap object");
+}
+
+const VarMapItem *VarMap::getNewStr () {
+  auto name = std::string("s") + std::to_string(this->lastStrIdx++);
+  this->items.push_back(new VarMapItem{VAR_STR, name, nullptr, nullptr, this->frame, true});
+
+  return this->items.back();
 }
 
 void VarMap::restore () {
@@ -133,6 +140,23 @@ void VarMap::restore () {
     it++;
   }
 
+  this->lastStrIdx = 0;
+
+  for (auto it = this->items.begin(); it != this->items.end();) {
+    auto item = *it;
+
+    if (item->type == VAR_STR && item->builtin) {
+      int newLastStrIdx = std::atoi(item->name.substr(1).c_str());
+
+      if (newLastStrIdx > this->lastStrIdx) {
+        this->lastStrIdx = newLastStrIdx;
+      }
+    }
+
+    it++;
+  }
+
+  this->lastStrIdx++;
   this->frame--;
 }
 

@@ -62,6 +62,7 @@ struct VarMapItem {
   VarMapFn *fn;
   VarMapObj *obj;
   int frame;
+  bool builtin = false;
 
   ~VarMapItem ();
 };
@@ -69,6 +70,7 @@ struct VarMapItem {
 class VarMap {
  public:
   int frame = 0;
+  int lastStrIdx = 0;
   std::vector<VarMapItem *> items;
 
   ~VarMap ();
@@ -88,6 +90,7 @@ class VarMap {
   const VarMapItem *get (const std::string &name) const;
   const VarMapItem *getFn (const std::string &name) const;
   const VarMapItem *getObj (const std::string &name) const;
+  const VarMapItem *getNewStr ();
   void restore ();
   void save ();
 };

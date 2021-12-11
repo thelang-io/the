@@ -19,11 +19,18 @@ struct CodegenHeaders {
   bool string = false;
 };
 
+struct CodegenFunctions {
+  bool str_init = false;
+  bool str_from_cstr = false;
+  bool str_deinit = false;
+};
+
 struct Codegen {
   VarMap *varMap;
   std::vector<std::string> stack = {};
   std::size_t indent = 0;
   CodegenHeaders headers = {};
+  CodegenFunctions functions = {};
   std::string functionDeclarationsCode = "";
   std::string structDeclarationsCode = "";
   std::string topLevelStatementsCode = "";

@@ -1,5 +1,6 @@
 na := 0
-nb := "Hello, World!"
+// TODO
+// nb := "Hello, World!"
 
 fn ga () int {
   return 3
@@ -465,7 +466,8 @@ main {
   print("World!", terminator: "")
   print()
 
-  print("na:", na, "nb:", nb)
+  // TODO
+  // print("na:", na, "nb:", nb)
 
   pa := Oa{a: 2}
 
