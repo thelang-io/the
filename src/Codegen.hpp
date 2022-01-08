@@ -9,7 +9,6 @@
 #define SRC_CODEGEN_HPP
 
 #include "AST.hpp"
-#include "VarMap.hpp"
 
 struct CodegenHeaders {
   bool math = false;
@@ -21,25 +20,20 @@ struct CodegenHeaders {
 
 struct CodegenFunctions {
   bool str_init = false;
+  bool str_clone = false;
   bool str_from_cstr = false;
   bool str_deinit = false;
 };
 
 struct Codegen {
-  VarMap *varMap;
-  std::vector<std::string> stack = {};
-  std::size_t indent = 0;
-  CodegenHeaders headers = {};
-  CodegenFunctions functions = {};
-  std::string functionDeclarationsCode = "";
-  std::string structDeclarationsCode = "";
-  std::string topLevelStatementsCode = "";
-  std::string functionDefinitionsCode = "";
-  std::string mainBodyCode = "";
-
-  ~Codegen ();
+  CodegenHeaders headers;
+  CodegenFunctions functions;
+  std::size_t indent;
+  std::string functionDeclarationsCode;
+  std::string functionDefinitionsCode;
+  std::string output;
 };
 
-std::string codegen (const AST *ast);
+Codegen codegen (AST *);
 
 #endif

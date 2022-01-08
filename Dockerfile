@@ -14,5 +14,6 @@ COPY . .
 RUN mkdir -p build
 RUN (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug)
 RUN cmake --build build
+RUN build/the-core
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["valgrind", "--error-exitcode=1", "--leak-check=full", "--show-leak-kinds=all", "--tool=memcheck", "--track-origins=yes", "build/a.out"]

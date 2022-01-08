@@ -8,264 +8,184 @@
 #ifndef SRC_PARSER_HPP
 #define SRC_PARSER_HPP
 
+#include <memory>
+#include <optional>
 #include <variant>
 #include <vector>
 #include "Lexer.hpp"
 
-struct ExprMember;
-struct Identifier;
-struct Stmt;
-struct StmtExpr;
-struct StmtIf;
+struct ParserId;
+struct ParserMember;
+struct ParserExprAssign;
+struct ParserExprBinary;
+struct ParserExprCall;
+struct ParserExprCond;
+struct ParserExprLit;
+struct ParserExprObj;
+struct ParserExprUnary;
+struct ParserStmtBreak;
+struct ParserStmtContinue;
+struct ParserStmtEnd;
+struct ParserStmtExpr;
+struct ParserStmtFnDecl;
+struct ParserStmtIf;
+struct ParserStmtLoop;
+struct ParserStmtMain;
+struct ParserStmtObjDecl;
+struct ParserStmtReturn;
+struct ParserStmtVarDecl;
 
-struct Block {
-  std::vector<Stmt *> body;
-  ~Block();
+using ParserStmt = std::variant<
+  ParserStmtBreak,
+  ParserStmtContinue,
+  ParserStmtEnd,
+  ParserStmtExpr,
+  ParserStmtFnDecl,
+  ParserStmtIf,
+  ParserStmtLoop,
+  ParserStmtMain,
+  ParserStmtObjDecl,
+  ParserStmtReturn,
+  ParserStmtVarDecl
+>;
+
+using ParserBlock = std::vector<ParserStmt>;
+using ParserExprAccess = std::variant<ParserId, ParserMember>;
+using ParserStmtIfCond = std::variant<ParserBlock, ParserStmtIf>;
+
+using ParserExpr = std::variant<
+  ParserExprAccess,
+  ParserExprAssign,
+  ParserExprBinary,
+  ParserExprCall,
+  ParserExprCond,
+  ParserExprLit,
+  ParserExprObj,
+  ParserExprUnary
+>;
+
+struct ParserId {
+  Token name;
 };
 
-enum CondType {
-  COND_BLOCK,
-  COND_STMT_IF
+struct ParserMember {
+  std::shared_ptr<ParserExprAccess> obj;
+  ParserId prop;
 };
 
-struct Cond {
-  CondType type;
-  std::variant<Block *, StmtIf *> body;
-
-  ~Cond ();
-};
-
-enum ExprType {
-  EXPR_ACCESS,
-  EXPR_ASSIGN,
-  EXPR_BINARY,
-  EXPR_CALL,
-  EXPR_COND,
-  EXPR_MEMBER,
-  EXPR_OBJ,
-  EXPR_UNARY
-};
-
-enum ExprAccessType {
-  EXPR_ACCESS_EXPR_MEMBER,
-  EXPR_ACCESS_IDENTIFIER
-};
-
-struct ExprAccess {
-  ExprAccessType type;
-  std::variant<ExprMember *, Identifier *> body;
-
-  ~ExprAccess ();
-};
-
-struct ExprAssign {
-  ExprAccess *left;
-  Token *op;
-  StmtExpr *right;
-
-  ~ExprAssign ();
-};
-
-struct ExprBinary {
-  StmtExpr *left;
-  Token *op;
-  StmtExpr *right;
-
-  ~ExprBinary ();
-};
-
-struct ExprCallArg {
-  Identifier *id;
-  StmtExpr *expr;
-};
-
-struct ExprCall {
-  ExprAccess *callee;
-  std::vector<ExprCallArg *> args;
-
-  ~ExprCall ();
-};
-
-struct ExprCond {
-  StmtExpr *cond;
-  StmtExpr *body;
-  StmtExpr *alt;
-
-  ~ExprCond ();
-};
-
-struct ExprMember {
-  ExprAccess *obj;
-  Identifier *prop;
-
-  ~ExprMember ();
-};
-
-struct ExprObjProp {
-  Identifier *id;
-  StmtExpr *init;
-};
-
-struct ExprObj {
-  Identifier *type;
-  std::vector<ExprObjProp *> props;
-
-  ~ExprObj ();
-};
-
-struct ExprUnary {
-  StmtExpr *arg;
-  Token *op;
-  bool prefix = false;
-
-  ~ExprUnary ();
-};
-
-struct Expr {
-  ExprType type;
-  std::variant<
-    ExprAccess *,
-    ExprAssign *,
-    ExprBinary *,
-    ExprCall *,
-    ExprCond *,
-    ExprMember *,
-    ExprObj *,
-    ExprUnary *
-  > body;
-
-  ~Expr ();
-};
-
-struct Identifier {
-  Token *name;
-  ~Identifier ();
-};
-
-struct Literal {
-  Token *val;
-  ~Literal ();
-};
-
-enum StmtType {
-  STMT_BREAK,
-  STMT_CONTINUE,
-  STMT_END,
-  STMT_EXPR,
-  STMT_FN_DECL,
-  STMT_IF,
-  STMT_LOOP,
-  STMT_MAIN,
-  STMT_OBJ_DECL,
-  STMT_RETURN,
-  STMT_VAR_DECL
-};
-
-struct StmtBreak {
-};
-
-struct StmtContinue {
-};
-
-struct StmtEnd {
-};
-
-enum StmtExprType {
-  STMT_EXPR_EXPR,
-  STMT_EXPR_IDENTIFIER,
-  STMT_EXPR_LITERAL
-};
-
-struct StmtExpr {
-  StmtExprType type;
-  std::variant<Expr *, Identifier *, Literal *> body;
+struct ParserStmtExpr {
+  std::shared_ptr<ParserExpr> expr;
   bool parenthesized = false;
-
-  ~StmtExpr ();
 };
 
-struct StmtFnDeclParam {
-  Identifier *id;
-  Identifier *type;
-  StmtExpr *init;
+struct ParserExprAssign {
+  ParserExprAccess left;
+  Token op;
+  ParserStmtExpr right;
 };
 
-struct StmtFnDecl {
-  Identifier *id;
-  std::vector<StmtFnDeclParam *> params;
-  Identifier *returnType;
-  Block *body;
-
-  ~StmtFnDecl ();
+struct ParserExprBinary {
+  ParserStmtExpr left;
+  Token op;
+  ParserStmtExpr right;
 };
 
-struct StmtIf {
-  StmtExpr *cond;
-  Block *body;
-  Cond *alt;
-
-  ~StmtIf ();
+struct ParserExprCallArg {
+  std::optional<ParserId> id;
+  ParserStmtExpr expr;
 };
 
-struct StmtLoop {
-  Stmt *init;
-  StmtExpr *cond;
-  StmtExpr *upd;
-  Block *body;
-
-  ~StmtLoop ();
+struct ParserExprCall {
+  ParserExprAccess callee;
+  std::vector<ParserExprCallArg> args;
 };
 
-struct StmtMain {
-  Block *body;
-  ~StmtMain ();
+struct ParserExprCond {
+  ParserStmtExpr cond;
+  ParserStmtExpr body;
+  ParserStmtExpr alt;
 };
 
-struct StmtObjDeclField {
-  Identifier *id;
-  Identifier *type;
+struct ParserExprLit {
+  Token val;
 };
 
-struct StmtObjDecl {
-  Identifier *id;
-  std::vector<StmtObjDeclField *> fields;
-
-  ~StmtObjDecl ();
+struct ParserExprObjProp {
+  ParserId id;
+  ParserStmtExpr init;
 };
 
-struct StmtReturn {
-  StmtExpr *arg;
-  ~StmtReturn ();
+struct ParserExprObj {
+  ParserId type;
+  std::vector<ParserExprObjProp> props;
 };
 
-struct StmtVarDecl {
-  Identifier *id;
-  Identifier *type;
-  StmtExpr *init;
+struct ParserExprUnary {
+  ParserStmtExpr arg;
+  Token op;
+  bool prefix = false;
+};
+
+struct ParserStmtBreak {
+};
+
+struct ParserStmtContinue {
+};
+
+struct ParserStmtEnd {
+};
+
+struct ParserStmtFnDeclParam {
+  ParserId id;
+  std::optional<ParserId> type;
+  std::optional<ParserStmtExpr> init;
+};
+
+struct ParserStmtFnDecl {
+  ParserId id;
+  ParserId returnType;
+  std::vector<ParserStmtFnDeclParam> params;
+  ParserBlock body;
+};
+
+struct ParserStmtIf {
+  ParserStmtExpr cond;
+  ParserBlock body;
+  std::optional<std::shared_ptr<ParserStmtIfCond>> alt = {};
+};
+
+struct ParserStmtLoop {
+  std::optional<std::shared_ptr<ParserStmt>> init;
+  std::optional<ParserStmtExpr> cond;
+  std::optional<ParserStmtExpr> upd;
+  ParserBlock body;
+};
+
+struct ParserStmtMain {
+  ParserBlock body;
+};
+
+struct ParserStmtObjDeclField {
+  ParserId id;
+  ParserId type;
+};
+
+struct ParserStmtObjDecl {
+  ParserId id;
+  std::vector<ParserStmtObjDeclField> fields;
+};
+
+struct ParserStmtReturn {
+  ParserStmtExpr arg;
+};
+
+struct ParserStmtVarDecl {
+  ParserId id;
+  std::optional<ParserId> type;
+  std::optional<ParserStmtExpr> init;
   bool mut = false;
-
-  ~StmtVarDecl ();
 };
 
-struct Stmt {
-  StmtType type;
-  std::variant<
-    StmtBreak *,
-    StmtContinue *,
-    StmtEnd *,
-    StmtExpr *,
-    StmtFnDecl *,
-    StmtIf *,
-    StmtLoop *,
-    StmtMain *,
-    StmtObjDecl *,
-    StmtReturn *,
-    StmtVarDecl *
-  > body;
-
-  ~Stmt ();
-};
-
-Stmt *parse (Reader *reader);
+ParserStmt parse (Reader *reader);
 
 #endif

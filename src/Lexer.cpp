@@ -64,7 +64,7 @@ void lexWalkLitFloatExp (Reader *reader, Lexer &lexer) {
   }
 }
 
-Token *lexLitFloat (Reader *reader, Lexer &lexer, TokenType type) {
+Token lexLitFloat (Reader *reader, Lexer &lexer, TokenType type) {
   if (!reader->eof()) {
     auto loc = reader->loc;
     auto ch = reader->next();
@@ -85,10 +85,10 @@ Token *lexLitFloat (Reader *reader, Lexer &lexer, TokenType type) {
     throw SyntaxError(reader, lexer.start, E0016);
   }
 
-  return new Token{TK_LIT_FLOAT, lexer.start, reader->loc, lexer.val};
+  return Token{TK_LIT_FLOAT, lexer.start, reader->loc, lexer.val};
 }
 
-Token *lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)> &fn, TokenType type) {
+Token lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)> &fn, TokenType type) {
   auto errCode = type == TK_LIT_INT_BIN
     ? E0008
     : type == TK_LIT_INT_DEC
@@ -114,7 +114,7 @@ Token *lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)>
   }
 
   if (reader->eof()) {
-    return new Token{type, lexer.start, reader->loc, lexer.val};
+    return Token{type, lexer.start, reader->loc, lexer.val};
   }
 
   auto loc2 = reader->loc;
@@ -183,12 +183,12 @@ Token *lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)>
     reader->seek(loc2);
   }
 
-  return new Token{type, lexer.start, reader->loc, lexer.val};
+  return Token{type, lexer.start, reader->loc, lexer.val};
 }
 
-Token *lexOpEq (Reader *reader, Lexer &lexer, TokenType type1, TokenType type2) {
+Token lexOpEq (Reader *reader, Lexer &lexer, TokenType type1, TokenType type2) {
   if (reader->eof()) {
-    return new Token{type1, lexer.start, reader->loc, lexer.val};
+    return Token{type1, lexer.start, reader->loc, lexer.val};
   }
 
   auto loc = reader->loc;
@@ -196,14 +196,14 @@ Token *lexOpEq (Reader *reader, Lexer &lexer, TokenType type1, TokenType type2) 
 
   if (ch == '=') {
     lexer.val += ch;
-    return new Token{type2, lexer.start, reader->loc, lexer.val};
+    return Token{type2, lexer.start, reader->loc, lexer.val};
   } else {
     reader->seek(loc);
-    return new Token{type1, lexer.start, reader->loc, lexer.val};
+    return Token{type1, lexer.start, reader->loc, lexer.val};
   }
 }
 
-Token *lexOpEq2 (
+Token lexOpEq2 (
   Reader *reader,
   Lexer &lexer,
   char ch,
@@ -213,7 +213,7 @@ Token *lexOpEq2 (
   TokenType type4
 ) {
   if (reader->eof()) {
-    return new Token{type1, lexer.start, reader->loc, lexer.val};
+    return Token{type1, lexer.start, reader->loc, lexer.val};
   }
 
   auto loc1 = reader->loc;
@@ -221,7 +221,7 @@ Token *lexOpEq2 (
 
   if (ch1 == '=' || reader->eof()) {
     lexer.val += ch1;
-    return new Token{ch1 == '=' ? type2 : type3, lexer.start, reader->loc, lexer.val};
+    return Token{ch1 == '=' ? type2 : type3, lexer.start, reader->loc, lexer.val};
   } else if (ch1 == ch) {
     auto loc2 = reader->loc;
     auto ch2 = reader->next();
@@ -230,22 +230,22 @@ Token *lexOpEq2 (
       lexer.val += ch1;
       lexer.val += ch2;
 
-      return new Token{type4, lexer.start, reader->loc, lexer.val};
+      return Token{type4, lexer.start, reader->loc, lexer.val};
     } else {
       lexer.val += ch1;
       reader->seek(loc2);
 
-      return new Token{type3, lexer.start, reader->loc, lexer.val};
+      return Token{type3, lexer.start, reader->loc, lexer.val};
     }
   } else {
     reader->seek(loc1);
-    return new Token{type1, lexer.start, reader->loc, lexer.val};
+    return Token{type1, lexer.start, reader->loc, lexer.val};
   }
 }
 
-Token *lexOpEqDouble (Reader *reader, Lexer &lexer, char ch, TokenType type1, TokenType type2, TokenType type3) {
+Token lexOpEqDouble (Reader *reader, Lexer &lexer, char ch, TokenType type1, TokenType type2, TokenType type3) {
   if (reader->eof()) {
-    return new Token{type1, lexer.start, reader->loc, lexer.val};
+    return Token{type1, lexer.start, reader->loc, lexer.val};
   }
 
   auto loc2 = reader->loc;
@@ -253,18 +253,18 @@ Token *lexOpEqDouble (Reader *reader, Lexer &lexer, char ch, TokenType type1, To
 
   if (ch1 == '=' || ch1 == ch) {
     lexer.val += ch1;
-    return new Token{ch1 == '=' ? type2 : type3, lexer.start, reader->loc, lexer.val};
+    return Token{ch1 == '=' ? type2 : type3, lexer.start, reader->loc, lexer.val};
   } else {
     reader->seek(loc2);
-    return new Token{type1, lexer.start, reader->loc, lexer.val};
+    return Token{type1, lexer.start, reader->loc, lexer.val};
   }
 }
 
-Token *lex (Reader *reader) {
+Token lex (Reader *reader) {
   auto lexer = Lexer{reader->loc, ""};
 
   if (reader->eof()) {
-    return new Token{TK_EOF, lexer.start, reader->loc, lexer.val};
+    return Token{TK_EOF, lexer.start, reader->loc, lexer.val};
   }
 
   auto ch = reader->next();
@@ -273,28 +273,28 @@ Token *lex (Reader *reader) {
   if (ch == '&') return lexOpEq2(reader, lexer, '&', TK_OP_AND, TK_OP_AND_EQ, TK_OP_AND_AND, TK_OP_AND_AND_EQ);
   if (ch == '^') return lexOpEq(reader, lexer, TK_OP_CARET, TK_OP_CARET_EQ);
   if (ch == ':') return lexOpEq(reader, lexer, TK_OP_COLON, TK_OP_COLON_EQ);
-  if (ch == ',') return new Token{TK_OP_COMMA, lexer.start, reader->loc, lexer.val};
+  if (ch == ',') return Token{TK_OP_COMMA, lexer.start, reader->loc, lexer.val};
   if (ch == '=') return lexOpEq(reader, lexer, TK_OP_EQ, TK_OP_EQ_EQ);
   if (ch == '!') return lexOpEqDouble(reader, lexer, '!', TK_OP_EXCL, TK_OP_EXCL_EQ, TK_OP_EXCL_EXCL);
   if (ch == '>') return lexOpEq2(reader, lexer, '>', TK_OP_GT, TK_OP_GT_EQ, TK_OP_RSHIFT, TK_OP_RSHIFT_EQ);
-  if (ch == '{') return new Token{TK_OP_LBRACE, lexer.start, reader->loc, lexer.val};
-  if (ch == '[') return new Token{TK_OP_LBRACK, lexer.start, reader->loc, lexer.val};
-  if (ch == '(') return new Token{TK_OP_LPAR, lexer.start, reader->loc, lexer.val};
+  if (ch == '{') return Token{TK_OP_LBRACE, lexer.start, reader->loc, lexer.val};
+  if (ch == '[') return Token{TK_OP_LBRACK, lexer.start, reader->loc, lexer.val};
+  if (ch == '(') return Token{TK_OP_LPAR, lexer.start, reader->loc, lexer.val};
   if (ch == '<') return lexOpEq2(reader, lexer, '<', TK_OP_LT, TK_OP_LT_EQ, TK_OP_LSHIFT, TK_OP_LSHIFT_EQ);
   if (ch == '-') return lexOpEqDouble(reader, lexer, '-', TK_OP_MINUS, TK_OP_MINUS_EQ, TK_OP_MINUS_MINUS);
   if (ch == '|') return lexOpEq2(reader, lexer, '|', TK_OP_OR, TK_OP_OR_EQ, TK_OP_OR_OR, TK_OP_OR_OR_EQ);
   if (ch == '%') return lexOpEq(reader, lexer, TK_OP_PERCENT, TK_OP_PERCENT_EQ);
   if (ch == '+') return lexOpEqDouble(reader, lexer, '+', TK_OP_PLUS, TK_OP_PLUS_EQ, TK_OP_PLUS_PLUS);
-  if (ch == '}') return new Token{TK_OP_RBRACE, lexer.start, reader->loc, lexer.val};
-  if (ch == ']') return new Token{TK_OP_RBRACK, lexer.start, reader->loc, lexer.val};
-  if (ch == ')') return new Token{TK_OP_RPAR, lexer.start, reader->loc, lexer.val};
-  if (ch == ';') return new Token{TK_OP_SEMI, lexer.start, reader->loc, lexer.val};
+  if (ch == '}') return Token{TK_OP_RBRACE, lexer.start, reader->loc, lexer.val};
+  if (ch == ']') return Token{TK_OP_RBRACK, lexer.start, reader->loc, lexer.val};
+  if (ch == ')') return Token{TK_OP_RPAR, lexer.start, reader->loc, lexer.val};
+  if (ch == ';') return Token{TK_OP_SEMI, lexer.start, reader->loc, lexer.val};
   if (ch == '*') return lexOpEq2(reader, lexer, '*', TK_OP_STAR, TK_OP_STAR_EQ, TK_OP_STAR_STAR, TK_OP_STAR_STAR_EQ);
-  if (ch == '~') return new Token{TK_OP_TILDE, lexer.start, reader->loc, lexer.val};
+  if (ch == '~') return Token{TK_OP_TILDE, lexer.start, reader->loc, lexer.val};
 
   if (ch == '.') {
     if (reader->eof()) {
-      return new Token{TK_OP_DOT, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_DOT, lexer.start, reader->loc, lexer.val};
     }
 
     auto loc1 = reader->loc;
@@ -304,7 +304,7 @@ Token *lex (Reader *reader) {
       lexer.val += ch1;
 
       if (reader->eof()) {
-        return new Token{TK_OP_DOT_DOT, lexer.start, reader->loc, lexer.val};
+        return Token{TK_OP_DOT_DOT, lexer.start, reader->loc, lexer.val};
       }
 
       auto loc2 = reader->loc;
@@ -312,18 +312,18 @@ Token *lex (Reader *reader) {
 
       if (ch2 == '.' || ch2 == '=') {
         lexer.val += ch2;
-        return new Token{ch2 == '.' ? TK_OP_DOT_DOT_DOT : TK_OP_DOT_DOT_EQ, lexer.start, reader->loc, lexer.val};
+        return Token{ch2 == '.' ? TK_OP_DOT_DOT_DOT : TK_OP_DOT_DOT_EQ, lexer.start, reader->loc, lexer.val};
       } else {
         reader->seek(loc2);
-        return new Token{TK_OP_DOT_DOT, lexer.start, reader->loc, lexer.val};
+        return Token{TK_OP_DOT_DOT, lexer.start, reader->loc, lexer.val};
       }
     } else {
       reader->seek(loc1);
-      return new Token{TK_OP_DOT, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_DOT, lexer.start, reader->loc, lexer.val};
     }
   } else if (ch == '?') {
     if (reader->eof()) {
-      return new Token{TK_OP_QN, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_QN, lexer.start, reader->loc, lexer.val};
     }
 
     auto loc1 = reader->loc;
@@ -331,12 +331,12 @@ Token *lex (Reader *reader) {
 
     if (ch1 == '.') {
       lexer.val += ch1;
-      return new Token{TK_OP_QN_DOT, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_QN_DOT, lexer.start, reader->loc, lexer.val};
     } else if (ch1 == '?') {
       lexer.val += ch1;
 
       if (reader->eof()) {
-        return new Token{TK_OP_QN_QN, lexer.start, reader->loc, lexer.val};
+        return Token{TK_OP_QN_QN, lexer.start, reader->loc, lexer.val};
       }
 
       auto loc2 = reader->loc;
@@ -344,18 +344,18 @@ Token *lex (Reader *reader) {
 
       if (ch2 == '=') {
         lexer.val += ch2;
-        return new Token{TK_OP_QN_QN_EQ, lexer.start, reader->loc, lexer.val};
+        return Token{TK_OP_QN_QN_EQ, lexer.start, reader->loc, lexer.val};
       } else {
         reader->seek(loc2);
-        return new Token{TK_OP_QN_QN, lexer.start, reader->loc, lexer.val};
+        return Token{TK_OP_QN_QN, lexer.start, reader->loc, lexer.val};
       }
     } else {
       reader->seek(loc1);
-      return new Token{TK_OP_QN, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_QN, lexer.start, reader->loc, lexer.val};
     }
   } else if (ch == '/') {
     if (reader->eof()) {
-      return new Token{TK_OP_SLASH, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_SLASH, lexer.start, reader->loc, lexer.val};
     }
 
     auto loc1 = reader->loc;
@@ -363,10 +363,10 @@ Token *lex (Reader *reader) {
 
     if (ch1 == '=') {
       lexer.val += ch1;
-      return new Token{TK_OP_SLASH_EQ, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_SLASH_EQ, lexer.start, reader->loc, lexer.val};
     } else if (ch1 != '/' && ch1 != '*') {
       reader->seek(loc1);
-      return new Token{TK_OP_SLASH, lexer.start, reader->loc, lexer.val};
+      return Token{TK_OP_SLASH, lexer.start, reader->loc, lexer.val};
     } else {
       reader->seek(loc1);
     }
@@ -374,13 +374,13 @@ Token *lex (Reader *reader) {
 
   if (tokenIsWhitespace(ch)) {
     lexWalk(reader, lexer, tokenIsWhitespace);
-    return new Token{TK_WHITESPACE, lexer.start, reader->loc, lexer.val};
+    return Token{TK_WHITESPACE, lexer.start, reader->loc, lexer.val};
   } else if (tokenIsLitIdStart(ch)) {
     lexWalk(reader, lexer, tokenIsLitIdContinue);
 
     if (lexer.val == "as") {
       if (reader->eof()) {
-        return new Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
+        return Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
       }
 
       auto loc1 = reader->loc;
@@ -388,63 +388,63 @@ Token *lex (Reader *reader) {
 
       if (ch1 == '?') {
         lexer.val += ch1;
-        return new Token{TK_KW_AS_SAFE, lexer.start, reader->loc, lexer.val};
+        return Token{TK_KW_AS_SAFE, lexer.start, reader->loc, lexer.val};
       } else {
         reader->seek(loc1);
-        return new Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
+        return Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
       }
     }
 
-    if (lexer.val == "async") return new Token{TK_KW_ASYNC, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "await") return new Token{TK_KW_AWAIT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "break") return new Token{TK_KW_BREAK, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "case") return new Token{TK_KW_CASE, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "catch") return new Token{TK_KW_CATCH, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "class") return new Token{TK_KW_CLASS, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "const") return new Token{TK_KW_CONST, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "continue") return new Token{TK_KW_CONTINUE, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "default") return new Token{TK_KW_DEFAULT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "deinit") return new Token{TK_KW_DEINIT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "elif") return new Token{TK_KW_ELIF, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "else") return new Token{TK_KW_ELSE, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "enum") return new Token{TK_KW_ENUM, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "export") return new Token{TK_KW_EXPORT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "fallthrough") return new Token{TK_KW_FALLTHROUGH, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "false") return new Token{TK_KW_FALSE, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "fn") return new Token{TK_KW_FN, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "from") return new Token{TK_KW_FROM, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "if") return new Token{TK_KW_IF, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "import") return new Token{TK_KW_IMPORT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "in") return new Token{TK_KW_IN, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "init") return new Token{TK_KW_INIT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "interface") return new Token{TK_KW_INTERFACE, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "is") return new Token{TK_KW_IS, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "loop") return new Token{TK_KW_LOOP, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "main") return new Token{TK_KW_MAIN, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "match") return new Token{TK_KW_MATCH, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "mut") return new Token{TK_KW_MUT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "new") return new Token{TK_KW_NEW, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "nil") return new Token{TK_KW_NIL, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "obj") return new Token{TK_KW_OBJ, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "op") return new Token{TK_KW_OP, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "override") return new Token{TK_KW_OVERRIDE, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "priv") return new Token{TK_KW_PRIV, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "prot") return new Token{TK_KW_PROT, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "pub") return new Token{TK_KW_PUB, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "return") return new Token{TK_KW_RETURN, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "static") return new Token{TK_KW_STATIC, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "super") return new Token{TK_KW_SUPER, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "this") return new Token{TK_KW_THIS, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "throw") return new Token{TK_KW_THROW, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "true") return new Token{TK_KW_TRUE, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "try") return new Token{TK_KW_TRY, lexer.start, reader->loc, lexer.val};
-    if (lexer.val == "union") return new Token{TK_KW_UNION, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "async") return Token{TK_KW_ASYNC, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "await") return Token{TK_KW_AWAIT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "break") return Token{TK_KW_BREAK, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "case") return Token{TK_KW_CASE, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "catch") return Token{TK_KW_CATCH, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "class") return Token{TK_KW_CLASS, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "const") return Token{TK_KW_CONST, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "continue") return Token{TK_KW_CONTINUE, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "default") return Token{TK_KW_DEFAULT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "deinit") return Token{TK_KW_DEINIT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "elif") return Token{TK_KW_ELIF, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "else") return Token{TK_KW_ELSE, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "enum") return Token{TK_KW_ENUM, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "export") return Token{TK_KW_EXPORT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "fallthrough") return Token{TK_KW_FALLTHROUGH, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "false") return Token{TK_KW_FALSE, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "fn") return Token{TK_KW_FN, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "from") return Token{TK_KW_FROM, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "if") return Token{TK_KW_IF, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "import") return Token{TK_KW_IMPORT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "in") return Token{TK_KW_IN, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "init") return Token{TK_KW_INIT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "interface") return Token{TK_KW_INTERFACE, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "is") return Token{TK_KW_IS, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "loop") return Token{TK_KW_LOOP, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "main") return Token{TK_KW_MAIN, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "match") return Token{TK_KW_MATCH, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "mut") return Token{TK_KW_MUT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "new") return Token{TK_KW_NEW, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "nil") return Token{TK_KW_NIL, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "obj") return Token{TK_KW_OBJ, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "op") return Token{TK_KW_OP, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "override") return Token{TK_KW_OVERRIDE, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "priv") return Token{TK_KW_PRIV, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "prot") return Token{TK_KW_PROT, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "pub") return Token{TK_KW_PUB, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "return") return Token{TK_KW_RETURN, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "static") return Token{TK_KW_STATIC, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "super") return Token{TK_KW_SUPER, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "this") return Token{TK_KW_THIS, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "throw") return Token{TK_KW_THROW, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "true") return Token{TK_KW_TRUE, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "try") return Token{TK_KW_TRY, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "union") return Token{TK_KW_UNION, lexer.start, reader->loc, lexer.val};
 
-    return new Token{TK_LIT_ID, lexer.start, reader->loc, lexer.val};
+    return Token{TK_LIT_ID, lexer.start, reader->loc, lexer.val};
   } else if (tokenIsDigit(ch)) {
     if (ch == '0') {
       if (reader->eof()) {
-        return new Token{TK_LIT_INT_DEC, lexer.start, reader->loc, lexer.val};
+        return Token{TK_LIT_INT_DEC, lexer.start, reader->loc, lexer.val};
       }
 
       auto loc1 = reader->loc;
@@ -500,7 +500,7 @@ Token *lex (Reader *reader) {
       }
     }
 
-    return new Token{TK_LIT_STR, lexer.start, reader->loc, lexer.val};
+    return Token{TK_LIT_STR, lexer.start, reader->loc, lexer.val};
   } else if (ch == '/') {
     auto ch1 = reader->next();
 
@@ -508,7 +508,7 @@ Token *lex (Reader *reader) {
       lexer.val += ch1;
       lexWalk(reader, lexer, tokenIsNotNewline);
 
-      return new Token{TK_COMMENT_LINE, lexer.start, reader->loc, lexer.val};
+      return Token{TK_COMMENT_LINE, lexer.start, reader->loc, lexer.val};
     } else {
       lexer.val += ch1;
 
@@ -538,7 +538,7 @@ Token *lex (Reader *reader) {
         lexer.val += ch2;
       }
 
-      return new Token{TK_COMMENT_BLOCK, lexer.start, reader->loc, lexer.val};
+      return Token{TK_COMMENT_BLOCK, lexer.start, reader->loc, lexer.val};
     }
   } else if (ch == '\'') {
     if (reader->eof()) {
@@ -580,7 +580,7 @@ Token *lex (Reader *reader) {
     }
 
     lexer.val += ch3;
-    return new Token{TK_LIT_CHAR, lexer.start, reader->loc, lexer.val};
+    return Token{TK_LIT_CHAR, lexer.start, reader->loc, lexer.val};
   }
 
   throw SyntaxError(reader, lexer.start, E0000);

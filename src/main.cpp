@@ -10,30 +10,20 @@
 #include "Codegen.hpp"
 #include "Error.hpp"
 
+const char outputFlags[] = "-Wno-constant-logical-operand -lm";
+
 int main () {
   try {
     auto reader = Reader("program.adl");
-    auto ast = new AST();
-
-    while (!reader.eof()) {
-      auto stmt = parse(&reader);
-
-      if (stmt->type == STMT_END) {
-        delete stmt;
-        break;
-      }
-
-      ast->add(stmt);
-    }
-
-    auto code = codegen(ast);
+    auto ast = analyze(&reader);
+    auto result = codegen(&ast);
     auto f = std::ofstream("build/output.c");
 
-    f << code;
+    f << result.output;
     f.close();
-    system("gcc build/output.c -Wno-constant-logical-operand -lm -o build/a.out");
 
-    delete ast;
+    system((std::string("gcc build/output.c -o build/a.out ") + outputFlags).c_str());
+
     return EXIT_SUCCESS;
   } catch (const SyntaxError &err) {
     std::cerr << err.what() << std::endl;

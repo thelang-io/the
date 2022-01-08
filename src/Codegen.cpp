@@ -6,1031 +6,650 @@
  */
 
 #include <algorithm>
-#include <climits>
-#include <tuple>
 #include "Codegen.hpp"
 #include "Error.hpp"
 
-using CodegenReturn = std::tuple<std::string, std::string, std::string>;
+std::string codegenBlock (Codegen &, const ASTBlock &);
 
-void codegenDeclarations (Codegen *codegen, const std::vector<Stmt *> &body);
-void codegenDefinitions (Codegen *codegen, const std::vector<Stmt *> &body);
-CodegenReturn codegenStmt (Codegen *codegen, const Stmt *stmt);
-
-Codegen::~Codegen () {
-  delete this->varMap;
+std::string codegenName (const std::string &name) {
+  return "__THE_" + name;
 }
 
-std::string codegenBlock (Codegen *codegen, const Block *block) {
-  auto code = std::string();
-  auto cleanup = std::string();
-  codegen->indent += 2;
-
-  for (auto stmt : block->body) {
-    auto [stmtSetUp, stmtCode, stmtCleanUp] = codegenStmt(codegen, stmt);
-
-    code += stmtSetUp + stmtCode;
-    cleanup += stmtCleanUp;
+std::string codegenType (Codegen &codegen, const Type &type, bool mut) {
+  if (type.isBool()) {
+    codegen.headers.stdbool = true;
   }
 
-  codegen->indent -= 2;
-  codegenDeclarations(codegen, block->body);
-  codegenDefinitions(codegen, block->body);
+  if (type.isBool()) return std::string(mut ? "" : "const ") + "bool ";
+  if (type.isByte()) return std::string(mut ? "" : "const ") + "unsigned char ";
+  if (type.isChar()) return std::string(mut ? "" : "const ") + "char ";
+  if (type.isFloat()) return std::string(mut ? "" : "const ") + "double ";
+  if (type.isF32()) return std::string(mut ? "" : "const ") + "float ";
+  if (type.isF64()) return std::string(mut ? "" : "const ") + "double ";
+  if (type.isInt()) return std::string(mut ? "" : "const ") + "long ";
+  if (type.isI8()) return std::string(mut ? "" : "const ") + "char ";
+  if (type.isI16()) return std::string(mut ? "" : "const ") + "short ";
+  if (type.isI32()) return std::string(mut ? "" : "const ") + "long ";
+  if (type.isI64()) return std::string(mut ? "" : "const ") + "long long ";
+  if (type.isStr()) return std::string(mut ? "" : "const ") + "struct str *";
+  if (type.isU8()) return std::string(mut ? "" : "const ") + "unsigned char ";
+  if (type.isU16()) return std::string(mut ? "" : "const ") + "unsigned short ";
+  if (type.isU32()) return std::string(mut ? "" : "const ") + "unsigned long ";
+  if (type.isU64()) return std::string(mut ? "" : "const ") + "unsigned long long ";
 
-  return code + cleanup;
+  throw Error("Tried to codegen unknown type");
 }
 
-std::string codegenIdentifier (const Identifier *id) {
-  return "__THE_" + id->name->val;
+std::string codegenTypeFormat (const Type &type) {
+  if (type.isBool()) return "%s";
+  if (type.isByte()) return "%x";
+  if (type.isChar()) return "%c";
+  if (type.isFloat()) return "%f";
+  if (type.isF32()) return "%f";
+  if (type.isF64()) return "%f";
+  if (type.isInt()) return "%ld";
+  if (type.isI8()) return "%d";
+  if (type.isI16()) return "%d";
+  if (type.isI32()) return "%ld";
+  if (type.isI64()) return "%lld";
+  if (type.isFn()) return "%s";
+  if (type.isObj()) return "%s";
+  if (type.isStr()) return "%s";
+  if (type.isU8()) return "%u";
+  if (type.isU16()) return "%u";
+  if (type.isU32()) return "%lu";
+  if (type.isU64()) return "%llu";
+
+  throw Error("Tried to codegen unknown type format");
 }
 
-std::string codegenExprAccess (const ExprAccess *exprAccess) {
-  if (exprAccess->type == EXPR_ACCESS_EXPR_MEMBER) {
-    auto exprMemberObj = std::get<ExprMember *>(exprAccess->body);
-    return codegenExprAccess(exprMemberObj->obj) + "->" + exprMemberObj->prop->name->val;
-  } else if (exprAccess->type == EXPR_ACCESS_IDENTIFIER) {
-    return codegenIdentifier(std::get<Identifier *>(exprAccess->body));
+std::string codegenExprAccess (const ASTExprAccess &exprAccess) {
+  if (std::holds_alternative<ASTId>(exprAccess)) {
+    auto id = std::get<ASTId>(exprAccess);
+    return codegenName(id.v.name);
   }
 
-  throw Error("Tried to access unknown expression access");
+  throw Error("TODO 2");
 }
 
-std::string codegenObjInitFn (const std::string &name) {
-  return name.substr(6) + "_init";
-}
-
-VarMapItemType codegenStmtExprType (Codegen *codegen, const StmtExpr *stmtExpr) {
-  if (stmtExpr->type == STMT_EXPR_EXPR) {
-    auto expr = std::get<Expr *>(stmtExpr->body);
-
-    if (expr->type == EXPR_ACCESS) {
-      auto name = codegenExprAccess(std::get<ExprAccess *>(expr->body));
-      return codegen->varMap->get(name)->type;
-    } else if (expr->type == EXPR_ASSIGN) {
-      auto exprAssign = std::get<ExprAssign *>(expr->body);
-      auto name = codegenExprAccess(exprAssign->left);
-
-      return codegen->varMap->get(name)->type;
-    } else if (expr->type == EXPR_BINARY) {
-      auto exprBinary = std::get<ExprBinary *>(expr->body);
-      auto exprBinaryLeftType = codegenStmtExprType(codegen, exprBinary->left);
-      auto exprBinaryRightType = codegenStmtExprType(codegen, exprBinary->right);
-
-      if (
-        exprBinaryLeftType == VAR_CHAR ||
-        exprBinaryLeftType == VAR_STR ||
-        exprBinaryRightType == VAR_CHAR ||
-        exprBinaryRightType == VAR_STR
-      ) {
-        if (exprBinary->op->type == TK_OP_PLUS) {
-          return VAR_STR;
-        } else {
-          throw Error("Tried operation other than concatenation on string");
-        }
-      } else if (
-        exprBinaryLeftType == VAR_FLOAT ||
-        exprBinaryRightType == VAR_FLOAT ||
-        exprBinary->op->type == TK_OP_SLASH ||
-        exprBinary->op->type == TK_OP_STAR ||
-        exprBinary->op->type == TK_OP_STAR_STAR
-      ) {
-        return VAR_FLOAT;
-      } else {
-        return VAR_INT;
-      }
-    } else if (expr->type == EXPR_CALL) {
-      auto exprCall = std::get<ExprCall *>(expr->body);
-      auto name = codegenExprAccess(exprCall->callee);
-
-      return codegen->varMap->getFn(name)->fn->returnType;
-    } else if (expr->type == EXPR_COND) {
-      auto exprCond = std::get<ExprCond *>(expr->body);
-      auto exprCondBodyType = codegenStmtExprType(codegen, exprCond->body);
-      auto exprCondAltType = codegenStmtExprType(codegen, exprCond->alt);
-
-      if (exprCondBodyType != exprCondAltType) {
-        throw Error("Incompatible operand types");
-      }
-
-      return exprCondBodyType;
-    } else if (expr->type == EXPR_OBJ) {
-      return VAR_OBJ;
-    } else if (expr->type == EXPR_UNARY) {
-      auto exprUnary = std::get<ExprUnary *>(expr->body);
-      auto exprType = codegenStmtExprType(codegen, exprUnary->arg);
-
-      if (exprType != VAR_FLOAT && exprType != VAR_INT) {
-        return VAR_INT;
-      }
-
-      return exprType;
-    }
-  } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
-    auto id = std::get<Identifier *>(stmtExpr->body);
-    auto name = codegenIdentifier(id);
-
-    return codegen->varMap->get(name)->type;
-  } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
-    auto lit = std::get<Literal *>(stmtExpr->body);
-
-    if (lit->val->type == TK_KW_FALSE || lit->val->type == TK_KW_TRUE) {
-      codegen->headers.stdbool = true;
-    } else if (lit->val->type == TK_LIT_STR) {
-      codegen->functions.str_from_cstr = true;
-    }
-
-    if (lit->val->type == TK_KW_FALSE) return VAR_BOOL;
-    if (lit->val->type == TK_KW_TRUE) return VAR_BOOL;
-    if (lit->val->type == TK_LIT_CHAR) return VAR_CHAR;
-    if (lit->val->type == TK_LIT_FLOAT) return VAR_FLOAT;
-    if (lit->val->type == TK_LIT_INT_BIN) return VAR_INT;
-    if (lit->val->type == TK_LIT_INT_DEC) return VAR_INT;
-    if (lit->val->type == TK_LIT_INT_HEX) return VAR_INT;
-    if (lit->val->type == TK_LIT_INT_OCT) return VAR_INT;
-    if (lit->val->type == TK_LIT_STR) return VAR_STR;
-  }
-
-  throw Error("Tried to access unknown expr type");
-}
-
-VarMapItemType codegenType (Codegen *codegen, const Identifier *type, const StmtExpr *init = nullptr) {
-  if (type != nullptr) {
-    if (type->name->val == "bool") {
-      codegen->headers.stdbool = true;
-    }
-
-    if (type->name->val == "bool") return VAR_BOOL;
-    if (type->name->val == "byte") return VAR_BYTE;
-    if (type->name->val == "char") return VAR_CHAR;
-    if (type->name->val == "float") return VAR_FLOAT;
-    if (type->name->val == "f32") return VAR_F32;
-    if (type->name->val == "f64") return VAR_F64;
-    if (type->name->val == "int") return VAR_INT;
-    if (type->name->val == "i8") return VAR_I8;
-    if (type->name->val == "i16") return VAR_I16;
-    if (type->name->val == "i32") return VAR_I32;
-    if (type->name->val == "i64") return VAR_I64;
-    if (type->name->val == "str") return VAR_STR;
-    if (type->name->val == "u8") return VAR_U8;
-    if (type->name->val == "u16") return VAR_U16;
-    if (type->name->val == "u32") return VAR_U32;
-    if (type->name->val == "u64") return VAR_U64;
-
-    try {
-      auto name = codegenIdentifier(type);
-      return codegen->varMap->get(name)->type;
-    } catch (const Error &err) {
-    }
-  }
-
-  if (init != nullptr) {
-    return codegenStmtExprType(codegen, init);
-  }
-
-  throw Error("Tried to access unknown type");
-}
-
-std::string codegenTypeFormat (VarMapItemType type) {
-  if (type == VAR_BOOL) return "%s";
-  if (type == VAR_BYTE) return "%x";
-  if (type == VAR_CHAR) return "%c";
-  if (type == VAR_FLOAT) return "%f";
-  if (type == VAR_F32) return "%f";
-  if (type == VAR_F64) return "%f";
-  if (type == VAR_INT) return "%ld";
-  if (type == VAR_I8) return "%d";
-  if (type == VAR_I16) return "%d";
-  if (type == VAR_I32) return "%ld";
-  if (type == VAR_I64) return "%lld";
-  if (type == VAR_FN) return "%s";
-  if (type == VAR_OBJ) return "%s";
-  if (type == VAR_STR) return "%s";
-  if (type == VAR_U8) return "%u";
-  if (type == VAR_U16) return "%u";
-  if (type == VAR_U32) return "%lu";
-  if (type == VAR_U64) return "%llu";
-
-  throw Error("Unknown print argument type");
-}
-
-std::string codegenTypeStr (VarMapItemType type, bool mut = false) {
-  if (type == VAR_BOOL) return std::string(mut ? "" : "const ") + "bool ";
-  if (type == VAR_BYTE) return std::string(mut ? "" : "const ") + "unsigned char ";
-  if (type == VAR_CHAR) return std::string(mut ? "" : "const ") + "char ";
-  if (type == VAR_FLOAT) return std::string(mut ? "" : "const ") + "double ";
-  if (type == VAR_F32) return std::string(mut ? "" : "const ") + "float ";
-  if (type == VAR_F64) return std::string(mut ? "" : "const ") + "double ";
-  if (type == VAR_INT) return std::string(mut ? "" : "const ") + "long ";
-  if (type == VAR_I8) return std::string(mut ? "" : "const ") + "char ";
-  if (type == VAR_I16) return std::string(mut ? "" : "const ") + "short ";
-  if (type == VAR_I32) return std::string(mut ? "" : "const ") + "long ";
-  if (type == VAR_I64) return std::string(mut ? "" : "const ") + "long long ";
-  if (type == VAR_STR) return std::string(mut ? "" : "const ") + "struct str *";
-  if (type == VAR_U8) return std::string(mut ? "" : "const ") + "unsigned char ";
-  if (type == VAR_U16) return std::string(mut ? "" : "const ") + "unsigned short ";
-  if (type == VAR_U32) return std::string(mut ? "" : "const ") + "unsigned long ";
-  if (type == VAR_U64) return std::string(mut ? "" : "const ") + "unsigned long long ";
-
-  throw Error("Tried to access unknown type str");
-}
-
-std::string codegenTypeStr (VarMapItemType type, const std::string &name, bool mut = false) {
-  if (type == VAR_OBJ) {
-    return std::string(mut ? "" : "const ") + "struct " + name + " *";
-  }
-
-  return codegenTypeStr(type, mut);
-}
-
-CodegenReturn codegenStmtExpr (Codegen *codegen, const StmtExpr *stmtExpr) {
+std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &codegen, const ASTNodeExpr &nodeExpr) {
   auto setUp = std::string();
   auto code = std::string();
   auto cleanUp = std::string();
 
-  if (stmtExpr->parenthesized) {
+  if (nodeExpr.parenthesized) {
     code += "(";
   }
 
-  if (stmtExpr->type == STMT_EXPR_EXPR) {
-    auto expr = std::get<Expr *>(stmtExpr->body);
+  if (std::holds_alternative<ASTExprAccess>(*nodeExpr.expr)) {
+    code += codegenExprAccess(std::get<ASTExprAccess>(*nodeExpr.expr));
+  } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.expr)) {
+    auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.expr);
+    auto leftExprAccess = codegenExprAccess(exprAssign.left);
+    auto [rightNodeExprSetUp, rightNodeExprCode, rightNodeExprCleanUp] = codegenNodeExpr(codegen, exprAssign.right);
 
-    if (expr->type == EXPR_ACCESS) {
-      code += codegenExprAccess(std::get<ExprAccess *>(expr->body));
-    } else if (expr->type == EXPR_ASSIGN) {
-      auto exprAssign = std::get<ExprAssign *>(expr->body);
-      auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, exprAssign->right);
+    if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) { // TODO
+    } else if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_AND) {
+      code += leftExprAccess + " = " + leftExprAccess + " && " + rightNodeExprCode;
+    } else if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_OR) {
+      code += leftExprAccess + " = " + leftExprAccess + " || " + rightNodeExprCode;
+    } else if (exprAssign.op == AST_EXPR_ASSIGN_POWER) {
+      codegen.headers.math = true;
+      code += leftExprAccess + " = pow(" + leftExprAccess + ", " + rightNodeExprCode + ")";
+    } else {
+      code += leftExprAccess;
 
-      code += codegenExprAccess(exprAssign->left);
+      if (exprAssign.op == AST_EXPR_ASSIGN_ADD) code += " += ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_AND) code += " &= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_OR) code += " |= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_XOR) code += " ^= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) code += " ?\?= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_DIVIDE) code += " /= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_EQUAL) code += " = ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_LEFT_SHIFT) code += " <<= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_MULTIPLY) code += " *= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_REMAINDER) code += " %= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_RIGHT_SHIFT) code += " >>= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_SUBTRACT) code += " -= ";
 
-      if (exprAssign->op->type == TK_OP_STAR_STAR_EQ) {
-        code += " = pow(" + codegenExprAccess(exprAssign->left) + ", " + stmtExprCode + ")";
-      } else if (exprAssign->op->type == TK_OP_AND_AND_EQ) {
-        code += " = " + codegenExprAccess(exprAssign->left) + " && " + stmtExprCode;
-      } else if (exprAssign->op->type == TK_OP_OR_OR_EQ) {
-        code += " = " + codegenExprAccess(exprAssign->left) + " || " + stmtExprCode;
-      } else {
-        code += " " + exprAssign->op->val + " " + stmtExprCode;
-      }
+      code += rightNodeExprCode;
+    }
 
-      setUp += stmtExprSetUp;
-      cleanUp += stmtExprCleanUp;
-    } else if (expr->type == EXPR_BINARY) {
-      auto exprBinary = std::get<ExprBinary *>(expr->body);
-      auto [stmtExprLeftSetUp, stmtExprLeftCode, stmtExprLeftCleanUp] = codegenStmtExpr(codegen, exprBinary->left);
-      auto [stmtExprRightSetUp, stmtExprRightCode, stmtExprRightCleanUp] = codegenStmtExpr(codegen, exprBinary->right);
+    setUp += rightNodeExprSetUp;
+    cleanUp += rightNodeExprCleanUp;
+  } else if (std::holds_alternative<ASTExprBinary>(*nodeExpr.expr)) {
+    auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.expr);
+    auto [leftNodeExprSetUp, leftNodeExprCode, leftNodeExprCleanUp] = codegenNodeExpr(codegen, exprBinary.left);
+    auto [rightNodeExprSetUp, rightNodeExprCode, rightNodeExprCleanUp] = codegenNodeExpr(codegen, exprBinary.right);
 
-      if (exprBinary->op->type == TK_OP_STAR_STAR) {
-        codegen->headers.math = true;
-        code += "pow(" + stmtExprLeftCode + ", " + stmtExprRightCode + ")";
-      } else if (exprBinary->op->type == TK_OP_SLASH || exprBinary->op->type == TK_OP_STAR) {
-        code += "(double) " + stmtExprLeftCode + " " + exprBinary->op->val + " (double) " + stmtExprRightCode;
-      } else {
-        code += stmtExprLeftCode + " " + exprBinary->op->val + " " + stmtExprRightCode;
-      }
+    if (exprBinary.op == AST_EXPR_BINARY_COALESCE) { // TODO
+    } else if (exprBinary.op == AST_EXPR_BINARY_POWER) {
+      codegen.headers.math = true;
+      code += "pow(" + leftNodeExprCode + ", " + rightNodeExprCode + ")";
+    } else {
+      code += leftNodeExprCode;
 
-      setUp += stmtExprLeftSetUp;
-      setUp += stmtExprRightSetUp;
-      cleanUp += stmtExprRightCleanUp;
-      cleanUp += stmtExprLeftCleanUp;
-    } else if (expr->type == EXPR_CALL) {
-      auto exprCall = std::get<ExprCall *>(expr->body);
+      if (exprBinary.op == AST_EXPR_BINARY_ADD) code += " + ";
+      if (exprBinary.op == AST_EXPR_BINARY_BITWISE_AND) code += " & ";
+      if (exprBinary.op == AST_EXPR_BINARY_BITWISE_OR) code += " | ";
+      if (exprBinary.op == AST_EXPR_BINARY_BITWISE_XOR) code += " ^ ";
+      if (exprBinary.op == AST_EXPR_BINARY_DIVIDE) code += " / ";
+      if (exprBinary.op == AST_EXPR_BINARY_EQUAL) code += " == ";
+      if (exprBinary.op == AST_EXPR_BINARY_GREATER_EQUAL) code += " >= ";
+      if (exprBinary.op == AST_EXPR_BINARY_GREATER_THAN) code += " > ";
+      if (exprBinary.op == AST_EXPR_BINARY_LEFT_SHIFT) code += " << ";
+      if (exprBinary.op == AST_EXPR_BINARY_LESS_EQUAL) code += " <= ";
+      if (exprBinary.op == AST_EXPR_BINARY_LESS_THAN) code += " < ";
+      if (exprBinary.op == AST_EXPR_BINARY_LOGICAL_AND) code += " && ";
+      if (exprBinary.op == AST_EXPR_BINARY_LOGICAL_OR) code += " || ";
+      if (exprBinary.op == AST_EXPR_BINARY_MULTIPLY) code += " * ";
+      if (exprBinary.op == AST_EXPR_BINARY_NOT_EQUAL) code += " != ";
+      if (exprBinary.op == AST_EXPR_BINARY_REMAINDER) code += " % ";
+      if (exprBinary.op == AST_EXPR_BINARY_RIGHT_SHIFT) code += " >> ";
+      if (exprBinary.op == AST_EXPR_BINARY_SUBTRACT) code += " - ";
 
-      if (
-        exprCall->callee->type == EXPR_ACCESS_IDENTIFIER &&
-        std::get<Identifier *>(exprCall->callee->body)->name->val == "print"
-      ) {
-        codegen->headers.stdio = true;
-        code += R"(printf(")";
+      code += rightNodeExprCode;
+    }
+
+    setUp += leftNodeExprSetUp;
+    cleanUp += leftNodeExprCleanUp;
+    setUp += rightNodeExprSetUp;
+    cleanUp += rightNodeExprCleanUp;
+  } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.expr)) {
+    auto exprCall = std::get<ASTExprCall>(*nodeExpr.expr);
+
+    if (exprCall.fn->builtin) {
+      if (exprCall.fn->name == "print") {
+        codegen.headers.stdio = true;
 
         auto separator = std::string(R"(" ")");
         auto terminator = std::string(R"("\n")");
+        auto argsCode = std::string();
         auto argIdx = static_cast<std::size_t>(0);
 
-        for (auto arg : exprCall->args) {
-          if (arg->id != nullptr && arg->id->name->val == "separator") {
-            if (arg->expr->type == STMT_EXPR_LITERAL) {
-              auto lit = std::get<Literal *>(arg->expr->body);
+        for (auto arg : exprCall.args) {
+          if (arg.id != std::nullopt && arg.id == "separator") {
+            auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, arg.expr);
 
-              if (lit->val->type == TK_LIT_STR) {
-                separator = lit->val->val;
-                continue;
-              }
-            }
+            separator = nodeExprCode + "->c";
+            setUp += nodeExprSetUp;
+            cleanUp += nodeExprCleanUp;
+          } else if (arg.id != std::nullopt && arg.id == "terminator") {
+            auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, arg.expr);
 
-            auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, arg->expr);
-
-            separator = stmtExprCode;
-            setUp += stmtExprSetUp;
-            cleanUp += stmtExprCleanUp;
-          } else if (arg->id != nullptr && arg->id->name->val == "terminator") {
-            if (arg->expr->type == STMT_EXPR_LITERAL) {
-              auto lit = std::get<Literal *>(arg->expr->body);
-
-              if (lit->val->type == TK_LIT_STR) {
-                terminator = lit->val->val;
-                continue;
-              }
-            }
-
-            auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, arg->expr);
-
-            terminator = stmtExprCode;
-            setUp += stmtExprSetUp;
-            cleanUp += stmtExprCleanUp;
-          } else if (arg->id != nullptr) {
+            terminator = nodeExprCode + "->c";
+            setUp += nodeExprSetUp;
+            cleanUp += nodeExprCleanUp;
+          } else if (arg.id != std::nullopt) {
             throw Error("Unknown print argument");
           }
         }
 
-        for (auto arg : exprCall->args) {
-          if (arg->id != nullptr) {
+        code += "printf(\"";
+
+        for (auto arg : exprCall.args) {
+          if (arg.id != std::nullopt) {
             continue;
           }
 
-          code += (argIdx != 0 ? "%s" : "");
-          auto exprType = codegenStmtExprType(codegen, arg->expr);
-          code += codegenTypeFormat(exprType);
+          code += argIdx == 0 ? "" : "%s";
+          code += codegenTypeFormat(arg.expr.type);
+          argsCode += argIdx == 0 ? "" : separator + ", ";
+
+          if (arg.expr.type.isBool()) {
+            argsCode += "(";
+          }
+
+          auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, arg.expr);
+          argsCode += nodeExprCode;
+
+          if (arg.expr.type.isBool()) {
+            argsCode += R"() == true ? "true" : "false")";
+          } else if (arg.expr.type.isStr()) {
+            argsCode += "->c";
+          }
+
+          argsCode += ", ";
+          setUp += nodeExprSetUp;
+          cleanUp += nodeExprCleanUp;
 
           argIdx++;
         }
 
-        code += R"(%s", )";
-        argIdx = 0;
-
-        for (auto arg : exprCall->args) {
-          if (arg->id != nullptr) {
-            continue;
-          }
-
-          code += argIdx != 0 ? separator + ", " : "";
-
-          if (arg->expr->type == STMT_EXPR_LITERAL) {
-            auto lit = std::get<Literal *>(arg->expr->body);
-
-            if (lit->val->type == TK_LIT_STR) {
-              code += lit->val->val + ", ";
-              argIdx++;
-
-              continue;
-            }
-          }
-
-          auto exprType = codegenStmtExprType(codegen, arg->expr);
-          auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, arg->expr);
-
-          if (exprType == VAR_BOOL || exprType == VAR_STR) {
-            code += "(";
-          }
-
-          code += stmtExprCode;
-
-          if (exprType == VAR_BOOL) {
-            code += R"() == true ? "true" : "false")";
-          } else if (exprType == VAR_STR) {
-            code += ")->c";
-          }
-
-          code += ", ";
-          setUp += stmtExprSetUp;
-          cleanUp += stmtExprCleanUp;
-
-          argIdx++;
-        }
-
-        code += terminator + ")";
-      } else {
-        auto fnName = codegenExprAccess(exprCall->callee);
-        auto fnMapIt = codegen->varMap->getFn(fnName);
-
-        code += fnMapIt->name;
-        code += "(";
-
-        auto argsCode = std::string();
-        auto optionalArgsCode = std::string();
-        auto idx = static_cast<std::size_t>(0);
-
-        for (auto param : fnMapIt->fn->params) {
-          argsCode += idx == 0 ? "" : ", ";
-
-          if (param->required && idx >= exprCall->args.size()) {
-            throw Error("Missing required function parameter in function call");
-          } else if (param->required) {
-            auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, exprCall->args[idx]->expr);
-
-            argsCode += stmtExprCode;
-            setUp += stmtExprSetUp;
-            cleanUp += stmtExprCleanUp;
-
-            idx++;
-            continue;
-          }
-
-          auto foundArg = static_cast<ExprCallArg *>(nullptr);
-
-          if (idx < exprCall->args.size() && exprCall->args[idx]->id == nullptr) {
-            foundArg = exprCall->args[idx];
-          } else {
-            for (auto arg : exprCall->args) {
-              if (arg->id != nullptr && codegenIdentifier(arg->id) == param->name) {
-                foundArg = arg;
-                break;
-              }
-            }
-          }
-
-          if (foundArg == nullptr) {
-            if (param->type == VAR_BOOL) {
-              argsCode += "false";
-            } else if (
-              param->type == VAR_BYTE ||
-              param->type == VAR_FLOAT ||
-              param->type == VAR_F32 ||
-              param->type == VAR_F64 ||
-              param->type == VAR_INT ||
-              param->type == VAR_I8 ||
-              param->type == VAR_I16 ||
-              param->type == VAR_I32 ||
-              param->type == VAR_I64 ||
-              param->type == VAR_U8 ||
-              param->type == VAR_U16 ||
-              param->type == VAR_U32 ||
-              param->type == VAR_U64
-            ) {
-              argsCode += "0";
-            } else if (param->type == VAR_CHAR) {
-              argsCode += R"('\0')";
-            } else if (param->type == VAR_STR) {
-              codegen->functions.str_init = true;
-              argsCode += R"(str_init(0))";
-            }
-          } else {
-            auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, foundArg->expr);
-
-            argsCode += stmtExprCode;
-            setUp += stmtExprSetUp;
-            cleanUp += stmtExprCleanUp;
-          }
-
-          optionalArgsCode += optionalArgsCode.empty() ? "" : ", ";
-          optionalArgsCode += foundArg == nullptr ? "0" : "1";
-          idx++;
-        }
-
-        if (fnMapIt->fn->optionalParams > 0) {
-          code += "(const char [" + std::to_string(fnMapIt->fn->optionalParams) + "]) {";
-          code += optionalArgsCode;
-          code += "}, ";
-        }
-
-        code += argsCode;
-        code += ")";
+        code += R"(%s", )" + argsCode + terminator + ")";
       }
-    } else if (expr->type == EXPR_COND) {
-      auto exprCond = std::get<ExprCond *>(expr->body);
-      auto [stmtExprCondSetUp, stmtExprCondCode, stmtExprCondCleanUp] = codegenStmtExpr(codegen, exprCond->cond);
-      auto [stmtExprBodySetUp, stmtExprBodyCode, stmtExprBodyCleanUp] = codegenStmtExpr(codegen, exprCond->body);
-      auto [stmtExprAltSetUp, stmtExprAltCode, stmtExprAltCleanUp] = codegenStmtExpr(codegen, exprCond->alt);
+    } else {
+      auto paramIdx = static_cast<std::size_t>(0);
+      code += codegenName(exprCall.fn->name) + "(";
 
-      code += stmtExprCondCode;
-      code += " ? ";
-      code += stmtExprBodyCode;
-      code += " : ";
-      code += stmtExprAltCode;
+      for (auto param : exprCall.fn->params) {
+        auto foundArg = std::optional<ASTExprCallArg>{};
 
-      setUp += stmtExprCondSetUp + stmtExprBodySetUp + stmtExprAltSetUp;
-      cleanUp += stmtExprCondCleanUp + stmtExprBodyCleanUp + stmtExprAltCleanUp;
-    } else if (expr->type == EXPR_UNARY) {
-      auto exprUnary = std::get<ExprUnary *>(expr->body);
-      auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, exprUnary->arg);
+        if (paramIdx < exprCall.args.size() && exprCall.args[paramIdx].id == std::nullopt) {
+          foundArg = exprCall.args[paramIdx];
+        } else {
+          for (auto arg : exprCall.args) {
+            if (arg.id == param.name) {
+              foundArg = arg;
+              break;
+            }
+          }
+        }
 
-      if (exprUnary->prefix) {
-        code += exprUnary->op->val;
-        code += stmtExprCode;
-      } else {
-        code += stmtExprCode;
-        code += exprUnary->op->val;
+        code += paramIdx == 0 ? "" : ", ";
+
+        if (foundArg == std::nullopt) {
+          if (param.type.isBool()) {
+            code += "false";
+          } else if (param.type.isChar()) {
+            code += R"('\0')";
+          } else if (param.type.isStr()) {
+            code += R"("")";
+          } else {
+            code += "0";
+          }
+        } else {
+          auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, foundArg->expr);
+
+          code += nodeExprCode;
+          setUp += nodeExprSetUp;
+          cleanUp += nodeExprCleanUp;
+        }
+
+        paramIdx++;
       }
 
-      setUp += stmtExprSetUp;
-      cleanUp += stmtExprCleanUp;
+      code += ")";
     }
-  } else if (stmtExpr->type == STMT_EXPR_IDENTIFIER) {
-    auto id = std::get<Identifier *>(stmtExpr->body);
-    code += codegenIdentifier(id);
-  } else if (stmtExpr->type == STMT_EXPR_LITERAL) {
-    auto lit = std::get<Literal *>(stmtExpr->body);
+  } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.expr)) {
+    auto exprCond = std::get<ASTExprCond>(*nodeExpr.expr);
+    auto [condNodeExprSetUp, condNodeExprCode, condNodeExprCleanUp] = codegenNodeExpr(codegen, exprCond.cond);
+    auto [bodyNodeExprSetUp, bodyNodeExprCode, bodyNodeExprCleanUp] = codegenNodeExpr(codegen, exprCond.body);
+    auto [altNodeExprSetUp, altNodeExprCode, altNodeExprCleanUp] = codegenNodeExpr(codegen, exprCond.alt);
 
-    if (lit->val->type == TK_LIT_INT_OCT) {
-      auto val = lit->val->val;
+    code += condNodeExprCode;
+    code += " ? ";
+    code += bodyNodeExprCode;
+    code += " : ";
+    code += altNodeExprCode;
+
+    setUp += condNodeExprSetUp;
+    setUp += bodyNodeExprSetUp;
+    setUp += altNodeExprSetUp;
+    cleanUp += condNodeExprCleanUp;
+    cleanUp += bodyNodeExprCleanUp;
+    cleanUp += altNodeExprCleanUp;
+  } else if (std::holds_alternative<ASTExprLit>(*nodeExpr.expr)) {
+    auto nodeExprLit = std::get<ASTExprLit>(*nodeExpr.expr);
+
+    if (nodeExprLit.type == AST_EXPR_LIT_INT_OCT) {
+      auto val = nodeExprLit.val;
 
       val.erase(std::remove(val.begin(), val.end(), 'O'), val.end());
       val.erase(std::remove(val.begin(), val.end(), 'o'), val.end());
 
       code += val;
-    } else if (lit->val->type == TK_LIT_STR) {
-      auto strVar = codegen->varMap->getNewStr();
-      auto valSize = std::to_string(lit->val->val.size() - 2);
-
-      code += strVar->name;
-      setUp += std::string(codegen->indent, ' ');
-      setUp += "struct str *" + strVar->name + " = str_from_cstr(" + lit->val->val + ", " + valSize + ");\n";
-      cleanUp += std::string(codegen->indent, ' ') + "str_deinit(&" + strVar->name + ");\n";
+    } else if (nodeExprLit.type == AST_EXPR_LIT_STR) {
+      codegen.functions.str_from_cstr = true;
+      auto valSize = std::to_string(nodeExprLit.val.size() - 2);
+      code += "str_from_cstr(" + nodeExprLit.val + ", " + valSize + ")";
     } else {
-      code += lit->val->val;
+      code += nodeExprLit.val;
     }
-  } else {
-    throw Error("Tried to access unknown expr");
+  } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.expr)) {
+    auto nodeExprUnary = std::get<ASTExprUnary>(*nodeExpr.expr);
+    auto [argNodeExprSetUp, argNodeExprCode, argNodeExprCleanUp] = codegenNodeExpr(codegen, nodeExprUnary.arg);
+
+    if (!nodeExprUnary.prefix) {
+      code += argNodeExprCode;
+    }
+
+    if (nodeExprUnary.op == AST_EXPR_UNARY_BITWISE_NOT) code += "~";
+    if (nodeExprUnary.op == AST_EXPR_UNARY_DECREMENT) code += "--";
+    if (nodeExprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT) code += "!!";
+    if (nodeExprUnary.op == AST_EXPR_UNARY_INCREMENT) code += "++";
+    if (nodeExprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) code += "!";
+    if (nodeExprUnary.op == AST_EXPR_UNARY_NEGATION) code += "-";
+    if (nodeExprUnary.op == AST_EXPR_UNARY_PLUS) code += "+";
+
+    if (nodeExprUnary.prefix) {
+      code += argNodeExprCode;
+    }
+
+    setUp += argNodeExprSetUp;
+    cleanUp += argNodeExprCleanUp;
   }
 
-  if (stmtExpr->parenthesized) {
+  if (nodeExpr.parenthesized) {
     code += ")";
   }
 
   return std::make_tuple(setUp, code, cleanUp);
 }
 
-void codegenDeclarations (Codegen *codegen, const std::vector<Stmt *> &body) {
-  for (auto stmt : body) {
-    if (stmt->type == STMT_FN_DECL) {
-      auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
-      auto hiddenName = codegenIdentifier(stmtFnDecl->id);
-      auto fnVar = codegen->varMap->getFn(hiddenName);
-
-      codegen->functionDeclarationsCode += codegenTypeStr(fnVar->fn->returnType);
-      codegen->functionDeclarationsCode += fnVar->name + " (";
-
-      if (fnVar->fn->params.empty()) {
-        codegen->functionDeclarationsCode += "void";
-      } else {
-        auto paramsCode = std::string();
-        auto idx = static_cast<std::size_t>(0);
-
-        for (auto param : fnVar->fn->params) {
-          auto paramTypeStr = codegenTypeStr(param->type);
-
-          paramsCode += idx == 0 ? "" : ", ";
-          paramsCode += paramTypeStr.back() == ' ' ? paramTypeStr.substr(0, paramTypeStr.length() - 1) : paramTypeStr;
-          idx++;
-        }
-
-        if (fnVar->fn->optionalParams > 0) {
-          codegen->functionDeclarationsCode += "const char [" + std::to_string(fnVar->fn->optionalParams) + "], ";
-        }
-
-        codegen->functionDeclarationsCode += paramsCode;
-      }
-
-      codegen->functionDeclarationsCode += ");\n";
-    } else if (stmt->type == STMT_OBJ_DECL) {
-      codegen->headers.stdlib = true;
-
-      auto stmtObjDecl = std::get<StmtObjDecl *>(stmt->body);
-      auto hiddenName = codegenIdentifier(stmtObjDecl->id);
-      auto objVar = codegen->varMap->getObj(hiddenName);
-
-      codegen->structDeclarationsCode += "struct " + objVar->name + " {\n";
-
-      for (auto field : objVar->obj->fields) {
-        codegen->structDeclarationsCode += "  " + codegenTypeStr(field->type, field->typeName, true);
-        codegen->structDeclarationsCode += field->name;
-        codegen->structDeclarationsCode += ";\n";
-      }
-
-      codegen->structDeclarationsCode += "};\n\n";
-      codegen->functionDeclarationsCode += "struct " + objVar->name + " *";
-      codegen->functionDeclarationsCode += codegenObjInitFn(objVar->name) + " (struct " + objVar->name + ");\n";
-    }
-  }
-}
-
-void codegenDefinitions (Codegen *codegen, const std::vector<Stmt *> &body) {
-  for (auto stmt : body) {
-    if (stmt->type == STMT_FN_DECL) {
-      auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
-      auto hiddenName = codegenIdentifier(stmtFnDecl->id);
-      auto fnVar = codegen->varMap->getFn(hiddenName);
-      auto code = std::string();
-      auto setUp = std::string();
-      auto cleanUp = std::string();
-
-      codegen->varMap->save();
-      codegen->stack.emplace_back(fnVar->fn->hiddenName);
-      code += codegenTypeStr(fnVar->fn->returnType);
-      code += fnVar->name + " (";
-
-      if (stmtFnDecl->params.empty()) {
-        code += ") {\n";
-      } else {
-        auto paramsCode = std::string();
-        auto optionalParams = static_cast<std::size_t>(0);
-        auto optionalParamsCode = std::string();
-        auto idx = static_cast<std::size_t>(0);
-
-        for (auto param : fnVar->fn->params) {
-          auto stmtParam = stmtFnDecl->params[idx];
-          auto optionalParamName = "OP_" + std::to_string(optionalParams + 1);
-          auto paramTypeStr = codegenTypeStr(param->type);
-
-          paramsCode += idx == 0 ? "" : ", ";
-          paramsCode += paramTypeStr;
-          paramsCode += param->required ? param->name : optionalParamName;
-
-          if (!param->required) {
-            auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, stmtParam->init);
-
-            optionalParamsCode += "  " + paramTypeStr;
-            optionalParamsCode += param->name + " = OP[" + std::to_string(optionalParams) + "] == 0 ? ";
-            optionalParamsCode += stmtExprCode + " : ";
-            optionalParamsCode += optionalParamName + ";\n";
-
-            setUp += stmtExprSetUp;
-            cleanUp += stmtExprCleanUp;
-
-            optionalParams++;
-          }
-
-          codegen->varMap->add(param->type, param->name);
-          idx++;
-        }
-
-        if (optionalParams > 0) {
-          code += "const char OP[" + std::to_string(optionalParams) + "], ";
-        }
-
-        code += paramsCode + ") {\n";
-        code += optionalParamsCode;
-      }
-
-      code += setUp;
-      code += codegenBlock(codegen, stmtFnDecl->body);
-      code += cleanUp;
-      code += "}\n\n";
-      codegen->stack.pop_back();
-      codegen->varMap->restore();
-
-      codegen->functionDefinitionsCode += code;
-    } else if (stmt->type == STMT_OBJ_DECL) {
-      codegen->headers.stdio = true;
-      codegen->headers.stdlib = true;
-      codegen->headers.string = true;
-
-      auto stmtObjDecl = std::get<StmtObjDecl *>(stmt->body);
-      auto hiddenName = codegenIdentifier(stmtObjDecl->id);
-      auto objVar = codegen->varMap->getObj(hiddenName);
-      auto code = std::string();
-
-      code += "struct " + objVar->name + " *";
-      code += codegenObjInitFn(objVar->name) + " (struct " + objVar->name + " x) {\n";
-      code += "  size_t l = sizeof(struct " + objVar->name + ");\n";
-      code += "  " + codegenTypeStr(objVar->type, objVar->name, true) + "n = malloc(l);\n";
-      code += "  if (n == NULL) {\n";
-      code += R"(    fprintf(stderr, "Error: Failed to allocate %zu bytes for object \")";
-      code += stmtObjDecl->id->name->val + R"(\"\n", l);)" + "\n";
-      code += "    exit(EXIT_FAILURE);\n";
-      code += "  }\n";
-      code += "  memcpy(n, &x, l);\n";
-      code += "  return n;\n";
-      code += "}\n\n";
-
-      codegen->functionDefinitionsCode += code;
-    }
-  }
-}
-
-std::string codegenStmtIf (Codegen *codegen, const StmtIf *stmtIf) {
+std::string codegenNodeIf (Codegen &codegen, const ASTNodeIf &nodeIf) {
   auto code = std::string();
-  auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, stmtIf->cond);
+  auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeIf.cond);
 
-  codegen->varMap->save();
-  code += "if (";
-  code += stmtExprSetUp;
-  code += stmtExprCode;
-  code += ") {\n";
-  code += codegenBlock(codegen, stmtIf->body);
-  code += stmtExprCleanUp;
-  codegen->varMap->restore();
+  code += "if (" + nodeExprCode + nodeExprSetUp + ") {\n";
+  code += codegenBlock(codegen, nodeIf.body);
+  code += nodeExprCleanUp;
 
-  if (stmtIf->alt != nullptr) {
-    code += std::string(codegen->indent, ' ') + "} else ";
+  if (nodeIf.alt != std::nullopt) {
+    code += std::string(codegen.indent, ' ') + "} else ";
 
-    if (stmtIf->alt->type == COND_BLOCK) {
+    if (std::holds_alternative<ASTBlock>(*nodeIf.alt.value())) {
       code += "{\n";
-      codegen->varMap->save();
-      code += codegenBlock(codegen, std::get<Block *>(stmtIf->alt->body));
-      code += std::string(codegen->indent, ' ') + "}";
-      codegen->varMap->restore();
-    } else if (stmtIf->alt->type == COND_STMT_IF) {
-      code += codegenStmtIf(codegen, std::get<StmtIf *>(stmtIf->alt->body));
+      code += codegenBlock(codegen, std::get<ASTBlock>(*nodeIf.alt.value()));
+      code += std::string(codegen.indent, ' ') + "}";
+    } else if (std::holds_alternative<ASTNodeIf>(*nodeIf.alt.value())) {
+      code += codegenNodeIf(codegen, std::get<ASTNodeIf>(*nodeIf.alt.value()));
     }
   } else {
-    code += std::string(codegen->indent, ' ') + "}";
+    code += std::string(codegen.indent, ' ') + "}";
   }
 
   return code;
 }
 
-CodegenReturn codegenStmtObjVarDecl (
-  Codegen *codegen,
-  bool rootDecl,
-  const std::string &id,
-  bool mut,
-  const ExprObj *exprObj
-) {
-  auto objName = codegenIdentifier(exprObj->type);
-  auto objVar = codegen->varMap->getObj(objName);
+std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen, const ASTNode &node) {
   auto setUp = std::string();
   auto code = std::string();
   auto cleanUp = std::string();
 
-  if (rootDecl) {
-    code += std::string(codegen->indent, ' ');
-    code += codegenTypeStr(objVar->type, objVar->name, mut) + id + " = ";
-  }
+  if (std::holds_alternative<ASTNodeBreak>(node)) {
+    code += std::string(codegen.indent, ' ') + "break;\n";
+  } else if (std::holds_alternative<ASTNodeContinue>(node)) {
+    code += std::string(codegen.indent, ' ') + "continue;\n";
+  } else if (std::holds_alternative<ASTNodeExpr>(node)) {
+    auto nodeExpr = std::get<ASTNodeExpr>(node);
+    auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeExpr);
 
-  code += codegenObjInitFn(objVar->name) + "((struct " + objVar->name + ") {";
-  auto idx = static_cast<std::size_t>(0);
+    setUp += nodeExprSetUp;
+    code += std::string(codegen.indent, ' ') + nodeExprCode + ";\n";
+    cleanUp += nodeExprCleanUp;
+  } else if (std::holds_alternative<ASTNodeIf>(node)) {
+    auto nodeIf = std::get<ASTNodeIf>(node);
 
-  for (auto field : objVar->obj->fields) {
-    auto propFound = std::find_if(exprObj->props.begin(), exprObj->props.end(), [&field] (auto it) -> bool {
-      return it->id->name->val == field->name;
-    });
-
-    if (propFound == exprObj->props.end()) {
-      throw Error("Object literal field is not set");
-    }
-
-    code += idx == 0 ? "" : ", ";
-    auto prop = *propFound;
-
-    if (field->type == VAR_OBJ) {
-      auto exprInit = std::get<Expr *>(prop->init->body);
-      auto exprObjInit = std::get<ExprObj *>(exprInit->body);
-
-      auto [
-        stmtObjVarDeclSetUp,
-        stmtObjVarDeclCode,
-        stmtObjVarDeclCleanUp
-      ] = codegenStmtObjVarDecl(codegen, false, id + "->" + field->name, mut, exprObjInit);
-
-      code += stmtObjVarDeclCode;
-      setUp += stmtObjVarDeclSetUp;
-      cleanUp += stmtObjVarDeclCleanUp;
-    } else {
-      auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, prop->init);
-      auto propName = id + "->" + field->name;
-
-      code += stmtExprCode;
-      setUp += stmtExprSetUp;
-      cleanUp += stmtExprCleanUp;
-
-      codegen->varMap->add(field->type, propName);
-    }
-
-    idx++;
-  }
-
-  code += "})";
-
-  if (rootDecl) {
-    code += ";\n";
-  }
-
-  return std::make_tuple(setUp, code, cleanUp);
-}
-
-CodegenReturn codegenStmt (Codegen *codegen, const Stmt *stmt) {
-  auto setUp = std::string();
-  auto code = std::string();
-  auto cleanUp = std::string();
-
-  if (stmt->type == STMT_BREAK) {
-    code += std::string(codegen->indent, ' ');
-    code += "break;\n";
-  } else if (stmt->type == STMT_CONTINUE) {
-    code += std::string(codegen->indent, ' ');
-    code += "continue;\n";
-  } else if (stmt->type == STMT_EXPR) {
-    auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, std::get<StmtExpr *>(stmt->body));
-
-    code += std::string(codegen->indent, ' ');
-    code += stmtExprCode;
-    code += ";\n";
-
-    setUp += stmtExprSetUp;
-    cleanUp += stmtExprCleanUp;
-  } else if (stmt->type == STMT_FN_DECL) {
-    auto stmtFnDecl = std::get<StmtFnDecl *>(stmt->body);
-    auto hiddenName = codegenIdentifier(stmtFnDecl->id);
-    auto fnName = codegen->varMap->genId(codegen->stack, hiddenName);
-    auto returnType = codegenType(codegen, stmtFnDecl->returnType);
-    auto params = std::vector<VarMapFnParam *>();
-    auto optionalParams = static_cast<std::size_t>(0);
-
-    for (auto param : stmtFnDecl->params) {
-      auto paramName = codegenIdentifier(param->id);
-      auto paramType = codegenType(codegen, param->type, param->init);
-      auto paramRequired = param->init == nullptr;
-      auto fnParam = new VarMapFnParam{paramName, paramType, paramRequired};
-
-      if (!paramRequired) {
-        optionalParams++;
-      }
-
-      params.push_back(fnParam);
-    }
-
-    codegen->varMap->addFn(fnName, hiddenName, returnType, params, optionalParams);
-  } else if (stmt->type == STMT_IF) {
-    code += std::string(codegen->indent, ' ');
-    code += codegenStmtIf(codegen, std::get<StmtIf *>(stmt->body));
+    code += std::string(codegen.indent, ' ');
+    code += codegenNodeIf(codegen, nodeIf);
     code += "\n";
-  } else if (stmt->type == STMT_LOOP) {
-    auto stmtLoop = std::get<StmtLoop *>(stmt->body);
-    auto stmtLoopCleanUp = std::string();
+  } else if (std::holds_alternative<ASTNodeLoop>(node)) {
+    auto nodeLoop = std::get<ASTNodeLoop>(node);
+    auto nodeLoopCleanUp = std::string();
 
-    codegen->varMap->save();
-    code += std::string(codegen->indent, ' ');
+    code += std::string(codegen.indent, ' ');
 
-    if (stmtLoop->init == nullptr && stmtLoop->cond == nullptr && stmtLoop->upd == nullptr) {
+    if (nodeLoop.init == std::nullopt && nodeLoop.cond == std::nullopt && nodeLoop.upd == std::nullopt) {
       code += "while (1)";
-    } else if (stmtLoop->init == nullptr && stmtLoop->upd == nullptr) {
-      auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, stmtLoop->cond);
-      // TODO How do you clean here?
+    } else if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
+      auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeLoop.cond.value());
 
       code += "while (";
-      code += stmtExprSetUp;
-      code += stmtExprCode;
+      code += nodeExprSetUp;
+      code += nodeExprCode;
       code += ")";
 
-      stmtLoopCleanUp += stmtExprCleanUp;
+      nodeLoopCleanUp += nodeExprCleanUp;
     } else {
       code += "for (";
 
-      if (stmtLoop->init != nullptr) {
-        auto prevIndent = codegen->indent;
+      if (nodeLoop.init != std::nullopt) {
+        auto prevIndent = codegen.indent;
+        codegen.indent = 0;
 
-        codegen->indent = 0;
-        auto [stmtSetUp, stmtCode, stmtCleanUp] = codegenStmt(codegen, stmtLoop->init);
-        codegen->indent = prevIndent;
-        // TODO How do you clean here?
+        auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, *nodeLoop.init.value());
+        codegen.indent = prevIndent;
 
-        code += stmtSetUp;
-        code += stmtCode.substr(0, stmtCode.length() - 2);
-        stmtLoopCleanUp += stmtCleanUp;
+        code += nodeSetUp;
+        code += nodeCode.substr(0, nodeCode.length() - 2);
+        nodeLoopCleanUp += nodeCleanUp;
       }
 
       code += ";";
 
-      if (stmtLoop->cond != nullptr) {
-        auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, stmtLoop->cond);
-        // TODO How do you clean here?
+      if (nodeLoop.cond != std::nullopt) {
+        auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeLoop.cond.value());
 
-        code += " " + stmtExprSetUp + stmtExprCode;
-        stmtLoopCleanUp += stmtExprCleanUp;
+        code += " " + nodeExprSetUp + nodeExprCode;
+        nodeLoopCleanUp += nodeExprCleanUp;
       }
 
       code += ";";
 
-      if (stmtLoop->upd != nullptr) {
-        auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, stmtLoop->upd);
-        // TODO How do you clean here?
+      if (nodeLoop.upd != std::nullopt) {
+        auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeLoop.upd.value());
 
-        code += " " + stmtExprSetUp + stmtExprCode;
-        stmtLoopCleanUp += stmtExprCleanUp;
+        code += " " + nodeExprSetUp + nodeExprCode;
+        nodeLoopCleanUp += nodeExprCleanUp;
       }
 
       code += ")";
     }
 
-    if (stmtLoop->body->body.empty() && stmtLoopCleanUp.empty()) {
+    if (nodeLoop.body.empty() && nodeLoopCleanUp.empty()) {
       code += ";\n";
     } else {
       code += " {\n";
-      code += codegenBlock(codegen, stmtLoop->body);
-      code += stmtLoopCleanUp;
-      code += std::string(codegen->indent, ' ') + "}\n";
+      code += codegenBlock(codegen, nodeLoop.body);
+      code += nodeLoopCleanUp;
+      code += std::string(codegen.indent, ' ') + "}\n";
     }
+  } else if (std::holds_alternative<ASTNodeMain>(node)) {
+    auto nodeMain = std::get<ASTNodeMain>(node);
+    code += codegenBlock(codegen, nodeMain.body);
+  } else if (std::holds_alternative<ASTNodeReturn>(node)) {
+    auto nodeReturn = std::get<ASTNodeReturn>(node);
+    auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeReturn.arg);
 
-    codegen->varMap->restore();
-  } else if (stmt->type == STMT_OBJ_DECL) {
-    auto stmtObjDecl = std::get<StmtObjDecl *>(stmt->body);
-    auto hiddenName = codegenIdentifier(stmtObjDecl->id);
-    auto objName = codegen->varMap->genId(codegen->stack, hiddenName);
-    auto fields = std::vector<VarMapObjField *>();
+    code += std::string(codegen.indent, ' ') + nodeExprSetUp;
+    code += "return " + nodeExprCode + ";\n";
+    code += nodeExprCleanUp;
+  } else if (std::holds_alternative<ASTNodeVarDecl>(node)) {
+    auto nodeVarDecl = std::get<ASTNodeVarDecl>(node);
 
-    for (auto field : stmtObjDecl->fields) {
-      auto fieldType = codegenType(codegen, field->type);
-      auto objField = new VarMapObjField{field->id->name->val, fieldType};
+    code += std::string(codegen.indent, ' ');
+    code += codegenType(codegen, nodeVarDecl.v.type, nodeVarDecl.v.mut) + codegenName(nodeVarDecl.v.name) + " = ";
 
-      if (fieldType == VAR_OBJ) {
-        auto fieldObjTypeName = codegenIdentifier(field->type);
-        auto objVar = codegen->varMap->getObj(fieldObjTypeName);
-
-        objField->typeName = objVar->name;
+    if (nodeVarDecl.init == std::nullopt) {
+      if (nodeVarDecl.v.type.isBool()) {
+        codegen.headers.stdbool = true;
+        code += "false";
+      } else if (nodeVarDecl.v.type.isChar()) {
+        code += "'\\0'";
+      } else if (nodeVarDecl.v.type.isStr()) {
+        codegen.functions.str_init = true;
+        code += "str_init(0)";
+      } else {
+        code += "0";
       }
+    } else if (std::holds_alternative<ASTExprAccess>(*nodeVarDecl.init->expr)) {
+      auto exprAccess = std::get<ASTExprAccess>(*nodeVarDecl.init->expr);
 
-      fields.push_back(objField);
+      if (std::holds_alternative<ASTId>(exprAccess)) {
+        auto id = std::get<ASTId>(exprAccess);
+
+        if (id.v.type.isStr()) {
+          codegen.functions.str_clone = true;
+          code += "str_clone(" + codegenName(id.v.name) + ")";
+        } else {
+          code += codegenName(id.v.name);
+        }
+      }
+    } else if (std::holds_alternative<ASTExprLit>(*nodeVarDecl.init->expr)) {
+      auto exprLit = std::get<ASTExprLit>(*nodeVarDecl.init->expr);
+
+      if (exprLit.type == AST_EXPR_LIT_BOOL) {
+        codegen.headers.stdbool = true;
+        code += exprLit.val;
+      } else if (exprLit.type == AST_EXPR_LIT_STR) {
+        codegen.functions.str_from_cstr = true;
+        code += "str_from_cstr(" + exprLit.val + ", " + std::to_string(exprLit.val.length() - 2) + ")";
+      } else {
+        code += exprLit.val;
+      }
+    } else {
+      auto [initNodeExprSetUp, initNodeExprCode, initNodeExprCleanUp] = codegenNodeExpr(codegen, nodeVarDecl.init.value());
+
+      setUp += initNodeExprSetUp;
+      code += initNodeExprCode;
+      cleanUp += initNodeExprCleanUp;
     }
 
-    codegen->varMap->addObj(objName, hiddenName, fields);
-  } else if (stmt->type == STMT_RETURN) {
-    auto stmtReturn = std::get<StmtReturn *>(stmt->body);
-    auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, stmtReturn->arg);
-
-    code += std::string(codegen->indent, ' ');
-    code += stmtExprSetUp;
-    code += "return ";
-    code += stmtExprCode;
     code += ";\n";
 
-    cleanUp += stmtExprCleanUp;
-  } else if (stmt->type == STMT_VAR_DECL) {
-    auto stmtVarDecl = std::get<StmtVarDecl *>(stmt->body);
+    if (nodeVarDecl.v.type.isStr()) {
+      codegen.functions.str_deinit = true;
 
-    auto exprType = stmtVarDecl->type == nullptr
-      ? codegenStmtExprType(codegen, stmtVarDecl->init)
-      : codegenType(codegen, stmtVarDecl->type);
-
-    if (exprType == VAR_OBJ) {
-      auto expr = std::get<Expr *>(stmtVarDecl->init->body);
-      auto exprObj = std::get<ExprObj *>(expr->body);
-
-      auto [
-        stmtObjVarDeclSetUp,
-        stmtObjVarDeclCode,
-        stmtObjVarDeclCleanUp
-      ] = codegenStmtObjVarDecl(codegen, true, codegenIdentifier(stmtVarDecl->id), stmtVarDecl->mut, exprObj);
-
-      code += stmtObjVarDeclCode;
-      setUp += stmtObjVarDeclSetUp;
-      cleanUp += stmtObjVarDeclCleanUp;
-    } else {
-      auto [stmtExprSetUp, stmtExprCode, stmtExprCleanUp] = codegenStmtExpr(codegen, stmtVarDecl->init);
-      auto varName = codegenIdentifier(stmtVarDecl->id);
-
-      code += std::string(codegen->indent, ' ');
-      code += codegenTypeStr(exprType, varName, stmtVarDecl->mut);
-      code += varName;
-      code += " = ";
-      code += stmtExprCode;
-      code += ";\n";
-
-      setUp += stmtExprSetUp;
-      cleanUp += stmtExprCleanUp;
-
-      codegen->varMap->add(exprType, varName);
+      cleanUp += std::string(codegen.indent, ' ');
+      cleanUp += "str_deinit((struct str **) &" + codegenName(nodeVarDecl.v.name) + ");\n";
     }
-  } else {
-    throw Error("Tried to access unknown stmt type");
   }
 
   return std::make_tuple(setUp, code, cleanUp);
 }
 
-std::string codegen (const AST *ast) {
-  auto codegen = new Codegen{new VarMap{}};
-  codegen->stack.reserve(SHRT_MAX);
+void codegenDeclarations (Codegen &codegen, const ASTBlock &block) {
+  for (auto node : block) {
+    if (std::holds_alternative<ASTNodeFnDecl>(node)) {
+      auto nodeFnDecl = std::get<ASTNodeFnDecl>(node);
 
-  for (auto stmt : ast->topLevelStatements) {
-    auto [stmtSetUp, stmtCode, stmtCleanUp] = codegenStmt(codegen, stmt);
+      codegen.functionDeclarationsCode += codegenType(codegen, nodeFnDecl.fn->returnType, true);
+      codegen.functionDeclarationsCode += codegenName(nodeFnDecl.fn->name) + " (";
 
-    if (!stmtSetUp.empty() || !stmtCleanUp.empty()) {
-      throw Error("Code generator returned set up or clean up data for global statement");
+      if (nodeFnDecl.fn->params.empty()) {
+        codegen.functionDeclarationsCode += "void";
+      } else {
+        auto paramsCode = std::string();
+        auto paramIdx = static_cast<std::size_t>(0);
+
+        for (auto param : nodeFnDecl.fn->params) {
+          auto paramType = codegenType(codegen, param.type, true);
+
+          paramsCode += paramIdx == 0 ? "" : ", ";
+          paramsCode += paramType.back() == ' ' ? paramType.substr(0, paramType.length() - 1) : paramType;
+          paramIdx++;
+        }
+
+        codegen.functionDeclarationsCode += paramsCode;
+      }
+
+      codegen.functionDeclarationsCode += ");\n";
+    }
+  }
+}
+
+void codegenDefinitions (Codegen &codegen, const ASTBlock &block) {
+  for (auto node : block) {
+    auto setUp = std::string();
+    auto code = std::string();
+    auto cleanUp = std::string();
+
+    if (std::holds_alternative<ASTNodeFnDecl>(node)) {
+      auto nodeFnDecl = std::get<ASTNodeFnDecl>(node);
+
+      code += codegenType(codegen, nodeFnDecl.fn->returnType, true);
+      code += codegenName(nodeFnDecl.fn->name) + " (";
+
+      if (nodeFnDecl.fn->params.empty()) {
+        code += ") {\n";
+      } else {
+        auto paramsCode = std::string();
+        auto paramIdx = static_cast<std::size_t>(0);
+
+        for (auto param : nodeFnDecl.fn->params) {
+          paramsCode += paramIdx == 0 ? "" : ", ";
+          paramsCode += codegenType(codegen, param.type, true);
+          paramsCode += codegenName(param.name);
+
+          paramIdx++;
+        }
+
+        code += paramsCode + ") {\n";
+      }
+
+      code += setUp;
+      code += codegenBlock(codegen, nodeFnDecl.body);
+      code += cleanUp;
+      code += "}\n\n";
+
+      codegen.functionDefinitionsCode += code;
+    }
+  }
+}
+
+std::string codegenBlock (Codegen &codegen, const ASTBlock &block) {
+  auto setUp = std::string();
+  auto code = std::string();
+  auto cleanUp = std::string();
+
+  codegen.indent += 2;
+
+  for (auto node : block) {
+    auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, node);
+
+    setUp += nodeSetUp;
+    code += nodeCode;
+    cleanUp += nodeCleanUp;
+  }
+
+  codegen.indent -= 2;
+
+  codegenDeclarations(codegen, block);
+  codegenDefinitions(codegen, block);
+
+  return setUp + code + (cleanUp.empty() ? "" : "\n" + cleanUp);
+}
+
+Codegen codegen (AST *ast) {
+  auto codegen = Codegen{};
+  auto topLevelCode = std::string();
+  auto mainCode = std::string();
+
+  for (auto node : ast->nodes) {
+    if (std::holds_alternative<ASTNodeMain>(node)) {
+      continue;
     }
 
-    codegen->topLevelStatementsCode += stmtCode;
+    auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, node);
+
+    if (!nodeSetUp.empty() || !nodeCleanUp.empty()) {
+      throw Error("Code generator returned set up or clean up data for top level statement");
+    }
+
+    topLevelCode += nodeCode;
   }
 
-  codegenDeclarations(codegen, ast->topLevelStatements);
-  codegenDefinitions(codegen, ast->topLevelStatements);
+  for (auto node : ast->nodes) {
+    if (std::holds_alternative<ASTNodeMain>(node)) {
+      auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, node);
 
-  codegen->varMap->save();
-  codegen->stack.emplace_back("main");
-  codegen->mainBodyCode += "int main () {\n";
+      if (!nodeSetUp.empty() || !nodeCleanUp.empty()) {
+        throw Error("Code generator returned set up or clean up data for main function");
+      }
 
-  if (ast->mainPresent) {
-    codegen->mainBodyCode += codegenBlock(codegen, ast->mainBody);
+      mainCode += nodeCode;
+      break;
+    }
   }
 
-  codegen->mainBodyCode += "}\n";
-  codegen->stack.pop_back();
-  codegen->varMap->restore();
+  codegenDeclarations(codegen, ast->nodes);
+  codegenDefinitions(codegen, ast->nodes);
 
-  auto banner = std::string("/*!\n") +
-    " * Copyright (c) Aaron Delasy\n" +
-    " *\n"+
-    " * Unauthorized copying of this file, via any medium is strictly prohibited\n"+
-    " * Proprietary and confidential\n"+
-    " */\n\n";
+  auto mainBody = std::string("int main () {\n");
+  mainBody += mainCode;
+  mainBody += "}\n";
 
   auto builtinStructDeclarationsCode = std::string();
   auto builtinFunctionDeclarationsCode = std::string();
   auto builtinFunctionDefinitionsCode = std::string();
 
-  if (codegen->functions.str_init || codegen->functions.str_from_cstr) {
-    codegen->headers.stdlib = true;
-    codegen->functions.str_init = true;
-    codegen->functions.str_deinit = true;
+  if (
+    codegen.functions.str_clone ||
+    codegen.functions.str_init ||
+    codegen.functions.str_from_cstr ||
+    codegen.functions.str_deinit
+  ) {
 
     builtinStructDeclarationsCode += "struct str {\n";
     builtinStructDeclarationsCode += "  unsigned char *c;\n";
@@ -1038,33 +657,22 @@ std::string codegen (const AST *ast) {
     builtinStructDeclarationsCode += "};\n\n";
   }
 
-  if (codegen->functions.str_init) {
-    codegen->headers.stdio = true;
-    codegen->headers.stdlib = true;
+  if (codegen.functions.str_clone) {
+    codegen.functions.str_init = true;
+    codegen.headers.string = true;
 
-    builtinFunctionDeclarationsCode += "struct str *str_init (size_t);\n";
+    builtinFunctionDeclarationsCode += "struct str *str_clone (const struct str *);\n";
 
-    builtinFunctionDefinitionsCode += "struct str *str_init (size_t l) {\n";
-    builtinFunctionDefinitionsCode += "  size_t z = sizeof(struct str);\n";
-    builtinFunctionDefinitionsCode += "  struct str *s = malloc(z);\n";
-    builtinFunctionDefinitionsCode += "  if (s == NULL) {\n";
-    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: Failed to allocate %zu bytes for string\n", z);)";
-    builtinFunctionDefinitionsCode += "\n";
-    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);\n";
-    builtinFunctionDefinitionsCode += "  }\n";
-    builtinFunctionDefinitionsCode += "  s->c = malloc(l);\n";
-    builtinFunctionDefinitionsCode += "  if (s->c == NULL) {\n";
-    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: )";
-    builtinFunctionDefinitionsCode += "Failed to allocate %zu bytes for string content\\n\", l);\n";
-    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);\n";
-    builtinFunctionDefinitionsCode += "  }\n";
-    builtinFunctionDefinitionsCode += "  s->l = l;\n";
+    builtinFunctionDefinitionsCode += "struct str *str_clone (const struct str *n) {\n";
+    builtinFunctionDefinitionsCode += "  struct str *s = str_init(n->l);\n";
+    builtinFunctionDefinitionsCode += "  memcpy(s->c, n->c, n->l);\n";
     builtinFunctionDefinitionsCode += "  return s;\n";
     builtinFunctionDefinitionsCode += "}\n\n";
   }
 
-  if (codegen->functions.str_from_cstr) {
-    codegen->headers.string = true;
+  if (codegen.functions.str_from_cstr) {
+    codegen.functions.str_init = true;
+    codegen.headers.string = true;
 
     builtinFunctionDeclarationsCode += "struct str *str_from_cstr (const char *, size_t);\n";
 
@@ -1075,8 +683,33 @@ std::string codegen (const AST *ast) {
     builtinFunctionDefinitionsCode += "}\n\n";
   }
 
-  if (codegen->functions.str_deinit) {
-    codegen->headers.stdlib = true;
+  if (codegen.functions.str_init) {
+    codegen.headers.stdio = true;
+    codegen.headers.stdlib = true;
+
+    builtinFunctionDeclarationsCode += "struct str *str_init (size_t);\n";
+
+    builtinFunctionDefinitionsCode += "struct str *str_init (size_t l) {\n";
+    builtinFunctionDefinitionsCode += "  size_t z = sizeof(struct str);\n";
+    builtinFunctionDefinitionsCode += "  struct str *s = malloc(z);\n\n";
+    builtinFunctionDefinitionsCode += "  if (s == NULL) {\n";
+    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: Failed to allocate %zu bytes for string\n", z);)";
+    builtinFunctionDefinitionsCode += "\n";
+    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);\n";
+    builtinFunctionDefinitionsCode += "  }\n\n";
+    builtinFunctionDefinitionsCode += "  s->l = l;\n";
+    builtinFunctionDefinitionsCode += "  s->c = malloc(s->l);\n\n";
+    builtinFunctionDefinitionsCode += "  if (s->c == NULL) {\n";
+    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: )";
+    builtinFunctionDefinitionsCode += "Failed to allocate %zu bytes for string content\\n\", s->l);\n";
+    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);\n";
+    builtinFunctionDefinitionsCode += "  }\n\n";
+    builtinFunctionDefinitionsCode += "  return s;\n";
+    builtinFunctionDefinitionsCode += "}\n\n";
+  }
+
+  if (codegen.functions.str_deinit) {
+    codegen.headers.stdlib = true;
 
     builtinFunctionDeclarationsCode += "void str_deinit (struct str **);\n";
 
@@ -1087,23 +720,26 @@ std::string codegen (const AST *ast) {
     builtinFunctionDefinitionsCode += "}\n\n";
   }
 
-  auto headers = std::string(codegen->headers.math ? "#include <math.h>\n" : "") +
-    std::string(codegen->headers.stdbool ? "#include <stdbool.h>\n" : "") +
-    std::string(codegen->headers.stdio ? "#include <stdio.h>\n" : "") +
-    std::string(codegen->headers.stdlib ? "#include <stdlib.h>\n" : "") +
-    std::string(codegen->headers.string ? "#include <string.h>\n" : "");
+  auto headers = std::string(codegen.headers.math ? "#include <math.h>\n" : "");
+  headers += codegen.headers.stdbool ? "#include <stdbool.h>\n" : "";
+  headers += codegen.headers.stdio ? "#include <stdio.h>\n" : "";
+  headers += codegen.headers.stdlib ? "#include <stdlib.h>\n" : "";
+  headers += codegen.headers.string ? "#include <string.h>\n" : "";
 
-  auto code = banner +
-    (headers.empty() ? "" : headers + "\n") +
-    builtinStructDeclarationsCode +
-    codegen->structDeclarationsCode +
-    builtinFunctionDeclarationsCode +
-    (codegen->functionDeclarationsCode.empty() ? "" : codegen->functionDeclarationsCode + "\n") +
-    builtinFunctionDefinitionsCode +
-    codegen->functionDefinitionsCode +
-    (codegen->topLevelStatementsCode.empty() ? "" : codegen->topLevelStatementsCode + "\n") +
-    codegen->mainBodyCode;
+  codegen.output += "/*!\n";
+  codegen.output += " * Copyright (c) Aaron Delasy\n";
+  codegen.output += " *\n";
+  codegen.output += " * Unauthorized copying of this file, via any medium is strictly prohibited\n";
+  codegen.output += " * Proprietary and confidential\n";
+  codegen.output += " */\n\n";
+  codegen.output += headers.empty() ? "" : headers + "\n";
+  codegen.output += builtinStructDeclarationsCode;
+  codegen.output += codegen.functionDeclarationsCode.empty() ? "" : codegen.functionDeclarationsCode + "\n";
+  codegen.output += builtinFunctionDeclarationsCode.empty() ? "" : builtinFunctionDeclarationsCode + "\n";
+  codegen.output += builtinFunctionDefinitionsCode;
+  codegen.output += codegen.functionDefinitionsCode;
+  codegen.output += topLevelCode.empty() ? "" : topLevelCode + "\n";
+  codegen.output += mainBody;
 
-  delete codegen;
-  return code;
+  return codegen;
 }

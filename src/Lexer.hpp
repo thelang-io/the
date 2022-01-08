@@ -130,15 +130,15 @@ enum TokenType {
   TK_OP_TILDE
 };
 
+struct Lexer {
+  ReaderLocation start;
+  std::string val;
+};
+
 struct Token {
   TokenType type;
   ReaderLocation start;
   ReaderLocation end;
-  std::string val;
-};
-
-struct Lexer {
-  ReaderLocation start;
   std::string val;
 };
 
@@ -186,47 +186,47 @@ inline bool tokenIsWhitespace (char ch) {
   return std::isspace(ch);
 }
 
-inline int tokenPrecedence (Token *tok) {
-  if (tok->type == TK_OP_STAR_STAR) {
+inline int tokenPrecedence (const Token &tok) {
+  if (tok.type == TK_OP_STAR_STAR) {
     return 13;
-  } else if (tok->type == TK_OP_PERCENT || tok->type == TK_OP_SLASH || tok->type == TK_OP_STAR) {
+  } else if (tok.type == TK_OP_PERCENT || tok.type == TK_OP_SLASH || tok.type == TK_OP_STAR) {
     return 12;
-  } else if (tok->type == TK_OP_MINUS || tok->type == TK_OP_PLUS) {
+  } else if (tok.type == TK_OP_MINUS || tok.type == TK_OP_PLUS) {
     return 11;
-  } else if (tok->type == TK_OP_LSHIFT || tok->type == TK_OP_RSHIFT) {
+  } else if (tok.type == TK_OP_LSHIFT || tok.type == TK_OP_RSHIFT) {
     return 10;
-  } else if (tok->type == TK_OP_GT || tok->type == TK_OP_GT_EQ || tok->type == TK_OP_LT || tok->type == TK_OP_LT_EQ) {
+  } else if (tok.type == TK_OP_GT || tok.type == TK_OP_GT_EQ || tok.type == TK_OP_LT || tok.type == TK_OP_LT_EQ) {
     return 9;
-  } else if (tok->type == TK_OP_EQ_EQ || tok->type == TK_OP_EXCL_EQ) {
+  } else if (tok.type == TK_OP_EQ_EQ || tok.type == TK_OP_EXCL_EQ) {
     return 8;
-  } else if (tok->type == TK_OP_AND) {
+  } else if (tok.type == TK_OP_AND) {
     return 7;
-  } else if (tok->type == TK_OP_CARET) {
+  } else if (tok.type == TK_OP_CARET) {
     return 6;
-  } else if (tok->type == TK_OP_OR) {
+  } else if (tok.type == TK_OP_OR) {
     return 5;
-  } else if (tok->type == TK_OP_AND_AND) {
+  } else if (tok.type == TK_OP_AND_AND) {
     return 4;
-  } else if (tok->type == TK_OP_OR_OR) {
+  } else if (tok.type == TK_OP_OR_OR) {
     return 3;
-  } else if (tok->type == TK_OP_QN_QN) {
+  } else if (tok.type == TK_OP_QN_QN) {
     return 2;
   } else if (
-    tok->type == TK_OP_AND_AND_EQ ||
-    tok->type == TK_OP_AND_EQ ||
-    tok->type == TK_OP_CARET_EQ ||
-    tok->type == TK_OP_EQ ||
-    tok->type == TK_OP_LSHIFT_EQ ||
-    tok->type == TK_OP_MINUS_EQ ||
-    tok->type == TK_OP_OR_EQ ||
-    tok->type == TK_OP_OR_OR_EQ ||
-    tok->type == TK_OP_PERCENT_EQ ||
-    tok->type == TK_OP_PLUS_EQ ||
-    tok->type == TK_OP_QN_QN_EQ ||
-    tok->type == TK_OP_RSHIFT_EQ ||
-    tok->type == TK_OP_SLASH_EQ ||
-    tok->type == TK_OP_STAR_EQ ||
-    tok->type == TK_OP_STAR_STAR_EQ
+    tok.type == TK_OP_AND_AND_EQ ||
+    tok.type == TK_OP_AND_EQ ||
+    tok.type == TK_OP_CARET_EQ ||
+    tok.type == TK_OP_EQ ||
+    tok.type == TK_OP_LSHIFT_EQ ||
+    tok.type == TK_OP_MINUS_EQ ||
+    tok.type == TK_OP_OR_EQ ||
+    tok.type == TK_OP_OR_OR_EQ ||
+    tok.type == TK_OP_PERCENT_EQ ||
+    tok.type == TK_OP_PLUS_EQ ||
+    tok.type == TK_OP_QN_QN_EQ ||
+    tok.type == TK_OP_RSHIFT_EQ ||
+    tok.type == TK_OP_SLASH_EQ ||
+    tok.type == TK_OP_STAR_EQ ||
+    tok.type == TK_OP_STAR_STAR_EQ
   ) {
     return 1;
   } else {
@@ -234,6 +234,6 @@ inline int tokenPrecedence (Token *tok) {
   }
 }
 
-Token *lex (Reader *reader);
+Token lex (Reader *reader);
 
 #endif

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.4.1
+  VERSION 1.5.0
   LANGUAGES CXX
 )
 
@@ -31,6 +31,7 @@ set(
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
   src/Reader.cpp src/Reader.hpp
+  src/TypedMap.cpp src/TypedMap.hpp
   src/VarMap.cpp src/VarMap.hpp
 )
 
