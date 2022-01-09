@@ -62,11 +62,11 @@ bool Type::isI64 () const {
 bool Type::isObj () const {
   auto p = this->parent;
 
-  while (p != std::nullopt && p.value()->parent != std::nullopt) {
-    p = p.value()->parent;
+  while (p != std::nullopt && (*p)->parent != std::nullopt) {
+    p = (*p)->parent;
   }
 
-  return p == std::nullopt ? this->name == "obj" : p.value()->name == "obj";
+  return p == std::nullopt ? this->name == "obj" : (*p)->name == "obj";
 }
 
 bool Type::isStr () const {

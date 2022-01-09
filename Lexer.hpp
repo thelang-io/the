@@ -11,10 +11,13 @@
 #include "Reader.hpp"
 
 enum TokenType {
-  TK_COMMENT_BLOCK,
-  TK_COMMENT_LINE,
   TK_EOF,
   TK_WHITESPACE,
+
+  TK_COMMENT_BLOCK,
+  TK_COMMENT_LINE,
+
+  TK_ID,
 
   TK_KW_AS,
   TK_KW_ASYNC,
@@ -65,7 +68,6 @@ enum TokenType {
 
   TK_LIT_CHAR,
   TK_LIT_FLOAT,
-  TK_LIT_ID,
   TK_LIT_INT_BIN,
   TK_LIT_INT_DEC,
   TK_LIT_INT_HEX,
@@ -146,16 +148,16 @@ inline bool tokenIsDigit (char ch) {
   return std::isdigit(ch);
 }
 
-inline bool tokenIsLitCharEscape (char ch) {
-  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
-}
-
-inline bool tokenIsLitIdContinue (char ch) {
+inline bool tokenIsIdContinue (char ch) {
   return std::isalnum(ch) || ch == '_';
 }
 
-inline bool tokenIsLitIdStart (char ch) {
+inline bool tokenIsIdStart (char ch) {
   return std::isalpha(ch) || ch == '_';
+}
+
+inline bool tokenIsLitCharEscape (char ch) {
+  return std::string("0tnr\"'\\").find(ch) != std::string::npos;
 }
 
 inline bool tokenIsLitIntBin (char ch) {
@@ -234,6 +236,6 @@ inline int tokenPrecedence (const Token &tok) {
   }
 }
 
-Token lex (Reader *reader);
+Token lex (Reader *);
 
 #endif

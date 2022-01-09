@@ -8,7 +8,7 @@
 #include "Error.hpp"
 #include "VarMap.hpp"
 
-Var &VarMap::add (const std::string &name, const std::shared_ptr<Type> &type, bool mut, const std::optional<std::variant<std::shared_ptr<Fn>, std::shared_ptr<Type>>> &ref) {
+Var &VarMap::add (const std::string &name, const std::shared_ptr<Type> &type, bool mut, const std::optional<VarRef> &ref) {
   this->_items.push_back(Var{name, type, mut, ref, this->_frame});
   return this->_items.back();
 }

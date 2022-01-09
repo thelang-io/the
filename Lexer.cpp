@@ -38,7 +38,7 @@ void lexWalkLitFloatExp (Reader *reader, Lexer &lexer) {
     auto ch2 = reader->next();
 
     if (!tokenIsDigit(ch2)) {
-      lexWalk(reader, lexer, tokenIsLitIdContinue);
+      lexWalk(reader, lexer, tokenIsIdContinue);
       throw SyntaxError(reader, lexer.start, E0013);
     }
 
@@ -47,7 +47,7 @@ void lexWalkLitFloatExp (Reader *reader, Lexer &lexer) {
   } else if (tokenIsDigit(ch1)) {
     lexer.val += ch1;
   } else {
-    lexWalk(reader, lexer, tokenIsLitIdContinue);
+    lexWalk(reader, lexer, tokenIsIdContinue);
     throw SyntaxError(reader, lexer.start, E0013);
   }
 
@@ -69,8 +69,8 @@ Token lexLitFloat (Reader *reader, Lexer &lexer, TokenType type) {
     auto loc = reader->loc;
     auto ch = reader->next();
 
-    if (tokenIsLitIdContinue(ch)) {
-      lexWalk(reader, lexer, tokenIsLitIdContinue);
+    if (tokenIsIdContinue(ch)) {
+      lexWalk(reader, lexer, tokenIsIdContinue);
       throw SyntaxError(reader, lexer.start, E0012);
     } else {
       reader->seek(loc);
@@ -105,7 +105,7 @@ Token lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)> 
     auto ch1 = reader->next();
 
     if (!fn(ch1)) {
-      lexWalk(reader, lexer, tokenIsLitIdContinue);
+      lexWalk(reader, lexer, tokenIsIdContinue);
       throw SyntaxError(reader, lexer.start, errCode);
     }
 
@@ -140,9 +140,9 @@ Token lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)> 
       lexWalkLitFloatExp(reader, lexer);
 
       return lexLitFloat(reader, lexer, type);
-    } else if (!tokenIsLitIdContinue(ch3)) {
-      if (tokenIsLitIdContinue(ch3)) {
-        lexWalk(reader, lexer, tokenIsLitIdContinue);
+    } else if (!tokenIsIdContinue(ch3)) {
+      if (tokenIsIdContinue(ch3)) {
+        lexWalk(reader, lexer, tokenIsIdContinue);
       }
 
       throw SyntaxError(reader, lexer.start, E0012);
@@ -176,8 +176,8 @@ Token lexLitNum (Reader *reader, Lexer &lexer, const std::function<bool (char)> 
 
       return lexLitFloat(reader, lexer, type);
     }
-  } else if (tokenIsLitIdContinue(ch2)) {
-    lexWalk(reader, lexer, tokenIsLitIdContinue);
+  } else if (tokenIsIdContinue(ch2)) {
+    lexWalk(reader, lexer, tokenIsIdContinue);
     throw SyntaxError(reader, lexer.start, errCode);
   } else {
     reader->seek(loc2);
@@ -203,15 +203,7 @@ Token lexOpEq (Reader *reader, Lexer &lexer, TokenType type1, TokenType type2) {
   }
 }
 
-Token lexOpEq2 (
-  Reader *reader,
-  Lexer &lexer,
-  char ch,
-  TokenType type1,
-  TokenType type2,
-  TokenType type3,
-  TokenType type4
-) {
+Token lexOpEq2 (Reader *reader, Lexer &lexer, char ch, TokenType type1, TokenType type2, TokenType type3, TokenType type4) {
   if (reader->eof()) {
     return Token{type1, lexer.start, reader->loc, lexer.val};
   }
@@ -375,8 +367,8 @@ Token lex (Reader *reader) {
   if (tokenIsWhitespace(ch)) {
     lexWalk(reader, lexer, tokenIsWhitespace);
     return Token{TK_WHITESPACE, lexer.start, reader->loc, lexer.val};
-  } else if (tokenIsLitIdStart(ch)) {
-    lexWalk(reader, lexer, tokenIsLitIdContinue);
+  } else if (tokenIsIdStart(ch)) {
+    lexWalk(reader, lexer, tokenIsIdContinue);
 
     if (lexer.val == "as") return Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "async") return Token{TK_KW_ASYNC, lexer.start, reader->loc, lexer.val};
@@ -425,7 +417,7 @@ Token lex (Reader *reader) {
     if (lexer.val == "type") return Token{TK_KW_TYPE, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "union") return Token{TK_KW_UNION, lexer.start, reader->loc, lexer.val};
 
-    return Token{TK_LIT_ID, lexer.start, reader->loc, lexer.val};
+    return Token{TK_ID, lexer.start, reader->loc, lexer.val};
   } else if (tokenIsDigit(ch)) {
     if (ch == '0') {
       if (reader->eof()) {
@@ -436,7 +428,7 @@ Token lex (Reader *reader) {
       auto ch1 = reader->next();
 
       if (tokenIsDigit(ch1)) {
-        lexWalk(reader, lexer, tokenIsLitIdContinue);
+        lexWalk(reader, lexer, tokenIsIdContinue);
         throw SyntaxError(reader, lexer.start, E0007);
       } else if (ch1 == 'B' || ch1 == 'b' || ch1 == 'X' || ch1 == 'x' || ch1 == 'O' || ch1 == 'o') {
         lexer.val += ch1;

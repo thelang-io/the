@@ -31,7 +31,7 @@
 
 class Error : public std::exception {
  public:
-  explicit Error (const std::string &message);
+  explicit Error (const std::string &);
   const char *what () const noexcept override;
 
  private:
@@ -40,7 +40,7 @@ class Error : public std::exception {
 
 class SyntaxError : public std::exception {
  public:
-  SyntaxError (Reader *reader, ReaderLocation start, const std::string &message);
+  SyntaxError (Reader *, ReaderLocation, const std::string &);
   const char *what () const noexcept override;
 
  private:

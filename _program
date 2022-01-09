@@ -1,5 +1,5 @@
 na := 0
-// TODO Global generation
+// TODO Generation
 // nb := "Hello, World!"
 
 fn ga () int {
@@ -275,19 +275,19 @@ main {
   }
 
   ea := 1 ? 2 : 3
-  eb := 1 > 2 ? 3 : 4 // todo wrong
-  ec := 1 > 2 ? 5 : 0 ? 6 : 7 // todo wrong
-  ed := 0 > 2 ? 0 ? 6 : 7 : 3 // todo wrong
-  ee := 1 ? 2 ? 3 : 4 : 5 // todo wrong
-  ef := 0 ? 2 ? 3 : 4 : 5 // todo wrong
+  eb := 1 > 2 ? 3 : 4 // TODO Wrong parsing
+  ec := 1 > 2 ? 5 : 0 ? 6 : 7 // TODO Wrong parsing
+  ed := 0 > 2 ? 0 ? 6 : 7 : 3 // TODO Wrong parsing
+  ee := 1 ? 2 ? 3 : 4 : 5 // TODO Wrong parsing
+  ef := 0 ? 2 ? 3 : 4 : 5 // TODO Wrong parsing
   mut eg_a := 0
   eg := 1 ? eg_a = 1 : (eg_a = 0)
-  eh := 0 > -1 ? 4 : 5 // todo wrong
+  eh := 0 > -1 ? 4 : 5 // TODO Wrong parsing
   mut ei_a := 0
   ei := 1 ? (ei_a = 1) : (ei_a = 2)
   mut ej_a := 0
   ej := 0 ? (ej_a = 1) : (ej_a = 2)
-  ek := 2 - 1 > 0 ? 1 : 2 // todo wrong
+  ek := 2 - 1 > 0 ? 1 : 2 // TODO Wrong parsing
 
   print("ea:", ea, "eb:", eb, "ec:", ec, "ed:", ed)
   print("ee:", ee, "ef:", ef, "eg:", eg, "eh:", eh)
@@ -480,7 +480,7 @@ main {
   print("World!", terminator: "")
   print()
 
-  // TODO
+  // TODO Doesn't work
   // print("na:", na, "nb:", nb)
 
   pa := Oa{a: 2}
@@ -694,13 +694,13 @@ main {
 
   // if 1 == 1 {
   //   obj Xb {a: int}
-  //   xb: Xb = {a: 2} // TODO
+  //   xb: Xb = {a: 2} // TODO Doesn't work
   //   print("xb-1:", xb.a, "", terminator: "")
   // }
   //
   // if 1 == 1 {
   //   obj Xb {a: int}
-  //   xb: Xb = {a: 3} // TODO
+  //   xb: Xb = {a: 3} // TODO Doesn't work
   //   print("xb-2:", xb.a, "", terminator: "")
   // }
 
@@ -718,7 +718,7 @@ main {
 
   print("xc:", xc())
 
-  // TODO
+  // TODO Doesn't work
   // ya: bool
   // yb: byte
   // yc: char

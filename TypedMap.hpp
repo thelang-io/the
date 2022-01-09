@@ -44,7 +44,8 @@ struct Type {
 
 struct FnParam {
   std::shared_ptr<Type> type;
-  bool required = false; // TODO
+  // TODO use
+  bool required;
 };
 
 struct Fn {
@@ -85,32 +86,32 @@ class TypedMap {
   }
 
   inline std::string name (const std::string &name) const {
-    auto result = std::string();
+    auto fullName = std::string();
 
     for (const auto &item : this->stack) {
-      result += item + "SD";
+      fullName += item + "SD";
     }
 
-    result += name + "_";
+    fullName += name + "_";
 
     for (auto idx = static_cast<std::size_t>(0);; idx++) {
-      auto fullName = result + std::to_string(idx);
+      auto fullNameTest = fullName + std::to_string(idx);
       auto exists = false;
 
       for (const auto &item : this->_items) {
-        if (item->name == fullName) {
+        if (item->name == fullNameTest) {
           exists = true;
           break;
         }
       }
 
       if (!exists) {
-        result = fullName;
+        fullName = fullNameTest;
         break;
       }
     }
 
-    return result;
+    return fullName;
   }
 
  private:

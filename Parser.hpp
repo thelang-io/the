@@ -186,6 +186,6 @@ struct ParserStmtVarDecl {
   bool mut = false;
 };
 
-ParserStmt parse (Reader *reader);
+ParserStmt parse (Reader *);
 
 #endif

@@ -46,8 +46,7 @@ SyntaxError::SyntaxError (Reader *reader, ReaderLocation start, const std::strin
   this->_message = reader->path + ':' +
     lineNumStr + ':' + colNumStr + ": " + message + "\n" +
     "  " + lineNumStr + " | " + line + '\n' +
-    "  " + std::string(lineNumStr.length(), ' ') +
-    " | " + std::string(start.col, ' ') + '^';
+    "  " + std::string(lineNumStr.length(), ' ') + " | " + std::string(start.col, ' ') + '^';
 
   if (underlineLen != 0) {
     this->_message += std::string(underlineLen - 1, '~');

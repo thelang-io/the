@@ -22,6 +22,7 @@ std::string codegenExprAccess (const ASTExprAccess &exprAccess) {
 
   auto member = std::get<ASTMember>(exprAccess);
   auto memberObj = codegenExprAccess(*member.obj);
+
   return memberObj + "->" + codegenName(member.prop);
 }
 
@@ -106,19 +107,19 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
     code += codegenExprAccess(std::get<ASTExprAccess>(*nodeExpr.expr));
   } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.expr)) {
     auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.expr);
-    auto leftExprAccess = codegenExprAccess(exprAssign.left);
+    auto exprAccessLeft = codegenExprAccess(exprAssign.left);
     auto [rightNodeExprSetUp, rightNodeExprCode, rightNodeExprCleanUp] = codegenNodeExpr(codegen, exprAssign.right);
 
-    if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) { // TODO
+    if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) { // TODO logic
     } else if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_AND) {
-      code += leftExprAccess + " = " + leftExprAccess + " && " + rightNodeExprCode;
+      code += exprAccessLeft + " = " + exprAccessLeft + " && " + rightNodeExprCode;
     } else if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_OR) {
-      code += leftExprAccess + " = " + leftExprAccess + " || " + rightNodeExprCode;
+      code += exprAccessLeft + " = " + exprAccessLeft + " || " + rightNodeExprCode;
     } else if (exprAssign.op == AST_EXPR_ASSIGN_POWER) {
       codegen.headers.math = true;
-      code += leftExprAccess + " = pow(" + leftExprAccess + ", " + rightNodeExprCode + ")";
+      code += exprAccessLeft + " = pow(" + exprAccessLeft + ", " + rightNodeExprCode + ")";
     } else {
-      code += leftExprAccess;
+      code += exprAccessLeft;
 
       if (exprAssign.op == AST_EXPR_ASSIGN_ADD) code += " += ";
       if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_AND) code += " &= ";
@@ -143,7 +144,7 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
     auto [leftNodeExprSetUp, leftNodeExprCode, leftNodeExprCleanUp] = codegenNodeExpr(codegen, exprBinary.left);
     auto [rightNodeExprSetUp, rightNodeExprCode, rightNodeExprCleanUp] = codegenNodeExpr(codegen, exprBinary.right);
 
-    if (exprBinary.op == AST_EXPR_BINARY_COALESCE) { // TODO
+    if (exprBinary.op == AST_EXPR_BINARY_COALESCE) { // TODO logic
     } else if (exprBinary.op == AST_EXPR_BINARY_POWER) {
       codegen.headers.math = true;
       code += "pow(" + leftNodeExprCode + ", " + rightNodeExprCode + ")";
@@ -307,40 +308,41 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
     cleanUp += bodyNodeExprCleanUp;
     cleanUp += altNodeExprCleanUp;
   } else if (std::holds_alternative<ASTExprLit>(*nodeExpr.expr)) {
-    auto nodeExprLit = std::get<ASTExprLit>(*nodeExpr.expr);
+    auto exprLit = std::get<ASTExprLit>(*nodeExpr.expr);
 
-    if (nodeExprLit.type == AST_EXPR_LIT_INT_OCT) {
-      auto val = nodeExprLit.val;
+    if (exprLit.type == AST_EXPR_LIT_INT_OCT) {
+      auto val = exprLit.val;
 
       val.erase(std::remove(val.begin(), val.end(), 'O'), val.end());
       val.erase(std::remove(val.begin(), val.end(), 'o'), val.end());
 
       code += val;
-    } else if (nodeExprLit.type == AST_EXPR_LIT_STR) {
+    } else if (exprLit.type == AST_EXPR_LIT_STR) {
       codegen.functions.str_from_cstr = true;
-      auto valSize = std::to_string(nodeExprLit.val.size() - 2);
-      code += "str_from_cstr(" + nodeExprLit.val + ", " + valSize + ")";
+      auto valSize = std::to_string(exprLit.val.size() - 2);
+
+      code += "str_from_cstr(" + exprLit.val + ", " + valSize + ")";
     } else {
-      code += nodeExprLit.val;
+      code += exprLit.val;
     }
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.expr)) {
-    auto nodeExprObj = std::get<ASTExprObj>(*nodeExpr.expr);
+    auto exprObj = std::get<ASTExprObj>(*nodeExpr.expr);
     auto fieldIdx = static_cast<std::size_t>(0);
 
-    code += codegenName(nodeExprObj.obj->name) + "_init((struct " + codegenName(nodeExprObj.obj->name) + ") {";
+    code += codegenName(exprObj.obj->name) + "_init((struct " + codegenName(exprObj.obj->name) + ") {";
 
-    for (auto [objFieldName, objField] : nodeExprObj.obj->fields) {
-      if (!nodeExprObj.props.contains(objFieldName)) {
+    for (const auto &[objFieldName, objField] : exprObj.obj->fields) {
+      if (!exprObj.props.contains(objFieldName)) {
         continue;
       }
 
-      auto nodeExprObjPropInit = nodeExprObj.props[objFieldName];
-      auto [initNodeExprSetUp, initNodeExprCode, initNodeExprCleanUp] = codegenNodeExpr(codegen, nodeExprObjPropInit);
+      auto init = exprObj.props[objFieldName];
+      auto [initNodeExprSetUp, initNodeExprCode, initNodeExprCleanUp] = codegenNodeExpr(codegen, init);
 
       code += fieldIdx == 0 ? "" : ", ";
+      code += initNodeExprCode;
 
       setUp += initNodeExprSetUp;
-      code += initNodeExprCode;
       cleanUp += initNodeExprCleanUp;
 
       fieldIdx++;
@@ -348,22 +350,22 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
 
     code += "})";
   } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.expr)) {
-    auto nodeExprUnary = std::get<ASTExprUnary>(*nodeExpr.expr);
-    auto [argNodeExprSetUp, argNodeExprCode, argNodeExprCleanUp] = codegenNodeExpr(codegen, nodeExprUnary.arg);
+    auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.expr);
+    auto [argNodeExprSetUp, argNodeExprCode, argNodeExprCleanUp] = codegenNodeExpr(codegen, exprUnary.arg);
 
-    if (!nodeExprUnary.prefix) {
+    if (!exprUnary.prefix) {
       code += argNodeExprCode;
     }
 
-    if (nodeExprUnary.op == AST_EXPR_UNARY_BITWISE_NOT) code += "~";
-    if (nodeExprUnary.op == AST_EXPR_UNARY_DECREMENT) code += "--";
-    if (nodeExprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT) code += "!!";
-    if (nodeExprUnary.op == AST_EXPR_UNARY_INCREMENT) code += "++";
-    if (nodeExprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) code += "!";
-    if (nodeExprUnary.op == AST_EXPR_UNARY_NEGATION) code += "-";
-    if (nodeExprUnary.op == AST_EXPR_UNARY_PLUS) code += "+";
+    if (exprUnary.op == AST_EXPR_UNARY_BITWISE_NOT) code += "~";
+    if (exprUnary.op == AST_EXPR_UNARY_DECREMENT) code += "--";
+    if (exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT) code += "!!";
+    if (exprUnary.op == AST_EXPR_UNARY_INCREMENT) code += "++";
+    if (exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) code += "!";
+    if (exprUnary.op == AST_EXPR_UNARY_NEGATION) code += "-";
+    if (exprUnary.op == AST_EXPR_UNARY_PLUS) code += "+";
 
-    if (nodeExprUnary.prefix) {
+    if (exprUnary.prefix) {
       code += argNodeExprCode;
     }
 
@@ -389,12 +391,12 @@ std::string codegenNodeIf (Codegen &codegen, const ASTNodeIf &nodeIf) {
   if (nodeIf.alt != std::nullopt) {
     code += std::string(codegen.indent, ' ') + "} else ";
 
-    if (std::holds_alternative<ASTBlock>(*nodeIf.alt.value())) {
+    if (std::holds_alternative<ASTBlock>(**nodeIf.alt)) {
       code += "{\n";
-      code += codegenBlock(codegen, std::get<ASTBlock>(*nodeIf.alt.value()));
+      code += codegenBlock(codegen, std::get<ASTBlock>(**nodeIf.alt));
       code += std::string(codegen.indent, ' ') + "}";
-    } else if (std::holds_alternative<ASTNodeIf>(*nodeIf.alt.value())) {
-      code += codegenNodeIf(codegen, std::get<ASTNodeIf>(*nodeIf.alt.value()));
+    } else if (std::holds_alternative<ASTNodeIf>(**nodeIf.alt)) {
+      code += codegenNodeIf(codegen, std::get<ASTNodeIf>(**nodeIf.alt));
     }
   } else {
     code += std::string(codegen.indent, ' ') + "}";
@@ -494,7 +496,7 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
     if (nodeLoop.init == std::nullopt && nodeLoop.cond == std::nullopt && nodeLoop.upd == std::nullopt) {
       code += "while (1)";
     } else if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
-      auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeLoop.cond.value());
+      auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, *nodeLoop.cond);
 
       code += "while (";
       code += nodeExprSetUp;
@@ -509,7 +511,7 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
         auto prevIndent = codegen.indent;
         codegen.indent = 0;
 
-        auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, *nodeLoop.init.value());
+        auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, **nodeLoop.init);
         codegen.indent = prevIndent;
 
         code += nodeSetUp;
@@ -520,7 +522,7 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
       code += ";";
 
       if (nodeLoop.cond != std::nullopt) {
-        auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeLoop.cond.value());
+        auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, *nodeLoop.cond);
 
         code += " " + nodeExprSetUp + nodeExprCode;
         nodeLoopCleanUp += nodeExprCleanUp;
@@ -529,7 +531,7 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
       code += ";";
 
       if (nodeLoop.upd != std::nullopt) {
-        auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeLoop.upd.value());
+        auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, *nodeLoop.upd);
 
         code += " " + nodeExprSetUp + nodeExprCode;
         nodeLoopCleanUp += nodeExprCleanUp;
@@ -572,7 +574,8 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
     codegen.functionDeclarationsCode += "(struct " + codegenName(nodeObjDecl.obj->name) + ");\n";
 
     nodeObjDeclCode += "struct " + codegenName(nodeObjDecl.obj->name) + " *";
-    nodeObjDeclCode += codegenName(nodeObjDecl.obj->name) + "_init (struct " + codegenName(nodeObjDecl.obj->name) + " x) {\n";
+    nodeObjDeclCode += codegenName(nodeObjDecl.obj->name) + "_init ";
+    nodeObjDeclCode += "(struct " + codegenName(nodeObjDecl.obj->name) + " x) {\n";
     nodeObjDeclCode += "  size_t l = sizeof(struct " + codegenName(nodeObjDecl.obj->name) + ");\n";
     nodeObjDeclCode += "  " + codegenType(codegen, nodeObjDecl.obj, true) + "n = malloc(l);\n";
     nodeObjDeclCode += "  if (n == NULL) {\n";
@@ -636,7 +639,7 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
         code += exprLit.val;
       }
     } else {
-      auto [initNodeExprSetUp, initNodeExprCode, initNodeExprCleanUp] = codegenNodeExpr(codegen, nodeVarDecl.init.value());
+      auto [initNodeExprSetUp, initNodeExprCode, initNodeExprCleanUp] = codegenNodeExpr(codegen, *nodeVarDecl.init);
 
       setUp += initNodeExprSetUp;
       code += initNodeExprCode;
@@ -704,7 +707,6 @@ Codegen codegen (AST *ast) {
     codegen.functions.str_from_cstr ||
     codegen.functions.str_deinit
   ) {
-
     builtinStructDefinitionsCode += "struct str {\n";
     builtinStructDefinitionsCode += "  unsigned char *c;\n";
     builtinStructDefinitionsCode += "  size_t l;\n";
@@ -790,8 +792,8 @@ Codegen codegen (AST *ast) {
   codegen.output += codegen.structDeclarationsCode.empty() ? "" : codegen.structDeclarationsCode + "\n";
   codegen.output += builtinStructDefinitionsCode;
   codegen.output += codegen.structDefinitionsCode;
-  codegen.output += codegen.functionDeclarationsCode.empty() ? "" : codegen.functionDeclarationsCode + "\n";
   codegen.output += builtinFunctionDeclarationsCode.empty() ? "" : builtinFunctionDeclarationsCode + "\n";
+  codegen.output += codegen.functionDeclarationsCode.empty() ? "" : codegen.functionDeclarationsCode + "\n";
   codegen.output += builtinFunctionDefinitionsCode;
   codegen.output += codegen.functionDefinitionsCode;
   codegen.output += topLevelCode.empty() ? "" : topLevelCode + "\n";

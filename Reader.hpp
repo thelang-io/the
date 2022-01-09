@@ -21,13 +21,13 @@ class Reader {
   ReaderLocation loc;
   std::string path;
 
-  explicit Reader (const std::string &path);
+  explicit Reader (const std::string &);
   Reader (const Reader &) = delete;
   Reader &operator= (const Reader &) = delete;
 
   bool eof () const;
   char next ();
-  void seek (ReaderLocation loc);
+  void seek (ReaderLocation);
 
  private:
   std::string _content;
