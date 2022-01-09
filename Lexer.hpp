@@ -17,7 +17,6 @@ enum TokenType {
   TK_WHITESPACE,
 
   TK_KW_AS,
-  TK_KW_AS_SAFE,
   TK_KW_ASYNC,
   TK_KW_AWAIT,
   TK_KW_BREAK,
@@ -61,6 +60,7 @@ enum TokenType {
   TK_KW_THROW,
   TK_KW_TRUE,
   TK_KW_TRY,
+  TK_KW_TYPE,
   TK_KW_UNION,
 
   TK_LIT_CHAR,

@@ -79,8 +79,10 @@ struct ASTExprBinary;
 struct ASTExprCall;
 struct ASTExprCond;
 struct ASTExprLit;
+struct ASTExprObj;
 struct ASTExprUnary;
 struct ASTId;
+struct ASTMember;
 struct ASTNodeBreak;
 struct ASTNodeContinue;
 struct ASTNodeExpr;
@@ -88,10 +90,11 @@ struct ASTNodeFnDecl;
 struct ASTNodeIf;
 struct ASTNodeLoop;
 struct ASTNodeMain;
+struct ASTNodeObjDecl;
 struct ASTNodeReturn;
 struct ASTNodeVarDecl;
 
-using ASTExprAccess = std::variant<ASTId>;
+using ASTExprAccess = std::variant<ASTId, ASTMember>;
 
 using ASTExpr = std::variant<
   ASTExprAccess,
@@ -100,6 +103,7 @@ using ASTExpr = std::variant<
   ASTExprCall,
   ASTExprCond,
   ASTExprLit,
+  ASTExprObj,
   ASTExprUnary
 >;
 
@@ -111,6 +115,7 @@ using ASTNode = std::variant<
   ASTNodeIf,
   ASTNodeLoop,
   ASTNodeMain,
+  ASTNodeObjDecl,
   ASTNodeReturn,
   ASTNodeVarDecl
 >;
@@ -129,9 +134,14 @@ struct ASTId {
   Var v;
 };
 
+struct ASTMember {
+  std::shared_ptr<ASTExprAccess> obj;
+  std::string prop;
+};
+
 struct ASTNodeExpr {
   std::shared_ptr<ASTExpr> expr;
-  Type type;
+  std::shared_ptr<Type> type;
   bool parenthesized = false;
 };
 
@@ -169,6 +179,11 @@ struct ASTExprLit {
   std::string val;
 };
 
+struct ASTExprObj {
+  std::shared_ptr<Type> obj;
+  std::map<std::string, ASTNodeExpr> props;
+};
+
 struct ASTExprUnary {
   ASTNodeExpr arg;
   ASTExprUnaryOp op;
@@ -182,21 +197,20 @@ struct ASTNodeContinue {
 };
 
 struct ASTNodeFnDeclParam {
-  std::string id;
-  Type type;
+  std::shared_ptr<Type> type;
   std::optional<ASTNodeExpr> init;
 };
 
 struct ASTNodeFnDecl {
   std::shared_ptr<Fn> fn;
-  std::vector<ASTNodeFnDeclParam> params = {};
-  ASTBlock body = {};
+  std::map<std::string, ASTNodeFnDeclParam> params;
+  ASTBlock body;
 };
 
 struct ASTNodeIf {
   ASTNodeExpr cond;
   ASTBlock body;
-  std::optional<std::shared_ptr<ASTNodeIfCond>> alt = {};
+  std::optional<std::shared_ptr<ASTNodeIfCond>> alt;
 };
 
 struct ASTNodeLoop {
@@ -210,13 +224,17 @@ struct ASTNodeMain {
   ASTBlock body;
 };
 
+struct ASTNodeObjDecl {
+  std::string name;
+  std::shared_ptr<Type> obj;
+};
+
 struct ASTNodeReturn {
   ASTNodeExpr arg;
 };
 
 struct ASTNodeVarDecl {
   Var v;
-  std::optional<ASTId> type;
   std::optional<ASTNodeExpr> init;
 };
 

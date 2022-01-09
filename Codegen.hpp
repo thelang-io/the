@@ -29,9 +29,11 @@ struct Codegen {
   CodegenHeaders headers;
   CodegenFunctions functions;
   std::size_t indent;
+  std::string forwardStructDeclarationsCode;
   std::string functionDeclarationsCode;
   std::string functionDefinitionsCode;
   std::string output;
+  std::string structDeclarationsCode;
 };
 
 Codegen codegen (AST *);

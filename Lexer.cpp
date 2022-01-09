@@ -378,23 +378,7 @@ Token lex (Reader *reader) {
   } else if (tokenIsLitIdStart(ch)) {
     lexWalk(reader, lexer, tokenIsLitIdContinue);
 
-    if (lexer.val == "as") {
-      if (reader->eof()) {
-        return Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
-      }
-
-      auto loc1 = reader->loc;
-      auto ch1 = reader->next();
-
-      if (ch1 == '?') {
-        lexer.val += ch1;
-        return Token{TK_KW_AS_SAFE, lexer.start, reader->loc, lexer.val};
-      } else {
-        reader->seek(loc1);
-        return Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
-      }
-    }
-
+    if (lexer.val == "as") return Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "async") return Token{TK_KW_ASYNC, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "await") return Token{TK_KW_AWAIT, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "break") return Token{TK_KW_BREAK, lexer.start, reader->loc, lexer.val};
@@ -438,6 +422,7 @@ Token lex (Reader *reader) {
     if (lexer.val == "throw") return Token{TK_KW_THROW, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "true") return Token{TK_KW_TRUE, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "try") return Token{TK_KW_TRY, lexer.start, reader->loc, lexer.val};
+    if (lexer.val == "type") return Token{TK_KW_TYPE, lexer.start, reader->loc, lexer.val};
     if (lexer.val == "union") return Token{TK_KW_UNION, lexer.start, reader->loc, lexer.val};
 
     return Token{TK_LIT_ID, lexer.start, reader->loc, lexer.val};

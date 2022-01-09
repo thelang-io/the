@@ -8,13 +8,17 @@
 #ifndef SRC_TYPED_MAP_HPP
 #define SRC_TYPED_MAP_HPP
 
+#include <algorithm>
 #include <climits>
+#include <map>
 #include <memory>
 #include <vector>
 #include "Error.hpp"
 
 struct Type {
   std::string name;
+  std::optional<std::shared_ptr<Type>> parent = std::nullopt;
+  std::map<std::string, std::shared_ptr<Type>> fields = {};
 
   bool isAny () const;
   bool isBool () const;
@@ -39,15 +43,14 @@ struct Type {
 };
 
 struct FnParam {
-  std::string name;
-  Type type;
-  bool required = false; // TODO Use
+  std::shared_ptr<Type> type;
+  bool required = false; // TODO
 };
 
 struct Fn {
   std::string name;
-  Type returnType;
-  std::vector<FnParam> params;
+  std::shared_ptr<Type> returnType;
+  std::map<std::string, FnParam> params;
   bool builtin = false;
 };
 
@@ -65,31 +68,37 @@ class TypedMap {
     return this->_items.back();
   }
 
-  inline const T &get (const std::string &name) const {
-    for (auto it : this->_items) {
-      if (it->name == name) {
-        return *it;
+  inline const std::shared_ptr<T> &get (const std::string &name) const {
+    for (const auto &item : this->_items) {
+      if (item->name == name) {
+        return item;
       }
     }
 
-    throw Error("Tried to access non existing variable map item");
+    throw Error("Tried to access non existing typed map item");
+  }
+
+  inline bool has (const std::string &name) const {
+    return std::any_of(this->_items.begin(), this->_items.end(), [&name] (auto it) -> bool {
+      return it.name == name;
+    });
   }
 
   inline std::string name (const std::string &name) const {
     auto result = std::string();
 
-    for (auto it : this->stack) {
-      result += it + "SD";
+    for (const auto &item : this->stack) {
+      result += item + "SD";
     }
 
-    result = result + name + "_";
+    result += name + "_";
 
     for (auto idx = static_cast<std::size_t>(0);; idx++) {
       auto fullName = result + std::to_string(idx);
       auto exists = false;
 
-      for (auto it : this->_items) {
-        if (it->name == fullName) {
+      for (const auto &item : this->_items) {
+        if (item->name == fullName) {
           exists = true;
           break;
         }

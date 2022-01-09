@@ -116,7 +116,7 @@ struct ParserExprObjProp {
 };
 
 struct ParserExprObj {
-  ParserId type;
+  ParserId id;
   std::vector<ParserExprObjProp> props;
 };
 
@@ -151,7 +151,7 @@ struct ParserStmtFnDecl {
 struct ParserStmtIf {
   ParserStmtExpr cond;
   ParserBlock body;
-  std::optional<std::shared_ptr<ParserStmtIfCond>> alt = {};
+  std::optional<std::shared_ptr<ParserStmtIfCond>> alt;
 };
 
 struct ParserStmtLoop {

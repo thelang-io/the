@@ -8,31 +8,30 @@
 #include "Error.hpp"
 #include "VarMap.hpp"
 
-Var &VarMap::add (const std::string &name, const Type &type, bool mut, const std::optional<std::variant<std::shared_ptr<Fn>, std::shared_ptr<Type>>> &ref) {
+Var &VarMap::add (const std::string &name, const std::shared_ptr<Type> &type, bool mut, const std::optional<std::variant<std::shared_ptr<Fn>, std::shared_ptr<Type>>> &ref) {
   this->_items.push_back(Var{name, type, mut, ref, this->_frame});
   return this->_items.back();
 }
 
 const Var &VarMap::get (const std::string &name) const {
-  for (auto it = this->_items.begin(); it != this->_items.end();) {
-    auto item = *it;
-    auto idx = static_cast<std::size_t>(std::distance(this->_items.begin(), it));
-
+  for (const auto &item : this->_items) {
     if (item.name == name) {
-      return this->_items[idx];
+      return item;
     }
-
-    it++;
   }
 
   throw Error("Tried to access non existing variable map item");
 }
 
+bool VarMap::has (const std::string &name) const {
+  return std::any_of(this->_items.begin(), this->_items.end(), [&name] (auto it) -> bool {
+    return it.name == name;
+  });
+}
+
 void VarMap::restore () {
   for (auto it = this->_items.begin(); it != this->_items.end();) {
-    auto item = *it;
-
-    if (item.frame == this->_frame) {
+    if (it->frame == this->_frame) {
       this->_items.erase(it);
       continue;
     }

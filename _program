@@ -1,5 +1,5 @@
 na := 0
-// TODO
+// TODO Global generation
 // nb := "Hello, World!"
 
 fn ga () int {
@@ -55,16 +55,16 @@ obj Ob {
   age: int
 }
 
+obj Oc {
+  tp: int
+  t: Oc_1
+}
+
 obj Oc_1 {
   t1: char
   t2: float
   t3: str
   t4: int
-}
-
-obj Oc {
-  type: int
-  t: Oc_1
 }
 
 main {
@@ -260,20 +260,34 @@ main {
     print("True condition")
   }
 
+  if false {
+    print("False condition")
+  } elif true {
+    print("True condition")
+  } elif 2 {
+    print("False condition")
+  } elif 3 {
+    print("False condition")
+  } elif 4 {
+    print("False condition")
+  } else {
+    print("False condition")
+  }
+
   ea := 1 ? 2 : 3
-  eb := 1 > 2 ? 3 : 4
-  ec := 1 > 2 ? 5 : 0 ? 6 : 7
-  ed := 0 > 2 ? 0 ? 6 : 7 : 3
-  ee := 1 ? 2 ? 3 : 4 : 5
-  ef := 0 ? 2 ? 3 : 4 : 5
+  eb := 1 > 2 ? 3 : 4 // todo wrong
+  ec := 1 > 2 ? 5 : 0 ? 6 : 7 // todo wrong
+  ed := 0 > 2 ? 0 ? 6 : 7 : 3 // todo wrong
+  ee := 1 ? 2 ? 3 : 4 : 5 // todo wrong
+  ef := 0 ? 2 ? 3 : 4 : 5 // todo wrong
   mut eg_a := 0
   eg := 1 ? eg_a = 1 : (eg_a = 0)
-  eh := 0 > -1 ? 4 : 5
+  eh := 0 > -1 ? 4 : 5 // todo wrong
   mut ei_a := 0
   ei := 1 ? (ei_a = 1) : (ei_a = 2)
   mut ej_a := 0
   ej := 0 ? (ej_a = 1) : (ej_a = 2)
-  ek := 2 - 1 > 0 ? 1 : 2
+  ek := 2 - 1 > 0 ? 1 : 2 // todo wrong
 
   print("ea:", ea, "eb:", eb, "ec:", ec, "ed:", ed)
   print("ee:", ee, "ef:", ef, "eg:", eg, "eh:", eh)
@@ -483,12 +497,12 @@ main {
       t3: "Thing",
       t4: -1
     },
-    type: 2
+    tp: 2
   }
 
   print("pa.a:", pa.a)
   print("pb.name:", pb.name, "pb.age:", pb.age)
-  print("pc.t.t1:", pc.t.t1, "pc.t.t2:", pc.t.t2, "pc.t.t3:", pc.t.t3, "pc.t.t4:", pc.t.t4, "pc.type:", pc.type)
+  print("pc.t.t1:", pc.t.t1, "pc.t.t2:", pc.t.t2, "pc.t.t3:", pc.t.t3, "pc.t.t4:", pc.t.t4, "pc.tp:", pc.tp)
 
   mut qa := Oa{a: 2}
 
@@ -504,7 +518,7 @@ main {
       t3: "Thing",
       t4: -1
     },
-    type: 2
+    tp: 2
   }
 
   qa.a = 3
@@ -514,11 +528,11 @@ main {
   qc.t.t2 = 2.718
   qc.t.t3 = "Stuff"
   qc.t.t4 += !1
-  qc.type -= ~2
+  qc.tp -= ~2
 
   print("qa.a:", qa.a)
   print("qb.name:", qb.name, "qb.age:", qb.age)
-  print("qc.t.t1:", qc.t.t1, "qc.t.t2:", qc.t.t2, "qc.t.t3:", qc.t.t3, "qc.t.t4:", qc.t.t4, "qc.type:", qc.type)
+  print("qc.t.t1:", qc.t.t1, "qc.t.t2:", qc.t.t2, "qc.t.t3:", qc.t.t3, "qc.t.t4:", qc.t.t4, "qc.tp:", qc.tp)
 
   obj R {
     name: str
@@ -667,22 +681,23 @@ main {
   // TODO Doesn't work
   // print("wa:", wa, "wb:", wb, "wb_do:", Vb_do(wb))
 
-  if 1 == 1 {
-    fn xa () int { return 2 }
-    print("xa-1:", xa(), "", terminator: "")
-  }
-
-  if 1 == 1 {
-    fn xa () int { return 3 }
-    print("xa-2:", xa(), "", terminator: "")
-  }
+  // TODO Doesn't work
+  // if 1 == 1 {
+  //   fn xa () int { return 2 }
+  //   print("xa-1:", xa(), "", terminator: "")
+  // }
+  //
+  // if 1 == 1 {
+  //   fn xa () int { return 3 }
+  //   print("xa-2:", xa(), "", terminator: "")
+  // }
 
   // if 1 == 1 {
   //   obj Xb {a: int}
   //   xb: Xb = {a: 2} // TODO
   //   print("xb-1:", xb.a, "", terminator: "")
   // }
-
+  //
   // if 1 == 1 {
   //   obj Xb {a: int}
   //   xb: Xb = {a: 3} // TODO
@@ -702,4 +717,27 @@ main {
   }
 
   print("xc:", xc())
+
+  // TODO
+  // ya: bool
+  // yb: byte
+  // yc: char
+  // yd: float
+  // ye: f32
+  // yf: f64
+  // yg: int
+  // yh: i8
+  // yi: i16
+  // yj: i32
+  // yk: i64
+  // yl: str
+  // ym: u8
+  // yn: u16
+  // yo: u32
+  // yp: u64
+  //
+  // print("ya:", ya, "yb:", yb, "yc:", yc, "yd:", yd)
+  // print("ye:", ye, "yf:", yf, "yg:", yg, "yh:", yh)
+  // print("yi:", yi, "yj:", yj, "yk:", yk, "yl:", yl)
+  // print("ym:", ym, "yn:", yn, "yo:", yo, "yp:", yp)
 }

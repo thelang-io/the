@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.5.0
+  VERSION 1.5.1
   LANGUAGES CXX
 )
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 function(target_add_flags target)
@@ -25,15 +25,15 @@ endfunction()
 set(
   sources
 
-  src/AST.cpp src/AST.hpp
-  src/Codegen.cpp src/Codegen.hpp
-  src/Error.cpp src/Error.hpp
-  src/Lexer.cpp src/Lexer.hpp
-  src/Parser.cpp src/Parser.hpp
-  src/Reader.cpp src/Reader.hpp
-  src/TypedMap.cpp src/TypedMap.hpp
-  src/VarMap.cpp src/VarMap.hpp
+  AST.cpp AST.hpp
+  Codegen.cpp Codegen.hpp
+  Error.cpp Error.hpp
+  Lexer.cpp Lexer.hpp
+  Parser.cpp Parser.hpp
+  Reader.cpp Reader.hpp
+  TypedMap.cpp TypedMap.hpp
+  VarMap.cpp VarMap.hpp
 )
 
-add_executable(${PROJECT_NAME} ${sources} src/main.cpp)
+add_executable(${PROJECT_NAME} ${sources} main.cpp)
 target_add_flags(${PROJECT_NAME})

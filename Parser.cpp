@@ -495,7 +495,8 @@ ParserStmt parse (Reader *reader) {
         parseWalkWhitespace(reader);
         auto stmtExprElif = parseStmtExpr(reader);
         auto blockElif = parseBlock(reader);
-        stmtIfAlt = std::make_shared<ParserStmtIfCond>(ParserStmtIf{stmtExprElif, blockElif});
+
+        stmtIfAlt = std::make_shared<ParserStmtIfCond>(ParserStmtIf{stmtExprElif, blockElif, std::nullopt});
       } else if (tok2.type == TK_KW_ELSE) {
         parseWalkWhitespace(reader);
         stmtIfAlt = std::make_shared<ParserStmtIfCond>(parseBlock(reader));
