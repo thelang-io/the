@@ -33,12 +33,7 @@ std::shared_ptr<Type> analyzeStmtExprAccessType (const AST &ast, const ParserExp
 
   if (!memberObjType->isObj()) {
     throw Error("Tried accessing property of non object variable");
-  }
-
-  // ast.typeMap.get(memberObjType->ref.value());
-
-
-  else if (!memberObjType->fields.contains(parserMember.prop.name.val)) {
+  } else if (!memberObjType->fields.contains(parserMember.prop.name.val)) {
     throw Error("Tried accessing non existing object property");
   }
 

@@ -79,7 +79,7 @@ class TypedMap {
   }
 
   inline bool has (const std::string &name) const {
-    return std::any_of(this->_items.begin(), this->_items.end(), [&name] (auto it) -> bool {
+    return std::any_of(this->_items.begin(), this->_items.end(), [&name] (const auto &it) -> bool {
       return it.name == name;
     });
   }

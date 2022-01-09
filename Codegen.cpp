@@ -557,15 +557,15 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(node);
     auto nodeObjDeclCode = std::string();
 
-    codegen.forwardStructDeclarationsCode += "struct " + codegenName(nodeObjDecl.obj->name) + ";\n";
-    codegen.structDeclarationsCode += "struct " + codegenName(nodeObjDecl.obj->name) + " {\n";
+    codegen.structDeclarationsCode += "struct " + codegenName(nodeObjDecl.obj->name) + ";\n";
+    codegen.structDefinitionsCode += "struct " + codegenName(nodeObjDecl.obj->name) + " {\n";
 
     for (const auto &[nodeObjDeclObjFieldName, nodeObjDeclObjFieldType] : nodeObjDecl.obj->fields) {
-      codegen.structDeclarationsCode += "  " + codegenType(codegen, nodeObjDeclObjFieldType, true);
-      codegen.structDeclarationsCode += codegenName(nodeObjDeclObjFieldName) + ";\n";
+      codegen.structDefinitionsCode += "  " + codegenType(codegen, nodeObjDeclObjFieldType, true);
+      codegen.structDefinitionsCode += codegenName(nodeObjDeclObjFieldName) + ";\n";
     }
 
-    codegen.structDeclarationsCode += "};\n\n";
+    codegen.structDefinitionsCode += "};\n\n";
 
     codegen.functionDeclarationsCode += "struct " + codegenName(nodeObjDecl.obj->name) + " *";
     codegen.functionDeclarationsCode += codegenName(nodeObjDecl.obj->name) + "_init ";
@@ -694,7 +694,7 @@ Codegen codegen (AST *ast) {
   mainBody += mainCode;
   mainBody += "}\n";
 
-  auto builtinStructDeclarationsCode = std::string();
+  auto builtinStructDefinitionsCode = std::string();
   auto builtinFunctionDeclarationsCode = std::string();
   auto builtinFunctionDefinitionsCode = std::string();
 
@@ -705,10 +705,10 @@ Codegen codegen (AST *ast) {
     codegen.functions.str_deinit
   ) {
 
-    builtinStructDeclarationsCode += "struct str {\n";
-    builtinStructDeclarationsCode += "  unsigned char *c;\n";
-    builtinStructDeclarationsCode += "  size_t l;\n";
-    builtinStructDeclarationsCode += "};\n\n";
+    builtinStructDefinitionsCode += "struct str {\n";
+    builtinStructDefinitionsCode += "  unsigned char *c;\n";
+    builtinStructDefinitionsCode += "  size_t l;\n";
+    builtinStructDefinitionsCode += "};\n\n";
   }
 
   if (codegen.functions.str_clone) {
@@ -787,9 +787,9 @@ Codegen codegen (AST *ast) {
   codegen.output += " * Proprietary and confidential\n";
   codegen.output += " */\n\n";
   codegen.output += headers.empty() ? "" : headers + "\n";
-  codegen.output += codegen.forwardStructDeclarationsCode.empty() ? "" : codegen.forwardStructDeclarationsCode + "\n";
-  codegen.output += builtinStructDeclarationsCode;
-  codegen.output += codegen.structDeclarationsCode;
+  codegen.output += codegen.structDeclarationsCode.empty() ? "" : codegen.structDeclarationsCode + "\n";
+  codegen.output += builtinStructDefinitionsCode;
+  codegen.output += codegen.structDefinitionsCode;
   codegen.output += codegen.functionDeclarationsCode.empty() ? "" : codegen.functionDeclarationsCode + "\n";
   codegen.output += builtinFunctionDeclarationsCode.empty() ? "" : builtinFunctionDeclarationsCode + "\n";
   codegen.output += builtinFunctionDefinitionsCode;
