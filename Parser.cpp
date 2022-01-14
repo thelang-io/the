@@ -5,25 +5,13 @@
  * Proprietary and confidential
  */
 
+#include <memory>
 #include "Error.hpp"
 #include "Parser.hpp"
 
 ParserStmtExpr parseStmtExpr (Reader *, bool = false);
 
-void parseWhitespace (Reader *reader) {
-  while (true) {
-    auto loc = reader->loc;
-    auto tok = lex(reader);
-
-    if (tok.type != TK_COMMENT_BLOCK && tok.type != TK_COMMENT_LINE && tok.type != TK_WHITESPACE) {
-      reader->seek(loc);
-      break;
-    }
-  }
-}
-
 ParserBlock parseBlock (Reader *reader) {
-  parseWhitespace(reader);
   auto tok1 = lex(reader);
 
   if (tok1.type != TK_OP_LBRACE) {
@@ -34,7 +22,6 @@ ParserBlock parseBlock (Reader *reader) {
 
   while (true) {
     auto loc2 = reader->loc;
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type == TK_EOF) {
@@ -54,11 +41,9 @@ ParserBlock parseBlock (Reader *reader) {
 
 ParserExprAccess parseExprAccess (Reader *reader, ParserExprAccess &exprAccess) {
   auto loc1 = reader->loc;
-  parseWhitespace(reader);
   auto tok1 = lex(reader);
 
   while (tok1.type == TK_OP_DOT) {
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type != TK_ID) {
@@ -70,7 +55,6 @@ ParserExprAccess parseExprAccess (Reader *reader, ParserExprAccess &exprAccess) 
     exprAccess = ParserExprAccess{member};
 
     loc1 = reader->loc;
-    parseWhitespace(reader);
     tok1 = lex(reader);
   }
 
@@ -80,7 +64,6 @@ ParserExprAccess parseExprAccess (Reader *reader, ParserExprAccess &exprAccess) 
 
 ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
   auto loc1 = reader->loc;
-  parseWhitespace(reader);
   auto tok1 = lex(reader);
 
   if (
@@ -105,7 +88,6 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
     tok1.type == TK_OP_STAR ||
     tok1.type == TK_OP_STAR_STAR
   ) {
-    parseWhitespace(reader);
     auto stmtExpr2 = parseStmtExpr(reader);
 
     if (std::holds_alternative<ParserExprBinary>(*stmtExpr2.expr)) {
@@ -126,17 +108,12 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
 
     return parsePostStmtExpr(reader, stmtExpr3);
   } else if (tok1.type == TK_OP_QN) {
-    parseWhitespace(reader);
-
     auto stmtExpr2 = parseStmtExpr(reader);
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type != TK_OP_COLON) {
       throw Error("Expected colon");
     }
-
-    parseWhitespace(reader);
 
     auto stmtExpr3 = parseStmtExpr(reader);
     auto exprCond = ParserExprCond{stmtExpr, stmtExpr2, stmtExpr3};
@@ -169,8 +146,6 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
     tok1.type == TK_OP_STAR_EQ ||
     tok1.type == TK_OP_STAR_STAR_EQ
   )) {
-    parseWhitespace(reader);
-
     auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.expr);
     auto stmtExprRight = parseStmtExpr(reader);
     auto exprAssign = ParserExprAssign{exprAccess, tok1, stmtExprRight};
@@ -179,7 +154,6 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
     stmtExpr.expr = expr;
     return parsePostStmtExpr(reader, stmtExpr);
   } else if (std::holds_alternative<ParserExprAccess>(*stmtExpr.expr) && tok1.type == TK_OP_LBRACE) {
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
     auto props = std::vector<ParserExprObjProp>();
 
@@ -191,7 +165,6 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
         throw Error("Expected object property name");
       }
 
-      parseWhitespace(reader);
       auto tok3 = lex(reader);
 
       if (tok3.type != TK_OP_COLON && props.empty()) {
@@ -201,19 +174,14 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
         throw Error("Expected colon after object property name");
       }
 
-      parseWhitespace(reader);
-
       auto init = parseStmtExpr(reader);
       auto id = ParserId{tok2};
       auto prop = ParserExprObjProp{id, init};
 
       props.push_back(prop);
-
-      parseWhitespace(reader);
       tok2 = lex(reader);
 
       if (tok2.type == TK_OP_COMMA) {
-        parseWhitespace(reader);
         tok2 = lex(reader);
       }
     }
@@ -232,7 +200,6 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
     return parsePostStmtExpr(reader, stmtExpr);
   } else if (std::holds_alternative<ParserExprAccess>(*stmtExpr.expr) && tok1.type == TK_OP_LPAR) {
     auto loc2 = reader->loc;
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
     auto args = std::vector<ParserExprCallArg>();
 
@@ -241,11 +208,9 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
 
       auto argId = std::optional<ParserId>{};
       auto loc3 = reader->loc;
-      parseWhitespace(reader);
       auto tok3 = lex(reader);
 
       if (tok3.type == TK_ID) {
-        parseWhitespace(reader);
         auto tok4 = lex(reader);
 
         if (tok4.type == TK_OP_COLON) {
@@ -257,18 +222,13 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
         reader->seek(loc3);
       }
 
-      parseWhitespace(reader);
       auto argStmtExpr = parseStmtExpr(reader);
-
       args.push_back(ParserExprCallArg{argId, argStmtExpr});
-      parseWhitespace(reader);
 
       tok2 = lex(reader);
 
       if (tok2.type == TK_OP_COMMA) {
         loc2 = reader->loc;
-        parseWhitespace(reader);
-
         tok2 = lex(reader);
       }
     }
@@ -328,8 +288,6 @@ ParserStmtExpr parseStmtExpr (Reader *reader, bool singleStmt) {
     tok1.type == TK_OP_PLUS_PLUS ||
     tok1.type == TK_OP_TILDE
   ) {
-    parseWhitespace(reader);
-
     auto exprUnaryArg = parseStmtExpr(reader, true);
     auto exprUnary = ParserExprUnary{exprUnaryArg, tok1, true};
     auto expr = std::make_shared<ParserExpr>(exprUnary);
@@ -337,10 +295,7 @@ ParserStmtExpr parseStmtExpr (Reader *reader, bool singleStmt) {
 
     return singleStmt ? stmtExpr : parsePostStmtExpr(reader, stmtExpr);
   } else if (tok1.type == TK_OP_LPAR) {
-    parseWhitespace(reader);
-
     auto stmtExpr = parseStmtExpr(reader);
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type != TK_OP_RPAR) {
@@ -357,17 +312,13 @@ ParserStmtExpr parseStmtExpr (Reader *reader, bool singleStmt) {
 ParserStmt parseStmtLoopFor (Reader *reader, const std::optional<std::shared_ptr<ParserStmt>> &stmt) {
   auto stmtExpr1 = std::optional<ParserStmtExpr>{};
   auto stmtExpr2 = std::optional<ParserStmtExpr>{};
-
   auto loc1 = reader->loc;
-  parseWhitespace(reader);
   auto tok1 = lex(reader);
 
   if (tok1.type != TK_OP_SEMI) {
     reader->seek(loc1);
-    parseWhitespace(reader);
 
     stmtExpr1 = parseStmtExpr(reader);
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type != TK_OP_SEMI) {
@@ -376,13 +327,11 @@ ParserStmt parseStmtLoopFor (Reader *reader, const std::optional<std::shared_ptr
   }
 
   auto loc3 = reader->loc;
-  parseWhitespace(reader);
   auto tok3 = lex(reader);
 
   reader->seek(loc3);
 
   if (tok3.type != TK_OP_LBRACE) {
-    parseWhitespace(reader);
     stmtExpr2 = parseStmtExpr(reader);
   }
 
@@ -393,15 +342,13 @@ ParserStmt parseStmtLoopFor (Reader *reader, const std::optional<std::shared_ptr
 }
 
 ParserStmt parse (Reader *reader) {
-  parseWhitespace(reader);
+  auto loc1 = reader->loc;
+  auto tok1 = lex(reader);
 
-  if (reader->eof()) {
+  if (tok1.type == TK_EOF) {
     auto stmtEnd = ParserStmtEnd{};
     return ParserStmt{stmtEnd};
   }
-
-  auto loc1 = reader->loc;
-  auto tok1 = lex(reader);
 
   if (tok1.type == TK_KW_BREAK) {
     auto stmtBreak = ParserStmtBreak{};
@@ -410,21 +357,18 @@ ParserStmt parse (Reader *reader) {
     auto stmtContinue = ParserStmtContinue{};
     return ParserStmt{stmtContinue};
   } else if (tok1.type == TK_KW_FN) {
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type != TK_ID) {
       throw Error("Expected function identifier");
     }
 
-    parseWhitespace(reader);
     auto tok3 = lex(reader);
 
     if (tok3.type != TK_OP_LPAR) {
       throw Error("Expected left parentheses");
     }
 
-    parseWhitespace(reader);
     auto tok4 = lex(reader);
     auto params = std::vector<ParserStmtFnDeclParam>();
 
@@ -435,11 +379,9 @@ ParserStmt parse (Reader *reader) {
 
       auto type = std::optional<ParserId>{};
       auto init = std::optional<ParserStmtExpr>{};
-      parseWhitespace(reader);
       auto tok5 = lex(reader);
 
       if (tok5.type == TK_OP_COLON) {
-        parseWhitespace(reader);
         auto tok6 = lex(reader);
 
         if (tok6.type != TK_ID) {
@@ -449,36 +391,29 @@ ParserStmt parse (Reader *reader) {
         type = ParserId{tok6};
 
         auto loc7 = reader->loc;
-        parseWhitespace(reader);
         auto tok7 = lex(reader);
 
         if (tok7.type == TK_OP_EQ) {
-          parseWhitespace(reader);
           init = parseStmtExpr(reader);
         } else {
           reader->seek(loc7);
         }
       } else if (tok5.type == TK_OP_COLON_EQ) {
-        parseWhitespace(reader);
         init = parseStmtExpr(reader);
       } else {
         throw Error("Expected function parameter type after parameter name");
       }
 
       auto id = ParserId{tok4};
-      auto param = ParserStmtFnDeclParam{id, type, init};
-      params.push_back(param);
+      params.push_back(ParserStmtFnDeclParam{id, type, init});
 
-      parseWhitespace(reader);
       tok4 = lex(reader);
 
       if (tok4.type == TK_OP_COMMA) {
-        parseWhitespace(reader);
         tok4 = lex(reader);
       }
     }
 
-    parseWhitespace(reader);
     auto tok8 = lex(reader);
 
     if (tok8.type != TK_ID) {
@@ -492,8 +427,6 @@ ParserStmt parse (Reader *reader) {
 
     return ParserStmt{stmtFnDecl};
   } else if (tok1.type == TK_KW_IF) {
-    parseWhitespace(reader);
-
     auto stmtExpr = parseStmtExpr(reader);
     auto block = parseBlock(reader);
     auto alt = std::optional<std::shared_ptr<ParserStmtIfCond>>{};
@@ -501,18 +434,15 @@ ParserStmt parse (Reader *reader) {
 
     while (true) {
       auto loc2 = reader->loc;
-      parseWhitespace(reader);
       auto tok2 = lex(reader);
       auto stmtIfAlt = std::shared_ptr<ParserStmtIfCond>{};
 
       if (tok2.type == TK_KW_ELIF) {
-        parseWhitespace(reader);
         auto stmtExprElif = parseStmtExpr(reader);
         auto blockElif = parseBlock(reader);
 
         stmtIfAlt = std::make_shared<ParserStmtIfCond>(ParserStmtIf{stmtExprElif, blockElif, std::nullopt});
       } else if (tok2.type == TK_KW_ELSE) {
-        parseWhitespace(reader);
         stmtIfAlt = std::make_shared<ParserStmtIfCond>(parseBlock(reader));
       } else {
         reader->seek(loc2);
@@ -524,7 +454,7 @@ ParserStmt parse (Reader *reader) {
       }
 
       if (altTail != std::nullopt) {
-        auto stmtIf = std::get<ParserStmtIf>(**altTail);
+        auto &stmtIf = std::get<ParserStmtIf>(**altTail);
         stmtIf.alt = stmtIfAlt;
       }
 
@@ -539,7 +469,6 @@ ParserStmt parse (Reader *reader) {
     return ParserStmt{stmtIf};
   } else if (tok1.type == TK_KW_LOOP) {
     auto loc2 = reader->loc;
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type == TK_OP_LBRACE) {
@@ -560,7 +489,6 @@ ParserStmt parse (Reader *reader) {
       }
 
       auto loc3 = reader->loc;
-      parseWhitespace(reader);
       auto tok3 = lex(reader);
 
       if (std::holds_alternative<ParserStmtVarDecl>(stmt) && tok3.type != TK_OP_SEMI) {
@@ -585,15 +513,12 @@ ParserStmt parse (Reader *reader) {
 
     return ParserStmt{stmtMain};
   } else if (tok1.type == TK_KW_MUT) {
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type == TK_ID) {
-      parseWhitespace(reader);
       auto tok3 = lex(reader);
 
       if (tok3.type == TK_OP_COLON) {
-        parseWhitespace(reader);
         auto tok4 = lex(reader);
 
         if (tok4.type != TK_ID) {
@@ -601,12 +526,10 @@ ParserStmt parse (Reader *reader) {
         }
 
         auto loc5 = reader->loc;
-        parseWhitespace(reader);
         auto tok5 = lex(reader);
         auto init = std::optional<ParserStmtExpr>{};
 
         if (tok5.type == TK_OP_EQ) {
-          parseWhitespace(reader);
           init = parseStmtExpr(reader);
         } else {
           reader->seek(loc5);
@@ -618,8 +541,6 @@ ParserStmt parse (Reader *reader) {
 
         return ParserStmt{stmtVarDecl};
       } else if (tok3.type == TK_OP_COLON_EQ) {
-        parseWhitespace(reader);
-
         auto stmtExpr = parseStmtExpr(reader);
         auto id = ParserId{tok2};
         auto stmtVarDecl = ParserStmtVarDecl{id, std::nullopt, stmtExpr, true};
@@ -628,21 +549,18 @@ ParserStmt parse (Reader *reader) {
       }
     }
   } else if (tok1.type == TK_KW_OBJ) {
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type != TK_ID) {
       throw Error("Expected object identifier");
     }
 
-    parseWhitespace(reader);
     auto tok3 = lex(reader);
 
     if (tok3.type != TK_OP_LBRACE) {
       throw Error("Expected left brace after object identifier");
     }
 
-    parseWhitespace(reader);
     auto tok4 = lex(reader);
     auto fields = std::vector<ParserStmtObjDeclField>();
 
@@ -651,14 +569,12 @@ ParserStmt parse (Reader *reader) {
         throw Error("Expected object field name");
       }
 
-      parseWhitespace(reader);
       auto tok5 = lex(reader);
 
       if (tok5.type != TK_OP_COLON) {
         throw Error("Expected colon after object field name");
       }
 
-      parseWhitespace(reader);
       auto tok6 = lex(reader);
 
       if (tok6.type != TK_ID) {
@@ -669,11 +585,9 @@ ParserStmt parse (Reader *reader) {
       auto fieldType = ParserId{tok6};
       fields.push_back(ParserStmtObjDeclField{fieldId, fieldType});
 
-      parseWhitespace(reader);
       tok4 = lex(reader);
 
       if (tok4.type == TK_OP_COMMA) {
-        parseWhitespace(reader);
         tok4 = lex(reader);
       }
     }
@@ -687,18 +601,14 @@ ParserStmt parse (Reader *reader) {
 
     return ParserStmt{stmtObjDecl};
   } else if (tok1.type == TK_KW_RETURN) {
-    parseWhitespace(reader);
-
     auto stmtExpr = parseStmtExpr(reader);
     auto stmtReturn = ParserStmtReturn{stmtExpr};
 
     return ParserStmt{stmtReturn};
   } else if (tok1.type == TK_ID) {
-    parseWhitespace(reader);
     auto tok2 = lex(reader);
 
     if (tok2.type == TK_OP_COLON) {
-      parseWhitespace(reader);
       auto tok3 = lex(reader);
 
       if (tok3.type != TK_ID) {
@@ -706,12 +616,10 @@ ParserStmt parse (Reader *reader) {
       }
 
       auto loc4 = reader->loc;
-      parseWhitespace(reader);
       auto tok4 = lex(reader);
       auto init = std::optional<ParserStmtExpr>{};
 
       if (tok4.type == TK_OP_EQ) {
-        parseWhitespace(reader);
         init = parseStmtExpr(reader);
       } else {
         reader->seek(loc4);
@@ -723,8 +631,6 @@ ParserStmt parse (Reader *reader) {
 
       return ParserStmt{stmtVarDecl};
     } else if (tok2.type == TK_OP_COLON_EQ) {
-      parseWhitespace(reader);
-
       auto stmtExpr = parseStmtExpr(reader);
       auto id = ParserId{tok1};
       auto stmtVarDecl = ParserStmtVarDecl{id, std::nullopt, stmtExpr};

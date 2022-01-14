@@ -23,6 +23,66 @@ void lexWalk (Reader *reader, Lexer &lexer, const std::function<bool (char)> &fn
   }
 }
 
+void lexWhitespace (Reader *reader) {
+  while (true) {
+    if (reader->eof()) {
+      break;
+    }
+
+    auto lexer = Lexer{reader->loc};
+    auto ch = reader->next();
+
+    if (tokenIsWhitespace(ch)) {
+      lexWalk(reader, lexer, tokenIsWhitespace);
+      continue;
+    } else if (ch == '/') {
+      auto ch1 = reader->next();
+
+      if (ch1 == '/') {
+        lexer.val += ch1;
+        lexWalk(reader, lexer, tokenIsNotNewline);
+
+        continue;
+      } else if (ch1 == '*') {
+        lexer.val += ch1;
+
+        if (reader->eof()) {
+          throw SyntaxError(reader, lexer.start, E0001);
+        }
+
+        while (true) {
+          auto ch2 = reader->next();
+
+          if (reader->eof()) {
+            throw SyntaxError(reader, lexer.start, E0001);
+          }
+
+          if (ch2 == '*') {
+            auto loc3 = reader->loc;
+            auto ch3 = reader->next();
+
+            if (ch3 == '/') {
+              lexer.val += ch2;
+              lexer.val += ch3;
+
+              break;
+            } else {
+              reader->seek(loc3);
+            }
+          }
+
+          lexer.val += ch2;
+        }
+
+        continue;
+      }
+    }
+
+    reader->seek(lexer.start);
+    break;
+  }
+}
+
 void lexWalkLitFloatExp (Reader *reader, Lexer &lexer) {
   if (reader->eof()) {
     throw SyntaxError(reader, lexer.start, E0013);
@@ -253,7 +313,9 @@ Token lexOpEqDouble (Reader *reader, Lexer &lexer, char ch, TokenType type1, Tok
 }
 
 Token lex (Reader *reader) {
-  auto lexer = Lexer{reader->loc, ""};
+  lexWhitespace(reader);
+
+  auto lexer = Lexer{reader->loc};
 
   if (reader->eof()) {
     return Token{TK_EOF, lexer.start, reader->loc, lexer.val};
@@ -356,18 +418,13 @@ Token lex (Reader *reader) {
     if (ch1 == '=') {
       lexer.val += ch1;
       return Token{TK_OP_SLASH_EQ, lexer.start, reader->loc, lexer.val};
-    } else if (ch1 != '/' && ch1 != '*') {
-      reader->seek(loc1);
-      return Token{TK_OP_SLASH, lexer.start, reader->loc, lexer.val};
     } else {
       reader->seek(loc1);
+      return Token{TK_OP_SLASH, lexer.start, reader->loc, lexer.val};
     }
   }
 
-  if (tokenIsWhitespace(ch)) {
-    lexWalk(reader, lexer, tokenIsWhitespace);
-    return Token{TK_WHITESPACE, lexer.start, reader->loc, lexer.val};
-  } else if (tokenIsIdStart(ch)) {
+  if (tokenIsIdStart(ch)) {
     lexWalk(reader, lexer, tokenIsIdContinue);
 
     if (lexer.val == "as") return Token{TK_KW_AS, lexer.start, reader->loc, lexer.val};
@@ -478,45 +535,6 @@ Token lex (Reader *reader) {
     }
 
     return Token{TK_LIT_STR, lexer.start, reader->loc, lexer.val};
-  } else if (ch == '/') {
-    auto ch1 = reader->next();
-
-    if (ch1 == '/') {
-      lexer.val += ch1;
-      lexWalk(reader, lexer, tokenIsNotNewline);
-
-      return Token{TK_COMMENT_LINE, lexer.start, reader->loc, lexer.val};
-    } else {
-      lexer.val += ch1;
-
-      if (reader->eof()) {
-        throw SyntaxError(reader, lexer.start, E0001);
-      }
-
-      while (true) {
-        auto ch2 = reader->next();
-
-        if (reader->eof()) {
-          throw SyntaxError(reader, lexer.start, E0001);
-        } else if (ch2 == '*') {
-          auto loc3 = reader->loc;
-          auto ch3 = reader->next();
-
-          if (ch3 == '/') {
-            lexer.val += ch2;
-            lexer.val += ch3;
-
-            break;
-          } else {
-            reader->seek(loc3);
-          }
-        }
-
-        lexer.val += ch2;
-      }
-
-      return Token{TK_COMMENT_BLOCK, lexer.start, reader->loc, lexer.val};
-    }
   } else if (ch == '\'') {
     if (reader->eof()) {
       throw SyntaxError(reader, lexer.start, E0002);

@@ -1,6 +1,5 @@
 na := 0
-// TODO Generation
-// nb := "Hello, World!"
+nb := "Hello, World!"
 
 fn ga () int {
   return 3
@@ -480,8 +479,7 @@ main {
   print("World!", terminator: "")
   print()
 
-  // TODO Doesn't work
-  // print("na:", na, "nb:", nb)
+  print("na:", na, "nb:", nb)
 
   pa := Oa{a: 2}
 
@@ -644,7 +642,7 @@ main {
     t3: int
   }
 
-  // TODO Doesn't work
+  // TODO obj as param
   // fn Vb_do (it: Vb) float {
   //   return it.t1.a0 + it.t1.a1 + it.t1.a2 + it.t1.a3 + it.t1.a4 + it.t1.a5 + it.t1.a6 +
   //     it.t1.a7 + it.t1.a8 + it.t1.a9 + it.t1.a10 + it.t1.a11 + it.t1.a12
@@ -678,7 +676,7 @@ main {
     t3: 2
   }
 
-  // TODO Doesn't work
+  // TODO obj as arg
   // print("wa:", wa, "wb:", wb, "wb_do:", Vb_do(wb))
 
   // TODO Doesn't work
@@ -692,15 +690,16 @@ main {
   //   print("xa-2:", xa(), "", terminator: "")
   // }
 
+  // TODO Doesn't work
   // if 1 == 1 {
   //   obj Xb {a: int}
-  //   xb: Xb = {a: 2} // TODO Doesn't work
+  //   xb: Xb = {a: 2}
   //   print("xb-1:", xb.a, "", terminator: "")
   // }
   //
   // if 1 == 1 {
   //   obj Xb {a: int}
-  //   xb: Xb = {a: 3} // TODO Doesn't work
+  //   xb: Xb = {a: 3}
   //   print("xb-2:", xb.a, "", terminator: "")
   // }
 
@@ -718,7 +717,7 @@ main {
 
   print("xc:", xc())
 
-  // TODO Doesn't work
+  // TODO empty initializers
   // ya: bool
   // yb: byte
   // yc: char

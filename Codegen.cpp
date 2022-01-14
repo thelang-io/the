@@ -10,13 +10,38 @@
 
 std::tuple<std::string, std::string, std::string> codegenNode (Codegen &, const ASTNode &);
 
+std::string codegenBuiltinName (const std::string &name) {
+  return "builtin_" + name;
+}
+
 std::string codegenName (const std::string &name) {
-  return "__THE_" + name;
+  return "__THE_0_" + name;
+}
+
+std::string codegenTypeName (const std::string &name) {
+  return "__THE_1_" + name;
+}
+
+std::string codegenAllocError (Codegen &codegen, const std::string &fnName, const std::optional<std::tuple<std::string, std::string>> &vars = std::nullopt) {
+  codegen.headers.stdio = true;
+  codegen.headers.stdlib = true;
+
+  auto [testVarName, lenVarName] = vars == std::nullopt ? std::make_tuple("r", "l") : *vars;
+
+  return "\n  if (" + testVarName + " == NULL) {\n" +
+    "    fprintf(stderr, \"Error: Failed to allocate %zu bytes in " + fnName + "\\n\", " + lenVarName + ");\n" +
+    "    exit(EXIT_FAILURE);\n" +
+    "  }\n\n";
 }
 
 std::string codegenExprAccess (const ASTExprAccess &exprAccess) {
   if (std::holds_alternative<ASTId>(exprAccess)) {
     auto id = std::get<ASTId>(exprAccess);
+
+    if (id.v.name == "print") {
+      return id.v.name;
+    }
+
     return codegenName(id.v.name);
   }
 
@@ -46,6 +71,11 @@ std::string codegenBlock (Codegen &codegen, const ASTBlock &block) {
 }
 
 std::string codegenType (Codegen &codegen, const std::shared_ptr<Type> &type, bool mut) {
+  if (type->isFn()) {
+    auto fn = std::get<TypeFn>(type->body);
+    return codegenType(codegen, fn.type, true);
+  }
+
   if (type->isBool()) {
     codegen.headers.stdbool = true;
   }
@@ -61,8 +91,8 @@ std::string codegenType (Codegen &codegen, const std::shared_ptr<Type> &type, bo
   if (type->isI16()) return std::string(mut ? "" : "const ") + "short ";
   if (type->isI32()) return std::string(mut ? "" : "const ") + "long ";
   if (type->isI64()) return std::string(mut ? "" : "const ") + "long long ";
-  if (type->isObj()) return std::string(mut ? "" : "const ") + "struct " + codegenName(type->name) + " *";
-  if (type->isStr()) return std::string(mut ? "" : "const ") + "struct str *";
+  if (type->isObj()) return std::string(mut ? "" : "const ") + "struct " + codegenTypeName(type->name) + " *";
+  if (type->isStr()) return std::string(mut ? "" : "const ") + "struct " + codegenBuiltinName("str") + " *";
   if (type->isU8()) return std::string(mut ? "" : "const ") + "unsigned char ";
   if (type->isU16()) return std::string(mut ? "" : "const ") + "unsigned short ";
   if (type->isU32()) return std::string(mut ? "" : "const ") + "unsigned long ";
@@ -110,7 +140,7 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
     auto exprAccessLeft = codegenExprAccess(exprAssign.left);
     auto [rightNodeExprSetUp, rightNodeExprCode, rightNodeExprCleanUp] = codegenNodeExpr(codegen, exprAssign.right);
 
-    if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) { // TODO logic
+    if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) { // TODO optionals
     } else if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_AND) {
       code += exprAccessLeft + " = " + exprAccessLeft + " && " + rightNodeExprCode;
     } else if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_OR) {
@@ -144,16 +174,12 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
     auto [leftNodeExprSetUp, leftNodeExprCode, leftNodeExprCleanUp] = codegenNodeExpr(codegen, exprBinary.left);
     auto [rightNodeExprSetUp, rightNodeExprCode, rightNodeExprCleanUp] = codegenNodeExpr(codegen, exprBinary.right);
 
-    if (exprBinary.op == AST_EXPR_BINARY_COALESCE) { // TODO logic
+    if (exprBinary.op == AST_EXPR_BINARY_COALESCE) { // TODO optionals
     } else if (exprBinary.op == AST_EXPR_BINARY_POWER) {
       codegen.headers.math = true;
       code += "pow(" + leftNodeExprCode + ", " + rightNodeExprCode + ")";
     } else {
-      if (exprBinary.op == AST_EXPR_BINARY_DIVIDE || exprBinary.op == AST_EXPR_BINARY_MULTIPLY) {
-        code += "(double) " + leftNodeExprCode;
-      } else {
-        code += leftNodeExprCode;
-      }
+      code += leftNodeExprCode;
 
       if (exprBinary.op == AST_EXPR_BINARY_ADD) code += " + ";
       if (exprBinary.op == AST_EXPR_BINARY_BITWISE_AND) code += " & ";
@@ -174,11 +200,7 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
       if (exprBinary.op == AST_EXPR_BINARY_RIGHT_SHIFT) code += " >> ";
       if (exprBinary.op == AST_EXPR_BINARY_SUBTRACT) code += " - ";
 
-      if (exprBinary.op == AST_EXPR_BINARY_DIVIDE || exprBinary.op == AST_EXPR_BINARY_MULTIPLY) {
-        code += "(double) " + rightNodeExprCode;
-      } else {
-        code += rightNodeExprCode;
-      }
+      code += rightNodeExprCode;
     }
 
     setUp += leftNodeExprSetUp;
@@ -187,77 +209,78 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
     cleanUp += rightNodeExprCleanUp;
   } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.expr)) {
     auto exprCall = std::get<ASTExprCall>(*nodeExpr.expr);
+    auto callee = codegenExprAccess(exprCall.callee);
 
-    if (exprCall.fn->builtin) {
-      if (exprCall.fn->name == "print") {
-        codegen.headers.stdio = true;
+    if (callee == "print") {
+      codegen.headers.stdio = true;
 
-        auto separator = std::string(R"(" ")");
-        auto terminator = std::string(R"("\n")");
-        auto argsCode = std::string();
-        auto argIdx = static_cast<std::size_t>(0);
+      auto separator = std::string(R"(" ")");
+      auto terminator = std::string(R"("\n")");
+      auto argsCode = std::string();
+      auto argIdx = static_cast<std::size_t>(0);
 
-        for (const auto &exprCallArg : exprCall.args) {
-          if (exprCallArg.id != std::nullopt && exprCallArg.id == "separator") {
-            auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, exprCallArg.expr);
-
-            separator = nodeExprCode + "->c";
-            setUp += nodeExprSetUp;
-            cleanUp += nodeExprCleanUp;
-          } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "terminator") {
-            auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, exprCallArg.expr);
-
-            terminator = nodeExprCode + "->c";
-            setUp += nodeExprSetUp;
-            cleanUp += nodeExprCleanUp;
-          }
-        }
-
-        code += "printf(\"";
-
-        for (const auto &exprCallArg : exprCall.args) {
-          if (exprCallArg.id != std::nullopt) {
-            continue;
-          }
-
-          code += argIdx == 0 ? "" : "%s";
-          code += codegenTypeFormat(exprCallArg.expr.type);
-          argsCode += argIdx == 0 ? "" : separator + ", ";
-
-          if (exprCallArg.expr.type->isBool()) {
-            argsCode += "(";
-          }
-
+      for (const auto &exprCallArg : exprCall.args) {
+        if (exprCallArg.id != std::nullopt && exprCallArg.id == "separator") {
           auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, exprCallArg.expr);
-          argsCode += nodeExprCode;
 
-          if (exprCallArg.expr.type->isBool()) {
-            argsCode += R"() == true ? "true" : "false")";
-          } else if (exprCallArg.expr.type->isStr()) {
-            argsCode += "->c";
-          }
-
-          argsCode += ", ";
+          separator = nodeExprCode + "->c";
           setUp += nodeExprSetUp;
           cleanUp += nodeExprCleanUp;
+        } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "terminator") {
+          auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, exprCallArg.expr);
 
-          argIdx++;
+          terminator = nodeExprCode + "->c";
+          setUp += nodeExprSetUp;
+          cleanUp += nodeExprCleanUp;
+        }
+      }
+
+      code += "printf(\"";
+
+      for (const auto &exprCallArg : exprCall.args) {
+        if (exprCallArg.id != std::nullopt) {
+          continue;
         }
 
-        code += R"(%s", )" + argsCode + terminator + ")";
-      }
-    } else {
-      auto paramIdx = static_cast<std::size_t>(0);
-      code += codegenName(exprCall.fn->name) + "(";
+        code += argIdx == 0 ? "" : "%s";
+        code += codegenTypeFormat(exprCallArg.expr.type);
+        argsCode += argIdx == 0 ? "" : separator + ", ";
 
-      for (const auto &[exprCallFnParamName, exprCallFnParam] : exprCall.fn->params) {
+        if (exprCallArg.expr.type->isBool()) {
+          argsCode += "(";
+        }
+
+        auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, exprCallArg.expr);
+        argsCode += nodeExprCode;
+
+        if (exprCallArg.expr.type->isBool()) {
+          argsCode += R"() == true ? "true" : "false")";
+        } else if (exprCallArg.expr.type->isStr()) {
+          argsCode += "->c";
+        }
+
+        argsCode += ", ";
+        setUp += nodeExprSetUp;
+        cleanUp += nodeExprCleanUp;
+
+        argIdx++;
+      }
+
+      code += R"(%s", )" + argsCode + terminator + ")";
+    } else {
+      auto fn = std::get<TypeFn>(exprCall.type->body);
+      auto paramIdx = static_cast<std::size_t>(0);
+
+      code += codegenTypeName(exprCall.type->name) + "(";
+
+      for (const auto &[fnParamName, fnParam] : fn.params) {
         auto foundArg = std::optional<ASTExprCallArg>{};
 
         if (paramIdx < exprCall.args.size() && exprCall.args[paramIdx].id == std::nullopt) {
           foundArg = exprCall.args[paramIdx];
         } else {
           for (const auto &exprCallArg : exprCall.args) {
-            if (exprCallArg.id == exprCallFnParamName) {
+            if (exprCallArg.id == fnParamName) {
               foundArg = exprCallArg;
               break;
             }
@@ -267,11 +290,11 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
         code += paramIdx == 0 ? "" : ", ";
 
         if (foundArg == std::nullopt) {
-          if (exprCallFnParam.type->isBool()) {
+          if (fnParam.type->isBool()) {
             code += "false";
-          } else if (exprCallFnParam.type->isChar()) {
+          } else if (fnParam.type->isChar()) {
             code += R"('\0')";
-          } else if (exprCallFnParam.type->isStr()) {
+          } else if (fnParam.type->isStr()) {
             code += R"("")";
           } else {
             code += "0";
@@ -318,20 +341,21 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
 
       code += val;
     } else if (exprLit.type == AST_EXPR_LIT_STR) {
-      codegen.functions.str_from_cstr = true;
-      auto valSize = std::to_string(exprLit.val.size() - 2);
+      codegen.functions.s.init = true;
 
-      code += "str_from_cstr(" + exprLit.val + ", " + valSize + ")";
+      auto valSize = std::to_string(exprLit.val.size() - 2);
+      code += codegenBuiltinName("str_init") + "(" + exprLit.val + ", " + valSize + ")";
     } else {
       code += exprLit.val;
     }
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.expr)) {
     auto exprObj = std::get<ASTExprObj>(*nodeExpr.expr);
+    auto obj = std::get<TypeObj>(exprObj.type->body);
     auto fieldIdx = static_cast<std::size_t>(0);
 
-    code += codegenName(exprObj.obj->name) + "_init((struct " + codegenName(exprObj.obj->name) + ") {";
+    code += codegenTypeName(exprObj.type->name) + "_init ((const struct " + codegenTypeName(exprObj.type->name) + ") {";
 
-    for (const auto &[objFieldName, objField] : exprObj.obj->fields) {
+    for (const auto &[objFieldName, objField] : obj.fields) {
       if (!exprObj.props.contains(objFieldName)) {
         continue;
       }
@@ -423,64 +447,52 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
     cleanUp += nodeExprCleanUp;
   } else if (std::holds_alternative<ASTNodeFnDecl>(node)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(node);
-    auto nodeFnDeclSetUp = std::string();
-    auto nodeFnDeclCode = std::string();
-    auto nodeFnDeclCleanUp = std::string();
+    auto fn = std::get<TypeFn>(nodeFnDecl.var.type->body);
+    auto declCode = std::string();
+    auto defSetUp = std::string();
+    auto defCode = std::string();
+    auto defCleanUp = std::string();
 
-    codegen.functionDeclarationsCode += codegenType(codegen, nodeFnDecl.fn->returnType, true);
-    codegen.functionDeclarationsCode += codegenName(nodeFnDecl.fn->name) + " (";
+    declCode += codegenType(codegen, fn.type, true) + codegenTypeName(nodeFnDecl.var.type->name) + " (";
+    defCode += codegenType(codegen, fn.type, true) + codegenTypeName(nodeFnDecl.var.type->name) + " (";
 
-    if (nodeFnDecl.fn->params.empty()) {
-      codegen.functionDeclarationsCode += "void";
+    if (fn.params.empty()) {
+      declCode += "void";
+      defCode += ") {\n";
     } else {
-      auto paramsCode = std::string();
+      auto declParamsCode = std::string();
+      auto defParamsCode = std::string();
       auto paramIdx = static_cast<std::size_t>(0);
 
-      for (const auto &[_, nodeFnDeclFnParam] : nodeFnDecl.fn->params) {
-        auto paramType = codegenType(codegen, nodeFnDeclFnParam.type, true);
+      for (const auto &[fnParamName, fnParam] : fn.params) {
+        auto paramType = codegenType(codegen, fnParam.type, true);
 
-        paramsCode += paramIdx == 0 ? "" : ", ";
-        paramsCode += paramType.back() == ' ' ? paramType.substr(0, paramType.length() - 1) : paramType;
-        paramIdx++;
-      }
+        declParamsCode += paramIdx == 0 ? "" : ", ";
+        declParamsCode += paramType.back() == ' ' ? paramType.substr(0, paramType.length() - 1) : paramType;
 
-      codegen.functionDeclarationsCode += paramsCode;
-    }
-
-    codegen.functionDeclarationsCode += ");\n";
-
-    nodeFnDeclCode += codegenType(codegen, nodeFnDecl.fn->returnType, true);
-    nodeFnDeclCode += codegenName(nodeFnDecl.fn->name) + " (";
-
-    if (nodeFnDecl.fn->params.empty()) {
-      nodeFnDeclCode += ") {\n";
-    } else {
-      auto paramsCode = std::string();
-      auto paramIdx = static_cast<std::size_t>(0);
-
-      for (const auto &[nodeFnDeclFnParamName, nodeFnDeclFnParam] : nodeFnDecl.fn->params) {
-        paramsCode += paramIdx == 0 ? "" : ", ";
-        paramsCode += codegenType(codegen, nodeFnDeclFnParam.type, false);
-        paramsCode += codegenName(nodeFnDeclFnParamName);
+        defParamsCode += paramIdx == 0 ? "" : ", ";
+        defParamsCode += paramType;
+        defParamsCode += codegenName(fnParamName);
 
         paramIdx++;
       }
 
-      nodeFnDeclCode += paramsCode + ") {\n";
+      declCode += declParamsCode;
+      defCode += defParamsCode + ") {\n";
     }
 
-    nodeFnDeclCode += nodeFnDeclSetUp;
+    defCode += defSetUp;
 
     auto prevIndent = codegen.indent;
     codegen.indent = 0;
 
-    nodeFnDeclCode += codegenBlock(codegen, nodeFnDecl.body);
+    defCode += codegenBlock(codegen, nodeFnDecl.body);
     codegen.indent = prevIndent;
 
-    nodeFnDeclCode += nodeFnDeclCleanUp;
-    nodeFnDeclCode += "}\n\n";
+    defCode += defCleanUp;
 
-    codegen.functionDefinitionsCode += nodeFnDeclCode;
+    codegen.functionDeclarationsCode += declCode + ");\n";
+    codegen.functionDefinitionsCode += defCode + "}\n\n";
   } else if (std::holds_alternative<ASTNodeIf>(node)) {
     auto nodeIf = std::get<ASTNodeIf>(node);
 
@@ -494,7 +506,7 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
     code += std::string(codegen.indent, ' ');
 
     if (nodeLoop.init == std::nullopt && nodeLoop.cond == std::nullopt && nodeLoop.upd == std::nullopt) {
-      code += "while (1)";
+      code += "while (true)";
     } else if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
       auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, *nodeLoop.cond);
 
@@ -557,37 +569,40 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
     codegen.headers.string = true;
 
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(node);
-    auto nodeObjDeclCode = std::string();
+    auto obj = std::get<TypeObj>(nodeObjDecl.var.type->body);
 
-    codegen.structDeclarationsCode += "struct " + codegenName(nodeObjDecl.obj->name) + ";\n";
-    codegen.structDefinitionsCode += "struct " + codegenName(nodeObjDecl.obj->name) + " {\n";
+    codegen.structDeclarationsCode += "struct " + codegenTypeName(nodeObjDecl.var.type->name) + ";\n";
+    codegen.structDefinitionsCode += "struct " + codegenTypeName(nodeObjDecl.var.type->name) + " {\n";
 
-    for (const auto &[nodeObjDeclObjFieldName, nodeObjDeclObjFieldType] : nodeObjDecl.obj->fields) {
-      codegen.structDefinitionsCode += "  " + codegenType(codegen, nodeObjDeclObjFieldType, true);
-      codegen.structDefinitionsCode += codegenName(nodeObjDeclObjFieldName) + ";\n";
+    for (const auto &[objFieldName, objFieldType] : obj.fields) {
+      codegen.structDefinitionsCode += "  " + codegenType(codegen, objFieldType, true);
+      codegen.structDefinitionsCode += codegenName(objFieldName) + ";\n";
     }
 
     codegen.structDefinitionsCode += "};\n\n";
 
-    codegen.functionDeclarationsCode += "struct " + codegenName(nodeObjDecl.obj->name) + " *";
-    codegen.functionDeclarationsCode += codegenName(nodeObjDecl.obj->name) + "_init ";
-    codegen.functionDeclarationsCode += "(struct " + codegenName(nodeObjDecl.obj->name) + ");\n";
+    auto fnName = codegenTypeName(nodeObjDecl.var.type->name) + "_init";
+    auto initDeclCode = std::string();
+    auto initDefCode = std::string();
 
-    nodeObjDeclCode += "struct " + codegenName(nodeObjDecl.obj->name) + " *";
-    nodeObjDeclCode += codegenName(nodeObjDecl.obj->name) + "_init ";
-    nodeObjDeclCode += "(struct " + codegenName(nodeObjDecl.obj->name) + " x) {\n";
-    nodeObjDeclCode += "  size_t l = sizeof(struct " + codegenName(nodeObjDecl.obj->name) + ");\n";
-    nodeObjDeclCode += "  " + codegenType(codegen, nodeObjDecl.obj, true) + "n = malloc(l);\n";
-    nodeObjDeclCode += "  if (n == NULL) {\n";
-    nodeObjDeclCode += R"(    fprintf(stderr, "Error: Failed to allocate %zu bytes for object \")";
-    nodeObjDeclCode += nodeObjDecl.name + R"(\"\n", l);)" + "\n";
-    nodeObjDeclCode += "    exit(EXIT_FAILURE);\n";
-    nodeObjDeclCode += "  }\n";
-    nodeObjDeclCode += "  memcpy(n, &x, l);\n";
-    nodeObjDeclCode += "  return n;\n";
-    nodeObjDeclCode += "}\n\n";
+    initDeclCode += "struct " + codegenTypeName(nodeObjDecl.var.type->name) + " *" + fnName;
+    initDeclCode += " (const struct " + codegenTypeName(nodeObjDecl.var.type->name) + ");\n";
 
-    codegen.functionDefinitionsCode += nodeObjDeclCode;
+    initDefCode += "struct " + codegenTypeName(nodeObjDecl.var.type->name) + " *" + fnName + " ";
+    initDefCode += "(const struct " + codegenTypeName(nodeObjDecl.var.type->name) + " n) {\n";
+    initDefCode += "  size_t l = sizeof(struct " + codegenTypeName(nodeObjDecl.var.type->name) + ");\n";
+    initDefCode += "  " + codegenType(codegen, nodeObjDecl.var.type, true) + "r = malloc(l);\n\n";
+    initDefCode += "  if (r == NULL) {\n";
+    initDefCode += R"(    fprintf(stderr, "Error: Failed to allocate %zu bytes for object \")";
+    initDefCode += nodeObjDecl.var.name + R"(\"\n", l);)" + "\n";
+    initDefCode += "    exit(EXIT_FAILURE);\n";
+    initDefCode += "  }\n\n";
+    initDefCode += "  memcpy(r, &n, l);\n";
+    initDefCode += "  return r;\n";
+    initDefCode += "}\n\n";
+
+    codegen.functionDeclarationsCode += initDeclCode;
+    codegen.functionDefinitionsCode += initDefCode;
   } else if (std::holds_alternative<ASTNodeReturn>(node)) {
     auto nodeReturn = std::get<ASTNodeReturn>(node);
     auto [nodeExprSetUp, nodeExprCode, nodeExprCleanUp] = codegenNodeExpr(codegen, nodeReturn.arg);
@@ -599,17 +614,18 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(node);
 
     code += std::string(codegen.indent, ' ');
-    code += codegenType(codegen, nodeVarDecl.v.type, nodeVarDecl.v.mut) + codegenName(nodeVarDecl.v.name) + " = ";
+    code += codegenType(codegen, nodeVarDecl.var.type, nodeVarDecl.var.mut);
+    code += codegenName(nodeVarDecl.var.name) + " = ";
 
     if (nodeVarDecl.init == std::nullopt) {
-      if (nodeVarDecl.v.type->isBool()) {
+      if (nodeVarDecl.var.type->isBool()) {
         codegen.headers.stdbool = true;
         code += "false";
-      } else if (nodeVarDecl.v.type->isChar()) {
+      } else if (nodeVarDecl.var.type->isChar()) {
         code += "'\\0'";
-      } else if (nodeVarDecl.v.type->isStr()) {
-        codegen.functions.str_init = true;
-        code += "str_init(0)";
+      } else if (nodeVarDecl.var.type->isStr()) {
+        codegen.functions.s.init = true;
+        code += codegenBuiltinName("str_init") + R"(("", 0))";
       } else {
         code += "0";
       }
@@ -620,8 +636,8 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
         auto id = std::get<ASTId>(exprAccess);
 
         if (id.v.type->isStr()) {
-          codegen.functions.str_clone = true;
-          code += "str_clone(" + codegenName(id.v.name) + ")";
+          codegen.functions.s.copy = true;
+          code += codegenBuiltinName("str_copy") + "(" + codegenName(id.v.name) + ")";
         } else {
           code += codegenName(id.v.name);
         }
@@ -633,8 +649,8 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
         codegen.headers.stdbool = true;
         code += exprLit.val;
       } else if (exprLit.type == AST_EXPR_LIT_STR) {
-        codegen.functions.str_from_cstr = true;
-        code += "str_from_cstr(" + exprLit.val + ", " + std::to_string(exprLit.val.length() - 2) + ")";
+        codegen.functions.s.init = true;
+        code += codegenBuiltinName("str_init") + "(" + exprLit.val + ", " + std::to_string(exprLit.val.length() - 2) + ")";
       } else {
         code += exprLit.val;
       }
@@ -648,11 +664,12 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
 
     code += ";\n";
 
-    if (nodeVarDecl.v.type->isStr()) {
-      codegen.functions.str_deinit = true;
+    if (nodeVarDecl.var.type->isStr()) {
+      codegen.functions.s.deinit = true;
 
       cleanUp += std::string(codegen.indent, ' ');
-      cleanUp += "str_deinit((struct str **) &" + codegenName(nodeVarDecl.v.name) + ");\n";
+      cleanUp += codegenBuiltinName("str_deinit") + "((struct " + codegenBuiltinName("str") + " **) &";
+      cleanUp += codegenName(nodeVarDecl.var.name) + ");\n";
     }
   }
 
@@ -661,118 +678,145 @@ std::tuple<std::string, std::string, std::string> codegenNode (Codegen &codegen,
 
 Codegen codegen (AST *ast) {
   auto codegen = Codegen{};
+  auto topLevelSetUp = std::string();
   auto topLevelCode = std::string();
+  auto topLevelCleanUp = std::string();
+  auto mainSetUp = std::string();
   auto mainCode = std::string();
+  auto mainCleanUp = std::string();
+
+  codegen.indent = 2;
 
   for (const auto &node : ast->nodes) {
     if (std::holds_alternative<ASTNodeMain>(node)) {
-      continue;
+      codegen.indent = 0;
+
+      auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, node);
+
+      mainSetUp = nodeSetUp;
+      mainCode = nodeCode;
+      mainCleanUp = nodeCleanUp;
+
+      codegen.indent = 2;
+    } else {
+      auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, node);
+
+      topLevelSetUp += nodeSetUp;
+      topLevelCode += nodeCode;
+      topLevelCleanUp += nodeCleanUp;
     }
-
-    auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, node);
-
-    if (!nodeSetUp.empty() || !nodeCleanUp.empty()) {
-      throw Error("Code generator returned set up or clean up data for top level statement");
-    }
-
-    topLevelCode += nodeCode;
   }
 
-  for (const auto &node : ast->nodes) {
-    if (!std::holds_alternative<ASTNodeMain>(node)) {
-      continue;
-    }
+  codegen.indent = 0;
 
-    auto [nodeSetUp, nodeCode, nodeCleanUp] = codegenNode(codegen, node);
-
-    if (!nodeSetUp.empty() || !nodeCleanUp.empty()) {
-      throw Error("Code generator returned set up or clean up data for main function");
-    }
-
-    mainCode += nodeCode;
-    break;
-  }
-
-  auto mainBody = std::string("int main () {\n");
-  mainBody += mainCode;
-  mainBody += "}\n";
-
+  auto builtinStructDeclarationsCode = std::string();
   auto builtinStructDefinitionsCode = std::string();
   auto builtinFunctionDeclarationsCode = std::string();
   auto builtinFunctionDefinitionsCode = std::string();
 
+  auto strStructCode = "struct " + codegenBuiltinName("str");
+  auto strPtrStructCode = strStructCode + " *";
+
   if (
-    codegen.functions.str_clone ||
-    codegen.functions.str_init ||
-    codegen.functions.str_from_cstr ||
-    codegen.functions.str_deinit
+    codegen.functions.s.init ||
+    codegen.functions.s.copy ||
+    codegen.functions.s.deinit ||
+    codegen.functions.s.to_cstr ||
+    codegen.functions.s.concat
   ) {
-    builtinStructDefinitionsCode += "struct str {\n";
+    codegen.headers.stdlib = true;
+
+    builtinStructDeclarationsCode += strStructCode + ";\n";
+
+    builtinStructDefinitionsCode += strStructCode + " {\n";
     builtinStructDefinitionsCode += "  unsigned char *c;\n";
     builtinStructDefinitionsCode += "  size_t l;\n";
     builtinStructDefinitionsCode += "};\n\n";
   }
 
-  if (codegen.functions.str_clone) {
-    codegen.functions.str_init = true;
+  if (codegen.functions.s.init) {
+    auto fnName = codegenBuiltinName("str_init");
+
+    codegen.headers.stdlib = true;
     codegen.headers.string = true;
 
-    builtinFunctionDeclarationsCode += "struct str *str_clone (const struct str *);\n";
+    builtinFunctionDeclarationsCode += strPtrStructCode + fnName + " (const char *, size_t);\n";
 
-    builtinFunctionDefinitionsCode += "struct str *str_clone (const struct str *n) {\n";
-    builtinFunctionDefinitionsCode += "  struct str *s = str_init(n->l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(s->c, n->c, n->l);\n";
-    builtinFunctionDefinitionsCode += "  return s;\n";
+    builtinFunctionDefinitionsCode += strPtrStructCode + fnName + " (const char *c, size_t l) {\n";
+    builtinFunctionDefinitionsCode += "  " + strPtrStructCode + "r = malloc(sizeof(" + strStructCode + "));\n";
+    builtinFunctionDefinitionsCode += codegenAllocError(codegen, fnName, std::make_tuple("r", "sizeof(" + strStructCode + ")"));
+    builtinFunctionDefinitionsCode += "  r->c = malloc(l);\n";
+    builtinFunctionDefinitionsCode += codegenAllocError(codegen, fnName, std::make_tuple("r->c", "l"));
+    builtinFunctionDefinitionsCode += "  memcpy(r->c, c, l);\n";
+    builtinFunctionDefinitionsCode += "  r->l = l;\n\n";
+    builtinFunctionDefinitionsCode += "  return r;\n";
     builtinFunctionDefinitionsCode += "}\n\n";
   }
 
-  if (codegen.functions.str_from_cstr) {
-    codegen.functions.str_init = true;
+  if (codegen.functions.s.copy) {
+    auto fnName = codegenBuiltinName("str_copy");
+
+    codegen.headers.stdlib = true;
     codegen.headers.string = true;
 
-    builtinFunctionDeclarationsCode += "struct str *str_from_cstr (const char *, size_t);\n";
+    builtinFunctionDeclarationsCode += strPtrStructCode + fnName + " (const " + strPtrStructCode + ");\n";
 
-    builtinFunctionDefinitionsCode += "struct str *str_from_cstr (const char *c, size_t l) {\n";
-    builtinFunctionDefinitionsCode += "  struct str *s = str_init(l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(s->c, c, l);\n";
-    builtinFunctionDefinitionsCode += "  return s;\n";
+    builtinFunctionDefinitionsCode += strPtrStructCode + fnName + " (const " + strPtrStructCode + "n) {\n";
+    builtinFunctionDefinitionsCode += "  " + strPtrStructCode + "r = malloc(sizeof(" + strStructCode + "));\n";
+    builtinFunctionDefinitionsCode += codegenAllocError(codegen, fnName, std::make_tuple("r", "sizeof(" + strStructCode + ")"));
+    builtinFunctionDefinitionsCode += "  r->c = malloc(n->l);\n";
+    builtinFunctionDefinitionsCode += codegenAllocError(codegen, fnName, std::make_tuple("r->c", "n->l"));
+    builtinFunctionDefinitionsCode += "  memcpy(r->c, n->c, n->l);\n";
+    builtinFunctionDefinitionsCode += "  r->l = n->l;\n\n";
+    builtinFunctionDefinitionsCode += "  return r;\n";
     builtinFunctionDefinitionsCode += "}\n\n";
   }
 
-  if (codegen.functions.str_init) {
-    codegen.headers.stdio = true;
+  if (codegen.functions.s.deinit) {
+    auto fnName = codegenBuiltinName("str_deinit");
     codegen.headers.stdlib = true;
 
-    builtinFunctionDeclarationsCode += "struct str *str_init (size_t);\n";
+    builtinFunctionDeclarationsCode += "void " + fnName + " (" + strPtrStructCode + "*);\n";
 
-    builtinFunctionDefinitionsCode += "struct str *str_init (size_t l) {\n";
-    builtinFunctionDefinitionsCode += "  size_t z = sizeof(struct str);\n";
-    builtinFunctionDefinitionsCode += "  struct str *s = malloc(z);\n\n";
-    builtinFunctionDefinitionsCode += "  if (s == NULL) {\n";
-    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: Failed to allocate %zu bytes for string\n", z);)";
-    builtinFunctionDefinitionsCode += "\n";
-    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);\n";
-    builtinFunctionDefinitionsCode += "  }\n\n";
-    builtinFunctionDefinitionsCode += "  s->l = l;\n";
-    builtinFunctionDefinitionsCode += "  s->c = malloc(s->l);\n\n";
-    builtinFunctionDefinitionsCode += "  if (s->c == NULL) {\n";
-    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: )";
-    builtinFunctionDefinitionsCode += "Failed to allocate %zu bytes for string content\\n\", s->l);\n";
-    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);\n";
-    builtinFunctionDefinitionsCode += "  }\n\n";
-    builtinFunctionDefinitionsCode += "  return s;\n";
+    builtinFunctionDefinitionsCode += "void " + fnName + " (" + strPtrStructCode + "*p) {\n";
+    builtinFunctionDefinitionsCode += "  free((*p)->c);\n";
+    builtinFunctionDefinitionsCode += "  free(*p);\n";
+    builtinFunctionDefinitionsCode += "  *p = NULL;\n";
     builtinFunctionDefinitionsCode += "}\n\n";
   }
 
-  if (codegen.functions.str_deinit) {
+  if (codegen.functions.s.to_cstr) {
+    auto fnName = codegenBuiltinName("str_to_cstr");
+
     codegen.headers.stdlib = true;
+    codegen.headers.string = true;
 
-    builtinFunctionDeclarationsCode += "void str_deinit (struct str **);\n";
+    builtinFunctionDeclarationsCode += "char *" + fnName + " (const " + strPtrStructCode + ");\n";
 
-    builtinFunctionDefinitionsCode += "void str_deinit (struct str **s) {\n";
-    builtinFunctionDefinitionsCode += "  free((*s)->c);\n";
-    builtinFunctionDefinitionsCode += "  free(*s);\n";
-    builtinFunctionDefinitionsCode += "  *s = NULL;\n";
+    builtinFunctionDefinitionsCode += "char *" + fnName + " (const " + strPtrStructCode + "n) {\n";
+    builtinFunctionDefinitionsCode += "  size_t l = n->l + 1;\n";
+    builtinFunctionDefinitionsCode += "  char *r = malloc(l);\n";
+    builtinFunctionDefinitionsCode += codegenAllocError(codegen, fnName);
+    builtinFunctionDefinitionsCode += "  memcpy(r, n->c, n->l);\n";
+    builtinFunctionDefinitionsCode += "  r[n->l] = 0;\n\n";
+    builtinFunctionDefinitionsCode += "  return r;";
+    builtinFunctionDefinitionsCode += "}\n\n";
+  }
+
+  if (codegen.functions.s.concat) {
+    auto fnName = codegenBuiltinName("str_concat");
+
+    builtinFunctionDeclarationsCode += strPtrStructCode + fnName + " (const " + strPtrStructCode + ", const " + strPtrStructCode + ");\n";
+
+    builtinFunctionDefinitionsCode += strPtrStructCode + fnName + " (const " + strPtrStructCode + "a, const " + strPtrStructCode + "b) {\n";
+    builtinFunctionDefinitionsCode += "  " + strPtrStructCode + "r = malloc(sizeof(" + strStructCode + "));\n";
+    builtinFunctionDefinitionsCode += codegenAllocError(codegen, fnName, std::make_tuple("r", "sizeof(" + strStructCode + ")"));
+    builtinFunctionDefinitionsCode += "  size_t l = a->l + b->l;\n";
+    builtinFunctionDefinitionsCode += "  r->c = malloc(l);\n";
+    builtinFunctionDefinitionsCode += "  memcpy(r->c, a->c, a->l);\n";
+    builtinFunctionDefinitionsCode += "  memcpy(&r->c[a->l], b->c, b->l);\n";
+    builtinFunctionDefinitionsCode += "  r->l = l;\n\n";
+    builtinFunctionDefinitionsCode += "  return r;\n";
     builtinFunctionDefinitionsCode += "}\n\n";
   }
 
@@ -789,6 +833,7 @@ Codegen codegen (AST *ast) {
   codegen.output += " * Proprietary and confidential\n";
   codegen.output += " */\n\n";
   codegen.output += headers.empty() ? "" : headers + "\n";
+  codegen.output += builtinStructDeclarationsCode.empty() ? "" : builtinStructDeclarationsCode + "\n";
   codegen.output += codegen.structDeclarationsCode.empty() ? "" : codegen.structDeclarationsCode + "\n";
   codegen.output += builtinStructDefinitionsCode;
   codegen.output += codegen.structDefinitionsCode;
@@ -796,8 +841,17 @@ Codegen codegen (AST *ast) {
   codegen.output += codegen.functionDeclarationsCode.empty() ? "" : codegen.functionDeclarationsCode + "\n";
   codegen.output += builtinFunctionDefinitionsCode;
   codegen.output += codegen.functionDefinitionsCode;
-  codegen.output += topLevelCode.empty() ? "" : topLevelCode + "\n";
-  codegen.output += mainBody;
+
+  codegen.output += "int main () {\n";
+  codegen.output += topLevelSetUp;
+  codegen.output += topLevelCode;
+  codegen.output += !mainSetUp.empty() || !mainCode.empty() || !mainCleanUp.empty() || !topLevelCleanUp.empty() ? "\n" : "";
+  codegen.output += mainSetUp;
+  codegen.output += mainCode;
+  codegen.output += !mainCleanUp.empty() || !topLevelCleanUp.empty() ? "\n" : "";
+  codegen.output += mainCleanUp;
+  codegen.output += topLevelCleanUp;
+  codegen.output += "}\n";
 
   return codegen;
 }

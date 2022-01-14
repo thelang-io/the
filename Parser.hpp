@@ -8,7 +8,6 @@
 #ifndef SRC_PARSER_HPP
 #define SRC_PARSER_HPP
 
-#include <memory>
 #include <optional>
 #include <variant>
 #include <vector>

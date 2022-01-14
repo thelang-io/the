@@ -18,11 +18,17 @@ struct CodegenHeaders {
   bool string = false;
 };
 
+struct CodegenFunctionsStr {
+  bool init = false;
+  bool copy = false;
+  bool deinit = false;
+  bool to_cstr = false;
+
+  bool concat = false;
+};
+
 struct CodegenFunctions {
-  bool str_init = false;
-  bool str_clone = false;
-  bool str_from_cstr = false;
-  bool str_deinit = false;
+  CodegenFunctionsStr s;
 };
 
 struct Codegen {

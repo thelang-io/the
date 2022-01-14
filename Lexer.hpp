@@ -12,11 +12,6 @@
 
 enum TokenType {
   TK_EOF,
-  TK_WHITESPACE,
-
-  TK_COMMENT_BLOCK,
-  TK_COMMENT_LINE,
-
   TK_ID,
 
   TK_KW_AS,
@@ -134,7 +129,7 @@ enum TokenType {
 
 struct Lexer {
   ReaderLocation start;
-  std::string val;
+  std::string val = "";
 };
 
 struct Token {

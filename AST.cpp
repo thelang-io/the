@@ -34,11 +34,15 @@ std::shared_ptr<Type> analyzeStmtExprAccessType (const AST &ast, const ParserExp
 
   if (!memberObjType->isObj()) {
     throw Error("Tried accessing property of non object variable");
-  } else if (!memberObjType->fields.contains(parserMember.prop.name.val)) {
+  }
+
+  auto memberObj = std::get<TypeObj>(memberObjType->body);
+
+  if (!memberObj.fields.contains(parserMember.prop.name.val)) {
     throw Error("Tried accessing non existing object property");
   }
 
-  return memberObjType->fields[parserMember.prop.name.val];
+  return memberObj.fields[parserMember.prop.name.val];
 }
 
 std::shared_ptr<Type> analyzeStmtExprType (const AST &ast, const ParserStmtExpr &stmtExpr) {
@@ -83,14 +87,14 @@ std::shared_ptr<Type> analyzeStmtExprType (const AST &ast, const ParserStmtExpr 
     auto exprCall = std::get<ParserExprCall>(*stmtExpr.expr);
 
     if (!std::holds_alternative<ParserId>(exprCall.callee)) {
-      // TODO logic
+      // TODO callee of type member
     }
 
     auto parserId = std::get<ParserId>(exprCall.callee);
     auto var = ast.varMap.get(parserId.name.val);
-    auto fn = std::get<std::shared_ptr<Fn>>(*var.ref);
+    auto fn = std::get<TypeFn>(var.type->body);
 
-    return fn->returnType;
+    return fn.type;
   } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.expr)) {
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.expr);
     auto exprCondBodyType = analyzeStmtExprType(ast, exprCond.body);
@@ -117,7 +121,7 @@ std::shared_ptr<Type> analyzeStmtExprType (const AST &ast, const ParserStmtExpr 
     auto exprObj = std::get<ParserExprObj>(*stmtExpr.expr);
     auto var = ast.varMap.get(exprObj.id.name.val);
 
-    return std::get<std::shared_ptr<Type>>(*var.ref);
+    return var.type;
   } else if (std::holds_alternative<ParserExprUnary>(*stmtExpr.expr)) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.expr);
     auto exprType = analyzeStmtExprType(ast, exprUnary.arg);
@@ -154,11 +158,6 @@ std::shared_ptr<Type> analyzeType (const AST &ast, const std::optional<ParserId>
 
     if (ast.varMap.has(type->name.val)) {
       auto var = ast.varMap.get(type->name.val);
-
-      if (var.type->isObj()) {
-        return std::get<std::shared_ptr<Type>>(*var.ref);
-      }
-
       return var.type;
     }
   }
@@ -175,24 +174,24 @@ void analyzeForwardStmt (AST &ast, const ParserBlock &block) {
     if (std::holds_alternative<ParserStmtFnDecl>(stmt)) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(stmt);
       auto fnName = stmtFnDecl.id.name.val;
-      auto fnTypeName = ast.fnMap.name(fnName);
+      auto fnTypeName = ast.typeMap.name(fnName);
       auto fnReturnType = analyzeType(ast, stmtFnDecl.returnType);
-      auto fnParams = std::map<std::string, FnParam>{};
+      auto fnParams = std::map<std::string, TypeFnParam>{};
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
         auto fnParamType = analyzeType(ast, stmtFnDeclParam.type, stmtFnDeclParam.init);
-        fnParams.emplace(stmtFnDeclParam.id.name.val, FnParam{fnParamType, stmtFnDeclParam.init == std::nullopt});
+        fnParams.emplace(stmtFnDeclParam.id.name.val, TypeFnParam{fnParamType, stmtFnDeclParam.init == std::nullopt});
       }
 
-      auto fn = ast.fnMap.add(Fn{fnTypeName, fnReturnType, fnParams});
-      ast.varMap.add(fnName, ast.typeMap.get("fn"), false, fn);
+      auto fn = ast.typeMap.add(fnTypeName, fnReturnType, fnParams);
+      ast.varMap.add(fnName, fn, false);
     } else if (std::holds_alternative<ParserStmtObjDecl>(stmt)) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(stmt);
       auto objName = stmtObjDecl.id.name.val;
       auto objTypeName = ast.typeMap.name(objName);
-      auto obj = ast.typeMap.add(Type{objTypeName, ast.typeMap.get("obj")});
+      auto obj = ast.typeMap.add(objTypeName, ast.typeMap.obj(), std::map<std::string, std::shared_ptr<Type>>{});
 
-      ast.varMap.add(objName, ast.typeMap.get("obj"), false, obj);
+      ast.varMap.add(objName, obj, false);
     }
   }
 }
@@ -200,7 +199,8 @@ void analyzeForwardStmt (AST &ast, const ParserBlock &block) {
 ASTExprAccess analyzeStmtExprAccess (const AST &ast, const ParserExprAccess &exprAccess) {
   if (std::holds_alternative<ParserId>(exprAccess)) {
     auto parserId = std::get<ParserId>(exprAccess);
-    auto id = ASTId{ast.varMap.get(parserId.name.val)};
+    auto var = ast.varMap.get(parserId.name.val);
+    auto id = ASTId{var};
 
     return ASTExprAccess{id};
   }
@@ -217,7 +217,7 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
     auto parserExprAccess = std::get<ParserExprAccess>(*stmtExpr->expr);
     auto exprAccess = std::make_shared<ASTExpr>(analyzeStmtExprAccess(ast, parserExprAccess));
 
-    return ASTNodeExpr{exprAccess, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprAccess, stmtExpr->parenthesized};
   } else if (stmtExpr != std::nullopt && std::holds_alternative<ParserExprAssign>(*stmtExpr->expr)) {
     auto parserExprAssign = std::get<ParserExprAssign>(*stmtExpr->expr);
     auto op = ASTExprAssignOp{};
@@ -242,7 +242,7 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
     auto right = analyzeStmtExpr(ast, parserExprAssign.right);
     auto exprAssign = std::make_shared<ASTExpr>(ASTExprAssign{left, op, right});
 
-    return ASTNodeExpr{exprAssign, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprAssign, stmtExpr->parenthesized};
   } else if (stmtExpr != std::nullopt && std::holds_alternative<ParserExprBinary>(*stmtExpr->expr)) {
     auto parserExprBinary = std::get<ParserExprBinary>(*stmtExpr->expr);
     auto op = ASTExprBinaryOp{};
@@ -272,17 +272,16 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
     auto right = analyzeStmtExpr(ast, parserExprBinary.right);
     auto exprBinary = std::make_shared<ASTExpr>(ASTExprBinary{left, op, right});
 
-    return ASTNodeExpr{exprBinary, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprBinary, stmtExpr->parenthesized};
   } else if (stmtExpr != std::nullopt && std::holds_alternative<ParserExprCall>(*stmtExpr->expr)) {
     auto parserExprCall = std::get<ParserExprCall>(*stmtExpr->expr);
     auto callee = analyzeStmtExprAccess(ast, parserExprCall.callee);
 
     if (!std::holds_alternative<ASTId>(callee)) {
-      // TODO logic
+      // TODO callee of type member
     }
 
     auto id = std::get<ASTId>(callee);
-    auto fn = std::get<std::shared_ptr<Fn>>(*id.v.ref);
     auto args = std::vector<ASTExprCallArg>{};
 
     for (const auto &parserExprCallArg : parserExprCall.args) {
@@ -296,8 +295,8 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
       args.push_back(ASTExprCallArg{argId, argExpr});
     }
 
-    auto exprCall = std::make_shared<ASTExpr>(ASTExprCall{callee, fn, args});
-    return ASTNodeExpr{exprCall, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    auto exprCall = std::make_shared<ASTExpr>(ASTExprCall{id.v.type, callee, args});
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprCall, stmtExpr->parenthesized};
   } else if (stmtExpr != std::nullopt && std::holds_alternative<ParserExprCond>(*stmtExpr->expr)) {
     auto parserExprCond = std::get<ParserExprCond>(*stmtExpr->expr);
     auto cond = analyzeStmtExpr(ast, parserExprCond.cond);
@@ -305,7 +304,7 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
     auto alt = analyzeStmtExpr(ast, parserExprCond.alt);
     auto exprCond = std::make_shared<ASTExpr>(ASTExprCond{cond, body, alt});
 
-    return ASTNodeExpr{exprCond, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprCond, stmtExpr->parenthesized};
   } else if (stmtExpr != std::nullopt && std::holds_alternative<ParserExprLit>(*stmtExpr->expr)) {
     auto parserExprLit = std::get<ParserExprLit>(*stmtExpr->expr);
     auto type = ASTExprLitType{};
@@ -321,19 +320,18 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
     if (parserExprLit.val.type == TK_LIT_STR) type = AST_EXPR_LIT_STR;
 
     auto exprLit = std::make_shared<ASTExpr>(ASTExprLit{type, parserExprLit.val.val});
-    return ASTNodeExpr{exprLit, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprLit, stmtExpr->parenthesized};
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr->expr)) {
     auto parserExprObj = std::get<ParserExprObj>(*stmtExpr->expr);
     auto var = ast.varMap.get(parserExprObj.id.name.val);
-    auto type = std::get<std::shared_ptr<Type>>(*var.ref);
     auto props = std::map<std::string, ASTNodeExpr>();
 
     for (const auto &parserExprObjProp : parserExprObj.props) {
       props.emplace(parserExprObjProp.id.name.val, analyzeStmtExpr(ast, parserExprObjProp.init));
     }
 
-    auto exprObj = std::make_shared<ASTExpr>(ASTExprObj{type, props});
-    return ASTNodeExpr{exprObj, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    auto exprObj = std::make_shared<ASTExpr>(ASTExprObj{var.type, props});
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprObj, stmtExpr->parenthesized};
   } else if (stmtExpr != std::nullopt && std::holds_alternative<ParserExprUnary>(*stmtExpr->expr)) {
     auto parserExprUnary = std::get<ParserExprUnary>(*stmtExpr->expr);
     auto op = ASTExprUnaryOp{};
@@ -349,7 +347,7 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
     auto exprUnaryArg = analyzeStmtExpr(ast, parserExprUnary.arg);
     auto exprUnary = std::make_shared<ASTExpr>(ASTExprUnary{exprUnaryArg, op, parserExprUnary.prefix});
 
-    return ASTNodeExpr{exprUnary, analyzeStmtExprType(ast, *stmtExpr), stmtExpr->parenthesized};
+    return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprUnary, stmtExpr->parenthesized};
   }
 
   throw Error("Tried to analyze unknown expression statement");
@@ -391,9 +389,7 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(stmt);
     auto fnName = stmtFnDecl.id.name.val;
     auto var = ast.varMap.get(fnName);
-    auto fn = std::get<std::shared_ptr<Fn>>(*var.ref);
 
-    ast.fnMap.stack.emplace_back(var.name);
     ast.typeMap.stack.emplace_back(var.name);
     ast.varMap.save();
 
@@ -407,9 +403,9 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
       }
 
       auto fnParamType = analyzeType(ast, stmtFnDeclParam.type, stmtFnDeclParam.init);
+      auto fnParamVar = ast.varMap.add(stmtFnDeclParam.id.name.val, fnParamType, false);
 
-      params.emplace(stmtFnDeclParam.id.name.val, ASTNodeFnDeclParam{fnParamType, fnParamInit});
-      ast.varMap.add(stmtFnDeclParam.id.name.val, fnParamType, false);
+      params.emplace(stmtFnDeclParam.id.name.val, ASTNodeFnDeclParam{fnParamVar, fnParamInit});
     }
 
     analyzeForwardStmt(ast, stmtFnDecl.body);
@@ -417,9 +413,8 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
 
     ast.varMap.restore();
     ast.typeMap.stack.pop_back();
-    ast.fnMap.stack.pop_back();
 
-    auto nodeFnDecl = ASTNodeFnDecl{fn, params, body};
+    auto nodeFnDecl = ASTNodeFnDecl{var, params, body};
     return ASTNode{nodeFnDecl};
   } else if (std::holds_alternative<ParserStmtIf>(stmt)) {
     auto nodeIf = analyzeStmtIf(ast, std::get<ParserStmtIf>(stmt));
@@ -447,7 +442,6 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
   } else if (std::holds_alternative<ParserStmtMain>(stmt)) {
     auto stmtMain = std::get<ParserStmtMain>(stmt);
 
-    ast.fnMap.stack.emplace_back("main");
     ast.typeMap.stack.emplace_back("main");
     ast.varMap.save();
 
@@ -456,7 +450,6 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
 
     ast.varMap.restore();
     ast.typeMap.stack.pop_back();
-    ast.fnMap.stack.pop_back();
 
     auto nodeMain = ASTNodeMain{body};
     return ASTNode{nodeMain};
@@ -464,14 +457,14 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     auto stmtObjDecl = std::get<ParserStmtObjDecl>(stmt);
     auto objName = stmtObjDecl.id.name.val;
     auto var = ast.varMap.get(objName);
-    auto obj = std::get<std::shared_ptr<Type>>(*var.ref);
+    auto &obj = std::get<TypeObj>(var.type->body);
 
     for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
       auto fieldType = analyzeType(ast, stmtObjDeclField.type);
-      obj->fields.emplace(stmtObjDeclField.id.name.val, fieldType);
+      obj.fields.emplace(stmtObjDeclField.id.name.val, fieldType);
     }
 
-    auto nodeObjDecl = ASTNodeObjDecl{objName, obj};
+    auto nodeObjDecl = ASTNodeObjDecl{var};
     return ASTNode{nodeObjDecl};
   } else if (std::holds_alternative<ParserStmtReturn>(stmt)) {
     auto stmtReturn = std::get<ParserStmtReturn>(stmt);
@@ -494,35 +487,75 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
 AST analyze (Reader *reader) {
   auto ast = AST{};
 
-  ast.typeMap.add(Type{"any"});
-  ast.typeMap.add(Type{"bool"});
-  ast.typeMap.add(Type{"byte"});
-  ast.typeMap.add(Type{"char"});
-  ast.typeMap.add(Type{"float"});
-  ast.typeMap.add(Type{"f32"});
-  ast.typeMap.add(Type{"f64"});
-  ast.typeMap.add(Type{"fn"});
-  ast.typeMap.add(Type{"int"});
-  ast.typeMap.add(Type{"i8"});
-  ast.typeMap.add(Type{"i16"});
-  ast.typeMap.add(Type{"i32"});
-  ast.typeMap.add(Type{"i64"});
-  ast.typeMap.add(Type{"obj"});
-  ast.typeMap.add(Type{"str"});
-  ast.typeMap.add(Type{"u8"});
-  ast.typeMap.add(Type{"u16"});
-  ast.typeMap.add(Type{"u32"});
-  ast.typeMap.add(Type{"u64"});
-  ast.typeMap.add(Type{"void"});
+  ast.typeMap.add("any", std::nullopt);
+  ast.typeMap.add("str", std::nullopt); // TODO str.concat
+  ast.typeMap.add("void", std::nullopt);
 
-  auto printParams = std::map<std::string, FnParam>{
-    std::pair{"items", FnParam{ast.typeMap.get("any"), false}},
-    std::pair{"separator", FnParam{ast.typeMap.get("str"), false}},
-    std::pair{"terminator", FnParam{ast.typeMap.get("str"), false}}
-  };
+  ast.typeMap.add("bool", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
 
-  auto printFn = ast.fnMap.add(Fn{"print", ast.typeMap.get("void"), printParams, true});
-  ast.varMap.add(printFn->name, ast.typeMap.get("fn"), false, printFn);
+  ast.typeMap.add("byte", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("char", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("float", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("f32", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("f64", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("int", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("i8", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("i16", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("i32", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("i64", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("u8", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("u16", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("u32", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.typeMap.add("u64", std::nullopt, {
+    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+  });
+
+  ast.varMap.add("print", ast.typeMap.fn(ast.typeMap.get("void"), {
+    std::pair{"items", TypeFnParam{ast.typeMap.get("any"), false}},
+    std::pair{"separator", TypeFnParam{ast.typeMap.get("str"), false}},
+    std::pair{"terminator", TypeFnParam{ast.typeMap.get("str"), false}}
+  }));
 
   auto block = ParserBlock{};
 

@@ -125,7 +125,6 @@ using ASTNodeIfCond = std::variant<ASTBlock, ASTNodeIf>;
 
 struct AST {
   ASTBlock nodes;
-  FnMap fnMap;
   VarMap varMap;
   TypeMap typeMap;
 };
@@ -140,8 +139,8 @@ struct ASTMember {
 };
 
 struct ASTNodeExpr {
-  std::shared_ptr<ASTExpr> expr;
   std::shared_ptr<Type> type;
+  std::shared_ptr<ASTExpr> expr;
   bool parenthesized = false;
 };
 
@@ -163,8 +162,8 @@ struct ASTExprCallArg {
 };
 
 struct ASTExprCall {
+  std::shared_ptr<Type> type;
   ASTExprAccess callee;
-  std::shared_ptr<Fn> fn;
   std::vector<ASTExprCallArg> args;
 };
 
@@ -180,7 +179,7 @@ struct ASTExprLit {
 };
 
 struct ASTExprObj {
-  std::shared_ptr<Type> obj;
+  std::shared_ptr<Type> type;
   std::map<std::string, ASTNodeExpr> props;
 };
 
@@ -197,12 +196,12 @@ struct ASTNodeContinue {
 };
 
 struct ASTNodeFnDeclParam {
-  std::shared_ptr<Type> type;
+  Var var;
   std::optional<ASTNodeExpr> init;
 };
 
 struct ASTNodeFnDecl {
-  std::shared_ptr<Fn> fn;
+  Var var;
   std::map<std::string, ASTNodeFnDeclParam> params;
   ASTBlock body;
 };
@@ -225,8 +224,7 @@ struct ASTNodeMain {
 };
 
 struct ASTNodeObjDecl {
-  std::string name;
-  std::shared_ptr<Type> obj;
+  Var var;
 };
 
 struct ASTNodeReturn {
@@ -234,7 +232,7 @@ struct ASTNodeReturn {
 };
 
 struct ASTNodeVarDecl {
-  Var v;
+  Var var;
   std::optional<ASTNodeExpr> init;
 };
 

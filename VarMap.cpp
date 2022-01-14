@@ -8,8 +8,8 @@
 #include "Error.hpp"
 #include "VarMap.hpp"
 
-Var &VarMap::add (const std::string &name, const std::shared_ptr<Type> &type, bool mut, const std::optional<VarRef> &ref) {
-  this->_items.push_back(Var{name, type, mut, ref, this->_frame});
+Var &VarMap::add (const std::string &name, const std::shared_ptr<Type> &type, bool mut) {
+  this->_items.push_back(Var{name, type, mut, this->_frame});
   return this->_items.back();
 }
 
@@ -31,7 +31,7 @@ bool VarMap::has (const std::string &name) const {
 
 void VarMap::restore () {
   for (auto it = this->_items.begin(); it != this->_items.end();) {
-    if (it->frame == this->_frame) {
+    if (it->_frame == this->_frame) {
       this->_items.erase(it);
       continue;
     }
