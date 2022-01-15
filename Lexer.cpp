@@ -358,18 +358,18 @@ Token lex (Reader *reader) {
       lexer.val += ch1;
 
       if (reader->eof()) {
-        return Token{TK_OP_DOT_DOT, lexer.start, reader->loc, lexer.val};
+        reader->seek(loc1);
+        return Token{TK_OP_DOT, lexer.start, reader->loc, lexer.val};
       }
 
-      auto loc2 = reader->loc;
       auto ch2 = reader->next();
 
-      if (ch2 == '.' || ch2 == '=') {
+      if (ch2 == '.') {
         lexer.val += ch2;
-        return Token{ch2 == '.' ? TK_OP_DOT_DOT_DOT : TK_OP_DOT_DOT_EQ, lexer.start, reader->loc, lexer.val};
+        return Token{TK_OP_DOT_DOT_DOT, lexer.start, reader->loc, lexer.val};
       } else {
-        reader->seek(loc2);
-        return Token{TK_OP_DOT_DOT, lexer.start, reader->loc, lexer.val};
+        reader->seek(loc1);
+        return Token{TK_OP_DOT, lexer.start, reader->loc, lexer.val};
       }
     } else {
       reader->seek(loc1);

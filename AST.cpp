@@ -9,9 +9,11 @@
 #include "Error.hpp"
 #include "Parser.hpp"
 
+void analyzeForwardStmt (AST &, const ParserBlock &);
 ASTNode analyzeStmt (AST &, const ParserStmt &);
 
 ASTBlock analyzeBlock (AST &ast, const ParserBlock &block) {
+  analyzeForwardStmt(ast, block);
   auto result = ASTBlock{};
 
   for (const auto &stmt : block) {
@@ -80,6 +82,15 @@ std::shared_ptr<Type> analyzeStmtExprType (const AST &ast, const ParserStmtExpr 
       exprBinary.op.type == TK_OP_STAR_STAR
     ) {
       return ast.typeMap.get("float");
+    } else if (
+      exprBinary.op.type == TK_OP_EQ_EQ ||
+      exprBinary.op.type == TK_OP_EXCL_EQ ||
+      exprBinary.op.type == TK_OP_GT ||
+      exprBinary.op.type == TK_OP_GT_EQ ||
+      exprBinary.op.type == TK_OP_LT ||
+      exprBinary.op.type == TK_OP_LT_EQ
+    ) {
+      return ast.typeMap.get("bool");
     } else {
       return ast.typeMap.get("int");
     }
@@ -354,14 +365,19 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
 }
 
 ASTNodeIf analyzeStmtIf (AST &ast, const ParserStmtIf &stmtIf) {
+  ast.varMap.save();
   auto cond = analyzeStmtExpr(ast, stmtIf.cond);
   auto body = analyzeBlock(ast, stmtIf.body);
+  ast.varMap.restore();
+
   auto alt = std::optional<std::shared_ptr<ASTNodeIfCond>>{};
 
   if (stmtIf.alt != std::nullopt) {
     if (std::holds_alternative<ParserBlock>(**stmtIf.alt)) {
+      ast.varMap.save();
       auto stmtIfAltBlock = std::get<ParserBlock>(**stmtIf.alt);
       auto nodeIfAltElse = analyzeBlock(ast, std::get<ParserBlock>(**stmtIf.alt));
+      ast.varMap.restore();
 
       alt = std::make_shared<ASTNodeIfCond>(nodeIfAltElse);
     } else if (std::holds_alternative<ParserStmtIf>(**stmtIf.alt)) {
@@ -408,7 +424,6 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
       params.emplace(stmtFnDeclParam.id.name.val, ASTNodeFnDeclParam{fnParamVar, fnParamInit});
     }
 
-    analyzeForwardStmt(ast, stmtFnDecl.body);
     auto body = analyzeBlock(ast, stmtFnDecl.body);
 
     ast.varMap.restore();
@@ -425,6 +440,8 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     auto cond = std::optional<ASTNodeExpr>{};
     auto upd = std::optional<ASTNodeExpr>{};
 
+    ast.varMap.save();
+
     if (stmtLoop.init != std::nullopt) {
       init = std::make_shared<ASTNode>(analyzeStmt(ast, **stmtLoop.init));
     }
@@ -437,7 +454,10 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
       upd = analyzeStmtExpr(ast, *stmtLoop.upd);
     }
 
-    auto nodeLoop = ASTNodeLoop{init, cond, upd, analyzeBlock(ast, stmtLoop.body)};
+    auto body = analyzeBlock(ast, stmtLoop.body);
+    ast.varMap.restore();
+
+    auto nodeLoop = ASTNodeLoop{init, cond, upd, body};
     return ASTNode{nodeLoop};
   } else if (std::holds_alternative<ParserStmtMain>(stmt)) {
     auto stmtMain = std::get<ParserStmtMain>(stmt);
@@ -445,7 +465,6 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     ast.typeMap.stack.emplace_back("main");
     ast.varMap.save();
 
-    analyzeForwardStmt(ast, stmtMain.body);
     auto body = analyzeBlock(ast, stmtMain.body);
 
     ast.varMap.restore();
@@ -475,7 +494,12 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(stmt);
     auto varType = analyzeType(ast, stmtVarDecl.type, stmtVarDecl.init);
     auto var = ast.varMap.add(stmtVarDecl.id.name.val, varType, stmtVarDecl.mut);
-    auto init = analyzeStmtExpr(ast, *stmtVarDecl.init);
+    auto init = std::optional<ASTNodeExpr>{};
+
+    if (stmtVarDecl.init != std::nullopt) {
+      init = analyzeStmtExpr(ast, *stmtVarDecl.init);
+    }
+
     auto nodeVarDecl = ASTNodeVarDecl{var, init};
 
     return ASTNode{nodeVarDecl};
@@ -570,7 +594,6 @@ AST analyze (Reader *reader) {
   }
 
   ast.varMap.save();
-  analyzeForwardStmt(ast, block);
   ast.nodes = analyzeBlock(ast, block);
   ast.varMap.restore();
 

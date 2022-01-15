@@ -39,29 +39,6 @@ ParserBlock parseBlock (Reader *reader) {
   return block;
 }
 
-ParserExprAccess parseExprAccess (Reader *reader, ParserExprAccess &exprAccess) {
-  auto loc1 = reader->loc;
-  auto tok1 = lex(reader);
-
-  while (tok1.type == TK_OP_DOT) {
-    auto tok2 = lex(reader);
-
-    if (tok2.type != TK_ID) {
-      throw Error("Expected property name after dot");
-    }
-
-    auto id = ParserId{tok2};
-    auto member = ParserMember{std::make_shared<ParserExprAccess>(exprAccess), id};
-    exprAccess = ParserExprAccess{member};
-
-    loc1 = reader->loc;
-    tok1 = lex(reader);
-  }
-
-  reader->seek(loc1);
-  return exprAccess;
-}
-
 ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
   auto loc1 = reader->loc;
   auto tok1 = lex(reader);
@@ -88,7 +65,7 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
     tok1.type == TK_OP_STAR ||
     tok1.type == TK_OP_STAR_STAR
   ) {
-    auto stmtExpr2 = parseStmtExpr(reader);
+    auto stmtExpr2 = parseStmtExpr(reader, true);
 
     if (std::holds_alternative<ParserExprBinary>(*stmtExpr2.expr)) {
       auto exprBinary2 = std::get<ParserExprBinary>(*stmtExpr2.expr);
@@ -121,134 +98,6 @@ ParserStmtExpr parsePostStmtExpr (Reader *reader, ParserStmtExpr &stmtExpr) {
     auto stmtExpr4 = ParserStmtExpr{expr};
 
     return parsePostStmtExpr(reader, stmtExpr4);
-  } else if (std::holds_alternative<ParserExprAccess>(*stmtExpr.expr) && tok1.type == TK_OP_DOT) {
-    reader->seek(loc1);
-
-    auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.expr);
-    auto expr = std::make_shared<ParserExpr>(parseExprAccess(reader, exprAccess));
-
-    stmtExpr.expr = expr;
-    return parsePostStmtExpr(reader, stmtExpr);
-  } else if (std::holds_alternative<ParserExprAccess>(*stmtExpr.expr) && (
-    tok1.type == TK_OP_AND_AND_EQ ||
-    tok1.type == TK_OP_AND_EQ ||
-    tok1.type == TK_OP_CARET_EQ ||
-    tok1.type == TK_OP_EQ ||
-    tok1.type == TK_OP_LSHIFT_EQ ||
-    tok1.type == TK_OP_MINUS_EQ ||
-    tok1.type == TK_OP_OR_EQ ||
-    tok1.type == TK_OP_OR_OR_EQ ||
-    tok1.type == TK_OP_PERCENT_EQ ||
-    tok1.type == TK_OP_PLUS_EQ ||
-    tok1.type == TK_OP_QN_QN_EQ ||
-    tok1.type == TK_OP_RSHIFT_EQ ||
-    tok1.type == TK_OP_SLASH_EQ ||
-    tok1.type == TK_OP_STAR_EQ ||
-    tok1.type == TK_OP_STAR_STAR_EQ
-  )) {
-    auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.expr);
-    auto stmtExprRight = parseStmtExpr(reader);
-    auto exprAssign = ParserExprAssign{exprAccess, tok1, stmtExprRight};
-    auto expr = std::make_shared<ParserExpr>(exprAssign);
-
-    stmtExpr.expr = expr;
-    return parsePostStmtExpr(reader, stmtExpr);
-  } else if (std::holds_alternative<ParserExprAccess>(*stmtExpr.expr) && tok1.type == TK_OP_LBRACE) {
-    auto tok2 = lex(reader);
-    auto props = std::vector<ParserExprObjProp>();
-
-    while (tok2.type != TK_OP_RBRACE) {
-      if (tok2.type != TK_ID && props.empty()) {
-        reader->seek(loc1);
-        return stmtExpr;
-      } else if (tok2.type != TK_ID) {
-        throw Error("Expected object property name");
-      }
-
-      auto tok3 = lex(reader);
-
-      if (tok3.type != TK_OP_COLON && props.empty()) {
-        reader->seek(loc1);
-        return stmtExpr;
-      } else if (tok3.type != TK_OP_COLON) {
-        throw Error("Expected colon after object property name");
-      }
-
-      auto init = parseStmtExpr(reader);
-      auto id = ParserId{tok2};
-      auto prop = ParserExprObjProp{id, init};
-
-      props.push_back(prop);
-      tok2 = lex(reader);
-
-      if (tok2.type == TK_OP_COMMA) {
-        tok2 = lex(reader);
-      }
-    }
-
-    auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.expr);
-
-    if (!std::holds_alternative<ParserId>(exprAccess)) {
-      throw Error("Only identifiers accepted as object names");
-    }
-
-    auto id = std::get<ParserId>(exprAccess);
-    auto exprObj = ParserExprObj{id, props};
-    auto expr = std::make_shared<ParserExpr>(exprObj);
-
-    stmtExpr.expr = expr;
-    return parsePostStmtExpr(reader, stmtExpr);
-  } else if (std::holds_alternative<ParserExprAccess>(*stmtExpr.expr) && tok1.type == TK_OP_LPAR) {
-    auto loc2 = reader->loc;
-    auto tok2 = lex(reader);
-    auto args = std::vector<ParserExprCallArg>();
-
-    while (tok2.type != TK_OP_RPAR) {
-      reader->seek(loc2);
-
-      auto argId = std::optional<ParserId>{};
-      auto loc3 = reader->loc;
-      auto tok3 = lex(reader);
-
-      if (tok3.type == TK_ID) {
-        auto tok4 = lex(reader);
-
-        if (tok4.type == TK_OP_COLON) {
-          argId = ParserId{tok3};
-        }
-      }
-
-      if (argId == std::nullopt) {
-        reader->seek(loc3);
-      }
-
-      auto argStmtExpr = parseStmtExpr(reader);
-      args.push_back(ParserExprCallArg{argId, argStmtExpr});
-
-      tok2 = lex(reader);
-
-      if (tok2.type == TK_OP_COMMA) {
-        loc2 = reader->loc;
-        tok2 = lex(reader);
-      }
-    }
-
-    auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.expr);
-    auto exprCall = ParserExprCall{exprAccess, args};
-    auto expr = std::make_shared<ParserExpr>(exprCall);
-
-    stmtExpr.expr = expr;
-    return parsePostStmtExpr(reader, stmtExpr);
-  } else if (tok1.type == TK_OP_MINUS_MINUS || tok1.type == TK_OP_PLUS_PLUS) {
-    if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.expr)) {
-      throw Error("Only access expressions can be used with increment/decrement operators");
-    }
-
-    auto exprUnary = ParserExprUnary{stmtExpr, tok1};
-    auto expr = std::make_shared<ParserExpr>(exprUnary);
-
-    stmtExpr.expr = expr;
-    return parsePostStmtExpr(reader, stmtExpr);
   }
 
   reader->seek(loc1);
@@ -275,8 +124,156 @@ ParserStmtExpr parseStmtExpr (Reader *reader, bool singleStmt) {
     return singleStmt ? stmtExpr : parsePostStmtExpr(reader, stmtExpr);
   } else if (tok1.type == TK_ID) {
     auto id = ParserId{tok1};
-    auto exprAccess = std::make_shared<ParserExpr>(ParserExprAccess{id});
-    auto stmtExpr = ParserStmtExpr{exprAccess};
+    auto exprAccess = ParserExprAccess{id};
+
+    auto loc2 = reader->loc;
+    auto tok2 = lex(reader);
+
+    while (tok2.type == TK_OP_DOT) {
+      auto tok3 = lex(reader);
+
+      if (tok3.type != TK_ID) {
+        throw Error("Expected property name after dot");
+      }
+
+      auto member = ParserMember{std::make_shared<ParserExprAccess>(exprAccess), ParserId{tok3}};
+      exprAccess = ParserExprAccess{member};
+
+      loc2 = reader->loc;
+      tok2 = lex(reader);
+    }
+
+    reader->seek(loc2);
+
+    auto loc4 = reader->loc;
+    auto tok4 = lex(reader);
+
+    if (
+      tok4.type == TK_OP_AND_AND_EQ ||
+      tok4.type == TK_OP_AND_EQ ||
+      tok4.type == TK_OP_CARET_EQ ||
+      tok4.type == TK_OP_EQ ||
+      tok4.type == TK_OP_LSHIFT_EQ ||
+      tok4.type == TK_OP_MINUS_EQ ||
+      tok4.type == TK_OP_OR_EQ ||
+      tok4.type == TK_OP_OR_OR_EQ ||
+      tok4.type == TK_OP_PERCENT_EQ ||
+      tok4.type == TK_OP_PLUS_EQ ||
+      tok4.type == TK_OP_QN_QN_EQ ||
+      tok4.type == TK_OP_RSHIFT_EQ ||
+      tok4.type == TK_OP_SLASH_EQ ||
+      tok4.type == TK_OP_STAR_EQ ||
+      tok4.type == TK_OP_STAR_STAR_EQ
+    ) {
+      auto stmtExprRight = parseStmtExpr(reader);
+      auto exprAssign = ParserExprAssign{exprAccess, tok4, stmtExprRight};
+      auto expr = std::make_shared<ParserExpr>(exprAssign);
+      auto stmtExpr = ParserStmtExpr{expr};
+
+      return singleStmt ? stmtExpr : parsePostStmtExpr(reader, stmtExpr);
+    } else if (tok4.type == TK_OP_LBRACE) {
+      auto tok5 = lex(reader);
+      auto props = std::vector<ParserExprObjProp>();
+
+      while (tok5.type != TK_OP_RBRACE) {
+        if (tok5.type != TK_ID && props.empty()) {
+          reader->seek(loc4);
+
+          auto expr = std::make_shared<ParserExpr>(exprAccess);
+          auto stmtExpr = ParserStmtExpr{expr};
+
+          return stmtExpr;
+        } else if (tok5.type != TK_ID) {
+          throw Error("Expected object property name");
+        }
+
+        auto tok6 = lex(reader);
+
+        if (tok6.type != TK_OP_COLON && props.empty()) {
+          reader->seek(loc4);
+
+          auto expr = std::make_shared<ParserExpr>(exprAccess);
+          auto stmtExpr = ParserStmtExpr{expr};
+
+          return stmtExpr;
+        } else if (tok6.type != TK_OP_COLON) {
+          throw Error("Expected colon after object property name");
+        }
+
+        auto init = parseStmtExpr(reader);
+        auto prop = ParserExprObjProp{ParserId{tok5}, init};
+
+        props.push_back(prop);
+        tok5 = lex(reader);
+
+        if (tok5.type == TK_OP_COMMA) {
+          tok5 = lex(reader);
+        }
+      }
+
+      if (!std::holds_alternative<ParserId>(exprAccess)) {
+        throw Error("Only identifiers accepted as object names");
+      }
+
+      auto exprObj = ParserExprObj{std::get<ParserId>(exprAccess), props};
+      auto expr = std::make_shared<ParserExpr>(exprObj);
+      auto stmtExpr = ParserStmtExpr{expr};
+
+      return singleStmt ? stmtExpr : parsePostStmtExpr(reader, stmtExpr);
+    } else if (tok4.type == TK_OP_LPAR) {
+      auto loc5 = reader->loc;
+      auto tok5 = lex(reader);
+      auto args = std::vector<ParserExprCallArg>();
+
+      while (tok5.type != TK_OP_RPAR) {
+        reader->seek(loc5);
+
+        auto argId = std::optional<ParserId>{};
+        auto loc6 = reader->loc;
+        auto tok6 = lex(reader);
+
+        if (tok6.type == TK_ID) {
+          auto tok7 = lex(reader);
+
+          if (tok7.type == TK_OP_COLON) {
+            argId = ParserId{tok6};
+          }
+        }
+
+        if (argId == std::nullopt) {
+          reader->seek(loc6);
+        }
+
+        auto argStmtExpr = parseStmtExpr(reader);
+        args.push_back(ParserExprCallArg{argId, argStmtExpr});
+
+        tok5 = lex(reader);
+
+        if (tok5.type == TK_OP_COMMA) {
+          loc5 = reader->loc;
+          tok5 = lex(reader);
+        }
+      }
+
+      auto exprCall = ParserExprCall{exprAccess, args};
+      auto expr = std::make_shared<ParserExpr>(exprCall);
+      auto stmtExpr = ParserStmtExpr{expr};
+
+      return singleStmt ? stmtExpr : parsePostStmtExpr(reader, stmtExpr);
+    } else if (tok4.type == TK_OP_MINUS_MINUS || tok4.type == TK_OP_PLUS_PLUS) {
+      auto exprUnaryArgExpr = std::make_shared<ParserExpr>(exprAccess);
+      auto exprUnaryArg = ParserStmtExpr{exprUnaryArgExpr};
+      auto exprUnary = ParserExprUnary{exprUnaryArg, tok4};
+      auto expr = std::make_shared<ParserExpr>(exprUnary);
+      auto stmtExpr = ParserStmtExpr{expr};
+
+      return singleStmt ? stmtExpr : parsePostStmtExpr(reader, stmtExpr);
+    }
+
+    reader->seek(loc4);
+
+    auto expr = std::make_shared<ParserExpr>(exprAccess);
+    auto stmtExpr = ParserStmtExpr{expr};
 
     return singleStmt ? stmtExpr : parsePostStmtExpr(reader, stmtExpr);
   } else if (

@@ -353,7 +353,7 @@ std::tuple<std::string, std::string, std::string> codegenNodeExpr (Codegen &code
     auto obj = std::get<TypeObj>(exprObj.type->body);
     auto fieldIdx = static_cast<std::size_t>(0);
 
-    code += codegenTypeName(exprObj.type->name) + "_init ((const struct " + codegenTypeName(exprObj.type->name) + ") {";
+    code += codegenTypeName(exprObj.type->name) + "_init((const struct " + codegenTypeName(exprObj.type->name) + ") {";
 
     for (const auto &[objFieldName, objField] : obj.fields) {
       if (!exprObj.props.contains(objFieldName)) {

@@ -79,9 +79,7 @@ enum TokenType {
   TK_OP_COLON_EQ,
   TK_OP_COMMA,
   TK_OP_DOT,
-  TK_OP_DOT_DOT,
   TK_OP_DOT_DOT_DOT,
-  TK_OP_DOT_DOT_EQ,
   TK_OP_EQ,
   TK_OP_EQ_EQ,
   TK_OP_EXCL,
@@ -184,30 +182,38 @@ inline bool tokenIsWhitespace (char ch) {
 }
 
 inline int tokenPrecedence (const Token &tok) {
-  if (tok.type == TK_OP_STAR_STAR) {
-    return 13;
+  if (tok.type == TK_OP_LPAR || tok.type == TK_OP_RPAR) {
+    return 18;
+  } else if (tok.type == TK_OP_DOT || tok.type == TK_OP_DOT_DOT_DOT || tok.type == TK_OP_LBRACK || tok.type == TK_OP_QN_DOT || tok.type == TK_OP_RBRACK) {
+    return 17;
+  } else if (tok.type == TK_OP_MINUS_MINUS || tok.type == TK_OP_PLUS_PLUS) {
+    return 16;
+  } else if (tok.type == TK_OP_EXCL || tok.type == TK_OP_EXCL_EXCL || tok.type == TK_OP_TILDE) {
+    return 15;
+  } else if (tok.type == TK_OP_STAR_STAR) {
+    return 14;
   } else if (tok.type == TK_OP_PERCENT || tok.type == TK_OP_SLASH || tok.type == TK_OP_STAR) {
-    return 12;
+    return 13;
   } else if (tok.type == TK_OP_MINUS || tok.type == TK_OP_PLUS) {
-    return 11;
+    return 12;
   } else if (tok.type == TK_OP_LSHIFT || tok.type == TK_OP_RSHIFT) {
-    return 10;
+    return 11;
   } else if (tok.type == TK_OP_GT || tok.type == TK_OP_GT_EQ || tok.type == TK_OP_LT || tok.type == TK_OP_LT_EQ) {
-    return 9;
+    return 10;
   } else if (tok.type == TK_OP_EQ_EQ || tok.type == TK_OP_EXCL_EQ) {
-    return 8;
+    return 9;
   } else if (tok.type == TK_OP_AND) {
-    return 7;
+    return 8;
   } else if (tok.type == TK_OP_CARET) {
-    return 6;
+    return 7;
   } else if (tok.type == TK_OP_OR) {
-    return 5;
+    return 6;
   } else if (tok.type == TK_OP_AND_AND) {
+    return 5;
+  } else if (tok.type == TK_OP_OR_OR || tok.type == TK_OP_QN_QN) {
     return 4;
-  } else if (tok.type == TK_OP_OR_OR) {
+  } else if (tok.type == TK_OP_COLON || tok.type == TK_OP_QN) {
     return 3;
-  } else if (tok.type == TK_OP_QN_QN) {
-    return 2;
   } else if (
     tok.type == TK_OP_AND_AND_EQ ||
     tok.type == TK_OP_AND_EQ ||
@@ -225,10 +231,12 @@ inline int tokenPrecedence (const Token &tok) {
     tok.type == TK_OP_STAR_EQ ||
     tok.type == TK_OP_STAR_STAR_EQ
   ) {
+    return 2;
+  } else if (tok.type == TK_OP_COMMA) {
     return 1;
-  } else {
-    return 0;
   }
+
+  return 0;
 }
 
 Token lex (Reader *);

@@ -274,19 +274,19 @@ main {
   }
 
   ea := 1 ? 2 : 3
-  eb := 1 > 2 ? 3 : 4 // TODO Wrong parsing
-  ec := 1 > 2 ? 5 : 0 ? 6 : 7 // TODO Wrong parsing
-  ed := 0 > 2 ? 0 ? 6 : 7 : 3 // TODO Wrong parsing
-  ee := 1 ? 2 ? 3 : 4 : 5 // TODO Wrong parsing
-  ef := 0 ? 2 ? 3 : 4 : 5 // TODO Wrong parsing
+  eb := 1 > 2 ? 3 : 4
+  ec := 1 > 2 ? 5 : 0 ? 6 : 7
+  ed := 0 > 2 ? 0 ? 6 : 7 : 3
+  ee := 1 ? 2 ? 3 : 4 : 5
+  ef := 0 ? 2 ? 3 : 4 : 5
   mut eg_a := 0
   eg := 1 ? eg_a = 1 : (eg_a = 0)
-  eh := 0 > -1 ? 4 : 5 // TODO Wrong parsing
+  eh := 0 > -1 ? 4 : 5
   mut ei_a := 0
   ei := 1 ? (ei_a = 1) : (ei_a = 2)
   mut ej_a := 0
   ej := 0 ? (ej_a = 1) : (ej_a = 2)
-  ek := 2 - 1 > 0 ? 1 : 2 // TODO Wrong parsing
+  ek := 2 - 1 > 0 ? 1 : 2
 
   print("ea:", ea, "eb:", eb, "ec:", ec, "ed:", ed)
   print("ee:", ee, "ef:", ef, "eg:", eg, "eh:", eh)
@@ -566,10 +566,15 @@ main {
     t2: str
   }
 
+  tq := Tq{
+    t1: 2,
+    t2: "simple string"
+  }
+
   print("ta:", ta, "tb:", tb, "tc:", tc, "td:", td)
   print("te:", te, "tf:", tf, "tg:", tg, "th:", th)
   print("ti:", ti, "tj:", tj, "tk:", tk, "tl:", tl)
-  print("tm:", tm, "to:", to, "tp:", tp)
+  print("tm:", tm, "to:", to, "tp:", tp, "tq.t1:", tq.t1, "tq.t2:", tq.t2)
 
   mut ua: bool = true
   mut ub: byte = 2
@@ -679,16 +684,15 @@ main {
   // TODO obj as arg
   // print("wa:", wa, "wb:", wb, "wb_do:", Vb_do(wb))
 
-  // TODO Doesn't work
-  // if 1 == 1 {
-  //   fn xa () int { return 2 }
-  //   print("xa-1:", xa(), "", terminator: "")
-  // }
-  //
-  // if 1 == 1 {
-  //   fn xa () int { return 3 }
-  //   print("xa-2:", xa(), "", terminator: "")
-  // }
+  if 1 == 1 {
+    fn xa () int { return 2 }
+    print("xa-1:", xa(), "", terminator: "")
+  }
+
+  if 1 == 1 {
+    fn xa () int { return 3 }
+    print("xa-2:", xa(), "", terminator: "")
+  }
 
   // TODO Doesn't work
   // if 1 == 1 {
@@ -717,26 +721,64 @@ main {
 
   print("xc:", xc())
 
-  // TODO empty initializers
-  // ya: bool
-  // yb: byte
-  // yc: char
-  // yd: float
-  // ye: f32
-  // yf: f64
-  // yg: int
-  // yh: i8
-  // yi: i16
-  // yj: i32
-  // yk: i64
-  // yl: str
-  // ym: u8
-  // yn: u16
-  // yo: u32
-  // yp: u64
-  //
-  // print("ya:", ya, "yb:", yb, "yc:", yc, "yd:", yd)
-  // print("ye:", ye, "yf:", yf, "yg:", yg, "yh:", yh)
-  // print("yi:", yi, "yj:", yj, "yk:", yk, "yl:", yl)
-  // print("ym:", ym, "yn:", yn, "yo:", yo, "yp:", yp)
+  ya: bool
+  yb: byte
+  yc: char
+  yd: float
+  ye: f32
+  yf: f64
+  yg: int
+  yh: i8
+  yi: i16
+  yj: i32
+  yk: i64
+  yl: str
+  ym: u8
+  yn: u16
+  yo: u32
+  yp: u64
+
+  print("ya:", ya, "yb:", yb, "yc:", yc, "yd:", yd)
+  print("ye:", ye, "yf:", yf, "yg:", yg, "yh:", yh)
+  print("yi:", yi, "yj:", yj, "yk:", yk, "yl:", yl)
+  print("ym:", ym, "yn:", yn, "yo:", yo, "yp:", yp)
+
+  mut caa: bool
+  mut cab: byte
+  mut cac: char
+  mut cad: float
+  mut cae: f32
+  mut caf: f64
+  mut cag: int
+  mut cah: i8
+  mut cai: i16
+  mut caj: i32
+  mut cak: i64
+  mut cal: str
+  mut cam: u8
+  mut can: u16
+  mut cao: u32
+  mut cap: u64
+
+  caa = true
+  cab = 0x1
+  cac = 'a'
+  cad = 1.61803
+  cae = 2.71828
+  caf = 3.14159
+  cag = -2147483648
+  cah = -128
+  cai = -32768
+  caj = -2147483648
+  cak = -9223372036854775807
+  cal = "This is string"
+  cam = 127
+  can = 65535
+  cao = 4294967295
+  cap = 18446744073709551615
+
+  print("caa:", caa, "cab:", cab, "cac:", cac, "cad:", cad)
+  print("cae:", cae, "caf:", caf, "cag:", cag, "cah:", cah)
+  print("cai:", cai, "caj:", caj, "cak:", cak, "cal:", cal)
+  print("cam:", cam, "can:", can, "cao:", cao, "cap:", cap)
 }

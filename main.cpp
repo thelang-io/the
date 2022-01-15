@@ -10,7 +10,7 @@
 #include "Codegen.hpp"
 #include "Error.hpp"
 
-const auto outputFlags = std::string("-Wno-constant-logical-operand -lm");
+const auto outputFlags = std::string("-Wno-constant-logical-operand -Wno-implicitly-unsigned-literal -lm");
 
 int main () {
   try {
