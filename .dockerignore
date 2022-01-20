@@ -1,5 +1,4 @@
 *
-!*.cpp
-!*.hpp
+!src/
+!test/
 !CMakeLists.txt
-!_program

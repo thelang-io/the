@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef READER_HPP
-#define READER_HPP
+#ifndef SRC_READER_HPP
+#define SRC_READER_HPP
 
 #include <string>
 
@@ -20,6 +20,8 @@ class Reader {
  public:
   ReaderLocation loc;
   std::string path;
+  std::string content;
+  std::size_t size;
 
   explicit Reader (const std::string &);
   Reader (const Reader &) = delete;
@@ -28,10 +30,6 @@ class Reader {
   bool eof () const;
   char next ();
   void seek (ReaderLocation);
-
- private:
-  std::string _content;
-  std::size_t _size;
 };
 
 #endif

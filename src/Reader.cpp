@@ -21,26 +21,26 @@ Reader::Reader (const std::string &p) {
   }
 
   if (!std::filesystem::is_regular_file(canonicalPath)) {
-    throw Error(R"(Path ")" + canonicalPath + R"(" is not a file)");
+    throw Error(R"(Path ")" + p + R"(" is not a file)");
   }
 
   auto f = std::ifstream(canonicalPath);
 
   if (f.fail()) {
-    throw Error(R"(Unable to read file ")" + canonicalPath + R"(")");
+    throw Error(R"(Unable to read file ")" + p + R"(")");
   }
 
-  std::stringstream content;
-  content << f.rdbuf();
+  std::stringstream c;
+  c << f.rdbuf();
 
   this->loc = ReaderLocation();
   this->path = canonicalPath;
-  this->_content = content.str();
-  this->_size = this->_content.length();
+  this->content = c.str();
+  this->size = this->content.length();
 }
 
 bool Reader::eof () const {
-  return this->loc.pos >= this->_size;
+  return this->loc.pos >= this->size;
 }
 
 char Reader::next () {
@@ -48,7 +48,7 @@ char Reader::next () {
     throw Error("Tried to read on Reader eof");
   }
 
-  auto ch = this->_content[this->loc.pos];
+  auto ch = this->content[this->loc.pos];
 
   if (ch == '\n') {
     this->loc.col = 0;
