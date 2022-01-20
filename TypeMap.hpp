@@ -5,11 +5,11 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_TYPED_MAP_HPP
-#define SRC_TYPED_MAP_HPP
+#ifndef TYPE_MAP_HPP
+#define TYPE_MAP_HPP
 
-#include <map>
 #include <memory>
+#include <optional>
 #include <variant>
 #include <vector>
 #include "Error.hpp"
@@ -17,18 +17,23 @@
 struct Type;
 
 struct TypeFnParam {
+  std::string name;
   std::shared_ptr<Type> type;
-  // TODO use
   bool required;
 };
 
 struct TypeFn {
   std::shared_ptr<Type> type;
-  std::map<std::string, TypeFnParam> params = {};
+  std::vector<TypeFnParam> params = {};
+};
+
+struct TypeObjField {
+  std::string name;
+  std::shared_ptr<Type> type;
 };
 
 struct TypeObj {
-  std::map<std::string, std::shared_ptr<Type>> fields = {};
+  std::vector<TypeObjField> fields = {};
 };
 
 struct Type {
@@ -62,11 +67,13 @@ class TypeMap {
  public:
   std::vector<std::string> stack;
 
+  static std::shared_ptr<Type> fn (const std::shared_ptr<Type> &, const std::vector<TypeFnParam> & = {});
+  static std::shared_ptr<Type> fn (const std::string &, const std::shared_ptr<Type> &, const std::vector<TypeFnParam> & = {});
+
   TypeMap ();
 
-  std::shared_ptr<Type> add (const std::string &, const std::optional<std::shared_ptr<Type>> & = std::nullopt, const std::map<std::string, std::shared_ptr<Type>> & = {});
-  std::shared_ptr<Type> add (const std::string &, const std::shared_ptr<Type> & = {}, const std::map<std::string, TypeFnParam> & = {});
-  std::shared_ptr<Type> fn (const std::shared_ptr<Type> &, const std::map<std::string, TypeFnParam> & = {}) const;
+  std::shared_ptr<Type> add (const std::string &, const std::optional<std::shared_ptr<Type>> & = std::nullopt, const std::vector<TypeObjField> & = {});
+  std::shared_ptr<Type> add (const std::string &, const std::shared_ptr<Type> & = {}, const std::vector<TypeFnParam> & = {});
   const std::shared_ptr<Type> &get (const std::string &) const;
   std::string name (const std::string &) const;
   std::shared_ptr<Type> obj () const;

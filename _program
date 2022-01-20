@@ -45,26 +45,26 @@ fn gh (n: int) int {
   return n == 0 || n == 1 ? n : gh(n - 1) + gh(n - 2)
 }
 
-obj Oa {
-  a: int
-}
-
-obj Ob {
-  name: str
-  age: int
-}
-
-obj Oc {
-  tp: int
-  t: Oc_1
-}
-
-obj Oc_1 {
-  t1: char
-  t2: float
-  t3: str
-  t4: int
-}
+// obj Oa {
+//   a: int
+// }
+//
+// obj Ob {
+//   name: str
+//   age: int
+// }
+//
+// obj Oc {
+//   tp: int
+//   t: Oc_1
+// }
+//
+// obj Oc_1 {
+//   t1: char
+//   t2: float
+//   t3: str
+//   t4: int
+// }
 
 main {
   print("Hello, World!")
@@ -294,6 +294,7 @@ main {
 
   1 ? print("True condition") : print("False condition")
   0 ? print("False condition") : print("True condition")
+  print(1 ? "True condition" : "False condition")
 
   mut fa := 0
   mut fb := 0
@@ -481,68 +482,68 @@ main {
 
   print("na:", na, "nb:", nb)
 
-  pa := Oa{a: 2}
+  // pa := Oa{a: 2}
+  //
+  // pb := Ob{
+  //   name: "Tina",
+  //   age: 45
+  // }
+  //
+  // pc := Oc{
+  //   t: Oc_1{
+  //     t1: 'z',
+  //     t2: 3.14,
+  //     t3: "Thing",
+  //     t4: -1
+  //   },
+  //   tp: 2
+  // }
+  //
+  // print("pa.a:", pa.a)
+  // print("pb.name:", pb.name, "pb.age:", pb.age)
+  // print("pc.t.t1:", pc.t.t1, "pc.t.t2:", pc.t.t2, "pc.t.t3:", pc.t.t3, "pc.t.t4:", pc.t.t4, "pc.tp:", pc.tp)
+  //
+  // mut qa := Oa{a: 2}
+  //
+  // mut qb := Ob{
+  //   name: "Tina",
+  //   age: 45
+  // }
+  //
+  // mut qc := Oc{
+  //   t: Oc_1{
+  //     t1: 'z',
+  //     t2: 3.14,
+  //     t3: "Thing",
+  //     t4: -1
+  //   },
+  //   tp: 2
+  // }
+  //
+  // qa.a = 3
+  // qb.name = "Kim"
+  // qb.age = 41
+  // qc.t.t1 = 'a'
+  // qc.t.t2 = 2.718
+  // qc.t.t3 = "Stuff"
+  // qc.t.t4 += !1
+  // qc.tp -= ~2
+  //
+  // print("qa.a:", qa.a)
+  // print("qb.name:", qb.name, "qb.age:", qb.age)
+  // print("qc.t.t1:", qc.t.t1, "qc.t.t2:", qc.t.t2, "qc.t.t3:", qc.t.t3, "qc.t.t4:", qc.t.t4, "qc.tp:", qc.tp)
 
-  pb := Ob{
-    name: "Tina",
-    age: 45
-  }
-
-  pc := Oc{
-    t: Oc_1{
-      t1: 'z',
-      t2: 3.14,
-      t3: "Thing",
-      t4: -1
-    },
-    tp: 2
-  }
-
-  print("pa.a:", pa.a)
-  print("pb.name:", pb.name, "pb.age:", pb.age)
-  print("pc.t.t1:", pc.t.t1, "pc.t.t2:", pc.t.t2, "pc.t.t3:", pc.t.t3, "pc.t.t4:", pc.t.t4, "pc.tp:", pc.tp)
-
-  mut qa := Oa{a: 2}
-
-  mut qb := Ob{
-    name: "Tina",
-    age: 45
-  }
-
-  mut qc := Oc{
-    t: Oc_1{
-      t1: 'z',
-      t2: 3.14,
-      t3: "Thing",
-      t4: -1
-    },
-    tp: 2
-  }
-
-  qa.a = 3
-  qb.name = "Kim"
-  qb.age = 41
-  qc.t.t1 = 'a'
-  qc.t.t2 = 2.718
-  qc.t.t3 = "Stuff"
-  qc.t.t4 += !1
-  qc.tp -= ~2
-
-  print("qa.a:", qa.a)
-  print("qb.name:", qb.name, "qb.age:", qb.age)
-  print("qc.t.t1:", qc.t.t1, "qc.t.t2:", qc.t.t2, "qc.t.t3:", qc.t.t3, "qc.t.t4:", qc.t.t4, "qc.tp:", qc.tp)
-
-  obj R {
-    name: str
-    age: int
-  }
-
-  sa := R{
-    name: "Harry",
-    age: 4
-  }
-
-  print("sa.name:", sa.name, "sa.age", sa.age)
+  // obj R {
+  //   name: str
+  //   age: int
+  // }
+  //
+  // sa := R{
+  //   name: "Harry",
+  //   age: 4
+  // }
+  //
+  // print("sa.name:", sa.name, "sa.age", sa.age)
 
   ta: bool = true
   tb: byte = 2
@@ -561,20 +562,20 @@ main {
   to: u32 = 100
   tp: u64 = 1000
 
-  obj Tq {
-    t1: int
-    t2: str
-  }
-
-  tq := Tq{
-    t1: 2,
-    t2: "simple string"
-  }
-
-  print("ta:", ta, "tb:", tb, "tc:", tc, "td:", td)
-  print("te:", te, "tf:", tf, "tg:", tg, "th:", th)
-  print("ti:", ti, "tj:", tj, "tk:", tk, "tl:", tl)
-  print("tm:", tm, "to:", to, "tp:", tp, "tq.t1:", tq.t1, "tq.t2:", tq.t2)
+  // obj Tq {
+  //   t1: int
+  //   t2: str
+  // }
+  //
+  // tq := Tq{
+  //   t1: 2,
+  //   t2: "simple string"
+  // }
+  //
+  // print("ta:", ta, "tb:", tb, "tc:", tc, "td:", td)
+  // print("te:", te, "tf:", tf, "tg:", tg, "th:", th)
+  // print("ti:", ti, "tj:", tj, "tk:", tk, "tl:", tl)
+  // print("tm:", tm, "to:", to, "tp:", tp, "tq.t1:", tq.t1, "tq.t2:", tq.t2)
 
   mut ua: bool = true
   mut ub: byte = 2
@@ -615,37 +616,37 @@ main {
   print("ui:", ui, "uj:", uj, "uk:", uk, "ul:", ul)
   print("um:", um, "un:", un, "uo:", uo, "up:", up)
 
-  obj Va {
-    name: str
-    age: int
-  }
-
-  obj Vb_1 {
-    a0: byte
-    a1: float
-    a2: f32
-    a3: f64
-    a4: int
-    a5: i8
-    a6: i16
-    a7: i32
-    a8: i64
-    a9: u8
-    a10: u16
-    a11: u32
-    a12: u64
-  }
-
-  obj Vb_2 {
-    b1: char
-    b2: str
-  }
-
-  obj Vb {
-    t1: Vb_1
-    t2: Vb_2
-    t3: int
-  }
+  // obj Va {
+  //   name: str
+  //   age: int
+  // }
+  //
+  // obj Vb_1 {
+  //   a0: byte
+  //   a1: float
+  //   a2: f32
+  //   a3: f64
+  //   a4: int
+  //   a5: i8
+  //   a6: i16
+  //   a7: i32
+  //   a8: i64
+  //   a9: u8
+  //   a10: u16
+  //   a11: u32
+  //   a12: u64
+  // }
+  //
+  // obj Vb_2 {
+  //   b1: char
+  //   b2: str
+  // }
+  //
+  // obj Vb {
+  //   t1: Vb_1
+  //   t2: Vb_2
+  //   t3: int
+  // }
 
   // TODO obj as param
   // fn Vb_do (it: Vb) float {
@@ -653,33 +654,33 @@ main {
   //     it.t1.a7 + it.t1.a8 + it.t1.a9 + it.t1.a10 + it.t1.a11 + it.t1.a12
   // }
 
-  wa := Va{
-    name: "Tristan",
-    age: 12
-  }
-
-  wb := Vb{
-    t1: Vb_1{
-      a0: 0x1,
-      a1: 2,
-      a2: 0b10,
-      a3: 0o10,
-      a4: 5,
-      a5: 6,
-      a6: 7,
-      a7: 8,
-      a8: 9,
-      a9: 10,
-      a10: 11,
-      a11: 12,
-      a12: 13
-    },
-    t2: Vb_2{
-      b1: 'a',
-      b2: "Mama mia"
-    },
-    t3: 2
-  }
+  // wa := Va{
+  //   name: "Tristan",
+  //   age: 12
+  // }
+  //
+  // wb := Vb{
+  //   t1: Vb_1{
+  //     a0: 0x1,
+  //     a1: 2,
+  //     a2: 0b10,
+  //     a3: 0o10,
+  //     a4: 5,
+  //     a5: 6,
+  //     a6: 7,
+  //     a7: 8,
+  //     a8: 9,
+  //     a9: 10,
+  //     a10: 11,
+  //     a11: 12,
+  //     a12: 13
+  //   },
+  //   t2: Vb_2{
+  //     b1: 'a',
+  //     b2: "Mama mia"
+  //   },
+  //   t3: 2
+  // }
 
   // TODO obj as arg
   // print("wa:", wa, "wb:", wb, "wb_do:", Vb_do(wb))

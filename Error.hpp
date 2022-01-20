@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_ERROR_HPP
-#define SRC_ERROR_HPP
+#ifndef ERROR_HPP
+#define ERROR_HPP
 
 #include "Reader.hpp"
 

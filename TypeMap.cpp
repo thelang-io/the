@@ -62,7 +62,7 @@ bool Type::isI64 () const {
 }
 
 bool Type::isObj () const {
-  return this->parent == std::nullopt ? false : (*this->parent)->name == "obj";
+  return this->parent != std::nullopt && (*this->parent)->name == "obj";
 }
 
 bool Type::isStr () const {
@@ -89,28 +89,33 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
+std::shared_ptr<Type> TypeMap::fn (const std::shared_ptr<Type> &type, const std::vector<TypeFnParam> &params) {
+  auto typeFn = TypeFn{type, params};
+  return std::make_shared<Type>(Type{"$", std::nullopt, typeFn});
+}
+
+std::shared_ptr<Type> TypeMap::fn (const std::string &name, const std::shared_ptr<Type> &type, const std::vector<TypeFnParam> &params) {
+  auto typeFn = TypeFn{type, params};
+  return std::make_shared<Type>(Type{name, std::nullopt, typeFn});
+}
+
 TypeMap::TypeMap () {
   this->stack.reserve(SHRT_MAX);
   this->_obj = std::make_shared<Type>(Type{"obj", std::nullopt, TypeObj{}});
 }
 
-std::shared_ptr<Type> TypeMap::add (const std::string &name, const std::optional<std::shared_ptr<Type>> &parent, const std::map<std::string, std::shared_ptr<Type>> &fields) {
+std::shared_ptr<Type> TypeMap::add (const std::string &name, const std::optional<std::shared_ptr<Type>> &parent, const std::vector<TypeObjField> &fields) {
   auto obj = TypeObj{fields};
   this->_items.push_back(std::make_shared<Type>(Type{name, parent, obj}));
 
   return this->_items.back();
 }
 
-std::shared_ptr<Type> TypeMap::add (const std::string &name, const std::shared_ptr<Type> &type, const std::map<std::string, TypeFnParam> &params) {
+std::shared_ptr<Type> TypeMap::add (const std::string &name, const std::shared_ptr<Type> &type, const std::vector<TypeFnParam> &params) {
   auto typeFn = TypeFn{type, params};
 
   this->_items.push_back(std::make_shared<Type>(Type{name, std::nullopt, typeFn}));
   return this->_items.back();
-}
-
-std::shared_ptr<Type> TypeMap::fn (const std::shared_ptr<Type> &type, const std::map<std::string, TypeFnParam> &params) const {
-  auto typeFn = TypeFn{type, params};
-  return std::make_shared<Type>(Type{"$", std::nullopt, typeFn});
 }
 
 const std::shared_ptr<Type> &TypeMap::get (const std::string &name) const {

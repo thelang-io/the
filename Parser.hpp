@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_PARSER_HPP
-#define SRC_PARSER_HPP
+#ifndef PARSER_HPP
+#define PARSER_HPP
 
 #include <optional>
 #include <variant>

@@ -40,11 +40,15 @@ std::shared_ptr<Type> analyzeStmtExprAccessType (const AST &ast, const ParserExp
 
   auto memberObj = std::get<TypeObj>(memberObjType->body);
 
-  if (!memberObj.fields.contains(parserMember.prop.name.val)) {
+  auto memberObjField = std::find_if(memberObj.fields.begin(), memberObj.fields.end(), [&parserMember] (const auto &it) -> bool {
+    return it.name == parserMember.prop.name.val;
+  });
+
+  if (memberObjField == memberObj.fields.end()) {
     throw Error("Tried accessing non existing object property");
   }
 
-  return memberObj.fields[parserMember.prop.name.val];
+  return memberObjField->type;
 }
 
 std::shared_ptr<Type> analyzeStmtExprType (const AST &ast, const ParserStmtExpr &stmtExpr) {
@@ -187,22 +191,22 @@ void analyzeForwardStmt (AST &ast, const ParserBlock &block) {
       auto fnName = stmtFnDecl.id.name.val;
       auto fnTypeName = ast.typeMap.name(fnName);
       auto fnReturnType = analyzeType(ast, stmtFnDecl.returnType);
-      auto fnParams = std::map<std::string, TypeFnParam>{};
+      auto fnParams = std::vector<TypeFnParam>{};
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
         auto fnParamType = analyzeType(ast, stmtFnDeclParam.type, stmtFnDeclParam.init);
-        fnParams.emplace(stmtFnDeclParam.id.name.val, TypeFnParam{fnParamType, stmtFnDeclParam.init == std::nullopt});
+        fnParams.push_back(TypeFnParam{stmtFnDeclParam.id.name.val, fnParamType, stmtFnDeclParam.init == std::nullopt});
       }
 
       auto fn = ast.typeMap.add(fnTypeName, fnReturnType, fnParams);
-      ast.varMap.add(fnName, fn, false);
+      ast.varMap.add(fnName, fnTypeName, fn, false);
     } else if (std::holds_alternative<ParserStmtObjDecl>(stmt)) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(stmt);
       auto objName = stmtObjDecl.id.name.val;
       auto objTypeName = ast.typeMap.name(objName);
-      auto obj = ast.typeMap.add(objTypeName, ast.typeMap.obj(), std::map<std::string, std::shared_ptr<Type>>{});
+      auto obj = ast.typeMap.add(objTypeName, ast.typeMap.obj(), std::vector<TypeObjField>{});
 
-      ast.varMap.add(objName, obj, false);
+      ast.varMap.add(objName, objTypeName, obj, false);
     }
   }
 }
@@ -293,9 +297,31 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
     }
 
     auto id = std::get<ASTId>(callee);
+    auto type = id.v.type;
+    auto fn = std::get<TypeFn>(type->body);
     auto args = std::vector<ASTExprCallArg>{};
+    auto argIdx = static_cast<std::size_t>(0);
 
     for (const auto &parserExprCallArg : parserExprCall.args) {
+      auto foundParam = std::optional<TypeFnParam>{};
+
+      if (argIdx < fn.params.size() && parserExprCallArg.id == std::nullopt) {
+        foundParam = fn.params[argIdx];
+      } else if (parserExprCallArg.id != std::nullopt) {
+        auto argName = parserExprCallArg.id->name.val;
+
+        for (const auto &exprCallArg : fn.params) {
+          if (exprCallArg.name == argName) {
+            foundParam = exprCallArg;
+            break;
+          }
+        }
+      }
+
+      if (foundParam == std::nullopt && !id.v.builtin) {
+        throw Error("Call expression argument wasn't found in function parameters");
+      }
+
       auto argId = std::optional<std::string>{};
 
       if (parserExprCallArg.id != std::nullopt) {
@@ -303,10 +329,16 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
       }
 
       auto argExpr = analyzeStmtExpr(ast, parserExprCallArg.expr);
+
+      if (!id.v.builtin) {
+        argExpr.type = foundParam->type;
+      }
+
       args.push_back(ASTExprCallArg{argId, argExpr});
+      argIdx++;
     }
 
-    auto exprCall = std::make_shared<ASTExpr>(ASTExprCall{id.v.type, callee, args});
+    auto exprCall = std::make_shared<ASTExpr>(ASTExprCall{type, callee, args});
     return ASTNodeExpr{analyzeStmtExprType(ast, *stmtExpr), exprCall, stmtExpr->parenthesized};
   } else if (stmtExpr != std::nullopt && std::holds_alternative<ParserExprCond>(*stmtExpr->expr)) {
     auto parserExprCond = std::get<ParserExprCond>(*stmtExpr->expr);
@@ -335,10 +367,10 @@ ASTNodeExpr analyzeStmtExpr (const AST &ast, const std::optional<ParserStmtExpr>
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr->expr)) {
     auto parserExprObj = std::get<ParserExprObj>(*stmtExpr->expr);
     auto var = ast.varMap.get(parserExprObj.id.name.val);
-    auto props = std::map<std::string, ASTNodeExpr>();
+    auto props = std::vector<ASTExprObjProp>();
 
     for (const auto &parserExprObjProp : parserExprObj.props) {
-      props.emplace(parserExprObjProp.id.name.val, analyzeStmtExpr(ast, parserExprObjProp.init));
+      props.push_back(ASTExprObjProp{parserExprObjProp.id.name.val, analyzeStmtExpr(ast, parserExprObjProp.init)});
     }
 
     auto exprObj = std::make_shared<ASTExpr>(ASTExprObj{var.type, props});
@@ -409,7 +441,7 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     ast.typeMap.stack.emplace_back(var.name);
     ast.varMap.save();
 
-    auto params = std::map<std::string, ASTNodeFnDeclParam>{};
+    auto params = std::vector<ASTNodeFnDeclParam>{};
 
     for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
       auto fnParamInit = std::optional<ASTNodeExpr>{};
@@ -418,10 +450,12 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
         fnParamInit = analyzeStmtExpr(ast, stmtFnDeclParam.init);
       }
 
+      auto fnParamName = stmtFnDeclParam.id.name.val;
+      auto fnParamCodeName = ast.varMap.name(fnParamName);
       auto fnParamType = analyzeType(ast, stmtFnDeclParam.type, stmtFnDeclParam.init);
-      auto fnParamVar = ast.varMap.add(stmtFnDeclParam.id.name.val, fnParamType, false);
+      auto fnParamVar = ast.varMap.add(fnParamName, fnParamCodeName, fnParamType, false);
 
-      params.emplace(stmtFnDeclParam.id.name.val, ASTNodeFnDeclParam{fnParamVar, fnParamInit});
+      params.push_back(ASTNodeFnDeclParam{fnParamVar, fnParamInit});
     }
 
     auto body = analyzeBlock(ast, stmtFnDecl.body);
@@ -429,7 +463,7 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     ast.varMap.restore();
     ast.typeMap.stack.pop_back();
 
-    auto nodeFnDecl = ASTNodeFnDecl{var, params, body};
+    auto nodeFnDecl = ASTNodeFnDecl{var, params, ast.varMap.stack(), body};
     return ASTNode{nodeFnDecl};
   } else if (std::holds_alternative<ParserStmtIf>(stmt)) {
     auto nodeIf = analyzeStmtIf(ast, std::get<ParserStmtIf>(stmt));
@@ -480,7 +514,7 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
 
     for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
       auto fieldType = analyzeType(ast, stmtObjDeclField.type);
-      obj.fields.emplace(stmtObjDeclField.id.name.val, fieldType);
+      obj.fields.push_back(TypeObjField{stmtObjDeclField.id.name.val, fieldType});
     }
 
     auto nodeObjDecl = ASTNodeObjDecl{var};
@@ -492,16 +526,18 @@ ASTNode analyzeStmt (AST &ast, const ParserStmt &stmt) {
     return ASTNode{nodeReturn};
   } else if (std::holds_alternative<ParserStmtVarDecl>(stmt)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(stmt);
+    auto varName = stmtVarDecl.id.name.val;
+    auto varCodeName = ast.varMap.name(varName);
     auto varType = analyzeType(ast, stmtVarDecl.type, stmtVarDecl.init);
-    auto var = ast.varMap.add(stmtVarDecl.id.name.val, varType, stmtVarDecl.mut);
+    auto var = ast.varMap.add(varName, varCodeName, varType, stmtVarDecl.mut);
     auto init = std::optional<ASTNodeExpr>{};
 
     if (stmtVarDecl.init != std::nullopt) {
       init = analyzeStmtExpr(ast, *stmtVarDecl.init);
+      init->type = varType;
     }
 
     auto nodeVarDecl = ASTNodeVarDecl{var, init};
-
     return ASTNode{nodeVarDecl};
   }
 
@@ -516,70 +552,70 @@ AST analyze (Reader *reader) {
   ast.typeMap.add("void", std::nullopt);
 
   ast.typeMap.add("bool", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("byte", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("char", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("float", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("f32", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("f64", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("int", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("i8", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("i16", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("i32", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("i64", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("u8", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("u16", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("u32", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
   ast.typeMap.add("u64", std::nullopt, {
-    std::pair{"str", ast.typeMap.fn(ast.typeMap.get("str"))}
+    {"str", TypeMap::fn(ast.typeMap.get("str"))}
   });
 
-  ast.varMap.add("print", ast.typeMap.fn(ast.typeMap.get("void"), {
-    std::pair{"items", TypeFnParam{ast.typeMap.get("any"), false}},
-    std::pair{"separator", TypeFnParam{ast.typeMap.get("str"), false}},
-    std::pair{"terminator", TypeFnParam{ast.typeMap.get("str"), false}}
-  }));
+  ast.varMap.add("print", "print", TypeMap::fn("print", ast.typeMap.get("void"), {
+    {"items", ast.typeMap.get("any"), false},
+    {"separator", ast.typeMap.get("str"), false},
+    {"terminator", ast.typeMap.get("str"), false}
+  }), false, true);
 
   auto block = ParserBlock{};
 

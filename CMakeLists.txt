@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.5.5
+  VERSION 1.5.6
   LANGUAGES CXX
 )
 
@@ -25,9 +25,11 @@ endfunction()
 set(
   sources
 
+  AnonMap.cpp AnonMap.hpp
   AST.cpp AST.hpp
   Codegen.cpp Codegen.hpp
   Error.cpp Error.hpp
+  Foundation.hpp
   Lexer.cpp Lexer.hpp
   Parser.cpp Parser.hpp
   Reader.cpp Reader.hpp

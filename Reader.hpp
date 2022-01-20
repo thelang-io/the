@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_READER_HPP
-#define SRC_READER_HPP
+#ifndef READER_HPP
+#define READER_HPP
 
 #include <string>
 

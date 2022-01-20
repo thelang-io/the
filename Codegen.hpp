@@ -5,41 +5,101 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_CODEGEN_HPP
-#define SRC_CODEGEN_HPP
+#ifndef CODEGEN_HPP
+#define CODEGEN_HPP
 
+#include <map>
 #include "AST.hpp"
+#include "AnonMap.hpp"
 
-struct CodegenHeaders {
-  bool math = false;
-  bool stdbool = false;
-  bool stdio = false;
-  bool stdlib = false;
-  bool string = false;
-};
-
-struct CodegenFunctionsStr {
-  bool init = false;
-  bool copy = false;
-  bool deinit = false;
-  bool to_cstr = false;
-
-  bool concat = false;
-};
-
-struct CodegenFunctions {
-  CodegenFunctionsStr s;
-};
+//struct CodegenFunctionsBool {
+//  bool init = false;
+//  bool copy = false;
+//  bool deinit = false;
+//  bool to_cstr = false;
+//
+//  bool str = false;
+//};
+//
+//struct CodegenFunctionsByte {
+//  bool init = false;
+//  bool copy = false;
+//  bool deinit = false;
+//  bool to_cstr = false;
+//
+//  bool str = false;
+//};
+//
+//struct CodegenFunctionsChar {
+//  bool init = false;
+//  bool copy = false;
+//  bool deinit = false;
+//  bool to_cstr = false;
+//
+//  bool str = false;
+//};
+//
+//struct CodegenFunctionsFloat {
+//  bool init = false;
+//  bool copy = false;
+//  bool deinit = false;
+//  bool to_cstr = false;
+//
+//  bool str = false;
+//};
+//
+//struct CodegenFunctionsFn {
+//  bool init = false;
+//  bool deinit = false;
+//  bool call = false;
+//};
+//
+//struct CodegenFunctionsInt {
+//  bool init = false;
+//  bool copy = false;
+//  bool deinit = false;
+//  bool to_cstr = false;
+//
+//  bool str = false;
+//};
+//
+//struct CodegenFunctionsStr {
+//  bool init = false;
+//  bool copy = false;
+//  bool deinit = false;
+//  bool to_cstr = false;
+//
+//  bool concat = false;
+//};
+//
+//struct CodegenFunctions {
+//  CodegenFunctionsByte byte;
+//  CodegenFunctionsChar ch;
+//  CodegenFunctionsFloat f;
+//  CodegenFunctionsFloat f32;
+//  CodegenFunctionsFloat f64;
+//  CodegenFunctionsFn fn;
+//  CodegenFunctionsInt i;
+//  CodegenFunctionsInt i8;
+//  CodegenFunctionsInt i16;
+//  CodegenFunctionsInt i32;
+//  CodegenFunctionsInt i64;
+//  CodegenFunctionsStr str;
+//  CodegenFunctionsBool t;
+//  CodegenFunctionsInt u8;
+//  CodegenFunctionsInt u16;
+//  CodegenFunctionsInt u32;
+//  CodegenFunctionsInt u64;
+//};
 
 struct Codegen {
-  CodegenHeaders headers;
-  CodegenFunctions functions;
+  AnonMap anonMap;
   std::size_t indent;
-  std::string functionDeclarationsCode;
-  std::string functionDefinitionsCode;
   std::string output;
-  std::string structDeclarationsCode;
-  std::string structDefinitionsCode;
+  std::map<std::string, std::tuple<std::string, std::string>> functionDeclarations;
+  std::map<std::string, std::tuple<std::string, std::string, std::string>> functionDefinitions;
+  std::vector<std::string> structDeclarations;
+  std::map<std::string, std::vector<std::tuple<std::string, std::string>>> structDefinitions;
 };
 
 Codegen codegen (AST *);

@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_LEXER_HPP
-#define SRC_LEXER_HPP
+#ifndef LEXER_HPP
+#define LEXER_HPP
 
 #include "Reader.hpp"
 

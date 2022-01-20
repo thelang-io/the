@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef SRC_AST_HPP
-#define SRC_AST_HPP
+#ifndef AST_HPP
+#define AST_HPP
 
 #include "Reader.hpp"
 #include "VarMap.hpp"
@@ -178,9 +178,14 @@ struct ASTExprLit {
   std::string val;
 };
 
+struct ASTExprObjProp {
+  std::string name;
+  ASTNodeExpr init;
+};
+
 struct ASTExprObj {
   std::shared_ptr<Type> type;
-  std::map<std::string, ASTNodeExpr> props;
+  std::vector<ASTExprObjProp> props;
 };
 
 struct ASTExprUnary {
@@ -202,7 +207,8 @@ struct ASTNodeFnDeclParam {
 
 struct ASTNodeFnDecl {
   Var var;
-  std::map<std::string, ASTNodeFnDeclParam> params;
+  std::vector<ASTNodeFnDeclParam> params;
+  std::vector<Var> stack;
   ASTBlock body;
 };
 
