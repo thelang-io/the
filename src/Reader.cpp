@@ -33,7 +33,7 @@ Reader::Reader (const std::string &p) {
   std::stringstream c;
   c << f.rdbuf();
 
-  this->loc = ReaderLocation();
+  this->loc = ReaderLocation{};
   this->path = canonicalPath;
   this->content = c.str();
   this->size = this->content.length();
@@ -45,7 +45,7 @@ bool Reader::eof () const {
 
 char Reader::next () {
   if (this->eof()) {
-    throw Error("Tried to read on Reader eof");
+    throw Error("Tried to read on reader eof");
   }
 
   auto ch = this->content[this->loc.pos];
@@ -63,4 +63,8 @@ char Reader::next () {
 
 void Reader::seek (ReaderLocation l) {
   this->loc = l;
+}
+
+bool operator== (const ReaderLocation &lhs, const ReaderLocation &rhs) {
+  return lhs.pos == rhs.pos && lhs.line == rhs.line && lhs.col == rhs.col;
 }

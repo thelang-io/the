@@ -6,9 +6,9 @@
  */
 
 #include <gtest/gtest.h>
+#include <filesystem>
 #include <fstream>
 #include "../src/Error.hpp"
-#include "../src/Reader.hpp"
 #include "utils.hpp"
 
 class ReaderTest : public ::testing::Test {
@@ -18,12 +18,7 @@ class ReaderTest : public ::testing::Test {
   Reader *r3_;
 
   void SetUp () override {
-    auto failFile = std::ofstream("test_fail.txt");
-    failFile.close();
-    std::filesystem::permissions("test_fail.txt", std::filesystem::perms::none);
-
     auto emptyFile = std::ofstream("test_empty.txt");
-    emptyFile << "";
     emptyFile.close();
 
     auto regularFile = std::ofstream("test_regular.txt");
@@ -44,7 +39,6 @@ class ReaderTest : public ::testing::Test {
     delete this->r2_;
     delete this->r3_;
 
-    std::filesystem::remove("test_fail.txt");
     std::filesystem::remove("test_empty.txt");
     std::filesystem::remove("test_regular.txt");
     std::filesystem::remove("test_multiline.txt");
@@ -63,27 +57,26 @@ TEST_F(ReaderTest, ThrowsOnDirectory) {
   }, Error, R"(Path "/dev/null" is not a file)");
 }
 
-TEST_F(ReaderTest, ThrowsOnNoPerms) {
-  EXPECT_THROW_WITH_MESSAGE({
-    Reader("test_fail.txt");
-  }, Error, R"(Unable to read file "test_fail.txt")");
-}
+// TODO Find a way to test on Linux, on macOS setting perms::none works
+// TEST_F(ReaderTest, ThrowsOnNoPerms) {
+//   EXPECT_THROW_WITH_MESSAGE({
+//     Reader("test_fail.txt");
+//   }, Error, R"(Unable to read file "test_fail.txt")");
+// }
 
 TEST_F(ReaderTest, ReadsFile) {
-  EXPECT_EQ(this->r2_->loc.pos, 0);
-  EXPECT_EQ(this->r2_->loc.line, 1);
-  EXPECT_EQ(this->r2_->loc.col, 0);
+  EXPECT_EQ(this->r2_->loc, (ReaderLocation{0, 1, 0}));
   EXPECT_EQ(this->r2_->path, std::filesystem::current_path() / "test_regular.txt");
   EXPECT_EQ(this->r2_->content, "Hello, World!");
   EXPECT_EQ(this->r2_->size, 13);
 }
 
 TEST_F(ReaderTest, NoEofOnNonEmpty) {
-  EXPECT_EQ(this->r2_->eof(), false);
+  EXPECT_FALSE(this->r2_->eof());
 }
 
 TEST_F(ReaderTest, EofOnEmpty) {
-  EXPECT_EQ(this->r1_->eof(), true);
+  EXPECT_TRUE(this->r1_->eof());
 }
 
 TEST_F(ReaderTest, ReadsNext) {
@@ -99,21 +92,23 @@ TEST_F(ReaderTest, EofOnNext) {
     this->r2_->next();
   }
 
-  EXPECT_EQ(this->r2_->eof(), true);
+  EXPECT_TRUE(this->r2_->eof());
 }
 
 TEST_F(ReaderTest, SeeksTo) {
   this->r2_->seek(ReaderLocation{7, 1, 7});
+
   EXPECT_EQ(this->r2_->next(), 'W');
   EXPECT_EQ(this->r2_->next(), 'o');
   EXPECT_EQ(this->r2_->next(), 'r');
   EXPECT_EQ(this->r2_->next(), 'l');
   EXPECT_EQ(this->r2_->next(), 'd');
+  EXPECT_EQ(this->r2_->loc, (ReaderLocation{12, 1, 12}));
 }
 
 TEST_F(ReaderTest, EofOnSeek) {
   this->r2_->seek(ReaderLocation{12, 1, 12});
-  EXPECT_EQ(this->r2_->eof(), false);
+  EXPECT_FALSE(this->r2_->eof());
 }
 
 TEST_F(ReaderTest, ReadsMultiline) {
@@ -121,7 +116,11 @@ TEST_F(ReaderTest, ReadsMultiline) {
     this->r3_->next();
   }
 
-  EXPECT_EQ(this->r3_->loc.pos, 39);
-  EXPECT_EQ(this->r3_->loc.line, 4);
-  EXPECT_EQ(this->r3_->loc.col, 0);
+  EXPECT_EQ(this->r3_->loc, (ReaderLocation{39, 4, 0}));
+}
+
+TEST_F(ReaderTest, ThrowsOnNextOnEof) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->r1_->next();
+  }, Error, "Tried to read on reader eof");
 }

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.5.6
+  VERSION 1.6.0
   LANGUAGES CXX
 )
 
@@ -31,7 +31,9 @@ set(
   sources
 
   src/Error.cpp src/Error.hpp
+  src/Lexer.cpp src/Lexer.hpp
   src/Reader.cpp src/Reader.hpp
+  src/Token.cpp src/Token.hpp
 )
 
 add_executable(${PROJECT_NAME} ${sources} src/main.cpp)
@@ -41,9 +43,12 @@ set(
   tests
 
   test/ErrorTest.cpp
+  test/LexerTest.cpp
+  test/MockReader.cpp test/MockReader.hpp
   test/ReaderTest.cpp
+  test/TokenTest.cpp
   test/utils.hpp
 )
 
 add_executable(${PROJECT_NAME}-test ${sources} ${tests})
-target_link_libraries(${PROJECT_NAME}-test gtest_main)
+target_link_libraries(${PROJECT_NAME}-test gmock_main)

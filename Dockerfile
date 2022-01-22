@@ -3,7 +3,7 @@ FROM ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y build-essential cmake git valgrind && \
+    apt-get install -y build-essential cmake git && \
     apt-get autoclean && \
     apt-get autoremove && \
     apt-get clean && \
@@ -14,6 +14,5 @@ COPY . .
 RUN mkdir -p build
 RUN (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug)
 RUN cmake --build build
-RUN build/the-core
 
-ENTRYPOINT ["valgrind", "--error-exitcode=1", "--leak-check=full", "--show-leak-kinds=all", "--tool=memcheck", "--track-origins=yes", "build/a.out"]
+ENTRYPOINT ["build/the-core-test"]

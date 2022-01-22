@@ -24,12 +24,16 @@ class Reader {
   std::size_t size;
 
   explicit Reader (const std::string &);
-  Reader (const Reader &) = delete;
-  Reader &operator= (const Reader &) = delete;
 
-  bool eof () const;
-  char next ();
-  void seek (ReaderLocation);
+  virtual bool eof () const;
+  virtual char next ();
+  virtual void seek (ReaderLocation);
+
+ private:
+  Reader (const Reader &);
+  Reader &operator= (const Reader &);
 };
+
+bool operator== (const ReaderLocation &, const ReaderLocation &);
 
 #endif
