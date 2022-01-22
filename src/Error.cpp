@@ -8,9 +8,9 @@
 #include "Error.hpp"
 
 Error::Error (const std::string &message) {
-  this->_message = message;
+  this->message_ = message;
 }
 
 const char *Error::what () const noexcept {
-  return this->_message.c_str();
+  return this->message_.c_str();
 }

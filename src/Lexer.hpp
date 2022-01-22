@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <optional>
+#include "Error.hpp"
 #include "Token.hpp"
 
 class LexerError;
@@ -38,13 +39,9 @@ class Lexer {
   void _whitespace ();
 };
 
-class LexerError : public std::exception {
+class LexerError : public Error {
  public:
   LexerError (Lexer *, const std::string &);
-  const char *what () const noexcept override;
-
- private:
-  std::string _message;
 };
 
 #endif

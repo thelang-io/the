@@ -144,6 +144,7 @@ struct Token {
   static bool isWhitespace (char);
 
   int precedence () const;
+  std::string str () const;
 };
 
 bool operator== (const Token &, const Token &);

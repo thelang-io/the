@@ -48,21 +48,14 @@ class ReaderTest : public ::testing::Test {
 TEST_F(ReaderTest, ThrowsOnNotExisting) {
   EXPECT_THROW_WITH_MESSAGE({
     Reader("test.jpg");
-  }, Error, R"(No such file "test.jpg")");
+  }, Error, R"(Error: no such file "test.jpg")");
 }
 
 TEST_F(ReaderTest, ThrowsOnDirectory) {
   EXPECT_THROW_WITH_MESSAGE({
     Reader("/dev/null");
-  }, Error, R"(Path "/dev/null" is not a file)");
+  }, Error, R"(Error: path "/dev/null" is not a file)");
 }
-
-// TODO Find a way to test on Linux, on macOS setting perms::none works
-// TEST_F(ReaderTest, ThrowsOnNoPerms) {
-//   EXPECT_THROW_WITH_MESSAGE({
-//     Reader("test_fail.txt");
-//   }, Error, R"(Unable to read file "test_fail.txt")");
-// }
 
 TEST_F(ReaderTest, ReadsFile) {
   EXPECT_EQ(this->r2_->loc, (ReaderLocation{0, 1, 0}));
@@ -122,5 +115,5 @@ TEST_F(ReaderTest, ReadsMultiline) {
 TEST_F(ReaderTest, ThrowsOnNextOnEof) {
   EXPECT_THROW_WITH_MESSAGE({
     this->r1_->next();
-  }, Error, "Tried to read on reader eof");
+  }, Error, "Error: tried to read on reader eof");
 }

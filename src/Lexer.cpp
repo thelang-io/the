@@ -288,7 +288,7 @@ void Lexer::_whitespace () {
   this->_reader->seek(loc1);
 }
 
-LexerError::LexerError (Lexer *lexer, const std::string &message) {
+LexerError::LexerError (Lexer *lexer, const std::string &message) : Error("") {
   auto start = lexer->loc;
   auto end = lexer->_reader->loc;
   auto line = std::string();
@@ -308,9 +308,9 @@ LexerError::LexerError (Lexer *lexer, const std::string &message) {
   auto colNumStr = std::to_string(start.col + 1);
   auto lineNumStr = std::to_string(start.line);
 
-  this->_message += lexer->_reader->path + ':' + lineNumStr + ':' + colNumStr + ": " + message + "\n";
-  this->_message += "  " + lineNumStr + " | " + line + '\n';
-  this->_message += "  " + std::string(lineNumStr.length(), ' ') + " | " + std::string(start.col, ' ') + '^';
+  this->message_ += lexer->_reader->path + ':' + lineNumStr + ':' + colNumStr + ": " + message + "\n";
+  this->message_ += "  " + lineNumStr + " | " + line + '\n';
+  this->message_ += "  " + std::string(lineNumStr.length(), ' ') + " | " + std::string(start.col, ' ') + '^';
 
   auto underlineLen = static_cast<std::size_t>(0);
 
@@ -321,10 +321,6 @@ LexerError::LexerError (Lexer *lexer, const std::string &message) {
   }
 
   if (underlineLen != 0) {
-    this->_message += std::string(underlineLen - 1, '~');
+    this->message_ += std::string(underlineLen - 1, '~');
   }
-}
-
-const char *LexerError::what () const noexcept {
-  return this->_message.c_str();
 }

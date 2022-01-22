@@ -34,8 +34,8 @@ class Error : public std::exception {
   explicit Error (const std::string &);
   const char *what () const noexcept override;
 
- private:
-  std::string _message;
+ protected:
+  std::string message_;
 };
 
 #endif
