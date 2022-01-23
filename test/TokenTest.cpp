@@ -109,14 +109,6 @@ TEST(TokenTest, IsNotLitStrEscape) {
   EXPECT_FALSE(Token::isLitStrEscape(' '));
 }
 
-TEST(TokenTest, IsNotNewline) {
-  EXPECT_TRUE(Token::isNotNewline(' '));
-}
-
-TEST(TokenTest, IsNotNotNewline) {
-  EXPECT_FALSE(Token::isNotNewline('\n'));
-}
-
 TEST(TokenTest, IsWhitespace) {
   EXPECT_TRUE(Token::isWhitespace(' '));
   EXPECT_TRUE(Token::isWhitespace('\n'));

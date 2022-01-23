@@ -140,7 +140,6 @@ struct Token {
   static bool isLitIntHex (char);
   static bool isLitIntOct (char);
   static bool isLitStrEscape (char);
-  static bool isNotNewline (char);
   static bool isWhitespace (char);
 
   int precedence () const;

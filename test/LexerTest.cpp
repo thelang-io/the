@@ -14,11 +14,10 @@
 TEST(LexerTest, ThrowsOnUnknownToken) {
   auto reader = ::testing::NiceMock<MockReader>("@");
   auto lexer = Lexer(&reader);
-  auto message = std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^";
 
   EXPECT_THROW_WITH_MESSAGE({
     lexer.next();
-  }, LexerError, message.c_str());
+  }, LexerError, (std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^").c_str());
 }
 
 TEST(LexerTest, LexEof) {
@@ -80,21 +79,19 @@ TEST(LexerTest, LexMultilineBlockComment) {
 TEST(LexerTest, ThrowsOnEmptyNotClosedBlockComment) {
   auto reader = ::testing::NiceMock<MockReader>("/*");
   auto lexer = Lexer(&reader);
-  auto message = std::string("/test:1:1: ") + E0001 + "\n  1 | /*\n    | ^~";
 
   EXPECT_THROW_WITH_MESSAGE({
     lexer.next();
-  }, LexerError, message.c_str());
+  }, LexerError, (std::string("/test:1:1: ") + E0001 + "\n  1 | /*\n    | ^~").c_str());
 }
 
 TEST(LexerTest, ThrowsOnNotClosedBlockComment) {
   auto reader = ::testing::NiceMock<MockReader>("/*Hello");
   auto lexer = Lexer(&reader);
-  auto message = std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~";
 
   EXPECT_THROW_WITH_MESSAGE({
     lexer.next();
-  }, LexerError, message.c_str());
+  }, LexerError, (std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~").c_str());
 }
 
 TEST(LexerTest, LexEmptyLineCommentNoNewLine) {
@@ -774,4 +771,753 @@ TEST(LexerTest, LexIdentifierWhitespace) {
   EXPECT_EQ(lexer.next().str(), "ID(1:16-1:24): ANYTHING");
   EXPECT_EQ(lexer.next().str(), "ID(1:25-1:34): __I1_D2__");
   EXPECT_EQ(lexer.next().str(), "EOF(1:35-1:35)");
+}
+
+TEST(LexerTest, LexLitChar) {
+  auto reader = ::testing::NiceMock<MockReader>(R"(' ''!''A''a''9''\n''\"''\'''\\')");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:1-1:4): ' '");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:4-1:7): '!'");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:7-1:10): 'A'");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:10-1:13): 'a'");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:13-1:16): '9'");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:16-1:20): '\\n')");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:20-1:24): '\"')");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:24-1:28): '\'')");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:28-1:32): '\\')");
+}
+
+TEST(LexerTest, LexLitCharWhitespace) {
+  auto reader = ::testing::NiceMock<MockReader>(R"( ' ' '!' 'A' 'a' '9' '\n' '\"' '\'' '\\' )");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:2-1:5): ' '");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:6-1:9): '!'");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:10-1:13): 'A'");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:14-1:17): 'a'");
+  EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:18-1:21): '9'");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:22-1:26): '\\n')");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:27-1:31): '\"')");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:32-1:36): '\'')");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_CHAR(1:37-1:41): '\\')");
+  EXPECT_EQ(lexer.next().str(), "EOF(1:42-1:42)");
+}
+
+TEST(LexerTest, LexLitCharEof) {
+  auto r1 = ::testing::NiceMock<MockReader>("' '");
+  auto r2 = ::testing::NiceMock<MockReader>("'!'");
+  auto r3 = ::testing::NiceMock<MockReader>("'A'");
+  auto r4 = ::testing::NiceMock<MockReader>("'a'");
+  auto r5 = ::testing::NiceMock<MockReader>("'9'");
+  auto r6 = ::testing::NiceMock<MockReader>(R"('\n')");
+  auto r7 = ::testing::NiceMock<MockReader>(R"('\"')");
+  auto r8 = ::testing::NiceMock<MockReader>(R"('\'')");
+  auto r9 = ::testing::NiceMock<MockReader>(R"('\\')");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+  auto l5 = Lexer(&r5);
+  auto l6 = Lexer(&r6);
+  auto l7 = Lexer(&r7);
+  auto l8 = Lexer(&r8);
+  auto l9 = Lexer(&r9);
+
+  EXPECT_EQ(l1.next().str(), "LIT_CHAR(1:1-1:4): ' '");
+  EXPECT_EQ(l2.next().str(), "LIT_CHAR(1:1-1:4): '!'");
+  EXPECT_EQ(l3.next().str(), "LIT_CHAR(1:1-1:4): 'A'");
+  EXPECT_EQ(l4.next().str(), "LIT_CHAR(1:1-1:4): 'a'");
+  EXPECT_EQ(l5.next().str(), "LIT_CHAR(1:1-1:4): '9'");
+  EXPECT_EQ(l6.next().str(), R"(LIT_CHAR(1:1-1:5): '\\n')");
+  EXPECT_EQ(l7.next().str(), R"(LIT_CHAR(1:1-1:5): '\"')");
+  EXPECT_EQ(l8.next().str(), R"(LIT_CHAR(1:1-1:5): '\'')");
+  EXPECT_EQ(l9.next().str(), R"(LIT_CHAR(1:1-1:5): '\\')");
+}
+
+TEST(LexerTest, ThrowsOnNotClosedLitChar) {
+  auto r1 = ::testing::NiceMock<MockReader>("'");
+  auto r2 = ::testing::NiceMock<MockReader>(R"('a)");
+  auto r3 = ::testing::NiceMock<MockReader>(R"('\)");
+  auto r4 = ::testing::NiceMock<MockReader>(R"('\n)");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | '\n    | ^").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | 'a\n    | ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l3.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | '\\\n    | ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l4.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | '\\n\n    | ^~~").c_str());
+}
+
+TEST(LexerTest, ThrowsOnEmptyLitChar) {
+  auto reader = ::testing::NiceMock<MockReader>("''");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    lexer.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0004 + "\n  1 | ''\n    | ^~").c_str());
+}
+
+TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
+  auto r1 = ::testing::NiceMock<MockReader>(R"('\m)");
+  auto r2 = ::testing::NiceMock<MockReader>(R"('\m')");
+  auto r3 = ::testing::NiceMock<MockReader>(R"('\ma)");
+  auto r4 = ::testing::NiceMock<MockReader>(R"('\ma')");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m\n    |  ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m'\n    |  ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l3.next();
+  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma\n    |  ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l4.next();
+  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma'\n    |  ^~").c_str());
+}
+
+TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
+  auto r1 = ::testing::NiceMock<MockReader>(R"('ch)");
+  auto r2 = ::testing::NiceMock<MockReader>(R"('char')");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0006 + "\n  1 | 'ch\n    | ^~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0006 + "\n  1 | 'char'\n    | ^~~~~~").c_str());
+}
+
+TEST(LexerTest, LexLitFloat) {
+  auto r1 = ::testing::NiceMock<MockReader>("0E0");
+  auto r2 = ::testing::NiceMock<MockReader>("0E1");
+  auto r3 = ::testing::NiceMock<MockReader>("1e308");
+  auto r4 = ::testing::NiceMock<MockReader>("1e+0");
+  auto r5 = ::testing::NiceMock<MockReader>("18446744073709551615e+1");
+  auto r6 = ::testing::NiceMock<MockReader>("18446744073709551615e-308");
+  auto r7 = ::testing::NiceMock<MockReader>("0.E0");
+  auto r8 = ::testing::NiceMock<MockReader>("0.E1");
+  auto r9 = ::testing::NiceMock<MockReader>("1.e308");
+  auto r10 = ::testing::NiceMock<MockReader>("1.e+0");
+  auto r11 = ::testing::NiceMock<MockReader>("18446744073709551615.e+1");
+  auto r12 = ::testing::NiceMock<MockReader>("18446744073709551615.e-308");
+  auto r13 = ::testing::NiceMock<MockReader>("0.0");
+  auto r14 = ::testing::NiceMock<MockReader>("1.1");
+  auto r15 = ::testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615");
+  auto r16 = ::testing::NiceMock<MockReader>("0.0E0");
+  auto r17 = ::testing::NiceMock<MockReader>("0.0E1");
+  auto r18 = ::testing::NiceMock<MockReader>("1.1e308");
+  auto r19 = ::testing::NiceMock<MockReader>("1.1E+0");
+  auto r20 = ::testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615E+1");
+  auto r21 = ::testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615e-308");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+  auto l5 = Lexer(&r5);
+  auto l6 = Lexer(&r6);
+  auto l7 = Lexer(&r7);
+  auto l8 = Lexer(&r8);
+  auto l9 = Lexer(&r9);
+  auto l10 = Lexer(&r10);
+  auto l11 = Lexer(&r11);
+  auto l12 = Lexer(&r12);
+  auto l13 = Lexer(&r13);
+  auto l14 = Lexer(&r14);
+  auto l15 = Lexer(&r15);
+  auto l16 = Lexer(&r16);
+  auto l17 = Lexer(&r17);
+  auto l18 = Lexer(&r18);
+  auto l19 = Lexer(&r19);
+  auto l20 = Lexer(&r20);
+  auto l21 = Lexer(&r21);
+
+  EXPECT_EQ(l1.next().str(), "LIT_FLOAT(1:1-1:4): 0E0");
+  EXPECT_EQ(l2.next().str(), "LIT_FLOAT(1:1-1:4): 0E1");
+  EXPECT_EQ(l3.next().str(), "LIT_FLOAT(1:1-1:6): 1e308");
+  EXPECT_EQ(l4.next().str(), "LIT_FLOAT(1:1-1:5): 1e+0");
+  EXPECT_EQ(l5.next().str(), "LIT_FLOAT(1:1-1:24): 18446744073709551615e+1");
+  EXPECT_EQ(l6.next().str(), "LIT_FLOAT(1:1-1:26): 18446744073709551615e-308");
+  EXPECT_EQ(l7.next().str(), "LIT_FLOAT(1:1-1:5): 0.E0");
+  EXPECT_EQ(l8.next().str(), "LIT_FLOAT(1:1-1:5): 0.E1");
+  EXPECT_EQ(l9.next().str(), "LIT_FLOAT(1:1-1:7): 1.e308");
+  EXPECT_EQ(l10.next().str(), "LIT_FLOAT(1:1-1:6): 1.e+0");
+  EXPECT_EQ(l11.next().str(), "LIT_FLOAT(1:1-1:25): 18446744073709551615.e+1");
+  EXPECT_EQ(l12.next().str(), "LIT_FLOAT(1:1-1:27): 18446744073709551615.e-308");
+  EXPECT_EQ(l13.next().str(), "LIT_FLOAT(1:1-1:4): 0.0");
+  EXPECT_EQ(l14.next().str(), "LIT_FLOAT(1:1-1:4): 1.1");
+  EXPECT_EQ(l15.next().str(), "LIT_FLOAT(1:1-1:42): 18446744073709551615.18446744073709551615");
+  EXPECT_EQ(l16.next().str(), "LIT_FLOAT(1:1-1:6): 0.0E0");
+  EXPECT_EQ(l17.next().str(), "LIT_FLOAT(1:1-1:6): 0.0E1");
+  EXPECT_EQ(l18.next().str(), "LIT_FLOAT(1:1-1:8): 1.1e308");
+  EXPECT_EQ(l19.next().str(), "LIT_FLOAT(1:1-1:7): 1.1E+0");
+  EXPECT_EQ(l20.next().str(), "LIT_FLOAT(1:1-1:45): 18446744073709551615.18446744073709551615E+1");
+  EXPECT_EQ(l21.next().str(), "LIT_FLOAT(1:1-1:47): 18446744073709551615.18446744073709551615e-308");
+}
+
+TEST(LexerTest, LexLitFloatWhitespace) {
+  auto reader = ::testing::NiceMock<MockReader>(
+    " 0E0 0E1 1e308 1e+0 18446744073709551615e+1 18446744073709551615e-308"
+    " 0.E0 0.E1 1.e308 1.e+0 18446744073709551615.e+1 18446744073709551615.e-308"
+    " 0.0 1.1 18446744073709551615.18446744073709551615"
+    " 0.0E0 0.0E1 1.1e308 1.1E+0"
+    " 18446744073709551615.18446744073709551615E+1 18446744073709551615.18446744073709551615e-308 "
+  );
+
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:2-1:5): 0E0");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:6-1:9): 0E1");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:10-1:15): 1e308");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:16-1:20): 1e+0");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:21-1:44): 18446744073709551615e+1");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:45-1:70): 18446744073709551615e-308");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:71-1:75): 0.E0");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:76-1:80): 0.E1");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:81-1:87): 1.e308");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:88-1:93): 1.e+0");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:94-1:118): 18446744073709551615.e+1");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:119-1:145): 18446744073709551615.e-308");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:146-1:149): 0.0");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:150-1:153): 1.1");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:154-1:195): 18446744073709551615.18446744073709551615");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:196-1:201): 0.0E0");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:202-1:207): 0.0E1");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:208-1:215): 1.1e308");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:216-1:222): 1.1E+0");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:223-1:267): 18446744073709551615.18446744073709551615E+1");
+  EXPECT_EQ(lexer.next().str(), "LIT_FLOAT(1:268-1:314): 18446744073709551615.18446744073709551615e-308");
+  EXPECT_EQ(lexer.next().str(), "EOF(1:315-1:315)");
+}
+
+TEST(LexerTest, ThrowsOnInvalidLitFloat) {
+  auto r1 = ::testing::NiceMock<MockReader>(R"(1234.)");
+  auto r2 = ::testing::NiceMock<MockReader>(R"(1234.a)");
+  auto r3 = ::testing::NiceMock<MockReader>(R"(1234.aZ)");
+  auto r4 = ::testing::NiceMock<MockReader>(R"(1234.0a)");
+  auto r5 = ::testing::NiceMock<MockReader>(R"(1234.1aZ)");
+  auto r6 = ::testing::NiceMock<MockReader>(R"(1234e)");
+  auto r7 = ::testing::NiceMock<MockReader>(R"(1234e+)");
+  auto r8 = ::testing::NiceMock<MockReader>(R"(1234e-)");
+  auto r9 = ::testing::NiceMock<MockReader>(R"(1234e+a1)");
+  auto r10 = ::testing::NiceMock<MockReader>(R"(1234eZ)");
+  auto r11 = ::testing::NiceMock<MockReader>(R"(1234eZa)");
+  auto r12 = ::testing::NiceMock<MockReader>(R"(1234e5e6)");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+  auto l5 = Lexer(&r5);
+  auto l6 = Lexer(&r6);
+  auto l7 = Lexer(&r7);
+  auto l8 = Lexer(&r8);
+  auto l9 = Lexer(&r9);
+  auto l10 = Lexer(&r10);
+  auto l11 = Lexer(&r11);
+  auto l12 = Lexer(&r12);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.a\n    | ^~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l3.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.aZ\n    | ^~~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l4.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.0a\n    | ^~~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l5.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.1aZ\n    | ^~~~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l6.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e\n    |     ^").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l7.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+\n    |     ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l8.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-\n    |     ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l9.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+a1\n    |     ^~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l10.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZ\n    |     ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l11.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZa\n    |     ^~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l12.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234e5e6\n    | ^~~~~~~~").c_str());
+}
+
+TEST(LexerTest, ThrowsOnNonDecLitFloat) {
+  auto r1 = ::testing::NiceMock<MockReader>("0b1.0");
+  auto r2 = ::testing::NiceMock<MockReader>("0xa.0");
+  auto r3 = ::testing::NiceMock<MockReader>("0o1.0");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0014 + "\n  1 | 0b1.0\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0015 + "\n  1 | 0xa.0\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l3.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0016 + "\n  1 | 0o1.0\n    | ^~~~~").c_str());
+}
+
+TEST(LexerTest, LexLitInteger) {
+  auto reader = ::testing::NiceMock<MockReader>(
+    "..0B0..0b1..0B00000000000000000000000000000000..0b11111111111111111111111111111111"
+    "..0..1..18446744073709551615"
+    "..0X0..0x9..0XA..0xf..0X9999999999999999..0xffffffffffffffff"
+    "..0O0..0o7..0O000000000000000000000..0o777777777777777777777.."
+  );
+
+  auto lexer = Lexer(&reader);
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:3-1:6): 0B0");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:8-1:11): 0b1");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:13-1:47): 0B00000000000000000000000000000000");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:49-1:83): 0b11111111111111111111111111111111");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_DEC(1:85-1:86): 0");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_DEC(1:88-1:89): 1");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_DEC(1:91-1:111): 18446744073709551615");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:113-1:116): 0X0");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:118-1:121): 0x9");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:123-1:126): 0XA");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:128-1:131): 0xf");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:133-1:151): 0X9999999999999999");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:153-1:171): 0xffffffffffffffff");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:173-1:176): 0O0");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:178-1:181): 0o7");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:183-1:206): 0O000000000000000000000");
+
+  lexer.next();
+  lexer.next();
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:208-1:231): 0o777777777777777777777");
+}
+
+TEST(LexerTest, LexLitIntegerWhitespace) {
+  auto reader = ::testing::NiceMock<MockReader>(
+    " 0B0 0b1 0B00000000000000000000000000000000 0b11111111111111111111111111111111"
+    " 0 1 18446744073709551615"
+    " 0X0 0x9 0XA 0xf 0X9999999999999999 0xffffffffffffffff"
+    " 0O0 0o7 0O000000000000000000000 0o777777777777777777777 "
+  );
+
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:2-1:5): 0B0");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:6-1:9): 0b1");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:10-1:44): 0B00000000000000000000000000000000");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_BIN(1:45-1:79): 0b11111111111111111111111111111111");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_DEC(1:80-1:81): 0");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_DEC(1:82-1:83): 1");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_DEC(1:84-1:104): 18446744073709551615");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:105-1:108): 0X0");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:109-1:112): 0x9");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:113-1:116): 0XA");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:117-1:120): 0xf");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:121-1:139): 0X9999999999999999");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_HEX(1:140-1:158): 0xffffffffffffffff");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:159-1:162): 0O0");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:163-1:166): 0o7");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:167-1:190): 0O000000000000000000000");
+  EXPECT_EQ(lexer.next().str(), "LIT_INT_OCT(1:191-1:214): 0o777777777777777777777");
+  EXPECT_EQ(lexer.next().str(), "EOF(1:215-1:215)");
+}
+
+TEST(LexerTest, LexLitIntegerEof) {
+  auto r1 = ::testing::NiceMock<MockReader>("0B0");
+  auto r2 = ::testing::NiceMock<MockReader>("0b1");
+  auto r3 = ::testing::NiceMock<MockReader>("0B00000000000000000000000000000000");
+  auto r4 = ::testing::NiceMock<MockReader>("0b11111111111111111111111111111111");
+  auto r5 = ::testing::NiceMock<MockReader>("0");
+  auto r6 = ::testing::NiceMock<MockReader>("1");
+  auto r7 = ::testing::NiceMock<MockReader>("18446744073709551615");
+  auto r8 = ::testing::NiceMock<MockReader>("0X0");
+  auto r9 = ::testing::NiceMock<MockReader>("0x9");
+  auto r10 = ::testing::NiceMock<MockReader>("0XA");
+  auto r11 = ::testing::NiceMock<MockReader>("0xf");
+  auto r12 = ::testing::NiceMock<MockReader>("0X9999999999999999");
+  auto r13 = ::testing::NiceMock<MockReader>("0xffffffffffffffff");
+  auto r14 = ::testing::NiceMock<MockReader>("0O0");
+  auto r15 = ::testing::NiceMock<MockReader>("0o7");
+  auto r16 = ::testing::NiceMock<MockReader>("0O000000000000000000000");
+  auto r17 = ::testing::NiceMock<MockReader>("0o777777777777777777777");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+  auto l5 = Lexer(&r5);
+  auto l6 = Lexer(&r6);
+  auto l7 = Lexer(&r7);
+  auto l8 = Lexer(&r8);
+  auto l9 = Lexer(&r9);
+  auto l10 = Lexer(&r10);
+  auto l11 = Lexer(&r11);
+  auto l12 = Lexer(&r12);
+  auto l13 = Lexer(&r13);
+  auto l14 = Lexer(&r14);
+  auto l15 = Lexer(&r15);
+  auto l16 = Lexer(&r16);
+  auto l17 = Lexer(&r17);
+
+  EXPECT_EQ(l1.next().str(), "LIT_INT_BIN(1:1-1:4): 0B0");
+  EXPECT_EQ(l2.next().str(), "LIT_INT_BIN(1:1-1:4): 0b1");
+  EXPECT_EQ(l3.next().str(), "LIT_INT_BIN(1:1-1:35): 0B00000000000000000000000000000000");
+  EXPECT_EQ(l4.next().str(), "LIT_INT_BIN(1:1-1:35): 0b11111111111111111111111111111111");
+  EXPECT_EQ(l5.next().str(), "LIT_INT_DEC(1:1-1:2): 0");
+  EXPECT_EQ(l6.next().str(), "LIT_INT_DEC(1:1-1:2): 1");
+  EXPECT_EQ(l7.next().str(), "LIT_INT_DEC(1:1-1:21): 18446744073709551615");
+  EXPECT_EQ(l8.next().str(), "LIT_INT_HEX(1:1-1:4): 0X0");
+  EXPECT_EQ(l9.next().str(), "LIT_INT_HEX(1:1-1:4): 0x9");
+  EXPECT_EQ(l10.next().str(), "LIT_INT_HEX(1:1-1:4): 0XA");
+  EXPECT_EQ(l11.next().str(), "LIT_INT_HEX(1:1-1:4): 0xf");
+  EXPECT_EQ(l12.next().str(), "LIT_INT_HEX(1:1-1:19): 0X9999999999999999");
+  EXPECT_EQ(l13.next().str(), "LIT_INT_HEX(1:1-1:19): 0xffffffffffffffff");
+  EXPECT_EQ(l14.next().str(), "LIT_INT_OCT(1:1-1:4): 0O0");
+  EXPECT_EQ(l15.next().str(), "LIT_INT_OCT(1:1-1:4): 0o7");
+  EXPECT_EQ(l16.next().str(), "LIT_INT_OCT(1:1-1:24): 0O000000000000000000000");
+  EXPECT_EQ(l17.next().str(), "LIT_INT_OCT(1:1-1:24): 0o777777777777777777777");
+}
+
+TEST(LexerTest, ThrowsOnLitIntegerWithLeadingZero) {
+  auto r1 = ::testing::NiceMock<MockReader>("04");
+  auto r2 = ::testing::NiceMock<MockReader>("0400e0");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0007 + "\n  1 | 04\n    | ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0007 + "\n  1 | 0400e0\n    | ^~~~~~").c_str());
+}
+
+TEST(LexerTest, ThrowsOnInvalidLitInteger) {
+  auto r1 = ::testing::NiceMock<MockReader>("0B");
+  auto r2 = ::testing::NiceMock<MockReader>("0bG");
+  auto r3 = ::testing::NiceMock<MockReader>("0bGz");
+  auto r4 = ::testing::NiceMock<MockReader>("0b1g");
+  auto r5 = ::testing::NiceMock<MockReader>("0b1gZ");
+  auto r6 = ::testing::NiceMock<MockReader>("0b1b0");
+  auto r7 = ::testing::NiceMock<MockReader>("1234g");
+  auto r8 = ::testing::NiceMock<MockReader>("1234gZ");
+  auto r9 = ::testing::NiceMock<MockReader>("1234g0a");
+  auto r10 = ::testing::NiceMock<MockReader>("0x");
+  auto r11 = ::testing::NiceMock<MockReader>("0xG");
+  auto r12 = ::testing::NiceMock<MockReader>("0xGz");
+  auto r13 = ::testing::NiceMock<MockReader>("0Xag");
+  auto r14 = ::testing::NiceMock<MockReader>("0XagZ");
+  auto r15 = ::testing::NiceMock<MockReader>("0x1x2");
+  auto r16 = ::testing::NiceMock<MockReader>("0o");
+  auto r17 = ::testing::NiceMock<MockReader>("0oG");
+  auto r18 = ::testing::NiceMock<MockReader>("0oGz");
+  auto r19 = ::testing::NiceMock<MockReader>("0O1g");
+  auto r20 = ::testing::NiceMock<MockReader>("0O1gZ");
+  auto r21 = ::testing::NiceMock<MockReader>("0o1o2");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+  auto l5 = Lexer(&r5);
+  auto l6 = Lexer(&r6);
+  auto l7 = Lexer(&r7);
+  auto l8 = Lexer(&r8);
+  auto l9 = Lexer(&r9);
+  auto l10 = Lexer(&r10);
+  auto l11 = Lexer(&r11);
+  auto l12 = Lexer(&r12);
+  auto l13 = Lexer(&r13);
+  auto l14 = Lexer(&r14);
+  auto l15 = Lexer(&r15);
+  auto l16 = Lexer(&r16);
+  auto l17 = Lexer(&r17);
+  auto l18 = Lexer(&r18);
+  auto l19 = Lexer(&r19);
+  auto l20 = Lexer(&r20);
+  auto l21 = Lexer(&r21);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0B\n    | ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0bG\n    | ^~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l3.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0bGz\n    | ^~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l4.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1g\n    | ^~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l5.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1gZ\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l6.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1b0\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l7.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l8.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0009 + "\n  1 | 1234gZ\n    | ^~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l9.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g0a\n    | ^~~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l10.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0x\n    | ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l11.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0xG\n    | ^~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l12.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0xGz\n    | ^~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l13.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0Xag\n    | ^~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l14.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0XagZ\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l15.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0x1x2\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l16.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0o\n    | ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l17.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0oG\n    | ^~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l18.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0oGz\n    | ^~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l19.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1g\n    | ^~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l20.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1gZ\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l21.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0o1o2\n    | ^~~~~").c_str());
+}
+
+TEST(LexerTest, LexLitStr) {
+  auto reader = ::testing::NiceMock<MockReader>(
+    R"("")"
+    R"("test")"
+    R"("Hello,\nWorld!")"
+    R"("multiple \\n lines")"
+    R"("\\0\\r\\t\"\'\\\0\r\t")"
+  );
+
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:1-1:3): "")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:3-1:9): "test")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:9-1:25): "Hello,\\nWorld!")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:25-1:45): "multiple \\\n lines")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:45-1:68): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
+}
+
+TEST(LexerTest, LexLitStrWhitespace) {
+  auto reader = ::testing::NiceMock<MockReader>(
+    R"( "")"
+    R"( "test")"
+    R"( "Hello,\nWorld!")"
+    R"( "multiple \\n lines")"
+    R"( "\\0\\r\\t\"\'\\\0\r\t" )"
+  );
+
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:2-1:4): "")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:5-1:11): "test")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:12-1:28): "Hello,\\nWorld!")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:29-1:49): "multiple \\\n lines")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:50-1:73): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
+}
+
+TEST(LexerTest, LexLitStrEof) {
+  auto r1 = ::testing::NiceMock<MockReader>(R"("")");
+  auto r2 = ::testing::NiceMock<MockReader>(R"("test")");
+  auto r3 = ::testing::NiceMock<MockReader>(R"("Hello,\nWorld!")");
+  auto r4 = ::testing::NiceMock<MockReader>(R"("multiple \\n lines")");
+  auto r5 = ::testing::NiceMock<MockReader>(R"("\\0\\r\\t\"\'\\\0\r\t")");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+  auto l5 = Lexer(&r5);
+
+  EXPECT_EQ(l1.next().str(), R"(LIT_STR(1:1-1:3): "")");
+  EXPECT_EQ(l2.next().str(), R"(LIT_STR(1:1-1:7): "test")");
+  EXPECT_EQ(l3.next().str(), R"(LIT_STR(1:1-1:17): "Hello,\\nWorld!")");
+  EXPECT_EQ(l4.next().str(), R"(LIT_STR(1:1-1:21): "multiple \\\n lines")");
+  EXPECT_EQ(l5.next().str(), R"(LIT_STR(1:1-1:24): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
+}
+
+TEST(LexerTest, ThrowsOnEmptyLitStr) {
+  auto r1 = ::testing::NiceMock<MockReader>(R"(")");
+  auto r2 = ::testing::NiceMock<MockReader>(R"("text)");
+  auto r3 = ::testing::NiceMock<MockReader>(R"("text\)");
+  auto r4 = ::testing::NiceMock<MockReader>(R"("text\")");
+
+  auto l1 = Lexer(&r1);
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
+  auto l4 = Lexer(&r4);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l1.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"\n    | ^").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l2.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\n    | ^~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l3.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\n    | ^~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l4.next();
+  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\"\n    | ^~~~~~~").c_str());
+}
+
+TEST(LexerTest, ThrowsOnLitStrIllegalEscSeq) {
+  auto reader = ::testing::NiceMock<MockReader>(R"("Hello, \m World!")");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    lexer.next();
+  }, LexerError, (std::string("/test:1:9: ") + E0005 + "\n  1 | \"Hello, \\m World!\"\n    |         ^~").c_str());
 }

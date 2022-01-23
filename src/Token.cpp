@@ -158,10 +158,6 @@ bool Token::isLitStrEscape (char ch) {
   return Token::isLitCharEscape(ch) || ch == '{';
 }
 
-bool Token::isNotNewline (char ch) {
-  return ch != '\n';
-}
-
 bool Token::isWhitespace (char ch) {
   return std::isspace(ch);
 }

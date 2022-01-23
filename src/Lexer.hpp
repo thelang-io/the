@@ -32,10 +32,13 @@ class Lexer {
   Lexer (const Lexer &);
   Lexer &operator= (const Lexer &);
 
+  Token _litFloat (TokenType);
+  Token _litNum (const std::function<bool (char)> &, TokenType);
   Token _opEq (TokenType, TokenType);
   Token _opEq2 (char, TokenType, TokenType, TokenType, const std::optional<TokenType> & = std::nullopt);
   Token _tok (TokenType);
   void _walk (const std::function<bool (char)> &);
+  void _walkLitFloatExp (ReaderLocation);
   void _whitespace ();
 };
 
