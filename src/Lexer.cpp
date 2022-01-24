@@ -282,9 +282,9 @@ Token Lexer::_litFloat (TokenType type) {
     if (Token::isIdContinue(ch1)) {
       this->_walk(Token::isIdContinue);
       throw LexerError(this, E0012);
+    } else {
+      this->_reader->seek(loc1);
     }
-
-    this->_reader->seek(loc1);
   }
 
   if (type == TK_LIT_INT_BIN) {
@@ -471,11 +471,17 @@ void Lexer::_walkLitFloatExp (ReaderLocation loc0) {
     throw LexerError(this, E0013);
   }
 
+  auto loc1 = this->_reader->loc;
   auto ch1 = this->_reader->next();
 
   if (!Token::isDigit(ch1) && ch1 != '+' && ch1 != '-') {
     this->loc = loc0;
-    this->_walk(Token::isIdContinue);
+
+    if (Token::isIdContinue(ch1)) {
+      this->_walk(Token::isIdContinue);
+    } else {
+      this->_reader->seek(loc1);
+    }
 
     throw LexerError(this, E0013);
   }
@@ -488,11 +494,17 @@ void Lexer::_walkLitFloatExp (ReaderLocation loc0) {
       throw LexerError(this, E0013);
     }
 
+    auto loc2 = this->_reader->loc;
     auto ch2 = this->_reader->next();
 
-    if (Token::isIdContinue(ch2) && !Token::isDigit(ch2)) {
+    if (!Token::isDigit(ch2)) {
       this->loc = loc0;
-      this->_walk(Token::isIdContinue);
+
+      if (Token::isIdContinue(ch2)) {
+        this->_walk(Token::isIdContinue);
+      } else {
+        this->_reader->seek(loc2);
+      }
 
       throw LexerError(this, E0013);
     }

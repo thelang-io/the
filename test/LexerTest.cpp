@@ -1033,6 +1033,9 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
   auto r10 = ::testing::NiceMock<MockReader>(R"(1234eZ)");
   auto r11 = ::testing::NiceMock<MockReader>(R"(1234eZa)");
   auto r12 = ::testing::NiceMock<MockReader>(R"(1234e5e6)");
+  auto r13 = ::testing::NiceMock<MockReader>(R"(1234e))");
+  auto r14 = ::testing::NiceMock<MockReader>(R"(1234e+))");
+  auto r15 = ::testing::NiceMock<MockReader>(R"(1234e-h))");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -1046,6 +1049,9 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
   auto l10 = Lexer(&r10);
   auto l11 = Lexer(&r11);
   auto l12 = Lexer(&r12);
+  auto l13 = Lexer(&r13);
+  auto l14 = Lexer(&r14);
+  auto l15 = Lexer(&r15);
 
   EXPECT_THROW_WITH_MESSAGE({
     l1.next();
@@ -1094,6 +1100,18 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
   EXPECT_THROW_WITH_MESSAGE({
     l12.next();
   }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234e5e6\n    | ^~~~~~~~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l13.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e)\n    |     ^").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l14.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+)\n    |     ^~").c_str());
+
+  EXPECT_THROW_WITH_MESSAGE({
+    l15.next();
+  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-h)\n    |     ^~~").c_str());
 }
 
 TEST(LexerTest, ThrowsOnNonDecLitFloat) {
