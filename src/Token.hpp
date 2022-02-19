@@ -10,6 +10,8 @@
 
 #include "Reader.hpp"
 
+struct Token;
+
 enum TokenType {
   TK_EOF,
   TK_ID,
@@ -20,11 +22,9 @@ enum TokenType {
   TK_KW_BREAK,
   TK_KW_CASE,
   TK_KW_CATCH,
-  TK_KW_CLASS,
   TK_KW_CONST,
   TK_KW_CONTINUE,
   TK_KW_DEFAULT,
-  TK_KW_DEINIT,
   TK_KW_ELIF,
   TK_KW_ELSE,
   TK_KW_ENUM,
@@ -35,30 +35,17 @@ enum TokenType {
   TK_KW_FROM,
   TK_KW_IF,
   TK_KW_IMPORT,
-  TK_KW_IN,
-  TK_KW_INIT,
-  TK_KW_INTERFACE,
   TK_KW_IS,
   TK_KW_LOOP,
   TK_KW_MAIN,
   TK_KW_MATCH,
   TK_KW_MUT,
-  TK_KW_NEW,
   TK_KW_NIL,
   TK_KW_OBJ,
-  TK_KW_OP,
-  TK_KW_OVERRIDE,
-  TK_KW_PRIV,
-  TK_KW_PROT,
-  TK_KW_PUB,
   TK_KW_RETURN,
-  TK_KW_STATIC,
-  TK_KW_SUPER,
-  TK_KW_THIS,
   TK_KW_THROW,
   TK_KW_TRUE,
   TK_KW_TRY,
-  TK_KW_TYPE,
   TK_KW_UNION,
 
   TK_LIT_CHAR,
@@ -127,9 +114,9 @@ enum TokenType {
 
 struct Token {
   TokenType type;
+  std::string val;
   ReaderLocation start;
   ReaderLocation end;
-  std::string val;
 
   static bool isDigit (char);
   static bool isIdContinue (char);

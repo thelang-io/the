@@ -6,10 +6,7 @@
  */
 
 #include <iostream>
-#include <optional>
-#include <string>
-#include "Error.hpp"
-#include "Lexer.hpp"
+#include "Parser.hpp"
 
 int main (int argc, char *argv[]) {
   try {
@@ -18,6 +15,7 @@ int main (int argc, char *argv[]) {
     }
 
     auto isLex = false;
+    auto isParse = false;
     auto fileName = std::optional<std::string>{};
 
     for (int i = 1; i < argc; i++) {
@@ -26,6 +24,8 @@ int main (int argc, char *argv[]) {
 
       if (i == 1 && arg == "lex") {
         isLex = true;
+      } else if (i == 1 && arg == "parse") {
+        isParse = true;
       } else if (isOpt) {
         throw Error("Error: bad option " + arg);
       } else if (fileName == std::nullopt) {
@@ -41,6 +41,7 @@ int main (int argc, char *argv[]) {
 
     auto reader = Reader(*fileName);
     auto lexer = Lexer(&reader);
+    auto parser = Parser(&lexer);
 
     if (isLex) {
       while (true) {
@@ -51,6 +52,18 @@ int main (int argc, char *argv[]) {
         }
 
         std::cout << tok.str() << std::endl;
+      }
+
+      return EXIT_SUCCESS;
+    } else if (isParse) {
+      while (true) {
+        auto stmt = parser.next();
+
+        if (std::holds_alternative<ParserStmtEof>(stmt.body)) {
+          break;
+        }
+
+        std::cout << stmt.str() << std::endl;
       }
 
       return EXIT_SUCCESS;

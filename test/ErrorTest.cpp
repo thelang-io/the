@@ -14,7 +14,7 @@
 TEST(ErrorTest, ThrowsExactMessage) {
   EXPECT_THROW_WITH_MESSAGE({
     throw Error("Hello, World!");
-  }, Error, "Hello, World!");
+  }, "Hello, World!");
 }
 
 TEST(LexerErrorTest, SingleToken) {
@@ -22,8 +22,8 @@ TEST(LexerErrorTest, SingleToken) {
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE({
-    throw LexerError(&lexer, E0000);
-  }, LexerError, (std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^").c_str());
+    throw Error(lexer.reader, lexer.loc, E0000);
+  }, std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^");
 }
 
 TEST(LexerErrorTest, MultipleTokens) {
@@ -33,8 +33,8 @@ TEST(LexerErrorTest, MultipleTokens) {
   reader.loc = ReaderLocation{4, 1, 4};
 
   EXPECT_THROW_WITH_MESSAGE({
-    throw LexerError(&lexer, E0000);
-  }, LexerError, (std::string("/test:1:1: ") + E0000 + "\n  1 | test\n    | ^~~~").c_str());
+    throw Error(lexer.reader, lexer.loc, E0000);
+  }, std::string("/test:1:1: ") + E0000 + "\n  1 | test\n    | ^~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterTokens) {
@@ -45,8 +45,8 @@ TEST(LexerErrorTest, MultipleTokensAfterTokens) {
   reader.loc = ReaderLocation{9, 1, 9};
 
   EXPECT_THROW_WITH_MESSAGE({
-    throw LexerError(&lexer, E0000);
-  }, LexerError, (std::string("/test:1:5: ") + E0000 + "\n  1 | 1 + test\n    |     ^~~~").c_str());
+    throw Error(lexer.reader, lexer.loc, E0000);
+  }, std::string("/test:1:5: ") + E0000 + "\n  1 | 1 + test\n    |     ^~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
@@ -57,8 +57,8 @@ TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
   reader.loc = ReaderLocation{15, 2, 7};
 
   EXPECT_THROW_WITH_MESSAGE({
-    throw LexerError(&lexer, E0001);
-  }, LexerError, (std::string("/test:2:1: ") + E0001 + "\n  2 | /*Hello\n    | ^~~~~~~").c_str());
+    throw Error(lexer.reader, lexer.loc, E0001);
+  }, std::string("/test:2:1: ") + E0001 + "\n  2 | /*Hello\n    | ^~~~~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
@@ -69,8 +69,8 @@ TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
   reader.loc = ReaderLocation{21, 3, 5};
 
   EXPECT_THROW_WITH_MESSAGE({
-    throw LexerError(&lexer, E0001);
-  }, LexerError, (std::string("/test:2:1: ") + E0001 + "\n  2 | /*Hello\n    | ^~~~~~~").c_str());
+    throw Error(lexer.reader, lexer.loc, E0001);
+  }, std::string("/test:2:1: ") + E0001 + "\n  2 | /*Hello\n    | ^~~~~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensBeforeNewLine) {
@@ -80,6 +80,6 @@ TEST(LexerErrorTest, MultipleTokensBeforeNewLine) {
   reader.loc = ReaderLocation{13, 2, 5};
 
   EXPECT_THROW_WITH_MESSAGE({
-    throw LexerError(&lexer, E0001);
-  }, LexerError, (std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~").c_str());
+    throw Error(lexer.reader, lexer.loc, E0001);
+  }, std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~");
 }

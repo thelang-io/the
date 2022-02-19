@@ -15,9 +15,7 @@ TEST(LexerTest, ThrowsOnUnknownToken) {
   auto reader = ::testing::NiceMock<MockReader>("@");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    lexer.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^").c_str());
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^");
 }
 
 TEST(LexerTest, LexEof) {
@@ -80,18 +78,14 @@ TEST(LexerTest, ThrowsOnEmptyNotClosedBlockComment) {
   auto reader = ::testing::NiceMock<MockReader>("/*");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    lexer.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0001 + "\n  1 | /*\n    | ^~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + "\n  1 | /*\n    | ^~");
 }
 
 TEST(LexerTest, ThrowsOnNotClosedBlockComment) {
   auto reader = ::testing::NiceMock<MockReader>("/*Hello");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    lexer.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~");
 }
 
 TEST(LexerTest, LexEmptyLineCommentNoNewLine) {
@@ -485,46 +479,31 @@ TEST(LexerTest, LexKeywords) {
   auto r4 = ::testing::NiceMock<MockReader>("break");
   auto r5 = ::testing::NiceMock<MockReader>("case");
   auto r6 = ::testing::NiceMock<MockReader>("catch");
-  auto r7 = ::testing::NiceMock<MockReader>("class");
-  auto r8 = ::testing::NiceMock<MockReader>("const");
-  auto r9 = ::testing::NiceMock<MockReader>("continue");
-  auto r10 = ::testing::NiceMock<MockReader>("default");
-  auto r11 = ::testing::NiceMock<MockReader>("deinit");
-  auto r12 = ::testing::NiceMock<MockReader>("elif");
-  auto r13 = ::testing::NiceMock<MockReader>("else");
-  auto r14 = ::testing::NiceMock<MockReader>("enum");
-  auto r15 = ::testing::NiceMock<MockReader>("export");
-  auto r16 = ::testing::NiceMock<MockReader>("fallthrough");
-  auto r17 = ::testing::NiceMock<MockReader>("false");
-  auto r18 = ::testing::NiceMock<MockReader>("fn");
-  auto r19 = ::testing::NiceMock<MockReader>("from");
-  auto r20 = ::testing::NiceMock<MockReader>("if");
-  auto r21 = ::testing::NiceMock<MockReader>("import");
-  auto r22 = ::testing::NiceMock<MockReader>("in");
-  auto r23 = ::testing::NiceMock<MockReader>("init");
-  auto r24 = ::testing::NiceMock<MockReader>("interface");
-  auto r25 = ::testing::NiceMock<MockReader>("is");
-  auto r26 = ::testing::NiceMock<MockReader>("loop");
-  auto r27 = ::testing::NiceMock<MockReader>("main");
-  auto r28 = ::testing::NiceMock<MockReader>("match");
-  auto r29 = ::testing::NiceMock<MockReader>("mut");
-  auto r30 = ::testing::NiceMock<MockReader>("new");
-  auto r31 = ::testing::NiceMock<MockReader>("nil");
-  auto r32 = ::testing::NiceMock<MockReader>("obj");
-  auto r33 = ::testing::NiceMock<MockReader>("op");
-  auto r34 = ::testing::NiceMock<MockReader>("override");
-  auto r35 = ::testing::NiceMock<MockReader>("priv");
-  auto r36 = ::testing::NiceMock<MockReader>("prot");
-  auto r37 = ::testing::NiceMock<MockReader>("pub");
-  auto r38 = ::testing::NiceMock<MockReader>("return");
-  auto r39 = ::testing::NiceMock<MockReader>("static");
-  auto r40 = ::testing::NiceMock<MockReader>("super");
-  auto r41 = ::testing::NiceMock<MockReader>("this");
-  auto r42 = ::testing::NiceMock<MockReader>("throw");
-  auto r43 = ::testing::NiceMock<MockReader>("true");
-  auto r44 = ::testing::NiceMock<MockReader>("try");
-  auto r45 = ::testing::NiceMock<MockReader>("type");
-  auto r46 = ::testing::NiceMock<MockReader>("union");
+  auto r7 = ::testing::NiceMock<MockReader>("const");
+  auto r8 = ::testing::NiceMock<MockReader>("continue");
+  auto r9 = ::testing::NiceMock<MockReader>("default");
+  auto r10 = ::testing::NiceMock<MockReader>("elif");
+  auto r11 = ::testing::NiceMock<MockReader>("else");
+  auto r12 = ::testing::NiceMock<MockReader>("enum");
+  auto r13 = ::testing::NiceMock<MockReader>("export");
+  auto r14 = ::testing::NiceMock<MockReader>("fallthrough");
+  auto r15 = ::testing::NiceMock<MockReader>("false");
+  auto r16 = ::testing::NiceMock<MockReader>("fn");
+  auto r17 = ::testing::NiceMock<MockReader>("from");
+  auto r18 = ::testing::NiceMock<MockReader>("if");
+  auto r19 = ::testing::NiceMock<MockReader>("import");
+  auto r20 = ::testing::NiceMock<MockReader>("is");
+  auto r21 = ::testing::NiceMock<MockReader>("loop");
+  auto r22 = ::testing::NiceMock<MockReader>("main");
+  auto r23 = ::testing::NiceMock<MockReader>("match");
+  auto r24 = ::testing::NiceMock<MockReader>("mut");
+  auto r25 = ::testing::NiceMock<MockReader>("nil");
+  auto r26 = ::testing::NiceMock<MockReader>("obj");
+  auto r27 = ::testing::NiceMock<MockReader>("return");
+  auto r28 = ::testing::NiceMock<MockReader>("throw");
+  auto r29 = ::testing::NiceMock<MockReader>("true");
+  auto r30 = ::testing::NiceMock<MockReader>("try");
+  auto r31 = ::testing::NiceMock<MockReader>("union");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -557,21 +536,6 @@ TEST(LexerTest, LexKeywords) {
   auto l29 = Lexer(&r29);
   auto l30 = Lexer(&r30);
   auto l31 = Lexer(&r31);
-  auto l32 = Lexer(&r32);
-  auto l33 = Lexer(&r33);
-  auto l34 = Lexer(&r34);
-  auto l35 = Lexer(&r35);
-  auto l36 = Lexer(&r36);
-  auto l37 = Lexer(&r37);
-  auto l38 = Lexer(&r38);
-  auto l39 = Lexer(&r39);
-  auto l40 = Lexer(&r40);
-  auto l41 = Lexer(&r41);
-  auto l42 = Lexer(&r42);
-  auto l43 = Lexer(&r43);
-  auto l44 = Lexer(&r44);
-  auto l45 = Lexer(&r45);
-  auto l46 = Lexer(&r46);
 
   EXPECT_EQ(l1.next().str(), "KW_AS(1:1-1:3): as");
   EXPECT_EQ(l2.next().str(), "KW_ASYNC(1:1-1:6): async");
@@ -579,53 +543,37 @@ TEST(LexerTest, LexKeywords) {
   EXPECT_EQ(l4.next().str(), "KW_BREAK(1:1-1:6): break");
   EXPECT_EQ(l5.next().str(), "KW_CASE(1:1-1:5): case");
   EXPECT_EQ(l6.next().str(), "KW_CATCH(1:1-1:6): catch");
-  EXPECT_EQ(l7.next().str(), "KW_CLASS(1:1-1:6): class");
-  EXPECT_EQ(l8.next().str(), "KW_CONST(1:1-1:6): const");
-  EXPECT_EQ(l9.next().str(), "KW_CONTINUE(1:1-1:9): continue");
-  EXPECT_EQ(l10.next().str(), "KW_DEFAULT(1:1-1:8): default");
-  EXPECT_EQ(l11.next().str(), "KW_DEINIT(1:1-1:7): deinit");
-  EXPECT_EQ(l12.next().str(), "KW_ELIF(1:1-1:5): elif");
-  EXPECT_EQ(l13.next().str(), "KW_ELSE(1:1-1:5): else");
-  EXPECT_EQ(l14.next().str(), "KW_ENUM(1:1-1:5): enum");
-  EXPECT_EQ(l15.next().str(), "KW_EXPORT(1:1-1:7): export");
-  EXPECT_EQ(l16.next().str(), "KW_FALLTHROUGH(1:1-1:12): fallthrough");
-  EXPECT_EQ(l17.next().str(), "KW_FALSE(1:1-1:6): false");
-  EXPECT_EQ(l18.next().str(), "KW_FN(1:1-1:3): fn");
-  EXPECT_EQ(l19.next().str(), "KW_FROM(1:1-1:5): from");
-  EXPECT_EQ(l20.next().str(), "KW_IF(1:1-1:3): if");
-  EXPECT_EQ(l21.next().str(), "KW_IMPORT(1:1-1:7): import");
-  EXPECT_EQ(l22.next().str(), "KW_IN(1:1-1:3): in");
-  EXPECT_EQ(l23.next().str(), "KW_INIT(1:1-1:5): init");
-  EXPECT_EQ(l24.next().str(), "KW_INTERFACE(1:1-1:10): interface");
-  EXPECT_EQ(l25.next().str(), "KW_IS(1:1-1:3): is");
-  EXPECT_EQ(l26.next().str(), "KW_LOOP(1:1-1:5): loop");
-  EXPECT_EQ(l27.next().str(), "KW_MAIN(1:1-1:5): main");
-  EXPECT_EQ(l28.next().str(), "KW_MATCH(1:1-1:6): match");
-  EXPECT_EQ(l29.next().str(), "KW_MUT(1:1-1:4): mut");
-  EXPECT_EQ(l30.next().str(), "KW_NEW(1:1-1:4): new");
-  EXPECT_EQ(l31.next().str(), "KW_NIL(1:1-1:4): nil");
-  EXPECT_EQ(l32.next().str(), "KW_OBJ(1:1-1:4): obj");
-  EXPECT_EQ(l33.next().str(), "KW_OP(1:1-1:3): op");
-  EXPECT_EQ(l34.next().str(), "KW_OVERRIDE(1:1-1:9): override");
-  EXPECT_EQ(l35.next().str(), "KW_PRIV(1:1-1:5): priv");
-  EXPECT_EQ(l36.next().str(), "KW_PROT(1:1-1:5): prot");
-  EXPECT_EQ(l37.next().str(), "KW_PUB(1:1-1:4): pub");
-  EXPECT_EQ(l38.next().str(), "KW_RETURN(1:1-1:7): return");
-  EXPECT_EQ(l39.next().str(), "KW_STATIC(1:1-1:7): static");
-  EXPECT_EQ(l40.next().str(), "KW_SUPER(1:1-1:6): super");
-  EXPECT_EQ(l41.next().str(), "KW_THIS(1:1-1:5): this");
-  EXPECT_EQ(l42.next().str(), "KW_THROW(1:1-1:6): throw");
-  EXPECT_EQ(l43.next().str(), "KW_TRUE(1:1-1:5): true");
-  EXPECT_EQ(l44.next().str(), "KW_TRY(1:1-1:4): try");
-  EXPECT_EQ(l45.next().str(), "KW_TYPE(1:1-1:5): type");
-  EXPECT_EQ(l46.next().str(), "KW_UNION(1:1-1:6): union");
+  EXPECT_EQ(l7.next().str(), "KW_CONST(1:1-1:6): const");
+  EXPECT_EQ(l8.next().str(), "KW_CONTINUE(1:1-1:9): continue");
+  EXPECT_EQ(l9.next().str(), "KW_DEFAULT(1:1-1:8): default");
+  EXPECT_EQ(l10.next().str(), "KW_ELIF(1:1-1:5): elif");
+  EXPECT_EQ(l11.next().str(), "KW_ELSE(1:1-1:5): else");
+  EXPECT_EQ(l12.next().str(), "KW_ENUM(1:1-1:5): enum");
+  EXPECT_EQ(l13.next().str(), "KW_EXPORT(1:1-1:7): export");
+  EXPECT_EQ(l14.next().str(), "KW_FALLTHROUGH(1:1-1:12): fallthrough");
+  EXPECT_EQ(l15.next().str(), "KW_FALSE(1:1-1:6): false");
+  EXPECT_EQ(l16.next().str(), "KW_FN(1:1-1:3): fn");
+  EXPECT_EQ(l17.next().str(), "KW_FROM(1:1-1:5): from");
+  EXPECT_EQ(l18.next().str(), "KW_IF(1:1-1:3): if");
+  EXPECT_EQ(l19.next().str(), "KW_IMPORT(1:1-1:7): import");
+  EXPECT_EQ(l20.next().str(), "KW_IS(1:1-1:3): is");
+  EXPECT_EQ(l21.next().str(), "KW_LOOP(1:1-1:5): loop");
+  EXPECT_EQ(l22.next().str(), "KW_MAIN(1:1-1:5): main");
+  EXPECT_EQ(l23.next().str(), "KW_MATCH(1:1-1:6): match");
+  EXPECT_EQ(l24.next().str(), "KW_MUT(1:1-1:4): mut");
+  EXPECT_EQ(l25.next().str(), "KW_NIL(1:1-1:4): nil");
+  EXPECT_EQ(l26.next().str(), "KW_OBJ(1:1-1:4): obj");
+  EXPECT_EQ(l27.next().str(), "KW_RETURN(1:1-1:7): return");
+  EXPECT_EQ(l28.next().str(), "KW_THROW(1:1-1:6): throw");
+  EXPECT_EQ(l29.next().str(), "KW_TRUE(1:1-1:5): true");
+  EXPECT_EQ(l30.next().str(), "KW_TRY(1:1-1:4): try");
+  EXPECT_EQ(l31.next().str(), "KW_UNION(1:1-1:6): union");
 }
 
 TEST(LexerTest, LexKeywordsWhitespace) {
   auto reader = ::testing::NiceMock<MockReader>(
-    " as async await break case catch class const continue default deinit elif else enum export fallthrough false fn"
-    " from if import in init interface is loop main match mut new nil obj op override priv prot pub return static"
-    " super this throw true try type union "
+    " as async await break case catch const continue default elif else enum export fallthrough false fn from if"
+    " import is loop main match mut nil obj return throw true try union "
   );
 
   auto lexer = Lexer(&reader);
@@ -636,55 +584,39 @@ TEST(LexerTest, LexKeywordsWhitespace) {
   EXPECT_EQ(lexer.next().str(), "KW_BREAK(1:17-1:22): break");
   EXPECT_EQ(lexer.next().str(), "KW_CASE(1:23-1:27): case");
   EXPECT_EQ(lexer.next().str(), "KW_CATCH(1:28-1:33): catch");
-  EXPECT_EQ(lexer.next().str(), "KW_CLASS(1:34-1:39): class");
-  EXPECT_EQ(lexer.next().str(), "KW_CONST(1:40-1:45): const");
-  EXPECT_EQ(lexer.next().str(), "KW_CONTINUE(1:46-1:54): continue");
-  EXPECT_EQ(lexer.next().str(), "KW_DEFAULT(1:55-1:62): default");
-  EXPECT_EQ(lexer.next().str(), "KW_DEINIT(1:63-1:69): deinit");
-  EXPECT_EQ(lexer.next().str(), "KW_ELIF(1:70-1:74): elif");
-  EXPECT_EQ(lexer.next().str(), "KW_ELSE(1:75-1:79): else");
-  EXPECT_EQ(lexer.next().str(), "KW_ENUM(1:80-1:84): enum");
-  EXPECT_EQ(lexer.next().str(), "KW_EXPORT(1:85-1:91): export");
-  EXPECT_EQ(lexer.next().str(), "KW_FALLTHROUGH(1:92-1:103): fallthrough");
-  EXPECT_EQ(lexer.next().str(), "KW_FALSE(1:104-1:109): false");
-  EXPECT_EQ(lexer.next().str(), "KW_FN(1:110-1:112): fn");
-  EXPECT_EQ(lexer.next().str(), "KW_FROM(1:113-1:117): from");
-  EXPECT_EQ(lexer.next().str(), "KW_IF(1:118-1:120): if");
-  EXPECT_EQ(lexer.next().str(), "KW_IMPORT(1:121-1:127): import");
-  EXPECT_EQ(lexer.next().str(), "KW_IN(1:128-1:130): in");
-  EXPECT_EQ(lexer.next().str(), "KW_INIT(1:131-1:135): init");
-  EXPECT_EQ(lexer.next().str(), "KW_INTERFACE(1:136-1:145): interface");
-  EXPECT_EQ(lexer.next().str(), "KW_IS(1:146-1:148): is");
-  EXPECT_EQ(lexer.next().str(), "KW_LOOP(1:149-1:153): loop");
-  EXPECT_EQ(lexer.next().str(), "KW_MAIN(1:154-1:158): main");
-  EXPECT_EQ(lexer.next().str(), "KW_MATCH(1:159-1:164): match");
-  EXPECT_EQ(lexer.next().str(), "KW_MUT(1:165-1:168): mut");
-  EXPECT_EQ(lexer.next().str(), "KW_NEW(1:169-1:172): new");
-  EXPECT_EQ(lexer.next().str(), "KW_NIL(1:173-1:176): nil");
-  EXPECT_EQ(lexer.next().str(), "KW_OBJ(1:177-1:180): obj");
-  EXPECT_EQ(lexer.next().str(), "KW_OP(1:181-1:183): op");
-  EXPECT_EQ(lexer.next().str(), "KW_OVERRIDE(1:184-1:192): override");
-  EXPECT_EQ(lexer.next().str(), "KW_PRIV(1:193-1:197): priv");
-  EXPECT_EQ(lexer.next().str(), "KW_PROT(1:198-1:202): prot");
-  EXPECT_EQ(lexer.next().str(), "KW_PUB(1:203-1:206): pub");
-  EXPECT_EQ(lexer.next().str(), "KW_RETURN(1:207-1:213): return");
-  EXPECT_EQ(lexer.next().str(), "KW_STATIC(1:214-1:220): static");
-  EXPECT_EQ(lexer.next().str(), "KW_SUPER(1:221-1:226): super");
-  EXPECT_EQ(lexer.next().str(), "KW_THIS(1:227-1:231): this");
-  EXPECT_EQ(lexer.next().str(), "KW_THROW(1:232-1:237): throw");
-  EXPECT_EQ(lexer.next().str(), "KW_TRUE(1:238-1:242): true");
-  EXPECT_EQ(lexer.next().str(), "KW_TRY(1:243-1:246): try");
-  EXPECT_EQ(lexer.next().str(), "KW_TYPE(1:247-1:251): type");
-  EXPECT_EQ(lexer.next().str(), "KW_UNION(1:252-1:257): union");
-  EXPECT_EQ(lexer.next().str(), "EOF(1:258-1:258)");
+  EXPECT_EQ(lexer.next().str(), "KW_CONST(1:34-1:39): const");
+  EXPECT_EQ(lexer.next().str(), "KW_CONTINUE(1:40-1:48): continue");
+  EXPECT_EQ(lexer.next().str(), "KW_DEFAULT(1:49-1:56): default");
+  EXPECT_EQ(lexer.next().str(), "KW_ELIF(1:57-1:61): elif");
+  EXPECT_EQ(lexer.next().str(), "KW_ELSE(1:62-1:66): else");
+  EXPECT_EQ(lexer.next().str(), "KW_ENUM(1:67-1:71): enum");
+  EXPECT_EQ(lexer.next().str(), "KW_EXPORT(1:72-1:78): export");
+  EXPECT_EQ(lexer.next().str(), "KW_FALLTHROUGH(1:79-1:90): fallthrough");
+  EXPECT_EQ(lexer.next().str(), "KW_FALSE(1:91-1:96): false");
+  EXPECT_EQ(lexer.next().str(), "KW_FN(1:97-1:99): fn");
+  EXPECT_EQ(lexer.next().str(), "KW_FROM(1:100-1:104): from");
+  EXPECT_EQ(lexer.next().str(), "KW_IF(1:105-1:107): if");
+  EXPECT_EQ(lexer.next().str(), "KW_IMPORT(1:108-1:114): import");
+  EXPECT_EQ(lexer.next().str(), "KW_IS(1:115-1:117): is");
+  EXPECT_EQ(lexer.next().str(), "KW_LOOP(1:118-1:122): loop");
+  EXPECT_EQ(lexer.next().str(), "KW_MAIN(1:123-1:127): main");
+  EXPECT_EQ(lexer.next().str(), "KW_MATCH(1:128-1:133): match");
+  EXPECT_EQ(lexer.next().str(), "KW_MUT(1:134-1:137): mut");
+  EXPECT_EQ(lexer.next().str(), "KW_NIL(1:138-1:141): nil");
+  EXPECT_EQ(lexer.next().str(), "KW_OBJ(1:142-1:145): obj");
+  EXPECT_EQ(lexer.next().str(), "KW_RETURN(1:146-1:152): return");
+  EXPECT_EQ(lexer.next().str(), "KW_THROW(1:153-1:158): throw");
+  EXPECT_EQ(lexer.next().str(), "KW_TRUE(1:159-1:163): true");
+  EXPECT_EQ(lexer.next().str(), "KW_TRY(1:164-1:167): try");
+  EXPECT_EQ(lexer.next().str(), "KW_UNION(1:168-1:173): union");
+  EXPECT_EQ(lexer.next().str(), "EOF(1:174-1:174)");
 }
 
 TEST(LexerTest, LexKeywordsAsIdentifiers) {
   auto reader = ::testing::NiceMock<MockReader>(
-    " asm asynchronously awaited breakpoint casein catching classic constant continues defaulted deinitialized elifffy"
-    " elsewhere enumeration exported fallthroughout falser fname fromental iffy importing inside initialization"
-    " interfaced isle looped maintain matching mutable newest nilled object operation overriding private protected"
-    " public returned statically superb thistle throwing trues tryout typed unions "
+    " asm asynchronously awaited breakpoint casein catching constant continues defaulted elifffy elsewhere"
+    " enumeration exported fallthroughout falser fname fromental iffy importing isle looped maintain matching"
+    " mutable nilled object returned throwing trues tryout unions "
   );
 
   auto lexer = Lexer(&reader);
@@ -695,46 +627,31 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   EXPECT_EQ(lexer.next().str(), "ID(1:29-1:39): breakpoint");
   EXPECT_EQ(lexer.next().str(), "ID(1:40-1:46): casein");
   EXPECT_EQ(lexer.next().str(), "ID(1:47-1:55): catching");
-  EXPECT_EQ(lexer.next().str(), "ID(1:56-1:63): classic");
-  EXPECT_EQ(lexer.next().str(), "ID(1:64-1:72): constant");
-  EXPECT_EQ(lexer.next().str(), "ID(1:73-1:82): continues");
-  EXPECT_EQ(lexer.next().str(), "ID(1:83-1:92): defaulted");
-  EXPECT_EQ(lexer.next().str(), "ID(1:93-1:106): deinitialized");
-  EXPECT_EQ(lexer.next().str(), "ID(1:107-1:114): elifffy");
-  EXPECT_EQ(lexer.next().str(), "ID(1:115-1:124): elsewhere");
-  EXPECT_EQ(lexer.next().str(), "ID(1:125-1:136): enumeration");
-  EXPECT_EQ(lexer.next().str(), "ID(1:137-1:145): exported");
-  EXPECT_EQ(lexer.next().str(), "ID(1:146-1:160): fallthroughout");
-  EXPECT_EQ(lexer.next().str(), "ID(1:161-1:167): falser");
-  EXPECT_EQ(lexer.next().str(), "ID(1:168-1:173): fname");
-  EXPECT_EQ(lexer.next().str(), "ID(1:174-1:183): fromental");
-  EXPECT_EQ(lexer.next().str(), "ID(1:184-1:188): iffy");
-  EXPECT_EQ(lexer.next().str(), "ID(1:189-1:198): importing");
-  EXPECT_EQ(lexer.next().str(), "ID(1:199-1:205): inside");
-  EXPECT_EQ(lexer.next().str(), "ID(1:206-1:220): initialization");
-  EXPECT_EQ(lexer.next().str(), "ID(1:221-1:231): interfaced");
-  EXPECT_EQ(lexer.next().str(), "ID(1:232-1:236): isle");
-  EXPECT_EQ(lexer.next().str(), "ID(1:237-1:243): looped");
-  EXPECT_EQ(lexer.next().str(), "ID(1:244-1:252): maintain");
-  EXPECT_EQ(lexer.next().str(), "ID(1:253-1:261): matching");
-  EXPECT_EQ(lexer.next().str(), "ID(1:262-1:269): mutable");
-  EXPECT_EQ(lexer.next().str(), "ID(1:270-1:276): newest");
-  EXPECT_EQ(lexer.next().str(), "ID(1:277-1:283): nilled");
-  EXPECT_EQ(lexer.next().str(), "ID(1:284-1:290): object");
-  EXPECT_EQ(lexer.next().str(), "ID(1:291-1:300): operation");
-  EXPECT_EQ(lexer.next().str(), "ID(1:301-1:311): overriding");
-  EXPECT_EQ(lexer.next().str(), "ID(1:312-1:319): private");
-  EXPECT_EQ(lexer.next().str(), "ID(1:320-1:329): protected");
-  EXPECT_EQ(lexer.next().str(), "ID(1:330-1:336): public");
-  EXPECT_EQ(lexer.next().str(), "ID(1:337-1:345): returned");
-  EXPECT_EQ(lexer.next().str(), "ID(1:346-1:356): statically");
-  EXPECT_EQ(lexer.next().str(), "ID(1:357-1:363): superb");
-  EXPECT_EQ(lexer.next().str(), "ID(1:364-1:371): thistle");
-  EXPECT_EQ(lexer.next().str(), "ID(1:372-1:380): throwing");
-  EXPECT_EQ(lexer.next().str(), "ID(1:381-1:386): trues");
-  EXPECT_EQ(lexer.next().str(), "ID(1:387-1:393): tryout");
-  EXPECT_EQ(lexer.next().str(), "ID(1:394-1:399): typed");
-  EXPECT_EQ(lexer.next().str(), "ID(1:400-1:406): unions");
+  EXPECT_EQ(lexer.next().str(), "ID(1:56-1:64): constant");
+  EXPECT_EQ(lexer.next().str(), "ID(1:65-1:74): continues");
+  EXPECT_EQ(lexer.next().str(), "ID(1:75-1:84): defaulted");
+  EXPECT_EQ(lexer.next().str(), "ID(1:85-1:92): elifffy");
+  EXPECT_EQ(lexer.next().str(), "ID(1:93-1:102): elsewhere");
+  EXPECT_EQ(lexer.next().str(), "ID(1:103-1:114): enumeration");
+  EXPECT_EQ(lexer.next().str(), "ID(1:115-1:123): exported");
+  EXPECT_EQ(lexer.next().str(), "ID(1:124-1:138): fallthroughout");
+  EXPECT_EQ(lexer.next().str(), "ID(1:139-1:145): falser");
+  EXPECT_EQ(lexer.next().str(), "ID(1:146-1:151): fname");
+  EXPECT_EQ(lexer.next().str(), "ID(1:152-1:161): fromental");
+  EXPECT_EQ(lexer.next().str(), "ID(1:162-1:166): iffy");
+  EXPECT_EQ(lexer.next().str(), "ID(1:167-1:176): importing");
+  EXPECT_EQ(lexer.next().str(), "ID(1:177-1:181): isle");
+  EXPECT_EQ(lexer.next().str(), "ID(1:182-1:188): looped");
+  EXPECT_EQ(lexer.next().str(), "ID(1:189-1:197): maintain");
+  EXPECT_EQ(lexer.next().str(), "ID(1:198-1:206): matching");
+  EXPECT_EQ(lexer.next().str(), "ID(1:207-1:214): mutable");
+  EXPECT_EQ(lexer.next().str(), "ID(1:215-1:221): nilled");
+  EXPECT_EQ(lexer.next().str(), "ID(1:222-1:228): object");
+  EXPECT_EQ(lexer.next().str(), "ID(1:229-1:237): returned");
+  EXPECT_EQ(lexer.next().str(), "ID(1:238-1:246): throwing");
+  EXPECT_EQ(lexer.next().str(), "ID(1:247-1:252): trues");
+  EXPECT_EQ(lexer.next().str(), "ID(1:253-1:259): tryout");
+  EXPECT_EQ(lexer.next().str(), "ID(1:260-1:266): unions");
 }
 
 TEST(LexerTest, LexIdentifier) {
@@ -847,30 +764,17 @@ TEST(LexerTest, ThrowsOnNotClosedLitChar) {
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | '\n    | ^").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | 'a\n    | ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l3.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | '\\\n    | ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l4.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0002 + "\n  1 | '\\n\n    | ^~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | '\n    | ^");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | 'a\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | '\\\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | '\\n\n    | ^~~");
 }
 
 TEST(LexerTest, ThrowsOnEmptyLitChar) {
   auto reader = ::testing::NiceMock<MockReader>("''");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    lexer.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0004 + "\n  1 | ''\n    | ^~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0004 + "\n  1 | ''\n    | ^~");
 }
 
 TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
@@ -884,21 +788,10 @@ TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m\n    |  ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m'\n    |  ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l3.next();
-  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma\n    |  ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l4.next();
-  }, LexerError, (std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma'\n    |  ^~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m\n    |  ^~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m'\n    |  ^~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma\n    |  ^~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma'\n    |  ^~");
 }
 
 TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
@@ -908,13 +801,8 @@ TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0006 + "\n  1 | 'ch\n    | ^~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0006 + "\n  1 | 'char'\n    | ^~~~~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0006 + "\n  1 | 'ch\n    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0006 + "\n  1 | 'char'\n    | ^~~~~~");
 }
 
 TEST(LexerTest, LexLitFloat) {
@@ -1053,65 +941,21 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
   auto l14 = Lexer(&r14);
   auto l15 = Lexer(&r15);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.a\n    | ^~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l3.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.aZ\n    | ^~~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l4.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.0a\n    | ^~~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l5.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.1aZ\n    | ^~~~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l6.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e\n    |     ^").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l7.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+\n    |     ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l8.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-\n    |     ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l9.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+a1\n    |     ^~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l10.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZ\n    |     ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l11.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZa\n    |     ^~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l12.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0012 + "\n  1 | 1234e5e6\n    | ^~~~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l13.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e)\n    |     ^").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l14.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+)\n    |     ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l15.next();
-  }, LexerError, (std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-h)\n    |     ^~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.a\n    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.aZ\n    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.0a\n    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l5.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.1aZ\n    | ^~~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l6.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e\n    |     ^");
+  EXPECT_THROW_WITH_MESSAGE(l7.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+\n    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l8.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-\n    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l9.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+a1\n    |     ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l10.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZ\n    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l11.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZa\n    |     ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l12.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234e5e6\n    | ^~~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l13.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e)\n    |     ^");
+  EXPECT_THROW_WITH_MESSAGE(l14.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+)\n    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l15.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-h)\n    |     ^~~");
 }
 
 TEST(LexerTest, ThrowsOnNonDecLitFloat) {
@@ -1123,17 +967,9 @@ TEST(LexerTest, ThrowsOnNonDecLitFloat) {
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0014 + "\n  1 | 0b1.0\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0015 + "\n  1 | 0xa.0\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l3.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0016 + "\n  1 | 0o1.0\n    | ^~~~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0014 + "\n  1 | 0b1.0\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0015 + "\n  1 | 0xa.0\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0016 + "\n  1 | 0o1.0\n    | ^~~~~");
 }
 
 TEST(LexerTest, LexLitInteger) {
@@ -1308,13 +1144,8 @@ TEST(LexerTest, ThrowsOnLitIntegerWithLeadingZero) {
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0007 + "\n  1 | 04\n    | ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0007 + "\n  1 | 0400e0\n    | ^~~~~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0007 + "\n  1 | 04\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0007 + "\n  1 | 0400e0\n    | ^~~~~~");
 }
 
 TEST(LexerTest, ThrowsOnInvalidLitInteger) {
@@ -1362,89 +1193,27 @@ TEST(LexerTest, ThrowsOnInvalidLitInteger) {
   auto l20 = Lexer(&r20);
   auto l21 = Lexer(&r21);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0B\n    | ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0bG\n    | ^~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l3.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0bGz\n    | ^~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l4.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1g\n    | ^~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l5.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1gZ\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l6.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1b0\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l7.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l8.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0009 + "\n  1 | 1234gZ\n    | ^~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l9.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g0a\n    | ^~~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l10.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0x\n    | ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l11.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0xG\n    | ^~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l12.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0xGz\n    | ^~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l13.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0Xag\n    | ^~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l14.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0XagZ\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l15.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0010 + "\n  1 | 0x1x2\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l16.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0o\n    | ^~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l17.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0oG\n    | ^~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l18.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0oGz\n    | ^~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l19.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1g\n    | ^~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l20.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1gZ\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l21.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0011 + "\n  1 | 0o1o2\n    | ^~~~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0B\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0bG\n    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0bGz\n    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1g\n    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l5.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1gZ\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l6.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1b0\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l7.next(), std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l8.next(), std::string("/test:1:1: ") + E0009 + "\n  1 | 1234gZ\n    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l9.next(), std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g0a\n    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l10.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0x\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l11.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0xG\n    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l12.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0xGz\n    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l13.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0Xag\n    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l14.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0XagZ\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l15.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0x1x2\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l16.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0o\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l17.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0oG\n    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l18.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0oGz\n    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l19.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1g\n    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l20.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1gZ\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l21.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0o1o2\n    | ^~~~~");
 }
 
 TEST(LexerTest, LexLitStr) {
@@ -1514,28 +1283,15 @@ TEST(LexerTest, ThrowsOnEmptyLitStr) {
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    l1.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"\n    | ^").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l2.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\n    | ^~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l3.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\n    | ^~~~~~").c_str());
-
-  EXPECT_THROW_WITH_MESSAGE({
-    l4.next();
-  }, LexerError, (std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\"\n    | ^~~~~~~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"\n    | ^");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\n    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\"\n    | ^~~~~~~");
 }
 
 TEST(LexerTest, ThrowsOnLitStrIllegalEscSeq) {
   auto reader = ::testing::NiceMock<MockReader>(R"("Hello, \m World!")");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    lexer.next();
-  }, LexerError, (std::string("/test:1:9: ") + E0005 + "\n  1 | \"Hello, \\m World!\"\n    |         ^~").c_str());
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:9: ") + E0005 + "\n  1 | \"Hello, \\m World!\"\n    |         ^~");
 }

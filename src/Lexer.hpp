@@ -13,12 +13,11 @@
 #include "Error.hpp"
 #include "Token.hpp"
 
-class LexerError;
+class Lexer;
 
 class Lexer {
-  friend class LexerError;
-
  public:
+  Reader *reader;
   ReaderLocation loc;
   std::string val;
 
@@ -27,8 +26,6 @@ class Lexer {
   Token next ();
 
  private:
-  Reader *_reader;
-
   Lexer (const Lexer &);
   Lexer &operator= (const Lexer &);
 
@@ -36,15 +33,10 @@ class Lexer {
   Token _litNum (const std::function<bool (char)> &, TokenType);
   Token _opEq (TokenType, TokenType);
   Token _opEq2 (char, TokenType, TokenType, TokenType, const std::optional<TokenType> & = std::nullopt);
-  Token _tok (TokenType);
+  Token _tok (TokenType) const;
   void _walk (const std::function<bool (char)> &);
   void _walkLitFloatExp (ReaderLocation);
   void _whitespace ();
-};
-
-class LexerError : public Error {
- public:
-  LexerError (Lexer *, const std::string &);
 };
 
 #endif

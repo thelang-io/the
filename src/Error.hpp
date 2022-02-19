@@ -27,11 +27,27 @@
 #define E0014 "E0014 - Binary float literals are not allowed"
 #define E0015 "E0015 - Hexadecimal float literals are not allowed"
 #define E0016 "E0016 - Octal float literals are not allowed"
+
 #define E0100 "E0100 - Unexpected statement"
+#define E0101 "E0101 - Unknown expression statement"
+#define E0102 "E0102 - Expected variable type after colon"
+#define E0103 "E0103 - Expected left brace"
+#define E0104 "E0104 - Expected right brace"
+#define E0105 "E0105 - Unexpected statement in loop condition"
+#define E0106 "E0106 - Expected semicolon after loop initialization"
+#define E0107 "E0107 - Unexpected token after loop initialization"
+#define E0108 "E0108 - Expected semicolon after loop condition"
+#define E0109 "E0109 - Expected right parentheses"
+#define E0110 "E0110 - Expected property name after dot"
+#define E0111 "E0111 - Expected colon after ternary expression"
+
+class Error;
 
 class Error : public std::exception {
  public:
   explicit Error (const std::string &);
+  Error (Reader *, ReaderLocation, const std::string &);
+
   const char *what () const noexcept override;
 
  protected:

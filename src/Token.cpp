@@ -18,11 +18,9 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_BREAK: return "KW_BREAK";
     case TK_KW_CASE: return "KW_CASE";
     case TK_KW_CATCH: return "KW_CATCH";
-    case TK_KW_CLASS: return "KW_CLASS";
     case TK_KW_CONST: return "KW_CONST";
     case TK_KW_CONTINUE: return "KW_CONTINUE";
     case TK_KW_DEFAULT: return "KW_DEFAULT";
-    case TK_KW_DEINIT: return "KW_DEINIT";
     case TK_KW_ELIF: return "KW_ELIF";
     case TK_KW_ELSE: return "KW_ELSE";
     case TK_KW_ENUM: return "KW_ENUM";
@@ -33,30 +31,17 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_FROM: return "KW_FROM";
     case TK_KW_IF: return "KW_IF";
     case TK_KW_IMPORT: return "KW_IMPORT";
-    case TK_KW_IN: return "KW_IN";
-    case TK_KW_INIT: return "KW_INIT";
-    case TK_KW_INTERFACE: return "KW_INTERFACE";
     case TK_KW_IS: return "KW_IS";
     case TK_KW_LOOP: return "KW_LOOP";
     case TK_KW_MAIN: return "KW_MAIN";
     case TK_KW_MATCH: return "KW_MATCH";
     case TK_KW_MUT: return "KW_MUT";
-    case TK_KW_NEW: return "KW_NEW";
     case TK_KW_NIL: return "KW_NIL";
     case TK_KW_OBJ: return "KW_OBJ";
-    case TK_KW_OP: return "KW_OP";
-    case TK_KW_OVERRIDE: return "KW_OVERRIDE";
-    case TK_KW_PRIV: return "KW_PRIV";
-    case TK_KW_PROT: return "KW_PROT";
-    case TK_KW_PUB: return "KW_PUB";
     case TK_KW_RETURN: return "KW_RETURN";
-    case TK_KW_STATIC: return "KW_STATIC";
-    case TK_KW_SUPER: return "KW_SUPER";
-    case TK_KW_THIS: return "KW_THIS";
     case TK_KW_THROW: return "KW_THROW";
     case TK_KW_TRUE: return "KW_TRUE";
     case TK_KW_TRY: return "KW_TRY";
-    case TK_KW_TYPE: return "KW_TYPE";
     case TK_KW_UNION: return "KW_UNION";
     case TK_LIT_CHAR: return "LIT_CHAR";
     case TK_LIT_FLOAT: return "LIT_FLOAT";
@@ -240,5 +225,5 @@ std::string Token::str () const {
 }
 
 bool operator== (const Token &lhs, const Token &rhs) {
-  return lhs.type == rhs.type && lhs.start == rhs.start && lhs.end == rhs.end && lhs.val == rhs.val;
+  return lhs.type == rhs.type && lhs.val == rhs.val && lhs.start == rhs.start && lhs.end == rhs.end;
 }

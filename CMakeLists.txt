@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.6.2
+  VERSION 1.7.0
   LANGUAGES CXX
 )
 
@@ -32,6 +32,9 @@ set(
 
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
+  src/Parser.cpp src/Parser.hpp
+  src/ParserExpr.cpp src/ParserExpr.hpp
+  src/ParserStmt.cpp src/ParserStmt.hpp
   src/Reader.cpp src/Reader.hpp
   src/Token.cpp src/Token.hpp
 )
@@ -45,6 +48,7 @@ set(
   test/ErrorTest.cpp
   test/LexerTest.cpp
   test/MockReader.cpp test/MockReader.hpp
+  test/ParserTest.cpp
   test/ReaderTest.cpp
   test/TokenTest.cpp
   test/utils.hpp

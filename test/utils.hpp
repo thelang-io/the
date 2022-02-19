@@ -8,13 +8,13 @@
 #ifndef TEST_UTILS_HPP
 #define TEST_UTILS_HPP
 
-#define EXPECT_THROW_WITH_MESSAGE(body, errName, message) EXPECT_THROW({ \
+#define EXPECT_THROW_WITH_MESSAGE(body, message) EXPECT_THROW({ \
     try { \
       body; \
-    } catch (const errName &err) { \
-      EXPECT_STREQ(message, err.what()); \
+    } catch (const Error &err) { \
+      EXPECT_STREQ(std::string(message).c_str(), err.what()); \
       throw; \
     } \
-  }, errName)
+  }, Error)
 
 #endif
