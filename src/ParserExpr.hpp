@@ -15,8 +15,12 @@
 struct ParserExprAccess;
 struct ParserExprAssign;
 struct ParserExprBinary;
+struct ParserExprCall;
+struct ParserExprCallArg;
 struct ParserExprCond;
 struct ParserExprLit;
+struct ParserExprObj;
+struct ParserExprObjProp;
 struct ParserExprUnary;
 struct ParserMember;
 struct ParserStmtExpr;
@@ -25,8 +29,10 @@ using ParserExpr = std::variant<
   ParserExprAccess,
   ParserExprAssign,
   ParserExprBinary,
+  ParserExprCall,
   ParserExprCond,
   ParserExprLit,
+  ParserExprObj,
   ParserExprUnary
 >;
 
@@ -56,6 +62,16 @@ struct ParserExprBinary {
   ParserStmtExpr right;
 };
 
+struct ParserExprCall {
+  ParserExprAccess callee;
+  std::vector<ParserExprCallArg> args;
+};
+
+struct ParserExprCallArg {
+  std::optional<Token> id;
+  ParserStmtExpr expr;
+};
+
 struct ParserExprCond {
   ParserStmtExpr cond;
   ParserStmtExpr body;
@@ -64,6 +80,16 @@ struct ParserExprCond {
 
 struct ParserExprLit {
   Token val;
+};
+
+struct ParserExprObj {
+  Token id;
+  std::vector<ParserExprObjProp> props;
+};
+
+struct ParserExprObjProp {
+  Token id;
+  ParserStmtExpr init;
 };
 
 struct ParserExprUnary {

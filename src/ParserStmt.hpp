@@ -14,9 +14,14 @@ struct ParserStmt;
 struct ParserStmtBreak;
 struct ParserStmtContinue;
 struct ParserStmtEof;
+struct ParserStmtFnDecl;
+struct ParserStmtFnDeclParam;
 struct ParserStmtIf;
 struct ParserStmtLoop;
 struct ParserStmtMain;
+struct ParserStmtObjDecl;
+struct ParserStmtObjDeclField;
+struct ParserStmtReturn;
 struct ParserStmtVarDecl;
 
 using ParserBlock = std::vector<ParserStmt>;
@@ -26,9 +31,12 @@ using ParserStmtBody = std::variant<
   ParserStmtContinue,
   ParserStmtEof,
   ParserStmtExpr,
+  ParserStmtFnDecl,
   ParserStmtIf,
   ParserStmtLoop,
   ParserStmtMain,
+  ParserStmtObjDecl,
+  ParserStmtReturn,
   ParserStmtVarDecl
 >;
 
@@ -41,6 +49,19 @@ struct ParserStmtContinue {
 };
 
 struct ParserStmtEof {
+};
+
+struct ParserStmtFnDecl {
+  Token id;
+  Token returnType;
+  std::vector<ParserStmtFnDeclParam> params;
+  ParserBlock body;
+};
+
+struct ParserStmtFnDeclParam {
+  Token id;
+  std::optional<Token> type;
+  std::optional<ParserStmtExpr> init;
 };
 
 struct ParserStmtIf {
@@ -58,6 +79,20 @@ struct ParserStmtLoop {
 
 struct ParserStmtMain {
   ParserBlock body;
+};
+
+struct ParserStmtObjDecl {
+  Token id;
+  std::vector<ParserStmtObjDeclField> fields;
+};
+
+struct ParserStmtObjDeclField {
+  Token id;
+  Token type;
+};
+
+struct ParserStmtReturn {
+  ParserStmtExpr arg;
 };
 
 struct ParserStmtVarDecl {
