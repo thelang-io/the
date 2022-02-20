@@ -93,14 +93,17 @@ TEST_P(ParserThrowTest, Throws) {
 }
 
 INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
-  "eof",
+  "stmt-eof",
   "stmt-break",
   "stmt-continue"
 ));
 
-INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
-  "throw-E0100-unexpected-mut-keyword",
-  "throw-E0100-unexpected-statement"
+INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
+  "stmt-if",
+  "stmt-if-with-else",
+  "stmt-if-with-single-elif",
+  "stmt-if-with-multi-elif",
+  "stmt-if-nested"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
@@ -117,11 +120,16 @@ INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
   "stmt-var-decl-short-mut"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprAccess, ParserPassTest, testing::Values(
+  "expr-access"
+));
+
+INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
+  "throw-E0100-unexpected-mut-keyword",
+  "throw-E0100-unexpected-statement"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
   "throw-E0102-stmt-var-decl",
   "throw-E0102-stmt-var-decl-mut"
-));
-
-INSTANTIATE_TEST_SUITE_P(ExprAccess, ParserPassTest, testing::Values(
-  "expr-access"
 ));

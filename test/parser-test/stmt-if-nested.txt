@@ -1,0 +1,289 @@
+======= stdin =======
+if 1 {
+  if 0 {
+    print("False condition")
+  } else {
+    print("True condition")
+  }
+}
+if 1 {
+  if 2 {
+    print("True condition")
+  } elif 0 {
+    print("False condition")
+  }
+}
+if 0 {
+  if 0 {
+    print("False condition")
+  } elif 0 {
+    print("False condition")
+  }
+} else {
+  print("True condition")
+}
+======= stdout =======
+<Stmt start="1:1" end="7:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="1:4" end="1:5">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="LIT_INT_DEC" val="1" start="1:4" end="1:5" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="body">
+      <Stmt start="2:3" end="6:4">
+        <StmtIf>
+          <slot name="cond">
+            <Stmt start="2:6" end="2:7">
+              <StmtExpr parenthesized="false">
+                <ExprLit>
+                  <Token type="LIT_INT_DEC" val="0" start="2:6" end="2:7" />
+                </ExprLit>
+              </StmtExpr>
+            </Stmt>
+          </slot>
+          <slot name="body">
+            <Stmt start="3:5" end="3:29">
+              <StmtExpr parenthesized="false">
+                <ExprCall>
+                  <slot name="callee">
+                    <Token type="ID" val="print" start="3:5" end="3:10" />
+                  </slot>
+                  <slot name="args">
+                    <ExprCallArg>
+                      <slot name="expr">
+                        <StmtExpr parenthesized="false">
+                          <ExprLit>
+                            <Token type="LIT_STR" val="\"False condition\"" start="3:11" end="3:28" />
+                          </ExprLit>
+                        </StmtExpr>
+                      </slot>
+                    </ExprCallArg>
+                  </slot>
+                </ExprCall>
+              </StmtExpr>
+            </Stmt>
+          </slot>
+          <slot name="alt">
+            <Stmt start="5:5" end="5:28">
+              <StmtExpr parenthesized="false">
+                <ExprCall>
+                  <slot name="callee">
+                    <Token type="ID" val="print" start="5:5" end="5:10" />
+                  </slot>
+                  <slot name="args">
+                    <ExprCallArg>
+                      <slot name="expr">
+                        <StmtExpr parenthesized="false">
+                          <ExprLit>
+                            <Token type="LIT_STR" val="\"True condition\"" start="5:11" end="5:27" />
+                          </ExprLit>
+                        </StmtExpr>
+                      </slot>
+                    </ExprCallArg>
+                  </slot>
+                </ExprCall>
+              </StmtExpr>
+            </Stmt>
+          </slot>
+        </StmtIf>
+      </Stmt>
+    </slot>
+  </StmtIf>
+</Stmt>
+<Stmt start="8:1" end="14:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="8:4" end="8:5">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="LIT_INT_DEC" val="1" start="8:4" end="8:5" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="body">
+      <Stmt start="9:3" end="13:4">
+        <StmtIf>
+          <slot name="cond">
+            <Stmt start="9:6" end="9:7">
+              <StmtExpr parenthesized="false">
+                <ExprLit>
+                  <Token type="LIT_INT_DEC" val="2" start="9:6" end="9:7" />
+                </ExprLit>
+              </StmtExpr>
+            </Stmt>
+          </slot>
+          <slot name="body">
+            <Stmt start="10:5" end="10:28">
+              <StmtExpr parenthesized="false">
+                <ExprCall>
+                  <slot name="callee">
+                    <Token type="ID" val="print" start="10:5" end="10:10" />
+                  </slot>
+                  <slot name="args">
+                    <ExprCallArg>
+                      <slot name="expr">
+                        <StmtExpr parenthesized="false">
+                          <ExprLit>
+                            <Token type="LIT_STR" val="\"True condition\"" start="10:11" end="10:27" />
+                          </ExprLit>
+                        </StmtExpr>
+                      </slot>
+                    </ExprCallArg>
+                  </slot>
+                </ExprCall>
+              </StmtExpr>
+            </Stmt>
+          </slot>
+          <slot name="alt">
+            <StmtIf>
+              <slot name="cond">
+                <Stmt start="11:10" end="11:11">
+                  <StmtExpr parenthesized="false">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="0" start="11:10" end="11:11" />
+                    </ExprLit>
+                  </StmtExpr>
+                </Stmt>
+              </slot>
+              <slot name="body">
+                <Stmt start="12:5" end="12:29">
+                  <StmtExpr parenthesized="false">
+                    <ExprCall>
+                      <slot name="callee">
+                        <Token type="ID" val="print" start="12:5" end="12:10" />
+                      </slot>
+                      <slot name="args">
+                        <ExprCallArg>
+                          <slot name="expr">
+                            <StmtExpr parenthesized="false">
+                              <ExprLit>
+                                <Token type="LIT_STR" val="\"False condition\"" start="12:11" end="12:28" />
+                              </ExprLit>
+                            </StmtExpr>
+                          </slot>
+                        </ExprCallArg>
+                      </slot>
+                    </ExprCall>
+                  </StmtExpr>
+                </Stmt>
+              </slot>
+            </StmtIf>
+          </slot>
+        </StmtIf>
+      </Stmt>
+    </slot>
+  </StmtIf>
+</Stmt>
+<Stmt start="15:1" end="23:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="15:4" end="15:5">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="LIT_INT_DEC" val="0" start="15:4" end="15:5" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="body">
+      <Stmt start="16:3" end="20:4">
+        <StmtIf>
+          <slot name="cond">
+            <Stmt start="16:6" end="16:7">
+              <StmtExpr parenthesized="false">
+                <ExprLit>
+                  <Token type="LIT_INT_DEC" val="0" start="16:6" end="16:7" />
+                </ExprLit>
+              </StmtExpr>
+            </Stmt>
+          </slot>
+          <slot name="body">
+            <Stmt start="17:5" end="17:29">
+              <StmtExpr parenthesized="false">
+                <ExprCall>
+                  <slot name="callee">
+                    <Token type="ID" val="print" start="17:5" end="17:10" />
+                  </slot>
+                  <slot name="args">
+                    <ExprCallArg>
+                      <slot name="expr">
+                        <StmtExpr parenthesized="false">
+                          <ExprLit>
+                            <Token type="LIT_STR" val="\"False condition\"" start="17:11" end="17:28" />
+                          </ExprLit>
+                        </StmtExpr>
+                      </slot>
+                    </ExprCallArg>
+                  </slot>
+                </ExprCall>
+              </StmtExpr>
+            </Stmt>
+          </slot>
+          <slot name="alt">
+            <StmtIf>
+              <slot name="cond">
+                <Stmt start="18:10" end="18:11">
+                  <StmtExpr parenthesized="false">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="0" start="18:10" end="18:11" />
+                    </ExprLit>
+                  </StmtExpr>
+                </Stmt>
+              </slot>
+              <slot name="body">
+                <Stmt start="19:5" end="19:29">
+                  <StmtExpr parenthesized="false">
+                    <ExprCall>
+                      <slot name="callee">
+                        <Token type="ID" val="print" start="19:5" end="19:10" />
+                      </slot>
+                      <slot name="args">
+                        <ExprCallArg>
+                          <slot name="expr">
+                            <StmtExpr parenthesized="false">
+                              <ExprLit>
+                                <Token type="LIT_STR" val="\"False condition\"" start="19:11" end="19:28" />
+                              </ExprLit>
+                            </StmtExpr>
+                          </slot>
+                        </ExprCallArg>
+                      </slot>
+                    </ExprCall>
+                  </StmtExpr>
+                </Stmt>
+              </slot>
+            </StmtIf>
+          </slot>
+        </StmtIf>
+      </Stmt>
+    </slot>
+    <slot name="alt">
+      <Stmt start="22:3" end="22:26">
+        <StmtExpr parenthesized="false">
+          <ExprCall>
+            <slot name="callee">
+              <Token type="ID" val="print" start="22:3" end="22:8" />
+            </slot>
+            <slot name="args">
+              <ExprCallArg>
+                <slot name="expr">
+                  <StmtExpr parenthesized="false">
+                    <ExprLit>
+                      <Token type="LIT_STR" val="\"True condition\"" start="22:9" end="22:25" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+  </StmtIf>
+</Stmt>

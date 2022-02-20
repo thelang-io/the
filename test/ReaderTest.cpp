@@ -81,7 +81,7 @@ TEST_F(ReaderTest, ReadsNext) {
 }
 
 TEST_F(ReaderTest, EofOnNext) {
-  for (auto i = static_cast<std::size_t>(0); i < 13; i++) {
+  for (auto i = 0; i < 13; i++) {
     this->r2_->next();
   }
 

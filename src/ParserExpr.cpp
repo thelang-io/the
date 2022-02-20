@@ -39,7 +39,36 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserExprBinary>(*this->body)) {
     // todo
   } else if (std::holds_alternative<ParserExprCall>(*this->body)) {
-    // todo
+    auto exprCall = std::get<ParserExprCall>(*this->body);
+
+    result += std::string(indent + 2, ' ') + "<ExprCall>\n";
+    result += std::string(indent + 4, ' ') + R"(<slot name="callee">)" + "\n";
+    result += exprAccessBodyToXml(exprCall.callee.body, indent + 6);
+    result += std::string(indent + 4, ' ') + R"(</slot>)" + "\n";
+
+    if (!exprCall.args.empty()) {
+      result += std::string(indent + 4, ' ') + R"(<slot name="args">)" + "\n";
+
+      for (const auto &exprCallArg : exprCall.args) {
+        result += std::string(indent + 6, ' ') + "<ExprCallArg>\n";
+
+        if (exprCallArg.id != std::nullopt) {
+          result += std::string(indent + 8, ' ') + R"(<slot name="id">)" + "\n";
+          result += std::string(indent + 10, ' ') +  exprCallArg.id->xml()  + "\n";
+          result += std::string(indent + 8, ' ') + "</slot>\n";
+        }
+
+        result += std::string(indent + 8, ' ') + R"(<slot name="expr">)" + "\n";
+        result += exprCallArg.expr.xml(indent + 10)  + "\n";
+        result += std::string(indent + 8, ' ') + "</slot>\n";
+
+        result += std::string(indent + 6, ' ') + "</ExprCallArg>\n";
+      }
+
+      result += std::string(indent + 4, ' ') + R"(</slot>)" + "\n";
+    }
+
+    result += std::string(indent + 2, ' ') + "</ExprCall>\n";
   } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
     // todo
   } else if (std::holds_alternative<ParserExprLit>(*this->body)) {

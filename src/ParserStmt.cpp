@@ -23,7 +23,8 @@ std::string ParserStmt::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserStmtFnDecl>(this->body)) {
     // todo
   } else if (std::holds_alternative<ParserStmtIf>(this->body)) {
-    // todo
+    auto stmtIf = std::get<ParserStmtIf>(this->body);
+    result += stmtIf.xml(indent + 2) + "\n";
   } else if (std::holds_alternative<ParserStmtLoop>(this->body)) {
     // todo
   } else if (std::holds_alternative<ParserStmtMain>(this->body)) {
@@ -61,5 +62,45 @@ std::string ParserStmt::xml (std::size_t indent) const {
   }
 
   result += std::string(indent, ' ') + "</Stmt>";
+  return result;
+}
+
+std::string ParserStmtIf::xml (std::size_t indent) const {
+  auto result = std::string();
+
+  result += std::string(indent, ' ') + "<StmtIf>\n";
+  result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" + "\n";
+  result += this->cond->xml(indent + 4) + "\n";
+  result += std::string(indent + 2, ' ') + "</slot>\n";
+
+  if (!this->body.empty()) {
+    result += std::string(indent + 2, ' ') + R"(<slot name="body">)" + "\n";
+
+    for (const auto &bodyStmt : this->body) {
+      result += bodyStmt.xml(indent + 4) + "\n";
+    }
+
+    result += std::string(indent + 2, ' ') + "</slot>\n";
+  }
+
+  if (this->alt != std::nullopt) {
+    auto altBody = **this->alt;
+    result += std::string(indent + 2, ' ') + R"(<slot name="alt">)" + "\n";
+
+    if (std::holds_alternative<ParserBlock>(altBody)) {
+      auto altElse = std::get<ParserBlock>(altBody);
+
+      for (const auto &bodyStmt : altElse) {
+        result += bodyStmt.xml(indent + 4) + "\n";
+      }
+    } else if (std::holds_alternative<ParserStmtIf>(altBody)) {
+      auto altElif = std::get<ParserStmtIf>(altBody);
+      result += altElif.xml(indent + 4) + "\n";
+    }
+
+    result += std::string(indent + 2, ' ') + "</slot>\n";
+  }
+
+  result += std::string(indent, ' ') + "</StmtIf>";
   return result;
 }

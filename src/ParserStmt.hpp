@@ -68,6 +68,8 @@ struct ParserStmtIf {
   std::shared_ptr<ParserStmt> cond;
   ParserBlock body;
   std::optional<std::shared_ptr<ParserStmtIfCond>> alt;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 struct ParserStmtLoop {

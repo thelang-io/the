@@ -1,0 +1,64 @@
+======= stdin =======
+if 0 {
+  print("False condition")
+} else {
+  print("True condition")
+}
+======= stdout =======
+<Stmt start="1:1" end="5:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="1:4" end="1:5">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="LIT_INT_DEC" val="0" start="1:4" end="1:5" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="body">
+      <Stmt start="2:3" end="2:27">
+        <StmtExpr parenthesized="false">
+          <ExprCall>
+            <slot name="callee">
+              <Token type="ID" val="print" start="2:3" end="2:8" />
+            </slot>
+            <slot name="args">
+              <ExprCallArg>
+                <slot name="expr">
+                  <StmtExpr parenthesized="false">
+                    <ExprLit>
+                      <Token type="LIT_STR" val="\"False condition\"" start="2:9" end="2:26" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="alt">
+      <Stmt start="4:3" end="4:26">
+        <StmtExpr parenthesized="false">
+          <ExprCall>
+            <slot name="callee">
+              <Token type="ID" val="print" start="4:3" end="4:8" />
+            </slot>
+            <slot name="args">
+              <ExprCallArg>
+                <slot name="expr">
+                  <StmtExpr parenthesized="false">
+                    <ExprLit>
+                      <Token type="LIT_STR" val="\"True condition\"" start="4:9" end="4:25" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+  </StmtIf>
+</Stmt>
