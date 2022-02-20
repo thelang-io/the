@@ -31,10 +31,9 @@ Error::Error (Reader *reader, ReaderLocation start, const std::string &message) 
     line += ch;
   }
 
-  auto colNumStr = std::to_string(start.col + 1);
   auto lineNumStr = std::to_string(start.line);
 
-  this->message_ += reader->path + ':' + lineNumStr + ':' + colNumStr + ": " + message + "\n";
+  this->message_ += reader->path + ':' + start.str() + ": " + message + "\n";
   this->message_ += "  " + lineNumStr + " | " + line + '\n';
   this->message_ += "  " + std::string(lineNumStr.length(), ' ') + " | " + std::string(start.col, ' ') + '^';
 

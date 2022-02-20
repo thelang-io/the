@@ -1,0 +1,122 @@
+======= stdin =======
+mut a := true
+mut b := 'z'
+mut c := 3.14
+mut d := 0b100
+mut e := 1
+mut f := 0xFF
+mut g := 0o777
+mut h := "Hello, World!"
+======= stdout =======
+<Stmt start="1:1" end="1:14">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="a" start="1:5" end="1:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="KW_TRUE" val="true" start="1:10" end="1:14" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="2:1" end="2:13">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="b" start="2:5" end="2:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_CHAR" val="'z'" start="2:10" end="2:13" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="3:1" end="3:14">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="c" start="3:5" end="3:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_FLOAT" val="3.14" start="3:10" end="3:14" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="4:1" end="4:15">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="d" start="4:5" end="4:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_BIN" val="0b100" start="4:10" end="4:15" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="5:1" end="5:11">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="e" start="5:5" end="5:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_DEC" val="1" start="5:10" end="5:11" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="6:1" end="6:14">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="f" start="6:5" end="6:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_HEX" val="0xFF" start="6:10" end="6:14" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="7:1" end="7:15">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="g" start="7:5" end="7:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_OCT" val="0o777" start="7:10" end="7:15" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="8:1" end="8:25">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="h" start="8:5" end="8:6" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_STR" val="\"Hello, World!\"" start="8:10" end="8:25" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>

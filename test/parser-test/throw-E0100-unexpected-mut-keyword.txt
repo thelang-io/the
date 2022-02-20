@@ -1,0 +1,6 @@
+======= stdin =======
+mut
+======= stderr =======
+/test:1:1: E0100 - Unexpected statement
+  1 | mut
+    | ^

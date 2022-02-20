@@ -107,7 +107,7 @@ struct ParserStmt {
   ReaderLocation start;
   ReaderLocation end;
 
-  std::string str () const;
+  std::string xml (std::size_t = 0) const;
 };
 
 #endif

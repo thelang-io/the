@@ -7,12 +7,12 @@
 
 #include "Lexer.hpp"
 
-Lexer::Lexer (Reader *reader) {
-  this->reader = reader;
+Lexer::Lexer (Reader *r) {
+  this->reader = r;
 }
 
 Token Lexer::next () {
-  this->_whitespace();
+  this->whitespace();
   this->loc = this->reader->loc;
   this->val = "";
 
@@ -258,6 +258,86 @@ Token Lexer::next () {
   throw Error(this->reader, this->loc, E0000);
 }
 
+void Lexer::seek (ReaderLocation l) {
+  this->loc = l;
+  this->reader->seek(l);
+}
+
+void Lexer::whitespace () {
+  if (this->reader->eof()) {
+    return;
+  }
+
+  auto loc1 = this->reader->loc;
+  auto ch1 = this->reader->next();
+
+  if (Token::isWhitespace(ch1)) {
+    this->_walk(Token::isWhitespace);
+
+    this->loc = this->reader->loc;
+    this->whitespace();
+
+    return;
+  } else if (ch1 == '/' && !this->reader->eof()) {
+    auto ch2 = this->reader->next();
+
+    if (ch2 == '/') {
+      this->val += ch2;
+
+      while (!this->reader->eof()) {
+        auto loc3 = this->reader->loc;
+        auto ch3 = this->reader->next();
+
+        if (ch3 == '\n') {
+          this->reader->seek(loc3);
+          break;
+        }
+
+        this->val += ch3;
+      }
+
+      this->loc = this->reader->loc;
+      this->whitespace();
+
+      return;
+    } else if (ch2 == '*') {
+      this->val += ch2;
+
+      if (this->reader->eof()) {
+        throw Error(this->reader, this->loc, E0001);
+      }
+
+      while (true) {
+        auto ch3 = this->reader->next();
+        this->val += ch3;
+
+        if (this->reader->eof()) {
+          throw Error(this->reader, this->loc, E0001);
+        }
+
+        if (ch3 == '*') {
+          auto loc4 = this->reader->loc;
+          auto ch4 = this->reader->next();
+
+          if (ch4 == '/') {
+            this->val += ch4;
+            break;
+          } else {
+            this->reader->seek(loc4);
+          }
+        }
+      }
+
+      this->loc = this->reader->loc;
+      this->whitespace();
+
+      return;
+    }
+  }
+
+  this->reader->seek(loc1);
+}
+
 Token Lexer::_litFloat (TokenType type) {
   if (!this->reader->eof()) {
     auto loc1 = this->reader->loc;
@@ -431,8 +511,11 @@ Token Lexer::_opEq2 (char ch, TokenType type1, TokenType type2, TokenType type3,
   }
 }
 
-Token Lexer::_tok (TokenType type) const {
-  return Token{type, this->val, this->loc, this->reader->loc};
+Token Lexer::_tok (TokenType type) {
+  auto tok = Token{type, this->val, this->loc, this->reader->loc};
+  this->loc = this->reader->loc;
+
+  return tok;
 }
 
 void Lexer::_walk (const std::function<bool (char)> &fn) {
@@ -507,73 +590,4 @@ void Lexer::_walkLitFloatExp (ReaderLocation loc0) {
 
     this->val += ch3;
   }
-}
-
-void Lexer::_whitespace () {
-  if (this->reader->eof()) {
-    return;
-  }
-
-  auto loc1 = this->reader->loc;
-  auto ch1 = this->reader->next();
-
-  if (Token::isWhitespace(ch1)) {
-    this->_walk(Token::isWhitespace);
-    this->_whitespace();
-
-    return;
-  } else if (ch1 == '/' && !this->reader->eof()) {
-    auto ch2 = this->reader->next();
-
-    if (ch2 == '/') {
-      this->val += ch2;
-
-      while (!this->reader->eof()) {
-        auto loc3 = this->reader->loc;
-        auto ch3 = this->reader->next();
-
-        if (ch3 == '\n') {
-          this->reader->seek(loc3);
-          break;
-        }
-
-        this->val += ch3;
-      }
-
-      this->_whitespace();
-      return;
-    } else if (ch2 == '*') {
-      this->val += ch2;
-
-      if (this->reader->eof()) {
-        throw Error(this->reader, this->loc, E0001);
-      }
-
-      while (true) {
-        auto ch3 = this->reader->next();
-        this->val += ch3;
-
-        if (this->reader->eof()) {
-          throw Error(this->reader, this->loc, E0001);
-        }
-
-        if (ch3 == '*') {
-          auto loc4 = this->reader->loc;
-          auto ch4 = this->reader->next();
-
-          if (ch4 == '/') {
-            this->val += ch4;
-            break;
-          } else {
-            this->reader->seek(loc4);
-          }
-        }
-      }
-
-      this->_whitespace();
-      return;
-    }
-  }
-
-  this->reader->seek(loc1);
 }

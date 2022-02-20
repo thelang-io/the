@@ -63,7 +63,7 @@ int main (int argc, char *argv[]) {
           break;
         }
 
-        std::cout << stmt.str() << std::endl;
+        std::cout << stmt.xml() << std::endl;
       }
 
       return EXIT_SUCCESS;

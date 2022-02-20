@@ -17,6 +17,8 @@ struct ReaderLocation {
   std::size_t pos = 0;
   std::size_t line = 1;
   std::size_t col = 0;
+
+  std::string str () const;
 };
 
 class Reader {

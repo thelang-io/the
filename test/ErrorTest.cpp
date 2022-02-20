@@ -18,7 +18,7 @@ TEST(ErrorTest, ThrowsExactMessage) {
 }
 
 TEST(LexerErrorTest, SingleToken) {
-  auto reader = ::testing::NiceMock<MockReader>("@");
+  auto reader = testing::NiceMock<MockReader>("@");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE({
@@ -27,7 +27,7 @@ TEST(LexerErrorTest, SingleToken) {
 }
 
 TEST(LexerErrorTest, MultipleTokens) {
-  auto reader = ::testing::NiceMock<MockReader>("test");
+  auto reader = testing::NiceMock<MockReader>("test");
   auto lexer = Lexer(&reader);
 
   reader.loc = ReaderLocation{4, 1, 4};
@@ -38,7 +38,7 @@ TEST(LexerErrorTest, MultipleTokens) {
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterTokens) {
-  auto reader = ::testing::NiceMock<MockReader>("1 + test");
+  auto reader = testing::NiceMock<MockReader>("1 + test");
   auto lexer = Lexer(&reader);
 
   lexer.loc = ReaderLocation{4, 1, 4};
@@ -50,7 +50,7 @@ TEST(LexerErrorTest, MultipleTokensAfterTokens) {
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
-  auto reader = ::testing::NiceMock<MockReader>("print()\n/*Hello");
+  auto reader = testing::NiceMock<MockReader>("print()\n/*Hello");
   auto lexer = Lexer(&reader);
 
   lexer.loc = ReaderLocation{8, 2, 0};
@@ -62,7 +62,7 @@ TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
 }
 
 TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
-  auto reader = ::testing::NiceMock<MockReader>("print()\n/*Hello\nDenis");
+  auto reader = testing::NiceMock<MockReader>("print()\n/*Hello\nDenis");
   auto lexer = Lexer(&reader);
 
   lexer.loc = ReaderLocation{8, 2, 0};
@@ -74,7 +74,7 @@ TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
 }
 
 TEST(LexerErrorTest, MultipleTokensBeforeNewLine) {
-  auto reader = ::testing::NiceMock<MockReader>("/*Hello\nDenis");
+  auto reader = testing::NiceMock<MockReader>("/*Hello\nDenis");
   auto lexer = Lexer(&reader);
 
   reader.loc = ReaderLocation{13, 2, 5};

@@ -23,7 +23,11 @@ class Lexer {
 
   explicit Lexer (Reader *);
 
-  Token next ();
+  // TODO Test
+  virtual void seek (ReaderLocation);
+  virtual Token next ();
+  // TODO Test
+  virtual void whitespace ();
 
  private:
   Lexer (const Lexer &);
@@ -33,10 +37,9 @@ class Lexer {
   Token _litNum (const std::function<bool (char)> &, TokenType);
   Token _opEq (TokenType, TokenType);
   Token _opEq2 (char, TokenType, TokenType, TokenType, const std::optional<TokenType> & = std::nullopt);
-  Token _tok (TokenType) const;
+  Token _tok (TokenType);
   void _walk (const std::function<bool (char)> &);
   void _walkLitFloatExp (ReaderLocation);
-  void _whitespace ();
 };
 
 #endif

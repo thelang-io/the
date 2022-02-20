@@ -216,10 +216,29 @@ std::string Token::str () const {
 
   auto result = std::string();
 
-  result += tokenTypeToStr(this->type);
-  result += "(" + std::to_string(this->start.line) + ":" + std::to_string(this->start.col + 1) + "-";
-  result += std::to_string(this->end.line) + ":" + std::to_string(this->end.col + 1) + ")";
+  result += tokenTypeToStr(this->type) + "(" + this->start.str() + "-" + this->end.str() + ")";
   result += escVal.empty() ? "" : ": " + escVal;
+
+  return result;
+}
+
+std::string Token::xml () const {
+  auto escVal = std::regex_replace(this->val, std::regex("\\\\0"), "\\\\0");
+  escVal = std::regex_replace(escVal, std::regex("\\\\n"), "\\\\n");
+  escVal = std::regex_replace(escVal, std::regex("\\\\r"), "\\\\r");
+  escVal = std::regex_replace(escVal, std::regex("\\\\t"), "\\\\t");
+  escVal = std::regex_replace(escVal, std::regex("\\n"), "\\n");
+  escVal = std::regex_replace(escVal, std::regex("\\r"), "\\r");
+  escVal = std::regex_replace(escVal, std::regex("\\t"), "\\t");
+  escVal = std::regex_replace(escVal, std::regex("\""), "\\\"");
+
+  auto result = std::string();
+
+  result += R"(<Token type=")" + tokenTypeToStr(this->type);
+  result += R"(" val=")" + escVal;
+  result += R"(" start=")" + this->start.str();
+  result += R"(" end=")" + this->end.str();
+  result += R"(" />)";
 
   return result;
 }

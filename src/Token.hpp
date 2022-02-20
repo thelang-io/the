@@ -131,6 +131,7 @@ struct Token {
 
   int precedence () const;
   std::string str () const;
+  std::string xml () const;
 };
 
 bool operator== (const Token &, const Token &);

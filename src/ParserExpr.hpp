@@ -42,8 +42,10 @@ struct ParserMember {
 };
 
 struct ParserStmtExpr {
-  std::shared_ptr<ParserExpr> expr;
+  std::shared_ptr<ParserExpr> body;
   bool parenthesized = false;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 struct ParserExprAccess {
@@ -79,7 +81,7 @@ struct ParserExprCond {
 };
 
 struct ParserExprLit {
-  Token val;
+  Token body;
 };
 
 struct ParserExprObj {

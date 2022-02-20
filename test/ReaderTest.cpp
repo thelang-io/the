@@ -11,7 +11,7 @@
 #include "../src/Error.hpp"
 #include "utils.hpp"
 
-class ReaderTest : public ::testing::Test {
+class ReaderTest : public testing::Test {
  protected:
   Reader *r1_;
   Reader *r2_;

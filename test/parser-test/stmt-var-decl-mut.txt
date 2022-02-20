@@ -1,0 +1,326 @@
+======= stdin =======
+mut a: bool = true
+mut b: byte = 0x1
+mut c: char = 'a'
+mut d: float = 1.61803
+mut e: f32 = 2.71828
+mut f: f64 = 3.14159
+mut g: int = 0
+mut h: i8 = -128
+mut i: i16 = -32768
+mut j: i32 = -2147483648
+mut k: i64 = -9223372036854775807
+mut l: str = "This is string"
+mut m: u8 = 255
+mut n: u16 = 65535
+mut o: u32 = 4294967295
+mut p: u64 = 18446744073709551615
+======= stdout =======
+<Stmt start="1:1" end="1:19">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="a" start="1:5" end="1:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="bool" start="1:8" end="1:12" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="KW_TRUE" val="true" start="1:15" end="1:19" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="2:1" end="2:18">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="b" start="2:5" end="2:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="byte" start="2:8" end="2:12" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_HEX" val="0x1" start="2:15" end="2:18" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="3:1" end="3:18">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="c" start="3:5" end="3:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="char" start="3:8" end="3:12" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_CHAR" val="'a'" start="3:15" end="3:18" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="4:1" end="4:23">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="d" start="4:5" end="4:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="float" start="4:8" end="4:13" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_FLOAT" val="1.61803" start="4:16" end="4:23" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="5:1" end="5:21">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="e" start="5:5" end="5:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="f32" start="5:8" end="5:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_FLOAT" val="2.71828" start="5:14" end="5:21" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="6:1" end="6:21">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="f" start="6:5" end="6:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="f64" start="6:8" end="6:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_FLOAT" val="3.14159" start="6:14" end="6:21" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="7:1" end="7:15">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="g" start="7:5" end="7:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="int" start="7:8" end="7:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_DEC" val="0" start="7:14" end="7:15" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="8:1" end="8:17">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="h" start="8:5" end="8:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="i8" start="8:8" end="8:10" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprUnary prefix="true">
+          <slot name="arg">
+            <StmtExpr parenthesized="false">
+              <ExprLit>
+                <Token type="LIT_INT_DEC" val="128" start="8:14" end="8:17" />
+              </ExprLit>
+            </StmtExpr>
+          </slot>
+          <slot name="op">
+            <Token type="OP_MINUS" val="-" start="8:13" end="8:14" />
+          </slot>
+        </ExprUnary>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="9:1" end="9:20">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="i" start="9:5" end="9:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="i16" start="9:8" end="9:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprUnary prefix="true">
+          <slot name="arg">
+            <StmtExpr parenthesized="false">
+              <ExprLit>
+                <Token type="LIT_INT_DEC" val="32768" start="9:15" end="9:20" />
+              </ExprLit>
+            </StmtExpr>
+          </slot>
+          <slot name="op">
+            <Token type="OP_MINUS" val="-" start="9:14" end="9:15" />
+          </slot>
+        </ExprUnary>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="10:1" end="10:25">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="j" start="10:5" end="10:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="i32" start="10:8" end="10:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprUnary prefix="true">
+          <slot name="arg">
+            <StmtExpr parenthesized="false">
+              <ExprLit>
+                <Token type="LIT_INT_DEC" val="2147483648" start="10:15" end="10:25" />
+              </ExprLit>
+            </StmtExpr>
+          </slot>
+          <slot name="op">
+            <Token type="OP_MINUS" val="-" start="10:14" end="10:15" />
+          </slot>
+        </ExprUnary>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="11:1" end="11:34">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="k" start="11:5" end="11:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="i64" start="11:8" end="11:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprUnary prefix="true">
+          <slot name="arg">
+            <StmtExpr parenthesized="false">
+              <ExprLit>
+                <Token type="LIT_INT_DEC" val="9223372036854775807" start="11:15" end="11:34" />
+              </ExprLit>
+            </StmtExpr>
+          </slot>
+          <slot name="op">
+            <Token type="OP_MINUS" val="-" start="11:14" end="11:15" />
+          </slot>
+        </ExprUnary>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="12:1" end="12:30">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="l" start="12:5" end="12:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="str" start="12:8" end="12:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_STR" val="\"This is string\"" start="12:14" end="12:30" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="13:1" end="13:16">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="m" start="13:5" end="13:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="u8" start="13:8" end="13:10" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_DEC" val="255" start="13:13" end="13:16" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="14:1" end="14:19">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="n" start="14:5" end="14:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="u16" start="14:8" end="14:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_DEC" val="65535" start="14:14" end="14:19" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="15:1" end="15:24">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="o" start="15:5" end="15:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="u32" start="15:8" end="15:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_DEC" val="4294967295" start="15:14" end="15:24" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>
+<Stmt start="16:1" end="16:34">
+  <StmtVarDecl mut="true">
+    <slot name="id">
+      <Token type="ID" val="p" start="16:5" end="16:6" />
+    </slot>
+    <slot name="type">
+      <Token type="ID" val="u64" start="16:8" end="16:11" />
+    </slot>
+    <slot name="init">
+      <StmtExpr parenthesized="false">
+        <ExprLit>
+          <Token type="LIT_INT_DEC" val="18446744073709551615" start="16:14" end="16:34" />
+        </ExprLit>
+      </StmtExpr>
+    </slot>
+  </StmtVarDecl>
+</Stmt>

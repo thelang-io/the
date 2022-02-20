@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.7.1
+  VERSION 1.7.2
   LANGUAGES CXX
 )
 
@@ -47,6 +47,7 @@ set(
 
   test/ErrorTest.cpp
   test/LexerTest.cpp
+  test/MockLexer.cpp test/MockLexer.hpp
   test/MockReader.cpp test/MockReader.hpp
   test/ParserTest.cpp
   test/ReaderTest.cpp

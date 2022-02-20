@@ -12,126 +12,126 @@
 #include "utils.hpp"
 
 TEST(LexerTest, ThrowsOnUnknownToken) {
-  auto reader = ::testing::NiceMock<MockReader>("@");
+  auto reader = testing::NiceMock<MockReader>("@");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^");
 }
 
 TEST(LexerTest, LexEof) {
-  auto reader = ::testing::NiceMock<MockReader>("");
+  auto reader = testing::NiceMock<MockReader>("");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:1-1:1)");
 }
 
 TEST(LexerTest, LexSingleWhitespace) {
-  auto reader = ::testing::NiceMock<MockReader>(" ");
+  auto reader = testing::NiceMock<MockReader>(" ");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:2-1:2)");
 }
 
 TEST(LexerTest, LexMultipleWhitespaces) {
-  auto reader = ::testing::NiceMock<MockReader>(" \n\t");
+  auto reader = testing::NiceMock<MockReader>(" \n\t");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(2:2-2:2)");
 }
 
 TEST(LexerTest, LexEmptyBlockComment) {
-  auto reader = ::testing::NiceMock<MockReader>("/**/");
+  auto reader = testing::NiceMock<MockReader>("/**/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:5-1:5)");
 }
 
 TEST(LexerTest, LexAsteriskBlockComment) {
-  auto reader = ::testing::NiceMock<MockReader>("/***/");
+  auto reader = testing::NiceMock<MockReader>("/***/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:6-1:6)");
 }
 
 TEST(LexerTest, LexSingleBlockComment) {
-  auto reader = ::testing::NiceMock<MockReader>("/*Hello Kendall*/");
+  auto reader = testing::NiceMock<MockReader>("/*Hello Kendall*/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:18-1:18)");
 }
 
 TEST(LexerTest, LexMultipleBlockComments) {
-  auto reader = ::testing::NiceMock<MockReader>("/*Hello Kim*//*Hello Dream*//*Hello Stormi*/");
+  auto reader = testing::NiceMock<MockReader>("/*Hello Kim*//*Hello Dream*//*Hello Stormi*/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:45-1:45)");
 }
 
 TEST(LexerTest, LexMultilineBlockComment) {
-  auto reader = ::testing::NiceMock<MockReader>("/*Hello Bella\nHello Olivia\nHello Rosa*/");
+  auto reader = testing::NiceMock<MockReader>("/*Hello Bella\nHello Olivia\nHello Rosa*/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(3:13-3:13)");
 }
 
 TEST(LexerTest, ThrowsOnEmptyNotClosedBlockComment) {
-  auto reader = ::testing::NiceMock<MockReader>("/*");
+  auto reader = testing::NiceMock<MockReader>("/*");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + "\n  1 | /*\n    | ^~");
 }
 
 TEST(LexerTest, ThrowsOnNotClosedBlockComment) {
-  auto reader = ::testing::NiceMock<MockReader>("/*Hello");
+  auto reader = testing::NiceMock<MockReader>("/*Hello");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~");
 }
 
 TEST(LexerTest, LexEmptyLineCommentNoNewLine) {
-  auto reader = ::testing::NiceMock<MockReader>("//");
+  auto reader = testing::NiceMock<MockReader>("//");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:3-1:3)");
 }
 
 TEST(LexerTest, LexEmptyLineComment) {
-  auto reader = ::testing::NiceMock<MockReader>("//\n");
+  auto reader = testing::NiceMock<MockReader>("//\n");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(2:1-2:1)");
 }
 
 TEST(LexerTest, LexLineCommentNoNewLine) {
-  auto reader = ::testing::NiceMock<MockReader>("//Hello Ariana");
+  auto reader = testing::NiceMock<MockReader>("//Hello Ariana");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(1:15-1:15)");
 }
 
 TEST(LexerTest, LexLineComment) {
-  auto reader = ::testing::NiceMock<MockReader>("//Hello Hailey\n");
+  auto reader = testing::NiceMock<MockReader>("//Hello Hailey\n");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(2:1-2:1)");
 }
 
 TEST(LexerTest, LexWhitespacesCombinedWithComments) {
-  auto reader = ::testing::NiceMock<MockReader>(" \t\r//Hello Mary\n/*Hello Linda*/");
+  auto reader = testing::NiceMock<MockReader>(" \t\r//Hello Mary\n/*Hello Linda*/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "EOF(2:16-2:16)");
 }
 
 TEST(LexerTest, LexWhitespaceBeforeToken) {
-  auto reader = ::testing::NiceMock<MockReader>(" \t;");
+  auto reader = testing::NiceMock<MockReader>(" \t;");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "OP_SEMI(1:3-1:4): ;");
 }
 
 TEST(LexerTest, LexWhitespaceAfterToken) {
-  auto reader = ::testing::NiceMock<MockReader>("; \t");
+  auto reader = testing::NiceMock<MockReader>("; \t");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "OP_SEMI(1:1-1:2): ;");
@@ -139,14 +139,14 @@ TEST(LexerTest, LexWhitespaceAfterToken) {
 }
 
 TEST(LexerTest, LexBlockCommentBeforeToken) {
-  auto reader = ::testing::NiceMock<MockReader>("/*Hello Anna*/,");
+  auto reader = testing::NiceMock<MockReader>("/*Hello Anna*/,");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "OP_COMMA(1:15-1:16): ,");
 }
 
 TEST(LexerTest, LexBlockCommentAfterToken) {
-  auto reader = ::testing::NiceMock<MockReader>(",/*Hello Anna*/");
+  auto reader = testing::NiceMock<MockReader>(",/*Hello Anna*/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "OP_COMMA(1:1-1:2): ,");
@@ -154,14 +154,14 @@ TEST(LexerTest, LexBlockCommentAfterToken) {
 }
 
 TEST(LexerTest, LexLineCommentBeforeToken) {
-  auto reader = ::testing::NiceMock<MockReader>("//Hello Kylie\n+");
+  auto reader = testing::NiceMock<MockReader>("//Hello Kylie\n+");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "OP_PLUS(2:1-2:2): +");
 }
 
 TEST(LexerTest, LexLineCommentAfterToken) {
-  auto reader = ::testing::NiceMock<MockReader>("+//Hello Kylie\n");
+  auto reader = testing::NiceMock<MockReader>("+//Hello Kylie\n");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "OP_PLUS(1:1-1:2): +");
@@ -169,9 +169,9 @@ TEST(LexerTest, LexLineCommentAfterToken) {
 }
 
 TEST(LexerTest, LexOperations) {
-  auto r1 = ::testing::NiceMock<MockReader>("&^:,.=!>{[(<-|%+?}]);/~*");
-  auto r2 = ::testing::NiceMock<MockReader>("&&!!<<--||++?.?\?>>**");
-  auto r3 = ::testing::NiceMock<MockReader>("&=&&=^=:=...==!=>=<<=<=-=|=||=%=+=?\?=>>=/=*=**=");
+  auto r1 = testing::NiceMock<MockReader>("&^:,.=!>{[(<-|%+?}]);/~*");
+  auto r2 = testing::NiceMock<MockReader>("&&!!<<--||++?.?\?>>**");
+  auto r3 = testing::NiceMock<MockReader>("&=&&=^=:=...==!=>=<<=<=-=|=||=%=+=?\?=>>=/=*=**=");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -235,9 +235,9 @@ TEST(LexerTest, LexOperations) {
 }
 
 TEST(LexerTest, LexOperationsWhitespace) {
-  auto r1 = ::testing::NiceMock<MockReader>(" & ^ : , . = ! > { [ ( < - | % + ? } ] ) ; / * ~ ");
-  auto r2 = ::testing::NiceMock<MockReader>(" && !! << -- || ++ ?. ?? >> ** ");
-  auto r3 = ::testing::NiceMock<MockReader>(" &= &&= ^= := ... == != >= <<= <= -= |= ||= %= += ?\?= >>= /= *= **= ");
+  auto r1 = testing::NiceMock<MockReader>(" & ^ : , . = ! > { [ ( < - | % + ? } ] ) ; / * ~ ");
+  auto r2 = testing::NiceMock<MockReader>(" && !! << -- || ++ ?. ?? >> ** ");
+  auto r3 = testing::NiceMock<MockReader>(" &= &&= ^= := ... == != >= <<= <= -= |= ||= %= += ?\?= >>= /= *= **= ");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -304,60 +304,60 @@ TEST(LexerTest, LexOperationsWhitespace) {
 }
 
 TEST(LexerTest, LexOperationsEof) {
-  auto r1 = ::testing::NiceMock<MockReader>("&");
-  auto r2 = ::testing::NiceMock<MockReader>("^");
-  auto r3 = ::testing::NiceMock<MockReader>(":");
-  auto r4 = ::testing::NiceMock<MockReader>(",");
-  auto r5 = ::testing::NiceMock<MockReader>(".");
-  auto r6 = ::testing::NiceMock<MockReader>("=");
-  auto r7 = ::testing::NiceMock<MockReader>("!");
-  auto r8 = ::testing::NiceMock<MockReader>(">");
-  auto r9 = ::testing::NiceMock<MockReader>("{");
-  auto r10 = ::testing::NiceMock<MockReader>("[");
-  auto r11 = ::testing::NiceMock<MockReader>("(");
-  auto r12 = ::testing::NiceMock<MockReader>("<");
-  auto r13 = ::testing::NiceMock<MockReader>("-");
-  auto r14 = ::testing::NiceMock<MockReader>("|");
-  auto r15 = ::testing::NiceMock<MockReader>("%");
-  auto r16 = ::testing::NiceMock<MockReader>("+");
-  auto r17 = ::testing::NiceMock<MockReader>("?");
-  auto r18 = ::testing::NiceMock<MockReader>("}");
-  auto r19 = ::testing::NiceMock<MockReader>("]");
-  auto r20 = ::testing::NiceMock<MockReader>(")");
-  auto r21 = ::testing::NiceMock<MockReader>(";");
-  auto r22 = ::testing::NiceMock<MockReader>("/");
-  auto r23 = ::testing::NiceMock<MockReader>("*");
-  auto r24 = ::testing::NiceMock<MockReader>("~");
-  auto r25 = ::testing::NiceMock<MockReader>("&&");
-  auto r26 = ::testing::NiceMock<MockReader>("!!");
-  auto r27 = ::testing::NiceMock<MockReader>("<<");
-  auto r28 = ::testing::NiceMock<MockReader>("--");
-  auto r29 = ::testing::NiceMock<MockReader>("||");
-  auto r30 = ::testing::NiceMock<MockReader>("++");
-  auto r31 = ::testing::NiceMock<MockReader>("?.");
-  auto r32 = ::testing::NiceMock<MockReader>("??");
-  auto r33 = ::testing::NiceMock<MockReader>(">>");
-  auto r34 = ::testing::NiceMock<MockReader>("**");
-  auto r35 = ::testing::NiceMock<MockReader>("&=");
-  auto r36 = ::testing::NiceMock<MockReader>("&&=");
-  auto r37 = ::testing::NiceMock<MockReader>("^=");
-  auto r38 = ::testing::NiceMock<MockReader>(":=");
-  auto r39 = ::testing::NiceMock<MockReader>("...");
-  auto r40 = ::testing::NiceMock<MockReader>("==");
-  auto r41 = ::testing::NiceMock<MockReader>("!=");
-  auto r42 = ::testing::NiceMock<MockReader>(">=");
-  auto r43 = ::testing::NiceMock<MockReader>("<<=");
-  auto r44 = ::testing::NiceMock<MockReader>("<=");
-  auto r45 = ::testing::NiceMock<MockReader>("-=");
-  auto r46 = ::testing::NiceMock<MockReader>("|=");
-  auto r47 = ::testing::NiceMock<MockReader>("||=");
-  auto r48 = ::testing::NiceMock<MockReader>("%=");
-  auto r49 = ::testing::NiceMock<MockReader>("+=");
-  auto r50 = ::testing::NiceMock<MockReader>("?\?=");
-  auto r51 = ::testing::NiceMock<MockReader>(">>=");
-  auto r52 = ::testing::NiceMock<MockReader>("/=");
-  auto r53 = ::testing::NiceMock<MockReader>("*=");
-  auto r54 = ::testing::NiceMock<MockReader>("**=");
+  auto r1 = testing::NiceMock<MockReader>("&");
+  auto r2 = testing::NiceMock<MockReader>("^");
+  auto r3 = testing::NiceMock<MockReader>(":");
+  auto r4 = testing::NiceMock<MockReader>(",");
+  auto r5 = testing::NiceMock<MockReader>(".");
+  auto r6 = testing::NiceMock<MockReader>("=");
+  auto r7 = testing::NiceMock<MockReader>("!");
+  auto r8 = testing::NiceMock<MockReader>(">");
+  auto r9 = testing::NiceMock<MockReader>("{");
+  auto r10 = testing::NiceMock<MockReader>("[");
+  auto r11 = testing::NiceMock<MockReader>("(");
+  auto r12 = testing::NiceMock<MockReader>("<");
+  auto r13 = testing::NiceMock<MockReader>("-");
+  auto r14 = testing::NiceMock<MockReader>("|");
+  auto r15 = testing::NiceMock<MockReader>("%");
+  auto r16 = testing::NiceMock<MockReader>("+");
+  auto r17 = testing::NiceMock<MockReader>("?");
+  auto r18 = testing::NiceMock<MockReader>("}");
+  auto r19 = testing::NiceMock<MockReader>("]");
+  auto r20 = testing::NiceMock<MockReader>(")");
+  auto r21 = testing::NiceMock<MockReader>(";");
+  auto r22 = testing::NiceMock<MockReader>("/");
+  auto r23 = testing::NiceMock<MockReader>("*");
+  auto r24 = testing::NiceMock<MockReader>("~");
+  auto r25 = testing::NiceMock<MockReader>("&&");
+  auto r26 = testing::NiceMock<MockReader>("!!");
+  auto r27 = testing::NiceMock<MockReader>("<<");
+  auto r28 = testing::NiceMock<MockReader>("--");
+  auto r29 = testing::NiceMock<MockReader>("||");
+  auto r30 = testing::NiceMock<MockReader>("++");
+  auto r31 = testing::NiceMock<MockReader>("?.");
+  auto r32 = testing::NiceMock<MockReader>("??");
+  auto r33 = testing::NiceMock<MockReader>(">>");
+  auto r34 = testing::NiceMock<MockReader>("**");
+  auto r35 = testing::NiceMock<MockReader>("&=");
+  auto r36 = testing::NiceMock<MockReader>("&&=");
+  auto r37 = testing::NiceMock<MockReader>("^=");
+  auto r38 = testing::NiceMock<MockReader>(":=");
+  auto r39 = testing::NiceMock<MockReader>("...");
+  auto r40 = testing::NiceMock<MockReader>("==");
+  auto r41 = testing::NiceMock<MockReader>("!=");
+  auto r42 = testing::NiceMock<MockReader>(">=");
+  auto r43 = testing::NiceMock<MockReader>("<<=");
+  auto r44 = testing::NiceMock<MockReader>("<=");
+  auto r45 = testing::NiceMock<MockReader>("-=");
+  auto r46 = testing::NiceMock<MockReader>("|=");
+  auto r47 = testing::NiceMock<MockReader>("||=");
+  auto r48 = testing::NiceMock<MockReader>("%=");
+  auto r49 = testing::NiceMock<MockReader>("+=");
+  auto r50 = testing::NiceMock<MockReader>("?\?=");
+  auto r51 = testing::NiceMock<MockReader>(">>=");
+  auto r52 = testing::NiceMock<MockReader>("/=");
+  auto r53 = testing::NiceMock<MockReader>("*=");
+  auto r54 = testing::NiceMock<MockReader>("**=");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -473,37 +473,37 @@ TEST(LexerTest, LexOperationsEof) {
 }
 
 TEST(LexerTest, LexKeywords) {
-  auto r1 = ::testing::NiceMock<MockReader>("as");
-  auto r2 = ::testing::NiceMock<MockReader>("async");
-  auto r3 = ::testing::NiceMock<MockReader>("await");
-  auto r4 = ::testing::NiceMock<MockReader>("break");
-  auto r5 = ::testing::NiceMock<MockReader>("case");
-  auto r6 = ::testing::NiceMock<MockReader>("catch");
-  auto r7 = ::testing::NiceMock<MockReader>("const");
-  auto r8 = ::testing::NiceMock<MockReader>("continue");
-  auto r9 = ::testing::NiceMock<MockReader>("default");
-  auto r10 = ::testing::NiceMock<MockReader>("elif");
-  auto r11 = ::testing::NiceMock<MockReader>("else");
-  auto r12 = ::testing::NiceMock<MockReader>("enum");
-  auto r13 = ::testing::NiceMock<MockReader>("export");
-  auto r14 = ::testing::NiceMock<MockReader>("fallthrough");
-  auto r15 = ::testing::NiceMock<MockReader>("false");
-  auto r16 = ::testing::NiceMock<MockReader>("fn");
-  auto r17 = ::testing::NiceMock<MockReader>("from");
-  auto r18 = ::testing::NiceMock<MockReader>("if");
-  auto r19 = ::testing::NiceMock<MockReader>("import");
-  auto r20 = ::testing::NiceMock<MockReader>("is");
-  auto r21 = ::testing::NiceMock<MockReader>("loop");
-  auto r22 = ::testing::NiceMock<MockReader>("main");
-  auto r23 = ::testing::NiceMock<MockReader>("match");
-  auto r24 = ::testing::NiceMock<MockReader>("mut");
-  auto r25 = ::testing::NiceMock<MockReader>("nil");
-  auto r26 = ::testing::NiceMock<MockReader>("obj");
-  auto r27 = ::testing::NiceMock<MockReader>("return");
-  auto r28 = ::testing::NiceMock<MockReader>("throw");
-  auto r29 = ::testing::NiceMock<MockReader>("true");
-  auto r30 = ::testing::NiceMock<MockReader>("try");
-  auto r31 = ::testing::NiceMock<MockReader>("union");
+  auto r1 = testing::NiceMock<MockReader>("as");
+  auto r2 = testing::NiceMock<MockReader>("async");
+  auto r3 = testing::NiceMock<MockReader>("await");
+  auto r4 = testing::NiceMock<MockReader>("break");
+  auto r5 = testing::NiceMock<MockReader>("case");
+  auto r6 = testing::NiceMock<MockReader>("catch");
+  auto r7 = testing::NiceMock<MockReader>("const");
+  auto r8 = testing::NiceMock<MockReader>("continue");
+  auto r9 = testing::NiceMock<MockReader>("default");
+  auto r10 = testing::NiceMock<MockReader>("elif");
+  auto r11 = testing::NiceMock<MockReader>("else");
+  auto r12 = testing::NiceMock<MockReader>("enum");
+  auto r13 = testing::NiceMock<MockReader>("export");
+  auto r14 = testing::NiceMock<MockReader>("fallthrough");
+  auto r15 = testing::NiceMock<MockReader>("false");
+  auto r16 = testing::NiceMock<MockReader>("fn");
+  auto r17 = testing::NiceMock<MockReader>("from");
+  auto r18 = testing::NiceMock<MockReader>("if");
+  auto r19 = testing::NiceMock<MockReader>("import");
+  auto r20 = testing::NiceMock<MockReader>("is");
+  auto r21 = testing::NiceMock<MockReader>("loop");
+  auto r22 = testing::NiceMock<MockReader>("main");
+  auto r23 = testing::NiceMock<MockReader>("match");
+  auto r24 = testing::NiceMock<MockReader>("mut");
+  auto r25 = testing::NiceMock<MockReader>("nil");
+  auto r26 = testing::NiceMock<MockReader>("obj");
+  auto r27 = testing::NiceMock<MockReader>("return");
+  auto r28 = testing::NiceMock<MockReader>("throw");
+  auto r29 = testing::NiceMock<MockReader>("true");
+  auto r30 = testing::NiceMock<MockReader>("try");
+  auto r31 = testing::NiceMock<MockReader>("union");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -571,7 +571,7 @@ TEST(LexerTest, LexKeywords) {
 }
 
 TEST(LexerTest, LexKeywordsWhitespace) {
-  auto reader = ::testing::NiceMock<MockReader>(
+  auto reader = testing::NiceMock<MockReader>(
     " as async await break case catch const continue default elif else enum export fallthrough false fn from if"
     " import is loop main match mut nil obj return throw true try union "
   );
@@ -613,7 +613,7 @@ TEST(LexerTest, LexKeywordsWhitespace) {
 }
 
 TEST(LexerTest, LexKeywordsAsIdentifiers) {
-  auto reader = ::testing::NiceMock<MockReader>(
+  auto reader = testing::NiceMock<MockReader>(
     " asm asynchronously awaited breakpoint casein catching constant continues defaulted elifffy elsewhere"
     " enumeration exported fallthroughout falser fname fromental iffy importing isle looped maintain matching"
     " mutable nilled object returned throwing trues tryout unions "
@@ -655,12 +655,12 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
 }
 
 TEST(LexerTest, LexIdentifier) {
-  auto r1 = ::testing::NiceMock<MockReader>("a");
-  auto r2 = ::testing::NiceMock<MockReader>("A");
-  auto r3 = ::testing::NiceMock<MockReader>("_");
-  auto r4 = ::testing::NiceMock<MockReader>("number1");
-  auto r5 = ::testing::NiceMock<MockReader>("ANYTHING");
-  auto r6 = ::testing::NiceMock<MockReader>("__I1_D2__");
+  auto r1 = testing::NiceMock<MockReader>("a");
+  auto r2 = testing::NiceMock<MockReader>("A");
+  auto r3 = testing::NiceMock<MockReader>("_");
+  auto r4 = testing::NiceMock<MockReader>("number1");
+  auto r5 = testing::NiceMock<MockReader>("ANYTHING");
+  auto r6 = testing::NiceMock<MockReader>("__I1_D2__");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -678,7 +678,7 @@ TEST(LexerTest, LexIdentifier) {
 }
 
 TEST(LexerTest, LexIdentifierWhitespace) {
-  auto reader = ::testing::NiceMock<MockReader>(" a A _ number1 ANYTHING __I1_D2__ ");
+  auto reader = testing::NiceMock<MockReader>(" a A _ number1 ANYTHING __I1_D2__ ");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "ID(1:2-1:3): a");
@@ -691,7 +691,7 @@ TEST(LexerTest, LexIdentifierWhitespace) {
 }
 
 TEST(LexerTest, LexLitChar) {
-  auto reader = ::testing::NiceMock<MockReader>(R"(' ''!''A''a''9''\n''\"''\'''\\')");
+  auto reader = testing::NiceMock<MockReader>(R"(' ''!''A''a''9''\n''\"''\'''\\')");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:1-1:4): ' '");
@@ -706,7 +706,7 @@ TEST(LexerTest, LexLitChar) {
 }
 
 TEST(LexerTest, LexLitCharWhitespace) {
-  auto reader = ::testing::NiceMock<MockReader>(R"( ' ' '!' 'A' 'a' '9' '\n' '\"' '\'' '\\' )");
+  auto reader = testing::NiceMock<MockReader>(R"( ' ' '!' 'A' 'a' '9' '\n' '\"' '\'' '\\' )");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(lexer.next().str(), "LIT_CHAR(1:2-1:5): ' '");
@@ -722,15 +722,15 @@ TEST(LexerTest, LexLitCharWhitespace) {
 }
 
 TEST(LexerTest, LexLitCharEof) {
-  auto r1 = ::testing::NiceMock<MockReader>("' '");
-  auto r2 = ::testing::NiceMock<MockReader>("'!'");
-  auto r3 = ::testing::NiceMock<MockReader>("'A'");
-  auto r4 = ::testing::NiceMock<MockReader>("'a'");
-  auto r5 = ::testing::NiceMock<MockReader>("'9'");
-  auto r6 = ::testing::NiceMock<MockReader>(R"('\n')");
-  auto r7 = ::testing::NiceMock<MockReader>(R"('\"')");
-  auto r8 = ::testing::NiceMock<MockReader>(R"('\'')");
-  auto r9 = ::testing::NiceMock<MockReader>(R"('\\')");
+  auto r1 = testing::NiceMock<MockReader>("' '");
+  auto r2 = testing::NiceMock<MockReader>("'!'");
+  auto r3 = testing::NiceMock<MockReader>("'A'");
+  auto r4 = testing::NiceMock<MockReader>("'a'");
+  auto r5 = testing::NiceMock<MockReader>("'9'");
+  auto r6 = testing::NiceMock<MockReader>(R"('\n')");
+  auto r7 = testing::NiceMock<MockReader>(R"('\"')");
+  auto r8 = testing::NiceMock<MockReader>(R"('\'')");
+  auto r9 = testing::NiceMock<MockReader>(R"('\\')");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -754,10 +754,10 @@ TEST(LexerTest, LexLitCharEof) {
 }
 
 TEST(LexerTest, ThrowsOnNotClosedLitChar) {
-  auto r1 = ::testing::NiceMock<MockReader>("'");
-  auto r2 = ::testing::NiceMock<MockReader>(R"('a)");
-  auto r3 = ::testing::NiceMock<MockReader>(R"('\)");
-  auto r4 = ::testing::NiceMock<MockReader>(R"('\n)");
+  auto r1 = testing::NiceMock<MockReader>("'");
+  auto r2 = testing::NiceMock<MockReader>(R"('a)");
+  auto r3 = testing::NiceMock<MockReader>(R"('\)");
+  auto r4 = testing::NiceMock<MockReader>(R"('\n)");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -771,17 +771,17 @@ TEST(LexerTest, ThrowsOnNotClosedLitChar) {
 }
 
 TEST(LexerTest, ThrowsOnEmptyLitChar) {
-  auto reader = ::testing::NiceMock<MockReader>("''");
+  auto reader = testing::NiceMock<MockReader>("''");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0004 + "\n  1 | ''\n    | ^~");
 }
 
 TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
-  auto r1 = ::testing::NiceMock<MockReader>(R"('\m)");
-  auto r2 = ::testing::NiceMock<MockReader>(R"('\m')");
-  auto r3 = ::testing::NiceMock<MockReader>(R"('\ma)");
-  auto r4 = ::testing::NiceMock<MockReader>(R"('\ma')");
+  auto r1 = testing::NiceMock<MockReader>(R"('\m)");
+  auto r2 = testing::NiceMock<MockReader>(R"('\m')");
+  auto r3 = testing::NiceMock<MockReader>(R"('\ma)");
+  auto r4 = testing::NiceMock<MockReader>(R"('\ma')");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -795,8 +795,8 @@ TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
 }
 
 TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
-  auto r1 = ::testing::NiceMock<MockReader>(R"('ch)");
-  auto r2 = ::testing::NiceMock<MockReader>(R"('char')");
+  auto r1 = testing::NiceMock<MockReader>(R"('ch)");
+  auto r2 = testing::NiceMock<MockReader>(R"('char')");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -806,27 +806,27 @@ TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
 }
 
 TEST(LexerTest, LexLitFloat) {
-  auto r1 = ::testing::NiceMock<MockReader>("0E0");
-  auto r2 = ::testing::NiceMock<MockReader>("0E1");
-  auto r3 = ::testing::NiceMock<MockReader>("1e308");
-  auto r4 = ::testing::NiceMock<MockReader>("1e+0");
-  auto r5 = ::testing::NiceMock<MockReader>("18446744073709551615e+1");
-  auto r6 = ::testing::NiceMock<MockReader>("18446744073709551615e-308");
-  auto r7 = ::testing::NiceMock<MockReader>("0.E0");
-  auto r8 = ::testing::NiceMock<MockReader>("0.E1");
-  auto r9 = ::testing::NiceMock<MockReader>("1.e308");
-  auto r10 = ::testing::NiceMock<MockReader>("1.e+0");
-  auto r11 = ::testing::NiceMock<MockReader>("18446744073709551615.e+1");
-  auto r12 = ::testing::NiceMock<MockReader>("18446744073709551615.e-308");
-  auto r13 = ::testing::NiceMock<MockReader>("0.0");
-  auto r14 = ::testing::NiceMock<MockReader>("1.1");
-  auto r15 = ::testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615");
-  auto r16 = ::testing::NiceMock<MockReader>("0.0E0");
-  auto r17 = ::testing::NiceMock<MockReader>("0.0E1");
-  auto r18 = ::testing::NiceMock<MockReader>("1.1e308");
-  auto r19 = ::testing::NiceMock<MockReader>("1.1E+0");
-  auto r20 = ::testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615E+1");
-  auto r21 = ::testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615e-308");
+  auto r1 = testing::NiceMock<MockReader>("0E0");
+  auto r2 = testing::NiceMock<MockReader>("0E1");
+  auto r3 = testing::NiceMock<MockReader>("1e308");
+  auto r4 = testing::NiceMock<MockReader>("1e+0");
+  auto r5 = testing::NiceMock<MockReader>("18446744073709551615e+1");
+  auto r6 = testing::NiceMock<MockReader>("18446744073709551615e-308");
+  auto r7 = testing::NiceMock<MockReader>("0.E0");
+  auto r8 = testing::NiceMock<MockReader>("0.E1");
+  auto r9 = testing::NiceMock<MockReader>("1.e308");
+  auto r10 = testing::NiceMock<MockReader>("1.e+0");
+  auto r11 = testing::NiceMock<MockReader>("18446744073709551615.e+1");
+  auto r12 = testing::NiceMock<MockReader>("18446744073709551615.e-308");
+  auto r13 = testing::NiceMock<MockReader>("0.0");
+  auto r14 = testing::NiceMock<MockReader>("1.1");
+  auto r15 = testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615");
+  auto r16 = testing::NiceMock<MockReader>("0.0E0");
+  auto r17 = testing::NiceMock<MockReader>("0.0E1");
+  auto r18 = testing::NiceMock<MockReader>("1.1e308");
+  auto r19 = testing::NiceMock<MockReader>("1.1E+0");
+  auto r20 = testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615E+1");
+  auto r21 = testing::NiceMock<MockReader>("18446744073709551615.18446744073709551615e-308");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -874,7 +874,7 @@ TEST(LexerTest, LexLitFloat) {
 }
 
 TEST(LexerTest, LexLitFloatWhitespace) {
-  auto reader = ::testing::NiceMock<MockReader>(
+  auto reader = testing::NiceMock<MockReader>(
     " 0E0 0E1 1e308 1e+0 18446744073709551615e+1 18446744073709551615e-308"
     " 0.E0 0.E1 1.e308 1.e+0 18446744073709551615.e+1 18446744073709551615.e-308"
     " 0.0 1.1 18446744073709551615.18446744073709551615"
@@ -909,21 +909,21 @@ TEST(LexerTest, LexLitFloatWhitespace) {
 }
 
 TEST(LexerTest, ThrowsOnInvalidLitFloat) {
-  auto r1 = ::testing::NiceMock<MockReader>(R"(1234.)");
-  auto r2 = ::testing::NiceMock<MockReader>(R"(1234.a)");
-  auto r3 = ::testing::NiceMock<MockReader>(R"(1234.aZ)");
-  auto r4 = ::testing::NiceMock<MockReader>(R"(1234.0a)");
-  auto r5 = ::testing::NiceMock<MockReader>(R"(1234.1aZ)");
-  auto r6 = ::testing::NiceMock<MockReader>(R"(1234e)");
-  auto r7 = ::testing::NiceMock<MockReader>(R"(1234e+)");
-  auto r8 = ::testing::NiceMock<MockReader>(R"(1234e-)");
-  auto r9 = ::testing::NiceMock<MockReader>(R"(1234e+a1)");
-  auto r10 = ::testing::NiceMock<MockReader>(R"(1234eZ)");
-  auto r11 = ::testing::NiceMock<MockReader>(R"(1234eZa)");
-  auto r12 = ::testing::NiceMock<MockReader>(R"(1234e5e6)");
-  auto r13 = ::testing::NiceMock<MockReader>(R"(1234e))");
-  auto r14 = ::testing::NiceMock<MockReader>(R"(1234e+))");
-  auto r15 = ::testing::NiceMock<MockReader>(R"(1234e-h))");
+  auto r1 = testing::NiceMock<MockReader>(R"(1234.)");
+  auto r2 = testing::NiceMock<MockReader>(R"(1234.a)");
+  auto r3 = testing::NiceMock<MockReader>(R"(1234.aZ)");
+  auto r4 = testing::NiceMock<MockReader>(R"(1234.0a)");
+  auto r5 = testing::NiceMock<MockReader>(R"(1234.1aZ)");
+  auto r6 = testing::NiceMock<MockReader>(R"(1234e)");
+  auto r7 = testing::NiceMock<MockReader>(R"(1234e+)");
+  auto r8 = testing::NiceMock<MockReader>(R"(1234e-)");
+  auto r9 = testing::NiceMock<MockReader>(R"(1234e+a1)");
+  auto r10 = testing::NiceMock<MockReader>(R"(1234eZ)");
+  auto r11 = testing::NiceMock<MockReader>(R"(1234eZa)");
+  auto r12 = testing::NiceMock<MockReader>(R"(1234e5e6)");
+  auto r13 = testing::NiceMock<MockReader>(R"(1234e))");
+  auto r14 = testing::NiceMock<MockReader>(R"(1234e+))");
+  auto r15 = testing::NiceMock<MockReader>(R"(1234e-h))");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -959,9 +959,9 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
 }
 
 TEST(LexerTest, ThrowsOnNonDecLitFloat) {
-  auto r1 = ::testing::NiceMock<MockReader>("0b1.0");
-  auto r2 = ::testing::NiceMock<MockReader>("0xa.0");
-  auto r3 = ::testing::NiceMock<MockReader>("0o1.0");
+  auto r1 = testing::NiceMock<MockReader>("0b1.0");
+  auto r2 = testing::NiceMock<MockReader>("0xa.0");
+  auto r3 = testing::NiceMock<MockReader>("0o1.0");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -973,7 +973,7 @@ TEST(LexerTest, ThrowsOnNonDecLitFloat) {
 }
 
 TEST(LexerTest, LexLitInteger) {
-  auto reader = ::testing::NiceMock<MockReader>(
+  auto reader = testing::NiceMock<MockReader>(
     "..0B0..0b1..0B00000000000000000000000000000000..0b11111111111111111111111111111111"
     "..0..1..18446744073709551615"
     "..0X0..0x9..0XA..0xf..0X9999999999999999..0xffffffffffffffff"
@@ -1052,7 +1052,7 @@ TEST(LexerTest, LexLitInteger) {
 }
 
 TEST(LexerTest, LexLitIntegerWhitespace) {
-  auto reader = ::testing::NiceMock<MockReader>(
+  auto reader = testing::NiceMock<MockReader>(
     " 0B0 0b1 0B00000000000000000000000000000000 0b11111111111111111111111111111111"
     " 0 1 18446744073709551615"
     " 0X0 0x9 0XA 0xf 0X9999999999999999 0xffffffffffffffff"
@@ -1082,23 +1082,23 @@ TEST(LexerTest, LexLitIntegerWhitespace) {
 }
 
 TEST(LexerTest, LexLitIntegerEof) {
-  auto r1 = ::testing::NiceMock<MockReader>("0B0");
-  auto r2 = ::testing::NiceMock<MockReader>("0b1");
-  auto r3 = ::testing::NiceMock<MockReader>("0B00000000000000000000000000000000");
-  auto r4 = ::testing::NiceMock<MockReader>("0b11111111111111111111111111111111");
-  auto r5 = ::testing::NiceMock<MockReader>("0");
-  auto r6 = ::testing::NiceMock<MockReader>("1");
-  auto r7 = ::testing::NiceMock<MockReader>("18446744073709551615");
-  auto r8 = ::testing::NiceMock<MockReader>("0X0");
-  auto r9 = ::testing::NiceMock<MockReader>("0x9");
-  auto r10 = ::testing::NiceMock<MockReader>("0XA");
-  auto r11 = ::testing::NiceMock<MockReader>("0xf");
-  auto r12 = ::testing::NiceMock<MockReader>("0X9999999999999999");
-  auto r13 = ::testing::NiceMock<MockReader>("0xffffffffffffffff");
-  auto r14 = ::testing::NiceMock<MockReader>("0O0");
-  auto r15 = ::testing::NiceMock<MockReader>("0o7");
-  auto r16 = ::testing::NiceMock<MockReader>("0O000000000000000000000");
-  auto r17 = ::testing::NiceMock<MockReader>("0o777777777777777777777");
+  auto r1 = testing::NiceMock<MockReader>("0B0");
+  auto r2 = testing::NiceMock<MockReader>("0b1");
+  auto r3 = testing::NiceMock<MockReader>("0B00000000000000000000000000000000");
+  auto r4 = testing::NiceMock<MockReader>("0b11111111111111111111111111111111");
+  auto r5 = testing::NiceMock<MockReader>("0");
+  auto r6 = testing::NiceMock<MockReader>("1");
+  auto r7 = testing::NiceMock<MockReader>("18446744073709551615");
+  auto r8 = testing::NiceMock<MockReader>("0X0");
+  auto r9 = testing::NiceMock<MockReader>("0x9");
+  auto r10 = testing::NiceMock<MockReader>("0XA");
+  auto r11 = testing::NiceMock<MockReader>("0xf");
+  auto r12 = testing::NiceMock<MockReader>("0X9999999999999999");
+  auto r13 = testing::NiceMock<MockReader>("0xffffffffffffffff");
+  auto r14 = testing::NiceMock<MockReader>("0O0");
+  auto r15 = testing::NiceMock<MockReader>("0o7");
+  auto r16 = testing::NiceMock<MockReader>("0O000000000000000000000");
+  auto r17 = testing::NiceMock<MockReader>("0o777777777777777777777");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -1138,8 +1138,8 @@ TEST(LexerTest, LexLitIntegerEof) {
 }
 
 TEST(LexerTest, ThrowsOnLitIntegerWithLeadingZero) {
-  auto r1 = ::testing::NiceMock<MockReader>("04");
-  auto r2 = ::testing::NiceMock<MockReader>("0400e0");
+  auto r1 = testing::NiceMock<MockReader>("04");
+  auto r2 = testing::NiceMock<MockReader>("0400e0");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -1149,27 +1149,27 @@ TEST(LexerTest, ThrowsOnLitIntegerWithLeadingZero) {
 }
 
 TEST(LexerTest, ThrowsOnInvalidLitInteger) {
-  auto r1 = ::testing::NiceMock<MockReader>("0B");
-  auto r2 = ::testing::NiceMock<MockReader>("0bG");
-  auto r3 = ::testing::NiceMock<MockReader>("0bGz");
-  auto r4 = ::testing::NiceMock<MockReader>("0b1g");
-  auto r5 = ::testing::NiceMock<MockReader>("0b1gZ");
-  auto r6 = ::testing::NiceMock<MockReader>("0b1b0");
-  auto r7 = ::testing::NiceMock<MockReader>("1234g");
-  auto r8 = ::testing::NiceMock<MockReader>("1234gZ");
-  auto r9 = ::testing::NiceMock<MockReader>("1234g0a");
-  auto r10 = ::testing::NiceMock<MockReader>("0x");
-  auto r11 = ::testing::NiceMock<MockReader>("0xG");
-  auto r12 = ::testing::NiceMock<MockReader>("0xGz");
-  auto r13 = ::testing::NiceMock<MockReader>("0Xag");
-  auto r14 = ::testing::NiceMock<MockReader>("0XagZ");
-  auto r15 = ::testing::NiceMock<MockReader>("0x1x2");
-  auto r16 = ::testing::NiceMock<MockReader>("0o");
-  auto r17 = ::testing::NiceMock<MockReader>("0oG");
-  auto r18 = ::testing::NiceMock<MockReader>("0oGz");
-  auto r19 = ::testing::NiceMock<MockReader>("0O1g");
-  auto r20 = ::testing::NiceMock<MockReader>("0O1gZ");
-  auto r21 = ::testing::NiceMock<MockReader>("0o1o2");
+  auto r1 = testing::NiceMock<MockReader>("0B");
+  auto r2 = testing::NiceMock<MockReader>("0bG");
+  auto r3 = testing::NiceMock<MockReader>("0bGz");
+  auto r4 = testing::NiceMock<MockReader>("0b1g");
+  auto r5 = testing::NiceMock<MockReader>("0b1gZ");
+  auto r6 = testing::NiceMock<MockReader>("0b1b0");
+  auto r7 = testing::NiceMock<MockReader>("1234g");
+  auto r8 = testing::NiceMock<MockReader>("1234gZ");
+  auto r9 = testing::NiceMock<MockReader>("1234g0a");
+  auto r10 = testing::NiceMock<MockReader>("0x");
+  auto r11 = testing::NiceMock<MockReader>("0xG");
+  auto r12 = testing::NiceMock<MockReader>("0xGz");
+  auto r13 = testing::NiceMock<MockReader>("0Xag");
+  auto r14 = testing::NiceMock<MockReader>("0XagZ");
+  auto r15 = testing::NiceMock<MockReader>("0x1x2");
+  auto r16 = testing::NiceMock<MockReader>("0o");
+  auto r17 = testing::NiceMock<MockReader>("0oG");
+  auto r18 = testing::NiceMock<MockReader>("0oGz");
+  auto r19 = testing::NiceMock<MockReader>("0O1g");
+  auto r20 = testing::NiceMock<MockReader>("0O1gZ");
+  auto r21 = testing::NiceMock<MockReader>("0o1o2");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -1217,10 +1217,11 @@ TEST(LexerTest, ThrowsOnInvalidLitInteger) {
 }
 
 TEST(LexerTest, LexLitStr) {
-  auto reader = ::testing::NiceMock<MockReader>(
+  auto reader = testing::NiceMock<MockReader>(
     R"("")"
     R"("test")"
     R"("Hello,\nWorld!")"
+    "\"Hello,\nWorld!\""
     R"("multiple \\n lines")"
     R"("\\0\\r\\t\"\'\\\0\r\t")"
   );
@@ -1230,12 +1231,13 @@ TEST(LexerTest, LexLitStr) {
   EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:1-1:3): "")");
   EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:3-1:9): "test")");
   EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:9-1:25): "Hello,\\nWorld!")");
-  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:25-1:45): "multiple \\\n lines")");
-  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:45-1:68): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(1:25-2:8): "Hello,\nWorld!")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(2:8-2:28): "multiple \\\n lines")");
+  EXPECT_EQ(lexer.next().str(), R"(LIT_STR(2:28-2:51): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
 }
 
 TEST(LexerTest, LexLitStrWhitespace) {
-  auto reader = ::testing::NiceMock<MockReader>(
+  auto reader = testing::NiceMock<MockReader>(
     R"( "")"
     R"( "test")"
     R"( "Hello,\nWorld!")"
@@ -1253,11 +1255,11 @@ TEST(LexerTest, LexLitStrWhitespace) {
 }
 
 TEST(LexerTest, LexLitStrEof) {
-  auto r1 = ::testing::NiceMock<MockReader>(R"("")");
-  auto r2 = ::testing::NiceMock<MockReader>(R"("test")");
-  auto r3 = ::testing::NiceMock<MockReader>(R"("Hello,\nWorld!")");
-  auto r4 = ::testing::NiceMock<MockReader>(R"("multiple \\n lines")");
-  auto r5 = ::testing::NiceMock<MockReader>(R"("\\0\\r\\t\"\'\\\0\r\t")");
+  auto r1 = testing::NiceMock<MockReader>(R"("")");
+  auto r2 = testing::NiceMock<MockReader>(R"("test")");
+  auto r3 = testing::NiceMock<MockReader>(R"("Hello,\nWorld!")");
+  auto r4 = testing::NiceMock<MockReader>(R"("multiple \\n lines")");
+  auto r5 = testing::NiceMock<MockReader>(R"("\\0\\r\\t\"\'\\\0\r\t")");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -1273,10 +1275,10 @@ TEST(LexerTest, LexLitStrEof) {
 }
 
 TEST(LexerTest, ThrowsOnEmptyLitStr) {
-  auto r1 = ::testing::NiceMock<MockReader>(R"(")");
-  auto r2 = ::testing::NiceMock<MockReader>(R"("text)");
-  auto r3 = ::testing::NiceMock<MockReader>(R"("text\)");
-  auto r4 = ::testing::NiceMock<MockReader>(R"("text\")");
+  auto r1 = testing::NiceMock<MockReader>(R"(")");
+  auto r2 = testing::NiceMock<MockReader>(R"("text)");
+  auto r3 = testing::NiceMock<MockReader>(R"("text\)");
+  auto r4 = testing::NiceMock<MockReader>(R"("text\")");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -1290,7 +1292,7 @@ TEST(LexerTest, ThrowsOnEmptyLitStr) {
 }
 
 TEST(LexerTest, ThrowsOnLitStrIllegalEscSeq) {
-  auto reader = ::testing::NiceMock<MockReader>(R"("Hello, \m World!")");
+  auto reader = testing::NiceMock<MockReader>(R"("Hello, \m World!")");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:9: ") + E0005 + "\n  1 | \"Hello, \\m World!\"\n    |         ^~");

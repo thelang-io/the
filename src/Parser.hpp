@@ -18,10 +18,9 @@ class Parser {
 
   explicit Parser (Lexer *);
 
-  ParserStmt next ();
+  virtual ParserStmt next ();
 
  private:
-
   Parser (const Parser &);
   Parser &operator= (const Parser &);
 

@@ -11,6 +11,10 @@
 #include "Error.hpp"
 #include "Reader.hpp"
 
+std::string ReaderLocation::str () const {
+  return std::to_string(this->line) + ":" + std::to_string(this->col + 1);
+}
+
 Reader::Reader (const std::string &p) {
   std::string canonicalPath;
 
