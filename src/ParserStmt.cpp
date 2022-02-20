@@ -31,7 +31,11 @@ std::string ParserStmt::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserStmtObjDecl>(this->body)) {
     // todo
   } else if (std::holds_alternative<ParserStmtReturn>(this->body)) {
-    result += std::string(indent + 2, ' ') + "<StmtReturn />\n";
+    auto stmtReturn = std::get<ParserStmtReturn>(this->body);
+
+    result += std::string(indent + 2, ' ') + "<StmtReturn>\n";
+    result += stmtReturn.body != std::nullopt ? (stmtReturn.body->xml(indent + 4) + "\n") : "";
+    result += std::string(indent + 2, ' ') + "</StmtReturn>\n";
   } else if (std::holds_alternative<ParserStmtVarDecl>(this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(this->body);
 

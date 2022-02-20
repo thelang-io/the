@@ -1,0 +1,52 @@
+======= stdin =======
+return true
+return 'z'
+return 3.14
+return 1
+return "Hello, World!"
+======= stdout =======
+<Stmt start="1:1" end="1:12">
+  <StmtReturn>
+    <StmtExpr parenthesized="false">
+      <ExprLit>
+        <Token type="KW_TRUE" val="true" start="1:8" end="1:12" />
+      </ExprLit>
+    </StmtExpr>
+  </StmtReturn>
+</Stmt>
+<Stmt start="2:1" end="2:11">
+  <StmtReturn>
+    <StmtExpr parenthesized="false">
+      <ExprLit>
+        <Token type="LIT_CHAR" val="'z'" start="2:8" end="2:11" />
+      </ExprLit>
+    </StmtExpr>
+  </StmtReturn>
+</Stmt>
+<Stmt start="3:1" end="3:12">
+  <StmtReturn>
+    <StmtExpr parenthesized="false">
+      <ExprLit>
+        <Token type="LIT_FLOAT" val="3.14" start="3:8" end="3:12" />
+      </ExprLit>
+    </StmtExpr>
+  </StmtReturn>
+</Stmt>
+<Stmt start="4:1" end="4:9">
+  <StmtReturn>
+    <StmtExpr parenthesized="false">
+      <ExprLit>
+        <Token type="LIT_INT_DEC" val="1" start="4:8" end="4:9" />
+      </ExprLit>
+    </StmtExpr>
+  </StmtReturn>
+</Stmt>
+<Stmt start="5:1" end="5:23">
+  <StmtReturn>
+    <StmtExpr parenthesized="false">
+      <ExprLit>
+        <Token type="LIT_STR" val="\"Hello, World!\"" start="5:8" end="5:23" />
+      </ExprLit>
+    </StmtExpr>
+  </StmtReturn>
+</Stmt>

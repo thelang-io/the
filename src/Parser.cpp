@@ -30,8 +30,16 @@ ParserStmt Parser::next () {
     auto mainBody = this->_block();
     return this->_stmt(ParserStmtMain{mainBody}, loc0, this->lexer->loc);
   } else if (tok0.type == TK_KW_RETURN) {
-    auto returnArg = this->_stmtExpr();
-    return this->_stmt(ParserStmtReturn{returnArg}, loc0, this->lexer->loc);
+    auto loc1 = this->lexer->loc;
+    auto returnBody = std::optional<ParserStmtExpr>{};
+
+    try {
+      returnBody = this->_stmtExpr();
+    } catch (const Error &err) {
+      this->lexer->seek(loc1);
+    }
+
+    return this->_stmt(ParserStmtReturn{returnBody}, loc0, this->lexer->loc);
   }
 
   if (tok0.type == TK_KW_FN) {
@@ -274,6 +282,9 @@ ParserStmt Parser::next () {
 
   try {
     auto stmtExpr = this->_stmtExpr();
+
+    // todo if stmtExpr useless throw error
+
     return this->_stmt(stmtExpr, loc0, this->lexer->loc);
   } catch (const Error &err) {
     this->lexer->seek(loc0);

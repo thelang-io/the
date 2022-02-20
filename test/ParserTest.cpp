@@ -94,12 +94,18 @@ TEST_P(ParserThrowTest, Throws) {
 
 INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
   "eof",
-  "id"
+  "stmt-break",
+  "stmt-continue"
 ));
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
   "throw-E0100-unexpected-mut-keyword",
   "throw-E0100-unexpected-statement"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
+  "stmt-return",
+  "stmt-return-no-arg"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
@@ -114,4 +120,8 @@ INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
   "throw-E0102-stmt-var-decl",
   "throw-E0102-stmt-var-decl-mut"
+));
+
+INSTANTIATE_TEST_SUITE_P(ExprAccess, ParserPassTest, testing::Values(
+  "expr-access"
 ));

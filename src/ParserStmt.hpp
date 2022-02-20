@@ -92,7 +92,7 @@ struct ParserStmtObjDeclField {
 };
 
 struct ParserStmtReturn {
-  ParserStmtExpr arg;
+  std::optional<ParserStmtExpr> body;
 };
 
 struct ParserStmtVarDecl {
