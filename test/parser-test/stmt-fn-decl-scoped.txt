@@ -1,0 +1,49 @@
+main {
+  if true {
+    fn test () void {}
+  } else {
+    fn test () void {}
+  }
+}
+======= stdout =======
+<Stmt start="1:1" end="7:2">
+  <StmtMain>
+    <Stmt start="2:3" end="6:4">
+      <StmtIf>
+        <slot name="cond">
+          <Stmt start="2:6" end="2:10">
+            <StmtExpr parenthesized="false">
+              <ExprLit>
+                <Token type="KW_TRUE" val="true" start="2:6" end="2:10" />
+              </ExprLit>
+            </StmtExpr>
+          </Stmt>
+        </slot>
+        <slot name="body">
+          <Stmt start="3:5" end="3:23">
+            <StmtFnDecl>
+              <slot name="id">
+                <Token type="ID" val="test" start="3:8" end="3:12" />
+              </slot>
+              <slot name="returnType">
+                <Token type="ID" val="void" start="3:16" end="3:20" />
+              </slot>
+            </StmtFnDecl>
+          </Stmt>
+        </slot>
+        <slot name="alt">
+          <Stmt start="5:5" end="5:23">
+            <StmtFnDecl>
+              <slot name="id">
+                <Token type="ID" val="test" start="5:8" end="5:12" />
+              </slot>
+              <slot name="returnType">
+                <Token type="ID" val="void" start="5:16" end="5:20" />
+              </slot>
+            </StmtFnDecl>
+          </Stmt>
+        </slot>
+      </StmtIf>
+    </Stmt>
+  </StmtMain>
+</Stmt>

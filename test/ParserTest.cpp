@@ -98,6 +98,16 @@ INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
   "stmt-continue"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
+  "stmt-fn-decl-empty",
+  "stmt-fn-decl",
+  "stmt-fn-decl-with-param-init",
+  "stmt-fn-decl-with-obj",
+  "stmt-fn-decl-recursive",
+  "stmt-fn-decl-nested",
+  "stmt-fn-decl-scoped"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
   "stmt-if",
   "stmt-if-with-else",
