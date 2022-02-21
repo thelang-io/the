@@ -1,0 +1,174 @@
+======= stdin =======
+obj Test1 {
+  tp: int
+  t: Test2
+}
+obj Test2 {
+  t1: char
+  t2: float
+  t3: str
+  t4: int
+}
+obj Test3 {
+  t1: Test4
+  t2: Test5
+  t3: int
+}
+obj Test4 {
+  a0: byte
+  a1: float
+}
+obj Test5 {
+  b1: char
+  b2: str
+}
+======= stdout =======
+<Stmt start="1:1" end="4:2">
+  <StmtObjDecl>
+    <slot name="id">
+      <Token type="ID" val="Test1" start="1:5" end="1:10" />
+    </slot>
+    <slot name="fields">
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="tp" start="2:3" end="2:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="int" start="2:7" end="2:10" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t" start="3:3" end="3:4" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="Test2" start="3:6" end="3:11" />
+        </slot>
+      </StmtObjDeclField>
+    </slot>
+  </StmtObjDecl>
+</Stmt>
+<Stmt start="5:1" end="10:2">
+  <StmtObjDecl>
+    <slot name="id">
+      <Token type="ID" val="Test2" start="5:5" end="5:10" />
+    </slot>
+    <slot name="fields">
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t1" start="6:3" end="6:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="char" start="6:7" end="6:11" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t2" start="7:3" end="7:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="float" start="7:7" end="7:12" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t3" start="8:3" end="8:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="str" start="8:7" end="8:10" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t4" start="9:3" end="9:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="int" start="9:7" end="9:10" />
+        </slot>
+      </StmtObjDeclField>
+    </slot>
+  </StmtObjDecl>
+</Stmt>
+<Stmt start="11:1" end="15:2">
+  <StmtObjDecl>
+    <slot name="id">
+      <Token type="ID" val="Test3" start="11:5" end="11:10" />
+    </slot>
+    <slot name="fields">
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t1" start="12:3" end="12:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="Test4" start="12:7" end="12:12" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t2" start="13:3" end="13:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="Test5" start="13:7" end="13:12" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="t3" start="14:3" end="14:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="int" start="14:7" end="14:10" />
+        </slot>
+      </StmtObjDeclField>
+    </slot>
+  </StmtObjDecl>
+</Stmt>
+<Stmt start="16:1" end="19:2">
+  <StmtObjDecl>
+    <slot name="id">
+      <Token type="ID" val="Test4" start="16:5" end="16:10" />
+    </slot>
+    <slot name="fields">
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="a0" start="17:3" end="17:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="byte" start="17:7" end="17:11" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="a1" start="18:3" end="18:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="float" start="18:7" end="18:12" />
+        </slot>
+      </StmtObjDeclField>
+    </slot>
+  </StmtObjDecl>
+</Stmt>
+<Stmt start="20:1" end="23:2">
+  <StmtObjDecl>
+    <slot name="id">
+      <Token type="ID" val="Test5" start="20:5" end="20:10" />
+    </slot>
+    <slot name="fields">
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="b1" start="21:3" end="21:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="char" start="21:7" end="21:11" />
+        </slot>
+      </StmtObjDeclField>
+      <StmtObjDeclField>
+        <slot name="id">
+          <Token type="ID" val="b2" start="22:3" end="22:5" />
+        </slot>
+        <slot name="type">
+          <Token type="ID" val="str" start="22:7" end="22:10" />
+        </slot>
+      </StmtObjDeclField>
+    </slot>
+  </StmtObjDecl>
+</Stmt>

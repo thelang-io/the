@@ -1,0 +1,58 @@
+======= stdin =======
+if true {
+  obj Test {a: int}
+} else {
+  obj Test {a: int}
+}
+======= stdout =======
+<Stmt start="1:1" end="5:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="1:4" end="1:8">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="KW_TRUE" val="true" start="1:4" end="1:8" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="body">
+      <Stmt start="2:3" end="2:20">
+        <StmtObjDecl>
+          <slot name="id">
+            <Token type="ID" val="Test" start="2:7" end="2:11" />
+          </slot>
+          <slot name="fields">
+            <StmtObjDeclField>
+              <slot name="id">
+                <Token type="ID" val="a" start="2:13" end="2:14" />
+              </slot>
+              <slot name="type">
+                <Token type="ID" val="int" start="2:16" end="2:19" />
+              </slot>
+            </StmtObjDeclField>
+          </slot>
+        </StmtObjDecl>
+      </Stmt>
+    </slot>
+    <slot name="alt">
+      <Stmt start="4:3" end="4:20">
+        <StmtObjDecl>
+          <slot name="id">
+            <Token type="ID" val="Test" start="4:7" end="4:11" />
+          </slot>
+          <slot name="fields">
+            <StmtObjDeclField>
+              <slot name="id">
+                <Token type="ID" val="a" start="4:13" end="4:14" />
+              </slot>
+              <slot name="type">
+                <Token type="ID" val="int" start="4:16" end="4:19" />
+              </slot>
+            </StmtObjDeclField>
+          </slot>
+        </StmtObjDecl>
+      </Stmt>
+    </slot>
+  </StmtIf>
+</Stmt>

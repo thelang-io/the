@@ -135,6 +135,12 @@ INSTANTIATE_TEST_SUITE_P(StmtMain, ParserPassTest, testing::Values(
   "stmt-main"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserPassTest, testing::Values(
+  "stmt-obj-decl",
+  "stmt-obj-decl-recursive",
+  "stmt-obj-decl-scoped"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return",
   "stmt-return-no-arg"
