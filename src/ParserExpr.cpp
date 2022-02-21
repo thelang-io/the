@@ -94,7 +94,19 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
 
     result += std::string(indent + 2, ' ') + "</ExprCall>\n";
   } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
-    // todo
+    auto exprCond = std::get<ParserExprCond>(*this->body);
+
+    result += std::string(indent + 2, ' ') + "<ExprCond>\n";
+    result += std::string(indent + 4, ' ') + R"(<slot name="cond">)" "\n";
+    result += exprCond.cond.xml(indent + 6) + "\n";
+    result += std::string(indent + 4, ' ') + "</slot>\n";
+    result += std::string(indent + 4, ' ') + R"(<slot name="body">)" "\n";
+    result += exprCond.body.xml(indent + 6) + "\n";
+    result += std::string(indent + 4, ' ') + "</slot>\n";
+    result += std::string(indent + 4, ' ') + R"(<slot name="alt">)" "\n";
+    result += exprCond.alt.xml(indent + 6) + "\n";
+    result += std::string(indent + 4, ' ') + "</slot>\n";
+    result += std::string(indent + 2, ' ') + "</ExprCond>\n";
   } else if (std::holds_alternative<ParserExprLit>(*this->body)) {
     auto exprLit = std::get<ParserExprLit>(*this->body);
 
@@ -102,7 +114,31 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     result += std::string(indent + 4, ' ') + exprLit.body.xml() + "\n";
     result += std::string(indent + 2, ' ') + "</ExprLit>\n";
   } else if (std::holds_alternative<ParserExprObj>(*this->body)) {
-    // todo
+    auto exprObj = std::get<ParserExprObj>(*this->body);
+
+    result += std::string(indent + 2, ' ') + "<ExprObj>\n";
+    result += std::string(indent + 4, ' ') + R"(<slot name="id">)" "\n";
+    result += std::string(indent + 6, ' ') + exprObj.id.xml() + "\n";
+    result += std::string(indent + 4, ' ') + "</slot>\n";
+
+    if (!exprObj.props.empty()) {
+      result += std::string(indent + 4, ' ') + R"(<slot name="props">)" "\n";
+
+      for (const auto &exprObjProp : exprObj.props) {
+        result += std::string(indent + 6, ' ') + "<ExprObjProp>\n";
+        result += std::string(indent + 8, ' ') + R"(<slot name="id">)" "\n";
+        result += std::string(indent + 10, ' ') + exprObjProp.id.xml() + "\n";
+        result += std::string(indent + 8, ' ') + "</slot>\n";
+        result += std::string(indent + 8, ' ') + R"(<slot name="init">)" "\n";
+        result += exprObjProp.init.xml(indent + 10) + "\n";
+        result += std::string(indent + 8, ' ') + "</slot>\n";
+        result += std::string(indent + 6, ' ') + "</ExprObjProp>\n";
+      }
+
+      result += std::string(indent + 4, ' ') + "</slot>\n";
+    }
+
+    result += std::string(indent + 2, ' ') + "</ExprObj>\n";
   } else if (std::holds_alternative<ParserExprUnary>(*this->body)) {
     auto exprUnary = std::get<ParserExprUnary>(*this->body);
 

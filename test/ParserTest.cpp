@@ -120,6 +120,11 @@ INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserPassTest, testing::Values(
   "stmt-loop-while-nested"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtMain, ParserPassTest, testing::Values(
+  "stmt-main-empty",
+  "stmt-main"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return",
   "stmt-return-no-arg"

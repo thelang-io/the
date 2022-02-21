@@ -7,6 +7,16 @@
 
 #include "ParserStmt.hpp"
 
+std::string blockToXml (const ParserBlock &block, std::size_t indent) {
+  auto result = std::string();
+
+  for (const auto &stmt : block) {
+    result += stmt.xml(indent) + "\n";
+  }
+
+  return result;
+}
+
 std::string ParserStmt::xml (std::size_t indent) const {
   auto result = std::string();
 
@@ -21,7 +31,51 @@ std::string ParserStmt::xml (std::size_t indent) const {
     auto stmtExpr = std::get<ParserStmtExpr>(this->body);
     result += stmtExpr.xml(indent + 2) + "\n";
   } else if (std::holds_alternative<ParserStmtFnDecl>(this->body)) {
-    // todo
+    auto stmtFnDecl = std::get<ParserStmtFnDecl>(this->body);
+
+    result += std::string(indent + 2, ' ') + "<StmtFnDecl>\n";
+    result += std::string(indent + 4, ' ') + R"(<slot name="id">)" "\n";
+    result += std::string(indent + 6, ' ') + stmtFnDecl.id.xml() + "\n";
+    result += std::string(indent + 4, ' ') + "</slot>\n";
+
+    if (!stmtFnDecl.params.empty()) {
+      result += std::string(indent + 4, ' ') + R"(<slot name="params">)" "\n";
+
+      for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
+        result += std::string(indent + 6, ' ') + "<StmtFnDeclParam>\n";
+        result += std::string(indent + 8, ' ') + R"(<slot name="id">)" "\n";
+        result += std::string(indent + 10, ' ') + stmtFnDeclParam.id.xml() + "\n";
+        result += std::string(indent + 8, ' ') + "</slot>\n";
+
+        if (stmtFnDeclParam.type != std::nullopt) {
+          result += std::string(indent + 8, ' ') + R"(<slot name="type">)" "\n";
+          result += std::string(indent + 10, ' ') + stmtFnDeclParam.type->xml() + "\n";
+          result += std::string(indent + 8, ' ') + "</slot>\n";
+        }
+
+        if (stmtFnDeclParam.init != std::nullopt) {
+          result += std::string(indent + 8, ' ') + R"(<slot name="init">)" "\n";
+          result += stmtFnDeclParam.init->xml(indent + 10) + "\n";
+          result += std::string(indent + 8, ' ') + "</slot>\n";
+        }
+
+        result += std::string(indent + 6, ' ') + "</StmtFnDeclParam>\n";
+      }
+
+      result += std::string(indent + 4, ' ') + "</slot>\n";
+    }
+
+    result += std::string(indent + 4, ' ') + R"(<slot name="returnType">)" "\n";
+    result += std::string(indent + 6, ' ') + stmtFnDecl.returnType.xml() + "\n";
+    result += std::string(indent + 4, ' ') + "</slot>\n";
+
+    if (!stmtFnDecl.body.empty()) {
+      result += std::string(indent + 4, ' ') + R"(<slot name="body">)" "\n";
+      result += blockToXml(stmtFnDecl.body, indent + 6);
+      result += std::string(indent + 4, ' ') + "</slot>\n";
+    }
+
+    result += std::string(indent + 2, ' ') + "</StmtFnDecl>\n";
   } else if (std::holds_alternative<ParserStmtIf>(this->body)) {
     auto stmtIf = std::get<ParserStmtIf>(this->body);
     result += stmtIf.xml(indent + 2) + "\n";
@@ -52,19 +106,43 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
     if (!stmtLoop.body.empty()) {
       result += std::string(indent + 4, ' ') + R"(<slot name="body">)" "\n";
-
-      for (const auto &stmtLoopBodyStmt : stmtLoop.body) {
-        result += stmtLoopBodyStmt.xml(indent + 6) + "\n";
-      }
-
+      result += blockToXml(stmtLoop.body, indent + 6);
       result += std::string(indent + 4, ' ') + "</slot>\n";
     }
 
     result += std::string(indent + 2, ' ') + "</StmtLoop>\n";
   } else if (std::holds_alternative<ParserStmtMain>(this->body)) {
-    // todo
+    auto stmtMain = std::get<ParserStmtMain>(this->body);
+
+    result += std::string(indent + 2, ' ') + "<StmtMain>\n";
+    result += blockToXml(stmtMain.body, indent + 4);
+    result += std::string(indent + 2, ' ') + "</StmtMain>\n";
   } else if (std::holds_alternative<ParserStmtObjDecl>(this->body)) {
-    // todo
+    auto stmtObjDecl = std::get<ParserStmtObjDecl>(this->body);
+
+    result += std::string(indent + 2, ' ') + "<StmtObjDecl>\n";
+    result += std::string(indent + 4, ' ') + R"(<slot name="id">)" "\n";
+    result += std::string(indent + 6, ' ') + stmtObjDecl.id.xml() + "\n";
+    result += std::string(indent + 4, ' ') + "</slot>\n";
+
+    if (!stmtObjDecl.fields.empty()) {
+      result += std::string(indent + 4, ' ') + R"(<slot name="fields">)" "\n";
+
+      for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
+        result += std::string(indent + 6, ' ') + "<StmtObjDeclField>\n";
+        result += std::string(indent + 8, ' ') + R"(<slot name="id">)" "\n";
+        result += std::string(indent + 10, ' ') + stmtObjDeclField.id.xml() + "\n";
+        result += std::string(indent + 8, ' ') + "</slot>\n";
+        result += std::string(indent + 8, ' ') + R"(<slot name="type">)" "\n";
+        result += std::string(indent + 10, ' ') + stmtObjDeclField.type.xml() + "\n";
+        result += std::string(indent + 8, ' ') + "</slot>\n";
+        result += std::string(indent + 6, ' ') + "</StmtObjDeclField>\n";
+      }
+
+      result += std::string(indent + 4, ' ') + "</slot>\n";
+    }
+
+    result += std::string(indent + 2, ' ') + "</StmtObjDecl>\n";
   } else if (std::holds_alternative<ParserStmtReturn>(this->body)) {
     auto stmtReturn = std::get<ParserStmtReturn>(this->body);
 
@@ -109,11 +187,7 @@ std::string ParserStmtIf::xml (std::size_t indent) const {
 
   if (!this->body.empty()) {
     result += std::string(indent + 2, ' ') + R"(<slot name="body">)" "\n";
-
-    for (const auto &bodyStmt : this->body) {
-      result += bodyStmt.xml(indent + 4) + "\n";
-    }
-
+    result += blockToXml(this->body, indent + 4);
     result += std::string(indent + 2, ' ') + "</slot>\n";
   }
 
@@ -123,10 +197,7 @@ std::string ParserStmtIf::xml (std::size_t indent) const {
 
     if (std::holds_alternative<ParserBlock>(altBody)) {
       auto altElse = std::get<ParserBlock>(altBody);
-
-      for (const auto &bodyStmt : altElse) {
-        result += bodyStmt.xml(indent + 4) + "\n";
-      }
+      result += blockToXml(altElse, indent + 4);
     } else if (std::holds_alternative<ParserStmtIf>(altBody)) {
       auto altElif = std::get<ParserStmtIf>(altBody);
       result += altElif.xml(indent + 4) + "\n";

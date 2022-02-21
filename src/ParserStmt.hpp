@@ -53,8 +53,8 @@ struct ParserStmtEof {
 
 struct ParserStmtFnDecl {
   Token id;
-  Token returnType;
   std::vector<ParserStmtFnDeclParam> params;
+  Token returnType;
   ParserBlock body;
 };
 

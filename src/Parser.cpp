@@ -112,7 +112,7 @@ ParserStmt Parser::next () {
     }
 
     auto fnDeclBody = this->_block();
-    return this->_stmt(ParserStmtFnDecl{tok2, tok6, fnDeclParams, fnDeclBody}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtFnDecl{tok1, fnDeclParams, tok6, fnDeclBody}, loc0, this->lexer->loc);
   }
 
   if (tok0.type == TK_KW_LOOP) {
