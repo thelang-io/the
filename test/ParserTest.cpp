@@ -106,6 +106,20 @@ INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
   "stmt-if-nested"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserPassTest, testing::Values(
+  "stmt-loop-for-empty",
+  "stmt-loop",
+  "stmt-loop-mut",
+  "stmt-loop-empty-init-condition",
+  "stmt-loop-empty-init-update",
+  "stmt-loop-empty-update",
+  "stmt-loop-empty-body",
+  "stmt-loop-nested",
+  "stmt-loop-while-empty",
+  "stmt-loop-while",
+  "stmt-loop-while-nested"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return",
   "stmt-return-no-arg"

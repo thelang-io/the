@@ -282,9 +282,6 @@ ParserStmt Parser::next () {
 
   try {
     auto stmtExpr = this->_stmtExpr();
-
-    // todo if stmtExpr useless throw error
-
     return this->_stmt(stmtExpr, loc0, this->lexer->loc);
   } catch (const Error &err) {
     this->lexer->seek(loc0);
