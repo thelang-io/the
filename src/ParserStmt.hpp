@@ -35,6 +35,7 @@ using ParserStmtBody = std::variant<
   ParserStmtIf,
   ParserStmtLoop,
   ParserStmtMain,
+  // TODO Test
   ParserStmtObjDecl,
   ParserStmtReturn,
   ParserStmtVarDecl

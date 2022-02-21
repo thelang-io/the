@@ -1,3 +1,4 @@
+======= stdin =======
 main {
   if true {
     fn test () void {}

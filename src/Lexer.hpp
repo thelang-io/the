@@ -23,10 +23,8 @@ class Lexer {
 
   explicit Lexer (Reader *);
 
-  // TODO Test
-  virtual void seek (ReaderLocation);
   virtual Token next ();
-  // TODO Test
+  virtual void seek (ReaderLocation);
   virtual void whitespace ();
 
  private:

@@ -26,13 +26,21 @@ struct ParserMember;
 struct ParserStmtExpr;
 
 using ParserExpr = std::variant<
+  // TODO Test
   ParserExprAccess,
+  // TODO Test
   ParserExprAssign,
+  // TODO Test
   ParserExprBinary,
+  // TODO Test
   ParserExprCall,
+  // TODO Test
   ParserExprCond,
+  // TODO Test
   ParserExprLit,
+  // TODO Test
   ParserExprObj,
+  // TODO Test
   ParserExprUnary
 >;
 

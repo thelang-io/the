@@ -1297,3 +1297,53 @@ TEST(LexerTest, ThrowsOnLitStrIllegalEscSeq) {
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:9: ") + E0005 + "\n  1 | \"Hello, \\m World!\"\n    |         ^~");
 }
+
+TEST(LexerTest, SeeksTo) {
+  auto reader = testing::NiceMock<MockReader>("main {\n  print(\"Hello, World!\")\n}\n");
+  auto lexer = Lexer(&reader);
+
+  lexer.seek(ReaderLocation{7, 1, 7});
+
+  EXPECT_EQ(lexer.loc, (ReaderLocation{7, 1, 7}));
+  EXPECT_EQ(lexer.reader->loc, (ReaderLocation{7, 1, 7}));
+}
+
+TEST(LexerTest, WhitespaceEmpty) {
+  auto reader = testing::NiceMock<MockReader>("test");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.loc, (ReaderLocation{0, 1, 0}));
+  lexer.whitespace();
+  EXPECT_EQ(lexer.loc, (ReaderLocation{0, 1, 0}));
+}
+
+TEST(LexerTest, WhitespaceSingle) {
+  auto reader = testing::NiceMock<MockReader>("\ttest");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.loc, (ReaderLocation{0, 1, 0}));
+  lexer.whitespace();
+  EXPECT_EQ(lexer.loc, (ReaderLocation{1, 1, 1}));
+}
+
+TEST(LexerTest, WhitespaceMultiple) {
+  auto reader = testing::NiceMock<MockReader>("\t/* comment */\r\t");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.loc, (ReaderLocation{0, 1, 0}));
+  lexer.whitespace();
+  EXPECT_EQ(lexer.loc, (ReaderLocation{16, 1, 16}));
+}
+
+TEST(LexerTest, WhitespaceAfterToken) {
+  auto reader = testing::NiceMock<MockReader>("\t/* comment */test\t\t// Test comment\n\t");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(lexer.loc, (ReaderLocation{0, 1, 0}));
+  lexer.whitespace();
+  EXPECT_EQ(lexer.loc, (ReaderLocation{14, 1, 14}));
+  lexer.next();
+  EXPECT_EQ(lexer.loc, (ReaderLocation{18, 1, 18}));
+  lexer.whitespace();
+  EXPECT_EQ(lexer.loc, (ReaderLocation{37, 2, 1}));
+}
