@@ -421,7 +421,7 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
           auto expr = std::make_shared<ParserExpr>(exprAccess);
           auto stmtExpr = ParserStmtExpr{expr};
 
-          return stmtExpr;
+          return singleStmt ? stmtExpr : this->_wrapStmtExpr(stmtExpr);
         } else if (tok5.type != TK_ID) {
           throw Error(this->lexer->reader, loc5, E0112);
         }
@@ -435,7 +435,7 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
           auto expr = std::make_shared<ParserExpr>(exprAccess);
           auto stmtExpr = ParserStmtExpr{expr};
 
-          return stmtExpr;
+          return singleStmt ? stmtExpr : this->_wrapStmtExpr(stmtExpr);
         } else if (tok6.type != TK_OP_COLON) {
           throw Error(this->lexer->reader, loc6, E0113);
         }
@@ -614,24 +614,25 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
     tok1.type == TK_OP_STAR ||
     tok1.type == TK_OP_STAR_STAR
   ) {
-    auto stmtExpr2 = this->_stmtExpr(true);
+    auto stmtExprRight = this->_stmtExpr(true);
 
-    if (std::holds_alternative<ParserExprBinary>(*stmtExpr2.body)) {
-      auto exprBinary2 = std::get<ParserExprBinary>(*stmtExpr2.body);
+    if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body) && !stmtExpr.parenthesized) {
+      auto exprBinaryLeft = std::get<ParserExprBinary>(*stmtExpr.body);
 
-      if (tok1.precedence() >= exprBinary2.op.precedence() && !stmtExpr2.parenthesized) {
-        auto exprBinaryLeft = std::make_shared<ParserExpr>(ParserExprBinary{stmtExpr, tok1, exprBinary2.left});
-        auto stmtExprLeft = ParserStmtExpr{exprBinaryLeft};
-        auto exprBinary = std::make_shared<ParserExpr>(ParserExprBinary{stmtExprLeft, exprBinary2.op, exprBinary2.right});
+      if (exprBinaryLeft.op.precedence() < tok1.precedence()) {
+        auto newExprBinaryRight = std::make_shared<ParserExpr>(ParserExprBinary{exprBinaryLeft.right, tok1, stmtExprRight});
+        auto newStmtExprRight = ParserStmtExpr{newExprBinaryRight};
+        auto exprBinary = std::make_shared<ParserExpr>(ParserExprBinary{exprBinaryLeft.left, exprBinaryLeft.op, newStmtExprRight});
+        auto newStmtExpr = ParserStmtExpr{exprBinary};
 
-        return ParserStmtExpr{exprBinary};
+        return this->_wrapStmtExpr(newStmtExpr);
       }
     }
 
-    auto exprBinary = std::make_shared<ParserExpr>(ParserExprBinary{stmtExpr, tok1, stmtExpr2});
-    auto stmtExpr3 = ParserStmtExpr{exprBinary};
+    auto exprBinary = std::make_shared<ParserExpr>(ParserExprBinary{stmtExpr, tok1, stmtExprRight});
+    auto newStmtExpr = ParserStmtExpr{exprBinary};
 
-    return this->_wrapStmtExpr(stmtExpr3);
+    return this->_wrapStmtExpr(newStmtExpr);
   }
 
   if (tok1.type == TK_OP_QN) {
@@ -645,9 +646,9 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
 
     auto exprCondAlt = this->_stmtExpr();
     auto exprCond = std::make_shared<ParserExpr>(ParserExprCond{stmtExpr, exprCondBody, exprCondAlt});
-    auto stmtExpr2 = ParserStmtExpr{exprCond};
+    auto newStmtExpr = ParserStmtExpr{exprCond};
 
-    return this->_wrapStmtExpr(stmtExpr2);
+    return this->_wrapStmtExpr(newStmtExpr);
   }
 
   this->lexer->seek(loc1);

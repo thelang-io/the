@@ -48,48 +48,48 @@ fn test3 (b: float) float {
                         <ExprBinary>
                           <slot name="left">
                             <StmtExpr parenthesized="false">
-                              <ExprBinary>
-                                <slot name="left">
-                                  <StmtExpr parenthesized="false">
-                                    <ExprAccess>
-                                      <Token type="ID" val="n" start="2:10" end="2:11" />
-                                    </ExprAccess>
-                                  </StmtExpr>
-                                </slot>
-                                <slot name="op">
-                                  <Token type="OP_EQ_EQ" val="==" start="2:12" end="2:14" />
-                                </slot>
-                                <slot name="right">
-                                  <StmtExpr parenthesized="false">
-                                    <ExprLit>
-                                      <Token type="LIT_INT_DEC" val="0" start="2:15" end="2:16" />
-                                    </ExprLit>
-                                  </StmtExpr>
-                                </slot>
-                              </ExprBinary>
+                              <ExprAccess>
+                                <Token type="ID" val="n" start="2:10" end="2:11" />
+                              </ExprAccess>
                             </StmtExpr>
                           </slot>
                           <slot name="op">
-                            <Token type="OP_OR_OR" val="||" start="2:17" end="2:19" />
+                            <Token type="OP_EQ_EQ" val="==" start="2:12" end="2:14" />
                           </slot>
                           <slot name="right">
                             <StmtExpr parenthesized="false">
-                              <ExprAccess>
-                                <Token type="ID" val="n" start="2:20" end="2:21" />
-                              </ExprAccess>
+                              <ExprLit>
+                                <Token type="LIT_INT_DEC" val="0" start="2:15" end="2:16" />
+                              </ExprLit>
                             </StmtExpr>
                           </slot>
                         </ExprBinary>
                       </StmtExpr>
                     </slot>
                     <slot name="op">
-                      <Token type="OP_EQ_EQ" val="==" start="2:22" end="2:24" />
+                      <Token type="OP_OR_OR" val="||" start="2:17" end="2:19" />
                     </slot>
                     <slot name="right">
                       <StmtExpr parenthesized="false">
-                        <ExprLit>
-                          <Token type="LIT_INT_DEC" val="1" start="2:25" end="2:26" />
-                        </ExprLit>
+                        <ExprBinary>
+                          <slot name="left">
+                            <StmtExpr parenthesized="false">
+                              <ExprAccess>
+                                <Token type="ID" val="n" start="2:20" end="2:21" />
+                              </ExprAccess>
+                            </StmtExpr>
+                          </slot>
+                          <slot name="op">
+                            <Token type="OP_EQ_EQ" val="==" start="2:22" end="2:24" />
+                          </slot>
+                          <slot name="right">
+                            <StmtExpr parenthesized="false">
+                              <ExprLit>
+                                <Token type="LIT_INT_DEC" val="1" start="2:25" end="2:26" />
+                              </ExprLit>
+                            </StmtExpr>
+                          </slot>
+                        </ExprBinary>
                       </StmtExpr>
                     </slot>
                   </ExprBinary>

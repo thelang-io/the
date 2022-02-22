@@ -94,6 +94,7 @@ TEST_P(ParserThrowTest, Throws) {
 
 INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
   "stmt-eof",
+  "stmt-expr",
   "stmt-break",
   "stmt-continue"
 ));
@@ -155,8 +156,23 @@ INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
   "stmt-var-decl-short-mut"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprAccess, ParserPassTest, testing::Values(
-  "expr-access"
+INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
+  "expr-access",
+  "expr-access-member",
+  "expr-assign",
+  "expr-assign-member",
+  "expr-assign-op",
+  "expr-binary",
+  "expr-binary-nested",
+  "expr-call",
+  "expr-call-member",
+  "expr-cond",
+  "expr-cond-nested",
+  "expr-lit",
+  "expr-obj",
+  "expr-obj-nested",
+  "expr-unary",
+  "expr-unary-nested"
 ));
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
