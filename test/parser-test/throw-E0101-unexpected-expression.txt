@@ -1,0 +1,6 @@
+======= stdin =======
+a := {
+======= stderr =======
+/test:1:6: E0101 - Unexpected expression statement
+  1 | a := {
+    |      ^

@@ -25,7 +25,7 @@ class Parser {
   Parser &operator= (const Parser &);
 
   ParserBlock _block ();
-  ParserStmt _stmt (const ParserStmtBody &, ReaderLocation, ReaderLocation) const;
+  ParserStmt _stmt (const ParserStmtBody &, ReaderLocation) const;
   ParserStmtExpr _stmtExpr (bool = false);
   ParserStmtIf _stmtIf ();
   ParserStmtLoop _stmtLoop (const std::optional<std::shared_ptr<ParserStmt>> &);

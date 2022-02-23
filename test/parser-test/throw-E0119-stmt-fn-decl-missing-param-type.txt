@@ -1,0 +1,6 @@
+======= stdin =======
+fn test ( a , b ) void {}
+======= stderr =======
+/test:1:13: E0119 - Expected function parameter type after parameter name
+  1 | fn test ( a , b ) void {}
+    |             ^

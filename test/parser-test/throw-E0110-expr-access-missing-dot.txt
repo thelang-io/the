@@ -1,0 +1,6 @@
+======= stdin =======
+a := b.234
+======= stderr =======
+/test:1:8: E0110 - Expected property name after dot
+  1 | a := b.234
+    |        ^~~

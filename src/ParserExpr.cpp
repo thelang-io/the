@@ -85,7 +85,6 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
         result += std::string(indent + 8, ' ') + R"(<slot name="expr">)" "\n";
         result += exprCallArg.expr.xml(indent + 10)  + "\n";
         result += std::string(indent + 8, ' ') + "</slot>\n";
-
         result += std::string(indent + 6, ' ') + "</ExprCallArg>\n";
       }
 

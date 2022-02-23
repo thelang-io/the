@@ -18,17 +18,17 @@ ParserStmt Parser::next () {
   auto tok0 = this->lexer->next();
 
   if (tok0.type == TK_EOF) {
-    return this->_stmt(ParserStmtEof{}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtEof{}, loc0);
   } else if (tok0.type == TK_KW_BREAK) {
-    return this->_stmt(ParserStmtBreak{}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtBreak{}, loc0);
   } else if (tok0.type == TK_KW_CONTINUE) {
-    return this->_stmt(ParserStmtContinue{}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtContinue{}, loc0);
   } else if (tok0.type == TK_KW_IF) {
     auto stmtIf = this->_stmtIf();
-    return this->_stmt(stmtIf, loc0, this->lexer->loc);
+    return this->_stmt(stmtIf, loc0);
   } else if (tok0.type == TK_KW_MAIN) {
     auto mainBody = this->_block();
-    return this->_stmt(ParserStmtMain{mainBody}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtMain{mainBody}, loc0);
   } else if (tok0.type == TK_KW_RETURN) {
     auto loc1 = this->lexer->loc;
     auto returnBody = std::optional<ParserStmtExpr>{};
@@ -39,16 +39,20 @@ ParserStmt Parser::next () {
       this->lexer->seek(loc1);
     }
 
-    return this->_stmt(ParserStmtReturn{returnBody}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtReturn{returnBody}, loc0);
   }
 
   if (tok0.type == TK_KW_FN) {
+    this->lexer->whitespace();
+
     auto loc1 = this->lexer->loc;
     auto tok1 = this->lexer->next();
 
     if (tok1.type != TK_ID) {
       throw Error(this->lexer->reader, loc1, E0115);
     }
+
+    this->lexer->whitespace();
 
     auto loc2 = this->lexer->loc;
     auto tok2 = this->lexer->next();
@@ -57,35 +61,44 @@ ParserStmt Parser::next () {
       throw Error(this->lexer->reader, loc2, E0116);
     }
 
+    this->lexer->whitespace();
+
     auto loc3 = this->lexer->loc;
     auto tok3 = this->lexer->next();
     auto fnDeclParams = std::vector<ParserStmtFnDeclParam>();
 
     while (tok3.type != TK_OP_RPAR) {
       if (tok3.type != TK_ID) {
-        // TODO Test change of loc3
         throw Error(this->lexer->reader, loc3, E0117);
       }
 
       auto fnDeclParamType = std::optional<Token>{};
       auto fnDeclParamInit = std::optional<ParserStmtExpr>{};
+
+      this->lexer->whitespace();
+
       auto loc4 = this->lexer->loc;
       auto tok4 = this->lexer->next();
 
       if (tok4.type == TK_OP_COLON) {
+        this->lexer->whitespace();
+
+        auto loc5 = this->lexer->loc;
         fnDeclParamType = this->lexer->next();
 
         if (fnDeclParamType->type != TK_ID) {
-          throw Error(this->lexer->reader, loc4, E0118);
+          throw Error(this->lexer->reader, loc5, E0118);
         }
 
-        auto loc5 = this->lexer->loc;
-        auto tok5 = this->lexer->next();
+        this->lexer->whitespace();
 
-        if (tok5.type == TK_OP_EQ) {
+        auto loc6 = this->lexer->loc;
+        auto tok6 = this->lexer->next();
+
+        if (tok6.type == TK_OP_EQ) {
           fnDeclParamInit = this->_stmtExpr();
         } else {
-          this->lexer->seek(loc5);
+          this->lexer->seek(loc6);
         }
       } else if (tok4.type == TK_OP_COLON_EQ) {
         fnDeclParamInit = this->_stmtExpr();
@@ -95,27 +108,35 @@ ParserStmt Parser::next () {
 
       fnDeclParams.push_back(ParserStmtFnDeclParam{tok3, fnDeclParamType, fnDeclParamInit});
 
+      this->lexer->whitespace();
+
       loc3 = this->lexer->loc;
       tok3 = this->lexer->next();
 
       if (tok3.type == TK_OP_COMMA) {
+        this->lexer->whitespace();
+
         loc3 = this->lexer->loc;
         tok3 = this->lexer->next();
       }
     }
 
-    auto loc6 = this->lexer->loc;
-    auto tok6 = this->lexer->next();
+    this->lexer->whitespace();
 
-    if (tok6.type != TK_ID) {
-      throw Error(this->lexer->reader, loc6, E0120);
+    auto loc7 = this->lexer->loc;
+    auto tok7 = this->lexer->next();
+
+    if (tok7.type != TK_ID) {
+      throw Error(this->lexer->reader, loc7, E0120);
     }
 
     auto fnDeclBody = this->_block();
-    return this->_stmt(ParserStmtFnDecl{tok1, fnDeclParams, tok6, fnDeclBody}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtFnDecl{tok1, fnDeclParams, tok7, fnDeclBody}, loc0);
   }
 
   if (tok0.type == TK_KW_LOOP) {
+    this->lexer->whitespace();
+
     auto loc1 = this->lexer->loc;
     auto tok1 = this->lexer->next();
 
@@ -123,10 +144,10 @@ ParserStmt Parser::next () {
       this->lexer->seek(loc1);
 
       auto loopBody = this->_block();
-      return this->_stmt(ParserStmtLoop{std::nullopt, std::nullopt, std::nullopt, loopBody}, loc0, this->lexer->loc);
+      return this->_stmt(ParserStmtLoop{std::nullopt, std::nullopt, std::nullopt, loopBody}, loc0);
     } else if (tok1.type == TK_OP_SEMI) {
       auto stmtLoop = this->_stmtLoop(std::nullopt);
-      return this->_stmt(stmtLoop, loc0, this->lexer->loc);
+      return this->_stmt(stmtLoop, loc0);
     }
 
     this->lexer->seek(loc1);
@@ -136,24 +157,26 @@ ParserStmt Parser::next () {
       throw Error(this->lexer->reader, loc1, E0105);
     }
 
+    this->lexer->whitespace();
+
     auto loc2 = this->lexer->loc;
     auto tok2 = this->lexer->next();
 
     if (std::holds_alternative<ParserStmtVarDecl>(loopInit.body) && tok2.type != TK_OP_SEMI) {
-      throw Error(this->lexer->reader, loc1, E0106);
+      throw Error(this->lexer->reader, loc2, E0106);
     } else if (std::holds_alternative<ParserStmtExpr>(loopInit.body) && tok2.type != TK_OP_LBRACE && tok2.type != TK_OP_SEMI) {
-      throw Error(this->lexer->reader, loc1, E0107);
+      throw Error(this->lexer->reader, loc2, E0107);
     } else if (std::holds_alternative<ParserStmtExpr>(loopInit.body) && tok2.type == TK_OP_LBRACE) {
       this->lexer->seek(loc2);
 
       auto loopCond = std::get<ParserStmtExpr>(loopInit.body);
       auto loopBody = this->_block();
 
-      return this->_stmt(ParserStmtLoop{std::nullopt, loopCond, std::nullopt, loopBody}, loc0, this->lexer->loc);
+      return this->_stmt(ParserStmtLoop{std::nullopt, loopCond, std::nullopt, loopBody}, loc0);
     }
 
     auto stmtLoop = this->_stmtLoop(std::make_shared<ParserStmt>(loopInit));
-    return this->_stmt(stmtLoop, loc0, this->lexer->loc);
+    return this->_stmt(stmtLoop, loc0);
   }
 
   if (tok0.type == TK_KW_MUT) {
@@ -181,10 +204,10 @@ ParserStmt Parser::next () {
           this->lexer->seek(loc5);
         }
 
-        return this->_stmt(ParserStmtVarDecl{tok1, tok3, varDeclInit, true}, loc0, this->lexer->loc);
+        return this->_stmt(ParserStmtVarDecl{tok1, tok3, varDeclInit, true}, loc0);
       } else if (tok2.type == TK_OP_COLON_EQ) {
         auto varDeclInit = this->_stmtExpr();
-        return this->_stmt(ParserStmtVarDecl{tok1, std::nullopt, varDeclInit, true}, loc0, this->lexer->loc);
+        return this->_stmt(ParserStmtVarDecl{tok1, std::nullopt, varDeclInit, true}, loc0);
       }
     }
 
@@ -192,6 +215,8 @@ ParserStmt Parser::next () {
   }
 
   if (tok0.type == TK_KW_OBJ) {
+    this->lexer->whitespace();
+
     auto loc1 = this->lexer->loc;
     auto tok1 = this->lexer->next();
 
@@ -199,12 +224,16 @@ ParserStmt Parser::next () {
       throw Error(this->lexer->reader, loc1, E0121);
     }
 
+    this->lexer->whitespace();
+
     auto loc2 = this->lexer->loc;
     auto tok2 = this->lexer->next();
 
     if (tok2.type != TK_OP_LBRACE) {
       throw Error(this->lexer->reader, loc2, E0122);
     }
+
+    this->lexer->whitespace();
 
     auto loc3 = this->lexer->loc;
     auto tok3 = this->lexer->next();
@@ -215,12 +244,16 @@ ParserStmt Parser::next () {
         throw Error(this->lexer->reader, loc3, E0123);
       }
 
+      this->lexer->whitespace();
+
       auto loc4 = this->lexer->loc;
       auto tok4 = this->lexer->next();
 
       if (tok4.type != TK_OP_COLON) {
         throw Error(this->lexer->reader, loc4, E0124);
       }
+
+      this->lexer->whitespace();
 
       auto loc5 = this->lexer->loc;
       auto tok5 = this->lexer->next();
@@ -230,6 +263,7 @@ ParserStmt Parser::next () {
       }
 
       objDeclFields.push_back(ParserStmtObjDeclField{tok3, tok5});
+      this->lexer->whitespace();
 
       loc3 = this->lexer->loc;
       tok3 = this->lexer->next();
@@ -239,7 +273,7 @@ ParserStmt Parser::next () {
       throw Error(this->lexer->reader, loc0, E0126);
     }
 
-    return this->_stmt(ParserStmtObjDecl{tok1, objDeclFields}, loc0, this->lexer->loc);
+    return this->_stmt(ParserStmtObjDecl{tok1, objDeclFields}, loc0);
   }
 
   if (tok0.type == TK_ID) {
@@ -264,10 +298,10 @@ ParserStmt Parser::next () {
         this->lexer->seek(loc3);
       }
 
-      return this->_stmt(ParserStmtVarDecl{tok0, tok2, varDeclInit}, loc0, this->lexer->loc);
+      return this->_stmt(ParserStmtVarDecl{tok0, tok2, varDeclInit}, loc0);
     } else if (tok1.type == TK_OP_COLON_EQ) {
       auto varDeclInit = this->_stmtExpr();
-      return this->_stmt(ParserStmtVarDecl{tok0, std::nullopt, varDeclInit}, loc0, this->lexer->loc);
+      return this->_stmt(ParserStmtVarDecl{tok0, std::nullopt, varDeclInit}, loc0);
     }
 
     this->lexer->seek(loc1);
@@ -277,7 +311,7 @@ ParserStmt Parser::next () {
 
   try {
     auto stmtExpr = this->_stmtExpr();
-    return this->_stmt(stmtExpr, loc0, this->lexer->loc);
+    return this->_stmt(stmtExpr, loc0);
   } catch (const Error &err) {
     this->lexer->seek(loc0);
   }
@@ -314,11 +348,13 @@ ParserBlock Parser::_block () {
   return block;
 }
 
-ParserStmt Parser::_stmt (const ParserStmtBody &body, ReaderLocation start, ReaderLocation end) const {
-  return ParserStmt{body, start, end};
+ParserStmt Parser::_stmt (const ParserStmtBody &body, ReaderLocation start) const {
+  return ParserStmt{body, start, this->lexer->loc};
 }
 
 ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
+  this->lexer->whitespace();
+
   auto loc1 = this->lexer->loc;
   auto tok1 = this->lexer->next();
 
@@ -405,6 +441,8 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
     }
 
     if (tok4.type == TK_OP_LBRACE) {
+      this->lexer->whitespace();
+
       auto loc5 = this->lexer->loc;
       auto tok5 = this->lexer->next();
       auto exprObjProps = std::vector<ParserExprObjProp>();
@@ -420,6 +458,8 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
         } else if (tok5.type != TK_ID) {
           throw Error(this->lexer->reader, loc5, E0112);
         }
+
+        this->lexer->whitespace();
 
         auto loc6 = this->lexer->loc;
         auto tok6 = this->lexer->next();
@@ -438,10 +478,14 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
         auto exprObjPropInit = this->_stmtExpr();
         exprObjProps.push_back(ParserExprObjProp{tok5, exprObjPropInit});
 
+        this->lexer->whitespace();
+
         loc5 = this->lexer->loc;
         tok5 = this->lexer->next();
 
         if (tok5.type == TK_OP_COMMA) {
+          this->lexer->whitespace();
+
           loc5 = this->lexer->loc;
           tok5 = this->lexer->next();
         }
@@ -562,6 +606,9 @@ ParserStmtLoop Parser::_stmtLoop (const std::optional<std::shared_ptr<ParserStmt
     this->lexer->seek(loc1);
     cond = this->_stmtExpr();
 
+    // TODO Simplify whitespace + loc + next structure
+    this->lexer->whitespace();
+
     auto loc2 = this->lexer->loc;
     auto tok2 = this->lexer->next();
 
@@ -632,6 +679,8 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
 
   if (tok1.type == TK_OP_QN) {
     auto exprCondBody = this->_stmtExpr();
+    this->lexer->whitespace();
+
     auto loc2 = this->lexer->loc;
     auto tok2 = this->lexer->next();
 

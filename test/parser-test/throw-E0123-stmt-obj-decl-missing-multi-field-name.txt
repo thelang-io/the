@@ -1,0 +1,6 @@
+======= stdin =======
+obj Test { field1 : int : float }
+======= stderr =======
+/test:1:25: E0123 - Expected object field name
+  1 | obj Test { field1 : int : float }
+    |                         ^

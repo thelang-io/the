@@ -1,0 +1,6 @@
+======= stdin =======
+fn test ( a : ) void {}
+======= stderr =======
+/test:1:15: E0118 - Expected function parameter type after colon
+  1 | fn test ( a : ) void {}
+    |               ^

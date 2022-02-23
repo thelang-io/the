@@ -1,0 +1,6 @@
+======= stdin =======
+obj 234 {}
+======= stderr =======
+/test:1:5: E0121 - Expected object identifier after obj keyword
+  1 | obj 234 {}
+    |     ^~~

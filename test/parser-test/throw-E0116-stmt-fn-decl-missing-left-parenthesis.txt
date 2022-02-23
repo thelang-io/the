@@ -1,0 +1,6 @@
+======= stdin =======
+fn test [] void {}
+======= stderr =======
+/test:1:9: E0116 - Expected left parentheses after function identifier
+  1 | fn test [] void {}
+    |         ^

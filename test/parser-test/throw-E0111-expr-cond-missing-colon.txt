@@ -1,0 +1,6 @@
+======= stdin =======
+a := true ? 2 ; 1
+======= stderr =======
+/test:1:15: E0111 - Expected colon after ternary expression
+  1 | a := true ? 2 ; 1
+    |               ^

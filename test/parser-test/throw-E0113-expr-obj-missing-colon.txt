@@ -1,0 +1,6 @@
+======= stdin =======
+a := Test{prop1 : 1, prop2 ; 2}
+======= stderr =======
+/test:1:28: E0113 - Expected colon after property name in object expression
+  1 | a := Test{prop1 : 1, prop2 ; 2}
+    |                            ^

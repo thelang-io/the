@@ -1,0 +1,6 @@
+======= stdin =======
+fn test ( a : int , 234 : str ) void {}
+======= stderr =======
+/test:1:21: E0117 - Expected identifier as function parameter name
+  1 | fn test ( a : int , 234 : str ) void {}
+    |                     ^~~

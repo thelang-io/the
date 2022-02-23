@@ -110,6 +110,7 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
+  "stmt-if-empty",
   "stmt-if",
   "stmt-if-with-else",
   "stmt-if-with-single-elif",
@@ -177,10 +178,49 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
   "throw-E0100-unexpected-mut-keyword",
-  "throw-E0100-unexpected-statement"
+  "throw-E0100-unexpected-statement",
+  "throw-E0103-missing-left-brace",
+  "throw-E0104-missing-right-brace"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
+  "throw-E0115-stmt-fn-decl-unexpected-id",
+  "throw-E0116-stmt-fn-decl-missing-left-parenthesis",
+  "throw-E0117-stmt-fn-decl-missing-param-name",
+  "throw-E0117-stmt-fn-decl-multi-missing-param-name",
+  "throw-E0118-stmt-fn-decl-missing-param-type-after-colon",
+  "throw-E0119-stmt-fn-decl-missing-param-type",
+  "throw-E0120-stmt-fn-decl-missing-return-type"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
+  "throw-E0105-stmt-loop-unexpected-init",
+  "throw-E0106-stmt-loop-semi-after-init",
+  "throw-E0107-stmt-loop-unexpected-token-after-init",
+  "throw-E0108-stmt-loop-semi-after-condition"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
+  "throw-E0121-stmt-obj-decl-missing-id",
+  "throw-E0122-stmt-obj-decl-missing-left-brace",
+  "throw-E0123-stmt-obj-decl-missing-field-name",
+  "throw-E0123-stmt-obj-decl-missing-multi-field-name",
+  "throw-E0124-stmt-obj-decl-missing-colon-after-field-name",
+  "throw-E0125-stmt-obj-decl-missing-field-type",
+  "throw-E0126-stmt-obj-decl-empty"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
   "throw-E0102-stmt-var-decl",
   "throw-E0102-stmt-var-decl-mut"
+));
+
+INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
+  "throw-E0101-unexpected-expression",
+  "throw-E0109-missing-right-parenthesis",
+  "throw-E0110-expr-access-missing-dot",
+  "throw-E0111-expr-cond-missing-colon",
+  "throw-E0112-expr-obj-missing-prop-name",
+  "throw-E0113-expr-obj-missing-colon",
+  "throw-E0114-expr-obj-member-id"
 ));

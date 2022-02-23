@@ -1,0 +1,6 @@
+======= stdin =======
+fn 234 () void {}
+======= stderr =======
+/test:1:4: E0115 - Expected function identifier after fn keyword
+  1 | fn 234 () void {}
+    |    ^~~

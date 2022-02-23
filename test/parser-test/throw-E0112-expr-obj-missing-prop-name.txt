@@ -1,0 +1,6 @@
+======= stdin =======
+a := Test{prop1: 1, 45: 2}
+======= stderr =======
+/test:1:21: E0112 - Expected property name in object expression
+  1 | a := Test{prop1: 1, 45: 2}
+    |                     ^~

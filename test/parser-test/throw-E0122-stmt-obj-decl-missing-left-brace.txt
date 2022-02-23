@@ -1,0 +1,6 @@
+======= stdin =======
+obj Test }
+======= stderr =======
+/test:1:10: E0122 - Expected left brace after object identifier
+  1 | obj Test }
+    |          ^

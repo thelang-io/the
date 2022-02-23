@@ -1,0 +1,6 @@
+======= stdin =======
+main
+======= stderr =======
+/test:1:5: E0103 - Expected left brace
+  1 | main
+    |     ^

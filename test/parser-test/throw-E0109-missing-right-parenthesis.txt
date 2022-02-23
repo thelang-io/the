@@ -1,0 +1,6 @@
+======= stdin =======
+a := (b + c
+======= stderr =======
+/test:1:12: E0109 - Expected right parentheses
+  1 | a := (b + c
+    |            ^

@@ -1,0 +1,6 @@
+======= stdin =======
+main {
+======= stderr =======
+/test:1:7: E0104 - Expected right brace
+  1 | main {
+    |       ^

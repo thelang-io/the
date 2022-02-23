@@ -1,0 +1,67 @@
+======= stdin =======
+if false {
+}
+if true {
+} else {
+}
+if true {
+} elif false {
+} else {
+}
+======= stdout =======
+<Stmt start="1:1" end="2:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="1:4" end="1:9">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="KW_FALSE" val="false" start="1:4" end="1:9" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+  </StmtIf>
+</Stmt>
+<Stmt start="3:1" end="5:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="3:4" end="3:8">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="KW_TRUE" val="true" start="3:4" end="3:8" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="alt">
+    </slot>
+  </StmtIf>
+</Stmt>
+<Stmt start="6:1" end="9:2">
+  <StmtIf>
+    <slot name="cond">
+      <Stmt start="6:4" end="6:8">
+        <StmtExpr parenthesized="false">
+          <ExprLit>
+            <Token type="KW_TRUE" val="true" start="6:4" end="6:8" />
+          </ExprLit>
+        </StmtExpr>
+      </Stmt>
+    </slot>
+    <slot name="alt">
+      <StmtIf>
+        <slot name="cond">
+          <Stmt start="7:8" end="7:13">
+            <StmtExpr parenthesized="false">
+              <ExprLit>
+                <Token type="KW_FALSE" val="false" start="7:8" end="7:13" />
+              </ExprLit>
+            </StmtExpr>
+          </Stmt>
+        </slot>
+        <slot name="alt">
+        </slot>
+      </StmtIf>
+    </slot>
+  </StmtIf>
+</Stmt>

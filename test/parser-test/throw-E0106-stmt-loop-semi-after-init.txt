@@ -1,0 +1,6 @@
+======= stdin =======
+loop mut i := 0 , i < 2 , i++ {}
+======= stderr =======
+/test:1:17: E0106 - Expected semicolon after loop initialization
+  1 | loop mut i := 0 , i < 2 , i++ {}
+    |                 ^
