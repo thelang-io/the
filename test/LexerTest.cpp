@@ -6,7 +6,6 @@
  */
 
 #include <gtest/gtest.h>
-#include "../src/Error.hpp"
 #include "../src/Lexer.hpp"
 #include "MockReader.hpp"
 #include "utils.hpp"

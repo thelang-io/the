@@ -8,7 +8,6 @@
 #include <gtest/gtest.h>
 #include <filesystem>
 #include <fstream>
-#include "../src/Error.hpp"
 #include "../src/Parser.hpp"
 #include "MockLexer.hpp"
 #include "utils.hpp"

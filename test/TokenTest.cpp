@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include "../src/Token.hpp"
+#include "utils.hpp"
 
 TEST(TokenTest, IsDigit) {
   EXPECT_TRUE(Token::isDigit('0'));
@@ -119,6 +120,10 @@ TEST(TokenTest, IsNotWhitespace) {
   EXPECT_FALSE(Token::isWhitespace('0'));
   EXPECT_FALSE(Token::isWhitespace('a'));
   EXPECT_FALSE(Token::isWhitespace('#'));
+}
+
+TEST(TokenTest, ThrowsOnUnknownPrecedenceToken) {
+  EXPECT_THROW_WITH_MESSAGE(Token{TK_ID}.precedence(), "Error: Asked for precedence of unknown token");
 }
 
 TEST(TokenTest, ParenthesesPrecision) {

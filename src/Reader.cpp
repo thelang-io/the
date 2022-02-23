@@ -31,10 +31,8 @@ Reader::Reader (const std::string &p) {
   auto f = std::ifstream(canonicalPath);
 
   if (!f.is_open()) {
-    // TODO Test
     throw Error(R"(Error: unable to open file ")" + p + R"(")");
   } else if (f.fail()) {
-    // TODO Test
     throw Error(R"(Error: unable to read file ")" + p + R"(")");
   }
 

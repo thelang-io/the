@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.7.12
+  VERSION 1.7.13
   LANGUAGES CXX
 )
 

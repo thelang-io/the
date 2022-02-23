@@ -8,6 +8,8 @@
 #ifndef TEST_UTILS_HPP
 #define TEST_UTILS_HPP
 
+#include "../src/Error.hpp"
+
 #define EXPECT_THROW_WITH_MESSAGE(body, message) EXPECT_THROW({ \
     try { \
       body; \

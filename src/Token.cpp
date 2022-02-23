@@ -203,8 +203,7 @@ int Token::precedence () const {
     return 1;
   }
 
-  // TODO Test
-  throw Error("Asked for precedence of unknown token");
+  throw Error("Error: Asked for precedence of unknown token");
 }
 
 std::string Token::str () const {
@@ -243,9 +242,4 @@ std::string Token::xml () const {
   result += R"(" />)";
 
   return result;
-}
-
-// TODO Test
-bool operator== (const Token &lhs, const Token &rhs) {
-  return lhs.type == rhs.type && lhs.val == rhs.val && lhs.start == rhs.start && lhs.end == rhs.end;
 }
