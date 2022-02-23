@@ -8,6 +8,7 @@
 #ifndef SRC_PARSER_EXPR_HPP
 #define SRC_PARSER_EXPR_HPP
 
+#include <memory>
 #include <variant>
 #include <vector>
 #include "Lexer.hpp"

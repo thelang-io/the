@@ -45,7 +45,7 @@ int main (int argc, char *argv[]) {
 
     if (isLex) {
       while (true) {
-        auto tok = lexer.next();
+        auto [_, tok] = lexer.next();
 
         if (tok.type == TK_EOF) {
           break;

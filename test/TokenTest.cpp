@@ -123,7 +123,7 @@ TEST(TokenTest, IsNotWhitespace) {
 }
 
 TEST(TokenTest, ThrowsOnUnknownPrecedenceToken) {
-  EXPECT_THROW_WITH_MESSAGE(Token{TK_ID}.precedence(), "Error: Asked for precedence of unknown token");
+  EXPECT_THROW_WITH_MESSAGE(Token{TK_EOF}.precedence(), "Error: Tried precedence for unknown token");
 }
 
 TEST(TokenTest, ParenthesesPrecision) {

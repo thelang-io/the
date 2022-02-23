@@ -9,6 +9,7 @@
 #define SRC_READER_HPP
 
 #include <string>
+#include <tuple>
 
 class Reader;
 struct ReaderLocation;
