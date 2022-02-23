@@ -31,7 +31,7 @@ class Reader {
   explicit Reader (const std::string &);
 
   virtual bool eof () const;
-  virtual char next ();
+  virtual std::tuple<ReaderLocation, char> next ();
   virtual void seek (ReaderLocation);
 
  private:

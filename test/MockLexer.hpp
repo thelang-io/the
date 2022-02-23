@@ -17,9 +17,8 @@ class MockLexer : public Lexer {
   explicit MockLexer (const std::string &);
   virtual ~MockLexer ();
 
-  MOCK_METHOD(Token, next, (), (override));
+  MOCK_METHOD((std::tuple<ReaderLocation, Token>), next, (), (override));
   MOCK_METHOD(void, seek, (ReaderLocation), (override));
-  MOCK_METHOD(void, whitespace, (), (override));
 
  private:
   testing::NiceMock<MockReader> _r;

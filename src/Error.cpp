@@ -22,7 +22,7 @@ Error::Error (Reader *reader, ReaderLocation start, const std::string &message) 
   reader->seek(ReaderLocation{start.pos - start.col, start.line});
 
   while (!reader->eof()) {
-    auto ch = reader->next();
+    auto [_, ch] = reader->next();
 
     if (ch == '\n') {
       break;

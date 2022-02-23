@@ -17,7 +17,7 @@ class MockReader : public Reader {
   virtual ~MockReader ();
 
   MOCK_METHOD(bool, eof, (), (override, const));
-  MOCK_METHOD(char, next, (), (override));
+  MOCK_METHOD((std::tuple<ReaderLocation, char>), next, (), (override));
   MOCK_METHOD(void, seek, (ReaderLocation), (override));
 };
 

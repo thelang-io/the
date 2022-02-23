@@ -23,9 +23,8 @@ class Lexer {
 
   explicit Lexer (Reader *);
 
-  virtual Token next ();
+  virtual std::tuple<ReaderLocation, Token> next ();
   virtual void seek (ReaderLocation);
-  virtual void whitespace ();
 
  private:
   Lexer (const Lexer &);
@@ -38,6 +37,7 @@ class Lexer {
   Token _tok (TokenType);
   void _walk (const std::function<bool (char)> &);
   void _walkLitFloatExp (ReaderLocation);
+  void _whitespace ();
 };
 
 #endif

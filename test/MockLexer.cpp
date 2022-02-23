@@ -11,16 +11,12 @@
 MockLexer::MockLexer (const std::string &content) : Lexer(nullptr), _r(testing::NiceMock<MockReader>(content)) {
   this->reader = &this->_r;
 
-  ON_CALL(*this, next).WillByDefault([this] () -> Token {
+  ON_CALL(*this, next).WillByDefault([this] () {
     return this->Lexer::next();
   });
 
-  ON_CALL(*this, seek).WillByDefault([this] (ReaderLocation l) -> void {
+  ON_CALL(*this, seek).WillByDefault([this] (ReaderLocation l) {
     return this->Lexer::seek(l);
-  });
-
-  ON_CALL(*this, whitespace).WillByDefault([this] () -> void {
-    return this->Lexer::whitespace();
   });
 }
 

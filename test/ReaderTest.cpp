@@ -72,11 +72,11 @@ TEST_F(ReaderTest, EofOnEmpty) {
 }
 
 TEST_F(ReaderTest, ReadsNext) {
-  EXPECT_EQ(this->r2_->next(), 'H');
-  EXPECT_EQ(this->r2_->next(), 'e');
-  EXPECT_EQ(this->r2_->next(), 'l');
-  EXPECT_EQ(this->r2_->next(), 'l');
-  EXPECT_EQ(this->r2_->next(), 'o');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'H');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'e');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'l');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'l');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'o');
 }
 
 TEST_F(ReaderTest, EofOnNext) {
@@ -90,11 +90,11 @@ TEST_F(ReaderTest, EofOnNext) {
 TEST_F(ReaderTest, SeeksTo) {
   this->r2_->seek(ReaderLocation{7, 1, 7});
 
-  EXPECT_EQ(this->r2_->next(), 'W');
-  EXPECT_EQ(this->r2_->next(), 'o');
-  EXPECT_EQ(this->r2_->next(), 'r');
-  EXPECT_EQ(this->r2_->next(), 'l');
-  EXPECT_EQ(this->r2_->next(), 'd');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'W');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'o');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'r');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'l');
+  EXPECT_EQ(std::get<1>(this->r2_->next()), 'd');
   EXPECT_EQ(this->r2_->loc, (ReaderLocation{12, 1, 12}));
 }
 

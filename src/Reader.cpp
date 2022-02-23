@@ -49,11 +49,12 @@ bool Reader::eof () const {
   return this->loc.pos >= this->size;
 }
 
-char Reader::next () {
+std::tuple<ReaderLocation, char> Reader::next () {
   if (this->eof()) {
     throw Error("Error: tried to read on reader eof");
   }
 
+  auto l = this->loc;
   auto ch = this->content[this->loc.pos];
 
   if (ch == '\n') {
@@ -64,7 +65,7 @@ char Reader::next () {
   }
 
   this->loc.pos += 1;
-  return ch;
+  return {l, ch};
 }
 
 void Reader::seek (ReaderLocation l) {
