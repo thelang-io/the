@@ -233,11 +233,6 @@ ParserStmt Parser::next () {
 
       loc3 = this->lexer->loc;
       tok3 = this->lexer->next();
-
-      if (tok3.type == TK_OP_COMMA) {
-        loc3 = this->lexer->loc;
-        tok3 = this->lexer->next();
-      }
     }
 
     if (objDeclFields.empty()) {
