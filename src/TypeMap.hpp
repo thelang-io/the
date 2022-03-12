@@ -8,6 +8,7 @@
 #ifndef SRC_TYPE_MAP_HPP
 #define SRC_TYPE_MAP_HPP
 
+#include <memory>
 #include <optional>
 #include <string>
 #include <variant>

@@ -6,3 +6,7 @@
  */
 
 #include "ASTNode.hpp"
+
+std::string ASTNode::xml (std::size_t indent) const {
+  return std::string(indent, ' ');
+}

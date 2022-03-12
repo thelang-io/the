@@ -89,6 +89,8 @@ struct ASTNodeVarDecl {
 
 struct ASTNode {
   ASTNodeBody body;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 #endif
