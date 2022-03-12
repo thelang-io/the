@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   the-core
-  VERSION 1.7.15
+  VERSION 1.8.0
   LANGUAGES CXX
 )
 
@@ -30,6 +30,9 @@ endfunction()
 set(
   sources
 
+  src/AST.cpp src/AST.hpp
+  src/ASTExpr.cpp src/ASTExpr.hpp
+  src/ASTNode.cpp src/ASTNode.hpp
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
@@ -37,6 +40,9 @@ set(
   src/ParserStmt.cpp src/ParserStmt.hpp
   src/Reader.cpp src/Reader.hpp
   src/Token.cpp src/Token.hpp
+  src/TypeMap.cpp src/TypeMap.hpp
+  src/VarMap.cpp src/VarMap.hpp
+  src/VarStack.cpp src/VarStack.hpp
 )
 
 add_executable(${PROJECT_NAME} ${sources} src/main.cpp)

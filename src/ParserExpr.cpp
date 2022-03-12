@@ -7,7 +7,7 @@
 
 #include "ParserExpr.hpp"
 
-std::string exprAccessBodyToXml (const std::variant<Token, ParserMember> &exprAccessBody, std::size_t indent) {
+std::string memberObjXml (const ParserMemberObj &exprAccessBody, std::size_t indent) {
   if (std::holds_alternative<Token>(exprAccessBody)) {
     auto id = std::get<Token>(exprAccessBody);
     return std::string(indent, ' ') + id.xml() + "\n";
@@ -16,7 +16,7 @@ std::string exprAccessBodyToXml (const std::variant<Token, ParserMember> &exprAc
   auto member = std::get<ParserMember>(exprAccessBody);
   auto result = std::string(indent, ' ') + R"(<slot name="obj">)" "\n";
 
-  result += exprAccessBodyToXml(*member.obj, indent + 2);
+  result += memberObjXml(*member.obj, indent + 2);
   result += std::string(indent, ' ') + "</slot>\n";
   result += std::string(indent, ' ') + R"(<slot name="prop">)" "\n";
   result += std::string(indent + 2, ' ') + member.prop.xml() + "\n";
@@ -32,14 +32,14 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     auto exprAccess = std::get<ParserExprAccess>(*this->body);
 
     result += std::string(indent + 2, ' ') + "<ExprAccess>\n";
-    result += exprAccessBodyToXml(exprAccess.body, indent + 4);
+    result += memberObjXml(exprAccess.body, indent + 4);
     result += std::string(indent + 2, ' ') + "</ExprAccess>\n";
   } else if (std::holds_alternative<ParserExprAssign>(*this->body)) {
     auto exprAssign = std::get<ParserExprAssign>(*this->body);
 
     result += std::string(indent + 2, ' ') + "<ExprAssign>\n";
     result += std::string(indent + 4, ' ') + R"(<slot name="left">)" "\n";
-    result += exprAccessBodyToXml(exprAssign.left.body, indent + 6);
+    result += memberObjXml(exprAssign.left.body, indent + 6);
     result += std::string(indent + 4, ' ') + "</slot>\n";
     result += std::string(indent + 4, ' ') + R"(<slot name="op">)" "\n";
     result += std::string(indent + 6, ' ') + exprAssign.op.xml() + "\n";
@@ -67,7 +67,7 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
 
     result += std::string(indent + 2, ' ') + "<ExprCall>\n";
     result += std::string(indent + 4, ' ') + R"(<slot name="callee">)" "\n";
-    result += exprAccessBodyToXml(exprCall.callee.body, indent + 6);
+    result += memberObjXml(exprCall.callee.body, indent + 6);
     result += std::string(indent + 4, ' ') + "</slot>\n";
 
     if (!exprCall.args.empty()) {

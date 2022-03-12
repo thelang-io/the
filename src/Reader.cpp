@@ -5,11 +5,11 @@
  * Proprietary and confidential
  */
 
+#include "Reader.hpp"
 #include <filesystem>
 #include <fstream>
 #include <sstream>
 #include "Error.hpp"
-#include "Reader.hpp"
 
 std::string ReaderLocation::str () const {
   return std::to_string(this->line) + ":" + std::to_string(this->col + 1);

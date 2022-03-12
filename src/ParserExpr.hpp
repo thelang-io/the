@@ -37,8 +37,10 @@ using ParserExpr = std::variant<
   ParserExprUnary
 >;
 
+using ParserMemberObj = std::variant<Token, ParserMember>;
+
 struct ParserMember {
-  std::shared_ptr<std::variant<Token, ParserMember>> obj;
+  std::shared_ptr<ParserMemberObj> obj;
   Token prop;
 };
 
@@ -50,7 +52,7 @@ struct ParserStmtExpr {
 };
 
 struct ParserExprAccess {
-  std::variant<Token, ParserMember> body;
+  ParserMemberObj body;
 };
 
 struct ParserExprAssign {

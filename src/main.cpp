@@ -6,7 +6,7 @@
  */
 
 #include <iostream>
-#include "Parser.hpp"
+#include "AST.hpp"
 
 int main (int argc, char *argv[]) {
   try {
@@ -14,15 +14,18 @@ int main (int argc, char *argv[]) {
       throw Error("Error: REPL is not supported");
     }
 
+    auto isAST = false;
     auto isLex = false;
     auto isParse = false;
     auto fileName = std::optional<std::string>{};
 
-    for (int i = 1; i < argc; i++) {
+    for (auto i = 1; i < argc; i++) {
       auto arg = std::string(argv[i]);
       auto isOpt = arg.substr(0, 1) == "-";
 
-      if (i == 1 && arg == "lex") {
+      if (i == 1 && arg == "ast") {
+        isAST = true;
+      } else if (i == 1 && arg == "lex") {
         isLex = true;
       } else if (i == 1 && arg == "parse") {
         isParse = true;
@@ -42,6 +45,7 @@ int main (int argc, char *argv[]) {
     auto reader = Reader(*fileName);
     auto lexer = Lexer(&reader);
     auto parser = Parser(&lexer);
+    auto ast = AST(&parser);
 
     if (isLex) {
       while (true) {
@@ -64,6 +68,14 @@ int main (int argc, char *argv[]) {
         }
 
         std::cout << stmt.xml() << std::endl;
+      }
+
+      return EXIT_SUCCESS;
+    } else if (isAST) {
+      auto nodes = ast.gen();
+
+      for (const auto &node : nodes) {
+        std::cout << node.xml() << std::endl;
       }
 
       return EXIT_SUCCESS;

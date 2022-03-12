@@ -5,9 +5,9 @@
  * Proprietary and confidential
  */
 
+#include "Token.hpp"
 #include <regex>
 #include "Error.hpp"
-#include "Token.hpp"
 
 std::string tokenTypeToStr (TokenType type) {
   switch (type) {

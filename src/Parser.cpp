@@ -336,7 +336,7 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
         throw Error(this->lexer->reader, tok3.start, E0110);
       }
 
-      auto member = ParserMember{std::make_shared<std::variant<Token, ParserMember>>(exprAccess.body), tok3};
+      auto member = ParserMember{std::make_shared<ParserMemberObj>(exprAccess.body), tok3};
       exprAccess = ParserExprAccess{member};
       std::tie(loc2, tok2) = this->lexer->next();
     }
