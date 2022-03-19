@@ -9,6 +9,7 @@
 
 Parser::Parser (Lexer *l) {
   this->lexer = l;
+  this->reader = this->lexer->reader;
 }
 
 ParserStmt Parser::next () {
@@ -43,13 +44,13 @@ ParserStmt Parser::next () {
     auto [_1, tok1] = this->lexer->next();
 
     if (tok1.type != TK_ID) {
-      throw Error(this->lexer->reader, tok1.start, E0115);
+      throw Error(this->reader, tok1.start, E0115);
     }
 
     auto [_2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_LPAR) {
-      throw Error(this->lexer->reader, tok2.start, E0116);
+      throw Error(this->reader, tok2.start, E0116);
     }
 
     auto [_3, tok3] = this->lexer->next();
@@ -57,7 +58,7 @@ ParserStmt Parser::next () {
 
     while (tok3.type != TK_OP_RPAR) {
       if (tok3.type != TK_ID) {
-        throw Error(this->lexer->reader, tok3.start, E0117);
+        throw Error(this->reader, tok3.start, E0117);
       }
 
       auto fnDeclParamType = std::optional<Token>{};
@@ -68,7 +69,7 @@ ParserStmt Parser::next () {
         auto [_5, tok5] = this->lexer->next();
 
         if (tok5.type != TK_ID) {
-          throw Error(this->lexer->reader, tok5.start, E0118);
+          throw Error(this->reader, tok5.start, E0118);
         }
 
         fnDeclParamType = tok5;
@@ -82,7 +83,7 @@ ParserStmt Parser::next () {
       } else if (tok4.type == TK_OP_COLON_EQ) {
         fnDeclParamInit = this->_stmtExpr();
       } else {
-        throw Error(this->lexer->reader, tok4.start, E0119);
+        throw Error(this->reader, tok4.start, E0119);
       }
 
       fnDeclParams.push_back(ParserStmtFnDeclParam{tok3, fnDeclParamType, fnDeclParamInit});
@@ -96,7 +97,7 @@ ParserStmt Parser::next () {
     auto [_7, tok7] = this->lexer->next();
 
     if (tok7.type != TK_ID) {
-      throw Error(this->lexer->reader, tok7.start, E0120);
+      throw Error(this->reader, tok7.start, E0120);
     }
 
     auto fnDeclBody = this->_block();
@@ -120,15 +121,15 @@ ParserStmt Parser::next () {
     auto loopInit = this->next();
 
     if (!std::holds_alternative<ParserStmtExpr>(loopInit.body) && !std::holds_alternative<ParserStmtVarDecl>(loopInit.body)) {
-      throw Error(this->lexer->reader, tok1.start, E0105);
+      throw Error(this->reader, tok1.start, E0105);
     }
 
     auto [loc2, tok2] = this->lexer->next();
 
     if (std::holds_alternative<ParserStmtVarDecl>(loopInit.body) && tok2.type != TK_OP_SEMI) {
-      throw Error(this->lexer->reader, tok2.start, E0106);
+      throw Error(this->reader, tok2.start, E0106);
     } else if (std::holds_alternative<ParserStmtExpr>(loopInit.body) && tok2.type != TK_OP_LBRACE && tok2.type != TK_OP_SEMI) {
-      throw Error(this->lexer->reader, tok2.start, E0107);
+      throw Error(this->reader, tok2.start, E0107);
     } else if (std::holds_alternative<ParserStmtExpr>(loopInit.body) && tok2.type == TK_OP_LBRACE) {
       this->lexer->seek(loc2);
 
@@ -152,7 +153,7 @@ ParserStmt Parser::next () {
         auto [_3, tok3] = this->lexer->next();
 
         if (tok3.type != TK_ID) {
-          throw Error(this->lexer->reader, tok3.start, E0102);
+          throw Error(this->reader, tok3.start, E0102);
         }
 
         auto [loc5, tok5] = this->lexer->next();
@@ -178,13 +179,13 @@ ParserStmt Parser::next () {
     auto [_1, tok1] = this->lexer->next();
 
     if (tok1.type != TK_ID) {
-      throw Error(this->lexer->reader, tok1.start, E0121);
+      throw Error(this->reader, tok1.start, E0121);
     }
 
     auto [_2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_LBRACE) {
-      throw Error(this->lexer->reader, tok2.start, E0122);
+      throw Error(this->reader, tok2.start, E0122);
     }
 
     auto [_3, tok3] = this->lexer->next();
@@ -192,19 +193,19 @@ ParserStmt Parser::next () {
 
     while (tok3.type != TK_OP_RBRACE) {
       if (tok3.type != TK_ID) {
-        throw Error(this->lexer->reader, tok3.start, E0123);
+        throw Error(this->reader, tok3.start, E0123);
       }
 
       auto [_4, tok4] = this->lexer->next();
 
       if (tok4.type != TK_OP_COLON) {
-        throw Error(this->lexer->reader, tok4.start, E0124);
+        throw Error(this->reader, tok4.start, E0124);
       }
 
       auto [_5, tok5] = this->lexer->next();
 
       if (tok5.type != TK_ID) {
-        throw Error(this->lexer->reader, tok5.start, E0125);
+        throw Error(this->reader, tok5.start, E0125);
       }
 
       objDeclFields.push_back(ParserStmtObjDeclField{tok3, tok5});
@@ -212,7 +213,7 @@ ParserStmt Parser::next () {
     }
 
     if (objDeclFields.empty()) {
-      throw Error(this->lexer->reader, tok0.start, E0126);
+      throw Error(this->reader, tok0.start, E0126);
     }
 
     return this->_stmt(ParserStmtObjDecl{tok1, objDeclFields}, tok0.start);
@@ -225,7 +226,7 @@ ParserStmt Parser::next () {
       auto [_2, tok2] = this->lexer->next();
 
       if (tok2.type != TK_ID) {
-        throw Error(this->lexer->reader, tok2.start, E0102);
+        throw Error(this->reader, tok2.start, E0102);
       }
 
       auto [loc3, tok3] = this->lexer->next();
@@ -255,14 +256,14 @@ ParserStmt Parser::next () {
     this->lexer->seek(tok0.start);
   }
 
-  throw Error(this->lexer->reader, tok0.start, E0100);
+  throw Error(this->reader, tok0.start, E0100);
 }
 
 ParserBlock Parser::_block () {
   auto [_1, tok1] = this->lexer->next();
 
   if (tok1.type != TK_OP_LBRACE) {
-    throw Error(this->lexer->reader, tok1.start, E0103);
+    throw Error(this->reader, tok1.start, E0103);
   }
 
   auto block = ParserBlock{};
@@ -271,7 +272,7 @@ ParserBlock Parser::_block () {
     auto [loc2, tok2] = this->lexer->next();
 
     if (tok2.type == TK_EOF) {
-      throw Error(this->lexer->reader, tok2.start, E0104);
+      throw Error(this->reader, tok2.start, E0104);
     } else if (tok2.type == TK_OP_RBRACE) {
       break;
     }
@@ -333,7 +334,7 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
       auto [_3, tok3] = this->lexer->next();
 
       if (tok3.type != TK_ID) {
-        throw Error(this->lexer->reader, tok3.start, E0110);
+        throw Error(this->reader, tok3.start, E0110);
       }
 
       auto member = ParserMember{std::make_shared<ParserMemberObj>(exprAccess.body), tok3};
@@ -381,7 +382,7 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
 
           return singleStmt ? stmtExpr : this->_wrapStmtExpr(stmtExpr);
         } else if (tok5.type != TK_ID) {
-          throw Error(this->lexer->reader, tok5.start, E0112);
+          throw Error(this->reader, tok5.start, E0112);
         }
 
         auto [_6, tok6] = this->lexer->next();
@@ -394,7 +395,7 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
 
           return singleStmt ? stmtExpr : this->_wrapStmtExpr(stmtExpr);
         } else if (tok6.type != TK_OP_COLON) {
-          throw Error(this->lexer->reader, tok6.start, E0113);
+          throw Error(this->reader, tok6.start, E0113);
         }
 
         auto exprObjPropInit = this->_stmtExpr();
@@ -408,7 +409,7 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
       }
 
       if (!std::holds_alternative<Token>(exprAccess.body)) {
-        throw Error(this->lexer->reader, tok1.start, E0114);
+        throw Error(this->reader, tok1.start, E0114);
       }
 
       auto exprObj = std::make_shared<ParserExpr>(ParserExprObj{std::get<Token>(exprAccess.body), exprObjProps});
@@ -477,14 +478,14 @@ ParserStmtExpr Parser::_stmtExpr (bool singleStmt) {
     auto [_2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_RPAR) {
-      throw Error(this->lexer->reader, tok2.start, E0109);
+      throw Error(this->reader, tok2.start, E0109);
     }
 
     stmtExpr.parenthesized = true;
     return singleStmt ? stmtExpr : this->_wrapStmtExpr(stmtExpr);
   }
 
-  throw Error(this->lexer->reader, tok1.start, E0101);
+  throw Error(this->reader, tok1.start, E0101);
 }
 
 ParserStmtIf Parser::_stmtIf () {
@@ -518,7 +519,7 @@ ParserStmtLoop Parser::_stmtLoop (const std::optional<std::shared_ptr<ParserStmt
     auto [_2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_SEMI) {
-      throw Error(this->lexer->reader, tok2.start, E0108);
+      throw Error(this->reader, tok2.start, E0108);
     }
   }
 
@@ -584,7 +585,7 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
     auto [_2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_COLON) {
-      throw Error(this->lexer->reader, tok2.start, E0111);
+      throw Error(this->reader, tok2.start, E0111);
     }
 
     auto exprCondAlt = this->_stmtExpr();

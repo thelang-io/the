@@ -15,6 +15,7 @@ class Parser;
 class Parser {
  public:
   Lexer *lexer;
+  Reader *reader;
 
   explicit Parser (Lexer *);
 

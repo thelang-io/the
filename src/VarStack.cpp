@@ -18,7 +18,7 @@ VarStack::VarStack (const std::vector<std::shared_ptr<Var>> &items) {
 void VarStack::mark (const std::shared_ptr<Var> &var) {
   for (auto &item : this->_items) {
     if (std::get<0>(item)->codeName == var->codeName) {
-      std::get<1>(item) = false;
+      std::get<1>(item) = true;
     }
   }
 }

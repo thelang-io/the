@@ -15,10 +15,11 @@ const char *Error::what () const noexcept {
   return this->message_.c_str();
 }
 
-Error::Error (Reader *reader, ReaderLocation start, const std::string &message) {
-  auto end = reader->loc;
-  auto line = std::string();
+Error::Error (Reader *reader, ReaderLocation start, const std::string &message) : Error(reader, start, reader->loc, message) {
+}
 
+Error::Error (Reader *reader, ReaderLocation start, ReaderLocation end, const std::string &message) {
+  auto line = std::string();
   reader->seek(ReaderLocation{start.pos - start.col, start.line});
 
   while (!reader->eof()) {
