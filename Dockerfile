@@ -11,8 +11,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 COPY . .
-RUN mkdir -p build
-RUN (cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug)
-RUN cmake --build build
+RUN cmake . -DCMAKE_BUILD_TYPE=Debug
+RUN cmake --build .
 
-ENTRYPOINT ["build/the-core-test"]
+ENTRYPOINT ["ctest"]
