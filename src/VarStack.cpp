@@ -7,6 +7,23 @@
 
 #include "VarStack.hpp"
 
+std::string Var::xml (std::size_t indent) const {
+  if (this->builtin) {
+    return std::string(indent, ' ') + R"(<BuiltinVar name=")" + this->name + R"(" />)";
+  }
+
+  auto result = std::string(indent, ' ') + R"(<Var builtin=")" + std::string(this->builtin ? "true" : "false");
+
+  result += R"( builtin=")" + std::string(this->builtin ? "true" : "false");
+  result += R"(" codeName=")" + this->codeName;
+  result += R"(" frame=")" + std::to_string(this->frame);
+  result += R"(" mut=")" + std::string(this->mut ? "true" : "false");
+  result += R"(" name=")" + this->name + R"(">)" "\n";
+  result += this->type->xml(indent + 2) + "\n";
+
+  return result + std::string(indent, ' ') + "</Var>";
+}
+
 VarStack::VarStack (const std::vector<std::shared_ptr<Var>> &items) {
   this->_items.reserve(items.size());
 

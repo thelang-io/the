@@ -107,6 +107,8 @@ struct ASTNodeExpr {
   std::shared_ptr<Type> type;
   std::shared_ptr<ASTExpr> body;
   bool parenthesized = false;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 struct ASTExprAccess {
@@ -148,7 +150,7 @@ struct ASTExprLit {
 };
 
 struct ASTExprObj {
-  std::shared_ptr<Type> objType;
+  std::shared_ptr<Type> type;
   std::vector<ASTExprObjProp> props;
 };
 

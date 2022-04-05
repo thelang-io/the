@@ -75,7 +75,7 @@ class Error : public std::exception {
  public:
   explicit Error (const std::string &);
   Error (Reader *, ReaderLocation, const std::string &);
-  Error (Reader *, ReaderLocation, ReaderLocation, const std::string &); // todo test
+  Error (Reader *, ReaderLocation, ReaderLocation, const std::string &);
 
   const char *what () const noexcept override;
 

@@ -32,13 +32,15 @@ bool VarMap::has (const std::string &name) const {
 }
 
 void VarMap::init (const TypeMap &typeMap) {
-  auto printFnType = TypeMap::fn(typeMap.get("void"), {
+  auto printFnTypeFn = TypeFn{typeMap.get("void"), {
     TypeFnParam{"items", typeMap.get("any"), false, true},
     TypeFnParam{"separator", typeMap.get("str"), false, false},
     TypeFnParam{"terminator", typeMap.get("str"), false, false}
-  });
+  }};
 
-  auto printVar = std::make_shared<Var>(Var{"print", "print", printFnType, false, true, this->_frame});
+  auto printFnType = std::make_shared<Type>(Type{"@", printFnTypeFn, true});
+  auto printVar = std::make_shared<Var>(Var{"print", "@", printFnType, false, true, this->_frame});
+
   this->_items.push_back(printVar);
 }
 
@@ -62,7 +64,7 @@ std::string VarMap::name (const std::string &name) const {
 
 void VarMap::restore () {
   for (auto it = this->_items.begin(); it != this->_items.end();) {
-    if ((*it)->_frame == this->_frame) {
+    if ((*it)->frame == this->_frame) {
       this->_items.erase(it);
       continue;
     }

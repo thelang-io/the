@@ -107,6 +107,59 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
+std::string Type::xml (std::size_t indent) const {
+  if (this->builtin) {
+    auto nameAttr = this->name == "@" ? "" : R"( name=")" + this->name + R"(")";
+    return std::string(indent, ' ') + "<BuiltinType" + nameAttr + " />";
+  }
+
+  auto result = std::string(indent, ' ') + R"(<Type builtin=")" + std::string(this->builtin ? "true" : "false");
+
+  result += R"(" name=")" + this->name;
+  result += R"(" type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" "\n";
+
+  indent += 2;
+
+  if (std::holds_alternative<TypeFn>(this->body)) {
+    auto typeFn = std::get<TypeFn>(this->body);
+
+    result += std::string(indent, ' ') + R"(<slot name="returnType">)" "\n";
+    result += typeFn.returnType->xml(indent + 2) + "\n";
+    result += std::string(indent, ' ') + "</slot>\n";
+
+    if (!typeFn.params.empty()) {
+      result += std::string(indent, ' ') + R"(<slot name="params">)" "\n";
+
+      for (const auto &typeFnParam : typeFn.params) {
+        result += std::string(indent + 2, ' ') + R"(<TypeFnParam name=")" + typeFnParam.name;
+        result += R"(" required=")" + std::string(typeFnParam.required ? "true" : "false");
+        result += R"(" vararg=")" + std::string(typeFnParam.vararg ? "true" : "false") + R"(">)" "\n";
+        result += typeFnParam.type->xml(indent + 4) + "\n";
+        result += std::string(indent + 2, ' ') + "</TypeFnParam>\n";
+      }
+
+      result += std::string(indent, ' ') + "</slot>\n";
+    }
+  } else {
+    auto typeObj = std::get<TypeObj>(this->body);
+
+    if (!typeObj.fields.empty()) {
+      result += std::string(indent, ' ') + R"(<slot name="fields">)" "\n";
+
+      for (const auto &typeObjField : typeObj.fields) {
+        result += std::string(indent + 2, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" "\n";
+        result += typeObjField.type->xml(indent + 4) + "\n";
+        result += std::string(indent + 2, ' ') + "</TypeObjField>\n";
+      }
+
+      result += std::string(indent, ' ') + "</slot>\n";
+    }
+  }
+
+  indent -= 2;
+  return result + std::string(indent, ' ') + "</Type>";
+}
+
 std::shared_ptr<Type> TypeMap::fn (const std::shared_ptr<Type> &returnType, const std::vector<TypeFnParam> &params) {
   auto typeFn = TypeFn{returnType, params};
   return std::make_shared<Type>(Type{"@", typeFn, false});

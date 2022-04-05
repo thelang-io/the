@@ -19,7 +19,9 @@ struct Var {
   std::shared_ptr<Type> type;
   bool mut;
   bool builtin;
-  std::size_t _frame;
+  std::size_t frame;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 class VarStack {

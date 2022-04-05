@@ -61,6 +61,8 @@ struct ASTNodeIf {
   std::shared_ptr<ASTNode> cond;
   ASTBlock body;
   std::optional<std::shared_ptr<ASTNodeIfCond>> alt;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 struct ASTNodeLoop {
