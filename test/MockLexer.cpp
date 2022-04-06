@@ -6,11 +6,8 @@
  */
 
 #include "MockLexer.hpp"
-#include "MockReader.hpp"
 
-MockLexer::MockLexer (const std::string &content) : Lexer(nullptr), _r(testing::NiceMock<MockReader>(content)) {
-  this->reader = &this->_r;
-
+MockLexer::MockLexer (const std::string &content) : _r(content), Lexer(&this->_r) {
   ON_CALL(*this, next).WillByDefault([this] () {
     return this->Lexer::next();
   });

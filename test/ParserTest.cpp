@@ -6,28 +6,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <filesystem>
-#include <fstream>
 #include "../src/Parser.hpp"
 #include "MockLexer.hpp"
 #include "utils.hpp"
-
-std::string parserTestReadFile (const char *name) {
-  auto path = "test/parser-test/" + std::string(name) + ".txt";
-  auto file = std::ifstream(path, std::ios::in | std::ios::binary);
-
-  if (!file.is_open()) {
-    throw Error(R"(Unable to open parser test file ")" + path + R"(")");
-  }
-
-  auto size = static_cast<std::ptrdiff_t>(std::filesystem::file_size(path));
-  auto content = std::string(size, '\0');
-
-  file.read(content.data(), size);
-  file.close();
-
-  return content;
-}
 
 class ParserPassTest : public testing::TestWithParam<const char *> {
 };
@@ -36,7 +17,7 @@ class ParserThrowTest : public testing::TestWithParam<const char *> {
 };
 
 TEST_P(ParserPassTest, Passes) {
-  auto testContent = parserTestReadFile(testing::TestWithParam<const char *>::GetParam());
+  auto testContent = readTestFile("parser", testing::TestWithParam<const char *>::GetParam());
 
   if (testContent.substr(0, 21) != "======= stdin =======") {
     throw Error("Parser pass test file doesn't look like an actual test");
@@ -69,7 +50,7 @@ TEST_P(ParserPassTest, Passes) {
 }
 
 TEST_P(ParserThrowTest, Throws) {
-  auto testContent = parserTestReadFile(testing::TestWithParam<const char *>::GetParam());
+  auto testContent = readTestFile("parser", testing::TestWithParam<const char *>::GetParam());
 
   if (testContent.substr(0, 21) != "======= stdin =======") {
     throw Error("Parser throw test file doesn't look like an actual test");

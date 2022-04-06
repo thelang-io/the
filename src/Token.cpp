@@ -17,16 +17,12 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_ASYNC: return "KW_ASYNC";
     case TK_KW_AWAIT: return "KW_AWAIT";
     case TK_KW_BREAK: return "KW_BREAK";
-    case TK_KW_CASE: return "KW_CASE";
     case TK_KW_CATCH: return "KW_CATCH";
-    case TK_KW_CONST: return "KW_CONST";
     case TK_KW_CONTINUE: return "KW_CONTINUE";
-    case TK_KW_DEFAULT: return "KW_DEFAULT";
     case TK_KW_ELIF: return "KW_ELIF";
     case TK_KW_ELSE: return "KW_ELSE";
     case TK_KW_ENUM: return "KW_ENUM";
     case TK_KW_EXPORT: return "KW_EXPORT";
-    case TK_KW_FALLTHROUGH: return "KW_FALLTHROUGH";
     case TK_KW_FALSE: return "KW_FALSE";
     case TK_KW_FN: return "KW_FN";
     case TK_KW_FROM: return "KW_FROM";
@@ -35,7 +31,6 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_IS: return "KW_IS";
     case TK_KW_LOOP: return "KW_LOOP";
     case TK_KW_MAIN: return "KW_MAIN";
-    case TK_KW_MATCH: return "KW_MATCH";
     case TK_KW_MUT: return "KW_MUT";
     case TK_KW_NIL: return "KW_NIL";
     case TK_KW_OBJ: return "KW_OBJ";

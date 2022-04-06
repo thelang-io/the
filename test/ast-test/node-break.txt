@@ -1,0 +1,20 @@
+======= stdin =======
+main {
+  loop {
+    break
+  }
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeLoop>
+        <slot name="body">
+          <Node>
+            <NodeBreak />
+          </Node>
+        </slot>
+      </NodeLoop>
+    </Node>
+  </NodeMain>
+</Node>

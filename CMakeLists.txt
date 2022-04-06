@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.8.4 LANGUAGES CXX)
+project(the-core VERSION 0.8.5 LANGUAGES CXX)
 
 include(FetchContent)
 include(GoogleTest)
@@ -28,14 +28,16 @@ set(
 set(
   tests
 
+  test/ASTTest.cpp
   test/ErrorTest.cpp
   test/LexerTest.cpp
   test/MockLexer.cpp test/MockLexer.hpp
+  test/MockParser.cpp test/MockParser.hpp
   test/MockReader.cpp test/MockReader.hpp
   test/ParserTest.cpp
   test/ReaderTest.cpp
   test/TokenTest.cpp
-  test/utils.hpp
+  test/utils.cpp test/utils.hpp
 )
 
 function(target_add_flags target)

@@ -110,16 +110,12 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
     if (this->val == "async") return {l, this->_tok(TK_KW_ASYNC)};
     if (this->val == "await") return {l, this->_tok(TK_KW_AWAIT)};
     if (this->val == "break") return {l, this->_tok(TK_KW_BREAK)};
-    if (this->val == "case") return {l, this->_tok(TK_KW_CASE)};
     if (this->val == "catch") return {l, this->_tok(TK_KW_CATCH)};
-    if (this->val == "const") return {l, this->_tok(TK_KW_CONST)};
     if (this->val == "continue") return {l, this->_tok(TK_KW_CONTINUE)};
-    if (this->val == "default") return {l, this->_tok(TK_KW_DEFAULT)};
     if (this->val == "elif") return {l, this->_tok(TK_KW_ELIF)};
     if (this->val == "else") return {l, this->_tok(TK_KW_ELSE)};
     if (this->val == "enum") return {l, this->_tok(TK_KW_ENUM)};
     if (this->val == "export") return {l, this->_tok(TK_KW_EXPORT)};
-    if (this->val == "fallthrough") return {l, this->_tok(TK_KW_FALLTHROUGH)};
     if (this->val == "false") return {l, this->_tok(TK_KW_FALSE)};
     if (this->val == "fn") return {l, this->_tok(TK_KW_FN)};
     if (this->val == "from") return {l, this->_tok(TK_KW_FROM)};
@@ -128,7 +124,6 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
     if (this->val == "is") return {l, this->_tok(TK_KW_IS)};
     if (this->val == "loop") return {l, this->_tok(TK_KW_LOOP)};
     if (this->val == "main") return {l, this->_tok(TK_KW_MAIN)};
-    if (this->val == "match") return {l, this->_tok(TK_KW_MATCH)};
     if (this->val == "mut") return {l, this->_tok(TK_KW_MUT)};
     if (this->val == "nil") return {l, this->_tok(TK_KW_NIL)};
     if (this->val == "obj") return {l, this->_tok(TK_KW_OBJ)};

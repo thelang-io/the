@@ -19,4 +19,6 @@
     } \
   }, Error)
 
+std::string readTestFile (const std::string &, const std::string &);
+
 #endif
