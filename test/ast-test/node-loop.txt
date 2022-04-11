@@ -1,0 +1,145 @@
+======= stdin =======
+main {
+  loop i := 0; i < 10; i++ {
+    print("i: ", i)
+  }
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeLoop>
+        <slot name="init">
+          <Node>
+            <NodeVarDecl>
+              <slot name="var">
+                <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                  <BuiltinType name="int" />
+                </Var>
+              </slot>
+              <slot name="init">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      0
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </slot>
+            </NodeVarDecl>
+          </Node>
+        </slot>
+        <slot name="cond">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="bool" />
+            </slot>
+            <slot name="body">
+              <ExprBinary op="LESS_THAN">
+                <slot name="left">
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="int" />
+                    </slot>
+                    <slot name="body">
+                      <ExprAccess>
+                        <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </slot>
+                  </NodeExpr>
+                </slot>
+                <slot name="right">
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="int" />
+                    </slot>
+                    <slot name="body">
+                      <ExprLit type="INT_DEC">
+                        10
+                      </ExprLit>
+                    </slot>
+                  </NodeExpr>
+                </slot>
+              </ExprBinary>
+            </slot>
+          </NodeExpr>
+        </slot>
+        <slot name="upd">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="INCREMENT" prefix="false">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+        <slot name="body">
+          <Node>
+            <NodeExpr parenthesized="false">
+              <slot name="type">
+                <BuiltinType name="void" />
+              </slot>
+              <slot name="body">
+                <ExprCall>
+                  <slot name="callee">
+                    <BuiltinVar name="print" />
+                  </slot>
+                  <slot name="calleeType">
+                    <BuiltinType />
+                  </slot>
+                  <slot name="args">
+                    <ExprCallArg>
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="any" />
+                        </slot>
+                        <slot name="body">
+                          <ExprLit type="STR">
+                            "i: "
+                          </ExprLit>
+                        </slot>
+                      </NodeExpr>
+                    </ExprCallArg>
+                    <ExprCallArg>
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="str" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                              <BuiltinType name="int" />
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprCallArg>
+                  </slot>
+                </ExprCall>
+              </slot>
+            </NodeExpr>
+          </Node>
+        </slot>
+      </NodeLoop>
+    </Node>
+  </NodeMain>
+</Node>

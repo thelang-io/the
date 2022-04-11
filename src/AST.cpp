@@ -232,7 +232,7 @@ ASTNode AST::_stmt (const ParserStmt &stmt, VarStack &varStack) {
   } else if (std::holds_alternative<ParserStmtObjDecl>(stmt.body)) {
     auto stmtObjDecl = std::get<ParserStmtObjDecl>(stmt.body);
     auto nodeObjDeclVar = this->varMap.get(stmtObjDecl.id.val);
-    auto nodeObjDeclObj = std::get<TypeObj>(nodeObjDeclVar->type->body);
+    auto &nodeObjDeclObj = std::get<TypeObj>(nodeObjDeclVar->type->body);
 
     for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
       auto fieldType = this->_type(stmtObjDeclField.type);
@@ -627,6 +627,7 @@ ASTNodeIf AST::_stmtIf (const ParserStmtIf &stmtIf, VarStack &varStack) {
 
 std::shared_ptr<Type> AST::_type (const std::optional<Token> &type, const std::optional<ParserStmtExpr> &init) const {
   if (type != std::nullopt) {
+    if (type->val == "any") return this->typeMap.get("any");
     if (type->val == "bool") return this->typeMap.get("bool");
     if (type->val == "byte") return this->typeMap.get("byte");
     if (type->val == "char") return this->typeMap.get("char");

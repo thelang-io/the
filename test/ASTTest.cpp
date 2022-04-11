@@ -40,6 +40,15 @@ TEST_P(ASTPassTest, Passes) {
   EXPECT_EQ(expectedOutput, actualOutput);
 }
 
-INSTANTIATE_TEST_SUITE_P(General, ASTPassTest, testing::Values(
-  "node-break"
+INSTANTIATE_TEST_SUITE_P(Nodes, ASTPassTest, testing::Values(
+  "node-break",
+  "node-continue",
+  "node-expr",
+  "node-fn-decl",
+  "node-if",
+  "node-loop",
+  "node-main",
+  "node-obj-decl",
+  "node-return",
+  "node-var-decl"
 ));

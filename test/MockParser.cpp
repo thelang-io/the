@@ -8,6 +8,8 @@
 #include "MockParser.hpp"
 
 MockParser::MockParser (const std::string &content) : _l(content), Parser(&this->_l) {
+  this->reader = this->_l.reader;
+
   ON_CALL(*this, next).WillByDefault([this] () {
     return this->Parser::next();
   });

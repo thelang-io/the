@@ -14,7 +14,6 @@ std::string Var::xml (std::size_t indent) const {
 
   auto result = std::string(indent, ' ') + R"(<Var builtin=")" + std::string(this->builtin ? "true" : "false");
 
-  result += R"( builtin=")" + std::string(this->builtin ? "true" : "false");
   result += R"(" codeName=")" + this->codeName;
   result += R"(" frame=")" + std::to_string(this->frame);
   result += R"(" mut=")" + std::string(this->mut ? "true" : "false");

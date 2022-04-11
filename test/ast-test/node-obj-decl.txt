@@ -1,0 +1,49 @@
+======= stdin =======
+obj Animal {
+  age: int
+  name: str
+}
+
+main {
+  obj Cat {
+    breed: str
+    sex: str
+  }
+}
+======= stdout =======
+<Node>
+  <NodeObjDecl>
+    <Var builtin="false" codeName="Animal_0" frame="1" mut="false" name="Animal">
+      <Type builtin="false" name="Animal_0" type="obj">
+        <slot name="fields">
+          <TypeObjField name="age">
+            <BuiltinType name="int" />
+          </TypeObjField>
+          <TypeObjField name="name">
+            <BuiltinType name="str" />
+          </TypeObjField>
+        </slot>
+      </Type>
+    </Var>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeObjDecl>
+        <Var builtin="false" codeName="mainSDCat_0" frame="2" mut="false" name="Cat">
+          <Type builtin="false" name="mainSDCat_0" type="obj">
+            <slot name="fields">
+              <TypeObjField name="breed">
+                <BuiltinType name="str" />
+              </TypeObjField>
+              <TypeObjField name="sex">
+                <BuiltinType name="str" />
+              </TypeObjField>
+            </slot>
+          </Type>
+        </Var>
+      </NodeObjDecl>
+    </Node>
+  </NodeMain>
+</Node>

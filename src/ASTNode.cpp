@@ -125,9 +125,13 @@ std::string ASTNode::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ASTNodeReturn>(this->body)) {
     auto nodeReturn = std::get<ASTNodeReturn>(this->body);
 
-    result += std::string(indent, ' ') + "<NodeReturn>\n";
-    result += nodeReturn.body != std::nullopt ? (nodeReturn.body->xml(indent + 2) + "\n") : "";
-    result += std::string(indent, ' ') + "</NodeReturn>\n";
+    if (nodeReturn.body == std::nullopt) {
+      result += std::string(indent, ' ') + "<NodeReturn />\n";
+    } else {
+      result += std::string(indent, ' ') + "<NodeReturn>\n";
+      result += nodeReturn.body->xml(indent + 2) + "\n";
+      result += std::string(indent, ' ') + "</NodeReturn>\n";
+    }
   } else if (std::holds_alternative<ASTNodeVarDecl>(this->body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(this->body);
 

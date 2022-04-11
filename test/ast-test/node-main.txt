@@ -1,0 +1,84 @@
+======= stdin =======
+main {
+  print(1)
+  print(2, 3)
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <BuiltinVar name="print" />
+            </slot>
+            <slot name="calleeType">
+              <BuiltinType />
+            </slot>
+            <slot name="args">
+              <ExprCallArg>
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="any" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      1
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <BuiltinVar name="print" />
+            </slot>
+            <slot name="calleeType">
+              <BuiltinType />
+            </slot>
+            <slot name="args">
+              <ExprCallArg>
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="any" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      2
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg>
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="str" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      3
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+  </NodeMain>
+</Node>

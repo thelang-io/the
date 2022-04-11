@@ -1,0 +1,227 @@
+======= stdin =======
+fn test1 (p1: str, l1: str) str {
+  print(p1)
+  print(l1)
+}
+
+main {
+  fn test2 (p2: int, l2: int) int {
+    print(p2)
+    print(l2)
+  }
+}
+======= stdout =======
+<Node>
+  <NodeFnDecl>
+    <slot name="var">
+      <Var builtin="false" codeName="test1_0" frame="1" mut="false" name="test1">
+        <Type builtin="false" name="test1_0" type="fn">
+          <slot name="returnType">
+            <BuiltinType name="str" />
+          </slot>
+          <slot name="params">
+            <TypeFnParam name="p1" required="true" vararg="false">
+              <BuiltinType name="str" />
+            </TypeFnParam>
+            <TypeFnParam name="l1" required="true" vararg="false">
+              <BuiltinType name="str" />
+            </TypeFnParam>
+          </slot>
+        </Type>
+      </Var>
+    </slot>
+    <slot name="params">
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var builtin="false" codeName="p1_0" frame="2" mut="false" name="p1">
+            <BuiltinType name="str" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var builtin="false" codeName="l1_0" frame="2" mut="false" name="l1">
+            <BuiltinType name="str" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+    </slot>
+    <slot name="body">
+      <Node>
+        <NodeExpr parenthesized="false">
+          <slot name="type">
+            <BuiltinType name="void" />
+          </slot>
+          <slot name="body">
+            <ExprCall>
+              <slot name="callee">
+                <BuiltinVar name="print" />
+              </slot>
+              <slot name="calleeType">
+                <BuiltinType />
+              </slot>
+              <slot name="args">
+                <ExprCallArg>
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="any" />
+                    </slot>
+                    <slot name="body">
+                      <ExprAccess>
+                        <Var builtin="false" codeName="p1_0" frame="2" mut="false" name="p1">
+                          <BuiltinType name="str" />
+                        </Var>
+                      </ExprAccess>
+                    </slot>
+                  </NodeExpr>
+                </ExprCallArg>
+              </slot>
+            </ExprCall>
+          </slot>
+        </NodeExpr>
+      </Node>
+      <Node>
+        <NodeExpr parenthesized="false">
+          <slot name="type">
+            <BuiltinType name="void" />
+          </slot>
+          <slot name="body">
+            <ExprCall>
+              <slot name="callee">
+                <BuiltinVar name="print" />
+              </slot>
+              <slot name="calleeType">
+                <BuiltinType />
+              </slot>
+              <slot name="args">
+                <ExprCallArg>
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="any" />
+                    </slot>
+                    <slot name="body">
+                      <ExprAccess>
+                        <Var builtin="false" codeName="l1_0" frame="2" mut="false" name="l1">
+                          <BuiltinType name="str" />
+                        </Var>
+                      </ExprAccess>
+                    </slot>
+                  </NodeExpr>
+                </ExprCallArg>
+              </slot>
+            </ExprCall>
+          </slot>
+        </NodeExpr>
+      </Node>
+    </slot>
+  </NodeFnDecl>
+</Node>
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeFnDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="mainSDtest2_0" frame="2" mut="false" name="test2">
+            <Type builtin="false" name="mainSDtest2_0" type="fn">
+              <slot name="returnType">
+                <BuiltinType name="int" />
+              </slot>
+              <slot name="params">
+                <TypeFnParam name="p2" required="true" vararg="false">
+                  <BuiltinType name="int" />
+                </TypeFnParam>
+                <TypeFnParam name="l2" required="true" vararg="false">
+                  <BuiltinType name="int" />
+                </TypeFnParam>
+              </slot>
+            </Type>
+          </Var>
+        </slot>
+        <slot name="params">
+          <NodeFnDeclParam>
+            <slot name="var">
+              <Var builtin="false" codeName="p2_0" frame="3" mut="false" name="p2">
+                <BuiltinType name="int" />
+              </Var>
+            </slot>
+          </NodeFnDeclParam>
+          <NodeFnDeclParam>
+            <slot name="var">
+              <Var builtin="false" codeName="l2_0" frame="3" mut="false" name="l2">
+                <BuiltinType name="int" />
+              </Var>
+            </slot>
+          </NodeFnDeclParam>
+        </slot>
+        <slot name="body">
+          <Node>
+            <NodeExpr parenthesized="false">
+              <slot name="type">
+                <BuiltinType name="void" />
+              </slot>
+              <slot name="body">
+                <ExprCall>
+                  <slot name="callee">
+                    <BuiltinVar name="print" />
+                  </slot>
+                  <slot name="calleeType">
+                    <BuiltinType />
+                  </slot>
+                  <slot name="args">
+                    <ExprCallArg>
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="any" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var builtin="false" codeName="p2_0" frame="3" mut="false" name="p2">
+                              <BuiltinType name="int" />
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprCallArg>
+                  </slot>
+                </ExprCall>
+              </slot>
+            </NodeExpr>
+          </Node>
+          <Node>
+            <NodeExpr parenthesized="false">
+              <slot name="type">
+                <BuiltinType name="void" />
+              </slot>
+              <slot name="body">
+                <ExprCall>
+                  <slot name="callee">
+                    <BuiltinVar name="print" />
+                  </slot>
+                  <slot name="calleeType">
+                    <BuiltinType />
+                  </slot>
+                  <slot name="args">
+                    <ExprCallArg>
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="any" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var builtin="false" codeName="l2_0" frame="3" mut="false" name="l2">
+                              <BuiltinType name="int" />
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprCallArg>
+                  </slot>
+                </ExprCall>
+              </slot>
+            </NodeExpr>
+          </Node>
+        </slot>
+      </NodeFnDecl>
+    </Node>
+  </NodeMain>
+</Node>

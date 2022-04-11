@@ -109,7 +109,7 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     auto exprAccess = std::get<ASTExprAccess>(*this->body);
 
     result += std::string(indent, ' ') + "<ExprAccess>\n";
-    result += memberObjXml(exprAccess.body, indent + 4);
+    result += memberObjXml(exprAccess.body, indent + 2);
     result += std::string(indent, ' ') + "</ExprAccess>\n";
   } else if (std::holds_alternative<ASTExprAssign>(*this->body)) {
     auto exprAssign = std::get<ASTExprAssign>(*this->body);
