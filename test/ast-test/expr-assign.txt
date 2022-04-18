@@ -1,0 +1,59 @@
+======= stdin =======
+main {
+  mut test := false
+  test = true
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="test_0" frame="2" mut="true" name="test">
+            <BuiltinType name="bool" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="bool" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="BOOL">
+                false
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="bool" />
+        </slot>
+        <slot name="body">
+          <ExprAssign op="EQUAL">
+            <slot name="left">
+              <Var builtin="false" codeName="test_0" frame="2" mut="true" name="test">
+                <BuiltinType name="bool" />
+              </Var>
+            </slot>
+            <slot name="right">
+              <NodeExpr parenthesized="false">
+                <slot name="type">
+                  <BuiltinType name="bool" />
+                </slot>
+                <slot name="body">
+                  <ExprLit type="BOOL">
+                    true
+                  </ExprLit>
+                </slot>
+              </NodeExpr>
+            </slot>
+          </ExprAssign>
+        </slot>
+      </NodeExpr>
+    </Node>
+  </NodeMain>
+</Node>

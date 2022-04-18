@@ -40,7 +40,7 @@ TEST_P(ASTPassTest, Passes) {
   EXPECT_EQ(expectedOutput, actualOutput);
 }
 
-INSTANTIATE_TEST_SUITE_P(Nodes, ASTPassTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-break",
   "node-continue",
   "node-expr",
@@ -51,4 +51,15 @@ INSTANTIATE_TEST_SUITE_P(Nodes, ASTPassTest, testing::Values(
   "node-obj-decl",
   "node-return",
   "node-var-decl"
+));
+
+INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
+  "expr-access",
+  "expr-assign",
+  "expr-binary",
+  "expr-call",
+  "expr-cond",
+  "expr-lit",
+  "expr-obj",
+  "expr-unary"
 ));

@@ -1,0 +1,98 @@
+======= stdin =======
+main {
+  a := 1 + 2
+  c := 5 / 2
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprBinary op="ADD">
+                <slot name="left">
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="int" />
+                    </slot>
+                    <slot name="body">
+                      <ExprLit type="INT_DEC">
+                        1
+                      </ExprLit>
+                    </slot>
+                  </NodeExpr>
+                </slot>
+                <slot name="right">
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="int" />
+                    </slot>
+                    <slot name="body">
+                      <ExprLit type="INT_DEC">
+                        2
+                      </ExprLit>
+                    </slot>
+                  </NodeExpr>
+                </slot>
+              </ExprBinary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="c_0" frame="2" mut="false" name="c">
+            <BuiltinType name="float" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="float" />
+            </slot>
+            <slot name="body">
+              <ExprBinary op="DIVIDE">
+                <slot name="left">
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="int" />
+                    </slot>
+                    <slot name="body">
+                      <ExprLit type="INT_DEC">
+                        5
+                      </ExprLit>
+                    </slot>
+                  </NodeExpr>
+                </slot>
+                <slot name="right">
+                  <NodeExpr parenthesized="false">
+                    <slot name="type">
+                      <BuiltinType name="int" />
+                    </slot>
+                    <slot name="body">
+                      <ExprLit type="INT_DEC">
+                        2
+                      </ExprLit>
+                    </slot>
+                  </NodeExpr>
+                </slot>
+              </ExprBinary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+  </NodeMain>
+</Node>

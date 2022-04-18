@@ -66,6 +66,7 @@ struct Type {
   bool isU32 () const;
   bool isU64 () const;
   bool isVoid () const;
+  bool match (const Type &) const;
   std::string xml (std::size_t = 0) const;
 };
 

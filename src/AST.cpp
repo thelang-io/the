@@ -341,31 +341,50 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto exprCallCalleeFn = std::get<TypeFn>(exprCallCalleeType->body);
     auto exprCallArgs = std::vector<ASTExprCallArg>{};
     auto exprCallArgIdx = static_cast<std::size_t>(0);
+    auto passedArgs = std::vector<std::string>{};
+    auto hasNamedArgs = false;
+    auto isArgVararg = false;
+    auto varargArgType = std::optional<TypeFnParam>{};
 
     for (const auto &parserExprCallArg : parserExprCall.args) {
       auto foundParam = std::optional<TypeFnParam>{};
 
-      if (exprCallArgIdx < exprCallCalleeFn.params.size() && parserExprCallArg.id == std::nullopt) {
-        foundParam = exprCallCalleeFn.params[exprCallArgIdx];
-      } else if (parserExprCallArg.id != std::nullopt) {
+      if (parserExprCallArg.id != std::nullopt) {
         auto exprCallArgName = parserExprCallArg.id->val;
 
-        for (const auto &exprCallArg : exprCallCalleeFn.params) {
-          if (exprCallArg.name == exprCallArgName) {
-            foundParam = exprCallArg;
+        if (std::find(passedArgs.begin(), passedArgs.end(), exprCallArgName) != passedArgs.end()) {
+          throw Error("TODO already passed");
+        }
+
+        for (const auto &calleeFnParam : exprCallCalleeFn.params) {
+          if (calleeFnParam.name == exprCallArgName) {
+            foundParam = calleeFnParam;
             break;
           }
         }
-      }
 
-      if (foundParam == std::nullopt) {
-        auto start = this->_stmtExprStart(parserExprCallArg.expr);
-
-        if (parserExprCallArg.id != std::nullopt) {
-          start = parserExprCallArg.id->start;
+        if (foundParam == std::nullopt) {
+          throw Error("TODO 1007 not found param by name");
+        } else if (foundParam->vararg) {
+          throw Error("TODO vararg arg cant be passed by name");
         }
 
-        throw Error(this->reader, start, this->_stmtExprEnd(parserExprCallArg.expr), E1007);
+        hasNamedArgs = true;
+        isArgVararg = false;
+        varargArgType = std::nullopt;
+      } else if (hasNamedArgs) {
+        throw Error("TODO can't pass arg not by name after already passed arg by name");
+      } else if (isArgVararg) {
+        foundParam = varargArgType;
+      } else if (exprCallArgIdx >= exprCallCalleeFn.params.size()) {
+        throw Error("TODO passed too many arguments");
+      } else {
+        foundParam = exprCallCalleeFn.params[exprCallArgIdx];
+      }
+
+      if (!isArgVararg && foundParam->vararg) {
+        isArgVararg = true;
+        varargArgType = foundParam;
       }
 
       auto exprCallArgId = std::optional<std::string>{};
@@ -375,10 +394,26 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
       }
 
       auto exprCallArgExpr = this->_stmtExpr(parserExprCallArg.expr, varStack);
-      exprCallArgExpr.type = foundParam->type;
 
+      if (isArgVararg && !foundParam->type->match(*exprCallArgExpr.type)) {
+        throw Error("TODO vararg type doesn't match");
+      } else if (!foundParam->type->match(*exprCallArgExpr.type)) {
+        throw Error("TODO types doesn't match");
+      }
+
+      exprCallArgExpr.type = foundParam->type;
       exprCallArgs.push_back(ASTExprCallArg{exprCallArgId, exprCallArgExpr});
-      exprCallArgIdx++;
+
+      if (!isArgVararg) {
+        passedArgs.push_back(foundParam->name);
+        exprCallArgIdx++;
+      }
+    }
+
+    for (const auto &calleeFnParam : exprCallCalleeFn.params) {
+      if (calleeFnParam.required && std::find(passedArgs.begin(), passedArgs.end(), calleeFnParam.name) == passedArgs.end()) {
+        throw Error("TODO not all required params are passed");
+      }
     }
 
     nodeExpr.body = std::make_shared<ASTExpr>(ASTExprCall{exprCallCallee, exprCallCalleeType, exprCallArgs});

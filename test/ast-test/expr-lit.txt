@@ -1,0 +1,74 @@
+======= stdin =======
+main {
+  a := 'z'
+  b := 3.14
+  c := "Hello, World!"
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+            <BuiltinType name="char" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="char" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="CHAR">
+                'z'
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="b_0" frame="2" mut="false" name="b">
+            <BuiltinType name="float" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="float" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="FLOAT">
+                3.14
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="c_0" frame="2" mut="false" name="c">
+            <BuiltinType name="str" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="str" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="STR">
+                "Hello, World!"
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+  </NodeMain>
+</Node>

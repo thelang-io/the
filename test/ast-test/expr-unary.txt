@@ -1,0 +1,72 @@
+======= stdin =======
+main {
+  a := !3
+  b := a++
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="LOGICAL_NOT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      3
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="b_0" frame="2" mut="false" name="b">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="INCREMENT" prefix="false">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+  </NodeMain>
+</Node>

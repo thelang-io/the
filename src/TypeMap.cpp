@@ -9,6 +9,19 @@
 #include <climits>
 #include "Error.hpp"
 
+bool numberTypeMatch (const std::string &src, const std::string &dest) {
+  return (src == "i8" && dest == "i8") ||
+    (src == "i16" && (dest == "i16" || dest == "u8" || numberTypeMatch("i8", dest))) ||
+    ((src == "i32" || src == "int") && (dest == "i32" || dest == "int" || dest == "u16" || numberTypeMatch("i16", dest))) ||
+    (src == "i64" && (dest == "i64" || dest == "u32" || numberTypeMatch("i32", dest))) ||
+    (src == "u8" && dest == "u8") ||
+    (src == "u16" && (dest == "u16" || numberTypeMatch("u8", dest))) ||
+    (src == "u32" && (dest == "u32" || numberTypeMatch("u16", dest))) ||
+    (src == "u64" && (dest == "u64" || numberTypeMatch("u32", dest))) ||
+    (src == "f32" && (dest == "f32" || numberTypeMatch("i32", dest))) ||
+    ((src == "f64" || src == "float") && (dest == "f32" || dest == "f64" || dest == "float" || numberTypeMatch("i64", dest)));
+}
+
 bool Type::isAny () const {
   return this->name == "any";
 }
@@ -105,6 +118,19 @@ bool Type::isU64 () const {
 
 bool Type::isVoid () const {
   return this->name == "void";
+}
+
+bool Type::match (const Type &type) const {
+  if (this->isObj() && type.isObj()) {
+    return this->name == type.name;
+  }
+
+  return (this->name == "any") ||
+    (this->name == "bool" && type.name == "bool") ||
+    (this->name == "byte" && type.name == "byte") ||
+    (this->name == "char" && type.name == "char") ||
+    (this->name == "str" && (type.name == "ch" || type.name == "str")) ||
+    numberTypeMatch(this->name, type.name);
 }
 
 std::string Type::xml (std::size_t indent) const {
