@@ -1,0 +1,8 @@
+======= stdin =======
+main {
+  print("1" - "2")
+}
+======= stderr =======
+/test:2:9: E1003 - Tried operation other than concatenation on string
+  2 |   print("1" - "2")
+    |         ^~~~~~~~~

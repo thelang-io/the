@@ -20,10 +20,10 @@ main {
             <BuiltinType name="str" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="p1" required="true" vararg="false">
+            <TypeFnParam name="p1" required="true" variadic="false">
               <BuiltinType name="str" />
             </TypeFnParam>
-            <TypeFnParam name="l1" required="true" vararg="false">
+            <TypeFnParam name="l1" required="true" variadic="false">
               <BuiltinType name="str" />
             </TypeFnParam>
           </slot>
@@ -127,10 +127,10 @@ main {
                 <BuiltinType name="int" />
               </slot>
               <slot name="params">
-                <TypeFnParam name="p2" required="true" vararg="false">
+                <TypeFnParam name="p2" required="true" variadic="false">
                   <BuiltinType name="int" />
                 </TypeFnParam>
-                <TypeFnParam name="l2" required="true" vararg="false">
+                <TypeFnParam name="l2" required="true" variadic="false">
                   <BuiltinType name="int" />
                 </TypeFnParam>
               </slot>

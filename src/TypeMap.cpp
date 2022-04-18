@@ -159,7 +159,7 @@ std::string Type::xml (std::size_t indent) const {
       for (const auto &typeFnParam : typeFn.params) {
         result += std::string(indent + 2, ' ') + R"(<TypeFnParam name=")" + typeFnParam.name;
         result += R"(" required=")" + std::string(typeFnParam.required ? "true" : "false");
-        result += R"(" vararg=")" + std::string(typeFnParam.vararg ? "true" : "false") + R"(">)" "\n";
+        result += R"(" variadic=")" + std::string(typeFnParam.variadic ? "true" : "false") + R"(">)" "\n";
         result += typeFnParam.type->xml(indent + 4) + "\n";
         result += std::string(indent + 2, ' ') + "</TypeFnParam>\n";
       }

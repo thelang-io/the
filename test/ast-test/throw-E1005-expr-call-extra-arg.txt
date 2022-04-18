@@ -1,0 +1,11 @@
+======= stdin =======
+fn test (a: int) void {
+}
+
+main {
+  test(1, 234)
+}
+======= stderr =======
+/test:5:11: E1005 - Extra argument in call expression
+  5 |   test(1, 234)
+    |           ^~~

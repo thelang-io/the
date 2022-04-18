@@ -1,0 +1,11 @@
+======= stdin =======
+fn test () void {
+}
+
+main {
+  print(test.b)
+}
+======= stderr =======
+/test:5:9: E1000 - Tried accessing property of non object variable
+  5 |   print(test.b)
+    |         ^~~~~~

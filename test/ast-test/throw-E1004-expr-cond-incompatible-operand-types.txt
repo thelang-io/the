@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  a := 1
+  print(a > 2 ? "Hello, World!" : 2)
+}
+======= stderr =======
+/test:3:17: E1004 - Incompatible operand types
+  3 |   print(a > 2 ? "Hello, World!" : 2)
+    |                 ^~~~~~~~~~~~~~~~~~~

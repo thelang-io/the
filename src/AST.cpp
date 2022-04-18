@@ -101,7 +101,7 @@ std::shared_ptr<Type> AST::_exprAccessType (const ParserMemberObj &exprAccessBod
   auto memberObjType = this->_exprAccessType(*parserMember.obj);
 
   if (!memberObjType->isObj()) {
-    throw Error(this->reader, this->_exprAccessStart(*parserMember.obj), this->_exprAccessEnd(*parserMember.obj), E1005);
+    throw Error(this->reader, this->_exprAccessStart(exprAccessBody), this->_exprAccessEnd(exprAccessBody), E1000);
   }
 
   auto memberObj = std::get<TypeObj>(memberObjType->body);
@@ -111,7 +111,7 @@ std::shared_ptr<Type> AST::_exprAccessType (const ParserMemberObj &exprAccessBod
   });
 
   if (memberObjField == memberObj.fields.end()) {
-    throw Error(this->reader, parserMember.prop.start, parserMember.prop.end, E1006);
+    throw Error(this->reader, parserMember.prop.start, parserMember.prop.end, E1001);
   }
 
   return memberObjField->type;
@@ -268,7 +268,7 @@ ASTNode AST::_stmt (const ParserStmt &stmt, VarStack &varStack) {
     return ASTNode{nodeVarDecl};
   }
 
-  throw Error(E1004);
+  throw Error("Error: tried to analyze unknown statement");
 }
 
 ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) const {
@@ -343,8 +343,8 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto exprCallArgIdx = static_cast<std::size_t>(0);
     auto passedArgs = std::vector<std::string>{};
     auto hasNamedArgs = false;
-    auto isArgVararg = false;
-    auto varargArgType = std::optional<TypeFnParam>{};
+    auto isArgVariadic = false;
+    auto variadicArgType = std::optional<TypeFnParam>{};
 
     for (const auto &parserExprCallArg : parserExprCall.args) {
       auto foundParam = std::optional<TypeFnParam>{};
@@ -353,7 +353,7 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
         auto exprCallArgName = parserExprCallArg.id->val;
 
         if (std::find(passedArgs.begin(), passedArgs.end(), exprCallArgName) != passedArgs.end()) {
-          throw Error("TODO already passed");
+          throw Error(this->reader, parserExprCallArg.id->start, this->_stmtExprEnd(parserExprCallArg.expr), E1005);
         }
 
         for (const auto &calleeFnParam : exprCallCalleeFn.params) {
@@ -364,27 +364,27 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
         }
 
         if (foundParam == std::nullopt) {
-          throw Error("TODO 1007 not found param by name");
-        } else if (foundParam->vararg) {
-          throw Error("TODO vararg arg cant be passed by name");
+          throw Error(this->reader, parserExprCallArg.id->start, this->_stmtExprEnd(parserExprCallArg.expr), E1002);
+        } else if (foundParam->variadic) {
+          throw Error(this->reader, parserExprCallArg.id->start, this->_stmtExprEnd(parserExprCallArg.expr), E1006);
         }
 
         hasNamedArgs = true;
-        isArgVararg = false;
-        varargArgType = std::nullopt;
+        isArgVariadic = false;
+        variadicArgType = std::nullopt;
       } else if (hasNamedArgs) {
-        throw Error("TODO can't pass arg not by name after already passed arg by name");
-      } else if (isArgVararg) {
-        foundParam = varargArgType;
+        throw Error(this->reader, this->_stmtExprStart(parserExprCallArg.expr), this->_stmtExprEnd(parserExprCallArg.expr), E1007);
+      } else if (isArgVariadic) {
+        foundParam = variadicArgType;
       } else if (exprCallArgIdx >= exprCallCalleeFn.params.size()) {
-        throw Error("TODO passed too many arguments");
+        throw Error(this->reader, this->_stmtExprStart(parserExprCallArg.expr), this->_stmtExprEnd(parserExprCallArg.expr), E1005);
       } else {
         foundParam = exprCallCalleeFn.params[exprCallArgIdx];
       }
 
-      if (!isArgVararg && foundParam->vararg) {
-        isArgVararg = true;
-        varargArgType = foundParam;
+      if (!isArgVariadic && foundParam->variadic) {
+        isArgVariadic = true;
+        variadicArgType = foundParam;
       }
 
       auto exprCallArgId = std::optional<std::string>{};
@@ -395,16 +395,14 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
 
       auto exprCallArgExpr = this->_stmtExpr(parserExprCallArg.expr, varStack);
 
-      if (isArgVararg && !foundParam->type->match(*exprCallArgExpr.type)) {
-        throw Error("TODO vararg type doesn't match");
-      } else if (!foundParam->type->match(*exprCallArgExpr.type)) {
-        throw Error("TODO types doesn't match");
+      if (!foundParam->type->match(*exprCallArgExpr.type)) {
+        throw Error(this->reader, this->_stmtExprStart(parserExprCallArg.expr), this->_stmtExprEnd(parserExprCallArg.expr), E1008);
       }
 
       exprCallArgExpr.type = foundParam->type;
       exprCallArgs.push_back(ASTExprCallArg{exprCallArgId, exprCallArgExpr});
 
-      if (!isArgVararg) {
+      if (!isArgVariadic) {
         passedArgs.push_back(foundParam->name);
         exprCallArgIdx++;
       }
@@ -412,7 +410,7 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
 
     for (const auto &calleeFnParam : exprCallCalleeFn.params) {
       if (calleeFnParam.required && std::find(passedArgs.begin(), passedArgs.end(), calleeFnParam.name) == passedArgs.end()) {
-        throw Error("TODO not all required params are passed");
+        throw Error(this->reader, this->_stmtExprStart(stmtExpr), this->_stmtExprEnd(stmtExpr), E1009);
       }
     }
 
@@ -474,7 +472,7 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     return nodeExpr;
   }
 
-  throw Error(E1003);
+  throw Error("Error: tried to analyze unknown expression statement");
 }
 
 ReaderLocation AST::_stmtExprEnd (const ParserStmtExpr &stmtExpr) const {
@@ -504,7 +502,7 @@ ReaderLocation AST::_stmtExprEnd (const ParserStmtExpr &stmtExpr) const {
     return exprUnary.prefix ? exprUnary.op.end : this->_stmtExprEnd(exprUnary.arg);
   }
 
-  throw Error(E1011);
+  throw Error("Error: tried to analyze unknown expression end");
 }
 
 ReaderLocation AST::_stmtExprStart (const ParserStmtExpr &stmtExpr) const {
@@ -534,7 +532,7 @@ ReaderLocation AST::_stmtExprStart (const ParserStmtExpr &stmtExpr) const {
     return exprUnary.prefix ? exprUnary.op.start : this->_stmtExprStart(exprUnary.arg);
   }
 
-  throw Error(E1010);
+  throw Error("Error: tried to analyze unknown expression start");
 }
 
 std::shared_ptr<Type> AST::_stmtExprType (const ParserStmtExpr &stmtExpr) const {
@@ -556,7 +554,7 @@ std::shared_ptr<Type> AST::_stmtExprType (const ParserStmtExpr &stmtExpr) const 
       exprBinaryRightType->isStr()
     ) {
       if (exprBinary.op.type != TK_OP_PLUS) {
-        throw Error(this->reader, this->_stmtExprStart(exprBinary.left), this->_stmtExprEnd(exprBinary.right), E1008);
+        throw Error(this->reader, this->_stmtExprStart(exprBinary.left), this->_stmtExprEnd(exprBinary.right), E1003);
       }
 
       return this->typeMap.get("str");
@@ -595,7 +593,7 @@ std::shared_ptr<Type> AST::_stmtExprType (const ParserStmtExpr &stmtExpr) const 
     auto exprCondAltType = this->_stmtExprType(exprCond.alt);
 
     if (exprCondBodyType->name != exprCondAltType->name) {
-      throw Error(this->reader, this->_stmtExprStart(exprCond.body), this->_stmtExprEnd(exprCond.alt), E1009);
+      throw Error(this->reader, this->_stmtExprStart(exprCond.body), this->_stmtExprEnd(exprCond.alt), E1004);
     }
 
     return exprCondBodyType;
@@ -612,7 +610,7 @@ std::shared_ptr<Type> AST::_stmtExprType (const ParserStmtExpr &stmtExpr) const 
     if (exprLit.body.type == TK_LIT_INT_OCT) return this->typeMap.get("int");
     if (exprLit.body.type == TK_LIT_STR) return this->typeMap.get("str");
 
-    throw Error(E1002);
+    throw Error("Error: tried to analyze unknown literal type");
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto exprObj = std::get<ParserExprObj>(*stmtExpr.body);
     return this->varMap.get(exprObj.id.val)->type;
@@ -633,7 +631,7 @@ std::shared_ptr<Type> AST::_stmtExprType (const ParserStmtExpr &stmtExpr) const 
     return exprUnaryType;
   }
 
-  throw Error(E1001);
+  throw Error("Error: tried to analyze unknown expression type");
 }
 
 ASTNodeIf AST::_stmtIf (const ParserStmtIf &stmtIf, VarStack &varStack) {
@@ -690,5 +688,5 @@ std::shared_ptr<Type> AST::_type (const std::optional<Token> &type, const std::o
     return this->_stmtExprType(*init);
   }
 
-  throw Error(E1000);
+  throw Error("Error: tried to analyze unknown type");
 }

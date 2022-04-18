@@ -1,0 +1,11 @@
+======= stdin =======
+fn test (a: str) void {
+}
+
+main {
+  test(123)
+}
+======= stderr =======
+/test:5:8: E1008 - Argument type doesn't match parameter type
+  5 |   test(123)
+    |        ^~~

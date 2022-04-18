@@ -1,0 +1,11 @@
+======= stdin =======
+fn test (a: int) void {
+}
+
+main {
+  test(b: 2)
+}
+======= stderr =======
+/test:5:8: E1002 - Extraneous argument passed in call expression
+  5 |   test(b: 2)
+    |        ^~~~

@@ -1,0 +1,8 @@
+======= stdin =======
+fn test (a: str...) void {
+}
+
+main {
+  test(1, 2, 3)
+}
+======= stderr =======

@@ -1,0 +1,12 @@
+======= stdin =======
+fn test (a: int, b: int, c: int) void {
+  print(a, b, c)
+}
+
+main {
+  test(1, b: 2, 345)
+}
+======= stderr =======
+/test:6:17: E1007 - Named arguments can't be followed by regular arguments
+  6 |   test(1, b: 2, 345)
+    |                 ^~~

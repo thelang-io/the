@@ -16,7 +16,7 @@ fn test (a: int) any {
             <BuiltinType name="any" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="a" required="true" vararg="false">
+            <TypeFnParam name="a" required="true" variadic="false">
               <BuiltinType name="int" />
             </TypeFnParam>
           </slot>

@@ -56,18 +56,16 @@
 #define E0125 "E0125 - Expected object field type after field name"
 #define E0126 "E0126 - Empty object declarations are not allowed"
 
-#define E1000 "E1000 - Tried to analyze unknown type"
-#define E1001 "E1001 - Tried to analyze unknown expression type"
-#define E1002 "E1002 - Tried to analyze unknown literal type"
-#define E1003 "E1003 - Tried to analyze unknown expression statement"
-#define E1004 "E1004 - Tried to analyze unknown statement"
-#define E1005 "E1005 - Tried accessing property of non object variable"
-#define E1006 "E1006 - Tried accessing non existing object property"
-#define E1007 "E1007 - Argument wasn't found in function parameters"
-#define E1008 "E1008 - Tried operation other than concatenation on string"
-#define E1009 "E1009 - Incompatible operand types"
-#define E1010 "E1010 - Tried to analyze unknown expression start"
-#define E1011 "E1011 - Tried to analyze unknown expression end"
+#define E1000 "E1000 - Tried accessing property of non object variable"
+#define E1001 "E1001 - Tried accessing non existing object property"
+#define E1002 "E1002 - Extraneous argument passed in call expression"
+#define E1003 "E1003 - Tried operation other than concatenation on string"
+#define E1004 "E1004 - Incompatible operand types"
+#define E1005 "E1005 - Extra argument in call expression"
+#define E1006 "E1006 - Variadic argument can't be passed by name"
+#define E1007 "E1007 - Named arguments can't be followed by regular arguments"
+#define E1008 "E1008 - Argument type doesn't match parameter type"
+#define E1009 "E1009 - Missing required arguments"
 
 class Error;
 

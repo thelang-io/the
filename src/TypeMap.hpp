@@ -29,7 +29,7 @@ struct TypeFnParam {
   std::string name;
   std::shared_ptr<Type> type;
   bool required;
-  bool vararg;
+  bool variadic;
 };
 
 struct TypeObj {

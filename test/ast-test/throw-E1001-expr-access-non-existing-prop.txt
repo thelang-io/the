@@ -1,0 +1,13 @@
+======= stdin =======
+obj Test {
+  a: int
+}
+
+main {
+  test := Test{a: 1}
+  print(test.propName)
+}
+======= stderr =======
+/test:7:14: E1001 - Tried accessing non existing object property
+  7 |   print(test.propName)
+    |              ^~~~~~~~
