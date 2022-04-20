@@ -6,6 +6,7 @@
  */
 
 #include "ASTExpr.hpp"
+#include "Error.hpp"
 
 std::string exprAssignOpStr (enum ASTExprAssignOp op) {
   switch (op) {
@@ -25,6 +26,8 @@ std::string exprAssignOpStr (enum ASTExprAssignOp op) {
     case AST_EXPR_ASSIGN_RIGHT_SHIFT: return "RIGHT_SHIFT";
     case AST_EXPR_ASSIGN_SUBTRACT: return "SUBTRACT";
   }
+
+  throw Error("Error: Tried stringify unknown assign expression operator");
 }
 
 std::string exprBinaryOpStr (enum ASTExprBinaryOp op) {
@@ -50,6 +53,8 @@ std::string exprBinaryOpStr (enum ASTExprBinaryOp op) {
     case AST_EXPR_BINARY_RIGHT_SHIFT: return "RIGHT_SHIFT";
     case AST_EXPR_BINARY_SUBTRACT: return "SUBTRACT";
   }
+
+  throw Error("Error: Tried stringify unknown binary expression operator");
 }
 
 std::string exprLitTypeStr (enum ASTExprLitType type) {
@@ -63,6 +68,8 @@ std::string exprLitTypeStr (enum ASTExprLitType type) {
     case AST_EXPR_LIT_INT_OCT: return "INT_OCT";
     case AST_EXPR_LIT_STR: return "STR";
   }
+
+  throw Error("Error: Tried stringify unknown literal expression type");
 }
 
 std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
@@ -75,6 +82,8 @@ std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
     case AST_EXPR_UNARY_NEGATION: return "NEGATION";
     case AST_EXPR_UNARY_PLUS: return "PLUS";
   }
+
+  throw Error("Error: Tried stringify unknown unary expression operator");
 }
 
 std::string memberObjXml (const ASTMemberObj &exprAccessBody, std::size_t indent) {
