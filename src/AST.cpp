@@ -123,12 +123,12 @@ void AST::_forwardStmt (const ParserBlock &block) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(stmt.body);
       auto fnName = stmtFnDecl.id.val;
       auto fnCodeName = this->typeMap.name(fnName);
-      auto fnReturnType = this->_type(stmtFnDecl.returnType);
+      auto fnReturnType = stmtFnDecl.returnType == std::nullopt ? this->typeMap.get("void") : this->_type(stmtFnDecl.returnType);
       auto fnParams = std::vector<TypeFnParam>{};
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
         auto paramType = this->_type(stmtFnDeclParam.type, stmtFnDeclParam.init);
-        fnParams.push_back(TypeFnParam{stmtFnDeclParam.id.val, paramType, stmtFnDeclParam.init == std::nullopt, false});
+        fnParams.push_back(TypeFnParam{stmtFnDeclParam.id.val, paramType, stmtFnDeclParam.init == std::nullopt, stmtFnDeclParam.variadic});
       }
 
       auto fnType = this->typeMap.add(fnCodeName, fnParams, fnReturnType);
@@ -395,7 +395,7 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
 
       auto exprCallArgExpr = this->_stmtExpr(parserExprCallArg.expr, varStack);
 
-      if (!foundParam->type->match(*exprCallArgExpr.type)) {
+      if (!foundParam->type->match(exprCallArgExpr.type)) {
         throw Error(this->reader, this->_stmtExprStart(parserExprCallArg.expr), this->_stmtExprEnd(parserExprCallArg.expr), E1008);
       }
 
@@ -658,30 +658,43 @@ ASTNodeIf AST::_stmtIf (const ParserStmtIf &stmtIf, VarStack &varStack) {
   return ASTNodeIf{cond, body, alt};
 }
 
-std::shared_ptr<Type> AST::_type (const std::optional<Token> &type, const std::optional<ParserStmtExpr> &init) const {
-  if (type != std::nullopt) {
-    if (type->val == "any") return this->typeMap.get("any");
-    if (type->val == "bool") return this->typeMap.get("bool");
-    if (type->val == "byte") return this->typeMap.get("byte");
-    if (type->val == "char") return this->typeMap.get("char");
-    if (type->val == "float") return this->typeMap.get("float");
-    if (type->val == "f32") return this->typeMap.get("f32");
-    if (type->val == "f64") return this->typeMap.get("f64");
-    if (type->val == "int") return this->typeMap.get("int");
-    if (type->val == "i8") return this->typeMap.get("i8");
-    if (type->val == "i16") return this->typeMap.get("i16");
-    if (type->val == "i32") return this->typeMap.get("i32");
-    if (type->val == "i64") return this->typeMap.get("i64");
-    if (type->val == "str") return this->typeMap.get("str");
-    if (type->val == "u8") return this->typeMap.get("u8");
-    if (type->val == "u16") return this->typeMap.get("u16");
-    if (type->val == "u32") return this->typeMap.get("u32");
-    if (type->val == "u64") return this->typeMap.get("u64");
-    if (type->val == "void") return this->typeMap.get("void");
+std::shared_ptr<Type> AST::_type (const std::optional<std::shared_ptr<ParserType>> &type, const std::optional<ParserStmtExpr> &init) const {
+  if (type != std::nullopt && std::holds_alternative<ParserTypeFn>((*type)->body)) {
+    auto typeFn = std::get<ParserTypeFn>((*type)->body);
+    auto fnParams = std::vector<TypeFnParam>{};
 
-    if (this->varMap.has(type->val)) {
-      return this->varMap.get(type->val)->type;
+    for (const auto &typeFnParam : typeFn.params) {
+      fnParams.push_back(TypeFnParam{"$", this->_type(typeFnParam.type), true, typeFnParam.variadic});
     }
+
+    return TypeMap::fn(this->_type(typeFn.returnType), fnParams);
+  } else if (type != std::nullopt && std::holds_alternative<ParserTypeId>((*type)->body)) {
+    auto typeId = std::get<ParserTypeId>((*type)->body);
+
+    if (typeId.id.val == "any") return this->typeMap.get("any");
+    if (typeId.id.val == "bool") return this->typeMap.get("bool");
+    if (typeId.id.val == "byte") return this->typeMap.get("byte");
+    if (typeId.id.val == "char") return this->typeMap.get("char");
+    if (typeId.id.val == "float") return this->typeMap.get("float");
+    if (typeId.id.val == "f32") return this->typeMap.get("f32");
+    if (typeId.id.val == "f64") return this->typeMap.get("f64");
+    if (typeId.id.val == "int") return this->typeMap.get("int");
+    if (typeId.id.val == "i8") return this->typeMap.get("i8");
+    if (typeId.id.val == "i16") return this->typeMap.get("i16");
+    if (typeId.id.val == "i32") return this->typeMap.get("i32");
+    if (typeId.id.val == "i64") return this->typeMap.get("i64");
+    if (typeId.id.val == "str") return this->typeMap.get("str");
+    if (typeId.id.val == "u8") return this->typeMap.get("u8");
+    if (typeId.id.val == "u16") return this->typeMap.get("u16");
+    if (typeId.id.val == "u32") return this->typeMap.get("u32");
+    if (typeId.id.val == "u64") return this->typeMap.get("u64");
+    if (typeId.id.val == "void") return this->typeMap.get("void");
+
+    if (this->varMap.has(typeId.id.val)) {
+      return this->varMap.get(typeId.id.val)->type;
+    }
+
+    throw Error("Error: tried to analyze unknown type");
   }
 
   if (init != std::nullopt) {

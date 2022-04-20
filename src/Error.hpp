@@ -46,7 +46,7 @@
 #define E0115 "E0115 - Expected function identifier after fn keyword"
 #define E0116 "E0116 - Expected left parentheses after function identifier"
 #define E0117 "E0117 - Expected identifier as function parameter name"
-#define E0118 "E0118 - Expected function parameter type after colon"
+#define E0118 "E0118 - Expected function parameter type"
 #define E0119 "E0119 - Expected function parameter type after parameter name"
 #define E0120 "E0120 - Expected function return type after parameters list"
 #define E0121 "E0121 - Expected object identifier after obj keyword"
@@ -55,6 +55,7 @@
 #define E0124 "E0124 - Expected colon after object field name"
 #define E0125 "E0125 - Expected object field type after field name"
 #define E0126 "E0126 - Empty object declarations are not allowed"
+#define E0127 "E0127 - Expected right parenthesis"
 
 #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"

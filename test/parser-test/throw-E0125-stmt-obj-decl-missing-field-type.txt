@@ -1,6 +1,6 @@
 ======= stdin =======
 obj Test { field1 : }
 ======= stderr =======
-/test:1:21: E0125 - Expected object field type after field name
+/test:1:20: E0125 - Expected object field type after field name
   1 | obj Test { field1 : }
-    |                     ^
+    |                    ^

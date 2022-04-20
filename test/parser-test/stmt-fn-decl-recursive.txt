@@ -28,12 +28,20 @@ fn test3 (b: float) float {
           <Token type="ID" val="n" start="1:11" end="1:12" />
         </slot>
         <slot name="type">
-          <Token type="ID" val="int" start="1:14" end="1:17" />
+          <Type parenthesized="false" start="1:14" end="1:17">
+            <TypeId>
+              <Token type="ID" val="int" start="1:14" end="1:17" />
+            </TypeId>
+          </Type>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Token type="ID" val="int" start="1:19" end="1:22" />
+      <Type parenthesized="false" start="1:19" end="1:22">
+        <TypeId>
+          <Token type="ID" val="int" start="1:19" end="1:22" />
+        </TypeId>
+      </Type>
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:60">
@@ -201,12 +209,20 @@ fn test3 (b: float) float {
           <Token type="ID" val="a" start="4:11" end="4:12" />
         </slot>
         <slot name="type">
-          <Token type="ID" val="float" start="4:14" end="4:19" />
+          <Type parenthesized="false" start="4:14" end="4:19">
+            <TypeId>
+              <Token type="ID" val="float" start="4:14" end="4:19" />
+            </TypeId>
+          </Type>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Token type="ID" val="float" start="4:21" end="4:26" />
+      <Type parenthesized="false" start="4:21" end="4:26">
+        <TypeId>
+          <Token type="ID" val="float" start="4:21" end="4:26" />
+        </TypeId>
+      </Type>
     </slot>
     <slot name="body">
       <Stmt start="5:3" end="7:4">
@@ -317,12 +333,20 @@ fn test3 (b: float) float {
           <Token type="ID" val="b" start="11:11" end="11:12" />
         </slot>
         <slot name="type">
-          <Token type="ID" val="float" start="11:14" end="11:19" />
+          <Type parenthesized="false" start="11:14" end="11:19">
+            <TypeId>
+              <Token type="ID" val="float" start="11:14" end="11:19" />
+            </TypeId>
+          </Type>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Token type="ID" val="float" start="11:21" end="11:26" />
+      <Type parenthesized="false" start="11:21" end="11:26">
+        <TypeId>
+          <Token type="ID" val="float" start="11:21" end="11:26" />
+        </TypeId>
+      </Type>
     </slot>
     <slot name="body">
       <Stmt start="12:3" end="14:4">

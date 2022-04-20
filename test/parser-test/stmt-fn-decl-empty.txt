@@ -1,15 +1,12 @@
 ======= stdin =======
-fn test1 () void {}
+fn test1 () {}
 fn test2 () void {
 }
 ======= stdout =======
-<Stmt start="1:1" end="1:20">
+<Stmt start="1:1" end="1:15">
   <StmtFnDecl>
     <slot name="id">
       <Token type="ID" val="test1" start="1:4" end="1:9" />
-    </slot>
-    <slot name="returnType">
-      <Token type="ID" val="void" start="1:13" end="1:17" />
     </slot>
   </StmtFnDecl>
 </Stmt>
@@ -19,7 +16,11 @@ fn test2 () void {
       <Token type="ID" val="test2" start="2:4" end="2:9" />
     </slot>
     <slot name="returnType">
-      <Token type="ID" val="void" start="2:13" end="2:17" />
+      <Type parenthesized="false" start="2:13" end="2:17">
+        <TypeId>
+          <Token type="ID" val="void" start="2:13" end="2:17" />
+        </TypeId>
+      </Type>
     </slot>
   </StmtFnDecl>
 </Stmt>

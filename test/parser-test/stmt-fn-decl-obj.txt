@@ -14,12 +14,20 @@ fn test (it: Test) float {
           <Token type="ID" val="it" start="1:10" end="1:12" />
         </slot>
         <slot name="type">
-          <Token type="ID" val="Test" start="1:14" end="1:18" />
+          <Type parenthesized="false" start="1:14" end="1:18">
+            <TypeId>
+              <Token type="ID" val="Test" start="1:14" end="1:18" />
+            </TypeId>
+          </Type>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Token type="ID" val="float" start="1:20" end="1:25" />
+      <Type parenthesized="false" start="1:20" end="1:25">
+        <TypeId>
+          <Token type="ID" val="float" start="1:20" end="1:25" />
+        </TypeId>
+      </Type>
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:28">

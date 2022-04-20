@@ -40,7 +40,7 @@ class AST {
   ReaderLocation _stmtExprStart (const ParserStmtExpr &) const;
   std::shared_ptr<Type> _stmtExprType (const ParserStmtExpr &) const;
   ASTNodeIf _stmtIf (const ParserStmtIf &, VarStack &);
-  std::shared_ptr<Type> _type (const std::optional<Token> &, const std::optional<ParserStmtExpr> & = std::nullopt) const;
+  std::shared_ptr<Type> _type (const std::optional<std::shared_ptr<ParserType>> &, const std::optional<ParserStmtExpr> & = std::nullopt) const;
 };
 
 #endif

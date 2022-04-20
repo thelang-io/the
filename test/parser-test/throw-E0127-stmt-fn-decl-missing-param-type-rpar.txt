@@ -1,0 +1,8 @@
+======= stdin =======
+fn test (a: fn ((int , int) int) int {
+  return a(1, 2)
+}
+======= stderr =======
+/test:1:21: E0127 - Expected right parenthesis
+  1 | fn test (a: fn ((int , int) int) int {
+    |                     ^

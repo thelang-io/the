@@ -1,5 +1,5 @@
 ======= stdin =======
-fn test1 (p1: str, l1: str) str {
+fn test1 (p1: str, l1: str) {
   print(p1)
   print(l1)
 }
@@ -8,6 +8,8 @@ main {
   fn test2 (p2: int, l2: int) int {
     print(p2)
     print(l2)
+
+    return p2
   }
 }
 ======= stdout =======
@@ -17,7 +19,7 @@ main {
       <Var builtin="false" codeName="test1_0" frame="1" mut="false" name="test1">
         <Type builtin="false" name="test1_0" type="fn">
           <slot name="returnType">
-            <BuiltinType name="str" />
+            <BuiltinType name="void" />
           </slot>
           <slot name="params">
             <TypeFnParam name="p1" required="true" variadic="false">
@@ -219,6 +221,22 @@ main {
                 </ExprCall>
               </slot>
             </NodeExpr>
+          </Node>
+          <Node>
+            <NodeReturn>
+              <NodeExpr parenthesized="false">
+                <slot name="type">
+                  <BuiltinType name="int" />
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var builtin="false" codeName="p2_0" frame="3" mut="false" name="p2">
+                      <BuiltinType name="int" />
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </NodeReturn>
           </Node>
         </slot>
       </NodeFnDecl>

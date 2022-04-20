@@ -1,6 +1,6 @@
 ======= stdin =======
 mut a: = 1
 ======= stderr =======
-/test:1:8: E0102 - Expected variable type after colon
+/test:1:7: E0102 - Expected variable type after colon
   1 | mut a: = 1
-    |        ^
+    |       ^

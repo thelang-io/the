@@ -3,6 +3,9 @@ fn test (a: str...) void {
 }
 
 main {
-  test(1, 2, 3)
+  test(123, 4, 5)
 }
 ======= stderr =======
+/test:5:8: E1008 - Argument type doesn't match parameter type
+  5 |   test(123, 4, 5)
+    |        ^~~

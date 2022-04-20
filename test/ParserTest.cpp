@@ -82,19 +82,20 @@ INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-empty",
   "stmt-fn-decl",
-  "stmt-fn-decl-with-param-init",
-  "stmt-fn-decl-with-obj",
+  "stmt-fn-decl-param-init",
+  "stmt-fn-decl-obj",
   "stmt-fn-decl-recursive",
   "stmt-fn-decl-nested",
-  "stmt-fn-decl-scoped"
+  "stmt-fn-decl-scoped",
+  "stmt-fn-decl-param-fn"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
   "stmt-if-empty",
   "stmt-if",
-  "stmt-if-with-else",
-  "stmt-if-with-single-elif",
-  "stmt-if-with-multi-elif",
+  "stmt-if-single-elif",
+  "stmt-if-else",
+  "stmt-if-multi-elif",
   "stmt-if-nested"
 ));
 
@@ -120,7 +121,8 @@ INSTANTIATE_TEST_SUITE_P(StmtMain, ParserPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserPassTest, testing::Values(
   "stmt-obj-decl",
   "stmt-obj-decl-recursive",
-  "stmt-obj-decl-scoped"
+  "stmt-obj-decl-scoped",
+  "stmt-obj-decl-field-fn"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
@@ -134,7 +136,8 @@ INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
   "stmt-var-decl-no-init",
   "stmt-var-decl-no-init-mut",
   "stmt-var-decl-short",
-  "stmt-var-decl-short-mut"
+  "stmt-var-decl-short-mut",
+  "stmt-var-decl-fn"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
@@ -157,20 +160,21 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
-  "throw-E0100-unexpected-mut-keyword",
   "throw-E0100-unexpected-statement",
-  "throw-E0103-missing-left-brace",
-  "throw-E0104-missing-right-brace"
+  "throw-E0103-missing-lbrace",
+  "throw-E0104-missing-rbrace"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0115-stmt-fn-decl-unexpected-id",
-  "throw-E0116-stmt-fn-decl-missing-left-parenthesis",
+  "throw-E0116-stmt-fn-decl-missing-lpar",
   "throw-E0117-stmt-fn-decl-missing-param-name",
   "throw-E0117-stmt-fn-decl-multi-missing-param-name",
-  "throw-E0118-stmt-fn-decl-missing-param-type-after-colon",
+  "throw-E0118-stmt-fn-decl-missing-param-type",
+  "throw-E0118-stmt-fn-decl-missing-type-param-type",
   "throw-E0119-stmt-fn-decl-missing-param-type",
-  "throw-E0120-stmt-fn-decl-missing-return-type"
+  "throw-E0120-stmt-fn-decl-missing-type-return-type",
+  "throw-E0127-stmt-fn-decl-missing-param-type-rpar"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
@@ -182,22 +186,24 @@ INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
   "throw-E0121-stmt-obj-decl-missing-id",
-  "throw-E0122-stmt-obj-decl-missing-left-brace",
+  "throw-E0122-stmt-obj-decl-missing-lbrace",
   "throw-E0123-stmt-obj-decl-missing-field-name",
   "throw-E0123-stmt-obj-decl-missing-multi-field-name",
   "throw-E0124-stmt-obj-decl-missing-colon-after-field-name",
   "throw-E0125-stmt-obj-decl-missing-field-type",
-  "throw-E0126-stmt-obj-decl-empty"
+  "throw-E0126-stmt-obj-decl-empty",
+  "throw-E0127-stmt-obj-decl-missing-field-type-rpar"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
-  "throw-E0102-stmt-var-decl",
-  "throw-E0102-stmt-var-decl-mut"
+  "throw-E0102-stmt-var-decl-missing-type",
+  "throw-E0102-stmt-var-decl-mut-missing-type",
+  "throw-E0127-stmt-var-decl-missing-type-rpar"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0101-unexpected-expression",
-  "throw-E0109-missing-right-parenthesis",
+  "throw-E0109-missing-rpar",
   "throw-E0110-expr-access-missing-dot",
   "throw-E0111-expr-cond-missing-colon",
   "throw-E0112-expr-obj-missing-prop-name",

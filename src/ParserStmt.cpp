@@ -47,7 +47,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
         if (stmtFnDeclParam.type != std::nullopt) {
           result += std::string(indent + 6, ' ') + R"(<slot name="type">)" "\n";
-          result += std::string(indent + 8, ' ') + stmtFnDeclParam.type->xml() + "\n";
+          result += (*stmtFnDeclParam.type)->xml(indent + 8) + "\n";
           result += std::string(indent + 6, ' ') + "</slot>\n";
         }
 
@@ -63,9 +63,11 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
-    result += std::string(indent + 2, ' ') + R"(<slot name="returnType">)" "\n";
-    result += std::string(indent + 4, ' ') + stmtFnDecl.returnType.xml() + "\n";
-    result += std::string(indent + 2, ' ') + "</slot>\n";
+    if (stmtFnDecl.returnType != std::nullopt) {
+      result += std::string(indent + 2, ' ') + R"(<slot name="returnType">)" "\n";
+      result += (*stmtFnDecl.returnType)->xml(indent + 4) + "\n";
+      result += std::string(indent + 2, ' ') + "</slot>\n";
+    }
 
     if (!stmtFnDecl.body.empty()) {
       result += std::string(indent + 2, ' ') + R"(<slot name="body">)" "\n";
@@ -132,7 +134,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
         result += std::string(indent + 8, ' ') + stmtObjDeclField.id.xml() + "\n";
         result += std::string(indent + 6, ' ') + "</slot>\n";
         result += std::string(indent + 6, ' ') + R"(<slot name="type">)" "\n";
-        result += std::string(indent + 8, ' ') + stmtObjDeclField.type.xml() + "\n";
+        result += stmtObjDeclField.type->xml(indent + 8) + "\n";
         result += std::string(indent + 6, ' ') + "</slot>\n";
         result += std::string(indent + 4, ' ') + "</StmtObjDeclField>\n";
       }
@@ -158,7 +160,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
     if (stmtVarDecl.type != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="type">)" "\n";
-      result += std::string(indent + 4, ' ') + stmtVarDecl.type->xml() + "\n";
+      result += (*stmtVarDecl.type)->xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
@@ -205,4 +207,45 @@ std::string ParserStmtIf::xml (std::size_t indent) const {
   }
 
   return result + std::string(indent, ' ') + "</StmtIf>";
+}
+
+std::string ParserType::xml (std::size_t indent) const {
+  auto result = std::string(indent, ' ') + "<Type";
+
+  result += R"( parenthesized=")" + std::string(this->parenthesized ? "true" : "false");
+  result += R"(" start=")" + this->start.str();
+  result += R"(" end=")" + this->end.str() + R"(">)" "\n";
+
+  indent += 2;
+
+  if (std::holds_alternative<ParserTypeFn>(this->body)) {
+    auto typeFn = std::get<ParserTypeFn>(this->body);
+    result += std::string(indent, ' ') + "<TypeFn>\n";
+
+    if (!typeFn.params.empty()) {
+      result += std::string(indent + 2, ' ') + R"(<slot name="params">)" "\n";
+
+      for (const auto &typeFnParam : typeFn.params) {
+        result += std::string(indent + 4, ' ') + "<TypeFnParam>\n";
+        result += typeFnParam.type->xml(indent + 6) + "\n";
+        result += std::string(indent + 4, ' ') + "</TypeFnParam>\n";
+      }
+
+      result += std::string(indent + 2, ' ') + "</slot>\n";
+    }
+
+    result += std::string(indent + 2, ' ') + R"(<slot name="returnType">)" "\n";
+    result += typeFn.returnType->xml(indent + 4) + "\n";
+    result += std::string(indent + 2, ' ') + "</slot>\n";
+    result += std::string(indent, ' ') + "</TypeFn>\n";
+  } else if (std::holds_alternative<ParserTypeId>(this->body)) {
+    auto typeId = std::get<ParserTypeId>(this->body);
+
+    result += std::string(indent, ' ') + "<TypeId>\n";
+    result += std::string(indent + 2, ' ') + typeId.id.xml() + "\n";
+    result += std::string(indent, ' ') + "</TypeId>\n";
+  }
+
+  indent -= 2;
+  return result + std::string(indent, ' ') + "</Type>";
 }

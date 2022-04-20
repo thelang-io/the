@@ -1,0 +1,6 @@
+======= stdin =======
+a: (int = 1
+======= stderr =======
+/test:1:8: E0127 - Expected right parenthesis
+  1 | a: (int = 1
+    |        ^
