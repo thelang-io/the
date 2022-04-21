@@ -159,7 +159,8 @@ bool Type::match (const std::shared_ptr<Type> &type) const {
     (this->name == "bool" && type->name == "bool") ||
     (this->name == "byte" && type->name == "byte") ||
     (this->name == "char" && type->name == "char") ||
-    (this->name == "str" && (type->name == "ch" || type->name == "str")) ||
+    (this->name == "void" && type->name == "void") ||
+    (this->name == "str" && (type->name == "char" || type->name == "str")) ||
     numberTypeMatch(this->name, type->name);
 }
 
