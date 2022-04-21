@@ -1,0 +1,168 @@
+======= stdin =======
+main {
+  mut b: bool
+  mut c: byte
+  mut d: char
+  mut e: float
+  mut f: f32
+  mut g: f64
+  mut h: int
+  mut i: i8
+  mut j: i16
+  mut k: i32
+  mut l: i64
+  mut m: str
+  mut n: u8
+  mut o: u16
+  mut p: u32
+  mut q: u64
+}
+======= stdout =======
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+            <BuiltinType name="bool" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
+            <BuiltinType name="byte" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
+            <BuiltinType name="char" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
+            <BuiltinType name="float" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
+            <BuiltinType name="f32" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
+            <BuiltinType name="f64" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+            <BuiltinType name="i8" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="j_0" frame="2" mut="true" name="j">
+            <BuiltinType name="i16" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="k_0" frame="2" mut="true" name="k">
+            <BuiltinType name="i32" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="l_0" frame="2" mut="true" name="l">
+            <BuiltinType name="i64" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="m_0" frame="2" mut="true" name="m">
+            <BuiltinType name="str" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="n_0" frame="2" mut="true" name="n">
+            <BuiltinType name="u8" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="o_0" frame="2" mut="true" name="o">
+            <BuiltinType name="u16" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="p_0" frame="2" mut="true" name="p">
+            <BuiltinType name="u32" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="q_0" frame="2" mut="true" name="q">
+            <BuiltinType name="u64" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+  </NodeMain>
+</Node>

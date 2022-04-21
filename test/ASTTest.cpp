@@ -77,7 +77,8 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-main",
   "node-obj-decl",
   "node-return",
-  "node-var-decl"
+  "node-var-decl",
+  "node-var-decl-type-only"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
