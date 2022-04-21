@@ -40,7 +40,9 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + R"(<slot name="params">)" "\n";
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
-        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam>\n";
+        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam";
+        result += R"( variadic=")" + std::string(stmtFnDeclParam.variadic ? "true" : "false") + R"(">)" "\n";
+
         result += std::string(indent + 6, ' ') + R"(<slot name="id">)" "\n";
         result += std::string(indent + 8, ' ') + stmtFnDeclParam.id.xml() + "\n";
         result += std::string(indent + 6, ' ') + "</slot>\n";
@@ -81,7 +83,6 @@ std::string ParserStmt::xml (std::size_t indent) const {
     result += stmtIf.xml(indent) + "\n";
   } else if (std::holds_alternative<ParserStmtLoop>(this->body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(this->body);
-
     result += std::string(indent, ' ') + "<StmtLoop>\n";
 
     if (stmtLoop.init != std::nullopt) {
@@ -226,7 +227,9 @@ std::string ParserType::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + R"(<slot name="params">)" "\n";
 
       for (const auto &typeFnParam : typeFn.params) {
-        result += std::string(indent + 4, ' ') + "<TypeFnParam>\n";
+        result += std::string(indent + 4, ' ') + "<TypeFnParam";
+        result += R"( variadic=")" + std::string(typeFnParam.variadic ? "true" : "false") + R"(">)" "\n";
+
         result += typeFnParam.type->xml(indent + 6) + "\n";
         result += std::string(indent + 4, ' ') + "</TypeFnParam>\n";
       }

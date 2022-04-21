@@ -1,0 +1,7 @@
+======= stdin =======
+fn test (x: int... = 1 + 2) {
+}
+======= stderr =======
+/test:1:20: E0128 - Variadic function parameters can't have default values
+  1 | fn test (x: int... = 1 + 2) {
+    |                    ^~~~~~~

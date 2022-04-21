@@ -56,6 +56,8 @@
 #define E0125 "E0125 - Expected object field type after field name"
 #define E0126 "E0126 - Empty object declarations are not allowed"
 #define E0127 "E0127 - Expected right parenthesis"
+#define E0128 "E0128 - Variadic function parameters can't have default values"
+#define E0129 "E0129 - Expected left parentheses after fn keyword"
 
 #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"

@@ -171,9 +171,11 @@ std::string Type::xml (std::size_t indent) const {
 
   auto result = std::string(indent, ' ') + R"(<Type builtin=")" + std::string(this->builtin ? "true" : "false");
 
-  result += R"(" name=")" + this->name;
-  result += R"(" type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" "\n";
+  if (this->name != "@") {
+    result += R"(" name=")" + this->name;
+  }
 
+  result += R"(" type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" "\n";
   indent += 2;
 
   if (std::holds_alternative<TypeFn>(this->body)) {
@@ -187,8 +189,13 @@ std::string Type::xml (std::size_t indent) const {
       result += std::string(indent, ' ') + R"(<slot name="params">)" "\n";
 
       for (const auto &typeFnParam : typeFn.params) {
-        result += std::string(indent + 2, ' ') + R"(<TypeFnParam name=")" + typeFnParam.name;
-        result += R"(" required=")" + std::string(typeFnParam.required ? "true" : "false");
+        result += std::string(indent + 2, ' ') + "<TypeFnParam";
+
+        if (this->name != "@") {
+          result += R"( name=")" + typeFnParam.name + R"(")";
+        }
+
+        result += R"( required=")" + std::string(typeFnParam.required ? "true" : "false");
         result += R"(" variadic=")" + std::string(typeFnParam.variadic ? "true" : "false") + R"(">)" "\n";
         result += typeFnParam.type->xml(indent + 4) + "\n";
         result += std::string(indent + 2, ' ') + "</TypeFnParam>\n";

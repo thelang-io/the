@@ -66,7 +66,7 @@ struct Type {
   bool isU32 () const;
   bool isU64 () const;
   bool isVoid () const;
-  bool match (const std::shared_ptr<Type> &) const; // todo test
+  bool match (const std::shared_ptr<Type> &) const;
   std::string xml (std::size_t = 0) const;
 };
 

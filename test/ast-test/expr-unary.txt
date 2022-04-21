@@ -1,11 +1,44 @@
 ======= stdin =======
 main {
+  mut i := 0
+
   a := !3
-  b := a++
+  c := ~4
+  d := -4
+  e := i++
+  f := i--
+  g := ++i
+  h := --i
+  l := !!i
+  m := +4
+  n := !true
+  o := !'a'
+  p := !"string"
 }
 ======= stdout =======
 <Node>
   <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                0
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
     <Node>
       <NodeVarDecl>
         <slot name="var">
@@ -39,7 +72,67 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="b_0" frame="2" mut="false" name="b">
+          <Var builtin="false" codeName="c_0" frame="2" mut="false" name="c">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="BITWISE_NOT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      4
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="d_0" frame="2" mut="false" name="d">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="NEGATION" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      4
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="e_0" frame="2" mut="false" name="e">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -56,10 +149,258 @@ main {
                   </slot>
                   <slot name="body">
                     <ExprAccess>
-                      <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+                      <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
                         <BuiltinType name="int" />
                       </Var>
                     </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="f_0" frame="2" mut="false" name="f">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="DECREMENT" prefix="false">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="g_0" frame="2" mut="false" name="g">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="INCREMENT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="h_0" frame="2" mut="false" name="h">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="DECREMENT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="l_0" frame="2" mut="false" name="l">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="DOUBLE_LOGICAL_NOT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="m_0" frame="2" mut="false" name="m">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="PLUS" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      4
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="n_0" frame="2" mut="false" name="n">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="LOGICAL_NOT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="bool" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="BOOL">
+                      true
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="o_0" frame="2" mut="false" name="o">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="LOGICAL_NOT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="char" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="CHAR">
+                      'a'
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprUnary>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var builtin="false" codeName="p_0" frame="2" mut="false" name="p">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprUnary op="LOGICAL_NOT" prefix="true">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="str" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="STR">
+                      "string"
+                    </ExprLit>
                   </slot>
                 </NodeExpr>
               </ExprUnary>

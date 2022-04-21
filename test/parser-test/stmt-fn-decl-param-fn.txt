@@ -26,7 +26,7 @@ main {
       <Token type="ID" val="test1" start="1:4" end="1:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="a" start="1:11" end="1:12" />
         </slot>
@@ -64,7 +64,7 @@ main {
       <Token type="ID" val="test2" start="5:4" end="5:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="b" start="5:11" end="5:12" />
         </slot>
@@ -76,7 +76,7 @@ main {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="c" start="5:19" end="5:20" />
         </slot>
@@ -167,7 +167,7 @@ main {
       <Token type="ID" val="test4" start="13:4" end="13:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="d" start="13:11" end="13:12" />
         </slot>
@@ -175,7 +175,7 @@ main {
           <Type parenthesized="false" start="13:14" end="13:34">
             <TypeFn>
               <slot name="params">
-                <TypeFnParam>
+                <TypeFnParam variadic="false">
                   <Type parenthesized="false" start="13:18" end="13:28">
                     <TypeFn>
                       <slot name="returnType">
@@ -200,7 +200,7 @@ main {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="e" start="13:36" end="13:37" />
         </slot>
@@ -208,14 +208,14 @@ main {
           <Type parenthesized="false" start="13:39" end="13:56">
             <TypeFn>
               <slot name="params">
-                <TypeFnParam>
+                <TypeFnParam variadic="false">
                   <Type parenthesized="false" start="13:43" end="13:46">
                     <TypeId>
                       <Token type="ID" val="int" start="13:43" end="13:46" />
                     </TypeId>
                   </Type>
                 </TypeFnParam>
-                <TypeFnParam>
+                <TypeFnParam variadic="false">
                   <Type parenthesized="false" start="13:48" end="13:51">
                     <TypeId>
                       <Token type="ID" val="int" start="13:48" end="13:51" />

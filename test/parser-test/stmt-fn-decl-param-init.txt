@@ -15,7 +15,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
       <Token type="ID" val="test1" start="1:4" end="1:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="a" start="1:11" end="1:12" />
         </slot>
@@ -70,7 +70,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
       <Token type="ID" val="test2" start="4:4" end="4:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="a" start="4:11" end="4:12" />
         </slot>
@@ -82,7 +82,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="b" start="4:19" end="4:20" />
         </slot>
@@ -137,7 +137,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
       <Token type="ID" val="test3" start="7:4" end="7:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="x" start="7:11" end="7:12" />
         </slot>
@@ -149,7 +149,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="y" start="7:19" end="7:20" />
         </slot>
@@ -168,7 +168,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           </StmtExpr>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="z" start="7:33" end="7:34" />
         </slot>

@@ -29,7 +29,7 @@ fn test3 () int {
       <Token type="ID" val="test1" start="1:4" end="1:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="a" start="1:11" end="1:12" />
         </slot>
@@ -41,7 +41,7 @@ fn test3 () int {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="b" start="1:19" end="1:20" />
         </slot>
@@ -53,7 +53,7 @@ fn test3 () int {
           </StmtExpr>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="c" start="1:27" end="1:28" />
         </slot>
@@ -80,7 +80,7 @@ fn test3 () int {
             <Token type="ID" val="test2" start="2:6" end="2:11" />
           </slot>
           <slot name="params">
-            <StmtFnDeclParam>
+            <StmtFnDeclParam variadic="false">
               <slot name="id">
                 <Token type="ID" val="d" start="2:13" end="2:14" />
               </slot>
@@ -92,7 +92,7 @@ fn test3 () int {
                 </Type>
               </slot>
             </StmtFnDeclParam>
-            <StmtFnDeclParam>
+            <StmtFnDeclParam variadic="false">
               <slot name="id">
                 <Token type="ID" val="e" start="2:21" end="2:22" />
               </slot>
@@ -104,7 +104,7 @@ fn test3 () int {
                 </Type>
               </slot>
             </StmtFnDeclParam>
-            <StmtFnDeclParam>
+            <StmtFnDeclParam variadic="false">
               <slot name="id">
                 <Token type="ID" val="f" start="2:29" end="2:30" />
               </slot>
@@ -116,7 +116,7 @@ fn test3 () int {
                 </StmtExpr>
               </slot>
             </StmtFnDeclParam>
-            <StmtFnDeclParam>
+            <StmtFnDeclParam variadic="false">
               <slot name="id">
                 <Token type="ID" val="g" start="2:37" end="2:38" />
               </slot>

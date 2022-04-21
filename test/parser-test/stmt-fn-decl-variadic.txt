@@ -1,0 +1,345 @@
+======= stdin =======
+fn test1 (x: int...) {
+}
+fn test2 (x: (int)...) {
+}
+fn test3 (a: int, b: int...) void {
+}
+fn test4 (x: int, y: int..., z: str) void {
+}
+fn test5 (b: fn (int...) void) void {
+}
+fn test6 (b: fn ((int)...) void) void {
+}
+fn test7 (b: fn (int, (int)...) void) void {
+}
+fn test8 (b: fn (int, (int)..., str) void) void {
+}
+======= stdout =======
+<Stmt start="1:1" end="2:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test1" start="1:4" end="1:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="true">
+        <slot name="id">
+          <Token type="ID" val="x" start="1:11" end="1:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="1:14" end="1:17">
+            <TypeId>
+              <Token type="ID" val="int" start="1:14" end="1:17" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="3:1" end="4:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test2" start="3:4" end="3:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="true">
+        <slot name="id">
+          <Token type="ID" val="x" start="3:11" end="3:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="true" start="3:14" end="3:19">
+            <TypeId>
+              <Token type="ID" val="int" start="3:15" end="3:18" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="5:1" end="6:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test3" start="5:4" end="5:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="false">
+        <slot name="id">
+          <Token type="ID" val="a" start="5:11" end="5:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="5:14" end="5:17">
+            <TypeId>
+              <Token type="ID" val="int" start="5:14" end="5:17" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+      <StmtFnDeclParam variadic="true">
+        <slot name="id">
+          <Token type="ID" val="b" start="5:19" end="5:20" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="5:22" end="5:25">
+            <TypeId>
+              <Token type="ID" val="int" start="5:22" end="5:25" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type parenthesized="false" start="5:30" end="5:34">
+        <TypeId>
+          <Token type="ID" val="void" start="5:30" end="5:34" />
+        </TypeId>
+      </Type>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="7:1" end="8:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test4" start="7:4" end="7:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="false">
+        <slot name="id">
+          <Token type="ID" val="x" start="7:11" end="7:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="7:14" end="7:17">
+            <TypeId>
+              <Token type="ID" val="int" start="7:14" end="7:17" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+      <StmtFnDeclParam variadic="true">
+        <slot name="id">
+          <Token type="ID" val="y" start="7:19" end="7:20" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="7:22" end="7:25">
+            <TypeId>
+              <Token type="ID" val="int" start="7:22" end="7:25" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
+        <slot name="id">
+          <Token type="ID" val="z" start="7:30" end="7:31" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="7:33" end="7:36">
+            <TypeId>
+              <Token type="ID" val="str" start="7:33" end="7:36" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type parenthesized="false" start="7:38" end="7:42">
+        <TypeId>
+          <Token type="ID" val="void" start="7:38" end="7:42" />
+        </TypeId>
+      </Type>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="9:1" end="10:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test5" start="9:4" end="9:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="false">
+        <slot name="id">
+          <Token type="ID" val="b" start="9:11" end="9:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="9:14" end="9:30">
+            <TypeFn>
+              <slot name="params">
+                <TypeFnParam variadic="true">
+                  <Type parenthesized="false" start="9:18" end="9:21">
+                    <TypeId>
+                      <Token type="ID" val="int" start="9:18" end="9:21" />
+                    </TypeId>
+                  </Type>
+                </TypeFnParam>
+              </slot>
+              <slot name="returnType">
+                <Type parenthesized="false" start="9:26" end="9:30">
+                  <TypeId>
+                    <Token type="ID" val="void" start="9:26" end="9:30" />
+                  </TypeId>
+                </Type>
+              </slot>
+            </TypeFn>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type parenthesized="false" start="9:32" end="9:36">
+        <TypeId>
+          <Token type="ID" val="void" start="9:32" end="9:36" />
+        </TypeId>
+      </Type>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="11:1" end="12:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test6" start="11:4" end="11:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="false">
+        <slot name="id">
+          <Token type="ID" val="b" start="11:11" end="11:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="11:14" end="11:32">
+            <TypeFn>
+              <slot name="params">
+                <TypeFnParam variadic="true">
+                  <Type parenthesized="true" start="11:18" end="11:23">
+                    <TypeId>
+                      <Token type="ID" val="int" start="11:19" end="11:22" />
+                    </TypeId>
+                  </Type>
+                </TypeFnParam>
+              </slot>
+              <slot name="returnType">
+                <Type parenthesized="false" start="11:28" end="11:32">
+                  <TypeId>
+                    <Token type="ID" val="void" start="11:28" end="11:32" />
+                  </TypeId>
+                </Type>
+              </slot>
+            </TypeFn>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type parenthesized="false" start="11:34" end="11:38">
+        <TypeId>
+          <Token type="ID" val="void" start="11:34" end="11:38" />
+        </TypeId>
+      </Type>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="13:1" end="14:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test7" start="13:4" end="13:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="false">
+        <slot name="id">
+          <Token type="ID" val="b" start="13:11" end="13:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="13:14" end="13:37">
+            <TypeFn>
+              <slot name="params">
+                <TypeFnParam variadic="false">
+                  <Type parenthesized="false" start="13:18" end="13:21">
+                    <TypeId>
+                      <Token type="ID" val="int" start="13:18" end="13:21" />
+                    </TypeId>
+                  </Type>
+                </TypeFnParam>
+                <TypeFnParam variadic="true">
+                  <Type parenthesized="true" start="13:23" end="13:28">
+                    <TypeId>
+                      <Token type="ID" val="int" start="13:24" end="13:27" />
+                    </TypeId>
+                  </Type>
+                </TypeFnParam>
+              </slot>
+              <slot name="returnType">
+                <Type parenthesized="false" start="13:33" end="13:37">
+                  <TypeId>
+                    <Token type="ID" val="void" start="13:33" end="13:37" />
+                  </TypeId>
+                </Type>
+              </slot>
+            </TypeFn>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type parenthesized="false" start="13:39" end="13:43">
+        <TypeId>
+          <Token type="ID" val="void" start="13:39" end="13:43" />
+        </TypeId>
+      </Type>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="15:1" end="16:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test8" start="15:4" end="15:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam variadic="false">
+        <slot name="id">
+          <Token type="ID" val="b" start="15:11" end="15:12" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized="false" start="15:14" end="15:42">
+            <TypeFn>
+              <slot name="params">
+                <TypeFnParam variadic="false">
+                  <Type parenthesized="false" start="15:18" end="15:21">
+                    <TypeId>
+                      <Token type="ID" val="int" start="15:18" end="15:21" />
+                    </TypeId>
+                  </Type>
+                </TypeFnParam>
+                <TypeFnParam variadic="true">
+                  <Type parenthesized="true" start="15:23" end="15:28">
+                    <TypeId>
+                      <Token type="ID" val="int" start="15:24" end="15:27" />
+                    </TypeId>
+                  </Type>
+                </TypeFnParam>
+                <TypeFnParam variadic="false">
+                  <Type parenthesized="false" start="15:33" end="15:36">
+                    <TypeId>
+                      <Token type="ID" val="str" start="15:33" end="15:36" />
+                    </TypeId>
+                  </Type>
+                </TypeFnParam>
+              </slot>
+              <slot name="returnType">
+                <Type parenthesized="false" start="15:38" end="15:42">
+                  <TypeId>
+                    <Token type="ID" val="void" start="15:38" end="15:42" />
+                  </TypeId>
+                </Type>
+              </slot>
+            </TypeFn>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type parenthesized="false" start="15:44" end="15:48">
+        <TypeId>
+          <Token type="ID" val="void" start="15:44" end="15:48" />
+        </TypeId>
+      </Type>
+    </slot>
+  </StmtFnDecl>
+</Stmt>

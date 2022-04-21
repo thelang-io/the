@@ -1,0 +1,8 @@
+======= stdin =======
+fn test (a: fn (int, int) ()) int {
+  return a(1, 2)
+}
+======= stderr =======
+/test:1:26: E0120 - Expected function return type after parameters list
+  1 | fn test (a: fn (int, int) ()) int {
+    |                          ^

@@ -128,7 +128,13 @@ void AST::_forwardStmt (const ParserBlock &block) {
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
         auto paramType = this->_type(stmtFnDeclParam.type, stmtFnDeclParam.init);
-        fnParams.push_back(TypeFnParam{stmtFnDeclParam.id.val, paramType, stmtFnDeclParam.init == std::nullopt, stmtFnDeclParam.variadic});
+
+        fnParams.push_back(TypeFnParam{
+          stmtFnDeclParam.id.val,
+          paramType,
+          stmtFnDeclParam.init == std::nullopt && !stmtFnDeclParam.variadic,
+          stmtFnDeclParam.variadic
+        });
       }
 
       auto fnType = this->typeMap.add(fnCodeName, fnParams, fnReturnType);
@@ -664,7 +670,7 @@ std::shared_ptr<Type> AST::_type (const std::optional<std::shared_ptr<ParserType
     auto fnParams = std::vector<TypeFnParam>{};
 
     for (const auto &typeFnParam : typeFn.params) {
-      fnParams.push_back(TypeFnParam{"$", this->_type(typeFnParam.type), true, typeFnParam.variadic});
+      fnParams.push_back(TypeFnParam{"@", this->_type(typeFnParam.type), !typeFnParam.variadic, typeFnParam.variadic});
     }
 
     return TypeMap::fn(this->_type(typeFn.returnType), fnParams);

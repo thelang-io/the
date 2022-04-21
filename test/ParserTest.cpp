@@ -87,7 +87,8 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-recursive",
   "stmt-fn-decl-nested",
   "stmt-fn-decl-scoped",
-  "stmt-fn-decl-param-fn"
+  "stmt-fn-decl-param-fn",
+  "stmt-fn-decl-variadic"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
@@ -161,6 +162,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
   "throw-E0100-unexpected-statement",
+  "throw-E0100-unexpected-mut-keyword",
   "throw-E0103-missing-lbrace",
   "throw-E0104-missing-rbrace"
 ));
@@ -174,7 +176,12 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0118-stmt-fn-decl-missing-type-param-type",
   "throw-E0119-stmt-fn-decl-missing-param-type",
   "throw-E0120-stmt-fn-decl-missing-type-return-type",
-  "throw-E0127-stmt-fn-decl-missing-param-type-rpar"
+  "throw-E0127-stmt-fn-decl-missing-param-type-rpar",
+  "throw-E0128-stmt-fn-decl-default-variadic-param",
+  "throw-E0118-stmt-fn-decl-missing-param-parenthesized-type",
+  "throw-E0118-stmt-fn-decl-missing-type-param-parenthesized-type",
+  "throw-E0120-stmt-fn-decl-missing-type-parenthesized-return-type",
+  "throw-E0129-stmt-fn-decl-missing-type-lpar"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
@@ -192,13 +199,16 @@ INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
   "throw-E0124-stmt-obj-decl-missing-colon-after-field-name",
   "throw-E0125-stmt-obj-decl-missing-field-type",
   "throw-E0126-stmt-obj-decl-empty",
-  "throw-E0127-stmt-obj-decl-missing-field-type-rpar"
+  "throw-E0127-stmt-obj-decl-missing-field-type-rpar",
+  "throw-E0125-stmt-obj-decl-missing-field-parenthesized-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
   "throw-E0102-stmt-var-decl-missing-type",
   "throw-E0102-stmt-var-decl-mut-missing-type",
-  "throw-E0127-stmt-var-decl-missing-type-rpar"
+  "throw-E0127-stmt-var-decl-missing-type-rpar",
+  "throw-E0102-stmt-var-decl-missing-parenthesized-type",
+  "throw-E0102-stmt-var-decl-mut-missing-parenthesized-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(

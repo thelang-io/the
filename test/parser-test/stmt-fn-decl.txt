@@ -46,7 +46,7 @@ fn test5 (x: int, y: int, z: int) int {
       <Token type="ID" val="test2" start="4:4" end="4:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="x" start="4:11" end="4:12" />
         </slot>
@@ -101,7 +101,7 @@ fn test5 (x: int, y: int, z: int) int {
       <Token type="ID" val="test3" start="7:4" end="7:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="x" start="7:11" end="7:12" />
         </slot>
@@ -156,7 +156,7 @@ fn test5 (x: int, y: int, z: int) int {
       <Token type="ID" val="test4" start="10:4" end="10:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="a" start="10:11" end="10:12" />
         </slot>
@@ -168,7 +168,7 @@ fn test5 (x: int, y: int, z: int) int {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="b" start="10:19" end="10:20" />
         </slot>
@@ -223,7 +223,7 @@ fn test5 (x: int, y: int, z: int) int {
       <Token type="ID" val="test5" start="13:4" end="13:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="x" start="13:11" end="13:12" />
         </slot>
@@ -235,7 +235,7 @@ fn test5 (x: int, y: int, z: int) int {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="y" start="13:19" end="13:20" />
         </slot>
@@ -247,7 +247,7 @@ fn test5 (x: int, y: int, z: int) int {
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="z" start="13:27" end="13:28" />
         </slot>

@@ -9,7 +9,7 @@ fn test (it: Test) float {
       <Token type="ID" val="test" start="1:4" end="1:8" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="it" start="1:10" end="1:12" />
         </slot>

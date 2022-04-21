@@ -37,6 +37,15 @@ TEST(LexerErrorTest, MultipleTokens) {
   }, std::string("/test:1:1: ") + E0000 + "\n  1 | test\n    | ^~~~");
 }
 
+TEST(LexerErrorTest, MultipleTokensWithEnd) {
+  auto reader = testing::NiceMock<MockReader>("test");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_THROW_WITH_MESSAGE({
+    throw Error(lexer.reader, lexer.loc, ReaderLocation{2, 1, 2}, E0000);
+  }, std::string("/test:1:1: ") + E0000 + "\n  1 | test\n    | ^~");
+}
+
 TEST(LexerErrorTest, MultipleTokensAfterTokens) {
   auto reader = testing::NiceMock<MockReader>("1 + test");
   auto lexer = Lexer(&reader);

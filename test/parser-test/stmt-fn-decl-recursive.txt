@@ -23,7 +23,7 @@ fn test3 (b: float) float {
       <Token type="ID" val="test1" start="1:4" end="1:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="n" start="1:11" end="1:12" />
         </slot>
@@ -204,7 +204,7 @@ fn test3 (b: float) float {
       <Token type="ID" val="test2" start="4:4" end="4:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="a" start="4:11" end="4:12" />
         </slot>
@@ -328,7 +328,7 @@ fn test3 (b: float) float {
       <Token type="ID" val="test3" start="11:4" end="11:9" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam>
+      <StmtFnDeclParam variadic="false">
         <slot name="id">
           <Token type="ID" val="b" start="11:11" end="11:12" />
         </slot>

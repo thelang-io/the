@@ -1,0 +1,7 @@
+======= stdin =======
+fn test (a: fn ( () , ) void) void {
+}
+======= stderr =======
+/test:1:17: E0118 - Expected function parameter type
+  1 | fn test (a: fn ( () , ) void) void {
+    |                 ^
