@@ -94,5 +94,5 @@ VarStack VarMap::stack () const {
     }
   }
 
-  return VarStack{stack};
+  return VarStack(stack);
 }
