@@ -22,7 +22,7 @@ std::shared_ptr<Var> VarMap::get (const std::string &name) const {
     }
   }
 
-  throw Error("Tried to access non existing variable map item");
+  throw Error("Error: Tried to access non existing variable map item");
 }
 
 bool VarMap::has (const std::string &name) const {

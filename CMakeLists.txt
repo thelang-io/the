@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.8.13 LANGUAGES CXX)
+project(the-core VERSION 0.8.14 LANGUAGES CXX)
 
 include(FetchContent)
 include(GoogleTest)
@@ -38,6 +38,7 @@ set(
   test/ReaderTest.cpp
   test/TokenTest.cpp
   test/TypeTest.cpp
+  test/TypeMapTest.cpp
   test/utils.cpp test/utils.hpp
 )
 

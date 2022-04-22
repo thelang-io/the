@@ -6,7 +6,7 @@
  */
 
 #include "TypeMap.hpp"
-#include <climits>
+#include <limits>
 #include "Error.hpp"
 
 bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
@@ -250,11 +250,11 @@ const std::shared_ptr<Type> &TypeMap::get (const std::string &name) const {
     }
   }
 
-  throw Error("Tried to access non existing typed map item");
+  throw Error("Error: Tried to access non existing type map item");
 }
 
 void TypeMap::init () {
-  this->stack.reserve(SHRT_MAX);
+  this->stack.reserve(std::numeric_limits<short>::max());
 
   auto anyType = std::make_shared<Type>(Type{"any", TypeObj{}, true});
   auto boolType = std::make_shared<Type>(Type{"bool", TypeObj{}, true});
