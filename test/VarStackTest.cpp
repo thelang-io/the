@@ -19,9 +19,6 @@ class VarStackTest : public testing::Test {
   }
 };
 
-// todo void mark (const std::shared_ptr<Var> &);
-// todo std::vector<std::shared_ptr<Var>> snapshot () const;
-
 TEST_F(VarStackTest, Constructs) {
   this->vm_.add("test1", this->vm_.name("test1"), this->tm_.get("int"), false);
   this->vm_.add("test2", this->vm_.name("test2"), this->tm_.get("str"), false);

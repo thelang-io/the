@@ -1,0 +1,111 @@
+======= stdin =======
+obj Test2 {
+  a: Test1
+}
+
+obj Test1 {
+  b: int
+}
+
+main {
+  obj Test4 {
+    c: Test3
+  }
+
+  obj Test3 {
+    d: Test2
+  }
+}
+======= stdout =======
+<Node>
+  <NodeObjDecl>
+    <Var builtin="false" codeName="Test2_0" frame="1" mut="false" name="Test2">
+      <Type builtin="false" name="Test2_0" type="obj">
+        <slot name="fields">
+          <TypeObjField name="a">
+            <Type builtin="false" name="Test1_0" type="obj">
+              <slot name="fields">
+                <TypeObjField name="b">
+                  <BuiltinType name="int" />
+                </TypeObjField>
+              </slot>
+            </Type>
+          </TypeObjField>
+        </slot>
+      </Type>
+    </Var>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeObjDecl>
+    <Var builtin="false" codeName="Test1_0" frame="1" mut="false" name="Test1">
+      <Type builtin="false" name="Test1_0" type="obj">
+        <slot name="fields">
+          <TypeObjField name="b">
+            <BuiltinType name="int" />
+          </TypeObjField>
+        </slot>
+      </Type>
+    </Var>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeObjDecl>
+        <Var builtin="false" codeName="mainSDTest4_0" frame="2" mut="false" name="Test4">
+          <Type builtin="false" name="mainSDTest4_0" type="obj">
+            <slot name="fields">
+              <TypeObjField name="c">
+                <Type builtin="false" name="mainSDTest3_0" type="obj">
+                  <slot name="fields">
+                    <TypeObjField name="d">
+                      <Type builtin="false" name="Test2_0" type="obj">
+                        <slot name="fields">
+                          <TypeObjField name="a">
+                            <Type builtin="false" name="Test1_0" type="obj">
+                              <slot name="fields">
+                                <TypeObjField name="b">
+                                  <BuiltinType name="int" />
+                                </TypeObjField>
+                              </slot>
+                            </Type>
+                          </TypeObjField>
+                        </slot>
+                      </Type>
+                    </TypeObjField>
+                  </slot>
+                </Type>
+              </TypeObjField>
+            </slot>
+          </Type>
+        </Var>
+      </NodeObjDecl>
+    </Node>
+    <Node>
+      <NodeObjDecl>
+        <Var builtin="false" codeName="mainSDTest3_0" frame="2" mut="false" name="Test3">
+          <Type builtin="false" name="mainSDTest3_0" type="obj">
+            <slot name="fields">
+              <TypeObjField name="d">
+                <Type builtin="false" name="Test2_0" type="obj">
+                  <slot name="fields">
+                    <TypeObjField name="a">
+                      <Type builtin="false" name="Test1_0" type="obj">
+                        <slot name="fields">
+                          <TypeObjField name="b">
+                            <BuiltinType name="int" />
+                          </TypeObjField>
+                        </slot>
+                      </Type>
+                    </TypeObjField>
+                  </slot>
+                </Type>
+              </TypeObjField>
+            </slot>
+          </Type>
+        </Var>
+      </NodeObjDecl>
+    </Node>
+  </NodeMain>
+</Node>
