@@ -1,0 +1,6 @@
+======= stdin =======
+a := ! {
+======= stderr =======
+/test:1:7: E0132 - Expected unary expression argument
+  1 | a := ! {
+    |       ^

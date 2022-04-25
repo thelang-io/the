@@ -1,0 +1,6 @@
+======= stdin =======
+a := 1 + {
+======= stderr =======
+/test:1:9: E0137 - Expected right-hand binary expression
+  1 | a := 1 + {
+    |         ^

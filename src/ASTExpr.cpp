@@ -104,6 +104,16 @@ std::string memberObjXml (const ASTMemberObj &exprAccessBody, std::size_t indent
   return result;
 }
 
+std::string ASTExprAccess::xml (std::size_t indent) const {
+  auto result = std::string();
+
+  result += std::string(indent, ' ') + "<ExprAccess>\n";
+  result += memberObjXml(this->body, indent + 2);
+  result += std::string(indent, ' ') + "</ExprAccess>";
+
+  return result;
+}
+
 std::string ASTNodeExpr::xml (std::size_t indent) const {
   auto result = std::string(indent, ' ') + R"(<NodeExpr parenthesized=")" + std::string(this->parenthesized ? "true" : "false") + R"(">)" "\n";
 
@@ -116,17 +126,13 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
 
   if (std::holds_alternative<ASTExprAccess>(this->body)) {
     auto exprAccess = std::get<ASTExprAccess>(this->body);
-
-    // todo pack into method
-    result += std::string(indent, ' ') + "<ExprAccess>\n";
-    result += memberObjXml(exprAccess.body, indent + 2);
-    result += std::string(indent, ' ') + "</ExprAccess>\n";
+    result += exprAccess.xml(indent) + "\n";
   } else if (std::holds_alternative<ASTExprAssign>(this->body)) {
     auto exprAssign = std::get<ASTExprAssign>(this->body);
 
     result += std::string(indent, ' ') + R"(<ExprAssign op=")" + exprAssignOpStr(exprAssign.op) + R"(">)" "\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="left">)" "\n";
-    result += memberObjXml(exprAssign.left.body, indent + 4);
+    result += exprAssign.left.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="right">)" "\n";
     result += exprAssign.right->xml(indent + 4) + "\n";
@@ -148,7 +154,7 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
 
     result += std::string(indent, ' ') + "<ExprCall>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="callee">)" "\n";
-    result += memberObjXml(exprCall.callee.body, indent + 4);
+    result += exprCall.callee.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
 
     result += std::string(indent + 2, ' ') + R"(<slot name="calleeType">)" "\n";

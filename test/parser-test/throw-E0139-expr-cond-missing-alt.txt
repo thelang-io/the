@@ -1,0 +1,6 @@
+======= stdin =======
+a := 1 > 2 ? true : {
+======= stderr =======
+/test:1:20: E0139 - Expected ternary alternative expression
+  1 | a := 1 > 2 ? true : {
+    |                    ^

@@ -58,7 +58,9 @@ main {
               <slot name="body">
                 <ExprCall>
                   <slot name="callee">
-                    <BuiltinVar name="print" />
+                    <ExprAccess>
+                      <BuiltinVar name="print" />
+                    </ExprAccess>
                   </slot>
                   <slot name="calleeType">
                     <BuiltinType />
@@ -130,7 +132,9 @@ main {
                   <slot name="body">
                     <ExprCall>
                       <slot name="callee">
-                        <BuiltinVar name="print" />
+                        <ExprAccess>
+                          <BuiltinVar name="print" />
+                        </ExprAccess>
                       </slot>
                       <slot name="calleeType">
                         <BuiltinType />

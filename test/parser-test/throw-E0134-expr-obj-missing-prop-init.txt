@@ -1,0 +1,6 @@
+======= stdin =======
+test := Test{a : }
+======= stderr =======
+/test:1:17: E0134 - Expected object property initializer
+  1 | test := Test{a : }
+    |                 ^

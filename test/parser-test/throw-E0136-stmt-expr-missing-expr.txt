@@ -1,0 +1,6 @@
+======= stdin =======
+a := ( )
+======= stderr =======
+/test:1:7: E0136 - Expected expression after left parenthesis
+  1 | a := ( )
+    |       ^

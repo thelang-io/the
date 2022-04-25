@@ -1,0 +1,6 @@
+======= stdin =======
+a := 1 > 2 ? : false
+======= stderr =======
+/test:1:13: E0138 - Expected ternary body expression
+  1 | a := 1 > 2 ? : false
+    |             ^

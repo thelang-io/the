@@ -1,0 +1,7 @@
+======= stdin =======
+fn test (a: int = ) void {
+}
+======= stderr =======
+/test:1:18: E0130 - Expected function param initializer
+  1 | fn test (a: int = ) void {
+    |                  ^

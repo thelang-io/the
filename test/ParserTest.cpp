@@ -164,7 +164,8 @@ INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
   "throw-E0100-unexpected-statement",
   "throw-E0100-unexpected-mut-keyword",
   "throw-E0103-missing-lbrace",
-  "throw-E0104-missing-rbrace"
+  "throw-E0104-missing-rbrace",
+  "throw-E0136-stmt-expr-missing-expr"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
@@ -181,7 +182,9 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0118-stmt-fn-decl-missing-param-parenthesized-type",
   "throw-E0118-stmt-fn-decl-missing-type-param-parenthesized-type",
   "throw-E0120-stmt-fn-decl-missing-type-parenthesized-return-type",
-  "throw-E0129-stmt-fn-decl-missing-type-lpar"
+  "throw-E0129-stmt-fn-decl-missing-type-lpar",
+  "throw-E0130-stmt-fn-decl-missing-param-init",
+  "throw-E0130-stmt-fn-decl-missing-param-init-after-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
@@ -208,15 +211,25 @@ INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
   "throw-E0102-stmt-var-decl-mut-missing-type",
   "throw-E0127-stmt-var-decl-missing-type-rpar",
   "throw-E0102-stmt-var-decl-missing-parenthesized-type",
-  "throw-E0102-stmt-var-decl-mut-missing-parenthesized-type"
+  "throw-E0102-stmt-var-decl-mut-missing-parenthesized-type",
+  "throw-E0131-var-decl-missing-init",
+  "throw-E0131-var-decl-missing-init-after-type",
+  "throw-E0131-var-decl-mut-missing-init",
+  "throw-E0131-var-decl-mut-missing-init-after-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
-  "throw-E0101-unexpected-expression",
   "throw-E0109-missing-rpar",
   "throw-E0110-expr-access-missing-dot",
   "throw-E0111-expr-cond-missing-colon",
   "throw-E0112-expr-obj-missing-prop-name",
   "throw-E0113-expr-obj-missing-colon",
-  "throw-E0114-expr-obj-member-id"
+  "throw-E0114-expr-obj-member-id",
+  "throw-E0132-expr-unary-missing-arg",
+  "throw-E0133-expr-assign-missing-value",
+  "throw-E0134-expr-obj-missing-prop-init",
+  "throw-E0135-expr-call-missing-arg",
+  "throw-E0137-expr-binary-missing-right-expr",
+  "throw-E0138-expr-cond-missing-body",
+  "throw-E0139-expr-cond-missing-alt"
 ));

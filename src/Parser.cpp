@@ -74,7 +74,7 @@ ParserStmt Parser::next () {
           fnDeclParamInit = this->_stmtExpr();
 
           if (fnDeclParamInit == nullptr) {
-            throw Error("TODO expected function param initializer");
+            throw Error(this->reader, this->lexer->loc, E0130);
           }
         } else if (tok5.type == TK_OP_DOT_DOT_DOT) {
           fnDeclParamVariadic = true;
@@ -93,7 +93,7 @@ ParserStmt Parser::next () {
         fnDeclParamInit = this->_stmtExpr();
 
         if (fnDeclParamInit == nullptr) {
-          throw Error("TODO expected function param initializer");
+          throw Error(this->reader, this->lexer->loc, E0130);
         }
       } else {
         throw Error(this->reader, tok4.start, E0119);
@@ -140,17 +140,19 @@ ParserStmt Parser::next () {
       throw Error(this->reader, tok2.start, E0106);
     } else if (std::holds_alternative<ParserStmtExpr>(loopInit.body) && tok2.type != TK_OP_LBRACE && tok2.type != TK_OP_SEMI) {
       throw Error(this->reader, tok2.start, E0107);
-    } else if (std::holds_alternative<ParserStmtExpr>(loopInit.body) && tok2.type == TK_OP_LBRACE) {
+    }
+
+    if (std::holds_alternative<ParserStmtExpr>(loopInit.body) && tok2.type == TK_OP_LBRACE) {
       this->lexer->seek(loc2);
 
       auto loopCond = std::get<ParserStmtExpr>(loopInit.body);
       auto loopBody = this->_block();
 
       return this->_stmt(ParserStmtLoop{std::nullopt, std::make_shared<ParserStmtExpr>(loopCond), std::nullopt, loopBody}, tok0.start);
+    } else {
+      auto stmtLoop = this->_stmtLoop(std::make_shared<ParserStmt>(loopInit));
+      return this->_stmt(stmtLoop, tok0.start);
     }
-
-    auto stmtLoop = this->_stmtLoop(std::make_shared<ParserStmt>(loopInit));
-    return this->_stmt(stmtLoop, tok0.start);
   }
 
   if (tok0.type == TK_KW_MUT) {
@@ -173,7 +175,7 @@ ParserStmt Parser::next () {
           varDeclInit = this->_stmtExpr();
 
           if (varDeclInit == nullptr) {
-            throw Error("TODO expected variable initializer");
+            throw Error(this->reader, this->lexer->loc, E0131);
           }
         } else {
           this->lexer->seek(loc3);
@@ -184,7 +186,7 @@ ParserStmt Parser::next () {
         auto varDeclInit = this->_stmtExpr();
 
         if (varDeclInit == nullptr) {
-          throw Error("TODO expected variable initializer");
+          throw Error(this->reader, this->lexer->loc, E0131);
         }
 
         return this->_stmt(ParserStmtVarDecl{tok1, std::nullopt, varDeclInit, true}, tok0.start);
@@ -255,7 +257,7 @@ ParserStmt Parser::next () {
         varDeclInit = this->_stmtExpr();
 
         if (varDeclInit == nullptr) {
-          throw Error("TODO expected variable initializer");
+          throw Error(this->reader, this->lexer->loc, E0131);
         }
       } else {
         this->lexer->seek(loc2);
@@ -266,7 +268,7 @@ ParserStmt Parser::next () {
       auto varDeclInit = this->_stmtExpr();
 
       if (varDeclInit == nullptr) {
-        throw Error("TODO expected variable initializer");
+        throw Error(this->reader, this->lexer->loc, E0131);
       }
 
       return this->_stmt(ParserStmtVarDecl{tok0, std::nullopt, varDeclInit}, tok0.start);
@@ -348,7 +350,7 @@ std::shared_ptr<ParserStmtExpr> Parser::_stmtExpr (bool singleStmt) {
     auto exprUnaryArg = this->_stmtExpr(true);
 
     if (exprUnaryArg == nullptr) {
-      throw Error("TODO expected unary argument");
+      throw Error(this->reader, this->lexer->loc, E0132);
     }
 
     auto exprUnary = ParserExprUnary{exprUnaryArg, tok1, true};
@@ -397,7 +399,7 @@ std::shared_ptr<ParserStmtExpr> Parser::_stmtExpr (bool singleStmt) {
       auto exprAssignRight = this->_stmtExpr();
 
       if (exprAssignRight == nullptr) {
-        throw Error("TODO expected assignment value");
+        throw Error(this->reader, this->lexer->loc, E0133);
       }
 
       auto exprAssign = ParserExprAssign{exprAccess, tok4, exprAssignRight};
@@ -434,7 +436,7 @@ std::shared_ptr<ParserStmtExpr> Parser::_stmtExpr (bool singleStmt) {
         auto exprObjPropInit = this->_stmtExpr();
 
         if (exprObjPropInit == nullptr) {
-          throw Error("TODO expected object property initializer");
+          throw Error(this->reader, this->lexer->loc, E0134);
         }
 
         exprObjProps.push_back(ParserExprObjProp{tok5, exprObjPropInit});
@@ -480,7 +482,7 @@ std::shared_ptr<ParserStmtExpr> Parser::_stmtExpr (bool singleStmt) {
         auto exprCallArgExpr = this->_stmtExpr();
 
         if (exprCallArgExpr == nullptr) {
-          throw Error("TODO expected call expression argument");
+          throw Error(this->reader, this->lexer->loc, E0135);
         }
 
         exprCallArgs.push_back(ParserExprCallArg{exprCallArgId, exprCallArgExpr});
@@ -515,7 +517,7 @@ std::shared_ptr<ParserStmtExpr> Parser::_stmtExpr (bool singleStmt) {
     auto stmtExpr = this->_stmtExpr();
 
     if (stmtExpr == nullptr) {
-      throw Error("TODO expected expression");
+      throw Error(this->reader, this->lexer->loc, E0136);
     }
 
     auto [_2, tok2] = this->lexer->next();
@@ -555,37 +557,18 @@ ParserStmtIf Parser::_stmtIf () {
 }
 
 ParserStmtLoop Parser::_stmtLoop (const std::optional<std::shared_ptr<ParserStmt>> &init) {
-  auto cond = std::optional<std::shared_ptr<ParserStmtExpr>>{};
-  auto upd = std::optional<std::shared_ptr<ParserStmtExpr>>{};
+  auto condTest = this->_stmtExpr();
+  auto cond = condTest == nullptr ? std::optional<std::shared_ptr<ParserStmtExpr>>{} : condTest;
   auto [loc1, tok1] = this->lexer->next();
 
   if (tok1.type != TK_OP_SEMI) {
-    this->lexer->seek(loc1);
-    cond = this->_stmtExpr();
-
-    if (cond == nullptr) {
-      throw Error("TODO expected loop condition expression");
-    }
-
-    auto [_2, tok2] = this->lexer->next();
-
-    if (tok2.type != TK_OP_SEMI) {
-      throw Error(this->reader, tok2.start, E0108);
-    }
+    throw Error(this->reader, tok1.start, E0108);
   }
 
-  auto [loc3, tok3] = this->lexer->next();
-  this->lexer->seek(loc3);
-
-  if (tok3.type != TK_OP_LBRACE) {
-    upd = this->_stmtExpr();
-
-    if (upd == nullptr) {
-      throw Error("TODO expected loop update expression");
-    }
-  }
-
+  auto updTest = this->_stmtExpr();
+  auto upd = updTest == nullptr ? std::optional<std::shared_ptr<ParserStmtExpr>>{} : updTest;
   auto body = this->_block();
+
   return ParserStmtLoop{init, cond, upd, body};
 }
 
@@ -688,7 +671,7 @@ std::shared_ptr<ParserStmtExpr> Parser::_wrapStmtExpr (const std::shared_ptr<Par
     auto stmtExprRight = this->_stmtExpr(true);
 
     if (stmtExprRight == nullptr) {
-      throw Error("TODO expected right-hand binary expression");
+      throw Error(this->reader, this->lexer->loc, E0137);
     }
 
     if (std::holds_alternative<ParserExprBinary>(stmtExpr->body) && !stmtExpr->parenthesized) {
@@ -727,7 +710,7 @@ std::shared_ptr<ParserStmtExpr> Parser::_wrapStmtExpr (const std::shared_ptr<Par
     auto exprCondBody = this->_stmtExpr();
 
     if (exprCondBody == nullptr) {
-      throw Error("TODO expected condition body expression");
+      throw Error(this->reader, this->lexer->loc, E0138);
     }
 
     auto [_2, tok2] = this->lexer->next();
@@ -738,8 +721,8 @@ std::shared_ptr<ParserStmtExpr> Parser::_wrapStmtExpr (const std::shared_ptr<Par
 
     auto exprCondAlt = this->_stmtExpr();
 
-    if (exprCondBody == nullptr) {
-      throw Error("TODO expected condition alternative expression");
+    if (exprCondAlt == nullptr) {
+      throw Error(this->reader, this->lexer->loc, E0139);
     }
 
     auto exprCond = ParserExprCond{stmtExpr, exprCondBody, exprCondAlt};

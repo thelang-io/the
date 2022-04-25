@@ -105,6 +105,8 @@ struct ASTMember {
 
 struct ASTExprAccess {
   ASTMemberObj body;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 struct ASTExprAssign {

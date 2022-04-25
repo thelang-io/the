@@ -335,9 +335,11 @@ main {
         <slot name="body">
           <ExprAssign op="POWER">
             <slot name="left">
-              <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -363,9 +365,11 @@ main {
         <slot name="body">
           <ExprAssign op="REMAINDER">
             <slot name="left">
-              <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -391,9 +395,11 @@ main {
         <slot name="body">
           <ExprAssign op="DIVIDE">
             <slot name="left">
-              <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -419,9 +425,11 @@ main {
         <slot name="body">
           <ExprAssign op="MULTIPLY">
             <slot name="left">
-              <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -447,9 +455,11 @@ main {
         <slot name="body">
           <ExprAssign op="SUBTRACT">
             <slot name="left">
-              <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -475,9 +485,11 @@ main {
         <slot name="body">
           <ExprAssign op="ADD">
             <slot name="left">
-              <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -503,9 +515,11 @@ main {
         <slot name="body">
           <ExprAssign op="RIGHT_SHIFT">
             <slot name="left">
-              <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -531,9 +545,11 @@ main {
         <slot name="body">
           <ExprAssign op="LEFT_SHIFT">
             <slot name="left">
-              <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -559,9 +575,11 @@ main {
         <slot name="body">
           <ExprAssign op="BITWISE_AND">
             <slot name="left">
-              <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -587,9 +605,11 @@ main {
         <slot name="body">
           <ExprAssign op="BITWISE_XOR">
             <slot name="left">
-              <Var builtin="false" codeName="j_0" frame="2" mut="true" name="j">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="j_0" frame="2" mut="true" name="j">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -615,9 +635,11 @@ main {
         <slot name="body">
           <ExprAssign op="BITWISE_OR">
             <slot name="left">
-              <Var builtin="false" codeName="k_0" frame="2" mut="true" name="k">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="k_0" frame="2" mut="true" name="k">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -643,9 +665,11 @@ main {
         <slot name="body">
           <ExprAssign op="LOGICAL_AND">
             <slot name="left">
-              <Var builtin="false" codeName="l_0" frame="2" mut="true" name="l">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="l_0" frame="2" mut="true" name="l">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -671,9 +695,11 @@ main {
         <slot name="body">
           <ExprAssign op="LOGICAL_OR">
             <slot name="left">
-              <Var builtin="false" codeName="m_0" frame="2" mut="true" name="m">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="m_0" frame="2" mut="true" name="m">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">
@@ -699,9 +725,11 @@ main {
         <slot name="body">
           <ExprAssign op="COALESCE">
             <slot name="left">
-              <Var builtin="false" codeName="n_0" frame="2" mut="true" name="n">
-                <BuiltinType name="int" />
-              </Var>
+              <ExprAccess>
+                <Var builtin="false" codeName="n_0" frame="2" mut="true" name="n">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
             </slot>
             <slot name="right">
               <NodeExpr parenthesized="false">

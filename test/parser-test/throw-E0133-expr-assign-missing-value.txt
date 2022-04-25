@@ -1,0 +1,6 @@
+======= stdin =======
+a = {
+======= stderr =======
+/test:1:4: E0133 - Expected assignment value
+  1 | a = {
+    |    ^

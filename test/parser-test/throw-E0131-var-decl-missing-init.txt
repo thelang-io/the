@@ -1,6 +1,6 @@
 ======= stdin =======
 a := {
 ======= stderr =======
-/test:1:6: E0101 - Unexpected expression statement
+/test:1:5: E0131 - Expected variable initializer
   1 | a := {
-    |      ^
+    |     ^

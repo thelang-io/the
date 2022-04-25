@@ -130,7 +130,9 @@ main {
           <slot name="body">
             <ExprCall>
               <slot name="callee">
-                <BuiltinVar name="print" />
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
               </slot>
               <slot name="calleeType">
                 <BuiltinType />
@@ -242,13 +244,15 @@ main {
           <slot name="body">
             <ExprCall>
               <slot name="callee">
-                <Var builtin="false" codeName="cb_0" frame="2" mut="false" name="cb">
-                  <Type builtin="false" type="fn">
-                    <slot name="returnType">
-                      <BuiltinType name="any" />
-                    </slot>
-                  </Type>
-                </Var>
+                <ExprAccess>
+                  <Var builtin="false" codeName="cb_0" frame="2" mut="false" name="cb">
+                    <Type builtin="false" type="fn">
+                      <slot name="returnType">
+                        <BuiltinType name="any" />
+                      </slot>
+                    </Type>
+                  </Var>
+                </ExprAccess>
               </slot>
               <slot name="calleeType">
                 <Type builtin="false" type="fn">
@@ -284,7 +288,9 @@ main {
           <slot name="body">
             <ExprCall>
               <slot name="callee">
-                <BuiltinVar name="print" />
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
               </slot>
               <slot name="calleeType">
                 <BuiltinType />
@@ -585,30 +591,32 @@ main {
             <slot name="body">
               <ExprCall>
                 <slot name="callee">
-                  <Var builtin="false" codeName="mainSDcreateCat_0" frame="2" mut="false" name="createCat">
-                    <Type builtin="false" name="mainSDcreateCat_0" type="fn">
-                      <slot name="returnType">
-                        <Type builtin="false" name="mainSDCat_0" type="obj">
-                          <slot name="fields">
-                            <TypeObjField name="breed">
-                              <BuiltinType name="str" />
-                            </TypeObjField>
-                            <TypeObjField name="sex">
-                              <BuiltinType name="str" />
-                            </TypeObjField>
-                          </slot>
-                        </Type>
-                      </slot>
-                      <slot name="params">
-                        <TypeFnParam name="breed" required="true" variadic="false">
-                          <BuiltinType name="str" />
-                        </TypeFnParam>
-                        <TypeFnParam name="sex" required="true" variadic="false">
-                          <BuiltinType name="str" />
-                        </TypeFnParam>
-                      </slot>
-                    </Type>
-                  </Var>
+                  <ExprAccess>
+                    <Var builtin="false" codeName="mainSDcreateCat_0" frame="2" mut="false" name="createCat">
+                      <Type builtin="false" name="mainSDcreateCat_0" type="fn">
+                        <slot name="returnType">
+                          <Type builtin="false" name="mainSDCat_0" type="obj">
+                            <slot name="fields">
+                              <TypeObjField name="breed">
+                                <BuiltinType name="str" />
+                              </TypeObjField>
+                              <TypeObjField name="sex">
+                                <BuiltinType name="str" />
+                              </TypeObjField>
+                            </slot>
+                          </Type>
+                        </slot>
+                        <slot name="params">
+                          <TypeFnParam name="breed" required="true" variadic="false">
+                            <BuiltinType name="str" />
+                          </TypeFnParam>
+                          <TypeFnParam name="sex" required="true" variadic="false">
+                            <BuiltinType name="str" />
+                          </TypeFnParam>
+                        </slot>
+                      </Type>
+                    </Var>
+                  </ExprAccess>
                 </slot>
                 <slot name="calleeType">
                   <Type builtin="false" name="mainSDcreateCat_0" type="fn">
@@ -796,7 +804,9 @@ main {
         <slot name="body">
           <ExprCall>
             <slot name="callee">
-              <BuiltinVar name="print" />
+              <ExprAccess>
+                <BuiltinVar name="print" />
+              </ExprAccess>
             </slot>
             <slot name="calleeType">
               <BuiltinType />
@@ -822,32 +832,34 @@ main {
                   <slot name="body">
                     <ExprCall>
                       <slot name="callee">
-                        <slot name="obj">
-                          <Var builtin="false" codeName="test_0" frame="2" mut="false" name="test">
-                            <Type builtin="false" name="Test_0" type="obj">
-                              <slot name="fields">
-                                <TypeObjField name="sum">
-                                  <Type builtin="false" type="fn">
-                                    <slot name="returnType">
-                                      <BuiltinType name="int" />
-                                    </slot>
-                                    <slot name="params">
-                                      <TypeFnParam required="true" variadic="false">
+                        <ExprAccess>
+                          <slot name="obj">
+                            <Var builtin="false" codeName="test_0" frame="2" mut="false" name="test">
+                              <Type builtin="false" name="Test_0" type="obj">
+                                <slot name="fields">
+                                  <TypeObjField name="sum">
+                                    <Type builtin="false" type="fn">
+                                      <slot name="returnType">
                                         <BuiltinType name="int" />
-                                      </TypeFnParam>
-                                      <TypeFnParam required="false" variadic="true">
-                                        <BuiltinType name="int" />
-                                      </TypeFnParam>
-                                    </slot>
-                                  </Type>
-                                </TypeObjField>
-                              </slot>
-                            </Type>
-                          </Var>
-                        </slot>
-                        <slot name="prop">
-                          sum
-                        </slot>
+                                      </slot>
+                                      <slot name="params">
+                                        <TypeFnParam required="true" variadic="false">
+                                          <BuiltinType name="int" />
+                                        </TypeFnParam>
+                                        <TypeFnParam required="false" variadic="true">
+                                          <BuiltinType name="int" />
+                                        </TypeFnParam>
+                                      </slot>
+                                    </Type>
+                                  </TypeObjField>
+                                </slot>
+                              </Type>
+                            </Var>
+                          </slot>
+                          <slot name="prop">
+                            sum
+                          </slot>
+                        </ExprAccess>
                       </slot>
                       <slot name="calleeType">
                         <Type builtin="false" type="fn">
@@ -1034,33 +1046,35 @@ main {
         <slot name="body">
           <ExprCall>
             <slot name="callee">
-              <slot name="obj">
-                <Var builtin="false" codeName="callback_0" frame="2" mut="false" name="callback">
-                  <Type builtin="false" name="Callback_0" type="obj">
-                    <slot name="fields">
-                      <TypeObjField name="logic">
-                        <Type builtin="false" type="fn">
-                          <slot name="returnType">
-                            <BuiltinType name="void" />
-                          </slot>
-                          <slot name="params">
-                            <TypeFnParam required="true" variadic="false">
-                              <Type builtin="false" type="fn">
-                                <slot name="returnType">
-                                  <BuiltinType name="any" />
-                                </slot>
-                              </Type>
-                            </TypeFnParam>
-                          </slot>
-                        </Type>
-                      </TypeObjField>
-                    </slot>
-                  </Type>
-                </Var>
-              </slot>
-              <slot name="prop">
-                logic
-              </slot>
+              <ExprAccess>
+                <slot name="obj">
+                  <Var builtin="false" codeName="callback_0" frame="2" mut="false" name="callback">
+                    <Type builtin="false" name="Callback_0" type="obj">
+                      <slot name="fields">
+                        <TypeObjField name="logic">
+                          <Type builtin="false" type="fn">
+                            <slot name="returnType">
+                              <BuiltinType name="void" />
+                            </slot>
+                            <slot name="params">
+                              <TypeFnParam required="true" variadic="false">
+                                <Type builtin="false" type="fn">
+                                  <slot name="returnType">
+                                    <BuiltinType name="any" />
+                                  </slot>
+                                </Type>
+                              </TypeFnParam>
+                            </slot>
+                          </Type>
+                        </TypeObjField>
+                      </slot>
+                    </Type>
+                  </Var>
+                </slot>
+                <slot name="prop">
+                  logic
+                </slot>
+              </ExprAccess>
             </slot>
             <slot name="calleeType">
               <Type builtin="false" type="fn">

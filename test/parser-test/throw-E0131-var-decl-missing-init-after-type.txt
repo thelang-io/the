@@ -1,0 +1,6 @@
+======= stdin =======
+a: int = {
+======= stderr =======
+/test:1:9: E0131 - Expected variable initializer
+  1 | a: int = {
+    |         ^

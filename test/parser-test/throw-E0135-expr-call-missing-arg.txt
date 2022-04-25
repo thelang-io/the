@@ -1,0 +1,6 @@
+======= stdin =======
+test(1, b: )
+======= stderr =======
+/test:1:11: E0135 - Expected call expression argument
+  1 | test(1, b: )
+    |           ^
