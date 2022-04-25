@@ -72,14 +72,15 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-continue",
   "node-expr",
   "node-fn-decl",
+  "node-fn-decl-param-init",
   "node-if",
   "node-loop",
   "node-main",
   "node-obj-decl",
+  "node-obj-decl-forward-decl",
   "node-return",
   "node-var-decl",
-  "node-var-decl-type-only",
-  "node-obj-decl-forward-decl"
+  "node-var-decl-type-only"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
@@ -95,6 +96,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1000-expr-access-non-obj-prop",
+  "throw-E1000-expr-access-non-obj-prop-member",
   "throw-E1001-expr-access-non-existing-prop",
   "throw-E1002-expr-call-extraneous-arg",
   "throw-E1003-expr-binary-wrong-str-operation",
@@ -106,5 +108,16 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1008-expr-call-incorrect-arg-type",
   "throw-E1008-expr-call-incorrect-variadic-arg-type",
   "throw-E1009-expr-call-missing-required-args",
-  "throw-E1010-node-obj-decl-undeclared-type"
+  "throw-E1010-expr-obj-undeclared-type",
+  "throw-E1010-node-fn-decl-undeclared-param-type",
+  "throw-E1010-node-fn-decl-undeclared-return-type",
+  "throw-E1010-node-obj-decl-undeclared-field-type",
+  "throw-E1011-expr-assign-undeclared-var",
+  "throw-E1011-expr-binary-undeclared-var",
+  "throw-E1011-expr-call-undeclared-var",
+  "throw-E1011-expr-cond-undeclared-alt-var",
+  "throw-E1011-expr-cond-undeclared-body-var",
+  "throw-E1011-expr-cond-undeclared-var",
+  "throw-E1011-expr-unary-undeclared-var",
+  "throw-E1011-node-fn-decl-undeclared-param-var"
 ));

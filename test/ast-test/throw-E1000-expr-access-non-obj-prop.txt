@@ -3,9 +3,9 @@ fn test () void {
 }
 
 main {
-  print(test.b)
+  print(test.existing.thing)
 }
 ======= stderr =======
 /test:5:9: E1000 - Tried accessing property of non object variable
-  5 |   print(test.b)
-    |         ^~~~~~
+  5 |   print(test.existing.thing)
+    |         ^~~~~~~~~~~~~

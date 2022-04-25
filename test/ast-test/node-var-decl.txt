@@ -174,7 +174,7 @@ main {
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="i32" />
+              <BuiltinType name="int" />
             </slot>
             <slot name="body">
               <ExprLit type="INT_DEC">
@@ -278,7 +278,7 @@ main {
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="f32" />
+              <BuiltinType name="float" />
             </slot>
             <slot name="body">
               <ExprLit type="FLOAT">

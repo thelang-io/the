@@ -1,0 +1,8 @@
+======= stdin =======
+main {
+  a := 1 > 2 ? test : 0
+}
+======= stderr =======
+/test:2:16: E1011 - Use of undeclared variable
+  2 |   a := 1 > 2 ? test : 0
+    |                ^~~~

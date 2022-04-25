@@ -36,7 +36,7 @@ class AST {
   std::shared_ptr<ASTNodeExpr> _stmtExpr (const std::shared_ptr<ParserStmtExpr> &, VarStack &) const;
   std::shared_ptr<Type> _stmtExprType (const std::shared_ptr<ParserStmtExpr> &) const;
   ASTNodeIf _stmtIf (const ParserStmtIf &, VarStack &);
-  std::shared_ptr<Type> _type (const std::optional<std::shared_ptr<ParserType>> &, const std::optional<std::shared_ptr<ParserStmtExpr>> & = std::nullopt) const;
+  std::shared_ptr<Type> _type (const std::shared_ptr<ParserType> &) const;
 };
 
 #endif

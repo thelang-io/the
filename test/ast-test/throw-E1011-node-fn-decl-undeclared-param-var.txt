@@ -1,0 +1,7 @@
+======= stdin =======
+fn test (p1: str, p2 := p3) {
+}
+======= stderr =======
+/test:1:25: E1011 - Use of undeclared variable
+  1 | fn test (p1: str, p2 := p3) {
+    |                         ^~

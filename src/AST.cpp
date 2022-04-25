@@ -54,7 +54,7 @@ ASTExprAccess AST::_exprAccess (const ParserMemberObj &exprAccessBody, VarStack 
     auto var = this->varMap.get(parserId.val);
 
     if (var == nullptr) {
-      throw Error("TODO use of undeclared variable");
+      throw Error(this->reader, parserId.start, parserId.end, E1011);
     }
 
     varStack.mark(var);
@@ -145,60 +145,41 @@ ASTNode AST::_stmt (const ParserStmt &stmt, VarStack &varStack) {
     return ASTNode{*nodeExpr};
   } else if (std::holds_alternative<ParserStmtFnDecl>(stmt.body)) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(stmt.body);
-    auto nodeFnDeclVarName = stmtFnDecl.id.val;
-    auto nodeFnDeclVarCodeName = this->typeMap.name(nodeFnDeclVarName);
-    auto nodeFnDeclVarReturnType = stmtFnDecl.returnType == std::nullopt
-      ? this->typeMap.get("void")
-      : this->_type(stmtFnDecl.returnType);
-
-    if (nodeFnDeclVarReturnType == nullptr) {
-      throw Error("TODO use of undeclared type");
-    }
-
-    auto nodeFnDeclVarParams = std::vector<TypeFnParam>{};
-
-    for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
-      auto paramType = this->_type(stmtFnDeclParam.type, stmtFnDeclParam.init);
-
-      if (paramType == nullptr) {
-        throw Error("TODO use of undeclared type");
-      }
-
-      nodeFnDeclVarParams.push_back(TypeFnParam{
-        stmtFnDeclParam.id.val,
-        paramType,
-        stmtFnDeclParam.init == std::nullopt && !stmtFnDeclParam.variadic,
-        stmtFnDeclParam.variadic
-      });
-    }
-
-    auto nodeFnDeclVarType = this->typeMap.add(nodeFnDeclVarCodeName, nodeFnDeclVarParams, nodeFnDeclVarReturnType);
-    auto nodeFnDeclVar = this->varMap.add(nodeFnDeclVarName, nodeFnDeclVarCodeName, nodeFnDeclVarType, false);
     auto nodeFnDeclParams = std::vector<ASTNodeFnDeclParam>{};
+    auto nodeFnDeclVarParams = std::vector<TypeFnParam>{};
     auto nodeFnDeclVarStack = this->varMap.stack();
 
-    this->typeMap.stack.emplace_back(nodeFnDeclVar->name);
     this->varMap.save();
 
     for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
+      auto paramName = stmtFnDeclParam.id.val;
+      auto paramType = stmtFnDeclParam.type != std::nullopt
+        ? this->_type(*stmtFnDeclParam.type)
+        : this->_stmtExprType(*stmtFnDeclParam.init);
+      auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, false);
       auto paramInit = std::optional<std::shared_ptr<ASTNodeExpr>>{};
 
       if (stmtFnDeclParam.init != std::nullopt) {
         paramInit = this->_stmtExpr(*stmtFnDeclParam.init, nodeFnDeclVarStack);
       }
 
-      auto paramName = stmtFnDeclParam.id.val;
-      auto paramCodeName = this->varMap.name(paramName);
-      auto paramType = this->_type(stmtFnDeclParam.type, stmtFnDeclParam.init);
+      auto paramVariadic = stmtFnDeclParam.variadic;
+      auto paramRequired = paramInit == std::nullopt && !paramVariadic;
 
-      if (paramType == nullptr) {
-        throw Error("TODO use of undeclared type");
-      }
-
-      auto paramVar = this->varMap.add(paramName, paramCodeName, paramType, false);
       nodeFnDeclParams.push_back(ASTNodeFnDeclParam{paramVar, paramInit});
+      nodeFnDeclVarParams.push_back(TypeFnParam{paramVar->name, paramVar->type, paramRequired, paramVariadic});
     }
 
+    auto nodeFnDeclVarName = stmtFnDecl.id.val;
+    auto nodeFnDeclVarReturnType = stmtFnDecl.returnType == std::nullopt
+      ? this->typeMap.get("void")
+      : this->_type(*stmtFnDecl.returnType);
+    auto nodeFnDeclVarType = this->typeMap.add(this->typeMap.name(nodeFnDeclVarName), nodeFnDeclVarParams, nodeFnDeclVarReturnType);
+    auto nodeFnDeclVar = this->varMap.add(nodeFnDeclVarName, nodeFnDeclVarType->name, nodeFnDeclVarType, false);
+
+    nodeFnDeclVar->frame -= 1;
+
+    this->typeMap.stack.emplace_back(nodeFnDeclVar->name);
     auto nodeFnDeclBody = this->_block(stmtFnDecl.body, nodeFnDeclVarStack);
     this->varMap.restore();
     this->typeMap.stack.pop_back();
@@ -255,11 +236,6 @@ ASTNode AST::_stmt (const ParserStmt &stmt, VarStack &varStack) {
 
     for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
       auto fieldType = this->_type(stmtObjDeclField.type);
-
-      if (fieldType == nullptr) {
-        throw Error("TODO use of undeclared type");
-      }
-
       nodeObjDeclObj.fields.push_back(TypeObjField{stmtObjDeclField.id.val, fieldType});
     }
 
@@ -278,22 +254,18 @@ ASTNode AST::_stmt (const ParserStmt &stmt, VarStack &varStack) {
   } else if (std::holds_alternative<ParserStmtVarDecl>(stmt.body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(stmt.body);
     auto nodeVarDeclName = stmtVarDecl.id.val;
-    auto nodeVarDeclCodeName = this->varMap.name(nodeVarDeclName);
-    auto nodeVarDeclType = this->_type(stmtVarDecl.type, stmtVarDecl.init);
-
-    if (nodeVarDeclType == nullptr) {
-      throw Error("TODO use of undeclared type");
-    }
-
-    auto nodeVarDeclVar = this->varMap.add(nodeVarDeclName, nodeVarDeclCodeName, nodeVarDeclType, stmtVarDecl.mut);
+    auto nodeVarDeclType = stmtVarDecl.type != std::nullopt
+      ? this->_type(*stmtVarDecl.type)
+      : this->_stmtExprType(*stmtVarDecl.init);
     auto nodeVarDeclInit = std::optional<std::shared_ptr<ASTNodeExpr>>{};
 
     if (stmtVarDecl.init != std::nullopt) {
       nodeVarDeclInit = this->_stmtExpr(*stmtVarDecl.init, varStack);
-      (*nodeVarDeclInit)->type = nodeVarDeclType;
     }
 
+    auto nodeVarDeclVar = this->varMap.add(nodeVarDeclName, this->varMap.name(nodeVarDeclName), nodeVarDeclType, stmtVarDecl.mut);
     auto nodeVarDecl = ASTNodeVarDecl{nodeVarDeclVar, nodeVarDeclInit};
+
     return ASTNode{nodeVarDecl};
   }
 
@@ -492,7 +464,7 @@ std::shared_ptr<ASTNodeExpr> AST::_stmtExpr (const std::shared_ptr<ParserStmtExp
     auto exprObjVar = this->varMap.get(parserExprObj.id.val);
 
     if (exprObjVar == nullptr) {
-      throw Error("TODO use of undeclared object");
+      throw Error(this->reader, parserExprObj.id.start, parserExprObj.id.end, E1010);
     }
 
     auto exprObjType = exprObjVar->type;
@@ -670,65 +642,48 @@ ASTNodeIf AST::_stmtIf (const ParserStmtIf &stmtIf, VarStack &varStack) {
   return ASTNodeIf{cond, body, alt};
 }
 
-std::shared_ptr<Type> AST::_type (
-  const std::optional<std::shared_ptr<ParserType>> &type,
-  const std::optional<std::shared_ptr<ParserStmtExpr>> &init
-) const {
-  if (type != std::nullopt && std::holds_alternative<ParserTypeFn>((*type)->body)) {
-    auto typeFn = std::get<ParserTypeFn>((*type)->body);
+std::shared_ptr<Type> AST::_type (const std::shared_ptr<ParserType> &type) const {
+  if (std::holds_alternative<ParserTypeFn>((*type).body)) {
+    auto typeFn = std::get<ParserTypeFn>((*type).body);
     auto fnReturnType = this->_type(typeFn.returnType);
-
-    if (fnReturnType == nullptr) {
-      throw Error("TODO use of undeclared type");
-    }
-
     auto fnParams = std::vector<TypeFnParam>{};
 
     for (const auto &typeFnParam : typeFn.params) {
       auto paramType = this->_type(typeFnParam.type);
-
-      if (paramType == nullptr) {
-        throw Error("TODO use of undeclared type");
-      }
-
       fnParams.push_back(TypeFnParam{"@", paramType, !typeFnParam.variadic, typeFnParam.variadic});
     }
 
     return TypeMap::fn(fnReturnType, fnParams);
-  } else if (type != std::nullopt && std::holds_alternative<ParserTypeId>((*type)->body)) {
-    auto typeId = std::get<ParserTypeId>((*type)->body);
-
-    if (typeId.id.val == "any") return this->typeMap.get("any");
-    if (typeId.id.val == "bool") return this->typeMap.get("bool");
-    if (typeId.id.val == "byte") return this->typeMap.get("byte");
-    if (typeId.id.val == "char") return this->typeMap.get("char");
-    if (typeId.id.val == "float") return this->typeMap.get("float");
-    if (typeId.id.val == "f32") return this->typeMap.get("f32");
-    if (typeId.id.val == "f64") return this->typeMap.get("f64");
-    if (typeId.id.val == "int") return this->typeMap.get("int");
-    if (typeId.id.val == "i8") return this->typeMap.get("i8");
-    if (typeId.id.val == "i16") return this->typeMap.get("i16");
-    if (typeId.id.val == "i32") return this->typeMap.get("i32");
-    if (typeId.id.val == "i64") return this->typeMap.get("i64");
-    if (typeId.id.val == "str") return this->typeMap.get("str");
-    if (typeId.id.val == "u8") return this->typeMap.get("u8");
-    if (typeId.id.val == "u16") return this->typeMap.get("u16");
-    if (typeId.id.val == "u32") return this->typeMap.get("u32");
-    if (typeId.id.val == "u64") return this->typeMap.get("u64");
-    if (typeId.id.val == "void") return this->typeMap.get("void");
-
-    if (this->varMap.has(typeId.id.val)) {
-      auto var = this->varMap.get(typeId.id.val);
-
-      if (var == nullptr) {
-        return nullptr;
-      }
-
-      return var->type;
-    }
-
-    throw Error(this->reader, typeId.id.start, typeId.id.end, E1010);
   }
 
-  return this->_stmtExprType(*init);
+  auto typeId = std::get<ParserTypeId>((*type).body);
+
+  if (typeId.id.val == "any") return this->typeMap.get("any");
+  if (typeId.id.val == "bool") return this->typeMap.get("bool");
+  if (typeId.id.val == "byte") return this->typeMap.get("byte");
+  if (typeId.id.val == "char") return this->typeMap.get("char");
+  if (typeId.id.val == "float") return this->typeMap.get("float");
+  if (typeId.id.val == "f32") return this->typeMap.get("f32");
+  if (typeId.id.val == "f64") return this->typeMap.get("f64");
+  if (typeId.id.val == "int") return this->typeMap.get("int");
+  if (typeId.id.val == "i8") return this->typeMap.get("i8");
+  if (typeId.id.val == "i16") return this->typeMap.get("i16");
+  if (typeId.id.val == "i32") return this->typeMap.get("i32");
+  if (typeId.id.val == "i64") return this->typeMap.get("i64");
+  if (typeId.id.val == "str") return this->typeMap.get("str");
+  if (typeId.id.val == "u8") return this->typeMap.get("u8");
+  if (typeId.id.val == "u16") return this->typeMap.get("u16");
+  if (typeId.id.val == "u32") return this->typeMap.get("u32");
+  if (typeId.id.val == "u64") return this->typeMap.get("u64");
+  if (typeId.id.val == "void") return this->typeMap.get("void");
+
+  if (this->varMap.has(typeId.id.val)) {
+    auto var = this->varMap.get(typeId.id.val);
+
+    if (var != nullptr) {
+      return var->type;
+    }
+  }
+
+  throw Error(this->reader, typeId.id.start, typeId.id.end, E1010);
 }

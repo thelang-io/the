@@ -80,6 +80,7 @@
 #define E1008 "E1008 - Argument type doesn't match parameter type"
 #define E1009 "E1009 - Missing required arguments"
 #define E1010 "E1010 - Use of undeclared type"
+#define E1011 "E1011 - Use of undeclared variable"
 
 class Error;
 

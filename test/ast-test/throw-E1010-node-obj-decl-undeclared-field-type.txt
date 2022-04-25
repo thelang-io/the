@@ -1,0 +1,8 @@
+======= stdin =======
+obj Test {
+  t2: Test2
+}
+======= stderr =======
+/test:2:7: E1010 - Use of undeclared type
+  2 |   t2: Test2
+    |       ^~~~~

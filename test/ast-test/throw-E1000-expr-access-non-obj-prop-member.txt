@@ -1,0 +1,20 @@
+======= stdin =======
+obj Test1 {
+  t2: Test2
+}
+
+obj Test2 {
+  a: int
+}
+
+main {
+  test := Test1{
+    t2: Test2{a: 1}
+  }
+
+  print(test.t2.a.existing.thing)
+}
+======= stderr =======
+/test:14:17: E1000 - Tried accessing property of non object variable
+  14 |   print(test.t2.a.existing.thing)
+     |                 ^~~~~~~~~~

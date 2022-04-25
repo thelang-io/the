@@ -1,0 +1,7 @@
+======= stdin =======
+fn test (x: Test) {
+}
+======= stderr =======
+/test:1:13: E1010 - Use of undeclared type
+  1 | fn test (x: Test) {
+    |             ^~~~
