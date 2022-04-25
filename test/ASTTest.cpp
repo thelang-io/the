@@ -93,7 +93,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-unary"
 ));
 
-INSTANTIATE_TEST_SUITE_P(General, ASTThrowTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1000-expr-access-non-obj-prop",
   "throw-E1001-expr-access-non-existing-prop",
   "throw-E1002-expr-call-extraneous-arg",
@@ -105,5 +105,6 @@ INSTANTIATE_TEST_SUITE_P(General, ASTThrowTest, testing::Values(
   "throw-E1007-expr-call-regular-after-named-args",
   "throw-E1008-expr-call-incorrect-arg-type",
   "throw-E1008-expr-call-incorrect-variadic-arg-type",
-  "throw-E1009-expr-call-missing-required-args"
+  "throw-E1009-expr-call-missing-required-args",
+  "throw-E1010-node-obj-decl-undeclared-type"
 ));

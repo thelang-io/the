@@ -59,7 +59,7 @@ std::string ASTNode::xml (std::size_t indent) const {
 
         if (nodeFnDeclParam.init != std::nullopt) {
           result += std::string(indent + 6, ' ') + R"(<slot name="init">)" "\n";
-          result += nodeFnDeclParam.init->xml(indent + 8) + "\n";
+          result += (*nodeFnDeclParam.init)->xml(indent + 8) + "\n";
           result += std::string(indent + 6, ' ') + "</slot>\n";
         }
 
@@ -93,13 +93,13 @@ std::string ASTNode::xml (std::size_t indent) const {
 
     if (nodeLoop.cond != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" "\n";
-      result += nodeLoop.cond->xml(indent + 4) + "\n";
+      result += (*nodeLoop.cond)->xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
     if (nodeLoop.upd != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="upd">)" "\n";
-      result += nodeLoop.upd->xml(indent + 4) + "\n";
+      result += (*nodeLoop.upd)->xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
@@ -129,7 +129,7 @@ std::string ASTNode::xml (std::size_t indent) const {
       result += std::string(indent, ' ') + "<NodeReturn />\n";
     } else {
       result += std::string(indent, ' ') + "<NodeReturn>\n";
-      result += nodeReturn.body->xml(indent + 2) + "\n";
+      result += (*nodeReturn.body)->xml(indent + 2) + "\n";
       result += std::string(indent, ' ') + "</NodeReturn>\n";
     }
   } else if (std::holds_alternative<ASTNodeVarDecl>(this->body)) {
@@ -142,7 +142,7 @@ std::string ASTNode::xml (std::size_t indent) const {
 
     if (nodeVarDecl.init != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="init">)" "\n";
-      result += nodeVarDecl.init->xml(indent + 4) + "\n";
+      result += (*nodeVarDecl.init)->xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 

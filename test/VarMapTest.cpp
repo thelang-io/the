@@ -66,7 +66,7 @@ TEST_F(VarMapTest, GetReturnsItem) {
 }
 
 TEST_F(VarMapTest, GetThrowOnNotExisting) {
-  EXPECT_THROW_WITH_MESSAGE(this->vm_.get("test1"), "Error: Tried to access non existing variable map item");
+  EXPECT_EQ(this->vm_.get("test1"), nullptr);
 }
 
 TEST_F(VarMapTest, HasWorks) {

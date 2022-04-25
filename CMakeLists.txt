@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.8.16 LANGUAGES CXX)
+project(the-core VERSION 0.8.17 LANGUAGES CXX)
 
 include(FetchContent)
 include(GoogleTest)

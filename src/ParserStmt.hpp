@@ -90,7 +90,7 @@ struct ParserStmtFnDeclParam {
   Token id;
   std::optional<std::shared_ptr<ParserType>> type;
   bool variadic;
-  std::optional<ParserStmtExpr> init;
+  std::optional<std::shared_ptr<ParserStmtExpr>> init;
 };
 
 struct ParserStmtIf {
@@ -103,8 +103,8 @@ struct ParserStmtIf {
 
 struct ParserStmtLoop {
   std::optional<std::shared_ptr<ParserStmt>> init;
-  std::optional<ParserStmtExpr> cond;
-  std::optional<ParserStmtExpr> upd;
+  std::optional<std::shared_ptr<ParserStmtExpr>> cond;
+  std::optional<std::shared_ptr<ParserStmtExpr>> upd;
   ParserBlock body;
 };
 
@@ -123,13 +123,13 @@ struct ParserStmtObjDeclField {
 };
 
 struct ParserStmtReturn {
-  std::optional<ParserStmtExpr> body;
+  std::optional<std::shared_ptr<ParserStmtExpr>> body;
 };
 
 struct ParserStmtVarDecl {
   Token id;
   std::optional<std::shared_ptr<ParserType>> type;
-  std::optional<ParserStmtExpr> init;
+  std::optional<std::shared_ptr<ParserStmtExpr>> init;
   bool mut = false;
 };
 

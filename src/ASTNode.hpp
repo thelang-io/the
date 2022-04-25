@@ -54,7 +54,7 @@ struct ASTNodeFnDecl {
 
 struct ASTNodeFnDeclParam {
   std::shared_ptr<Var> var;
-  std::optional<ASTNodeExpr> init;
+  std::optional<std::shared_ptr<ASTNodeExpr>> init;
 };
 
 struct ASTNodeIf {
@@ -67,8 +67,8 @@ struct ASTNodeIf {
 
 struct ASTNodeLoop {
   std::optional<std::shared_ptr<ASTNode>> init;
-  std::optional<ASTNodeExpr> cond;
-  std::optional<ASTNodeExpr> upd;
+  std::optional<std::shared_ptr<ASTNodeExpr>> cond;
+  std::optional<std::shared_ptr<ASTNodeExpr>> upd;
   ASTBlock body;
 };
 
@@ -81,12 +81,12 @@ struct ASTNodeObjDecl {
 };
 
 struct ASTNodeReturn {
-  std::optional<ASTNodeExpr> body;
+  std::optional<std::shared_ptr<ASTNodeExpr>> body;
 };
 
 struct ASTNodeVarDecl {
   std::shared_ptr<Var> var;
-  std::optional<ASTNodeExpr> init;
+  std::optional<std::shared_ptr<ASTNodeExpr>> init;
 };
 
 struct ASTNode {

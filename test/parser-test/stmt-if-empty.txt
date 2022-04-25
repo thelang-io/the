@@ -13,7 +13,7 @@ if true {
   <StmtIf>
     <slot name="cond">
       <Stmt start="1:4" end="1:9">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="1:4" end="1:9">
           <ExprLit>
             <Token type="KW_FALSE" val="false" start="1:4" end="1:9" />
           </ExprLit>
@@ -26,7 +26,7 @@ if true {
   <StmtIf>
     <slot name="cond">
       <Stmt start="3:4" end="3:8">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="3:4" end="3:8">
           <ExprLit>
             <Token type="KW_TRUE" val="true" start="3:4" end="3:8" />
           </ExprLit>
@@ -41,7 +41,7 @@ if true {
   <StmtIf>
     <slot name="cond">
       <Stmt start="6:4" end="6:8">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="6:4" end="6:8">
           <ExprLit>
             <Token type="KW_TRUE" val="true" start="6:4" end="6:8" />
           </ExprLit>
@@ -52,7 +52,7 @@ if true {
       <StmtIf>
         <slot name="cond">
           <Stmt start="7:8" end="7:13">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="7:8" end="7:13">
               <ExprLit>
                 <Token type="KW_FALSE" val="false" start="7:8" end="7:13" />
               </ExprLit>

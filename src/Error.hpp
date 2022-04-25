@@ -29,7 +29,7 @@
 #define E0016 "E0016 - Octal float literals are not allowed"
 
 #define E0100 "E0100 - Unexpected statement"
-#define E0101 "E0101 - Unexpected expression statement"
+// #define E0101 "E0101 - Unexpected expression statement"
 #define E0102 "E0102 - Expected variable type after colon"
 #define E0103 "E0103 - Expected left brace"
 #define E0104 "E0104 - Expected right brace"
@@ -69,6 +69,7 @@
 #define E1007 "E1007 - Named arguments can't be followed by regular arguments"
 #define E1008 "E1008 - Argument type doesn't match parameter type"
 #define E1009 "E1009 - Missing required arguments"
+#define E1010 "E1010 - Use of undeclared type"
 
 class Error;
 

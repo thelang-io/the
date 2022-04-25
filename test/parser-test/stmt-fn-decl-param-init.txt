@@ -20,7 +20,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           <Token type="ID" val="a" start="1:11" end="1:12" />
         </slot>
         <slot name="init">
-          <StmtExpr parenthesized="false">
+          <StmtExpr parenthesized="false" start="1:16" end="1:17">
             <ExprLit>
               <Token type="LIT_INT_DEC" val="0" start="1:16" end="1:17" />
             </ExprLit>
@@ -38,10 +38,10 @@ fn test3 (x: int, y: float = 0, z := 0) float {
     <slot name="body">
       <Stmt start="2:3" end="2:15">
         <StmtReturn>
-          <StmtExpr parenthesized="false">
+          <StmtExpr parenthesized="false" start="2:10" end="2:15">
             <ExprBinary>
               <slot name="left">
-                <StmtExpr parenthesized="false">
+                <StmtExpr parenthesized="false" start="2:10" end="2:11">
                   <ExprAccess>
                     <Token type="ID" val="a" start="2:10" end="2:11" />
                   </ExprAccess>
@@ -51,7 +51,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
                 <Token type="OP_PLUS" val="+" start="2:12" end="2:13" />
               </slot>
               <slot name="right">
-                <StmtExpr parenthesized="false">
+                <StmtExpr parenthesized="false" start="2:14" end="2:15">
                   <ExprLit>
                     <Token type="LIT_INT_DEC" val="3" start="2:14" end="2:15" />
                   </ExprLit>
@@ -87,7 +87,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           <Token type="ID" val="b" start="4:19" end="4:20" />
         </slot>
         <slot name="init">
-          <StmtExpr parenthesized="false">
+          <StmtExpr parenthesized="false" start="4:24" end="4:25">
             <ExprLit>
               <Token type="LIT_INT_DEC" val="0" start="4:24" end="4:25" />
             </ExprLit>
@@ -105,10 +105,10 @@ fn test3 (x: int, y: float = 0, z := 0) float {
     <slot name="body">
       <Stmt start="5:3" end="5:15">
         <StmtReturn>
-          <StmtExpr parenthesized="false">
+          <StmtExpr parenthesized="false" start="5:10" end="5:15">
             <ExprBinary>
               <slot name="left">
-                <StmtExpr parenthesized="false">
+                <StmtExpr parenthesized="false" start="5:10" end="5:11">
                   <ExprAccess>
                     <Token type="ID" val="a" start="5:10" end="5:11" />
                   </ExprAccess>
@@ -118,7 +118,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
                 <Token type="OP_PLUS" val="+" start="5:12" end="5:13" />
               </slot>
               <slot name="right">
-                <StmtExpr parenthesized="false">
+                <StmtExpr parenthesized="false" start="5:14" end="5:15">
                   <ExprAccess>
                     <Token type="ID" val="b" start="5:14" end="5:15" />
                   </ExprAccess>
@@ -161,7 +161,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           </Type>
         </slot>
         <slot name="init">
-          <StmtExpr parenthesized="false">
+          <StmtExpr parenthesized="false" start="7:30" end="7:31">
             <ExprLit>
               <Token type="LIT_INT_DEC" val="0" start="7:30" end="7:31" />
             </ExprLit>
@@ -173,7 +173,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           <Token type="ID" val="z" start="7:33" end="7:34" />
         </slot>
         <slot name="init">
-          <StmtExpr parenthesized="false">
+          <StmtExpr parenthesized="false" start="7:38" end="7:39">
             <ExprLit>
               <Token type="LIT_INT_DEC" val="0" start="7:38" end="7:39" />
             </ExprLit>
@@ -191,13 +191,13 @@ fn test3 (x: int, y: float = 0, z := 0) float {
     <slot name="body">
       <Stmt start="8:3" end="8:19">
         <StmtReturn>
-          <StmtExpr parenthesized="false">
+          <StmtExpr parenthesized="false" start="8:10" end="8:19">
             <ExprBinary>
               <slot name="left">
-                <StmtExpr parenthesized="false">
+                <StmtExpr parenthesized="false" start="8:10" end="8:15">
                   <ExprBinary>
                     <slot name="left">
-                      <StmtExpr parenthesized="false">
+                      <StmtExpr parenthesized="false" start="8:10" end="8:11">
                         <ExprAccess>
                           <Token type="ID" val="x" start="8:10" end="8:11" />
                         </ExprAccess>
@@ -207,7 +207,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
                       <Token type="OP_PLUS" val="+" start="8:12" end="8:13" />
                     </slot>
                     <slot name="right">
-                      <StmtExpr parenthesized="false">
+                      <StmtExpr parenthesized="false" start="8:14" end="8:15">
                         <ExprAccess>
                           <Token type="ID" val="y" start="8:14" end="8:15" />
                         </ExprAccess>
@@ -220,7 +220,7 @@ fn test3 (x: int, y: float = 0, z := 0) float {
                 <Token type="OP_PLUS" val="+" start="8:16" end="8:17" />
               </slot>
               <slot name="right">
-                <StmtExpr parenthesized="false">
+                <StmtExpr parenthesized="false" start="8:18" end="8:19">
                   <ExprAccess>
                     <Token type="ID" val="z" start="8:18" end="8:19" />
                   </ExprAccess>

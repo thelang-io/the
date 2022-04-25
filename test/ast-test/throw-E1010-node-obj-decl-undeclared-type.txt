@@ -1,0 +1,5 @@
+======= stdin =======
+main {
+  test := Test{a: int}
+}
+======= stderr =======

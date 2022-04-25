@@ -243,14 +243,14 @@ std::shared_ptr<Type> TypeMap::add (const std::string &name, const std::vector<T
   return this->_items.back();
 }
 
-const std::shared_ptr<Type> &TypeMap::get (const std::string &name) const {
+std::shared_ptr<Type> TypeMap::get (const std::string &name) const {
   for (const auto &item : this->_items) {
     if (item->name == name) {
       return item;
     }
   }
 
-  throw Error("Error: Tried to access non existing type map item");
+  return nullptr;
 }
 
 void TypeMap::init () {

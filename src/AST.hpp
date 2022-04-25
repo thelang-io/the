@@ -30,17 +30,13 @@ class AST {
 
   ASTBlock _block (const ParserBlock &, VarStack &);
   ASTExprAccess _exprAccess (const ParserMemberObj &, VarStack &) const;
-  ReaderLocation _exprAccessEnd (const ParserMemberObj &) const;
-  ReaderLocation _exprAccessStart (const ParserMemberObj &) const;
   std::shared_ptr<Type> _exprAccessType (const ParserMemberObj &) const;
   void _forwardStmt (const ParserBlock &);
   ASTNode _stmt (const ParserStmt &, VarStack &);
-  ASTNodeExpr _stmtExpr (const ParserStmtExpr &, VarStack &) const;
-  ReaderLocation _stmtExprEnd (const ParserStmtExpr &) const;
-  ReaderLocation _stmtExprStart (const ParserStmtExpr &) const;
-  std::shared_ptr<Type> _stmtExprType (const ParserStmtExpr &) const;
+  std::shared_ptr<ASTNodeExpr> _stmtExpr (const std::shared_ptr<ParserStmtExpr> &, VarStack &) const;
+  std::shared_ptr<Type> _stmtExprType (const std::shared_ptr<ParserStmtExpr> &) const;
   ASTNodeIf _stmtIf (const ParserStmtIf &, VarStack &);
-  std::shared_ptr<Type> _type (const std::optional<std::shared_ptr<ParserType>> &, const std::optional<ParserStmtExpr> & = std::nullopt) const;
+  std::shared_ptr<Type> _type (const std::optional<std::shared_ptr<ParserType>> &, const std::optional<std::shared_ptr<ParserStmtExpr>> & = std::nullopt) const;
 };
 
 #endif

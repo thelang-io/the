@@ -9,7 +9,7 @@ if true {
   <StmtIf>
     <slot name="cond">
       <Stmt start="1:4" end="1:8">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="1:4" end="1:8">
           <ExprLit>
             <Token type="KW_TRUE" val="true" start="1:4" end="1:8" />
           </ExprLit>

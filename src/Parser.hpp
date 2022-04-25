@@ -27,11 +27,11 @@ class Parser {
 
   ParserBlock _block ();
   ParserStmt _stmt (const ParserStmtBody &, ReaderLocation) const;
-  ParserStmtExpr _stmtExpr (bool = false);
+  std::shared_ptr<ParserStmtExpr> _stmtExpr (bool = false);
   ParserStmtIf _stmtIf ();
   ParserStmtLoop _stmtLoop (const std::optional<std::shared_ptr<ParserStmt>> &);
   std::shared_ptr<ParserType> _type ();
-  ParserStmtExpr _wrapStmtExpr (const ParserStmtExpr &);
+  std::shared_ptr<ParserStmtExpr> _wrapStmtExpr (const std::shared_ptr<ParserStmtExpr> &);
 };
 
 #endif

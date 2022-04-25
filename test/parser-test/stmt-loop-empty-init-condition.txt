@@ -8,10 +8,10 @@ loop ;; i++ {
 <Stmt start="1:1" end="5:2">
   <StmtLoop>
     <slot name="upd">
-      <StmtExpr parenthesized="false">
+      <StmtExpr parenthesized="false" start="1:9" end="1:12">
         <ExprUnary prefix="false">
           <slot name="arg">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="1:9" end="1:10">
               <ExprAccess>
                 <Token type="ID" val="i" start="1:9" end="1:10" />
               </ExprAccess>
@@ -28,10 +28,10 @@ loop ;; i++ {
         <StmtIf>
           <slot name="cond">
             <Stmt start="2:6" end="2:12">
-              <StmtExpr parenthesized="false">
+              <StmtExpr parenthesized="false" start="2:6" end="2:12">
                 <ExprBinary>
                   <slot name="left">
-                    <StmtExpr parenthesized="false">
+                    <StmtExpr parenthesized="false" start="2:6" end="2:7">
                       <ExprAccess>
                         <Token type="ID" val="i" start="2:6" end="2:7" />
                       </ExprAccess>
@@ -41,7 +41,7 @@ loop ;; i++ {
                     <Token type="OP_GT" val=">" start="2:8" end="2:9" />
                   </slot>
                   <slot name="right">
-                    <StmtExpr parenthesized="false">
+                    <StmtExpr parenthesized="false" start="2:10" end="2:12">
                       <ExprLit>
                         <Token type="LIT_INT_DEC" val="10" start="2:10" end="2:12" />
                       </ExprLit>

@@ -10,10 +10,10 @@ loop i < 5 {
 <Stmt start="1:1" end="3:2">
   <StmtLoop>
     <slot name="cond">
-      <StmtExpr parenthesized="false">
+      <StmtExpr parenthesized="false" start="1:6" end="1:11">
         <ExprBinary>
           <slot name="left">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="1:6" end="1:7">
               <ExprAccess>
                 <Token type="ID" val="i" start="1:6" end="1:7" />
               </ExprAccess>
@@ -23,7 +23,7 @@ loop i < 5 {
             <Token type="OP_LT" val="<" start="1:8" end="1:9" />
           </slot>
           <slot name="right">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="1:10" end="1:11">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="5" start="1:10" end="1:11" />
               </ExprLit>
@@ -34,16 +34,18 @@ loop i < 5 {
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:9">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="2:3" end="2:9">
           <ExprAssign>
             <slot name="left">
-              <Token type="ID" val="i" start="2:3" end="2:4" />
+              <ExprAccess>
+                <Token type="ID" val="i" start="2:3" end="2:4" />
+              </ExprAccess>
             </slot>
             <slot name="op">
               <Token type="OP_PLUS_EQ" val="+=" start="2:5" end="2:7" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false">
+              <StmtExpr parenthesized="false" start="2:8" end="2:9">
                 <ExprLit>
                   <Token type="LIT_INT_DEC" val="2" start="2:8" end="2:9" />
                 </ExprLit>
@@ -58,10 +60,10 @@ loop i < 5 {
 <Stmt start="4:1" end="7:2">
   <StmtLoop>
     <slot name="cond">
-      <StmtExpr parenthesized="false">
+      <StmtExpr parenthesized="false" start="4:6" end="4:11">
         <ExprBinary>
           <slot name="left">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="4:6" end="4:7">
               <ExprAccess>
                 <Token type="ID" val="i" start="4:6" end="4:7" />
               </ExprAccess>
@@ -71,7 +73,7 @@ loop i < 5 {
             <Token type="OP_LT" val="<" start="4:8" end="4:9" />
           </slot>
           <slot name="right">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="4:10" end="4:11">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="5" start="4:10" end="4:11" />
               </ExprLit>
@@ -82,16 +84,18 @@ loop i < 5 {
     </slot>
     <slot name="body">
       <Stmt start="5:3" end="5:9">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="5:3" end="5:9">
           <ExprAssign>
             <slot name="left">
-              <Token type="ID" val="i" start="5:3" end="5:4" />
+              <ExprAccess>
+                <Token type="ID" val="i" start="5:3" end="5:4" />
+              </ExprAccess>
             </slot>
             <slot name="op">
               <Token type="OP_PLUS_EQ" val="+=" start="5:5" end="5:7" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false">
+              <StmtExpr parenthesized="false" start="5:8" end="5:9">
                 <ExprLit>
                   <Token type="LIT_INT_DEC" val="2" start="5:8" end="5:9" />
                 </ExprLit>
@@ -101,16 +105,18 @@ loop i < 5 {
         </StmtExpr>
       </Stmt>
       <Stmt start="6:3" end="6:9">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="6:3" end="6:9">
           <ExprAssign>
             <slot name="left">
-              <Token type="ID" val="j" start="6:3" end="6:4" />
+              <ExprAccess>
+                <Token type="ID" val="j" start="6:3" end="6:4" />
+              </ExprAccess>
             </slot>
             <slot name="op">
               <Token type="OP_STAR_EQ" val="*=" start="6:5" end="6:7" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false">
+              <StmtExpr parenthesized="false" start="6:8" end="6:9">
                 <ExprAccess>
                   <Token type="ID" val="i" start="6:8" end="6:9" />
                 </ExprAccess>

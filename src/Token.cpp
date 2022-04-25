@@ -102,7 +102,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_TILDE: return "OP_TILDE";
   }
 
-  throw Error("Error: Tried stringify unknown token");
+  throw Error("Error: tried stringify unknown token");
 }
 
 bool Token::isDigit (char ch) {
@@ -200,7 +200,7 @@ int Token::precedence () const {
     return 1;
   }
 
-  throw Error("Error: Tried precedence for unknown token");
+  throw Error("Error: tried precedence for unknown token");
 }
 
 std::string Token::str () const {

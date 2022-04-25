@@ -143,8 +143,8 @@ TEST_F(TypeMapTest, GetReturnsItem) {
   EXPECT_NO_THROW(this->tm_.get("test"));
 }
 
-TEST_F(TypeMapTest, GetThrowsOnNotExisting) {
-  EXPECT_THROW_WITH_MESSAGE(this->tm_.get("Test"), "Error: Tried to access non existing type map item");
+TEST_F(TypeMapTest, GetReturnsNull) {
+  EXPECT_EQ(this->tm_.get("test"), nullptr);
 }
 
 TEST_F(TypeMapTest, NameGeneratesValid) {

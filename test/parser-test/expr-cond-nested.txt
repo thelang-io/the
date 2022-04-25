@@ -10,13 +10,13 @@ d := 0 ? 2 ? 3 : 4 : 5
       <Token type="ID" val="a" start="1:1" end="1:2" />
     </slot>
     <slot name="init">
-      <StmtExpr parenthesized="false">
+      <StmtExpr parenthesized="false" start="1:6" end="1:27">
         <ExprCond>
           <slot name="cond">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="1:6" end="1:11">
               <ExprBinary>
                 <slot name="left">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="1:6" end="1:7">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="1" start="1:6" end="1:7" />
                     </ExprLit>
@@ -26,7 +26,7 @@ d := 0 ? 2 ? 3 : 4 : 5
                   <Token type="OP_GT" val=">" start="1:8" end="1:9" />
                 </slot>
                 <slot name="right">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="1:10" end="1:11">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="2" start="1:10" end="1:11" />
                     </ExprLit>
@@ -36,31 +36,31 @@ d := 0 ? 2 ? 3 : 4 : 5
             </StmtExpr>
           </slot>
           <slot name="body">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="1:14" end="1:15">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="5" start="1:14" end="1:15" />
               </ExprLit>
             </StmtExpr>
           </slot>
           <slot name="alt">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="1:18" end="1:27">
               <ExprCond>
                 <slot name="cond">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="1:18" end="1:19">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="0" start="1:18" end="1:19" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="body">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="1:22" end="1:23">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="6" start="1:22" end="1:23" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="alt">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="1:26" end="1:27">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="7" start="1:26" end="1:27" />
                     </ExprLit>
@@ -80,13 +80,13 @@ d := 0 ? 2 ? 3 : 4 : 5
       <Token type="ID" val="b" start="2:1" end="2:2" />
     </slot>
     <slot name="init">
-      <StmtExpr parenthesized="false">
+      <StmtExpr parenthesized="false" start="2:6" end="2:27">
         <ExprCond>
           <slot name="cond">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="2:6" end="2:11">
               <ExprBinary>
                 <slot name="left">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="2:6" end="2:7">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="0" start="2:6" end="2:7" />
                     </ExprLit>
@@ -96,7 +96,7 @@ d := 0 ? 2 ? 3 : 4 : 5
                   <Token type="OP_GT" val=">" start="2:8" end="2:9" />
                 </slot>
                 <slot name="right">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="2:10" end="2:11">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="2" start="2:10" end="2:11" />
                     </ExprLit>
@@ -106,24 +106,24 @@ d := 0 ? 2 ? 3 : 4 : 5
             </StmtExpr>
           </slot>
           <slot name="body">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="2:14" end="2:23">
               <ExprCond>
                 <slot name="cond">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="2:14" end="2:15">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="0" start="2:14" end="2:15" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="body">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="2:18" end="2:19">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="6" start="2:18" end="2:19" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="alt">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="2:22" end="2:23">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="7" start="2:22" end="2:23" />
                     </ExprLit>
@@ -133,7 +133,7 @@ d := 0 ? 2 ? 3 : 4 : 5
             </StmtExpr>
           </slot>
           <slot name="alt">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="2:26" end="2:27">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="3" start="2:26" end="2:27" />
               </ExprLit>
@@ -150,34 +150,34 @@ d := 0 ? 2 ? 3 : 4 : 5
       <Token type="ID" val="c" start="3:1" end="3:2" />
     </slot>
     <slot name="init">
-      <StmtExpr parenthesized="false">
+      <StmtExpr parenthesized="false" start="3:6" end="3:23">
         <ExprCond>
           <slot name="cond">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="3:6" end="3:7">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="1" start="3:6" end="3:7" />
               </ExprLit>
             </StmtExpr>
           </slot>
           <slot name="body">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="3:10" end="3:19">
               <ExprCond>
                 <slot name="cond">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="3:10" end="3:11">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="2" start="3:10" end="3:11" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="body">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="3:14" end="3:15">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="3" start="3:14" end="3:15" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="alt">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="3:18" end="3:19">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="4" start="3:18" end="3:19" />
                     </ExprLit>
@@ -187,7 +187,7 @@ d := 0 ? 2 ? 3 : 4 : 5
             </StmtExpr>
           </slot>
           <slot name="alt">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="3:22" end="3:23">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="5" start="3:22" end="3:23" />
               </ExprLit>
@@ -204,34 +204,34 @@ d := 0 ? 2 ? 3 : 4 : 5
       <Token type="ID" val="d" start="4:1" end="4:2" />
     </slot>
     <slot name="init">
-      <StmtExpr parenthesized="false">
+      <StmtExpr parenthesized="false" start="4:6" end="4:23">
         <ExprCond>
           <slot name="cond">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="4:6" end="4:7">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="0" start="4:6" end="4:7" />
               </ExprLit>
             </StmtExpr>
           </slot>
           <slot name="body">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="4:10" end="4:19">
               <ExprCond>
                 <slot name="cond">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="4:10" end="4:11">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="2" start="4:10" end="4:11" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="body">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="4:14" end="4:15">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="3" start="4:14" end="4:15" />
                     </ExprLit>
                   </StmtExpr>
                 </slot>
                 <slot name="alt">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="4:18" end="4:19">
                     <ExprLit>
                       <Token type="LIT_INT_DEC" val="4" start="4:18" end="4:19" />
                     </ExprLit>
@@ -241,7 +241,7 @@ d := 0 ? 2 ? 3 : 4 : 5
             </StmtExpr>
           </slot>
           <slot name="alt">
-            <StmtExpr parenthesized="false">
+            <StmtExpr parenthesized="false" start="4:22" end="4:23">
               <ExprLit>
                 <Token type="LIT_INT_DEC" val="5" start="4:22" end="4:23" />
               </ExprLit>

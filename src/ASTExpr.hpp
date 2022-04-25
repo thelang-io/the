@@ -96,19 +96,11 @@ using ASTExpr = std::variant<
   ASTExprUnary
 >;
 
-using ASTMemberObj = std::variant<std::shared_ptr<Var>, ASTMember>;
+using ASTMemberObj = std::variant<std::shared_ptr<Var>, std::shared_ptr<ASTMember>>;
 
 struct ASTMember {
-  std::shared_ptr<ASTMemberObj> obj;
+  ASTMemberObj obj;
   std::string prop;
-};
-
-struct ASTNodeExpr {
-  std::shared_ptr<Type> type;
-  std::shared_ptr<ASTExpr> body;
-  bool parenthesized = false;
-
-  std::string xml (std::size_t = 0) const;
 };
 
 struct ASTExprAccess {
@@ -118,13 +110,13 @@ struct ASTExprAccess {
 struct ASTExprAssign {
   ASTExprAccess left;
   ASTExprAssignOp op;
-  ASTNodeExpr right;
+  std::shared_ptr<ASTNodeExpr> right;
 };
 
 struct ASTExprBinary {
-  ASTNodeExpr left;
+  std::shared_ptr<ASTNodeExpr> left;
   ASTExprBinaryOp op;
-  ASTNodeExpr right;
+  std::shared_ptr<ASTNodeExpr> right;
 };
 
 struct ASTExprCall {
@@ -135,13 +127,13 @@ struct ASTExprCall {
 
 struct ASTExprCallArg {
   std::optional<std::string> id;
-  ASTNodeExpr expr;
+  std::shared_ptr<ASTNodeExpr> expr;
 };
 
 struct ASTExprCond {
-  ASTNodeExpr cond;
-  ASTNodeExpr body;
-  ASTNodeExpr alt;
+  std::shared_ptr<ASTNodeExpr> cond;
+  std::shared_ptr<ASTNodeExpr> body;
+  std::shared_ptr<ASTNodeExpr> alt;
 };
 
 struct ASTExprLit {
@@ -156,13 +148,21 @@ struct ASTExprObj {
 
 struct ASTExprObjProp {
   std::string id;
-  ASTNodeExpr init;
+  std::shared_ptr<ASTNodeExpr> init;
 };
 
 struct ASTExprUnary {
-  ASTNodeExpr arg;
+  std::shared_ptr<ASTNodeExpr> arg;
   ASTExprUnaryOp op;
   bool prefix = false;
+};
+
+struct ASTNodeExpr {
+  std::shared_ptr<Type> type;
+  ASTExpr body;
+  bool parenthesized = false;
+
+  std::string xml (std::size_t = 0) const;
 };
 
 #endif

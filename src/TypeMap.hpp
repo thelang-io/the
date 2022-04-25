@@ -78,7 +78,7 @@ class TypeMap {
 
   std::shared_ptr<Type> add (const std::string &, const std::vector<TypeObjField> &);
   std::shared_ptr<Type> add (const std::string &, const std::vector<TypeFnParam> &, const std::shared_ptr<Type> &);
-  const std::shared_ptr<Type> &get (const std::string &) const;
+  std::shared_ptr<Type> get (const std::string &) const;
   void init ();
   std::string name (const std::string &) const;
 

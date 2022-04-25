@@ -8,4 +8,4 @@ main {
 ======= stderr =======
 /test:5:3: E1009 - Missing required arguments
   5 |   test(123)
-    |   ^~~~
+    |   ^~~~~~~~~

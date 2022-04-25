@@ -13,7 +13,7 @@ if test {
   <StmtIf>
     <slot name="cond">
       <Stmt start="1:4" end="1:5">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="1:4" end="1:5">
           <ExprLit>
             <Token type="LIT_INT_DEC" val="0" start="1:4" end="1:5" />
           </ExprLit>
@@ -22,15 +22,17 @@ if test {
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:27">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="2:3" end="2:27">
           <ExprCall>
             <slot name="callee">
-              <Token type="ID" val="print" start="2:3" end="2:8" />
+              <ExprAccess>
+                <Token type="ID" val="print" start="2:3" end="2:8" />
+              </ExprAccess>
             </slot>
             <slot name="args">
               <ExprCallArg>
                 <slot name="expr">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="2:9" end="2:26">
                     <ExprLit>
                       <Token type="LIT_STR" val="\"False condition\"" start="2:9" end="2:26" />
                     </ExprLit>
@@ -48,7 +50,7 @@ if test {
   <StmtIf>
     <slot name="cond">
       <Stmt start="4:4" end="4:5">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="4:4" end="4:5">
           <ExprLit>
             <Token type="LIT_INT_DEC" val="1" start="4:4" end="4:5" />
           </ExprLit>
@@ -57,15 +59,17 @@ if test {
     </slot>
     <slot name="body">
       <Stmt start="5:3" end="5:26">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="5:3" end="5:26">
           <ExprCall>
             <slot name="callee">
-              <Token type="ID" val="print" start="5:3" end="5:8" />
+              <ExprAccess>
+                <Token type="ID" val="print" start="5:3" end="5:8" />
+              </ExprAccess>
             </slot>
             <slot name="args">
               <ExprCallArg>
                 <slot name="expr">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="5:9" end="5:25">
                     <ExprLit>
                       <Token type="LIT_STR" val="\"True condition\"" start="5:9" end="5:25" />
                     </ExprLit>
@@ -83,7 +87,7 @@ if test {
   <StmtIf>
     <slot name="cond">
       <Stmt start="7:4" end="7:8">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="7:4" end="7:8">
           <ExprAccess>
             <Token type="ID" val="test" start="7:4" end="7:8" />
           </ExprAccess>
@@ -92,15 +96,17 @@ if test {
     </slot>
     <slot name="body">
       <Stmt start="8:3" end="8:26">
-        <StmtExpr parenthesized="false">
+        <StmtExpr parenthesized="false" start="8:3" end="8:26">
           <ExprCall>
             <slot name="callee">
-              <Token type="ID" val="print" start="8:3" end="8:8" />
+              <ExprAccess>
+                <Token type="ID" val="print" start="8:3" end="8:8" />
+              </ExprAccess>
             </slot>
             <slot name="args">
               <ExprCallArg>
                 <slot name="expr">
-                  <StmtExpr parenthesized="false">
+                  <StmtExpr parenthesized="false" start="8:9" end="8:25">
                     <ExprLit>
                       <Token type="LIT_STR" val="\"Test condition\"" start="8:9" end="8:25" />
                     </ExprLit>

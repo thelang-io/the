@@ -18,7 +18,11 @@ std::string blockToXml (const ParserBlock &block, std::size_t indent) {
 }
 
 std::string ParserStmt::xml (std::size_t indent) const {
-  auto result = std::string(indent, ' ') + R"(<Stmt start=")" + this->start.str() + R"(" end=")" + this->end.str() + R"(">)" "\n";
+  auto result = std::string(indent, ' ') + "<Stmt";
+
+  result += R"( start=")" + this->start.str();
+  result += R"(" end=")" + this->end.str() + R"(">)" "\n";
+
   indent += 2;
 
   if (std::holds_alternative<ParserStmtBreak>(this->body)) {
@@ -55,7 +59,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
         if (stmtFnDeclParam.init != std::nullopt) {
           result += std::string(indent + 6, ' ') + R"(<slot name="init">)" "\n";
-          result += stmtFnDeclParam.init->xml(indent + 8) + "\n";
+          result += (*stmtFnDeclParam.init)->xml(indent + 8) + "\n";
           result += std::string(indent + 6, ' ') + "</slot>\n";
         }
 
@@ -95,13 +99,13 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
     if (stmtLoop.cond != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" "\n";
-      result += stmtLoop.cond->xml(indent + 4) + "\n";
+      result += (*stmtLoop.cond)->xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
     if (stmtLoop.upd != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="upd">)" "\n";
-      result += stmtLoop.upd->xml(indent + 4) + "\n";
+      result += (*stmtLoop.upd)->xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
@@ -148,7 +152,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
     auto stmtReturn = std::get<ParserStmtReturn>(this->body);
 
     result += std::string(indent, ' ') + "<StmtReturn>\n";
-    result += stmtReturn.body != std::nullopt ? (stmtReturn.body->xml(indent + 2) + "\n") : "";
+    result += stmtReturn.body != std::nullopt ? ((*stmtReturn.body)->xml(indent + 2) + "\n") : "";
     result += std::string(indent, ' ') + "</StmtReturn>\n";
   } else if (std::holds_alternative<ParserStmtVarDecl>(this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(this->body);
@@ -167,7 +171,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
     if (stmtVarDecl.init != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="init">)" "\n";
-      result += stmtVarDecl.init->xml(indent + 4) + "\n";
+      result += (*stmtVarDecl.init)->xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
