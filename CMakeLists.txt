@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.8.19 LANGUAGES CXX)
+project(the-core VERSION 0.10.0 LANGUAGES CXX)
 
 include(FetchContent)
 include(GoogleTest)
@@ -13,6 +13,7 @@ set(
   src/AST.cpp src/AST.hpp
   src/ASTExpr.cpp src/ASTExpr.hpp
   src/ASTNode.cpp src/ASTNode.hpp
+  src/Codegen.cpp src/Codegen.hpp
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
@@ -29,6 +30,7 @@ set(
   tests
 
   test/ASTTest.cpp
+  test/CodegenTest.cpp
   test/ErrorTest.cpp
   test/LexerTest.cpp
   test/MockLexer.cpp test/MockLexer.hpp

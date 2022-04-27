@@ -5,8 +5,9 @@
  * Proprietary and confidential
  */
 
+#include <fstream>
 #include <iostream>
-#include "AST.hpp"
+#include "Codegen.hpp"
 
 int main (int argc, char *argv[]) {
   try {
@@ -44,8 +45,6 @@ int main (int argc, char *argv[]) {
 
     auto reader = Reader(*fileName);
     auto lexer = Lexer(&reader);
-    auto parser = Parser(&lexer);
-    auto ast = AST(&parser);
 
     if (isLex) {
       while (true) {
@@ -59,7 +58,11 @@ int main (int argc, char *argv[]) {
       }
 
       return EXIT_SUCCESS;
-    } else if (isParse) {
+    }
+
+    auto parser = Parser(&lexer);
+
+    if (isParse) {
       while (true) {
         auto stmt = parser.next();
 
@@ -71,7 +74,11 @@ int main (int argc, char *argv[]) {
       }
 
       return EXIT_SUCCESS;
-    } else if (isAST) {
+    }
+
+    auto ast = AST(&parser);
+
+    if (isAST) {
       auto nodes = ast.gen();
 
       for (const auto &node : nodes) {
@@ -80,6 +87,18 @@ int main (int argc, char *argv[]) {
 
       return EXIT_SUCCESS;
     }
+
+    auto codegen = Codegen(&ast);
+    auto [code, flags] = codegen.gen();
+
+    auto f = std::ofstream("build/output.c");
+    f << code;
+    f.close();
+
+    auto cmd = "gcc build/output.c -o build/a.out " + flags;
+    system(cmd.c_str());
+
+    return EXIT_SUCCESS;
   } catch (const Error &err) {
     std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;
