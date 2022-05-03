@@ -1,0 +1,10 @@
+======= stdin =======
+main {
+  a := 'a'
+}
+======= code =======
+int main () {
+  const char __THE_0_a_0 = 'a';
+}
+======= flags =======
+======= stdout =======

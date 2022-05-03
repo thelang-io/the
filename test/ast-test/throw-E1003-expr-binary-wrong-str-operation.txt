@@ -3,6 +3,6 @@ main {
   print("1" - "2")
 }
 ======= stderr =======
-/test:2:9: E1003 - Tried operation other than concatenation on string
+/test:2:9: E1003 - Binary operator cannot be applied to these operands
   2 |   print("1" - "2")
     |         ^~~~~~~~~

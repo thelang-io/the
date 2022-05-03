@@ -5,9 +5,27 @@
  * Proprietary and confidential
  */
 
+#include "utils.hpp"
+#include <array>
 #include <filesystem>
 #include <fstream>
-#include "utils.hpp"
+
+std::string execCmd (const std::string &cmd) {
+  auto pipe = std::unique_ptr<FILE, decltype(&pclose)>{popen(cmd.c_str(), "r"), pclose};
+
+  if (!pipe) {
+    throw Error("Failed to execute binary file");
+  }
+
+  auto buffer = std::array<char, 128>{};
+  auto result = std::string();
+
+  while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+    result += buffer.data();
+  }
+
+  return result;
+}
 
 std::string readTestFile (const std::string &testName, const std::string &filepath) {
   auto path = "test/" + testName + "-test/" + filepath + ".txt";

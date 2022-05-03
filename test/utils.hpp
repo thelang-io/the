@@ -19,6 +19,7 @@
     } \
   }, Error)
 
+std::string execCmd (const std::string &);
 std::string readTestFile (const std::string &, const std::string &);
 
 #endif

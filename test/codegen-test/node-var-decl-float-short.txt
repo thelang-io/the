@@ -1,0 +1,10 @@
+======= stdin =======
+main {
+  a := 3.14
+}
+======= code =======
+int main () {
+  const double __THE_0_a_0 = 3.14;
+}
+======= flags =======
+======= stdout =======

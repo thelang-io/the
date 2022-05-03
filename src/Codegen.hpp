@@ -11,10 +11,22 @@
 #include "AST.hpp"
 
 struct CodegenBuiltins {
+  bool fnAlloc = false;
+  bool fnCstrConcatStr = false;
+  bool fnStrConcatCstr = false;
+  bool fnStrConcatStr = false;
+  bool fnStrCopy = false;
+  bool fnStrDeinit = false;
+  bool fnStrInit = false;
+  bool fnStrReinit = false;
   bool libMath = false;
   bool libStdbool = false;
+  bool libStddef = false;
   bool libStdint = false;
-  bool typeInt = false;
+  bool libStdio = false;
+  bool libStdlib = false;
+  bool libString = false;
+  bool typeStr = false;
 };
 
 class Codegen {
@@ -24,8 +36,10 @@ class Codegen {
   std::vector<std::string> flags;
   std::size_t indent = 0;
   Reader *reader;
+  VarMap varMap;
 
-  static std::string name (const std::string &, bool = false);
+  static void compile (const std::string &, const std::tuple<std::string, std::string> &);
+  static std::string name (const std::string &);
 
   explicit Codegen (AST *);
 
@@ -39,7 +53,7 @@ class Codegen {
   std::string _exprAccess (const ASTMemberObj &);
   std::string _flags () const;
   std::tuple<std::string, std::string, std::string> _node (const ASTNode &);
-  std::tuple<std::string, std::string, std::string> _nodeExpr (const std::shared_ptr<ASTNodeExpr> &);
+  std::tuple<std::string, std::string, std::string> _nodeExpr (const std::shared_ptr<ASTNodeExpr> &, bool = false);
   std::string _type (const std::shared_ptr<Type> &, bool);
 };
 

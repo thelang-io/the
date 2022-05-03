@@ -72,7 +72,7 @@
 #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
-#define E1003 "E1003 - Tried operation other than concatenation on string"
+#define E1003 "E1003 - Binary operator cannot be applied to these operands"
 #define E1004 "E1004 - Incompatible operand types"
 #define E1005 "E1005 - Extra argument in call expression"
 #define E1006 "E1006 - Variadic argument can't be passed by name"

@@ -677,7 +677,13 @@ std::shared_ptr<ParserStmtExpr> Parser::_wrapStmtExpr (const std::shared_ptr<Par
     if (std::holds_alternative<ParserExprBinary>(stmtExpr->body) && !stmtExpr->parenthesized) {
       auto exprBinaryLeft = std::get<ParserExprBinary>(stmtExpr->body);
 
-      if (exprBinaryLeft.op.precedence() < tok1.precedence()) {
+      auto isStrConcat = tok1.type == TK_OP_PLUS &&
+        std::holds_alternative<ParserExprLit>(exprBinaryLeft.right->body) &&
+        std::get<ParserExprLit>(exprBinaryLeft.right->body).body.type == TK_LIT_STR &&
+        std::holds_alternative<ParserExprLit>(stmtExprRight->body) &&
+        std::get<ParserExprLit>(stmtExprRight->body).body.type == TK_LIT_STR;
+
+      if ((exprBinaryLeft.op.precedence() < tok1.precedence()) || isStrConcat) {
         auto newExprBinaryRight = ParserExprBinary{exprBinaryLeft.right, tok1, stmtExprRight};
 
         auto newStmtExprRight = std::make_shared<ParserStmtExpr>(ParserStmtExpr{

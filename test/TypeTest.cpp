@@ -138,6 +138,7 @@ TEST_F(TypeTest, Matches) {
   EXPECT_TRUE(this->tm_.get("bool")->match(this->tm_.get("bool")));
   EXPECT_TRUE(this->tm_.get("byte")->match(this->tm_.get("byte")));
   EXPECT_TRUE(this->tm_.get("char")->match(this->tm_.get("char")));
+  EXPECT_TRUE(this->tm_.get("str")->match(this->tm_.get("str")));
   EXPECT_TRUE(this->tm_.get("void")->match(this->tm_.get("void")));
 }
 
@@ -392,9 +393,4 @@ TEST_F(TypeTest, MatchesObject) {
   EXPECT_FALSE(this->tm_.get("Test1")->match(this->tm_.get("Test4")));
   EXPECT_FALSE(this->tm_.get("Test1")->match(this->tm_.get("Test5")));
   EXPECT_FALSE(this->tm_.get("Test1")->match(this->tm_.get("int")));
-}
-
-TEST_F(TypeTest, MatchesString) {
-  EXPECT_TRUE(this->tm_.get("str")->match(this->tm_.get("char")));
-  EXPECT_TRUE(this->tm_.get("str")->match(this->tm_.get("str")));
 }

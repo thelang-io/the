@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  mut a: char = 'a'
+  a = '\0'
+}
+======= code =======
+int main () {
+  char __THE_0_a_0 = 'a';
+  __THE_0_a_0 = '\0';
+}
+======= flags =======
+======= stdout =======

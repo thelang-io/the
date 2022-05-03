@@ -149,6 +149,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-assign-op",
   "expr-binary",
   "expr-binary-nested",
+  "expr-binary-str",
   "expr-call",
   "expr-call-member",
   "expr-cond",

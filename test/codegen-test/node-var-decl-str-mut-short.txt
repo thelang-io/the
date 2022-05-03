@@ -1,0 +1,49 @@
+======= stdin =======
+main {
+  mut a := "test"
+  a = ""
+}
+======= code =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+void str_deinit (struct str);
+struct str str_init (const char *);
+struct str str_reinit (struct str, const struct str);
+void *alloc (size_t);
+
+void str_deinit (struct str s) {
+  free(s.c);
+}
+struct str str_init (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_reinit (struct str s1, const struct str s2) {
+  free(s1.c);
+  return (struct str) {s2.c, s2.l};
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+int main () {
+  struct str __THE_0_a_0 = str_init("test");
+  __THE_0_a_0 = str_reinit(__THE_0_a_0, str_init(""));
+  str_deinit((struct str) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

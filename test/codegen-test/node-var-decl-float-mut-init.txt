@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  mut a: float = 3.14
+  a = 0
+}
+======= code =======
+int main () {
+  double __THE_0_a_0 = 3.14;
+  __THE_0_a_0 = 0;
+}
+======= flags =======
+======= stdout =======

@@ -519,12 +519,7 @@ std::shared_ptr<Type> AST::_stmtExprType (const std::shared_ptr<ParserStmtExpr> 
 
     if (exprBinaryLeftType == nullptr || exprBinaryRightType == nullptr) {
       return nullptr;
-    } else if (
-      exprBinaryLeftType->isChar() ||
-      exprBinaryLeftType->isStr() ||
-      exprBinaryRightType->isChar() ||
-      exprBinaryRightType->isStr()
-    ) {
+    } else if (exprBinaryLeftType->isStr() || exprBinaryRightType->isStr()) {
       if (exprBinary.op.type != TK_OP_PLUS) {
         throw Error(this->reader, exprBinary.left->start, exprBinary.right->end, E1003);
       }
@@ -570,7 +565,7 @@ std::shared_ptr<Type> AST::_stmtExprType (const std::shared_ptr<ParserStmtExpr> 
 
     if (exprCondBodyType == nullptr || exprCondAltType == nullptr) {
       return nullptr;
-    } else if (exprCondBodyType->name != exprCondAltType->name) {
+    } else if (!exprCondBodyType->match(exprCondAltType) && !exprCondAltType->match(exprCondBodyType)) {
       throw Error(this->reader, exprCond.body->start, exprCond.alt->end, E1004);
     }
 

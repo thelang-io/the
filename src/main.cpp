@@ -89,15 +89,9 @@ int main (int argc, char *argv[]) {
     }
 
     auto codegen = Codegen(&ast);
-    auto [code, flags] = codegen.gen();
+    auto result = codegen.gen();
 
-    auto f = std::ofstream("build/output.c");
-    f << code;
-    f.close();
-
-    auto cmd = "gcc build/output.c -o build/a.out " + flags;
-    system(cmd.c_str());
-
+    Codegen::compile("build/a.out", result);
     return EXIT_SUCCESS;
   } catch (const Error &err) {
     std::cerr << err.what() << std::endl;

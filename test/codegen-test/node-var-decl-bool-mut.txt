@@ -1,0 +1,14 @@
+======= stdin =======
+main {
+  mut a: bool
+  a = true
+}
+======= code =======
+#include <stdbool.h>
+
+int main () {
+  bool __THE_0_a_0 = false;
+  __THE_0_a_0 = true;
+}
+======= flags =======
+======= stdout =======

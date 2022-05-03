@@ -1,0 +1,26 @@
+======= stdin =======
+main {
+  mut a: int
+  a = 1
+  mut b: int
+  b = 0xFF
+  mut c: int
+  c = 0o777
+  mut d: int
+  d = 0b0001
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_a_0 = 0;
+  __THE_0_a_0 = 1;
+  int32_t __THE_0_b_0 = 0;
+  __THE_0_b_0 = 0xFF;
+  int32_t __THE_0_c_0 = 0;
+  __THE_0_c_0 = 0777;
+  int32_t __THE_0_d_0 = 0;
+  __THE_0_d_0 = 0b0001;
+}
+======= flags =======
+======= stdout =======

@@ -114,6 +114,27 @@ std::string ASTExprAccess::xml (std::size_t indent) const {
   return result;
 }
 
+bool ASTNodeExpr::isLit () const {
+  if (std::holds_alternative<ASTExprBinary>(this->body)) {
+    auto exprBinary = std::get<ASTExprBinary>(this->body);
+    return exprBinary.left->isLit() && exprBinary.right->isLit();
+  }
+
+  return std::holds_alternative<ASTExprLit>(this->body);
+}
+
+std::string ASTNodeExpr::litBody () const {
+  if (std::holds_alternative<ASTExprBinary>(this->body)) {
+    auto exprBinary = std::get<ASTExprBinary>(this->body);
+    auto leftLitBody = exprBinary.left->litBody();
+    auto rightLitBody = exprBinary.right->litBody();
+
+    return R"(")" + leftLitBody.substr(1, leftLitBody.size() - 2) + rightLitBody.substr(1, rightLitBody.size() - 2) + R"(")";
+  }
+
+  return std::get<ASTExprLit>(this->body).body;
+}
+
 std::string ASTNodeExpr::xml (std::size_t indent) const {
   auto result = std::string(indent, ' ') + R"(<NodeExpr parenthesized=")" + std::string(this->parenthesized ? "true" : "false") + R"(">)" "\n";
 

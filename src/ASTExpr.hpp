@@ -164,6 +164,8 @@ struct ASTNodeExpr {
   ASTExpr body;
   bool parenthesized = false;
 
+  bool isLit () const;
+  std::string litBody () const;
   std::string xml (std::size_t = 0) const;
 };
 
