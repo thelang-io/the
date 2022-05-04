@@ -526,12 +526,12 @@ std::shared_ptr<Type> AST::_stmtExprType (const std::shared_ptr<ParserStmtExpr> 
 
       return this->typeMap.get("str");
     } else if (
-      exprBinaryLeftType->isFloat() ||
       exprBinaryLeftType->isF32() ||
       exprBinaryLeftType->isF64() ||
-      exprBinaryRightType->isFloat() ||
+      exprBinaryLeftType->isFloat() ||
       exprBinaryRightType->isF32() ||
       exprBinaryRightType->isF64() ||
+      exprBinaryRightType->isFloat() ||
       exprBinary.op.type == TK_OP_SLASH ||
       exprBinary.op.type == TK_OP_STAR ||
       exprBinary.op.type == TK_OP_STAR_STAR
@@ -657,14 +657,14 @@ std::shared_ptr<Type> AST::_type (const std::shared_ptr<ParserType> &type) const
   if (typeId.id.val == "bool") return this->typeMap.get("bool");
   if (typeId.id.val == "byte") return this->typeMap.get("byte");
   if (typeId.id.val == "char") return this->typeMap.get("char");
-  if (typeId.id.val == "float") return this->typeMap.get("float");
   if (typeId.id.val == "f32") return this->typeMap.get("f32");
   if (typeId.id.val == "f64") return this->typeMap.get("f64");
-  if (typeId.id.val == "int") return this->typeMap.get("int");
+  if (typeId.id.val == "float") return this->typeMap.get("float");
   if (typeId.id.val == "i8") return this->typeMap.get("i8");
   if (typeId.id.val == "i16") return this->typeMap.get("i16");
   if (typeId.id.val == "i32") return this->typeMap.get("i32");
   if (typeId.id.val == "i64") return this->typeMap.get("i64");
+  if (typeId.id.val == "int") return this->typeMap.get("int");
   if (typeId.id.val == "str") return this->typeMap.get("str");
   if (typeId.id.val == "u8") return this->typeMap.get("u8");
   if (typeId.id.val == "u16") return this->typeMap.get("u16");

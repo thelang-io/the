@@ -1,0 +1,22 @@
+======= stdin =======
+main {
+  mut a: u8 = 0
+  a = 0
+  mut b: u8 = 1
+  b = 0
+  mut c: u8 = 255
+  c = 0
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  uint8_t __THE_0_a_0 = 0;
+  __THE_0_a_0 = 0;
+  uint8_t __THE_0_b_0 = 1;
+  __THE_0_b_0 = 0;
+  uint8_t __THE_0_c_0 = 255;
+  __THE_0_c_0 = 0;
+}
+======= flags =======
+======= stdout =======

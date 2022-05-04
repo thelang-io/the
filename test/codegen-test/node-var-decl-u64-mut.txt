@@ -1,0 +1,22 @@
+======= stdin =======
+main {
+  mut a: u64
+  a = 0
+  mut b: u64
+  b = 1
+  mut c: u64
+  c = 18446744073709551615
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  uint64_t __THE_0_a_0 = 0;
+  __THE_0_a_0 = 0;
+  uint64_t __THE_0_b_0 = 0;
+  __THE_0_b_0 = 1;
+  uint64_t __THE_0_c_0 = 0;
+  __THE_0_c_0 = 18446744073709551615U;
+}
+======= flags =======
+======= stdout =======

@@ -38,14 +38,6 @@ bool Type::isChar () const {
   return this->name == "char";
 }
 
-bool Type::isFloat () const {
-  return this->name == "float";
-}
-
-bool Type::isFn () const {
-  return std::holds_alternative<TypeFn>(this->body);
-}
-
 bool Type::isF32 () const {
   return this->name == "f32";
 }
@@ -54,8 +46,12 @@ bool Type::isF64 () const {
   return this->name == "f64";
 }
 
-bool Type::isInt () const {
-  return this->name == "int";
+bool Type::isFloat () const {
+  return this->name == "float";
+}
+
+bool Type::isFn () const {
+  return std::holds_alternative<TypeFn>(this->body);
 }
 
 bool Type::isI8 () const {
@@ -74,20 +70,24 @@ bool Type::isI64 () const {
   return this->name == "i64";
 }
 
+bool Type::isInt () const {
+  return this->name == "int";
+}
+
 bool Type::isObj () const {
   return !this->isAny() &&
     !this->isBool() &&
     !this->isByte() &&
     !this->isChar() &&
-    !this->isFloat() &&
-    !this->isFn() &&
     !this->isF32() &&
     !this->isF64() &&
-    !this->isInt() &&
+    !this->isFloat() &&
+    !this->isFn() &&
     !this->isI8() &&
     !this->isI16() &&
     !this->isI32() &&
     !this->isI64() &&
+    !this->isInt() &&
     !this->isStr() &&
     !this->isU8() &&
     !this->isU16() &&
@@ -260,14 +260,14 @@ void TypeMap::init () {
   auto boolType = std::make_shared<Type>(Type{"bool", TypeObj{}, true});
   auto byteType = std::make_shared<Type>(Type{"byte", TypeObj{}, true});
   auto charType = std::make_shared<Type>(Type{"char", TypeObj{}, true});
-  auto floatType = std::make_shared<Type>(Type{"float", TypeObj{}, true});
   auto f32Type = std::make_shared<Type>(Type{"f32", TypeObj{}, true});
   auto f64Type = std::make_shared<Type>(Type{"f64", TypeObj{}, true});
-  auto intType = std::make_shared<Type>(Type{"int", TypeObj{}, true});
+  auto floatType = std::make_shared<Type>(Type{"float", TypeObj{}, true});
   auto i8Type = std::make_shared<Type>(Type{"i8", TypeObj{}, true});
   auto i16Type = std::make_shared<Type>(Type{"i16", TypeObj{}, true});
   auto i32Type = std::make_shared<Type>(Type{"i32", TypeObj{}, true});
   auto i64Type = std::make_shared<Type>(Type{"i64", TypeObj{}, true});
+  auto intType = std::make_shared<Type>(Type{"int", TypeObj{}, true});
   auto strType = std::make_shared<Type>(Type{"str", TypeObj{}, true});
   auto u8Type = std::make_shared<Type>(Type{"u8", TypeObj{}, true});
   auto u16Type = std::make_shared<Type>(Type{"u16", TypeObj{}, true});
@@ -285,14 +285,14 @@ void TypeMap::init () {
   std::get<TypeObj>(boolType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(byteType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(charType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(floatType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(f32Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(f64Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(intType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
+  std::get<TypeObj>(floatType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(i8Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(i16Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(i32Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(i64Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
+  std::get<TypeObj>(intType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(u8Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(u16Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
   std::get<TypeObj>(u32Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
@@ -302,14 +302,14 @@ void TypeMap::init () {
   this->_items.push_back(boolType);
   this->_items.push_back(byteType);
   this->_items.push_back(charType);
-  this->_items.push_back(floatType);
   this->_items.push_back(f32Type);
   this->_items.push_back(f64Type);
-  this->_items.push_back(intType);
+  this->_items.push_back(floatType);
   this->_items.push_back(i8Type);
   this->_items.push_back(i16Type);
   this->_items.push_back(i32Type);
   this->_items.push_back(i64Type);
+  this->_items.push_back(intType);
   this->_items.push_back(strType);
   this->_items.push_back(u8Type);
   this->_items.push_back(u16Type);

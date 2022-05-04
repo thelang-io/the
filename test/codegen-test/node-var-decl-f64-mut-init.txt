@@ -1,12 +1,12 @@
 ======= stdin =======
 main {
-  a := '\0'
-  b := '~'
+  mut a: f64 = 3.14
+  a = 0
 }
 ======= code =======
 int main () {
-  const char __THE_0_a_0 = '\0';
-  const char __THE_0_b_0 = '~';
+  double __THE_0_a_0 = 3.14;
+  __THE_0_a_0 = 0;
 }
 ======= flags =======
 ======= stdout =======

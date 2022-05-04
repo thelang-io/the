@@ -1,0 +1,16 @@
+======= stdin =======
+main {
+  a: i16 = -32768
+  b: i16 = 1
+  c: i16 = 32767
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int16_t __THE_0_a_0 = -32768;
+  const int16_t __THE_0_b_0 = 1;
+  const int16_t __THE_0_c_0 = 32767;
+}
+======= flags =======
+======= stdout =======

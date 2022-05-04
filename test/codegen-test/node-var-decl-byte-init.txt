@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  a: byte = 0x0
+  b: byte = 0xFF
+}
+======= code =======
+int main () {
+  const unsigned char __THE_0_a_0 = 0x0;
+  const unsigned char __THE_0_b_0 = 0xFF;
+}
+======= flags =======
+======= stdout =======

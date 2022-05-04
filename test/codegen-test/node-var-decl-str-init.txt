@@ -1,6 +1,7 @@
 ======= stdin =======
 main {
-  a: str = "test"
+  a: str = ""
+  b: str = "test"
 }
 ======= code =======
 #include <stdio.h>
@@ -35,8 +36,10 @@ void *alloc (size_t l) {
 }
 
 int main () {
-  const struct str __THE_0_a_0 = str_init("test");
+  const struct str __THE_0_a_0 = str_init("");
+  const struct str __THE_0_b_0 = str_init("test");
   str_deinit((struct str) __THE_0_a_0);
+  str_deinit((struct str) __THE_0_b_0);
 }
 ======= flags =======
 ======= stdout =======

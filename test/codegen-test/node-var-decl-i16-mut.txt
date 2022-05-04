@@ -1,0 +1,22 @@
+======= stdin =======
+main {
+  mut a: i16
+  a = -32768
+  mut b: i16
+  b = 1
+  mut c: i16
+  c = 32767
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  int16_t __THE_0_a_0 = 0;
+  __THE_0_a_0 = -32768;
+  int16_t __THE_0_b_0 = 0;
+  __THE_0_b_0 = 1;
+  int16_t __THE_0_c_0 = 0;
+  __THE_0_c_0 = 32767;
+}
+======= flags =======
+======= stdout =======

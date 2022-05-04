@@ -50,15 +50,15 @@ struct Type {
   bool isBool () const;
   bool isByte () const;
   bool isChar () const;
-  bool isFloat () const;
-  bool isFn () const;
   bool isF32 () const;
   bool isF64 () const;
-  bool isInt () const;
+  bool isFloat () const;
+  bool isFn () const;
   bool isI8 () const;
   bool isI16 () const;
   bool isI32 () const;
   bool isI64 () const;
+  bool isInt () const;
   bool isObj () const;
   bool isStr () const;
   bool isU8 () const;

@@ -633,23 +633,19 @@ std::string Codegen::_type (const std::shared_ptr<Type> &type, bool mut) {
 
   if (type->isByte()) typeName = "unsigned char";
   if (type->isChar()) typeName = "char";
-  if (type->isFloat()) typeName = "double";
   if (type->isF32()) typeName = "float";
-  if (type->isF64()) typeName = "double";
+  if (type->isF64() || type->isFloat()) typeName = "double";
 
   if (type->isBool()) {
     this->builtins.libStdbool = true;
     typeName = "bool";
-  } else if (type->isInt()) {
-    this->builtins.libStdint = true;
-    typeName = "int32_t";
   } else if (type->isI8()) {
     this->builtins.libStdint = true;
     typeName = "int8_t";
   } else if (type->isI16()) {
     this->builtins.libStdint = true;
     typeName = "int16_t";
-  } else if (type->isI32()) {
+  } else if (type->isI32() || type->isInt()) {
     this->builtins.libStdint = true;
     typeName = "int32_t";
   } else if (type->isI64()) {

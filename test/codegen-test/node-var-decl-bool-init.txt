@@ -1,12 +1,14 @@
 ======= stdin =======
 main {
   a: bool = false
+  b: bool = true
 }
 ======= code =======
 #include <stdbool.h>
 
 int main () {
   const bool __THE_0_a_0 = false;
+  const bool __THE_0_b_0 = true;
 }
 ======= flags =======
 ======= stdout =======

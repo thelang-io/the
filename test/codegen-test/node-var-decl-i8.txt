@@ -1,12 +1,12 @@
 ======= stdin =======
 main {
-  a := '\0'
-  b := '~'
+  a: i8
 }
 ======= code =======
+#include <stdint.h>
+
 int main () {
-  const char __THE_0_a_0 = '\0';
-  const char __THE_0_b_0 = '~';
+  const int8_t __THE_0_a_0 = 0;
 }
 ======= flags =======
 ======= stdout =======
