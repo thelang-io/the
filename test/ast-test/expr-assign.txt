@@ -15,6 +15,7 @@ main {
   mut m := 0
   mut n := 0
 
+  a = 0
   a **= 1
   b %= 2
   c /= 3
@@ -29,6 +30,10 @@ main {
   l &&= 12
   m ||= 13
   n ??= 14
+
+  a = b
+  c = d = e
+  f = g = h = i
 }
 ======= stdout =======
 <Node>
@@ -326,6 +331,36 @@ main {
           </NodeExpr>
         </slot>
       </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="int" />
+        </slot>
+        <slot name="body">
+          <ExprAssign op="EQUAL">
+            <slot name="left">
+              <ExprAccess>
+                <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
+            </slot>
+            <slot name="right">
+              <NodeExpr parenthesized="false">
+                <slot name="type">
+                  <BuiltinType name="int" />
+                </slot>
+                <slot name="body">
+                  <ExprLit type="INT_DEC">
+                    0
+                  </ExprLit>
+                </slot>
+              </NodeExpr>
+            </slot>
+          </ExprAssign>
+        </slot>
+      </NodeExpr>
     </Node>
     <Node>
       <NodeExpr parenthesized="false">
@@ -740,6 +775,156 @@ main {
                   <ExprLit type="INT_DEC">
                     14
                   </ExprLit>
+                </slot>
+              </NodeExpr>
+            </slot>
+          </ExprAssign>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="int" />
+        </slot>
+        <slot name="body">
+          <ExprAssign op="EQUAL">
+            <slot name="left">
+              <ExprAccess>
+                <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
+            </slot>
+            <slot name="right">
+              <NodeExpr parenthesized="false">
+                <slot name="type">
+                  <BuiltinType name="int" />
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+                      <BuiltinType name="int" />
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+          </ExprAssign>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="int" />
+        </slot>
+        <slot name="body">
+          <ExprAssign op="EQUAL">
+            <slot name="left">
+              <ExprAccess>
+                <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
+            </slot>
+            <slot name="right">
+              <NodeExpr parenthesized="false">
+                <slot name="type">
+                  <BuiltinType name="int" />
+                </slot>
+                <slot name="body">
+                  <ExprAssign op="EQUAL">
+                    <slot name="left">
+                      <ExprAccess>
+                        <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </slot>
+                    <slot name="right">
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="int" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
+                              <BuiltinType name="int" />
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </slot>
+                  </ExprAssign>
+                </slot>
+              </NodeExpr>
+            </slot>
+          </ExprAssign>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="int" />
+        </slot>
+        <slot name="body">
+          <ExprAssign op="EQUAL">
+            <slot name="left">
+              <ExprAccess>
+                <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
+            </slot>
+            <slot name="right">
+              <NodeExpr parenthesized="false">
+                <slot name="type">
+                  <BuiltinType name="int" />
+                </slot>
+                <slot name="body">
+                  <ExprAssign op="EQUAL">
+                    <slot name="left">
+                      <ExprAccess>
+                        <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </slot>
+                    <slot name="right">
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="int" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAssign op="EQUAL">
+                            <slot name="left">
+                              <ExprAccess>
+                                <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
+                                  <BuiltinType name="int" />
+                                </Var>
+                              </ExprAccess>
+                            </slot>
+                            <slot name="right">
+                              <NodeExpr parenthesized="false">
+                                <slot name="type">
+                                  <BuiltinType name="int" />
+                                </slot>
+                                <slot name="body">
+                                  <ExprAccess>
+                                    <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                                      <BuiltinType name="int" />
+                                    </Var>
+                                  </ExprAccess>
+                                </slot>
+                              </NodeExpr>
+                            </slot>
+                          </ExprAssign>
+                        </slot>
+                      </NodeExpr>
+                    </slot>
+                  </ExprAssign>
                 </slot>
               </NodeExpr>
             </slot>

@@ -8,6 +8,7 @@
 #ifndef TEST_UTILS_HPP
 #define TEST_UTILS_HPP
 
+#include <map>
 #include "../src/Error.hpp"
 
 #define EXPECT_THROW_WITH_MESSAGE(body, message) EXPECT_THROW({ \
@@ -19,7 +20,8 @@
     } \
   }, Error)
 
-std::string execCmd (const std::string &);
+std::tuple<std::string, std::string, int> execCmd (const std::string &, const std::string &);
+std::map<std::string, std::string> getEnvVars ();
 std::string readTestFile (const std::string &, const std::string &);
 
 #endif

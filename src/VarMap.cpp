@@ -8,14 +8,12 @@
 #include "VarMap.hpp"
 #include "Error.hpp"
 
-std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &codeName, const std::shared_ptr<Type> &type, bool mut) {
-  auto var = std::make_shared<Var>(Var{name, codeName, type, mut, false, this->_frame});
-
-  this->_items.push_back(var);
+std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &codeName, Type *type, bool mut) {
+  this->_items.push_back(std::make_shared<Var>(Var{name, codeName, type, mut, false, this->_frame}));
   return this->_items.back();
 }
 
-std::shared_ptr<Var> VarMap::get (const std::string &name) const {
+std::shared_ptr<Var> VarMap::get (const std::string &name) {
   for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
     if ((*it)->name == name) {
       return *it;
@@ -31,17 +29,8 @@ bool VarMap::has (const std::string &name) const {
   });
 }
 
-void VarMap::init (const TypeMap &typeMap) {
-  auto printFnTypeFn = TypeFn{typeMap.get("void"), {
-    TypeFnParam{"items", typeMap.get("any"), false, true},
-    TypeFnParam{"separator", typeMap.get("str"), false, false},
-    TypeFnParam{"terminator", typeMap.get("str"), false, false}
-  }};
-
-  auto printFnType = std::make_shared<Type>(Type{"@", printFnTypeFn, true});
-  auto printVar = std::make_shared<Var>(Var{"print", "@", printFnType, false, true, this->_frame});
-
-  this->_items.push_back(printVar);
+void VarMap::init (TypeMap &typeMap) {
+  this->_items.push_back(std::make_shared<Var>(Var{"print", "@print", typeMap.get("@print"), false, true, this->_frame}));
 }
 
 std::string VarMap::name (const std::string &name) const {

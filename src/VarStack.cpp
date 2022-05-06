@@ -42,7 +42,7 @@ void VarStack::mark (const std::shared_ptr<Var> &var) {
 std::vector<std::shared_ptr<Var>> VarStack::snapshot () const {
   auto result = std::vector<std::shared_ptr<Var>>{};
 
-  for (auto &item : this->_items) {
+  for (const auto &item : this->_items) {
     if (std::get<1>(item)) {
       result.push_back(std::get<0>(item));
     }

@@ -11,9 +11,6 @@
 #include <string>
 #include <tuple>
 
-class Reader;
-struct ReaderLocation;
-
 struct ReaderLocation {
   std::size_t pos = 0;
   std::size_t line = 1;

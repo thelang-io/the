@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.10.2 LANGUAGES CXX)
+project(the-core VERSION 0.10.3 LANGUAGES CXX)
 
 option(BUILD_TESTS "Build test programs" OFF)
+option(CODEGEN_MEMCHECK "Memory check codegen binaries" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -42,14 +43,11 @@ add_executable(${PROJECT_NAME} ${sources} src/main.cpp)
 target_add_flags(${PROJECT_NAME})
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
-  set(CTEST_MEMORYCHECK_COMMAND valgrind)
-  set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes")
+  enable_testing()
 
   include(CTest)
   include(FetchContent)
   include(GoogleTest)
-
-  enable_testing()
 
   FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip)
   FetchContent_MakeAvailable(googletest)
@@ -78,5 +76,10 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
 
   add_executable(${PROJECT_NAME}-test ${sources} ${tests})
   target_link_libraries(${PROJECT_NAME}-test gmock_main)
-  gtest_discover_tests(${PROJECT_NAME}-test)
+
+  if (CODEGEN_MEMCHECK)
+    gtest_discover_tests(${PROJECT_NAME}-test WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTIES ENVIRONMENT "CODEGEN_MEMCHECK=ON")
+  else()
+    gtest_discover_tests(${PROJECT_NAME}-test WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+  endif()
 endif()

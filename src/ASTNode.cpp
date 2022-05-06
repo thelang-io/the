@@ -21,15 +21,15 @@ std::string ASTNode::xml (std::size_t indent) const {
   auto result = std::string(indent, ' ') + "<Node>\n";
   indent += 2;
 
-  if (std::holds_alternative<ASTNodeBreak>(this->body)) {
+  if (std::holds_alternative<ASTNodeBreak>(*this->body)) {
     result += std::string(indent, ' ') + "<NodeBreak />\n";
-  } else if (std::holds_alternative<ASTNodeContinue>(this->body)) {
+  } else if (std::holds_alternative<ASTNodeContinue>(*this->body)) {
     result += std::string(indent, ' ') + "<NodeContinue />\n";
-  } else if (std::holds_alternative<ASTNodeExpr>(this->body)) {
-    auto nodeExpr = std::get<ASTNodeExpr>(this->body);
+  } else if (std::holds_alternative<ASTNodeExpr>(*this->body)) {
+    auto nodeExpr = std::get<ASTNodeExpr>(*this->body);
     result += nodeExpr.xml(indent) + "\n";
-  } else if (std::holds_alternative<ASTNodeFnDecl>(this->body)) {
-    auto nodeFnDecl = std::get<ASTNodeFnDecl>(this->body);
+  } else if (std::holds_alternative<ASTNodeFnDecl>(*this->body)) {
+    auto nodeFnDecl = std::get<ASTNodeFnDecl>(*this->body);
 
     result += std::string(indent, ' ') + "<NodeFnDecl>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="var">)" "\n";
@@ -59,7 +59,7 @@ std::string ASTNode::xml (std::size_t indent) const {
 
         if (nodeFnDeclParam.init != std::nullopt) {
           result += std::string(indent + 6, ' ') + R"(<slot name="init">)" "\n";
-          result += (*nodeFnDeclParam.init)->xml(indent + 8) + "\n";
+          result += (*nodeFnDeclParam.init).xml(indent + 8) + "\n";
           result += std::string(indent + 6, ' ') + "</slot>\n";
         }
 
@@ -76,15 +76,15 @@ std::string ASTNode::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</NodeFnDecl>\n";
-  } else if (std::holds_alternative<ASTNodeIf>(this->body)) {
-    auto nodeIf = std::get<ASTNodeIf>(this->body);
+  } else if (std::holds_alternative<ASTNodeIf>(*this->body)) {
+    auto nodeIf = std::get<ASTNodeIf>(*this->body);
     result += nodeIf.xml(indent) + "\n";
-  } else if (std::holds_alternative<ASTNodeLoop>(this->body)) {
-    auto nodeLoop = std::get<ASTNodeLoop>(this->body);
+  } else if (std::holds_alternative<ASTNodeLoop>(*this->body)) {
+    auto nodeLoop = std::get<ASTNodeLoop>(*this->body);
     result += std::string(indent, ' ') + "<NodeLoop>\n";
 
     if (nodeLoop.init != std::nullopt) {
-      auto nodeLoopInit = **nodeLoop.init;
+      auto nodeLoopInit = *nodeLoop.init;
 
       result += std::string(indent + 2, ' ') + R"(<slot name="init">)" "\n";
       result += nodeLoopInit.xml(indent + 4) + "\n";
@@ -93,13 +93,13 @@ std::string ASTNode::xml (std::size_t indent) const {
 
     if (nodeLoop.cond != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" "\n";
-      result += (*nodeLoop.cond)->xml(indent + 4) + "\n";
+      result += (*nodeLoop.cond).xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
     if (nodeLoop.upd != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="upd">)" "\n";
-      result += (*nodeLoop.upd)->xml(indent + 4) + "\n";
+      result += (*nodeLoop.upd).xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
@@ -110,30 +110,30 @@ std::string ASTNode::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</NodeLoop>\n";
-  } else if (std::holds_alternative<ASTNodeMain>(this->body)) {
-    auto nodeMain = std::get<ASTNodeMain>(this->body);
+  } else if (std::holds_alternative<ASTNodeMain>(*this->body)) {
+    auto nodeMain = std::get<ASTNodeMain>(*this->body);
 
     result += std::string(indent, ' ') + "<NodeMain>\n";
     result += blockToXml(nodeMain.body, indent + 2);
     result += std::string(indent, ' ') + "</NodeMain>\n";
-  } else if (std::holds_alternative<ASTNodeObjDecl>(this->body)) {
-    auto nodeObjDecl = std::get<ASTNodeObjDecl>(this->body);
+  } else if (std::holds_alternative<ASTNodeObjDecl>(*this->body)) {
+    auto nodeObjDecl = std::get<ASTNodeObjDecl>(*this->body);
 
     result += std::string(indent, ' ') + "<NodeObjDecl>\n";
     result += nodeObjDecl.var->xml(indent + 2) + "\n";
     result += std::string(indent, ' ') + "</NodeObjDecl>\n";
-  } else if (std::holds_alternative<ASTNodeReturn>(this->body)) {
-    auto nodeReturn = std::get<ASTNodeReturn>(this->body);
+  } else if (std::holds_alternative<ASTNodeReturn>(*this->body)) {
+    auto nodeReturn = std::get<ASTNodeReturn>(*this->body);
 
     if (nodeReturn.body == std::nullopt) {
       result += std::string(indent, ' ') + "<NodeReturn />\n";
     } else {
       result += std::string(indent, ' ') + "<NodeReturn>\n";
-      result += (*nodeReturn.body)->xml(indent + 2) + "\n";
+      result += (*nodeReturn.body).xml(indent + 2) + "\n";
       result += std::string(indent, ' ') + "</NodeReturn>\n";
     }
-  } else if (std::holds_alternative<ASTNodeVarDecl>(this->body)) {
-    auto nodeVarDecl = std::get<ASTNodeVarDecl>(this->body);
+  } else if (std::holds_alternative<ASTNodeVarDecl>(*this->body)) {
+    auto nodeVarDecl = std::get<ASTNodeVarDecl>(*this->body);
 
     result += std::string(indent, ' ') + "<NodeVarDecl>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="var">)" "\n";
@@ -142,7 +142,7 @@ std::string ASTNode::xml (std::size_t indent) const {
 
     if (nodeVarDecl.init != std::nullopt) {
       result += std::string(indent + 2, ' ') + R"(<slot name="init">)" "\n";
-      result += (*nodeVarDecl.init)->xml(indent + 4) + "\n";
+      result += (*nodeVarDecl.init).xml(indent + 4) + "\n";
       result += std::string(indent + 2, ' ') + "</slot>\n";
     }
 
@@ -158,7 +158,7 @@ std::string ASTNodeIf::xml (std::size_t indent) const {
 
   result += std::string(indent, ' ') + "<NodeIf>\n";
   result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" "\n";
-  result += this->cond->xml(indent + 4) + "\n";
+  result += this->cond.xml(indent + 4) + "\n";
   result += std::string(indent + 2, ' ') + "</slot>\n";
 
   if (!this->body.empty()) {

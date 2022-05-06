@@ -5,7 +5,6 @@
  * Proprietary and confidential
  */
 
-#include <fstream>
 #include <iostream>
 #include "Codegen.hpp"
 
@@ -66,7 +65,7 @@ int main (int argc, char *argv[]) {
       while (true) {
         auto stmt = parser.next();
 
-        if (std::holds_alternative<ParserStmtEof>(stmt.body)) {
+        if (std::holds_alternative<ParserStmtEof>(*stmt.body)) {
           break;
         }
 

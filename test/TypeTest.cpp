@@ -53,16 +53,16 @@ TEST_F(TypeTest, CheckIfFn) {
   EXPECT_TRUE(this->tm_.get("test2")->isFn());
   EXPECT_TRUE(this->tm_.get("test3")->isFn());
 
-  EXPECT_TRUE(TypeMap::fn(this->tm_.get("void"), {})->isFn());
+  EXPECT_TRUE(this->tm_.fn({}, this->tm_.get("void"))->isFn());
 
-  EXPECT_TRUE(TypeMap::fn(this->tm_.get("void"), {
+  EXPECT_TRUE(this->tm_.fn({
     {"a", this->tm_.get("int"), true, false}
-  })->isFn());
+  }, this->tm_.get("void"))->isFn());
 
-  EXPECT_TRUE(TypeMap::fn(this->tm_.get("str"), {
+  EXPECT_TRUE(this->tm_.fn({
     {"a", this->tm_.get("str"), false, false},
     {"b", this->tm_.get("int"), false, true}
-  })->isFn());
+  }, this->tm_.get("str"))->isFn());
 }
 
 TEST_F(TypeTest, CheckIfF32) {

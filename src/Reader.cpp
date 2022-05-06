@@ -36,7 +36,7 @@ Reader::Reader (const std::string &p) {
     throw Error(R"(Error: unable to read file ")" + p + R"(")");
   }
 
-  std::stringstream c;
+  auto c = std::stringstream();
   c << f.rdbuf();
 
   this->loc = ReaderLocation{};

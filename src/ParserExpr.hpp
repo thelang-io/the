@@ -17,14 +17,11 @@ struct ParserExprAccess;
 struct ParserExprAssign;
 struct ParserExprBinary;
 struct ParserExprCall;
-struct ParserExprCallArg;
 struct ParserExprCond;
 struct ParserExprLit;
 struct ParserExprObj;
-struct ParserExprObjProp;
 struct ParserExprUnary;
 struct ParserMember;
-struct ParserStmtExpr;
 
 using ParserExpr = std::variant<
   ParserExprAccess,
@@ -37,15 +34,24 @@ using ParserExpr = std::variant<
   ParserExprUnary
 >;
 
-using ParserMemberObj = std::variant<Token, std::shared_ptr<ParserMember>>;
+struct ParserStmtExpr {
+  std::shared_ptr<ParserExpr> body;
+  bool parenthesized = false;
+  ReaderLocation start;
+  ReaderLocation end;
+
+  std::string xml (std::size_t = 0) const;
+};
+
+using ParserMemberObj = std::variant<Token, ParserMember>;
 
 struct ParserMember {
-  ParserMemberObj obj;
+  std::shared_ptr<ParserMemberObj> obj;
   Token prop;
 };
 
 struct ParserExprAccess {
-  ParserMemberObj body;
+  std::shared_ptr<ParserMemberObj> body;
 
   std::string xml (std::size_t = 0) const;
 };
@@ -53,13 +59,18 @@ struct ParserExprAccess {
 struct ParserExprAssign {
   ParserExprAccess left;
   Token op;
-  std::shared_ptr<ParserStmtExpr> right;
+  ParserStmtExpr right;
 };
 
 struct ParserExprBinary {
-  std::shared_ptr<ParserStmtExpr> left;
+  ParserStmtExpr left;
   Token op;
-  std::shared_ptr<ParserStmtExpr> right;
+  ParserStmtExpr right;
+};
+
+struct ParserExprCallArg {
+  std::optional<Token> id;
+  ParserStmtExpr expr;
 };
 
 struct ParserExprCall {
@@ -67,19 +78,19 @@ struct ParserExprCall {
   std::vector<ParserExprCallArg> args;
 };
 
-struct ParserExprCallArg {
-  std::optional<Token> id;
-  std::shared_ptr<ParserStmtExpr> expr;
-};
-
 struct ParserExprCond {
-  std::shared_ptr<ParserStmtExpr> cond;
-  std::shared_ptr<ParserStmtExpr> body;
-  std::shared_ptr<ParserStmtExpr> alt;
+  ParserStmtExpr cond;
+  ParserStmtExpr body;
+  ParserStmtExpr alt;
 };
 
 struct ParserExprLit {
   Token body;
+};
+
+struct ParserExprObjProp {
+  Token id;
+  ParserStmtExpr init;
 };
 
 struct ParserExprObj {
@@ -87,24 +98,10 @@ struct ParserExprObj {
   std::vector<ParserExprObjProp> props;
 };
 
-struct ParserExprObjProp {
-  Token id;
-  std::shared_ptr<ParserStmtExpr> init;
-};
-
 struct ParserExprUnary {
-  std::shared_ptr<ParserStmtExpr> arg;
+  ParserStmtExpr arg;
   Token op;
   bool prefix = false;
-};
-
-struct ParserStmtExpr {
-  ParserExpr body;
-  bool parenthesized = false;
-  ReaderLocation start;
-  ReaderLocation end;
-
-  std::string xml (std::size_t = 0) const;
 };
 
 #endif

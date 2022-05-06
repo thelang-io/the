@@ -39,7 +39,7 @@ TEST_P(ParserPassTest, Passes) {
   while (true) {
     auto stmt = parser.next();
 
-    if (std::holds_alternative<ParserStmtEof>(stmt.body)) {
+    if (std::holds_alternative<ParserStmtEof>(*stmt.body)) {
       break;
     }
 

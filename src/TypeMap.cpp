@@ -120,7 +120,7 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
-bool Type::match (const std::shared_ptr<Type> &type) const {
+bool Type::match (const Type *type) const {
   if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -166,7 +166,7 @@ bool Type::match (const std::shared_ptr<Type> &type) const {
 
 std::string Type::xml (std::size_t indent) const {
   if (this->builtin) {
-    auto nameAttr = this->name == "@" ? "" : R"( name=")" + this->name + R"(")";
+    auto nameAttr = this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
     return std::string(indent, ' ') + "<BuiltinType" + nameAttr + " />";
   }
 
@@ -224,29 +224,25 @@ std::string Type::xml (std::size_t indent) const {
   return result + std::string(indent, ' ') + "</Type>";
 }
 
-std::shared_ptr<Type> TypeMap::fn (const std::shared_ptr<Type> &returnType, const std::vector<TypeFnParam> &params) {
-  auto typeFn = TypeFn{returnType, params};
-  return std::make_shared<Type>(Type{"@", typeFn, false});
+Type *TypeMap::add (const std::string &name, const std::vector<TypeObjField> &fields) {
+  this->_items.push_back(std::make_unique<Type>(Type{name, TypeObj{fields}, false}));
+  return this->_items.back().get();
 }
 
-std::shared_ptr<Type> TypeMap::add (const std::string &name, const std::vector<TypeObjField> &fields) {
-  auto obj = TypeObj{fields};
-
-  this->_items.push_back(std::make_shared<Type>(Type{name, obj, false}));
-  return this->_items.back();
+Type *TypeMap::add (const std::string &name, const std::vector<TypeFnParam> &params, Type *returnType) {
+  this->_items.push_back(std::make_unique<Type>(Type{name, TypeFn{returnType, params}, false}));
+  return this->_items.back().get();
 }
 
-std::shared_ptr<Type> TypeMap::add (const std::string &name, const std::vector<TypeFnParam> &params, const std::shared_ptr<Type> &returnType) {
-  auto fn = TypeFn{returnType, params};
-
-  this->_items.push_back(std::make_shared<Type>(Type{name, fn, false}));
-  return this->_items.back();
+Type *TypeMap::fn (const std::vector<TypeFnParam> &params, Type *returnType) {
+  this->_items.push_back(std::make_unique<Type>(Type{"@", TypeFn{returnType, params}, false}));
+  return this->_items.back().get();
 }
 
-std::shared_ptr<Type> TypeMap::get (const std::string &name) const {
+Type *TypeMap::get (const std::string &name) {
   for (const auto &item : this->_items) {
     if (item->name == name) {
-      return item;
+      return item.get();
     }
   }
 
@@ -256,66 +252,89 @@ std::shared_ptr<Type> TypeMap::get (const std::string &name) const {
 void TypeMap::init () {
   this->stack.reserve(std::numeric_limits<short>::max());
 
-  auto anyType = std::make_shared<Type>(Type{"any", TypeObj{}, true});
-  auto boolType = std::make_shared<Type>(Type{"bool", TypeObj{}, true});
-  auto byteType = std::make_shared<Type>(Type{"byte", TypeObj{}, true});
-  auto charType = std::make_shared<Type>(Type{"char", TypeObj{}, true});
-  auto f32Type = std::make_shared<Type>(Type{"f32", TypeObj{}, true});
-  auto f64Type = std::make_shared<Type>(Type{"f64", TypeObj{}, true});
-  auto floatType = std::make_shared<Type>(Type{"float", TypeObj{}, true});
-  auto i8Type = std::make_shared<Type>(Type{"i8", TypeObj{}, true});
-  auto i16Type = std::make_shared<Type>(Type{"i16", TypeObj{}, true});
-  auto i32Type = std::make_shared<Type>(Type{"i32", TypeObj{}, true});
-  auto i64Type = std::make_shared<Type>(Type{"i64", TypeObj{}, true});
-  auto intType = std::make_shared<Type>(Type{"int", TypeObj{}, true});
-  auto strType = std::make_shared<Type>(Type{"str", TypeObj{}, true});
-  auto u8Type = std::make_shared<Type>(Type{"u8", TypeObj{}, true});
-  auto u16Type = std::make_shared<Type>(Type{"u16", TypeObj{}, true});
-  auto u32Type = std::make_shared<Type>(Type{"u32", TypeObj{}, true});
-  auto u64Type = std::make_shared<Type>(Type{"u64", TypeObj{}, true});
-  auto voidType = std::make_shared<Type>(Type{"void", TypeObj{}, true});
-
-  auto strTypeMethodConcat = TypeFn{strType, {
-    {"src", strType, true, false}
-  }};
+  this->_items.push_back(std::make_unique<Type>(Type{"any", TypeObj{}, true}));
+  auto anyType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"bool", TypeObj{}, true}));
+  auto boolType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"byte", TypeObj{}, true}));
+  auto byteType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"char", TypeObj{}, true}));
+  auto charType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"f32", TypeObj{}, true}));
+  auto f32Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"f64", TypeObj{}, true}));
+  auto f64Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"float", TypeObj{}, true}));
+  auto floatType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"i8", TypeObj{}, true}));
+  auto i8Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"i16", TypeObj{}, true}));
+  auto i16Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"i32", TypeObj{}, true}));
+  auto i32Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"i64", TypeObj{}, true}));
+  auto i64Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"int", TypeObj{}, true}));
+  auto intType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"str", TypeObj{}, true}));
+  auto strType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"u8", TypeObj{}, true}));
+  auto u8Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"u16", TypeObj{}, true}));
+  auto u16Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"u32", TypeObj{}, true}));
+  auto u32Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"u64", TypeObj{}, true}));
+  auto u64Type = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"void", TypeObj{}, true}));
+  auto voidType = this->_items.back().get();
 
   std::get<TypeObj>(strType->body).fields.push_back({"len", intType});
-  std::get<TypeObj>(strType->body).fields.push_back({"concat", std::make_shared<Type>(Type{"@", strTypeMethodConcat, true})});
 
-  std::get<TypeObj>(boolType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(byteType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(charType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(f32Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(f64Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(floatType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(i8Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(i16Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(i32Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(i64Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(intType->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(u8Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(u16Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(u32Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
-  std::get<TypeObj>(u64Type->body).fields.push_back({"str", std::make_shared<Type>(Type{"@", TypeFn{strType}, true})});
+  this->_items.push_back(std::make_unique<Type>(Type{"@str.concat", TypeFn{strType, {
+    {"src", strType, true, false}
+  }}, true}));
 
-  this->_items.push_back(anyType);
-  this->_items.push_back(boolType);
-  this->_items.push_back(byteType);
-  this->_items.push_back(charType);
-  this->_items.push_back(f32Type);
-  this->_items.push_back(f64Type);
-  this->_items.push_back(floatType);
-  this->_items.push_back(i8Type);
-  this->_items.push_back(i16Type);
-  this->_items.push_back(i32Type);
-  this->_items.push_back(i64Type);
-  this->_items.push_back(intType);
-  this->_items.push_back(strType);
-  this->_items.push_back(u8Type);
-  this->_items.push_back(u16Type);
-  this->_items.push_back(u32Type);
-  this->_items.push_back(u64Type);
-  this->_items.push_back(voidType);
+  std::get<TypeObj>(strType->body).fields.push_back({"concat", this->_items.back().get()});
+
+  this->_items.push_back(std::make_unique<Type>(Type{"@bool.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(boolType->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@byte.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(byteType->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@char.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(charType->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@f32.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(f32Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@f64.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(f64Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@float.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(floatType->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@i8.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(i8Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@i16.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(i16Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@i32.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(i32Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@i64.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(i64Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@int.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(intType->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@u8.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(u8Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@u16.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(u16Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@u32.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(u32Type->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@u64.str", TypeFn{strType}, true}));
+  std::get<TypeObj>(u64Type->body).fields.push_back({"str", this->_items.back().get()});
+
+  auto printFnTypeFn = TypeFn{voidType, {
+    TypeFnParam{"items", anyType, false, true},
+    TypeFnParam{"separator", strType, false, false},
+    TypeFnParam{"terminator", strType, false, false}
+  }};
+
+  this->_items.push_back(std::make_unique<Type>(Type{"@print", printFnTypeFn, true}));
 }
 
 std::string TypeMap::name (const std::string &name) const {
@@ -339,10 +358,7 @@ std::string TypeMap::name (const std::string &name) const {
     }
 
     if (!exists) {
-      fullName = fullNameTest;
-      break;
+      return fullNameTest;
     }
   }
-
-  return fullName;
 }

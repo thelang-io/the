@@ -10,13 +10,10 @@
 
 #include "TypeMap.hpp"
 
-struct Var;
-class VarStack;
-
 struct Var {
   std::string name;
   std::string codeName;
-  std::shared_ptr<Type> type;
+  Type *type;
   bool mut;
   bool builtin;
   std::size_t frame;

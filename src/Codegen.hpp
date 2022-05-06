@@ -10,6 +10,8 @@
 
 #include "AST.hpp"
 
+using CodegenNode = std::tuple<std::string, std::string, std::string>;
+
 struct CodegenBuiltins {
   bool fnAlloc = false;
   bool fnCstrConcatStr = false;
@@ -38,7 +40,7 @@ class Codegen {
   Reader *reader;
   VarMap varMap;
 
-  static void compile (const std::string &, const std::tuple<std::string, std::string> &);
+  static void compile (const std::string &, const std::tuple<std::string, std::string> &, bool = false);
   static std::string name (const std::string &);
 
   explicit Codegen (AST *);
@@ -50,11 +52,13 @@ class Codegen {
   Codegen &operator= (const Codegen &);
 
   std::string _block (const ASTBlock &);
-  std::string _exprAccess (const ASTMemberObj &);
+  std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
   std::string _flags () const;
-  std::tuple<std::string, std::string, std::string> _node (const ASTNode &);
-  std::tuple<std::string, std::string, std::string> _nodeExpr (const std::shared_ptr<ASTNodeExpr> &, bool = false);
-  std::string _type (const std::shared_ptr<Type> &, bool);
+  CodegenNode _node (const ASTNode &);
+  std::string _nodeExpr (const ASTNodeExpr &, bool = false);
+  std::string _type (const Type *, bool);
+  CodegenNode _wrapNode (const ASTNode &, const std::string &, const std::string &, const std::string &) const;
+  std::string _wrapNodeExpr (const ASTNodeExpr &, const std::string &) const;
 };
 
 #endif

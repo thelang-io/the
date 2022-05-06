@@ -10,9 +10,9 @@
 
 ASTNodeExpr astExprTestGen (const std::string &code) {
   auto nodes = testing::NiceMock<MockAST>("main{" + code + "}").gen();
-  auto nodeMain = std::get<ASTNodeMain>(nodes[0].body);
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
 
-  return std::get<ASTNodeExpr>(nodeMain.body[0].body);
+  return std::get<ASTNodeExpr>(*nodeMain.body[0].body);
 }
 
 TEST(ASTExprTest, IsLit) {

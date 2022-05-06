@@ -1,0 +1,47 @@
+======= stdin =======
+main {
+  mut a := 1
+
+  a += 2
+  a -= 1
+  a /= 1
+  a *= 10
+  a %= 2
+  a **= 2
+  a <<= 10
+  a >>= 10
+  a &= 2
+  a |= 1
+  a ^= 0
+
+  mut b := false
+  mut c := true
+  c &&= b
+  b ||= c
+}
+======= code =======
+#include <math.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_a_0 = 1;
+  __THE_0_a_0 += 2;
+  __THE_0_a_0 -= 1;
+  __THE_0_a_0 /= 1;
+  __THE_0_a_0 *= 10;
+  __THE_0_a_0 %= 2;
+  __THE_0_a_0 = pow(__THE_0_a_0, 2);
+  __THE_0_a_0 <<= 10;
+  __THE_0_a_0 >>= 10;
+  __THE_0_a_0 &= 2;
+  __THE_0_a_0 |= 1;
+  __THE_0_a_0 ^= 0;
+  bool __THE_0_b_0 = false;
+  bool __THE_0_c_0 = true;
+  __THE_0_c_0 = __THE_0_c_0 && __THE_0_b_0;
+  __THE_0_b_0 = __THE_0_b_0 || __THE_0_c_0;
+}
+======= flags =======
+-lm
+======= stdout =======

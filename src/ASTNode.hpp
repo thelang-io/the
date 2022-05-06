@@ -10,19 +10,15 @@
 
 #include "ASTExpr.hpp"
 
-struct ASTNode;
 struct ASTNodeBreak;
 struct ASTNodeContinue;
 struct ASTNodeFnDecl;
-struct ASTNodeFnDeclParam;
 struct ASTNodeIf;
 struct ASTNodeLoop;
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
 struct ASTNodeReturn;
 struct ASTNodeVarDecl;
-
-using ASTBlock = std::vector<ASTNode>;
 
 using ASTNodeBody = std::variant<
   ASTNodeBreak,
@@ -37,12 +33,24 @@ using ASTNodeBody = std::variant<
   ASTNodeVarDecl
 >;
 
+struct ASTNode {
+  std::shared_ptr<ASTNodeBody> body;
+
+  std::string xml (std::size_t = 0) const;
+};
+
+using ASTBlock = std::vector<ASTNode>;
 using ASTNodeIfCond = std::variant<ASTBlock, ASTNodeIf>;
 
 struct ASTNodeBreak {
 };
 
 struct ASTNodeContinue {
+};
+
+struct ASTNodeFnDeclParam {
+  std::shared_ptr<Var> var;
+  std::optional<ASTNodeExpr> init;
 };
 
 struct ASTNodeFnDecl {
@@ -52,13 +60,8 @@ struct ASTNodeFnDecl {
   ASTBlock body;
 };
 
-struct ASTNodeFnDeclParam {
-  std::shared_ptr<Var> var;
-  std::optional<std::shared_ptr<ASTNodeExpr>> init;
-};
-
 struct ASTNodeIf {
-  std::shared_ptr<ASTNode> cond;
+  ASTNode cond;
   ASTBlock body;
   std::optional<std::shared_ptr<ASTNodeIfCond>> alt;
 
@@ -66,9 +69,9 @@ struct ASTNodeIf {
 };
 
 struct ASTNodeLoop {
-  std::optional<std::shared_ptr<ASTNode>> init;
-  std::optional<std::shared_ptr<ASTNodeExpr>> cond;
-  std::optional<std::shared_ptr<ASTNodeExpr>> upd;
+  std::optional<ASTNode> init;
+  std::optional<ASTNodeExpr> cond;
+  std::optional<ASTNodeExpr> upd;
   ASTBlock body;
 };
 
@@ -81,18 +84,12 @@ struct ASTNodeObjDecl {
 };
 
 struct ASTNodeReturn {
-  std::optional<std::shared_ptr<ASTNodeExpr>> body;
+  std::optional<ASTNodeExpr> body;
 };
 
 struct ASTNodeVarDecl {
   std::shared_ptr<Var> var;
-  std::optional<std::shared_ptr<ASTNodeExpr>> init;
-};
-
-struct ASTNode {
-  ASTNodeBody body;
-
-  std::string xml (std::size_t = 0) const;
+  std::optional<ASTNodeExpr> init;
 };
 
 #endif

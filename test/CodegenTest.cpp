@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <filesystem>
+#include <iostream>
 #include "../src/Codegen.hpp"
 #include "MockAST.hpp"
 #include "utils.hpp"
@@ -59,23 +60,49 @@ TEST_P(CodegenTest,) {
     expectedFlags = expectedFlags.substr(0, expectedFlags.size() - 1);
   }
 
+  auto envVars = getEnvVars();
+  auto testMemcheck = envVars.contains("CODEGEN_MEMCHECK") && envVars["CODEGEN_MEMCHECK"] == "ON";
   auto ast = testing::NiceMock<MockAST>(testStdin);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
 
-  EXPECT_EQ(expectedCode, std::get<0>(result).substr(150));
-  EXPECT_EQ(expectedFlags, std::get<1>(result));
+  ASSERT_EQ(expectedCode, std::get<0>(result).substr(150));
+  ASSERT_EQ(expectedFlags, std::get<1>(result));
 
-  auto filePath = param + ".out";
-  Codegen::compile(filePath, result);
-  auto actualOutput = execCmd("./" + filePath);
+  auto filePath = "build/" + param + ".out";
+  Codegen::compile(filePath, result, true);
+  auto cmd = filePath;
+
+  if (testMemcheck) {
+    cmd = "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --track-origins=yes " + cmd;
+  }
+
+  auto [actualOutput, actualStderr, actualReturnCode] = execCmd(cmd, "build/" + param);
   std::filesystem::remove(filePath);
 
   EXPECT_EQ(expectedOutput, actualOutput);
+  EXPECT_EQ(actualReturnCode, 0);
+
+  if (!testMemcheck) {
+    EXPECT_EQ(actualStderr, "");
+  } else if (actualReturnCode != 0) {
+    std::cout << actualStderr;
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(General, CodegenTest, testing::Values(
   "empty"
+));
+
+INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenTest, testing::Values(
+  "expr-access",
+  "expr-access-str"
+));
+
+INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenTest, testing::Values(
+  "expr-assign",
+  "expr-assign-op",
+  "expr-assign-str"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(

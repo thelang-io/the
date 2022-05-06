@@ -12,18 +12,18 @@ struct str {
   size_t l;
 };
 
-void str_deinit (struct str);
 struct str str_init (const char *);
+void str_deinit (struct str);
 void *alloc (size_t);
 
-void str_deinit (struct str s) {
-  free(s.c);
-}
 struct str str_init (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
+}
+void str_deinit (struct str s) {
+  free(s.c);
 }
 void *alloc (size_t l) {
   void *r = malloc(l);

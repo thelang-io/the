@@ -82,8 +82,6 @@
 #define E1010 "E1010 - Use of undeclared type"
 #define E1011 "E1011 - Use of undeclared variable"
 
-class Error;
-
 class Error : public std::exception {
  public:
   explicit Error (const std::string &);

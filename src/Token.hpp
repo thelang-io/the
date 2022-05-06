@@ -10,8 +10,6 @@
 
 #include "Reader.hpp"
 
-struct Token;
-
 enum TokenType {
   TK_EOF,
   TK_ID,

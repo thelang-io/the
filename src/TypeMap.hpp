@@ -9,36 +9,31 @@
 #define SRC_TYPE_MAP_HPP
 
 #include <memory>
-#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
 
 struct Type;
-struct TypeFn;
-struct TypeFnParam;
-struct TypeObj;
-struct TypeObjField;
-
-struct TypeFn {
-  std::shared_ptr<Type> returnType;
-  std::vector<TypeFnParam> params = {};
-};
 
 struct TypeFnParam {
   std::string name;
-  std::shared_ptr<Type> type;
+  Type *type;
   bool required;
   bool variadic;
 };
 
-struct TypeObj {
-  std::vector<TypeObjField> fields = {};
+struct TypeFn {
+  Type *returnType;
+  std::vector<TypeFnParam> params = {};
 };
 
 struct TypeObjField {
   std::string name;
-  std::shared_ptr<Type> type;
+  Type *type;
+};
+
+struct TypeObj {
+  std::vector<TypeObjField> fields = {};
 };
 
 struct Type {
@@ -66,7 +61,7 @@ struct Type {
   bool isU32 () const;
   bool isU64 () const;
   bool isVoid () const;
-  bool match (const std::shared_ptr<Type> &) const;
+  bool match (const Type *) const;
   std::string xml (std::size_t = 0) const;
 };
 
@@ -74,16 +69,15 @@ class TypeMap {
  public:
   std::vector<std::string> stack;
 
-  static std::shared_ptr<Type> fn (const std::shared_ptr<Type> &, const std::vector<TypeFnParam> & = {});
-
-  std::shared_ptr<Type> add (const std::string &, const std::vector<TypeObjField> &);
-  std::shared_ptr<Type> add (const std::string &, const std::vector<TypeFnParam> &, const std::shared_ptr<Type> &);
-  std::shared_ptr<Type> get (const std::string &) const;
+  Type *add (const std::string &, const std::vector<TypeObjField> &);
+  Type *add (const std::string &, const std::vector<TypeFnParam> &, Type *);
+  Type *fn (const std::vector<TypeFnParam> &, Type *);
+  Type *get (const std::string &);
   void init ();
   std::string name (const std::string &) const;
 
  private:
-  std::vector<std::shared_ptr<Type>> _items;
+  std::vector<std::unique_ptr<Type>> _items;
 };
 
 #endif

@@ -10,25 +10,18 @@
 
 #include "ParserExpr.hpp"
 
-struct ParserStmt;
 struct ParserStmtBreak;
 struct ParserStmtContinue;
 struct ParserStmtEof;
 struct ParserStmtFnDecl;
-struct ParserStmtFnDeclParam;
 struct ParserStmtIf;
 struct ParserStmtLoop;
 struct ParserStmtMain;
 struct ParserStmtObjDecl;
-struct ParserStmtObjDeclField;
 struct ParserStmtReturn;
 struct ParserStmtVarDecl;
-struct ParserType;
 struct ParserTypeFn;
-struct ParserTypeFnParam;
 struct ParserTypeId;
-
-using ParserBlock = std::vector<ParserStmt>;
 
 using ParserStmtBody = std::variant<
   ParserStmtBreak,
@@ -44,30 +37,39 @@ using ParserStmtBody = std::variant<
   ParserStmtVarDecl
 >;
 
+struct ParserStmt {
+  std::shared_ptr<ParserStmtBody> body;
+  ReaderLocation start;
+  ReaderLocation end;
+
+  std::string xml (std::size_t = 0) const;
+};
+
+using ParserBlock = std::vector<ParserStmt>;
 using ParserStmtIfCond = std::variant<ParserBlock, ParserStmtIf>;
 using ParserTypeBody = std::variant<ParserTypeFn, ParserTypeId>;
 
-struct ParserTypeFn {
-  std::vector<ParserTypeFnParam> params;
-  std::shared_ptr<ParserType> returnType;
-};
-
-struct ParserTypeFnParam {
-  std::shared_ptr<ParserType> type;
-  bool variadic;
-};
-
-struct ParserTypeId {
-  Token id;
-};
-
 struct ParserType {
-  ParserTypeBody body;
+  std::shared_ptr<ParserTypeBody> body;
   bool parenthesized;
   ReaderLocation start;
   ReaderLocation end;
 
   std::string xml (std::size_t = 0) const;
+};
+
+struct ParserTypeFnParam {
+  ParserType type;
+  bool variadic;
+};
+
+struct ParserTypeFn {
+  std::vector<ParserTypeFnParam> params;
+  ParserType returnType;
+};
+
+struct ParserTypeId {
+  Token id;
 };
 
 struct ParserStmtBreak {
@@ -79,22 +81,22 @@ struct ParserStmtContinue {
 struct ParserStmtEof {
 };
 
+struct ParserStmtFnDeclParam {
+  Token id;
+  std::optional<ParserType> type;
+  bool variadic;
+  std::optional<ParserStmtExpr> init;
+};
+
 struct ParserStmtFnDecl {
   Token id;
   std::vector<ParserStmtFnDeclParam> params;
-  std::optional<std::shared_ptr<ParserType>> returnType;
+  std::optional<ParserType> returnType;
   ParserBlock body;
 };
 
-struct ParserStmtFnDeclParam {
-  Token id;
-  std::optional<std::shared_ptr<ParserType>> type;
-  bool variadic;
-  std::optional<std::shared_ptr<ParserStmtExpr>> init;
-};
-
 struct ParserStmtIf {
-  std::shared_ptr<ParserStmt> cond;
+  ParserStmt cond;
   ParserBlock body;
   std::optional<std::shared_ptr<ParserStmtIfCond>> alt;
 
@@ -102,9 +104,9 @@ struct ParserStmtIf {
 };
 
 struct ParserStmtLoop {
-  std::optional<std::shared_ptr<ParserStmt>> init;
-  std::optional<std::shared_ptr<ParserStmtExpr>> cond;
-  std::optional<std::shared_ptr<ParserStmtExpr>> upd;
+  std::optional<ParserStmt> init;
+  std::optional<ParserStmtExpr> cond;
+  std::optional<ParserStmtExpr> upd;
   ParserBlock body;
 };
 
@@ -112,33 +114,25 @@ struct ParserStmtMain {
   ParserBlock body;
 };
 
+struct ParserStmtObjDeclField {
+  Token id;
+  ParserType type;
+};
+
 struct ParserStmtObjDecl {
   Token id;
   std::vector<ParserStmtObjDeclField> fields;
 };
 
-struct ParserStmtObjDeclField {
-  Token id;
-  std::shared_ptr<ParserType> type;
-};
-
 struct ParserStmtReturn {
-  std::optional<std::shared_ptr<ParserStmtExpr>> body;
+  std::optional<ParserStmtExpr> body;
 };
 
 struct ParserStmtVarDecl {
   Token id;
-  std::optional<std::shared_ptr<ParserType>> type;
-  std::optional<std::shared_ptr<ParserStmtExpr>> init;
+  std::optional<ParserType> type;
+  std::optional<ParserStmtExpr> init;
   bool mut = false;
-};
-
-struct ParserStmt {
-  ParserStmtBody body;
-  ReaderLocation start;
-  ReaderLocation end;
-
-  std::string xml (std::size_t = 0) const;
 };
 
 #endif

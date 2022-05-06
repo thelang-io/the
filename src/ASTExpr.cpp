@@ -86,19 +86,19 @@ std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
   throw Error("Error: tried stringify unknown unary expression operator");
 }
 
-std::string memberObjXml (const ASTMemberObj &exprAccessBody, std::size_t indent) {
-  if (std::holds_alternative<std::shared_ptr<Var>>(exprAccessBody)) {
-    auto id = std::get<std::shared_ptr<Var>>(exprAccessBody);
+std::string memberObjXml (const std::shared_ptr<ASTMemberObj> &exprAccessBody, std::size_t indent) {
+  if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccessBody)) {
+    auto id = std::get<std::shared_ptr<Var>>(*exprAccessBody);
     return id->xml(indent) + "\n";
   }
 
-  auto member = std::get<std::shared_ptr<ASTMember>>(exprAccessBody);
+  auto member = std::get<ASTMember>(*exprAccessBody);
   auto result = std::string(indent, ' ') + R"(<slot name="obj">)" "\n";
 
-  result += memberObjXml(member->obj, indent + 2);
+  result += memberObjXml(member.obj, indent + 2);
   result += std::string(indent, ' ') + "</slot>\n";
   result += std::string(indent, ' ') + R"(<slot name="prop">)" "\n";
-  result += std::string(indent + 2, ' ') + member->prop + "\n";
+  result += std::string(indent + 2, ' ') + member.prop + "\n";
   result += std::string(indent, ' ') + "</slot>\n";
 
   return result;
@@ -115,24 +115,24 @@ std::string ASTExprAccess::xml (std::size_t indent) const {
 }
 
 bool ASTNodeExpr::isLit () const {
-  if (std::holds_alternative<ASTExprBinary>(this->body)) {
-    auto exprBinary = std::get<ASTExprBinary>(this->body);
-    return exprBinary.left->isLit() && exprBinary.right->isLit();
+  if (std::holds_alternative<ASTExprBinary>(*this->body)) {
+    auto exprBinary = std::get<ASTExprBinary>(*this->body);
+    return exprBinary.left.isLit() && exprBinary.right.isLit();
   }
 
-  return std::holds_alternative<ASTExprLit>(this->body);
+  return std::holds_alternative<ASTExprLit>(*this->body);
 }
 
 std::string ASTNodeExpr::litBody () const {
-  if (std::holds_alternative<ASTExprBinary>(this->body)) {
-    auto exprBinary = std::get<ASTExprBinary>(this->body);
-    auto leftLitBody = exprBinary.left->litBody();
-    auto rightLitBody = exprBinary.right->litBody();
+  if (std::holds_alternative<ASTExprBinary>(*this->body)) {
+    auto exprBinary = std::get<ASTExprBinary>(*this->body);
+    auto leftLitBody = exprBinary.left.litBody();
+    auto rightLitBody = exprBinary.right.litBody();
 
     return R"(")" + leftLitBody.substr(1, leftLitBody.size() - 2) + rightLitBody.substr(1, rightLitBody.size() - 2) + R"(")";
   }
 
-  return std::get<ASTExprLit>(this->body).body;
+  return std::get<ASTExprLit>(*this->body).body;
 }
 
 std::string ASTNodeExpr::xml (std::size_t indent) const {
@@ -145,33 +145,33 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
 
   indent += 4;
 
-  if (std::holds_alternative<ASTExprAccess>(this->body)) {
-    auto exprAccess = std::get<ASTExprAccess>(this->body);
+  if (std::holds_alternative<ASTExprAccess>(*this->body)) {
+    auto exprAccess = std::get<ASTExprAccess>(*this->body);
     result += exprAccess.xml(indent) + "\n";
-  } else if (std::holds_alternative<ASTExprAssign>(this->body)) {
-    auto exprAssign = std::get<ASTExprAssign>(this->body);
+  } else if (std::holds_alternative<ASTExprAssign>(*this->body)) {
+    auto exprAssign = std::get<ASTExprAssign>(*this->body);
 
     result += std::string(indent, ' ') + R"(<ExprAssign op=")" + exprAssignOpStr(exprAssign.op) + R"(">)" "\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="left">)" "\n";
     result += exprAssign.left.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="right">)" "\n";
-    result += exprAssign.right->xml(indent + 4) + "\n";
+    result += exprAssign.right.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent, ' ') + "</ExprAssign>\n";
-  } else if (std::holds_alternative<ASTExprBinary>(this->body)) {
-    auto exprBinary = std::get<ASTExprBinary>(this->body);
+  } else if (std::holds_alternative<ASTExprBinary>(*this->body)) {
+    auto exprBinary = std::get<ASTExprBinary>(*this->body);
 
     result += std::string(indent, ' ') + R"(<ExprBinary op=")" + exprBinaryOpStr(exprBinary.op) + R"(">)" "\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="left">)" "\n";
-    result += exprBinary.left->xml(indent + 4) + "\n";
+    result += exprBinary.left.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="right">)" "\n";
-    result += exprBinary.right->xml(indent + 4) + "\n";
+    result += exprBinary.right.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent, ' ') + "</ExprBinary>\n";
-  } else if (std::holds_alternative<ASTExprCall>(this->body)) {
-    auto exprCall = std::get<ASTExprCall>(this->body);
+  } else if (std::holds_alternative<ASTExprCall>(*this->body)) {
+    auto exprCall = std::get<ASTExprCall>(*this->body);
 
     result += std::string(indent, ' ') + "<ExprCall>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="callee">)" "\n";
@@ -188,7 +188,7 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
       for (const auto &exprCallArg : exprCall.args) {
         result += std::string(indent + 4, ' ') + "<ExprCallArg";
         result += (exprCallArg.id != std::nullopt ? R"( id=")" + *exprCallArg.id + R"(")" : "") + ">\n";
-        result += exprCallArg.expr->xml(indent + 6)  + "\n";
+        result += exprCallArg.expr.xml(indent + 6)  + "\n";
         result += std::string(indent + 4, ' ') + "</ExprCallArg>\n";
       }
 
@@ -196,28 +196,28 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprCall>\n";
-  } else if (std::holds_alternative<ASTExprCond>(this->body)) {
-    auto exprCond = std::get<ASTExprCond>(this->body);
+  } else if (std::holds_alternative<ASTExprCond>(*this->body)) {
+    auto exprCond = std::get<ASTExprCond>(*this->body);
 
     result += std::string(indent, ' ') + "<ExprCond>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" "\n";
-    result += exprCond.cond->xml(indent + 4) + "\n";
+    result += exprCond.cond.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="body">)" "\n";
-    result += exprCond.body->xml(indent + 4) + "\n";
+    result += exprCond.body.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="alt">)" "\n";
-    result += exprCond.alt->xml(indent + 4) + "\n";
+    result += exprCond.alt.xml(indent + 4) + "\n";
     result += std::string(indent + 2, ' ') + "</slot>\n";
     result += std::string(indent, ' ') + "</ExprCond>\n";
-  } else if (std::holds_alternative<ASTExprLit>(this->body)) {
-    auto exprLit = std::get<ASTExprLit>(this->body);
+  } else if (std::holds_alternative<ASTExprLit>(*this->body)) {
+    auto exprLit = std::get<ASTExprLit>(*this->body);
 
     result += std::string(indent, ' ') + R"(<ExprLit type=")" + exprLitTypeStr(exprLit.type) + R"(">)" "\n";
     result += std::string(indent + 2, ' ') + exprLit.body + "\n";
     result += std::string(indent, ' ') + "</ExprLit>\n";
-  } else if (std::holds_alternative<ASTExprObj>(this->body)) {
-    auto exprObj = std::get<ASTExprObj>(this->body);
+  } else if (std::holds_alternative<ASTExprObj>(*this->body)) {
+    auto exprObj = std::get<ASTExprObj>(*this->body);
 
     result += std::string(indent, ' ') + "<ExprObj>\n";
     result += std::string(indent + 2, ' ') + R"(<slot name="type">)" "\n";
@@ -233,7 +233,7 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
         result += std::string(indent + 8, ' ') + exprObjProp.id + "\n";
         result += std::string(indent + 6, ' ') + "</slot>\n";
         result += std::string(indent + 6, ' ') + R"(<slot name="init">)" "\n";
-        result += exprObjProp.init->xml(indent + 8) + "\n";
+        result += exprObjProp.init.xml(indent + 8) + "\n";
         result += std::string(indent + 6, ' ') + "</slot>\n";
         result += std::string(indent + 4, ' ') + "</ExprObjProp>\n";
       }
@@ -242,12 +242,12 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprObj>\n";
-  } else if (std::holds_alternative<ASTExprUnary>(this->body)) {
-    auto exprUnary = std::get<ASTExprUnary>(this->body);
+  } else if (std::holds_alternative<ASTExprUnary>(*this->body)) {
+    auto exprUnary = std::get<ASTExprUnary>(*this->body);
 
     result += std::string(indent, ' ') + R"(<ExprUnary op=")" + exprUnaryOpStr(exprUnary.op);
     result += R"(" prefix=")" + std::string(exprUnary.prefix ? "true" : "false") + R"(">)" "\n";
-    result += exprUnary.arg->xml(indent + 2) + "\n";
+    result += exprUnary.arg.xml(indent + 2) + "\n";
     result += std::string(indent, ' ') + "</ExprUnary>\n";
   }
 

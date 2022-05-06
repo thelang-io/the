@@ -13,8 +13,6 @@
 #include "Error.hpp"
 #include "Token.hpp"
 
-class Lexer;
-
 class Lexer {
  public:
   Reader *reader;

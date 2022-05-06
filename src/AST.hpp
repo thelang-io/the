@@ -11,8 +11,6 @@
 #include "ASTNode.hpp"
 #include "Parser.hpp"
 
-class AST;
-
 class AST {
  public:
   Parser *parser;
@@ -29,14 +27,16 @@ class AST {
   AST &operator= (const AST &);
 
   ASTBlock _block (const ParserBlock &, VarStack &);
-  ASTExprAccess _exprAccess (const ParserMemberObj &, VarStack &) const;
-  std::shared_ptr<Type> _exprAccessType (const ParserMemberObj &) const;
+  ASTExprAccess _exprAccess (const std::shared_ptr<ParserMemberObj> &, VarStack &);
+  Type *_exprAccessType (const std::shared_ptr<ParserMemberObj> &);
   void _forwardStmt (const ParserBlock &);
   ASTNode _stmt (const ParserStmt &, VarStack &);
-  std::shared_ptr<ASTNodeExpr> _stmtExpr (const std::shared_ptr<ParserStmtExpr> &, VarStack &) const;
-  std::shared_ptr<Type> _stmtExprType (const std::shared_ptr<ParserStmtExpr> &) const;
+  ASTNodeExpr _stmtExpr (const ParserStmtExpr &, VarStack &);
+  Type *_stmtExprType (const ParserStmtExpr &);
   ASTNodeIf _stmtIf (const ParserStmtIf &, VarStack &);
-  std::shared_ptr<Type> _type (const std::shared_ptr<ParserType> &) const;
+  Type *_type (const ParserType &);
+  ASTNode _wrapNode (const ParserStmt &, const ASTNodeBody &);
+  ASTNodeExpr _wrapNodeExpr (const ParserStmtExpr &, const ASTExpr &);
 };
 
 #endif

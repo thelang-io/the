@@ -10,14 +10,12 @@
 
 #include "VarStack.hpp"
 
-class VarMap;
-
 class VarMap {
  public:
-  std::shared_ptr<Var> add (const std::string &, const std::string &, const std::shared_ptr<Type> &, bool = false);
-  std::shared_ptr<Var> get (const std::string &) const;
+  std::shared_ptr<Var> add (const std::string &, const std::string &, Type *, bool = false);
+  std::shared_ptr<Var> get (const std::string &);
   bool has (const std::string &) const;
-  void init (const TypeMap &);
+  void init (TypeMap &);
   std::string name (const std::string &) const;
   void restore ();
   void save ();
