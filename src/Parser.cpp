@@ -6,6 +6,7 @@
  */
 
 #include "Parser.hpp"
+#include "config.hpp"
 
 Parser::Parser (Lexer *l) {
   this->lexer = l;
@@ -285,6 +286,22 @@ ParserStmt Parser::next () {
   }
 
   throw Error(this->reader, tok0.start, E0100);
+}
+
+std::string Parser::xml () {
+  auto result = std::string();
+
+  while (true) {
+    auto stmt = this->next();
+
+    if (std::holds_alternative<ParserStmtEof>(*stmt.body)) {
+      break;
+    }
+
+    result += stmt.xml() + EOL;
+  }
+
+  return result;
 }
 
 ParserBlock Parser::_block () {

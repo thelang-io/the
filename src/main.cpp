@@ -21,7 +21,7 @@ int main (int argc, char *argv[]) {
 
     for (auto i = 1; i < argc; i++) {
       auto arg = std::string(argv[i]);
-      auto isOpt = arg.substr(0, 1) == "-";
+      auto isOpt = arg.starts_with('-');
 
       if (i == 1 && arg == "ast") {
         isAST = true;

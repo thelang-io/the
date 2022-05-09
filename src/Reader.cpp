@@ -8,8 +8,8 @@
 #include "Reader.hpp"
 #include <filesystem>
 #include <fstream>
-#include <sstream>
 #include "Error.hpp"
+#include "config.hpp"
 
 std::string ReaderLocation::str () const {
   return std::to_string(this->line) + ":" + std::to_string(this->col + 1);
@@ -19,7 +19,7 @@ Reader::Reader (const std::string &p) {
   std::string canonicalPath;
 
   try {
-    canonicalPath = std::filesystem::canonical(p);
+    canonicalPath = std::filesystem::canonical(p).string();
   } catch (const std::exception &ex) {
     throw Error(R"(Error: no such file ")" + p + R"(")");
   }
@@ -57,14 +57,28 @@ std::tuple<ReaderLocation, char> Reader::next () {
   auto l = this->loc;
   auto ch = this->content[this->loc.pos];
 
-  if (ch == '\n') {
-    this->loc.col = 0;
-    this->loc.line += 1;
-  } else {
-    this->loc.col += 1;
-  }
+  #ifdef OS_WINDOWS
+    if (ch == '\r' && this->content[this->loc.pos + 1] == '\n') {
+      ch = '\n';
 
-  this->loc.pos += 1;
+      this->loc.col = 0;
+      this->loc.line += 1;
+      this->loc.pos += 2;
+    } else {
+      this->loc.col += 1;
+      this->loc.pos += 1;
+    }
+  #else
+    if (ch == '\n') {
+      this->loc.col = 0;
+      this->loc.line += 1;
+    } else {
+      this->loc.col += 1;
+    }
+
+    this->loc.pos += 1;
+  #endif
+
   return {l, ch};
 }
 

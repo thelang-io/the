@@ -6,8 +6,70 @@
  */
 
 #include "Token.hpp"
-#include <regex>
 #include "Error.hpp"
+
+std::string escapeVal (const std::string &val, bool insideAttr = false) {
+  auto result = std::string();
+
+  for (auto idx = static_cast<std::size_t>(0); idx < val.size(); idx++) {
+    auto ch = val[idx];
+
+    if (ch == '\\') {
+      auto nextCh = val[idx + 1];
+
+      if (nextCh == '\\') {
+        result += R"(\\\\)";
+        idx++;
+        continue;
+      } else if (nextCh == '0') {
+        result += R"(\\0)";
+        idx++;
+        continue;
+      } else if (nextCh == 'n') {
+        result += R"(\\n)";
+        idx++;
+        continue;
+      } else if (nextCh == 'r') {
+        result += R"(\\r)";
+        idx++;
+        continue;
+      } else if (nextCh == 't') {
+        result += R"(\\t)";
+        idx++;
+        continue;
+      } else if (nextCh == '"') {
+        if (insideAttr) {
+          result += R"(\\\")";
+        } else {
+          result += R"(\\")";
+        }
+
+        idx++;
+        continue;
+      } else if (nextCh == '\'') {
+        result += R"(\\')";
+        idx++;
+        continue;
+      }
+    } else if (ch == '\n') {
+      result += R"(\n)";
+      continue;
+    } else if (ch == '\r') {
+      result += R"(\r)";
+      continue;
+    } else if (ch == '\t') {
+      result += R"(\t)";
+      continue;
+    } else if (ch == '"' && insideAttr) {
+      result += R"(\")";
+      continue;
+    }
+
+    result += ch;
+  }
+
+  return result;
+}
 
 std::string tokenTypeToStr (TokenType type) {
   switch (type) {
@@ -138,7 +200,7 @@ bool Token::isLitIntOct (char ch) {
 }
 
 bool Token::isLitStrEscape (char ch) {
-  return Token::isLitCharEscape(ch) || ch == '{';
+  return Token::isLitCharEscape(ch);
 }
 
 bool Token::isWhitespace (char ch) {
@@ -204,14 +266,7 @@ int Token::precedence () const {
 }
 
 std::string Token::str () const {
-  auto escVal = std::regex_replace(this->val, std::regex("\\\\0"), "\\\\0");
-  escVal = std::regex_replace(escVal, std::regex("\\\\n"), "\\\\n");
-  escVal = std::regex_replace(escVal, std::regex("\\\\r"), "\\\\r");
-  escVal = std::regex_replace(escVal, std::regex("\\\\t"), "\\\\t");
-  escVal = std::regex_replace(escVal, std::regex("\\n"), "\\n");
-  escVal = std::regex_replace(escVal, std::regex("\\r"), "\\r");
-  escVal = std::regex_replace(escVal, std::regex("\\t"), "\\t");
-
+  auto escVal = escapeVal(this->val);
   auto result = std::string();
 
   result += tokenTypeToStr(this->type) + "(" + this->start.str() + "-" + this->end.str() + ")";
@@ -221,19 +276,10 @@ std::string Token::str () const {
 }
 
 std::string Token::xml () const {
-  auto escVal = std::regex_replace(this->val, std::regex("\\\\0"), "\\\\0");
-  escVal = std::regex_replace(escVal, std::regex("\\\\n"), "\\\\n");
-  escVal = std::regex_replace(escVal, std::regex("\\\\r"), "\\\\r");
-  escVal = std::regex_replace(escVal, std::regex("\\\\t"), "\\\\t");
-  escVal = std::regex_replace(escVal, std::regex("\\n"), "\\n");
-  escVal = std::regex_replace(escVal, std::regex("\\r"), "\\r");
-  escVal = std::regex_replace(escVal, std::regex("\\t"), "\\t");
-  escVal = std::regex_replace(escVal, std::regex("\""), "\\\"");
-
   auto result = std::string();
 
   result += R"(<Token type=")" + tokenTypeToStr(this->type);
-  result += R"(" val=")" + escVal;
+  result += R"(" val=")" + escapeVal(this->val, true);
   result += R"(" start=")" + this->start.str();
   result += R"(" end=")" + this->end.str();
   result += R"(" />)";

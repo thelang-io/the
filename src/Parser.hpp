@@ -18,6 +18,7 @@ class Parser {
   explicit Parser (Lexer *);
 
   virtual ParserStmt next ();
+  virtual std::string xml ();
 
  private:
   Parser (const Parser &);

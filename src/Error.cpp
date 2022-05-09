@@ -6,6 +6,7 @@
  */
 
 #include "Error.hpp"
+#include "config.hpp"
 
 Error::Error (const std::string &message) {
   this->message_ = message;
@@ -34,8 +35,8 @@ Error::Error (Reader *reader, ReaderLocation start, ReaderLocation end, const st
 
   auto lineNumStr = std::to_string(start.line);
 
-  this->message_ += reader->path + ':' + start.str() + ": " + message + "\n";
-  this->message_ += "  " + lineNumStr + " | " + line + '\n';
+  this->message_ += reader->path + ':' + start.str() + ": " + message + EOL;
+  this->message_ += "  " + lineNumStr + " | " + line + EOL;
   this->message_ += "  " + std::string(lineNumStr.length(), ' ') + " | " + std::string(start.col, ' ') + '^';
 
   auto underlineLen = static_cast<std::size_t>(0);

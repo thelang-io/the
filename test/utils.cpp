@@ -18,7 +18,6 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
 
   auto pcloseWrapper = [&returnCode] (FILE *fd) {
     returnCode = pclose(fd);
-    returnCode = WEXITSTATUS(returnCode);
   };
 
   auto stderrFileName = tmpName + "-stderr.txt";

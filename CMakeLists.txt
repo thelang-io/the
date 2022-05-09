@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.10.3 LANGUAGES CXX)
+project(the-core VERSION 0.10.4 LANGUAGES CXX)
 
 option(BUILD_TESTS "Build test programs" OFF)
 option(CODEGEN_MEMCHECK "Memory check codegen binaries" OFF)
@@ -24,9 +24,10 @@ set(
   src/TypeMap.cpp src/TypeMap.hpp
   src/VarMap.cpp src/VarMap.hpp
   src/VarStack.cpp src/VarStack.hpp
+  src/config.hpp
 )
 
-function(target_add_flags target)
+function (target_add_flags target)
   target_compile_options(${target} PRIVATE -Wall)
   target_compile_options(${target} PRIVATE -Wconversion)
   target_compile_options(${target} PRIVATE -Werror)
@@ -37,12 +38,12 @@ function(target_add_flags target)
   target_compile_options(${target} PRIVATE -Wundef)
   target_compile_options(${target} PRIVATE -Wunreachable-code)
   target_compile_options(${target} PRIVATE -pedantic-errors)
-endfunction()
+endfunction ()
 
 add_executable(${PROJECT_NAME} ${sources} src/main.cpp)
 target_add_flags(${PROJECT_NAME})
 
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   enable_testing()
 
   include(CTest)
@@ -79,7 +80,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
 
   if (CODEGEN_MEMCHECK)
     gtest_discover_tests(${PROJECT_NAME}-test WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTIES ENVIRONMENT "CODEGEN_MEMCHECK=ON")
-  else()
+  else ()
     gtest_discover_tests(${PROJECT_NAME}-test WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-  endif()
-endif()
+  endif ()
+endif ()
