@@ -8,13 +8,14 @@
 #include <gtest/gtest.h>
 #include <filesystem>
 #include <fstream>
+#include "../src/config.hpp"
 #include "utils.hpp"
 
 class ReaderTest : public testing::Test {
  protected:
-  Reader *r1_;
-  Reader *r2_;
-  Reader *r3_;
+  Reader *r1_ = nullptr;
+  Reader *r2_ = nullptr;
+  Reader *r3_ = nullptr;
 
   void SetUp () override {
     auto emptyFile = std::ofstream("test_empty.txt");
@@ -25,7 +26,7 @@ class ReaderTest : public testing::Test {
     regularFile.close();
 
     auto multilineFile = std::ofstream("test_multiline.txt");
-    multilineFile << "Hello, Anna!\nHello, Nina!\nHello, Rosa!\n";
+    multilineFile << "Hello, Anna!" EOL "Hello, Nina!" EOL "Hello, Rosa!" EOL;
     multilineFile.close();
 
     this->r1_ = new Reader("test_empty.txt");
@@ -52,8 +53,8 @@ TEST_F(ReaderTest, ThrowsOnNotExisting) {
 
 TEST_F(ReaderTest, ThrowsOnDirectory) {
   EXPECT_THROW_WITH_MESSAGE({
-    Reader("/dev/null");
-  }, R"(Error: path "/dev/null" is not a file)");
+    Reader("test");
+  }, R"(Error: path "test" is not a file)");
 }
 
 TEST_F(ReaderTest, ReadsFile) {
@@ -108,7 +109,7 @@ TEST_F(ReaderTest, ReadsMultiline) {
     this->r3_->next();
   }
 
-  EXPECT_EQ(this->r3_->loc, (ReaderLocation{39, 4, 0}));
+  EXPECT_EQ(this->r3_->loc, (ReaderLocation{36 + std::string(EOL).size() * 3, 4, 0}));
 }
 
 TEST_F(ReaderTest, ThrowsOnNextOnEof) {

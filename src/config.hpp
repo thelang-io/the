@@ -10,9 +10,11 @@
 
 #ifdef _WIN32
   #define EOL "\r\n"
+  #define ESC_EOL "\\r\\n"
   #define OS_WINDOWS
 #else
   #define EOL "\n"
+  #define ESC_OL "\\n"
   #define OS_UNIX
 #endif
 

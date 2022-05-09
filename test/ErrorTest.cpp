@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include "../src/Error.hpp"
 #include "../src/Lexer.hpp"
+#include "../src/config.hpp"
 #include "MockReader.hpp"
 #include "utils.hpp"
 
@@ -23,7 +24,7 @@ TEST(LexerErrorTest, SingleToken) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^");
+  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | @" EOL "    | ^");
 }
 
 TEST(LexerErrorTest, MultipleTokens) {
@@ -34,7 +35,7 @@ TEST(LexerErrorTest, MultipleTokens) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:1: ") + E0000 + "\n  1 | test\n    | ^~~~");
+  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensWithEnd) {
@@ -43,7 +44,7 @@ TEST(LexerErrorTest, MultipleTokensWithEnd) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, ReaderLocation{2, 1, 2}, E0000);
-  }, std::string("/test:1:1: ") + E0000 + "\n  1 | test\n    | ^~");
+  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~");
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterTokens) {
@@ -55,40 +56,40 @@ TEST(LexerErrorTest, MultipleTokensAfterTokens) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:5: ") + E0000 + "\n  1 | 1 + test\n    |     ^~~~");
+  }, std::string("/test:1:5: ") + E0000 + EOL "  1 | 1 + test" EOL "    |     ^~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
-  auto reader = testing::NiceMock<MockReader>("print()\n/*Hello");
+  auto reader = testing::NiceMock<MockReader>("print()" EOL "/*Hello");
   auto lexer = Lexer(&reader);
 
-  lexer.loc = ReaderLocation{8, 2, 0};
-  reader.loc = ReaderLocation{15, 2, 7};
+  lexer.loc = ReaderLocation{7 + std::string(EOL).size(), 2, 0};
+  reader.loc = ReaderLocation{14 + std::string(EOL).size(), 2, 7};
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:2:1: ") + E0001 + "\n  2 | /*Hello\n    | ^~~~~~~");
+  }, std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
-  auto reader = testing::NiceMock<MockReader>("print()\n/*Hello\nDenis");
+  auto reader = testing::NiceMock<MockReader>("print()" EOL "/*Hello" EOL "Denis");
   auto lexer = Lexer(&reader);
 
-  lexer.loc = ReaderLocation{8, 2, 0};
-  reader.loc = ReaderLocation{21, 3, 5};
+  lexer.loc = ReaderLocation{7 + std::string(EOL).size(), 2, 0};
+  reader.loc = ReaderLocation{19 + std::string(EOL).size() * 2, 3, 5};
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:2:1: ") + E0001 + "\n  2 | /*Hello\n    | ^~~~~~~");
+  }, std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~");
 }
 
 TEST(LexerErrorTest, MultipleTokensBeforeNewLine) {
-  auto reader = testing::NiceMock<MockReader>("/*Hello\nDenis");
+  auto reader = testing::NiceMock<MockReader>("/*Hello" EOL "Denis");
   auto lexer = Lexer(&reader);
 
   reader.loc = ReaderLocation{13, 2, 5};
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~");
+  }, std::string("/test:1:1: ") + E0001 + EOL "  1 | /*Hello" EOL "    | ^~~~~~~");
 }

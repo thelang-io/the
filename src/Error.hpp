@@ -27,6 +27,7 @@
 #define E0014 "E0014 - Binary float literals are not allowed"
 #define E0015 "E0015 - Hexadecimal float literals are not allowed"
 #define E0016 "E0016 - Octal float literals are not allowed"
+#define E0017 "E0017 - New line is not allowed as character literal"
 
 #define E0100 "E0100 - Unexpected statement"
 // #define E0101 "E0101 - Unexpected expression statement"

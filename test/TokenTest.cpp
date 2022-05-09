@@ -101,7 +101,7 @@ TEST(TokenTest, IsNotLitIntOct) {
 }
 
 TEST(TokenTest, IsLitStrEscape) {
-  EXPECT_TRUE(Token::isLitStrEscape('{'));
+  EXPECT_FALSE(Token::isLitStrEscape('{'));
   EXPECT_TRUE(Token::isLitStrEscape('n'));
 }
 

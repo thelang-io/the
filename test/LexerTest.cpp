@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include "../src/Lexer.hpp"
+#include "../src/config.hpp"
 #include "MockReader.hpp"
 #include "utils.hpp"
 
@@ -14,7 +15,7 @@ TEST(LexerTest, ThrowsOnUnknownToken) {
   auto reader = testing::NiceMock<MockReader>("@");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0000 + "\n  1 | @\n    | ^");
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0000 + EOL "  1 | @" EOL "    | ^");
 }
 
 TEST(LexerTest, LexEof) {
@@ -32,7 +33,7 @@ TEST(LexerTest, LexSingleWhitespace) {
 }
 
 TEST(LexerTest, LexMultipleWhitespaces) {
-  auto reader = testing::NiceMock<MockReader>(" \n\t");
+  auto reader = testing::NiceMock<MockReader>(" " EOL "\t");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(2:2-2:2)");
@@ -67,7 +68,7 @@ TEST(LexerTest, LexMultipleBlockComments) {
 }
 
 TEST(LexerTest, LexMultilineBlockComment) {
-  auto reader = testing::NiceMock<MockReader>("/*Hello Bella\nHello Olivia\nHello Rosa*/");
+  auto reader = testing::NiceMock<MockReader>("/*Hello Bella" EOL "Hello Olivia" EOL "Hello Rosa*/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(3:13-3:13)");
@@ -77,14 +78,14 @@ TEST(LexerTest, ThrowsOnEmptyNotClosedBlockComment) {
   auto reader = testing::NiceMock<MockReader>("/*");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + "\n  1 | /*\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + EOL "  1 | /*" EOL "    | ^~");
 }
 
 TEST(LexerTest, ThrowsOnNotClosedBlockComment) {
   auto reader = testing::NiceMock<MockReader>("/*Hello");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + "\n  1 | /*Hello\n    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0001 + EOL "  1 | /*Hello" EOL "    | ^~~~~~~");
 }
 
 TEST(LexerTest, LexEmptyLineCommentNoNewLine) {
@@ -95,7 +96,7 @@ TEST(LexerTest, LexEmptyLineCommentNoNewLine) {
 }
 
 TEST(LexerTest, LexEmptyLineComment) {
-  auto reader = testing::NiceMock<MockReader>("//\n");
+  auto reader = testing::NiceMock<MockReader>("//" EOL);
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(2:1-2:1)");
@@ -109,14 +110,14 @@ TEST(LexerTest, LexLineCommentNoNewLine) {
 }
 
 TEST(LexerTest, LexLineComment) {
-  auto reader = testing::NiceMock<MockReader>("//Hello Hailey\n");
+  auto reader = testing::NiceMock<MockReader>("//Hello Hailey" EOL);
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(2:1-2:1)");
 }
 
 TEST(LexerTest, LexWhitespacesCombinedWithComments) {
-  auto reader = testing::NiceMock<MockReader>(" \t\r//Hello Mary\n/*Hello Linda*/");
+  auto reader = testing::NiceMock<MockReader>(" \t\r//Hello Mary" EOL "/*Hello Linda*/");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(2:16-2:16)");
@@ -153,14 +154,14 @@ TEST(LexerTest, LexBlockCommentAfterToken) {
 }
 
 TEST(LexerTest, LexLineCommentBeforeToken) {
-  auto reader = testing::NiceMock<MockReader>("//Hello Kylie\n+");
+  auto reader = testing::NiceMock<MockReader>("//Hello Kylie" EOL "+");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "OP_PLUS(2:1-2:2): +");
 }
 
 TEST(LexerTest, LexLineCommentAfterToken) {
-  auto reader = testing::NiceMock<MockReader>("+//Hello Kylie\n");
+  auto reader = testing::NiceMock<MockReader>("+//Hello Kylie" EOL);
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "OP_PLUS(1:1-1:2): +");
@@ -720,9 +721,9 @@ TEST(LexerTest, LexLitChar) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:10-1:13): 'a'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:13-1:16): '9'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:16-1:20): '\\n')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:20-1:24): '\"')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:24-1:28): '\'')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:28-1:32): '\\')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:20-1:24): '\\"')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:24-1:28): '\\'')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:28-1:32): '\\\\')");
 }
 
 TEST(LexerTest, LexLitCharWhitespace) {
@@ -735,9 +736,9 @@ TEST(LexerTest, LexLitCharWhitespace) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:14-1:17): 'a'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:18-1:21): '9'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:22-1:26): '\\n')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:27-1:31): '\"')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:32-1:36): '\'')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:37-1:41): '\\')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:27-1:31): '\\"')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:32-1:36): '\\'')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:37-1:41): '\\\\')");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:42-1:42)");
 }
 
@@ -768,9 +769,9 @@ TEST(LexerTest, LexLitCharEof) {
   EXPECT_EQ(std::get<1>(l4.next()).str(), "LIT_CHAR(1:1-1:4): 'a'");
   EXPECT_EQ(std::get<1>(l5.next()).str(), "LIT_CHAR(1:1-1:4): '9'");
   EXPECT_EQ(std::get<1>(l6.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\n')");
-  EXPECT_EQ(std::get<1>(l7.next()).str(), R"(LIT_CHAR(1:1-1:5): '\"')");
-  EXPECT_EQ(std::get<1>(l8.next()).str(), R"(LIT_CHAR(1:1-1:5): '\'')");
-  EXPECT_EQ(std::get<1>(l9.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\')");
+  EXPECT_EQ(std::get<1>(l7.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\"')");
+  EXPECT_EQ(std::get<1>(l8.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\'')");
+  EXPECT_EQ(std::get<1>(l9.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\\\')");
 }
 
 TEST(LexerTest, ThrowsOnNotClosedLitChar) {
@@ -784,17 +785,17 @@ TEST(LexerTest, ThrowsOnNotClosedLitChar) {
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | '\n    | ^");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | 'a\n    | ^~");
-  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | '\\\n    | ^~");
-  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0002 + "\n  1 | '\\n\n    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0002 + EOL "  1 | '" EOL "    | ^");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0002 + EOL "  1 | 'a" EOL "    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0002 + EOL "  1 | '\\" EOL "    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0002 + EOL "  1 | '\\n" EOL "    | ^~~");
 }
 
 TEST(LexerTest, ThrowsOnEmptyLitChar) {
   auto reader = testing::NiceMock<MockReader>("''");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0004 + "\n  1 | ''\n    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:1: ") + E0004 + EOL "  1 | ''" EOL "    | ^~");
 }
 
 TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
@@ -808,10 +809,10 @@ TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m\n    |  ^~");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\m'\n    |  ^~");
-  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma\n    |  ^~");
-  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:2: ") + E0005 + "\n  1 | '\\ma'\n    |  ^~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:2: ") + E0005 + EOL "  1 | '\\m" EOL "    |  ^~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:2: ") + E0005 + EOL "  1 | '\\m'" EOL "    |  ^~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:2: ") + E0005 + EOL "  1 | '\\ma" EOL "    |  ^~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:2: ") + E0005 + EOL "  1 | '\\ma'" EOL "    |  ^~");
 }
 
 TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
@@ -821,8 +822,15 @@ TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0006 + "\n  1 | 'ch\n    | ^~~");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0006 + "\n  1 | 'char'\n    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0006 + EOL "  1 | 'ch" EOL "    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0006 + EOL "  1 | 'char'" EOL "    | ^~~~~~");
+}
+
+TEST(LexerTest, ThrowsOnLitCharNewLineChar) {
+  auto r1 = testing::NiceMock<MockReader>("'" EOL "'");
+  auto l1 = Lexer(&r1);
+
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0017 + EOL "  1 | '" EOL "    | ^");
 }
 
 TEST(LexerTest, LexLitFloat) {
@@ -961,21 +969,21 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
   auto l14 = Lexer(&r14);
   auto l15 = Lexer(&r15);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.a\n    | ^~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.aZ\n    | ^~~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.0a\n    | ^~~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l5.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234.1aZ\n    | ^~~~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l6.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e\n    |     ^");
-  EXPECT_THROW_WITH_MESSAGE(l7.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+\n    |     ^~");
-  EXPECT_THROW_WITH_MESSAGE(l8.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-\n    |     ^~");
-  EXPECT_THROW_WITH_MESSAGE(l9.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+a1\n    |     ^~~~");
-  EXPECT_THROW_WITH_MESSAGE(l10.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZ\n    |     ^~");
-  EXPECT_THROW_WITH_MESSAGE(l11.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234eZa\n    |     ^~~");
-  EXPECT_THROW_WITH_MESSAGE(l12.next(), std::string("/test:1:1: ") + E0012 + "\n  1 | 1234e5e6\n    | ^~~~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l13.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e)\n    |     ^");
-  EXPECT_THROW_WITH_MESSAGE(l14.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e+)\n    |     ^~");
-  EXPECT_THROW_WITH_MESSAGE(l15.next(), std::string("/test:1:5: ") + E0013 + "\n  1 | 1234e-h)\n    |     ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0012 + EOL "  1 | 1234." EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0012 + EOL "  1 | 1234.a" EOL "    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0012 + EOL "  1 | 1234.aZ" EOL "    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0012 + EOL "  1 | 1234.0a" EOL "    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l5.next(), std::string("/test:1:1: ") + E0012 + EOL "  1 | 1234.1aZ" EOL "    | ^~~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l6.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e" EOL "    |     ^");
+  EXPECT_THROW_WITH_MESSAGE(l7.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e+" EOL "    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l8.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e-" EOL "    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l9.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e+a1" EOL "    |     ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l10.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234eZ" EOL "    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l11.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234eZa" EOL "    |     ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l12.next(), std::string("/test:1:1: ") + E0012 + EOL "  1 | 1234e5e6" EOL "    | ^~~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l13.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e)" EOL "    |     ^");
+  EXPECT_THROW_WITH_MESSAGE(l14.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e+)" EOL "    |     ^~");
+  EXPECT_THROW_WITH_MESSAGE(l15.next(), std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e-h)" EOL "    |     ^~~");
 }
 
 TEST(LexerTest, ThrowsOnNonDecLitFloat) {
@@ -987,9 +995,9 @@ TEST(LexerTest, ThrowsOnNonDecLitFloat) {
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0014 + "\n  1 | 0b1.0\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0015 + "\n  1 | 0xa.0\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0016 + "\n  1 | 0o1.0\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0014 + EOL "  1 | 0b1.0" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0015 + EOL "  1 | 0xa.0" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0016 + EOL "  1 | 0o1.0" EOL "    | ^~~~~");
 }
 
 TEST(LexerTest, LexLitInteger) {
@@ -1164,8 +1172,8 @@ TEST(LexerTest, ThrowsOnLitIntegerWithLeadingZero) {
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0007 + "\n  1 | 04\n    | ^~");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0007 + "\n  1 | 0400e0\n    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0007 + EOL "  1 | 04" EOL "    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0007 + EOL "  1 | 0400e0" EOL "    | ^~~~~~");
 }
 
 TEST(LexerTest, ThrowsOnInvalidLitInteger) {
@@ -1213,27 +1221,27 @@ TEST(LexerTest, ThrowsOnInvalidLitInteger) {
   auto l20 = Lexer(&r20);
   auto l21 = Lexer(&r21);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0B\n    | ^~");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0bG\n    | ^~~");
-  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0bGz\n    | ^~~~");
-  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1g\n    | ^~~~");
-  EXPECT_THROW_WITH_MESSAGE(l5.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1gZ\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l6.next(), std::string("/test:1:1: ") + E0008 + "\n  1 | 0b1b0\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l7.next(), std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l8.next(), std::string("/test:1:1: ") + E0009 + "\n  1 | 1234gZ\n    | ^~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l9.next(), std::string("/test:1:1: ") + E0009 + "\n  1 | 1234g0a\n    | ^~~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l10.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0x\n    | ^~");
-  EXPECT_THROW_WITH_MESSAGE(l11.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0xG\n    | ^~~");
-  EXPECT_THROW_WITH_MESSAGE(l12.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0xGz\n    | ^~~~");
-  EXPECT_THROW_WITH_MESSAGE(l13.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0Xag\n    | ^~~~");
-  EXPECT_THROW_WITH_MESSAGE(l14.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0XagZ\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l15.next(), std::string("/test:1:1: ") + E0010 + "\n  1 | 0x1x2\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l16.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0o\n    | ^~");
-  EXPECT_THROW_WITH_MESSAGE(l17.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0oG\n    | ^~~");
-  EXPECT_THROW_WITH_MESSAGE(l18.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0oGz\n    | ^~~~");
-  EXPECT_THROW_WITH_MESSAGE(l19.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1g\n    | ^~~~");
-  EXPECT_THROW_WITH_MESSAGE(l20.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0O1gZ\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l21.next(), std::string("/test:1:1: ") + E0011 + "\n  1 | 0o1o2\n    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0008 + EOL "  1 | 0B" EOL "    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0008 + EOL "  1 | 0bG" EOL "    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0008 + EOL "  1 | 0bGz" EOL "    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0008 + EOL "  1 | 0b1g" EOL "    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l5.next(), std::string("/test:1:1: ") + E0008 + EOL "  1 | 0b1gZ" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l6.next(), std::string("/test:1:1: ") + E0008 + EOL "  1 | 0b1b0" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l7.next(), std::string("/test:1:1: ") + E0009 + EOL "  1 | 1234g" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l8.next(), std::string("/test:1:1: ") + E0009 + EOL "  1 | 1234gZ" EOL "    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l9.next(), std::string("/test:1:1: ") + E0009 + EOL "  1 | 1234g0a" EOL "    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l10.next(), std::string("/test:1:1: ") + E0010 + EOL "  1 | 0x" EOL "    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l11.next(), std::string("/test:1:1: ") + E0010 + EOL "  1 | 0xG" EOL "    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l12.next(), std::string("/test:1:1: ") + E0010 + EOL "  1 | 0xGz" EOL "    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l13.next(), std::string("/test:1:1: ") + E0010 + EOL "  1 | 0Xag" EOL "    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l14.next(), std::string("/test:1:1: ") + E0010 + EOL "  1 | 0XagZ" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l15.next(), std::string("/test:1:1: ") + E0010 + EOL "  1 | 0x1x2" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l16.next(), std::string("/test:1:1: ") + E0011 + EOL "  1 | 0o" EOL "    | ^~");
+  EXPECT_THROW_WITH_MESSAGE(l17.next(), std::string("/test:1:1: ") + E0011 + EOL "  1 | 0oG" EOL "    | ^~~");
+  EXPECT_THROW_WITH_MESSAGE(l18.next(), std::string("/test:1:1: ") + E0011 + EOL "  1 | 0oGz" EOL "    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l19.next(), std::string("/test:1:1: ") + E0011 + EOL "  1 | 0O1g" EOL "    | ^~~~");
+  EXPECT_THROW_WITH_MESSAGE(l20.next(), std::string("/test:1:1: ") + E0011 + EOL "  1 | 0O1gZ" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l21.next(), std::string("/test:1:1: ") + E0011 + EOL "  1 | 0o1o2" EOL "    | ^~~~~");
 }
 
 TEST(LexerTest, LexLitStr) {
@@ -1241,7 +1249,7 @@ TEST(LexerTest, LexLitStr) {
     R"("")"
     R"("test")"
     R"("Hello,\nWorld!")"
-    "\"Hello,\nWorld!\""
+    "\"Hello," EOL "World!\""
     R"("multiple \\n lines")"
     R"("\\0\\r\\t\"\'\\\0\r\t")"
   );
@@ -1251,9 +1259,9 @@ TEST(LexerTest, LexLitStr) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:1-1:3): "")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:3-1:9): "test")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:9-1:25): "Hello,\\nWorld!")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:25-2:8): "Hello,\nWorld!")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:8-2:28): "multiple \\\n lines")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:28-2:51): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:25-2:8): "Hello,)" ESC_EOL R"(World!")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:8-2:28): "multiple \\\\n lines")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:28-2:51): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
 }
 
 TEST(LexerTest, LexLitStrWhitespace) {
@@ -1270,8 +1278,8 @@ TEST(LexerTest, LexLitStrWhitespace) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:2-1:4): "")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:5-1:11): "test")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:12-1:28): "Hello,\\nWorld!")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:29-1:49): "multiple \\\n lines")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:50-1:73): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:29-1:49): "multiple \\\\n lines")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:50-1:73): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
 }
 
 TEST(LexerTest, LexLitStrEof) {
@@ -1290,8 +1298,8 @@ TEST(LexerTest, LexLitStrEof) {
   EXPECT_EQ(std::get<1>(l1.next()).str(), R"(LIT_STR(1:1-1:3): "")");
   EXPECT_EQ(std::get<1>(l2.next()).str(), R"(LIT_STR(1:1-1:7): "test")");
   EXPECT_EQ(std::get<1>(l3.next()).str(), R"(LIT_STR(1:1-1:17): "Hello,\\nWorld!")");
-  EXPECT_EQ(std::get<1>(l4.next()).str(), R"(LIT_STR(1:1-1:21): "multiple \\\n lines")");
-  EXPECT_EQ(std::get<1>(l5.next()).str(), R"(LIT_STR(1:1-1:24): "\\\0\\\r\\\t\"\'\\\\0\\r\\t")");
+  EXPECT_EQ(std::get<1>(l4.next()).str(), R"(LIT_STR(1:1-1:21): "multiple \\\\n lines")");
+  EXPECT_EQ(std::get<1>(l5.next()).str(), R"(LIT_STR(1:1-1:24): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
 }
 
 TEST(LexerTest, ThrowsOnEmptyLitStr) {
@@ -1305,21 +1313,21 @@ TEST(LexerTest, ThrowsOnEmptyLitStr) {
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
 
-  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"\n    | ^");
-  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\n    | ^~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\n    | ^~~~~~");
-  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0003 + "\n  1 | \"text\\\"\n    | ^~~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l1.next(), std::string("/test:1:1: ") + E0003 + EOL "  1 | \"" EOL "    | ^");
+  EXPECT_THROW_WITH_MESSAGE(l2.next(), std::string("/test:1:1: ") + E0003 + EOL "  1 | \"text" EOL "    | ^~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l3.next(), std::string("/test:1:1: ") + E0003 + EOL "  1 | \"text\\" EOL "    | ^~~~~~");
+  EXPECT_THROW_WITH_MESSAGE(l4.next(), std::string("/test:1:1: ") + E0003 + EOL "  1 | \"text\\\"" EOL "    | ^~~~~~~");
 }
 
 TEST(LexerTest, ThrowsOnLitStrIllegalEscSeq) {
   auto reader = testing::NiceMock<MockReader>(R"("Hello, \m World!")");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:9: ") + E0005 + "\n  1 | \"Hello, \\m World!\"\n    |         ^~");
+  EXPECT_THROW_WITH_MESSAGE(lexer.next(), std::string("/test:1:9: ") + E0005 + EOL "  1 | \"Hello, \\m World!\"" EOL "    |         ^~");
 }
 
 TEST(LexerTest, SeeksTo) {
-  auto reader = testing::NiceMock<MockReader>("main {\n  print(\"Hello, World!\")\n}\n");
+  auto reader = testing::NiceMock<MockReader>("main {" EOL "  print(\"Hello, World!\")" EOL "}" EOL);
   auto lexer = Lexer(&reader);
 
   lexer.seek(ReaderLocation{7, 1, 7});

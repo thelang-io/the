@@ -15,7 +15,7 @@
 class CodegenTest : public testing::TestWithParam<const char *> {
 };
 
-TEST_P(CodegenTest,) {
+TEST_P(CodegenTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto testContent = readTestFile("codegen", param);
 

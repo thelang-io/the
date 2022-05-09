@@ -6,6 +6,7 @@
  */
 
 #include "Lexer.hpp"
+#include "config.hpp"
 
 Lexer::Lexer (Reader *r) {
   this->reader = r;
@@ -176,7 +177,7 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
       }
 
       auto [loc1, ch1] = this->reader->next();
-      this->val += ch1;
+      this->val += (ch1 == '\n') ? EOL : std::string(1, ch1);
 
       if (ch1 == '\\') {
         if (this->reader->eof()) {
@@ -205,7 +206,9 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
     auto [loc1, ch1] = this->reader->next();
     this->val += ch1;
 
-    if (ch1 == '\'') {
+    if (ch1 == '\n') {
+      throw Error(this->reader, this->loc, E0017);
+    } else if (ch1 == '\'') {
       throw Error(this->reader, this->loc, E0004);
     } else if (this->reader->eof()) {
       throw Error(this->reader, this->loc, E0002);
