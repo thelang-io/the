@@ -105,6 +105,21 @@ INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenTest, testing::Values(
   "expr-assign-str"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenTest, testing::Values(
+  "expr-lit-bool-false",
+  "expr-lit-bool-true",
+  "expr-lit-char",
+  "expr-lit-char-esc",
+  "expr-lit-float",
+  "expr-lit-float-exp",
+  "expr-lit-int-bin",
+  "expr-lit-int-dec",
+  "expr-lit-int-hex",
+  "expr-lit-int-oct",
+  "expr-lit-str",
+  "expr-lit-str-esc"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
   "node-var-decl-bool",
   "node-var-decl-bool-init",

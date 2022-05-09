@@ -1,0 +1,46 @@
+======= stdin =======
+main {
+  a := 0E0
+  b := 0e1
+  c := 1e308
+  d := 1e+0
+  e := 18446744073709551615e+1
+  f := 18446744073709551615e-308
+  g := 0.E0
+  h := 0.E1
+  l := 1.e308
+  m := 1.e+0
+  n := 18446744073709551615.e+1
+  o := 18446744073709551615.e-308
+  p := 0.0E0
+  q := 0.0e1
+  r := 1.1e308
+  s := 1.1e308
+  t := 1.1E+0
+  u := 18446744073709551615.18446744073709551615e+1
+  v := 18446744073709551615.18446744073709551615E-308
+}
+======= code =======
+int main () {
+  const double __THE_0_a_0 = 0E0;
+  const double __THE_0_b_0 = 0e1;
+  const double __THE_0_c_0 = 1e308;
+  const double __THE_0_d_0 = 1e+0;
+  const double __THE_0_e_0 = 18446744073709551615e+1;
+  const double __THE_0_f_0 = 18446744073709551615e-308;
+  const double __THE_0_g_0 = 0.E0;
+  const double __THE_0_h_0 = 0.E1;
+  const double __THE_0_l_0 = 1.e308;
+  const double __THE_0_m_0 = 1.e+0;
+  const double __THE_0_n_0 = 18446744073709551615.e+1;
+  const double __THE_0_o_0 = 18446744073709551615.e-308;
+  const double __THE_0_p_0 = 0.0E0;
+  const double __THE_0_q_0 = 0.0e1;
+  const double __THE_0_r_0 = 1.1e308;
+  const double __THE_0_s_0 = 1.1e308;
+  const double __THE_0_t_0 = 1.1E+0;
+  const double __THE_0_u_0 = 18446744073709551615.18446744073709551615e+1;
+  const double __THE_0_v_0 = 18446744073709551615.18446744073709551615E-308;
+}
+======= flags =======
+======= stdout =======
