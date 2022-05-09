@@ -8,6 +8,7 @@
 #include "Reader.hpp"
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 #include "Error.hpp"
 #include "config.hpp"
 

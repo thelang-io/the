@@ -14,7 +14,7 @@
   #define OS_WINDOWS
 #else
   #define EOL "\n"
-  #define ESC_OL "\\n"
+  #define ESC_EOL "\\n"
   #define OS_UNIX
 #endif
 
