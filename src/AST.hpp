@@ -21,6 +21,7 @@ class AST {
   explicit AST (Parser *);
 
   virtual ASTBlock gen ();
+  virtual std::string xml ();
 
  private:
   AST (const AST &);

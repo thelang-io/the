@@ -6,6 +6,7 @@
  */
 
 #include "VarStack.hpp"
+#include "config.hpp"
 
 std::string Var::xml (std::size_t indent) const {
   if (this->builtin) {
@@ -17,8 +18,8 @@ std::string Var::xml (std::size_t indent) const {
   result += R"(" codeName=")" + this->codeName;
   result += R"(" frame=")" + std::to_string(this->frame);
   result += R"(" mut=")" + std::string(this->mut ? "true" : "false");
-  result += R"(" name=")" + this->name + R"(">)" "\n";
-  result += this->type->xml(indent + 2) + "\n";
+  result += R"(" name=")" + this->name + R"(">)" EOL;
+  result += this->type->xml(indent + 2) + EOL;
 
   return result + std::string(indent, ' ') + "</Var>";
 }

@@ -7,6 +7,7 @@
 
 #include "AST.hpp"
 #include "Parser.hpp"
+#include "config.hpp"
 
 AST::AST (Parser *p) {
   this->parser = p;
@@ -33,6 +34,16 @@ ASTBlock AST::gen () {
   auto mainVarStack = VarStack({});
   auto result = this->_block(block, mainVarStack);
   this->varMap.restore();
+
+  return result;
+}
+
+std::string AST::xml () {
+  auto result = std::string();
+
+  for (const auto &node : this->gen()) {
+    result += node.xml() + EOL;
+  }
 
   return result;
 }

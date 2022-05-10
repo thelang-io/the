@@ -8,6 +8,7 @@
 #include "TypeMap.hpp"
 #include <limits>
 #include "Error.hpp"
+#include "config.hpp"
 
 bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
   return (lhs == "i8" && rhs == "i8") ||
@@ -176,18 +177,18 @@ std::string Type::xml (std::size_t indent) const {
     result += R"(" name=")" + this->name;
   }
 
-  result += R"(" type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" "\n";
+  result += R"(" type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" EOL;
   indent += 2;
 
   if (std::holds_alternative<TypeFn>(this->body)) {
     auto typeFn = std::get<TypeFn>(this->body);
 
-    result += std::string(indent, ' ') + R"(<slot name="returnType">)" "\n";
-    result += typeFn.returnType->xml(indent + 2) + "\n";
-    result += std::string(indent, ' ') + "</slot>\n";
+    result += std::string(indent, ' ') + R"(<slot name="returnType">)" EOL;
+    result += typeFn.returnType->xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</slot>" EOL;
 
     if (!typeFn.params.empty()) {
-      result += std::string(indent, ' ') + R"(<slot name="params">)" "\n";
+      result += std::string(indent, ' ') + R"(<slot name="params">)" EOL;
 
       for (const auto &typeFnParam : typeFn.params) {
         result += std::string(indent + 2, ' ') + "<TypeFnParam";
@@ -197,26 +198,26 @@ std::string Type::xml (std::size_t indent) const {
         }
 
         result += R"( required=")" + std::string(typeFnParam.required ? "true" : "false");
-        result += R"(" variadic=")" + std::string(typeFnParam.variadic ? "true" : "false") + R"(">)" "\n";
-        result += typeFnParam.type->xml(indent + 4) + "\n";
-        result += std::string(indent + 2, ' ') + "</TypeFnParam>\n";
+        result += R"(" variadic=")" + std::string(typeFnParam.variadic ? "true" : "false") + R"(">)" EOL;
+        result += typeFnParam.type->xml(indent + 4) + EOL;
+        result += std::string(indent + 2, ' ') + "</TypeFnParam>" EOL;
       }
 
-      result += std::string(indent, ' ') + "</slot>\n";
+      result += std::string(indent, ' ') + "</slot>" EOL;
     }
   } else {
     auto typeObj = std::get<TypeObj>(this->body);
 
     if (!typeObj.fields.empty()) {
-      result += std::string(indent, ' ') + R"(<slot name="fields">)" "\n";
+      result += std::string(indent, ' ') + R"(<slot name="fields">)" EOL;
 
       for (const auto &typeObjField : typeObj.fields) {
-        result += std::string(indent + 2, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" "\n";
-        result += typeObjField.type->xml(indent + 4) + "\n";
-        result += std::string(indent + 2, ' ') + "</TypeObjField>\n";
+        result += std::string(indent + 2, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" EOL;
+        result += typeObjField.type->xml(indent + 4) + EOL;
+        result += std::string(indent + 2, ' ') + "</TypeObjField>" EOL;
       }
 
-      result += std::string(indent, ' ') + "</slot>\n";
+      result += std::string(indent, ' ') + "</slot>" EOL;
     }
   }
 

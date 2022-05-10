@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include "../src/AST.hpp"
+#include "../src/config.hpp"
 #include "MockParser.hpp"
 #include "utils.hpp"
 
@@ -18,52 +19,51 @@ class ASTThrowTest : public testing::TestWithParam<const char *> {
 
 TEST_P(ASTPassTest, Passes) {
   auto testContent = readTestFile("ast", testing::TestWithParam<const char *>::GetParam());
+  auto stdinDelimiter = std::string("======= stdin =======" EOL);
 
-  if (testContent.substr(0, 21) != "======= stdin =======") {
+  if (!testContent.starts_with(stdinDelimiter)) {
     throw Error("AST pass test file doesn't look like an actual test");
   }
 
-  auto delimiter = std::string("\n======= stdout =======\n");
-  auto delimiterPos = testContent.find(delimiter);
+  testContent = testContent.substr(stdinDelimiter.size());
+  auto stdoutDelimiter = std::string("======= stdout =======" EOL);
+  auto stdoutDelimiterPos = testContent.find(stdoutDelimiter);
 
-  if (delimiterPos == std::string::npos) {
+  if (stdoutDelimiterPos == std::string::npos) {
     throw Error("AST pass test file doesn't have a delimiter");
   }
 
-  auto testStdin = delimiterPos > 22 ? testContent.substr(22, delimiterPos - 22) : "";
-  auto expectedOutput = testContent.substr(delimiterPos + delimiter.size());
+  auto testStdin = testContent.substr(0, stdoutDelimiterPos);
+  auto expectedOutput = testContent.substr(stdoutDelimiterPos + stdoutDelimiter.size());
   auto parser = testing::NiceMock<MockParser>(testStdin);
   auto ast = AST(&parser);
-  auto actualOutput = std::string();
 
-  for (const auto &node : ast.gen()) {
-    actualOutput += node.xml() + "\n";
-  }
-
-  EXPECT_EQ(expectedOutput, actualOutput);
+  EXPECT_EQ(expectedOutput, ast.xml());
 }
 
 TEST_P(ASTThrowTest, Throws) {
   auto testContent = readTestFile("ast", testing::TestWithParam<const char *>::GetParam());
+  auto stdinDelimiter = std::string("======= stdin =======" EOL);
 
-  if (testContent.substr(0, 21) != "======= stdin =======") {
+  if (!testContent.starts_with(stdinDelimiter)) {
     throw Error("AST throw test file doesn't look like an actual test");
   }
 
-  auto delimiter = std::string("\n======= stderr =======\n");
-  auto delimiterPos = testContent.find(delimiter);
+  testContent = testContent.substr(stdinDelimiter.size());
+  auto stderrDelimiter = std::string("======= stderr =======" EOL);
+  auto stderrDelimiterPos = testContent.find(stderrDelimiter);
 
-  if (delimiterPos == std::string::npos) {
+  if (stderrDelimiterPos == std::string::npos) {
     throw Error("AST throw test file doesn't have a delimiter");
   }
 
-  auto delimiterEndPos = delimiterPos + delimiter.size();
-  auto testStdin = testContent.substr(22, delimiterPos - 22);
-  auto expectedOutput = testContent.substr(delimiterEndPos, testContent.size() - delimiterEndPos - 1);
+  auto testStdin = testContent.substr(0, stderrDelimiterPos - std::string(EOL).size());
+  testContent = testContent.substr(stderrDelimiterPos + stderrDelimiter.size());
+  auto expectedOutput = testContent.substr(0, testContent.size() - std::string(EOL).size());
   auto parser = testing::NiceMock<MockParser>(testStdin);
   auto ast = AST(&parser);
 
-  EXPECT_THROW_WITH_MESSAGE(ast.gen(), expectedOutput);
+  EXPECT_THROW_WITH_MESSAGE(ast.xml(), expectedOutput);
 }
 
 INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
