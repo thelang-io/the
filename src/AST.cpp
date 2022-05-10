@@ -544,19 +544,13 @@ Type *AST::_stmtExprType (const ParserStmtExpr &stmtExpr) {
     return exprObjVar->type;
   } else if (std::holds_alternative<ParserExprUnary>(*stmtExpr.body)) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
-    auto exprUnaryType = this->_stmtExprType(exprUnary.arg);
+    auto exprUnaryArgType = this->_stmtExprType(exprUnary.arg);
 
-    if (
-      exprUnaryType->isBool() ||
-      exprUnaryType->isChar() ||
-      exprUnaryType->isFn() ||
-      exprUnaryType->isObj() ||
-      exprUnaryType->isStr()
-    ) {
-      return this->typeMap.get("int");
+    if (exprUnary.op.type == TK_OP_EXCL || exprUnary.op.type == TK_OP_EXCL_EXCL) {
+      return this->typeMap.get("bool");
     }
 
-    return exprUnaryType;
+    return exprUnaryArgType;
   }
 
   throw Error("Error: tried to analyze unknown expression type");

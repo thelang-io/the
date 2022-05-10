@@ -43,13 +43,13 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
-            <BuiltinType name="int" />
+            <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="int" />
+              <BuiltinType name="bool" />
             </slot>
             <slot name="body">
               <ExprUnary op="LOGICAL_NOT" prefix="true">
@@ -261,13 +261,13 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var builtin="false" codeName="l_0" frame="2" mut="false" name="l">
-            <BuiltinType name="int" />
+            <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="int" />
+              <BuiltinType name="bool" />
             </slot>
             <slot name="body">
               <ExprUnary op="DOUBLE_LOGICAL_NOT" prefix="true">
@@ -323,13 +323,13 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var builtin="false" codeName="n_0" frame="2" mut="false" name="n">
-            <BuiltinType name="int" />
+            <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="int" />
+              <BuiltinType name="bool" />
             </slot>
             <slot name="body">
               <ExprUnary op="LOGICAL_NOT" prefix="true">
@@ -353,13 +353,13 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var builtin="false" codeName="o_0" frame="2" mut="false" name="o">
-            <BuiltinType name="int" />
+            <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="int" />
+              <BuiltinType name="bool" />
             </slot>
             <slot name="body">
               <ExprUnary op="LOGICAL_NOT" prefix="true">
@@ -383,13 +383,13 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var builtin="false" codeName="p_0" frame="2" mut="false" name="p">
-            <BuiltinType name="int" />
+            <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="int" />
+              <BuiltinType name="bool" />
             </slot>
             <slot name="body">
               <ExprUnary op="LOGICAL_NOT" prefix="true">

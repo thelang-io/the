@@ -120,6 +120,12 @@ INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenTest, testing::Values(
   "expr-lit-str-esc"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenTest, testing::Values(
+  "expr-unary",
+  "expr-unary-nested",
+  "expr-unary-str"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
   "node-var-decl-bool",
   "node-var-decl-bool-init",

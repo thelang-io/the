@@ -1,0 +1,375 @@
+======= stdin =======
+main {
+  zBoolTrue := true     zBoolFalse := false
+  zByteEmpty: byte = 0  zByte: byte = 0xA
+  zCharEmpty := '\0'    zChar := 'a'
+  zFloatEmpty := 0.0    zFloatNeg := -3.14   zFloat := 3.14
+  zF32Empty: f32 = 0    zF32Neg: f32 = -3.14 zF32: f32 = 3.14
+  zF64Empty: f64 = 0    zF64Neg: f64 = -3.14 zF64: f64 = -3.14
+  zIntEmpty: int = 0    zIntNeg: int = -3    zInt: int = 3
+  zI8Empty: i8 = 0      zI8Neg: i8 = -3      zI8: i8 = 3
+  zI16Empty: i16 = 0    zI16Neg: i16 = -3    zI16: i16 = 3
+  zI32Empty: i32 = 0    zI32Neg: i32 = -3    zI32: i32 = 3
+  zI64Empty: i64 = 0    zI64Neg: i64 = -3    zI64: i64 = 3
+  zU8Empty: u8 = 0      zU8: u8 = 3
+  zU16Empty: u16 = 0    zU16: u16 = 3
+  zU32Empty: u32 = 0    zU32: u32 = 3
+  zU64Empty: u64 = 0    zU64: u64 = 3
+
+  a01 := !true          a02 := !false
+  a03 := !'\0'          a04 := !'a'
+  a05 := !0             a06 := !3
+  a07 := !0x0           a08 := !0xF
+  a09 := !0o0           a00 := !0o7
+  a11 := !0b0           a12 := !0b1
+  a13 := !0.0           a14 := !3.14
+  a15 := !!true         a16 := !!false
+  a17 := !!'\0'         a18 := !!'a'
+  a19 := !!0            a10 := !!3
+  a21 := !!0x0          a22 := !!0xF
+  a23 := !!0o0          a24 := !!0o7
+  a25 := !!0b0          a26 := !!0b1
+  a27 := !!0.0          a28 := !!3.14
+  a29 := ~0             a20 := ~3
+  a31 := ~0x0           a32 := ~0xF
+  a33 := ~0o0           a34 := ~0o7
+  a35 := ~0b0           a36 := ~0b1
+  a37 := -0             a38 := -3
+  a39 := -0x0           a30 := -0xF
+  a41 := -0o0           a42 := -0o7
+  a43 := -0b0           a44 := -0b1
+  a45 := -0.0           a46 := -3.14
+  a47 := +0             a48 := +3
+  a49 := +0x0           a40 := +0xF
+  a51 := +0o0           a52 := +0o7
+  a53 := +0b0           a54 := +0b1
+  a55 := +0.0           a56 := +3.14
+
+  mut i := 0
+  z0 := i++
+  z1 := i--
+  z2 := ++i
+  z3 := --i
+
+  a001 := !zBoolTrue    a002 := !zBoolFalse
+  a003 := !zByteEmpty   a004 := !zByte
+  a005 := !zCharEmpty   a006 := !zChar
+  a007 := !zFloatEmpty  a008 := !zFloatNeg   a009 := !zFloat
+  a010 := !zF32Empty    a011 := !zF32Neg     a012 := !zF32
+  a013 := !zF64Empty    a014 := !zF64Neg     a015 := !zF64
+  a016 := !zIntEmpty    a017 := !zIntNeg     a018 := !zInt
+  a019 := !zI8Empty     a020 := !zI8Neg      a021 := !zI8
+  a022 := !zI16Empty    a023 := !zI16Neg     a024 := !zI16
+  a025 := !zI32Empty    a026 := !zI32Neg     a027 := !zI32
+  a028 := !zI64Empty    a029 := !zI64Neg     a030 := !zI64
+  a031 := !zU8Empty     a032 := !zU8
+  a033 := !zU16Empty    a034 := !zU16
+  a035 := !zU32Empty    a036 := !zU32
+  a037 := !zU64Empty    a038 := !zU64
+  a039 := !!zBoolTrue   a040 := !!zBoolFalse
+  a041 := !!zByteEmpty  a042 := !!zByte
+  a043 := !!zCharEmpty  a044 := !!zChar
+  a045 := !!zFloatEmpty a046 := !!zFloatNeg  a047 := !!zFloat
+  a048 := !!zF32Empty   a049 := !!zF32Neg    a050 := !!zF32
+  a051 := !!zF64Empty   a052 := !!zF64Neg    a053 := !!zF64
+  a054 := !!zIntEmpty   a055 := !!zIntNeg    a056 := !!zInt
+  a057 := !!zI8Empty    a058 := !!zI8Neg     a059 := !!zI8
+  a060 := !!zI16Empty   a061 := !!zI16Neg    a062 := !!zI16
+  a063 := !!zI32Empty   a064 := !!zI32Neg    a065 := !!zI32
+  a066 := !!zI64Empty   a067 := !!zI64Neg    a068 := !!zI64
+  a069 := !!zU8Empty    a070 := !!zU8
+  a071 := !!zU16Empty   a072 := !!zU16
+  a073 := !!zU32Empty   a074 := !!zU32
+  a075 := !!zU64Empty   a076 := !!zU64
+  a077 := -zFloatEmpty  a078 := -zFloatNeg   a079 := -zFloat
+  a080 := -zF32Empty    a081 := -zF32Neg     a082 := -zF32
+  a083 := -zF64Empty    a084 := -zF64Neg     a085 := -zF64
+  a086 := -zIntEmpty    a087 := -zIntNeg     a088 := -zInt
+  a089 := -zI8Empty     a090 := -zI8Neg      a091 := -zI8
+  a092 := -zI16Empty    a093 := -zI16Neg     a094 := -zI16
+  a095 := -zI32Empty    a096 := -zI32Neg     a097 := -zI32
+  a098 := -zI64Empty    a099 := -zI64Neg     a100 := -zI64
+  a109 := +zFloatEmpty  a110 := +zFloatNeg   a111 := +zFloat
+  a112 := +zF32Empty    a113 := +zF32Neg     a114 := +zF32
+  a115 := +zF64Empty    a116 := +zF64Neg     a117 := +zF64
+  a118 := +zIntEmpty    a119 := +zIntNeg     a120 := +zInt
+  a121 := +zI8Empty     a122 := +zI8Neg      a123 := +zI8
+  a124 := +zI16Empty    a125 := +zI16Neg     a126 := +zI16
+  a127 := +zI32Empty    a128 := +zI32Neg     a129 := +zI32
+  a130 := +zI64Empty    a131 := +zI64Neg     a132 := +zI64
+  a133 := +zU8Empty     a134 := +zU8
+  a135 := +zU16Empty    a136 := +zU16
+  a137 := +zU32Empty    a138 := +zU32
+  a139 := +zU64Empty    a140 := +zU64
+  a150 := ~zIntEmpty    a151 := ~zIntNeg     a152 := ~zInt
+  a153 := ~zI8Empty     a154 := ~zI8Neg      a155 := ~zI8
+  a156 := ~zI16Empty    a157 := ~zI16Neg     a158 := ~zI16
+  a159 := ~zI32Empty    a160 := ~zI32Neg     a161 := ~zI32
+  a162 := ~zI64Empty    a163 := ~zI64Neg     a164 := ~zI64
+  a165 := ~zU8Empty     a166 := ~zU8
+  a167 := ~zU16Empty    a168 := ~zU16
+  a169 := ~zU32Empty    a170 := ~zU32
+  a171 := ~zU64Empty    a172 := ~zU64
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const bool __THE_0_zBoolTrue_0 = true;
+  const bool __THE_0_zBoolFalse_0 = false;
+  const unsigned char __THE_0_zByteEmpty_0 = 0;
+  const unsigned char __THE_0_zByte_0 = 0xA;
+  const char __THE_0_zCharEmpty_0 = '\0';
+  const char __THE_0_zChar_0 = 'a';
+  const double __THE_0_zFloatEmpty_0 = 0.0;
+  const double __THE_0_zFloatNeg_0 = -3.14;
+  const double __THE_0_zFloat_0 = 3.14;
+  const float __THE_0_zF32Empty_0 = 0;
+  const float __THE_0_zF32Neg_0 = -3.14;
+  const float __THE_0_zF32_0 = 3.14;
+  const double __THE_0_zF64Empty_0 = 0;
+  const double __THE_0_zF64Neg_0 = -3.14;
+  const double __THE_0_zF64_0 = -3.14;
+  const int32_t __THE_0_zIntEmpty_0 = 0;
+  const int32_t __THE_0_zIntNeg_0 = -3;
+  const int32_t __THE_0_zInt_0 = 3;
+  const int8_t __THE_0_zI8Empty_0 = 0;
+  const int8_t __THE_0_zI8Neg_0 = -3;
+  const int8_t __THE_0_zI8_0 = 3;
+  const int16_t __THE_0_zI16Empty_0 = 0;
+  const int16_t __THE_0_zI16Neg_0 = -3;
+  const int16_t __THE_0_zI16_0 = 3;
+  const int32_t __THE_0_zI32Empty_0 = 0;
+  const int32_t __THE_0_zI32Neg_0 = -3;
+  const int32_t __THE_0_zI32_0 = 3;
+  const int64_t __THE_0_zI64Empty_0 = 0;
+  const int64_t __THE_0_zI64Neg_0 = -3;
+  const int64_t __THE_0_zI64_0 = 3;
+  const uint8_t __THE_0_zU8Empty_0 = 0;
+  const uint8_t __THE_0_zU8_0 = 3;
+  const uint16_t __THE_0_zU16Empty_0 = 0;
+  const uint16_t __THE_0_zU16_0 = 3;
+  const uint32_t __THE_0_zU32Empty_0 = 0;
+  const uint32_t __THE_0_zU32_0 = 3;
+  const uint64_t __THE_0_zU64Empty_0 = 0;
+  const uint64_t __THE_0_zU64_0 = 3;
+  const bool __THE_0_a01_0 = !true;
+  const bool __THE_0_a02_0 = !false;
+  const bool __THE_0_a03_0 = !'\0';
+  const bool __THE_0_a04_0 = !'a';
+  const bool __THE_0_a05_0 = !0;
+  const bool __THE_0_a06_0 = !3;
+  const bool __THE_0_a07_0 = !0x0;
+  const bool __THE_0_a08_0 = !0xF;
+  const bool __THE_0_a09_0 = !00;
+  const bool __THE_0_a00_0 = !07;
+  const bool __THE_0_a11_0 = !0b0;
+  const bool __THE_0_a12_0 = !0b1;
+  const bool __THE_0_a13_0 = !((bool) 0.0);
+  const bool __THE_0_a14_0 = !((bool) 3.14);
+  const bool __THE_0_a15_0 = !!true;
+  const bool __THE_0_a16_0 = !!false;
+  const bool __THE_0_a17_0 = !!'\0';
+  const bool __THE_0_a18_0 = !!'a';
+  const bool __THE_0_a19_0 = !!0;
+  const bool __THE_0_a10_0 = !!3;
+  const bool __THE_0_a21_0 = !!0x0;
+  const bool __THE_0_a22_0 = !!0xF;
+  const bool __THE_0_a23_0 = !!00;
+  const bool __THE_0_a24_0 = !!07;
+  const bool __THE_0_a25_0 = !!0b0;
+  const bool __THE_0_a26_0 = !!0b1;
+  const bool __THE_0_a27_0 = !!((bool) 0.0);
+  const bool __THE_0_a28_0 = !!((bool) 3.14);
+  const int32_t __THE_0_a29_0 = ~0;
+  const int32_t __THE_0_a20_0 = ~3;
+  const int32_t __THE_0_a31_0 = ~0x0;
+  const int32_t __THE_0_a32_0 = ~0xF;
+  const int32_t __THE_0_a33_0 = ~00;
+  const int32_t __THE_0_a34_0 = ~07;
+  const int32_t __THE_0_a35_0 = ~0b0;
+  const int32_t __THE_0_a36_0 = ~0b1;
+  const int32_t __THE_0_a37_0 = -0;
+  const int32_t __THE_0_a38_0 = -3;
+  const int32_t __THE_0_a39_0 = -0x0;
+  const int32_t __THE_0_a30_0 = -0xF;
+  const int32_t __THE_0_a41_0 = -00;
+  const int32_t __THE_0_a42_0 = -07;
+  const int32_t __THE_0_a43_0 = -0b0;
+  const int32_t __THE_0_a44_0 = -0b1;
+  const double __THE_0_a45_0 = -0.0;
+  const double __THE_0_a46_0 = -3.14;
+  const int32_t __THE_0_a47_0 = +0;
+  const int32_t __THE_0_a48_0 = +3;
+  const int32_t __THE_0_a49_0 = +0x0;
+  const int32_t __THE_0_a40_0 = +0xF;
+  const int32_t __THE_0_a51_0 = +00;
+  const int32_t __THE_0_a52_0 = +07;
+  const int32_t __THE_0_a53_0 = +0b0;
+  const int32_t __THE_0_a54_0 = +0b1;
+  const double __THE_0_a55_0 = +0.0;
+  const double __THE_0_a56_0 = +3.14;
+  int32_t __THE_0_i_0 = 0;
+  const int32_t __THE_0_z0_0 = __THE_0_i_0++;
+  const int32_t __THE_0_z1_0 = __THE_0_i_0--;
+  const int32_t __THE_0_z2_0 = ++__THE_0_i_0;
+  const int32_t __THE_0_z3_0 = --__THE_0_i_0;
+  const bool __THE_0_a001_0 = !__THE_0_zBoolTrue_0;
+  const bool __THE_0_a002_0 = !__THE_0_zBoolFalse_0;
+  const bool __THE_0_a003_0 = !__THE_0_zByteEmpty_0;
+  const bool __THE_0_a004_0 = !__THE_0_zByte_0;
+  const bool __THE_0_a005_0 = !__THE_0_zCharEmpty_0;
+  const bool __THE_0_a006_0 = !__THE_0_zChar_0;
+  const bool __THE_0_a007_0 = !((bool) __THE_0_zFloatEmpty_0);
+  const bool __THE_0_a008_0 = !((bool) __THE_0_zFloatNeg_0);
+  const bool __THE_0_a009_0 = !((bool) __THE_0_zFloat_0);
+  const bool __THE_0_a010_0 = !((bool) __THE_0_zF32Empty_0);
+  const bool __THE_0_a011_0 = !((bool) __THE_0_zF32Neg_0);
+  const bool __THE_0_a012_0 = !((bool) __THE_0_zF32_0);
+  const bool __THE_0_a013_0 = !((bool) __THE_0_zF64Empty_0);
+  const bool __THE_0_a014_0 = !((bool) __THE_0_zF64Neg_0);
+  const bool __THE_0_a015_0 = !((bool) __THE_0_zF64_0);
+  const bool __THE_0_a016_0 = !__THE_0_zIntEmpty_0;
+  const bool __THE_0_a017_0 = !__THE_0_zIntNeg_0;
+  const bool __THE_0_a018_0 = !__THE_0_zInt_0;
+  const bool __THE_0_a019_0 = !__THE_0_zI8Empty_0;
+  const bool __THE_0_a020_0 = !__THE_0_zI8Neg_0;
+  const bool __THE_0_a021_0 = !__THE_0_zI8_0;
+  const bool __THE_0_a022_0 = !__THE_0_zI16Empty_0;
+  const bool __THE_0_a023_0 = !__THE_0_zI16Neg_0;
+  const bool __THE_0_a024_0 = !__THE_0_zI16_0;
+  const bool __THE_0_a025_0 = !__THE_0_zI32Empty_0;
+  const bool __THE_0_a026_0 = !__THE_0_zI32Neg_0;
+  const bool __THE_0_a027_0 = !__THE_0_zI32_0;
+  const bool __THE_0_a028_0 = !__THE_0_zI64Empty_0;
+  const bool __THE_0_a029_0 = !__THE_0_zI64Neg_0;
+  const bool __THE_0_a030_0 = !__THE_0_zI64_0;
+  const bool __THE_0_a031_0 = !__THE_0_zU8Empty_0;
+  const bool __THE_0_a032_0 = !__THE_0_zU8_0;
+  const bool __THE_0_a033_0 = !__THE_0_zU16Empty_0;
+  const bool __THE_0_a034_0 = !__THE_0_zU16_0;
+  const bool __THE_0_a035_0 = !__THE_0_zU32Empty_0;
+  const bool __THE_0_a036_0 = !__THE_0_zU32_0;
+  const bool __THE_0_a037_0 = !__THE_0_zU64Empty_0;
+  const bool __THE_0_a038_0 = !__THE_0_zU64_0;
+  const bool __THE_0_a039_0 = !!__THE_0_zBoolTrue_0;
+  const bool __THE_0_a040_0 = !!__THE_0_zBoolFalse_0;
+  const bool __THE_0_a041_0 = !!__THE_0_zByteEmpty_0;
+  const bool __THE_0_a042_0 = !!__THE_0_zByte_0;
+  const bool __THE_0_a043_0 = !!__THE_0_zCharEmpty_0;
+  const bool __THE_0_a044_0 = !!__THE_0_zChar_0;
+  const bool __THE_0_a045_0 = !!((bool) __THE_0_zFloatEmpty_0);
+  const bool __THE_0_a046_0 = !!((bool) __THE_0_zFloatNeg_0);
+  const bool __THE_0_a047_0 = !!((bool) __THE_0_zFloat_0);
+  const bool __THE_0_a048_0 = !!((bool) __THE_0_zF32Empty_0);
+  const bool __THE_0_a049_0 = !!((bool) __THE_0_zF32Neg_0);
+  const bool __THE_0_a050_0 = !!((bool) __THE_0_zF32_0);
+  const bool __THE_0_a051_0 = !!((bool) __THE_0_zF64Empty_0);
+  const bool __THE_0_a052_0 = !!((bool) __THE_0_zF64Neg_0);
+  const bool __THE_0_a053_0 = !!((bool) __THE_0_zF64_0);
+  const bool __THE_0_a054_0 = !!__THE_0_zIntEmpty_0;
+  const bool __THE_0_a055_0 = !!__THE_0_zIntNeg_0;
+  const bool __THE_0_a056_0 = !!__THE_0_zInt_0;
+  const bool __THE_0_a057_0 = !!__THE_0_zI8Empty_0;
+  const bool __THE_0_a058_0 = !!__THE_0_zI8Neg_0;
+  const bool __THE_0_a059_0 = !!__THE_0_zI8_0;
+  const bool __THE_0_a060_0 = !!__THE_0_zI16Empty_0;
+  const bool __THE_0_a061_0 = !!__THE_0_zI16Neg_0;
+  const bool __THE_0_a062_0 = !!__THE_0_zI16_0;
+  const bool __THE_0_a063_0 = !!__THE_0_zI32Empty_0;
+  const bool __THE_0_a064_0 = !!__THE_0_zI32Neg_0;
+  const bool __THE_0_a065_0 = !!__THE_0_zI32_0;
+  const bool __THE_0_a066_0 = !!__THE_0_zI64Empty_0;
+  const bool __THE_0_a067_0 = !!__THE_0_zI64Neg_0;
+  const bool __THE_0_a068_0 = !!__THE_0_zI64_0;
+  const bool __THE_0_a069_0 = !!__THE_0_zU8Empty_0;
+  const bool __THE_0_a070_0 = !!__THE_0_zU8_0;
+  const bool __THE_0_a071_0 = !!__THE_0_zU16Empty_0;
+  const bool __THE_0_a072_0 = !!__THE_0_zU16_0;
+  const bool __THE_0_a073_0 = !!__THE_0_zU32Empty_0;
+  const bool __THE_0_a074_0 = !!__THE_0_zU32_0;
+  const bool __THE_0_a075_0 = !!__THE_0_zU64Empty_0;
+  const bool __THE_0_a076_0 = !!__THE_0_zU64_0;
+  const double __THE_0_a077_0 = -__THE_0_zFloatEmpty_0;
+  const double __THE_0_a078_0 = -__THE_0_zFloatNeg_0;
+  const double __THE_0_a079_0 = -__THE_0_zFloat_0;
+  const float __THE_0_a080_0 = -__THE_0_zF32Empty_0;
+  const float __THE_0_a081_0 = -__THE_0_zF32Neg_0;
+  const float __THE_0_a082_0 = -__THE_0_zF32_0;
+  const double __THE_0_a083_0 = -__THE_0_zF64Empty_0;
+  const double __THE_0_a084_0 = -__THE_0_zF64Neg_0;
+  const double __THE_0_a085_0 = -__THE_0_zF64_0;
+  const int32_t __THE_0_a086_0 = -__THE_0_zIntEmpty_0;
+  const int32_t __THE_0_a087_0 = -__THE_0_zIntNeg_0;
+  const int32_t __THE_0_a088_0 = -__THE_0_zInt_0;
+  const int8_t __THE_0_a089_0 = -__THE_0_zI8Empty_0;
+  const int8_t __THE_0_a090_0 = -__THE_0_zI8Neg_0;
+  const int8_t __THE_0_a091_0 = -__THE_0_zI8_0;
+  const int16_t __THE_0_a092_0 = -__THE_0_zI16Empty_0;
+  const int16_t __THE_0_a093_0 = -__THE_0_zI16Neg_0;
+  const int16_t __THE_0_a094_0 = -__THE_0_zI16_0;
+  const int32_t __THE_0_a095_0 = -__THE_0_zI32Empty_0;
+  const int32_t __THE_0_a096_0 = -__THE_0_zI32Neg_0;
+  const int32_t __THE_0_a097_0 = -__THE_0_zI32_0;
+  const int64_t __THE_0_a098_0 = -__THE_0_zI64Empty_0;
+  const int64_t __THE_0_a099_0 = -__THE_0_zI64Neg_0;
+  const int64_t __THE_0_a100_0 = -__THE_0_zI64_0;
+  const double __THE_0_a109_0 = +__THE_0_zFloatEmpty_0;
+  const double __THE_0_a110_0 = +__THE_0_zFloatNeg_0;
+  const double __THE_0_a111_0 = +__THE_0_zFloat_0;
+  const float __THE_0_a112_0 = +__THE_0_zF32Empty_0;
+  const float __THE_0_a113_0 = +__THE_0_zF32Neg_0;
+  const float __THE_0_a114_0 = +__THE_0_zF32_0;
+  const double __THE_0_a115_0 = +__THE_0_zF64Empty_0;
+  const double __THE_0_a116_0 = +__THE_0_zF64Neg_0;
+  const double __THE_0_a117_0 = +__THE_0_zF64_0;
+  const int32_t __THE_0_a118_0 = +__THE_0_zIntEmpty_0;
+  const int32_t __THE_0_a119_0 = +__THE_0_zIntNeg_0;
+  const int32_t __THE_0_a120_0 = +__THE_0_zInt_0;
+  const int8_t __THE_0_a121_0 = +__THE_0_zI8Empty_0;
+  const int8_t __THE_0_a122_0 = +__THE_0_zI8Neg_0;
+  const int8_t __THE_0_a123_0 = +__THE_0_zI8_0;
+  const int16_t __THE_0_a124_0 = +__THE_0_zI16Empty_0;
+  const int16_t __THE_0_a125_0 = +__THE_0_zI16Neg_0;
+  const int16_t __THE_0_a126_0 = +__THE_0_zI16_0;
+  const int32_t __THE_0_a127_0 = +__THE_0_zI32Empty_0;
+  const int32_t __THE_0_a128_0 = +__THE_0_zI32Neg_0;
+  const int32_t __THE_0_a129_0 = +__THE_0_zI32_0;
+  const int64_t __THE_0_a130_0 = +__THE_0_zI64Empty_0;
+  const int64_t __THE_0_a131_0 = +__THE_0_zI64Neg_0;
+  const int64_t __THE_0_a132_0 = +__THE_0_zI64_0;
+  const uint8_t __THE_0_a133_0 = +__THE_0_zU8Empty_0;
+  const uint8_t __THE_0_a134_0 = +__THE_0_zU8_0;
+  const uint16_t __THE_0_a135_0 = +__THE_0_zU16Empty_0;
+  const uint16_t __THE_0_a136_0 = +__THE_0_zU16_0;
+  const uint32_t __THE_0_a137_0 = +__THE_0_zU32Empty_0;
+  const uint32_t __THE_0_a138_0 = +__THE_0_zU32_0;
+  const uint64_t __THE_0_a139_0 = +__THE_0_zU64Empty_0;
+  const uint64_t __THE_0_a140_0 = +__THE_0_zU64_0;
+  const int32_t __THE_0_a150_0 = ~__THE_0_zIntEmpty_0;
+  const int32_t __THE_0_a151_0 = ~__THE_0_zIntNeg_0;
+  const int32_t __THE_0_a152_0 = ~__THE_0_zInt_0;
+  const int8_t __THE_0_a153_0 = ~__THE_0_zI8Empty_0;
+  const int8_t __THE_0_a154_0 = ~__THE_0_zI8Neg_0;
+  const int8_t __THE_0_a155_0 = ~__THE_0_zI8_0;
+  const int16_t __THE_0_a156_0 = ~__THE_0_zI16Empty_0;
+  const int16_t __THE_0_a157_0 = ~__THE_0_zI16Neg_0;
+  const int16_t __THE_0_a158_0 = ~__THE_0_zI16_0;
+  const int32_t __THE_0_a159_0 = ~__THE_0_zI32Empty_0;
+  const int32_t __THE_0_a160_0 = ~__THE_0_zI32Neg_0;
+  const int32_t __THE_0_a161_0 = ~__THE_0_zI32_0;
+  const int64_t __THE_0_a162_0 = ~__THE_0_zI64Empty_0;
+  const int64_t __THE_0_a163_0 = ~__THE_0_zI64Neg_0;
+  const int64_t __THE_0_a164_0 = ~__THE_0_zI64_0;
+  const uint8_t __THE_0_a165_0 = ~__THE_0_zU8Empty_0;
+  const uint8_t __THE_0_a166_0 = ~__THE_0_zU8_0;
+  const uint16_t __THE_0_a167_0 = ~__THE_0_zU16Empty_0;
+  const uint16_t __THE_0_a168_0 = ~__THE_0_zU16_0;
+  const uint32_t __THE_0_a169_0 = ~__THE_0_zU32Empty_0;
+  const uint32_t __THE_0_a170_0 = ~__THE_0_zU32_0;
+  const uint64_t __THE_0_a171_0 = ~__THE_0_zU64Empty_0;
+  const uint64_t __THE_0_a172_0 = ~__THE_0_zU64_0;
+}
+======= flags =======
+======= stdout =======

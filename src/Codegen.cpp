@@ -144,6 +144,19 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFunctionDefinitionsCode += "}\n";
   }
 
+  if (this->builtins.fnStrNot) {
+    this->builtins.fnStrDeinit = true;
+    this->builtins.libStdbool = true;
+    this->builtins.typeStr = true;
+
+    builtinFunctionDeclarationsCode += "bool str_not (struct str);\n";
+    builtinFunctionDefinitionsCode += "bool str_not (struct str s) {\n";
+    builtinFunctionDefinitionsCode += "  bool r = s.l == 0;\n";
+    builtinFunctionDefinitionsCode += "  str_deinit(s);\n";
+    builtinFunctionDefinitionsCode += "  return r;\n";
+    builtinFunctionDefinitionsCode += "}\n";
+  }
+
   if (this->builtins.fnStrReinit) {
     this->builtins.fnStrDeinit = true;
     this->builtins.typeStr = true;
@@ -510,6 +523,21 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     if (exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) opCode = "!";
     if (exprUnary.op == AST_EXPR_UNARY_NEGATION) opCode = "-";
     if (exprUnary.op == AST_EXPR_UNARY_PLUS) opCode = "+";
+
+    if (
+      (exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT || exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) &&
+      (exprUnary.arg.type->isFloat() || exprUnary.arg.type->isF32() || exprUnary.arg.type->isF64())
+    ) {
+      this->builtins.libStdbool = true;
+      argCode = "((bool) " + argCode + ")";
+    } else if (
+      (exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT || exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) &&
+      exprUnary.arg.type->isStr()
+    ) {
+      this->builtins.fnStrNot = true;
+      argCode = "str_not(" + argCode + ")";
+      opCode = exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT ? "!" : "";
+    }
 
     return this->_wrapNodeExpr(nodeExpr, exprUnary.prefix ? opCode + argCode : argCode + opCode);
   }

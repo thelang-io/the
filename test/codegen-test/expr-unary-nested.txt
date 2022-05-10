@@ -1,0 +1,148 @@
+======= stdin =======
+main {
+  mut i := 0
+
+  a01 := !~5
+  a02 := !--i
+  a03 := !i--
+  a04 := !!!5
+  a05 := !++i
+  a06 := !i++
+  a07 := !-5
+  a08 := !+5
+  a09 := !!!5
+  a10 := !!~5
+  a11 := !!--i
+  a12 := !!i--
+  a13 := !!!!5
+  a14 := !!++i
+  a15 := !!i++
+  a16 := !!-5
+  a17 := !!+5
+  a18 := ~~5
+  a19 := ~--i
+  a20 := ~i--
+  a21 := ~++i
+  a22 := ~i++
+  a23 := ~-5
+  a24 := ~+5
+  a26 := -~5
+  a27 := -(--i)
+  a28 := -i--
+  a30 := -++i
+  a31 := -i++
+  a32 := -(-5)
+  a33 := -+5
+  a35 := +~5
+  a36 := +--i
+  a37 := +i--
+  a39 := +(++i)
+  a40 := +i++
+  a41 := +-5
+  a42 := +(+5)
+
+  mut j := 0.0
+
+  b02 := !--j
+  b03 := !j--
+  b04 := !!!5.0
+  b05 := !++j
+  b06 := !j++
+  b07 := !-5.0
+  b08 := !+5.0
+  b09 := !!!5.0
+  b11 := !!--j
+  b12 := !!j--
+  b13 := !!!!5.0
+  b14 := !!++j
+  b15 := !!j++
+  b16 := !!-5.0
+  b17 := !!+5.0
+  b27 := -(--j)
+  b28 := -j--
+  b30 := -++j
+  b31 := -j++
+  b32 := -(-5.0)
+  b33 := -+5.0
+  b36 := +--j
+  b37 := +j--
+  b39 := +(++j)
+  b40 := +j++
+  b41 := +-5.0
+  b42 := +(+5.0)
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_i_0 = 0;
+  const bool __THE_0_a01_0 = !~5;
+  const bool __THE_0_a02_0 = !--__THE_0_i_0;
+  const bool __THE_0_a03_0 = !__THE_0_i_0--;
+  const bool __THE_0_a04_0 = !!!5;
+  const bool __THE_0_a05_0 = !++__THE_0_i_0;
+  const bool __THE_0_a06_0 = !__THE_0_i_0++;
+  const bool __THE_0_a07_0 = !-5;
+  const bool __THE_0_a08_0 = !+5;
+  const bool __THE_0_a09_0 = !!!5;
+  const bool __THE_0_a10_0 = !!~5;
+  const bool __THE_0_a11_0 = !!--__THE_0_i_0;
+  const bool __THE_0_a12_0 = !!__THE_0_i_0--;
+  const bool __THE_0_a13_0 = !!!!5;
+  const bool __THE_0_a14_0 = !!++__THE_0_i_0;
+  const bool __THE_0_a15_0 = !!__THE_0_i_0++;
+  const bool __THE_0_a16_0 = !!-5;
+  const bool __THE_0_a17_0 = !!+5;
+  const int32_t __THE_0_a18_0 = ~~5;
+  const int32_t __THE_0_a19_0 = ~--__THE_0_i_0;
+  const int32_t __THE_0_a20_0 = ~__THE_0_i_0--;
+  const int32_t __THE_0_a21_0 = ~++__THE_0_i_0;
+  const int32_t __THE_0_a22_0 = ~__THE_0_i_0++;
+  const int32_t __THE_0_a23_0 = ~-5;
+  const int32_t __THE_0_a24_0 = ~+5;
+  const int32_t __THE_0_a26_0 = -~5;
+  const int32_t __THE_0_a27_0 = -(--__THE_0_i_0);
+  const int32_t __THE_0_a28_0 = -__THE_0_i_0--;
+  const int32_t __THE_0_a30_0 = -++__THE_0_i_0;
+  const int32_t __THE_0_a31_0 = -__THE_0_i_0++;
+  const int32_t __THE_0_a32_0 = -(-5);
+  const int32_t __THE_0_a33_0 = -+5;
+  const int32_t __THE_0_a35_0 = +~5;
+  const int32_t __THE_0_a36_0 = +--__THE_0_i_0;
+  const int32_t __THE_0_a37_0 = +__THE_0_i_0--;
+  const int32_t __THE_0_a39_0 = +(++__THE_0_i_0);
+  const int32_t __THE_0_a40_0 = +__THE_0_i_0++;
+  const int32_t __THE_0_a41_0 = +-5;
+  const int32_t __THE_0_a42_0 = +(+5);
+  double __THE_0_j_0 = 0.0;
+  const bool __THE_0_b02_0 = !((bool) --__THE_0_j_0);
+  const bool __THE_0_b03_0 = !((bool) __THE_0_j_0--);
+  const bool __THE_0_b04_0 = !!!((bool) 5.0);
+  const bool __THE_0_b05_0 = !((bool) ++__THE_0_j_0);
+  const bool __THE_0_b06_0 = !((bool) __THE_0_j_0++);
+  const bool __THE_0_b07_0 = !((bool) -5.0);
+  const bool __THE_0_b08_0 = !((bool) +5.0);
+  const bool __THE_0_b09_0 = !!!((bool) 5.0);
+  const bool __THE_0_b11_0 = !!((bool) --__THE_0_j_0);
+  const bool __THE_0_b12_0 = !!((bool) __THE_0_j_0--);
+  const bool __THE_0_b13_0 = !!!!((bool) 5.0);
+  const bool __THE_0_b14_0 = !!((bool) ++__THE_0_j_0);
+  const bool __THE_0_b15_0 = !!((bool) __THE_0_j_0++);
+  const bool __THE_0_b16_0 = !!((bool) -5.0);
+  const bool __THE_0_b17_0 = !!((bool) +5.0);
+  const double __THE_0_b27_0 = -(--__THE_0_j_0);
+  const double __THE_0_b28_0 = -__THE_0_j_0--;
+  const double __THE_0_b30_0 = -++__THE_0_j_0;
+  const double __THE_0_b31_0 = -__THE_0_j_0++;
+  const double __THE_0_b32_0 = -(-5.0);
+  const double __THE_0_b33_0 = -+5.0;
+  const double __THE_0_b36_0 = +--__THE_0_j_0;
+  const double __THE_0_b37_0 = +__THE_0_j_0--;
+  const double __THE_0_b39_0 = +(++__THE_0_j_0);
+  const double __THE_0_b40_0 = +__THE_0_j_0++;
+  const double __THE_0_b41_0 = +-5.0;
+  const double __THE_0_b42_0 = +(+5.0);
+}
+======= flags =======
+======= stdout =======

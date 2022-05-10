@@ -1,0 +1,87 @@
+======= stdin =======
+main {
+  s0 := ""
+  s1 := "1"
+  s2 := "test"
+
+  a := !""
+  b := !!""
+  c := !"1"
+  d := !!"1"
+  e := !"test"
+  f := !!"test"
+
+  l := !s0
+  m := !!s0
+  n := !s1
+  o := !!s1
+  p := !s2
+  q := !!s2
+}
+======= code =======
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_copy (const struct str);
+struct str str_init (const char *);
+bool str_not (struct str);
+void str_deinit (struct str);
+void *alloc (size_t);
+
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+struct str str_init (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+bool str_not (struct str s) {
+  bool r = s.l == 0;
+  str_deinit(s);
+  return r;
+}
+void str_deinit (struct str s) {
+  free(s.c);
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+int main () {
+  const struct str __THE_0_s0_0 = str_init("");
+  const struct str __THE_0_s1_0 = str_init("1");
+  const struct str __THE_0_s2_0 = str_init("test");
+  const bool __THE_0_a_0 = str_not(str_init(""));
+  const bool __THE_0_b_0 = !str_not(str_init(""));
+  const bool __THE_0_c_0 = str_not(str_init("1"));
+  const bool __THE_0_d_0 = !str_not(str_init("1"));
+  const bool __THE_0_e_0 = str_not(str_init("test"));
+  const bool __THE_0_f_0 = !str_not(str_init("test"));
+  const bool __THE_0_l_0 = str_not(str_copy(__THE_0_s0_0));
+  const bool __THE_0_m_0 = !str_not(str_copy(__THE_0_s0_0));
+  const bool __THE_0_n_0 = str_not(str_copy(__THE_0_s1_0));
+  const bool __THE_0_o_0 = !str_not(str_copy(__THE_0_s1_0));
+  const bool __THE_0_p_0 = str_not(str_copy(__THE_0_s2_0));
+  const bool __THE_0_q_0 = !str_not(str_copy(__THE_0_s2_0));
+  str_deinit((struct str) __THE_0_s2_0);
+  str_deinit((struct str) __THE_0_s1_0);
+  str_deinit((struct str) __THE_0_s0_0);
+}
+======= flags =======
+======= stdout =======

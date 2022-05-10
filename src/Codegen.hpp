@@ -20,6 +20,7 @@ struct CodegenBuiltins {
   bool fnStrCopy = false;
   bool fnStrDeinit = false;
   bool fnStrInit = false;
+  bool fnStrNot = false;
   bool fnStrReinit = false;
   bool libMath = false;
   bool libStdbool = false;

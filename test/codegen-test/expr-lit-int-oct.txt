@@ -2,8 +2,8 @@
 main {
   a := 0O0
   b := 0o7
-  c := 0O000000000000000000000
-  d := 0o777777777777777777777
+  c := 0O0000000000
+  d := 0o7777777777
 }
 ======= code =======
 #include <stdint.h>
@@ -11,8 +11,8 @@ main {
 int main () {
   const int32_t __THE_0_a_0 = 00;
   const int32_t __THE_0_b_0 = 07;
-  const int32_t __THE_0_c_0 = 0000000000000000000000;
-  const int32_t __THE_0_d_0 = 0777777777777777777777;
+  const int32_t __THE_0_c_0 = 00000000000;
+  const int32_t __THE_0_d_0 = 07777777777;
 }
 ======= flags =======
 ======= stdout =======
