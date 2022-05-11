@@ -6,10 +6,12 @@
  */
 
 #include "utils.hpp"
+#include <algorithm>
 #include <array>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include "../src/config.hpp"
 
 extern char **environ;
 
@@ -62,8 +64,12 @@ std::map<std::string, std::string> getEnvVars () {
   return result;
 }
 
-std::string readTestFile (const std::string &testName, const std::string &filepath) {
-  auto path = "test/" + testName + "-test/" + filepath + ".txt";
+std::map<std::string, std::string> readTestFile (
+  const std::string &testName,
+  const std::string &filepath,
+  const std::vector<std::string> &allowedSections
+) {
+  auto path = "test" OS_PATH_SEP + testName + "-test" OS_PATH_SEP + filepath + ".txt";
   auto file = std::ifstream(path, std::ios::in | std::ios::binary);
 
   if (!file.is_open()) {
@@ -76,5 +82,69 @@ std::string readTestFile (const std::string &testName, const std::string &filepa
   file.read(content.data(), size);
   file.close();
 
-  return content;
+  if (!content.starts_with("======= ")) {
+    throw Error(R"(Test file ")" + path + R"(" doesn't look like an actual )" + testName + "test");
+  }
+
+  auto sections = std::map<std::string, std::string>{};
+  auto eolSize = std::string(EOL).size();
+  auto sectionName = std::string();
+  auto sectionContent = std::string();
+
+  for (const auto &line : splitFileContent(content)) {
+    if (line.starts_with("======= ") && line.ends_with(" =======" EOL)) {
+      if (!sectionName.empty()) {
+        sections[sectionName] = sectionContent;
+      }
+
+      sectionName = line.substr(8, line.size() - 16 - eolSize);
+      sectionContent = "";
+    } else {
+      sectionContent += line;
+    }
+  }
+
+  sections[sectionName] = sectionContent;
+
+  auto eraseEolSections = std::map<std::string, bool>{
+    {"stdin", true},
+    {"flags", true},
+    {"stderr", true}
+  };
+
+  for (auto &item : sections) {
+    if (std::find(allowedSections.begin(), allowedSections.end(), item.first) == allowedSections.end()) {
+      throw Error("Error: passed unknown " + testName + R"( section ")" + item.first + R"(")");
+    }
+
+    if (eraseEolSections.contains(item.first) && !item.second.empty()) {
+      item.second.erase(item.second.size() - eolSize, eolSize);
+    }
+  }
+
+  return sections;
+}
+
+std::vector<std::string> splitFileContent (const std::string &content) {
+  auto result = std::vector<std::string>{};
+  auto eolSize = std::string(EOL).size();
+  auto line = std::string();
+  auto len = content.size();
+
+  for (auto i = static_cast<std::size_t>(0); i < len; i++) {
+    auto ch = content[i];
+    line += ch;
+
+    if (content.substr(i + 1, eolSize) == EOL) {
+      result.push_back(line + EOL);
+      line = "";
+      i += eolSize;
+    }
+  }
+
+  if (!line.empty()) {
+    result.push_back(line + (line.ends_with(EOL) ? "" : EOL));
+  }
+
+  return result;
 }

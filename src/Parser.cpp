@@ -49,7 +49,7 @@ ParserStmt Parser::next () {
     }
 
     auto [_3, tok3] = this->lexer->next();
-    auto fnDeclParams = std::vector<ParserStmtFnDeclParam>();
+    auto fnDeclParams = std::vector<ParserStmtFnDeclParam>{};
 
     while (tok3.type != TK_OP_RPAR) {
       if (tok3.type != TK_ID) {
@@ -211,7 +211,7 @@ ParserStmt Parser::next () {
     }
 
     auto [_3, tok3] = this->lexer->next();
-    auto objDeclFields = std::vector<ParserStmtObjDeclField>();
+    auto objDeclFields = std::vector<ParserStmtObjDeclField>{};
 
     while (tok3.type != TK_OP_RBRACE) {
       if (tok3.type != TK_ID) {
@@ -423,7 +423,7 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool singleStmt) {
 
     if (tok4.type == TK_OP_LBRACE) {
       auto [_5, tok5] = this->lexer->next();
-      auto exprObjProps = std::vector<ParserExprObjProp>();
+      auto exprObjProps = std::vector<ParserExprObjProp>{};
 
       while (tok5.type != TK_OP_RBRACE) {
         if (tok5.type != TK_ID && exprObjProps.empty()) {
@@ -472,7 +472,7 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool singleStmt) {
 
     if (tok4.type == TK_OP_LPAR) {
       auto [loc5, tok5] = this->lexer->next();
-      auto exprCallArgs = std::vector<ParserExprCallArg>();
+      auto exprCallArgs = std::vector<ParserExprCallArg>{};
 
       while (tok5.type != TK_OP_RPAR) {
         this->lexer->seek(loc5);

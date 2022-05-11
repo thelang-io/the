@@ -13,79 +13,47 @@
 #include "MockAST.hpp"
 #include "utils.hpp"
 
+const auto valgrindArguments = std::string(
+  "--error-exitcode=1 "
+  "--leak-check=full "
+  "--show-leak-kinds=all "
+  "--track-origins=yes"
+);
+
 class CodegenTest : public testing::TestWithParam<const char *> {
+ protected:
+  bool testMemcheck_ = false;
+
+  void SetUp () override {
+    auto envVars = getEnvVars();
+    this->testMemcheck_ = envVars.contains("CODEGEN_MEMCHECK") && envVars["CODEGEN_MEMCHECK"] == "ON";
+  }
 };
 
 TEST_P(CodegenTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
-  auto testContent = readTestFile("codegen", param);
-  auto stdinDelimiter = std::string("======= stdin =======" EOL);
-
-  if (!testContent.starts_with(stdinDelimiter)) {
-    throw Error("Codegen test file doesn't look like an actual test");
-  }
-
-  testContent.erase(0, stdinDelimiter.size());
-  auto codeDelimiter = std::string("======= code =======" EOL);
-  auto codeDelimiterPos = testContent.find(codeDelimiter);
-
-  if (codeDelimiterPos == std::string::npos) {
-    throw Error("Codegen test file doesn't have a code delimiter");
-  }
-
-  auto testStdin = testContent.substr(0, codeDelimiterPos);
-  testContent.erase(0, codeDelimiterPos + codeDelimiter.size());
-
-  auto flagsDelimiter = std::string("======= flags =======" EOL);
-  auto flagsDelimiterPos = testContent.find(flagsDelimiter);
-
-  if (flagsDelimiterPos == std::string::npos) {
-    throw Error("Codegen test file doesn't have a flags delimiter");
-  }
-
-  auto expectedCode = testContent.substr(0, flagsDelimiterPos);
-  testContent.erase(0, flagsDelimiterPos + flagsDelimiter.size());
-
-  auto stdoutDelimiter = std::string("======= stdout =======" EOL);
-  auto stdoutDelimiterPos = testContent.find(stdoutDelimiter);
-
-  if (stdoutDelimiterPos == std::string::npos) {
-    throw Error("Codegen test file doesn't have an output delimiter");
-  }
-
-  auto expectedFlags = testContent.substr(0, stdoutDelimiterPos);
-  testContent.erase(0, stdoutDelimiterPos + stdoutDelimiter.size());
-  auto expectedOutput = testContent.substr(0, testContent.size());
-
-  if (!expectedFlags.empty()) {
-    expectedFlags.erase(expectedFlags.size());
-  }
-
-  auto envVars = getEnvVars();
-  auto testMemcheck = envVars.contains("CODEGEN_MEMCHECK") && envVars["CODEGEN_MEMCHECK"] == "ON";
-  auto ast = testing::NiceMock<MockAST>(testStdin);
+  auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stdout"});
+  auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
 
-  ASSERT_EQ(expectedCode, std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
-  ASSERT_EQ(expectedFlags, std::get<1>(result));
+  ASSERT_EQ(sections["code"], std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
+  ASSERT_EQ(sections["flags"], std::get<1>(result));
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
   Codegen::compile(filePath, result, true);
-  auto cmd = filePath;
 
-  if (testMemcheck) {
-    cmd = "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --track-origins=yes " + cmd;
-  }
+  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(
+    (this->testMemcheck_ ? "valgrind " + valgrindArguments + " " : "") + filePath,
+    fileName
+  );
 
-  auto [actualOutput, actualStderr, actualReturnCode] = execCmd(cmd, fileName);
   std::filesystem::remove(filePath);
-
-  EXPECT_EQ(expectedOutput, actualOutput);
+  EXPECT_EQ(sections["stdout"], actualStdout);
   EXPECT_EQ(actualReturnCode, 0);
 
-  if (!testMemcheck) {
+  if (!this->testMemcheck_) {
     EXPECT_EQ(actualStderr, "");
   } else if (actualReturnCode != 0) {
     std::cout << actualStderr;

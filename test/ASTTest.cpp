@@ -18,52 +18,21 @@ class ASTThrowTest : public testing::TestWithParam<const char *> {
 };
 
 TEST_P(ASTPassTest, Passes) {
-  auto testContent = readTestFile("ast", testing::TestWithParam<const char *>::GetParam());
-  auto stdinDelimiter = std::string("======= stdin =======" EOL);
-
-  if (!testContent.starts_with(stdinDelimiter)) {
-    throw Error("AST pass test file doesn't look like an actual test");
-  }
-
-  testContent.erase(0, stdinDelimiter.size());
-  auto stdoutDelimiter = std::string("======= stdout =======" EOL);
-  auto stdoutDelimiterPos = testContent.find(stdoutDelimiter);
-
-  if (stdoutDelimiterPos == std::string::npos) {
-    throw Error("AST pass test file doesn't have a delimiter");
-  }
-
-  auto testStdin = testContent.substr(0, stdoutDelimiterPos);
-  auto expectedOutput = testContent.substr(stdoutDelimiterPos + stdoutDelimiter.size());
-  auto parser = testing::NiceMock<MockParser>(testStdin);
+  auto param = testing::TestWithParam<const char *>::GetParam();
+  auto sections = readTestFile("ast", param, {"stdin", "stdout"});
+  auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
   auto ast = AST(&parser);
 
-  EXPECT_EQ(expectedOutput, ast.xml());
+  EXPECT_EQ(sections["stdout"], ast.xml());
 }
 
 TEST_P(ASTThrowTest, Throws) {
-  auto testContent = readTestFile("ast", testing::TestWithParam<const char *>::GetParam());
-  auto stdinDelimiter = std::string("======= stdin =======" EOL);
-
-  if (!testContent.starts_with(stdinDelimiter)) {
-    throw Error("AST throw test file doesn't look like an actual test");
-  }
-
-  testContent.erase(0, stdinDelimiter.size());
-  auto stderrDelimiter = std::string("======= stderr =======" EOL);
-  auto stderrDelimiterPos = testContent.find(stderrDelimiter);
-
-  if (stderrDelimiterPos == std::string::npos) {
-    throw Error("AST throw test file doesn't have a delimiter");
-  }
-
-  auto testStdin = testContent.substr(0, stderrDelimiterPos - std::string(EOL).size());
-  testContent.erase(0, stderrDelimiterPos + stderrDelimiter.size());
-  auto expectedOutput = testContent.substr(0, testContent.size() - std::string(EOL).size());
-  auto parser = testing::NiceMock<MockParser>(testStdin);
+  auto param = testing::TestWithParam<const char *>::GetParam();
+  auto sections = readTestFile("ast", param, {"stdin", "stderr"});
+  auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
   auto ast = AST(&parser);
 
-  EXPECT_THROW_WITH_MESSAGE(ast.xml(), expectedOutput);
+  EXPECT_THROW_WITH_MESSAGE(ast.xml(), sections["stderr"]);
 }
 
 INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(

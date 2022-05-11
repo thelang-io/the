@@ -447,7 +447,7 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     }
 
     auto exprObjType = exprObjVar->type;
-    auto exprObjProps = std::vector<ASTExprObjProp>();
+    auto exprObjProps = std::vector<ASTExprObjProp>{};
 
     varStack.mark(exprObjVar);
 
