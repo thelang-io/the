@@ -25,7 +25,7 @@ TEST_P(ParserPassTest, Passes) {
     throw Error("Parser pass test file doesn't look like an actual test");
   }
 
-  testContent = testContent.substr(stdinDelimiter.size());
+  testContent.erase(0, stdinDelimiter.size());
   auto stdoutDelimiter = std::string("======= stdout =======" EOL);
   auto stdoutDelimiterPos = testContent.find(stdoutDelimiter);
 
@@ -49,7 +49,7 @@ TEST_P(ParserThrowTest, Throws) {
     throw Error("Parser throw test file doesn't look like an actual test");
   }
 
-  testContent = testContent.substr(stdinDelimiter.size());
+  testContent.erase(0, stdinDelimiter.size());
   auto stderrDelimiter = std::string("======= stderr =======" EOL);
   auto stderrDelimiterPos = testContent.find(stderrDelimiter);
 
@@ -58,7 +58,7 @@ TEST_P(ParserThrowTest, Throws) {
   }
 
   auto testStdin = testContent.substr(0, stderrDelimiterPos - std::string(EOL).size());
-  testContent = testContent.substr(stderrDelimiterPos + stderrDelimiter.size());
+  testContent.erase(0, stderrDelimiterPos + stderrDelimiter.size());
   auto expectedStderr = testContent.substr(0, testContent.size() - std::string(EOL).size());
   auto lexer = testing::NiceMock<MockLexer>(testStdin);
   auto parser = Parser(&lexer);

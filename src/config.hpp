@@ -11,11 +11,14 @@
 #ifdef _WIN32
   #define EOL "\r\n"
   #define ESC_EOL "\\r\\n"
+  #define OS_FILE_EXT ".exe"
+  #define OS_PATH_SEP '\\'
   #define OS_WINDOWS
 #else
   #define EOL "\n"
   #define ESC_EOL "\\n"
-  #define OS_UNIX
+  #define OS_FILE_EXT ".out"
+  #define OS_PATH_SEP '/'
 #endif
 
 #endif

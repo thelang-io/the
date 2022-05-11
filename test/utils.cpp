@@ -44,8 +44,9 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
   auto stderrOutput = std::stringstream();
 
   stderrOutput << stderrFile.rdbuf();
-  std::filesystem::remove(stderrFileName);
+  stderrFile.close();
 
+  std::filesystem::remove(stderrFileName);
   return std::make_tuple(stdoutOutput, stderrOutput.str(), returnCode);
 }
 

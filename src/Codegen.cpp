@@ -9,14 +9,16 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include "config.hpp"
 
 const auto banner = std::string(
-  "/*!\n"
-  " * Copyright (c) Aaron Delasy\n"
-  " *\n"
-  " * Unauthorized copying of this file, via any medium is strictly prohibited\n"
-  " * Proprietary and confidential\n"
-  " */\n\n"
+  "/*!" EOL
+  " * Copyright (c) Aaron Delasy" EOL
+  " *" EOL
+  " * Unauthorized copying of this file, via any medium is strictly prohibited" EOL
+  " * Proprietary and confidential" EOL
+  " */" EOL
+  EOL
 );
 
 void Codegen::compile (const std::string &path, const std::tuple<std::string, std::string> &result, bool debug) {
@@ -76,10 +78,10 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.fnStrConcatCstr = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str cstr_concat_str (const char *, struct str);\n";
-    builtinFunctionDefinitionsCode += "struct str cstr_concat_str (const char *c, struct str s) {\n";
-    builtinFunctionDefinitionsCode += "  return str_concat_cstr(s, c);\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "struct str cstr_concat_str (const char *, struct str);" EOL;
+    builtinFunctionDefinitionsCode += "struct str cstr_concat_str (const char *c, struct str s) {" EOL;
+    builtinFunctionDefinitionsCode += "  return str_concat_cstr(s, c);" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnStrConcatCstr) {
@@ -88,15 +90,15 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_concat_cstr (struct str, const char *);\n";
-    builtinFunctionDefinitionsCode += "struct str str_concat_cstr (struct str s, const char *c) {\n";
-    builtinFunctionDefinitionsCode += "  size_t l = s.l + strlen(c);\n";
-    builtinFunctionDefinitionsCode += "  char *r = alloc(l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(r, s.c, s.l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(&r[s.l], c, l - s.l);\n";
-    builtinFunctionDefinitionsCode += "  str_deinit(s);\n";
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "struct str str_concat_cstr (struct str, const char *);" EOL;
+    builtinFunctionDefinitionsCode += "struct str str_concat_cstr (struct str s, const char *c) {" EOL;
+    builtinFunctionDefinitionsCode += "  size_t l = s.l + strlen(c);" EOL;
+    builtinFunctionDefinitionsCode += "  char *r = alloc(l);" EOL;
+    builtinFunctionDefinitionsCode += "  memcpy(r, s.c, s.l);" EOL;
+    builtinFunctionDefinitionsCode += "  memcpy(&r[s.l], c, l - s.l);" EOL;
+    builtinFunctionDefinitionsCode += "  str_deinit(s);" EOL;
+    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnStrConcatStr) {
@@ -105,16 +107,16 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_concat_str (struct str, struct str);\n";
-    builtinFunctionDefinitionsCode += "struct str str_concat_str (struct str s1, struct str s2) {\n";
-    builtinFunctionDefinitionsCode += "  size_t l = s1.l + s2.l;\n";
-    builtinFunctionDefinitionsCode += "  char *r = alloc(l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(r, s1.c, s1.l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(&r[s1.l], s2.c, s2.l);\n";
-    builtinFunctionDefinitionsCode += "  str_deinit(s1);\n";
-    builtinFunctionDefinitionsCode += "  str_deinit(s2);\n";
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "struct str str_concat_str (struct str, struct str);" EOL;
+    builtinFunctionDefinitionsCode += "struct str str_concat_str (struct str s1, struct str s2) {" EOL;
+    builtinFunctionDefinitionsCode += "  size_t l = s1.l + s2.l;" EOL;
+    builtinFunctionDefinitionsCode += "  char *r = alloc(l);" EOL;
+    builtinFunctionDefinitionsCode += "  memcpy(r, s1.c, s1.l);" EOL;
+    builtinFunctionDefinitionsCode += "  memcpy(&r[s1.l], s2.c, s2.l);" EOL;
+    builtinFunctionDefinitionsCode += "  str_deinit(s1);" EOL;
+    builtinFunctionDefinitionsCode += "  str_deinit(s2);" EOL;
+    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnStrCopy) {
@@ -122,12 +124,12 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_copy (const struct str);\n";
-    builtinFunctionDefinitionsCode += "struct str str_copy (const struct str s) {\n";
-    builtinFunctionDefinitionsCode += "  char *r = alloc(s.l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(r, s.c, s.l);\n";
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, s.l};\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "struct str str_copy (const struct str);" EOL;
+    builtinFunctionDefinitionsCode += "struct str str_copy (const struct str s) {" EOL;
+    builtinFunctionDefinitionsCode += "  char *r = alloc(s.l);" EOL;
+    builtinFunctionDefinitionsCode += "  memcpy(r, s.c, s.l);" EOL;
+    builtinFunctionDefinitionsCode += "  return (struct str) {r, s.l};" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnStrInit) {
@@ -135,13 +137,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_init (const char *);\n";
-    builtinFunctionDefinitionsCode += "struct str str_init (const char *c) {\n";
-    builtinFunctionDefinitionsCode += "  size_t l = strlen(c);\n";
-    builtinFunctionDefinitionsCode += "  char *r = alloc(l);\n";
-    builtinFunctionDefinitionsCode += "  memcpy(r, c, l);\n";
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "struct str str_init (const char *);" EOL;
+    builtinFunctionDefinitionsCode += "struct str str_init (const char *c) {" EOL;
+    builtinFunctionDefinitionsCode += "  size_t l = strlen(c);" EOL;
+    builtinFunctionDefinitionsCode += "  char *r = alloc(l);" EOL;
+    builtinFunctionDefinitionsCode += "  memcpy(r, c, l);" EOL;
+    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnStrNot) {
@@ -149,48 +151,48 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libStdbool = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool str_not (struct str);\n";
-    builtinFunctionDefinitionsCode += "bool str_not (struct str s) {\n";
-    builtinFunctionDefinitionsCode += "  bool r = s.l == 0;\n";
-    builtinFunctionDefinitionsCode += "  str_deinit(s);\n";
-    builtinFunctionDefinitionsCode += "  return r;\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "bool str_not (struct str);" EOL;
+    builtinFunctionDefinitionsCode += "bool str_not (struct str s) {" EOL;
+    builtinFunctionDefinitionsCode += "  bool r = s.l == 0;" EOL;
+    builtinFunctionDefinitionsCode += "  str_deinit(s);" EOL;
+    builtinFunctionDefinitionsCode += "  return r;" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnStrReinit) {
     this->builtins.fnStrDeinit = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_reinit (struct str, struct str);\n";
-    builtinFunctionDefinitionsCode += "struct str str_reinit (struct str s1, struct str s2) {\n";
-    builtinFunctionDefinitionsCode += "  str_deinit(s1);\n";
-    builtinFunctionDefinitionsCode += "  return s2;\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "struct str str_reinit (struct str, struct str);" EOL;
+    builtinFunctionDefinitionsCode += "struct str str_reinit (struct str s1, struct str s2) {" EOL;
+    builtinFunctionDefinitionsCode += "  str_deinit(s1);" EOL;
+    builtinFunctionDefinitionsCode += "  return s2;" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnStrDeinit) {
     this->builtins.libStdlib = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "void str_deinit (struct str);\n";
-    builtinFunctionDefinitionsCode += "void str_deinit (struct str s) {\n";
-    builtinFunctionDefinitionsCode += "  free(s.c);\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "void str_deinit (struct str);" EOL;
+    builtinFunctionDefinitionsCode += "void str_deinit (struct str s) {" EOL;
+    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.fnAlloc) {
     this->builtins.libStdio = true;
     this->builtins.libStdlib = true;
 
-    builtinFunctionDeclarationsCode += "void *alloc (size_t);\n";
-    builtinFunctionDefinitionsCode += "void *alloc (size_t l) {\n";
-    builtinFunctionDefinitionsCode += "  void *r = malloc(l);\n";
-    builtinFunctionDefinitionsCode += "  if (r == NULL) {\n";
-    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);)" "\n";
-    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);\n";
-    builtinFunctionDefinitionsCode += "  }\n";
-    builtinFunctionDefinitionsCode += "  return r;\n";
-    builtinFunctionDefinitionsCode += "}\n";
+    builtinFunctionDeclarationsCode += "void *alloc (size_t);" EOL;
+    builtinFunctionDefinitionsCode += "void *alloc (size_t l) {" EOL;
+    builtinFunctionDefinitionsCode += "  void *r = malloc(l);" EOL;
+    builtinFunctionDefinitionsCode += "  if (r == NULL) {" EOL;
+    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes)" ESC_EOL R"(", l);)" EOL;
+    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFunctionDefinitionsCode += "  }" EOL;
+    builtinFunctionDefinitionsCode += "  return r;" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
   }
 
   if (this->builtins.typeStr) {
@@ -198,24 +200,24 @@ std::tuple<std::string, std::string> Codegen::gen () {
       this->builtins.libStddef = true;
     }
 
-    builtinStructDefinitionsCode += "struct str {\n";
-    builtinStructDefinitionsCode += "  char *c;\n";
-    builtinStructDefinitionsCode += "  size_t l;\n";
-    builtinStructDefinitionsCode += "};\n";
+    builtinStructDefinitionsCode += "struct str {" EOL;
+    builtinStructDefinitionsCode += "  char *c;" EOL;
+    builtinStructDefinitionsCode += "  size_t l;" EOL;
+    builtinStructDefinitionsCode += "};" EOL;
   }
 
-  builtinFunctionDeclarationsCode += builtinFunctionDeclarationsCode.empty() ? "" : "\n";
-  builtinFunctionDefinitionsCode += builtinFunctionDefinitionsCode.empty() ? "" : "\n";
-  builtinStructDefinitionsCode += builtinStructDefinitionsCode.empty() ? "" : "\n";
+  builtinFunctionDeclarationsCode += builtinFunctionDeclarationsCode.empty() ? "" : EOL;
+  builtinFunctionDefinitionsCode += builtinFunctionDefinitionsCode.empty() ? "" : EOL;
+  builtinStructDefinitionsCode += builtinStructDefinitionsCode.empty() ? "" : EOL;
 
-  auto headers = std::string(this->builtins.libMath ? "#include <math.h>\n" : "");
-  headers += std::string(this->builtins.libStdbool ? "#include <stdbool.h>\n" : "");
-  headers += std::string(this->builtins.libStddef ? "#include <stddef.h>\n" : "");
-  headers += std::string(this->builtins.libStdint ? "#include <stdint.h>\n" : "");
-  headers += std::string(this->builtins.libStdio ? "#include <stdio.h>\n" : "");
-  headers += std::string(this->builtins.libStdlib ? "#include <stdlib.h>\n" : "");
-  headers += std::string(this->builtins.libString ? "#include <string.h>\n" : "");
-  headers += headers.empty() ? "" : "\n";
+  auto headers = std::string(this->builtins.libMath ? "#include <math.h>" EOL : "");
+  headers += std::string(this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "");
+  headers += std::string(this->builtins.libStddef ? "#include <stddef.h>" EOL : "");
+  headers += std::string(this->builtins.libStdint ? "#include <stdint.h>" EOL : "");
+  headers += std::string(this->builtins.libStdio ? "#include <stdio.h>" EOL : "");
+  headers += std::string(this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "");
+  headers += std::string(this->builtins.libString ? "#include <string.h>" EOL : "");
+  headers += headers.empty() ? "" : EOL;
 
   if (this->builtins.libMath) {
     this->flags.emplace_back("-lm");
@@ -227,14 +229,14 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += builtinStructDefinitionsCode;
   output += builtinFunctionDeclarationsCode;
   output += builtinFunctionDefinitionsCode;
-  output += "int main () {\n";
+  output += "int main () {" EOL;
   output += topLevelSetUp;
   output += topLevelCode;
   output += mainSetUp;
   output += mainCode;
   output += mainCleanUp;
   output += topLevelCleanUp;
-  output += "}\n";
+  output += "}" EOL;
 
   return std::make_tuple(output, this->_flags());
 }
@@ -294,7 +296,7 @@ CodegenNode Codegen::_node (const ASTNode &node) {
     auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
     auto nodeExprCode = this->_nodeExpr(nodeExpr, true);
 
-    code = std::string(this->indent, ' ') + nodeExprCode + ";\n";
+    code = std::string(this->indent, ' ') + nodeExprCode + ";" EOL;
     return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     // todo
@@ -335,11 +337,11 @@ CodegenNode Codegen::_node (const ASTNode &node) {
       initCode = R"(str_init(""))";
     }
 
-    code = std::string(this->indent, ' ') + type + name + " = " + initCode + ";\n";
+    code = std::string(this->indent, ' ') + type + name + " = " + initCode + ";" EOL;
 
     if (nodeVarDecl.var->type->isStr()) {
        this->builtins.fnStrDeinit = true;
-       cleanUp = std::string(this->indent, ' ') + "str_deinit((struct str) " + name + ");\n";
+       cleanUp = std::string(this->indent, ' ') + "str_deinit((struct str) " + name + ");" EOL;
     }
 
     return this->_wrapNode(node, setUp, code, cleanUp);

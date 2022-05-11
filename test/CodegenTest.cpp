@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <iostream>
 #include "../src/Codegen.hpp"
+#include "../src/config.hpp"
 #include "MockAST.hpp"
 #include "utils.hpp"
 
@@ -18,46 +19,46 @@ class CodegenTest : public testing::TestWithParam<const char *> {
 TEST_P(CodegenTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto testContent = readTestFile("codegen", param);
+  auto stdinDelimiter = std::string("======= stdin =======" EOL);
 
-  if (testContent.substr(0, 22) != "======= stdin =======\n") {
+  if (!testContent.starts_with(stdinDelimiter)) {
     throw Error("Codegen test file doesn't look like an actual test");
   }
 
-  testContent.erase(0, 22);
+  testContent.erase(0, stdinDelimiter.size());
+  auto codeDelimiter = std::string("======= code =======" EOL);
+  auto codeDelimiterPos = testContent.find(codeDelimiter);
 
-  auto delimiterCode = std::string("======= code =======\n");
-  auto delimiterCodePos = testContent.find(delimiterCode);
-
-  if (delimiterCodePos == std::string::npos) {
+  if (codeDelimiterPos == std::string::npos) {
     throw Error("Codegen test file doesn't have a code delimiter");
   }
 
-  auto testStdin = testContent.substr(0, delimiterCodePos);
-  testContent.erase(0, delimiterCodePos + delimiterCode.size());
+  auto testStdin = testContent.substr(0, codeDelimiterPos);
+  testContent.erase(0, codeDelimiterPos + codeDelimiter.size());
 
-  auto delimiterFlags = std::string("======= flags =======\n");
-  auto delimiterFlagsPos = testContent.find(delimiterFlags);
+  auto flagsDelimiter = std::string("======= flags =======" EOL);
+  auto flagsDelimiterPos = testContent.find(flagsDelimiter);
 
-  if (delimiterFlagsPos == std::string::npos) {
+  if (flagsDelimiterPos == std::string::npos) {
     throw Error("Codegen test file doesn't have a flags delimiter");
   }
 
-  auto expectedCode = testContent.substr(0, delimiterFlagsPos);
-  testContent.erase(0, delimiterFlagsPos + delimiterFlags.size());
+  auto expectedCode = testContent.substr(0, flagsDelimiterPos);
+  testContent.erase(0, flagsDelimiterPos + flagsDelimiter.size());
 
-  auto delimiterOutput = std::string("======= stdout =======\n");
-  auto delimiterOutputPos = testContent.find(delimiterOutput);
+  auto stdoutDelimiter = std::string("======= stdout =======" EOL);
+  auto stdoutDelimiterPos = testContent.find(stdoutDelimiter);
 
-  if (delimiterOutputPos == std::string::npos) {
+  if (stdoutDelimiterPos == std::string::npos) {
     throw Error("Codegen test file doesn't have an output delimiter");
   }
 
-  auto expectedFlags = testContent.substr(0, delimiterOutputPos);
-  testContent.erase(0, delimiterOutputPos + delimiterOutput.size());
+  auto expectedFlags = testContent.substr(0, stdoutDelimiterPos);
+  testContent.erase(0, stdoutDelimiterPos + stdoutDelimiter.size());
   auto expectedOutput = testContent.substr(0, testContent.size());
 
   if (!expectedFlags.empty()) {
-    expectedFlags = expectedFlags.substr(0, expectedFlags.size() - 1);
+    expectedFlags.erase(expectedFlags.size());
   }
 
   auto envVars = getEnvVars();
@@ -66,10 +67,11 @@ TEST_P(CodegenTest, Passes) {
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
 
-  ASSERT_EQ(expectedCode, std::get<0>(result).substr(150));
+  ASSERT_EQ(expectedCode, std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
   ASSERT_EQ(expectedFlags, std::get<1>(result));
 
-  auto filePath = "build/" + param + ".out";
+  auto fileName = std::string("build") + OS_PATH_SEP + param;
+  auto filePath = fileName + OS_FILE_EXT;
   Codegen::compile(filePath, result, true);
   auto cmd = filePath;
 
@@ -77,7 +79,7 @@ TEST_P(CodegenTest, Passes) {
     cmd = "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --track-origins=yes " + cmd;
   }
 
-  auto [actualOutput, actualStderr, actualReturnCode] = execCmd(cmd, "build/" + param);
+  auto [actualOutput, actualStderr, actualReturnCode] = execCmd(cmd, fileName);
   std::filesystem::remove(filePath);
 
   EXPECT_EQ(expectedOutput, actualOutput);
