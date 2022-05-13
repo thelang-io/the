@@ -126,4 +126,6 @@ struct Token {
   std::string xml () const;
 };
 
+extern Token tkQn;
+
 #endif

@@ -114,7 +114,7 @@ int main () {
   str_deinit((struct str) __THE_0_a_0);
   str_deinit((struct str) __THE_0___0);
 }
-======= code =======
+======= code-windows =======
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

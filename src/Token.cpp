@@ -8,6 +8,8 @@
 #include "Token.hpp"
 #include "Error.hpp"
 
+Token tkQn = {TK_OP_QN, "?", {}, {}};
+
 std::string escapeVal (const std::string &val, bool insideAttr = false) {
   auto result = std::string();
 

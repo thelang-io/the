@@ -557,7 +557,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &
   } else if (
     std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
     !stmtExpr.parenthesized &&
-    Token{TK_OP_QN}.precedence() < tok.precedence()
+    tkQn.precedence() < tok.precedence()
   ) { // todo test
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprAssign(exprCond.alt, loc, tok);
@@ -630,7 +630,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprBinary (const ParserStmtExpr &
   } else if (
     std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
     !stmtExpr.parenthesized &&
-    Token{TK_OP_QN}.precedence() < tok.precedence()
+    tkQn.precedence() < tok.precedence()
   ) { // todo test
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprBinary(exprCond.alt, loc, tok);
@@ -802,7 +802,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
   } else if (
     std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
     !stmtExpr.parenthesized &&
-    Token{TK_OP_QN}.precedence() < tok.precedence()
+    tkQn.precedence() < tok.precedence()
   ) { // todo test
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprCond(exprCond.alt, loc, tok);
@@ -990,7 +990,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &s
   } else if (
     std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
     !stmtExpr.parenthesized &&
-    Token{TK_OP_QN}.precedence() < tok.precedence()
+    tkQn.precedence() < tok.precedence()
   ) { // todo test
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprUnary(exprCond.alt, loc, tok);
