@@ -41,5 +41,43 @@ int main () {
   str_deinit((struct str) __THE_0_b_0);
   str_deinit((struct str) __THE_0_a_0);
 }
+======= code-windows =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_init (const char *);
+void str_deinit (struct str);
+void *alloc (size_t);
+
+struct str str_init (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+void str_deinit (struct str s) {
+  free(s.c);
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+int main () {
+  const struct str __THE_0_a_0 = str_init("");
+  const struct str __THE_0_b_0 = str_init("test");
+  str_deinit((struct str) __THE_0_b_0);
+  str_deinit((struct str) __THE_0_a_0);
+}
 ======= flags =======
 ======= stdout =======

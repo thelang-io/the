@@ -32,12 +32,19 @@ class CodegenTest : public testing::TestWithParam<const char *> {
 
 TEST_P(CodegenTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
-  auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stdout"});
+  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stdout"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
+  auto expectedCode = sections["code"];
 
-  ASSERT_EQ(sections["code"], std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
+  #ifdef OS_WINDOWS
+    if (sections.contains("code-windows")) {
+      expectedCode = sections["code-windows"];
+    }
+  #endif
+
+  ASSERT_EQ(expectedCode, std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], std::get<1>(result));
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
