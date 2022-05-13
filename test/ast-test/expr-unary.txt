@@ -270,17 +270,26 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprUnary op="DOUBLE_LOGICAL_NOT" prefix="true">
+              <ExprUnary op="LOGICAL_NOT" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="int" />
+                    <BuiltinType name="bool" />
                   </slot>
                   <slot name="body">
-                    <ExprAccess>
-                      <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
-                        <BuiltinType name="int" />
-                      </Var>
-                    </ExprAccess>
+                    <ExprUnary op="LOGICAL_NOT" prefix="true">
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="int" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                              <BuiltinType name="int" />
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprUnary>
                   </slot>
                 </NodeExpr>
               </ExprUnary>

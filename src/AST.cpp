@@ -461,7 +461,6 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto op = ASTExprUnaryOp{};
 
     if (parserExprUnary.op.type == TK_OP_EXCL) op = AST_EXPR_UNARY_LOGICAL_NOT;
-    if (parserExprUnary.op.type == TK_OP_EXCL_EXCL) op = AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT;
     if (parserExprUnary.op.type == TK_OP_MINUS) op = AST_EXPR_UNARY_NEGATION;
     if (parserExprUnary.op.type == TK_OP_MINUS_MINUS) op = AST_EXPR_UNARY_DECREMENT;
     if (parserExprUnary.op.type == TK_OP_PLUS) op = AST_EXPR_UNARY_PLUS;
@@ -531,7 +530,7 @@ Type *AST::_stmtExprType (const ParserStmtExpr &stmtExpr) {
       throw Error(this->reader, exprCond.body.start, exprCond.alt.end, E1004);
     }
 
-    return exprCondBodyType;
+    return Type::largest(exprCondBodyType, exprCondAltType);
   } else if (std::holds_alternative<ParserExprLit>(*stmtExpr.body)) {
     auto exprLit = std::get<ParserExprLit>(*stmtExpr.body);
 
@@ -557,7 +556,7 @@ Type *AST::_stmtExprType (const ParserStmtExpr &stmtExpr) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto exprUnaryArgType = this->_stmtExprType(exprUnary.arg);
 
-    if (exprUnary.op.type == TK_OP_EXCL || exprUnary.op.type == TK_OP_EXCL_EXCL) {
+    if (exprUnary.op.type == TK_OP_EXCL) {
       return this->typeMap.get("bool");
     }
 

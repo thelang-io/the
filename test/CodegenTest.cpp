@@ -75,6 +75,13 @@ INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenTest, testing::Values(
   "expr-assign-str"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenTest, testing::Values(
+  "expr-cond",
+  "expr-cond-nested",
+  "expr-cond-str",
+  "expr-cond-operands"
+));
+
 INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenTest, testing::Values(
   "expr-lit-bool-false",
   "expr-lit-bool-true",

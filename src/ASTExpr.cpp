@@ -77,7 +77,6 @@ std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
   switch (op) {
     case AST_EXPR_UNARY_BITWISE_NOT: return "BITWISE_NOT";
     case AST_EXPR_UNARY_DECREMENT: return "DECREMENT";
-    case AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT: return "DOUBLE_LOGICAL_NOT";
     case AST_EXPR_UNARY_INCREMENT: return "INCREMENT";
     case AST_EXPR_UNARY_LOGICAL_NOT: return "LOGICAL_NOT";
     case AST_EXPR_UNARY_NEGATION: return "NEGATION";

@@ -123,7 +123,6 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_EQ_EQ: return "OP_EQ_EQ";
     case TK_OP_EXCL: return "OP_EXCL";
     case TK_OP_EXCL_EQ: return "OP_EXCL_EQ";
-    case TK_OP_EXCL_EXCL: return "OP_EXCL_EXCL";
     case TK_OP_GT: return "OP_GT";
     case TK_OP_GT_EQ: return "OP_GT_EQ";
     case TK_OP_LBRACE: return "OP_LBRACE";
@@ -214,7 +213,7 @@ int Token::precedence () const {
     return 17;
   } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
     return 16;
-  } else if (this->type == TK_OP_EXCL || this->type == TK_OP_EXCL_EXCL || this->type == TK_OP_TILDE) {
+  } else if (this->type == TK_OP_EXCL || this->type == TK_OP_TILDE) {
     return 15;
   } else if (this->type == TK_OP_STAR_STAR) {
     return 14;

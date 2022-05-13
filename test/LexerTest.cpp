@@ -170,7 +170,7 @@ TEST(LexerTest, LexLineCommentAfterToken) {
 
 TEST(LexerTest, LexOperations) {
   auto r1 = testing::NiceMock<MockReader>("&^:,.=!>{[(<-|%+?}]);/~*");
-  auto r2 = testing::NiceMock<MockReader>("&&!!<<--||++?.?\?>>**");
+  auto r2 = testing::NiceMock<MockReader>("&&<<--||++?.?\?>>**");
   auto r3 = testing::NiceMock<MockReader>("&=&&=^=:=...==!=>=<<=<=-=|=||=%=+=?\?=>>=/=*=**=");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -202,15 +202,14 @@ TEST(LexerTest, LexOperations) {
   EXPECT_EQ(std::get<1>(l1.next()).str(), "OP_STAR(1:24-1:25): *");
 
   EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_AND_AND(1:1-1:3): &&");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_EXCL_EXCL(1:3-1:5): !!");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_LSHIFT(1:5-1:7): <<");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_MINUS_MINUS(1:7-1:9): --");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_OR_OR(1:9-1:11): ||");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_PLUS_PLUS(1:11-1:13): ++");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_DOT(1:13-1:15): ?.");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_QN(1:15-1:17): ??");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_RSHIFT(1:17-1:19): >>");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_STAR_STAR(1:19-1:21): **");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_LSHIFT(1:3-1:5): <<");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_MINUS_MINUS(1:5-1:7): --");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_OR_OR(1:7-1:9): ||");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_PLUS_PLUS(1:9-1:11): ++");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_DOT(1:11-1:13): ?.");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_QN(1:13-1:15): ??");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_RSHIFT(1:15-1:17): >>");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_STAR_STAR(1:17-1:19): **");
 
   EXPECT_EQ(std::get<1>(l3.next()).str(), "OP_AND_EQ(1:1-1:3): &=");
   EXPECT_EQ(std::get<1>(l3.next()).str(), "OP_AND_AND_EQ(1:3-1:6): &&=");
@@ -236,7 +235,7 @@ TEST(LexerTest, LexOperations) {
 
 TEST(LexerTest, LexOperationsWhitespace) {
   auto r1 = testing::NiceMock<MockReader>(" & ^ : , . = ! > { [ ( < - | % + ? } ] ) ; / * ~ ");
-  auto r2 = testing::NiceMock<MockReader>(" && !! << -- || ++ ?. ?? >> ** ");
+  auto r2 = testing::NiceMock<MockReader>(" && << -- || ++ ?. ?? >> ** ");
   auto r3 = testing::NiceMock<MockReader>(" &= &&= ^= := ... == != >= <<= <= -= |= ||= %= += ?\?= >>= /= *= **= ");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -269,16 +268,15 @@ TEST(LexerTest, LexOperationsWhitespace) {
   EXPECT_EQ(std::get<1>(l1.next()).str(), "EOF(1:50-1:50)");
 
   EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_AND_AND(1:2-1:4): &&");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_EXCL_EXCL(1:5-1:7): !!");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_LSHIFT(1:8-1:10): <<");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_MINUS_MINUS(1:11-1:13): --");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_OR_OR(1:14-1:16): ||");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_PLUS_PLUS(1:17-1:19): ++");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_DOT(1:20-1:22): ?.");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_QN(1:23-1:25): ??");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_RSHIFT(1:26-1:28): >>");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_STAR_STAR(1:29-1:31): **");
-  EXPECT_EQ(std::get<1>(l2.next()).str(), "EOF(1:32-1:32)");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_LSHIFT(1:5-1:7): <<");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_MINUS_MINUS(1:8-1:10): --");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_OR_OR(1:11-1:13): ||");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_PLUS_PLUS(1:14-1:16): ++");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_DOT(1:17-1:19): ?.");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_QN_QN(1:20-1:22): ??");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_RSHIFT(1:23-1:25): >>");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "OP_STAR_STAR(1:26-1:28): **");
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "EOF(1:29-1:29)");
 
   EXPECT_EQ(std::get<1>(l3.next()).str(), "OP_AND_EQ(1:2-1:4): &=");
   EXPECT_EQ(std::get<1>(l3.next()).str(), "OP_AND_AND_EQ(1:5-1:8): &&=");
@@ -329,7 +327,6 @@ TEST(LexerTest, LexOperationsEof) {
   auto r23 = testing::NiceMock<MockReader>("*");
   auto r24 = testing::NiceMock<MockReader>("~");
   auto r25 = testing::NiceMock<MockReader>("&&");
-  auto r26 = testing::NiceMock<MockReader>("!!");
   auto r27 = testing::NiceMock<MockReader>("<<");
   auto r28 = testing::NiceMock<MockReader>("--");
   auto r29 = testing::NiceMock<MockReader>("||");
@@ -384,7 +381,6 @@ TEST(LexerTest, LexOperationsEof) {
   auto l23 = Lexer(&r23);
   auto l24 = Lexer(&r24);
   auto l25 = Lexer(&r25);
-  auto l26 = Lexer(&r26);
   auto l27 = Lexer(&r27);
   auto l28 = Lexer(&r28);
   auto l29 = Lexer(&r29);
@@ -440,7 +436,6 @@ TEST(LexerTest, LexOperationsEof) {
   EXPECT_EQ(std::get<1>(l24.next()).str(), "OP_TILDE(1:1-1:2): ~");
 
   EXPECT_EQ(std::get<1>(l25.next()).str(), "OP_AND_AND(1:1-1:3): &&");
-  EXPECT_EQ(std::get<1>(l26.next()).str(), "OP_EXCL_EXCL(1:1-1:3): !!");
   EXPECT_EQ(std::get<1>(l27.next()).str(), "OP_LSHIFT(1:1-1:3): <<");
   EXPECT_EQ(std::get<1>(l28.next()).str(), "OP_MINUS_MINUS(1:1-1:3): --");
   EXPECT_EQ(std::get<1>(l29.next()).str(), "OP_OR_OR(1:1-1:3): ||");

@@ -69,6 +69,9 @@
 #define E0137 "E0137 - Expected right-hand binary expression"
 #define E0138 "E0138 - Expected ternary body expression"
 #define E0139 "E0139 - Expected ternary alternative expression"
+#define E0140 "E0140 - Expected lvalue as left operand of assignment"
+#define E0141 "E0141 - Called object expected to be a function"
+#define E0142 "E0142 - lvalue required as increment operand"
 
 #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"

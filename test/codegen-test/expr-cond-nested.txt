@@ -1,0 +1,23 @@
+======= stdin =======
+main {
+  mut v: int
+
+  a := 1 > 2 ? 5 : 0 ? 6 : 7
+  b := 0 > 2 ? 0 ? 6 : 7 : 3
+  c := 1 ? 2 ? 3 : 4 : 5
+  d := 0 ? 2 ? 3 : 4 : 5
+  e := a < d ? v++ : v = d
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_v_0 = 0;
+  const int32_t __THE_0_a_0 = 1 > 2 ? 5 : 0 ? 6 : 7;
+  const int32_t __THE_0_b_0 = 0 > 2 ? 0 ? 6 : 7 : 3;
+  const int32_t __THE_0_c_0 = 1 ? 2 ? 3 : 4 : 5;
+  const int32_t __THE_0_d_0 = 0 ? 2 ? 3 : 4 : 5;
+  const int32_t __THE_0_e_0 = __THE_0_a_0 < __THE_0_d_0 ? __THE_0_v_0++ : (__THE_0_v_0 = __THE_0_d_0);
+}
+======= flags =======
+======= stdout =======

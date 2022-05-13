@@ -5,7 +5,7 @@ main {
   zCharEmpty := '\0'    zChar := 'a'
   zFloatEmpty := 0.0    zFloatNeg := -3.14   zFloat := 3.14
   zF32Empty: f32 = 0    zF32Neg: f32 = -3.14 zF32: f32 = 3.14
-  zF64Empty: f64 = 0    zF64Neg: f64 = -3.14 zF64: f64 = -3.14
+  zF64Empty: f64 = 0    zF64Neg: f64 = -3.14 zF64: f64 = 3.14
   zIntEmpty: int = 0    zIntNeg: int = -3    zInt: int = 3
   zI8Empty: i8 = 0      zI8Neg: i8 = -3      zI8: i8 = 3
   zI16Empty: i16 = 0    zI16Neg: i16 = -3    zI16: i16 = 3
@@ -130,7 +130,7 @@ int main () {
   const float __THE_0_zF32_0 = 3.14;
   const double __THE_0_zF64Empty_0 = 0;
   const double __THE_0_zF64Neg_0 = -3.14;
-  const double __THE_0_zF64_0 = -3.14;
+  const double __THE_0_zF64_0 = 3.14;
   const int32_t __THE_0_zIntEmpty_0 = 0;
   const int32_t __THE_0_zIntNeg_0 = -3;
   const int32_t __THE_0_zInt_0 = 3;

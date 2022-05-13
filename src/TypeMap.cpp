@@ -23,6 +23,57 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
 }
 
+Type *Type::largest (Type *a, Type *b) {
+  return (
+    ((a->isF64() || a->isFloat()) && (b->isF64() || b->isFloat())) ||
+    ((a->isF64() || a->isFloat()) && b->isF32()) ||
+    ((a->isF64() || a->isFloat()) && b->isU32()) ||
+    ((a->isF64() || a->isFloat()) && b->isU16()) ||
+    ((a->isF64() || a->isFloat()) && b->isU8()) ||
+    ((a->isF64() || a->isFloat()) && b->isI64()) ||
+    ((a->isF64() || a->isFloat()) && (b->isI32() || b->isInt())) ||
+    ((a->isF64() || a->isFloat()) && b->isI16()) ||
+    ((a->isF64() || a->isFloat()) && b->isI8()) ||
+
+    (a->isF32() && b->isF32()) ||
+    (a->isF32() && b->isU16()) ||
+    (a->isF32() && b->isU8()) ||
+    (a->isF32() && (b->isI32() || b->isInt())) ||
+    (a->isF32() && b->isI16()) ||
+    (a->isF32() && b->isI8()) ||
+
+    (a->isI64() && b->isU32()) ||
+    (a->isI64() && b->isU16()) ||
+    (a->isI64() && b->isU8()) ||
+    (a->isI64() && b->isI64()) ||
+    (a->isI64() && (b->isI32() || b->isInt())) ||
+    (a->isI64() && b->isI16()) ||
+    (a->isI64() && b->isI8()) ||
+    (a->isU64() && b->isU64()) ||
+    (a->isU64() && b->isU32()) ||
+    (a->isU64() && b->isU16()) ||
+    (a->isU64() && b->isU8()) ||
+
+    ((a->isI32() || a->isInt()) && b->isU16()) ||
+    ((a->isI32() || a->isInt()) && b->isU8()) ||
+    ((a->isI32() || a->isInt()) && (b->isI32() || b->isInt())) ||
+    ((a->isI32() || a->isInt()) && b->isI16()) ||
+    ((a->isI32() || a->isInt()) && b->isI8()) ||
+    (a->isU32() && b->isU32()) ||
+    (a->isU32() && b->isU16()) ||
+    (a->isU32() && b->isU8()) ||
+
+    (a->isI16() && b->isU8()) ||
+    (a->isI16() && b->isI16()) ||
+    (a->isI16() && b->isI8()) ||
+    (a->isU16() && b->isU16()) ||
+    (a->isU16() && b->isU8()) ||
+
+    (a->isI8() && b->isI8()) ||
+    (a->isU8() && b->isU8())
+  ) ? a : b;
+}
+
 bool Type::isAny () const {
   return this->name == "any";
 }

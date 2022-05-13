@@ -32,7 +32,7 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
   if (ch0 == ':') return {l, this->_opEq(TK_OP_COLON, TK_OP_COLON_EQ)};
   if (ch0 == ',') return {l, this->_tok(TK_OP_COMMA)};
   if (ch0 == '=') return {l, this->_opEq(TK_OP_EQ, TK_OP_EQ_EQ)};
-  if (ch0 == '!') return {l, this->_opEq2('!', TK_OP_EXCL, TK_OP_EXCL_EQ, TK_OP_EXCL_EXCL)};
+  if (ch0 == '!') return {l, this->_opEq(TK_OP_EXCL, TK_OP_EXCL_EQ)};
   if (ch0 == '>') return {l, this->_opEq2('>', TK_OP_GT, TK_OP_GT_EQ, TK_OP_RSHIFT, TK_OP_RSHIFT_EQ)};
   if (ch0 == '{') return {l, this->_tok(TK_OP_LBRACE)};
   if (ch0 == '[') return {l, this->_tok(TK_OP_LBRACK)};

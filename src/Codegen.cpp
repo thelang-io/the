@@ -59,7 +59,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
       mainSetUp += nodeSetUp;
       mainCode += nodeCode;
       mainCleanUp = nodeCleanUp + mainCleanUp;
-    } else {
+    } else { // todo test
       this->indent = 2;
       auto [nodeSetUp, nodeCode, nodeCleanUp] = this->_node(node);
       this->indent = 0;
@@ -196,7 +196,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.typeStr) {
-    if (!this->builtins.libStdio && !this->builtins.libStdlib && !this->builtins.libString) {
+    if (!this->builtins.libStdio && !this->builtins.libStdlib && !this->builtins.libString) { // todo test
       this->builtins.libStddef = true;
     }
 
@@ -212,7 +212,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   auto headers = std::string(this->builtins.libMath ? "#include <math.h>" EOL : "");
   headers += std::string(this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "");
-  headers += std::string(this->builtins.libStddef ? "#include <stddef.h>" EOL : "");
+  headers += std::string(this->builtins.libStddef ? "#include <stddef.h>" EOL : ""); // todo test
   headers += std::string(this->builtins.libStdint ? "#include <stdint.h>" EOL : "");
   headers += std::string(this->builtins.libStdio ? "#include <stdio.h>" EOL : "");
   headers += std::string(this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "");
@@ -266,6 +266,7 @@ std::string Codegen::_exprAccess (const std::shared_ptr<ASTMemberObj> &exprAcces
     return Codegen::name(id->codeName);
   }
 
+  // todo test
   auto member = std::get<ASTMember>(*exprAccessBody);
   auto memberObj = this->_exprAccess(member.obj);
 
@@ -288,25 +289,17 @@ CodegenNode Codegen::_node (const ASTNode &node) {
   auto code = std::string();
   auto cleanUp = std::string();
 
-  if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
-    // todo
-  } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
-    // todo
-  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
+  if (std::holds_alternative<ASTNodeBreak>(*node.body)) { // todo
+  } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) { // todo
+  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) { // todo test
     auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
     auto nodeExprCode = this->_nodeExpr(nodeExpr, true);
 
     code = std::string(this->indent, ' ') + nodeExprCode + ";" EOL;
     return this->_wrapNode(node, setUp, code, cleanUp);
-  } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-    // todo
-    // todo varMap save/restore
-  } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
-    // todo
-    // todo if/else varMap save/restore
-  } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
-    // todo
-    // todo varMap save/restore
+  } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) { // todo varMap save/restore
+  } else if (std::holds_alternative<ASTNodeIf>(*node.body)) { // todo if/else varMap save/restore
+  } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) { // todo varMap save/restore
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
     auto nodeMain = std::get<ASTNodeMain>(*node.body);
 
@@ -315,10 +308,8 @@ CodegenNode Codegen::_node (const ASTNode &node) {
     this->varMap.restore();
 
     return this->_wrapNode(node, setUp, code, cleanUp);
-  } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-    // todo
-  } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
-    // todo
+  } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) { // todo
+  } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) { // todo
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
     auto name = Codegen::name(nodeVarDecl.var->codeName);
@@ -410,6 +401,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_AND) opCode = " &= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_OR) opCode = " |= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_XOR) opCode = " ^= ";
+      // todo test
       if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) opCode = " ?\?= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_DIVIDE) opCode = " /= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_EQUAL) opCode = " = ";
@@ -478,13 +470,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     if (exprBinary.op == AST_EXPR_BINARY_SUBTRACT) opCode = " - ";
 
     return this->_wrapNodeExpr(nodeExpr, leftCode + opCode + rightCode);
-  } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
-    // todo
+  } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) { // todo
   } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
     auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
     auto condCode = this->_nodeExpr(exprCond.cond);
     auto bodyCode = this->_nodeExpr(exprCond.body);
     auto altCode = this->_nodeExpr(exprCond.alt);
+
+    if (std::holds_alternative<ASTExprAssign>(*exprCond.alt.body) && !exprCond.alt.parenthesized && !exprCond.alt.type->isStr()) {
+      altCode = "(" + altCode + ")";
+    }
 
     return this->_wrapNodeExpr(nodeExpr, condCode + " ? " + bodyCode + " : " + altCode);
   } else if (std::holds_alternative<ASTExprLit>(*nodeExpr.body)) {
@@ -511,8 +506,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     }
 
     return this->_wrapNodeExpr(nodeExpr, exprLit.body);
-  } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
-    // todo
+  } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) { // todo
   } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.body)) {
     auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
     auto argCode = this->_nodeExpr(exprUnary.arg);
@@ -520,25 +514,21 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
 
     if (exprUnary.op == AST_EXPR_UNARY_BITWISE_NOT) opCode = "~";
     if (exprUnary.op == AST_EXPR_UNARY_DECREMENT) opCode = "--";
-    if (exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT) opCode = "!!";
     if (exprUnary.op == AST_EXPR_UNARY_INCREMENT) opCode = "++";
     if (exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) opCode = "!";
     if (exprUnary.op == AST_EXPR_UNARY_NEGATION) opCode = "-";
     if (exprUnary.op == AST_EXPR_UNARY_PLUS) opCode = "+";
 
     if (
-      (exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT || exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) &&
+      exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT &&
       (exprUnary.arg.type->isFloat() || exprUnary.arg.type->isF32() || exprUnary.arg.type->isF64())
     ) {
       this->builtins.libStdbool = true;
       argCode = "((bool) " + argCode + ")";
-    } else if (
-      (exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT || exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) &&
-      exprUnary.arg.type->isStr()
-    ) {
+    } else if (exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT && exprUnary.arg.type->isStr()) {
       this->builtins.fnStrNot = true;
       argCode = "str_not(" + argCode + ")";
-      opCode = exprUnary.op == AST_EXPR_UNARY_DOUBLE_LOGICAL_NOT ? "!" : "";
+      opCode = "";
     }
 
     return this->_wrapNodeExpr(nodeExpr, exprUnary.prefix ? opCode + argCode : argCode + opCode);

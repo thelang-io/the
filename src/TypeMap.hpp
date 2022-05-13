@@ -41,6 +41,8 @@ struct Type {
   std::variant<TypeFn, TypeObj> body;
   bool builtin;
 
+  static Type *largest (Type *, Type *); // todo test
+
   bool isAny () const;
   bool isBool () const;
   bool isByte () const;

@@ -149,7 +149,6 @@ TEST(TokenTest, UnaryPrecision) {
   EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.precedence(), 16);
   EXPECT_EQ(Token{TK_OP_PLUS_PLUS}.precedence(), 16);
   EXPECT_EQ(Token{TK_OP_EXCL}.precedence(), 15);
-  EXPECT_EQ(Token{TK_OP_EXCL_EXCL}.precedence(), 15);
   EXPECT_EQ(Token{TK_OP_TILDE}.precedence(), 15);
 }
 

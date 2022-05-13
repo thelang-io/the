@@ -64,7 +64,6 @@ enum TokenType {
   TK_OP_EQ_EQ,
   TK_OP_EXCL,
   TK_OP_EXCL_EQ,
-  TK_OP_EXCL_EXCL,
   TK_OP_GT,
   TK_OP_GT_EQ,
   TK_OP_LBRACE,
