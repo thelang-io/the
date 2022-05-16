@@ -2,9 +2,9 @@
 z = a = 1
 z = a = b = 1
 
-z = 1 + a = 3
-z = 1 + 2 + a = 3 + b = 4
-z = 1 + 3 + a = b = 3
+z = 1 + (a = 3)
+z = 1 + 2 + (a = 3) + (b = 4)
+z = 1 + 3 + (a = b = 3)
 
 z = a = b()
 z = a = b = c()
@@ -102,8 +102,8 @@ z = a = b = !c
     </ExprAssign>
   </StmtExpr>
 </Stmt>
-<Stmt start="4:1" end="4:14">
-  <StmtExpr parenthesized="false" start="4:1" end="4:14">
+<Stmt start="4:1" end="4:16">
+  <StmtExpr parenthesized="false" start="4:1" end="4:16">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -114,7 +114,7 @@ z = a = b = !c
         <Token type="OP_EQ" val="=" start="4:3" end="4:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="4:5" end="4:14">
+        <StmtExpr parenthesized="false" start="4:5" end="4:16">
           <ExprBinary>
             <slot name="left">
               <StmtExpr parenthesized="false" start="4:5" end="4:6">
@@ -127,20 +127,20 @@ z = a = b = !c
               <Token type="OP_PLUS" val="+" start="4:7" end="4:8" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false" start="4:9" end="4:14">
+              <StmtExpr parenthesized="true" start="4:9" end="4:16">
                 <ExprAssign>
                   <slot name="left">
                     <ExprAccess>
-                      <Token type="ID" val="a" start="4:9" end="4:10" />
+                      <Token type="ID" val="a" start="4:10" end="4:11" />
                     </ExprAccess>
                   </slot>
                   <slot name="op">
-                    <Token type="OP_EQ" val="=" start="4:11" end="4:12" />
+                    <Token type="OP_EQ" val="=" start="4:12" end="4:13" />
                   </slot>
                   <slot name="right">
-                    <StmtExpr parenthesized="false" start="4:13" end="4:14">
+                    <StmtExpr parenthesized="false" start="4:14" end="4:15">
                       <ExprLit>
-                        <Token type="LIT_INT_DEC" val="3" start="4:13" end="4:14" />
+                        <Token type="LIT_INT_DEC" val="3" start="4:14" end="4:15" />
                       </ExprLit>
                     </StmtExpr>
                   </slot>
@@ -153,8 +153,8 @@ z = a = b = !c
     </ExprAssign>
   </StmtExpr>
 </Stmt>
-<Stmt start="5:1" end="5:26">
-  <StmtExpr parenthesized="false" start="5:1" end="5:26">
+<Stmt start="5:1" end="5:30">
+  <StmtExpr parenthesized="false" start="5:1" end="5:30">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -165,10 +165,10 @@ z = a = b = !c
         <Token type="OP_EQ" val="=" start="5:3" end="5:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="5:5" end="5:26">
+        <StmtExpr parenthesized="false" start="5:5" end="5:30">
           <ExprBinary>
             <slot name="left">
-              <StmtExpr parenthesized="false" start="5:5" end="5:18">
+              <StmtExpr parenthesized="false" start="5:5" end="5:20">
                 <ExprBinary>
                   <slot name="left">
                     <StmtExpr parenthesized="false" start="5:5" end="5:10">
@@ -197,20 +197,20 @@ z = a = b = !c
                     <Token type="OP_PLUS" val="+" start="5:11" end="5:12" />
                   </slot>
                   <slot name="right">
-                    <StmtExpr parenthesized="false" start="5:13" end="5:18">
+                    <StmtExpr parenthesized="true" start="5:13" end="5:20">
                       <ExprAssign>
                         <slot name="left">
                           <ExprAccess>
-                            <Token type="ID" val="a" start="5:13" end="5:14" />
+                            <Token type="ID" val="a" start="5:14" end="5:15" />
                           </ExprAccess>
                         </slot>
                         <slot name="op">
-                          <Token type="OP_EQ" val="=" start="5:15" end="5:16" />
+                          <Token type="OP_EQ" val="=" start="5:16" end="5:17" />
                         </slot>
                         <slot name="right">
-                          <StmtExpr parenthesized="false" start="5:17" end="5:18">
+                          <StmtExpr parenthesized="false" start="5:18" end="5:19">
                             <ExprLit>
-                              <Token type="LIT_INT_DEC" val="3" start="5:17" end="5:18" />
+                              <Token type="LIT_INT_DEC" val="3" start="5:18" end="5:19" />
                             </ExprLit>
                           </StmtExpr>
                         </slot>
@@ -221,23 +221,23 @@ z = a = b = !c
               </StmtExpr>
             </slot>
             <slot name="op">
-              <Token type="OP_PLUS" val="+" start="5:19" end="5:20" />
+              <Token type="OP_PLUS" val="+" start="5:21" end="5:22" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false" start="5:21" end="5:26">
+              <StmtExpr parenthesized="true" start="5:23" end="5:30">
                 <ExprAssign>
                   <slot name="left">
                     <ExprAccess>
-                      <Token type="ID" val="b" start="5:21" end="5:22" />
+                      <Token type="ID" val="b" start="5:24" end="5:25" />
                     </ExprAccess>
                   </slot>
                   <slot name="op">
-                    <Token type="OP_EQ" val="=" start="5:23" end="5:24" />
+                    <Token type="OP_EQ" val="=" start="5:26" end="5:27" />
                   </slot>
                   <slot name="right">
-                    <StmtExpr parenthesized="false" start="5:25" end="5:26">
+                    <StmtExpr parenthesized="false" start="5:28" end="5:29">
                       <ExprLit>
-                        <Token type="LIT_INT_DEC" val="4" start="5:25" end="5:26" />
+                        <Token type="LIT_INT_DEC" val="4" start="5:28" end="5:29" />
                       </ExprLit>
                     </StmtExpr>
                   </slot>
@@ -250,8 +250,8 @@ z = a = b = !c
     </ExprAssign>
   </StmtExpr>
 </Stmt>
-<Stmt start="6:1" end="6:22">
-  <StmtExpr parenthesized="false" start="6:1" end="6:22">
+<Stmt start="6:1" end="6:24">
+  <StmtExpr parenthesized="false" start="6:1" end="6:24">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -262,7 +262,7 @@ z = a = b = !c
         <Token type="OP_EQ" val="=" start="6:3" end="6:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="6:5" end="6:22">
+        <StmtExpr parenthesized="false" start="6:5" end="6:24">
           <ExprBinary>
             <slot name="left">
               <StmtExpr parenthesized="false" start="6:5" end="6:10">
@@ -291,31 +291,31 @@ z = a = b = !c
               <Token type="OP_PLUS" val="+" start="6:11" end="6:12" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false" start="6:13" end="6:22">
+              <StmtExpr parenthesized="true" start="6:13" end="6:24">
                 <ExprAssign>
                   <slot name="left">
                     <ExprAccess>
-                      <Token type="ID" val="a" start="6:13" end="6:14" />
+                      <Token type="ID" val="a" start="6:14" end="6:15" />
                     </ExprAccess>
                   </slot>
                   <slot name="op">
-                    <Token type="OP_EQ" val="=" start="6:15" end="6:16" />
+                    <Token type="OP_EQ" val="=" start="6:16" end="6:17" />
                   </slot>
                   <slot name="right">
-                    <StmtExpr parenthesized="false" start="6:17" end="6:22">
+                    <StmtExpr parenthesized="false" start="6:18" end="6:23">
                       <ExprAssign>
                         <slot name="left">
                           <ExprAccess>
-                            <Token type="ID" val="b" start="6:17" end="6:18" />
+                            <Token type="ID" val="b" start="6:18" end="6:19" />
                           </ExprAccess>
                         </slot>
                         <slot name="op">
-                          <Token type="OP_EQ" val="=" start="6:19" end="6:20" />
+                          <Token type="OP_EQ" val="=" start="6:20" end="6:21" />
                         </slot>
                         <slot name="right">
-                          <StmtExpr parenthesized="false" start="6:21" end="6:22">
+                          <StmtExpr parenthesized="false" start="6:22" end="6:23">
                             <ExprLit>
-                              <Token type="LIT_INT_DEC" val="3" start="6:21" end="6:22" />
+                              <Token type="LIT_INT_DEC" val="3" start="6:22" end="6:23" />
                             </ExprLit>
                           </StmtExpr>
                         </slot>

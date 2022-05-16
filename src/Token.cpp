@@ -208,36 +208,40 @@ bool Token::isWhitespace (char ch) {
 
 int Token::precedence (bool isUnary) const {
   if (this->type == TK_OP_LPAR || this->type == TK_OP_RPAR) {
-    return 18;
-  } else if (this->type == TK_OP_DOT || this->type == TK_OP_DOT_DOT_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_QN_DOT || this->type == TK_OP_RBRACK) {
     return 17;
-  } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
+  } else if (
+    this->type == TK_OP_DOT ||
+    this->type == TK_OP_DOT_DOT_DOT ||
+    this->type == TK_OP_LBRACK ||
+    this->type == TK_OP_QN_DOT ||
+    this->type == TK_OP_RBRACK
+  ) {
     return 16;
-  } else if (isUnary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) {
+  } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
     return 15;
-  } else if (this->type == TK_OP_STAR_STAR) {
+  } else if (isUnary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) {
     return 14;
-  } else if (this->type == TK_OP_PERCENT || this->type == TK_OP_SLASH || this->type == TK_OP_STAR) {
+  } else if (this->type == TK_OP_STAR_STAR) {
     return 13;
-  } else if (this->type == TK_OP_MINUS || this->type == TK_OP_PLUS) {
+  } else if (this->type == TK_OP_PERCENT || this->type == TK_OP_SLASH || this->type == TK_OP_STAR) {
     return 12;
-  } else if (this->type == TK_OP_LSHIFT || this->type == TK_OP_RSHIFT) {
+  } else if (this->type == TK_OP_MINUS || this->type == TK_OP_PLUS) {
     return 11;
-  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ) {
+  } else if (this->type == TK_OP_LSHIFT || this->type == TK_OP_RSHIFT) {
     return 10;
-  } else if (this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ) {
+  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ) {
     return 9;
-  } else if (this->type == TK_OP_AND) {
+  } else if (this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ) {
     return 8;
-  } else if (this->type == TK_OP_CARET) {
+  } else if (this->type == TK_OP_AND) {
     return 7;
-  } else if (this->type == TK_OP_OR) {
+  } else if (this->type == TK_OP_CARET) {
     return 6;
-  } else if (this->type == TK_OP_AND_AND) {
+  } else if (this->type == TK_OP_OR) {
     return 5;
-  } else if (this->type == TK_OP_OR_OR || this->type == TK_OP_QN_QN) {
+  } else if (this->type == TK_OP_AND_AND) {
     return 4;
-  } else if (this->type == TK_OP_COLON || this->type == TK_OP_QN) {
+  } else if (this->type == TK_OP_OR_OR || this->type == TK_OP_QN_QN) {
     return 3;
   } else if (
     this->type == TK_OP_AND_AND_EQ ||
@@ -254,7 +258,10 @@ int Token::precedence (bool isUnary) const {
     this->type == TK_OP_RSHIFT_EQ ||
     this->type == TK_OP_SLASH_EQ ||
     this->type == TK_OP_STAR_EQ ||
-    this->type == TK_OP_STAR_STAR_EQ
+    this->type == TK_OP_STAR_STAR_EQ ||
+
+    this->type == TK_OP_COLON ||
+    this->type == TK_OP_QN
   ) {
     return 2;
   } else if (this->type == TK_OP_COMMA) {

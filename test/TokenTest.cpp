@@ -127,57 +127,57 @@ TEST(TokenTest, ThrowsOnUnknownPrecedenceToken) {
 }
 
 TEST(TokenTest, ParenthesesPrecision) {
-  EXPECT_EQ(Token{TK_OP_LPAR}.precedence(), 18);
-  EXPECT_EQ(Token{TK_OP_RPAR}.precedence(), 18);
+  EXPECT_EQ(Token{TK_OP_LPAR}.precedence(), 17);
+  EXPECT_EQ(Token{TK_OP_RPAR}.precedence(), 17);
 }
 
 TEST(TokenTest, BracketsPrecision) {
-  EXPECT_EQ(Token{TK_OP_LBRACK}.precedence(), 17);
-  EXPECT_EQ(Token{TK_OP_RBRACK}.precedence(), 17);
+  EXPECT_EQ(Token{TK_OP_LBRACK}.precedence(), 16);
+  EXPECT_EQ(Token{TK_OP_RBRACK}.precedence(), 16);
 }
 
 TEST(TokenTest, SymbolsPrecision) {
-  EXPECT_EQ(Token{TK_OP_DOT}.precedence(), 17);
-  EXPECT_EQ(Token{TK_OP_DOT_DOT_DOT}.precedence(), 17);
-  EXPECT_EQ(Token{TK_OP_QN_DOT}.precedence(), 17);
-  EXPECT_EQ(Token{TK_OP_COLON}.precedence(), 3);
-  EXPECT_EQ(Token{TK_OP_QN}.precedence(), 3);
+  EXPECT_EQ(Token{TK_OP_DOT}.precedence(), 16);
+  EXPECT_EQ(Token{TK_OP_DOT_DOT_DOT}.precedence(), 16);
+  EXPECT_EQ(Token{TK_OP_QN_DOT}.precedence(), 16);
+  EXPECT_EQ(Token{TK_OP_COLON}.precedence(), 2);
+  EXPECT_EQ(Token{TK_OP_QN}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_COMMA}.precedence(), 1);
 }
 
 TEST(TokenTest, UnaryPrecision) {
-  EXPECT_EQ(Token{TK_OP_MINUS}.precedence(true), 15);
-  EXPECT_EQ(Token{TK_OP_PLUS}.precedence(true), 15);
-  EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.precedence(true), 16);
-  EXPECT_EQ(Token{TK_OP_PLUS_PLUS}.precedence(true), 16);
-  EXPECT_EQ(Token{TK_OP_EXCL}.precedence(true), 15);
-  EXPECT_EQ(Token{TK_OP_TILDE}.precedence(true), 15);
+  EXPECT_EQ(Token{TK_OP_MINUS}.precedence(true), 14);
+  EXPECT_EQ(Token{TK_OP_PLUS}.precedence(true), 14);
+  EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.precedence(true), 15);
+  EXPECT_EQ(Token{TK_OP_PLUS_PLUS}.precedence(true), 15);
+  EXPECT_EQ(Token{TK_OP_EXCL}.precedence(true), 14);
+  EXPECT_EQ(Token{TK_OP_TILDE}.precedence(true), 14);
 }
 
 TEST(TokenTest, BinaryPrecision) {
-  EXPECT_EQ(Token{TK_OP_STAR_STAR}.precedence(), 14);
-  EXPECT_EQ(Token{TK_OP_PERCENT}.precedence(), 13);
-  EXPECT_EQ(Token{TK_OP_SLASH}.precedence(), 13);
-  EXPECT_EQ(Token{TK_OP_STAR}.precedence(), 13);
-  EXPECT_EQ(Token{TK_OP_MINUS}.precedence(), 12);
-  EXPECT_EQ(Token{TK_OP_PLUS}.precedence(), 12);
-  EXPECT_EQ(Token{TK_OP_LSHIFT}.precedence(), 11);
-  EXPECT_EQ(Token{TK_OP_RSHIFT}.precedence(), 11);
-  EXPECT_EQ(Token{TK_OP_GT}.precedence(), 10);
-  EXPECT_EQ(Token{TK_OP_GT_EQ}.precedence(), 10);
-  EXPECT_EQ(Token{TK_OP_LT}.precedence(), 10);
-  EXPECT_EQ(Token{TK_OP_LT_EQ}.precedence(), 10);
-  EXPECT_EQ(Token{TK_OP_AND}.precedence(), 8);
-  EXPECT_EQ(Token{TK_OP_CARET}.precedence(), 7);
-  EXPECT_EQ(Token{TK_OP_OR}.precedence(), 6);
-  EXPECT_EQ(Token{TK_OP_AND_AND}.precedence(), 5);
-  EXPECT_EQ(Token{TK_OP_OR_OR}.precedence(), 4);
-  EXPECT_EQ(Token{TK_OP_QN_QN}.precedence(), 4);
+  EXPECT_EQ(Token{TK_OP_STAR_STAR}.precedence(), 13);
+  EXPECT_EQ(Token{TK_OP_PERCENT}.precedence(), 12);
+  EXPECT_EQ(Token{TK_OP_SLASH}.precedence(), 12);
+  EXPECT_EQ(Token{TK_OP_STAR}.precedence(), 12);
+  EXPECT_EQ(Token{TK_OP_MINUS}.precedence(), 11);
+  EXPECT_EQ(Token{TK_OP_PLUS}.precedence(), 11);
+  EXPECT_EQ(Token{TK_OP_LSHIFT}.precedence(), 10);
+  EXPECT_EQ(Token{TK_OP_RSHIFT}.precedence(), 10);
+  EXPECT_EQ(Token{TK_OP_GT}.precedence(), 9);
+  EXPECT_EQ(Token{TK_OP_GT_EQ}.precedence(), 9);
+  EXPECT_EQ(Token{TK_OP_LT}.precedence(), 9);
+  EXPECT_EQ(Token{TK_OP_LT_EQ}.precedence(), 9);
+  EXPECT_EQ(Token{TK_OP_AND}.precedence(), 7);
+  EXPECT_EQ(Token{TK_OP_CARET}.precedence(), 6);
+  EXPECT_EQ(Token{TK_OP_OR}.precedence(), 5);
+  EXPECT_EQ(Token{TK_OP_AND_AND}.precedence(), 4);
+  EXPECT_EQ(Token{TK_OP_OR_OR}.precedence(), 3);
+  EXPECT_EQ(Token{TK_OP_QN_QN}.precedence(), 3);
 }
 
 TEST(TokenTest, AssignmentPrecision) {
-  EXPECT_EQ(Token{TK_OP_EQ_EQ}.precedence(), 9);
-  EXPECT_EQ(Token{TK_OP_EXCL_EQ}.precedence(), 9);
+  EXPECT_EQ(Token{TK_OP_EQ_EQ}.precedence(), 8);
+  EXPECT_EQ(Token{TK_OP_EXCL_EQ}.precedence(), 8);
   EXPECT_EQ(Token{TK_OP_AND_AND_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_AND_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_CARET_EQ}.precedence(), 2);
