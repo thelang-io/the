@@ -1,0 +1,6 @@
+======= stdin =======
+Test{a: 1}++
+======= stderr =======
+/test:1:1: E0142 - lvalue required as operand
+  1 | Test{a: 1}++
+    | ^~~~~~~~~~

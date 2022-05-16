@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 #include "../src/TypeMap.hpp"
-#include "utils.hpp"
 
 class TypeMapTest : public testing::Test {
  protected:

@@ -1,0 +1,6 @@
+======= stdin =======
+(a + 1){prop1: 1, prop2: 2}
+======= stderr =======
+/test:1:1: E0114 - Only identifiers accepted as object expression names
+  1 | (a + 1){prop1: 1, prop2: 2}
+    | ^~~~~~~

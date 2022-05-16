@@ -24,6 +24,10 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
 }
 
 Type *Type::largest (Type *a, Type *b) {
+  if (!a->isNumber() || !b->isNumber()) {
+    throw Error("Error: tried to find largest type of non-number");
+  }
+
   return (
     ((a->isF64() || a->isFloat()) && (b->isF64() || b->isFloat())) ||
     ((a->isF64() || a->isFloat()) && b->isF32()) ||
@@ -126,26 +130,25 @@ bool Type::isInt () const {
   return this->name == "int";
 }
 
+bool Type::isNumber () const {
+  return (
+    this->isI8() || this->isI16() || this->isI32() || this->isInt() || this->isI64() ||
+    this->isU8() || this->isU16() || this->isU32() || this->isU64() ||
+    this->isF32() || this->isF64() || this->isFloat()
+  );
+}
+
 bool Type::isObj () const {
-  return !this->isAny() &&
+  return (
+    !this->isAny() &&
     !this->isBool() &&
     !this->isByte() &&
     !this->isChar() &&
-    !this->isF32() &&
-    !this->isF64() &&
-    !this->isFloat() &&
+    !this->isNumber() &&
     !this->isFn() &&
-    !this->isI8() &&
-    !this->isI16() &&
-    !this->isI32() &&
-    !this->isI64() &&
-    !this->isInt() &&
     !this->isStr() &&
-    !this->isU8() &&
-    !this->isU16() &&
-    !this->isU32() &&
-    !this->isU64() &&
-    !this->isVoid();
+    !this->isVoid()
+  );
 }
 
 bool Type::isStr () const {

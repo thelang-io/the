@@ -1,0 +1,268 @@
+======= stdin =======
+a = Test{a: 1}
+a = b = Test{a: 1}
+
+a + Test{a: 1}
+a + b + Test{a: 1}
+
+false ? 1 : Test{a: 1}
+
+!Test{a: 1}
+======= stdout =======
+<Stmt start="1:1" end="1:15">
+  <StmtExpr parenthesized="false" start="1:1" end="1:15">
+    <ExprAssign>
+      <slot name="left">
+        <ExprAccess>
+          <Token type="ID" val="a" start="1:1" end="1:2" />
+        </ExprAccess>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EQ" val="=" start="1:3" end="1:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="1:5" end="1:15">
+          <ExprObj>
+            <slot name="id">
+              <Token type="ID" val="Test" start="1:5" end="1:9" />
+            </slot>
+            <slot name="props">
+              <ExprObjProp>
+                <slot name="id">
+                  <Token type="ID" val="a" start="1:10" end="1:11" />
+                </slot>
+                <slot name="init">
+                  <StmtExpr parenthesized="false" start="1:13" end="1:14">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="1" start="1:13" end="1:14" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprObjProp>
+            </slot>
+          </ExprObj>
+        </StmtExpr>
+      </slot>
+    </ExprAssign>
+  </StmtExpr>
+</Stmt>
+<Stmt start="2:1" end="2:19">
+  <StmtExpr parenthesized="false" start="2:1" end="2:19">
+    <ExprAssign>
+      <slot name="left">
+        <ExprAccess>
+          <Token type="ID" val="a" start="2:1" end="2:2" />
+        </ExprAccess>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EQ" val="=" start="2:3" end="2:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="2:5" end="2:19">
+          <ExprAssign>
+            <slot name="left">
+              <ExprAccess>
+                <Token type="ID" val="b" start="2:5" end="2:6" />
+              </ExprAccess>
+            </slot>
+            <slot name="op">
+              <Token type="OP_EQ" val="=" start="2:7" end="2:8" />
+            </slot>
+            <slot name="right">
+              <StmtExpr parenthesized="false" start="2:9" end="2:19">
+                <ExprObj>
+                  <slot name="id">
+                    <Token type="ID" val="Test" start="2:9" end="2:13" />
+                  </slot>
+                  <slot name="props">
+                    <ExprObjProp>
+                      <slot name="id">
+                        <Token type="ID" val="a" start="2:14" end="2:15" />
+                      </slot>
+                      <slot name="init">
+                        <StmtExpr parenthesized="false" start="2:17" end="2:18">
+                          <ExprLit>
+                            <Token type="LIT_INT_DEC" val="1" start="2:17" end="2:18" />
+                          </ExprLit>
+                        </StmtExpr>
+                      </slot>
+                    </ExprObjProp>
+                  </slot>
+                </ExprObj>
+              </StmtExpr>
+            </slot>
+          </ExprAssign>
+        </StmtExpr>
+      </slot>
+    </ExprAssign>
+  </StmtExpr>
+</Stmt>
+<Stmt start="4:1" end="4:15">
+  <StmtExpr parenthesized="false" start="4:1" end="4:15">
+    <ExprBinary>
+      <slot name="left">
+        <StmtExpr parenthesized="false" start="4:1" end="4:2">
+          <ExprAccess>
+            <Token type="ID" val="a" start="4:1" end="4:2" />
+          </ExprAccess>
+        </StmtExpr>
+      </slot>
+      <slot name="op">
+        <Token type="OP_PLUS" val="+" start="4:3" end="4:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="4:5" end="4:15">
+          <ExprObj>
+            <slot name="id">
+              <Token type="ID" val="Test" start="4:5" end="4:9" />
+            </slot>
+            <slot name="props">
+              <ExprObjProp>
+                <slot name="id">
+                  <Token type="ID" val="a" start="4:10" end="4:11" />
+                </slot>
+                <slot name="init">
+                  <StmtExpr parenthesized="false" start="4:13" end="4:14">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="1" start="4:13" end="4:14" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprObjProp>
+            </slot>
+          </ExprObj>
+        </StmtExpr>
+      </slot>
+    </ExprBinary>
+  </StmtExpr>
+</Stmt>
+<Stmt start="5:1" end="5:19">
+  <StmtExpr parenthesized="false" start="5:1" end="5:19">
+    <ExprBinary>
+      <slot name="left">
+        <StmtExpr parenthesized="false" start="5:1" end="5:6">
+          <ExprBinary>
+            <slot name="left">
+              <StmtExpr parenthesized="false" start="5:1" end="5:2">
+                <ExprAccess>
+                  <Token type="ID" val="a" start="5:1" end="5:2" />
+                </ExprAccess>
+              </StmtExpr>
+            </slot>
+            <slot name="op">
+              <Token type="OP_PLUS" val="+" start="5:3" end="5:4" />
+            </slot>
+            <slot name="right">
+              <StmtExpr parenthesized="false" start="5:5" end="5:6">
+                <ExprAccess>
+                  <Token type="ID" val="b" start="5:5" end="5:6" />
+                </ExprAccess>
+              </StmtExpr>
+            </slot>
+          </ExprBinary>
+        </StmtExpr>
+      </slot>
+      <slot name="op">
+        <Token type="OP_PLUS" val="+" start="5:7" end="5:8" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="5:9" end="5:19">
+          <ExprObj>
+            <slot name="id">
+              <Token type="ID" val="Test" start="5:9" end="5:13" />
+            </slot>
+            <slot name="props">
+              <ExprObjProp>
+                <slot name="id">
+                  <Token type="ID" val="a" start="5:14" end="5:15" />
+                </slot>
+                <slot name="init">
+                  <StmtExpr parenthesized="false" start="5:17" end="5:18">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="1" start="5:17" end="5:18" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprObjProp>
+            </slot>
+          </ExprObj>
+        </StmtExpr>
+      </slot>
+    </ExprBinary>
+  </StmtExpr>
+</Stmt>
+<Stmt start="7:1" end="7:23">
+  <StmtExpr parenthesized="false" start="7:1" end="7:23">
+    <ExprCond>
+      <slot name="cond">
+        <StmtExpr parenthesized="false" start="7:1" end="7:6">
+          <ExprLit>
+            <Token type="KW_FALSE" val="false" start="7:1" end="7:6" />
+          </ExprLit>
+        </StmtExpr>
+      </slot>
+      <slot name="body">
+        <StmtExpr parenthesized="false" start="7:9" end="7:10">
+          <ExprLit>
+            <Token type="LIT_INT_DEC" val="1" start="7:9" end="7:10" />
+          </ExprLit>
+        </StmtExpr>
+      </slot>
+      <slot name="alt">
+        <StmtExpr parenthesized="false" start="7:13" end="7:23">
+          <ExprObj>
+            <slot name="id">
+              <Token type="ID" val="Test" start="7:13" end="7:17" />
+            </slot>
+            <slot name="props">
+              <ExprObjProp>
+                <slot name="id">
+                  <Token type="ID" val="a" start="7:18" end="7:19" />
+                </slot>
+                <slot name="init">
+                  <StmtExpr parenthesized="false" start="7:21" end="7:22">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="1" start="7:21" end="7:22" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprObjProp>
+            </slot>
+          </ExprObj>
+        </StmtExpr>
+      </slot>
+    </ExprCond>
+  </StmtExpr>
+</Stmt>
+<Stmt start="9:1" end="9:12">
+  <StmtExpr parenthesized="false" start="9:1" end="9:12">
+    <ExprUnary prefix="true">
+      <slot name="arg">
+        <StmtExpr parenthesized="false" start="9:2" end="9:12">
+          <ExprObj>
+            <slot name="id">
+              <Token type="ID" val="Test" start="9:2" end="9:6" />
+            </slot>
+            <slot name="props">
+              <ExprObjProp>
+                <slot name="id">
+                  <Token type="ID" val="a" start="9:7" end="9:8" />
+                </slot>
+                <slot name="init">
+                  <StmtExpr parenthesized="false" start="9:10" end="9:11">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="1" start="9:10" end="9:11" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprObjProp>
+            </slot>
+          </ExprObj>
+        </StmtExpr>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EXCL" val="!" start="9:1" end="9:2" />
+      </slot>
+    </ExprUnary>
+  </StmtExpr>
+</Stmt>

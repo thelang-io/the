@@ -8,8 +8,6 @@
 #include "Token.hpp"
 #include "Error.hpp"
 
-Token tkQn = {TK_OP_QN, "?", {}, {}};
-
 std::string escapeVal (const std::string &val, bool insideAttr = false) {
   auto result = std::string();
 
@@ -208,14 +206,14 @@ bool Token::isWhitespace (char ch) {
   return std::isspace(ch);
 }
 
-int Token::precedence () const {
+int Token::precedence (bool isUnary) const {
   if (this->type == TK_OP_LPAR || this->type == TK_OP_RPAR) {
     return 18;
   } else if (this->type == TK_OP_DOT || this->type == TK_OP_DOT_DOT_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_QN_DOT || this->type == TK_OP_RBRACK) {
     return 17;
   } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
     return 16;
-  } else if (this->type == TK_OP_EXCL || this->type == TK_OP_TILDE) {
+  } else if (isUnary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) {
     return 15;
   } else if (this->type == TK_OP_STAR_STAR) {
     return 14;

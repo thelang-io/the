@@ -71,7 +71,7 @@
 #define E0139 "E0139 - Expected ternary alternative expression"
 #define E0140 "E0140 - Expected lvalue as left operand of assignment"
 #define E0141 "E0141 - Called object expected to be a function"
-#define E0142 "E0142 - lvalue required as increment operand"
+#define E0142 "E0142 - lvalue required as operand"
 
 #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"

@@ -1,0 +1,6 @@
+======= stdin =======
+"test"++
+======= stderr =======
+/test:1:1: E0142 - lvalue required as operand
+  1 | "test"++
+    | ^~~~~~

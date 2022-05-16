@@ -401,8 +401,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_AND) opCode = " &= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_OR) opCode = " |= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_XOR) opCode = " ^= ";
-      // todo test
-      if (exprAssign.op == AST_EXPR_ASSIGN_COALESCE) opCode = " ?\?= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_DIVIDE) opCode = " /= ";
       if (exprAssign.op == AST_EXPR_ASSIGN_EQUAL) opCode = " = ";
       if (exprAssign.op == AST_EXPR_ASSIGN_LEFT_SHIFT) opCode = " <<= ";

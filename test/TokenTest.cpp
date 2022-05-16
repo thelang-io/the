@@ -146,10 +146,12 @@ TEST(TokenTest, SymbolsPrecision) {
 }
 
 TEST(TokenTest, UnaryPrecision) {
-  EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.precedence(), 16);
-  EXPECT_EQ(Token{TK_OP_PLUS_PLUS}.precedence(), 16);
-  EXPECT_EQ(Token{TK_OP_EXCL}.precedence(), 15);
-  EXPECT_EQ(Token{TK_OP_TILDE}.precedence(), 15);
+  EXPECT_EQ(Token{TK_OP_MINUS}.precedence(true), 15);
+  EXPECT_EQ(Token{TK_OP_PLUS}.precedence(true), 15);
+  EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.precedence(true), 16);
+  EXPECT_EQ(Token{TK_OP_PLUS_PLUS}.precedence(true), 16);
+  EXPECT_EQ(Token{TK_OP_EXCL}.precedence(true), 15);
+  EXPECT_EQ(Token{TK_OP_TILDE}.precedence(true), 15);
 }
 
 TEST(TokenTest, BinaryPrecision) {

@@ -121,11 +121,9 @@ struct Token {
   static bool isLitStrEscape (char);
   static bool isWhitespace (char);
 
-  int precedence () const;
+  int precedence (bool = false) const;
   std::string str () const;
   std::string xml () const;
 };
-
-extern Token tkQn;
 
 #endif

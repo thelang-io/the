@@ -1243,8 +1243,10 @@ TEST(LexerTest, LexLitStr) {
   auto reader = testing::NiceMock<MockReader>(
     R"("")"
     R"("test")"
-    R"("Hello,\nWorld!")"
+    R"("Hello,\n\r\tWorld!")"
     "\"Hello," EOL "World!\""
+    "\"Hello,\rWorld!\""
+    "\"Hello,\tWorld!\""
     R"("multiple \\n lines")"
     R"("\\0\\r\\t\"\'\\\0\r\t")"
   );
@@ -1253,10 +1255,12 @@ TEST(LexerTest, LexLitStr) {
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:1-1:3): "")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:3-1:9): "test")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:9-1:25): "Hello,\\nWorld!")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:25-2:8): "Hello,)" ESC_EOL R"(World!")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:8-2:28): "multiple \\\\n lines")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:28-2:51): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:9-1:29): "Hello,\\n\\r\\tWorld!")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:29-2:8): "Hello,)" ESC_EOL R"(World!")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:8-2:23): "Hello,\rWorld!")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:23-2:38): "Hello,\tWorld!")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:38-2:58): "multiple \\\\n lines")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:58-2:81): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
 }
 
 TEST(LexerTest, LexLitStrWhitespace) {

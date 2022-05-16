@@ -1,0 +1,6 @@
+======= stdin =======
+print() = 1
+======= stderr =======
+/test:1:1: E0140 - Expected lvalue as left operand of assignment
+  1 | print() = 1
+    | ^~~~~~~

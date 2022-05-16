@@ -528,11 +528,7 @@ std::optional<ParserType> Parser::_type () {
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
-  if (
-    std::holds_alternative<ParserExprAssign>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprAssign>(*stmtExpr.body).op.precedence() <= tok.precedence()
-  ) {
+  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprAssign(exprAssign.right, loc, tok);
     auto newExprAssign = ParserExprAssign{exprAssign.left, exprAssign.op, newStmtExpr};
@@ -541,11 +537,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprAssign), false, stmtExpr.start, newExprAssign.right.end},
       shouldWrap
     );
-  } else if (
-    std::holds_alternative<ParserExprBinary>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprBinary>(*stmtExpr.body).op.precedence() < tok.precedence()
-  ) { // todo test
+  } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprAssign(exprBinary.right, loc, tok);
     auto newExprBinary = ParserExprBinary{exprBinary.left, exprBinary.op, newStmtExpr};
@@ -554,11 +546,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprBinary), false, stmtExpr.start, newExprBinary.right.end},
       shouldWrap
     );
-  } else if (
-    std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    tkQn.precedence() < tok.precedence()
-  ) { // todo test
+  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprAssign(exprCond.alt, loc, tok);
     auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
@@ -567,27 +555,13 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprCond), false, stmtExpr.start, newExprCond.alt.end},
       shouldWrap
     );
-  } else if (
-    std::holds_alternative<ParserExprUnary>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprUnary>(*stmtExpr.body).prefix &&
-    std::get<ParserExprUnary>(*stmtExpr.body).op.precedence() < tok.precedence()
-  ) { // todo test
-    auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
-    auto [newStmtExpr, shouldWrap] = this->_wrapExprAssign(exprUnary.arg, loc, tok);
-    auto newExprUnary = ParserExprUnary{newStmtExpr, exprUnary.op, exprUnary.prefix};
-
-    return std::make_tuple(
-      ParserStmtExpr{std::make_shared<ParserExpr>(newExprUnary), false, stmtExpr.start, newExprUnary.arg.end},
-      shouldWrap
-    );
   }
 
   auto exprAssignRight = this->_stmtExpr(false);
 
   if (exprAssignRight == std::nullopt) {
     throw Error(this->reader, this->lexer->loc, E0133);
-  } else if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) { // todo test
+  } else if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0140);
   }
 
@@ -601,11 +575,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprBinary (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
-  if (
-    std::holds_alternative<ParserExprAssign>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprAssign>(*stmtExpr.body).op.precedence() < tok.precedence()
-  ) {
+  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprBinary(exprAssign.right, loc, tok);
     auto newExprAssign = ParserExprAssign{exprAssign.left, exprAssign.op, newStmtExpr};
@@ -627,11 +597,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprBinary (const ParserStmtExpr &
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprBinary), false, stmtExpr.start, newExprBinary.right.end},
       shouldWrap
     );
-  } else if (
-    std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    tkQn.precedence() < tok.precedence()
-  ) { // todo test
+  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprBinary(exprCond.alt, loc, tok);
     auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
@@ -685,7 +651,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprBinary (const ParserStmtExpr &
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
-  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) { // todo test
+  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprCall(exprAssign.right, loc, tok);
     auto newExprAssign = ParserExprAssign{exprAssign.left, exprAssign.op, newStmtExpr};
@@ -703,7 +669,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &st
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprBinary), false, stmtExpr.start, newExprBinary.right.end},
       shouldWrap
     );
-  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) { // todo test
+  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprCall(exprCond.alt, loc, tok);
     auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
@@ -716,7 +682,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &st
     std::holds_alternative<ParserExprUnary>(*stmtExpr.body) &&
     !stmtExpr.parenthesized &&
     std::get<ParserExprUnary>(*stmtExpr.body).prefix
-  ) { // todo test
+  ) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprCall(exprUnary.arg, loc, tok);
     auto newExprUnary = ParserExprUnary{newStmtExpr, exprUnary.op, exprUnary.prefix};
@@ -759,7 +725,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &st
     }
   }
 
-  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) { // todo test
+  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0141);
   }
 
@@ -773,11 +739,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &st
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
-  if (
-    std::holds_alternative<ParserExprAssign>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprAssign>(*stmtExpr.body).op.precedence() < tok.precedence()
-  ) {
+  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprCond(exprAssign.right, loc, tok);
     auto newExprAssign = ParserExprAssign{exprAssign.left, exprAssign.op, newStmtExpr};
@@ -786,44 +748,13 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprAssign), false, stmtExpr.start, newExprAssign.right.end},
       shouldWrap
     );
-  } else if (
-    std::holds_alternative<ParserExprBinary>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprBinary>(*stmtExpr.body).op.precedence() < tok.precedence()
-  ) { // todo test
-    auto exprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
-    auto [newStmtExpr, shouldWrap] = this->_wrapExprCond(exprBinary.right, loc, tok);
-    auto newExprBinary = ParserExprBinary{exprBinary.left, exprBinary.op, newStmtExpr};
-
-    return std::make_tuple(
-      ParserStmtExpr{std::make_shared<ParserExpr>(newExprBinary), false, stmtExpr.start, newExprBinary.right.end},
-      shouldWrap
-    );
-  } else if (
-    std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    tkQn.precedence() < tok.precedence()
-  ) { // todo test
+  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprCond(exprCond.alt, loc, tok);
     auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
 
     return std::make_tuple(
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprCond), false, stmtExpr.start, newExprCond.alt.end},
-      shouldWrap
-    );
-  } else if (
-    std::holds_alternative<ParserExprUnary>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprUnary>(*stmtExpr.body).prefix &&
-    std::get<ParserExprUnary>(*stmtExpr.body).op.precedence() < tok.precedence()
-  ) { // todo test
-    auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
-    auto [newStmtExpr, shouldWrap] = this->_wrapExprCond(exprUnary.arg, loc, tok);
-    auto newExprUnary = ParserExprUnary{newStmtExpr, exprUnary.op, exprUnary.prefix};
-
-    return std::make_tuple(
-      ParserStmtExpr{std::make_shared<ParserExpr>(newExprUnary), false, stmtExpr.start, newExprUnary.arg.end},
       shouldWrap
     );
   }
@@ -840,7 +771,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
     throw Error(this->reader, tok2.start, E0111);
   }
 
-  auto exprCondAlt = this->_stmtExpr();
+  auto exprCondAlt = this->_stmtExpr(false);
 
   if (exprCondAlt == std::nullopt) {
     throw Error(this->reader, this->lexer->loc, E0139);
@@ -855,7 +786,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
-  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) { // todo test
+  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprObj(exprAssign.right, loc, tok);
     auto newExprAssign = ParserExprAssign{exprAssign.left, exprAssign.op, newStmtExpr};
@@ -873,7 +804,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprBinary), false, stmtExpr.start, newExprBinary.right.end},
       shouldWrap
     );
-  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) { // todo test
+  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprObj(exprCond.alt, loc, tok);
     auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
@@ -934,7 +865,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
   if (exprObjProps.empty()) {
     this->lexer->seek(loc);
     return std::make_tuple(stmtExpr, false);
-  } else if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) { // todo test
+  } else if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0114);
   }
 
@@ -953,19 +884,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
-  if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
-    auto exprUnary = ParserExprUnary{stmtExpr, tok, false};
-
-    return std::make_tuple(
-      ParserStmtExpr{std::make_shared<ParserExpr>(exprUnary), false, stmtExpr.start, tok.end},
-      true
-    );
-    // todo test !parentStmtExpr.parenthesized
-  } else if (
-    std::holds_alternative<ParserExprAssign>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    std::get<ParserExprAssign>(*stmtExpr.body).op.precedence() < tok.precedence()
-  ) { // todo test
+  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprUnary(exprAssign.right, loc, tok);
     auto newExprAssign = ParserExprAssign{exprAssign.left, exprAssign.op, newStmtExpr};
@@ -977,7 +896,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &s
   } else if (
     std::holds_alternative<ParserExprBinary>(*stmtExpr.body) &&
     !stmtExpr.parenthesized &&
-    std::get<ParserExprBinary>(*stmtExpr.body).op.precedence() < tok.precedence()
+    std::get<ParserExprBinary>(*stmtExpr.body).op.precedence() < tok.precedence(true)
   ) {
     auto exprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprUnary(exprBinary.right, loc, tok);
@@ -987,11 +906,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &s
       ParserStmtExpr{std::make_shared<ParserExpr>(newExprBinary), false, stmtExpr.start, newExprBinary.right.end},
       shouldWrap
     );
-  } else if (
-    std::holds_alternative<ParserExprCond>(*stmtExpr.body) &&
-    !stmtExpr.parenthesized &&
-    tkQn.precedence() < tok.precedence()
-  ) { // todo test
+  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprUnary(exprCond.alt, loc, tok);
     auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
@@ -1003,8 +918,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &s
   } else if (
     std::holds_alternative<ParserExprUnary>(*stmtExpr.body) &&
     !stmtExpr.parenthesized &&
-    std::get<ParserExprUnary>(*stmtExpr.body).prefix &&
-    std::get<ParserExprUnary>(*stmtExpr.body).op.precedence() < tok.precedence()
+    std::get<ParserExprUnary>(*stmtExpr.body).prefix
   ) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto [newStmtExpr, shouldWrap] = this->_wrapExprUnary(exprUnary.arg, loc, tok);
@@ -1016,8 +930,16 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &s
     );
   }
 
-  // todo test
-  throw Error(this->reader, tok.start, E0142);
+  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
+    throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0142);
+  }
+
+  auto exprUnary = ParserExprUnary{stmtExpr, tok, false};
+
+  return std::make_tuple(
+    ParserStmtExpr{std::make_shared<ParserExpr>(exprUnary), false, stmtExpr.start, tok.end},
+    true
+  );
 }
 
 ParserStmt Parser::_wrapStmt (const ParserStmtBody &body, ReaderLocation start) const {

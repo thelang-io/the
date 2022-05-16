@@ -422,6 +422,10 @@ ASTNodeExpr AST::_stmtExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto exprCondBody = this->_stmtExpr(parserExprCond.body, varStack);
     auto exprCondAlt = this->_stmtExpr(parserExprCond.alt, varStack);
 
+    if (!exprCondBody.type->match(exprCondAlt.type) && !exprCondAlt.type->match(exprCondBody.type)) {
+      throw Error(this->reader, parserExprCond.body.start, parserExprCond.alt.end, E1004);
+    }
+
     return this->_wrapNodeExpr(stmtExpr, ASTExprCond{exprCondCond, exprCondBody, exprCondAlt});
   } else if (std::holds_alternative<ParserExprLit>(*stmtExpr.body)) {
     auto parserExprLit = std::get<ParserExprLit>(*stmtExpr.body);
@@ -526,11 +530,9 @@ Type *AST::_stmtExprType (const ParserStmtExpr &stmtExpr) {
     auto exprCondBodyType = this->_stmtExprType(exprCond.body);
     auto exprCondAltType = this->_stmtExprType(exprCond.alt);
 
-    if (!exprCondBodyType->match(exprCondAltType) && !exprCondAltType->match(exprCondBodyType)) {
-      throw Error(this->reader, exprCond.body.start, exprCond.alt.end, E1004);
-    }
-
-    return Type::largest(exprCondBodyType, exprCondAltType);
+    return exprCondBodyType->isNumber() && exprCondAltType->isNumber()
+      ? Type::largest(exprCondBodyType, exprCondAltType)
+      : exprCondBodyType;
   } else if (std::holds_alternative<ParserExprLit>(*stmtExpr.body)) {
     auto exprLit = std::get<ParserExprLit>(*stmtExpr.body);
 
