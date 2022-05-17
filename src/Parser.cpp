@@ -596,7 +596,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
   return wrap(stmtExpr, loc, tok);
 }
 
-std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
   auto exprAssignRight = this->_stmtExpr(false);
 
   if (exprAssignRight == std::nullopt) {
@@ -611,7 +611,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprAssign), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
-std::tuple<ParserStmtExpr, bool> Parser::_wrapExprBinary (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprBinary (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
   auto stmtExprRight = this->_stmtExpr(false);
 
   if (stmtExprRight == std::nullopt) {
@@ -650,7 +650,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprBinary (const ParserStmtExpr &
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprBinary), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
-std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, [[maybe_unused]] const Token &tok) {
   auto [loc2, tok2] = this->lexer->next();
   auto exprCallArgs = std::vector<ParserExprCallArg>{};
 
@@ -693,7 +693,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCall (const ParserStmtExpr &st
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprCall), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
-std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, [[maybe_unused]] const Token &tok) {
   auto exprCondBody = this->_stmtExpr();
 
   if (exprCondBody == std::nullopt) {
@@ -716,7 +716,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprCond), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
-std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
   auto [_2, tok2] = this->lexer->next();
   auto exprObjProps = std::vector<ParserExprObjProp>{};
 
@@ -768,7 +768,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprObj), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
-std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &stmtExpr, ReaderLocation loc, const Token &tok) {
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
   if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0142);
   }
