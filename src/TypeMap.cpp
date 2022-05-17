@@ -221,17 +221,14 @@ bool Type::match (const Type *type) const {
 
 std::string Type::xml (std::size_t indent) const {
   if (this->builtin) {
-    auto nameAttr = this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
-    return std::string(indent, ' ') + "<BuiltinType" + nameAttr + " />";
+    return std::string(indent, ' ') + "<BuiltinType" + (this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")") + " />";
   }
 
-  auto result = std::string(indent, ' ') + R"(<Type builtin=")" + std::string(this->builtin ? "true" : "false");
+  auto result = std::string(indent, ' ') + "<Type";
 
-  if (this->name != "@") {
-    result += R"(" name=")" + this->name;
-  }
+  result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
+  result += R"( type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" EOL;
 
-  result += R"(" type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" EOL;
   indent += 2;
 
   if (std::holds_alternative<TypeFn>(this->body)) {

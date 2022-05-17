@@ -122,30 +122,96 @@ TEST(TokenTest, IsNotWhitespace) {
   EXPECT_FALSE(Token::isWhitespace('#'));
 }
 
-TEST(TokenTest, ThrowsOnUnknownPrecedenceToken) {
-  EXPECT_THROW_WITH_MESSAGE(Token{TK_EOF}.precedence(), "Error: tried precedence for unknown token");
+TEST(TokenTest, AssociativityThrowsOnUnknown) {
+  EXPECT_THROW_WITH_MESSAGE({
+    Token{TK_EOF}.associativity();
+  }, "Error: tried associativity for unknown token");
 }
 
-TEST(TokenTest, ParenthesesPrecision) {
+TEST(TokenTest, AssociativityNone) {
+  EXPECT_EQ(Token{TK_OP_LPAR}.associativity(), TK_ASSOC_NONE);
+  EXPECT_EQ(Token{TK_OP_RPAR}.associativity(), TK_ASSOC_NONE);
+  EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.associativity(true), TK_ASSOC_NONE);
+  EXPECT_EQ(Token{TK_OP_PLUS_PLUS}.associativity(true), TK_ASSOC_NONE);
+}
+
+TEST(TokenTest, AssociativityLeft) {
+  EXPECT_EQ(Token{TK_OP_DOT}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_QN_DOT}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_LBRACK}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_RBRACK}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_PERCENT}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_SLASH}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_STAR}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_MINUS}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_PLUS}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_LSHIFT}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_RSHIFT}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_GT}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_GT_EQ}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_LT}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_LT_EQ}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_EQ_EQ}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_EXCL_EQ}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_AND}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_CARET}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_OR}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_AND_AND}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_OR_OR}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_QN_QN}.associativity(), TK_ASSOC_LEFT);
+  EXPECT_EQ(Token{TK_OP_COMMA}.associativity(), TK_ASSOC_LEFT);
+}
+
+TEST(TokenTest, AssociativityRight) {
+  EXPECT_EQ(Token{TK_OP_EXCL}.associativity(true), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_MINUS}.associativity(true), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_PLUS}.associativity(true), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_TILDE}.associativity(true), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_STAR_STAR}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_AND_AND_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_AND_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_CARET_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_LSHIFT_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_MINUS_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_OR_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_OR_OR_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_PERCENT_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_PLUS_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_QN_QN_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_RSHIFT_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_SLASH_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_STAR_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_STAR_STAR_EQ}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_COLON}.associativity(), TK_ASSOC_RIGHT);
+  EXPECT_EQ(Token{TK_OP_QN}.associativity(), TK_ASSOC_RIGHT);
+}
+
+TEST(TokenTest, PrecedenceThrowsOnUnknown) {
+  EXPECT_THROW_WITH_MESSAGE({
+    Token{TK_EOF}.precedence();
+  }, "Error: tried precedence for unknown token");
+}
+
+TEST(TokenTest, PrecedenceParentheses) {
   EXPECT_EQ(Token{TK_OP_LPAR}.precedence(), 17);
   EXPECT_EQ(Token{TK_OP_RPAR}.precedence(), 17);
 }
 
-TEST(TokenTest, BracketsPrecision) {
+TEST(TokenTest, PrecedenceBrackets) {
   EXPECT_EQ(Token{TK_OP_LBRACK}.precedence(), 16);
   EXPECT_EQ(Token{TK_OP_RBRACK}.precedence(), 16);
 }
 
-TEST(TokenTest, SymbolsPrecision) {
+TEST(TokenTest, PrecedenceSymbols) {
   EXPECT_EQ(Token{TK_OP_DOT}.precedence(), 16);
-  EXPECT_EQ(Token{TK_OP_DOT_DOT_DOT}.precedence(), 16);
   EXPECT_EQ(Token{TK_OP_QN_DOT}.precedence(), 16);
   EXPECT_EQ(Token{TK_OP_COLON}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_QN}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_COMMA}.precedence(), 1);
 }
 
-TEST(TokenTest, UnaryPrecision) {
+TEST(TokenTest, PrecedenceUnary) {
   EXPECT_EQ(Token{TK_OP_MINUS}.precedence(true), 14);
   EXPECT_EQ(Token{TK_OP_PLUS}.precedence(true), 14);
   EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.precedence(true), 15);
@@ -154,7 +220,7 @@ TEST(TokenTest, UnaryPrecision) {
   EXPECT_EQ(Token{TK_OP_TILDE}.precedence(true), 14);
 }
 
-TEST(TokenTest, BinaryPrecision) {
+TEST(TokenTest, PrecedenceBinary) {
   EXPECT_EQ(Token{TK_OP_STAR_STAR}.precedence(), 13);
   EXPECT_EQ(Token{TK_OP_PERCENT}.precedence(), 12);
   EXPECT_EQ(Token{TK_OP_SLASH}.precedence(), 12);
@@ -175,7 +241,7 @@ TEST(TokenTest, BinaryPrecision) {
   EXPECT_EQ(Token{TK_OP_QN_QN}.precedence(), 3);
 }
 
-TEST(TokenTest, AssignmentPrecision) {
+TEST(TokenTest, PrecedenceAssignment) {
   EXPECT_EQ(Token{TK_OP_EQ_EQ}.precedence(), 8);
   EXPECT_EQ(Token{TK_OP_EXCL_EQ}.precedence(), 8);
   EXPECT_EQ(Token{TK_OP_AND_AND_EQ}.precedence(), 2);

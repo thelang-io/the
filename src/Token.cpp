@@ -206,16 +206,54 @@ bool Token::isWhitespace (char ch) {
   return std::isspace(ch);
 }
 
+TokenAssociativity Token::associativity (bool unary) const {
+  if (
+    this->type == TK_OP_LPAR || this->type == TK_OP_RPAR ||
+    this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS
+  ) {
+    return TK_ASSOC_NONE;
+  } else if (
+    (unary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) ||
+    this->type == TK_OP_STAR_STAR ||
+    this->type == TK_OP_AND_AND_EQ ||
+    this->type == TK_OP_AND_EQ ||
+    this->type == TK_OP_CARET_EQ ||
+    this->type == TK_OP_EQ ||
+    this->type == TK_OP_LSHIFT_EQ ||
+    this->type == TK_OP_MINUS_EQ ||
+    this->type == TK_OP_OR_EQ ||
+    this->type == TK_OP_OR_OR_EQ ||
+    this->type == TK_OP_PERCENT_EQ ||
+    this->type == TK_OP_PLUS_EQ ||
+    this->type == TK_OP_QN_QN_EQ ||
+    this->type == TK_OP_RSHIFT_EQ ||
+    this->type == TK_OP_SLASH_EQ ||
+    this->type == TK_OP_STAR_EQ ||
+    this->type == TK_OP_STAR_STAR_EQ ||
+    this->type == TK_OP_COLON || this->type == TK_OP_QN
+  ) {
+    return TK_ASSOC_RIGHT;
+  } else if (
+    this->type == TK_OP_DOT || this->type == TK_OP_QN_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_RBRACK ||
+    this->type == TK_OP_PERCENT || this->type == TK_OP_SLASH || this->type == TK_OP_STAR ||
+    this->type == TK_OP_MINUS || this->type == TK_OP_PLUS ||
+    this->type == TK_OP_LSHIFT || this->type == TK_OP_RSHIFT ||
+    this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ ||
+    this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ ||
+    this->type == TK_OP_AND || this->type == TK_OP_CARET || this->type == TK_OP_OR ||
+    this->type == TK_OP_AND_AND || this->type == TK_OP_OR_OR || this->type == TK_OP_QN_QN ||
+    this->type == TK_OP_COMMA
+  ) {
+    return TK_ASSOC_LEFT;
+  }
+
+  throw Error("Error: tried associativity for unknown token");
+}
+
 int Token::precedence (bool isUnary) const {
   if (this->type == TK_OP_LPAR || this->type == TK_OP_RPAR) {
     return 17;
-  } else if (
-    this->type == TK_OP_DOT ||
-    this->type == TK_OP_DOT_DOT_DOT ||
-    this->type == TK_OP_LBRACK ||
-    this->type == TK_OP_QN_DOT ||
-    this->type == TK_OP_RBRACK
-  ) {
+  } else if (this->type == TK_OP_DOT || this->type == TK_OP_QN_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_RBRACK) {
     return 16;
   } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
     return 15;
@@ -259,9 +297,7 @@ int Token::precedence (bool isUnary) const {
     this->type == TK_OP_SLASH_EQ ||
     this->type == TK_OP_STAR_EQ ||
     this->type == TK_OP_STAR_STAR_EQ ||
-
-    this->type == TK_OP_COLON ||
-    this->type == TK_OP_QN
+    this->type == TK_OP_COLON || this->type == TK_OP_QN
   ) {
     return 2;
   } else if (this->type == TK_OP_COMMA) {

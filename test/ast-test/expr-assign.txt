@@ -41,7 +41,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
+          <Var codeName="a_0" frame="2" mut="true" name="a">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -62,7 +62,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+          <Var codeName="b_0" frame="2" mut="true" name="b">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -83,7 +83,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
+          <Var codeName="c_0" frame="2" mut="true" name="c">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -104,7 +104,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
+          <Var codeName="d_0" frame="2" mut="true" name="d">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -125,7 +125,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
+          <Var codeName="e_0" frame="2" mut="true" name="e">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -146,7 +146,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
+          <Var codeName="f_0" frame="2" mut="true" name="f">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -167,7 +167,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
+          <Var codeName="g_0" frame="2" mut="true" name="g">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -188,7 +188,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
+          <Var codeName="h_0" frame="2" mut="true" name="h">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -209,7 +209,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+          <Var codeName="i_0" frame="2" mut="true" name="i">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -230,7 +230,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="j_0" frame="2" mut="true" name="j">
+          <Var codeName="j_0" frame="2" mut="true" name="j">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -251,7 +251,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="k_0" frame="2" mut="true" name="k">
+          <Var codeName="k_0" frame="2" mut="true" name="k">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -272,7 +272,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="l_0" frame="2" mut="true" name="l">
+          <Var codeName="l_0" frame="2" mut="true" name="l">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -293,7 +293,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="m_0" frame="2" mut="true" name="m">
+          <Var codeName="m_0" frame="2" mut="true" name="m">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -314,7 +314,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="n_0" frame="2" mut="true" name="n">
+          <Var codeName="n_0" frame="2" mut="true" name="n">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -341,7 +341,7 @@ main {
           <ExprAssign op="EQUAL">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
+                <Var codeName="a_0" frame="2" mut="true" name="a">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -371,7 +371,7 @@ main {
           <ExprAssign op="POWER">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
+                <Var codeName="a_0" frame="2" mut="true" name="a">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -401,7 +401,7 @@ main {
           <ExprAssign op="REMAINDER">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+                <Var codeName="b_0" frame="2" mut="true" name="b">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -431,7 +431,7 @@ main {
           <ExprAssign op="DIVIDE">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
+                <Var codeName="c_0" frame="2" mut="true" name="c">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -461,7 +461,7 @@ main {
           <ExprAssign op="MULTIPLY">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
+                <Var codeName="d_0" frame="2" mut="true" name="d">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -491,7 +491,7 @@ main {
           <ExprAssign op="SUBTRACT">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
+                <Var codeName="e_0" frame="2" mut="true" name="e">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -521,7 +521,7 @@ main {
           <ExprAssign op="ADD">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
+                <Var codeName="f_0" frame="2" mut="true" name="f">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -551,7 +551,7 @@ main {
           <ExprAssign op="RIGHT_SHIFT">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
+                <Var codeName="g_0" frame="2" mut="true" name="g">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -581,7 +581,7 @@ main {
           <ExprAssign op="LEFT_SHIFT">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
+                <Var codeName="h_0" frame="2" mut="true" name="h">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -611,7 +611,7 @@ main {
           <ExprAssign op="BITWISE_AND">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                <Var codeName="i_0" frame="2" mut="true" name="i">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -641,7 +641,7 @@ main {
           <ExprAssign op="BITWISE_XOR">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="j_0" frame="2" mut="true" name="j">
+                <Var codeName="j_0" frame="2" mut="true" name="j">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -671,7 +671,7 @@ main {
           <ExprAssign op="BITWISE_OR">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="k_0" frame="2" mut="true" name="k">
+                <Var codeName="k_0" frame="2" mut="true" name="k">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -701,7 +701,7 @@ main {
           <ExprAssign op="LOGICAL_AND">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="l_0" frame="2" mut="true" name="l">
+                <Var codeName="l_0" frame="2" mut="true" name="l">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -731,7 +731,7 @@ main {
           <ExprAssign op="LOGICAL_OR">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="m_0" frame="2" mut="true" name="m">
+                <Var codeName="m_0" frame="2" mut="true" name="m">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -761,7 +761,7 @@ main {
           <ExprAssign op="COALESCE">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="n_0" frame="2" mut="true" name="n">
+                <Var codeName="n_0" frame="2" mut="true" name="n">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -791,7 +791,7 @@ main {
           <ExprAssign op="EQUAL">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="a_0" frame="2" mut="true" name="a">
+                <Var codeName="a_0" frame="2" mut="true" name="a">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -803,7 +803,7 @@ main {
                 </slot>
                 <slot name="body">
                   <ExprAccess>
-                    <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+                    <Var codeName="b_0" frame="2" mut="true" name="b">
                       <BuiltinType name="int" />
                     </Var>
                   </ExprAccess>
@@ -823,7 +823,7 @@ main {
           <ExprAssign op="EQUAL">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
+                <Var codeName="c_0" frame="2" mut="true" name="c">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -837,7 +837,7 @@ main {
                   <ExprAssign op="EQUAL">
                     <slot name="left">
                       <ExprAccess>
-                        <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
+                        <Var codeName="d_0" frame="2" mut="true" name="d">
                           <BuiltinType name="int" />
                         </Var>
                       </ExprAccess>
@@ -849,7 +849,7 @@ main {
                         </slot>
                         <slot name="body">
                           <ExprAccess>
-                            <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
+                            <Var codeName="e_0" frame="2" mut="true" name="e">
                               <BuiltinType name="int" />
                             </Var>
                           </ExprAccess>
@@ -873,7 +873,7 @@ main {
           <ExprAssign op="EQUAL">
             <slot name="left">
               <ExprAccess>
-                <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
+                <Var codeName="f_0" frame="2" mut="true" name="f">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
@@ -887,7 +887,7 @@ main {
                   <ExprAssign op="EQUAL">
                     <slot name="left">
                       <ExprAccess>
-                        <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
+                        <Var codeName="g_0" frame="2" mut="true" name="g">
                           <BuiltinType name="int" />
                         </Var>
                       </ExprAccess>
@@ -901,7 +901,7 @@ main {
                           <ExprAssign op="EQUAL">
                             <slot name="left">
                               <ExprAccess>
-                                <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
+                                <Var codeName="h_0" frame="2" mut="true" name="h">
                                   <BuiltinType name="int" />
                                 </Var>
                               </ExprAccess>
@@ -913,7 +913,7 @@ main {
                                 </slot>
                                 <slot name="body">
                                   <ExprAccess>
-                                    <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+                                    <Var codeName="i_0" frame="2" mut="true" name="i">
                                       <BuiltinType name="int" />
                                     </Var>
                                   </ExprAccess>

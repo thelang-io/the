@@ -10,8 +10,8 @@ fn test (a: int) any {
 <Node>
   <NodeFnDecl>
     <slot name="var">
-      <Var builtin="false" codeName="test_0" frame="1" mut="false" name="test">
-        <Type builtin="false" name="test_0" type="fn">
+      <Var codeName="test_0" frame="1" mut="false" name="test">
+        <Type name="test_0" type="fn">
           <slot name="returnType">
             <BuiltinType name="any" />
           </slot>
@@ -26,7 +26,7 @@ fn test (a: int) any {
     <slot name="params">
       <NodeFnDeclParam>
         <slot name="var">
-          <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" mut="false" name="a">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -94,7 +94,7 @@ fn test (a: int) any {
                     </slot>
                     <slot name="body">
                       <ExprAccess>
-                        <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+                        <Var codeName="a_0" frame="2" mut="false" name="a">
                           <BuiltinType name="int" />
                         </Var>
                       </ExprAccess>

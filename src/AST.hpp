@@ -30,11 +30,11 @@ class AST {
   ASTBlock _block (const ParserBlock &, VarStack &);
   ASTExprAccess _exprAccess (const std::shared_ptr<ParserMemberObj> &, VarStack &);
   Type *_exprAccessType (const std::shared_ptr<ParserMemberObj> &);
-  void _forwardStmt (const ParserBlock &);
-  ASTNode _stmt (const ParserStmt &, VarStack &);
-  ASTNodeExpr _stmtExpr (const ParserStmtExpr &, VarStack &);
-  Type *_stmtExprType (const ParserStmtExpr &);
-  ASTNodeIf _stmtIf (const ParserStmtIf &, VarStack &);
+  void _forwardNode (const ParserBlock &);
+  ASTNode _node (const ParserStmt &, VarStack &);
+  ASTNodeExpr _nodeExpr (const ParserStmtExpr &, VarStack &);
+  Type *_nodeExprType (const ParserStmtExpr &);
+  ASTNodeIf _nodeIf (const ParserStmtIf &, VarStack &);
   Type *_type (const ParserType &);
   ASTNode _wrapNode (const ParserStmt &, const ASTNodeBody &);
   ASTNodeExpr _wrapNodeExpr (const ParserStmtExpr &, const ASTExpr &);

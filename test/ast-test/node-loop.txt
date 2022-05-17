@@ -13,7 +13,7 @@ main {
           <Node>
             <NodeVarDecl>
               <slot name="var">
-                <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                <Var codeName="i_0" frame="3" mut="false" name="i">
                   <BuiltinType name="int" />
                 </Var>
               </slot>
@@ -46,7 +46,7 @@ main {
                     </slot>
                     <slot name="body">
                       <ExprAccess>
-                        <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                        <Var codeName="i_0" frame="3" mut="false" name="i">
                           <BuiltinType name="int" />
                         </Var>
                       </ExprAccess>
@@ -82,7 +82,7 @@ main {
                   </slot>
                   <slot name="body">
                     <ExprAccess>
-                      <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                      <Var codeName="i_0" frame="3" mut="false" name="i">
                         <BuiltinType name="int" />
                       </Var>
                     </ExprAccess>
@@ -128,7 +128,7 @@ main {
                         </slot>
                         <slot name="body">
                           <ExprAccess>
-                            <Var builtin="false" codeName="i_0" frame="3" mut="false" name="i">
+                            <Var codeName="i_0" frame="3" mut="false" name="i">
                               <BuiltinType name="int" />
                             </Var>
                           </ExprAccess>

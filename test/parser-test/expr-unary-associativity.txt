@@ -1,0 +1,211 @@
+======= stdin =======
+a = -b
+a = -b++
+a = -~b
+a = -~++b
+a = -~b++
+======= stdout =======
+<Stmt start="1:1" end="1:7">
+  <StmtExpr parenthesized="false" start="1:1" end="1:7">
+    <ExprAssign>
+      <slot name="left">
+        <ExprAccess>
+          <Token type="ID" val="a" start="1:1" end="1:2" />
+        </ExprAccess>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EQ" val="=" start="1:3" end="1:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="1:5" end="1:7">
+          <ExprUnary prefix="true">
+            <slot name="arg">
+              <StmtExpr parenthesized="false" start="1:6" end="1:7">
+                <ExprAccess>
+                  <Token type="ID" val="b" start="1:6" end="1:7" />
+                </ExprAccess>
+              </StmtExpr>
+            </slot>
+            <slot name="op">
+              <Token type="OP_MINUS" val="-" start="1:5" end="1:6" />
+            </slot>
+          </ExprUnary>
+        </StmtExpr>
+      </slot>
+    </ExprAssign>
+  </StmtExpr>
+</Stmt>
+<Stmt start="2:1" end="2:9">
+  <StmtExpr parenthesized="false" start="2:1" end="2:9">
+    <ExprAssign>
+      <slot name="left">
+        <ExprAccess>
+          <Token type="ID" val="a" start="2:1" end="2:2" />
+        </ExprAccess>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EQ" val="=" start="2:3" end="2:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="2:5" end="2:9">
+          <ExprUnary prefix="true">
+            <slot name="arg">
+              <StmtExpr parenthesized="false" start="2:6" end="2:9">
+                <ExprUnary prefix="false">
+                  <slot name="arg">
+                    <StmtExpr parenthesized="false" start="2:6" end="2:7">
+                      <ExprAccess>
+                        <Token type="ID" val="b" start="2:6" end="2:7" />
+                      </ExprAccess>
+                    </StmtExpr>
+                  </slot>
+                  <slot name="op">
+                    <Token type="OP_PLUS_PLUS" val="++" start="2:7" end="2:9" />
+                  </slot>
+                </ExprUnary>
+              </StmtExpr>
+            </slot>
+            <slot name="op">
+              <Token type="OP_MINUS" val="-" start="2:5" end="2:6" />
+            </slot>
+          </ExprUnary>
+        </StmtExpr>
+      </slot>
+    </ExprAssign>
+  </StmtExpr>
+</Stmt>
+<Stmt start="3:1" end="3:8">
+  <StmtExpr parenthesized="false" start="3:1" end="3:8">
+    <ExprAssign>
+      <slot name="left">
+        <ExprAccess>
+          <Token type="ID" val="a" start="3:1" end="3:2" />
+        </ExprAccess>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EQ" val="=" start="3:3" end="3:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="3:5" end="3:8">
+          <ExprUnary prefix="true">
+            <slot name="arg">
+              <StmtExpr parenthesized="false" start="3:6" end="3:8">
+                <ExprUnary prefix="true">
+                  <slot name="arg">
+                    <StmtExpr parenthesized="false" start="3:7" end="3:8">
+                      <ExprAccess>
+                        <Token type="ID" val="b" start="3:7" end="3:8" />
+                      </ExprAccess>
+                    </StmtExpr>
+                  </slot>
+                  <slot name="op">
+                    <Token type="OP_TILDE" val="~" start="3:6" end="3:7" />
+                  </slot>
+                </ExprUnary>
+              </StmtExpr>
+            </slot>
+            <slot name="op">
+              <Token type="OP_MINUS" val="-" start="3:5" end="3:6" />
+            </slot>
+          </ExprUnary>
+        </StmtExpr>
+      </slot>
+    </ExprAssign>
+  </StmtExpr>
+</Stmt>
+<Stmt start="4:1" end="4:10">
+  <StmtExpr parenthesized="false" start="4:1" end="4:10">
+    <ExprAssign>
+      <slot name="left">
+        <ExprAccess>
+          <Token type="ID" val="a" start="4:1" end="4:2" />
+        </ExprAccess>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EQ" val="=" start="4:3" end="4:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="4:5" end="4:10">
+          <ExprUnary prefix="true">
+            <slot name="arg">
+              <StmtExpr parenthesized="false" start="4:6" end="4:10">
+                <ExprUnary prefix="true">
+                  <slot name="arg">
+                    <StmtExpr parenthesized="false" start="4:7" end="4:10">
+                      <ExprUnary prefix="true">
+                        <slot name="arg">
+                          <StmtExpr parenthesized="false" start="4:9" end="4:10">
+                            <ExprAccess>
+                              <Token type="ID" val="b" start="4:9" end="4:10" />
+                            </ExprAccess>
+                          </StmtExpr>
+                        </slot>
+                        <slot name="op">
+                          <Token type="OP_PLUS_PLUS" val="++" start="4:7" end="4:9" />
+                        </slot>
+                      </ExprUnary>
+                    </StmtExpr>
+                  </slot>
+                  <slot name="op">
+                    <Token type="OP_TILDE" val="~" start="4:6" end="4:7" />
+                  </slot>
+                </ExprUnary>
+              </StmtExpr>
+            </slot>
+            <slot name="op">
+              <Token type="OP_MINUS" val="-" start="4:5" end="4:6" />
+            </slot>
+          </ExprUnary>
+        </StmtExpr>
+      </slot>
+    </ExprAssign>
+  </StmtExpr>
+</Stmt>
+<Stmt start="5:1" end="5:10">
+  <StmtExpr parenthesized="false" start="5:1" end="5:10">
+    <ExprAssign>
+      <slot name="left">
+        <ExprAccess>
+          <Token type="ID" val="a" start="5:1" end="5:2" />
+        </ExprAccess>
+      </slot>
+      <slot name="op">
+        <Token type="OP_EQ" val="=" start="5:3" end="5:4" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="5:5" end="5:10">
+          <ExprUnary prefix="true">
+            <slot name="arg">
+              <StmtExpr parenthesized="false" start="5:6" end="5:10">
+                <ExprUnary prefix="true">
+                  <slot name="arg">
+                    <StmtExpr parenthesized="false" start="5:7" end="5:10">
+                      <ExprUnary prefix="false">
+                        <slot name="arg">
+                          <StmtExpr parenthesized="false" start="5:7" end="5:8">
+                            <ExprAccess>
+                              <Token type="ID" val="b" start="5:7" end="5:8" />
+                            </ExprAccess>
+                          </StmtExpr>
+                        </slot>
+                        <slot name="op">
+                          <Token type="OP_PLUS_PLUS" val="++" start="5:8" end="5:10" />
+                        </slot>
+                      </ExprUnary>
+                    </StmtExpr>
+                  </slot>
+                  <slot name="op">
+                    <Token type="OP_TILDE" val="~" start="5:6" end="5:7" />
+                  </slot>
+                </ExprUnary>
+              </StmtExpr>
+            </slot>
+            <slot name="op">
+              <Token type="OP_MINUS" val="-" start="5:5" end="5:6" />
+            </slot>
+          </ExprUnary>
+        </StmtExpr>
+      </slot>
+    </ExprAssign>
+  </StmtExpr>
+</Stmt>

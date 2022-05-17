@@ -12,8 +12,8 @@ main {
 ======= stdout =======
 <Node>
   <NodeObjDecl>
-    <Var builtin="false" codeName="Test_0" frame="1" mut="false" name="Test">
-      <Type builtin="false" name="Test_0" type="obj">
+    <Var codeName="Test_0" frame="1" mut="false" name="Test">
+      <Type name="Test_0" type="obj">
         <slot name="fields">
           <TypeObjField name="a">
             <BuiltinType name="float" />
@@ -28,7 +28,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="test1_0" frame="2" mut="false" name="test1">
+          <Var codeName="test1_0" frame="2" mut="false" name="test1">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -49,8 +49,8 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="test2_0" frame="2" mut="false" name="test2">
-            <Type builtin="false" name="Test_0" type="obj">
+          <Var codeName="test2_0" frame="2" mut="false" name="test2">
+            <Type name="Test_0" type="obj">
               <slot name="fields">
                 <TypeObjField name="a">
                   <BuiltinType name="float" />
@@ -62,7 +62,7 @@ main {
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <Type builtin="false" name="Test_0" type="obj">
+              <Type name="Test_0" type="obj">
                 <slot name="fields">
                   <TypeObjField name="a">
                     <BuiltinType name="float" />
@@ -73,7 +73,7 @@ main {
             <slot name="body">
               <ExprObj>
                 <slot name="type">
-                  <Type builtin="false" name="Test_0" type="obj">
+                  <Type name="Test_0" type="obj">
                     <slot name="fields">
                       <TypeObjField name="a">
                         <BuiltinType name="float" />
@@ -129,7 +129,7 @@ main {
                   </slot>
                   <slot name="body">
                     <ExprAccess>
-                      <Var builtin="false" codeName="test1_0" frame="2" mut="false" name="test1">
+                      <Var codeName="test1_0" frame="2" mut="false" name="test1">
                         <BuiltinType name="int" />
                       </Var>
                     </ExprAccess>
@@ -144,8 +144,8 @@ main {
                   <slot name="body">
                     <ExprAccess>
                       <slot name="obj">
-                        <Var builtin="false" codeName="test2_0" frame="2" mut="false" name="test2">
-                          <Type builtin="false" name="Test_0" type="obj">
+                        <Var codeName="test2_0" frame="2" mut="false" name="test2">
+                          <Type name="Test_0" type="obj">
                             <slot name="fields">
                               <TypeObjField name="a">
                                 <BuiltinType name="float" />

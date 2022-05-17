@@ -10,6 +10,12 @@
 
 #include "Reader.hpp"
 
+enum TokenAssociativity {
+  TK_ASSOC_NONE,
+  TK_ASSOC_LEFT,
+  TK_ASSOC_RIGHT
+};
+
 enum TokenType {
   TK_EOF,
   TK_ID,
@@ -106,9 +112,9 @@ enum TokenType {
 
 struct Token {
   TokenType type;
-  std::string val;
-  ReaderLocation start;
-  ReaderLocation end;
+  std::string val = "";
+  ReaderLocation start = {};
+  ReaderLocation end = {};
 
   static bool isDigit (char);
   static bool isIdContinue (char);
@@ -121,6 +127,7 @@ struct Token {
   static bool isLitStrEscape (char);
   static bool isWhitespace (char);
 
+  TokenAssociativity associativity (bool = false) const;
   int precedence (bool = false) const;
   std::string str () const;
   std::string xml () const;

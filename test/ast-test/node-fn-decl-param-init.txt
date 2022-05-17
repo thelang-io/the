@@ -7,8 +7,8 @@ fn test1 (p1 := "1", p2 := p1) {
 <Node>
   <NodeFnDecl>
     <slot name="var">
-      <Var builtin="false" codeName="test1_0" frame="1" mut="false" name="test1">
-        <Type builtin="false" name="test1_0" type="fn">
+      <Var codeName="test1_0" frame="1" mut="false" name="test1">
+        <Type name="test1_0" type="fn">
           <slot name="returnType">
             <BuiltinType name="void" />
           </slot>
@@ -26,7 +26,7 @@ fn test1 (p1 := "1", p2 := p1) {
     <slot name="params">
       <NodeFnDeclParam>
         <slot name="var">
-          <Var builtin="false" codeName="p1_0" frame="2" mut="false" name="p1">
+          <Var codeName="p1_0" frame="2" mut="false" name="p1">
             <BuiltinType name="str" />
           </Var>
         </slot>
@@ -45,7 +45,7 @@ fn test1 (p1 := "1", p2 := p1) {
       </NodeFnDeclParam>
       <NodeFnDeclParam>
         <slot name="var">
-          <Var builtin="false" codeName="p2_0" frame="2" mut="false" name="p2">
+          <Var codeName="p2_0" frame="2" mut="false" name="p2">
             <BuiltinType name="str" />
           </Var>
         </slot>
@@ -56,7 +56,7 @@ fn test1 (p1 := "1", p2 := p1) {
             </slot>
             <slot name="body">
               <ExprAccess>
-                <Var builtin="false" codeName="p1_0" frame="2" mut="false" name="p1">
+                <Var codeName="p1_0" frame="2" mut="false" name="p1">
                   <BuiltinType name="str" />
                 </Var>
               </ExprAccess>
@@ -89,7 +89,7 @@ fn test1 (p1 := "1", p2 := p1) {
                     </slot>
                     <slot name="body">
                       <ExprAccess>
-                        <Var builtin="false" codeName="p1_0" frame="2" mut="false" name="p1">
+                        <Var codeName="p1_0" frame="2" mut="false" name="p1">
                           <BuiltinType name="str" />
                         </Var>
                       </ExprAccess>
@@ -124,7 +124,7 @@ fn test1 (p1 := "1", p2 := p1) {
                     </slot>
                     <slot name="body">
                       <ExprAccess>
-                        <Var builtin="false" codeName="p2_0" frame="2" mut="false" name="p2">
+                        <Var codeName="p2_0" frame="2" mut="false" name="p2">
                           <BuiltinType name="str" />
                         </Var>
                       </ExprAccess>

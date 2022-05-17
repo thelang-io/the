@@ -23,7 +23,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+          <Var codeName="b_0" frame="2" mut="true" name="b">
             <BuiltinType name="bool" />
           </Var>
         </slot>
@@ -32,7 +32,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="c_0" frame="2" mut="true" name="c">
+          <Var codeName="c_0" frame="2" mut="true" name="c">
             <BuiltinType name="byte" />
           </Var>
         </slot>
@@ -41,7 +41,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="d_0" frame="2" mut="true" name="d">
+          <Var codeName="d_0" frame="2" mut="true" name="d">
             <BuiltinType name="char" />
           </Var>
         </slot>
@@ -50,7 +50,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="e_0" frame="2" mut="true" name="e">
+          <Var codeName="e_0" frame="2" mut="true" name="e">
             <BuiltinType name="float" />
           </Var>
         </slot>
@@ -59,7 +59,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="f_0" frame="2" mut="true" name="f">
+          <Var codeName="f_0" frame="2" mut="true" name="f">
             <BuiltinType name="f32" />
           </Var>
         </slot>
@@ -68,7 +68,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="g_0" frame="2" mut="true" name="g">
+          <Var codeName="g_0" frame="2" mut="true" name="g">
             <BuiltinType name="f64" />
           </Var>
         </slot>
@@ -77,7 +77,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="h_0" frame="2" mut="true" name="h">
+          <Var codeName="h_0" frame="2" mut="true" name="h">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -86,7 +86,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="i_0" frame="2" mut="true" name="i">
+          <Var codeName="i_0" frame="2" mut="true" name="i">
             <BuiltinType name="i8" />
           </Var>
         </slot>
@@ -95,7 +95,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="j_0" frame="2" mut="true" name="j">
+          <Var codeName="j_0" frame="2" mut="true" name="j">
             <BuiltinType name="i16" />
           </Var>
         </slot>
@@ -104,7 +104,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="k_0" frame="2" mut="true" name="k">
+          <Var codeName="k_0" frame="2" mut="true" name="k">
             <BuiltinType name="i32" />
           </Var>
         </slot>
@@ -113,7 +113,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="l_0" frame="2" mut="true" name="l">
+          <Var codeName="l_0" frame="2" mut="true" name="l">
             <BuiltinType name="i64" />
           </Var>
         </slot>
@@ -122,7 +122,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="m_0" frame="2" mut="true" name="m">
+          <Var codeName="m_0" frame="2" mut="true" name="m">
             <BuiltinType name="str" />
           </Var>
         </slot>
@@ -131,7 +131,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="n_0" frame="2" mut="true" name="n">
+          <Var codeName="n_0" frame="2" mut="true" name="n">
             <BuiltinType name="u8" />
           </Var>
         </slot>
@@ -140,7 +140,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="o_0" frame="2" mut="true" name="o">
+          <Var codeName="o_0" frame="2" mut="true" name="o">
             <BuiltinType name="u16" />
           </Var>
         </slot>
@@ -149,7 +149,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="p_0" frame="2" mut="true" name="p">
+          <Var codeName="p_0" frame="2" mut="true" name="p">
             <BuiltinType name="u32" />
           </Var>
         </slot>
@@ -158,7 +158,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="q_0" frame="2" mut="true" name="q">
+          <Var codeName="q_0" frame="2" mut="true" name="q">
             <BuiltinType name="u64" />
           </Var>
         </slot>

@@ -9,7 +9,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" mut="false" name="a">
             <BuiltinType name="bool" />
           </Var>
         </slot>
@@ -71,7 +71,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var builtin="false" codeName="b_0" frame="2" mut="true" name="b">
+          <Var codeName="b_0" frame="2" mut="true" name="b">
             <BuiltinType name="float" />
           </Var>
         </slot>

@@ -13,9 +13,8 @@ std::string Var::xml (std::size_t indent) const {
     return std::string(indent, ' ') + R"(<BuiltinVar name=")" + this->name + R"(" />)";
   }
 
-  auto result = std::string(indent, ' ') + R"(<Var builtin=")" + std::string(this->builtin ? "true" : "false");
+  auto result = std::string(indent, ' ') + R"(<Var codeName=")" + this->codeName;
 
-  result += R"(" codeName=")" + this->codeName;
   result += R"(" frame=")" + std::to_string(this->frame);
   result += R"(" mut=")" + std::string(this->mut ? "true" : "false");
   result += R"(" name=")" + this->name + R"(">)" EOL;
