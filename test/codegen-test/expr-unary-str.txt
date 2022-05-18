@@ -29,30 +29,30 @@ struct str {
   size_t l;
 };
 
+struct str str_alloc (const char *);
 struct str str_copy (const struct str);
-struct str str_init (const char *);
+void str_free (struct str);
 bool str_not (struct str);
-void str_deinit (struct str);
 void *alloc (size_t);
 
-struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
-}
-struct str str_init (const char *c) {
+struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
 }
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
 bool str_not (struct str s) {
   bool r = s.l == 0;
-  str_deinit(s);
-  return r;
-}
-void str_deinit (struct str s) {
   free(s.c);
+  return r;
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -64,24 +64,24 @@ void *alloc (size_t l) {
 }
 
 int main () {
-  const struct str __THE_0_s0_0 = str_init("");
-  const struct str __THE_0_s1_0 = str_init("1");
-  const struct str __THE_0_s2_0 = str_init("test");
-  const bool __THE_0_a_0 = str_not(str_init(""));
-  const bool __THE_0_b_0 = !str_not(str_init(""));
-  const bool __THE_0_c_0 = str_not(str_init("1"));
-  const bool __THE_0_d_0 = !str_not(str_init("1"));
-  const bool __THE_0_e_0 = str_not(str_init("test"));
-  const bool __THE_0_f_0 = !str_not(str_init("test"));
+  const struct str __THE_0_s0_0 = str_alloc("");
+  const struct str __THE_0_s1_0 = str_alloc("1");
+  const struct str __THE_0_s2_0 = str_alloc("test");
+  const bool __THE_0_a_0 = str_not(str_alloc(""));
+  const bool __THE_0_b_0 = !str_not(str_alloc(""));
+  const bool __THE_0_c_0 = str_not(str_alloc("1"));
+  const bool __THE_0_d_0 = !str_not(str_alloc("1"));
+  const bool __THE_0_e_0 = str_not(str_alloc("test"));
+  const bool __THE_0_f_0 = !str_not(str_alloc("test"));
   const bool __THE_0_l_0 = str_not(str_copy(__THE_0_s0_0));
   const bool __THE_0_m_0 = !str_not(str_copy(__THE_0_s0_0));
   const bool __THE_0_n_0 = str_not(str_copy(__THE_0_s1_0));
   const bool __THE_0_o_0 = !str_not(str_copy(__THE_0_s1_0));
   const bool __THE_0_p_0 = str_not(str_copy(__THE_0_s2_0));
   const bool __THE_0_q_0 = !str_not(str_copy(__THE_0_s2_0));
-  str_deinit((struct str) __THE_0_s2_0);
-  str_deinit((struct str) __THE_0_s1_0);
-  str_deinit((struct str) __THE_0_s0_0);
+  str_free((struct str) __THE_0_s2_0);
+  str_free((struct str) __THE_0_s1_0);
+  str_free((struct str) __THE_0_s0_0);
 }
 ======= code-windows =======
 #include <stdbool.h>
@@ -94,30 +94,30 @@ struct str {
   size_t l;
 };
 
+struct str str_alloc (const char *);
 struct str str_copy (const struct str);
-struct str str_init (const char *);
+void str_free (struct str);
 bool str_not (struct str);
-void str_deinit (struct str);
 void *alloc (size_t);
 
-struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
-}
-struct str str_init (const char *c) {
+struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
 }
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
 bool str_not (struct str s) {
   bool r = s.l == 0;
-  str_deinit(s);
-  return r;
-}
-void str_deinit (struct str s) {
   free(s.c);
+  return r;
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -129,24 +129,24 @@ void *alloc (size_t l) {
 }
 
 int main () {
-  const struct str __THE_0_s0_0 = str_init("");
-  const struct str __THE_0_s1_0 = str_init("1");
-  const struct str __THE_0_s2_0 = str_init("test");
-  const bool __THE_0_a_0 = str_not(str_init(""));
-  const bool __THE_0_b_0 = !str_not(str_init(""));
-  const bool __THE_0_c_0 = str_not(str_init("1"));
-  const bool __THE_0_d_0 = !str_not(str_init("1"));
-  const bool __THE_0_e_0 = str_not(str_init("test"));
-  const bool __THE_0_f_0 = !str_not(str_init("test"));
+  const struct str __THE_0_s0_0 = str_alloc("");
+  const struct str __THE_0_s1_0 = str_alloc("1");
+  const struct str __THE_0_s2_0 = str_alloc("test");
+  const bool __THE_0_a_0 = str_not(str_alloc(""));
+  const bool __THE_0_b_0 = !str_not(str_alloc(""));
+  const bool __THE_0_c_0 = str_not(str_alloc("1"));
+  const bool __THE_0_d_0 = !str_not(str_alloc("1"));
+  const bool __THE_0_e_0 = str_not(str_alloc("test"));
+  const bool __THE_0_f_0 = !str_not(str_alloc("test"));
   const bool __THE_0_l_0 = str_not(str_copy(__THE_0_s0_0));
   const bool __THE_0_m_0 = !str_not(str_copy(__THE_0_s0_0));
   const bool __THE_0_n_0 = str_not(str_copy(__THE_0_s1_0));
   const bool __THE_0_o_0 = !str_not(str_copy(__THE_0_s1_0));
   const bool __THE_0_p_0 = str_not(str_copy(__THE_0_s2_0));
   const bool __THE_0_q_0 = !str_not(str_copy(__THE_0_s2_0));
-  str_deinit((struct str) __THE_0_s2_0);
-  str_deinit((struct str) __THE_0_s1_0);
-  str_deinit((struct str) __THE_0_s0_0);
+  str_free((struct str) __THE_0_s2_0);
+  str_free((struct str) __THE_0_s1_0);
+  str_free((struct str) __THE_0_s0_0);
 }
 ======= flags =======
 ======= stdout =======

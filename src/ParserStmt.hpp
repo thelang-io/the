@@ -96,7 +96,7 @@ struct ParserStmtFnDecl {
 };
 
 struct ParserStmtIf {
-  ParserStmt cond;
+  ParserStmtExpr cond;
   ParserBlock body;
   std::optional<std::shared_ptr<ParserStmtIfCond>> alt;
 

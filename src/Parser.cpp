@@ -422,7 +422,12 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
 }
 
 ParserStmtIf Parser::_stmtIf () {
-  auto cond = this->next();
+  auto cond = this->_stmtExpr();
+
+  if (cond == std::nullopt) {
+    throw Error(this->reader, this->lexer->loc, E0143);
+  }
+
   auto body = this->_block();
   auto alt = std::optional<std::shared_ptr<ParserStmtIfCond>>{};
   auto [loc1, tok1] = this->lexer->next();
@@ -437,7 +442,7 @@ ParserStmtIf Parser::_stmtIf () {
     this->lexer->seek(loc1);
   }
 
-  return ParserStmtIf{cond, body, alt};
+  return ParserStmtIf{*cond, body, alt};
 }
 
 ParserStmtLoop Parser::_stmtLoop (const std::optional<ParserStmt> &init) {

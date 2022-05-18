@@ -163,6 +163,10 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0130-stmt-fn-decl-missing-param-init-after-type"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
+  "throw-E0143-node-if-expected-expr"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
   "throw-E0105-stmt-loop-unexpected-init",
   "throw-E0106-stmt-loop-semi-after-init",

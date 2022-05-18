@@ -36,41 +36,39 @@ fn test (a: int) any {
       <Node>
         <NodeIf>
           <slot name="cond">
-            <Node>
-              <NodeExpr parenthesized="false">
-                <slot name="type">
-                  <BuiltinType name="bool" />
-                </slot>
-                <slot name="body">
-                  <ExprBinary op="GT">
-                    <slot name="left">
-                      <NodeExpr parenthesized="false">
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprLit type="INT_DEC">
-                            1
-                          </ExprLit>
-                        </slot>
-                      </NodeExpr>
-                    </slot>
-                    <slot name="right">
-                      <NodeExpr parenthesized="false">
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprLit type="INT_DEC">
-                            2
-                          </ExprLit>
-                        </slot>
-                      </NodeExpr>
-                    </slot>
-                  </ExprBinary>
-                </slot>
-              </NodeExpr>
-            </Node>
+            <NodeExpr parenthesized="false">
+              <slot name="type">
+                <BuiltinType name="bool" />
+              </slot>
+              <slot name="body">
+                <ExprBinary op="GT">
+                  <slot name="left">
+                    <NodeExpr parenthesized="false">
+                      <slot name="type">
+                        <BuiltinType name="int" />
+                      </slot>
+                      <slot name="body">
+                        <ExprLit type="INT_DEC">
+                          1
+                        </ExprLit>
+                      </slot>
+                    </NodeExpr>
+                  </slot>
+                  <slot name="right">
+                    <NodeExpr parenthesized="false">
+                      <slot name="type">
+                        <BuiltinType name="int" />
+                      </slot>
+                      <slot name="body">
+                        <ExprLit type="INT_DEC">
+                          2
+                        </ExprLit>
+                      </slot>
+                    </NodeExpr>
+                  </slot>
+                </ExprBinary>
+              </slot>
+            </NodeExpr>
           </slot>
           <slot name="body">
             <Node>

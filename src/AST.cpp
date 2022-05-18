@@ -330,7 +330,10 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto exprBinaryLeft = this->_nodeExpr(parserExprBinary.left, varStack);
     auto exprBinaryRight = this->_nodeExpr(parserExprBinary.right, varStack);
 
-    if ((exprBinaryLeft.type->isStr() || exprBinaryRight.type->isStr()) && parserExprBinary.op.type != TK_OP_PLUS) {
+    if (
+      (exprBinaryLeft.type->isStr() || exprBinaryRight.type->isStr()) &&
+      (parserExprBinary.op.type != TK_OP_PLUS && parserExprBinary.op.type != TK_OP_EQ_EQ && parserExprBinary.op.type != TK_OP_EXCL_EQ)
+    ) {
       throw Error(this->reader, parserExprBinary.left.start, parserExprBinary.right.end, E1003);
     }
 
@@ -557,7 +560,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
 
 ASTNodeIf AST::_nodeIf (const ParserStmtIf &stmtIf, VarStack &varStack) {
   this->varMap.save();
-  auto cond = this->_node(stmtIf.cond, varStack);
+  auto cond = this->_nodeExpr(stmtIf.cond, varStack);
   auto body = this->_block(stmtIf.body, varStack);
   auto alt = std::optional<std::shared_ptr<ASTNodeIfCond>>{};
   this->varMap.restore();

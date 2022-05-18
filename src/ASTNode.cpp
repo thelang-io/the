@@ -170,17 +170,23 @@ std::string ASTNodeIf::xml (std::size_t indent) const {
 
   if (this->alt != std::nullopt) {
     auto altBody = **this->alt;
-    result += std::string(indent + 2, ' ') + R"(<slot name="alt">)" EOL;
 
-    if (std::holds_alternative<ASTBlock>(altBody)) {
-      auto altElse = std::get<ASTBlock>(altBody);
-      result += blockToXml(altElse, indent + 4);
-    } else if (std::holds_alternative<ASTNodeIf>(altBody)) {
-      auto altElif = std::get<ASTNodeIf>(altBody);
-      result += altElif.xml(indent + 4) + EOL;
+    if (
+      (std::holds_alternative<ASTBlock>(altBody) && !std::get<ASTBlock>(altBody).empty()) ||
+      std::holds_alternative<ASTNodeIf>(altBody)
+    ) {
+      result += std::string(indent + 2, ' ') + R"(<slot name="alt">)" EOL;
+
+      if (std::holds_alternative<ASTBlock>(altBody)) {
+        auto altElse = std::get<ASTBlock>(altBody);
+        result += blockToXml(altElse, indent + 4);
+      } else if (std::holds_alternative<ASTNodeIf>(altBody)) {
+        auto altElif = std::get<ASTNodeIf>(altBody);
+        result += altElif.xml(indent + 4) + EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</slot>" EOL;
     }
-
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
   }
 
   return result + std::string(indent, ' ') + "</NodeIf>";

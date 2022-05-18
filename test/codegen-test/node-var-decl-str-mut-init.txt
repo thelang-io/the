@@ -13,23 +13,23 @@ struct str {
   size_t l;
 };
 
-struct str str_init (const char *);
-struct str str_reinit (struct str, struct str);
-void str_deinit (struct str);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
 void *alloc (size_t);
 
-struct str str_init (const char *c) {
+struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
 }
-struct str str_reinit (struct str s1, struct str s2) {
-  str_deinit(s1);
-  return s2;
-}
-void str_deinit (struct str s) {
+void str_free (struct str s) {
   free(s.c);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -41,9 +41,9 @@ void *alloc (size_t l) {
 }
 
 int main () {
-  struct str __THE_0_a_0 = str_init("test");
-  __THE_0_a_0 = str_reinit(__THE_0_a_0, str_init(""));
-  str_deinit((struct str) __THE_0_a_0);
+  struct str __THE_0_a_0 = str_alloc("test");
+  __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc(""));
+  str_free((struct str) __THE_0_a_0);
 }
 ======= code-windows =======
 #include <stdio.h>
@@ -55,23 +55,23 @@ struct str {
   size_t l;
 };
 
-struct str str_init (const char *);
-struct str str_reinit (struct str, struct str);
-void str_deinit (struct str);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
 void *alloc (size_t);
 
-struct str str_init (const char *c) {
+struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
 }
-struct str str_reinit (struct str s1, struct str s2) {
-  str_deinit(s1);
-  return s2;
-}
-void str_deinit (struct str s) {
+void str_free (struct str s) {
   free(s.c);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -83,9 +83,9 @@ void *alloc (size_t l) {
 }
 
 int main () {
-  struct str __THE_0_a_0 = str_init("test");
-  __THE_0_a_0 = str_reinit(__THE_0_a_0, str_init(""));
-  str_deinit((struct str) __THE_0_a_0);
+  struct str __THE_0_a_0 = str_alloc("test");
+  __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc(""));
+  str_free((struct str) __THE_0_a_0);
 }
 ======= flags =======
 ======= stdout =======

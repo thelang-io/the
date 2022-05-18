@@ -61,7 +61,7 @@ struct ASTNodeFnDecl {
 };
 
 struct ASTNodeIf {
-  ASTNode cond;
+  ASTNodeExpr cond;
   ASTBlock body;
   std::optional<std::shared_ptr<ASTNodeIfCond>> alt;
 

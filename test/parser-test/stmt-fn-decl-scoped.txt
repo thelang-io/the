@@ -12,13 +12,11 @@ main {
     <Stmt start="2:3" end="6:4">
       <StmtIf>
         <slot name="cond">
-          <Stmt start="2:6" end="2:10">
-            <StmtExpr parenthesized="false" start="2:6" end="2:10">
-              <ExprLit>
-                <Token type="KW_TRUE" val="true" start="2:6" end="2:10" />
-              </ExprLit>
-            </StmtExpr>
-          </Stmt>
+          <StmtExpr parenthesized="false" start="2:6" end="2:10">
+            <ExprLit>
+              <Token type="KW_TRUE" val="true" start="2:6" end="2:10" />
+            </ExprLit>
+          </StmtExpr>
         </slot>
         <slot name="body">
           <Stmt start="3:5" end="3:23">

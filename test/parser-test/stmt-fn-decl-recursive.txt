@@ -232,29 +232,27 @@ fn test3 (b: float) float {
       <Stmt start="5:3" end="7:4">
         <StmtIf>
           <slot name="cond">
-            <Stmt start="5:6" end="5:12">
-              <StmtExpr parenthesized="false" start="5:6" end="5:12">
-                <ExprBinary>
-                  <slot name="left">
-                    <StmtExpr parenthesized="false" start="5:6" end="5:7">
-                      <ExprAccess>
-                        <Token type="ID" val="a" start="5:6" end="5:7" />
-                      </ExprAccess>
-                    </StmtExpr>
-                  </slot>
-                  <slot name="op">
-                    <Token type="OP_LT_EQ" val="<=" start="5:8" end="5:10" />
-                  </slot>
-                  <slot name="right">
-                    <StmtExpr parenthesized="false" start="5:11" end="5:12">
-                      <ExprLit>
-                        <Token type="LIT_INT_DEC" val="0" start="5:11" end="5:12" />
-                      </ExprLit>
-                    </StmtExpr>
-                  </slot>
-                </ExprBinary>
-              </StmtExpr>
-            </Stmt>
+            <StmtExpr parenthesized="false" start="5:6" end="5:12">
+              <ExprBinary>
+                <slot name="left">
+                  <StmtExpr parenthesized="false" start="5:6" end="5:7">
+                    <ExprAccess>
+                      <Token type="ID" val="a" start="5:6" end="5:7" />
+                    </ExprAccess>
+                  </StmtExpr>
+                </slot>
+                <slot name="op">
+                  <Token type="OP_LT_EQ" val="<=" start="5:8" end="5:10" />
+                </slot>
+                <slot name="right">
+                  <StmtExpr parenthesized="false" start="5:11" end="5:12">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="0" start="5:11" end="5:12" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprBinary>
+            </StmtExpr>
           </slot>
           <slot name="body">
             <Stmt start="6:5" end="6:13">
@@ -358,29 +356,27 @@ fn test3 (b: float) float {
       <Stmt start="12:3" end="14:4">
         <StmtIf>
           <slot name="cond">
-            <Stmt start="12:6" end="12:12">
-              <StmtExpr parenthesized="false" start="12:6" end="12:12">
-                <ExprBinary>
-                  <slot name="left">
-                    <StmtExpr parenthesized="false" start="12:6" end="12:7">
-                      <ExprAccess>
-                        <Token type="ID" val="b" start="12:6" end="12:7" />
-                      </ExprAccess>
-                    </StmtExpr>
-                  </slot>
-                  <slot name="op">
-                    <Token type="OP_LT_EQ" val="<=" start="12:8" end="12:10" />
-                  </slot>
-                  <slot name="right">
-                    <StmtExpr parenthesized="false" start="12:11" end="12:12">
-                      <ExprLit>
-                        <Token type="LIT_INT_DEC" val="0" start="12:11" end="12:12" />
-                      </ExprLit>
-                    </StmtExpr>
-                  </slot>
-                </ExprBinary>
-              </StmtExpr>
-            </Stmt>
+            <StmtExpr parenthesized="false" start="12:6" end="12:12">
+              <ExprBinary>
+                <slot name="left">
+                  <StmtExpr parenthesized="false" start="12:6" end="12:7">
+                    <ExprAccess>
+                      <Token type="ID" val="b" start="12:6" end="12:7" />
+                    </ExprAccess>
+                  </StmtExpr>
+                </slot>
+                <slot name="op">
+                  <Token type="OP_LT_EQ" val="<=" start="12:8" end="12:10" />
+                </slot>
+                <slot name="right">
+                  <StmtExpr parenthesized="false" start="12:11" end="12:12">
+                    <ExprLit>
+                      <Token type="LIT_INT_DEC" val="0" start="12:11" end="12:12" />
+                    </ExprLit>
+                  </StmtExpr>
+                </slot>
+              </ExprBinary>
+            </StmtExpr>
           </slot>
           <slot name="body">
             <Stmt start="13:5" end="13:13">

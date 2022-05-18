@@ -12,17 +12,17 @@ struct str {
   size_t l;
 };
 
-struct str str_init (const char *);
-void str_deinit (struct str);
+struct str str_alloc (const char *);
+void str_free (struct str);
 void *alloc (size_t);
 
-struct str str_init (const char *c) {
+struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
 }
-void str_deinit (struct str s) {
+void str_free (struct str s) {
   free(s.c);
 }
 void *alloc (size_t l) {
@@ -35,8 +35,8 @@ void *alloc (size_t l) {
 }
 
 int main () {
-  const struct str __THE_0_a_0 = str_init("");
-  str_deinit((struct str) __THE_0_a_0);
+  const struct str __THE_0_a_0 = str_alloc("");
+  str_free((struct str) __THE_0_a_0);
 }
 ======= code-windows =======
 #include <stdio.h>
@@ -48,17 +48,17 @@ struct str {
   size_t l;
 };
 
-struct str str_init (const char *);
-void str_deinit (struct str);
+struct str str_alloc (const char *);
+void str_free (struct str);
 void *alloc (size_t);
 
-struct str str_init (const char *c) {
+struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
 }
-void str_deinit (struct str s) {
+void str_free (struct str s) {
   free(s.c);
 }
 void *alloc (size_t l) {
@@ -71,8 +71,8 @@ void *alloc (size_t l) {
 }
 
 int main () {
-  const struct str __THE_0_a_0 = str_init("");
-  str_deinit((struct str) __THE_0_a_0);
+  const struct str __THE_0_a_0 = str_alloc("");
+  str_free((struct str) __THE_0_a_0);
 }
 ======= flags =======
 ======= stdout =======

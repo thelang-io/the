@@ -47,13 +47,11 @@ main {
     <Stmt start="4:3" end="6:4">
       <StmtIf>
         <slot name="cond">
-          <Stmt start="4:6" end="4:10">
-            <StmtExpr parenthesized="false" start="4:6" end="4:10">
-              <ExprLit>
-                <Token type="KW_TRUE" val="true" start="4:6" end="4:10" />
-              </ExprLit>
-            </StmtExpr>
-          </Stmt>
+          <StmtExpr parenthesized="false" start="4:6" end="4:10">
+            <ExprLit>
+              <Token type="KW_TRUE" val="true" start="4:6" end="4:10" />
+            </ExprLit>
+          </StmtExpr>
         </slot>
         <slot name="body">
           <Stmt start="5:5" end="5:12">

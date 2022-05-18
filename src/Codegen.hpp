@@ -15,13 +15,17 @@ using CodegenNode = std::tuple<std::string, std::string, std::string>;
 struct CodegenBuiltins {
   bool fnAlloc = false;
   bool fnCstrConcatStr = false;
+  bool fnCstrEqCstr = false;
+  bool fnCstrEqStr = false;
+  bool fnStrAlloc = false;
   bool fnStrConcatCstr = false;
   bool fnStrConcatStr = false;
+  bool fnStrEqCstr = false;
+  bool fnStrEqStr = false;
   bool fnStrCopy = false;
-  bool fnStrDeinit = false;
-  bool fnStrInit = false;
+  bool fnStrFree = false;
   bool fnStrNot = false;
-  bool fnStrReinit = false;
+  bool fnStrRealloc = false;
   bool libStdbool = false;
   bool libStddef = false;
   bool libStdint = false;
@@ -55,6 +59,7 @@ class Codegen {
   std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
   std::string _flags () const;
   CodegenNode _node (const ASTNode &);
+  std::string _nodeIf (const ASTNodeIf &);
   std::string _nodeExpr (const ASTNodeExpr &, bool = false);
   std::string _type (const Type *, bool);
   CodegenNode _wrapNode (const ASTNode &, const std::string &, const std::string &, const std::string &) const;

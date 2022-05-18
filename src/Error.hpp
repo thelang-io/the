@@ -72,6 +72,7 @@
 #define E0140 "E0140 - Expected lvalue as left operand of assignment"
 #define E0141 "E0141 - Called object expected to be a function"
 #define E0142 "E0142 - lvalue required as operand"
+#define E0143 "E0143 - Expected if condition expression"
 
 #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"

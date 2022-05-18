@@ -116,6 +116,12 @@ INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenTest, testing::Values(
   "expr-unary-str"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenTest, testing::Values(
+  "node-if",
+  "node-if-cmp-num",
+  "node-if-cmp-str"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
   "node-var-decl-bool",
   "node-var-decl-bool-init",
