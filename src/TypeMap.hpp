@@ -50,6 +50,7 @@ struct Type {
   bool isF32 () const;
   bool isF64 () const;
   bool isFloat () const;
+  bool isFloatNumber () const;
   bool isFn () const;
   bool isI8 () const;
   bool isI16 () const;

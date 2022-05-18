@@ -1,0 +1,47 @@
+======= stdin =======
+main {
+  a := 1 + 2
+  b := 1 - 2
+  c := 5 / 2
+  d := 2 * 3
+  e := 1 && 0
+  f := 1 == 2
+  g := 1 >= 2
+  h := 1 > 2
+  i := 0 <= 2
+  j := 2 < 1
+  k := 0 != 0
+  l := 0 || 1
+  m := 0 & 1
+  n := 0 | 1
+  o := 0 ^ 1
+  p := 0 >> 2
+  q := 0 << 2
+  r := 4 % 2
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_a_0 = 1 + 2;
+  const int32_t __THE_0_b_0 = 1 - 2;
+  const int32_t __THE_0_c_0 = 5 / 2;
+  const int32_t __THE_0_d_0 = 2 * 3;
+  const int32_t __THE_0_e_0 = 1 && 0;
+  const bool __THE_0_f_0 = 1 == 2;
+  const bool __THE_0_g_0 = 1 >= 2;
+  const bool __THE_0_h_0 = 1 > 2;
+  const bool __THE_0_i_0 = 0 <= 2;
+  const bool __THE_0_j_0 = 2 < 1;
+  const bool __THE_0_k_0 = 0 != 0;
+  const int32_t __THE_0_l_0 = 0 || 1;
+  const int32_t __THE_0_m_0 = 0 & 1;
+  const int32_t __THE_0_n_0 = 0 | 1;
+  const int32_t __THE_0_o_0 = 0 ^ 1;
+  const int32_t __THE_0_p_0 = 0 >> 2;
+  const int32_t __THE_0_q_0 = 0 << 2;
+  const int32_t __THE_0_r_0 = 4 % 2;
+}
+======= flags =======
+======= stdout =======

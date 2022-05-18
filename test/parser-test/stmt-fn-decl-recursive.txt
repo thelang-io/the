@@ -75,7 +75,7 @@ fn test3 (b: float) float {
                       </StmtExpr>
                     </slot>
                     <slot name="op">
-                      <Token type="OP_OR_OR" val="||" start="2:17" end="2:19" />
+                      <Token type="OP_PIPE_PIPE" val="||" start="2:17" end="2:19" />
                     </slot>
                     <slot name="right">
                       <StmtExpr parenthesized="false" start="2:20" end="2:26">

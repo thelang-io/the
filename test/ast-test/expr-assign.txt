@@ -16,7 +16,6 @@ main {
   mut n := 0
 
   a = 0
-  a **= 1
   b %= 2
   c /= 3
   d *= 4
@@ -29,7 +28,6 @@ main {
   k |= 11
   l &&= 12
   m ||= 13
-  n ??= 14
 
   a = b
   c = d = e
@@ -338,7 +336,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="a_0" frame="2" mut="true" name="a">
@@ -368,37 +366,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="POWER">
-            <slot name="left">
-              <ExprAccess>
-                <Var codeName="a_0" frame="2" mut="true" name="a">
-                  <BuiltinType name="int" />
-                </Var>
-              </ExprAccess>
-            </slot>
-            <slot name="right">
-              <NodeExpr parenthesized="false">
-                <slot name="type">
-                  <BuiltinType name="int" />
-                </slot>
-                <slot name="body">
-                  <ExprLit type="INT_DEC">
-                    1
-                  </ExprLit>
-                </slot>
-              </NodeExpr>
-            </slot>
-          </ExprAssign>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr parenthesized="false">
-        <slot name="type">
-          <BuiltinType name="int" />
-        </slot>
-        <slot name="body">
-          <ExprAssign op="REMAINDER">
+          <ExprAssign op="MOD">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="b_0" frame="2" mut="true" name="b">
@@ -428,7 +396,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="DIVIDE">
+          <ExprAssign op="DIV">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="c_0" frame="2" mut="true" name="c">
@@ -458,7 +426,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="MULTIPLY">
+          <ExprAssign op="MUL">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="d_0" frame="2" mut="true" name="d">
@@ -488,7 +456,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="SUBTRACT">
+          <ExprAssign op="SUB">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="e_0" frame="2" mut="true" name="e">
@@ -548,7 +516,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="RIGHT_SHIFT">
+          <ExprAssign op="RSHIFT">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="g_0" frame="2" mut="true" name="g">
@@ -578,7 +546,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="LEFT_SHIFT">
+          <ExprAssign op="LSHIFT">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="h_0" frame="2" mut="true" name="h">
@@ -608,7 +576,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="BITWISE_AND">
+          <ExprAssign op="BIT_AND">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="i_0" frame="2" mut="true" name="i">
@@ -638,7 +606,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="BITWISE_XOR">
+          <ExprAssign op="BIT_XOR">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="j_0" frame="2" mut="true" name="j">
@@ -668,7 +636,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="BITWISE_OR">
+          <ExprAssign op="BIT_OR">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="k_0" frame="2" mut="true" name="k">
@@ -698,7 +666,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="LOGICAL_AND">
+          <ExprAssign op="AND">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="l_0" frame="2" mut="true" name="l">
@@ -728,7 +696,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="LOGICAL_OR">
+          <ExprAssign op="OR">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="m_0" frame="2" mut="true" name="m">
@@ -758,37 +726,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="COALESCE">
-            <slot name="left">
-              <ExprAccess>
-                <Var codeName="n_0" frame="2" mut="true" name="n">
-                  <BuiltinType name="int" />
-                </Var>
-              </ExprAccess>
-            </slot>
-            <slot name="right">
-              <NodeExpr parenthesized="false">
-                <slot name="type">
-                  <BuiltinType name="int" />
-                </slot>
-                <slot name="body">
-                  <ExprLit type="INT_DEC">
-                    14
-                  </ExprLit>
-                </slot>
-              </NodeExpr>
-            </slot>
-          </ExprAssign>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr parenthesized="false">
-        <slot name="type">
-          <BuiltinType name="int" />
-        </slot>
-        <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="a_0" frame="2" mut="true" name="a">
@@ -820,7 +758,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="c_0" frame="2" mut="true" name="c">
@@ -834,7 +772,7 @@ main {
                   <BuiltinType name="int" />
                 </slot>
                 <slot name="body">
-                  <ExprAssign op="EQUAL">
+                  <ExprAssign op="EQ">
                     <slot name="left">
                       <ExprAccess>
                         <Var codeName="d_0" frame="2" mut="true" name="d">
@@ -870,7 +808,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="f_0" frame="2" mut="true" name="f">
@@ -884,7 +822,7 @@ main {
                   <BuiltinType name="int" />
                 </slot>
                 <slot name="body">
-                  <ExprAssign op="EQUAL">
+                  <ExprAssign op="EQ">
                     <slot name="left">
                       <ExprAccess>
                         <Var codeName="g_0" frame="2" mut="true" name="g">
@@ -898,7 +836,7 @@ main {
                           <BuiltinType name="int" />
                         </slot>
                         <slot name="body">
-                          <ExprAssign op="EQUAL">
+                          <ExprAssign op="EQ">
                             <slot name="left">
                               <ExprAccess>
                                 <Var codeName="h_0" frame="2" mut="true" name="h">

@@ -19,7 +19,7 @@ main {
                 <BuiltinType name="bool" />
               </slot>
               <slot name="body">
-                <ExprBinary op="GREATER_THAN">
+                <ExprBinary op="GT">
                   <slot name="left">
                     <NodeExpr parenthesized="false">
                       <slot name="type">
@@ -93,7 +93,7 @@ main {
                     <BuiltinType name="bool" />
                   </slot>
                   <slot name="body">
-                    <ExprBinary op="LESS_THAN">
+                    <ExprBinary op="LT">
                       <slot name="left">
                         <NodeExpr parenthesized="false">
                           <slot name="type">

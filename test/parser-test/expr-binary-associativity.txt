@@ -17,11 +17,10 @@ a | b ^ c & d
 a & b + c
 a + b ^ c
 a | b + c
-a && b || c ?? d
-a ?? b || c && d
 a && b && c
 a || b || c
-a ?? b ?? c
+a && b || c
+a || b && c
 ======= stdout =======
 <Stmt start="1:1" end="1:6">
   <StmtExpr parenthesized="false" start="1:1" end="1:6">
@@ -547,7 +546,7 @@ a ?? b ?? c
                     </StmtExpr>
                   </slot>
                   <slot name="op">
-                    <Token type="OP_AND" val="&" start="14:3" end="14:4" />
+                    <Token type="OP_AMP" val="&" start="14:3" end="14:4" />
                   </slot>
                   <slot name="right">
                     <StmtExpr parenthesized="false" start="14:5" end="14:6">
@@ -573,7 +572,7 @@ a ?? b ?? c
         </StmtExpr>
       </slot>
       <slot name="op">
-        <Token type="OP_OR" val="|" start="14:11" end="14:12" />
+        <Token type="OP_PIPE" val="|" start="14:11" end="14:12" />
       </slot>
       <slot name="right">
         <StmtExpr parenthesized="false" start="14:13" end="14:14">
@@ -596,7 +595,7 @@ a ?? b ?? c
         </StmtExpr>
       </slot>
       <slot name="op">
-        <Token type="OP_OR" val="|" start="15:3" end="15:4" />
+        <Token type="OP_PIPE" val="|" start="15:3" end="15:4" />
       </slot>
       <slot name="right">
         <StmtExpr parenthesized="false" start="15:5" end="15:14">
@@ -622,7 +621,7 @@ a ?? b ?? c
                     </StmtExpr>
                   </slot>
                   <slot name="op">
-                    <Token type="OP_AND" val="&" start="15:11" end="15:12" />
+                    <Token type="OP_AMP" val="&" start="15:11" end="15:12" />
                   </slot>
                   <slot name="right">
                     <StmtExpr parenthesized="false" start="15:13" end="15:14">
@@ -651,7 +650,7 @@ a ?? b ?? c
         </StmtExpr>
       </slot>
       <slot name="op">
-        <Token type="OP_AND" val="&" start="16:3" end="16:4" />
+        <Token type="OP_AMP" val="&" start="16:3" end="16:4" />
       </slot>
       <slot name="right">
         <StmtExpr parenthesized="false" start="16:5" end="16:10">
@@ -729,7 +728,7 @@ a ?? b ?? c
         </StmtExpr>
       </slot>
       <slot name="op">
-        <Token type="OP_OR" val="|" start="18:3" end="18:4" />
+        <Token type="OP_PIPE" val="|" start="18:3" end="18:4" />
       </slot>
       <slot name="right">
         <StmtExpr parenthesized="false" start="18:5" end="18:10">
@@ -757,42 +756,26 @@ a ?? b ?? c
     </ExprBinary>
   </StmtExpr>
 </Stmt>
-<Stmt start="19:1" end="19:17">
-  <StmtExpr parenthesized="false" start="19:1" end="19:17">
+<Stmt start="19:1" end="19:12">
+  <StmtExpr parenthesized="false" start="19:1" end="19:12">
     <ExprBinary>
       <slot name="left">
-        <StmtExpr parenthesized="false" start="19:1" end="19:12">
+        <StmtExpr parenthesized="false" start="19:1" end="19:7">
           <ExprBinary>
             <slot name="left">
-              <StmtExpr parenthesized="false" start="19:1" end="19:7">
-                <ExprBinary>
-                  <slot name="left">
-                    <StmtExpr parenthesized="false" start="19:1" end="19:2">
-                      <ExprAccess>
-                        <Token type="ID" val="a" start="19:1" end="19:2" />
-                      </ExprAccess>
-                    </StmtExpr>
-                  </slot>
-                  <slot name="op">
-                    <Token type="OP_AND_AND" val="&&" start="19:3" end="19:5" />
-                  </slot>
-                  <slot name="right">
-                    <StmtExpr parenthesized="false" start="19:6" end="19:7">
-                      <ExprAccess>
-                        <Token type="ID" val="b" start="19:6" end="19:7" />
-                      </ExprAccess>
-                    </StmtExpr>
-                  </slot>
-                </ExprBinary>
+              <StmtExpr parenthesized="false" start="19:1" end="19:2">
+                <ExprAccess>
+                  <Token type="ID" val="a" start="19:1" end="19:2" />
+                </ExprAccess>
               </StmtExpr>
             </slot>
             <slot name="op">
-              <Token type="OP_OR_OR" val="||" start="19:8" end="19:10" />
+              <Token type="OP_AMP_AMP" val="&&" start="19:3" end="19:5" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false" start="19:11" end="19:12">
+              <StmtExpr parenthesized="false" start="19:6" end="19:7">
                 <ExprAccess>
-                  <Token type="ID" val="c" start="19:11" end="19:12" />
+                  <Token type="ID" val="b" start="19:6" end="19:7" />
                 </ExprAccess>
               </StmtExpr>
             </slot>
@@ -800,20 +783,20 @@ a ?? b ?? c
         </StmtExpr>
       </slot>
       <slot name="op">
-        <Token type="OP_QN_QN" val="??" start="19:13" end="19:15" />
+        <Token type="OP_AMP_AMP" val="&&" start="19:8" end="19:10" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="19:16" end="19:17">
+        <StmtExpr parenthesized="false" start="19:11" end="19:12">
           <ExprAccess>
-            <Token type="ID" val="d" start="19:16" end="19:17" />
+            <Token type="ID" val="c" start="19:11" end="19:12" />
           </ExprAccess>
         </StmtExpr>
       </slot>
     </ExprBinary>
   </StmtExpr>
 </Stmt>
-<Stmt start="20:1" end="20:17">
-  <StmtExpr parenthesized="false" start="20:1" end="20:17">
+<Stmt start="20:1" end="20:12">
+  <StmtExpr parenthesized="false" start="20:1" end="20:12">
     <ExprBinary>
       <slot name="left">
         <StmtExpr parenthesized="false" start="20:1" end="20:7">
@@ -826,7 +809,7 @@ a ?? b ?? c
               </StmtExpr>
             </slot>
             <slot name="op">
-              <Token type="OP_QN_QN" val="??" start="20:3" end="20:5" />
+              <Token type="OP_PIPE_PIPE" val="||" start="20:3" end="20:5" />
             </slot>
             <slot name="right">
               <StmtExpr parenthesized="false" start="20:6" end="20:7">
@@ -839,29 +822,13 @@ a ?? b ?? c
         </StmtExpr>
       </slot>
       <slot name="op">
-        <Token type="OP_OR_OR" val="||" start="20:8" end="20:10" />
+        <Token type="OP_PIPE_PIPE" val="||" start="20:8" end="20:10" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="20:11" end="20:17">
-          <ExprBinary>
-            <slot name="left">
-              <StmtExpr parenthesized="false" start="20:11" end="20:12">
-                <ExprAccess>
-                  <Token type="ID" val="c" start="20:11" end="20:12" />
-                </ExprAccess>
-              </StmtExpr>
-            </slot>
-            <slot name="op">
-              <Token type="OP_AND_AND" val="&&" start="20:13" end="20:15" />
-            </slot>
-            <slot name="right">
-              <StmtExpr parenthesized="false" start="20:16" end="20:17">
-                <ExprAccess>
-                  <Token type="ID" val="d" start="20:16" end="20:17" />
-                </ExprAccess>
-              </StmtExpr>
-            </slot>
-          </ExprBinary>
+        <StmtExpr parenthesized="false" start="20:11" end="20:12">
+          <ExprAccess>
+            <Token type="ID" val="c" start="20:11" end="20:12" />
+          </ExprAccess>
         </StmtExpr>
       </slot>
     </ExprBinary>
@@ -881,7 +848,7 @@ a ?? b ?? c
               </StmtExpr>
             </slot>
             <slot name="op">
-              <Token type="OP_AND_AND" val="&&" start="21:3" end="21:5" />
+              <Token type="OP_AMP_AMP" val="&&" start="21:3" end="21:5" />
             </slot>
             <slot name="right">
               <StmtExpr parenthesized="false" start="21:6" end="21:7">
@@ -894,7 +861,7 @@ a ?? b ?? c
         </StmtExpr>
       </slot>
       <slot name="op">
-        <Token type="OP_AND_AND" val="&&" start="21:8" end="21:10" />
+        <Token type="OP_PIPE_PIPE" val="||" start="21:8" end="21:10" />
       </slot>
       <slot name="right">
         <StmtExpr parenthesized="false" start="21:11" end="21:12">
@@ -910,75 +877,36 @@ a ?? b ?? c
   <StmtExpr parenthesized="false" start="22:1" end="22:12">
     <ExprBinary>
       <slot name="left">
-        <StmtExpr parenthesized="false" start="22:1" end="22:7">
+        <StmtExpr parenthesized="false" start="22:1" end="22:2">
+          <ExprAccess>
+            <Token type="ID" val="a" start="22:1" end="22:2" />
+          </ExprAccess>
+        </StmtExpr>
+      </slot>
+      <slot name="op">
+        <Token type="OP_PIPE_PIPE" val="||" start="22:3" end="22:5" />
+      </slot>
+      <slot name="right">
+        <StmtExpr parenthesized="false" start="22:6" end="22:12">
           <ExprBinary>
             <slot name="left">
-              <StmtExpr parenthesized="false" start="22:1" end="22:2">
-                <ExprAccess>
-                  <Token type="ID" val="a" start="22:1" end="22:2" />
-                </ExprAccess>
-              </StmtExpr>
-            </slot>
-            <slot name="op">
-              <Token type="OP_OR_OR" val="||" start="22:3" end="22:5" />
-            </slot>
-            <slot name="right">
               <StmtExpr parenthesized="false" start="22:6" end="22:7">
                 <ExprAccess>
                   <Token type="ID" val="b" start="22:6" end="22:7" />
                 </ExprAccess>
               </StmtExpr>
             </slot>
-          </ExprBinary>
-        </StmtExpr>
-      </slot>
-      <slot name="op">
-        <Token type="OP_OR_OR" val="||" start="22:8" end="22:10" />
-      </slot>
-      <slot name="right">
-        <StmtExpr parenthesized="false" start="22:11" end="22:12">
-          <ExprAccess>
-            <Token type="ID" val="c" start="22:11" end="22:12" />
-          </ExprAccess>
-        </StmtExpr>
-      </slot>
-    </ExprBinary>
-  </StmtExpr>
-</Stmt>
-<Stmt start="23:1" end="23:12">
-  <StmtExpr parenthesized="false" start="23:1" end="23:12">
-    <ExprBinary>
-      <slot name="left">
-        <StmtExpr parenthesized="false" start="23:1" end="23:7">
-          <ExprBinary>
-            <slot name="left">
-              <StmtExpr parenthesized="false" start="23:1" end="23:2">
-                <ExprAccess>
-                  <Token type="ID" val="a" start="23:1" end="23:2" />
-                </ExprAccess>
-              </StmtExpr>
-            </slot>
             <slot name="op">
-              <Token type="OP_QN_QN" val="??" start="23:3" end="23:5" />
+              <Token type="OP_AMP_AMP" val="&&" start="22:8" end="22:10" />
             </slot>
             <slot name="right">
-              <StmtExpr parenthesized="false" start="23:6" end="23:7">
+              <StmtExpr parenthesized="false" start="22:11" end="22:12">
                 <ExprAccess>
-                  <Token type="ID" val="b" start="23:6" end="23:7" />
+                  <Token type="ID" val="c" start="22:11" end="22:12" />
                 </ExprAccess>
               </StmtExpr>
             </slot>
           </ExprBinary>
-        </StmtExpr>
-      </slot>
-      <slot name="op">
-        <Token type="OP_QN_QN" val="??" start="23:8" end="23:10" />
-      </slot>
-      <slot name="right">
-        <StmtExpr parenthesized="false" start="23:11" end="23:12">
-          <ExprAccess>
-            <Token type="ID" val="c" start="23:11" end="23:12" />
-          </ExprAccess>
         </StmtExpr>
       </slot>
     </ExprBinary>

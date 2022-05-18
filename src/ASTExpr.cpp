@@ -12,50 +12,44 @@
 std::string exprAssignOpStr (enum ASTExprAssignOp op) {
   switch (op) {
     case AST_EXPR_ASSIGN_ADD: return "ADD";
-    case AST_EXPR_ASSIGN_BITWISE_AND: return "BITWISE_AND";
-    case AST_EXPR_ASSIGN_BITWISE_OR: return "BITWISE_OR";
-    case AST_EXPR_ASSIGN_BITWISE_XOR: return "BITWISE_XOR";
-    case AST_EXPR_ASSIGN_COALESCE: return "COALESCE";
-    case AST_EXPR_ASSIGN_DIVIDE: return "DIVIDE";
-    case AST_EXPR_ASSIGN_EQUAL: return "EQUAL";
-    case AST_EXPR_ASSIGN_LEFT_SHIFT: return "LEFT_SHIFT";
-    case AST_EXPR_ASSIGN_LOGICAL_AND: return "LOGICAL_AND";
-    case AST_EXPR_ASSIGN_LOGICAL_OR: return "LOGICAL_OR";
-    case AST_EXPR_ASSIGN_MULTIPLY: return "MULTIPLY";
-    case AST_EXPR_ASSIGN_POWER: return "POWER";
-    case AST_EXPR_ASSIGN_REMAINDER: return "REMAINDER";
-    case AST_EXPR_ASSIGN_RIGHT_SHIFT: return "RIGHT_SHIFT";
-    case AST_EXPR_ASSIGN_SUBTRACT: return "SUBTRACT";
+    case AST_EXPR_ASSIGN_AND: return "AND";
+    case AST_EXPR_ASSIGN_BIT_AND: return "BIT_AND";
+    case AST_EXPR_ASSIGN_BIT_OR: return "BIT_OR";
+    case AST_EXPR_ASSIGN_BIT_XOR: return "BIT_XOR";
+    case AST_EXPR_ASSIGN_DIV: return "DIV";
+    case AST_EXPR_ASSIGN_EQ: return "EQ";
+    case AST_EXPR_ASSIGN_LSHIFT: return "LSHIFT";
+    case AST_EXPR_ASSIGN_MOD: return "MOD";
+    case AST_EXPR_ASSIGN_MUL: return "MUL";
+    case AST_EXPR_ASSIGN_OR: return "OR";
+    case AST_EXPR_ASSIGN_RSHIFT: return "RSHIFT";
+    case AST_EXPR_ASSIGN_SUB: return "SUB";
+    default: throw Error("Error: tried stringify unknown assign expression operator");
   }
-
-  throw Error("Error: tried stringify unknown assign expression operator");
 }
 
 std::string exprBinaryOpStr (enum ASTExprBinaryOp op) {
   switch (op) {
     case AST_EXPR_BINARY_ADD: return "ADD";
-    case AST_EXPR_BINARY_BITWISE_AND: return "BITWISE_AND";
-    case AST_EXPR_BINARY_BITWISE_OR: return "BITWISE_OR";
-    case AST_EXPR_BINARY_BITWISE_XOR: return "BITWISE_XOR";
-    case AST_EXPR_BINARY_COALESCE: return "COALESCE";
-    case AST_EXPR_BINARY_DIVIDE: return "DIVIDE";
-    case AST_EXPR_BINARY_EQUAL: return "EQUAL";
-    case AST_EXPR_BINARY_GREATER_EQUAL: return "GREATER_EQUAL";
-    case AST_EXPR_BINARY_GREATER_THAN: return "GREATER_THAN";
-    case AST_EXPR_BINARY_LEFT_SHIFT: return "LEFT_SHIFT";
-    case AST_EXPR_BINARY_LESS_EQUAL: return "LESS_EQUAL";
-    case AST_EXPR_BINARY_LESS_THAN: return "LESS_THAN";
-    case AST_EXPR_BINARY_LOGICAL_AND: return "LOGICAL_AND";
-    case AST_EXPR_BINARY_LOGICAL_OR: return "LOGICAL_OR";
-    case AST_EXPR_BINARY_MULTIPLY: return "MULTIPLY";
-    case AST_EXPR_BINARY_NOT_EQUAL: return "NOT_EQUAL";
-    case AST_EXPR_BINARY_POWER: return "POWER";
-    case AST_EXPR_BINARY_REMAINDER: return "REMAINDER";
-    case AST_EXPR_BINARY_RIGHT_SHIFT: return "RIGHT_SHIFT";
-    case AST_EXPR_BINARY_SUBTRACT: return "SUBTRACT";
+    case AST_EXPR_BINARY_AND: return "AND";
+    case AST_EXPR_BINARY_BIT_AND: return "BIT_AND";
+    case AST_EXPR_BINARY_BIT_OR: return "BIT_OR";
+    case AST_EXPR_BINARY_BIT_XOR: return "BIT_XOR";
+    case AST_EXPR_BINARY_DIV: return "DIV";
+    case AST_EXPR_BINARY_EQ: return "EQ";
+    case AST_EXPR_BINARY_GE: return "GE";
+    case AST_EXPR_BINARY_GT: return "GT";
+    case AST_EXPR_BINARY_LSHIFT: return "LSHIFT";
+    case AST_EXPR_BINARY_LE: return "LE";
+    case AST_EXPR_BINARY_LT: return "LT";
+    case AST_EXPR_BINARY_MOD: return "MOD";
+    case AST_EXPR_BINARY_MUL: return "MUL";
+    case AST_EXPR_BINARY_NE: return "NE";
+    case AST_EXPR_BINARY_OR: return "OR";
+    case AST_EXPR_BINARY_RSHIFT: return "RSHIFT";
+    case AST_EXPR_BINARY_SUB: return "SUB";
+    default: throw Error("Error: tried stringify unknown binary expression operator");
   }
-
-  throw Error("Error: tried stringify unknown binary expression operator");
 }
 
 std::string exprLitTypeStr (enum ASTExprLitType type) {
@@ -68,22 +62,20 @@ std::string exprLitTypeStr (enum ASTExprLitType type) {
     case AST_EXPR_LIT_INT_HEX: return "INT_HEX";
     case AST_EXPR_LIT_INT_OCT: return "INT_OCT";
     case AST_EXPR_LIT_STR: return "STR";
+    default: throw Error("Error: tried stringify unknown literal expression type");
   }
-
-  throw Error("Error: tried stringify unknown literal expression type");
 }
 
 std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
   switch (op) {
-    case AST_EXPR_UNARY_BITWISE_NOT: return "BITWISE_NOT";
+    case AST_EXPR_UNARY_BIT_NOT: return "BIT_NOT";
     case AST_EXPR_UNARY_DECREMENT: return "DECREMENT";
     case AST_EXPR_UNARY_INCREMENT: return "INCREMENT";
-    case AST_EXPR_UNARY_LOGICAL_NOT: return "LOGICAL_NOT";
-    case AST_EXPR_UNARY_NEGATION: return "NEGATION";
+    case AST_EXPR_UNARY_MINUS: return "MINUS";
+    case AST_EXPR_UNARY_NOT: return "NOT";
     case AST_EXPR_UNARY_PLUS: return "PLUS";
+    default: throw Error("Error: tried stringify unknown unary expression operator");
   }
-
-  throw Error("Error: tried stringify unknown unary expression operator");
 }
 
 std::string memberObjXml (const std::shared_ptr<ASTMemberObj> &exprAccessBody, std::size_t indent) {

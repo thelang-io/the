@@ -98,7 +98,7 @@ main {
                           <BuiltinType name="float" />
                         </slot>
                         <slot name="body">
-                          <ExprUnary op="NEGATION" prefix="true">
+                          <ExprUnary op="MINUS" prefix="true">
                             <NodeExpr parenthesized="false">
                               <slot name="type">
                                 <BuiltinType name="float" />

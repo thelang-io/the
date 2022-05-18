@@ -82,6 +82,12 @@ INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenTest, testing::Values(
   "expr-assign-str"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenTest, testing::Values(
+  "expr-binary",
+  "expr-binary-str",
+  "expr-binary-nested"
+));
+
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenTest, testing::Values(
   "expr-cond",
   "expr-cond-nested",

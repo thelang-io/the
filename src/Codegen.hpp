@@ -22,7 +22,6 @@ struct CodegenBuiltins {
   bool fnStrInit = false;
   bool fnStrNot = false;
   bool fnStrReinit = false;
-  bool libMath = false;
   bool libStdbool = false;
   bool libStddef = false;
   bool libStdint = false;

@@ -29,7 +29,7 @@ void Codegen::compile (const std::string &path, const std::tuple<std::string, st
   f << code;
   f.close();
 
-  auto cmd = "gcc build/output.c -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
+  auto cmd = "gcc build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
   std::system(cmd.c_str());
   std::filesystem::remove("build/output.c");
 }
@@ -210,18 +210,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
   builtinFunctionDefinitionsCode += builtinFunctionDefinitionsCode.empty() ? "" : EOL;
   builtinStructDefinitionsCode += builtinStructDefinitionsCode.empty() ? "" : EOL;
 
-  auto headers = std::string(this->builtins.libMath ? "#include <math.h>" EOL : "");
-  headers += std::string(this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "");
+  auto headers = std::string(this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "");
   headers += std::string(this->builtins.libStddef ? "#include <stddef.h>" EOL : ""); // todo test
   headers += std::string(this->builtins.libStdint ? "#include <stdint.h>" EOL : "");
   headers += std::string(this->builtins.libStdio ? "#include <stdio.h>" EOL : "");
   headers += std::string(this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "");
   headers += std::string(this->builtins.libString ? "#include <string.h>" EOL : "");
   headers += headers.empty() ? "" : EOL;
-
-  if (this->builtins.libMath) {
-    this->flags.emplace_back("-lm");
-  }
 
   auto output = std::string();
   output += banner;
@@ -389,25 +384,22 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     auto opCode = std::string(" = ");
     auto rightCode = this->_nodeExpr(exprAssign.right);
 
-    if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_AND) {
+    if (exprAssign.op == AST_EXPR_ASSIGN_AND) {
       rightCode = leftCode + " && " + rightCode;
-    } else if (exprAssign.op == AST_EXPR_ASSIGN_LOGICAL_OR) {
+    } else if (exprAssign.op == AST_EXPR_ASSIGN_OR) {
       rightCode = leftCode + " || " + rightCode;
-    } else if (exprAssign.op == AST_EXPR_ASSIGN_POWER) {
-      this->builtins.libMath = true;
-      rightCode = "pow(" + leftCode + ", " + rightCode + ")";
     } else {
       if (exprAssign.op == AST_EXPR_ASSIGN_ADD) opCode = " += ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_AND) opCode = " &= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_OR) opCode = " |= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_BITWISE_XOR) opCode = " ^= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_DIVIDE) opCode = " /= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_EQUAL) opCode = " = ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_LEFT_SHIFT) opCode = " <<= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_MULTIPLY) opCode = " *= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_REMAINDER) opCode = " %= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_RIGHT_SHIFT) opCode = " >>= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_SUBTRACT) opCode = " -= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_BIT_AND) opCode = " &= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_BIT_OR) opCode = " |= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_BIT_XOR) opCode = " ^= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_DIV) opCode = " /= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_EQ) opCode = " = ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_LSHIFT) opCode = " <<= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_MOD) opCode = " %= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_MUL) opCode = " *= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_RSHIFT) opCode = " >>= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_SUB) opCode = " -= ";
     }
 
     return this->_wrapNodeExpr(nodeExpr, leftCode + opCode + rightCode);
@@ -440,32 +432,26 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
 
     auto leftCode = this->_nodeExpr(exprBinary.left);
     auto rightCode = this->_nodeExpr(exprBinary.right);
-
-    if (exprBinary.op == AST_EXPR_BINARY_POWER) {
-      this->builtins.libMath = true;
-      return this->_wrapNodeExpr(nodeExpr, "pow(" + leftCode + ", " + rightCode + ")");
-    }
-
     auto opCode = std::string();
 
     if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
-    if (exprBinary.op == AST_EXPR_BINARY_BITWISE_AND) opCode = " & ";
-    if (exprBinary.op == AST_EXPR_BINARY_BITWISE_OR) opCode = " | ";
-    if (exprBinary.op == AST_EXPR_BINARY_BITWISE_XOR) opCode = " ^ ";
-    if (exprBinary.op == AST_EXPR_BINARY_DIVIDE) opCode = " / ";
-    if (exprBinary.op == AST_EXPR_BINARY_EQUAL) opCode = " == ";
-    if (exprBinary.op == AST_EXPR_BINARY_GREATER_EQUAL) opCode = " >= ";
-    if (exprBinary.op == AST_EXPR_BINARY_GREATER_THAN) opCode = " > ";
-    if (exprBinary.op == AST_EXPR_BINARY_LEFT_SHIFT) opCode = " << ";
-    if (exprBinary.op == AST_EXPR_BINARY_LESS_EQUAL) opCode = " <= ";
-    if (exprBinary.op == AST_EXPR_BINARY_LESS_THAN) opCode = " < ";
-    if (exprBinary.op == AST_EXPR_BINARY_LOGICAL_AND) opCode = " && ";
-    if (exprBinary.op == AST_EXPR_BINARY_LOGICAL_OR) opCode = " || ";
-    if (exprBinary.op == AST_EXPR_BINARY_MULTIPLY) opCode = " * ";
-    if (exprBinary.op == AST_EXPR_BINARY_NOT_EQUAL) opCode = " != ";
-    if (exprBinary.op == AST_EXPR_BINARY_REMAINDER) opCode = " % ";
-    if (exprBinary.op == AST_EXPR_BINARY_RIGHT_SHIFT) opCode = " >> ";
-    if (exprBinary.op == AST_EXPR_BINARY_SUBTRACT) opCode = " - ";
+    if (exprBinary.op == AST_EXPR_BINARY_AND) opCode = " && ";
+    if (exprBinary.op == AST_EXPR_BINARY_BIT_AND) opCode = " & ";
+    if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = " | ";
+    if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = " ^ ";
+    if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = " / ";
+    if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = " == ";
+    if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = " >= ";
+    if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = " > ";
+    if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = " << ";
+    if (exprBinary.op == AST_EXPR_BINARY_LE) opCode = " <= ";
+    if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = " < ";
+    if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = " % ";
+    if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = " * ";
+    if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = " != ";
+    if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = " || ";
+    if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = " >> ";
+    if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = " - ";
 
     return this->_wrapNodeExpr(nodeExpr, leftCode + opCode + rightCode);
   } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) { // todo
@@ -510,20 +496,17 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     auto argCode = this->_nodeExpr(exprUnary.arg);
     auto opCode = std::string();
 
-    if (exprUnary.op == AST_EXPR_UNARY_BITWISE_NOT) opCode = "~";
+    if (exprUnary.op == AST_EXPR_UNARY_BIT_NOT) opCode = "~";
     if (exprUnary.op == AST_EXPR_UNARY_DECREMENT) opCode = "--";
     if (exprUnary.op == AST_EXPR_UNARY_INCREMENT) opCode = "++";
-    if (exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT) opCode = "!";
-    if (exprUnary.op == AST_EXPR_UNARY_NEGATION) opCode = "-";
+    if (exprUnary.op == AST_EXPR_UNARY_MINUS) opCode = "-";
+    if (exprUnary.op == AST_EXPR_UNARY_NOT) opCode = "!";
     if (exprUnary.op == AST_EXPR_UNARY_PLUS) opCode = "+";
 
-    if (
-      exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT &&
-      (exprUnary.arg.type->isFloat() || exprUnary.arg.type->isF32() || exprUnary.arg.type->isF64())
-    ) {
+    if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isFloatNumber()) {
       this->builtins.libStdbool = true;
       argCode = "((bool) " + argCode + ")";
-    } else if (exprUnary.op == AST_EXPR_UNARY_LOGICAL_NOT && exprUnary.arg.type->isStr()) {
+    } else if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isStr()) {
       this->builtins.fnStrNot = true;
       argCode = "str_not(" + argCode + ")";
       opCode = "";

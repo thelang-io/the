@@ -162,7 +162,7 @@ j := test(1, 2) - (test(1, 2) / 2) * 2
                   </StmtExpr>
                 </slot>
                 <slot name="op">
-                  <Token type="OP_OR_OR" val="||" start="3:9" end="3:11" />
+                  <Token type="OP_PIPE_PIPE" val="||" start="3:9" end="3:11" />
                 </slot>
                 <slot name="right">
                   <StmtExpr parenthesized="false" start="3:12" end="3:13">
@@ -175,7 +175,7 @@ j := test(1, 2) - (test(1, 2) / 2) * 2
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_AND_AND" val="&&" start="3:15" end="3:17" />
+            <Token type="OP_AMP_AMP" val="&&" start="3:15" end="3:17" />
           </slot>
           <slot name="right">
             <StmtExpr parenthesized="false" start="3:18" end="3:19">
@@ -208,7 +208,7 @@ j := test(1, 2) - (test(1, 2) / 2) * 2
                   </StmtExpr>
                 </slot>
                 <slot name="op">
-                  <Token type="OP_OR_OR" val="||" start="4:8" end="4:10" />
+                  <Token type="OP_PIPE_PIPE" val="||" start="4:8" end="4:10" />
                 </slot>
                 <slot name="right">
                   <StmtExpr parenthesized="true" start="4:11" end="4:18">
@@ -235,7 +235,7 @@ j := test(1, 2) - (test(1, 2) / 2) * 2
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_OR_OR" val="||" start="4:19" end="4:21" />
+            <Token type="OP_PIPE_PIPE" val="||" start="4:19" end="4:21" />
           </slot>
           <slot name="right">
             <StmtExpr parenthesized="true" start="4:22" end="4:29">
@@ -279,7 +279,7 @@ j := test(1, 2) - (test(1, 2) / 2) * 2
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_AND_AND" val="&&" start="5:8" end="5:10" />
+            <Token type="OP_AMP_AMP" val="&&" start="5:8" end="5:10" />
           </slot>
           <slot name="right">
             <StmtExpr parenthesized="true" start="5:11" end="5:18">
@@ -323,7 +323,7 @@ j := test(1, 2) - (test(1, 2) / 2) * 2
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_OR_OR" val="||" start="6:8" end="6:10" />
+            <Token type="OP_PIPE_PIPE" val="||" start="6:8" end="6:10" />
           </slot>
           <slot name="right">
             <StmtExpr parenthesized="true" start="6:11" end="6:18">

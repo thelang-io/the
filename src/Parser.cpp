@@ -785,8 +785,8 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
   auto [loc, tok] = this->lexer->next();
 
   if (
-    tok.type == TK_OP_AND ||
-    tok.type == TK_OP_AND_AND ||
+    tok.type == TK_OP_AMP ||
+    tok.type == TK_OP_AMP_AMP ||
     tok.type == TK_OP_CARET ||
     tok.type == TK_OP_EQ_EQ ||
     tok.type == TK_OP_EXCL_EQ ||
@@ -796,15 +796,13 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
     tok.type == TK_OP_LT ||
     tok.type == TK_OP_LT_EQ ||
     tok.type == TK_OP_MINUS ||
-    tok.type == TK_OP_OR ||
-    tok.type == TK_OP_OR_OR ||
     tok.type == TK_OP_PERCENT ||
+    tok.type == TK_OP_PIPE ||
+    tok.type == TK_OP_PIPE_PIPE ||
     tok.type == TK_OP_PLUS ||
-    tok.type == TK_OP_QN_QN ||
     tok.type == TK_OP_RSHIFT ||
     tok.type == TK_OP_SLASH ||
-    tok.type == TK_OP_STAR ||
-    tok.type == TK_OP_STAR_STAR
+    tok.type == TK_OP_STAR
   ) {
     auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
       return this->_wrapExprBinary(_1, _2, _3);
@@ -812,21 +810,19 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
 
     return this->_wrapStmtExpr(newStmtExpr);
   } else if (
-    tok.type == TK_OP_AND_AND_EQ ||
-    tok.type == TK_OP_AND_EQ ||
+    tok.type == TK_OP_AMP_EQ ||
+    tok.type == TK_OP_AMP_AMP_EQ ||
     tok.type == TK_OP_CARET_EQ ||
     tok.type == TK_OP_EQ ||
     tok.type == TK_OP_LSHIFT_EQ ||
     tok.type == TK_OP_MINUS_EQ ||
-    tok.type == TK_OP_OR_EQ ||
-    tok.type == TK_OP_OR_OR_EQ ||
     tok.type == TK_OP_PERCENT_EQ ||
+    tok.type == TK_OP_PIPE_EQ ||
+    tok.type == TK_OP_PIPE_PIPE_EQ ||
     tok.type == TK_OP_PLUS_EQ ||
-    tok.type == TK_OP_QN_QN_EQ ||
     tok.type == TK_OP_RSHIFT_EQ ||
     tok.type == TK_OP_SLASH_EQ ||
-    tok.type == TK_OP_STAR_EQ ||
-    tok.type == TK_OP_STAR_STAR_EQ
+    tok.type == TK_OP_STAR_EQ
   ) {
     auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
       return this->_wrapExprAssign(_1, _2, _3);

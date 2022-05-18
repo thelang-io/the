@@ -115,7 +115,7 @@ main {
                       <BuiltinType name="bool" />
                     </slot>
                     <slot name="body">
-                      <ExprBinary op="GREATER_THAN">
+                      <ExprBinary op="GT">
                         <slot name="left">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
@@ -194,7 +194,7 @@ main {
                       <BuiltinType name="bool" />
                     </slot>
                     <slot name="body">
-                      <ExprBinary op="GREATER_THAN">
+                      <ExprBinary op="GT">
                         <slot name="left">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
@@ -213,7 +213,7 @@ main {
                               <BuiltinType name="int" />
                             </slot>
                             <slot name="body">
-                              <ExprUnary op="NEGATION" prefix="true">
+                              <ExprUnary op="MINUS" prefix="true">
                                 <NodeExpr parenthesized="false">
                                   <slot name="type">
                                     <BuiltinType name="int" />
@@ -282,14 +282,14 @@ main {
                       <BuiltinType name="bool" />
                     </slot>
                     <slot name="body">
-                      <ExprBinary op="GREATER_THAN">
+                      <ExprBinary op="GT">
                         <slot name="left">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
                               <BuiltinType name="int" />
                             </slot>
                             <slot name="body">
-                              <ExprBinary op="SUBTRACT">
+                              <ExprBinary op="SUB">
                                 <slot name="left">
                                   <NodeExpr parenthesized="false">
                                     <slot name="type">
@@ -630,7 +630,7 @@ main {
                       <BuiltinType name="bool" />
                     </slot>
                     <slot name="body">
-                      <ExprBinary op="GREATER_THAN">
+                      <ExprBinary op="GT">
                         <slot name="left">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
@@ -744,7 +744,7 @@ main {
                       <BuiltinType name="bool" />
                     </slot>
                     <slot name="body">
-                      <ExprBinary op="GREATER_THAN">
+                      <ExprBinary op="GT">
                         <slot name="left">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
@@ -1033,7 +1033,7 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprAssign op="EQUAL">
+              <ExprAssign op="EQ">
                 <slot name="left">
                   <ExprAccess>
                     <Var codeName="v_0" frame="2" mut="true" name="v">

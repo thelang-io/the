@@ -19,7 +19,7 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprUnary op="LOGICAL_NOT" prefix="true">
+              <ExprUnary op="NOT" prefix="true">
                 <NodeExpr parenthesized="true">
                   <slot name="type">
                     <BuiltinType name="int" />
@@ -44,7 +44,7 @@ main {
                             <BuiltinType name="int" />
                           </slot>
                           <slot name="body">
-                            <ExprUnary op="BITWISE_NOT" prefix="true">
+                            <ExprUnary op="BIT_NOT" prefix="true">
                               <NodeExpr parenthesized="false">
                                 <slot name="type">
                                   <BuiltinType name="int" />
@@ -72,30 +72,30 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="b_0" frame="2" mut="true" name="b">
-            <BuiltinType name="float" />
+            <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <BuiltinType name="float" />
+              <BuiltinType name="int" />
             </slot>
             <slot name="body">
-              <ExprBinary op="MULTIPLY">
+              <ExprBinary op="MUL">
                 <slot name="left">
                   <NodeExpr parenthesized="true">
                     <slot name="type">
-                      <BuiltinType name="float" />
+                      <BuiltinType name="int" />
                     </slot>
                     <slot name="body">
                       <ExprBinary op="ADD">
                         <slot name="left">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
-                              <BuiltinType name="float" />
+                              <BuiltinType name="int" />
                             </slot>
                             <slot name="body">
-                              <ExprBinary op="MULTIPLY">
+                              <ExprBinary op="MUL">
                                 <slot name="left">
                                   <NodeExpr parenthesized="false">
                                     <slot name="type">
@@ -150,10 +150,10 @@ main {
                         <slot name="right">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
-                              <BuiltinType name="float" />
+                              <BuiltinType name="int" />
                             </slot>
                             <slot name="body">
-                              <ExprBinary op="DIVIDE">
+                              <ExprBinary op="DIV">
                                 <slot name="left">
                                   <NodeExpr parenthesized="false">
                                     <slot name="type">

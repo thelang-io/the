@@ -1,0 +1,127 @@
+======= stdin =======
+main {
+  mut a := ~2 + 3
+  mut b := 1 - 2 - 3
+  mut c := 2 - -1
+  mut d := 6 / 3 / 2
+  mut e: f32 = -12 / 5
+  f := 2 + 3 * 4
+  g := 1 && -1
+  h := 1 <= -1
+  i := -1 != -2
+  j := 1 || 0 && 2
+  k := 2 == 2 > 0
+  l := 2 == 2 || 0
+  m := !(a = 2)
+
+  z01 := b = 2 + 1
+  z02 := (b = 2) + 1
+  z03 := b = 2 + 1 - 1
+  z04 := (b = 2) + 1 - 1
+  z05 := a + b + 1
+  z06 := (a + b) + 1
+  z07 := a + b + 1 - 1
+  z08 := (a + b) + 1 - 1
+  z09 := a + b / 1
+  z10 := (a + b) / 1
+  z11 := a + b / 1 - 1
+  z12 := (a + b) / 1 - 1
+  z16 := true ? 1 : a + b + 1
+  z17 := (true ? 1 : a) + b + 1
+  z18 := true ? 1 : a + b / 1
+  z19 := (true ? 1 : a + b) / 1
+  z20 := 1 + 2 + 3
+  z21 := (1 + 2) + 3
+  z22 := -a + ~b + c++
+  z23 := (-a + ~b) + c++
+  z24 := -a + ~b + c++ - --d
+  z25 := (-a + ~b + c++) - --d
+
+  z50 := a + b
+  z51 := a + b - c
+  z52 := a + b * c
+  z53 := a / b * c % d
+  z54 := a / b + c
+  z55 := a + b % c
+  z56 := a >> b << c
+  z57 := a >> b + c
+  z58 := a + b << c
+  z59 := a + b << c + d
+  z60 := a >= b <= c
+  z61 := a >= b == c
+  z62 := a != b == c
+  z63 := a != b < c
+  z64 := a & b ^ c | d
+  z65 := a | b ^ c & d
+  z66 := a & b + c
+  z67 := a + b ^ c
+  z68 := a | b + c
+  z69 := a && b || c
+  z70 := a && b && c
+  z71 := a || b || c
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_a_0 = ~2 + 3;
+  int32_t __THE_0_b_0 = 1 - 2 - 3;
+  int32_t __THE_0_c_0 = 2 - -1;
+  int32_t __THE_0_d_0 = 6 / 3 / 2;
+  float __THE_0_e_0 = -12 / 5;
+  const int32_t __THE_0_f_0 = 2 + 3 * 4;
+  const int32_t __THE_0_g_0 = 1 && -1;
+  const bool __THE_0_h_0 = 1 <= -1;
+  const bool __THE_0_i_0 = -1 != -2;
+  const int32_t __THE_0_j_0 = 1 || 0 && 2;
+  const bool __THE_0_k_0 = 2 == 2 > 0;
+  const int32_t __THE_0_l_0 = 2 == 2 || 0;
+  const bool __THE_0_m_0 = !(__THE_0_a_0 = 2);
+  const int32_t __THE_0_z01_0 = __THE_0_b_0 = 2 + 1;
+  const int32_t __THE_0_z02_0 = (__THE_0_b_0 = 2) + 1;
+  const int32_t __THE_0_z03_0 = __THE_0_b_0 = 2 + 1 - 1;
+  const int32_t __THE_0_z04_0 = (__THE_0_b_0 = 2) + 1 - 1;
+  const int32_t __THE_0_z05_0 = __THE_0_a_0 + __THE_0_b_0 + 1;
+  const int32_t __THE_0_z06_0 = (__THE_0_a_0 + __THE_0_b_0) + 1;
+  const int32_t __THE_0_z07_0 = __THE_0_a_0 + __THE_0_b_0 + 1 - 1;
+  const int32_t __THE_0_z08_0 = (__THE_0_a_0 + __THE_0_b_0) + 1 - 1;
+  const int32_t __THE_0_z09_0 = __THE_0_a_0 + __THE_0_b_0 / 1;
+  const int32_t __THE_0_z10_0 = (__THE_0_a_0 + __THE_0_b_0) / 1;
+  const int32_t __THE_0_z11_0 = __THE_0_a_0 + __THE_0_b_0 / 1 - 1;
+  const int32_t __THE_0_z12_0 = (__THE_0_a_0 + __THE_0_b_0) / 1 - 1;
+  const int32_t __THE_0_z16_0 = true ? 1 : __THE_0_a_0 + __THE_0_b_0 + 1;
+  const int32_t __THE_0_z17_0 = (true ? 1 : __THE_0_a_0) + __THE_0_b_0 + 1;
+  const int32_t __THE_0_z18_0 = true ? 1 : __THE_0_a_0 + __THE_0_b_0 / 1;
+  const int32_t __THE_0_z19_0 = (true ? 1 : __THE_0_a_0 + __THE_0_b_0) / 1;
+  const int32_t __THE_0_z20_0 = 1 + 2 + 3;
+  const int32_t __THE_0_z21_0 = (1 + 2) + 3;
+  const int32_t __THE_0_z22_0 = -__THE_0_a_0 + ~__THE_0_b_0 + __THE_0_c_0++;
+  const int32_t __THE_0_z23_0 = (-__THE_0_a_0 + ~__THE_0_b_0) + __THE_0_c_0++;
+  const int32_t __THE_0_z24_0 = -__THE_0_a_0 + ~__THE_0_b_0 + __THE_0_c_0++ - --__THE_0_d_0;
+  const int32_t __THE_0_z25_0 = (-__THE_0_a_0 + ~__THE_0_b_0 + __THE_0_c_0++) - --__THE_0_d_0;
+  const int32_t __THE_0_z50_0 = __THE_0_a_0 + __THE_0_b_0;
+  const int32_t __THE_0_z51_0 = __THE_0_a_0 + __THE_0_b_0 - __THE_0_c_0;
+  const int32_t __THE_0_z52_0 = __THE_0_a_0 + __THE_0_b_0 * __THE_0_c_0;
+  const int32_t __THE_0_z53_0 = __THE_0_a_0 / __THE_0_b_0 * __THE_0_c_0 % __THE_0_d_0;
+  const int32_t __THE_0_z54_0 = __THE_0_a_0 / __THE_0_b_0 + __THE_0_c_0;
+  const int32_t __THE_0_z55_0 = __THE_0_a_0 + __THE_0_b_0 % __THE_0_c_0;
+  const int32_t __THE_0_z56_0 = __THE_0_a_0 >> __THE_0_b_0 << __THE_0_c_0;
+  const int32_t __THE_0_z57_0 = __THE_0_a_0 >> __THE_0_b_0 + __THE_0_c_0;
+  const int32_t __THE_0_z58_0 = __THE_0_a_0 + __THE_0_b_0 << __THE_0_c_0;
+  const int32_t __THE_0_z59_0 = __THE_0_a_0 + __THE_0_b_0 << __THE_0_c_0 + __THE_0_d_0;
+  const bool __THE_0_z60_0 = __THE_0_a_0 >= __THE_0_b_0 <= __THE_0_c_0;
+  const bool __THE_0_z61_0 = __THE_0_a_0 >= __THE_0_b_0 == __THE_0_c_0;
+  const bool __THE_0_z62_0 = __THE_0_a_0 != __THE_0_b_0 == __THE_0_c_0;
+  const bool __THE_0_z63_0 = __THE_0_a_0 != __THE_0_b_0 < __THE_0_c_0;
+  const int32_t __THE_0_z64_0 = __THE_0_a_0 & __THE_0_b_0 ^ __THE_0_c_0 | __THE_0_d_0;
+  const int32_t __THE_0_z65_0 = __THE_0_a_0 | __THE_0_b_0 ^ __THE_0_c_0 & __THE_0_d_0;
+  const int32_t __THE_0_z66_0 = __THE_0_a_0 & __THE_0_b_0 + __THE_0_c_0;
+  const int32_t __THE_0_z67_0 = __THE_0_a_0 + __THE_0_b_0 ^ __THE_0_c_0;
+  const int32_t __THE_0_z68_0 = __THE_0_a_0 | __THE_0_b_0 + __THE_0_c_0;
+  const int32_t __THE_0_z69_0 = __THE_0_a_0 && __THE_0_b_0 || __THE_0_c_0;
+  const int32_t __THE_0_z70_0 = __THE_0_a_0 && __THE_0_b_0 && __THE_0_c_0;
+  const int32_t __THE_0_z71_0 = __THE_0_a_0 || __THE_0_b_0 || __THE_0_c_0;
+}
+======= flags =======
+======= stdout =======

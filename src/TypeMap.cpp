@@ -106,6 +106,10 @@ bool Type::isFloat () const {
   return this->name == "float";
 }
 
+bool Type::isFloatNumber () const {
+  return this->isF32() || this->isF64() || this->isFloat();
+}
+
 bool Type::isFn () const {
   return std::holds_alternative<TypeFn>(this->body);
 }
@@ -134,7 +138,7 @@ bool Type::isNumber () const {
   return (
     this->isI8() || this->isI16() || this->isI32() || this->isInt() || this->isI64() ||
     this->isU8() || this->isU16() || this->isU32() || this->isU64() ||
-    this->isF32() || this->isF64() || this->isFloat()
+    this->isFloatNumber()
   );
 }
 

@@ -13,46 +13,52 @@ Lexer::Lexer (Reader *r) {
 }
 
 std::tuple<ReaderLocation, Token> Lexer::next () {
-  auto l = this->reader->loc;
-
+  auto startLoc = this->reader->loc;
   this->_whitespace();
+
   this->loc = this->reader->loc;
   this->val = "";
 
   if (this->reader->eof()) {
-    return {l, this->_tok(TK_EOF)};
+    return {startLoc, this->_tok(TK_EOF)};
   }
 
   auto [loc0, ch0] = this->reader->next();
   this->loc = loc0;
   this->val = ch0;
 
-  if (ch0 == '&') return {l, this->_opEq2('&', TK_OP_AND, TK_OP_AND_EQ, TK_OP_AND_AND, TK_OP_AND_AND_EQ)};
-  if (ch0 == '^') return {l, this->_opEq(TK_OP_CARET, TK_OP_CARET_EQ)};
-  if (ch0 == ':') return {l, this->_opEq(TK_OP_COLON, TK_OP_COLON_EQ)};
-  if (ch0 == ',') return {l, this->_tok(TK_OP_COMMA)};
-  if (ch0 == '=') return {l, this->_opEq(TK_OP_EQ, TK_OP_EQ_EQ)};
-  if (ch0 == '!') return {l, this->_opEq(TK_OP_EXCL, TK_OP_EXCL_EQ)};
-  if (ch0 == '>') return {l, this->_opEq2('>', TK_OP_GT, TK_OP_GT_EQ, TK_OP_RSHIFT, TK_OP_RSHIFT_EQ)};
-  if (ch0 == '{') return {l, this->_tok(TK_OP_LBRACE)};
-  if (ch0 == '[') return {l, this->_tok(TK_OP_LBRACK)};
-  if (ch0 == '(') return {l, this->_tok(TK_OP_LPAR)};
-  if (ch0 == '<') return {l, this->_opEq2('<', TK_OP_LT, TK_OP_LT_EQ, TK_OP_LSHIFT, TK_OP_LSHIFT_EQ)};
-  if (ch0 == '-') return {l, this->_opEq2('-', TK_OP_MINUS, TK_OP_MINUS_EQ, TK_OP_MINUS_MINUS)};
-  if (ch0 == '|') return {l, this->_opEq2('|', TK_OP_OR, TK_OP_OR_EQ, TK_OP_OR_OR, TK_OP_OR_OR_EQ)};
-  if (ch0 == '%') return {l, this->_opEq(TK_OP_PERCENT, TK_OP_PERCENT_EQ)};
-  if (ch0 == '+') return {l, this->_opEq2('+', TK_OP_PLUS, TK_OP_PLUS_EQ, TK_OP_PLUS_PLUS)};
-  if (ch0 == '}') return {l, this->_tok(TK_OP_RBRACE)};
-  if (ch0 == ']') return {l, this->_tok(TK_OP_RBRACK)};
-  if (ch0 == ')') return {l, this->_tok(TK_OP_RPAR)};
-  if (ch0 == ';') return {l, this->_tok(TK_OP_SEMI)};
-  if (ch0 == '/') return {l, this->_opEq(TK_OP_SLASH, TK_OP_SLASH_EQ)};
-  if (ch0 == '*') return {l, this->_opEq2('*', TK_OP_STAR, TK_OP_STAR_EQ, TK_OP_STAR_STAR, TK_OP_STAR_STAR_EQ)};
-  if (ch0 == '~') return {l, this->_tok(TK_OP_TILDE)};
+  if (ch0 == '&') return {startLoc, this->_opEq2('&', TK_OP_AMP, TK_OP_AMP_EQ, TK_OP_AMP_AMP, TK_OP_AMP_AMP_EQ)};
+  else if (ch0 == '@') return {startLoc, this->_tok(TK_OP_AT)};
+  else if (ch0 == '`') return {startLoc, this->_tok(TK_OP_BACKTICK)};
+  else if (ch0 == '\\') return {startLoc, this->_tok(TK_OP_BACKSLASH)};
+  else if (ch0 == '^') return {startLoc, this->_opEq(TK_OP_CARET, TK_OP_CARET_EQ)};
+  else if (ch0 == ':') return {startLoc, this->_opEq(TK_OP_COLON, TK_OP_COLON_EQ)};
+  else if (ch0 == ',') return {startLoc, this->_tok(TK_OP_COMMA)};
+  else if (ch0 == '$') return {startLoc, this->_tok(TK_OP_DOLLAR)};
+  else if (ch0 == '=') return {startLoc, this->_opEq(TK_OP_EQ, TK_OP_EQ_EQ)};
+  else if (ch0 == '!') return {startLoc, this->_opEq(TK_OP_EXCL, TK_OP_EXCL_EQ)};
+  else if (ch0 == '>') return {startLoc, this->_opEq2('>', TK_OP_GT, TK_OP_GT_EQ, TK_OP_RSHIFT, TK_OP_RSHIFT_EQ)};
+  else if (ch0 == '#') return {startLoc, this->_tok(TK_OP_HASH)};
+  else if (ch0 == '{') return {startLoc, this->_tok(TK_OP_LBRACE)};
+  else if (ch0 == '[') return {startLoc, this->_tok(TK_OP_LBRACK)};
+  else if (ch0 == '(') return {startLoc, this->_tok(TK_OP_LPAR)};
+  else if (ch0 == '<') return {startLoc, this->_opEq2('<', TK_OP_LT, TK_OP_LT_EQ, TK_OP_LSHIFT, TK_OP_LSHIFT_EQ)};
+  else if (ch0 == '-') return {startLoc, this->_opEq2('-', TK_OP_MINUS, TK_OP_MINUS_EQ, TK_OP_MINUS_MINUS)};
+  else if (ch0 == '|') return {startLoc, this->_opEq2('|', TK_OP_PIPE, TK_OP_PIPE_EQ, TK_OP_PIPE_PIPE, TK_OP_PIPE_PIPE_EQ)};
+  else if (ch0 == '%') return {startLoc, this->_opEq(TK_OP_PERCENT, TK_OP_PERCENT_EQ)};
+  else if (ch0 == '+') return {startLoc, this->_opEq2('+', TK_OP_PLUS, TK_OP_PLUS_EQ, TK_OP_PLUS_PLUS)};
+  else if (ch0 == '?') return {startLoc, this->_tok(TK_OP_QN)};
+  else if (ch0 == '}') return {startLoc, this->_tok(TK_OP_RBRACE)};
+  else if (ch0 == ']') return {startLoc, this->_tok(TK_OP_RBRACK)};
+  else if (ch0 == ')') return {startLoc, this->_tok(TK_OP_RPAR)};
+  else if (ch0 == ';') return {startLoc, this->_tok(TK_OP_SEMI)};
+  else if (ch0 == '/') return {startLoc, this->_opEq(TK_OP_SLASH, TK_OP_SLASH_EQ)};
+  else if (ch0 == '*') return {startLoc, this->_opEq(TK_OP_STAR, TK_OP_STAR_EQ)};
+  else if (ch0 == '~') return {startLoc, this->_tok(TK_OP_TILDE)};
 
   if (ch0 == '.') {
     if (this->reader->eof()) {
-      return {l, this->_tok(TK_OP_DOT)};
+      return {startLoc, this->_tok(TK_OP_DOT)};
     }
 
     auto [loc1, ch1] = this->reader->next();
@@ -64,83 +70,45 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
         this->val += ch1;
         this->val += ch2;
 
-        return {l, this->_tok(TK_OP_DOT_DOT_DOT)};
+        return {startLoc, this->_tok(TK_OP_DOT_DOT_DOT)};
       }
     }
 
     this->reader->seek(loc1);
-    return {l, this->_tok(TK_OP_DOT)};
-  }
-
-  if (ch0 == '?') {
-    if (this->reader->eof()) {
-      return {l, this->_tok(TK_OP_QN)};
-    }
-
-    auto [loc1, ch1] = this->reader->next();
-
-    if (ch1 == '.') {
-      this->val += ch1;
-      return {l, this->_tok(TK_OP_QN_DOT)};
-    } else if (ch1 == '?') {
-      this->val += ch1;
-
-      if (this->reader->eof()) {
-        return {l, this->_tok(TK_OP_QN_QN)};
-      }
-
-      auto [loc2, ch2] = this->reader->next();
-
-      if (ch2 == '=') {
-        this->val += ch2;
-        return {l, this->_tok(TK_OP_QN_QN_EQ)};
-      } else {
-        this->reader->seek(loc2);
-        return {l, this->_tok(TK_OP_QN_QN)};
-      }
-    } else {
-      this->reader->seek(loc1);
-      return {l, this->_tok(TK_OP_QN)};
-    }
+    return {startLoc, this->_tok(TK_OP_DOT)};
   }
 
   if (Token::isIdStart(ch0)) {
     this->_walk(Token::isIdContinue);
 
-    if (this->val == "as") return {l, this->_tok(TK_KW_AS)};
-    if (this->val == "async") return {l, this->_tok(TK_KW_ASYNC)};
-    if (this->val == "await") return {l, this->_tok(TK_KW_AWAIT)};
-    if (this->val == "break") return {l, this->_tok(TK_KW_BREAK)};
-    if (this->val == "catch") return {l, this->_tok(TK_KW_CATCH)};
-    if (this->val == "continue") return {l, this->_tok(TK_KW_CONTINUE)};
-    if (this->val == "elif") return {l, this->_tok(TK_KW_ELIF)};
-    if (this->val == "else") return {l, this->_tok(TK_KW_ELSE)};
-    if (this->val == "enum") return {l, this->_tok(TK_KW_ENUM)};
-    if (this->val == "export") return {l, this->_tok(TK_KW_EXPORT)};
-    if (this->val == "false") return {l, this->_tok(TK_KW_FALSE)};
-    if (this->val == "fn") return {l, this->_tok(TK_KW_FN)};
-    if (this->val == "from") return {l, this->_tok(TK_KW_FROM)};
-    if (this->val == "if") return {l, this->_tok(TK_KW_IF)};
-    if (this->val == "import") return {l, this->_tok(TK_KW_IMPORT)};
-    if (this->val == "is") return {l, this->_tok(TK_KW_IS)};
-    if (this->val == "loop") return {l, this->_tok(TK_KW_LOOP)};
-    if (this->val == "main") return {l, this->_tok(TK_KW_MAIN)};
-    if (this->val == "mut") return {l, this->_tok(TK_KW_MUT)};
-    if (this->val == "nil") return {l, this->_tok(TK_KW_NIL)};
-    if (this->val == "obj") return {l, this->_tok(TK_KW_OBJ)};
-    if (this->val == "return") return {l, this->_tok(TK_KW_RETURN)};
-    if (this->val == "throw") return {l, this->_tok(TK_KW_THROW)};
-    if (this->val == "true") return {l, this->_tok(TK_KW_TRUE)};
-    if (this->val == "try") return {l, this->_tok(TK_KW_TRY)};
-    if (this->val == "union") return {l, this->_tok(TK_KW_UNION)};
+    if (this->val == "break") return {startLoc, this->_tok(TK_KW_BREAK)};
+    if (this->val == "catch") return {startLoc, this->_tok(TK_KW_CATCH)};
+    if (this->val == "continue") return {startLoc, this->_tok(TK_KW_CONTINUE)};
+    if (this->val == "elif") return {startLoc, this->_tok(TK_KW_ELIF)};
+    if (this->val == "else") return {startLoc, this->_tok(TK_KW_ELSE)};
+    if (this->val == "enum") return {startLoc, this->_tok(TK_KW_ENUM)};
+    if (this->val == "false") return {startLoc, this->_tok(TK_KW_FALSE)};
+    if (this->val == "fn") return {startLoc, this->_tok(TK_KW_FN)};
+    if (this->val == "if") return {startLoc, this->_tok(TK_KW_IF)};
+    if (this->val == "is") return {startLoc, this->_tok(TK_KW_IS)};
+    if (this->val == "loop") return {startLoc, this->_tok(TK_KW_LOOP)};
+    if (this->val == "main") return {startLoc, this->_tok(TK_KW_MAIN)};
+    if (this->val == "mut") return {startLoc, this->_tok(TK_KW_MUT)};
+    if (this->val == "nil") return {startLoc, this->_tok(TK_KW_NIL)};
+    if (this->val == "obj") return {startLoc, this->_tok(TK_KW_OBJ)};
+    if (this->val == "return") return {startLoc, this->_tok(TK_KW_RETURN)};
+    if (this->val == "throw") return {startLoc, this->_tok(TK_KW_THROW)};
+    if (this->val == "true") return {startLoc, this->_tok(TK_KW_TRUE)};
+    if (this->val == "try") return {startLoc, this->_tok(TK_KW_TRY)};
+    if (this->val == "union") return {startLoc, this->_tok(TK_KW_UNION)};
 
-    return {l, this->_tok(TK_ID)};
+    return {startLoc, this->_tok(TK_ID)};
   }
 
   if (Token::isDigit(ch0)) {
     if (ch0 == '0') {
       if (this->reader->eof()) {
-        return {l, this->_tok(TK_LIT_INT_DEC)};
+        return {startLoc, this->_tok(TK_LIT_INT_DEC)};
       }
 
       auto [loc1, ch1] = this->reader->next();
@@ -154,20 +122,20 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
         this->val += ch1;
 
         if (ch1 == 'B' || ch1 == 'b') {
-          return {l, this->_litNum(Token::isLitIntBin, TK_LIT_INT_BIN)};
+          return {startLoc, this->_litNum(Token::isLitIntBin, TK_LIT_INT_BIN)};
         } else if (ch1 == 'X' || ch1 == 'x') {
-          return {l, this->_litNum(Token::isLitIntHex, TK_LIT_INT_HEX)};
+          return {startLoc, this->_litNum(Token::isLitIntHex, TK_LIT_INT_HEX)};
         } else {
-          return {l, this->_litNum(Token::isLitIntOct, TK_LIT_INT_OCT)};
+          return {startLoc, this->_litNum(Token::isLitIntOct, TK_LIT_INT_OCT)};
         }
       }
 
       this->reader->seek(loc1);
-      return {l, this->_litNum(Token::isLitIntDec, TK_LIT_INT_DEC)};
+      return {startLoc, this->_litNum(Token::isLitIntDec, TK_LIT_INT_DEC)};
     }
 
     this->_walk(Token::isLitIntDec);
-    return {l, this->_litNum(Token::isLitIntDec, TK_LIT_INT_DEC)};
+    return {startLoc, this->_litNum(Token::isLitIntDec, TK_LIT_INT_DEC)};
   }
 
   if (ch0 == '"') {
@@ -195,7 +163,7 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
       }
     }
 
-    return {l, this->_tok(TK_LIT_STR)};
+    return {startLoc, this->_tok(TK_LIT_STR)};
   }
 
   if (ch0 == '\'') {
@@ -238,10 +206,10 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
       throw Error(this->reader, this->loc, E0006);
     }
 
-    return {l, this->_tok(TK_LIT_CHAR)};
+    return {startLoc, this->_tok(TK_LIT_CHAR)};
   }
 
-  throw Error(this->reader, this->loc, E0000);
+  return {startLoc, this->_tok(TK_UNKNOWN)};
 }
 
 void Lexer::seek (ReaderLocation l) {

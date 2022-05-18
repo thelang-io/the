@@ -129,8 +129,40 @@ TEST_F(TypeTest, CheckIfChar) {
   EXPECT_TRUE(this->tm_.get("char")->isChar());
 }
 
+TEST_F(TypeTest, CheckIfF32) {
+  EXPECT_TRUE(this->tm_.get("f32")->isF32());
+}
+
+TEST_F(TypeTest, CheckIfF64) {
+  EXPECT_TRUE(this->tm_.get("f64")->isF64());
+}
+
 TEST_F(TypeTest, CheckIfFloat) {
   EXPECT_TRUE(this->tm_.get("float")->isFloat());
+}
+
+TEST_F(TypeTest, CheckIfFloatNumber) {
+  EXPECT_TRUE(this->tm_.get("f32")->isFloatNumber());
+  EXPECT_TRUE(this->tm_.get("f64")->isFloatNumber());
+  EXPECT_TRUE(this->tm_.get("float")->isFloatNumber());
+}
+
+TEST_F(TypeTest, CheckIfNotFloatNumber) {
+  EXPECT_FALSE(this->tm_.get("i8")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("i16")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("i32")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("int")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("i64")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("u8")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("u16")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("u32")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("u64")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("any")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("bool")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("byte")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("char")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("str")->isFloatNumber());
+  EXPECT_FALSE(this->tm_.get("void")->isFloatNumber());
 }
 
 TEST_F(TypeTest, CheckIfFn) {
@@ -161,18 +193,6 @@ TEST_F(TypeTest, CheckIfFn) {
   }, this->tm_.get("str"))->isFn());
 }
 
-TEST_F(TypeTest, CheckIfF32) {
-  EXPECT_TRUE(this->tm_.get("f32")->isF32());
-}
-
-TEST_F(TypeTest, CheckIfF64) {
-  EXPECT_TRUE(this->tm_.get("f64")->isF64());
-}
-
-TEST_F(TypeTest, CheckIfInt) {
-  EXPECT_TRUE(this->tm_.get("int")->isInt());
-}
-
 TEST_F(TypeTest, CheckIfI8) {
   EXPECT_TRUE(this->tm_.get("i8")->isI8());
 }
@@ -187,6 +207,10 @@ TEST_F(TypeTest, CheckIfI32) {
 
 TEST_F(TypeTest, CheckIfI64) {
   EXPECT_TRUE(this->tm_.get("i64")->isI64());
+}
+
+TEST_F(TypeTest, CheckIfInt) {
+  EXPECT_TRUE(this->tm_.get("int")->isInt());
 }
 
 TEST_F(TypeTest, CheckIfNumber) {

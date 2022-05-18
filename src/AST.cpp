@@ -286,21 +286,19 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto parserExprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto exprAssignOp = ASTExprAssignOp{};
 
-    if (parserExprAssign.op.type == TK_OP_AND_AND_EQ) exprAssignOp = AST_EXPR_ASSIGN_LOGICAL_AND;
-    if (parserExprAssign.op.type == TK_OP_AND_EQ) exprAssignOp = AST_EXPR_ASSIGN_BITWISE_AND;
-    if (parserExprAssign.op.type == TK_OP_CARET_EQ) exprAssignOp = AST_EXPR_ASSIGN_BITWISE_XOR;
-    if (parserExprAssign.op.type == TK_OP_EQ) exprAssignOp = AST_EXPR_ASSIGN_EQUAL;
-    if (parserExprAssign.op.type == TK_OP_LSHIFT_EQ) exprAssignOp = AST_EXPR_ASSIGN_LEFT_SHIFT;
-    if (parserExprAssign.op.type == TK_OP_MINUS_EQ) exprAssignOp = AST_EXPR_ASSIGN_SUBTRACT;
-    if (parserExprAssign.op.type == TK_OP_OR_EQ) exprAssignOp = AST_EXPR_ASSIGN_BITWISE_OR;
-    if (parserExprAssign.op.type == TK_OP_OR_OR_EQ) exprAssignOp = AST_EXPR_ASSIGN_LOGICAL_OR;
-    if (parserExprAssign.op.type == TK_OP_PERCENT_EQ) exprAssignOp = AST_EXPR_ASSIGN_REMAINDER;
+    if (parserExprAssign.op.type == TK_OP_AMP_EQ) exprAssignOp = AST_EXPR_ASSIGN_BIT_AND;
+    if (parserExprAssign.op.type == TK_OP_AMP_AMP_EQ) exprAssignOp = AST_EXPR_ASSIGN_AND;
+    if (parserExprAssign.op.type == TK_OP_CARET_EQ) exprAssignOp = AST_EXPR_ASSIGN_BIT_XOR;
+    if (parserExprAssign.op.type == TK_OP_EQ) exprAssignOp = AST_EXPR_ASSIGN_EQ;
+    if (parserExprAssign.op.type == TK_OP_LSHIFT_EQ) exprAssignOp = AST_EXPR_ASSIGN_LSHIFT;
+    if (parserExprAssign.op.type == TK_OP_MINUS_EQ) exprAssignOp = AST_EXPR_ASSIGN_SUB;
+    if (parserExprAssign.op.type == TK_OP_PERCENT_EQ) exprAssignOp = AST_EXPR_ASSIGN_MOD;
+    if (parserExprAssign.op.type == TK_OP_PIPE_EQ) exprAssignOp = AST_EXPR_ASSIGN_BIT_OR;
+    if (parserExprAssign.op.type == TK_OP_PIPE_PIPE_EQ) exprAssignOp = AST_EXPR_ASSIGN_OR;
     if (parserExprAssign.op.type == TK_OP_PLUS_EQ) exprAssignOp = AST_EXPR_ASSIGN_ADD;
-    if (parserExprAssign.op.type == TK_OP_QN_QN_EQ) exprAssignOp = AST_EXPR_ASSIGN_COALESCE;
-    if (parserExprAssign.op.type == TK_OP_RSHIFT_EQ) exprAssignOp = AST_EXPR_ASSIGN_RIGHT_SHIFT;
-    if (parserExprAssign.op.type == TK_OP_SLASH_EQ) exprAssignOp = AST_EXPR_ASSIGN_DIVIDE;
-    if (parserExprAssign.op.type == TK_OP_STAR_EQ) exprAssignOp = AST_EXPR_ASSIGN_MULTIPLY;
-    if (parserExprAssign.op.type == TK_OP_STAR_STAR_EQ) exprAssignOp = AST_EXPR_ASSIGN_POWER;
+    if (parserExprAssign.op.type == TK_OP_RSHIFT_EQ) exprAssignOp = AST_EXPR_ASSIGN_RSHIFT;
+    if (parserExprAssign.op.type == TK_OP_SLASH_EQ) exprAssignOp = AST_EXPR_ASSIGN_DIV;
+    if (parserExprAssign.op.type == TK_OP_STAR_EQ) exprAssignOp = AST_EXPR_ASSIGN_MUL;
 
     auto exprAssignLeft = this->_exprAccess(parserExprAssign.left.body, varStack);
     auto exprAssignRight = this->_nodeExpr(parserExprAssign.right, varStack);
@@ -310,26 +308,24 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto parserExprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
     auto exprBinaryOp = ASTExprBinaryOp{};
 
-    if (parserExprBinary.op.type == TK_OP_AND) exprBinaryOp = AST_EXPR_BINARY_BITWISE_AND;
-    if (parserExprBinary.op.type == TK_OP_AND_AND) exprBinaryOp = AST_EXPR_BINARY_LOGICAL_AND;
-    if (parserExprBinary.op.type == TK_OP_CARET) exprBinaryOp = AST_EXPR_BINARY_BITWISE_XOR;
-    if (parserExprBinary.op.type == TK_OP_EQ_EQ) exprBinaryOp = AST_EXPR_BINARY_EQUAL;
-    if (parserExprBinary.op.type == TK_OP_EXCL_EQ) exprBinaryOp = AST_EXPR_BINARY_NOT_EQUAL;
-    if (parserExprBinary.op.type == TK_OP_GT) exprBinaryOp = AST_EXPR_BINARY_GREATER_THAN;
-    if (parserExprBinary.op.type == TK_OP_GT_EQ) exprBinaryOp = AST_EXPR_BINARY_GREATER_EQUAL;
-    if (parserExprBinary.op.type == TK_OP_LSHIFT) exprBinaryOp = AST_EXPR_BINARY_LEFT_SHIFT;
-    if (parserExprBinary.op.type == TK_OP_LT) exprBinaryOp = AST_EXPR_BINARY_LESS_THAN;
-    if (parserExprBinary.op.type == TK_OP_LT_EQ) exprBinaryOp = AST_EXPR_BINARY_LESS_EQUAL;
-    if (parserExprBinary.op.type == TK_OP_MINUS) exprBinaryOp = AST_EXPR_BINARY_SUBTRACT;
-    if (parserExprBinary.op.type == TK_OP_OR) exprBinaryOp = AST_EXPR_BINARY_BITWISE_OR;
-    if (parserExprBinary.op.type == TK_OP_OR_OR) exprBinaryOp = AST_EXPR_BINARY_LOGICAL_OR;
-    if (parserExprBinary.op.type == TK_OP_PERCENT) exprBinaryOp = AST_EXPR_BINARY_REMAINDER;
+    if (parserExprBinary.op.type == TK_OP_AMP) exprBinaryOp = AST_EXPR_BINARY_BIT_AND;
+    if (parserExprBinary.op.type == TK_OP_AMP_AMP) exprBinaryOp = AST_EXPR_BINARY_AND;
+    if (parserExprBinary.op.type == TK_OP_CARET) exprBinaryOp = AST_EXPR_BINARY_BIT_XOR;
+    if (parserExprBinary.op.type == TK_OP_EQ_EQ) exprBinaryOp = AST_EXPR_BINARY_EQ;
+    if (parserExprBinary.op.type == TK_OP_EXCL_EQ) exprBinaryOp = AST_EXPR_BINARY_NE;
+    if (parserExprBinary.op.type == TK_OP_GT) exprBinaryOp = AST_EXPR_BINARY_GT;
+    if (parserExprBinary.op.type == TK_OP_GT_EQ) exprBinaryOp = AST_EXPR_BINARY_GE;
+    if (parserExprBinary.op.type == TK_OP_LSHIFT) exprBinaryOp = AST_EXPR_BINARY_LSHIFT;
+    if (parserExprBinary.op.type == TK_OP_LT) exprBinaryOp = AST_EXPR_BINARY_LT;
+    if (parserExprBinary.op.type == TK_OP_LT_EQ) exprBinaryOp = AST_EXPR_BINARY_LE;
+    if (parserExprBinary.op.type == TK_OP_MINUS) exprBinaryOp = AST_EXPR_BINARY_SUB;
+    if (parserExprBinary.op.type == TK_OP_PERCENT) exprBinaryOp = AST_EXPR_BINARY_MOD;
+    if (parserExprBinary.op.type == TK_OP_PIPE) exprBinaryOp = AST_EXPR_BINARY_BIT_OR;
+    if (parserExprBinary.op.type == TK_OP_PIPE_PIPE) exprBinaryOp = AST_EXPR_BINARY_OR;
     if (parserExprBinary.op.type == TK_OP_PLUS) exprBinaryOp = AST_EXPR_BINARY_ADD;
-    if (parserExprBinary.op.type == TK_OP_QN_QN) exprBinaryOp = AST_EXPR_BINARY_COALESCE;
-    if (parserExprBinary.op.type == TK_OP_RSHIFT) exprBinaryOp = AST_EXPR_BINARY_RIGHT_SHIFT;
-    if (parserExprBinary.op.type == TK_OP_SLASH) exprBinaryOp = AST_EXPR_BINARY_DIVIDE;
-    if (parserExprBinary.op.type == TK_OP_STAR) exprBinaryOp = AST_EXPR_BINARY_MULTIPLY;
-    if (parserExprBinary.op.type == TK_OP_STAR_STAR) exprBinaryOp = AST_EXPR_BINARY_POWER;
+    if (parserExprBinary.op.type == TK_OP_RSHIFT) exprBinaryOp = AST_EXPR_BINARY_RSHIFT;
+    if (parserExprBinary.op.type == TK_OP_SLASH) exprBinaryOp = AST_EXPR_BINARY_DIV;
+    if (parserExprBinary.op.type == TK_OP_STAR) exprBinaryOp = AST_EXPR_BINARY_MUL;
 
     auto exprBinaryLeft = this->_nodeExpr(parserExprBinary.left, varStack);
     auto exprBinaryRight = this->_nodeExpr(parserExprBinary.right, varStack);
@@ -468,12 +464,12 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto parserExprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto op = ASTExprUnaryOp{};
 
-    if (parserExprUnary.op.type == TK_OP_EXCL) op = AST_EXPR_UNARY_LOGICAL_NOT;
-    if (parserExprUnary.op.type == TK_OP_MINUS) op = AST_EXPR_UNARY_NEGATION;
+    if (parserExprUnary.op.type == TK_OP_EXCL) op = AST_EXPR_UNARY_NOT;
+    if (parserExprUnary.op.type == TK_OP_MINUS) op = AST_EXPR_UNARY_MINUS;
     if (parserExprUnary.op.type == TK_OP_MINUS_MINUS) op = AST_EXPR_UNARY_DECREMENT;
     if (parserExprUnary.op.type == TK_OP_PLUS) op = AST_EXPR_UNARY_PLUS;
     if (parserExprUnary.op.type == TK_OP_PLUS_PLUS) op = AST_EXPR_UNARY_INCREMENT;
-    if (parserExprUnary.op.type == TK_OP_TILDE) op = AST_EXPR_UNARY_BITWISE_NOT;
+    if (parserExprUnary.op.type == TK_OP_TILDE) op = AST_EXPR_UNARY_BIT_NOT;
 
     auto exprUnaryArg = this->_nodeExpr(parserExprUnary.arg, varStack);
     return this->_wrapNodeExpr(stmtExpr, ASTExprUnary{exprUnaryArg, op, parserExprUnary.prefix});
@@ -497,28 +493,19 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
     if (exprBinaryLeftType->isStr() || exprBinaryRightType->isStr()) {
       return this->typeMap.get("str");
     } else if (
-      exprBinaryLeftType->isF32() ||
-      exprBinaryLeftType->isF64() ||
-      exprBinaryLeftType->isFloat() ||
-      exprBinaryRightType->isF32() ||
-      exprBinaryRightType->isF64() ||
-      exprBinaryRightType->isFloat() ||
-      exprBinary.op.type == TK_OP_SLASH ||
-      exprBinary.op.type == TK_OP_STAR ||
-      exprBinary.op.type == TK_OP_STAR_STAR
-    ) {
-      return this->typeMap.get("float");
-    } else if (
       exprBinary.op.type == TK_OP_EQ_EQ ||
       exprBinary.op.type == TK_OP_EXCL_EQ ||
       exprBinary.op.type == TK_OP_GT ||
       exprBinary.op.type == TK_OP_GT_EQ ||
       exprBinary.op.type == TK_OP_LT ||
-      exprBinary.op.type == TK_OP_LT_EQ
+      exprBinary.op.type == TK_OP_LT_EQ ||
+      (exprBinaryLeftType->isBool() && exprBinaryRightType->isBool())
     ) {
       return this->typeMap.get("bool");
+    } else if (exprBinaryLeftType->isNumber() && exprBinaryRightType->isNumber()) {
+      return Type::largest(exprBinaryLeftType, exprBinaryRightType);
     } else {
-      return this->typeMap.get("int");
+      return exprBinaryLeftType->isNumber() ? exprBinaryLeftType : exprBinaryRightType;
     }
   } else if (std::holds_alternative<ParserExprCall>(*stmtExpr.body)) {
     auto exprCall = std::get<ParserExprCall>(*stmtExpr.body);

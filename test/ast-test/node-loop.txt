@@ -38,7 +38,7 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprBinary op="LESS_THAN">
+              <ExprBinary op="LT">
                 <slot name="left">
                   <NodeExpr parenthesized="false">
                     <slot name="type">

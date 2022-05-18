@@ -75,21 +75,15 @@ std::string tokenTypeToStr (TokenType type) {
   switch (type) {
     case TK_EOF: return "EOF";
     case TK_ID: return "ID";
-    case TK_KW_AS: return "KW_AS";
-    case TK_KW_ASYNC: return "KW_ASYNC";
-    case TK_KW_AWAIT: return "KW_AWAIT";
     case TK_KW_BREAK: return "KW_BREAK";
     case TK_KW_CATCH: return "KW_CATCH";
     case TK_KW_CONTINUE: return "KW_CONTINUE";
     case TK_KW_ELIF: return "KW_ELIF";
     case TK_KW_ELSE: return "KW_ELSE";
     case TK_KW_ENUM: return "KW_ENUM";
-    case TK_KW_EXPORT: return "KW_EXPORT";
     case TK_KW_FALSE: return "KW_FALSE";
     case TK_KW_FN: return "KW_FN";
-    case TK_KW_FROM: return "KW_FROM";
     case TK_KW_IF: return "KW_IF";
-    case TK_KW_IMPORT: return "KW_IMPORT";
     case TK_KW_IS: return "KW_IS";
     case TK_KW_LOOP: return "KW_LOOP";
     case TK_KW_MAIN: return "KW_MAIN";
@@ -108,15 +102,19 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_LIT_INT_HEX: return "LIT_INT_HEX";
     case TK_LIT_INT_OCT: return "LIT_INT_OCT";
     case TK_LIT_STR: return "LIT_STR";
-    case TK_OP_AND: return "OP_AND";
-    case TK_OP_AND_AND: return "OP_AND_AND";
-    case TK_OP_AND_AND_EQ: return "OP_AND_AND_EQ";
-    case TK_OP_AND_EQ: return "OP_AND_EQ";
+    case TK_OP_AMP: return "OP_AMP";
+    case TK_OP_AMP_EQ: return "OP_AMP_EQ";
+    case TK_OP_AMP_AMP: return "OP_AMP_AMP";
+    case TK_OP_AMP_AMP_EQ: return "OP_AMP_AMP_EQ";
+    case TK_OP_AT: return "OP_AT";
+    case TK_OP_BACKSLASH: return "OP_BACKSLASH";
+    case TK_OP_BACKTICK: return "OP_BACKTICK";
     case TK_OP_CARET: return "OP_CARET";
     case TK_OP_CARET_EQ: return "OP_CARET_EQ";
     case TK_OP_COLON: return "OP_COLON";
     case TK_OP_COLON_EQ: return "OP_COLON_EQ";
     case TK_OP_COMMA: return "OP_COMMA";
+    case TK_OP_DOLLAR: return "OP_DOLLAR";
     case TK_OP_DOT: return "OP_DOT";
     case TK_OP_DOT_DOT_DOT: return "OP_DOT_DOT_DOT";
     case TK_OP_EQ: return "OP_EQ";
@@ -125,6 +123,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_EXCL_EQ: return "OP_EXCL_EQ";
     case TK_OP_GT: return "OP_GT";
     case TK_OP_GT_EQ: return "OP_GT_EQ";
+    case TK_OP_HASH: return "OP_HASH";
     case TK_OP_LBRACE: return "OP_LBRACE";
     case TK_OP_LBRACK: return "OP_LBRACK";
     case TK_OP_LPAR: return "OP_LPAR";
@@ -135,19 +134,16 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_MINUS: return "OP_MINUS";
     case TK_OP_MINUS_EQ: return "OP_MINUS_EQ";
     case TK_OP_MINUS_MINUS: return "OP_MINUS_MINUS";
-    case TK_OP_OR: return "OP_OR";
-    case TK_OP_OR_EQ: return "OP_OR_EQ";
-    case TK_OP_OR_OR: return "OP_OR_OR";
-    case TK_OP_OR_OR_EQ: return "OP_OR_OR_EQ";
     case TK_OP_PERCENT: return "OP_PERCENT";
     case TK_OP_PERCENT_EQ: return "OP_PERCENT_EQ";
+    case TK_OP_PIPE: return "OP_PIPE";
+    case TK_OP_PIPE_EQ: return "OP_PIPE_EQ";
+    case TK_OP_PIPE_PIPE: return "OP_PIPE_PIPE";
+    case TK_OP_PIPE_PIPE_EQ: return "OP_PIPE_PIPE_EQ";
     case TK_OP_PLUS: return "OP_PLUS";
     case TK_OP_PLUS_EQ: return "OP_PLUS_EQ";
     case TK_OP_PLUS_PLUS: return "OP_PLUS_PLUS";
     case TK_OP_QN: return "OP_QN";
-    case TK_OP_QN_DOT: return "OP_QN_DOT";
-    case TK_OP_QN_QN: return "OP_QN_QN";
-    case TK_OP_QN_QN_EQ: return "OP_QN_QN_EQ";
     case TK_OP_RBRACE: return "OP_RBRACE";
     case TK_OP_RBRACK: return "OP_RBRACK";
     case TK_OP_RPAR: return "OP_RPAR";
@@ -158,12 +154,9 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_SLASH_EQ: return "OP_SLASH_EQ";
     case TK_OP_STAR: return "OP_STAR";
     case TK_OP_STAR_EQ: return "OP_STAR_EQ";
-    case TK_OP_STAR_STAR: return "OP_STAR_STAR";
-    case TK_OP_STAR_STAR_EQ: return "OP_STAR_STAR_EQ";
     case TK_OP_TILDE: return "OP_TILDE";
+    default: throw Error("Error: tried stringify unknown token");
   }
-
-  throw Error("Error: tried stringify unknown token");
 }
 
 bool Token::isDigit (char ch) {
@@ -214,34 +207,31 @@ TokenAssociativity Token::associativity (bool unary) const {
     return TK_ASSOC_NONE;
   } else if (
     (unary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) ||
-    this->type == TK_OP_STAR_STAR ||
-    this->type == TK_OP_AND_AND_EQ ||
-    this->type == TK_OP_AND_EQ ||
+    this->type == TK_OP_AMP_EQ ||
+    this->type == TK_OP_AMP_AMP_EQ ||
     this->type == TK_OP_CARET_EQ ||
     this->type == TK_OP_EQ ||
     this->type == TK_OP_LSHIFT_EQ ||
     this->type == TK_OP_MINUS_EQ ||
-    this->type == TK_OP_OR_EQ ||
-    this->type == TK_OP_OR_OR_EQ ||
     this->type == TK_OP_PERCENT_EQ ||
+    this->type == TK_OP_PIPE_EQ ||
+    this->type == TK_OP_PIPE_PIPE_EQ ||
     this->type == TK_OP_PLUS_EQ ||
-    this->type == TK_OP_QN_QN_EQ ||
     this->type == TK_OP_RSHIFT_EQ ||
     this->type == TK_OP_SLASH_EQ ||
     this->type == TK_OP_STAR_EQ ||
-    this->type == TK_OP_STAR_STAR_EQ ||
     this->type == TK_OP_COLON || this->type == TK_OP_QN
   ) {
     return TK_ASSOC_RIGHT;
   } else if (
-    this->type == TK_OP_DOT || this->type == TK_OP_QN_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_RBRACK ||
+    this->type == TK_OP_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_RBRACK ||
     this->type == TK_OP_PERCENT || this->type == TK_OP_SLASH || this->type == TK_OP_STAR ||
     this->type == TK_OP_MINUS || this->type == TK_OP_PLUS ||
     this->type == TK_OP_LSHIFT || this->type == TK_OP_RSHIFT ||
     this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ ||
     this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ ||
-    this->type == TK_OP_AND || this->type == TK_OP_CARET || this->type == TK_OP_OR ||
-    this->type == TK_OP_AND_AND || this->type == TK_OP_OR_OR || this->type == TK_OP_QN_QN ||
+    this->type == TK_OP_AMP || this->type == TK_OP_CARET || this->type == TK_OP_PIPE ||
+    this->type == TK_OP_AMP_AMP || this->type == TK_OP_PIPE_PIPE ||
     this->type == TK_OP_COMMA
   ) {
     return TK_ASSOC_LEFT;
@@ -253,14 +243,12 @@ TokenAssociativity Token::associativity (bool unary) const {
 int Token::precedence (bool isUnary) const {
   if (this->type == TK_OP_LPAR || this->type == TK_OP_RPAR) {
     return 17;
-  } else if (this->type == TK_OP_DOT || this->type == TK_OP_QN_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_RBRACK) {
+  } else if (this->type == TK_OP_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_RBRACK) {
     return 16;
   } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
     return 15;
   } else if (isUnary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) {
     return 14;
-  } else if (this->type == TK_OP_STAR_STAR) {
-    return 13;
   } else if (this->type == TK_OP_PERCENT || this->type == TK_OP_SLASH || this->type == TK_OP_STAR) {
     return 12;
   } else if (this->type == TK_OP_MINUS || this->type == TK_OP_PLUS) {
@@ -271,32 +259,30 @@ int Token::precedence (bool isUnary) const {
     return 9;
   } else if (this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ) {
     return 8;
-  } else if (this->type == TK_OP_AND) {
+  } else if (this->type == TK_OP_AMP) {
     return 7;
   } else if (this->type == TK_OP_CARET) {
     return 6;
-  } else if (this->type == TK_OP_OR) {
+  } else if (this->type == TK_OP_PIPE) {
     return 5;
-  } else if (this->type == TK_OP_AND_AND) {
+  } else if (this->type == TK_OP_AMP_AMP) {
     return 4;
-  } else if (this->type == TK_OP_OR_OR || this->type == TK_OP_QN_QN) {
+  } else if (this->type == TK_OP_PIPE_PIPE) {
     return 3;
   } else if (
-    this->type == TK_OP_AND_AND_EQ ||
-    this->type == TK_OP_AND_EQ ||
+    this->type == TK_OP_AMP_EQ ||
+    this->type == TK_OP_AMP_AMP_EQ ||
     this->type == TK_OP_CARET_EQ ||
     this->type == TK_OP_EQ ||
     this->type == TK_OP_LSHIFT_EQ ||
     this->type == TK_OP_MINUS_EQ ||
-    this->type == TK_OP_OR_EQ ||
-    this->type == TK_OP_OR_OR_EQ ||
     this->type == TK_OP_PERCENT_EQ ||
+    this->type == TK_OP_PIPE_EQ ||
+    this->type == TK_OP_PIPE_PIPE_EQ ||
     this->type == TK_OP_PLUS_EQ ||
-    this->type == TK_OP_QN_QN_EQ ||
     this->type == TK_OP_RSHIFT_EQ ||
     this->type == TK_OP_SLASH_EQ ||
     this->type == TK_OP_STAR_EQ ||
-    this->type == TK_OP_STAR_STAR_EQ ||
     this->type == TK_OP_COLON || this->type == TK_OP_QN
   ) {
     return 2;

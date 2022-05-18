@@ -52,7 +52,7 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprUnary op="LOGICAL_NOT" prefix="true">
+              <ExprUnary op="NOT" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
                     <BuiltinType name="int" />
@@ -82,7 +82,7 @@ main {
               <BuiltinType name="int" />
             </slot>
             <slot name="body">
-              <ExprUnary op="BITWISE_NOT" prefix="true">
+              <ExprUnary op="BIT_NOT" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
                     <BuiltinType name="int" />
@@ -112,7 +112,7 @@ main {
               <BuiltinType name="int" />
             </slot>
             <slot name="body">
-              <ExprUnary op="NEGATION" prefix="true">
+              <ExprUnary op="MINUS" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
                     <BuiltinType name="int" />
@@ -270,13 +270,13 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprUnary op="LOGICAL_NOT" prefix="true">
+              <ExprUnary op="NOT" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
                     <BuiltinType name="bool" />
                   </slot>
                   <slot name="body">
-                    <ExprUnary op="LOGICAL_NOT" prefix="true">
+                    <ExprUnary op="NOT" prefix="true">
                       <NodeExpr parenthesized="false">
                         <slot name="type">
                           <BuiltinType name="int" />
@@ -341,7 +341,7 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprUnary op="LOGICAL_NOT" prefix="true">
+              <ExprUnary op="NOT" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
                     <BuiltinType name="bool" />
@@ -371,7 +371,7 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprUnary op="LOGICAL_NOT" prefix="true">
+              <ExprUnary op="NOT" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
                     <BuiltinType name="char" />
@@ -401,7 +401,7 @@ main {
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
-              <ExprUnary op="LOGICAL_NOT" prefix="true">
+              <ExprUnary op="NOT" prefix="true">
                 <NodeExpr parenthesized="false">
                   <slot name="type">
                     <BuiltinType name="str" />

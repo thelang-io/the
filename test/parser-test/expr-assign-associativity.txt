@@ -90,7 +90,7 @@ a = b >>= c ||= 1
                     </ExprAccess>
                   </slot>
                   <slot name="op">
-                    <Token type="OP_OR_OR_EQ" val="||=" start="3:13" end="3:16" />
+                    <Token type="OP_PIPE_PIPE_EQ" val="||=" start="3:13" end="3:16" />
                   </slot>
                   <slot name="right">
                     <StmtExpr parenthesized="false" start="3:17" end="3:18">

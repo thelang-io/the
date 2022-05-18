@@ -137,7 +137,6 @@ TEST(TokenTest, AssociativityNone) {
 
 TEST(TokenTest, AssociativityLeft) {
   EXPECT_EQ(Token{TK_OP_DOT}.associativity(), TK_ASSOC_LEFT);
-  EXPECT_EQ(Token{TK_OP_QN_DOT}.associativity(), TK_ASSOC_LEFT);
   EXPECT_EQ(Token{TK_OP_LBRACK}.associativity(), TK_ASSOC_LEFT);
   EXPECT_EQ(Token{TK_OP_RBRACK}.associativity(), TK_ASSOC_LEFT);
   EXPECT_EQ(Token{TK_OP_PERCENT}.associativity(), TK_ASSOC_LEFT);
@@ -153,12 +152,7 @@ TEST(TokenTest, AssociativityLeft) {
   EXPECT_EQ(Token{TK_OP_LT_EQ}.associativity(), TK_ASSOC_LEFT);
   EXPECT_EQ(Token{TK_OP_EQ_EQ}.associativity(), TK_ASSOC_LEFT);
   EXPECT_EQ(Token{TK_OP_EXCL_EQ}.associativity(), TK_ASSOC_LEFT);
-  EXPECT_EQ(Token{TK_OP_AND}.associativity(), TK_ASSOC_LEFT);
   EXPECT_EQ(Token{TK_OP_CARET}.associativity(), TK_ASSOC_LEFT);
-  EXPECT_EQ(Token{TK_OP_OR}.associativity(), TK_ASSOC_LEFT);
-  EXPECT_EQ(Token{TK_OP_AND_AND}.associativity(), TK_ASSOC_LEFT);
-  EXPECT_EQ(Token{TK_OP_OR_OR}.associativity(), TK_ASSOC_LEFT);
-  EXPECT_EQ(Token{TK_OP_QN_QN}.associativity(), TK_ASSOC_LEFT);
   EXPECT_EQ(Token{TK_OP_COMMA}.associativity(), TK_ASSOC_LEFT);
 }
 
@@ -167,22 +161,15 @@ TEST(TokenTest, AssociativityRight) {
   EXPECT_EQ(Token{TK_OP_MINUS}.associativity(true), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_PLUS}.associativity(true), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_TILDE}.associativity(true), TK_ASSOC_RIGHT);
-  EXPECT_EQ(Token{TK_OP_STAR_STAR}.associativity(), TK_ASSOC_RIGHT);
-  EXPECT_EQ(Token{TK_OP_AND_AND_EQ}.associativity(), TK_ASSOC_RIGHT);
-  EXPECT_EQ(Token{TK_OP_AND_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_CARET_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_LSHIFT_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_MINUS_EQ}.associativity(), TK_ASSOC_RIGHT);
-  EXPECT_EQ(Token{TK_OP_OR_EQ}.associativity(), TK_ASSOC_RIGHT);
-  EXPECT_EQ(Token{TK_OP_OR_OR_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_PERCENT_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_PLUS_EQ}.associativity(), TK_ASSOC_RIGHT);
-  EXPECT_EQ(Token{TK_OP_QN_QN_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_RSHIFT_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_SLASH_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_STAR_EQ}.associativity(), TK_ASSOC_RIGHT);
-  EXPECT_EQ(Token{TK_OP_STAR_STAR_EQ}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_COLON}.associativity(), TK_ASSOC_RIGHT);
   EXPECT_EQ(Token{TK_OP_QN}.associativity(), TK_ASSOC_RIGHT);
 }
@@ -205,7 +192,6 @@ TEST(TokenTest, PrecedenceBrackets) {
 
 TEST(TokenTest, PrecedenceSymbols) {
   EXPECT_EQ(Token{TK_OP_DOT}.precedence(), 16);
-  EXPECT_EQ(Token{TK_OP_QN_DOT}.precedence(), 16);
   EXPECT_EQ(Token{TK_OP_COLON}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_QN}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_COMMA}.precedence(), 1);
@@ -221,7 +207,6 @@ TEST(TokenTest, PrecedenceUnary) {
 }
 
 TEST(TokenTest, PrecedenceBinary) {
-  EXPECT_EQ(Token{TK_OP_STAR_STAR}.precedence(), 13);
   EXPECT_EQ(Token{TK_OP_PERCENT}.precedence(), 12);
   EXPECT_EQ(Token{TK_OP_SLASH}.precedence(), 12);
   EXPECT_EQ(Token{TK_OP_STAR}.precedence(), 12);
@@ -233,30 +218,19 @@ TEST(TokenTest, PrecedenceBinary) {
   EXPECT_EQ(Token{TK_OP_GT_EQ}.precedence(), 9);
   EXPECT_EQ(Token{TK_OP_LT}.precedence(), 9);
   EXPECT_EQ(Token{TK_OP_LT_EQ}.precedence(), 9);
-  EXPECT_EQ(Token{TK_OP_AND}.precedence(), 7);
   EXPECT_EQ(Token{TK_OP_CARET}.precedence(), 6);
-  EXPECT_EQ(Token{TK_OP_OR}.precedence(), 5);
-  EXPECT_EQ(Token{TK_OP_AND_AND}.precedence(), 4);
-  EXPECT_EQ(Token{TK_OP_OR_OR}.precedence(), 3);
-  EXPECT_EQ(Token{TK_OP_QN_QN}.precedence(), 3);
 }
 
 TEST(TokenTest, PrecedenceAssignment) {
   EXPECT_EQ(Token{TK_OP_EQ_EQ}.precedence(), 8);
   EXPECT_EQ(Token{TK_OP_EXCL_EQ}.precedence(), 8);
-  EXPECT_EQ(Token{TK_OP_AND_AND_EQ}.precedence(), 2);
-  EXPECT_EQ(Token{TK_OP_AND_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_CARET_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_LSHIFT_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_MINUS_EQ}.precedence(), 2);
-  EXPECT_EQ(Token{TK_OP_OR_EQ}.precedence(), 2);
-  EXPECT_EQ(Token{TK_OP_OR_OR_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_PERCENT_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_PLUS_EQ}.precedence(), 2);
-  EXPECT_EQ(Token{TK_OP_QN_QN_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_RSHIFT_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_SLASH_EQ}.precedence(), 2);
   EXPECT_EQ(Token{TK_OP_STAR_EQ}.precedence(), 2);
-  EXPECT_EQ(Token{TK_OP_STAR_STAR_EQ}.precedence(), 2);
 }

@@ -313,7 +313,7 @@ main {
           </Type>
         </slot>
         <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="e_0" frame="2" mut="true" name="e">
@@ -372,7 +372,7 @@ main {
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="f_0" frame="2" mut="true" name="f">
@@ -386,7 +386,7 @@ main {
                   <BuiltinType name="int" />
                 </slot>
                 <slot name="body">
-                  <ExprUnary op="NEGATION" prefix="true">
+                  <ExprUnary op="MINUS" prefix="true">
                     <NodeExpr parenthesized="false">
                       <slot name="type">
                         <BuiltinType name="int" />
@@ -411,7 +411,7 @@ main {
           <BuiltinType name="f32" />
         </slot>
         <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="g_0" frame="2" mut="true" name="g">
@@ -441,7 +441,7 @@ main {
           <BuiltinType name="str" />
         </slot>
         <slot name="body">
-          <ExprAssign op="EQUAL">
+          <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
                 <Var codeName="h_0" frame="2" mut="true" name="h">

@@ -42,7 +42,7 @@ fn test (a: int) any {
                   <BuiltinType name="bool" />
                 </slot>
                 <slot name="body">
-                  <ExprBinary op="GREATER_THAN">
+                  <ExprBinary op="GT">
                     <slot name="left">
                       <NodeExpr parenthesized="false">
                         <slot name="type">
