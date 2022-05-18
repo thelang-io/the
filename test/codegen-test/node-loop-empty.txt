@@ -1,0 +1,59 @@
+======= stdin =======
+main {
+  mut i := 0
+
+  loop ; i < 10; i++ {
+  }
+  loop mut i := 0; i < 10; i++ {}
+
+  loop ;; i++ {
+    if i > 10 {
+      break
+    }
+  }
+
+  loop ; i < 10; {
+    i++
+  }
+
+  loop mut i := 0; i < 10; {
+    i++
+  }
+
+  loop ;; {
+    if i > 10 {
+      break
+    }
+
+    i++
+  }
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_i_0 = 0;
+  for (; __THE_0_i_0 < 10; __THE_0_i_0++) {
+  }
+  for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < 10; __THE_0_i_1++) {
+  }
+  for (;; __THE_0_i_0++) {
+    if (__THE_0_i_0 > 10) {
+      break;
+    }
+  }
+  while (__THE_0_i_0 < 10) {
+    __THE_0_i_0++;
+  }
+  for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < 10;) {
+    __THE_0_i_1++;
+  }
+  while (1) {
+    if (__THE_0_i_0 > 10) {
+      break;
+    }
+    __THE_0_i_0++;
+  }
+}
+======= flags =======
+======= stdout =======

@@ -122,6 +122,13 @@ INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenTest, testing::Values(
   "node-if-cmp-str"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenTest, testing::Values(
+  "node-loop",
+  "node-loop-empty",
+  "node-loop-while",
+  "node-loop-str"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
   "node-var-decl-bool",
   "node-var-decl-bool-init",

@@ -1,0 +1,78 @@
+obj Token {
+  type: TokenType
+  val: str
+  start: int
+  end: int
+}
+
+enum TokenAssociativity {
+  TK_ASSOC_NONE,
+  TK_ASSOC_LEFT,
+  TK_ASSOC_RIGHT
+}
+
+enum TokenType {
+  TK_EOF,
+  TK_ID
+}
+
+fn Token_isCharEsc (ch: char) bool {
+  return
+    ch == '0' ||
+    ch == 'b' ||
+    ch == 'f' ||
+    ch == 'n' ||
+    ch == 'r' ||
+    ch == 't' ||
+    ch == 'v' ||
+    ch == '"' ||
+    ch == '\'' ||
+    ch == '\\'
+}
+
+fn Token_isId (ch: char) bool {
+  return char_isAlphaNum(ch) || ch == '_'
+}
+
+fn Token_isIdStart (ch: char) bool {
+  return char_isAlpha(ch) || ch == '_'
+}
+
+fn Token_isIntBin (ch: char) bool {
+  return ch == '0' || ch == '1'
+}
+
+fn Token_isIntDec (ch: char) bool {
+  return char_isDigit(ch)
+}
+
+fn Token_isIntHex (ch: char) bool {
+  return
+    char_isDigit(ch) ||
+    ch == 'A' || ch == 'a' ||
+    ch == 'B' || ch == 'b' ||
+    ch == 'C' || ch == 'c' ||
+    ch == 'D' || ch == 'd' ||
+    ch == 'E' || ch == 'e' ||
+    ch == 'F' || ch == 'f'
+}
+
+fn Token_isIntOct (ch: char) bool {
+  return
+    ch == '0' ||
+    ch == '1' ||
+    ch == '2' ||
+    ch == '3' ||
+    ch == '4' ||
+    ch == '5' ||
+    ch == '6' ||
+    ch == '7'
+}
+
+fn Token_isStrEsc (ch: char) bool {
+  return Token_isLitCharEscape(ch)
+}
+
+fn Token_isWhitespace (ch: char) bool {
+  return char_isSpace(ch)
+}

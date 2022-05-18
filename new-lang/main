@@ -1,0 +1,35 @@
+main {
+  try {
+    if argv.len == 1 {
+      throw Error("Error: REPL is not supported")
+    }
+
+    mut fileName: str?
+
+    loop mut i := 1; i < argv.len; i++ {
+      arg := argv[i]
+
+      if arg[0] == '-' {
+        throw Error("Error: bad option " + arg)
+      } elif fileName == nil {
+        fileName = arg
+      } else {
+        throw Error("Error: processing multiple files is not supported")
+      }
+    }
+
+    if fileName == nil {
+      throw Error("Error: file is not specified")
+    }
+
+    reader := Reader_init(fileName)
+    mut tokenizer := Tokenizer_init(reader)
+
+    loop mut tok := Tokenizer_next(tokenizer); tok.type != TK_EOF; tok = Tokenizer_next(tokenizer) {
+      print(Token_str(tok))
+    }
+  } catch err: Error {
+    print(err.message, to: stderr)
+    exit(EXIT_FAILURE)
+  }
+}

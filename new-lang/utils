@@ -1,0 +1,57 @@
+fn char_isAlpha (ch: char) bool {
+  return
+    ch == 'A' || ch == 'a' ||
+    ch == 'B' || ch == 'b' ||
+    ch == 'C' || ch == 'c' ||
+    ch == 'D' || ch == 'd' ||
+    ch == 'E' || ch == 'e' ||
+    ch == 'F' || ch == 'f' ||
+    ch == 'G' || ch == 'g' ||
+    ch == 'H' || ch == 'h' ||
+    ch == 'I' || ch == 'i' ||
+    ch == 'J' || ch == 'j' ||
+    ch == 'K' || ch == 'k' ||
+    ch == 'L' || ch == 'l' ||
+    ch == 'M' || ch == 'm' ||
+    ch == 'N' || ch == 'n' ||
+    ch == 'O' || ch == 'o' ||
+    ch == 'P' || ch == 'p' ||
+    ch == 'Q' || ch == 'q' ||
+    ch == 'R' || ch == 'r' ||
+    ch == 'S' || ch == 's' ||
+    ch == 'T' || ch == 't' ||
+    ch == 'U' || ch == 'u' ||
+    ch == 'V' || ch == 'v' ||
+    ch == 'W' || ch == 'w' ||
+    ch == 'X' || ch == 'x' ||
+    ch == 'Y' || ch == 'y' ||
+    ch == 'Z' || ch == 'z'
+}
+
+fn char_isAlphaNum (ch: char) bool {
+  return char_isAlpha(ch) || char_isDigit(ch)
+}
+
+fn char_isDigit (ch: char) bool {
+  return
+    ch == '0' ||
+    ch == '1' ||
+    ch == '2' ||
+    ch == '3' ||
+    ch == '4' ||
+    ch == '5' ||
+    ch == '6' ||
+    ch == '7' ||
+    ch == '8' ||
+    ch == '9'
+}
+
+fn char_isSpace (ch: char) bool {
+  return
+    ch == ' ' ||
+    ch == '\t' ||
+    ch == '\n' ||
+    ch == '\v' ||
+    ch == '\f' ||
+    ch == '\r'
+}

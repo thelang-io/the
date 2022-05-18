@@ -1,0 +1,53 @@
+======= stdin =======
+main {
+  mut i := 0
+  mut j := 0
+
+  loop i < 5 {
+    i += 2
+  }
+  loop i < 5 {
+    i += 2
+    j *= i
+  }
+
+  loop {
+    break
+  }
+
+  loop i / 3 < 20 {
+    mut k := 1
+
+    loop k < 10 {
+      k *= 2
+    }
+
+    i += k
+  }
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_i_0 = 0;
+  int32_t __THE_0_j_0 = 0;
+  while (__THE_0_i_0 < 5) {
+    __THE_0_i_0 += 2;
+  }
+  while (__THE_0_i_0 < 5) {
+    __THE_0_i_0 += 2;
+    __THE_0_j_0 *= __THE_0_i_0;
+  }
+  while (1) {
+    break;
+  }
+  while (__THE_0_i_0 / 3 < 20) {
+    int32_t __THE_0_k_0 = 1;
+    while (__THE_0_k_0 < 10) {
+      __THE_0_k_0 *= 2;
+    }
+    __THE_0_i_0 += __THE_0_k_0;
+  }
+}
+======= flags =======
+======= stdout =======

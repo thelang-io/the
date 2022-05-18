@@ -1,0 +1,116 @@
+======= stdin =======
+main {
+  mut i := 0
+  mut j := 0
+  mut k := 0
+
+  loop i = 0; i < 3; i++ {
+    i *= 2
+  }
+
+  loop mut i := 0; i < 10; i++ {
+    j += i
+
+    if j > 10 {
+      break
+    }
+  }
+
+  loop mut i := 0; i < 10; i++ {
+    if (j / 2) * 2 != j {
+      continue
+    }
+
+    j += i
+  }
+
+  loop mut i := 0; i < 10; {
+    i++
+
+    if i % 2 {
+      continue
+    }
+
+    j += i
+  }
+
+  loop mut i := 0; i < 3; i++ {
+    j++
+  }
+
+  loop mut i := 100; i > 0; i-- {
+    i := 0
+    j := j * 2 + i
+  }
+
+  loop i = 0; i < 10; i++ {
+    k := i
+
+    loop mut i := k; i < 10; i++ {
+      j++
+    }
+  }
+
+  loop mut i := 0; i < 10; i++ {
+    loop mut j := 0; j < 10; j++ {
+      if (i / 2) * 2 == i {
+        break
+      }
+
+      k += i
+    }
+  }
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_i_0 = 0;
+  int32_t __THE_0_j_0 = 0;
+  int32_t __THE_0_k_0 = 0;
+  for (__THE_0_i_0 = 0; __THE_0_i_0 < 3; __THE_0_i_0++) {
+    __THE_0_i_0 *= 2;
+  }
+  for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < 10; __THE_0_i_1++) {
+    __THE_0_j_0 += __THE_0_i_1;
+    if (__THE_0_j_0 > 10) {
+      break;
+    }
+  }
+  for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < 10; __THE_0_i_1++) {
+    if ((__THE_0_j_0 / 2) * 2 != __THE_0_j_0) {
+      continue;
+    }
+    __THE_0_j_0 += __THE_0_i_1;
+  }
+  for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < 10;) {
+    __THE_0_i_1++;
+    if (__THE_0_i_1 % 2) {
+      continue;
+    }
+    __THE_0_j_0 += __THE_0_i_1;
+  }
+  for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < 3; __THE_0_i_1++) {
+    __THE_0_j_0++;
+  }
+  for (int32_t __THE_0_i_1 = 100; __THE_0_i_1 > 0; __THE_0_i_1--) {
+    const int32_t __THE_0_i_2 = 0;
+    const int32_t __THE_0_j_1 = __THE_0_j_0 * 2 + __THE_0_i_2;
+  }
+  for (__THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    const int32_t __THE_0_k_1 = __THE_0_i_0;
+    for (int32_t __THE_0_i_1 = __THE_0_k_1; __THE_0_i_1 < 10; __THE_0_i_1++) {
+      __THE_0_j_0++;
+    }
+  }
+  for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < 10; __THE_0_i_1++) {
+    for (int32_t __THE_0_j_1 = 0; __THE_0_j_1 < 10; __THE_0_j_1++) {
+      if ((__THE_0_i_1 / 2) * 2 == __THE_0_i_1) {
+        break;
+      }
+      __THE_0_k_0 += __THE_0_i_1;
+    }
+  }
+}
+======= flags =======
+======= stdout =======

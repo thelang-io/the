@@ -1,0 +1,142 @@
+obj Tokenizer {
+  reader: Reader
+  data: Token[]
+  pos: int
+}
+
+fn Tokenizer_init (reader: Reader) Tokenizer {
+  return Tokenizer{reader: reader, data: [], pos: 0}
+}
+
+fn Tokenizer_next (mut this: Tokenizer) Token {
+  if this.data.len < this.pos {
+    tok := this.data[this.pos]
+    this.pos++
+
+    return tok
+  }
+
+  if this.data[this.data.len - 1].type == TK_EOF {
+    throw Error("Error: tried to tokenize on eof")
+  }
+
+  tok := Tokenizer_tok(this)
+
+  this.data.push(tok)
+  this.pos++
+
+  return tok
+}
+
+fn Tokenizer_tok (mut this: Tokenizer) Token {
+  if Reader_eof(this.reader) {
+    return Token{TK_EOF, "", this.reader.pos, this.reader.pos}
+  }
+
+  pos := this.reader.pos
+  ch := Reader_next(this.reader)
+
+  if Tokenizer_isWhitespace(this, ch) {
+    return Tokenizer_whitespace(this, pos, ch)
+  } elif Tokenizer_isCommentBlock(this, ch) {
+    return Tokenizer_commentBlock(this, pos, ch)
+  } elif Tokenizer_isCommentLine(this, ch) {
+    return Tokenizer_commentLine(this, pos, ch)
+  } else {
+    return Token{TK_UNKNOWN, ch.str(), pos, this.reader.pos}
+  }
+}
+
+fn Tokenizer_walk (mut this: Tokenizer, match: fn (char) bool) str {
+  mut result: str
+
+  loop !Reader_eof(this.reader) {
+    pos := this.reader.pos
+    ch := Reader_next(this.reader)
+
+    if !match(ch) {
+      Reader_seek(this.reader, pos)
+      break
+    }
+
+    result += ch.str()
+  }
+
+  return result
+}
+
+fn Tokenizer_isCommentBlock (mut this: Tokenizer, ch1: char) bool {
+  mut result := false
+
+  if (ch1 == '/' && !Reader_eof(this.reader) {
+    pos2 := this.reader.pos
+    ch2 := Reader_next(this.reader)
+
+    if ch2 == '*' {
+      result = true
+    }
+
+    Reader_seek(this.reader, pos2)
+  }
+
+  return result
+}
+
+fn Tokenizer_isCommentLine (mut this: Tokenizer, ch1: char) bool {
+  mut result := false
+
+  if (ch1 == '/' && !Reader_eof(this.reader) {
+    pos2 := this.reader.pos
+    ch2 := Reader_next(this.reader)
+
+    if ch2 == '/' {
+      result = true
+    }
+
+    Reader_seek(this.reader, pos2)
+  }
+
+  return result
+}
+
+fn Tokenizer_isWhitespace (mut this: Tokenizer, ch: char) bool {
+  return Token_isWhitespace(ch)
+}
+
+fn Tokenizer_commentBlock (mut this: Tokenizer, pos: int, ch1: char) Token {
+  ch2 := Reader_next(this.reader)
+  mut val := ch1.str() + ch2.str()
+
+  loop Reader_eof(this.reader) {
+    ch3 := Reader_next(this.reader)
+    val += ch3.str()
+
+    if ch3 == '*' && !Reader_eof(this.reader) {
+      loc4 := this.reader.pos
+      ch4 := Reader_next(this.reader)
+
+      if ch4 == '/' {
+        val += ch4.str()
+        break
+      }
+
+      Reader_seek(loc4)
+    }
+  }
+
+  return Token{TK_COMMENT_BLOCK, val, pos, this.reader.pos}
+}
+
+fn Tokenizer_commentLine (mut this: Tokenizer, pos: int, ch1: char) Token {
+  fn checkCommentLine (ch: char) bool {
+    return ch != '\n'
+  }
+
+  val := ch1.str() + ch2.str() + Tokenizer_walk(this, checkCommentLine)
+  return Token{TK_COMMENT_LINE, val, pos, this.reader.pos}
+}
+
+fn Tokenizer_whitespace (mut this: Tokenizer, pos: int, ch1: char) Token {
+  val := ch1.str() + Tokenizer_walk(this, Token_isWhitespace)
+  return Token{TK_WHITESPACE, val, pos, this.reader.pos}
+}

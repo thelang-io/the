@@ -340,7 +340,7 @@ std::string Codegen::_flags () const {
   return result;
 }
 
-CodegenNode Codegen::_node (const ASTNode &node) {
+CodegenNode Codegen::_node (const ASTNode &node, bool root) {
   auto setUp = std::string();
   auto code = std::string();
   auto cleanUp = std::string();
@@ -354,7 +354,7 @@ CodegenNode Codegen::_node (const ASTNode &node) {
   } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) { // todo test
     auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
 
-    code = std::string(this->indent, ' ') + this->_nodeExpr(nodeExpr, true) + ";" EOL;
+    code = (root ? std::string(this->indent, ' ') : "") + this->_nodeExpr(nodeExpr, true) + (root ? ";" EOL : "");
     return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) { // todo varMap save/restore
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
@@ -365,7 +365,44 @@ CodegenNode Codegen::_node (const ASTNode &node) {
     this->varMap.restore();
 
     return this->_wrapNode(node, setUp, code, cleanUp);
-  } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) { // todo varMap save/restore
+  } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
+    auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
+    this->varMap.save();
+
+    if (nodeLoop.init == std::nullopt && nodeLoop.cond == std::nullopt && nodeLoop.upd == std::nullopt) {
+      code = std::string(this->indent, ' ') + "while (1)";
+    } else if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
+      code = std::string(this->indent, ' ') + "while (" + this->_nodeExpr(*nodeLoop.cond, true) + ")";
+    } else if (nodeLoop.init != std::nullopt && !std::get<2>(this->_node(*nodeLoop.init)).empty()) {
+      code = std::string(this->indent, ' ') + "{" EOL;
+      this->indent += 2;
+
+      // todo delete setUp from entire app?
+      auto [_, initCode, initCleanUp] = this->_node(*nodeLoop.init);
+
+      code += initCode;
+      code += std::string(this->indent, ' ') + "for (;";
+      code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
+      code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true));
+      code += ") {" EOL + this->_block(nodeLoop.body) + std::string(this->indent, ' ') + "}" EOL;
+      code += initCleanUp;
+
+      this->indent -= 2;
+      code += std::string(this->indent, ' ') + "}" EOL;
+      this->varMap.restore();
+
+      return this->_wrapNode(node, setUp, code, cleanUp);
+    } else {
+      code = std::string(this->indent, ' ') + "for (";
+      code += (nodeLoop.init == std::nullopt ? "" : std::get<1>(this->_node(*nodeLoop.init, false))) + ";";
+      code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
+      code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true)) + ")";
+    }
+
+    code += " {" EOL + this->_block(nodeLoop.body) + std::string(this->indent, ' ') + "}" EOL;
+    this->varMap.restore();
+
+    return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
     auto nodeMain = std::get<ASTNodeMain>(*node.body);
 
@@ -394,7 +431,7 @@ CodegenNode Codegen::_node (const ASTNode &node) {
       initCode = R"(str_alloc(""))";
     }
 
-    code = std::string(this->indent, ' ') + type + name + " = " + initCode + ";" EOL;
+    code = (root ? std::string(this->indent, ' ') : "") + type + name + " = " + initCode + (root ? ";" EOL : "");
 
     if (nodeVarDecl.var->type->isStr()) {
        this->builtins.fnStrFree = true;

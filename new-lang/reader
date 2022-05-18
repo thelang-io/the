@@ -1,0 +1,54 @@
+obj Reader {
+  path: str
+  content: str
+  pos: int
+}
+
+fn Reader_init (p: str) Reader {
+  mut path: str
+
+  try {
+    path = realpathSync(p)
+  } catch err: Error {
+    throw Error("Error: no such file \"" + path + "\"")
+  }
+
+  if !isFileSync(path) {
+    throw Error("Error: path \"" + path + "\" is not a file")
+  }
+
+  mut content: str
+
+  try {
+    content = readFileSync(path, "utf8")
+  } catch err: Error {
+    throw Error("Error: unable to open file \"" + path + "\"")
+  }
+
+  return Reader{path: path, content: content, pos: 0}
+}
+
+fn Reader_eof (this: Reader) bool {
+  return this.pos >= this.content.len
+}
+
+fn Reader_next (mut this: Reader) char {
+  if Reader_eof(this) {
+    throw Error("Error: tried to read on eof")
+  }
+
+  ch := this.content[this.pos]
+
+  // todo: better way of handling
+  if OS == "win" && ch == '\r' && this.content[this.pos + 1] == '\n' {
+    this.pos += 2
+    return '\n'
+  } else {
+    this.pos += 1
+    return ch
+  }
+}
+
+fn Reader_seek (mut this: Reader, pos: int) {
+  this.pos = pos
+}

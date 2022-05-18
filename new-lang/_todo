@@ -1,0 +1,13 @@
+// features:
+// - array
+// - optionals
+// - enum
+// - union
+// - try-catch | throw
+
+// globals:
+// - print | realpathSync | isFileSync
+// - readFileSync writeFileSync
+// - stderr argv
+// - EOL | OS
+// - exit | EXIT_FAILURE | EXIT_SUCCESS

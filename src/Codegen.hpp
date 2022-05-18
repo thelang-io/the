@@ -58,7 +58,7 @@ class Codegen {
   std::string _block (const ASTBlock &);
   std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
   std::string _flags () const;
-  CodegenNode _node (const ASTNode &);
+  CodegenNode _node (const ASTNode &, bool = true);
   std::string _nodeIf (const ASTNodeIf &);
   std::string _nodeExpr (const ASTNodeExpr &, bool = false);
   std::string _type (const Type *, bool);
