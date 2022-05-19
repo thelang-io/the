@@ -47,6 +47,7 @@ struct str str_concat_cstr (struct str, const char *);
 bool str_eq_cstr (struct str, const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
+bool str_ne_cstr (struct str, const char *);
 struct str str_realloc (struct str, struct str);
 void *alloc (size_t);
 
@@ -77,6 +78,11 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.c);
 }
+bool str_ne_cstr (struct str s, const char *c) {
+  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
+  free(s.c);
+  return r;
+}
 struct str str_realloc (struct str s1, struct str s2) {
   free(s1.c);
   return s2;
@@ -93,15 +99,15 @@ void *alloc (size_t l) {
 int main () {
   {
     struct str __THE_0_i_0 = str_alloc("");
-    for (; !str_eq_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
+    for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
     }
     str_free((struct str) __THE_0_i_0);
   }
   struct str __THE_0_a_0 = str_alloc("");
-  for (; !str_eq_cstr(str_copy(__THE_0_a_0), "aaa"); __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "a"))) {
+  for (; str_ne_cstr(str_copy(__THE_0_a_0), "aaa"); __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "a"))) {
   }
   struct str __THE_0_b_0 = str_alloc("");
-  while (!str_eq_cstr(str_copy(__THE_0_b_0), "aaa")) {
+  while (str_ne_cstr(str_copy(__THE_0_b_0), "aaa")) {
     __THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_cstr(str_copy(__THE_0_b_0), "a"));
   }
   struct str __THE_0_c_0 = str_alloc("");
@@ -113,7 +119,113 @@ int main () {
   }
   {
     struct str __THE_0_d_0 = str_alloc("");
-    for (; !str_eq_cstr(str_copy(__THE_0_d_0), "aaa");) {
+    for (; str_ne_cstr(str_copy(__THE_0_d_0), "aaa");) {
+      __THE_0_d_0 = str_realloc(__THE_0_d_0, str_concat_cstr(str_copy(__THE_0_d_0), "a"));
+    }
+    str_free((struct str) __THE_0_d_0);
+  }
+  {
+    struct str __THE_0_e_0 = str_alloc("");
+    for (;; __THE_0_e_0 = str_realloc(__THE_0_e_0, str_concat_cstr(str_copy(__THE_0_e_0), "a"))) {
+      if (str_eq_cstr(str_copy(__THE_0_e_0), "aaa")) {
+        break;
+      }
+    }
+    str_free((struct str) __THE_0_e_0);
+  }
+  str_free((struct str) __THE_0_c_0);
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a_0);
+}
+======= code-windows =======
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+bool str_eq_cstr (struct str, const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+bool str_ne_cstr (struct str, const char *);
+struct str str_realloc (struct str, struct str);
+void *alloc (size_t);
+
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_concat_cstr (struct str s, const char *c) {
+  size_t l = s.l + strlen(c);
+  char *r = alloc(l);
+  memcpy(r, s.c, s.l);
+  memcpy(&r[s.l], c, l - s.l);
+  free(s.c);
+  return (struct str) {r, l};
+}
+bool str_eq_cstr (struct str s, const char *c) {
+  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
+  free(s.c);
+  return r;
+}
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+bool str_ne_cstr (struct str s, const char *c) {
+  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
+  free(s.c);
+  return r;
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+int main () {
+  {
+    struct str __THE_0_i_0 = str_alloc("");
+    for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
+    }
+    str_free((struct str) __THE_0_i_0);
+  }
+  struct str __THE_0_a_0 = str_alloc("");
+  for (; str_ne_cstr(str_copy(__THE_0_a_0), "aaa"); __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "a"))) {
+  }
+  struct str __THE_0_b_0 = str_alloc("");
+  while (str_ne_cstr(str_copy(__THE_0_b_0), "aaa")) {
+    __THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_cstr(str_copy(__THE_0_b_0), "a"));
+  }
+  struct str __THE_0_c_0 = str_alloc("");
+  while (1) {
+    if (str_eq_cstr(str_copy(__THE_0_c_0), "aaa")) {
+      break;
+    }
+    __THE_0_c_0 = str_realloc(__THE_0_c_0, str_concat_cstr(str_copy(__THE_0_c_0), "a"));
+  }
+  {
+    struct str __THE_0_d_0 = str_alloc("");
+    for (; str_ne_cstr(str_copy(__THE_0_d_0), "aaa");) {
       __THE_0_d_0 = str_realloc(__THE_0_d_0, str_concat_cstr(str_copy(__THE_0_d_0), "a"));
     }
     str_free((struct str) __THE_0_d_0);

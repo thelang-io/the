@@ -38,6 +38,10 @@ std::string Codegen::name (const std::string &name) {
   return "__THE_0_" + name;
 }
 
+std::string Codegen::typeName (const std::string &name) {
+  return "__THE_1_" + name;
+}
+
 Codegen::Codegen (AST *a) {
   this->ast = a;
   this->reader = this->ast->reader;
@@ -59,7 +63,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
       mainSetUp += nodeSetUp;
       mainCode += nodeCode;
       mainCleanUp = nodeCleanUp + mainCleanUp;
-    } else { // todo test
+    } else {
       this->indent = 2;
       auto [nodeSetUp, nodeCode, nodeCleanUp] = this->_node(node);
       this->indent = 0;
@@ -111,6 +115,31 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFunctionDeclarationsCode += "bool cstr_eq_str (const char *, struct str);" EOL;
     builtinFunctionDefinitionsCode += "bool cstr_eq_str (const char *c, struct str s) {" EOL;
     builtinFunctionDefinitionsCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
+    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
+    builtinFunctionDefinitionsCode += "  return r;" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCstrNeCstr) {
+    this->builtins.libStdbool = true;
+    this->builtins.libString = true;
+
+    builtinFunctionDeclarationsCode += "bool cstr_ne_cstr (const char *, const char *);" EOL;
+    builtinFunctionDefinitionsCode += "bool cstr_ne_cstr (const char *c1, const char *c2) {" EOL;
+    builtinFunctionDefinitionsCode += "  size_t l = strlen(c1);" EOL;
+    builtinFunctionDefinitionsCode += "  return l != strlen(c2) || memcmp(c1, c2, l) != 0;" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCstrNeStr) {
+    this->builtins.libStdbool = true;
+    this->builtins.libStdlib = true;
+    this->builtins.libString = true;
+    this->builtins.typeStr = true;
+
+    builtinFunctionDeclarationsCode += "bool cstr_ne_str (const char *, struct str);" EOL;
+    builtinFunctionDefinitionsCode += "bool cstr_ne_str (const char *c, struct str s) {" EOL;
+    builtinFunctionDefinitionsCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
     builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
     builtinFunctionDefinitionsCode += "  return r;" EOL;
     builtinFunctionDefinitionsCode += "}" EOL;
@@ -217,6 +246,35 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFunctionDefinitionsCode += "}" EOL;
   }
 
+  if (this->builtins.fnStrNeCstr) {
+    this->builtins.libStdbool = true;
+    this->builtins.libStdlib = true;
+    this->builtins.libString = true;
+    this->builtins.typeStr = true;
+
+    builtinFunctionDeclarationsCode += "bool str_ne_cstr (struct str, const char *);" EOL;
+    builtinFunctionDefinitionsCode += "bool str_ne_cstr (struct str s, const char *c) {" EOL;
+    builtinFunctionDefinitionsCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
+    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
+    builtinFunctionDefinitionsCode += "  return r;" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrNeStr) {
+    this->builtins.libStdbool = true;
+    this->builtins.libStdlib = true;
+    this->builtins.libString = true;
+    this->builtins.typeStr = true;
+
+    builtinFunctionDeclarationsCode += "bool str_ne_str (struct str, struct str);" EOL;
+    builtinFunctionDefinitionsCode += "bool str_ne_str (struct str s1, struct str s2) {" EOL;
+    builtinFunctionDefinitionsCode += "  bool r = s1.l != s2.l || memcmp(s1.c, s2.c, s1.l) != 0;" EOL;
+    builtinFunctionDefinitionsCode += "  free(s1.c);" EOL;
+    builtinFunctionDefinitionsCode += "  free(s2.c);" EOL;
+    builtinFunctionDefinitionsCode += "  return r;" EOL;
+    builtinFunctionDefinitionsCode += "}" EOL;
+  }
+
   if (this->builtins.fnStrNot) {
     this->builtins.libStdbool = true;
     this->builtins.libStdlib = true;
@@ -285,6 +343,10 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += builtinStructDefinitionsCode;
   output += builtinFunctionDeclarationsCode;
   output += builtinFunctionDefinitionsCode;
+  output += this->objDecl + (this->objDecl.empty() ? "" : EOL);
+  output += this->objDef + (this->objDef.empty() ? "" : EOL);
+  output += this->fnDecl + (this->fnDecl.empty() ? "" : EOL);
+  output += this->fnDef + (this->fnDef.empty() ? "" : EOL);
   output += "int main () {" EOL;
   output += topLevelSetUp;
   output += topLevelCode;
@@ -322,11 +384,10 @@ std::string Codegen::_exprAccess (const std::shared_ptr<ASTMemberObj> &exprAcces
     return Codegen::name(id->codeName);
   }
 
-  // todo test
   auto member = std::get<ASTMember>(*exprAccessBody);
   auto memberObj = this->_exprAccess(member.obj);
 
-  return memberObj + "." + Codegen::name(member.prop);
+  return memberObj + "->" + Codegen::name(member.prop);
 }
 
 std::string Codegen::_flags () const {
@@ -411,7 +472,70 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
     this->varMap.restore();
 
     return this->_wrapNode(node, setUp, code, cleanUp);
-  } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) { // todo
+  } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+    auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+    auto obj = std::get<TypeObj>(nodeObjDecl.var->type->body);
+    auto type = this->_type(nodeObjDecl.var->type, true);
+    auto typeName = Codegen::typeName(nodeObjDecl.var->type->name);
+
+    this->objDecl += "struct " + typeName + ";" EOL;
+    this->objDef += "struct " + typeName + " {" EOL;
+
+    for (const auto &objField : obj.fields) {
+      this->objDef += "  " + this->_type(objField.type, true) + Codegen::name(objField.name) + ";" EOL;
+    }
+
+    this->objDef += "};" EOL;
+
+    this->builtins.fnAlloc = true;
+    this->builtins.libStdlib = true;
+
+    auto allocParamTypes = std::string();
+    auto allocParams = std::string();
+    auto allocCode = std::string("  " + type + "r = alloc(sizeof(struct " + typeName + "));" EOL);
+    auto copyCode = std::string("  " + type + "r = alloc(sizeof(struct " + typeName + "));" EOL);
+    auto freeCode = std::string();
+    auto reallocCode = std::string("  " + typeName + "_free((" + type + ") o1);" EOL "  return o2;" EOL);
+
+    for (const auto &objField : obj.fields) {
+      auto objFieldName = Codegen::name(objField.name);
+      auto objFieldType = this->_type(objField.type, true);
+
+      if (objField.type->isObj()) {
+        auto objFieldTypeName = Codegen::typeName(objField.type->name);
+
+        copyCode += "  r->" + objFieldName + " = " + objFieldTypeName + "_copy(o->" + objFieldName + ");" EOL;
+        freeCode += "  " + objFieldTypeName + "_free((" + objFieldType + ") o->" + objFieldName + ");" EOL;
+      } else if (objField.type->isStr()) {
+        this->builtins.fnStrCopy = true;
+        this->builtins.fnStrFree = true;
+
+        copyCode += "  r->" + objFieldName + " = str_copy(o->" + objFieldName + ");" EOL;
+        freeCode += "  str_free((struct str) o->" + objFieldName + ");" EOL;
+      } else {
+        copyCode += "  r->" + objFieldName + " = o->" + objFieldName + ";" EOL;
+      }
+
+      allocParamTypes += ", " + (objFieldType.ends_with(" ") ? objFieldType.substr(0, objFieldType.size() - 1) : objFieldType);
+      allocParams += ", " + objFieldType + objFieldName;
+      allocCode += "  r->" + objFieldName + " = " + objFieldName + ";" EOL;
+    }
+
+    allocCode += "  return r;" EOL;
+    copyCode += "  return r;" EOL;
+    freeCode += "  free(o);" EOL;
+
+    this->fnDecl += type + typeName + "_alloc (" + allocParamTypes.substr(2) + ");" EOL;
+    this->fnDecl += type + typeName + "_copy (" + type + ");" EOL;
+    this->fnDecl += "void " + typeName + "_free (" + type + ");" EOL;
+    this->fnDecl += type + typeName + "_realloc (" + type + ", " + type + ");" EOL;
+
+    this->fnDef += type + typeName + "_alloc (" + allocParams.substr(2) + ") {" EOL + allocCode + "}" EOL;
+    this->fnDef += type + typeName + "_copy (" + type + "o) {" EOL + copyCode + "}" EOL;
+    this->fnDef += "void " + typeName + "_free (" + type + "o) {" EOL + freeCode + "}" EOL;
+    this->fnDef += type + typeName + "_realloc (" + type + "o1, " + type + "o2) {" EOL + reallocCode + "}" EOL;
+
+    return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) { // todo
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
@@ -433,9 +557,14 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
 
     code = (root ? std::string(this->indent, ' ') : "") + type + name + " = " + initCode + (root ? ";" EOL : "");
 
-    if (nodeVarDecl.var->type->isStr()) {
-       this->builtins.fnStrFree = true;
-       cleanUp = std::string(this->indent, ' ') + "str_free((struct str) " + name + ");" EOL;
+    if (nodeVarDecl.var->type->isObj()) {
+      auto cleanUpType = this->_type(nodeVarDecl.var->type, true);
+      auto cleanUpTypeName = Codegen::typeName(nodeVarDecl.var->type->name);
+
+      cleanUp = std::string(this->indent, ' ') + cleanUpTypeName + "_free((" + cleanUpType + ") " + name + ");" EOL;
+    } else if (nodeVarDecl.var->type->isStr()) {
+      this->builtins.fnStrFree = true;
+      cleanUp = std::string(this->indent, ' ') + "str_free((struct str) " + name + ");" EOL;
     }
 
     return this->_wrapNode(node, setUp, code, cleanUp);
@@ -469,7 +598,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
     auto code = this->_exprAccess(exprAccess.body);
 
-    if (!root && nodeExpr.type->isStr()) {
+    if (!root && nodeExpr.type->isObj()) {
+      auto typeName = Codegen::typeName(nodeExpr.type->name);
+      code = typeName + "_copy(" + code + ")";
+    } else if (!root && nodeExpr.type->isStr()) {
       this->builtins.fnStrCopy = true;
       code = "str_copy(" + code + ")";
     }
@@ -479,7 +611,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
     auto leftCode = this->_exprAccess(exprAssign.left.body);
 
-    if (exprAssign.right.type->isStr()) {
+    if (exprAssign.right.type->isObj()) {
+      auto typeName = Codegen::typeName(nodeExpr.type->name);
+      auto code = leftCode + " = " + typeName + "_realloc(" + leftCode + ", " + this->_nodeExpr(exprAssign.right) + ")";
+
+      if (!root && nodeExpr.type->isStr()) {
+        code = typeName + "_copy(" + code + ")";
+      }
+
+      return this->_wrapNodeExpr(nodeExpr, code);
+    } else if (exprAssign.right.type->isStr()) {
       auto rightCode = std::string();
 
       if (exprAssign.op == AST_EXPR_ASSIGN_ADD) {
@@ -558,40 +699,46 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
           return this->_wrapNodeExpr(nodeExpr, "str_concat_str(" + leftCode + ", " + rightCode + ")");
         }
       } else if (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) {
+        auto opName = std::string(exprBinary.op == AST_EXPR_BINARY_NE ? "ne" : "eq");
+
         if (nodeExpr.isLit()) {
-          this->builtins.fnCstrEqCstr = true;
+          if (exprBinary.op == AST_EXPR_BINARY_EQ) {
+            this->builtins.fnCstrEqCstr = true;
+          } else {
+            this->builtins.fnCstrNeCstr = true;
+          }
 
-          auto code = "cstr_eq_cstr(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")";
-          return this->_wrapNodeExpr(nodeExpr, (exprBinary.op == AST_EXPR_BINARY_NE ? "!" : "") + code);
-        } else if (exprBinary.right.isLit()) {
-          this->builtins.fnStrEqCstr = true;
-
-          auto leftCode = this->_nodeExpr(exprBinary.left);
-          auto code = "str_eq_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")";
-
-          return this->_wrapNodeExpr(nodeExpr, (exprBinary.op == AST_EXPR_BINARY_NE ? "!" : "") + code);
+          auto code = "cstr_" + opName + "_cstr(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")";
+          return this->_wrapNodeExpr(nodeExpr, code);
         } else if (exprBinary.left.isLit()) {
-          this->builtins.fnCstrEqStr = true;
+          if (exprBinary.op == AST_EXPR_BINARY_EQ) {
+            this->builtins.fnCstrEqStr = true;
+          } else {
+            this->builtins.fnCstrNeStr = true;
+          }
 
           auto rightCode = this->_nodeExpr(exprBinary.right);
-          auto code = "cstr_eq_str(" + exprBinary.left.litBody() + ", " + rightCode + ")";
-
-          return this->_wrapNodeExpr(nodeExpr, (exprBinary.op == AST_EXPR_BINARY_NE ? "!" : "") + code);
+          return this->_wrapNodeExpr(nodeExpr, "cstr_" + opName + "_str(" + exprBinary.left.litBody() + ", " + rightCode + ")");
         } else if (exprBinary.right.isLit()) {
-          this->builtins.fnStrEqCstr = true;
+          if (exprBinary.op == AST_EXPR_BINARY_EQ) {
+            this->builtins.fnStrEqCstr = true;
+          } else {
+            this->builtins.fnStrNeCstr = true;
+          }
 
           auto leftCode = this->_nodeExpr(exprBinary.left);
-          auto code = "str_eq_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")";
-
-          return this->_wrapNodeExpr(nodeExpr, (exprBinary.op == AST_EXPR_BINARY_NE ? "!" : "") + code);
+          return this->_wrapNodeExpr(nodeExpr, "str_" + opName + "_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")");
         } else {
-          this->builtins.fnStrEqStr = true;
+          if (exprBinary.op == AST_EXPR_BINARY_EQ) {
+            this->builtins.fnStrEqStr = true;
+          } else {
+            this->builtins.fnStrNeStr = true;
+          }
 
           auto leftCode = this->_nodeExpr(exprBinary.left);
           auto rightCode = this->_nodeExpr(exprBinary.right);
-          auto code = "str_eq_str(" + leftCode + ", " + rightCode + ")";
 
-          return this->_wrapNodeExpr(nodeExpr, (exprBinary.op == AST_EXPR_BINARY_NE ? "!" : "") + code);
+          return this->_wrapNodeExpr(nodeExpr, "str_" + opName + "_str(" + leftCode + ", " + rightCode + ")");
         }
       }
     }
@@ -656,7 +803,21 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     }
 
     return this->_wrapNodeExpr(nodeExpr, exprLit.body);
-  } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) { // todo
+  } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
+    auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
+    auto obj = std::get<TypeObj>(exprObj.type->body);
+    auto typeName = Codegen::typeName(exprObj.type->name);
+    auto fieldsCode = std::string();
+
+    for (const auto &objField : obj.fields) {
+      auto exprObjProp = std::find_if(exprObj.props.begin(), exprObj.props.end(), [&objField] (const auto &it) -> bool {
+        return it.id == objField.name;
+      });
+
+      fieldsCode += ", " + this->_nodeExpr(exprObjProp->init);
+    }
+
+    return this->_wrapNodeExpr(nodeExpr, typeName + "_alloc(" + fieldsCode.substr(2) + ")");
   } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.body)) {
     auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
     auto argCode = this->_nodeExpr(exprUnary.arg);
@@ -707,6 +868,9 @@ std::string Codegen::_type (const Type *type, bool mut) {
   } else if (type->isI64()) {
     this->builtins.libStdint = true;
     typeName = "int64_t";
+  } else if (type->isObj()) {
+    typeName = "struct " + Codegen::typeName(type->name);
+    return std::string(mut ? "" : "const ") + typeName + " *";
   } else if (type->isStr()) {
     this->builtins.typeStr = true;
     typeName = "struct str";

@@ -110,6 +110,11 @@ INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenTest, testing::Values(
   "expr-lit-str-esc"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprObj, CodegenTest, testing::Values(
+  "expr-obj",
+  "expr-obj-nested"
+));
+
 INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenTest, testing::Values(
   "expr-unary",
   "expr-unary-nested",
@@ -127,6 +132,10 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenTest, testing::Values(
   "node-loop-empty",
   "node-loop-while",
   "node-loop-str"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenTest, testing::Values(
+  "node-obj-decl"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(

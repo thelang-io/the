@@ -56,11 +56,15 @@ struct str {
 
 bool cstr_eq_cstr (const char *, const char *);
 bool cstr_eq_str (const char *, struct str);
+bool cstr_ne_cstr (const char *, const char *);
+bool cstr_ne_str (const char *, struct str);
 struct str str_alloc (const char *);
 bool str_eq_cstr (struct str, const char *);
 bool str_eq_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
+bool str_ne_cstr (struct str, const char *);
+bool str_ne_str (struct str, struct str);
 void *alloc (size_t);
 
 bool cstr_eq_cstr (const char *c1, const char *c2) {
@@ -69,6 +73,15 @@ bool cstr_eq_cstr (const char *c1, const char *c2) {
 }
 bool cstr_eq_str (const char *c, struct str s) {
   bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
+  free(s.c);
+  return r;
+}
+bool cstr_ne_cstr (const char *c1, const char *c2) {
+  size_t l = strlen(c1);
+  return l != strlen(c2) || memcmp(c1, c2, l) != 0;
+}
+bool cstr_ne_str (const char *c, struct str s) {
+  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
   free(s.c);
   return r;
 }
@@ -96,6 +109,17 @@ struct str str_copy (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.c);
+}
+bool str_ne_cstr (struct str s, const char *c) {
+  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
+  free(s.c);
+  return r;
+}
+bool str_ne_str (struct str s1, struct str s2) {
+  bool r = s1.l != s2.l || memcmp(s1.c, s2.c, s1.l) != 0;
+  free(s1.c);
+  free(s2.c);
+  return r;
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -125,21 +149,21 @@ int main () {
   }
   if (str_eq_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s1_0))) {
   }
-  if (!cstr_eq_cstr("hello", "hello")) {
+  if (cstr_ne_cstr("hello", "hello")) {
   }
-  if (!cstr_eq_cstr("", "hello")) {
+  if (cstr_ne_cstr("", "hello")) {
   }
-  if (!str_eq_cstr(str_copy(__THE_0_s1_0), "str1")) {
+  if (str_ne_cstr(str_copy(__THE_0_s1_0), "str1")) {
   }
-  if (!str_eq_cstr(str_copy(__THE_0_s1_0), "str")) {
+  if (str_ne_cstr(str_copy(__THE_0_s1_0), "str")) {
   }
-  if (!cstr_eq_str("str1", str_copy(__THE_0_s1_0))) {
+  if (cstr_ne_str("str1", str_copy(__THE_0_s1_0))) {
   }
-  if (!cstr_eq_str("str", str_copy(__THE_0_s1_0))) {
+  if (cstr_ne_str("str", str_copy(__THE_0_s1_0))) {
   }
-  if (!str_eq_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s1_0))) {
+  if (str_ne_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s1_0))) {
   }
-  if (!str_eq_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s2_0))) {
+  if (str_ne_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s2_0))) {
   }
   str_free((struct str) __THE_0_s2_0);
   str_free((struct str) __THE_0_s1_0);
@@ -157,11 +181,15 @@ struct str {
 
 bool cstr_eq_cstr (const char *, const char *);
 bool cstr_eq_str (const char *, struct str);
+bool cstr_ne_cstr (const char *, const char *);
+bool cstr_ne_str (const char *, struct str);
 struct str str_alloc (const char *);
 bool str_eq_cstr (struct str, const char *);
 bool str_eq_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
+bool str_ne_cstr (struct str, const char *);
+bool str_ne_str (struct str, struct str);
 void *alloc (size_t);
 
 bool cstr_eq_cstr (const char *c1, const char *c2) {
@@ -170,6 +198,15 @@ bool cstr_eq_cstr (const char *c1, const char *c2) {
 }
 bool cstr_eq_str (const char *c, struct str s) {
   bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
+  free(s.c);
+  return r;
+}
+bool cstr_ne_cstr (const char *c1, const char *c2) {
+  size_t l = strlen(c1);
+  return l != strlen(c2) || memcmp(c1, c2, l) != 0;
+}
+bool cstr_ne_str (const char *c, struct str s) {
+  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
   free(s.c);
   return r;
 }
@@ -197,6 +234,17 @@ struct str str_copy (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.c);
+}
+bool str_ne_cstr (struct str s, const char *c) {
+  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
+  free(s.c);
+  return r;
+}
+bool str_ne_str (struct str s1, struct str s2) {
+  bool r = s1.l != s2.l || memcmp(s1.c, s2.c, s1.l) != 0;
+  free(s1.c);
+  free(s2.c);
+  return r;
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -226,21 +274,21 @@ int main () {
   }
   if (str_eq_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s1_0))) {
   }
-  if (!cstr_eq_cstr("hello", "hello")) {
+  if (cstr_ne_cstr("hello", "hello")) {
   }
-  if (!cstr_eq_cstr("", "hello")) {
+  if (cstr_ne_cstr("", "hello")) {
   }
-  if (!str_eq_cstr(str_copy(__THE_0_s1_0), "str1")) {
+  if (str_ne_cstr(str_copy(__THE_0_s1_0), "str1")) {
   }
-  if (!str_eq_cstr(str_copy(__THE_0_s1_0), "str")) {
+  if (str_ne_cstr(str_copy(__THE_0_s1_0), "str")) {
   }
-  if (!cstr_eq_str("str1", str_copy(__THE_0_s1_0))) {
+  if (cstr_ne_str("str1", str_copy(__THE_0_s1_0))) {
   }
-  if (!cstr_eq_str("str", str_copy(__THE_0_s1_0))) {
+  if (cstr_ne_str("str", str_copy(__THE_0_s1_0))) {
   }
-  if (!str_eq_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s1_0))) {
+  if (str_ne_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s1_0))) {
   }
-  if (!str_eq_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s2_0))) {
+  if (str_ne_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s2_0))) {
   }
   str_free((struct str) __THE_0_s2_0);
   str_free((struct str) __THE_0_s1_0);

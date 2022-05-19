@@ -17,6 +17,8 @@ struct CodegenBuiltins {
   bool fnCstrConcatStr = false;
   bool fnCstrEqCstr = false;
   bool fnCstrEqStr = false;
+  bool fnCstrNeCstr = false;
+  bool fnCstrNeStr = false;
   bool fnStrAlloc = false;
   bool fnStrConcatCstr = false;
   bool fnStrConcatStr = false;
@@ -24,6 +26,8 @@ struct CodegenBuiltins {
   bool fnStrEqStr = false;
   bool fnStrCopy = false;
   bool fnStrFree = false;
+  bool fnStrNeCstr = false;
+  bool fnStrNeStr = false;
   bool fnStrNot = false;
   bool fnStrRealloc = false;
   bool libStdbool = false;
@@ -43,9 +47,14 @@ class Codegen {
   std::size_t indent = 0;
   Reader *reader;
   VarMap varMap;
+  std::string fnDecl = "";
+  std::string fnDef = "";
+  std::string objDecl = "";
+  std::string objDef = "";
 
   static void compile (const std::string &, const std::tuple<std::string, std::string> &, bool = false);
   static std::string name (const std::string &);
+  static std::string typeName (const std::string &);
 
   explicit Codegen (AST *);
 
