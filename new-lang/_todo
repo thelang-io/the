@@ -3,6 +3,7 @@
 // - optionals
 // - enum
 // - union
+// - constants
 // - try-catch | throw
 
 // globals:
@@ -11,3 +12,7 @@
 // - stderr argv
 // - EOL | OS
 // - exit | EXIT_FAILURE | EXIT_SUCCESS
+// - env vars
+// - arr.join(char)
+// - str.len | str.slice
+// - int.str()

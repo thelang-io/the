@@ -1,0 +1,39 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+fn E0000 (unexpected: char, expected: char?) str {
+  return "E0000: Unexpected token `" + unexpected + "`" +
+    (expected == nil ? "" : ", expected `" + expected + "`")
+}
+
+fn E0001 () str {
+  return "E0001 - Unterminated comment"
+}
+
+fn E0002 () str {
+  return "E0002 - Unterminated character literal"
+}
+
+fn E0003 () str {
+  return "E0003 - Unterminated string literal"
+}
+
+fn E0004 () str {
+  return "E0004 - Empty character literal"
+}
+
+fn E0005 () str {
+  return "E0005 - Illegal character escape sequence"
+}
+
+fn E0006 () str {
+  return "E0006 - Illegal string escape sequence"
+}
+
+fn E0007 () str {
+  return "E0007 - Too many characters in character literal"
+}

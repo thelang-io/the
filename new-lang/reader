@@ -1,8 +1,9 @@
-obj Reader {
-  path: str
-  content: str
-  pos: int
-}
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 
 fn Reader_init (p: str) Reader {
   mut path: str
@@ -10,11 +11,11 @@ fn Reader_init (p: str) Reader {
   try {
     path = realpathSync(p)
   } catch err: Error {
-    throw Error("Error: no such file \"" + path + "\"")
+    throw NewError("No such file \"" + path + "\"")
   }
 
   if !isFileSync(path) {
-    throw Error("Error: path \"" + path + "\" is not a file")
+    throw NewError("Path \"" + path + "\" is not a file")
   }
 
   mut content: str
@@ -22,7 +23,7 @@ fn Reader_init (p: str) Reader {
   try {
     content = readFileSync(path, "utf8")
   } catch err: Error {
-    throw Error("Error: unable to open file \"" + path + "\"")
+    throw NewError("Unable to read file \"" + path + "\"")
   }
 
   return Reader{path: path, content: content, pos: 0}
@@ -32,23 +33,67 @@ fn Reader_eof (this: Reader) bool {
   return this.pos >= this.content.len
 }
 
+fn Reader_lookahead (mut this: Reader, check: char) bool {
+  if this.pos + 1 >= this.content.len {
+    return false
+  }
+
+  ch := this.content[this.pos + 1]
+
+  if (
+    OS == "win" &&
+    ch == '\r' &&
+    this.pos + 2 < this.content.len &&
+    this.content[this.pos + 2] == '\n'
+  ) {
+    if check == '\n' {
+      this.pos += 2
+      return true
+    }
+  } elif check == ch {
+    this.pos++
+    return true
+  }
+
+  return false
+}
+
 fn Reader_next (mut this: Reader) char {
   if Reader_eof(this) {
-    throw Error("Error: tried to read on eof")
+    throw NewError("Tried to read on eof")
   }
 
-  ch := this.content[this.pos]
+  ch1 := this.content[this.pos]
+  this.pos++
 
-  // todo: better way of handling
-  if OS == "win" && ch == '\r' && this.content[this.pos + 1] == '\n' {
-    this.pos += 2
-    return '\n'
-  } else {
-    this.pos += 1
-    return ch
+  if OS == "win" && ch1 == '\r' && !Reader_eof(this) {
+    ch2 := this.content[this.pos]
+
+    if ch2 == '\n' {
+      this.pos++
+      return ch2
+    }
   }
+
+  return ch1
 }
 
 fn Reader_seek (mut this: Reader, pos: int) {
   this.pos = pos
+}
+
+fn Reader_slice (this: Reader, start: int, end: int) str {
+  return this.content.slice(start, end)
+}
+
+fn Reader_walk (mut this: Reader, match: fn (char) bool) {
+  loop !Reader_eof(this) {
+    pos := this.pos
+    ch := Reader_next(this)
+
+    if !match(ch) {
+      Reader_seek(this, pos)
+      break
+    }
+  }
 }

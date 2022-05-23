@@ -1,7 +1,14 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 main {
   try {
     if argv.len == 1 {
-      throw Error("Error: REPL is not supported")
+      throw NewError("REPL is not supported")
     }
 
     mut fileName: str?
@@ -10,26 +17,37 @@ main {
       arg := argv[i]
 
       if arg[0] == '-' {
-        throw Error("Error: bad option " + arg)
+        throw NewError("Bad option " + arg)
       } elif fileName == nil {
         fileName = arg
       } else {
-        throw Error("Error: processing multiple files is not supported")
+        throw NewError("Processing multiple files is not supported")
       }
     }
 
     if fileName == nil {
-      throw Error("Error: file is not specified")
+      throw NewError("File is not specified")
     }
 
-    reader := Reader_init(fileName)
+    mut reader := Reader_init(fileName)
     mut tokenizer := Tokenizer_init(reader)
+    mut result: str[]
 
-    loop mut tok := Tokenizer_next(tokenizer); tok.type != TK_EOF; tok = Tokenizer_next(tokenizer) {
-      print(Token_str(tok))
+    loop (
+      mut tok := Tokenizer_next(tokenizer);
+      tok.type != TK_EOF;
+      tok = Tokenizer_next(tokenizer)
+    ) {
+      result.push(Token_str(tok))
+    }
+
+    if tokenizer.errors.len != 0 {
+      print(tokenizer.errors.join(EOL), to: stderr)
+    } else {
+      print(result.join(EOL))
     }
   } catch err: Error {
-    print(err.message, to: stderr)
+    print(err.name + ": " + err.message, to: stderr)
     exit(EXIT_FAILURE)
   }
 }
