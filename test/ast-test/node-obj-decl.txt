@@ -141,7 +141,7 @@ main {
                 <ExprCallArg>
                   <NodeExpr parenthesized="false">
                     <slot name="type">
-                      <BuiltinType name="any" />
+                      <BuiltinType name="int" />
                     </slot>
                     <slot name="body">
                       <ExprAccess>
@@ -299,7 +299,7 @@ main {
                 <ExprCallArg>
                   <NodeExpr parenthesized="false">
                     <slot name="type">
-                      <BuiltinType name="any" />
+                      <BuiltinType name="str" />
                     </slot>
                     <slot name="body">
                       <ExprLit type="STR">
@@ -815,7 +815,7 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="any" />
+                    <BuiltinType name="str" />
                   </slot>
                   <slot name="body">
                     <ExprLit type="STR">
@@ -827,7 +827,7 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="any" />
+                    <BuiltinType name="int" />
                   </slot>
                   <slot name="body">
                     <ExprCall>
@@ -1096,9 +1096,9 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <Type type="fn">
+                    <Type name="callbackLogicCb_0" type="fn">
                       <slot name="returnType">
-                        <BuiltinType name="any" />
+                        <BuiltinType name="void" />
                       </slot>
                     </Type>
                   </slot>

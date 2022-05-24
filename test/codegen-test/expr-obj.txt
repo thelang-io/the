@@ -104,17 +104,11 @@ struct __THE_1_Human_0 {
 };
 
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
-struct __THE_1_Point_0 *__THE_1_Point_0_copy (struct __THE_1_Point_0 *);
 void __THE_1_Point_0_free (struct __THE_1_Point_0 *);
-struct __THE_1_Point_0 *__THE_1_Point_0_realloc (struct __THE_1_Point_0 *, struct __THE_1_Point_0 *);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, int32_t);
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (struct __THE_1_Human_0 *);
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *, struct __THE_1_Human_0 *);
 
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_y) {
   struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
@@ -122,35 +116,16 @@ struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_
   r->__THE_0_y = __THE_0_y;
   return r;
 }
-struct __THE_1_Point_0 *__THE_1_Point_0_copy (struct __THE_1_Point_0 *o) {
-  struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
-  r->__THE_0_x = o->__THE_0_x;
-  r->__THE_0_y = o->__THE_0_y;
-  return r;
-}
 void __THE_1_Point_0_free (struct __THE_1_Point_0 *o) {
   free(o);
-}
-struct __THE_1_Point_0 *__THE_1_Point_0_realloc (struct __THE_1_Point_0 *o1, struct __THE_1_Point_0 *o2) {
-  __THE_1_Point_0_free((struct __THE_1_Point_0 *) o1);
-  return o2;
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   r->__THE_0_a = __THE_0_a;
   return r;
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *o) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = o->__THE_0_a;
-  return r;
-}
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
   free(o);
-}
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct __THE_1_Test_0 *o2) {
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
-  return o2;
 }
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
   struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
@@ -158,19 +133,9 @@ struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t 
   r->__THE_0_age = __THE_0_age;
   return r;
 }
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (struct __THE_1_Human_0 *o) {
-  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  r->__THE_0_name = str_copy(o->__THE_0_name);
-  r->__THE_0_age = o->__THE_0_age;
-  return r;
-}
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
   str_free((struct str) o->__THE_0_name);
   free(o);
-}
-struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *o1, struct __THE_1_Human_0 *o2) {
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o1);
-  return o2;
 }
 
 int main () {
@@ -258,17 +223,11 @@ struct __THE_1_Human_0 {
 };
 
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
-struct __THE_1_Point_0 *__THE_1_Point_0_copy (struct __THE_1_Point_0 *);
 void __THE_1_Point_0_free (struct __THE_1_Point_0 *);
-struct __THE_1_Point_0 *__THE_1_Point_0_realloc (struct __THE_1_Point_0 *, struct __THE_1_Point_0 *);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, int32_t);
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (struct __THE_1_Human_0 *);
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *, struct __THE_1_Human_0 *);
 
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_y) {
   struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
@@ -276,35 +235,16 @@ struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_
   r->__THE_0_y = __THE_0_y;
   return r;
 }
-struct __THE_1_Point_0 *__THE_1_Point_0_copy (struct __THE_1_Point_0 *o) {
-  struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
-  r->__THE_0_x = o->__THE_0_x;
-  r->__THE_0_y = o->__THE_0_y;
-  return r;
-}
 void __THE_1_Point_0_free (struct __THE_1_Point_0 *o) {
   free(o);
-}
-struct __THE_1_Point_0 *__THE_1_Point_0_realloc (struct __THE_1_Point_0 *o1, struct __THE_1_Point_0 *o2) {
-  __THE_1_Point_0_free((struct __THE_1_Point_0 *) o1);
-  return o2;
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   r->__THE_0_a = __THE_0_a;
   return r;
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *o) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = o->__THE_0_a;
-  return r;
-}
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
   free(o);
-}
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct __THE_1_Test_0 *o2) {
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
-  return o2;
 }
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
   struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
@@ -312,19 +252,9 @@ struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t 
   r->__THE_0_age = __THE_0_age;
   return r;
 }
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (struct __THE_1_Human_0 *o) {
-  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  r->__THE_0_name = str_copy(o->__THE_0_name);
-  r->__THE_0_age = o->__THE_0_age;
-  return r;
-}
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
   str_free((struct str) o->__THE_0_name);
   free(o);
-}
-struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *o1, struct __THE_1_Human_0 *o2) {
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o1);
-  return o2;
 }
 
 int main () {

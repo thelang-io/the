@@ -125,7 +125,7 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="any" />
+                    <BuiltinType name="int" />
                   </slot>
                   <slot name="body">
                     <ExprAccess>
@@ -139,7 +139,7 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="any" />
+                    <BuiltinType name="float" />
                   </slot>
                   <slot name="body">
                     <ExprAccess>

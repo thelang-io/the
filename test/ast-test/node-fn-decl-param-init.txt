@@ -85,7 +85,7 @@ fn test1 (p1 := "1", p2 := p1) {
                 <ExprCallArg>
                   <NodeExpr parenthesized="false">
                     <slot name="type">
-                      <BuiltinType name="any" />
+                      <BuiltinType name="str" />
                     </slot>
                     <slot name="body">
                       <ExprAccess>
@@ -120,7 +120,7 @@ fn test1 (p1 := "1", p2 := p1) {
                 <ExprCallArg>
                   <NodeExpr parenthesized="false">
                     <slot name="type">
-                      <BuiltinType name="any" />
+                      <BuiltinType name="str" />
                     </slot>
                     <slot name="body">
                       <ExprAccess>

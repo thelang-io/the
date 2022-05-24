@@ -1,0 +1,16 @@
+======= stdin =======
+main {
+  // todo test
+  // a.b()
+  // test.game(3)
+  // test1.test2.test3(5, 6)
+  // a.b.c.d.e(7, 8, c: 9)
+  // cls.ctor.name(10, 11, d: 12)
+  // country.codes.dial(13, 14, c: 15, d: 16)
+  // errors.invalid(17, 18, d: 19, c: 20)
+}
+======= code =======
+int main () {
+}
+======= flags =======
+======= stdout =======

@@ -341,7 +341,7 @@ print("Monkey", "Panda", "Elephant", terminator: "\n", separator: "_")
           <slot name="expr">
             <StmtExpr parenthesized="false" start="9:50" end="9:54">
               <ExprLit>
-                <Token type="LIT_STR" val="\"\\n\"" start="9:50" end="9:54" />
+                <Token type="LIT_STR" val="\"\n\"" start="9:50" end="9:54" />
               </ExprLit>
             </StmtExpr>
           </slot>

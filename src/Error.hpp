@@ -16,6 +16,7 @@
 #define E0003 "E0003 - Unterminated string literal"
 #define E0004 "E0004 - Empty character literal"
 #define E0005 "E0005 - Illegal character escape sequence"
+// +1 from here in new lang
 #define E0006 "E0006 - Too many characters in character literal"
 #define E0007 "E0007 - Integer literals with leading zero are not allowed"
 #define E0008 "E0008 - Invalid binary integer literal"

@@ -1,17 +1,16 @@
 ======= stdin =======
-obj Test1 {
-  a: str
-  b: int
-}
-
-obj Test2 {
-  a: bool
-}
-
 main {
+  -2
+  !3
+  ~4
+  !!0
 }
 ======= code =======
 int main () {
+  -2;
+  !3;
+  ~4;
+  !!0;
 }
 ======= flags =======
 ======= stdout =======

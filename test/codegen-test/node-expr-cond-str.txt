@@ -1,0 +1,61 @@
+======= stdin =======
+main {
+  a := "str1"
+  b := "str2"
+
+  true ? "str3" : "str4"
+  true ? "str5" : a
+  true ? b : "str6"
+  true ? a : b
+}
+======= code =======
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+void *alloc (size_t);
+
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+int main () {
+  const struct str __THE_0_a_0 = str_alloc("str1");
+  const struct str __THE_0_b_0 = str_alloc("str2");
+  str_free(true ? str_alloc("str3") : str_alloc("str4"));
+  str_free(true ? str_alloc("str5") : str_copy(__THE_0_a_0));
+  str_free(true ? str_copy(__THE_0_b_0) : str_alloc("str6"));
+  str_free(true ? str_copy(__THE_0_a_0) : str_copy(__THE_0_b_0));
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

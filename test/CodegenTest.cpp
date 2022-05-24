@@ -88,6 +88,11 @@ INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenTest, testing::Values(
   "expr-binary-nested"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenTest, testing::Values(
+  "expr-call",
+  "expr-call-obj-prop"
+));
+
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenTest, testing::Values(
   "expr-cond",
   "expr-cond-nested",
@@ -119,6 +124,28 @@ INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenTest, testing::Values(
   "expr-unary",
   "expr-unary-nested",
   "expr-unary-str"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenTest, testing::Values(
+  "node-expr-access",
+  "node-expr-access-str",
+  "node-expr-access-obj",
+  "node-expr-assign",
+  "node-expr-assign-str",
+  "node-expr-assign-obj",
+  "node-expr-binary",
+  "node-expr-binary-str",
+  "node-expr-binary-obj",
+  "node-expr-call",
+  "node-expr-cond",
+  "node-expr-cond-str",
+  "node-expr-cond-obj",
+  "node-expr-lit",
+  "node-expr-obj",
+  "node-expr-obj-str",
+  "node-expr-unary",
+  "node-expr-unary-str",
+  "node-expr-unary-obj"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenTest, testing::Values(

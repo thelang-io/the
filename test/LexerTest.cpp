@@ -690,14 +690,14 @@ TEST(LexerTest, LexLitChar) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:7-1:10): 'A'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:10-1:13): 'a'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:13-1:16): '9'");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:16-1:20): '\\n')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:20-1:24): '\\"')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:24-1:28): '\\'')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:28-1:32): '\\\\')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:16-1:20): '\n')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:20-1:24): '\"')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:24-1:28): '\'')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:28-1:32): '\\')");
 }
 
 TEST(LexerTest, LexLitCharWhitespace) {
-  auto reader = testing::NiceMock<MockReader>(R"( ' ' '!' 'A' 'a' '9' '\n' '\"' '\'' '\\' )");
+  auto reader = testing::NiceMock<MockReader>(R"( ' ' '!' 'A' 'a' '9' '\n' '"' '\'' '\\' )");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:2-1:5): ' '");
@@ -705,11 +705,11 @@ TEST(LexerTest, LexLitCharWhitespace) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:10-1:13): 'A'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:14-1:17): 'a'");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "LIT_CHAR(1:18-1:21): '9'");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:22-1:26): '\\n')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:27-1:31): '\\"')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:32-1:36): '\\'')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:37-1:41): '\\\\')");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:42-1:42)");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:22-1:26): '\n')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:27-1:30): '"')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:31-1:35): '\'')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_CHAR(1:36-1:40): '\\')");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:41-1:41)");
 }
 
 TEST(LexerTest, LexLitCharEof) {
@@ -738,10 +738,10 @@ TEST(LexerTest, LexLitCharEof) {
   EXPECT_EQ(std::get<1>(l3.next()).str(), "LIT_CHAR(1:1-1:4): 'A'");
   EXPECT_EQ(std::get<1>(l4.next()).str(), "LIT_CHAR(1:1-1:4): 'a'");
   EXPECT_EQ(std::get<1>(l5.next()).str(), "LIT_CHAR(1:1-1:4): '9'");
-  EXPECT_EQ(std::get<1>(l6.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\n')");
-  EXPECT_EQ(std::get<1>(l7.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\"')");
-  EXPECT_EQ(std::get<1>(l8.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\'')");
-  EXPECT_EQ(std::get<1>(l9.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\\\')");
+  EXPECT_EQ(std::get<1>(l6.next()).str(), R"(LIT_CHAR(1:1-1:5): '\n')");
+  EXPECT_EQ(std::get<1>(l7.next()).str(), R"(LIT_CHAR(1:1-1:5): '\"')");
+  EXPECT_EQ(std::get<1>(l8.next()).str(), R"(LIT_CHAR(1:1-1:5): '\'')");
+  EXPECT_EQ(std::get<1>(l9.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\')");
 }
 
 TEST(LexerTest, ThrowsOnNotClosedLitChar) {
@@ -1230,12 +1230,12 @@ TEST(LexerTest, LexLitStr) {
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:1-1:3): "")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:3-1:9): "test")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:9-1:29): "Hello,\\n\\r\\tWorld!")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:9-1:29): "Hello,\n\r\tWorld!")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:29-2:8): "Hello,)" ESC_EOL R"(World!")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:8-2:23): "Hello,\rWorld!")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:23-2:38): "Hello,\tWorld!")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:38-2:58): "multiple \\\\n lines")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:58-2:81): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:38-2:58): "multiple \\n lines")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:58-2:81): "\\0\\r\\t\"\'\\\0\r\t")");
 }
 
 TEST(LexerTest, LexLitStrWhitespace) {
@@ -1251,9 +1251,9 @@ TEST(LexerTest, LexLitStrWhitespace) {
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:2-1:4): "")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:5-1:11): "test")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:12-1:28): "Hello,\\nWorld!")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:29-1:49): "multiple \\\\n lines")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:50-1:73): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:12-1:28): "Hello,\nWorld!")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:29-1:49): "multiple \\n lines")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:50-1:73): "\\0\\r\\t\"\'\\\0\r\t")");
 }
 
 TEST(LexerTest, LexLitStrEof) {
@@ -1271,9 +1271,9 @@ TEST(LexerTest, LexLitStrEof) {
 
   EXPECT_EQ(std::get<1>(l1.next()).str(), R"(LIT_STR(1:1-1:3): "")");
   EXPECT_EQ(std::get<1>(l2.next()).str(), R"(LIT_STR(1:1-1:7): "test")");
-  EXPECT_EQ(std::get<1>(l3.next()).str(), R"(LIT_STR(1:1-1:17): "Hello,\\nWorld!")");
-  EXPECT_EQ(std::get<1>(l4.next()).str(), R"(LIT_STR(1:1-1:21): "multiple \\\\n lines")");
-  EXPECT_EQ(std::get<1>(l5.next()).str(), R"(LIT_STR(1:1-1:24): "\\\\0\\\\r\\\\t\\"\\'\\\\\\0\\r\\t")");
+  EXPECT_EQ(std::get<1>(l3.next()).str(), R"(LIT_STR(1:1-1:17): "Hello,\nWorld!")");
+  EXPECT_EQ(std::get<1>(l4.next()).str(), R"(LIT_STR(1:1-1:21): "multiple \\n lines")");
+  EXPECT_EQ(std::get<1>(l5.next()).str(), R"(LIT_STR(1:1-1:24): "\\0\\r\\t\"\'\\\0\r\t")");
 }
 
 TEST(LexerTest, ThrowsOnEmptyLitStr) {

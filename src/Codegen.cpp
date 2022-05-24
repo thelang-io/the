@@ -74,9 +74,28 @@ std::tuple<std::string, std::string> Codegen::gen () {
     }
   }
 
-  auto builtinFunctionDeclarationsCode = std::string();
-  auto builtinFunctionDefinitionsCode = std::string();
-  auto builtinStructDefinitionsCode = std::string();
+  auto fnDeclCode = std::string();
+  auto fnDefCode = std::string();
+  auto structDeclCode = std::string();
+  auto structDefCode = std::string();
+
+  for (const auto &entity : this->entities) {
+    if (!entity.active) {
+      continue;
+    }
+
+    if (entity.type == CODEGEN_ENTITY_FN) {
+      fnDeclCode += entity.decl + EOL;
+      fnDefCode += entity.def + EOL;
+    } else if (entity.type == CODEGEN_ENTITY_OBJ) {
+      structDeclCode += entity.decl + EOL;
+      structDefCode += entity.def + EOL;
+    }
+  }
+
+  auto builtinFnDeclCode = std::string();
+  auto builtinFnDefCode = std::string();
+  auto builtinStructDefCode = std::string();
 
   if (this->builtins.fnCstrConcatStr) {
     this->builtins.fnAlloc = true;
@@ -84,26 +103,26 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str cstr_concat_str (const char *, struct str);" EOL;
-    builtinFunctionDefinitionsCode += "struct str cstr_concat_str (const char *c, struct str s) {" EOL;
-    builtinFunctionDefinitionsCode += "  size_t l = s.l + strlen(c);" EOL;
-    builtinFunctionDefinitionsCode += "  char *r = alloc(l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(r, s.c, s.l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(&r[s.l], c, l - s.l);" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "struct str cstr_concat_str (const char *, struct str);" EOL;
+    builtinFnDefCode += "struct str cstr_concat_str (const char *c, struct str s) {" EOL;
+    builtinFnDefCode += "  size_t l = s.l + strlen(c);" EOL;
+    builtinFnDefCode += "  char *r = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(r, s.c, s.l);" EOL;
+    builtinFnDefCode += "  memcpy(&r[s.l], c, l - s.l);" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnCstrEqCstr) {
     this->builtins.libStdbool = true;
     this->builtins.libString = true;
 
-    builtinFunctionDeclarationsCode += "bool cstr_eq_cstr (const char *, const char *);" EOL;
-    builtinFunctionDefinitionsCode += "bool cstr_eq_cstr (const char *c1, const char *c2) {" EOL;
-    builtinFunctionDefinitionsCode += "  size_t l = strlen(c1);" EOL;
-    builtinFunctionDefinitionsCode += "  return l == strlen(c2) && memcmp(c1, c2, l) == 0;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool cstr_eq_cstr (const char *, const char *);" EOL;
+    builtinFnDefCode += "bool cstr_eq_cstr (const char *c1, const char *c2) {" EOL;
+    builtinFnDefCode += "  size_t l = strlen(c1);" EOL;
+    builtinFnDefCode += "  return l == strlen(c2) && memcmp(c1, c2, l) == 0;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnCstrEqStr) {
@@ -112,23 +131,23 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool cstr_eq_str (const char *, struct str);" EOL;
-    builtinFunctionDefinitionsCode += "bool cstr_eq_str (const char *c, struct str s) {" EOL;
-    builtinFunctionDefinitionsCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool cstr_eq_str (const char *, struct str);" EOL;
+    builtinFnDefCode += "bool cstr_eq_str (const char *c, struct str s) {" EOL;
+    builtinFnDefCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnCstrNeCstr) {
     this->builtins.libStdbool = true;
     this->builtins.libString = true;
 
-    builtinFunctionDeclarationsCode += "bool cstr_ne_cstr (const char *, const char *);" EOL;
-    builtinFunctionDefinitionsCode += "bool cstr_ne_cstr (const char *c1, const char *c2) {" EOL;
-    builtinFunctionDefinitionsCode += "  size_t l = strlen(c1);" EOL;
-    builtinFunctionDefinitionsCode += "  return l != strlen(c2) || memcmp(c1, c2, l) != 0;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool cstr_ne_cstr (const char *, const char *);" EOL;
+    builtinFnDefCode += "bool cstr_ne_cstr (const char *c1, const char *c2) {" EOL;
+    builtinFnDefCode += "  size_t l = strlen(c1);" EOL;
+    builtinFnDefCode += "  return l != strlen(c2) || memcmp(c1, c2, l) != 0;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnCstrNeStr) {
@@ -137,12 +156,64 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool cstr_ne_str (const char *, struct str);" EOL;
-    builtinFunctionDefinitionsCode += "bool cstr_ne_str (const char *c, struct str s) {" EOL;
-    builtinFunctionDefinitionsCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool cstr_ne_str (const char *, struct str);" EOL;
+    builtinFnDefCode += "bool cstr_ne_str (const char *c, struct str s) {" EOL;
+    builtinFnDefCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnIntStr) {
+    this->builtins.fnStrAlloc = true;
+    this->builtins.libInttypes = true;
+    this->builtins.libStdio = true;
+    this->builtins.typeStr = true;
+
+    builtinFnDeclCode += "struct str int_str (int32_t);" EOL;
+    builtinFnDefCode += "struct str int_str (int32_t d) {" EOL;
+    builtinFnDefCode += "  char buf[512];" EOL;
+    builtinFnDefCode += R"(  sprintf(buf, "%" PRId32, d);)" EOL;
+    builtinFnDefCode += "  return str_alloc(buf);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnPrint) {
+    this->builtins.fnStrFree = true;
+    this->builtins.libInttypes = true;
+    this->builtins.libStdarg = true;
+    this->builtins.libStdio = true;
+    this->builtins.typeStr = true;
+
+    builtinFnDeclCode += "void print (FILE *, const char *, ...);" EOL;
+    builtinFnDefCode += "void print (FILE *stream, const char *fmt, ...) {" EOL;
+    builtinFnDefCode += "  va_list args;" EOL;
+    builtinFnDefCode += "  va_start(args, fmt);" EOL;
+    builtinFnDefCode += "  char buf[512];" EOL;
+    builtinFnDefCode += "  struct str s;" EOL;
+    builtinFnDefCode += "  while (*fmt) {" EOL;
+    builtinFnDefCode += "    switch (*fmt++) {" EOL;
+    builtinFnDefCode += R"(      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += "      case 'c': fputc(va_arg(args, int), stream); break;" EOL;
+    builtinFnDefCode += "      case 'e':" EOL;
+    builtinFnDefCode += "      case 'f':" EOL;
+    builtinFnDefCode += R"(      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'h': sprintf(buf, "%" PRId8, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'j': sprintf(buf, "%" PRId16, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += "      case 'i':" EOL;
+    builtinFnDefCode += R"(      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += "      case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;" EOL;
+    builtinFnDefCode += R"(      case 'v': sprintf(buf, "%" PRIu8, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'w': sprintf(buf, "%" PRIu16, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += "      case 'z': fputs(va_arg(args, char *), stream); break;" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  va_end(args);" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrAlloc) {
@@ -150,13 +221,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_alloc (const char *);" EOL;
-    builtinFunctionDefinitionsCode += "struct str str_alloc (const char *c) {" EOL;
-    builtinFunctionDefinitionsCode += "  size_t l = strlen(c);" EOL;
-    builtinFunctionDefinitionsCode += "  char *r = alloc(l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(r, c, l);" EOL;
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "struct str str_alloc (const char *);" EOL;
+    builtinFnDefCode += "struct str str_alloc (const char *c) {" EOL;
+    builtinFnDefCode += "  size_t l = strlen(c);" EOL;
+    builtinFnDefCode += "  char *r = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(r, c, l);" EOL;
+    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrConcatCstr) {
@@ -165,15 +236,15 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_concat_cstr (struct str, const char *);" EOL;
-    builtinFunctionDefinitionsCode += "struct str str_concat_cstr (struct str s, const char *c) {" EOL;
-    builtinFunctionDefinitionsCode += "  size_t l = s.l + strlen(c);" EOL;
-    builtinFunctionDefinitionsCode += "  char *r = alloc(l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(r, s.c, s.l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(&r[s.l], c, l - s.l);" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "struct str str_concat_cstr (struct str, const char *);" EOL;
+    builtinFnDefCode += "struct str str_concat_cstr (struct str s, const char *c) {" EOL;
+    builtinFnDefCode += "  size_t l = s.l + strlen(c);" EOL;
+    builtinFnDefCode += "  char *r = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(r, s.c, s.l);" EOL;
+    builtinFnDefCode += "  memcpy(&r[s.l], c, l - s.l);" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrConcatStr) {
@@ -182,16 +253,29 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_concat_str (struct str, struct str);" EOL;
-    builtinFunctionDefinitionsCode += "struct str str_concat_str (struct str s1, struct str s2) {" EOL;
-    builtinFunctionDefinitionsCode += "  size_t l = s1.l + s2.l;" EOL;
-    builtinFunctionDefinitionsCode += "  char *r = alloc(l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(r, s1.c, s1.l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(&r[s1.l], s2.c, s2.l);" EOL;
-    builtinFunctionDefinitionsCode += "  free(s1.c);" EOL;
-    builtinFunctionDefinitionsCode += "  free(s2.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, l};" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "struct str str_concat_str (struct str, struct str);" EOL;
+    builtinFnDefCode += "struct str str_concat_str (struct str s1, struct str s2) {" EOL;
+    builtinFnDefCode += "  size_t l = s1.l + s2.l;" EOL;
+    builtinFnDefCode += "  char *r = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(r, s1.c, s1.l);" EOL;
+    builtinFnDefCode += "  memcpy(&r[s1.l], s2.c, s2.l);" EOL;
+    builtinFnDefCode += "  free(s1.c);" EOL;
+    builtinFnDefCode += "  free(s2.c);" EOL;
+    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrCopy) {
+    this->builtins.fnAlloc = true;
+    this->builtins.libString = true;
+    this->builtins.typeStr = true;
+
+    builtinFnDeclCode += "struct str str_copy (const struct str);" EOL;
+    builtinFnDefCode += "struct str str_copy (const struct str s) {" EOL;
+    builtinFnDefCode += "  char *r = alloc(s.l);" EOL;
+    builtinFnDefCode += "  memcpy(r, s.c, s.l);" EOL;
+    builtinFnDefCode += "  return (struct str) {r, s.l};" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrEqCstr) {
@@ -200,12 +284,12 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool str_eq_cstr (struct str, const char *);" EOL;
-    builtinFunctionDefinitionsCode += "bool str_eq_cstr (struct str s, const char *c) {" EOL;
-    builtinFunctionDefinitionsCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool str_eq_cstr (struct str, const char *);" EOL;
+    builtinFnDefCode += "bool str_eq_cstr (struct str s, const char *c) {" EOL;
+    builtinFnDefCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrEqStr) {
@@ -214,36 +298,52 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool str_eq_str (struct str, struct str);" EOL;
-    builtinFunctionDefinitionsCode += "bool str_eq_str (struct str s1, struct str s2) {" EOL;
-    builtinFunctionDefinitionsCode += "  bool r = s1.l == s2.l && memcmp(s1.c, s2.c, s1.l) == 0;" EOL;
-    builtinFunctionDefinitionsCode += "  free(s1.c);" EOL;
-    builtinFunctionDefinitionsCode += "  free(s2.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool str_eq_str (struct str, struct str);" EOL;
+    builtinFnDefCode += "bool str_eq_str (struct str s1, struct str s2) {" EOL;
+    builtinFnDefCode += "  bool r = s1.l == s2.l && memcmp(s1.c, s2.c, s1.l) == 0;" EOL;
+    builtinFnDefCode += "  free(s1.c);" EOL;
+    builtinFnDefCode += "  free(s2.c);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
-  if (this->builtins.fnStrCopy) {
+  if (this->builtins.fnStrEscape) {
     this->builtins.fnAlloc = true;
-    this->builtins.libString = true;
+    this->builtins.libStdlib = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_copy (const struct str);" EOL;
-    builtinFunctionDefinitionsCode += "struct str str_copy (const struct str s) {" EOL;
-    builtinFunctionDefinitionsCode += "  char *r = alloc(s.l);" EOL;
-    builtinFunctionDefinitionsCode += "  memcpy(r, s.c, s.l);" EOL;
-    builtinFunctionDefinitionsCode += "  return (struct str) {r, s.l};" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "struct str str_escape (const struct str);" EOL;
+    builtinFnDefCode += "struct str str_escape (const struct str s) {" EOL;
+    builtinFnDefCode += "  char *r = alloc(s.l);" EOL;
+    builtinFnDefCode += "  size_t l = 0;" EOL;
+    builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) {" EOL;
+    builtinFnDefCode += "    char c = s.c[i];" EOL;
+    builtinFnDefCode += R"(    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {)" EOL;
+    builtinFnDefCode += "      if (l + 2 > s.l) r = realloc(r, l + 2);" EOL;
+    builtinFnDefCode += R"(      r[l++] = '\\';)" EOL;
+    builtinFnDefCode += R"(      if (c == '\f') r[l++] = 'f';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\n') r[l++] = 'n';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\r') r[l++] = 'r';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\t') r[l++] = 't';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\v') r[l++] = 'v';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '"') r[l++] = '"';)" EOL;
+    builtinFnDefCode += "      continue;" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    if (l + 1 > s.l) r = realloc(r, l + 1);" EOL;
+    builtinFnDefCode += "    r[l++] = c;" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrFree) {
     this->builtins.libStdlib = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "void str_free (struct str);" EOL;
-    builtinFunctionDefinitionsCode += "void str_free (struct str s) {" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "void str_free (struct str);" EOL;
+    builtinFnDefCode += "void str_free (struct str s) {" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrNeCstr) {
@@ -252,12 +352,12 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool str_ne_cstr (struct str, const char *);" EOL;
-    builtinFunctionDefinitionsCode += "bool str_ne_cstr (struct str s, const char *c) {" EOL;
-    builtinFunctionDefinitionsCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool str_ne_cstr (struct str, const char *);" EOL;
+    builtinFnDefCode += "bool str_ne_cstr (struct str s, const char *c) {" EOL;
+    builtinFnDefCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrNeStr) {
@@ -266,13 +366,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libString = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool str_ne_str (struct str, struct str);" EOL;
-    builtinFunctionDefinitionsCode += "bool str_ne_str (struct str s1, struct str s2) {" EOL;
-    builtinFunctionDefinitionsCode += "  bool r = s1.l != s2.l || memcmp(s1.c, s2.c, s1.l) != 0;" EOL;
-    builtinFunctionDefinitionsCode += "  free(s1.c);" EOL;
-    builtinFunctionDefinitionsCode += "  free(s2.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool str_ne_str (struct str, struct str);" EOL;
+    builtinFnDefCode += "bool str_ne_str (struct str s1, struct str s2) {" EOL;
+    builtinFnDefCode += "  bool r = s1.l != s2.l || memcmp(s1.c, s2.c, s1.l) != 0;" EOL;
+    builtinFnDefCode += "  free(s1.c);" EOL;
+    builtinFnDefCode += "  free(s2.c);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrNot) {
@@ -280,73 +380,80 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libStdlib = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "bool str_not (struct str);" EOL;
-    builtinFunctionDefinitionsCode += "bool str_not (struct str s) {" EOL;
-    builtinFunctionDefinitionsCode += "  bool r = s.l == 0;" EOL;
-    builtinFunctionDefinitionsCode += "  free(s.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "bool str_not (struct str);" EOL;
+    builtinFnDefCode += "bool str_not (struct str s) {" EOL;
+    builtinFnDefCode += "  bool r = s.l == 0;" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrRealloc) {
     this->builtins.libStdlib = true;
     this->builtins.typeStr = true;
 
-    builtinFunctionDeclarationsCode += "struct str str_realloc (struct str, struct str);" EOL;
-    builtinFunctionDefinitionsCode += "struct str str_realloc (struct str s1, struct str s2) {" EOL;
-    builtinFunctionDefinitionsCode += "  free(s1.c);" EOL;
-    builtinFunctionDefinitionsCode += "  return s2;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "struct str str_realloc (struct str, struct str);" EOL;
+    builtinFnDefCode += "struct str str_realloc (struct str s1, struct str s2) {" EOL;
+    builtinFnDefCode += "  free(s1.c);" EOL;
+    builtinFnDefCode += "  return s2;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnAlloc) {
     this->builtins.libStdio = true;
     this->builtins.libStdlib = true;
 
-    builtinFunctionDeclarationsCode += "void *alloc (size_t);" EOL;
-    builtinFunctionDefinitionsCode += "void *alloc (size_t l) {" EOL;
-    builtinFunctionDefinitionsCode += "  void *r = malloc(l);" EOL;
-    builtinFunctionDefinitionsCode += "  if (r == NULL) {" EOL;
-    builtinFunctionDefinitionsCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes)" ESC_EOL R"(", l);)" EOL;
-    builtinFunctionDefinitionsCode += "    exit(EXIT_FAILURE);" EOL;
-    builtinFunctionDefinitionsCode += "  }" EOL;
-    builtinFunctionDefinitionsCode += "  return r;" EOL;
-    builtinFunctionDefinitionsCode += "}" EOL;
+    builtinFnDeclCode += "void *alloc (size_t);" EOL;
+    builtinFnDefCode += "void *alloc (size_t l) {" EOL;
+    builtinFnDefCode += "  void *r = malloc(l);" EOL;
+    builtinFnDefCode += "  if (r == NULL) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes)" ESC_EOL R"(", l);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.typeStr) {
-    if (!this->builtins.libStdio && !this->builtins.libStdlib && !this->builtins.libString) { // todo test
-      this->builtins.libStddef = true;
-    }
+    this->builtins.libStddef = true;
 
-    builtinStructDefinitionsCode += "struct str {" EOL;
-    builtinStructDefinitionsCode += "  char *c;" EOL;
-    builtinStructDefinitionsCode += "  size_t l;" EOL;
-    builtinStructDefinitionsCode += "};" EOL;
+    builtinStructDefCode += "struct str {" EOL;
+    builtinStructDefCode += "  char *c;" EOL;
+    builtinStructDefCode += "  size_t l;" EOL;
+    builtinStructDefCode += "};" EOL;
   }
 
-  builtinFunctionDeclarationsCode += builtinFunctionDeclarationsCode.empty() ? "" : EOL;
-  builtinFunctionDefinitionsCode += builtinFunctionDefinitionsCode.empty() ? "" : EOL;
-  builtinStructDefinitionsCode += builtinStructDefinitionsCode.empty() ? "" : EOL;
+  builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
+  builtinFnDeclCode += builtinFnDeclCode.empty() ? "" : EOL;
+  builtinFnDefCode += builtinFnDefCode.empty() ? "" : EOL;
+  structDeclCode += structDeclCode.empty() ? "" : EOL;
+  structDefCode += structDefCode.empty() ? "" : EOL;
+  fnDeclCode += fnDeclCode.empty() ? "" : EOL;
+  fnDefCode += fnDefCode.empty() ? "" : EOL;
 
-  auto headers = std::string(this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "");
-  headers += std::string(this->builtins.libStddef ? "#include <stddef.h>" EOL : ""); // todo test
-  headers += std::string(this->builtins.libStdint ? "#include <stdint.h>" EOL : "");
-  headers += std::string(this->builtins.libStdio ? "#include <stdio.h>" EOL : "");
-  headers += std::string(this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "");
-  headers += std::string(this->builtins.libString ? "#include <string.h>" EOL : "");
+  auto headers = std::string(this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "");
+  headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
+  headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
+  // todo test
+  headers += this->builtins.libStddef && !this->builtins.libStdio && !this->builtins.libStdlib && !this->builtins.libString
+    ? "#include <stddef.h>" EOL
+    : "";
+  headers += this->builtins.libStdint && !this->builtins.libInttypes ? "#include <stdint.h>" EOL : "";
+  headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
+  headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
+  headers += this->builtins.libString ? "#include <string.h>" EOL : "";
   headers += headers.empty() ? "" : EOL;
 
   auto output = std::string();
   output += banner;
   output += headers;
-  output += builtinStructDefinitionsCode;
-  output += builtinFunctionDeclarationsCode;
-  output += builtinFunctionDefinitionsCode;
-  output += this->objDecl + (this->objDecl.empty() ? "" : EOL);
-  output += this->objDef + (this->objDef.empty() ? "" : EOL);
-  output += this->fnDecl + (this->fnDecl.empty() ? "" : EOL);
-  output += this->fnDef + (this->fnDef.empty() ? "" : EOL);
+  output += builtinStructDefCode;
+  output += builtinFnDeclCode;
+  output += builtinFnDefCode;
+  output += structDeclCode;
+  output += structDefCode;
+  output += fnDeclCode;
+  output += fnDefCode;
   output += "int main () {" EOL;
   output += topLevelSetUp;
   output += topLevelCode;
@@ -357,6 +464,68 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += "}" EOL;
 
   return std::make_tuple(output, this->_flags());
+}
+
+void Codegen::_activateEntity (const std::string &name) {
+  for (auto &entity : this->entities) {
+    if (entity.name != name) {
+      continue;
+    } else if (entity.active) {
+      break;
+    }
+
+    entity.active = true;
+
+    if (entity.builtins.fnAlloc) this->builtins.fnAlloc = true;
+    if (entity.builtins.fnBoolStr) this->builtins.fnBoolStr = true;
+    if (entity.builtins.fnByteStr) this->builtins.fnByteStr = true;
+    if (entity.builtins.fnCharStr) this->builtins.fnCharStr = true;
+    if (entity.builtins.fnCstrConcatStr) this->builtins.fnCstrConcatStr = true;
+    if (entity.builtins.fnCstrEqCstr) this->builtins.fnCstrEqCstr = true;
+    if (entity.builtins.fnCstrEqStr) this->builtins.fnCstrEqStr = true;
+    if (entity.builtins.fnCstrNeCstr) this->builtins.fnCstrNeCstr = true;
+    if (entity.builtins.fnCstrNeStr) this->builtins.fnCstrNeStr = true;
+    if (entity.builtins.fnF32Str) this->builtins.fnF32Str = true;
+    if (entity.builtins.fnF64Str) this->builtins.fnF64Str = true;
+    if (entity.builtins.fnFloatStr) this->builtins.fnFloatStr = true;
+    if (entity.builtins.fnI8Str) this->builtins.fnI8Str = true;
+    if (entity.builtins.fnI16Str) this->builtins.fnI16Str = true;
+    if (entity.builtins.fnI32Str) this->builtins.fnI32Str = true;
+    if (entity.builtins.fnI64Str) this->builtins.fnI64Str = true;
+    if (entity.builtins.fnIntStr) this->builtins.fnIntStr = true;
+    if (entity.builtins.fnPrint) this->builtins.fnPrint = true;
+    if (entity.builtins.fnStrAlloc) this->builtins.fnStrAlloc = true;
+    if (entity.builtins.fnStrConcatCstr) this->builtins.fnStrConcatCstr = true;
+    if (entity.builtins.fnStrConcatStr) this->builtins.fnStrConcatStr = true;
+    if (entity.builtins.fnStrCopy) this->builtins.fnStrCopy = true;
+    if (entity.builtins.fnStrEqCstr) this->builtins.fnStrEqCstr = true;
+    if (entity.builtins.fnStrEqStr) this->builtins.fnStrEqStr = true;
+    if (entity.builtins.fnStrEscape) this->builtins.fnStrEscape = true;
+    if (entity.builtins.fnStrFree) this->builtins.fnStrFree = true;
+    if (entity.builtins.fnStrNeCstr) this->builtins.fnStrNeCstr = true;
+    if (entity.builtins.fnStrNeStr) this->builtins.fnStrNeStr = true;
+    if (entity.builtins.fnStrNot) this->builtins.fnStrNot = true;
+    if (entity.builtins.fnStrRealloc) this->builtins.fnStrRealloc = true;
+    if (entity.builtins.fnU8Str) this->builtins.fnU8Str = true;
+    if (entity.builtins.fnU16Str) this->builtins.fnU16Str = true;
+    if (entity.builtins.fnU32Str) this->builtins.fnU32Str = true;
+    if (entity.builtins.fnU64Str) this->builtins.fnU64Str = true;
+    if (entity.builtins.libInttypes) this->builtins.libInttypes = true;
+    if (entity.builtins.libStdarg) this->builtins.libStdarg = true;
+    if (entity.builtins.libStdbool) this->builtins.libStdbool = true;
+    if (entity.builtins.libStddef) this->builtins.libStddef = true;
+    if (entity.builtins.libStdint) this->builtins.libStdint = true;
+    if (entity.builtins.libStdio) this->builtins.libStdio = true;
+    if (entity.builtins.libStdlib) this->builtins.libStdlib = true;
+    if (entity.builtins.libString) this->builtins.libString = true;
+    if (entity.builtins.typeStr) this->builtins.typeStr = true;
+
+    for (const auto &child : entity.entities) {
+      this->_activateEntity(child);
+    }
+
+    break;
+  }
 }
 
 std::string Codegen::_block (const ASTBlock &block) {
@@ -412,7 +581,7 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
     code = std::string(this->indent, ' ') + "continue;" EOL;
     return this->_wrapNode(node, setUp, code, cleanUp);
-  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) { // todo test
+  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
     auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
 
     code = (root ? std::string(this->indent, ' ') : "") + this->_nodeExpr(nodeExpr, true) + (root ? ";" EOL : "");
@@ -475,65 +644,168 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
     auto obj = std::get<TypeObj>(nodeObjDecl.var->type->body);
-    auto type = this->_type(nodeObjDecl.var->type, true);
     auto typeName = Codegen::typeName(nodeObjDecl.var->type->name);
-
-    this->objDecl += "struct " + typeName + ";" EOL;
-    this->objDef += "struct " + typeName + " {" EOL;
+    auto objEntity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
+    auto type = this->_type(nodeObjDecl.var->type, true, &objEntity.builtins, &objEntity.entities);
+    auto objCode = std::string();
 
     for (const auto &objField : obj.fields) {
-      this->objDef += "  " + this->_type(objField.type, true) + Codegen::name(objField.name) + ";" EOL;
+      objCode += "  " + this->_type(objField.type, true, &objEntity.builtins, &objEntity.entities);
+      objCode += Codegen::name(objField.name) + ";" EOL;
     }
 
-    this->objDef += "};" EOL;
+    objEntity.decl = "struct " + typeName + ";";
+    objEntity.def += "struct " + typeName + " {" EOL + objCode + "};";
+    this->entities.push_back(objEntity);
 
-    this->builtins.fnAlloc = true;
-    this->builtins.libStdlib = true;
+    auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { .fnAlloc = true }, { typeName }};
+    auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { .fnAlloc = true }, { typeName }};
+    auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { .libStdlib = true }, { typeName }};
+    auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN, {}, { typeName, typeName + "_free" }};
 
-    auto allocParamTypes = std::string();
-    auto allocParams = std::string();
-    auto allocCode = std::string("  " + type + "r = alloc(sizeof(struct " + typeName + "));" EOL);
-    auto copyCode = std::string("  " + type + "r = alloc(sizeof(struct " + typeName + "));" EOL);
-    auto freeCode = std::string();
-    auto reallocCode = std::string("  " + typeName + "_free((" + type + ") o1);" EOL "  return o2;" EOL);
+    auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN, {
+      .fnStrAlloc = true,
+      .fnStrConcatCstr = true,
+      .typeStr = true
+    }, { typeName, typeName + "_free" }};
+
+    auto allocFnParamTypes = std::string();
+    auto allocFnParams = std::string();
+    auto allocFnCode = std::string("  " + type + "r = alloc(sizeof(struct " + typeName + "));" EOL);
+    auto copyFnCode = std::string("  " + type + "r = alloc(sizeof(struct " + typeName + "));" EOL);
+    auto freeFnCode = std::string();
+    auto reallocFnCode = std::string("  " + typeName + "_free((" + type + ") o1);" EOL "  return o2;" EOL);
+    auto strFnCode = std::string(R"(  struct str r = str_alloc(")" + nodeObjDecl.var->name + R"({");)" EOL);
+    auto objFieldIdx = static_cast<std::size_t>(0);
 
     for (const auto &objField : obj.fields) {
       auto objFieldName = Codegen::name(objField.name);
-      auto objFieldType = this->_type(objField.type, true);
+      auto objFieldType = this->_type(objField.type, true, &objEntity.builtins, &objEntity.entities);
+      auto strCodeComma = std::string(objFieldIdx == 0 ? "" : ", ");
 
       if (objField.type->isObj()) {
         auto objFieldTypeName = Codegen::typeName(objField.type->name);
 
-        copyCode += "  r->" + objFieldName + " = " + objFieldTypeName + "_copy(o->" + objFieldName + ");" EOL;
-        freeCode += "  " + objFieldTypeName + "_free((" + objFieldType + ") o->" + objFieldName + ");" EOL;
-      } else if (objField.type->isStr()) {
-        this->builtins.fnStrCopy = true;
-        this->builtins.fnStrFree = true;
+        strFnEntity.builtins.fnStrConcatStr = true;
+        copyFnEntity.entities.push_back(objFieldTypeName + "_copy");
+        freeFnEntity.entities.push_back(objFieldTypeName + "_free");
+        strFnEntity.entities.push_back(objFieldTypeName + "_str");
 
-        copyCode += "  r->" + objFieldName + " = str_copy(o->" + objFieldName + ");" EOL;
-        freeCode += "  str_free((struct str) o->" + objFieldName + ");" EOL;
+        copyFnCode += "  r->" + objFieldName + " = " + objFieldTypeName + "_copy(o->" + objFieldName + ");" EOL;
+        freeFnCode += "  " + objFieldTypeName + "_free((" + objFieldType + ") o->" + objFieldName + ");" EOL;
+        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeComma + objField.name + R"(: ");)" EOL;
+        strFnCode += "  r = str_concat_str(r, " + objFieldTypeName + "_str(o->" + objFieldName + "));" EOL;
+      } else if (objField.type->isStr()) {
+        copyFnEntity.builtins.fnStrCopy = true;
+        freeFnEntity.builtins.fnStrFree = true;
+        freeFnEntity.builtins.typeStr = true;
+        strFnEntity.builtins.fnStrConcatStr = true;
+        strFnEntity.builtins.fnStrEscape = true;
+        strFnEntity.builtins.typeStr = true;
+
+        copyFnCode += "  r->" + objFieldName + " = str_copy(o->" + objFieldName + ");" EOL;
+        freeFnCode += "  str_free((struct str) o->" + objFieldName + ");" EOL;
+        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeComma + objField.name + R"(: \"");)" EOL;
+        strFnCode += "  r = str_concat_str(r, str_escape(o->" + objFieldName + "));" EOL;
+        strFnCode += R"(  r = str_concat_cstr(r, "\"");)" EOL;
+      } else if (objField.type->isAny() || objField.type->isFn() || objField.type->isVoid()) {
+        auto typeStrContent = std::string();
+
+        if (objField.type->isAny()) {
+          typeStrContent = "any";
+        } else if (objField.type->isFn()) {
+          typeStrContent = "fn";
+        } else if (objField.type->isVoid()) {
+          typeStrContent = "void";
+        }
+
+        copyFnCode += "  r->" + objFieldName + " = o->" + objFieldName + ";" EOL;
+        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeComma + objField.name + ": [" + typeStrContent + R"(]");)" EOL;
       } else {
-        copyCode += "  r->" + objFieldName + " = o->" + objFieldName + ";" EOL;
+        auto typeStrFn = std::string();
+
+        if (objField.type->isBool()) {
+          strFnEntity.builtins.fnBoolStr = true;
+          typeStrFn = "bool_str";
+        } else if (objField.type->isByte()) {
+          strFnEntity.builtins.fnByteStr = true;
+          typeStrFn = "byte_str";
+        } else if (objField.type->isChar()) {
+          strFnEntity.builtins.fnCharStr = true;
+          typeStrFn = "char_str";
+        } else if (objField.type->isF32()) {
+          strFnEntity.builtins.fnF32Str = true;
+          typeStrFn = "f32_str";
+        } else if (objField.type->isF64()) {
+          strFnEntity.builtins.fnF64Str = true;
+          typeStrFn = "f64_str";
+        } else if (objField.type->isFloat()) {
+          strFnEntity.builtins.fnFloatStr = true;
+          typeStrFn = "float_str";
+        } else if (objField.type->isI8()) {
+          strFnEntity.builtins.fnI8Str = true;
+          typeStrFn = "i8_str";
+        } else if (objField.type->isI16()) {
+          strFnEntity.builtins.fnI16Str = true;
+          typeStrFn = "i16_str";
+        } else if (objField.type->isI32()) {
+          strFnEntity.builtins.fnI32Str = true;
+          typeStrFn = "i32_str";
+        } else if (objField.type->isI64()) {
+          strFnEntity.builtins.fnI64Str = true;
+          typeStrFn = "i64_str";
+        } else if (objField.type->isInt()) {
+          strFnEntity.builtins.fnIntStr = true;
+          typeStrFn = "int_str";
+        } else if (objField.type->isU8()) {
+          strFnEntity.builtins.fnU8Str = true;
+          typeStrFn = "u8_str";
+        } else if (objField.type->isU16()) {
+          strFnEntity.builtins.fnU16Str = true;
+          typeStrFn = "u16_str";
+        } else if (objField.type->isU32()) {
+          strFnEntity.builtins.fnU32Str = true;
+          typeStrFn = "u32_str";
+        } else if (objField.type->isU64()) {
+          strFnEntity.builtins.fnU64Str = true;
+          typeStrFn = "u64_str";
+        }
+
+        strFnEntity.builtins.fnStrConcatStr = true;
+
+        copyFnCode += "  r->" + objFieldName + " = o->" + objFieldName + ";" EOL;
+        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeComma + objField.name + R"(: ");)" EOL;
+        strFnCode += "  r = str_concat_str(r, " + typeStrFn + "(o->" + objFieldName + "));" EOL;
       }
 
-      allocParamTypes += ", " + (objFieldType.ends_with(" ") ? objFieldType.substr(0, objFieldType.size() - 1) : objFieldType);
-      allocParams += ", " + objFieldType + objFieldName;
-      allocCode += "  r->" + objFieldName + " = " + objFieldName + ";" EOL;
+      allocFnParamTypes += ", " + (objFieldType.ends_with(" ") ? objFieldType.substr(0, objFieldType.size() - 1) : objFieldType);
+      allocFnParams += ", " + objFieldType + objFieldName;
+      allocFnCode += "  r->" + objFieldName + " = " + objFieldName + ";" EOL;
+
+      objFieldIdx++;
     }
 
-    allocCode += "  return r;" EOL;
-    copyCode += "  return r;" EOL;
-    freeCode += "  free(o);" EOL;
+    allocFnCode += "  return r;" EOL;
+    copyFnCode += "  return r;" EOL;
+    freeFnCode += "  free(o);" EOL;
+    strFnCode += "  " + typeName + "_free(o);" EOL + R"(  return str_concat_cstr(r, "}");)" EOL;
 
-    this->fnDecl += type + typeName + "_alloc (" + allocParamTypes.substr(2) + ");" EOL;
-    this->fnDecl += type + typeName + "_copy (" + type + ");" EOL;
-    this->fnDecl += "void " + typeName + "_free (" + type + ");" EOL;
-    this->fnDecl += type + typeName + "_realloc (" + type + ", " + type + ");" EOL;
+    allocFnEntity.decl = type + typeName + "_alloc (" + allocFnParamTypes.substr(2) + ");";
+    allocFnEntity.def = type + typeName + "_alloc (" + allocFnParams.substr(2) + ") {" EOL + allocFnCode + "}";
+    copyFnEntity.decl = type + typeName + "_copy (" + type + ");";
+    copyFnEntity.def = type + typeName + "_copy (" + type + "o) {" EOL + copyFnCode + "}";
+    freeFnEntity.decl = "void " + typeName + "_free (" + type + ");";
+    freeFnEntity.def = "void " + typeName + "_free (" + type + "o) {" EOL + freeFnCode + "}";
+    reallocFnEntity.decl = type + typeName + "_realloc (" + type + ", " + type + ");";
+    reallocFnEntity.def = type + typeName + "_realloc (" + type + "o1, " + type + "o2) {" EOL + reallocFnCode + "}";
+    strFnEntity.decl = "struct str " + typeName + "_str (" + type + ");";
+    strFnEntity.def = "struct str " + typeName + "_str (" + type + "o) {" EOL + strFnCode + "}";
 
-    this->fnDef += type + typeName + "_alloc (" + allocParams.substr(2) + ") {" EOL + allocCode + "}" EOL;
-    this->fnDef += type + typeName + "_copy (" + type + "o) {" EOL + copyCode + "}" EOL;
-    this->fnDef += "void " + typeName + "_free (" + type + "o) {" EOL + freeCode + "}" EOL;
-    this->fnDef += type + typeName + "_realloc (" + type + "o1, " + type + "o2) {" EOL + reallocCode + "}" EOL;
+    this->entities.push_back(allocFnEntity);
+    this->entities.push_back(copyFnEntity);
+    this->entities.push_back(freeFnEntity);
+    this->entities.push_back(reallocFnEntity);
+    this->entities.push_back(strFnEntity);
 
     return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) { // todo
@@ -561,6 +833,7 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
       auto cleanUpType = this->_type(nodeVarDecl.var->type, true);
       auto cleanUpTypeName = Codegen::typeName(nodeVarDecl.var->type->name);
 
+      this->_activateEntity(cleanUpTypeName + "_free");
       cleanUp = std::string(this->indent, ' ') + cleanUpTypeName + "_free((" + cleanUpType + ") " + name + ");" EOL;
     } else if (nodeVarDecl.var->type->isStr()) {
       this->builtins.fnStrFree = true;
@@ -601,6 +874,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     if (!root && nodeExpr.type->isObj()) {
       auto typeName = Codegen::typeName(nodeExpr.type->name);
       code = typeName + "_copy(" + code + ")";
+
+      this->_activateEntity(typeName + "_copy");
     } else if (!root && nodeExpr.type->isStr()) {
       this->builtins.fnStrCopy = true;
       code = "str_copy(" + code + ")";
@@ -619,6 +894,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
         code = typeName + "_copy(" + code + ")";
       }
 
+      this->_activateEntity(typeName + "_realloc");
       return this->_wrapNodeExpr(nodeExpr, code);
     } else if (exprAssign.right.type->isStr()) {
       auto rightCode = std::string();
@@ -659,16 +935,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       rightCode = leftCode + " || " + rightCode;
     } else {
       if (exprAssign.op == AST_EXPR_ASSIGN_ADD) opCode = " += ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_BIT_AND) opCode = " &= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_BIT_OR) opCode = " |= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_BIT_XOR) opCode = " ^= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_DIV) opCode = " /= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_EQ) opCode = " = ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_LSHIFT) opCode = " <<= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_MOD) opCode = " %= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_MUL) opCode = " *= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_RSHIFT) opCode = " >>= ";
-      if (exprAssign.op == AST_EXPR_ASSIGN_SUB) opCode = " -= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_AND) opCode = " &= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_OR) opCode = " |= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_XOR) opCode = " ^= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_DIV) opCode = " /= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_EQ) opCode = " = ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_LSHIFT) opCode = " <<= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_MOD) opCode = " %= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_MUL) opCode = " *= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_RSHIFT) opCode = " >>= ";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_SUB) opCode = " -= ";
     }
 
     return this->_wrapNodeExpr(nodeExpr, leftCode + opCode + rightCode);
@@ -677,27 +953,30 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
 
     if (exprBinary.left.type->isStr() && exprBinary.right.type->isStr()) {
       if (exprBinary.op == AST_EXPR_BINARY_ADD) {
-        if (nodeExpr.isLit()) {
+        auto code = std::string();
+
+        if (root && nodeExpr.isLit()) {
+          return this->_wrapNodeExpr(nodeExpr, nodeExpr.litBody());
+        } else if (nodeExpr.isLit()) {
           this->builtins.fnStrAlloc = true;
-          return this->_wrapNodeExpr(nodeExpr, "str_alloc(" + nodeExpr.litBody() + ")");
+          code = "str_alloc(" + nodeExpr.litBody() + ")";
         } else if (exprBinary.left.isLit()) {
           this->builtins.fnCstrConcatStr = true;
-
-          auto rightCode = this->_nodeExpr(exprBinary.right);
-          return this->_wrapNodeExpr(nodeExpr, "cstr_concat_str(" + exprBinary.left.litBody() + ", " + rightCode + ")");
+          code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right) + ")";
         } else if (exprBinary.right.isLit()) {
           this->builtins.fnStrConcatCstr = true;
-
-          auto leftCode = this->_nodeExpr(exprBinary.left);
-          return this->_wrapNodeExpr(nodeExpr, "str_concat_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")");
+          code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left) + ", " + exprBinary.right.litBody() + ")";
         } else {
           this->builtins.fnStrConcatStr = true;
-
-          auto leftCode = this->_nodeExpr(exprBinary.left);
-          auto rightCode = this->_nodeExpr(exprBinary.right);
-
-          return this->_wrapNodeExpr(nodeExpr, "str_concat_str(" + leftCode + ", " + rightCode + ")");
+          code = "str_concat_str(" + this->_nodeExpr(exprBinary.left) + ", " + this->_nodeExpr(exprBinary.right) + ")";
         }
+
+        if (root) {
+          this->builtins.fnStrFree = true;
+          code = "str_free(" + code + ")";
+        }
+
+        return this->_wrapNodeExpr(nodeExpr, code);
       } else if (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) {
         auto opName = std::string(exprBinary.op == AST_EXPR_BINARY_NE ? "ne" : "eq");
 
@@ -748,26 +1027,113 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     auto opCode = std::string();
 
     if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
-    if (exprBinary.op == AST_EXPR_BINARY_AND) opCode = " && ";
-    if (exprBinary.op == AST_EXPR_BINARY_BIT_AND) opCode = " & ";
-    if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = " | ";
-    if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = " ^ ";
-    if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = " / ";
-    if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = " == ";
-    if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = " >= ";
-    if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = " > ";
-    if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = " << ";
-    if (exprBinary.op == AST_EXPR_BINARY_LE) opCode = " <= ";
-    if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = " < ";
-    if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = " % ";
-    if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = " * ";
-    if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = " != ";
-    if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = " || ";
-    if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = " >> ";
-    if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = " - ";
+    else if (exprBinary.op == AST_EXPR_BINARY_AND) opCode = " && ";
+    else if (exprBinary.op == AST_EXPR_BINARY_BIT_AND) opCode = " & ";
+    else if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = " | ";
+    else if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = " ^ ";
+    else if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = " / ";
+    else if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = " == ";
+    else if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = " >= ";
+    else if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = " > ";
+    else if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = " << ";
+    else if (exprBinary.op == AST_EXPR_BINARY_LE) opCode = " <= ";
+    else if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = " < ";
+    else if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = " % ";
+    else if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = " * ";
+    else if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = " != ";
+    else if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = " || ";
+    else if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = " >> ";
+    else if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = " - ";
 
     return this->_wrapNodeExpr(nodeExpr, leftCode + opCode + rightCode);
-  } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) { // todo
+  } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
+    auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
+
+    if (exprCall.calleeType->builtin) {
+      if (exprCall.calleeType->name == "@print") {
+        this->builtins.fnPrint = true;
+        this->builtins.libStdio = true;
+
+        auto separator = std::string(R"(" ")");
+        auto isSeparatorLit = true;
+        auto terminator = std::string(R"(")" ESC_EOL R"(")");
+        auto isTerminatorLit = true;
+
+        for (const auto &exprCallArg : exprCall.args) {
+          if (exprCallArg.id != std::nullopt && exprCallArg.id == "separator") {
+            if (exprCallArg.expr.isLit()) {
+              separator = exprCallArg.expr.litBody();
+            } else {
+              separator = this->_nodeExpr(exprCallArg.expr);
+              isSeparatorLit = false;
+            }
+          } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "terminator") {
+            if (exprCallArg.expr.isLit()) {
+              terminator = exprCallArg.expr.litBody();
+            } else {
+              terminator = this->_nodeExpr(exprCallArg.expr);
+              isTerminatorLit = false;
+            }
+          }
+        }
+
+        auto code = std::string(R"(print(stdout, ")");
+        auto argsCode = std::string();
+        auto argIdx = static_cast<std::size_t>(0);
+
+        for (const auto &exprCallArg : exprCall.args) {
+          if (exprCallArg.id != std::nullopt) {
+            continue;
+          }
+
+          if (argIdx != 0 && separator != R"("")") {
+            code += isSeparatorLit ? "%z" : "%s";
+            argsCode += separator + ", ";
+          }
+
+          if (exprCallArg.expr.type->isObj()) {
+            auto typeName = Codegen::typeName(exprCallArg.expr.type->name);
+            this->_activateEntity(typeName + "_str");
+
+            code += "%s";
+            argsCode += typeName + "_str(" + this->_nodeExpr(exprCallArg.expr) + ")";
+          } else if (exprCallArg.expr.type->isStr() && exprCallArg.expr.isLit()) {
+            code += "%z";
+            argsCode += exprCallArg.expr.litBody();
+          } else {
+            if (exprCallArg.expr.type->isBool()) code += "%t";
+            else if (exprCallArg.expr.type->isByte()) code += "%b";
+            else if (exprCallArg.expr.type->isChar()) code += "%c";
+            else if (exprCallArg.expr.type->isF32()) code += "%e";
+            else if (exprCallArg.expr.type->isF64()) code += "%g";
+            else if (exprCallArg.expr.type->isFloat()) code += "%f";
+            else if (exprCallArg.expr.type->isI8()) code += "%h";
+            else if (exprCallArg.expr.type->isI16()) code += "%j";
+            else if (exprCallArg.expr.type->isI32()) code += "%k";
+            else if (exprCallArg.expr.type->isI64()) code += "%l";
+            else if (exprCallArg.expr.type->isInt()) code += "%i";
+            else if (exprCallArg.expr.type->isStr()) code += "%s";
+            else if (exprCallArg.expr.type->isU8()) code += "%v";
+            else if (exprCallArg.expr.type->isU16()) code += "%w";
+            else if (exprCallArg.expr.type->isU32()) code += "%u";
+            else if (exprCallArg.expr.type->isU64()) code += "%y";
+
+            argsCode += this->_nodeExpr(exprCallArg.expr);
+          }
+
+          argsCode += ", ";
+          argIdx++;
+        }
+
+        if (terminator == R"("")") {
+          code += R"(", )" + argsCode.substr(0, argsCode.size() - 2);
+        } else {
+          code += std::string(isTerminatorLit ? "%z" : "%s") + R"(", )" + argsCode + terminator;
+        }
+
+        return this->_wrapNodeExpr(nodeExpr, code + ")");
+      }
+    }
   } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
     auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
     auto condCode = this->_nodeExpr(exprCond.cond);
@@ -778,7 +1144,19 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       altCode = "(" + altCode + ")";
     }
 
-    return this->_wrapNodeExpr(nodeExpr, condCode + " ? " + bodyCode + " : " + altCode);
+    auto code = condCode + " ? " + bodyCode + " : " + altCode;
+
+    if (root && nodeExpr.type->isObj()) {
+      auto typeName = Codegen::typeName(nodeExpr.type->name);
+      this->_activateEntity(typeName + "_free");
+
+      code = typeName + "_free(" + code + ")";
+    } else if (root && nodeExpr.type->isStr()) {
+      this->builtins.fnStrFree = true;
+      code = "str_free(" + code + ")";
+    }
+
+    return this->_wrapNodeExpr(nodeExpr, code);
   } else if (std::holds_alternative<ASTExprLit>(*nodeExpr.body)) {
     auto exprLit = std::get<ASTExprLit>(*nodeExpr.body);
 
@@ -797,7 +1175,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       val.erase(std::remove(val.begin(), val.end(), 'o'), val.end());
 
       return this->_wrapNodeExpr(nodeExpr, val);
-    } else if (exprLit.type == AST_EXPR_LIT_STR) {
+    } else if (!root && exprLit.type == AST_EXPR_LIT_STR) {
       this->builtins.fnStrAlloc = true;
       return this->_wrapNodeExpr(nodeExpr, "str_alloc(" + exprLit.body + ")");
     }
@@ -817,18 +1195,26 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       fieldsCode += ", " + this->_nodeExpr(exprObjProp->init);
     }
 
-    return this->_wrapNodeExpr(nodeExpr, typeName + "_alloc(" + fieldsCode.substr(2) + ")");
+    this->_activateEntity(typeName + "_alloc");
+    auto code = typeName + "_alloc(" + fieldsCode.substr(2) + ")";
+
+    if (root) {
+      this->_activateEntity(typeName + "_free");
+      code = typeName + "_free(" + code + ")";
+    }
+
+    return this->_wrapNodeExpr(nodeExpr, code);
   } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.body)) {
     auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
     auto argCode = this->_nodeExpr(exprUnary.arg);
     auto opCode = std::string();
 
     if (exprUnary.op == AST_EXPR_UNARY_BIT_NOT) opCode = "~";
-    if (exprUnary.op == AST_EXPR_UNARY_DECREMENT) opCode = "--";
-    if (exprUnary.op == AST_EXPR_UNARY_INCREMENT) opCode = "++";
-    if (exprUnary.op == AST_EXPR_UNARY_MINUS) opCode = "-";
-    if (exprUnary.op == AST_EXPR_UNARY_NOT) opCode = "!";
-    if (exprUnary.op == AST_EXPR_UNARY_PLUS) opCode = "+";
+    else if (exprUnary.op == AST_EXPR_UNARY_DECREMENT) opCode = "--";
+    else if (exprUnary.op == AST_EXPR_UNARY_INCREMENT) opCode = "++";
+    else if (exprUnary.op == AST_EXPR_UNARY_MINUS) opCode = "-";
+    else if (exprUnary.op == AST_EXPR_UNARY_NOT) opCode = "!";
+    else if (exprUnary.op == AST_EXPR_UNARY_PLUS) opCode = "+";
 
     if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isFloatNumber()) {
       this->builtins.libStdbool = true;
@@ -845,46 +1231,62 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
   throw Error("Error: tried to generate code for unknown expression");
 }
 
-std::string Codegen::_type (const Type *type, bool mut) {
+std::string Codegen::_type (
+  const Type *type,
+  bool mut,
+  std::optional<CodegenBuiltins *> b,
+  std::optional<std::vector<std::string> *> entityEntities
+) {
+  auto libs = b == std::nullopt ? &this->builtins : *b;
   auto typeName = std::string();
 
-  if (type->isByte()) typeName = "unsigned char";
-  if (type->isChar()) typeName = "char";
-  if (type->isF32()) typeName = "float";
-  if (type->isF64() || type->isFloat()) typeName = "double";
-
-  if (type->isBool()) {
-    this->builtins.libStdbool = true;
+  if (type->isByte()) {
+    typeName = "unsigned char";
+  } else if (type->isChar()) {
+    typeName = "char";
+  } else if (type->isF32()) {
+    typeName = "float";
+  } else if (type->isF64() || type->isFloat()) {
+    typeName = "double";
+  } else if (type->isBool()) {
+    libs->libStdbool = true;
     typeName = "bool";
   } else if (type->isI8()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "int8_t";
   } else if (type->isI16()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "int16_t";
   } else if (type->isI32() || type->isInt()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "int32_t";
   } else if (type->isI64()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "int64_t";
   } else if (type->isObj()) {
-    typeName = "struct " + Codegen::typeName(type->name);
-    return std::string(mut ? "" : "const ") + typeName + " *";
+    typeName = Codegen::typeName(type->name);
+
+    if (entityEntities != std::nullopt) {
+      (*entityEntities)->push_back(typeName);
+    } else {
+      this->_activateEntity(typeName);
+    }
+
+    return std::string(mut ? "" : "const ") + "struct " + typeName + " *";
   } else if (type->isStr()) {
-    this->builtins.typeStr = true;
+    libs->typeStr = true;
     typeName = "struct str";
   } else if (type->isU8()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "uint8_t";
   } else if (type->isU16()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "uint16_t";
   } else if (type->isU32()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "uint32_t";
   } else if (type->isU64()) {
-    this->builtins.libStdint = true;
+    libs->libStdint = true;
     typeName = "uint64_t";
   }
 

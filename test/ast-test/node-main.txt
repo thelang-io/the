@@ -25,7 +25,7 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="any" />
+                    <BuiltinType name="int" />
                   </slot>
                   <slot name="body">
                     <ExprLit type="INT_DEC">
@@ -58,7 +58,7 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="any" />
+                    <BuiltinType name="int" />
                   </slot>
                   <slot name="body">
                     <ExprLit type="INT_DEC">
@@ -70,7 +70,7 @@ main {
               <ExprCallArg>
                 <NodeExpr parenthesized="false">
                   <slot name="type">
-                    <BuiltinType name="any" />
+                    <BuiltinType name="int" />
                   </slot>
                   <slot name="body">
                     <ExprLit type="INT_DEC">

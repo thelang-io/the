@@ -44,8 +44,8 @@ struct str {
 
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
-bool str_eq_cstr (struct str, const char *);
 struct str str_copy (const struct str);
+bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 bool str_ne_cstr (struct str, const char *);
 struct str str_realloc (struct str, struct str);
@@ -65,15 +65,15 @@ struct str str_concat_cstr (struct str s, const char *c) {
   free(s.c);
   return (struct str) {r, l};
 }
-bool str_eq_cstr (struct str s, const char *c) {
-  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
-  free(s.c);
-  return r;
-}
 struct str str_copy (const struct str s) {
   char *r = alloc(s.l);
   memcpy(r, s.c, s.l);
   return (struct str) {r, s.l};
+}
+bool str_eq_cstr (struct str s, const char *c) {
+  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
+  free(s.c);
+  return r;
 }
 void str_free (struct str s) {
   free(s.c);
@@ -150,8 +150,8 @@ struct str {
 
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
-bool str_eq_cstr (struct str, const char *);
 struct str str_copy (const struct str);
+bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 bool str_ne_cstr (struct str, const char *);
 struct str str_realloc (struct str, struct str);
@@ -171,15 +171,15 @@ struct str str_concat_cstr (struct str s, const char *c) {
   free(s.c);
   return (struct str) {r, l};
 }
-bool str_eq_cstr (struct str s, const char *c) {
-  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
-  free(s.c);
-  return r;
-}
 struct str str_copy (const struct str s) {
   char *r = alloc(s.l);
   memcpy(r, s.c, s.l);
   return (struct str) {r, s.l};
+}
+bool str_eq_cstr (struct str s, const char *c) {
+  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
+  free(s.c);
+  return r;
 }
 void str_free (struct str s) {
   free(s.c);

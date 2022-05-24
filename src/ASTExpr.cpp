@@ -121,7 +121,7 @@ std::string ASTNodeExpr::litBody () const {
     auto leftLitBody = exprBinary.left.litBody();
     auto rightLitBody = exprBinary.right.litBody();
 
-    return R"(")" + leftLitBody.substr(1, leftLitBody.size() - 2) + rightLitBody.substr(1, rightLitBody.size() - 2) + R"(")";
+    return '"' + leftLitBody.substr(1, leftLitBody.size() - 2) + rightLitBody.substr(1, rightLitBody.size() - 2) + '"';
   }
 
   return std::get<ASTExprLit>(*this->body).body;

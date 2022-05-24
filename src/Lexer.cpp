@@ -82,25 +82,25 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
     this->_walk(Token::isIdContinue);
 
     if (this->val == "break") return {startLoc, this->_tok(TK_KW_BREAK)};
-    if (this->val == "catch") return {startLoc, this->_tok(TK_KW_CATCH)};
-    if (this->val == "continue") return {startLoc, this->_tok(TK_KW_CONTINUE)};
-    if (this->val == "elif") return {startLoc, this->_tok(TK_KW_ELIF)};
-    if (this->val == "else") return {startLoc, this->_tok(TK_KW_ELSE)};
-    if (this->val == "enum") return {startLoc, this->_tok(TK_KW_ENUM)};
-    if (this->val == "false") return {startLoc, this->_tok(TK_KW_FALSE)};
-    if (this->val == "fn") return {startLoc, this->_tok(TK_KW_FN)};
-    if (this->val == "if") return {startLoc, this->_tok(TK_KW_IF)};
-    if (this->val == "is") return {startLoc, this->_tok(TK_KW_IS)};
-    if (this->val == "loop") return {startLoc, this->_tok(TK_KW_LOOP)};
-    if (this->val == "main") return {startLoc, this->_tok(TK_KW_MAIN)};
-    if (this->val == "mut") return {startLoc, this->_tok(TK_KW_MUT)};
-    if (this->val == "nil") return {startLoc, this->_tok(TK_KW_NIL)};
-    if (this->val == "obj") return {startLoc, this->_tok(TK_KW_OBJ)};
-    if (this->val == "return") return {startLoc, this->_tok(TK_KW_RETURN)};
-    if (this->val == "throw") return {startLoc, this->_tok(TK_KW_THROW)};
-    if (this->val == "true") return {startLoc, this->_tok(TK_KW_TRUE)};
-    if (this->val == "try") return {startLoc, this->_tok(TK_KW_TRY)};
-    if (this->val == "union") return {startLoc, this->_tok(TK_KW_UNION)};
+    else if (this->val == "catch") return {startLoc, this->_tok(TK_KW_CATCH)};
+    else if (this->val == "continue") return {startLoc, this->_tok(TK_KW_CONTINUE)};
+    else if (this->val == "elif") return {startLoc, this->_tok(TK_KW_ELIF)};
+    else if (this->val == "else") return {startLoc, this->_tok(TK_KW_ELSE)};
+    else if (this->val == "enum") return {startLoc, this->_tok(TK_KW_ENUM)};
+    else if (this->val == "false") return {startLoc, this->_tok(TK_KW_FALSE)};
+    else if (this->val == "fn") return {startLoc, this->_tok(TK_KW_FN)};
+    else if (this->val == "if") return {startLoc, this->_tok(TK_KW_IF)};
+    else if (this->val == "is") return {startLoc, this->_tok(TK_KW_IS)};
+    else if (this->val == "loop") return {startLoc, this->_tok(TK_KW_LOOP)};
+    else if (this->val == "main") return {startLoc, this->_tok(TK_KW_MAIN)};
+    else if (this->val == "mut") return {startLoc, this->_tok(TK_KW_MUT)};
+    else if (this->val == "nil") return {startLoc, this->_tok(TK_KW_NIL)};
+    else if (this->val == "obj") return {startLoc, this->_tok(TK_KW_OBJ)};
+    else if (this->val == "return") return {startLoc, this->_tok(TK_KW_RETURN)};
+    else if (this->val == "throw") return {startLoc, this->_tok(TK_KW_THROW)};
+    else if (this->val == "true") return {startLoc, this->_tok(TK_KW_TRUE)};
+    else if (this->val == "try") return {startLoc, this->_tok(TK_KW_TRY)};
+    else if (this->val == "union") return {startLoc, this->_tok(TK_KW_UNION)};
 
     return {startLoc, this->_tok(TK_ID)};
   }

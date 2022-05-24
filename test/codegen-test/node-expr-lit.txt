@@ -1,17 +1,18 @@
 ======= stdin =======
-obj Test1 {
-  a: str
-  b: int
-}
-
-obj Test2 {
-  a: bool
-}
-
 main {
+  true
+  "str"
+  '\0'
+  1
 }
 ======= code =======
+#include <stdbool.h>
+
 int main () {
+  true;
+  "str";
+  '\0';
+  1;
 }
 ======= flags =======
 ======= stdout =======

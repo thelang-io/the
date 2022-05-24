@@ -207,11 +207,7 @@ bool Type::match (const Type *type) const {
 
     return true;
   } else if (this->isObj()) {
-    if (!type->isObj()) {
-      return false;
-    }
-
-    return this->name == type->name;
+    return type->isObj() && this->name == type->name;
   }
 
   return (this->name == "any") ||

@@ -67,7 +67,7 @@ main {
                     <ExprCallArg>
                       <NodeExpr parenthesized="false">
                         <slot name="type">
-                          <BuiltinType name="any" />
+                          <BuiltinType name="str" />
                         </slot>
                         <slot name="body">
                           <ExprLit type="STR">
@@ -139,7 +139,7 @@ main {
                         <ExprCallArg>
                           <NodeExpr parenthesized="false">
                             <slot name="type">
-                              <BuiltinType name="any" />
+                              <BuiltinType name="str" />
                             </slot>
                             <slot name="body">
                               <ExprLit type="STR">

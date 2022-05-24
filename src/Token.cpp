@@ -10,62 +10,16 @@
 
 std::string escapeVal (const std::string &val, bool insideAttr = false) {
   auto result = std::string();
+  result.reserve(val.size());
 
   for (auto idx = static_cast<std::size_t>(0); idx < val.size(); idx++) {
-    auto ch = val[idx];
-
-    if (ch == '\\') {
-      auto nextCh = val[idx + 1];
-
-      if (nextCh == '\\') {
-        result += R"(\\\\)";
-        idx++;
-        continue;
-      } else if (nextCh == '0') {
-        result += R"(\\0)";
-        idx++;
-        continue;
-      } else if (nextCh == 'n') {
-        result += R"(\\n)";
-        idx++;
-        continue;
-      } else if (nextCh == 'r') {
-        result += R"(\\r)";
-        idx++;
-        continue;
-      } else if (nextCh == 't') {
-        result += R"(\\t)";
-        idx++;
-        continue;
-      } else if (nextCh == '"') {
-        if (insideAttr) {
-          result += R"(\\\")";
-        } else {
-          result += R"(\\")";
-        }
-
-        idx++;
-        continue;
-      } else if (nextCh == '\'') {
-        result += R"(\\')";
-        idx++;
-        continue;
-      }
-    } else if (ch == '\n') {
-      result += R"(\n)";
-      continue;
-    } else if (ch == '\r') {
-      result += R"(\r)";
-      continue;
-    } else if (ch == '\t') {
-      result += R"(\t)";
-      continue;
-    } else if (ch == '"' && insideAttr) {
-      result += R"(\")";
-      continue;
-    }
-
-    result += ch;
+    if (val[idx] == '\f') result += R"(\f)"; // todo test
+    else if (val[idx] == '\n') result += R"(\n)";
+    else if (val[idx] == '\r') result += R"(\r)";
+    else if (val[idx] == '\t') result += R"(\t)";
+    else if (val[idx] == '\v') result += R"(\v)"; // todo test
+    else if (val[idx] == '"' && insideAttr) result += R"(\")";
+    else result += val[idx];
   }
 
   return result;

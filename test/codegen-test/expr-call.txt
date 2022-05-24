@@ -1,0 +1,181 @@
+======= stdin =======
+obj Human {
+  name: str
+  age: int
+}
+
+main {
+  print(true)
+  print(3)
+  print("Hello, World!")
+  print("Spider", "Snake", "Wolf", separator: ",", terminator: "")
+  print()
+  print(Human{name: "Bruce\nWayne", age: 32})
+
+  // todo test
+  // a = b()
+  // a = b = c()
+  // a + b()
+  // a + b + c()
+  // false ? 1 : a()
+  // !a()
+  // b := fn () void
+}
+======= code =======
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str int_str (int32_t);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_escape (const struct str);
+void str_free (struct str);
+void *alloc (size_t);
+
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h': sprintf(buf, "%" PRId8, va_arg(args, int)); fputs(buf, stream); break;
+      case 'j': sprintf(buf, "%" PRId16, va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;
+      case 'v': sprintf(buf, "%" PRIu8, va_arg(args, int)); fputs(buf, stream); break;
+      case 'w': sprintf(buf, "%" PRIu16, va_arg(args, int)); fputs(buf, stream); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_concat_cstr (struct str s, const char *c) {
+  size_t l = s.l + strlen(c);
+  char *r = alloc(l);
+  memcpy(r, s.c, s.l);
+  memcpy(&r[s.l], c, l - s.l);
+  free(s.c);
+  return (struct str) {r, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *r = alloc(l);
+  memcpy(r, s1.c, s1.l);
+  memcpy(&r[s1.l], s2.c, s2.l);
+  free(s1.c);
+  free(s2.c);
+  return (struct str) {r, l};
+}
+struct str str_escape (const struct str s) {
+  char *r = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.c[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) r = realloc(r, l + 2);
+      r[l++] = '\\';
+      if (c == '\f') r[l++] = 'f';
+      else if (c == '\n') r[l++] = 'n';
+      else if (c == '\r') r[l++] = 'r';
+      else if (c == '\t') r[l++] = 't';
+      else if (c == '\v') r[l++] = 'v';
+      else if (c == '"') r[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) r = realloc(r, l + 1);
+    r[l++] = c;
+  }
+  return (struct str) {r, l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_Human_0;
+
+struct __THE_1_Human_0 {
+  struct str __THE_0_name;
+  int32_t __THE_0_age;
+};
+
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, int32_t);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
+struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *);
+
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
+  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
+  r->__THE_0_name = __THE_0_name;
+  r->__THE_0_age = __THE_0_age;
+  return r;
+}
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
+  str_free((struct str) o->__THE_0_name);
+  free(o);
+}
+struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
+  struct str r = str_alloc("Human{");
+  r = str_concat_cstr(r, "name: \"");
+  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_cstr(r, "\"");
+  r = str_concat_cstr(r, ", age: ");
+  r = str_concat_str(r, int_str(o->__THE_0_age));
+  __THE_1_Human_0_free(o);
+  return str_concat_cstr(r, "}");
+}
+
+int main () {
+  print(stdout, "%t%z", true, "\n");
+  print(stdout, "%i%z", 3, "\n");
+  print(stdout, "%z%z", "Hello, World!", "\n");
+  print(stdout, "%z%z%z%z%z", "Spider", ",", "Snake", ",", "Wolf");
+  print(stdout, "%z", "\n");
+  print(stdout, "%s%z", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), "\n");
+}
+======= flags =======
+======= stdout =======
+true
+3
+Hello, World!
+Spider,Snake,Wolf
+Human{name: "Bruce\nWayne", age: 32}
