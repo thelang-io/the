@@ -152,8 +152,8 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
   } else if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
     auto nodeFnDeclParams = std::vector<ASTNodeFnDeclParam>{};
+    auto nodeFnDeclStack = this->varMap.stack();
     auto nodeFnDeclVarParams = std::vector<TypeFnParam>{};
-    auto nodeFnDeclVarStack = this->varMap.stack();
 
     this->varMap.save();
 
@@ -166,14 +166,14 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       auto paramInit = std::optional<ASTNodeExpr>{};
 
       if (stmtFnDeclParam.init != std::nullopt) {
-        paramInit = this->_nodeExpr(*stmtFnDeclParam.init, nodeFnDeclVarStack);
+        paramInit = this->_nodeExpr(*stmtFnDeclParam.init, nodeFnDeclStack);
       }
 
       auto paramVariadic = stmtFnDeclParam.variadic;
       auto paramRequired = paramInit == std::nullopt && !paramVariadic;
 
       nodeFnDeclParams.push_back(ASTNodeFnDeclParam{paramVar, paramInit});
-      nodeFnDeclVarParams.push_back(TypeFnParam{paramVar->name, paramVar->type, paramRequired, paramVariadic});
+      nodeFnDeclVarParams.push_back(TypeFnParam{paramVar, paramRequired, paramVariadic});
     }
 
     auto nodeFnDeclVarName = stmtFnDecl.id.val;
@@ -186,12 +186,12 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     nodeFnDeclVar->frame -= 1;
 
     this->typeMap.stack.emplace_back(nodeFnDeclVar->name);
-    auto nodeFnDeclBody = this->_block(stmtFnDecl.body, nodeFnDeclVarStack);
+    auto nodeFnDeclBody = this->_block(stmtFnDecl.body, nodeFnDeclStack);
     this->varMap.restore();
     this->typeMap.stack.pop_back();
 
-    auto nodeFnDeclStack = nodeFnDeclVarStack.snapshot();
-    auto nodeFnDecl = ASTNodeFnDecl{nodeFnDeclVar, nodeFnDeclStack, nodeFnDeclParams, nodeFnDeclBody};
+    std::get<TypeFn>(nodeFnDeclVarType->body).stack = nodeFnDeclStack.snapshot();
+    auto nodeFnDecl = ASTNodeFnDecl{nodeFnDeclVar, nodeFnDeclParams, nodeFnDeclBody};
 
     return this->_wrapNode(stmt, nodeFnDecl);
   } else if (std::holds_alternative<ParserStmtIf>(*stmt.body)) {
@@ -361,7 +361,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
         }
 
         for (const auto &calleeFnParam : exprCallCalleeFn.params) {
-          if (calleeFnParam.name == exprCallArgName) {
+          if (calleeFnParam.var->name == exprCallArgName) {
             foundParam = calleeFnParam;
             break;
           }
@@ -399,20 +399,20 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
 
       auto exprCallArgExpr = this->_nodeExpr(parserExprCallArg.expr, varStack);
 
-      if (!foundParam->type->match(exprCallArgExpr.type)) {
+      if (!foundParam->var->type->match(exprCallArgExpr.type)) {
         throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1008);
       }
 
       exprCallArgs.push_back(ASTExprCallArg{exprCallArgId, exprCallArgExpr});
 
       if (!isArgVariadic) {
-        passedArgs.push_back(foundParam->name);
+        passedArgs.push_back(foundParam->var->name);
         exprCallArgIdx++;
       }
     }
 
     for (const auto &calleeFnParam : exprCallCalleeFn.params) {
-      if (calleeFnParam.required && std::find(passedArgs.begin(), passedArgs.end(), calleeFnParam.name) == passedArgs.end()) {
+      if (calleeFnParam.required && std::find(passedArgs.begin(), passedArgs.end(), calleeFnParam.var->name) == passedArgs.end()) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1009);
       }
     }
@@ -596,7 +596,9 @@ Type *AST::_type (const ParserType &type) {
 
     for (const auto &typeFnParam : typeFn.params) {
       auto paramType = this->_type(typeFnParam.type);
-      fnParams.push_back(TypeFnParam{"@", paramType, !typeFnParam.variadic, typeFnParam.variadic});
+      auto paramVar = std::make_shared<Var>(Var{"@", "@", paramType, false, false, 0});
+
+      fnParams.push_back(TypeFnParam{paramVar, !typeFnParam.variadic, typeFnParam.variadic});
     }
 
     return this->typeMap.fn(fnParams, fnReturnType);

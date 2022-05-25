@@ -8,6 +8,7 @@
 #ifndef SRC_VAR_MAP_HPP
 #define SRC_VAR_MAP_HPP
 
+#include "TypeMap.hpp"
 #include "VarStack.hpp"
 
 class VarMap {

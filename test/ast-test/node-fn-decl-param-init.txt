@@ -13,11 +13,15 @@ fn test1 (p1 := "1", p2 := p1) {
             <BuiltinType name="void" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="p1" required="false" variadic="false">
-              <BuiltinType name="str" />
+            <TypeFnParam required="false" variadic="false">
+              <Var codeName="p1_0" frame="2" mut="false" name="p1">
+                <BuiltinType name="str" />
+              </Var>
             </TypeFnParam>
-            <TypeFnParam name="p2" required="false" variadic="false">
-              <BuiltinType name="str" />
+            <TypeFnParam required="false" variadic="false">
+              <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                <BuiltinType name="str" />
+              </Var>
             </TypeFnParam>
           </slot>
         </Type>

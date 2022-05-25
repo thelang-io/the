@@ -8,18 +8,7 @@
 #ifndef SRC_VAR_STACK_HPP
 #define SRC_VAR_STACK_HPP
 
-#include "TypeMap.hpp"
-
-struct Var {
-  std::string name;
-  std::string codeName;
-  Type *type;
-  bool mut;
-  bool builtin;
-  std::size_t frame;
-
-  std::string xml (std::size_t = 0) const;
-};
+#include "Var.hpp"
 
 class VarStack {
  public:

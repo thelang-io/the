@@ -1,0 +1,56 @@
+======= stdin =======
+main {
+  if 1 > 2 {
+    fn x (a: int) {}
+    x(1)
+  } else {
+    fn x (b: str) {}
+    x("test")
+  }
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_alloc (const char *);
+void *alloc (size_t);
+
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+void __THE_0_mainSDx_0(int32_t);
+void __THE_0_mainSDx_1(struct str);
+
+void __THE_0_mainSDx_0(int32_t __THE_0_a_0) {
+}
+void __THE_0_mainSDx_1(struct str __THE_0_b_0) {
+}
+
+int main () {
+  if (1 > 2) {
+    __THE_0_mainSDx_0(1);
+  } else {
+    __THE_0_mainSDx_1(str_alloc("test"));
+  }
+}
+======= flags =======
+======= stdout =======

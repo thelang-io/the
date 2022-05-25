@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.10.23 LANGUAGES CXX)
+project(the-core VERSION 0.10.24 LANGUAGES CXX)
 
 option(BUILD_TESTS "Build test programs" OFF)
 option(CODEGEN_MEMCHECK "Memory check codegen binaries" OFF)
@@ -21,7 +21,9 @@ set(
   src/ParserStmt.cpp src/ParserStmt.hpp
   src/Reader.cpp src/Reader.hpp
   src/Token.cpp src/Token.hpp
+  src/Type.cpp src/Type.hpp
   src/TypeMap.cpp src/TypeMap.hpp
+  src/Var.cpp src/Var.hpp
   src/VarMap.cpp src/VarMap.hpp
   src/VarStack.cpp src/VarStack.hpp
   src/config.hpp

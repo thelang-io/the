@@ -148,6 +148,12 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenTest, testing::Values(
   "node-expr-unary-obj"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenTest, testing::Values(
+  "node-fn-decl-empty",
+  "node-fn-decl-stack",
+  "node-fn-decl-scope"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenTest, testing::Values(
   "node-if",
   "node-if-cmp-num",

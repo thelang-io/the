@@ -55,7 +55,6 @@ struct CodegenBuiltins {
   bool libInttypes = false;
   bool libStdarg = false;
   bool libStdbool = false;
-  bool libStddef = false;
   bool libStdint = false;
   bool libStdio = false;
   bool libStdlib = false;
@@ -66,7 +65,7 @@ struct CodegenBuiltins {
 struct CodegenEntity {
   std::string name;
   CodegenEntityType type;
-  CodegenBuiltins builtins = {};
+  std::vector<std::string> builtins = {};
   std::vector<std::string> entities = {};
   std::string decl = "";
   std::string def = "";
@@ -95,17 +94,40 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
-  void _activateEntity (const std::string &);
-  std::string _block (const ASTBlock &);
-  std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
+  void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
+  void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
+  std::string _block (
+    const ASTBlock &,
+    std::optional<std::vector<std::string> *> = std::nullopt,
+    std::optional<std::vector<std::string> *> = std::nullopt
+  );
+  std::string _exprAccess (
+    const std::shared_ptr<ASTMemberObj> &,
+    std::optional<std::vector<std::string> *> = std::nullopt,
+    std::optional<std::vector<std::string> *> = std::nullopt
+  );
   std::string _flags () const;
-  CodegenNode _node (const ASTNode &, bool = true);
-  std::string _nodeIf (const ASTNodeIf &);
-  std::string _nodeExpr (const ASTNodeExpr &, bool = false);
+  CodegenNode _node (
+    const ASTNode &,
+    bool = true,
+    std::optional<std::vector<std::string> *> = std::nullopt,
+    std::optional<std::vector<std::string> *> = std::nullopt
+  );
+  std::string _nodeIf (
+    const ASTNodeIf &,
+    std::optional<std::vector<std::string> *> = std::nullopt,
+    std::optional<std::vector<std::string> *> = std::nullopt
+  );
+  std::string _nodeExpr (
+    const ASTNodeExpr &,
+    bool = false,
+    std::optional<std::vector<std::string> *> = std::nullopt,
+    std::optional<std::vector<std::string> *> = std::nullopt
+  );
   std::string _type (
     const Type *,
     bool,
-    std::optional<CodegenBuiltins *> = std::nullopt,
+    std::optional<std::vector<std::string> *> = std::nullopt,
     std::optional<std::vector<std::string> *> = std::nullopt
   );
   CodegenNode _wrapNode (const ASTNode &, const std::string &, const std::string &, const std::string &) const;

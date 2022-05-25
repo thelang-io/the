@@ -1,0 +1,32 @@
+======= stdin =======
+main {
+  mut a := 2
+
+  fn test (newA: int) {
+    a = newA
+  }
+
+  test(1)
+}
+======= code =======
+#include <stdint.h>
+
+struct __THE_1_mainSDtest_0S;
+
+struct __THE_1_mainSDtest_0S {
+  int32_t __THE_0_a_0;
+};
+
+void __THE_0_mainSDtest_0(struct __THE_1_mainSDtest_0S, int32_t);
+
+void __THE_0_mainSDtest_0(struct __THE_1_mainSDtest_0S s, int32_t __THE_0_newA_0) {
+  int32_t __THE_0_a_0 = s.__THE_0_a_0;
+  __THE_0_a_0 = __THE_0_newA_0;
+}
+
+int main () {
+  int32_t __THE_0_a_0 = 2;
+  __THE_0_mainSDtest_0((struct __THE_1_mainSDtest_0S) {__THE_0_a_0}, 1);
+}
+======= flags =======
+======= stdout =======

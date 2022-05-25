@@ -45,11 +45,15 @@ main {
             <BuiltinType name="void" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="p1" required="true" variadic="false">
-              <BuiltinType name="str" />
+            <TypeFnParam required="true" variadic="false">
+              <Var codeName="p1_0" frame="2" mut="false" name="p1">
+                <BuiltinType name="str" />
+              </Var>
             </TypeFnParam>
-            <TypeFnParam name="l1" required="true" variadic="false">
-              <BuiltinType name="str" />
+            <TypeFnParam required="true" variadic="false">
+              <Var codeName="l1_0" frame="2" mut="false" name="l1">
+                <BuiltinType name="str" />
+              </Var>
             </TypeFnParam>
           </slot>
         </Type>
@@ -154,11 +158,15 @@ main {
             <BuiltinType name="void" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="p2" required="false" variadic="false">
-              <BuiltinType name="str" />
+            <TypeFnParam required="false" variadic="false">
+              <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                <BuiltinType name="str" />
+              </Var>
             </TypeFnParam>
-            <TypeFnParam name="args" required="false" variadic="true">
-              <BuiltinType name="str" />
+            <TypeFnParam required="false" variadic="true">
+              <Var codeName="args_0" frame="2" mut="false" name="args">
+                <BuiltinType name="str" />
+              </Var>
             </TypeFnParam>
           </slot>
         </Type>
@@ -275,20 +283,26 @@ main {
             <BuiltinType name="int" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="sum" required="true" variadic="false">
-              <Type type="fn">
-                <slot name="returnType">
-                  <BuiltinType name="int" />
-                </slot>
-                <slot name="params">
-                  <TypeFnParam required="true" variadic="false">
+            <TypeFnParam required="true" variadic="false">
+              <Var codeName="sum_0" frame="2" mut="false" name="sum">
+                <Type type="fn">
+                  <slot name="returnType">
                     <BuiltinType name="int" />
-                  </TypeFnParam>
-                  <TypeFnParam required="false" variadic="true">
-                    <BuiltinType name="int" />
-                  </TypeFnParam>
-                </slot>
-              </Type>
+                  </slot>
+                  <slot name="params">
+                    <TypeFnParam required="true" variadic="false">
+                      <Var frame="0" mut="false">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </TypeFnParam>
+                    <TypeFnParam required="false" variadic="true">
+                      <Var frame="0" mut="false">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </TypeFnParam>
+                  </slot>
+                </Type>
+              </Var>
             </TypeFnParam>
           </slot>
         </Type>
@@ -304,10 +318,14 @@ main {
               </slot>
               <slot name="params">
                 <TypeFnParam required="true" variadic="false">
-                  <BuiltinType name="int" />
+                  <Var frame="0" mut="false">
+                    <BuiltinType name="int" />
+                  </Var>
                 </TypeFnParam>
                 <TypeFnParam required="false" variadic="true">
-                  <BuiltinType name="int" />
+                  <Var frame="0" mut="false">
+                    <BuiltinType name="int" />
+                  </Var>
                 </TypeFnParam>
               </slot>
             </Type>
@@ -347,10 +365,14 @@ main {
                                         </slot>
                                         <slot name="params">
                                           <TypeFnParam required="true" variadic="false">
-                                            <BuiltinType name="int" />
+                                            <Var frame="0" mut="false">
+                                              <BuiltinType name="int" />
+                                            </Var>
                                           </TypeFnParam>
                                           <TypeFnParam required="false" variadic="true">
-                                            <BuiltinType name="int" />
+                                            <Var frame="0" mut="false">
+                                              <BuiltinType name="int" />
+                                            </Var>
                                           </TypeFnParam>
                                         </slot>
                                       </Type>
@@ -364,10 +386,14 @@ main {
                                     </slot>
                                     <slot name="params">
                                       <TypeFnParam required="true" variadic="false">
-                                        <BuiltinType name="int" />
+                                        <Var frame="0" mut="false">
+                                          <BuiltinType name="int" />
+                                        </Var>
                                       </TypeFnParam>
                                       <TypeFnParam required="false" variadic="true">
-                                        <BuiltinType name="int" />
+                                        <Var frame="0" mut="false">
+                                          <BuiltinType name="int" />
+                                        </Var>
                                       </TypeFnParam>
                                     </slot>
                                   </Type>
@@ -406,10 +432,14 @@ main {
                                         </slot>
                                         <slot name="params">
                                           <TypeFnParam required="true" variadic="false">
-                                            <BuiltinType name="int" />
+                                            <Var frame="0" mut="false">
+                                              <BuiltinType name="int" />
+                                            </Var>
                                           </TypeFnParam>
                                           <TypeFnParam required="false" variadic="true">
-                                            <BuiltinType name="int" />
+                                            <Var frame="0" mut="false">
+                                              <BuiltinType name="int" />
+                                            </Var>
                                           </TypeFnParam>
                                         </slot>
                                       </Type>
@@ -423,10 +453,14 @@ main {
                                     </slot>
                                     <slot name="params">
                                       <TypeFnParam required="true" variadic="false">
-                                        <BuiltinType name="int" />
+                                        <Var frame="0" mut="false">
+                                          <BuiltinType name="int" />
+                                        </Var>
                                       </TypeFnParam>
                                       <TypeFnParam required="false" variadic="true">
-                                        <BuiltinType name="int" />
+                                        <Var frame="0" mut="false">
+                                          <BuiltinType name="int" />
+                                        </Var>
                                       </TypeFnParam>
                                     </slot>
                                   </Type>
@@ -481,10 +515,14 @@ main {
                                 </slot>
                                 <slot name="params">
                                   <TypeFnParam required="true" variadic="false">
-                                    <BuiltinType name="int" />
+                                    <Var frame="0" mut="false">
+                                      <BuiltinType name="int" />
+                                    </Var>
                                   </TypeFnParam>
                                   <TypeFnParam required="false" variadic="true">
-                                    <BuiltinType name="int" />
+                                    <Var frame="0" mut="false">
+                                      <BuiltinType name="int" />
+                                    </Var>
                                   </TypeFnParam>
                                 </slot>
                               </Type>
@@ -498,10 +536,14 @@ main {
                             </slot>
                             <slot name="params">
                               <TypeFnParam required="true" variadic="false">
-                                <BuiltinType name="int" />
+                                <Var frame="0" mut="false">
+                                  <BuiltinType name="int" />
+                                </Var>
                               </TypeFnParam>
                               <TypeFnParam required="false" variadic="true">
-                                <BuiltinType name="int" />
+                                <Var frame="0" mut="false">
+                                  <BuiltinType name="int" />
+                                </Var>
                               </TypeFnParam>
                             </slot>
                           </Type>
@@ -553,11 +595,15 @@ main {
             <BuiltinType name="int" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="a" required="true" variadic="false">
-              <BuiltinType name="int" />
+            <TypeFnParam required="true" variadic="false">
+              <Var codeName="a_0" frame="2" mut="false" name="a">
+                <BuiltinType name="int" />
+              </Var>
             </TypeFnParam>
-            <TypeFnParam name="b" required="false" variadic="true">
-              <BuiltinType name="int" />
+            <TypeFnParam required="false" variadic="true">
+              <Var codeName="b_0" frame="2" mut="false" name="b">
+                <BuiltinType name="int" />
+              </Var>
             </TypeFnParam>
           </slot>
         </Type>
@@ -645,11 +691,15 @@ main {
                 <BuiltinType name="int" />
               </slot>
               <slot name="params">
-                <TypeFnParam name="p0" required="true" variadic="false">
-                  <BuiltinType name="int" />
+                <TypeFnParam required="true" variadic="false">
+                  <Var codeName="p0_0" frame="3" mut="false" name="p0">
+                    <BuiltinType name="int" />
+                  </Var>
                 </TypeFnParam>
-                <TypeFnParam name="l0" required="false" variadic="false">
-                  <BuiltinType name="int" />
+                <TypeFnParam required="false" variadic="false">
+                  <Var codeName="l0_0" frame="3" mut="false" name="l0">
+                    <BuiltinType name="int" />
+                  </Var>
                 </TypeFnParam>
               </slot>
             </Type>
@@ -788,11 +838,15 @@ main {
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam name="p1" required="true" variadic="false">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="true" variadic="false">
+                        <Var codeName="p1_0" frame="2" mut="false" name="p1">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
-                      <TypeFnParam name="l1" required="true" variadic="false">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="true" variadic="false">
+                        <Var codeName="l1_0" frame="2" mut="false" name="l1">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
                     </slot>
                   </Type>
@@ -805,11 +859,15 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam name="p1" required="true" variadic="false">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="true" variadic="false">
+                    <Var codeName="p1_0" frame="2" mut="false" name="p1">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
-                  <TypeFnParam name="l1" required="true" variadic="false">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="true" variadic="false">
+                    <Var codeName="l1_0" frame="2" mut="false" name="l1">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
                 </slot>
               </Type>
@@ -859,11 +917,15 @@ main {
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam name="p2" required="false" variadic="false">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="false">
+                        <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
-                      <TypeFnParam name="args" required="false" variadic="true">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="true">
+                        <Var codeName="args_0" frame="2" mut="false" name="args">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
                     </slot>
                   </Type>
@@ -876,11 +938,15 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam name="p2" required="false" variadic="false">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="false">
+                    <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
-                  <TypeFnParam name="args" required="false" variadic="true">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="true">
+                    <Var codeName="args_0" frame="2" mut="false" name="args">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
                 </slot>
               </Type>
@@ -904,11 +970,15 @@ main {
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam name="p2" required="false" variadic="false">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="false">
+                        <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
-                      <TypeFnParam name="args" required="false" variadic="true">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="true">
+                        <Var codeName="args_0" frame="2" mut="false" name="args">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
                     </slot>
                   </Type>
@@ -921,11 +991,15 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam name="p2" required="false" variadic="false">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="false">
+                    <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
-                  <TypeFnParam name="args" required="false" variadic="true">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="true">
+                    <Var codeName="args_0" frame="2" mut="false" name="args">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
                 </slot>
               </Type>
@@ -963,11 +1037,15 @@ main {
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam name="p2" required="false" variadic="false">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="false">
+                        <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
-                      <TypeFnParam name="args" required="false" variadic="true">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="true">
+                        <Var codeName="args_0" frame="2" mut="false" name="args">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
                     </slot>
                   </Type>
@@ -980,11 +1058,15 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam name="p2" required="false" variadic="false">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="false">
+                    <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
-                  <TypeFnParam name="args" required="false" variadic="true">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="true">
+                    <Var codeName="args_0" frame="2" mut="false" name="args">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
                 </slot>
               </Type>
@@ -1034,11 +1116,15 @@ main {
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam name="p2" required="false" variadic="false">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="false">
+                        <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
-                      <TypeFnParam name="args" required="false" variadic="true">
-                        <BuiltinType name="str" />
+                      <TypeFnParam required="false" variadic="true">
+                        <Var codeName="args_0" frame="2" mut="false" name="args">
+                          <BuiltinType name="str" />
+                        </Var>
                       </TypeFnParam>
                     </slot>
                   </Type>
@@ -1051,11 +1137,15 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam name="p2" required="false" variadic="false">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="false">
+                    <Var codeName="p2_0" frame="2" mut="false" name="p2">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
-                  <TypeFnParam name="args" required="false" variadic="true">
-                    <BuiltinType name="str" />
+                  <TypeFnParam required="false" variadic="true">
+                    <Var codeName="args_0" frame="2" mut="false" name="args">
+                      <BuiltinType name="str" />
+                    </Var>
                   </TypeFnParam>
                 </slot>
               </Type>
@@ -1145,20 +1235,26 @@ main {
                                 <BuiltinType name="int" />
                               </slot>
                               <slot name="params">
-                                <TypeFnParam name="sum" required="true" variadic="false">
-                                  <Type type="fn">
-                                    <slot name="returnType">
-                                      <BuiltinType name="int" />
-                                    </slot>
-                                    <slot name="params">
-                                      <TypeFnParam required="true" variadic="false">
+                                <TypeFnParam required="true" variadic="false">
+                                  <Var codeName="sum_0" frame="2" mut="false" name="sum">
+                                    <Type type="fn">
+                                      <slot name="returnType">
                                         <BuiltinType name="int" />
-                                      </TypeFnParam>
-                                      <TypeFnParam required="false" variadic="true">
-                                        <BuiltinType name="int" />
-                                      </TypeFnParam>
-                                    </slot>
-                                  </Type>
+                                      </slot>
+                                      <slot name="params">
+                                        <TypeFnParam required="true" variadic="false">
+                                          <Var frame="0" mut="false">
+                                            <BuiltinType name="int" />
+                                          </Var>
+                                        </TypeFnParam>
+                                        <TypeFnParam required="false" variadic="true">
+                                          <Var frame="0" mut="false">
+                                            <BuiltinType name="int" />
+                                          </Var>
+                                        </TypeFnParam>
+                                      </slot>
+                                    </Type>
+                                  </Var>
                                 </TypeFnParam>
                               </slot>
                             </Type>
@@ -1171,20 +1267,26 @@ main {
                             <BuiltinType name="int" />
                           </slot>
                           <slot name="params">
-                            <TypeFnParam name="sum" required="true" variadic="false">
-                              <Type type="fn">
-                                <slot name="returnType">
-                                  <BuiltinType name="int" />
-                                </slot>
-                                <slot name="params">
-                                  <TypeFnParam required="true" variadic="false">
+                            <TypeFnParam required="true" variadic="false">
+                              <Var codeName="sum_0" frame="2" mut="false" name="sum">
+                                <Type type="fn">
+                                  <slot name="returnType">
                                     <BuiltinType name="int" />
-                                  </TypeFnParam>
-                                  <TypeFnParam required="false" variadic="true">
-                                    <BuiltinType name="int" />
-                                  </TypeFnParam>
-                                </slot>
-                              </Type>
+                                  </slot>
+                                  <slot name="params">
+                                    <TypeFnParam required="true" variadic="false">
+                                      <Var frame="0" mut="false">
+                                        <BuiltinType name="int" />
+                                      </Var>
+                                    </TypeFnParam>
+                                    <TypeFnParam required="false" variadic="true">
+                                      <Var frame="0" mut="false">
+                                        <BuiltinType name="int" />
+                                      </Var>
+                                    </TypeFnParam>
+                                  </slot>
+                                </Type>
+                              </Var>
                             </TypeFnParam>
                           </slot>
                         </Type>
@@ -1198,11 +1300,15 @@ main {
                                   <BuiltinType name="int" />
                                 </slot>
                                 <slot name="params">
-                                  <TypeFnParam name="a" required="true" variadic="false">
-                                    <BuiltinType name="int" />
+                                  <TypeFnParam required="true" variadic="false">
+                                    <Var codeName="a_0" frame="2" mut="false" name="a">
+                                      <BuiltinType name="int" />
+                                    </Var>
                                   </TypeFnParam>
-                                  <TypeFnParam name="b" required="false" variadic="true">
-                                    <BuiltinType name="int" />
+                                  <TypeFnParam required="false" variadic="true">
+                                    <Var codeName="b_0" frame="2" mut="false" name="b">
+                                      <BuiltinType name="int" />
+                                    </Var>
                                   </TypeFnParam>
                                 </slot>
                               </Type>
@@ -1215,11 +1321,15 @@ main {
                                       <BuiltinType name="int" />
                                     </slot>
                                     <slot name="params">
-                                      <TypeFnParam name="a" required="true" variadic="false">
-                                        <BuiltinType name="int" />
+                                      <TypeFnParam required="true" variadic="false">
+                                        <Var codeName="a_0" frame="2" mut="false" name="a">
+                                          <BuiltinType name="int" />
+                                        </Var>
                                       </TypeFnParam>
-                                      <TypeFnParam name="b" required="false" variadic="true">
-                                        <BuiltinType name="int" />
+                                      <TypeFnParam required="false" variadic="true">
+                                        <Var codeName="b_0" frame="2" mut="false" name="b">
+                                          <BuiltinType name="int" />
+                                        </Var>
                                       </TypeFnParam>
                                     </slot>
                                   </Type>
@@ -1281,11 +1391,15 @@ main {
                                 <BuiltinType name="int" />
                               </slot>
                               <slot name="params">
-                                <TypeFnParam name="p0" required="true" variadic="false">
-                                  <BuiltinType name="int" />
+                                <TypeFnParam required="true" variadic="false">
+                                  <Var codeName="p0_0" frame="3" mut="false" name="p0">
+                                    <BuiltinType name="int" />
+                                  </Var>
                                 </TypeFnParam>
-                                <TypeFnParam name="l0" required="false" variadic="false">
-                                  <BuiltinType name="int" />
+                                <TypeFnParam required="false" variadic="false">
+                                  <Var codeName="l0_0" frame="3" mut="false" name="l0">
+                                    <BuiltinType name="int" />
+                                  </Var>
                                 </TypeFnParam>
                               </slot>
                             </Type>
@@ -1298,11 +1412,15 @@ main {
                             <BuiltinType name="int" />
                           </slot>
                           <slot name="params">
-                            <TypeFnParam name="p0" required="true" variadic="false">
-                              <BuiltinType name="int" />
+                            <TypeFnParam required="true" variadic="false">
+                              <Var codeName="p0_0" frame="3" mut="false" name="p0">
+                                <BuiltinType name="int" />
+                              </Var>
                             </TypeFnParam>
-                            <TypeFnParam name="l0" required="false" variadic="false">
-                              <BuiltinType name="int" />
+                            <TypeFnParam required="false" variadic="false">
+                              <Var codeName="l0_0" frame="3" mut="false" name="l0">
+                                <BuiltinType name="int" />
+                              </Var>
                             </TypeFnParam>
                           </slot>
                         </Type>
@@ -1373,11 +1491,15 @@ main {
                                 <BuiltinType name="int" />
                               </slot>
                               <slot name="params">
-                                <TypeFnParam name="p0" required="true" variadic="false">
-                                  <BuiltinType name="int" />
+                                <TypeFnParam required="true" variadic="false">
+                                  <Var codeName="p0_0" frame="3" mut="false" name="p0">
+                                    <BuiltinType name="int" />
+                                  </Var>
                                 </TypeFnParam>
-                                <TypeFnParam name="l0" required="false" variadic="false">
-                                  <BuiltinType name="int" />
+                                <TypeFnParam required="false" variadic="false">
+                                  <Var codeName="l0_0" frame="3" mut="false" name="l0">
+                                    <BuiltinType name="int" />
+                                  </Var>
                                 </TypeFnParam>
                               </slot>
                             </Type>
@@ -1390,11 +1512,15 @@ main {
                             <BuiltinType name="int" />
                           </slot>
                           <slot name="params">
-                            <TypeFnParam name="p0" required="true" variadic="false">
-                              <BuiltinType name="int" />
+                            <TypeFnParam required="true" variadic="false">
+                              <Var codeName="p0_0" frame="3" mut="false" name="p0">
+                                <BuiltinType name="int" />
+                              </Var>
                             </TypeFnParam>
-                            <TypeFnParam name="l0" required="false" variadic="false">
-                              <BuiltinType name="int" />
+                            <TypeFnParam required="false" variadic="false">
+                              <Var codeName="l0_0" frame="3" mut="false" name="l0">
+                                <BuiltinType name="int" />
+                              </Var>
                             </TypeFnParam>
                           </slot>
                         </Type>

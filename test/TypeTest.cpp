@@ -12,9 +12,13 @@
 class TypeTest : public testing::Test {
  protected:
   TypeMap tm_;
+  std::shared_ptr<Var> intVar_;
+  std::shared_ptr<Var> strVar_;
 
   void SetUp () override {
     this->tm_.init();
+    this->intVar_ = std::make_shared<Var>(Var{"a", "a_0", this->tm_.get("int"), false, false, 0});
+    this->strVar_ = std::make_shared<Var>(Var{"b", "b_0", this->tm_.get("str"), false, false, 0});
   }
 };
 
@@ -169,12 +173,12 @@ TEST_F(TypeTest, CheckIfFn) {
   this->tm_.add("test1", {}, this->tm_.get("int"));
 
   this->tm_.add("test2", {
-    {"a", this->tm_.get("int"), true, false}
+    {this->intVar_, true, false}
   }, this->tm_.get("int"));
 
   this->tm_.add("test3", {
-    {"a", this->tm_.get("str"), false, false},
-    {"b", this->tm_.get("int"), false, true}
+    {this->strVar_, false, false},
+    {this->intVar_, false, true}
   }, this->tm_.get("str"));
 
   EXPECT_TRUE(this->tm_.get("test1")->isFn());
@@ -184,12 +188,12 @@ TEST_F(TypeTest, CheckIfFn) {
   EXPECT_TRUE(this->tm_.fn({}, this->tm_.get("void"))->isFn());
 
   EXPECT_TRUE(this->tm_.fn({
-    {"a", this->tm_.get("int"), true, false}
+    {this->intVar_, true, false}
   }, this->tm_.get("void"))->isFn());
 
   EXPECT_TRUE(this->tm_.fn({
-    {"a", this->tm_.get("str"), false, false},
-    {"b", this->tm_.get("int"), false, true}
+    {this->strVar_, false, false},
+    {this->intVar_, false, true}
   }, this->tm_.get("str"))->isFn());
 }
 
@@ -467,34 +471,34 @@ TEST_F(TypeTest, MatchesInteger) {
 
 TEST_F(TypeTest, MatchesFunction) {
   this->tm_.add("test1", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    {this->intVar_, true, false},
+    {this->intVar_, false, true}
   }, this->tm_.get("int"));
 
   this->tm_.add("test2", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    {this->intVar_, true, false},
+    {this->intVar_, false, true}
   }, this->tm_.get("int"));
 
   this->tm_.add("test3", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), true, false}
+    {this->intVar_, true, false},
+    {this->intVar_, true, false}
   }, this->tm_.get("int"));
 
   this->tm_.add("test4", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("str"), false, true}
+    {this->intVar_, true, false},
+    {this->strVar_, false, true}
   }, this->tm_.get("int"));
 
   this->tm_.add("test5", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    {this->intVar_, true, false},
+    {this->intVar_, false, true}
   }, this->tm_.get("str"));
 
   this->tm_.add("test6", {}, this->tm_.get("int"));
 
   this->tm_.add("test7", {
-    {"a", this->tm_.get("int"), true, false}
+    {this->intVar_, true, false}
   }, this->tm_.get("int"));
 
   EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("test1")));
