@@ -185,7 +185,7 @@ struct str str_realloc (struct str s1, struct str s2) {
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
     exit(EXIT_FAILURE);
   }
   return r;
