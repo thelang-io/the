@@ -1,0 +1,33 @@
+======= stdin =======
+fn test1 () int {
+  fn test2 () int {
+    fn test3 () int {
+      return 1
+    }
+
+    return test3()
+  }
+
+  return test2()
+}
+
+main {
+  a := test1()
+
+  fn test4 () int {
+    fn test5 () int {
+      fn test6 () int {
+        return a
+      }
+
+      return test6()
+    }
+
+    return test5()
+  }
+
+  b := test4()
+}
+======= code =======
+======= flags =======
+======= stdout =======

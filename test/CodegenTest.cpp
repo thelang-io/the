@@ -151,7 +151,14 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenTest, testing::Values(
   "node-fn-decl-empty",
   "node-fn-decl-stack",
-  "node-fn-decl-scope"
+  "node-fn-decl-stack-str",
+  "node-fn-decl-stack-obj",
+  "node-fn-decl-scope",
+  "node-fn-decl-param-default",
+  "node-fn-decl-param-default-str",
+  "node-fn-decl-param-default-obj",
+  "node-fn-decl-param-fn",
+  "node-fn-decl-nested"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenTest, testing::Values(

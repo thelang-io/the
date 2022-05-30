@@ -559,7 +559,7 @@ std::string Codegen::_block (const ASTBlock &block) {
 
     setUp += nodeSetUp;
     code += nodeCode;
-    cleanUp = nodeCleanUp + cleanUp;
+    cleanUp = nodeCleanUp + cleanUp; // todo put label on cleanUp step
   }
 
   this->indent -= 2;
@@ -569,7 +569,13 @@ std::string Codegen::_block (const ASTBlock &block) {
 std::string Codegen::_exprAccess (const std::shared_ptr<ASTMemberObj> &exprAccessBody) {
   if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccessBody)) {
     auto id = std::get<std::shared_ptr<Var>>(*exprAccessBody);
-    return Codegen::name(id->codeName);
+    auto code = Codegen::name(id->codeName);
+
+    if (this->state.stackVars.find(code) != this->state.stackVars.end()) {
+      code = "*" + code;
+    }
+
+    return code;
   }
 
   auto member = std::get<ASTMember>(*exprAccessBody);
@@ -618,6 +624,7 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
     auto saveIndent = this->indent;
     auto saveStateBuiltins = this->state.builtins;
     auto saveStateEntities = this->state.entities;
+    auto saveStateStackVars = this->state.stackVars;
 
     this->varMap.save();
     this->indent = 2;
@@ -629,17 +636,19 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
     auto bodyCode = std::string();
     auto bodyCleanUp = std::string();
 
-    if (!fn.stack.empty()) { // todo use via pointer
+    if (!fn.stack.empty()) {
       auto stackName = Codegen::typeName(nodeFnDecl.var->type->name + "S");
       auto stackEntity = CodegenEntity{stackName, CODEGEN_ENTITY_OBJ};
       auto stackCode = std::string();
 
       for (const auto &stackVar : fn.stack) {
         auto stackVarName = Codegen::name(stackVar->codeName);
-        auto stackVarType = this->_type(stackVar->type, stackVar->mut);
+        auto stackVarType = this->_type(stackVar->type, stackVar->mut, true);
 
         stackCode += "  " + stackVarType + stackVarName + ";" EOL;
         bodyCode += "  " + stackVarType + stackVarName + " = s." + stackVarName + ";" EOL;
+
+        this->state.stackVars.insert(stackVarName);
       }
 
       stackEntity.decl = "struct " + stackName + ";";
@@ -657,7 +666,7 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
       auto paramsCode = std::string();
       auto paramIdx = static_cast<std::size_t>(0);
 
-      for (const auto &param: fn.params) {
+      for (const auto &param : fn.params) {
         auto nodeFnDeclParam = std::find_if(nodeFnDecl.params.begin(), nodeFnDecl.params.end(), [&param] (const auto &it) -> bool {
           return it.var->codeName == param.var->codeName;
         });
@@ -720,6 +729,7 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
     this->indent = saveIndent;
     this->state.builtins = saveStateBuiltins;
     this->state.entities = saveStateEntities;
+    this->state.stackVars = saveStateStackVars;
 
     return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
@@ -1232,36 +1242,36 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
           }
 
           if (argIdx != 0 && separator != R"("")") {
-            code += isSeparatorLit ? "%z" : "%s";
+            code += isSeparatorLit ? "z" : "s";
             argsCode += separator + ", ";
           }
 
           if (exprCallArg.expr.type->isObj()) {
             auto typeName = Codegen::typeName(exprCallArg.expr.type->name);
-            code += "%s";
+            code += "s";
 
             this->_activateEntity(typeName + "_str");
             argsCode += typeName + "_str(" + this->_nodeExpr(exprCallArg.expr) + ")";
           } else if (exprCallArg.expr.type->isStr() && exprCallArg.expr.isLit()) {
-            code += "%z";
+            code += "z";
             argsCode += exprCallArg.expr.litBody();
           } else {
-            if (exprCallArg.expr.type->isBool()) code += "%t";
-            else if (exprCallArg.expr.type->isByte()) code += "%b";
-            else if (exprCallArg.expr.type->isChar()) code += "%c";
-            else if (exprCallArg.expr.type->isF32()) code += "%e";
-            else if (exprCallArg.expr.type->isF64()) code += "%g";
-            else if (exprCallArg.expr.type->isFloat()) code += "%f";
-            else if (exprCallArg.expr.type->isI8()) code += "%h";
-            else if (exprCallArg.expr.type->isI16()) code += "%j";
-            else if (exprCallArg.expr.type->isI32()) code += "%k";
-            else if (exprCallArg.expr.type->isI64()) code += "%l";
-            else if (exprCallArg.expr.type->isInt()) code += "%i";
-            else if (exprCallArg.expr.type->isStr()) code += "%s";
-            else if (exprCallArg.expr.type->isU8()) code += "%v";
-            else if (exprCallArg.expr.type->isU16()) code += "%w";
-            else if (exprCallArg.expr.type->isU32()) code += "%u";
-            else if (exprCallArg.expr.type->isU64()) code += "%y";
+            if (exprCallArg.expr.type->isBool()) code += "t";
+            else if (exprCallArg.expr.type->isByte()) code += "b";
+            else if (exprCallArg.expr.type->isChar()) code += "c";
+            else if (exprCallArg.expr.type->isF32()) code += "e";
+            else if (exprCallArg.expr.type->isF64()) code += "g";
+            else if (exprCallArg.expr.type->isFloat()) code += "f";
+            else if (exprCallArg.expr.type->isI8()) code += "h";
+            else if (exprCallArg.expr.type->isI16()) code += "j";
+            else if (exprCallArg.expr.type->isI32()) code += "k";
+            else if (exprCallArg.expr.type->isI64()) code += "l";
+            else if (exprCallArg.expr.type->isInt()) code += "i";
+            else if (exprCallArg.expr.type->isStr()) code += "s";
+            else if (exprCallArg.expr.type->isU8()) code += "v";
+            else if (exprCallArg.expr.type->isU16()) code += "w";
+            else if (exprCallArg.expr.type->isU32()) code += "u";
+            else if (exprCallArg.expr.type->isU64()) code += "y";
 
             argsCode += this->_nodeExpr(exprCallArg.expr);
           }
@@ -1273,7 +1283,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
         if (terminator == R"("")") {
           code += R"(", )" + argsCode.substr(0, argsCode.size() - 2);
         } else {
-          code += std::string(isTerminatorLit ? "%z" : "%s") + R"(", )" + argsCode + terminator;
+          code += std::string(isTerminatorLit ? "z" : "s") + R"(", )" + argsCode + terminator;
         }
 
         return this->_wrapNodeExpr(nodeExpr, code + ")");
@@ -1288,7 +1298,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
         auto stackVarIdx = static_cast<std::size_t>(0);
 
         for (const auto &stackVar : fn.stack) {
-          bodyCode += (stackVarIdx == 0 ? "" : ", ") + Codegen::name(stackVar->codeName);
+          bodyCode += std::string(stackVarIdx == 0 ? "" : ", ") + "&" + Codegen::name(stackVar->codeName);
           stackVarIdx++;
         }
 
@@ -1464,7 +1474,7 @@ std::string Codegen::_type (const Type *type, bool mut, bool ref) {
   auto typeName = std::string();
 
   if (type->isAny()) {
-    return std::string(mut ? "" : "const ") + "void *";
+    return std::string(mut ? "" : "const ") + "void *" + (ref ? "*" : "");
   } else if (type->isByte()) {
     typeName = "unsigned char";
   } else if (type->isChar()) {
@@ -1492,7 +1502,7 @@ std::string Codegen::_type (const Type *type, bool mut, bool ref) {
     typeName = Codegen::typeName(type->name);
 
     this->_activateEntity(typeName);
-    return std::string(mut ? "" : "const ") + "struct " + typeName + " *";
+    return std::string(mut ? "" : "const ") + "struct " + typeName + " *" + (ref ? "*" : "");
   } else if (type->isStr()) {
     this->_activateBuiltin("typeStr");
     typeName = "struct str";

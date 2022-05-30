@@ -8,6 +8,7 @@
 #ifndef SRC_CODEGEN_HPP
 #define SRC_CODEGEN_HPP
 
+#include <set>
 #include "AST.hpp"
 
 enum CodegenEntityType {
@@ -75,6 +76,7 @@ struct CodegenEntity {
 struct CodegenState {
   std::optional<std::vector<std::string> *> builtins = std::nullopt;
   std::optional<std::vector<std::string> *> entities = std::nullopt;
+  std::set<std::string> stackVars = {};
 };
 
 class Codegen {

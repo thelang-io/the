@@ -1,0 +1,35 @@
+======= stdin =======
+obj Test {
+  a: int
+}
+
+fn test1 (a: Test, b := Test{a: 1}, c := Test{a: 2}) Test {
+  return Test{a: a.a + b.a + c.a}
+}
+
+main {
+  test1(Test{a: 1})
+  test1(Test{a: 1}, Test{a: 2})
+  test1(Test{a: 1}, Test{a: 2}, Test{a: 3})
+  test1(Test{a: 1}, b: Test{a: 2})
+  test1(Test{a: 1}, c: Test{a: 3})
+  test1(Test{a: 1}, b: Test{a: 2}, c: Test{a: 3})
+  test1(Test{a: 1}, c: Test{a: 3}, b: Test{a: 2})
+
+  mut a := Test{a: 1}
+
+  fn test2 (a2: Test, b := Test{a: 1}, c := Test{a: 2}) {
+    a.a = a2.a + b.a + c.a
+  }
+
+  test2(Test{a: 1})
+  test2(Test{a: 1}, Test{a: 2})
+  test2(Test{a: 1}, Test{a: 2}, Test{a: 3})
+  test2(Test{a: 1}, b: Test{a: 2})
+  test2(Test{a: 1}, c: Test{a: 3})
+  test2(Test{a: 1}, b: Test{a: 2}, c: Test{a: 3})
+  test2(Test{a: 1}, c: Test{a: 3}, b: Test{a: 2})
+}
+======= code =======
+======= flags =======
+======= stdout =======

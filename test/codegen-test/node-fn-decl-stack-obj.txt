@@ -1,0 +1,17 @@
+======= stdin =======
+obj Test {
+  a: int
+}
+
+main {
+  mut a := Test{a: 1}
+
+  fn test (newA: Test) {
+    a = newA
+  }
+
+  test(Test{a: 2})
+}
+======= code =======
+======= flags =======
+======= stdout =======

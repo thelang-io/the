@@ -1,0 +1,31 @@
+======= stdin =======
+fn test1 (a: str, b := "b", c := "c") str {
+  return a + b + c
+}
+
+main {
+  test1("a")
+  test1("a", "b")
+  test1("a", "b", "c")
+  test1("a", b: "b")
+  test1("a", c: "c")
+  test1("a", b: "b", c: "c")
+  test1("a", c: "c", b: "b")
+
+  mut a := "a"
+
+  fn test2 (a2: str, b := "b", c := "c") {
+    a = a2 + b + c
+  }
+
+  test2("a2")
+  test2("a2", "b")
+  test2("a2", "b", "c")
+  test2("a2", b: "b")
+  test2("a2", c: "c")
+  test2("a2", b: "b", c: "c")
+  test2("a2", c: "c", b: "b")
+}
+======= code =======
+======= flags =======
+======= stdout =======

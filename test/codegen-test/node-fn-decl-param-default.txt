@@ -1,0 +1,89 @@
+======= stdin =======
+fn test1 (a: int, b := 1, c := 2) int {
+  return a + b + c
+}
+
+main {
+  test1(1)
+  test1(1, 2)
+  test1(1, 2, 3)
+  test1(1, b: 2)
+  test1(1, c: 3)
+  test1(1, b: 2, c: 3)
+  test1(1, c: 3, b: 2)
+
+  mut a := 1
+
+  fn test2 (a2: int, b := 1, c := 2) {
+    a = a2 + b + c
+  }
+
+  test2(1)
+  test2(1, 2)
+  test2(1, 2, 3)
+  test2(1, b: 2)
+  test2(1, c: 3)
+  test2(1, b: 2, c: 3)
+  test2(1, c: 3, b: 2)
+}
+======= code =======
+#include <stdint.h>
+
+struct __THE_1_test1_0P;
+struct __THE_1_mainSDtest2_0S;
+struct __THE_1_mainSDtest2_0P;
+
+struct __THE_1_test1_0P {
+  int32_t n0;
+  unsigned char o1;
+  int32_t n1;
+  unsigned char o2;
+  int32_t n2;
+};
+struct __THE_1_mainSDtest2_0S {
+  int32_t *__THE_0_a_0;
+};
+struct __THE_1_mainSDtest2_0P {
+  int32_t n0;
+  unsigned char o1;
+  int32_t n1;
+  unsigned char o2;
+  int32_t n2;
+};
+
+int32_t __THE_0_test1_0 (struct __THE_1_test1_0P);
+void __THE_0_mainSDtest2_0 (struct __THE_1_mainSDtest2_0S, struct __THE_1_mainSDtest2_0P);
+
+int32_t __THE_0_test1_0 (struct __THE_1_test1_0P p) {
+  int32_t __THE_0_a_0 = p.n0;
+  int32_t __THE_0_b_0 = p.o1 == 1 ? p.n1 : 1;
+  int32_t __THE_0_c_0 = p.o2 == 1 ? p.n2 : 2;
+  return __THE_0_a_0 + __THE_0_b_0 + __THE_0_c_0;
+}
+void __THE_0_mainSDtest2_0 (struct __THE_1_mainSDtest2_0S s, struct __THE_1_mainSDtest2_0P p) {
+  int32_t *__THE_0_a_0 = s.__THE_0_a_0;
+  int32_t __THE_0_a2_0 = p.n0;
+  int32_t __THE_0_b_0 = p.o1 == 1 ? p.n1 : 1;
+  int32_t __THE_0_c_0 = p.o2 == 1 ? p.n2 : 2;
+  *__THE_0_a_0 = __THE_0_a2_0 + __THE_0_b_0 + __THE_0_c_0;
+}
+
+int main () {
+  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 0, 0, 0, 0});
+  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 0, 0});
+  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 1, 3});
+  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 0, 0});
+  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 0, 0, 1, 3});
+  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 1, 3});
+  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 1, 3});
+  int32_t __THE_0_a_0 = 1;
+  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 0, 0, 0, 0});
+  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 0, 0});
+  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 1, 3});
+  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 0, 0});
+  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 0, 0, 1, 3});
+  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 1, 3});
+  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 1, 3});
+}
+======= flags =======
+======= stdout =======

@@ -1,0 +1,32 @@
+======= stdin =======
+fn test1 (job: fn () void) {
+  job()
+}
+
+fn test2 (job: fn (int) int) int {
+  return job(1)
+}
+
+fn test3 (job: fn (int, int) int) int {
+  return job(2, 3)
+}
+
+fn job1 () {
+}
+
+fn job2 (a: int) int {
+  return a + 2
+}
+
+fn job3 (a: int, b: int) int {
+  return a * b
+}
+
+main {
+  test1(job1)
+  test2(job2)
+  test3(job3)
+}
+======= code =======
+======= flags =======
+======= stdout =======

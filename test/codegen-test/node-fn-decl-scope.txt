@@ -20,6 +20,7 @@ struct str {
 };
 
 struct str str_alloc (const char *);
+void str_free (struct str);
 void *alloc (size_t);
 
 struct str str_alloc (const char *c) {
@@ -27,6 +28,9 @@ struct str str_alloc (const char *c) {
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
+}
+void str_free (struct str s) {
+  free(s.c);
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -43,6 +47,7 @@ void __THE_0_mainSDx_1(struct str);
 void __THE_0_mainSDx_0(int32_t __THE_0_a_0) {
 }
 void __THE_0_mainSDx_1(struct str __THE_0_b_0) {
+  str_free((struct str) __THE_0_b_0);
 }
 
 int main () {
@@ -64,6 +69,7 @@ struct str {
 };
 
 struct str str_alloc (const char *);
+void str_free (struct str);
 void *alloc (size_t);
 
 struct str str_alloc (const char *c) {
@@ -71,6 +77,9 @@ struct str str_alloc (const char *c) {
   char *r = alloc(l);
   memcpy(r, c, l);
   return (struct str) {r, l};
+}
+void str_free (struct str s) {
+  free(s.c);
 }
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -87,6 +96,7 @@ void __THE_0_mainSDx_1(struct str);
 void __THE_0_mainSDx_0(int32_t __THE_0_a_0) {
 }
 void __THE_0_mainSDx_1(struct str __THE_0_b_0) {
+  str_free((struct str) __THE_0_b_0);
 }
 
 int main () {

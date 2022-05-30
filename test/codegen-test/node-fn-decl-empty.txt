@@ -6,9 +6,9 @@ main {
   test()
 }
 ======= code =======
-void __THE_0_test_0();
+void __THE_0_test_0 ();
 
-void __THE_0_test_0() {
+void __THE_0_test_0 () {
 }
 
 int main () {

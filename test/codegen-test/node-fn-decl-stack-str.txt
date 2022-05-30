@@ -1,0 +1,13 @@
+======= stdin =======
+main {
+  mut a := "test1"
+
+  fn test (newA: str) {
+    a = newA
+  }
+
+  test("test2")
+}
+======= code =======
+======= flags =======
+======= stdout =======
