@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include "ASTChecker.hpp"
 #include "config.hpp"
 
 const auto banner = std::string(
@@ -547,23 +548,55 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
   }
 }
 
-std::string Codegen::_block (const ASTBlock &block) {
-  auto setUp = std::string();
+std::tuple<std::string, std::string> Codegen::_block (const ASTBlock &nodes) {
   auto code = std::string();
   auto cleanUp = std::string();
 
+  auto saveIndent = this->indent;
+  auto saveLabel = this->state.label;
+
   this->indent += 2;
 
-  for (const auto &node : block) {
-    auto [nodeSetUp, nodeCode, nodeCleanUp] = this->_node(node);
+  for (const auto &node : nodes) {
+    auto isFnDecl = std::holds_alternative<ASTNodeFnDecl>(*node.body);
+    auto fnDeclSaveLabel = this->state.label;
 
-    setUp += nodeSetUp;
+    auto isBlock = isFnDecl ||
+      std::holds_alternative<ASTNodeIf>(*node.body) ||
+      std::holds_alternative<ASTNodeLoop>(*node.body) ||
+      std::holds_alternative<ASTNodeMain>(*node.body);
+
+    if (isBlock && !cleanUp.empty()) {
+      this->state.label = "L" + std::to_string(this->lastLabel++);
+      cleanUp = *this->state.label + ":" EOL + cleanUp;
+    }
+
+    if (isFnDecl) {
+      this->state.label = saveLabel;
+    }
+
+    auto [_, nodeCode, nodeCleanUp] = this->_node(node);
+
     code += nodeCode;
-    cleanUp = nodeCleanUp + cleanUp; // todo put label on cleanUp step
+    cleanUp = nodeCleanUp + cleanUp;
+
+    if (isFnDecl) {
+      this->state.label = fnDeclSaveLabel;
+    }
   }
 
-  this->indent -= 2;
-  return setUp + code + cleanUp;
+  this->state.label = saveLabel;
+
+  if (
+    ASTChecker(nodes).has<ASTNodeReturn>() &&
+    !ASTChecker(nodes).endsWith<ASTNodeReturn>() &&
+    this->state.label != std::nullopt
+  ) {
+    cleanUp += std::string(this->indent, ' ') + "if (r == 1) goto " + *this->state.label + ";" EOL;
+  }
+
+  this->indent = saveIndent;
+  return std::make_tuple(code, cleanUp);
 }
 
 std::string Codegen::_exprAccess (const std::shared_ptr<ASTMemberObj> &exprAccessBody) {
@@ -601,7 +634,7 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
   auto cleanUp = std::string();
 
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
-    code = std::string(this->indent, ' ') + "break;" + EOL;
+    code = std::string(this->indent, ' ') + "break;" EOL;
     return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
     code = std::string(this->indent, ' ') + "continue;" EOL;
@@ -712,18 +745,28 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
       params += std::string(params.empty() ? "" : ", ") + "struct " + paramsName + " p";
     }
 
-    for (const auto &nodeFnDeclBodyNode : nodeFnDecl.body) {
-      auto [_, nodeCode, nodeCleanUp] = this->_node(nodeFnDeclBodyNode);
+    this->indent = 0;
+    auto [bodyBlockCode, bodyBlockCleanUp] = this->_block(nodeFnDecl.body);
+    this->indent = 2;
 
-      bodyCode += nodeCode;
-      bodyCleanUp += nodeCleanUp;
-    }
+    bodyCode += bodyBlockCode;
+    bodyCleanUp = bodyBlockCleanUp + bodyCleanUp;
 
     this->varMap.restore();
     auto returnType = this->_type(fn.returnType, true);
 
+    if (!fn.returnType->isVoid() && !bodyCleanUp.empty()) {
+      auto bodyCodeStart = std::string(this->indent, ' ') + "unsigned char r = 0;" EOL;
+      bodyCodeStart += std::string(this->indent, ' ') + returnType + "v;" EOL;
+      auto bodyCodeEnd = std::string(this->indent, ' ') + "return v;" EOL;
+
+      bodyCode = bodyCodeStart + bodyCode + bodyCleanUp + bodyCodeEnd;
+    } else if (!bodyCleanUp.empty()) {
+      bodyCode = bodyCode + bodyCleanUp;
+    }
+
     entity.decl = returnType + fnName + " (" + paramTypes + ");";
-    entity.def = returnType + fnName + " (" + params + ") {" EOL + bodyCode + bodyCleanUp + "}";
+    entity.def = returnType + fnName + " (" + params + ") {" EOL + bodyCode + "}";
     this->entities.push_back(entity);
 
     this->indent = saveIndent;
@@ -753,12 +796,13 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
       this->indent += 2;
 
       auto [_, initCode, initCleanUp] = this->_node(*nodeLoop.init);
+      auto [bodyCode, bodyCleanUp] = this->_block(nodeLoop.body);
 
       code += initCode;
       code += std::string(this->indent, ' ') + "for (;";
       code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
       code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true));
-      code += ") {" EOL + this->_block(nodeLoop.body) + std::string(this->indent, ' ') + "}" EOL;
+      code += ") {" EOL + bodyCode + bodyCleanUp + std::string(this->indent, ' ') + "}" EOL;
       code += initCleanUp;
 
       this->indent -= 2;
@@ -773,15 +817,17 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
       code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true)) + ")";
     }
 
-    code += " {" EOL + this->_block(nodeLoop.body) + std::string(this->indent, ' ') + "}" EOL;
+    auto [bodyCode, bodyCleanUp] = this->_block(nodeLoop.body);
+    code += " {" EOL + bodyCode + bodyCleanUp + std::string(this->indent, ' ') + "}" EOL;
     this->varMap.restore();
 
     return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
     auto nodeMain = std::get<ASTNodeMain>(*node.body);
+    auto [bodyCode, bodyCleanUp] = this->_block(nodeMain.body);
 
     this->varMap.save();
-    code = this->_block(nodeMain.body);
+    code = bodyCode + bodyCleanUp;
     this->varMap.restore();
 
     return this->_wrapNode(node, setUp, code, cleanUp);
@@ -959,8 +1005,20 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
     auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
 
-    code = std::string(this->indent, ' ') + "return";
-    code += (nodeReturn.body == std::nullopt ? "" : " " + this->_nodeExpr(*nodeReturn.body)) + ";" EOL;
+    if (this->state.label != std::nullopt && nodeReturn.body != std::nullopt) {
+      if (nodeReturn.body != std::nullopt) {
+        code = std::string(this->indent, ' ') + "v = " + this->_nodeExpr(*nodeReturn.body) + ";" EOL;
+      }
+
+      if (!ASTChecker(node.parent).is<ASTNodeFnDecl>() || !ASTChecker(node).isLast()) {
+        code += std::string(this->indent, ' ') + "r = 1;" EOL;
+        code += std::string(this->indent, ' ') + "goto " + *this->state.label + ";" EOL;
+      }
+    } else if (nodeReturn.body != std::nullopt) {
+      code = std::string(this->indent, ' ') + "return " + this->_nodeExpr(*nodeReturn.body) + ";" EOL;
+    } else {
+      code = std::string(this->indent, ' ') + "return";
+    }
 
     return this->_wrapNode(node, setUp, code, cleanUp);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
@@ -1001,15 +1059,15 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
 }
 
 std::string Codegen::_nodeIf (const ASTNodeIf &nodeIf) {
-  auto code = "if (" + this->_nodeExpr(nodeIf.cond) + ") {" EOL + this->_block(nodeIf.body);
+  auto [bodyCode, bodyCleanUp] = this->_block(nodeIf.body);
+  auto code = "if (" + this->_nodeExpr(nodeIf.cond) + ") {" EOL + bodyCode + bodyCleanUp;
 
   if (nodeIf.alt != std::nullopt) {
     code += std::string(this->indent, ' ') + "} else ";
 
     if (std::holds_alternative<ASTBlock>(**nodeIf.alt)) {
-      code += "{" EOL;
-      code += this->_block(std::get<ASTBlock>(**nodeIf.alt));
-      code += std::string(this->indent, ' ') + "}";
+      auto [altCode, altCleanUp] = this->_block(std::get<ASTBlock>(**nodeIf.alt));
+      code += "{" EOL + altCode + altCleanUp + std::string(this->indent, ' ') + "}";
     } else if (std::holds_alternative<ASTNodeIf>(**nodeIf.alt)) {
       code += this->_nodeIf(std::get<ASTNodeIf>(**nodeIf.alt));
     }

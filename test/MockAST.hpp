@@ -18,6 +18,7 @@ class MockAST : public AST {
   virtual ~MockAST ();
 
   MOCK_METHOD(ASTBlock, gen, (), (override));
+  MOCK_METHOD(std::string, xml, (), (override));
 
  private:
   testing::NiceMock<MockParser> _p;

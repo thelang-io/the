@@ -18,6 +18,8 @@ class AST {
   TypeMap typeMap;
   VarMap varMap;
 
+  static void populateParents (ASTBlock &, ASTNode * = nullptr);
+
   explicit AST (Parser *);
 
   virtual ASTBlock gen ();

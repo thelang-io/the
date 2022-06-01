@@ -76,6 +76,7 @@ struct CodegenEntity {
 struct CodegenState {
   std::optional<std::vector<std::string> *> builtins = std::nullopt;
   std::optional<std::vector<std::string> *> entities = std::nullopt;
+  std::optional<std::string> label = std::nullopt;
   std::set<std::string> stackVars = {};
 };
 
@@ -89,6 +90,7 @@ class Codegen {
   VarMap varMap;
   std::vector<CodegenEntity> entities;
   CodegenState state;
+  std::size_t lastLabel = 1;
 
   static void compile (const std::string &, const std::tuple<std::string, std::string> &, bool = false);
   static std::string name (const std::string &);
@@ -104,7 +106,7 @@ class Codegen {
 
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  std::string _block (const ASTBlock &);
+  std::tuple<std::string, std::string> _block (const ASTBlock &);
   std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
   std::string _flags () const;
   CodegenNode _node (const ASTNode &, bool = true);

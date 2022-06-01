@@ -165,12 +165,12 @@ struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
 }
 
 int main () {
-  print(stdout, "%t%z", true, "\n");
-  print(stdout, "%i%z", 3, "\n");
-  print(stdout, "%z%z", "Hello, World!", "\n");
-  print(stdout, "%z%z%z%z%z", "Spider", ",", "Snake", ",", "Wolf");
-  print(stdout, "%z", "\n");
-  print(stdout, "%s%z", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), "\n");
+  print(stdout, "tz", true, "\n");
+  print(stdout, "iz", 3, "\n");
+  print(stdout, "zz", "Hello, World!", "\n");
+  print(stdout, "zzzzz", "Spider", ",", "Snake", ",", "Wolf");
+  print(stdout, "z", "\n");
+  print(stdout, "sz", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), "\n");
 }
 ======= code-windows =======
 #include <inttypes.h>
@@ -316,12 +316,12 @@ struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
 }
 
 int main () {
-  print(stdout, "%t%z", true, "\r\n");
-  print(stdout, "%i%z", 3, "\r\n");
-  print(stdout, "%z%z", "Hello, World!", "\r\n");
-  print(stdout, "%z%z%z%z%z", "Spider", ",", "Snake", ",", "Wolf");
-  print(stdout, "%z", "\r\n");
-  print(stdout, "%s%z", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), "\r\n");
+  print(stdout, "tz", true, "\r\n");
+  print(stdout, "iz", 3, "\r\n");
+  print(stdout, "zz", "Hello, World!", "\r\n");
+  print(stdout, "zzzzz", "Spider", ",", "Snake", ",", "Wolf");
+  print(stdout, "z", "\r\n");
+  print(stdout, "sz", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), "\r\n");
 }
 ======= flags =======
 ======= stdout =======

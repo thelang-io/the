@@ -168,9 +168,9 @@ struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *o) {
 
 int main () {
   const struct str __THE_0_a_0 = str_alloc("str");
-  print(stdout, "%s%z", str_copy(__THE_0_a_0), "\n");
+  print(stdout, "sz", str_copy(__THE_0_a_0), "\n");
   const struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(0, str_alloc("test"));
-  print(stdout, "%s%z", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_b_0)), "\n");
+  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_b_0)), "\n");
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
   str_free((struct str) __THE_0_a_0);
 }
@@ -331,9 +331,9 @@ struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *o) {
 
 int main () {
   const struct str __THE_0_a_0 = str_alloc("str");
-  print(stdout, "%s%z", str_copy(__THE_0_a_0), "\r\n");
+  print(stdout, "sz", str_copy(__THE_0_a_0), "\r\n");
   const struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(0, str_alloc("test"));
-  print(stdout, "%s%z", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_b_0)), "\r\n");
+  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_b_0)), "\r\n");
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
   str_free((struct str) __THE_0_a_0);
 }

@@ -9,6 +9,30 @@
 #include "Parser.hpp"
 #include "config.hpp"
 
+void AST::populateParents (ASTBlock &nodes, ASTNode *parent) {
+  for (auto &node : nodes) {
+    node.parent = parent;
+
+    if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+      auto &nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
+      AST::populateParents(nodeFnDecl.body, &node);
+    } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
+      auto &nodeIf = std::get<ASTNodeIf>(*node.body);
+      AST::populateParents(nodeIf.body, &node);
+    } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
+      auto &nodeLoop = std::get<ASTNodeLoop>(*node.body);
+      AST::populateParents(nodeLoop.body, &node);
+
+      if (nodeLoop.init != std::nullopt) {
+        nodeLoop.init->parent = &node;
+      }
+    } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
+      auto &nodeMain = std::get<ASTNodeMain>(*node.body);
+      AST::populateParents(nodeMain.body, &node);
+    }
+  }
+}
+
 AST::AST (Parser *p) {
   this->parser = p;
   this->reader = this->parser->reader;
@@ -33,6 +57,7 @@ ASTBlock AST::gen () {
   this->varMap.save();
   auto mainVarStack = VarStack({});
   auto result = this->_block(block, mainVarStack);
+  AST::populateParents(result);
   this->varMap.restore();
 
   return result;

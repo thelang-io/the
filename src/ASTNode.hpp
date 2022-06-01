@@ -35,6 +35,7 @@ using ASTNodeBody = std::variant<
 
 struct ASTNode {
   std::shared_ptr<ASTNodeBody> body;
+  ASTNode *parent;
 
   std::string xml (std::size_t = 0) const;
 };

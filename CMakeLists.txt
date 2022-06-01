@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.10.27 LANGUAGES CXX)
+project(the-core VERSION 0.10.28 LANGUAGES CXX)
 
 option(BUILD_TESTS "Build test programs" OFF)
 option(CODEGEN_MEMCHECK "Memory check codegen binaries" OFF)
@@ -11,6 +11,7 @@ set(
   sources
 
   src/AST.cpp src/AST.hpp
+  src/ASTChecker.hpp
   src/ASTExpr.cpp src/ASTExpr.hpp
   src/ASTNode.cpp src/ASTNode.hpp
   src/Codegen.cpp src/Codegen.hpp
@@ -59,6 +60,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     tests
 
     test/ASTTest.cpp
+    test/ASTCheckerTest.cpp
     test/ASTExprTest.cpp
     test/CodegenTest.cpp
     test/ErrorTest.cpp

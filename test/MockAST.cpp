@@ -13,6 +13,10 @@ MockAST::MockAST (const std::string &content) : _p(content), AST(&this->_p)  {
   ON_CALL(*this, gen).WillByDefault([this] () {
     return this->AST::gen();
   });
+
+  ON_CALL(*this, xml).WillByDefault([this] () {
+    return this->AST::xml();
+  });
 }
 
 MockAST::~MockAST () {

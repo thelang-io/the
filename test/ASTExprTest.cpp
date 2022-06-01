@@ -6,10 +6,11 @@
  */
 
 #include <gtest/gtest.h>
+#include "../src/config.hpp"
 #include "MockAST.hpp"
 
 ASTNodeExpr astExprTestGen (const std::string &code) {
-  auto nodes = testing::NiceMock<MockAST>("main{" + code + "}").gen();
+  auto nodes = testing::NiceMock<MockAST>("main {" EOL + code + EOL "}" EOL).gen();
   auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
 
   return std::get<ASTNodeExpr>(*nodeMain.body[0].body);
