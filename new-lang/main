@@ -5,6 +5,13 @@
  * Proprietary and confidential
  */
 
+import EOL from "os"
+import Error, NewError from "error"
+
+import Reader, Reader_init from "./reader"
+import TokenType, Token_str from "./token"
+import Tokenizer_init, Tokenizer_next from "./tokenizer"
+
 main {
   try {
     if argv.len == 1 {

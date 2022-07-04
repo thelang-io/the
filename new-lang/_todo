@@ -4,15 +4,15 @@
 // - enum
 // - union
 // - constants
-// - try-catch | throw
+// - try-catch | throw | NewError | Error{name: str, message: str}
 
 // globals:
 // - print | realpathSync | isFileSync
-// - readFileSync writeFileSync
+// - readFileSync | writeFileSync
 // - stderr argv
 // - EOL | OS
 // - exit | EXIT_FAILURE | EXIT_SUCCESS
 // - env vars
-// - arr.join(char)
-// - str.len | str.slice
+// - arr.join(str) | arr.len | push | pop
+// - str.len | str.slice()
 // - int.str()

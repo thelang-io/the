@@ -1,0 +1,9 @@
+export obj Location {
+  line: int
+  col: int
+  pos: int
+}
+
+export fn Location_locate (content: str, pos: int) Location {
+  // todo
+}

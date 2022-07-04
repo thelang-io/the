@@ -5,48 +5,70 @@
  * Proprietary and confidential
  */
 
-fn char_isAlpha (ch: char) bool {
+export fn char_isAlpha (this: char) bool {
   return
-    ch == 'A' || ch == 'a' ||
-    ch == 'B' || ch == 'b' ||
-    ch == 'C' || ch == 'c' ||
-    ch == 'D' || ch == 'd' ||
-    ch == 'E' || ch == 'e' ||
-    ch == 'F' || ch == 'f' ||
-    ch == 'G' || ch == 'g' ||
-    ch == 'H' || ch == 'h' ||
-    ch == 'I' || ch == 'i' ||
-    ch == 'J' || ch == 'j' ||
-    ch == 'K' || ch == 'k' ||
-    ch == 'L' || ch == 'l' ||
-    ch == 'M' || ch == 'm' ||
-    ch == 'N' || ch == 'n' ||
-    ch == 'O' || ch == 'o' ||
-    ch == 'P' || ch == 'p' ||
-    ch == 'Q' || ch == 'q' ||
-    ch == 'R' || ch == 'r' ||
-    ch == 'S' || ch == 's' ||
-    ch == 'T' || ch == 't' ||
-    ch == 'U' || ch == 'u' ||
-    ch == 'V' || ch == 'v' ||
-    ch == 'W' || ch == 'w' ||
-    ch == 'X' || ch == 'x' ||
-    ch == 'Y' || ch == 'y' ||
-    ch == 'Z' || ch == 'z'
+    this == 'A' || this == 'a' ||
+    this == 'B' || this == 'b' ||
+    this == 'C' || this == 'c' ||
+    this == 'D' || this == 'd' ||
+    this == 'E' || this == 'e' ||
+    this == 'F' || this == 'f' ||
+    this == 'G' || this == 'g' ||
+    this == 'H' || this == 'h' ||
+    this == 'I' || this == 'i' ||
+    this == 'J' || this == 'j' ||
+    this == 'K' || this == 'k' ||
+    this == 'L' || this == 'l' ||
+    this == 'M' || this == 'm' ||
+    this == 'N' || this == 'n' ||
+    this == 'O' || this == 'o' ||
+    this == 'P' || this == 'p' ||
+    this == 'Q' || this == 'q' ||
+    this == 'R' || this == 'r' ||
+    this == 'S' || this == 's' ||
+    this == 'T' || this == 't' ||
+    this == 'U' || this == 'u' ||
+    this == 'V' || this == 'v' ||
+    this == 'W' || this == 'w' ||
+    this == 'X' || this == 'x' ||
+    this == 'Y' || this == 'y' ||
+    this == 'Z' || this == 'z'
 }
 
-fn char_isAlphaNum (ch: char) bool {
-  return char_isAlpha(ch) || char_isDigit(ch)
+export fn char_isAlphaNum (this: char) bool {
+  return char_isAlpha(this) || char_isDigit(this)
 }
 
-fn char_isDigit (ch: char) bool {
+export fn char_isDigit (this: char) bool {
   return
-    ch == '0' || ch == '1' || ch == '2' || ch == '3' || ch == '4' ||
-    ch == '5' || ch == '6' || ch == '7' || ch == '8' || ch == '9'
+    this == '0' || this == '1' || this == '2' || this == '3' || this == '4' ||
+    this == '5' || this == '6' || this == '7' || this == '8' || this == '9'
 }
 
-fn char_isSpace (ch: char) bool {
+export fn char_isSpace (this: char) bool {
   return
-    ch == ' ' ||
-    ch == '\t' || ch == '\n' || ch == '\v' || ch == '\f' || ch == '\r'
+    this == ' ' || this == '\t' || this == '\n' || this == '\v' ||
+    this == '\f' || this == '\r'
+}
+
+export fn char_repeat (this: char, times: int) str {
+  mut result: str
+
+  loop i < times {
+    result += this.str()
+  }
+
+  return result
+}
+
+export fn str_lines (this: str) str[] {
+  // todo
+}
+
+export fn str_toUpper (this: str) str {
+  // todo
+}
+
+export fn str_toUpperFirst (this: str) str {
+  return str_toUpper(this.slice(0, 1)) + this.slice(1)
 }

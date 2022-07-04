@@ -5,35 +5,58 @@
  * Proprietary and confidential
  */
 
-fn E0000 (unexpected: char, expected: char?) str {
-  return "E0000: Unexpected token `" + unexpected + "`" +
-    (expected == nil ? "" : ", expected `" + expected + "`")
+import str_toUpperFirst from "./utils"
+
+export fn E0000 (unexpected: char, expected: char?) str {
+  return "E0000: Unexpected token `" + unexpected.str() + "`" +
+    (expected == nil ? "" : ", expected.str() `" + expected + "`")
 }
 
-fn E0001 () str {
+export fn E0001 () str {
   return "E0001 - Unterminated comment"
 }
 
-fn E0002 () str {
+export fn E0002 () str {
   return "E0002 - Unterminated character literal"
 }
 
-fn E0003 () str {
+export fn E0003 () str {
   return "E0003 - Unterminated string literal"
 }
 
-fn E0004 () str {
+export fn E0004 () str {
   return "E0004 - Empty character literal"
 }
 
-fn E0005 () str {
+export fn E0005 () str {
   return "E0005 - Illegal character escape sequence"
 }
 
-fn E0006 () str {
+export fn E0006 () str {
   return "E0006 - Illegal string escape sequence"
 }
 
-fn E0007 () str {
+export fn E0007 () str {
   return "E0007 - Too many characters in character literal"
+}
+
+export fn E0008 () str {
+  return "E0008 - Leading zero integer literals are not allowed"
+}
+
+export fn E0009 (type: str) str {
+  return "E0009 - Invalid " + type + " integer literal"
+}
+
+export fn E0010 () str {
+  return "E0010 - Invalid float literal"
+}
+
+export fn E0011 () str {
+  return "E0011 - Invalid float literal exponent"
+}
+
+export fn E0012 (type: str) str {
+  return "E0012 - " + str_toUpperFirst(type) +
+    " float literals are not allowed"
 }

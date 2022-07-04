@@ -5,7 +5,17 @@
  * Proprietary and confidential
  */
 
-fn Reader_init (p: str) Reader {
+import Error, NewError from "error"
+import OS from "os"
+import isFileSync, readFileSync, realpathSync from "fs"
+
+export obj Reader {
+  path: str
+  content: str
+  pos: int
+}
+
+export fn Reader_init (p: str) Reader {
   mut path: str
 
   try {
@@ -29,11 +39,11 @@ fn Reader_init (p: str) Reader {
   return Reader{path: path, content: content, pos: 0}
 }
 
-fn Reader_eof (this: Reader) bool {
+export fn Reader_eof (this: Reader) bool {
   return this.pos >= this.content.len
 }
 
-fn Reader_lookahead (mut this: Reader, check: char) bool {
+export fn Reader_lookahead (mut this: Reader, check: char) bool {
   if this.pos + 1 >= this.content.len {
     return false
   }
@@ -58,7 +68,7 @@ fn Reader_lookahead (mut this: Reader, check: char) bool {
   return false
 }
 
-fn Reader_next (mut this: Reader) char {
+export fn Reader_next (mut this: Reader) char {
   if Reader_eof(this) {
     throw NewError("Tried to read on eof")
   }
@@ -78,15 +88,15 @@ fn Reader_next (mut this: Reader) char {
   return ch1
 }
 
-fn Reader_seek (mut this: Reader, pos: int) {
+export fn Reader_seek (mut this: Reader, pos: int) {
   this.pos = pos
 }
 
-fn Reader_slice (this: Reader, start: int, end: int) str {
+export fn Reader_slice (this: Reader, start: int, end: int) str {
   return this.content.slice(start, end)
 }
 
-fn Reader_walk (mut this: Reader, match: fn (char) bool) {
+export fn Reader_walk (mut this: Reader, match: fn (char) bool) {
   loop !Reader_eof(this) {
     pos := this.pos
     ch := Reader_next(this)
