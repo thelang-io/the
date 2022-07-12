@@ -7,7 +7,6 @@
 
 #include "Type.hpp"
 #include "Error.hpp"
-#include "Var.hpp"
 #include "config.hpp"
 
 bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
@@ -197,7 +196,8 @@ bool Type::match (const Type *type) const {
       auto rhsFnParam = rhsFn.params[i];
 
       if (
-        !lhsFnParam.var->type->match(rhsFnParam.var->type) ||
+        lhsFnParam.name != rhsFnParam.name ||
+        !lhsFnParam.type->match(rhsFnParam.type) ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic
       ) {
@@ -243,20 +243,15 @@ std::string Type::xml (std::size_t indent) const {
 
       for (const auto &typeFnParam : typeFn.params) {
         result += std::string(indent + 2, ' ') + "<TypeFnParam";
+
+        if (typeFnParam.name != std::nullopt) {
+          result += R"( name=")" + *typeFnParam.name + R"(")";
+        }
+
         result += R"( required=")" + std::string(typeFnParam.required ? "true" : "false");
         result += R"(" variadic=")" + std::string(typeFnParam.variadic ? "true" : "false") + R"(">)" EOL;
-        result += typeFnParam.var->xml(indent + 4) + EOL;
+        result += typeFnParam.type->xml(indent + 4) + EOL;
         result += std::string(indent + 2, ' ') + "</TypeFnParam>" EOL;
-      }
-
-      result += std::string(indent, ' ') + "</slot>" EOL;
-    }
-
-    if (!typeFn.stack.empty()) {
-      result += std::string(indent, ' ') + R"(<slot name="stack">)" EOL;
-
-      for (const auto &typeFnStackVar : typeFn.stack) {
-        result += typeFnStackVar->xml(indent + 2) + EOL;
       }
 
       result += std::string(indent, ' ') + "</slot>" EOL;

@@ -8,7 +8,6 @@
 #ifndef SRC_AST_EXPR_HPP
 #define SRC_AST_EXPR_HPP
 
-#include <optional>
 #include "VarMap.hpp"
 
 enum ASTExprAssignOp {
@@ -126,6 +125,7 @@ struct ASTExprBinary {
 
 struct ASTExprCallArg {
   std::optional<std::string> id;
+  TypeFnParam *param;
   ASTNodeExpr expr;
 };
 

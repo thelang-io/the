@@ -13,11 +13,11 @@ std::string escapeVal (const std::string &val, bool insideAttr = false) {
   result.reserve(val.size());
 
   for (auto idx = static_cast<std::size_t>(0); idx < val.size(); idx++) {
-    if (val[idx] == '\f') result += R"(\f)"; // todo test
+    if (val[idx] == '\f') result += R"(\f)";
     else if (val[idx] == '\n') result += R"(\n)";
     else if (val[idx] == '\r') result += R"(\r)";
     else if (val[idx] == '\t') result += R"(\t)";
-    else if (val[idx] == '\v') result += R"(\v)"; // todo test
+    else if (val[idx] == '\v') result += R"(\v)";
     else if (val[idx] == '"' && insideAttr) result += R"(\")";
     else result += val[idx];
   }

@@ -9,7 +9,6 @@
 #define SRC_TYPE_MAP_HPP
 
 #include "Type.hpp"
-#include "Var.hpp"
 
 class TypeMap {
  public:

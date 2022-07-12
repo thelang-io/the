@@ -14,12 +14,12 @@ Type *TypeMap::add (const std::string &name, const std::vector<TypeObjField> &fi
 }
 
 Type *TypeMap::add (const std::string &name, const std::vector<TypeFnParam> &params, Type *returnType) {
-  this->_items.push_back(std::make_unique<Type>(Type{name, TypeFn{returnType, {}, params}, false}));
+  this->_items.push_back(std::make_unique<Type>(Type{name, TypeFn{returnType, params}, false}));
   return this->_items.back().get();
 }
 
 Type *TypeMap::fn (const std::vector<TypeFnParam> &params, Type *returnType) {
-  this->_items.push_back(std::make_unique<Type>(Type{"@", TypeFn{returnType, {}, params}, false}));
+  this->_items.push_back(std::make_unique<Type>(Type{"@", TypeFn{returnType, params}, false}));
   return this->_items.back().get();
 }
 
@@ -73,15 +73,9 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"void", TypeObj{}, true}));
   auto voidType = this->_items.back().get();
 
-  std::get<TypeObj>(strType->body).fields.push_back({"len", intType});
-
-  auto strConcatSrcVar = std::make_shared<Var>(Var{"src", "src", strType, false, true, 0});
-
-  this->_items.push_back(std::make_unique<Type>(Type{"@str.concat", TypeFn{strType, {}, {
-    {strConcatSrcVar, true, false}
-  }}, true}));
-
-  std::get<TypeObj>(strType->body).fields.push_back({"concat", this->_items.back().get()});
+  auto strConcatTypeFn = TypeFn{strType, {
+    {"src", strType, true, false}
+  }};
 
   this->_items.push_back(std::make_unique<Type>(Type{"@bool.str", TypeFn{strType}, true}));
   std::get<TypeObj>(boolType->body).fields.push_back({"str", this->_items.back().get()});
@@ -105,6 +99,9 @@ void TypeMap::init () {
   std::get<TypeObj>(i64Type->body).fields.push_back({"str", this->_items.back().get()});
   this->_items.push_back(std::make_unique<Type>(Type{"@int.str", TypeFn{strType}, true}));
   std::get<TypeObj>(intType->body).fields.push_back({"str", this->_items.back().get()});
+  this->_items.push_back(std::make_unique<Type>(Type{"@str.concat", strConcatTypeFn, true}));
+  std::get<TypeObj>(strType->body).fields.push_back({"concat", this->_items.back().get()});
+  std::get<TypeObj>(strType->body).fields.push_back({"len", intType});
   this->_items.push_back(std::make_unique<Type>(Type{"@u8.str", TypeFn{strType}, true}));
   std::get<TypeObj>(u8Type->body).fields.push_back({"str", this->_items.back().get()});
   this->_items.push_back(std::make_unique<Type>(Type{"@u16.str", TypeFn{strType}, true}));
@@ -114,17 +111,13 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"@u64.str", TypeFn{strType}, true}));
   std::get<TypeObj>(u64Type->body).fields.push_back({"str", this->_items.back().get()});
 
-  auto printItemsVar = std::make_shared<Var>(Var{"items", "items", anyType, false, true, 0});
-  auto printSeparatorVar = std::make_shared<Var>(Var{"separator", "separator", strType, false, true, 0});
-  auto printTerminatorVar = std::make_shared<Var>(Var{"terminator", "terminator", strType, false, true, 0});
-
-  auto printFnTypeFn = TypeFn{voidType, {}, {
-    TypeFnParam{printItemsVar, false, true},
-    TypeFnParam{printSeparatorVar, false, false},
-    TypeFnParam{printTerminatorVar, false, false}
+  auto printTypeFn = TypeFn{voidType, {
+    {"items", anyType, false, true},
+    {"separator", strType, false, false},
+    {"terminator", strType, false, false}
   }};
 
-  this->_items.push_back(std::make_unique<Type>(Type{"@print", printFnTypeFn, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"@print", printTypeFn, true}));
 }
 
 std::string TypeMap::name (const std::string &name) const {

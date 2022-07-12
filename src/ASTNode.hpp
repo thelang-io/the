@@ -56,6 +56,7 @@ struct ASTNodeFnDeclParam {
 
 struct ASTNodeFnDecl {
   std::shared_ptr<Var> var;
+  std::vector<std::shared_ptr<Var>> stack;
   std::vector<ASTNodeFnDeclParam> params;
   ASTBlock body;
 };

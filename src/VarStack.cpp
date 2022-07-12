@@ -23,6 +23,12 @@ void VarStack::mark (const std::shared_ptr<Var> &var) {
   }
 }
 
+void VarStack::mark (const std::vector<std::shared_ptr<Var>> &vars) {
+  for (const auto &var : vars) {
+    this->mark(var);
+  }
+}
+
 std::vector<std::shared_ptr<Var>> VarStack::snapshot () const {
   auto result = std::vector<std::shared_ptr<Var>>{};
 

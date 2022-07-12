@@ -9,22 +9,22 @@
 #define SRC_TYPE_HPP
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
 
 struct Type;
-struct Var;
 
 struct TypeFnParam {
-  std::shared_ptr<Var> var;
+  std::optional<std::string> name;
+  Type *type;
   bool required;
   bool variadic;
 };
 
 struct TypeFn {
   Type *returnType;
-  std::vector<std::shared_ptr<Var>> stack = {};
   std::vector<TypeFnParam> params = {};
 };
 

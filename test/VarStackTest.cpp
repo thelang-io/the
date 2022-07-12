@@ -33,11 +33,15 @@ TEST_F(VarStackTest, MarksAndSnapshot) {
   this->vm_.add("test1", this->vm_.name("test1"), this->tm_.get("int"), false);
   this->vm_.add("test2", this->vm_.name("test2"), this->tm_.get("str"), false);
   this->vm_.add("test3", this->vm_.name("test3"), this->tm_.get("any"), false);
+  this->vm_.add("test4", this->vm_.name("test4"), this->tm_.get("str"), false);
+  this->vm_.add("test5", this->vm_.name("test5"), this->tm_.get("str"), false);
 
   auto t1 = this->vm_.get("test1");
   auto t2 = this->vm_.get("test2");
   auto t3 = this->vm_.get("test3");
-  auto vs = VarStack({t1, t2, t3});
+  auto t4 = this->vm_.get("test4");
+  auto t5 = this->vm_.get("test5");
+  auto vs = VarStack({t1, t2, t3, t4, t5});
 
   auto s1 = vs.snapshot();
   EXPECT_EQ(s1.size(), 0);
@@ -49,4 +53,8 @@ TEST_F(VarStackTest, MarksAndSnapshot) {
   vs.mark(t2);
   auto s3 = vs.snapshot();
   EXPECT_EQ(s3.size(), 2);
+
+  vs.mark({t3, t4});
+  auto s4 = vs.snapshot();
+  EXPECT_EQ(s4.size(), 4);
 }

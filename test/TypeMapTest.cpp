@@ -11,15 +11,9 @@
 class TypeMapTest : public testing::Test {
  protected:
   TypeMap tm_;
-  std::shared_ptr<Var> aVar_;
-  std::shared_ptr<Var> bVar_;
-  std::shared_ptr<Var> cVar_;
 
   void SetUp () override {
     this->tm_.init();
-    this->aVar_ = std::make_shared<Var>(Var{"a", "a_0", this->tm_.get("int"), false, false, 0});
-    this->bVar_ = std::make_shared<Var>(Var{"b", "b_0", this->tm_.get("int"), false, false, 0});
-    this->cVar_ = std::make_shared<Var>(Var{"c", "c_0", this->tm_.get("str"), false, false, 0});
   }
 };
 
@@ -61,12 +55,12 @@ TEST_F(TypeMapTest, AddInsertsObject) {
   this->tm_.add("test1", {}, this->tm_.get("void"));
 
   this->tm_.add("test2", {
-    {this->aVar_, true, false}
+    {"a", this->tm_.get("int"), true, false}
   }, this->tm_.get("void"));
 
   this->tm_.add("test3", {
-    {this->bVar_, false, false},
-    {this->cVar_, false, true}
+    {"a", this->tm_.get("int"), false, false},
+    {"b", this->tm_.get("str"), false, true}
   }, this->tm_.get("str"));
 
   EXPECT_NO_THROW(this->tm_.get("test1"));
@@ -86,16 +80,13 @@ TEST_F(TypeMapTest, AddInsertsObject) {
   EXPECT_EQ(fn1Body.params.size(), 0);
   EXPECT_EQ(fn2Body.params.size(), 1);
   EXPECT_EQ(fn3Body.params.size(), 2);
-  EXPECT_EQ(fn2Body.params[0].var->name, "a");
-  EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].var->type));
+  EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].type));
   EXPECT_TRUE(fn2Body.params[0].required);
   EXPECT_FALSE(fn2Body.params[0].variadic);
-  EXPECT_EQ(fn3Body.params[0].var->name, "b");
-  EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].var->type));
+  EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].type));
   EXPECT_FALSE(fn3Body.params[0].required);
   EXPECT_FALSE(fn3Body.params[0].variadic);
-  EXPECT_EQ(fn3Body.params[1].var->name, "c");
-  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].var->type));
+  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].type));
   EXPECT_FALSE(fn3Body.params[1].required);
   EXPECT_TRUE(fn3Body.params[1].variadic);
 }
@@ -104,12 +95,12 @@ TEST_F(TypeMapTest, FunctionGenerates) {
   auto fn1 = this->tm_.fn({}, this->tm_.get("void"));
 
   auto fn2 = this->tm_.fn({
-    {this->aVar_, true, false}
+    {nullptr, this->tm_.get("int"), true, false}
   }, this->tm_.get("void"));
 
   auto fn3 = this->tm_.fn({
-    {this->bVar_, false, false},
-    {this->cVar_, false, true}
+    {nullptr, this->tm_.get("int"), false, false},
+    {nullptr, this->tm_.get("str"), false, true}
   }, this->tm_.get("str"));
 
   EXPECT_EQ(fn1->name, "@");
@@ -126,16 +117,13 @@ TEST_F(TypeMapTest, FunctionGenerates) {
   EXPECT_EQ(fn1Body.params.size(), 0);
   EXPECT_EQ(fn2Body.params.size(), 1);
   EXPECT_EQ(fn3Body.params.size(), 2);
-  EXPECT_EQ(fn2Body.params[0].var->name, "a");
-  EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].var->type));
+  EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].type));
   EXPECT_TRUE(fn2Body.params[0].required);
   EXPECT_FALSE(fn2Body.params[0].variadic);
-  EXPECT_EQ(fn3Body.params[0].var->name, "b");
-  EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].var->type));
+  EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].type));
   EXPECT_FALSE(fn3Body.params[0].required);
   EXPECT_FALSE(fn3Body.params[0].variadic);
-  EXPECT_EQ(fn3Body.params[1].var->name, "c");
-  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].var->type));
+  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].type));
   EXPECT_FALSE(fn3Body.params[1].required);
   EXPECT_TRUE(fn3Body.params[1].variadic);
 }
