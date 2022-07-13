@@ -29,5 +29,109 @@ main {
   b := test4()
 }
 ======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct fn$0;
+struct __THE_1_mainSDtest4_0C;
+struct __THE_1_mainSDtest4SDtest5_0C;
+struct __THE_1_mainSDtest4SDtest5SDtest6_0C;
+
+struct fn$0 {
+  int32_t (*f) (void *);
+  void *c;
+};
+struct __THE_1_mainSDtest4_0C {
+  const int32_t *__THE_0_a_0;
+};
+struct __THE_1_mainSDtest4SDtest5_0C {
+  const int32_t *__THE_0_a_0;
+};
+struct __THE_1_mainSDtest4SDtest5SDtest6_0C {
+  const int32_t *__THE_0_a_0;
+};
+
+int32_t __THE_1_test1SDtest2SDtest3_0F (void *);
+int32_t __THE_1_test1SDtest2_0F (void *);
+int32_t __THE_1_test1_0F (void *);
+int32_t __THE_1_mainSDtest4SDtest5SDtest6_0F (void *);
+void __THE_1_mainSDtest4SDtest5SDtest6_0A (struct fn$0 *, struct __THE_1_mainSDtest4SDtest5SDtest6_0C);
+int32_t __THE_1_mainSDtest4SDtest5_0F (void *);
+void __THE_1_mainSDtest4SDtest5_0A (struct fn$0 *, struct __THE_1_mainSDtest4SDtest5_0C);
+int32_t __THE_1_mainSDtest4_0F (void *);
+void __THE_1_mainSDtest4_0A (struct fn$0 *, struct __THE_1_mainSDtest4_0C);
+
+int32_t __THE_1_test1SDtest2SDtest3_0F (void *_c) {
+  return 1;
+}
+int32_t __THE_1_test1SDtest2_0F (void *_c) {
+  const struct fn$0 __THE_0_test1SDtest2SDtest3_0 = (struct fn$0) {&__THE_1_test1SDtest2SDtest3_0F, NULL};
+  return __THE_0_test1SDtest2SDtest3_0.f(__THE_0_test1SDtest2SDtest3_0.c);
+}
+int32_t __THE_1_test1_0F (void *_c) {
+  const struct fn$0 __THE_0_test1SDtest2_0 = (struct fn$0) {&__THE_1_test1SDtest2_0F, NULL};
+  return __THE_0_test1SDtest2_0.f(__THE_0_test1SDtest2_0.c);
+}
+int32_t __THE_1_mainSDtest4SDtest5SDtest6_0F (void *_c) {
+  struct __THE_1_mainSDtest4SDtest5SDtest6_0C *c = _c;
+  const int32_t *__THE_0_a_0 = c->__THE_0_a_0;
+  return *__THE_0_a_0;
+}
+void __THE_1_mainSDtest4SDtest5SDtest6_0A (struct fn$0 *n, struct __THE_1_mainSDtest4SDtest5SDtest6_0C c) {
+  size_t l = sizeof(struct __THE_1_mainSDtest4SDtest5SDtest6_0C);
+  struct __THE_1_mainSDtest4SDtest5SDtest6_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_mainSDtest4SDtest5SDtest6_0F;
+  n->c = r;
+}
+int32_t __THE_1_mainSDtest4SDtest5_0F (void *_c) {
+  struct __THE_1_mainSDtest4SDtest5_0C *c = _c;
+  const int32_t *__THE_0_a_0 = c->__THE_0_a_0;
+  const struct fn$0 __THE_0_mainSDtest4SDtest5SDtest6_0;
+  __THE_1_mainSDtest4SDtest5SDtest6_0A((struct fn$0 *) &__THE_0_mainSDtest4SDtest5SDtest6_0, (struct __THE_1_mainSDtest4SDtest5SDtest6_0C) {__THE_0_a_0});
+  return __THE_0_mainSDtest4SDtest5SDtest6_0.f(__THE_0_mainSDtest4SDtest5SDtest6_0.c);
+}
+void __THE_1_mainSDtest4SDtest5_0A (struct fn$0 *n, struct __THE_1_mainSDtest4SDtest5_0C c) {
+  size_t l = sizeof(struct __THE_1_mainSDtest4SDtest5_0C);
+  struct __THE_1_mainSDtest4SDtest5_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_mainSDtest4SDtest5_0F;
+  n->c = r;
+}
+int32_t __THE_1_mainSDtest4_0F (void *_c) {
+  struct __THE_1_mainSDtest4_0C *c = _c;
+  const int32_t *__THE_0_a_0 = c->__THE_0_a_0;
+  const struct fn$0 __THE_0_mainSDtest4SDtest5_0;
+  __THE_1_mainSDtest4SDtest5_0A((struct fn$0 *) &__THE_0_mainSDtest4SDtest5_0, (struct __THE_1_mainSDtest4SDtest5_0C) {__THE_0_a_0});
+  return __THE_0_mainSDtest4SDtest5_0.f(__THE_0_mainSDtest4SDtest5_0.c);
+}
+void __THE_1_mainSDtest4_0A (struct fn$0 *n, struct __THE_1_mainSDtest4_0C c) {
+  size_t l = sizeof(struct __THE_1_mainSDtest4_0C);
+  struct __THE_1_mainSDtest4_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_mainSDtest4_0F;
+  n->c = r;
+}
+
+int main () {
+  const struct fn$0 __THE_0_test1_0 = (struct fn$0) {&__THE_1_test1_0F, NULL};
+  const int32_t __THE_0_a_0 = __THE_0_test1_0.f(__THE_0_test1_0.c);
+  const struct fn$0 __THE_0_mainSDtest4_0;
+  __THE_1_mainSDtest4_0A((struct fn$0 *) &__THE_0_mainSDtest4_0, (struct __THE_1_mainSDtest4_0C) {&__THE_0_a_0});
+  const int32_t __THE_0_b_0 = __THE_0_mainSDtest4_0.f(__THE_0_mainSDtest4_0.c);
+}
 ======= flags =======
 ======= stdout =======

@@ -6,13 +6,23 @@ main {
   test()
 }
 ======= code =======
-void __THE_0_test_0 ();
+#include <stdlib.h>
 
-void __THE_0_test_0 () {
+struct fn$0;
+
+struct fn$0 {
+  void (*f) (void *);
+  void *c;
+};
+
+void __THE_1_test_0F (void *);
+
+void __THE_1_test_0F (void *_c) {
 }
 
 int main () {
-  __THE_0_test_0();
+  const struct fn$0 __THE_0_test_0 = (struct fn$0) {&__THE_1_test_0F, NULL};
+  __THE_0_test_0.f(__THE_0_test_0.c);
 }
 ======= flags =======
 ======= stdout =======

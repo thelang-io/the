@@ -54,7 +54,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   auto mainSetUp = std::string();
   auto mainCode = std::string();
   auto mainCleanUp = std::string();
-  auto topLevelCode = std::string();
 
   for (const auto &node : nodes) {
     if (std::holds_alternative<ASTNodeMain>(*node.body)) {
@@ -70,7 +69,9 @@ std::tuple<std::string, std::string> Codegen::gen () {
         throw Error("Error: top level node has setUp or cleanUp");
       }
 
-      topLevelCode += nodeCode;
+      mainSetUp += nodeSetUp;
+      mainCode += nodeCode;
+      mainCleanUp = nodeCleanUp + mainCleanUp;
     }
   }
 
@@ -450,7 +451,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += structDefCode;
   output += fnDeclCode;
   output += fnDefCode;
-  output += topLevelCode;
   output += "int main () {" EOL;
   output += mainSetUp;
   output += mainCode;
@@ -548,6 +548,16 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
   }
 }
 
+bool Codegen::_entitiesContains (const std::string &name) {
+  for (const auto &entity : this->entities) {
+    if (entity.name == name) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 std::tuple<std::string, std::string> Codegen::_block (const ASTBlock &nodes) {
   auto code = std::string();
   auto cleanUp = std::string();
@@ -604,7 +614,7 @@ std::string Codegen::_exprAccess (const std::shared_ptr<ASTMemberObj> &exprAcces
     auto id = std::get<std::shared_ptr<Var>>(*exprAccessBody);
     auto code = Codegen::name(id->codeName);
 
-    if (this->state.stackVars.find(code) != this->state.stackVars.end()) {
+    if (this->state.contextVars.contains(code)) {
       code = "*" + code;
     }
 
@@ -651,69 +661,75 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
     auto fn = std::get<TypeFn>(nodeFnDecl.var->type->body);
+    auto fnId = this->_typeFnId(nodeFnDecl.var->type);
     auto fnName = Codegen::name(nodeFnDecl.var->type->name);
-    auto entity = CodegenEntity{fnName, CODEGEN_ENTITY_FN, {}, {}};
+    auto allocFnName = Codegen::typeName(nodeFnDecl.var->type->name + "A");
+    auto contextName = Codegen::typeName(nodeFnDecl.var->type->name + "C");
+    auto functorName = Codegen::typeName(nodeFnDecl.var->type->name + "F");
+    auto paramsName = fnId + "P";
+
+    auto functorEntity = CodegenEntity{functorName, CODEGEN_ENTITY_FN, {}, {
+      fnId,
+      contextName,
+      paramsName
+    }};
+
+    auto allocFnEntity = CodegenEntity{allocFnName, CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, {
+      fnId,
+      functorName,
+      contextName
+    }};
 
     auto saveIndent = this->indent;
     auto saveStateBuiltins = this->state.builtins;
     auto saveStateEntities = this->state.entities;
-    auto saveStateStackVars = this->state.stackVars;
+    auto saveStateContextVars = this->state.contextVars;
 
     this->varMap.save();
     this->indent = 2;
-    this->state.builtins = &entity.builtins;
-    this->state.entities = &entity.entities;
+    this->state.builtins = &functorEntity.builtins;
+    this->state.entities = &functorEntity.entities;
 
-    auto paramTypes = std::string();
-    auto params = std::string();
     auto bodyCode = std::string();
     auto bodyCleanUp = std::string();
 
-    if (!fn.stack.empty()) {
-      auto stackName = Codegen::typeName(nodeFnDecl.var->type->name + "S");
-      auto stackEntity = CodegenEntity{stackName, CODEGEN_ENTITY_OBJ};
-      auto stackCode = std::string();
+    if (!nodeFnDecl.stack.empty()) {
+      bodyCode += "  struct " + contextName + " *c = _c;" EOL;
 
-      for (const auto &stackVar : fn.stack) {
-        auto stackVarName = Codegen::name(stackVar->codeName);
-        auto stackVarType = this->_type(stackVar->type, stackVar->mut, true);
+      auto contextEntity = CodegenEntity{contextName, CODEGEN_ENTITY_OBJ};
+      auto contextCode = std::string();
 
-        stackCode += "  " + stackVarType + stackVarName + ";" EOL;
-        bodyCode += "  " + stackVarType + stackVarName + " = s." + stackVarName + ";" EOL;
+      for (const auto &contextVar : nodeFnDecl.stack) {
+        auto contextVarName = Codegen::name(contextVar->codeName);
+        auto contextVarType = this->_type(contextVar->type, contextVar->mut, true);
 
-        this->state.stackVars.insert(stackVarName);
+        contextCode += "  " + contextVarType + contextVarName + ";" EOL;
+        bodyCode += "  " + contextVarType + contextVarName + " = c->" + contextVarName + ";" EOL;
+
+        this->state.contextVars.insert(contextVarName);
       }
 
-      stackEntity.decl = "struct " + stackName + ";";
-      stackEntity.def = "struct " + stackName + " {" EOL + stackCode + "};";
-      this->entities.push_back(stackEntity);
+      contextEntity.decl = "struct " + contextName + ";";
+      contextEntity.def = "struct " + contextName + " {" EOL + contextCode + "};";
 
-      this->_activateEntity(stackName, &entity.entities);
-      paramTypes += "struct " + stackName;
-      params += "struct " + stackName + " s";
+      this->entities.push_back(contextEntity);
     }
 
-    if (!fn.params.empty()) {
-      auto paramsName = Codegen::typeName(nodeFnDecl.var->type->name + "P");
-      auto paramsEntity = CodegenEntity{paramsName, CODEGEN_ENTITY_OBJ};
+    if (!nodeFnDecl.params.empty()) {
       auto paramsCode = std::string();
       auto paramIdx = static_cast<std::size_t>(0);
 
-      for (const auto &param : fn.params) {
-        auto nodeFnDeclParam = std::find_if(nodeFnDecl.params.begin(), nodeFnDecl.params.end(), [&param] (const auto &it) -> bool {
-          return it.var->codeName == param.var->codeName;
-        });
-
+      for (const auto &param : nodeFnDecl.params) {
         auto paramName = Codegen::name(param.var->codeName);
         auto paramType = this->_type(param.var->type, true);
         auto paramIdxStr = std::to_string(paramIdx);
 
         bodyCode += "  " + paramType + paramName + " = ";
 
-        if (param.required) {
+        if (param.init == std::nullopt) {
           bodyCode += "p.n" + paramIdxStr;
         } else {
-          auto initCode = this->_nodeExpr(*nodeFnDeclParam->init);
+          auto initCode = this->_nodeExpr(*param.init);
 
           bodyCode += "p.o" + paramIdxStr + " == 1 ? p.n" + paramIdxStr + " : " + initCode;
           paramsCode += "  unsigned char o" + paramIdxStr + ";" EOL;
@@ -736,13 +752,14 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
         paramIdx++;
       }
 
-      paramsEntity.decl = "struct " + paramsName + ";";
-      paramsEntity.def = "struct " + paramsName + " {" EOL + paramsCode + "};";
-      this->entities.push_back(paramsEntity);
+      if (!this->_entitiesContains(paramsName)) {
+        auto paramsEntity = CodegenEntity{paramsName, CODEGEN_ENTITY_OBJ};
 
-      this->_activateEntity(paramsName, &entity.entities);
-      paramTypes += std::string(paramTypes.empty() ? "" : ", ") + "struct " + paramsName;
-      params += std::string(params.empty() ? "" : ", ") + "struct " + paramsName + " p";
+        paramsEntity.decl = "struct " + paramsName + ";";
+        paramsEntity.def = "struct " + paramsName + " {" EOL + paramsCode + "};";
+
+        this->entities.push_back(paramsEntity);
+      }
     }
 
     this->indent = 0;
@@ -765,16 +782,83 @@ CodegenNode Codegen::_node (const ASTNode &node, bool root) {
       bodyCode = bodyCode + bodyCleanUp;
     }
 
-    entity.decl = returnType + fnName + " (" + paramTypes + ");";
-    entity.def = returnType + fnName + " (" + params + ") {" EOL + bodyCode + "}";
-    this->entities.push_back(entity);
+    if (nodeFnDecl.params.empty()) {
+      functorEntity.decl = returnType + functorName + " (void *);";
+      functorEntity.def = returnType + functorName + " (void *_c) {" EOL + bodyCode + "}";
+    } else {
+      functorEntity.decl = returnType + functorName + " (void *, struct " + paramsName + ");";
+      functorEntity.def = returnType + functorName + " (void *_c, struct " + paramsName + " p) {" EOL + bodyCode + "}";
+    }
+
+    this->entities.push_back(functorEntity);
+
+    allocFnEntity.decl = "void " + allocFnName + " (struct " + fnId + " *, struct " + contextName + ");";
+    allocFnEntity.def = "void " + allocFnName + " (struct " + fnId + " *n, struct " + contextName + " c) {" EOL;
+    allocFnEntity.def += "  size_t l = sizeof(struct " + contextName + ");" EOL;
+    allocFnEntity.def += "  struct " + contextName + " *r = alloc(l);" EOL;
+    allocFnEntity.def += "  memcpy(r, &c, l);" EOL;
+    allocFnEntity.def += "  n->f = &" + functorName + ";" EOL;
+    allocFnEntity.def += "  n->c = r;" EOL;
+    allocFnEntity.def += "}";
+    this->entities.push_back(allocFnEntity);
+
+    if (!this->_entitiesContains(fnId)) {
+      auto typeEntity = CodegenEntity{fnId, CODEGEN_ENTITY_OBJ, {}, { paramsName }};
+
+      typeEntity.decl = "struct " + fnId + ";";
+      typeEntity.def = "struct " + fnId + " {" EOL;
+      typeEntity.def += "  " + returnType + "(*f) (void *";
+
+      if (!nodeFnDecl.params.empty()) {
+        typeEntity.def += ", struct " + paramsName;
+      }
+
+      typeEntity.def += ");" EOL;
+      typeEntity.def += "  void *c;" EOL;
+      typeEntity.def += "};";
+
+      this->entities.push_back(typeEntity);
+    }
 
     this->indent = saveIndent;
     this->state.builtins = saveStateBuiltins;
     this->state.entities = saveStateEntities;
-    this->state.stackVars = saveStateStackVars;
+    this->state.contextVars = saveStateContextVars;
 
-    return this->_wrapNode(node, setUp, code, cleanUp);
+    // todo clean up
+    code = std::string(this->indent == 0 ? 2 : this->indent, ' ');
+    code += "const struct " + fnId + " " + fnName;
+    this->_activateEntity(fnId);
+
+    if (nodeFnDecl.stack.empty()) {
+      code += " = (struct " + fnId + ") {&" + functorName + ", NULL};";
+
+      this->_activateBuiltin("libStdlib");
+      this->_activateEntity(functorName);
+    } else {
+      code += ";" EOL;
+      code += std::string(this->indent, ' ') + allocFnName + "((struct " + fnId + " *) &" + fnName + ", ";
+      code += "(struct " + contextName + ") {";
+
+      this->_activateEntity(allocFnName);
+      this->_activateEntity(contextName);
+
+      auto contextVarIdx = static_cast<std::size_t>(0);
+
+      for (const auto &contextVar : nodeFnDecl.stack) {
+        auto contextVarName = Codegen::name(contextVar->codeName);
+        auto contextVarType = this->_type(contextVar->type, contextVar->mut, true);
+
+        code += contextVarIdx == 0 ? "" : ", ";
+        code += (this->state.contextVars.contains(contextVarName) ? "" : "&") + contextVarName;
+
+        contextVarIdx++;
+      }
+
+      code += "});";
+    }
+
+    return this->_wrapNode(node, setUp, code + EOL, cleanUp);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     auto nodeIf = std::get<ASTNodeIf>(*node.body);
 
@@ -1295,7 +1379,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
         auto argIdx = static_cast<std::size_t>(0);
 
         for (const auto &exprCallArg : exprCall.args) {
-          if (exprCallArg.id != std::nullopt) {
+          if (exprCallArg.id != "items") {
             continue;
           }
 
@@ -1348,62 +1432,47 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       }
     } else {
       auto fn = std::get<TypeFn>(exprCall.calleeType->body);
-      auto fnName = Codegen::name(exprCall.calleeType->name);
+      auto fnId = this->_typeFnId(exprCall.calleeType);
+      auto paramsName = fnId + "P";
       auto bodyCode = std::string();
 
-      if (!fn.stack.empty()) {
-        bodyCode += "(struct " + Codegen::typeName(exprCall.calleeType->name + "S") + ") {";
-        auto stackVarIdx = static_cast<std::size_t>(0);
-
-        for (const auto &stackVar : fn.stack) {
-          bodyCode += std::string(stackVarIdx == 0 ? "" : ", ") + "&" + Codegen::name(stackVar->codeName);
-          stackVarIdx++;
-        }
-
-        bodyCode += "}";
-      }
-
       if (!fn.params.empty()) {
-        bodyCode += bodyCode.empty() ? "" : ", ";
-        bodyCode += "(struct " + Codegen::typeName(exprCall.calleeType->name + "P") + ") {";
+        bodyCode += "(struct " + paramsName + ") {";
+        this->_activateEntity(paramsName);
 
         auto paramIdx = static_cast<std::size_t>(0);
 
         for (const auto &param : fn.params) {
           auto foundArg = std::optional<ASTExprCallArg>{};
 
-          if (paramIdx < exprCall.args.size() && exprCall.args[paramIdx].id == std::nullopt) {
-            foundArg = exprCall.args[paramIdx];
-          } else {
+          if (param.name != std::nullopt) {
             for (const auto &exprCallArg : exprCall.args) {
-              if (exprCallArg.id == param.var->name) {
+              if (exprCallArg.id == param.name) {
                 foundArg = exprCallArg;
                 break;
               }
             }
+          } else if (paramIdx < exprCall.args.size()) {
+            foundArg = exprCall.args[paramIdx];
           }
 
           if (!param.required) {
-            bodyCode += (paramIdx == 0 ? "" : ", ") + std::string(foundArg == std::nullopt ? "0" : "1");
+            bodyCode += std::string(paramIdx == 0 ? "" : ", ") + (foundArg == std::nullopt ? "0" : "1");
           }
 
-          bodyCode += (paramIdx == 0 ? "" : ", ");
+          bodyCode += paramIdx == 0 && param.required ? "" : ", ";
 
           if (foundArg != std::nullopt) {
             bodyCode += this->_nodeExpr(foundArg->expr);
-          } else if (param.var->type->isBool()) {
+          } else if (param.type->isBool()) {
             this->_activateBuiltin("libStdbool");
             bodyCode += "false";
-          } else if (param.var->type->isChar()) {
+          } else if (param.type->isChar()) {
             bodyCode += R"('\0')";
-          } else if (param.var->type->isObj()) {
-            auto typeName = Codegen::typeName(param.var->type->name);
-
+          } else if (param.type->isObj()) {
             this->_activateBuiltin("libStdlib");
-            this->_activateEntity(typeName);
-
-            bodyCode += "(struct " + typeName + " *) NULL";
-          } else if (param.var->type->isStr()) {
+            bodyCode += "NULL";
+          } else if (param.type->isStr()) {
             this->_activateBuiltin("typeStr");
             bodyCode += "(struct str) {}";
           } else {
@@ -1416,14 +1485,14 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
         bodyCode += "}";
       }
 
-      this->_activateEntity(fnName);
-      auto code = fnName + "(" + bodyCode + ")";
+      auto fnName = Codegen::name(exprCall.calleeType->name);
+      auto code = fnName + ".f(" + fnName + ".c" + (bodyCode.empty() ? "" : ", ") + bodyCode + ")";
 
       if (root && nodeExpr.type->isObj()) {
-        auto typeName = Codegen::typeName(nodeExpr.type->name);
+        auto nodeExprTypeName = Codegen::typeName(nodeExpr.type->name);
 
-        this->_activateEntity(typeName + "_free");
-        code = typeName + "_free(" + code + ")";
+        this->_activateEntity(nodeExprTypeName + "_free");
+        code = nodeExprTypeName + "_free(" + code + ")";
       } else if (root && nodeExpr.type->isStr()) {
         this->_activateBuiltin("fnStrFree");
         code = "str_free(" + code + ")";
@@ -1581,6 +1650,19 @@ std::string Codegen::_type (const Type *type, bool mut, bool ref) {
   }
 
   return std::string(mut ? "" : "const ") + typeName + " " + (ref ? "*" : "");
+}
+
+std::string Codegen::_typeFnId (const Type *searchType) {
+  for (const auto &[id, type] : this->functions) {
+    if (searchType->match(type)) {
+      return "fn$" + std::to_string(id);
+    }
+  }
+
+  auto id = this->functions.size();
+  this->functions.emplace_back(id, searchType);
+
+  return "fn$" + std::to_string(id);
 }
 
 CodegenNode Codegen::_wrapNode (

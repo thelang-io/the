@@ -126,7 +126,7 @@ bool Token::isIdStart (char ch) {
 }
 
 bool Token::isLitCharEscape (char ch) {
-  return std::string("0nrt\"'\\").find(ch) != std::string::npos;
+  return std::string("0fnrtv\"'\\").find(ch) != std::string::npos;
 }
 
 bool Token::isLitIntBin (char ch) {

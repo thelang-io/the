@@ -41,69 +41,44 @@ void *alloc (size_t l) {
   return r;
 }
 
-void __THE_0_mainSDx_0(int32_t);
-void __THE_0_mainSDx_1(struct str);
+struct fn$0P;
+struct fn$0;
+struct fn$1P;
+struct fn$1;
 
-void __THE_0_mainSDx_0(int32_t __THE_0_a_0) {
-}
-void __THE_0_mainSDx_1(struct str __THE_0_b_0) {
-  str_free((struct str) __THE_0_b_0);
-}
-
-int main () {
-  if (1 > 2) {
-    __THE_0_mainSDx_0(1);
-  } else {
-    __THE_0_mainSDx_1(str_alloc("test"));
-  }
-}
-======= code-windows =======
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-struct str {
-  char *c;
-  size_t l;
+struct fn$0P {
+  int32_t n0;
+};
+struct fn$0 {
+  void (*f) (void *, struct fn$0P);
+  void *c;
+};
+struct fn$1P {
+  struct str n0;
+};
+struct fn$1 {
+  void (*f) (void *, struct fn$1P);
+  void *c;
 };
 
-struct str str_alloc (const char *);
-void str_free (struct str);
-void *alloc (size_t);
+void __THE_1_mainSDx_0F (void *, struct fn$0P);
+void __THE_1_mainSDx_1F (void *, struct fn$1P);
 
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+void __THE_1_mainSDx_0F (void *_c, struct fn$0P p) {
+  int32_t __THE_0_a_0 = p.n0;
 }
-void str_free (struct str s) {
-  free(s.c);
-}
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
-void __THE_0_mainSDx_0(int32_t);
-void __THE_0_mainSDx_1(struct str);
-
-void __THE_0_mainSDx_0(int32_t __THE_0_a_0) {
-}
-void __THE_0_mainSDx_1(struct str __THE_0_b_0) {
+void __THE_1_mainSDx_1F (void *_c, struct fn$1P p) {
+  struct str __THE_0_b_0 = p.n0;
   str_free((struct str) __THE_0_b_0);
 }
 
 int main () {
   if (1 > 2) {
-    __THE_0_mainSDx_0(1);
+    const struct fn$0 __THE_0_mainSDx_0 = (struct fn$0) {&__THE_1_mainSDx_0F, NULL};
+    __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.c, (struct fn$0P) {1});
   } else {
-    __THE_0_mainSDx_1(str_alloc("test"));
+    const struct fn$1 __THE_0_mainSDx_1 = (struct fn$1) {&__THE_1_mainSDx_1F, NULL};
+    __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.c, (struct fn$1P) {str_alloc("test")});
   }
 }
 ======= flags =======

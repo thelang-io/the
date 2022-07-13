@@ -9,5 +9,87 @@ main {
   test("test2")
 }
 ======= code =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+void *alloc (size_t);
+
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_mainSDtest_0C;
+struct fn$0P;
+struct fn$0;
+
+struct __THE_1_mainSDtest_0C {
+  struct str *__THE_0_a_0;
+};
+struct fn$0P {
+  struct str n0;
+};
+struct fn$0 {
+  void (*f) (void *, struct fn$0P);
+  void *c;
+};
+
+void __THE_1_mainSDtest_0F (void *, struct fn$0P);
+void __THE_1_mainSDtest_0A (struct fn$0 *, struct __THE_1_mainSDtest_0C);
+
+void __THE_1_mainSDtest_0F (void *_c, struct fn$0P p) {
+  struct __THE_1_mainSDtest_0C *c = _c;
+  struct str *__THE_0_a_0 = c->__THE_0_a_0;
+  struct str __THE_0_newA_0 = p.n0;
+  *__THE_0_a_0 = str_realloc(*__THE_0_a_0, str_copy(__THE_0_newA_0));
+  str_free((struct str) __THE_0_newA_0);
+}
+void __THE_1_mainSDtest_0A (struct fn$0 *n, struct __THE_1_mainSDtest_0C c) {
+  size_t l = sizeof(struct __THE_1_mainSDtest_0C);
+  struct __THE_1_mainSDtest_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_mainSDtest_0F;
+  n->c = r;
+}
+
+int main () {
+  struct str __THE_0_a_0 = str_alloc("test1");
+  const struct fn$0 __THE_0_mainSDtest_0;
+  __THE_1_mainSDtest_0A((struct fn$0 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0C) {&__THE_0_a_0});
+  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.c, (struct fn$0P) {str_alloc("test2")});
+  str_free((struct str) __THE_0_a_0);
+}
 ======= flags =======
 ======= stdout =======

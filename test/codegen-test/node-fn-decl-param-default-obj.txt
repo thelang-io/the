@@ -31,5 +31,123 @@ main {
   test2(Test{a: 1}, c: Test{a: 3}, b: Test{a: 2})
 }
 ======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_Test_0;
+struct __THE_1_test1_0C;
+struct fn$0P;
+struct fn$0;
+struct __THE_1_mainSDtest2_0C;
+struct fn$1P;
+struct fn$1;
+
+struct __THE_1_Test_0 {
+  int32_t __THE_0_a;
+};
+struct fn$0P {
+  struct __THE_1_Test_0 *n0;
+  unsigned char o1;
+  struct __THE_1_Test_0 *n1;
+  unsigned char o2;
+  struct __THE_1_Test_0 *n2;
+};
+struct fn$0 {
+  struct __THE_1_Test_0 *(*f) (void *, struct fn$0P);
+  void *c;
+};
+struct __THE_1_mainSDtest2_0C {
+  struct __THE_1_Test_0 **__THE_0_a_0;
+};
+struct fn$1P {
+  struct __THE_1_Test_0 *n0;
+  unsigned char o1;
+  struct __THE_1_Test_0 *n1;
+  unsigned char o2;
+  struct __THE_1_Test_0 *n2;
+};
+struct fn$1 {
+  void (*f) (void *, struct fn$1P);
+  void *c;
+};
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_Test_0 *__THE_1_test1_0F (void *, struct fn$0P);
+void __THE_1_mainSDtest2_0F (void *, struct fn$1P);
+void __THE_1_mainSDtest2_0A (struct fn$1 *, struct __THE_1_mainSDtest2_0C);
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  r->__THE_0_a = __THE_0_a;
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  free(o);
+}
+struct __THE_1_Test_0 *__THE_1_test1_0F (void *_c, struct fn$0P p) {
+  struct __THE_1_Test_0 *v;
+  struct __THE_1_Test_0 *__THE_0_a_0 = p.n0;
+  struct __THE_1_Test_0 *__THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_Test_0_alloc(1);
+  struct __THE_1_Test_0 *__THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_Test_0_alloc(2);
+  v = __THE_1_Test_0_alloc(__THE_0_a_0->__THE_0_a + __THE_0_b_0->__THE_0_a + __THE_0_c_0->__THE_0_a);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_c_0);
+  return v;
+}
+void __THE_1_mainSDtest2_0F (void *_c, struct fn$1P p) {
+  struct __THE_1_mainSDtest2_0C *c = _c;
+  struct __THE_1_Test_0 **__THE_0_a_0 = c->__THE_0_a_0;
+  struct __THE_1_Test_0 *__THE_0_a2_0 = p.n0;
+  struct __THE_1_Test_0 *__THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_Test_0_alloc(1);
+  struct __THE_1_Test_0 *__THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_Test_0_alloc(2);
+  *__THE_0_a_0->__THE_0_a = __THE_0_a2_0->__THE_0_a + __THE_0_b_0->__THE_0_a + __THE_0_c_0->__THE_0_a;
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a2_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_c_0);
+}
+void __THE_1_mainSDtest2_0A (struct fn$1 *n, struct __THE_1_mainSDtest2_0C c) {
+  size_t l = sizeof(struct __THE_1_mainSDtest2_0C);
+  struct __THE_1_mainSDtest2_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_mainSDtest2_0F;
+  n->c = r;
+}
+
+int main () {
+  const struct fn$0 __THE_0_test1_0 = {&__THE_1_test1_0F, NULL};
+  __THE_1_Test_0_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_1_Test_0_alloc(1), 0, NULL, 0, NULL}));
+  __THE_1_Test_0_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 0, NULL}));
+  __THE_1_Test_0_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 1, __THE_1_Test_0_alloc(3)}));
+  __THE_1_Test_0_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 0, NULL}));
+  __THE_1_Test_0_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_1_Test_0_alloc(1), 0, NULL, 1, __THE_1_Test_0_alloc(3)}));
+  __THE_1_Test_0_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 1, __THE_1_Test_0_alloc(3)}));
+  __THE_1_Test_0_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 1, __THE_1_Test_0_alloc(3)}));
+  struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc(1);
+  const struct fn$1 __THE_0_mainSDtest2_0;
+  __THE_1_mainSDtest2_0A((struct fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0C) {&__THE_0_a_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {__THE_1_Test_0_alloc(1), 0, NULL, 0, NULL});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 0, NULL});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 1, __THE_1_Test_0_alloc(3)});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 0, NULL});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {__THE_1_Test_0_alloc(1), 0, NULL, 1, __THE_1_Test_0_alloc(3)});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 1, __THE_1_Test_0_alloc(3)});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {__THE_1_Test_0_alloc(1), 1, __THE_1_Test_0_alloc(2), 1, __THE_1_Test_0_alloc(3)});
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
+}
 ======= flags =======
 ======= stdout =======

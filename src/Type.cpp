@@ -196,7 +196,7 @@ bool Type::match (const Type *type) const {
       auto rhsFnParam = rhsFn.params[i];
 
       if (
-        lhsFnParam.name != rhsFnParam.name ||
+        (lhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
         !lhsFnParam.type->match(rhsFnParam.type) ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic

@@ -95,12 +95,12 @@ TEST_F(TypeMapTest, FunctionGenerates) {
   auto fn1 = this->tm_.fn({}, this->tm_.get("void"));
 
   auto fn2 = this->tm_.fn({
-    {nullptr, this->tm_.get("int"), true, false}
+    {std::nullopt, this->tm_.get("int"), true, false}
   }, this->tm_.get("void"));
 
   auto fn3 = this->tm_.fn({
-    {nullptr, this->tm_.get("int"), false, false},
-    {nullptr, this->tm_.get("str"), false, true}
+    {std::nullopt, this->tm_.get("int"), false, false},
+    {std::nullopt, this->tm_.get("str"), false, true}
   }, this->tm_.get("str"));
 
   EXPECT_EQ(fn1->name, "@");

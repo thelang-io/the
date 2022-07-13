@@ -374,10 +374,10 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     auto passedArgs = std::vector<std::string>{};
     auto hasNamedArgs = false;
     auto isArgVariadic = false;
-    auto variadicArgType = std::optional<TypeFnParam *>{};
+    auto variadicArgType = std::optional<TypeFnParam>{};
 
     for (const auto &parserExprCallArg : parserExprCall.args) {
-      auto foundParam = std::optional<TypeFnParam *>{};
+      auto foundParam = std::optional<TypeFnParam>{};
 
       if (parserExprCallArg.id != std::nullopt) {
         auto exprCallArgName = parserExprCallArg.id->val;
@@ -388,14 +388,14 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
 
         for (auto &calleeFnParam : exprCallCalleeFn.params) {
           if (calleeFnParam.name != std::nullopt && calleeFnParam.name == exprCallArgName) {
-            foundParam = &calleeFnParam;
+            foundParam = calleeFnParam;
             break;
           }
         }
 
         if (foundParam == std::nullopt) {
           throw Error(this->reader, parserExprCallArg.id->start, parserExprCallArg.expr.end, E1002);
-        } else if ((*foundParam)->variadic) {
+        } else if (foundParam->variadic) {
           throw Error(this->reader, parserExprCallArg.id->start, parserExprCallArg.expr.end, E1006);
         }
 
@@ -409,25 +409,25 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
       } else if (exprCallArgIdx >= exprCallCalleeFn.params.size()) {
         throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1005);
       } else {
-        foundParam = &exprCallCalleeFn.params[exprCallArgIdx];
+        foundParam = exprCallCalleeFn.params[exprCallArgIdx];
       }
 
-      if (!isArgVariadic && (*foundParam)->variadic) {
+      if (!isArgVariadic && foundParam->variadic) {
         isArgVariadic = true;
         variadicArgType = foundParam;
       }
 
       auto exprCallArgExpr = this->_nodeExpr(parserExprCallArg.expr, varStack);
 
-      if (!(*foundParam)->type->match(exprCallArgExpr.type)) {
+      if (!foundParam->type->match(exprCallArgExpr.type)) {
         throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1008);
       }
 
-      exprCallArgs.push_back(ASTExprCallArg{(*foundParam)->name, *foundParam, exprCallArgExpr});
+      exprCallArgs.push_back(ASTExprCallArg{foundParam->name, exprCallArgExpr});
 
       if (!isArgVariadic) {
-        if ((*foundParam)->name != std::nullopt) {
-          passedArgs.push_back(*(*foundParam)->name);
+        if (foundParam->name != std::nullopt) {
+          passedArgs.push_back(*foundParam->name);
         }
 
         exprCallArgIdx++;

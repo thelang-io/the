@@ -125,7 +125,6 @@ struct ASTExprBinary {
 
 struct ASTExprCallArg {
   std::optional<std::string> id;
-  TypeFnParam *param;
   ASTNodeExpr expr;
 };
 

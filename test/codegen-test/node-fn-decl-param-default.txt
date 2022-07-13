@@ -28,62 +28,98 @@ main {
 }
 ======= code =======
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct __THE_1_test1_0P;
-struct __THE_1_mainSDtest2_0S;
-struct __THE_1_mainSDtest2_0P;
+void *alloc (size_t);
 
-struct __THE_1_test1_0P {
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct fn$0P;
+struct fn$0;
+struct __THE_1_mainSDtest2_0C;
+struct fn$1P;
+struct fn$1;
+
+struct fn$0P {
   int32_t n0;
   unsigned char o1;
   int32_t n1;
   unsigned char o2;
   int32_t n2;
 };
-struct __THE_1_mainSDtest2_0S {
+struct fn$0 {
+  int32_t (*f) (void *, struct fn$0P);
+  void *c;
+};
+struct __THE_1_mainSDtest2_0C {
   int32_t *__THE_0_a_0;
 };
-struct __THE_1_mainSDtest2_0P {
+struct fn$1P {
   int32_t n0;
   unsigned char o1;
   int32_t n1;
   unsigned char o2;
   int32_t n2;
 };
+struct fn$1 {
+  void (*f) (void *, struct fn$1P);
+  void *c;
+};
 
-int32_t __THE_0_test1_0 (struct __THE_1_test1_0P);
-void __THE_0_mainSDtest2_0 (struct __THE_1_mainSDtest2_0S, struct __THE_1_mainSDtest2_0P);
+int32_t __THE_1_test1_0F (void *, struct fn$0P);
+void __THE_1_mainSDtest2_0F (void *, struct fn$1P);
+void __THE_1_mainSDtest2_0A (struct fn$1 *, struct __THE_1_mainSDtest2_0C);
 
-int32_t __THE_0_test1_0 (struct __THE_1_test1_0P p) {
+int32_t __THE_1_test1_0F (void *_c, struct fn$0P p) {
   int32_t __THE_0_a_0 = p.n0;
   int32_t __THE_0_b_0 = p.o1 == 1 ? p.n1 : 1;
   int32_t __THE_0_c_0 = p.o2 == 1 ? p.n2 : 2;
   return __THE_0_a_0 + __THE_0_b_0 + __THE_0_c_0;
 }
-void __THE_0_mainSDtest2_0 (struct __THE_1_mainSDtest2_0S s, struct __THE_1_mainSDtest2_0P p) {
-  int32_t *__THE_0_a_0 = s.__THE_0_a_0;
+void __THE_1_mainSDtest2_0F (void *_c, struct fn$1P p) {
+  struct __THE_1_mainSDtest2_0C *c = _c;
+  int32_t *__THE_0_a_0 = c->__THE_0_a_0;
   int32_t __THE_0_a2_0 = p.n0;
   int32_t __THE_0_b_0 = p.o1 == 1 ? p.n1 : 1;
   int32_t __THE_0_c_0 = p.o2 == 1 ? p.n2 : 2;
   *__THE_0_a_0 = __THE_0_a2_0 + __THE_0_b_0 + __THE_0_c_0;
 }
+void __THE_1_mainSDtest2_0A (struct fn$1 *n, struct __THE_1_mainSDtest2_0C c) {
+  size_t l = sizeof(struct __THE_1_mainSDtest2_0C);
+  struct __THE_1_mainSDtest2_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_mainSDtest2_0F;
+  n->c = r;
+}
 
 int main () {
-  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 0, 0, 0, 0});
-  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 0, 0});
-  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 1, 3});
-  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 0, 0});
-  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 0, 0, 1, 3});
-  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 1, 3});
-  __THE_0_test1_0((struct __THE_1_test1_0P) {1, 1, 2, 1, 3});
+  const struct fn$0 __THE_0_test1_0 = (struct fn$0) {&__THE_1_test1_0F, NULL};
+  __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {1, 0, 0, 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {1, 1, 2, 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {1, 1, 2, 1, 3});
+  __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {1, 1, 2, 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {1, 0, 0, 1, 3});
+  __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {1, 1, 2, 1, 3});
+  __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {1, 1, 2, 1, 3});
   int32_t __THE_0_a_0 = 1;
-  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 0, 0, 0, 0});
-  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 0, 0});
-  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 1, 3});
-  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 0, 0});
-  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 0, 0, 1, 3});
-  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 1, 3});
-  __THE_0_mainSDtest2_0((struct __THE_1_mainSDtest2_0S) {&__THE_0_a_0}, (struct __THE_1_mainSDtest2_0P) {1, 1, 2, 1, 3});
+  const struct fn$1 __THE_0_mainSDtest2_0;
+  __THE_1_mainSDtest2_0A((struct fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0C) {&__THE_0_a_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {1, 0, 0, 0, 0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {1, 1, 2, 0, 0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {1, 1, 2, 1, 3});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {1, 1, 2, 0, 0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {1, 0, 0, 1, 3});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {1, 1, 2, 1, 3});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {1, 1, 2, 1, 3});
 }
 ======= flags =======
 ======= stdout =======

@@ -184,12 +184,12 @@ TEST_F(TypeTest, CheckIfFn) {
   EXPECT_TRUE(this->tm_.fn({}, this->tm_.get("void"))->isFn());
 
   EXPECT_TRUE(this->tm_.fn({
-    {nullptr, this->tm_.get("int"), true, false}
+    {std::nullopt, this->tm_.get("int"), true, false}
   }, this->tm_.get("void"))->isFn());
 
   EXPECT_TRUE(this->tm_.fn({
-    {nullptr, this->tm_.get("str"), false, false},
-    {nullptr, this->tm_.get("int"), false, true}
+    {std::nullopt, this->tm_.get("str"), false, false},
+    {std::nullopt, this->tm_.get("int"), false, true}
   }, this->tm_.get("str"))->isFn());
 }
 
@@ -498,8 +498,8 @@ TEST_F(TypeTest, MatchesFunction) {
   }, this->tm_.get("int"));
 
   this->tm_.add("test8", {
-    {nullptr, this->tm_.get("int"), true, false},
-    {nullptr, this->tm_.get("int"), false, true}
+    {std::nullopt, this->tm_.get("int"), true, false},
+    {std::nullopt, this->tm_.get("int"), false, true}
   }, this->tm_.get("int"));
 
   EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("test1")));

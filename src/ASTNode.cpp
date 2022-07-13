@@ -41,9 +41,7 @@ std::string ASTNode::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + R"(<slot name="stack">)" EOL;
 
       for (const auto &nodeFnDeclStackItem : nodeFnDecl.stack) {
-        result += std::string(indent + 4, ' ') + "<NodeFnDeclStackItem>" EOL;
-        result += nodeFnDeclStackItem->xml(indent + 6) + EOL;
-        result += std::string(indent + 4, ' ') + "</NodeFnDeclStackItem>" EOL;
+        result += nodeFnDeclStackItem->xml(indent + 4) + EOL;
       }
 
       result += std::string(indent + 2, ' ') + "</slot>" EOL;
