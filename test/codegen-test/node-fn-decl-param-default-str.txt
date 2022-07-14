@@ -81,34 +81,34 @@ void *alloc (size_t l) {
 
 struct fn$0P;
 struct fn$0;
-struct __THE_1_mainSDtest2_0C;
 struct fn$1P;
 struct fn$1;
+struct __THE_1_mainSDtest2_0C;
 
 struct fn$0P {
-  struct str n0;
+  const struct str n0;
   unsigned char o1;
-  struct str n1;
+  const struct str n1;
   unsigned char o2;
-  struct str n2;
+  const struct str n2;
 };
 struct fn$0 {
   struct str (*f) (void *, struct fn$0P);
   void *c;
 };
-struct __THE_1_mainSDtest2_0C {
-  struct str *__THE_0_a_0;
-};
 struct fn$1P {
-  struct str n0;
+  const struct str n0;
   unsigned char o1;
-  struct str n1;
+  const struct str n1;
   unsigned char o2;
-  struct str n2;
+  const struct str n2;
 };
 struct fn$1 {
   void (*f) (void *, struct fn$1P);
   void *c;
+};
+struct __THE_1_mainSDtest2_0C {
+  struct str *__THE_0_a_0;
 };
 
 struct str __THE_1_test1_0F (void *, struct fn$0P);
@@ -116,26 +116,27 @@ void __THE_1_mainSDtest2_0F (void *, struct fn$1P);
 void __THE_1_mainSDtest2_0A (struct fn$1 *, struct __THE_1_mainSDtest2_0C);
 
 struct str __THE_1_test1_0F (void *_c, struct fn$0P p) {
+  unsigned char r = 0;
   struct str v;
-  struct str __THE_0_a_0 = p.n0;
-  struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("b");
-  struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("c");
+  const struct str __THE_0_a_0 = p.n0;
+  const struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("b");
+  const struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("c");
   v = str_concat_str(str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0));
-  str_free((struct str) __THE_0_a_0);
-  str_free((struct str) __THE_0_b_0);
   str_free((struct str) __THE_0_c_0);
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a_0);
   return v;
 }
 void __THE_1_mainSDtest2_0F (void *_c, struct fn$1P p) {
   struct __THE_1_mainSDtest2_0C *c = _c;
   struct str *__THE_0_a_0 = c->__THE_0_a_0;
-  struct str __THE_0_a2_0 = p.n0;
-  struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("b");
-  struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("c");
+  const struct str __THE_0_a2_0 = p.n0;
+  const struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("b");
+  const struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("c");
   *__THE_0_a_0 = str_realloc(*__THE_0_a_0, str_concat_str(str_concat_str(str_copy(__THE_0_a2_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0)));
-  str_free((struct str) __THE_0_a2_0);
-  str_free((struct str) __THE_0_b_0);
   str_free((struct str) __THE_0_c_0);
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a2_0);
 }
 void __THE_1_mainSDtest2_0A (struct fn$1 *n, struct __THE_1_mainSDtest2_0C c) {
   size_t l = sizeof(struct __THE_1_mainSDtest2_0C);

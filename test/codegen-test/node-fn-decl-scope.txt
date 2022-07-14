@@ -47,14 +47,14 @@ struct fn$1P;
 struct fn$1;
 
 struct fn$0P {
-  int32_t n0;
+  const int32_t n0;
 };
 struct fn$0 {
   void (*f) (void *, struct fn$0P);
   void *c;
 };
 struct fn$1P {
-  struct str n0;
+  const struct str n0;
 };
 struct fn$1 {
   void (*f) (void *, struct fn$1P);
@@ -65,10 +65,10 @@ void __THE_1_mainSDx_0F (void *, struct fn$0P);
 void __THE_1_mainSDx_1F (void *, struct fn$1P);
 
 void __THE_1_mainSDx_0F (void *_c, struct fn$0P p) {
-  int32_t __THE_0_a_0 = p.n0;
+  const int32_t __THE_0_a_0 = p.n0;
 }
 void __THE_1_mainSDx_1F (void *_c, struct fn$1P p) {
-  struct str __THE_0_b_0 = p.n0;
+  const struct str __THE_0_b_0 = p.n0;
   str_free((struct str) __THE_0_b_0);
 }
 

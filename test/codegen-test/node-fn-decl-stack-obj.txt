@@ -30,22 +30,22 @@ void *alloc (size_t l) {
 }
 
 struct __THE_1_Test_0;
-struct __THE_1_mainSDtest_0C;
 struct fn$0P;
 struct fn$0;
+struct __THE_1_mainSDtest_0C;
 
 struct __THE_1_Test_0 {
   int32_t __THE_0_a;
 };
-struct __THE_1_mainSDtest_0C {
-  struct __THE_1_Test_0 **__THE_0_a_0;
-};
 struct fn$0P {
-  struct __THE_1_Test_0 *n0;
+  const struct __THE_1_Test_0 *n0;
 };
 struct fn$0 {
   void (*f) (void *, struct fn$0P);
   void *c;
+};
+struct __THE_1_mainSDtest_0C {
+  struct __THE_1_Test_0 **__THE_0_a_0;
 };
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
@@ -75,7 +75,7 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct
 void __THE_1_mainSDtest_0F (void *_c, struct fn$0P p) {
   struct __THE_1_mainSDtest_0C *c = _c;
   struct __THE_1_Test_0 **__THE_0_a_0 = c->__THE_0_a_0;
-  struct __THE_1_Test_0 *__THE_0_newA_0 = p.n0;
+  const struct __THE_1_Test_0 *__THE_0_newA_0 = p.n0;
   *__THE_0_a_0 = __THE_1_Test_0_realloc(*__THE_0_a_0, __THE_1_Test_0_copy(__THE_0_newA_0));
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_newA_0);
 }

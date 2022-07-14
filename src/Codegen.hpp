@@ -10,6 +10,7 @@
 
 #include <set>
 #include "AST.hpp"
+#include "CodegenCleanUp.hpp"
 
 enum CodegenEntityType {
   CODEGEN_ENTITY_FN,
@@ -76,7 +77,7 @@ struct CodegenEntity {
 struct CodegenState {
   std::optional<std::vector<std::string> *> builtins = std::nullopt;
   std::optional<std::vector<std::string> *> entities = std::nullopt;
-  std::optional<std::string> label = std::nullopt;
+  CodegenCleanUp cleanUp;
   std::set<std::string> contextVars = {};
 };
 
@@ -90,7 +91,6 @@ class Codegen {
   VarMap varMap;
   std::vector<CodegenEntity> entities;
   CodegenState state;
-  std::size_t lastLabel = 1;
   std::vector<std::tuple<std::size_t, const Type *>> functions = {};
 
   static void compile (const std::string &, const std::tuple<std::string, std::string> &, bool = false);
@@ -107,8 +107,7 @@ class Codegen {
 
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  bool _entitiesContains (const std::string &);
-  std::tuple<std::string, std::string> _block (const ASTBlock &);
+  std::tuple<std::string, std::string> _block (const ASTBlock &, bool = true);
   std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
   std::string _flags () const;
   CodegenNode _node (const ASTNode &, bool = true);

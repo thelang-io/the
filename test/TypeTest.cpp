@@ -511,6 +511,9 @@ TEST_F(TypeTest, MatchesFunction) {
   EXPECT_FALSE(this->tm_.get("test1")->match(this->tm_.get("test6")));
   EXPECT_FALSE(this->tm_.get("test1")->match(this->tm_.get("test7")));
   EXPECT_FALSE(this->tm_.get("test1")->match(this->tm_.get("test8")));
+  EXPECT_TRUE(this->tm_.get("test8")->match(this->tm_.get("test1")));
+  EXPECT_TRUE(this->tm_.get("test1")->match(this->tm_.get("test8"), false));
+  EXPECT_TRUE(this->tm_.get("test8")->match(this->tm_.get("test1"), false));
   EXPECT_FALSE(this->tm_.get("test1")->match(this->tm_.get("any")));
 }
 

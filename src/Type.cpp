@@ -178,7 +178,7 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
-bool Type::match (const Type *type) const {
+bool Type::match (const Type *type, bool strict) const {
   if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -196,7 +196,7 @@ bool Type::match (const Type *type) const {
       auto rhsFnParam = rhsFn.params[i];
 
       if (
-        (lhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
+        (strict && lhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
         !lhsFnParam.type->match(rhsFnParam.type) ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic

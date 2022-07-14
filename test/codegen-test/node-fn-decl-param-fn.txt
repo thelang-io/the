@@ -31,56 +31,56 @@ main {
 #include <stdint.h>
 #include <stdlib.h>
 
+struct fn$1;
 struct fn$0P;
 struct fn$0;
+struct fn$3P;
+struct fn$3;
 struct fn$2P;
 struct fn$2;
+struct fn$5P;
+struct fn$5;
 struct fn$4P;
 struct fn$4;
-struct fn$1;
-struct fn$6P;
-struct fn$6;
-struct fn$7P;
-struct fn$7;
 
+struct fn$1 {
+  void (*f) (void *);
+  void *c;
+};
 struct fn$0P {
-   n0;
+  const struct fn$1 n0;
 };
 struct fn$0 {
   void (*f) (void *, struct fn$0P);
   void *c;
 };
+struct fn$3P {
+  const int32_t n0;
+};
+struct fn$3 {
+  int32_t (*f) (void *, struct fn$3P);
+  void *c;
+};
 struct fn$2P {
-   n0;
+  const struct fn$3 n0;
 };
 struct fn$2 {
   int32_t (*f) (void *, struct fn$2P);
   void *c;
 };
+struct fn$5P {
+  const int32_t n0;
+  const int32_t n1;
+};
+struct fn$5 {
+  int32_t (*f) (void *, struct fn$5P);
+  void *c;
+};
 struct fn$4P {
-   n0;
+  const struct fn$5 n0;
 };
 struct fn$4 {
   int32_t (*f) (void *, struct fn$4P);
-  void *c;
-};
-struct fn$1 {
-  void (*f) (void *);
-  void *c;
-};
-struct fn$6P {
-  int32_t n0;
-};
-struct fn$6 {
-  int32_t (*f) (void *, struct fn$6P);
-  void *c;
-};
-struct fn$7P {
-  int32_t n0;
-  int32_t n1;
-};
-struct fn$7 {
-  int32_t (*f) (void *, struct fn$7P);
   void *c;
 };
 
@@ -88,8 +88,8 @@ void __THE_1_test1_0F (void *, struct fn$0P);
 int32_t __THE_1_test2_0F (void *, struct fn$2P);
 int32_t __THE_1_test3_0F (void *, struct fn$4P);
 void __THE_1_job1_0F (void *);
-int32_t __THE_1_job2_0F (void *, struct fn$6P);
-int32_t __THE_1_job3_0F (void *, struct fn$7P);
+int32_t __THE_1_job2_0F (void *, struct fn$3P);
+int32_t __THE_1_job3_0F (void *, struct fn$5P);
 
 void __THE_1_test1_0F (void *_c, struct fn$0P p) {
   const struct fn$1 __THE_0_job_0 = p.n0;
@@ -105,13 +105,13 @@ int32_t __THE_1_test3_0F (void *_c, struct fn$4P p) {
 }
 void __THE_1_job1_0F (void *_c) {
 }
-int32_t __THE_1_job2_0F (void *_c, struct fn$6P p) {
-  int32_t __THE_0_a_0 = p.n0;
+int32_t __THE_1_job2_0F (void *_c, struct fn$3P p) {
+  const int32_t __THE_0_a_0 = p.n0;
   return __THE_0_a_0 + 2;
 }
-int32_t __THE_1_job3_0F (void *_c, struct fn$7P p) {
-  int32_t __THE_0_a_0 = p.n0;
-  int32_t __THE_0_b_0 = p.n1;
+int32_t __THE_1_job3_0F (void *_c, struct fn$5P p) {
+  const int32_t __THE_0_a_0 = p.n0;
+  const int32_t __THE_0_b_0 = p.n1;
   return __THE_0_a_0 * __THE_0_b_0;
 }
 
@@ -120,8 +120,8 @@ int main () {
   const struct fn$2 __THE_0_test2_0 = (struct fn$2) {&__THE_1_test2_0F, NULL};
   const struct fn$4 __THE_0_test3_0 = (struct fn$4) {&__THE_1_test3_0F, NULL};
   const struct fn$1 __THE_0_job1_0 = (struct fn$1) {&__THE_1_job1_0F, NULL};
-  const struct fn$6 __THE_0_job2_0 = (struct fn$6) {&__THE_1_job2_0F, NULL};
-  const struct fn$7 __THE_0_job3_0 = (struct fn$7) {&__THE_1_job3_0F, NULL};
+  const struct fn$3 __THE_0_job2_0 = (struct fn$3) {&__THE_1_job2_0F, NULL};
+  const struct fn$5 __THE_0_job3_0 = (struct fn$5) {&__THE_1_job3_0F, NULL};
   __THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {__THE_0_job1_0});
   __THE_0_test2_0.f(__THE_0_test2_0.c, (struct fn$2P) {__THE_0_job2_0});
   __THE_0_test3_0.f(__THE_0_test3_0.c, (struct fn$4P) {__THE_0_job3_0});

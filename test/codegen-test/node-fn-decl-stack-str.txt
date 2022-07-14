@@ -51,19 +51,19 @@ void *alloc (size_t l) {
   return r;
 }
 
-struct __THE_1_mainSDtest_0C;
 struct fn$0P;
 struct fn$0;
+struct __THE_1_mainSDtest_0C;
 
-struct __THE_1_mainSDtest_0C {
-  struct str *__THE_0_a_0;
-};
 struct fn$0P {
-  struct str n0;
+  const struct str n0;
 };
 struct fn$0 {
   void (*f) (void *, struct fn$0P);
   void *c;
+};
+struct __THE_1_mainSDtest_0C {
+  struct str *__THE_0_a_0;
 };
 
 void __THE_1_mainSDtest_0F (void *, struct fn$0P);
@@ -72,7 +72,7 @@ void __THE_1_mainSDtest_0A (struct fn$0 *, struct __THE_1_mainSDtest_0C);
 void __THE_1_mainSDtest_0F (void *_c, struct fn$0P p) {
   struct __THE_1_mainSDtest_0C *c = _c;
   struct str *__THE_0_a_0 = c->__THE_0_a_0;
-  struct str __THE_0_newA_0 = p.n0;
+  const struct str __THE_0_newA_0 = p.n0;
   *__THE_0_a_0 = str_realloc(*__THE_0_a_0, str_copy(__THE_0_newA_0));
   str_free((struct str) __THE_0_newA_0);
 }
