@@ -151,10 +151,10 @@ int32_t __THE_1_test1_0F (void *_c) {
     if (str_eq_cstr(str_copy(__THE_0_b_0), "c")) {
       r = 1;
       v = 1;
-      goto L3;
+      goto L1;
     }
     __THE_0_b_0 = str_realloc(__THE_0_b_0, str_alloc("b2"));
-L3:
+L1:
     str_free((struct str) __THE_0_b_0);
     if (r == 1) goto L0;
   }
@@ -166,10 +166,10 @@ L3:
     if (str_eq_cstr(str_copy(__THE_0_d_0), "e")) {
       r = 1;
       v = 2;
-      goto L5;
+      goto L3;
     }
     __THE_0_d_0 = str_realloc(__THE_0_d_0, str_alloc("b2"));
-L5:
+L3:
     str_free((struct str) __THE_0_d_0);
     if (r == 1) goto L2;
   }
@@ -192,12 +192,12 @@ int32_t __THE_1_test2_0F (void *_c) {
   if (str_eq_cstr(str_copy(__THE_0_a_0), "b")) {
     r = 1;
     v = 1;
-    goto L3;
+    goto L4;
   }
   const struct str __THE_0_b_0 = str_alloc("a");
   v = str_eq_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)) ? 2 : 0;
   str_free((struct str) __THE_0_b_0);
-L3:
+L4:
   str_free((struct str) __THE_0_a_0);
   return v;
 }

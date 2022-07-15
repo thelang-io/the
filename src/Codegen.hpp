@@ -19,21 +19,21 @@ enum CodegenEntityType {
 
 struct CodegenBuiltins {
   bool fnAlloc = false;
-  bool fnBoolStr = false; // todo
-  bool fnByteStr = false; // todo
-  bool fnCharStr = false; // todo
+  bool fnBoolStr = false;
+  bool fnByteStr = false;
+  bool fnCharStr = false;
   bool fnCstrConcatStr = false;
   bool fnCstrEqCstr = false;
   bool fnCstrEqStr = false;
   bool fnCstrNeCstr = false;
   bool fnCstrNeStr = false;
-  bool fnF32Str = false; // todo
-  bool fnF64Str = false; // todo
-  bool fnFloatStr = false; // todo
-  bool fnI8Str = false; // todo
-  bool fnI16Str = false; // todo
-  bool fnI32Str = false; // todo
-  bool fnI64Str = false; // todo
+  bool fnF32Str = false;
+  bool fnF64Str = false;
+  bool fnFloatStr = false;
+  bool fnI8Str = false;
+  bool fnI16Str = false;
+  bool fnI32Str = false;
+  bool fnI64Str = false;
   bool fnIntStr = false;
   bool fnPrint = false;
   bool fnStrAlloc = false;
@@ -48,10 +48,10 @@ struct CodegenBuiltins {
   bool fnStrNeStr = false;
   bool fnStrNot = false;
   bool fnStrRealloc = false;
-  bool fnU8Str = false; // todo
-  bool fnU16Str = false; // todo
-  bool fnU32Str = false; // todo
-  bool fnU64Str = false; // todo
+  bool fnU8Str = false;
+  bool fnU16Str = false;
+  bool fnU32Str = false;
+  bool fnU64Str = false;
   bool libInttypes = false;
   bool libStdarg = false;
   bool libStdbool = false;

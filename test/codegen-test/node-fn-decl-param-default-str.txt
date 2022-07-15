@@ -117,7 +117,6 @@ void __THE_1_mainSDtest2_0F (void *, struct fn$1P);
 void __THE_1_mainSDtest2_0A (struct fn$1 *, struct __THE_1_mainSDtest2_0C);
 
 struct str __THE_1_test1_0F (void *_c, struct fn$0P p) {
-  unsigned char r = 0;
   struct str v;
   const struct str __THE_0_a_0 = p.n0;
   const struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("b");

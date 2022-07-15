@@ -157,6 +157,7 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenTest, testing::Values(
   "node-fn-decl-param-default",
   "node-fn-decl-param-default-str",
   "node-fn-decl-param-default-obj",
+  "node-fn-decl-param-default-fn",
   "node-fn-decl-param-fn",
   "node-fn-decl-nested",
   "node-fn-decl-complex"

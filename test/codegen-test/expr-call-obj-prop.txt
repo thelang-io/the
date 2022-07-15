@@ -1,16 +1,270 @@
 ======= stdin =======
+obj A {
+  b: fn () void
+}
+
+obj Test {
+  game: fn (int) void
+}
+
+obj Test1 {
+  test2: Test2
+}
+
+obj Test2 {
+  test3: fn (int, int) void
+}
+
+obj B {
+  c: C
+}
+
+obj C {
+  d: D
+}
+
+obj D {
+  e: E
+}
+
+obj E {
+  f: fn (int, int, int) void
+}
+
+fn job1 () {}
+fn job2 (n: int) {}
+fn job3 (x: int, y: int) {}
+fn job4 (x: int, y: int, z: int) {}
+
 main {
-  // todo test
-  // a.b()
-  // test.game(3)
-  // test1.test2.test3(5, 6)
-  // a.b.c.d.e(7, 8, c: 9)
-  // cls.ctor.name(10, 11, d: 12)
-  // country.codes.dial(13, 14, c: 15, d: 16)
-  // errors.invalid(17, 18, d: 19, c: 20)
+  a := A{b: job1}
+  a.b()
+
+  test := Test{game: job2}
+  test.game(3)
+
+  test1 := Test1{
+    test2: Test2{test3: job3}
+  }
+
+  test1.test2.test3(5, 6)
+
+  b := B{
+    c: C{
+      d: D{
+        e: E{f: job4}
+      }
+    }
+  }
+
+  b.c.d.e.f(7, 8, 9)
 }
 ======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct fn$0;
+struct __THE_1_A_0;
+struct fn$1P;
+struct fn$1;
+struct __THE_1_Test_0;
+struct __THE_1_Test1_0;
+struct fn$2P;
+struct fn$2;
+struct __THE_1_Test2_0;
+struct __THE_1_B_0;
+struct __THE_1_C_0;
+struct __THE_1_D_0;
+struct fn$3P;
+struct fn$3;
+struct __THE_1_E_0;
+
+struct fn$0 {
+  void (*f) (void *);
+  void *c;
+};
+struct __THE_1_A_0 {
+  struct fn$0 __THE_0_b;
+};
+struct fn$1P {
+  const int32_t n0;
+};
+struct fn$1 {
+  void (*f) (void *, struct fn$1P);
+  void *c;
+};
+struct __THE_1_Test_0 {
+  struct fn$1 __THE_0_game;
+};
+struct __THE_1_Test1_0 {
+  struct __THE_1_Test2_0 *__THE_0_test2;
+};
+struct fn$2P {
+  const int32_t n0;
+  const int32_t n1;
+};
+struct fn$2 {
+  void (*f) (void *, struct fn$2P);
+  void *c;
+};
+struct __THE_1_Test2_0 {
+  struct fn$2 __THE_0_test3;
+};
+struct __THE_1_B_0 {
+  struct __THE_1_C_0 *__THE_0_c;
+};
+struct __THE_1_C_0 {
+  struct __THE_1_D_0 *__THE_0_d;
+};
+struct __THE_1_D_0 {
+  struct __THE_1_E_0 *__THE_0_e;
+};
+struct fn$3P {
+  const int32_t n0;
+  const int32_t n1;
+  const int32_t n2;
+};
+struct fn$3 {
+  void (*f) (void *, struct fn$3P);
+  void *c;
+};
+struct __THE_1_E_0 {
+  struct fn$3 __THE_0_f;
+};
+
+struct __THE_1_A_0 *__THE_1_A_0_alloc (struct fn$0);
+void __THE_1_A_0_free (struct __THE_1_A_0 *);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct fn$1);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct fn$2);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+struct __THE_1_B_0 *__THE_1_B_0_alloc (struct __THE_1_C_0 *);
+void __THE_1_B_0_free (struct __THE_1_B_0 *);
+struct __THE_1_C_0 *__THE_1_C_0_alloc (struct __THE_1_D_0 *);
+void __THE_1_C_0_free (struct __THE_1_C_0 *);
+struct __THE_1_D_0 *__THE_1_D_0_alloc (struct __THE_1_E_0 *);
+void __THE_1_D_0_free (struct __THE_1_D_0 *);
+struct __THE_1_E_0 *__THE_1_E_0_alloc (struct fn$3);
+void __THE_1_E_0_free (struct __THE_1_E_0 *);
+void __THE_1_job1_0F (void *);
+void __THE_1_job2_0F (void *, struct fn$1P);
+void __THE_1_job3_0F (void *, struct fn$2P);
+void __THE_1_job4_0F (void *, struct fn$3P);
+
+struct __THE_1_A_0 *__THE_1_A_0_alloc (struct fn$0 __THE_0_b) {
+  struct __THE_1_A_0 *r = alloc(sizeof(struct __THE_1_A_0));
+  r->__THE_0_b = __THE_0_b;
+  return r;
+}
+void __THE_1_A_0_free (struct __THE_1_A_0 *o) {
+  free(o);
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct fn$1 __THE_0_game) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  r->__THE_0_game = __THE_0_game;
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  free(o);
+}
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_test2) {
+  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
+  r->__THE_0_test2 = __THE_0_test2;
+  return r;
+}
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o->__THE_0_test2);
+  free(o);
+}
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct fn$2 __THE_0_test3) {
+  struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
+  r->__THE_0_test3 = __THE_0_test3;
+  return r;
+}
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
+  free(o);
+}
+struct __THE_1_B_0 *__THE_1_B_0_alloc (struct __THE_1_C_0 *__THE_0_c) {
+  struct __THE_1_B_0 *r = alloc(sizeof(struct __THE_1_B_0));
+  r->__THE_0_c = __THE_0_c;
+  return r;
+}
+void __THE_1_B_0_free (struct __THE_1_B_0 *o) {
+  __THE_1_C_0_free((struct __THE_1_C_0 *) o->__THE_0_c);
+  free(o);
+}
+struct __THE_1_C_0 *__THE_1_C_0_alloc (struct __THE_1_D_0 *__THE_0_d) {
+  struct __THE_1_C_0 *r = alloc(sizeof(struct __THE_1_C_0));
+  r->__THE_0_d = __THE_0_d;
+  return r;
+}
+void __THE_1_C_0_free (struct __THE_1_C_0 *o) {
+  __THE_1_D_0_free((struct __THE_1_D_0 *) o->__THE_0_d);
+  free(o);
+}
+struct __THE_1_D_0 *__THE_1_D_0_alloc (struct __THE_1_E_0 *__THE_0_e) {
+  struct __THE_1_D_0 *r = alloc(sizeof(struct __THE_1_D_0));
+  r->__THE_0_e = __THE_0_e;
+  return r;
+}
+void __THE_1_D_0_free (struct __THE_1_D_0 *o) {
+  __THE_1_E_0_free((struct __THE_1_E_0 *) o->__THE_0_e);
+  free(o);
+}
+struct __THE_1_E_0 *__THE_1_E_0_alloc (struct fn$3 __THE_0_f) {
+  struct __THE_1_E_0 *r = alloc(sizeof(struct __THE_1_E_0));
+  r->__THE_0_f = __THE_0_f;
+  return r;
+}
+void __THE_1_E_0_free (struct __THE_1_E_0 *o) {
+  free(o);
+}
+void __THE_1_job1_0F (void *_c) {
+}
+void __THE_1_job2_0F (void *_c, struct fn$1P p) {
+  const int32_t __THE_0_n_0 = p.n0;
+}
+void __THE_1_job3_0F (void *_c, struct fn$2P p) {
+  const int32_t __THE_0_x_0 = p.n0;
+  const int32_t __THE_0_y_0 = p.n1;
+}
+void __THE_1_job4_0F (void *_c, struct fn$3P p) {
+  const int32_t __THE_0_x_0 = p.n0;
+  const int32_t __THE_0_y_0 = p.n1;
+  const int32_t __THE_0_z_0 = p.n2;
+}
+
 int main () {
+  const struct fn$0 __THE_0_job1_0 = (struct fn$0) {&__THE_1_job1_0F, NULL};
+  const struct fn$1 __THE_0_job2_0 = (struct fn$1) {&__THE_1_job2_0F, NULL};
+  const struct fn$2 __THE_0_job3_0 = (struct fn$2) {&__THE_1_job3_0F, NULL};
+  const struct fn$3 __THE_0_job4_0 = (struct fn$3) {&__THE_1_job4_0F, NULL};
+  const struct __THE_1_A_0 *__THE_0_a_0 = __THE_1_A_0_alloc(__THE_0_job1_0);
+  __THE_0_a_0->__THE_0_b.f(__THE_0_a_0->__THE_0_b.c);
+  const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(__THE_0_job2_0);
+  __THE_0_test_0->__THE_0_game.f(__THE_0_test_0->__THE_0_game.c, (struct fn$1P) {3});
+  const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_1_Test2_0_alloc(__THE_0_job3_0));
+  __THE_0_test1_0->__THE_0_test2->__THE_0_test3.f(__THE_0_test1_0->__THE_0_test2->__THE_0_test3.c, (struct fn$2P) {5, 6});
+  const struct __THE_1_B_0 *__THE_0_b_0 = __THE_1_B_0_alloc(__THE_1_C_0_alloc(__THE_1_D_0_alloc(__THE_1_E_0_alloc(__THE_0_job4_0))));
+  __THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.f(__THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.c, (struct fn$3P) {7, 8, 9});
+  __THE_1_B_0_free((struct __THE_1_B_0 *) __THE_0_b_0);
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
+  __THE_1_A_0_free((struct __THE_1_A_0 *) __THE_0_a_0);
 }
 ======= flags =======
 ======= stdout =======

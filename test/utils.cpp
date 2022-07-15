@@ -34,7 +34,7 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
     auto pipe = std::unique_ptr<FILE, decltype(pcloseWrapper)>{popen(actualCmd.c_str(), "r"), pcloseWrapper};
 
     if (!pipe) {
-      throw Error("Failed to execute binary file");
+      throw Error("Error: failed to execute binary file");
     }
 
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
@@ -73,7 +73,7 @@ std::map<std::string, std::string> readTestFile (
   auto file = std::ifstream(path, std::ios::in | std::ios::binary);
 
   if (!file.is_open()) {
-    throw Error("Unable to open " + testName + R"( test file ")" + path + R"(")");
+    throw Error("Error: unable to open " + testName + R"( test file ")" + path + R"(")");
   }
 
   auto size = static_cast<std::ptrdiff_t>(std::filesystem::file_size(path));
@@ -83,7 +83,7 @@ std::map<std::string, std::string> readTestFile (
   file.close();
 
   if (!content.starts_with("======= ")) {
-    throw Error(R"(Test file ")" + path + R"(" doesn't look like an actual )" + testName + "test");
+    throw Error(R"(Error: test file ")" + path + R"(" doesn't look like an actual )" + testName + "test");
   }
 
   auto sections = std::map<std::string, std::string>{};

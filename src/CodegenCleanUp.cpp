@@ -6,20 +6,35 @@
  */
 
 #include "CodegenCleanUp.hpp"
+#include "Error.hpp"
 #include "config.hpp"
+
+CodegenCleanUp::CodegenCleanUp (CodegenCleanUp *p) {
+  this->parent = p;
+  this->labelIdx = this->parent->labelIdx;
+  this->parentHasCleanUp = this->parent->parentHasCleanUp || !this->parent->_data.empty();
+  this->returnVarUsed = this->parent->returnVarUsed;
+  this->valueVarUsed = this->parent->valueVarUsed;
+}
 
 void CodegenCleanUp::add (const std::string &content) {
   if (this->_data.empty() || this->_data.back().labelUsed) {
     this->_data.push_back({"L" + std::to_string(this->labelIdx), content});
-    this->labelIdx++;
+    this->_setLabelIdx(this->labelIdx + 1);
   } else {
     this->_data.back().content.insert(0, content + EOL);
   }
 }
 
 std::string CodegenCleanUp::currentLabel () {
-  this->_data.back().labelUsed = true;
-  return this->_data.back().label;
+  if (!this->empty()) {
+    this->_data.back().labelUsed = true;
+    return this->_data.back().label;
+  } else if (this->parent == nullptr) {
+    throw Error("Error: tried getting current label on nullptr in CodegenCleanUp");
+  }
+
+  return this->parent->currentLabel();
 }
 
 bool CodegenCleanUp::empty () const {
@@ -49,7 +64,17 @@ std::string CodegenCleanUp::gen (std::size_t indent) const {
   return result;
 }
 
-CodegenCleanUp &CodegenCleanUp::update (std::size_t newLabelIdx) {
-  this->labelIdx = newLabelIdx;
+CodegenCleanUp &CodegenCleanUp::update (const CodegenCleanUp &child) {
+  this->returnVarUsed = child.returnVarUsed;
+  this->valueVarUsed = child.valueVarUsed;
+
   return *this;
+}
+
+void CodegenCleanUp::_setLabelIdx (std::size_t newLabelIdx) {
+  this->labelIdx = newLabelIdx;
+
+  if (this->parent != nullptr) {
+    this->parent->_setLabelIdx(newLabelIdx);
+  }
 }

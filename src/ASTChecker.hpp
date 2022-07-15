@@ -60,7 +60,7 @@ class ASTChecker {
 
   void _checkNode () const {
     if (!this->_isNode) {
-      throw Error("Error: Tried node method on non node");
+      throw Error("Error: tried node method on non node");
     }
   }
 
@@ -86,9 +86,9 @@ class ASTChecker {
 
   bool _isLastNode (const std::vector<ASTNode> &nodes) const {
     if (nodes.size() != 1) {
-      throw Error("Error: Tried isLast on many nodes");
+      throw Error("Error: tried isLast on many nodes");
     } else if (nodes[0].parent == nullptr) {
-      throw Error("Error: Tried isLast on root node");
+      throw Error("Error: tried isLast on root node");
     }
 
     auto node = nodes[0];

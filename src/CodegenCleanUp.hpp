@@ -19,19 +19,25 @@ struct CodegenCleanUpItem {
 
 class CodegenCleanUp {
  public:
+  CodegenCleanUp *parent = nullptr;
   std::size_t labelIdx = 0;
+  bool parentHasCleanUp = false;
+  bool returnVarUsed = false;
+  bool valueVarUsed = false;
 
   CodegenCleanUp () = default;
-  explicit CodegenCleanUp (std::size_t i) : labelIdx(i) {}
+  explicit CodegenCleanUp (CodegenCleanUp *);
 
   void add (const std::string &);
   std::string currentLabel ();
   bool empty () const;
   std::string gen (std::size_t) const;
-  CodegenCleanUp &update (std::size_t);
+  CodegenCleanUp &update (const CodegenCleanUp &);
 
  private:
   std::vector<CodegenCleanUpItem> _data;
+
+  void _setLabelIdx (std::size_t);
 };
 
 #endif

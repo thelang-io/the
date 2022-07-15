@@ -8,12 +8,14 @@
 #include <gtest/gtest.h>
 #include "../src/CodegenCleanUp.hpp"
 #include "../src/config.hpp"
+#include "utils.hpp"
 
 TEST(CodegenCleanUpTest, InitialSetValues) {
   auto n0 = CodegenCleanUp();
-  auto n1 = CodegenCleanUp(1);
-
   EXPECT_EQ(n0.labelIdx, 0);
+  n0.labelIdx = 1;
+
+  auto n1 = CodegenCleanUp(&n0);
   EXPECT_EQ(n1.labelIdx, 1);
 }
 
@@ -52,6 +54,19 @@ TEST(CodegenCleanUpTest, AddsAfterLabellingToNonLabeled) {
   EXPECT_EQ(n.gen(0), "test4;" EOL "test3;" EOL + l + ":" + EOL "test2;" EOL "test1;" EOL);
 }
 
+TEST(CodegenCleanUpTest, AddsToParent) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(&n0);
+  n1.add("test1;");
+  n1.add("test2;");
+  auto l = n1.currentLabel();
+  n1.add("test3;");
+  n1.add("test4;");
+
+  EXPECT_EQ(n0.labelIdx, 2);
+  EXPECT_EQ(n1.labelIdx, 2);
+}
+
 TEST(CodegenCleanUpTest, LabelsOnOneStatement) {
   auto n = CodegenCleanUp();
   n.add("test;");
@@ -70,6 +85,28 @@ TEST(CodegenCleanUpTest, LabelsOnMultipleStatements) {
 
   EXPECT_EQ(n.labelIdx, 1);
   EXPECT_EQ(n.gen(0), l + ":" + EOL "test3;" EOL "test2;" EOL "test1;" EOL);
+}
+
+TEST(CodegenCleanUpTest, LabelsParent) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(&n0);
+  n0.add("test;");
+  auto l = n1.currentLabel();
+
+  EXPECT_EQ(n0.gen(0), l + ":" + EOL "test;" EOL);
+}
+
+TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {
+  auto n0 = CodegenCleanUp();
+  EXPECT_THROW_WITH_MESSAGE(n0.currentLabel(), "Error: tried getting current label on nullptr in CodegenCleanUp");
+}
+
+TEST(CodegenCleanUpTest, ThrowOnNothingToLabelWithParent) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(&n0);
+  auto n2 = CodegenCleanUp(&n1);
+
+  EXPECT_THROW_WITH_MESSAGE(n2.currentLabel(), "Error: tried getting current label on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, Empty) {
@@ -144,10 +181,15 @@ TEST(CodegenCleanUpTest, GeneratesOnNonEmptyWithMultipleLabels) {
   );
 }
 
-TEST(CodegenCleanUpTest, UpdatesLabelIdx) {
-  auto n = CodegenCleanUp();
+TEST(CodegenCleanUpTest, Updates) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp();
+  n0.returnVarUsed = true;
+  n0.valueVarUsed = true;
 
-  EXPECT_EQ(n.update(0).labelIdx, 0);
-  EXPECT_EQ(n.update(2).labelIdx, 2);
-  EXPECT_EQ(n.update(0).labelIdx, 0);
+  EXPECT_FALSE(n1.returnVarUsed);
+  EXPECT_FALSE(n1.valueVarUsed);
+  n1.update(n0);
+  EXPECT_TRUE(n1.returnVarUsed);
+  EXPECT_TRUE(n1.valueVarUsed);
 }

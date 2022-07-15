@@ -1,0 +1,220 @@
+======= stdin =======
+fn jobA () str {
+  return "a"
+}
+
+fn jobA2 () str {
+  return "a2"
+}
+
+fn jobB () str {
+  return "b"
+}
+
+fn jobC () str {
+  return "c"
+}
+
+fn test1 (a: fn () str, b := jobB, c := jobC) str {
+  return a() + b() + c()
+}
+
+main{
+  test1(jobA)
+  test1(jobA, jobB)
+  test1(jobA, jobB, jobC)
+  test1(jobA, b: jobB)
+  test1(jobA, c: jobC)
+  test1(jobA, b: jobB, c: jobC)
+  test1(jobA, c: jobC, b: jobB)
+
+  mut a := jobA()
+
+  fn test2 (a2: fn () str, b := jobB, c := jobC) {
+    a = test1(a2, b, c)
+  }
+
+  test2(jobA2)
+  test2(jobA2, jobB)
+  test2(jobA2, jobB, jobC)
+  test2(jobA2, b: jobB)
+  test2(jobA2, c: jobC)
+  test2(jobA2, b: jobB, c: jobC)
+  test2(jobA2, c: jobC, b: jobB)
+}
+======= code =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_alloc (const char *);
+struct str str_concat_str (struct str, struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+void *alloc (size_t);
+
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *r = alloc(l);
+  memcpy(r, s1.c, s1.l);
+  memcpy(&r[s1.l], s2.c, s2.l);
+  free(s1.c);
+  free(s2.c);
+  return (struct str) {r, l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct fn$0;
+struct fn$1P;
+struct fn$1;
+struct __THE_1_test1_0C;
+struct fn$2P;
+struct fn$2;
+struct __THE_1_mainSDtest2_0C;
+
+struct fn$0 {
+  struct str (*f) (void *);
+  void *c;
+};
+struct fn$1P {
+  const struct fn$0 n0;
+  unsigned char o1;
+  const struct fn$0 n1;
+  unsigned char o2;
+  const struct fn$0 n2;
+};
+struct fn$1 {
+  struct str (*f) (void *, struct fn$1P);
+  void *c;
+};
+struct __THE_1_test1_0C {
+  const struct fn$0 *__THE_0_jobC_0;
+  const struct fn$0 *__THE_0_jobB_0;
+};
+struct fn$2P {
+  const struct fn$0 n0;
+  unsigned char o1;
+  const struct fn$0 n1;
+  unsigned char o2;
+  const struct fn$0 n2;
+};
+struct fn$2 {
+  void (*f) (void *, struct fn$2P);
+  void *c;
+};
+struct __THE_1_mainSDtest2_0C {
+  struct str *__THE_0_a_0;
+  const struct fn$1 *__THE_0_test1_0;
+  const struct fn$0 *__THE_0_jobC_0;
+  const struct fn$0 *__THE_0_jobB_0;
+};
+
+struct str __THE_1_jobA_0F (void *);
+struct str __THE_1_jobA2_0F (void *);
+struct str __THE_1_jobB_0F (void *);
+struct str __THE_1_jobC_0F (void *);
+struct str __THE_1_test1_0F (void *, struct fn$1P);
+void __THE_1_test1_0A (struct fn$1 *, struct __THE_1_test1_0C);
+void __THE_1_mainSDtest2_0F (void *, struct fn$2P);
+void __THE_1_mainSDtest2_0A (struct fn$2 *, struct __THE_1_mainSDtest2_0C);
+
+struct str __THE_1_jobA_0F (void *_c) {
+  return str_alloc("a");
+}
+struct str __THE_1_jobA2_0F (void *_c) {
+  return str_alloc("a2");
+}
+struct str __THE_1_jobB_0F (void *_c) {
+  return str_alloc("b");
+}
+struct str __THE_1_jobC_0F (void *_c) {
+  return str_alloc("c");
+}
+struct str __THE_1_test1_0F (void *_c, struct fn$1P p) {
+  struct __THE_1_test1_0C *c = _c;
+  const struct fn$0 *__THE_0_jobC_0 = c->__THE_0_jobC_0;
+  const struct fn$0 *__THE_0_jobB_0 = c->__THE_0_jobB_0;
+  const struct fn$0 __THE_0_a_0 = p.n0;
+  const struct fn$0 __THE_0_b_0 = p.o1 == 1 ? p.n1 : *__THE_0_jobB_0;
+  const struct fn$0 __THE_0_c_0 = p.o2 == 1 ? p.n2 : *__THE_0_jobC_0;
+  return str_concat_str(str_concat_str(__THE_0_a_0.f(__THE_0_a_0.c), __THE_0_b_0.f(__THE_0_b_0.c)), __THE_0_c_0.f(__THE_0_c_0.c));
+}
+void __THE_1_test1_0A (struct fn$1 *n, struct __THE_1_test1_0C c) {
+  size_t l = sizeof(struct __THE_1_test1_0C);
+  struct __THE_1_test1_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_test1_0F;
+  n->c = r;
+}
+void __THE_1_mainSDtest2_0F (void *_c, struct fn$2P p) {
+  struct __THE_1_mainSDtest2_0C *c = _c;
+  struct str *__THE_0_a_0 = c->__THE_0_a_0;
+  const struct fn$1 *__THE_0_test1_0 = c->__THE_0_test1_0;
+  const struct fn$0 *__THE_0_jobC_0 = c->__THE_0_jobC_0;
+  const struct fn$0 *__THE_0_jobB_0 = c->__THE_0_jobB_0;
+  const struct fn$0 __THE_0_a2_0 = p.n0;
+  const struct fn$0 __THE_0_b_0 = p.o1 == 1 ? p.n1 : *__THE_0_jobB_0;
+  const struct fn$0 __THE_0_c_0 = p.o2 == 1 ? p.n2 : *__THE_0_jobC_0;
+  *__THE_0_a_0 = str_realloc(*__THE_0_a_0, __THE_0_test1_0->f(__THE_0_test1_0->c, (struct fn$1P) {__THE_0_a2_0, 1, __THE_0_b_0, 1, __THE_0_c_0}));
+}
+void __THE_1_mainSDtest2_0A (struct fn$2 *n, struct __THE_1_mainSDtest2_0C c) {
+  size_t l = sizeof(struct __THE_1_mainSDtest2_0C);
+  struct __THE_1_mainSDtest2_0C *r = alloc(l);
+  memcpy(r, &c, l);
+  n->f = &__THE_1_mainSDtest2_0F;
+  n->c = r;
+}
+
+int main () {
+  const struct fn$0 __THE_0_jobA_0 = (struct fn$0) {&__THE_1_jobA_0F, NULL};
+  const struct fn$0 __THE_0_jobA2_0 = (struct fn$0) {&__THE_1_jobA2_0F, NULL};
+  const struct fn$0 __THE_0_jobB_0 = (struct fn$0) {&__THE_1_jobB_0F, NULL};
+  const struct fn$0 __THE_0_jobC_0 = (struct fn$0) {&__THE_1_jobC_0F, NULL};
+  const struct fn$1 __THE_0_test1_0;
+  __THE_1_test1_0A((struct fn$1 *) &__THE_0_test1_0, (struct __THE_1_test1_0C) {&__THE_0_jobC_0, &__THE_0_jobB_0});
+  str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$1P) {__THE_0_jobA_0, 0, (struct fn$0) {NULL, NULL}, 0, (struct fn$0) {NULL, NULL}}));
+  str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$1P) {__THE_0_jobA_0, 1, __THE_0_jobB_0, 0, (struct fn$0) {NULL, NULL}}));
+  str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$1P) {__THE_0_jobA_0, 1, __THE_0_jobB_0, 1, __THE_0_jobC_0}));
+  str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$1P) {__THE_0_jobA_0, 1, __THE_0_jobB_0, 0, (struct fn$0) {NULL, NULL}}));
+  str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$1P) {__THE_0_jobA_0, 0, (struct fn$0) {NULL, NULL}, 1, __THE_0_jobC_0}));
+  str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$1P) {__THE_0_jobA_0, 1, __THE_0_jobB_0, 1, __THE_0_jobC_0}));
+  str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$1P) {__THE_0_jobA_0, 1, __THE_0_jobB_0, 1, __THE_0_jobC_0}));
+  struct str __THE_0_a_0 = __THE_0_jobA_0.f(__THE_0_jobA_0.c);
+  const struct fn$2 __THE_0_mainSDtest2_0;
+  __THE_1_mainSDtest2_0A((struct fn$2 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0C) {&__THE_0_a_0, &__THE_0_test1_0, &__THE_0_jobC_0, &__THE_0_jobB_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$2P) {__THE_0_jobA2_0, 0, (struct fn$0) {NULL, NULL}, 0, (struct fn$0) {NULL, NULL}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$2P) {__THE_0_jobA2_0, 1, __THE_0_jobB_0, 0, (struct fn$0) {NULL, NULL}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$2P) {__THE_0_jobA2_0, 1, __THE_0_jobB_0, 1, __THE_0_jobC_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$2P) {__THE_0_jobA2_0, 1, __THE_0_jobB_0, 0, (struct fn$0) {NULL, NULL}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$2P) {__THE_0_jobA2_0, 0, (struct fn$0) {NULL, NULL}, 1, __THE_0_jobC_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$2P) {__THE_0_jobA2_0, 1, __THE_0_jobB_0, 1, __THE_0_jobC_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$2P) {__THE_0_jobA2_0, 1, __THE_0_jobB_0, 1, __THE_0_jobC_0});
+  str_free((struct str) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======
