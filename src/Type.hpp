@@ -39,6 +39,7 @@ struct TypeObj {
 
 struct Type {
   std::string name;
+  std::string codeName;
   std::variant<TypeFn, TypeObj> body;
   bool builtin;
 

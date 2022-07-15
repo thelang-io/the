@@ -8,7 +8,7 @@ fn test1 (p1 := "1", p2 := p1) {
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="test1_0" frame="1" mut="false" name="test1">
-        <Type name="test1_0" type="fn">
+        <Type codeName="test1_0" name="test1" type="fn">
           <slot name="returnType">
             <BuiltinType name="void" />
           </slot>
@@ -79,7 +79,7 @@ fn test1 (p1 := "1", p2 := p1) {
                 </ExprAccess>
               </slot>
               <slot name="calleeType">
-                <BuiltinType />
+                <BuiltinType name="print" />
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
@@ -114,7 +114,7 @@ fn test1 (p1 := "1", p2 := p1) {
                 </ExprAccess>
               </slot>
               <slot name="calleeType">
-                <BuiltinType />
+                <BuiltinType name="print" />
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">

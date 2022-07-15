@@ -114,13 +114,12 @@ ASTExprAccess AST::_exprAccess (const std::shared_ptr<ParserMemberObj> &exprAcce
 Type *AST::_exprAccessType (const std::shared_ptr<ParserMemberObj> &exprAccessBody) {
   if (std::holds_alternative<Token>(*exprAccessBody)) {
     auto parserId = std::get<Token>(*exprAccessBody);
-    auto var = this->varMap.get(parserId.val);
 
-    if (var == nullptr) {
+    if (!this->varMap.has(parserId.val)) {
       throw Error(this->reader, parserId.start, parserId.end, E1011);
     }
 
-    return var->type;
+    return this->varMap.get(parserId.val)->type;
   }
 
   auto parserMember = std::get<ParserMember>(*exprAccessBody);
@@ -154,10 +153,8 @@ void AST::_forwardNode (const ParserBlock &block) {
     if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
       auto objName = stmtObjDecl.id.val;
-      auto objTypeName = this->typeMap.name(objName);
 
-      auto objType = this->typeMap.add(objTypeName, std::vector<TypeObjField>{});
-      this->varMap.add(objName, objTypeName, objType, false);
+      this->typeMap.add(objName, this->typeMap.name(objName), std::vector<TypeObjField>{});
     }
   }
 }
@@ -205,9 +202,15 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto nodeFnDeclVarReturnType = stmtFnDecl.returnType == std::nullopt
       ? this->typeMap.get("void")
       : this->_type(*stmtFnDecl.returnType);
-    auto nodeFnDeclVarType = this->typeMap.add(this->typeMap.name(nodeFnDeclVarName), nodeFnDeclVarParams, nodeFnDeclVarReturnType);
-    auto nodeFnDeclVar = this->varMap.add(nodeFnDeclVarName, nodeFnDeclVarType->name, nodeFnDeclVarType, false);
 
+    auto nodeFnDeclVarType = this->typeMap.add(
+      nodeFnDeclVarName,
+      this->typeMap.name(nodeFnDeclVarName),
+      nodeFnDeclVarParams,
+      nodeFnDeclVarReturnType
+    );
+
+    auto nodeFnDeclVar = this->varMap.add(nodeFnDeclVarName, nodeFnDeclVarType->codeName, nodeFnDeclVarType, false);
     nodeFnDeclVar->frame -= 1;
 
     this->typeMap.stack.emplace_back(nodeFnDeclVar->name);
@@ -263,15 +266,15 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     return this->_wrapNode(stmt, nodeMain);
   } else if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
     auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
-    auto nodeObjDeclVar = this->varMap.get(stmtObjDecl.id.val);
-    auto &nodeObjDeclObj = std::get<TypeObj>(nodeObjDeclVar->type->body);
+    auto type = this->typeMap.get(stmtObjDecl.id.val);
+    auto &obj = std::get<TypeObj>(type->body);
 
     for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
       auto fieldType = this->_type(stmtObjDeclField.type);
-      nodeObjDeclObj.fields.push_back(TypeObjField{stmtObjDeclField.id.val, fieldType});
+      obj.fields.push_back({stmtObjDeclField.id.val, fieldType});
     }
 
-    auto nodeObjDecl = ASTNodeObjDecl{nodeObjDeclVar};
+    auto nodeObjDecl = ASTNodeObjDecl{type};
     return this->_wrapNode(stmt, nodeObjDecl);
   } else if (std::holds_alternative<ParserStmtReturn>(*stmt.body)) {
     auto stmtReturn = std::get<ParserStmtReturn>(*stmt.body);
@@ -470,22 +473,19 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     return this->_wrapNodeExpr(stmtExpr, ASTExprLit{exprLitType, parserExprLit.body.val});
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto parserExprObj = std::get<ParserExprObj>(*stmtExpr.body);
-    auto exprObjVar = this->varMap.get(parserExprObj.id.val);
+    auto type = this->typeMap.get(parserExprObj.id.val);
 
-    if (exprObjVar == nullptr) {
+    if (type == nullptr) {
       throw Error(this->reader, parserExprObj.id.start, parserExprObj.id.end, E1010);
     }
 
-    auto exprObjType = exprObjVar->type;
     auto exprObjProps = std::vector<ASTExprObjProp>{};
-
-    varStack.mark(exprObjVar);
 
     for (const auto &parserExprObjProp : parserExprObj.props) {
       exprObjProps.push_back(ASTExprObjProp{parserExprObjProp.id.val, this->_nodeExpr(parserExprObjProp.init, varStack)});
     }
 
-    return this->_wrapNodeExpr(stmtExpr, ASTExprObj{exprObjType, exprObjProps});
+    return this->_wrapNodeExpr(stmtExpr, ASTExprObj{type, exprObjProps});
   } else if (std::holds_alternative<ParserExprUnary>(*stmtExpr.body)) {
     auto parserExprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto op = ASTExprUnaryOp{};
@@ -569,13 +569,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
     }
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto exprObj = std::get<ParserExprObj>(*stmtExpr.body);
-    auto exprObjVar = this->varMap.get(exprObj.id.val);
-
-    if (exprObjVar == nullptr) {
-      return nullptr;
-    }
-
-    return exprObjVar->type;
+    return this->typeMap.get(exprObj.id.val);
   } else if (std::holds_alternative<ParserExprUnary>(*stmtExpr.body)) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto exprUnaryArgType = this->_nodeExprType(exprUnary.arg);
@@ -648,12 +642,8 @@ Type *AST::_type (const ParserType &type) {
   else if (typeId.id.val == "u64") return this->typeMap.get("u64");
   else if (typeId.id.val == "void") return this->typeMap.get("void");
 
-  if (this->varMap.has(typeId.id.val)) {
-    auto var = this->varMap.get(typeId.id.val);
-
-    if (var != nullptr) {
-      return var->type;
-    }
+  if (this->typeMap.has(typeId.id.val)) {
+    return this->typeMap.get(typeId.id.val);
   }
 
   throw Error(this->reader, typeId.id.start, typeId.id.end, E1010);

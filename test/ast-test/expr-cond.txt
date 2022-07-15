@@ -396,7 +396,7 @@ main {
                       </ExprAccess>
                     </slot>
                     <slot name="calleeType">
-                      <BuiltinType />
+                      <BuiltinType name="print" />
                     </slot>
                     <slot name="args">
                       <ExprCallArg id="items">
@@ -429,7 +429,7 @@ main {
                       </ExprAccess>
                     </slot>
                     <slot name="calleeType">
-                      <BuiltinType />
+                      <BuiltinType name="print" />
                     </slot>
                     <slot name="args">
                       <ExprCallArg id="items">
@@ -485,7 +485,7 @@ main {
                       </ExprAccess>
                     </slot>
                     <slot name="calleeType">
-                      <BuiltinType />
+                      <BuiltinType name="print" />
                     </slot>
                     <slot name="args">
                       <ExprCallArg id="items">
@@ -518,7 +518,7 @@ main {
                       </ExprAccess>
                     </slot>
                     <slot name="calleeType">
-                      <BuiltinType />
+                      <BuiltinType name="print" />
                     </slot>
                     <slot name="args">
                       <ExprCallArg id="items">
@@ -555,7 +555,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <BuiltinType />
+              <BuiltinType name="print" />
             </slot>
             <slot name="args">
               <ExprCallArg id="items">

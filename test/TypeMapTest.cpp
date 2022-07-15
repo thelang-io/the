@@ -18,13 +18,13 @@ class TypeMapTest : public testing::Test {
 };
 
 TEST_F(TypeMapTest, AddInsertsFunction) {
-  this->tm_.add("Test1", {});
+  this->tm_.add("Test1", "Test1_0", {});
 
-  this->tm_.add("Test2", {
+  this->tm_.add("Test2", "Test2_0", {
     {"a", this->tm_.get("int")}
   });
 
-  this->tm_.add("Test3", {
+  this->tm_.add("Test3", "Test3_0", {
     {"b", this->tm_.get("any")},
     {"c", this->tm_.get("str")}
   });
@@ -52,13 +52,13 @@ TEST_F(TypeMapTest, AddInsertsFunction) {
 }
 
 TEST_F(TypeMapTest, AddInsertsObject) {
-  this->tm_.add("test1", {}, this->tm_.get("void"));
+  this->tm_.add("test1", "test1_0", {}, this->tm_.get("void"));
 
-  this->tm_.add("test2", {
+  this->tm_.add("test2", "test2_0", {
     {"a", this->tm_.get("int"), true, false}
   }, this->tm_.get("void"));
 
-  this->tm_.add("test3", {
+  this->tm_.add("test3", "test3_0", {
     {"a", this->tm_.get("int"), false, false},
     {"b", this->tm_.get("str"), false, true}
   }, this->tm_.get("str"));
@@ -129,8 +129,8 @@ TEST_F(TypeMapTest, FunctionGenerates) {
 }
 
 TEST_F(TypeMapTest, GetReturnsItem) {
-  this->tm_.add("Test", {});
-  this->tm_.add("test", {}, this->tm_.get("void"));
+  this->tm_.add("Test", "Test", {});
+  this->tm_.add("test", "test", {}, this->tm_.get("void"));
 
   EXPECT_NO_THROW(this->tm_.get("Test"));
   EXPECT_NO_THROW(this->tm_.get("test"));
@@ -140,26 +140,38 @@ TEST_F(TypeMapTest, GetReturnsNull) {
   EXPECT_EQ(this->tm_.get("test"), nullptr);
 }
 
+TEST_F(TypeMapTest, HasExisting) {
+  this->tm_.add("Test", "Test", {});
+  this->tm_.add("test", "test", {}, this->tm_.get("void"));
+
+  EXPECT_TRUE(this->tm_.has("Test"));
+  EXPECT_TRUE(this->tm_.has("test"));
+}
+
+TEST_F(TypeMapTest, HasNotExisting) {
+  EXPECT_FALSE(this->tm_.has("test"));
+}
+
 TEST_F(TypeMapTest, NameGeneratesValid) {
   EXPECT_EQ(this->tm_.name("test"), "test_0");
-  this->tm_.add("test_0", {});
+  this->tm_.add("test", "test_0", {});
   EXPECT_EQ(this->tm_.name("test"), "test_1");
 
   this->tm_.stack.emplace_back("main");
 
   EXPECT_EQ(this->tm_.name("test"), "mainSDtest_0");
-  this->tm_.add("mainSDtest_0", {});
+  this->tm_.add("test", "mainSDtest_0", {});
   EXPECT_EQ(this->tm_.name("test"), "mainSDtest_1");
 
   this->tm_.stack.emplace_back("hello");
 
   EXPECT_EQ(this->tm_.name("world"), "mainSDhelloSDworld_0");
-  this->tm_.add("mainSDhelloSDworld_0", {});
+  this->tm_.add("world", "mainSDhelloSDworld_0", {});
   EXPECT_EQ(this->tm_.name("world"), "mainSDhelloSDworld_1");
 
   this->tm_.stack.emplace_back("world");
 
   EXPECT_EQ(this->tm_.name("test"), "mainSDhelloSDworldSDtest_0");
-  this->tm_.add("mainSDhelloSDworldSDtest_0", {});
+  this->tm_.add("test", "mainSDhelloSDworldSDtest_0", {});
   EXPECT_EQ(this->tm_.name("test"), "mainSDhelloSDworldSDtest_1");
 }

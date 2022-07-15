@@ -166,13 +166,13 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfFn) {
-  this->tm_.add("test1", {}, this->tm_.get("int"));
+  this->tm_.add("test1", "test1_0", {}, this->tm_.get("int"));
 
-  this->tm_.add("test2", {
+  this->tm_.add("test2", "test2_0", {
     {"a", this->tm_.get("int"), true, false}
   }, this->tm_.get("int"));
 
-  this->tm_.add("test3", {
+  this->tm_.add("test3", "test3_0", {
     {"a", this->tm_.get("str"), false, false},
     {"b", this->tm_.get("int"), false, true}
   }, this->tm_.get("str"));
@@ -238,13 +238,13 @@ TEST_F(TypeTest, CheckIfNotNumber) {
 }
 
 TEST_F(TypeTest, CheckIfObj) {
-  this->tm_.add("Test1", {});
+  this->tm_.add("Test1", "Test1_0", {});
 
-  this->tm_.add("Test2", {
+  this->tm_.add("Test2", "Test2_0", {
     {"a", this->tm_.get("int")}
   });
 
-  this->tm_.add("Test3", {
+  this->tm_.add("Test3", "Test3_0", {
     {"a", this->tm_.get("int")},
     {"b", this->tm_.get("str")}
   });
@@ -466,38 +466,38 @@ TEST_F(TypeTest, MatchesInteger) {
 }
 
 TEST_F(TypeTest, MatchesFunction) {
-  this->tm_.add("test1", {
+  this->tm_.add("test1", "test1_0", {
     {"a", this->tm_.get("int"), true, false},
     {"b", this->tm_.get("int"), false, true}
   }, this->tm_.get("int"));
 
-  this->tm_.add("test2", {
+  this->tm_.add("test2", "test2_0", {
     {"a", this->tm_.get("int"), true, false},
     {"b", this->tm_.get("int"), false, true}
   }, this->tm_.get("int"));
 
-  this->tm_.add("test3", {
+  this->tm_.add("test3", "test3_0", {
     {"a", this->tm_.get("int"), true, false},
     {"b", this->tm_.get("int"), true, false}
   }, this->tm_.get("int"));
 
-  this->tm_.add("test4", {
+  this->tm_.add("test4", "test4_0", {
     {"a", this->tm_.get("int"), true, false},
     {"b", this->tm_.get("str"), false, true}
   }, this->tm_.get("int"));
 
-  this->tm_.add("test5", {
+  this->tm_.add("test5", "test5_0", {
     {"a", this->tm_.get("int"), true, false},
     {"b", this->tm_.get("int"), false, true}
   }, this->tm_.get("str"));
 
-  this->tm_.add("test6", {}, this->tm_.get("int"));
+  this->tm_.add("test6", "test6_0", {}, this->tm_.get("int"));
 
-  this->tm_.add("test7", {
+  this->tm_.add("test7", "test7_0", {
     {"a", this->tm_.get("int"), true, false}
   }, this->tm_.get("int"));
 
-  this->tm_.add("test8", {
+  this->tm_.add("test8", "test8_0", {
     {std::nullopt, this->tm_.get("int"), true, false},
     {std::nullopt, this->tm_.get("int"), false, true}
   }, this->tm_.get("int"));
@@ -518,23 +518,23 @@ TEST_F(TypeTest, MatchesFunction) {
 }
 
 TEST_F(TypeTest, MatchesObject) {
-  this->tm_.add("Test1", {
+  this->tm_.add("Test1", "Test1_0", {
     {"a", this->tm_.get("int")},
     {"b", this->tm_.get("int")}
   });
 
-  this->tm_.add("Test2", {});
+  this->tm_.add("Test2", "Test2_0", {});
 
-  this->tm_.add("Test3", {
+  this->tm_.add("Test3", "Test3_0", {
     {"a", this->tm_.get("int")}
   });
 
-  this->tm_.add("Test4", {
+  this->tm_.add("Test4", "Test4_0", {
     {"a", this->tm_.get("int")},
     {"b", this->tm_.get("int")}
   });
 
-  this->tm_.add("Test5", {
+  this->tm_.add("Test5", "Test5_0", {
     {"a", this->tm_.get("int")},
     {"b", this->tm_.get("str")}
   });

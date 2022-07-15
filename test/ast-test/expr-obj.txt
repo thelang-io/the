@@ -10,18 +10,16 @@ main {
 ======= stdout =======
 <Node>
   <NodeObjDecl>
-    <Var codeName="Point_0" frame="1" mut="false" name="Point">
-      <Type name="Point_0" type="obj">
-        <slot name="fields">
-          <TypeObjField name="x">
-            <BuiltinType name="float" />
-          </TypeObjField>
-          <TypeObjField name="y">
-            <BuiltinType name="float" />
-          </TypeObjField>
-        </slot>
-      </Type>
-    </Var>
+    <Type codeName="Point_0" name="Point" type="obj">
+      <slot name="fields">
+        <TypeObjField name="x">
+          <BuiltinType name="float" />
+        </TypeObjField>
+        <TypeObjField name="y">
+          <BuiltinType name="float" />
+        </TypeObjField>
+      </slot>
+    </Type>
   </NodeObjDecl>
 </Node>
 <Node>
@@ -30,7 +28,7 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a_0" frame="2" mut="false" name="a">
-            <Type name="Point_0" type="obj">
+            <Type codeName="Point_0" name="Point" type="obj">
               <slot name="fields">
                 <TypeObjField name="x">
                   <BuiltinType name="float" />
@@ -45,7 +43,7 @@ main {
         <slot name="init">
           <NodeExpr parenthesized="false">
             <slot name="type">
-              <Type name="Point_0" type="obj">
+              <Type codeName="Point_0" name="Point" type="obj">
                 <slot name="fields">
                   <TypeObjField name="x">
                     <BuiltinType name="float" />
@@ -59,7 +57,7 @@ main {
             <slot name="body">
               <ExprObj>
                 <slot name="type">
-                  <Type name="Point_0" type="obj">
+                  <Type codeName="Point_0" name="Point" type="obj">
                     <slot name="fields">
                       <TypeObjField name="x">
                         <BuiltinType name="float" />

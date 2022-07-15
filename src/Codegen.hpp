@@ -17,8 +17,6 @@ enum CodegenEntityType {
   CODEGEN_ENTITY_OBJ
 };
 
-using CodegenNode = std::tuple<std::string, std::string, std::string>;
-
 struct CodegenBuiltins {
   bool fnAlloc = false;
   bool fnBoolStr = false; // todo
@@ -107,15 +105,15 @@ class Codegen {
 
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  std::tuple<std::string, std::string> _block (const ASTBlock &, bool = true);
+  std::string _block (const ASTBlock &, bool = true);
   std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
   std::string _flags () const;
-  CodegenNode _node (const ASTNode &, bool = true);
+  std::string _node (const ASTNode &, bool = true);
   std::string _nodeIf (const ASTNodeIf &);
   std::string _nodeExpr (const ASTNodeExpr &, bool = false);
   std::string _type (const Type *, bool, bool = false);
   std::string _typeFnId (const Type *);
-  CodegenNode _wrapNode (const ASTNode &, const std::string &, const std::string &, const std::string &) const;
+  std::string _wrapNode (const ASTNode &, const std::string &) const;
   std::string _wrapNodeExpr (const ASTNodeExpr &, const std::string &) const;
 };
 

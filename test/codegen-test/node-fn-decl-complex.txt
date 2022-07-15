@@ -44,7 +44,6 @@ fn test2 () int {
   }
 
   b := "a"
-
   return a == b ? 2 : 0
 }
 
@@ -65,5 +64,159 @@ main {
   test3()
 }
 ======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+bool cstr_eq_cstr (const char *, const char *);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+bool str_eq_cstr (struct str, const char *);
+bool str_eq_str (struct str, struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+void *alloc (size_t);
+
+bool cstr_eq_cstr (const char *c1, const char *c2) {
+  size_t l = strlen(c1);
+  return l == strlen(c2) && memcmp(c1, c2, l) == 0;
+}
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+bool str_eq_cstr (struct str s, const char *c) {
+  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
+  free(s.c);
+  return r;
+}
+bool str_eq_str (struct str s1, struct str s2) {
+  bool r = s1.l == s2.l && memcmp(s1.c, s2.c, s1.l) == 0;
+  free(s1.c);
+  free(s2.c);
+  return r;
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct fn$0;
+
+struct fn$0 {
+  int32_t (*f) (void *);
+  void *c;
+};
+
+int32_t __THE_1_test1_0F (void *);
+int32_t __THE_1_test2_0F (void *);
+int32_t __THE_1_test3_0F (void *);
+
+int32_t __THE_1_test1_0F (void *_c) {
+  unsigned char r = 0;
+  int32_t v;
+  if (cstr_eq_cstr("a", "b")) {
+    return 2;
+  }
+  struct str __THE_0_a_0 = str_alloc("a");
+  const struct str __THE_0_a2_0 = str_alloc("a2");
+  const struct str __THE_0_a3_0 = str_alloc("a3");
+  if (str_eq_cstr(str_copy(__THE_0_a_0), "a")) {
+    struct str __THE_0_b_0 = str_alloc("b");
+    if (str_eq_cstr(str_copy(__THE_0_b_0), "c")) {
+      r = 1;
+      v = 1;
+      goto L3;
+    }
+    __THE_0_b_0 = str_realloc(__THE_0_b_0, str_alloc("b2"));
+L3:
+    str_free((struct str) __THE_0_b_0);
+    if (r == 1) goto L0;
+  }
+  struct str __THE_0_c_0 = str_alloc("c");
+  const struct str __THE_0_c2_0 = str_alloc("c2");
+  const struct str __THE_0_c3_0 = str_alloc("c3");
+  if (str_eq_cstr(str_copy(__THE_0_c_0), "a")) {
+    struct str __THE_0_d_0 = str_alloc("d");
+    if (str_eq_cstr(str_copy(__THE_0_d_0), "e")) {
+      r = 1;
+      v = 2;
+      goto L5;
+    }
+    __THE_0_d_0 = str_realloc(__THE_0_d_0, str_alloc("b2"));
+L5:
+    str_free((struct str) __THE_0_d_0);
+    if (r == 1) goto L2;
+  }
+  __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc("a2"));
+  v = 3;
+L2:
+  str_free((struct str) __THE_0_c3_0);
+  str_free((struct str) __THE_0_c2_0);
+  str_free((struct str) __THE_0_c_0);
+L0:
+  str_free((struct str) __THE_0_a3_0);
+  str_free((struct str) __THE_0_a2_0);
+  str_free((struct str) __THE_0_a_0);
+  return v;
+}
+int32_t __THE_1_test2_0F (void *_c) {
+  unsigned char r = 0;
+  int32_t v;
+  const struct str __THE_0_a_0 = str_alloc("a");
+  if (str_eq_cstr(str_copy(__THE_0_a_0), "b")) {
+    r = 1;
+    v = 1;
+    goto L3;
+  }
+  const struct str __THE_0_b_0 = str_alloc("a");
+  v = str_eq_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)) ? 2 : 0;
+  str_free((struct str) __THE_0_b_0);
+L3:
+  str_free((struct str) __THE_0_a_0);
+  return v;
+}
+int32_t __THE_1_test3_0F (void *_c) {
+  const int32_t __THE_0_a_0 = 1;
+  if (__THE_0_a_0 == 2) {
+    return __THE_0_a_0;
+  }
+  const int32_t __THE_0_b_0 = 2;
+  return __THE_0_a_0 == __THE_0_b_0 ? 2 : 0;
+}
+
+int main () {
+  const struct fn$0 __THE_0_test1_0 = (struct fn$0) {&__THE_1_test1_0F, NULL};
+  const struct fn$0 __THE_0_test2_0 = (struct fn$0) {&__THE_1_test2_0F, NULL};
+  const struct fn$0 __THE_0_test3_0 = (struct fn$0) {&__THE_1_test3_0F, NULL};
+  __THE_0_test1_0.f(__THE_0_test1_0.c);
+  __THE_0_test2_0.f(__THE_0_test2_0.c);
+  __THE_0_test3_0.f(__THE_0_test3_0.c);
+}
 ======= flags =======
 ======= stdout =======

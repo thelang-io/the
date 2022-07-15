@@ -15,7 +15,7 @@ main {
   mut a := "a"
 
   fn test2 (a2: str, b := "b", c := "c") {
-    a = a2 + b + c
+    a = test1(a2, b, c)
   }
 
   test2("a2")
@@ -109,6 +109,7 @@ struct fn$1 {
 };
 struct __THE_1_mainSDtest2_0C {
   struct str *__THE_0_a_0;
+  const struct fn$0 *__THE_0_test1_0;
 };
 
 struct str __THE_1_test1_0F (void *, struct fn$0P);
@@ -130,10 +131,11 @@ struct str __THE_1_test1_0F (void *_c, struct fn$0P p) {
 void __THE_1_mainSDtest2_0F (void *_c, struct fn$1P p) {
   struct __THE_1_mainSDtest2_0C *c = _c;
   struct str *__THE_0_a_0 = c->__THE_0_a_0;
+  const struct fn$0 *__THE_0_test1_0 = c->__THE_0_test1_0;
   const struct str __THE_0_a2_0 = p.n0;
   const struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("b");
   const struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("c");
-  *__THE_0_a_0 = str_realloc(*__THE_0_a_0, str_concat_str(str_concat_str(str_copy(__THE_0_a2_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0)));
+  *__THE_0_a_0 = str_realloc(*__THE_0_a_0, __THE_0_test1_0->f(__THE_0_test1_0->c, (struct fn$0P) {str_copy(__THE_0_a2_0), 1, str_copy(__THE_0_b_0), 1, str_copy(__THE_0_c_0)}));
   str_free((struct str) __THE_0_c_0);
   str_free((struct str) __THE_0_b_0);
   str_free((struct str) __THE_0_a2_0);
@@ -157,7 +159,7 @@ int main () {
   str_free(__THE_0_test1_0.f(__THE_0_test1_0.c, (struct fn$0P) {str_alloc("a"), 1, str_alloc("b"), 1, str_alloc("c")}));
   struct str __THE_0_a_0 = str_alloc("a");
   const struct fn$1 __THE_0_mainSDtest2_0;
-  __THE_1_mainSDtest2_0A((struct fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0C) {&__THE_0_a_0});
+  __THE_1_mainSDtest2_0A((struct fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0C) {&__THE_0_a_0, &__THE_0_test1_0});
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {str_alloc("a2"), 0, (struct str) {}, 0, (struct str) {}});
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {str_alloc("a2"), 1, str_alloc("b"), 0, (struct str) {}});
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.c, (struct fn$1P) {str_alloc("a2"), 1, str_alloc("b"), 1, str_alloc("c")});

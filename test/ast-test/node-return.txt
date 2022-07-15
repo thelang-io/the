@@ -11,7 +11,7 @@ fn test (a: int) any {
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="test_0" frame="1" mut="false" name="test">
-        <Type name="test_0" type="fn">
+        <Type codeName="test_0" name="test" type="fn">
           <slot name="returnType">
             <BuiltinType name="any" />
           </slot>

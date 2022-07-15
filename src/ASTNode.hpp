@@ -81,7 +81,7 @@ struct ASTNodeMain {
 };
 
 struct ASTNodeObjDecl {
-  std::shared_ptr<Var> var;
+  Type *type;
 };
 
 struct ASTNodeReturn {

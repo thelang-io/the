@@ -226,6 +226,7 @@ std::string Type::xml (std::size_t indent) const {
 
   auto result = std::string(indent, ' ') + "<Type";
 
+  result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
   result += R"( type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" EOL;
 

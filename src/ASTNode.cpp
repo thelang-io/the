@@ -119,7 +119,7 @@ std::string ASTNode::xml (std::size_t indent) const {
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(*this->body);
 
     result += std::string(indent, ' ') + "<NodeObjDecl>" EOL;
-    result += nodeObjDecl.var->xml(indent + 2) + EOL;
+    result += nodeObjDecl.type->xml(indent + 2) + EOL;
     result += std::string(indent, ' ') + "</NodeObjDecl>" EOL;
   } else if (std::holds_alternative<ASTNodeReturn>(*this->body)) {
     auto nodeReturn = std::get<ASTNodeReturn>(*this->body);

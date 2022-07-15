@@ -14,10 +14,11 @@ class TypeMap {
  public:
   std::vector<std::string> stack;
 
-  Type *add (const std::string &, const std::vector<TypeObjField> &);
-  Type *add (const std::string &, const std::vector<TypeFnParam> &, Type *);
+  Type *add (const std::string &, const std::string &, const std::vector<TypeObjField> &);
+  Type *add (const std::string &, const std::string &, const std::vector<TypeFnParam> &, Type *);
   Type *fn (const std::vector<TypeFnParam> &, Type *);
   Type *get (const std::string &);
+  bool has (const std::string &);
   void init ();
   std::string name (const std::string &) const;
 

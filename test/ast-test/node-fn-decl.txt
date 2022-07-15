@@ -40,7 +40,7 @@ main {
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="test1_0" frame="1" mut="false" name="test1">
-        <Type name="test1_0" type="fn">
+        <Type codeName="test1_0" name="test1" type="fn">
           <slot name="returnType">
             <BuiltinType name="void" />
           </slot>
@@ -85,7 +85,7 @@ main {
                 </ExprAccess>
               </slot>
               <slot name="calleeType">
-                <BuiltinType />
+                <BuiltinType name="print" />
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
@@ -120,7 +120,7 @@ main {
                 </ExprAccess>
               </slot>
               <slot name="calleeType">
-                <BuiltinType />
+                <BuiltinType name="print" />
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
@@ -149,7 +149,7 @@ main {
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="test2_0" frame="1" mut="false" name="test2">
-        <Type name="test2_0" type="fn">
+        <Type codeName="test2_0" name="test2" type="fn">
           <slot name="returnType">
             <BuiltinType name="void" />
           </slot>
@@ -206,7 +206,7 @@ main {
                 </ExprAccess>
               </slot>
               <slot name="calleeType">
-                <BuiltinType />
+                <BuiltinType name="print" />
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
@@ -241,7 +241,7 @@ main {
                 </ExprAccess>
               </slot>
               <slot name="calleeType">
-                <BuiltinType />
+                <BuiltinType name="print" />
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
@@ -270,7 +270,7 @@ main {
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="test3_0" frame="1" mut="false" name="test3">
-        <Type name="test3_0" type="fn">
+        <Type codeName="test3_0" name="test3" type="fn">
           <slot name="returnType">
             <BuiltinType name="int" />
           </slot>
@@ -548,7 +548,7 @@ main {
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="test3_sum_0" frame="1" mut="false" name="test3_sum">
-        <Type name="test3_sum_0" type="fn">
+        <Type codeName="test3_sum_0" name="test3_sum" type="fn">
           <slot name="returnType">
             <BuiltinType name="int" />
           </slot>
@@ -593,7 +593,7 @@ main {
                 </ExprAccess>
               </slot>
               <slot name="calleeType">
-                <BuiltinType />
+                <BuiltinType name="print" />
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
@@ -640,7 +640,7 @@ main {
       <NodeFnDecl>
         <slot name="var">
           <Var codeName="mainSDtest0_0" frame="2" mut="false" name="test0">
-            <Type name="mainSDtest0_0" type="fn">
+            <Type codeName="mainSDtest0_0" name="test0" type="fn">
               <slot name="returnType">
                 <BuiltinType name="int" />
               </slot>
@@ -697,7 +697,7 @@ main {
                     </ExprAccess>
                   </slot>
                   <slot name="calleeType">
-                    <BuiltinType />
+                    <BuiltinType name="print" />
                   </slot>
                   <slot name="args">
                     <ExprCallArg id="items">
@@ -732,7 +732,7 @@ main {
                     </ExprAccess>
                   </slot>
                   <slot name="calleeType">
-                    <BuiltinType />
+                    <BuiltinType name="print" />
                   </slot>
                   <slot name="args">
                     <ExprCallArg id="items">
@@ -783,7 +783,7 @@ main {
             <slot name="callee">
               <ExprAccess>
                 <Var codeName="test1_0" frame="1" mut="false" name="test1">
-                  <Type name="test1_0" type="fn">
+                  <Type codeName="test1_0" name="test1" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
@@ -800,7 +800,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <Type name="test1_0" type="fn">
+              <Type codeName="test1_0" name="test1" type="fn">
                 <slot name="returnType">
                   <BuiltinType name="void" />
                 </slot>
@@ -854,7 +854,7 @@ main {
             <slot name="callee">
               <ExprAccess>
                 <Var codeName="test2_0" frame="1" mut="false" name="test2">
-                  <Type name="test2_0" type="fn">
+                  <Type codeName="test2_0" name="test2" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
@@ -871,7 +871,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <Type name="test2_0" type="fn">
+              <Type codeName="test2_0" name="test2" type="fn">
                 <slot name="returnType">
                   <BuiltinType name="void" />
                 </slot>
@@ -899,7 +899,7 @@ main {
             <slot name="callee">
               <ExprAccess>
                 <Var codeName="test2_0" frame="1" mut="false" name="test2">
-                  <Type name="test2_0" type="fn">
+                  <Type codeName="test2_0" name="test2" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
@@ -916,7 +916,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <Type name="test2_0" type="fn">
+              <Type codeName="test2_0" name="test2" type="fn">
                 <slot name="returnType">
                   <BuiltinType name="void" />
                 </slot>
@@ -958,7 +958,7 @@ main {
             <slot name="callee">
               <ExprAccess>
                 <Var codeName="test2_0" frame="1" mut="false" name="test2">
-                  <Type name="test2_0" type="fn">
+                  <Type codeName="test2_0" name="test2" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
@@ -975,7 +975,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <Type name="test2_0" type="fn">
+              <Type codeName="test2_0" name="test2" type="fn">
                 <slot name="returnType">
                   <BuiltinType name="void" />
                 </slot>
@@ -1029,7 +1029,7 @@ main {
             <slot name="callee">
               <ExprAccess>
                 <Var codeName="test2_0" frame="1" mut="false" name="test2">
-                  <Type name="test2_0" type="fn">
+                  <Type codeName="test2_0" name="test2" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
@@ -1046,7 +1046,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <Type name="test2_0" type="fn">
+              <Type codeName="test2_0" name="test2" type="fn">
                 <slot name="returnType">
                   <BuiltinType name="void" />
                 </slot>
@@ -1115,7 +1115,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <BuiltinType />
+              <BuiltinType name="print" />
             </slot>
             <slot name="args">
               <ExprCallArg id="items">
@@ -1140,7 +1140,7 @@ main {
                       <slot name="callee">
                         <ExprAccess>
                           <Var codeName="test3_0" frame="1" mut="false" name="test3">
-                            <Type name="test3_0" type="fn">
+                            <Type codeName="test3_0" name="test3" type="fn">
                               <slot name="returnType">
                                 <BuiltinType name="int" />
                               </slot>
@@ -1166,7 +1166,7 @@ main {
                         </ExprAccess>
                       </slot>
                       <slot name="calleeType">
-                        <Type name="test3_0" type="fn">
+                        <Type codeName="test3_0" name="test3" type="fn">
                           <slot name="returnType">
                             <BuiltinType name="int" />
                           </slot>
@@ -1193,7 +1193,7 @@ main {
                         <ExprCallArg id="sum">
                           <NodeExpr parenthesized="false">
                             <slot name="type">
-                              <Type name="test3_sum_0" type="fn">
+                              <Type codeName="test3_sum_0" name="test3_sum" type="fn">
                                 <slot name="returnType">
                                   <BuiltinType name="int" />
                                 </slot>
@@ -1210,7 +1210,7 @@ main {
                             <slot name="body">
                               <ExprAccess>
                                 <Var codeName="test3_sum_0" frame="1" mut="false" name="test3_sum">
-                                  <Type name="test3_sum_0" type="fn">
+                                  <Type codeName="test3_sum_0" name="test3_sum" type="fn">
                                     <slot name="returnType">
                                       <BuiltinType name="int" />
                                     </slot>
@@ -1251,7 +1251,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <BuiltinType />
+              <BuiltinType name="print" />
             </slot>
             <slot name="args">
               <ExprCallArg id="items">
@@ -1276,7 +1276,7 @@ main {
                       <slot name="callee">
                         <ExprAccess>
                           <Var codeName="mainSDtest0_0" frame="2" mut="false" name="test0">
-                            <Type name="mainSDtest0_0" type="fn">
+                            <Type codeName="mainSDtest0_0" name="test0" type="fn">
                               <slot name="returnType">
                                 <BuiltinType name="int" />
                               </slot>
@@ -1293,7 +1293,7 @@ main {
                         </ExprAccess>
                       </slot>
                       <slot name="calleeType">
-                        <Type name="mainSDtest0_0" type="fn">
+                        <Type codeName="mainSDtest0_0" name="test0" type="fn">
                           <slot name="returnType">
                             <BuiltinType name="int" />
                           </slot>
@@ -1343,7 +1343,7 @@ main {
               </ExprAccess>
             </slot>
             <slot name="calleeType">
-              <BuiltinType />
+              <BuiltinType name="print" />
             </slot>
             <slot name="args">
               <ExprCallArg id="items">
@@ -1368,7 +1368,7 @@ main {
                       <slot name="callee">
                         <ExprAccess>
                           <Var codeName="mainSDtest0_0" frame="2" mut="false" name="test0">
-                            <Type name="mainSDtest0_0" type="fn">
+                            <Type codeName="mainSDtest0_0" name="test0" type="fn">
                               <slot name="returnType">
                                 <BuiltinType name="int" />
                               </slot>
@@ -1385,7 +1385,7 @@ main {
                         </ExprAccess>
                       </slot>
                       <slot name="calleeType">
-                        <Type name="mainSDtest0_0" type="fn">
+                        <Type codeName="mainSDtest0_0" name="test0" type="fn">
                           <slot name="returnType">
                             <BuiltinType name="int" />
                           </slot>
