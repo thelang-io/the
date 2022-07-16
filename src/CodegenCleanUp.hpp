@@ -26,7 +26,7 @@ class CodegenCleanUp {
   bool valueVarUsed = false;
 
   CodegenCleanUp () = default;
-  explicit CodegenCleanUp (CodegenCleanUp *);
+  explicit CodegenCleanUp (CodegenCleanUp *, bool = true);
 
   void add (const std::string &);
   std::string currentLabel ();

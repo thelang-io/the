@@ -153,6 +153,7 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenTest, testing::Values(
   "node-fn-decl-stack",
   "node-fn-decl-stack-str",
   "node-fn-decl-stack-obj",
+  "node-fn-decl-stack-fn",
   "node-fn-decl-scope",
   "node-fn-decl-param-default",
   "node-fn-decl-param-default-str",

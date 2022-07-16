@@ -41,44 +41,46 @@ void *alloc (size_t l) {
   return r;
 }
 
-struct fn$0P;
-struct fn$0;
-struct fn$1P;
-struct fn$1;
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1P;
+struct __THE_1_fn$1;
 
-struct fn$0P {
+struct __THE_1_fn$0P {
   const int32_t n0;
 };
-struct fn$0 {
-  void (*f) (void *, struct fn$0P);
-  void *c;
+struct __THE_1_fn$0 {
+  void (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
 };
-struct fn$1P {
+struct __THE_1_fn$1P {
   const struct str n0;
 };
-struct fn$1 {
-  void (*f) (void *, struct fn$1P);
-  void *c;
+struct __THE_1_fn$1 {
+  void (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
 };
 
-void __THE_1_mainSDx_0F (void *, struct fn$0P);
-void __THE_1_mainSDx_1F (void *, struct fn$1P);
+void __THE_1_mainSDx_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_mainSDx_1 (void *, struct __THE_1_fn$1P);
 
-void __THE_1_mainSDx_0F (void *_c, struct fn$0P p) {
+void __THE_1_mainSDx_0 (void *px, struct __THE_1_fn$0P p) {
   const int32_t __THE_0_a_0 = p.n0;
 }
-void __THE_1_mainSDx_1F (void *_c, struct fn$1P p) {
+void __THE_1_mainSDx_1 (void *px, struct __THE_1_fn$1P p) {
   const struct str __THE_0_b_0 = p.n0;
   str_free((struct str) __THE_0_b_0);
 }
 
 int main () {
   if (1 > 2) {
-    const struct fn$0 __THE_0_mainSDx_0 = (struct fn$0) {&__THE_1_mainSDx_0F, NULL};
-    __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.c, (struct fn$0P) {1});
+    const struct __THE_1_fn$0 __THE_0_mainSDx_0 = (struct __THE_1_fn$0) {&__THE_1_mainSDx_0, NULL, 0};
+    __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.x, (struct __THE_1_fn$0P) {1});
   } else {
-    const struct fn$1 __THE_0_mainSDx_1 = (struct fn$1) {&__THE_1_mainSDx_1F, NULL};
-    __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.c, (struct fn$1P) {str_alloc("test")});
+    const struct __THE_1_fn$1 __THE_0_mainSDx_1 = (struct __THE_1_fn$1) {&__THE_1_mainSDx_1, NULL, 0};
+    __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.x, (struct __THE_1_fn$1P) {str_alloc("test")});
   }
 }
 ======= flags =======

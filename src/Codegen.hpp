@@ -112,7 +112,7 @@ class Codegen {
   std::string _nodeIf (const ASTNodeIf &);
   std::string _nodeExpr (const ASTNodeExpr &, bool = false);
   std::string _type (const Type *, bool, bool = false);
-  std::string _typeFnId (const Type *);
+  std::string _typeNameFn (const Type *);
   std::string _wrapNode (const ASTNode &, const std::string &) const;
   std::string _wrapNodeExpr (const ASTNodeExpr &, const std::string &) const;
 };

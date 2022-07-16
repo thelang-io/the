@@ -9,12 +9,15 @@
 #include "Error.hpp"
 #include "config.hpp"
 
-CodegenCleanUp::CodegenCleanUp (CodegenCleanUp *p) {
+CodegenCleanUp::CodegenCleanUp (CodegenCleanUp *p, bool inherit) {
   this->parent = p;
   this->labelIdx = this->parent->labelIdx;
-  this->parentHasCleanUp = this->parent->parentHasCleanUp || !this->parent->_data.empty();
-  this->returnVarUsed = this->parent->returnVarUsed;
-  this->valueVarUsed = this->parent->valueVarUsed;
+
+  if (inherit) {
+    this->parentHasCleanUp = this->parent->parentHasCleanUp || !this->parent->_data.empty();
+    this->returnVarUsed = this->parent->returnVarUsed;
+    this->valueVarUsed = this->parent->valueVarUsed;
+  }
 }
 
 void CodegenCleanUp::add (const std::string &content) {

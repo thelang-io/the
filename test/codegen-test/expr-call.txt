@@ -142,22 +142,23 @@ void *alloc (size_t l) {
 }
 
 struct __THE_1_Human_0;
-struct fn$0;
+struct __THE_1_fn$0;
 
 struct __THE_1_Human_0 {
   struct str __THE_0_name;
   int32_t __THE_0_age;
 };
-struct fn$0 {
+struct __THE_1_fn$0 {
   int32_t (*f) (void *);
-  void *c;
+  void *x;
+  size_t l;
 };
 
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, int32_t);
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
 struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *);
-int32_t __THE_1_b_0F (void *);
-int32_t __THE_1_d_0F (void *);
+int32_t __THE_1_b_0 (void *);
+int32_t __THE_1_d_0 (void *);
 
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
   struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
@@ -179,16 +180,16 @@ struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
   __THE_1_Human_0_free(o);
   return str_concat_cstr(r, "}");
 }
-int32_t __THE_1_b_0F (void *_c) {
+int32_t __THE_1_b_0 (void *px) {
   return 1;
 }
-int32_t __THE_1_d_0F (void *_c) {
+int32_t __THE_1_d_0 (void *px) {
   return 2;
 }
 
 int main () {
-  const struct fn$0 __THE_0_b_0 = (struct fn$0) {&__THE_1_b_0F, NULL};
-  const struct fn$0 __THE_0_d_0 = (struct fn$0) {&__THE_1_d_0F, NULL};
+  const struct __THE_1_fn$0 __THE_0_b_0 = (struct __THE_1_fn$0) {&__THE_1_b_0, NULL, 0};
+  const struct __THE_1_fn$0 __THE_0_d_0 = (struct __THE_1_fn$0) {&__THE_1_d_0, NULL, 0};
   print(stdout, "tz", true, "\n");
   print(stdout, "iz", 3, "\n");
   print(stdout, "zz", "Hello, World!", "\n");
@@ -197,12 +198,12 @@ int main () {
   print(stdout, "sz", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), "\n");
   int32_t __THE_0_a_0 = 0;
   int32_t __THE_0_c_0 = 0;
-  __THE_0_a_0 = __THE_0_b_0.f(__THE_0_b_0.c);
-  __THE_0_a_0 = __THE_0_c_0 = __THE_0_d_0.f(__THE_0_d_0.c);
-  __THE_0_a_0 + __THE_0_b_0.f(__THE_0_b_0.c);
-  __THE_0_a_0 + __THE_0_b_0.f(__THE_0_b_0.c) + __THE_0_d_0.f(__THE_0_d_0.c);
-  false ? 1 : __THE_0_b_0.f(__THE_0_b_0.c);
-  !__THE_0_d_0.f(__THE_0_d_0.c);
+  __THE_0_a_0 = __THE_0_b_0.f(__THE_0_b_0.x);
+  __THE_0_a_0 = __THE_0_c_0 = __THE_0_d_0.f(__THE_0_d_0.x);
+  __THE_0_a_0 + __THE_0_b_0.f(__THE_0_b_0.x);
+  __THE_0_a_0 + __THE_0_b_0.f(__THE_0_b_0.x) + __THE_0_d_0.f(__THE_0_d_0.x);
+  false ? 1 : __THE_0_b_0.f(__THE_0_b_0.x);
+  !__THE_0_d_0.f(__THE_0_d_0.x);
 }
 ======= flags =======
 ======= stdout =======
