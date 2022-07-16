@@ -17,6 +17,9 @@ TEST(CodegenCleanUpTest, InitialSetValues) {
 
   auto n1 = CodegenCleanUp(&n0);
   EXPECT_EQ(n1.labelIdx, 1);
+
+  auto n2 = CodegenCleanUp(&n0, false);
+  EXPECT_EQ(n2.labelIdx, 1);
 }
 
 TEST(CodegenCleanUpTest, Adds) {
