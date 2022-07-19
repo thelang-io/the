@@ -1,0 +1,179 @@
+======= stdin =======
+fn test () int {
+  mut result := 0
+
+  loop mut i := ""; i != "aaa"; i += "a" {
+    j := "b" + i
+
+    if j == "ba" {
+      result = 1
+      continue
+    }
+
+    k := j + "a"
+
+    if k == "ba" {
+      result = 2
+      break
+    }
+
+    l := k + "a"
+
+    if l == "ba" {
+      return 3
+    }
+  }
+
+  if result == 2 {
+    result = 4
+  } elif result == 1 {
+    return -1
+  }
+
+  return result
+}
+
+main {
+  test()
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str cstr_concat_str (const char *, struct str);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_copy (const struct str);
+bool str_eq_cstr (struct str, const char *);
+void str_free (struct str);
+bool str_ne_cstr (struct str, const char *);
+struct str str_realloc (struct str, struct str);
+void *alloc (size_t);
+
+struct str cstr_concat_str (const char *c, struct str s) {
+  size_t l = s.l + strlen(c);
+  char *r = alloc(l);
+  memcpy(r, s.c, s.l);
+  memcpy(&r[s.l], c, l - s.l);
+  free(s.c);
+  return (struct str) {r, l};
+}
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_concat_cstr (struct str s, const char *c) {
+  size_t l = s.l + strlen(c);
+  char *r = alloc(l);
+  memcpy(r, s.c, s.l);
+  memcpy(&r[s.l], c, l - s.l);
+  free(s.c);
+  return (struct str) {r, l};
+}
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+bool str_eq_cstr (struct str s, const char *c) {
+  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
+  free(s.c);
+  return r;
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+bool str_ne_cstr (struct str s, const char *c) {
+  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
+  free(s.c);
+  return r;
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_fn$0;
+
+struct __THE_1_fn$0 {
+  int32_t (*f) (void *);
+  void *x;
+  size_t l;
+};
+
+int32_t __THE_1_test_0 (void *);
+
+int32_t __THE_1_test_0 (void *px) {
+  unsigned char r = 0;
+  int32_t v;
+  int32_t __THE_0_result_0 = 0;
+  {
+    struct str __THE_0_i_0 = str_alloc("");
+    for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
+      unsigned char b1 = 0;
+      const struct str __THE_0_j_0 = cstr_concat_str("b", str_copy(__THE_0_i_0));
+      if (str_eq_cstr(str_copy(__THE_0_j_0), "ba")) {
+        __THE_0_result_0 = 1;
+        goto L1;
+      }
+      const struct str __THE_0_k_0 = str_concat_cstr(str_copy(__THE_0_j_0), "a");
+      if (str_eq_cstr(str_copy(__THE_0_k_0), "ba")) {
+        __THE_0_result_0 = 2;
+        b1 = 1;
+        goto L2;
+      }
+      const struct str __THE_0_l_0 = str_concat_cstr(str_copy(__THE_0_k_0), "a");
+      if (str_eq_cstr(str_copy(__THE_0_l_0), "ba")) {
+        r = 1;
+        v = 3;
+        goto L3;
+      }
+L3:
+      str_free((struct str) __THE_0_l_0);
+L2:
+      str_free((struct str) __THE_0_k_0);
+L1:
+      str_free((struct str) __THE_0_j_0);
+      if (b1 == 1) break;
+      if (r == 1) goto L0;
+    }
+L0:
+    str_free((struct str) __THE_0_i_0);
+    if (r == 1) goto L4;
+  }
+  if (__THE_0_result_0 == 2) {
+    __THE_0_result_0 = 4;
+  } else if (__THE_0_result_0 == 1) {
+    r = 1;
+    v = -1;
+    goto L4;
+  }
+  v = __THE_0_result_0;
+L4:
+  return v;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_test_0 = (struct __THE_1_fn$0) {&__THE_1_test_0, NULL, 0};
+  __THE_0_test_0.f(__THE_0_test_0.x);
+}
+======= flags =======
+======= stdout =======

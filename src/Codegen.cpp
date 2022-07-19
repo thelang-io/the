@@ -717,7 +717,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
   auto code = std::string();
 
   if (saveCleanUp) {
-    this->state.cleanUp = CodegenCleanUp(&initialCleanUp);
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp);
   }
 
   this->indent += 2;
@@ -728,11 +728,21 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
 
   if (saveCleanUp) {
     code += this->state.cleanUp.gen(this->indent);
-    this->state.cleanUp = initialCleanUp.update(this->state.cleanUp);
+
+    if (
+      !ASTChecker(nodes).endsWith<ASTNodeBreak>() &&
+      !ASTChecker(nodes).endsWith<ASTNodeContinue>() &&
+      !ASTChecker(nodes).endsWith<ASTNodeReturn>() &&
+      this->state.cleanUp.breakVarUsed
+    ) {
+      code += std::string(this->indent, ' ') + "if (" + initialCleanUp.currentBreakVar() + " == 1) break;" EOL;
+    }
 
     if (!ASTChecker(nodes).endsWith<ASTNodeReturn>() && this->state.cleanUp.returnVarUsed) {
-      code += std::string(this->indent, ' ') + "if (r == 1) goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+      code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
     }
+
+    this->state.cleanUp = initialCleanUp;
   }
 
   this->indent = initialIndent;
@@ -772,10 +782,24 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
   auto code = std::string();
 
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
-    code = std::string(this->indent, ' ') + "break;" EOL;
+    if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+      code = std::string(this->indent, ' ') + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
+
+      if (!ASTChecker(node.parent).is<ASTNodeLoop>() || !ASTChecker(node).isLast()) {
+        code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+      }
+    } else {
+      code = std::string(this->indent, ' ') + "break;" EOL;
+    }
+
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
-    code = std::string(this->indent, ' ') + "continue;" EOL;
+    if (!this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
+      code = std::string(this->indent, ' ') + "continue;" EOL;
+    } else if (!ASTChecker(node.parent).is<ASTNodeLoop>() || !ASTChecker(node).isLast()) {
+      code = std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+    }
+
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
     auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
@@ -817,7 +841,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     this->indent = 2;
     this->state.builtins = &entity.builtins;
     this->state.entities = &entity.entities;
-    this->state.cleanUp = CodegenCleanUp(&initialStateCleanUp, false);
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
 
     auto bodyCode = std::string();
 
@@ -977,57 +1001,67 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
     auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
+
+    auto initialCleanUp = this->state.cleanUp;
+    auto initialIndent = this->indent;
+
     this->varMap.save();
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp);
+    this->state.cleanUp.breakVarIdx += 1;
 
     if (nodeLoop.init == std::nullopt && nodeLoop.cond == std::nullopt && nodeLoop.upd == std::nullopt) {
       code = std::string(this->indent, ' ') + "while (1)";
     } else if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
       code = std::string(this->indent, ' ') + "while (" + this->_nodeExpr(*nodeLoop.cond, true) + ")";
     } else if (nodeLoop.init != std::nullopt) {
-      auto initialCleanUp = this->state.cleanUp;
-      auto initialIndent = this->indent;
-
-      this->state.cleanUp = CodegenCleanUp(&initialCleanUp);
-
       this->indent += 2;
       auto initCode = this->_node(*nodeLoop.init);
       this->indent = initialIndent;
 
-      if (this->state.cleanUp.empty()) {
-        code = std::string(this->indent, ' ') + "for (" + this->_node(*nodeLoop.init, false) + ";";
-      } else {
+      if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
         code = std::string(this->indent, ' ') + "{" EOL + initCode;
         code += std::string(this->indent + 2, ' ') + "for (;";
 
         this->indent += 2;
+      } else {
+        code = std::string(this->indent, ' ') + "for (" + this->_node(*nodeLoop.init, false) + ";";
       }
 
       code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
-      code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true));
-
-      code += ") {" EOL + this->_block(nodeLoop.body);
-      code += std::string(this->indent, ' ') + "}" EOL;
-
-      if (!this->state.cleanUp.empty()) {
-        code += this->state.cleanUp.gen(this->indent);
-        this->indent = initialIndent;
-        code += std::string(this->indent, ' ') + "}" EOL;
-      }
-
-      this->state.cleanUp = initialCleanUp.update(this->state.cleanUp);
-      this->varMap.restore();
-
-      return this->_wrapNode(node, code);
+      code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true)) + ")";
     } else {
       code = std::string(this->indent, ' ') + "for (;";
       code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
       code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true)) + ")";
     }
 
-    code += " {" EOL + this->_block(nodeLoop.body);
-    code += std::string(this->indent, ' ') + "}" EOL;
+    auto saveCleanUp = this->state.cleanUp;
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveCleanUp);
 
+    auto bodyCode = this->_block(nodeLoop.body);
+    code += " {" EOL;
+
+    if (this->state.cleanUp.breakVarUsed) {
+      code += std::string(this->indent + 2, ' ') + "unsigned char " + this->state.cleanUp.currentBreakVar() + " = 0;" EOL;
+    }
+
+    code += bodyCode + std::string(this->indent, ' ') + "}" EOL;
+
+    if (nodeLoop.init != std::nullopt && !saveCleanUp.empty()) {
+      code += saveCleanUp.gen(this->indent);
+
+      if (saveCleanUp.returnVarUsed) {
+        code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
+      }
+
+      this->indent = initialIndent;
+      code += std::string(this->indent, ' ') + "}" EOL;
+    }
+
+    this->state.cleanUp.breakVarIdx -= 1;
+    this->state.cleanUp = initialCleanUp;
     this->varMap.restore();
+
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
     auto nodeMain = std::get<ASTNodeMain>(*node.body);
@@ -1223,15 +1257,14 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
     auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
 
-    if (this->state.cleanUp.parentHasCleanUp || !this->state.cleanUp.empty()) {
-      if (this->state.cleanUp.parentHasCleanUp) {
-        code += std::string(this->indent, ' ') + "r = 1;" EOL;
-        this->state.cleanUp.returnVarUsed = true;
+    if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) || this->state.cleanUp.returnVarUsed) {
+      if (this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
+        code += std::string(this->indent, ' ') + this->state.cleanUp.currentReturnVar() + " = 1;" EOL;
       }
 
       if (nodeReturn.body != std::nullopt) {
-        code += std::string(this->indent, ' ') + "v = " + this->_nodeExpr(*nodeReturn.body) + ";" EOL;
-        this->state.cleanUp.valueVarUsed = true;
+        code += std::string(this->indent, ' ') + this->state.cleanUp.currentValueVar() + " = ";
+        code += this->_nodeExpr(*nodeReturn.body) + ";" EOL;
       }
 
       if (!ASTChecker(node.parent).is<ASTNodeFnDecl>() || !ASTChecker(node).isLast()) {

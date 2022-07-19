@@ -13,13 +13,21 @@
 TEST(CodegenCleanUpTest, InitialSetValues) {
   auto n0 = CodegenCleanUp();
   EXPECT_EQ(n0.labelIdx, 0);
+  EXPECT_EQ(n0.breakVarIdx, 0);
   n0.labelIdx = 1;
+  n0.breakVarIdx = 1;
 
-  auto n1 = CodegenCleanUp(&n0);
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
+  EXPECT_EQ(n1.type, CODEGEN_CLEANUP_BLOCK);
+  EXPECT_NE(n1.parent, nullptr);
   EXPECT_EQ(n1.labelIdx, 1);
+  EXPECT_EQ(n1.breakVarIdx, 1);
+}
 
-  auto n2 = CodegenCleanUp(&n0, false);
-  EXPECT_EQ(n2.labelIdx, 1);
+TEST(CodegenCleanUpTest, AddsEmpty) {
+  auto n = CodegenCleanUp();
+  n.add("");
+  EXPECT_EQ(n.gen(0), "");
 }
 
 TEST(CodegenCleanUpTest, Adds) {
@@ -59,7 +67,7 @@ TEST(CodegenCleanUpTest, AddsAfterLabellingToNonLabeled) {
 
 TEST(CodegenCleanUpTest, AddsToParent) {
   auto n0 = CodegenCleanUp();
-  auto n1 = CodegenCleanUp(&n0);
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
   n1.add("test1;");
   n1.add("test2;");
   auto l = n1.currentLabel();
@@ -68,6 +76,28 @@ TEST(CodegenCleanUpTest, AddsToParent) {
 
   EXPECT_EQ(n0.labelIdx, 2);
   EXPECT_EQ(n1.labelIdx, 2);
+}
+
+TEST(CodegenCleanUpTest, CurrentBreakVarOnLoop) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &n0);
+  n1.breakVarIdx++;
+
+  EXPECT_EQ(n1.currentBreakVar(), "b1");
+}
+
+TEST(CodegenCleanUpTest, CurrentBreakVarOnChild) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &n0);
+  n1.breakVarIdx++;
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
+
+  EXPECT_EQ(n2.currentBreakVar(), "b1");
+}
+
+TEST(CodegenCleanUpTest, ThrowsOnCurrentBreakVarRoot) {
+  auto n0 = CodegenCleanUp();
+  EXPECT_THROW_WITH_MESSAGE(n0.currentBreakVar(), "Error: tried getting break var on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, LabelsOnOneStatement) {
@@ -92,11 +122,20 @@ TEST(CodegenCleanUpTest, LabelsOnMultipleStatements) {
 
 TEST(CodegenCleanUpTest, LabelsParent) {
   auto n0 = CodegenCleanUp();
-  auto n1 = CodegenCleanUp(&n0);
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
   n0.add("test;");
   auto l = n1.currentLabel();
 
   EXPECT_EQ(n0.gen(0), l + ":" + EOL "test;" EOL);
+}
+
+TEST(CodegenCleanUpTest, LabellingAddsValueToFunction) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
+
+  EXPECT_EQ(n2.currentLabel(), "L0");
+  EXPECT_EQ(n1.gen(0), "L0:" EOL);
 }
 
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {
@@ -106,10 +145,50 @@ TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {
 
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabelWithParent) {
   auto n0 = CodegenCleanUp();
-  auto n1 = CodegenCleanUp(&n0);
-  auto n2 = CodegenCleanUp(&n1);
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
 
   EXPECT_THROW_WITH_MESSAGE(n2.currentLabel(), "Error: tried getting current label on nullptr in CodegenCleanUp");
+}
+
+TEST(CodegenCleanUpTest, CurrentReturnVarOnFn) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
+
+  EXPECT_EQ(n1.currentReturnVar(), "r");
+}
+
+TEST(CodegenCleanUpTest, CurrentReturnVarOnChild) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
+
+  EXPECT_EQ(n2.currentReturnVar(), "r");
+}
+
+TEST(CodegenCleanUpTest, ThrowsOnCurrentReturnVarRoot) {
+  auto n0 = CodegenCleanUp();
+  EXPECT_THROW_WITH_MESSAGE(n0.currentReturnVar(), "Error: tried getting return var on nullptr in CodegenCleanUp");
+}
+
+TEST(CodegenCleanUpTest, CurrentValueVarOnFn) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
+
+  EXPECT_EQ(n1.currentValueVar(), "v");
+}
+
+TEST(CodegenCleanUpTest, CurrentValueVarOnChild) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
+
+  EXPECT_EQ(n2.currentValueVar(), "v");
+}
+
+TEST(CodegenCleanUpTest, ThrowsOnCurrentValueVarRoot) {
+  auto n0 = CodegenCleanUp();
+  EXPECT_THROW_WITH_MESSAGE(n0.currentValueVar(), "Error: tried getting value var on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, Empty) {
@@ -184,15 +263,23 @@ TEST(CodegenCleanUpTest, GeneratesOnNonEmptyWithMultipleLabels) {
   );
 }
 
-TEST(CodegenCleanUpTest, Updates) {
+TEST(CodegenCleanUpTest, HasCleanUpOnEmpty) {
   auto n0 = CodegenCleanUp();
   auto n1 = CodegenCleanUp();
-  n0.returnVarUsed = true;
-  n0.valueVarUsed = true;
+  n1.add("test;");
 
-  EXPECT_FALSE(n1.returnVarUsed);
-  EXPECT_FALSE(n1.valueVarUsed);
-  n1.update(n0);
-  EXPECT_TRUE(n1.returnVarUsed);
-  EXPECT_TRUE(n1.valueVarUsed);
+  EXPECT_FALSE(n0.hasCleanUp(CODEGEN_CLEANUP_BLOCK));
+  EXPECT_TRUE(n1.hasCleanUp(CODEGEN_CLEANUP_BLOCK));
+}
+
+TEST(CodegenCleanUpTest, HasCleanUpOnType) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &n0);
+  n1.add("test;");
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n1);
+
+  EXPECT_FALSE(n0.hasCleanUp(CODEGEN_CLEANUP_BLOCK));
+  EXPECT_TRUE(n1.hasCleanUp(CODEGEN_CLEANUP_LOOP));
+  EXPECT_FALSE(n2.hasCleanUp(CODEGEN_CLEANUP_FN));
+  EXPECT_TRUE(n2.hasCleanUp(CODEGEN_CLEANUP_LOOP));
 }

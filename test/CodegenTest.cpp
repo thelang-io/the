@@ -174,7 +174,8 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenTest, testing::Values(
   "node-loop",
   "node-loop-empty",
   "node-loop-while",
-  "node-loop-str"
+  "node-loop-str",
+  "node-loop-complex"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenTest, testing::Values(
