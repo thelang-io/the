@@ -509,14 +509,12 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
       exprBinary.op.type == TK_OP_GT_EQ ||
       exprBinary.op.type == TK_OP_LT ||
       exprBinary.op.type == TK_OP_LT_EQ ||
-      // todo test
       (exprBinaryLeftType->isBool() && exprBinaryRightType->isBool())
     ) {
       return this->typeMap.get("bool");
     } else if (exprBinaryLeftType->isNumber() && exprBinaryRightType->isNumber()) {
       return Type::largest(exprBinaryLeftType, exprBinaryRightType);
     } else {
-      // todo test
       return exprBinaryLeftType->isNumber() ? exprBinaryLeftType : exprBinaryRightType;
     }
   } else if (std::holds_alternative<ParserExprCall>(*stmtExpr.body)) {
@@ -535,24 +533,21 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
   } else if (std::holds_alternative<ParserExprLit>(*stmtExpr.body)) {
     auto exprLit = std::get<ParserExprLit>(*stmtExpr.body);
 
-    // todo test
-    switch (exprLit.body.type) {
-      case TK_KW_FALSE:
-      case TK_KW_TRUE:
-        return this->typeMap.get("bool");
-      case TK_LIT_CHAR:
-        return this->typeMap.get("char");
-      case TK_LIT_FLOAT:
-        return this->typeMap.get("float");
-      case TK_LIT_INT_BIN:
-      case TK_LIT_INT_DEC:
-      case TK_LIT_INT_HEX:
-      case TK_LIT_INT_OCT:
-        return this->typeMap.get("int");
-      case TK_LIT_STR:
-        return this->typeMap.get("str");
-      default:
-        throw Error("Error: tried to analyze unknown literal");
+    if (exprLit.body.type == TK_KW_FALSE || exprLit.body.type == TK_KW_TRUE) {
+      return this->typeMap.get("bool");
+    } else if (exprLit.body.type == TK_LIT_CHAR) {
+      return this->typeMap.get("char");
+    } else if (exprLit.body.type == TK_LIT_FLOAT) {
+      return this->typeMap.get("float");
+    } else if (
+      exprLit.body.type == TK_LIT_INT_BIN ||
+      exprLit.body.type == TK_LIT_INT_DEC ||
+      exprLit.body.type == TK_LIT_INT_HEX ||
+      exprLit.body.type == TK_LIT_INT_OCT
+    ) {
+      return this->typeMap.get("int");
+    } else if (exprLit.body.type == TK_LIT_STR) {
+      return this->typeMap.get("str");
     }
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto exprObj = std::get<ParserExprObj>(*stmtExpr.body);
