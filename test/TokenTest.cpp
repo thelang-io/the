@@ -219,6 +219,10 @@ TEST(TokenTest, PrecedenceBinary) {
   EXPECT_EQ(Token{TK_OP_LT}.precedence(), 9);
   EXPECT_EQ(Token{TK_OP_LT_EQ}.precedence(), 9);
   EXPECT_EQ(Token{TK_OP_CARET}.precedence(), 6);
+  EXPECT_EQ(Token{TK_OP_AMP}.precedence(), 7);
+  EXPECT_EQ(Token{TK_OP_PIPE}.precedence(), 5);
+  EXPECT_EQ(Token{TK_OP_AMP_AMP}.precedence(), 4);
+  EXPECT_EQ(Token{TK_OP_PIPE_PIPE}.precedence(), 3);
 }
 
 TEST(TokenTest, PrecedenceAssignment) {

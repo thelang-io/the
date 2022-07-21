@@ -75,7 +75,7 @@
 #define E0142 "E0142 - lvalue required as operand"
 #define E0143 "E0143 - Expected if condition expression"
 
-#define E1000 "E1000 - Tried accessing property of non object variable"
+// #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
 #define E1003 "E1003 - Binary operator cannot be applied to these operands"

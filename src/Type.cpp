@@ -6,6 +6,7 @@
  */
 
 #include "Type.hpp"
+#include <algorithm>
 #include "Error.hpp"
 #include "config.hpp"
 
@@ -75,6 +76,38 @@ Type *Type::largest (Type *a, Type *b) {
     (a->isI8() && b->isI8()) ||
     (a->isU8() && b->isU8())
   ) ? a : b;
+}
+
+Type *Type::getProp (const std::string &propName) const {
+  if (this->isFn()) {
+    throw Error("Error: tried to get non-existing prop type");
+  }
+
+  auto obj = std::get<TypeObj>(this->body);
+
+  auto memberObjField = std::find_if(obj.fields.begin(), obj.fields.end(), [&propName] (const auto &it) -> bool {
+    return it.name == propName;
+  });
+
+  if (memberObjField == obj.fields.end()) {
+    throw Error("Error: tried to get non-existing prop type");
+  }
+
+  return memberObjField->type;
+}
+
+bool Type::hasProp (const std::string &propName) const {
+  if (this->isFn()) {
+    return false;
+  }
+
+  auto obj = std::get<TypeObj>(this->body);
+
+  auto memberObjField = std::find_if(obj.fields.begin(), obj.fields.end(), [&propName] (const auto &it) -> bool {
+    return it.name == propName;
+  });
+
+  return memberObjField != obj.fields.end();
 }
 
 bool Type::isAny () const {
@@ -221,14 +254,14 @@ bool Type::match (const Type *type, bool strict) const {
 
 std::string Type::xml (std::size_t indent) const {
   if (this->builtin) {
-    return std::string(indent, ' ') + "<BuiltinType" + (this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")") + " />";
+    return std::string(indent, ' ') + R"(<BuiltinType name=")" + this->name + R"(" />)";
   }
 
   auto result = std::string(indent, ' ') + "<Type";
 
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
-  result += R"( type=")" + std::string(std::holds_alternative<TypeFn>(this->body) ? "fn" : "obj") + R"(">)" EOL;
+  result += R"( type=")" + std::string(this->isFn() ? "fn" : "obj") + R"(">)" EOL;
 
   indent += 2;
 

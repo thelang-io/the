@@ -125,27 +125,11 @@ Type *AST::_exprAccessType (const std::shared_ptr<ParserMemberObj> &exprAccessBo
   auto parserMember = std::get<ParserMember>(*exprAccessBody);
   auto memberObjType = this->_exprAccessType(parserMember.obj);
 
-  if (!memberObjType->isObj()) {
-    if (std::holds_alternative<Token>(*parserMember.obj)) {
-      auto parserId = std::get<Token>(*parserMember.obj);
-      throw Error(this->reader, parserId.start, parserMember.prop.end, E1000);
-    } else {
-      auto exprAccessProp = std::get<ParserMember>(*parserMember.obj).prop;
-      throw Error(this->reader, exprAccessProp.start, parserMember.prop.end, E1000);
-    }
-  }
-
-  auto memberObj = std::get<TypeObj>(memberObjType->body);
-
-  auto memberObjField = std::find_if(memberObj.fields.begin(), memberObj.fields.end(), [&parserMember] (const auto &it) -> bool {
-    return it.name == parserMember.prop.val;
-  });
-
-  if (memberObjField == memberObj.fields.end()) {
+  if (!memberObjType->hasProp(parserMember.prop.val)) {
     throw Error(this->reader, parserMember.prop.start, parserMember.prop.end, E1001);
   }
 
-  return memberObjField->type;
+  return memberObjType->getProp(parserMember.prop.val);
 }
 
 void AST::_forwardNode (const ParserBlock &block) {
@@ -525,12 +509,14 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
       exprBinary.op.type == TK_OP_GT_EQ ||
       exprBinary.op.type == TK_OP_LT ||
       exprBinary.op.type == TK_OP_LT_EQ ||
+      // todo test
       (exprBinaryLeftType->isBool() && exprBinaryRightType->isBool())
     ) {
       return this->typeMap.get("bool");
     } else if (exprBinaryLeftType->isNumber() && exprBinaryRightType->isNumber()) {
       return Type::largest(exprBinaryLeftType, exprBinaryRightType);
     } else {
+      // todo test
       return exprBinaryLeftType->isNumber() ? exprBinaryLeftType : exprBinaryRightType;
     }
   } else if (std::holds_alternative<ParserExprCall>(*stmtExpr.body)) {
@@ -549,6 +535,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
   } else if (std::holds_alternative<ParserExprLit>(*stmtExpr.body)) {
     auto exprLit = std::get<ParserExprLit>(*stmtExpr.body);
 
+    // todo test
     switch (exprLit.body.type) {
       case TK_KW_FALSE:
       case TK_KW_TRUE:

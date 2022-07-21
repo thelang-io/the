@@ -1,13 +1,9 @@
 ======= stdin =======
-obj Test {
-  a: int
-}
-
 main {
-  test := Test{a: 1}
-  print(test.propName)
+  a := 1
+  print(a.test)
 }
 ======= stderr =======
-/test:7:14: E1001 - Tried accessing non existing object property
-  7 |   print(test.propName)
-    |              ^~~~~~~~
+/test:3:11: E1001 - Tried accessing non existing object property
+  3 |   print(a.test)
+    |           ^~~~

@@ -45,6 +45,8 @@ struct Type {
 
   static Type *largest (Type *, Type *);
 
+  bool hasProp (const std::string &) const;
+  Type *getProp (const std::string &) const;
   bool isAny () const;
   bool isBool () const;
   bool isByte () const;

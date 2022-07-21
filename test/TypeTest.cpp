@@ -113,6 +113,78 @@ TEST_F(TypeTest, LargestNonNumbers) {
   EXPECT_THROW_WITH_MESSAGE(Type::largest(this->tm_.get("int"), this->tm_.get("void")), "Error: tried to find largest type of non-number");
 }
 
+TEST_F(TypeTest, GetsProp) {
+  EXPECT_NE(this->tm_.get("int")->getProp("str"), nullptr);
+  EXPECT_EQ(this->tm_.get("str")->getProp("len"), this->tm_.get("int"));
+
+  this->tm_.add("Test1", "Test1_0", {
+    {"a", this->tm_.get("int")}
+  });
+
+  EXPECT_EQ(this->tm_.get("Test1")->getProp("a"), this->tm_.get("int"));
+}
+
+TEST_F(TypeTest, GetsNonExistingProp) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->tm_.get("int")->getProp("str")->getProp("str");
+  }, "Error: tried to get non-existing prop type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->tm_.get("int")->getProp("a");
+  }, "Error: tried to get non-existing prop type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->tm_.get("str")->getProp("len2");
+  }, "Error: tried to get non-existing prop type");
+
+  this->tm_.add("test1", "test1_0", {
+    {"a", this->tm_.get("int"), true, false},
+    {"b", this->tm_.get("int"), false, true}
+  }, this->tm_.get("int"));
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->tm_.get("test1")->getProp("a");
+  }, "Error: tried to get non-existing prop type");
+
+  this->tm_.add("Test1", "Test1_0", {
+    {"a", this->tm_.get("int")}
+  });
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->tm_.get("Test1")->getProp("b");
+  }, "Error: tried to get non-existing prop type");
+}
+
+TEST_F(TypeTest, HasProp) {
+  EXPECT_TRUE(this->tm_.get("int")->hasProp("str"));
+  EXPECT_TRUE(this->tm_.get("str")->hasProp("len"));
+
+  this->tm_.add("Test1", "Test1_0", {
+    {"a", this->tm_.get("int")}
+  });
+
+  EXPECT_TRUE(this->tm_.get("Test1")->hasProp("a"));
+}
+
+TEST_F(TypeTest, HasNonExistingProp) {
+  EXPECT_FALSE(this->tm_.get("int")->getProp("str")->hasProp("str"));
+  EXPECT_FALSE(this->tm_.get("int")->hasProp("a"));
+  EXPECT_FALSE(this->tm_.get("str")->hasProp("len2"));
+
+  this->tm_.add("test1", "test1_0", {
+    {"a", this->tm_.get("int"), true, false},
+    {"b", this->tm_.get("int"), false, true}
+  }, this->tm_.get("int"));
+
+  EXPECT_FALSE(this->tm_.get("test1")->hasProp("a"));
+
+  this->tm_.add("Test1", "Test1_0", {
+    {"a", this->tm_.get("int")}
+  });
+
+  EXPECT_FALSE(this->tm_.get("Test1")->hasProp("b"));
+}
+
 TEST_F(TypeTest, CheckIfAny) {
   EXPECT_TRUE(this->tm_.get("any")->isAny());
 }

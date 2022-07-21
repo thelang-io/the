@@ -13,6 +13,10 @@
 
 class ASTChecker {
  public:
+  explicit ASTChecker (const ASTExpr &expr) {
+    this->_exprs = {expr};
+  }
+
   explicit ASTChecker (const ASTNode &node) {
     this->_nodes = {node};
     this->_isNode = true;
@@ -29,6 +33,10 @@ class ASTChecker {
   explicit ASTChecker (const ASTBlock &nodes) {
     this->_nodes = nodes;
     this->_isNode = true;
+  }
+
+  explicit ASTChecker (const std::vector<ASTExpr> &exprs) {
+    this->_exprs = exprs;
   }
 
   template <typename T>
@@ -56,6 +64,7 @@ class ASTChecker {
 
  private:
   bool _isNode = false;
+  std::vector<ASTExpr> _exprs;
   std::vector<ASTNode> _nodes;
 
   void _checkNode () const {
@@ -71,44 +80,6 @@ class ASTChecker {
     }
 
     return std::holds_alternative<T>(*nodes.back().body);
-  }
-
-  template <typename T>
-  bool _isNodeMethod (const std::vector<ASTNode> &nodes) const {
-    if (nodes.empty()) {
-      return false;
-    }
-
-    return std::all_of(nodes.cbegin(), nodes.cend(), [] (const auto &node) {
-      return std::holds_alternative<T>(*node.body);
-    });
-  }
-
-  bool _isLastNode (const std::vector<ASTNode> &nodes) const {
-    if (nodes.size() != 1) {
-      throw Error("Error: tried isLast on many nodes");
-    } else if (nodes[0].parent == nullptr) {
-      throw Error("Error: tried isLast on root node");
-    }
-
-    auto node = nodes[0];
-    auto parent = *node.parent;
-
-    if (std::holds_alternative<ASTNodeFnDecl>(*parent.body)) {
-      auto nodeFnDecl = std::get<ASTNodeFnDecl>(*parent.body);
-      return nodeFnDecl.body.back().body == node.body;
-    } else if (std::holds_alternative<ASTNodeIf>(*parent.body)) {
-      auto nodeIf = std::get<ASTNodeIf>(*parent.body);
-      return nodeIf.body.back().body == node.body;
-    } else if (std::holds_alternative<ASTNodeLoop>(*parent.body)) {
-      auto nodeLoop = std::get<ASTNodeLoop>(*parent.body);
-      return nodeLoop.body.back().body == node.body;
-    } else if (std::holds_alternative<ASTNodeMain>(*parent.body)) {
-      auto nodeMain = std::get<ASTNodeMain>(*parent.body);
-      return nodeMain.body.back().body == node.body;
-    }
-
-    return false;
   }
 
   template <typename T>
@@ -147,6 +118,44 @@ class ASTChecker {
     }
 
     return false;
+  }
+
+  template <typename T>
+  bool _isNodeMethod (const std::vector<ASTNode> &nodes) const {
+    if (nodes.empty()) {
+      return false;
+    }
+
+    return std::all_of(nodes.cbegin(), nodes.cend(), [] (const auto &node) {
+      return std::holds_alternative<T>(*node.body);
+    });
+  }
+
+  bool _isLastNode (const std::vector<ASTNode> &nodes) const {
+    if (nodes.size() != 1) {
+      throw Error("Error: tried isLast on many nodes");
+    } else if (nodes[0].parent == nullptr) {
+      throw Error("Error: tried isLast on root node");
+    }
+
+    auto node = nodes[0];
+    auto parent = *node.parent;
+
+    if (std::holds_alternative<ASTNodeFnDecl>(*parent.body)) {
+      auto nodeFnDecl = std::get<ASTNodeFnDecl>(*parent.body);
+      return nodeFnDecl.body.back().body == node.body;
+    } else if (std::holds_alternative<ASTNodeIf>(*parent.body)) {
+      auto nodeIf = std::get<ASTNodeIf>(*parent.body);
+      return nodeIf.body.back().body == node.body;
+    } else if (std::holds_alternative<ASTNodeLoop>(*parent.body)) {
+      auto nodeLoop = std::get<ASTNodeLoop>(*parent.body);
+      return nodeLoop.body.back().body == node.body;
+    } else if (std::holds_alternative<ASTNodeMain>(*parent.body)) {
+      auto nodeMain = std::get<ASTNodeMain>(*parent.body);
+      return nodeMain.body.back().body == node.body;
+    }
+
+    throw Error("Error: tried isLast on unknown node");
   }
 };
 

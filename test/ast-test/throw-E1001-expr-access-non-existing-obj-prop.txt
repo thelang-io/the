@@ -15,6 +15,6 @@ main {
   print(test.t2.a.existing.thing)
 }
 ======= stderr =======
-/test:14:17: E1000 - Tried accessing property of non object variable
+/test:14:19: E1001 - Tried accessing non existing object property
   14 |   print(test.t2.a.existing.thing)
-     |                 ^~~~~~~~~~
+     |                   ^~~~~~~~

@@ -6,6 +6,6 @@ main {
   print(test.existing.thing)
 }
 ======= stderr =======
-/test:5:9: E1000 - Tried accessing property of non object variable
+/test:5:14: E1001 - Tried accessing non existing object property
   5 |   print(test.existing.thing)
-    |         ^~~~~~~~~~~~~
+    |              ^~~~~~~~

@@ -42,6 +42,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-expr",
   "node-fn-decl",
   "node-fn-decl-param-init",
+  "node-fn-decl-stack",
   "node-if",
   "node-loop",
   "node-main",
@@ -64,9 +65,9 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
-  "throw-E1000-expr-access-non-obj-prop",
-  "throw-E1000-expr-access-non-obj-prop-member",
   "throw-E1001-expr-access-non-existing-prop",
+  "throw-E1001-expr-access-non-existing-fn-prop",
+  "throw-E1001-expr-access-non-existing-obj-prop",
   "throw-E1002-expr-call-extraneous-arg",
   "throw-E1003-expr-binary-wrong-str-operation",
   "throw-E1004-expr-cond-incompatible-operand-types",
