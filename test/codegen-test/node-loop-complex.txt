@@ -24,6 +24,26 @@ fn test () int {
     }
   }
 
+  loop mut i := ""; i != "aaa"; i += "a" {
+    j := "b" + i
+    break
+    k := j + "a"
+  }
+
+  loop mut i := ""; i != "aaa"; i += "a" {
+    j := "b" + i
+    continue
+    k := j + "a"
+  }
+
+  loop {
+    break
+  }
+
+  loop mut i := 0; i < 10; i++ {
+    continue
+  }
+
   if result == 2 {
     result = 4
   } elif result == 1 {
@@ -158,6 +178,39 @@ L1:
 L0:
     str_free((struct str) __THE_0_i_0);
     if (r == 1) goto L4;
+  }
+  {
+    struct str __THE_0_i_0 = str_alloc("");
+    for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
+      unsigned char b1 = 0;
+      const struct str __THE_0_j_0 = cstr_concat_str("b", str_copy(__THE_0_i_0));
+      b1 = 1;
+      goto L6;
+      const struct str __THE_0_k_0 = str_concat_cstr(str_copy(__THE_0_j_0), "a");
+      str_free((struct str) __THE_0_k_0);
+L6:
+      str_free((struct str) __THE_0_j_0);
+      if (b1 == 1) break;
+    }
+    str_free((struct str) __THE_0_i_0);
+  }
+  {
+    struct str __THE_0_i_0 = str_alloc("");
+    for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
+      const struct str __THE_0_j_0 = cstr_concat_str("b", str_copy(__THE_0_i_0));
+      goto L9;
+      const struct str __THE_0_k_0 = str_concat_cstr(str_copy(__THE_0_j_0), "a");
+      str_free((struct str) __THE_0_k_0);
+L9:
+      str_free((struct str) __THE_0_j_0);
+    }
+    str_free((struct str) __THE_0_i_0);
+  }
+  while (1) {
+    break;
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    continue;
   }
   if (__THE_0_result_0 == 2) {
     __THE_0_result_0 = 4;

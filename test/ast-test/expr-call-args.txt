@@ -1,0 +1,1387 @@
+======= stdin =======
+obj Test {
+  i: int
+}
+
+fn job () {}
+
+fn test1 (
+  t: bool,
+  b: byte,
+  c: char,
+  f1: f32,
+  f2: f64,
+  f: float,
+  i1: i8,
+  i2: i16,
+  i3: i32,
+  i4: i64,
+  i: int,
+  s: str,
+  u1: u8,
+  u2: u16,
+  u3: u32,
+  u4: u64,
+  v1: Test,
+  v2: fn () void
+) {}
+
+fn test2 (
+  t := true,
+  b: byte = 1,
+  c: char = 'c',
+  f1: f32 = 2,
+  f2: f64 = 3,
+  f: float = 4,
+  i1: i8 = 5,
+  i2: i16 = 6,
+  i3: i32 = 7,
+  i4: i64 = 8,
+  i: int = 9,
+  s: str = "test",
+  u1: u8 = 10,
+  u2: u16 = 11,
+  u3: u32 = 12,
+  u4: u64 = 13,
+  v1 := Test{i: 0},
+  v2 := job
+) {}
+
+main {
+  test1(
+    true,
+    1,
+    'c',
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    "test",
+    10,
+    11,
+    12,
+    13,
+    Test{i: 0},
+    job
+  )
+
+  test2()
+}
+======= stdout =======
+<Node>
+  <NodeObjDecl>
+    <Type codeName="Test_0" name="Test" type="obj">
+      <slot name="fields">
+        <TypeObjField name="i">
+          <BuiltinType name="int" />
+        </TypeObjField>
+      </slot>
+    </Type>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeFnDecl>
+    <slot name="var">
+      <Var codeName="job_0" frame="1" mut="false" name="job">
+        <Type codeName="job_0" name="job" type="fn">
+          <slot name="returnType">
+            <BuiltinType name="void" />
+          </slot>
+        </Type>
+      </Var>
+    </slot>
+  </NodeFnDecl>
+</Node>
+<Node>
+  <NodeFnDecl>
+    <slot name="var">
+      <Var codeName="test1_0" frame="1" mut="false" name="test1">
+        <Type codeName="test1_0" name="test1" type="fn">
+          <slot name="returnType">
+            <BuiltinType name="void" />
+          </slot>
+          <slot name="params">
+            <TypeFnParam name="t" required="true" variadic="false">
+              <BuiltinType name="bool" />
+            </TypeFnParam>
+            <TypeFnParam name="b" required="true" variadic="false">
+              <BuiltinType name="byte" />
+            </TypeFnParam>
+            <TypeFnParam name="c" required="true" variadic="false">
+              <BuiltinType name="char" />
+            </TypeFnParam>
+            <TypeFnParam name="f1" required="true" variadic="false">
+              <BuiltinType name="f32" />
+            </TypeFnParam>
+            <TypeFnParam name="f2" required="true" variadic="false">
+              <BuiltinType name="f64" />
+            </TypeFnParam>
+            <TypeFnParam name="f" required="true" variadic="false">
+              <BuiltinType name="float" />
+            </TypeFnParam>
+            <TypeFnParam name="i1" required="true" variadic="false">
+              <BuiltinType name="i8" />
+            </TypeFnParam>
+            <TypeFnParam name="i2" required="true" variadic="false">
+              <BuiltinType name="i16" />
+            </TypeFnParam>
+            <TypeFnParam name="i3" required="true" variadic="false">
+              <BuiltinType name="i32" />
+            </TypeFnParam>
+            <TypeFnParam name="i4" required="true" variadic="false">
+              <BuiltinType name="i64" />
+            </TypeFnParam>
+            <TypeFnParam name="i" required="true" variadic="false">
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam name="s" required="true" variadic="false">
+              <BuiltinType name="str" />
+            </TypeFnParam>
+            <TypeFnParam name="u1" required="true" variadic="false">
+              <BuiltinType name="u8" />
+            </TypeFnParam>
+            <TypeFnParam name="u2" required="true" variadic="false">
+              <BuiltinType name="u16" />
+            </TypeFnParam>
+            <TypeFnParam name="u3" required="true" variadic="false">
+              <BuiltinType name="u32" />
+            </TypeFnParam>
+            <TypeFnParam name="u4" required="true" variadic="false">
+              <BuiltinType name="u64" />
+            </TypeFnParam>
+            <TypeFnParam name="v1" required="true" variadic="false">
+              <Type codeName="Test_0" name="Test" type="obj">
+                <slot name="fields">
+                  <TypeObjField name="i">
+                    <BuiltinType name="int" />
+                  </TypeObjField>
+                </slot>
+              </Type>
+            </TypeFnParam>
+            <TypeFnParam name="v2" required="true" variadic="false">
+              <Type type="fn">
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </Type>
+            </TypeFnParam>
+          </slot>
+        </Type>
+      </Var>
+    </slot>
+    <slot name="params">
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="t_0" frame="2" mut="false" name="t">
+            <BuiltinType name="bool" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="b_0" frame="2" mut="false" name="b">
+            <BuiltinType name="byte" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="c_0" frame="2" mut="false" name="c">
+            <BuiltinType name="char" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="f1_0" frame="2" mut="false" name="f1">
+            <BuiltinType name="f32" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="f2_0" frame="2" mut="false" name="f2">
+            <BuiltinType name="f64" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="f_0" frame="2" mut="false" name="f">
+            <BuiltinType name="float" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i1_0" frame="2" mut="false" name="i1">
+            <BuiltinType name="i8" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i2_0" frame="2" mut="false" name="i2">
+            <BuiltinType name="i16" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i3_0" frame="2" mut="false" name="i3">
+            <BuiltinType name="i32" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i4_0" frame="2" mut="false" name="i4">
+            <BuiltinType name="i64" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i_0" frame="2" mut="false" name="i">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="s_0" frame="2" mut="false" name="s">
+            <BuiltinType name="str" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u1_0" frame="2" mut="false" name="u1">
+            <BuiltinType name="u8" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u2_0" frame="2" mut="false" name="u2">
+            <BuiltinType name="u16" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u3_0" frame="2" mut="false" name="u3">
+            <BuiltinType name="u32" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u4_0" frame="2" mut="false" name="u4">
+            <BuiltinType name="u64" />
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="v1_0" frame="2" mut="false" name="v1">
+            <Type codeName="Test_0" name="Test" type="obj">
+              <slot name="fields">
+                <TypeObjField name="i">
+                  <BuiltinType name="int" />
+                </TypeObjField>
+              </slot>
+            </Type>
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="v2_0" frame="2" mut="false" name="v2">
+            <Type type="fn">
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </Type>
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+    </slot>
+  </NodeFnDecl>
+</Node>
+<Node>
+  <NodeFnDecl>
+    <slot name="var">
+      <Var codeName="test2_0" frame="1" mut="false" name="test2">
+        <Type codeName="test2_0" name="test2" type="fn">
+          <slot name="returnType">
+            <BuiltinType name="void" />
+          </slot>
+          <slot name="params">
+            <TypeFnParam name="t" required="false" variadic="false">
+              <BuiltinType name="bool" />
+            </TypeFnParam>
+            <TypeFnParam name="b" required="false" variadic="false">
+              <BuiltinType name="byte" />
+            </TypeFnParam>
+            <TypeFnParam name="c" required="false" variadic="false">
+              <BuiltinType name="char" />
+            </TypeFnParam>
+            <TypeFnParam name="f1" required="false" variadic="false">
+              <BuiltinType name="f32" />
+            </TypeFnParam>
+            <TypeFnParam name="f2" required="false" variadic="false">
+              <BuiltinType name="f64" />
+            </TypeFnParam>
+            <TypeFnParam name="f" required="false" variadic="false">
+              <BuiltinType name="float" />
+            </TypeFnParam>
+            <TypeFnParam name="i1" required="false" variadic="false">
+              <BuiltinType name="i8" />
+            </TypeFnParam>
+            <TypeFnParam name="i2" required="false" variadic="false">
+              <BuiltinType name="i16" />
+            </TypeFnParam>
+            <TypeFnParam name="i3" required="false" variadic="false">
+              <BuiltinType name="i32" />
+            </TypeFnParam>
+            <TypeFnParam name="i4" required="false" variadic="false">
+              <BuiltinType name="i64" />
+            </TypeFnParam>
+            <TypeFnParam name="i" required="false" variadic="false">
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam name="s" required="false" variadic="false">
+              <BuiltinType name="str" />
+            </TypeFnParam>
+            <TypeFnParam name="u1" required="false" variadic="false">
+              <BuiltinType name="u8" />
+            </TypeFnParam>
+            <TypeFnParam name="u2" required="false" variadic="false">
+              <BuiltinType name="u16" />
+            </TypeFnParam>
+            <TypeFnParam name="u3" required="false" variadic="false">
+              <BuiltinType name="u32" />
+            </TypeFnParam>
+            <TypeFnParam name="u4" required="false" variadic="false">
+              <BuiltinType name="u64" />
+            </TypeFnParam>
+            <TypeFnParam name="v1" required="false" variadic="false">
+              <Type codeName="Test_0" name="Test" type="obj">
+                <slot name="fields">
+                  <TypeObjField name="i">
+                    <BuiltinType name="int" />
+                  </TypeObjField>
+                </slot>
+              </Type>
+            </TypeFnParam>
+            <TypeFnParam name="v2" required="false" variadic="false">
+              <Type codeName="job_0" name="job" type="fn">
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </Type>
+            </TypeFnParam>
+          </slot>
+        </Type>
+      </Var>
+    </slot>
+    <slot name="stack">
+      <Var codeName="job_0" frame="1" mut="false" name="job">
+        <Type codeName="job_0" name="job" type="fn">
+          <slot name="returnType">
+            <BuiltinType name="void" />
+          </slot>
+        </Type>
+      </Var>
+    </slot>
+    <slot name="params">
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="t_0" frame="2" mut="false" name="t">
+            <BuiltinType name="bool" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="bool" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="BOOL">
+                true
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="b_0" frame="2" mut="false" name="b">
+            <BuiltinType name="byte" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                1
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="c_0" frame="2" mut="false" name="c">
+            <BuiltinType name="char" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="char" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="CHAR">
+                'c'
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="f1_0" frame="2" mut="false" name="f1">
+            <BuiltinType name="f32" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                2
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="f2_0" frame="2" mut="false" name="f2">
+            <BuiltinType name="f64" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                3
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="f_0" frame="2" mut="false" name="f">
+            <BuiltinType name="float" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                4
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i1_0" frame="2" mut="false" name="i1">
+            <BuiltinType name="i8" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                5
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i2_0" frame="2" mut="false" name="i2">
+            <BuiltinType name="i16" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                6
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i3_0" frame="2" mut="false" name="i3">
+            <BuiltinType name="i32" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                7
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i4_0" frame="2" mut="false" name="i4">
+            <BuiltinType name="i64" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                8
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="i_0" frame="2" mut="false" name="i">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                9
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="s_0" frame="2" mut="false" name="s">
+            <BuiltinType name="str" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="str" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="STR">
+                "test"
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u1_0" frame="2" mut="false" name="u1">
+            <BuiltinType name="u8" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                10
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u2_0" frame="2" mut="false" name="u2">
+            <BuiltinType name="u16" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                11
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u3_0" frame="2" mut="false" name="u3">
+            <BuiltinType name="u32" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                12
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="u4_0" frame="2" mut="false" name="u4">
+            <BuiltinType name="u64" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                13
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="v1_0" frame="2" mut="false" name="v1">
+            <Type codeName="Test_0" name="Test" type="obj">
+              <slot name="fields">
+                <TypeObjField name="i">
+                  <BuiltinType name="int" />
+                </TypeObjField>
+              </slot>
+            </Type>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <Type codeName="Test_0" name="Test" type="obj">
+                <slot name="fields">
+                  <TypeObjField name="i">
+                    <BuiltinType name="int" />
+                  </TypeObjField>
+                </slot>
+              </Type>
+            </slot>
+            <slot name="body">
+              <ExprObj>
+                <slot name="type">
+                  <Type codeName="Test_0" name="Test" type="obj">
+                    <slot name="fields">
+                      <TypeObjField name="i">
+                        <BuiltinType name="int" />
+                      </TypeObjField>
+                    </slot>
+                  </Type>
+                </slot>
+                <slot name="props">
+                  <ExprObjProp>
+                    <slot name="id">
+                      i
+                    </slot>
+                    <slot name="init">
+                      <NodeExpr parenthesized="false">
+                        <slot name="type">
+                          <BuiltinType name="int" />
+                        </slot>
+                        <slot name="body">
+                          <ExprLit type="INT_DEC">
+                            0
+                          </ExprLit>
+                        </slot>
+                      </NodeExpr>
+                    </slot>
+                  </ExprObjProp>
+                </slot>
+              </ExprObj>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="v2_0" frame="2" mut="false" name="v2">
+            <Type codeName="job_0" name="job" type="fn">
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </Type>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr parenthesized="false">
+            <slot name="type">
+              <Type codeName="job_0" name="job" type="fn">
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </Type>
+            </slot>
+            <slot name="body">
+              <ExprAccess>
+                <Var codeName="job_0" frame="1" mut="false" name="job">
+                  <Type codeName="job_0" name="job" type="fn">
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </Type>
+                </Var>
+              </ExprAccess>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeFnDeclParam>
+    </slot>
+  </NodeFnDecl>
+</Node>
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <ExprAccess>
+                <Var codeName="test1_0" frame="1" mut="false" name="test1">
+                  <Type codeName="test1_0" name="test1" type="fn">
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                    <slot name="params">
+                      <TypeFnParam name="t" required="true" variadic="false">
+                        <BuiltinType name="bool" />
+                      </TypeFnParam>
+                      <TypeFnParam name="b" required="true" variadic="false">
+                        <BuiltinType name="byte" />
+                      </TypeFnParam>
+                      <TypeFnParam name="c" required="true" variadic="false">
+                        <BuiltinType name="char" />
+                      </TypeFnParam>
+                      <TypeFnParam name="f1" required="true" variadic="false">
+                        <BuiltinType name="f32" />
+                      </TypeFnParam>
+                      <TypeFnParam name="f2" required="true" variadic="false">
+                        <BuiltinType name="f64" />
+                      </TypeFnParam>
+                      <TypeFnParam name="f" required="true" variadic="false">
+                        <BuiltinType name="float" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i1" required="true" variadic="false">
+                        <BuiltinType name="i8" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i2" required="true" variadic="false">
+                        <BuiltinType name="i16" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i3" required="true" variadic="false">
+                        <BuiltinType name="i32" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i4" required="true" variadic="false">
+                        <BuiltinType name="i64" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i" required="true" variadic="false">
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                      <TypeFnParam name="s" required="true" variadic="false">
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u1" required="true" variadic="false">
+                        <BuiltinType name="u8" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u2" required="true" variadic="false">
+                        <BuiltinType name="u16" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u3" required="true" variadic="false">
+                        <BuiltinType name="u32" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u4" required="true" variadic="false">
+                        <BuiltinType name="u64" />
+                      </TypeFnParam>
+                      <TypeFnParam name="v1" required="true" variadic="false">
+                        <Type codeName="Test_0" name="Test" type="obj">
+                          <slot name="fields">
+                            <TypeObjField name="i">
+                              <BuiltinType name="int" />
+                            </TypeObjField>
+                          </slot>
+                        </Type>
+                      </TypeFnParam>
+                      <TypeFnParam name="v2" required="true" variadic="false">
+                        <Type type="fn">
+                          <slot name="returnType">
+                            <BuiltinType name="void" />
+                          </slot>
+                        </Type>
+                      </TypeFnParam>
+                    </slot>
+                  </Type>
+                </Var>
+              </ExprAccess>
+            </slot>
+            <slot name="calleeType">
+              <Type codeName="test1_0" name="test1" type="fn">
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+                <slot name="params">
+                  <TypeFnParam name="t" required="true" variadic="false">
+                    <BuiltinType name="bool" />
+                  </TypeFnParam>
+                  <TypeFnParam name="b" required="true" variadic="false">
+                    <BuiltinType name="byte" />
+                  </TypeFnParam>
+                  <TypeFnParam name="c" required="true" variadic="false">
+                    <BuiltinType name="char" />
+                  </TypeFnParam>
+                  <TypeFnParam name="f1" required="true" variadic="false">
+                    <BuiltinType name="f32" />
+                  </TypeFnParam>
+                  <TypeFnParam name="f2" required="true" variadic="false">
+                    <BuiltinType name="f64" />
+                  </TypeFnParam>
+                  <TypeFnParam name="f" required="true" variadic="false">
+                    <BuiltinType name="float" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i1" required="true" variadic="false">
+                    <BuiltinType name="i8" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i2" required="true" variadic="false">
+                    <BuiltinType name="i16" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i3" required="true" variadic="false">
+                    <BuiltinType name="i32" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i4" required="true" variadic="false">
+                    <BuiltinType name="i64" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i" required="true" variadic="false">
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                  <TypeFnParam name="s" required="true" variadic="false">
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u1" required="true" variadic="false">
+                    <BuiltinType name="u8" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u2" required="true" variadic="false">
+                    <BuiltinType name="u16" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u3" required="true" variadic="false">
+                    <BuiltinType name="u32" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u4" required="true" variadic="false">
+                    <BuiltinType name="u64" />
+                  </TypeFnParam>
+                  <TypeFnParam name="v1" required="true" variadic="false">
+                    <Type codeName="Test_0" name="Test" type="obj">
+                      <slot name="fields">
+                        <TypeObjField name="i">
+                          <BuiltinType name="int" />
+                        </TypeObjField>
+                      </slot>
+                    </Type>
+                  </TypeFnParam>
+                  <TypeFnParam name="v2" required="true" variadic="false">
+                    <Type type="fn">
+                      <slot name="returnType">
+                        <BuiltinType name="void" />
+                      </slot>
+                    </Type>
+                  </TypeFnParam>
+                </slot>
+              </Type>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="t">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="bool" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="BOOL">
+                      true
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="b">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="byte" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      1
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="c">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="char" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="CHAR">
+                      'c'
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="f1">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      2
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="f2">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      3
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="f">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      4
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="i1">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="i8" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      5
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="i2">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="i16" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      6
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="i3">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      7
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="i4">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      8
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="i">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      9
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="s">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="str" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="STR">
+                      "test"
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="u1">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="u8" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      10
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="u2">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="u16" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      11
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="u3">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="u32" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      12
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="u4">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <BuiltinType name="u64" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      13
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="v1">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <Type codeName="Test_0" name="Test" type="obj">
+                      <slot name="fields">
+                        <TypeObjField name="i">
+                          <BuiltinType name="int" />
+                        </TypeObjField>
+                      </slot>
+                    </Type>
+                  </slot>
+                  <slot name="body">
+                    <ExprObj>
+                      <slot name="type">
+                        <Type codeName="Test_0" name="Test" type="obj">
+                          <slot name="fields">
+                            <TypeObjField name="i">
+                              <BuiltinType name="int" />
+                            </TypeObjField>
+                          </slot>
+                        </Type>
+                      </slot>
+                      <slot name="props">
+                        <ExprObjProp>
+                          <slot name="id">
+                            i
+                          </slot>
+                          <slot name="init">
+                            <NodeExpr parenthesized="false">
+                              <slot name="type">
+                                <BuiltinType name="int" />
+                              </slot>
+                              <slot name="body">
+                                <ExprLit type="INT_DEC">
+                                  0
+                                </ExprLit>
+                              </slot>
+                            </NodeExpr>
+                          </slot>
+                        </ExprObjProp>
+                      </slot>
+                    </ExprObj>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="v2">
+                <NodeExpr parenthesized="false">
+                  <slot name="type">
+                    <Type codeName="job_0" name="job" type="fn">
+                      <slot name="returnType">
+                        <BuiltinType name="void" />
+                      </slot>
+                    </Type>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="job_0" frame="1" mut="false" name="job">
+                        <Type codeName="job_0" name="job" type="fn">
+                          <slot name="returnType">
+                            <BuiltinType name="void" />
+                          </slot>
+                        </Type>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr parenthesized="false">
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <ExprAccess>
+                <Var codeName="test2_0" frame="1" mut="false" name="test2">
+                  <Type codeName="test2_0" name="test2" type="fn">
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                    <slot name="params">
+                      <TypeFnParam name="t" required="false" variadic="false">
+                        <BuiltinType name="bool" />
+                      </TypeFnParam>
+                      <TypeFnParam name="b" required="false" variadic="false">
+                        <BuiltinType name="byte" />
+                      </TypeFnParam>
+                      <TypeFnParam name="c" required="false" variadic="false">
+                        <BuiltinType name="char" />
+                      </TypeFnParam>
+                      <TypeFnParam name="f1" required="false" variadic="false">
+                        <BuiltinType name="f32" />
+                      </TypeFnParam>
+                      <TypeFnParam name="f2" required="false" variadic="false">
+                        <BuiltinType name="f64" />
+                      </TypeFnParam>
+                      <TypeFnParam name="f" required="false" variadic="false">
+                        <BuiltinType name="float" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i1" required="false" variadic="false">
+                        <BuiltinType name="i8" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i2" required="false" variadic="false">
+                        <BuiltinType name="i16" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i3" required="false" variadic="false">
+                        <BuiltinType name="i32" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i4" required="false" variadic="false">
+                        <BuiltinType name="i64" />
+                      </TypeFnParam>
+                      <TypeFnParam name="i" required="false" variadic="false">
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                      <TypeFnParam name="s" required="false" variadic="false">
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u1" required="false" variadic="false">
+                        <BuiltinType name="u8" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u2" required="false" variadic="false">
+                        <BuiltinType name="u16" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u3" required="false" variadic="false">
+                        <BuiltinType name="u32" />
+                      </TypeFnParam>
+                      <TypeFnParam name="u4" required="false" variadic="false">
+                        <BuiltinType name="u64" />
+                      </TypeFnParam>
+                      <TypeFnParam name="v1" required="false" variadic="false">
+                        <Type codeName="Test_0" name="Test" type="obj">
+                          <slot name="fields">
+                            <TypeObjField name="i">
+                              <BuiltinType name="int" />
+                            </TypeObjField>
+                          </slot>
+                        </Type>
+                      </TypeFnParam>
+                      <TypeFnParam name="v2" required="false" variadic="false">
+                        <Type codeName="job_0" name="job" type="fn">
+                          <slot name="returnType">
+                            <BuiltinType name="void" />
+                          </slot>
+                        </Type>
+                      </TypeFnParam>
+                    </slot>
+                  </Type>
+                </Var>
+              </ExprAccess>
+            </slot>
+            <slot name="calleeType">
+              <Type codeName="test2_0" name="test2" type="fn">
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+                <slot name="params">
+                  <TypeFnParam name="t" required="false" variadic="false">
+                    <BuiltinType name="bool" />
+                  </TypeFnParam>
+                  <TypeFnParam name="b" required="false" variadic="false">
+                    <BuiltinType name="byte" />
+                  </TypeFnParam>
+                  <TypeFnParam name="c" required="false" variadic="false">
+                    <BuiltinType name="char" />
+                  </TypeFnParam>
+                  <TypeFnParam name="f1" required="false" variadic="false">
+                    <BuiltinType name="f32" />
+                  </TypeFnParam>
+                  <TypeFnParam name="f2" required="false" variadic="false">
+                    <BuiltinType name="f64" />
+                  </TypeFnParam>
+                  <TypeFnParam name="f" required="false" variadic="false">
+                    <BuiltinType name="float" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i1" required="false" variadic="false">
+                    <BuiltinType name="i8" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i2" required="false" variadic="false">
+                    <BuiltinType name="i16" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i3" required="false" variadic="false">
+                    <BuiltinType name="i32" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i4" required="false" variadic="false">
+                    <BuiltinType name="i64" />
+                  </TypeFnParam>
+                  <TypeFnParam name="i" required="false" variadic="false">
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                  <TypeFnParam name="s" required="false" variadic="false">
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u1" required="false" variadic="false">
+                    <BuiltinType name="u8" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u2" required="false" variadic="false">
+                    <BuiltinType name="u16" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u3" required="false" variadic="false">
+                    <BuiltinType name="u32" />
+                  </TypeFnParam>
+                  <TypeFnParam name="u4" required="false" variadic="false">
+                    <BuiltinType name="u64" />
+                  </TypeFnParam>
+                  <TypeFnParam name="v1" required="false" variadic="false">
+                    <Type codeName="Test_0" name="Test" type="obj">
+                      <slot name="fields">
+                        <TypeObjField name="i">
+                          <BuiltinType name="int" />
+                        </TypeObjField>
+                      </slot>
+                    </Type>
+                  </TypeFnParam>
+                  <TypeFnParam name="v2" required="false" variadic="false">
+                    <Type codeName="job_0" name="job" type="fn">
+                      <slot name="returnType">
+                        <BuiltinType name="void" />
+                      </slot>
+                    </Type>
+                  </TypeFnParam>
+                </slot>
+              </Type>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+  </NodeMain>
+</Node>

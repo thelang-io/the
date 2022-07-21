@@ -58,6 +58,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-assign",
   "expr-binary",
   "expr-call",
+  "expr-call-args",
   "expr-cond",
   "expr-lit",
   "expr-obj",

@@ -61,6 +61,7 @@ struct Type {
   bool isI32 () const;
   bool isI64 () const;
   bool isInt () const;
+  bool isIntNumber () const;
   bool isNumber () const;
   bool isObj () const;
   bool isStr () const;

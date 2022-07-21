@@ -285,6 +285,30 @@ TEST_F(TypeTest, CheckIfInt) {
   EXPECT_TRUE(this->tm_.get("int")->isInt());
 }
 
+TEST_F(TypeTest, CheckIfIntNumber) {
+  EXPECT_TRUE(this->tm_.get("i8")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("i16")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("i32")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("int")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("i64")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("u8")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("u16")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("u32")->isIntNumber());
+  EXPECT_TRUE(this->tm_.get("u64")->isIntNumber());
+}
+
+TEST_F(TypeTest, CheckIfNotIntNumber) {
+  EXPECT_FALSE(this->tm_.get("f32")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("f64")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("float")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("any")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("bool")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("byte")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("char")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("str")->isIntNumber());
+  EXPECT_FALSE(this->tm_.get("void")->isIntNumber());
+}
+
 TEST_F(TypeTest, CheckIfNumber) {
   EXPECT_TRUE(this->tm_.get("f32")->isNumber());
   EXPECT_TRUE(this->tm_.get("f64")->isNumber());

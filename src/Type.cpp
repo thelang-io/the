@@ -166,12 +166,15 @@ bool Type::isInt () const {
   return this->name == "int";
 }
 
-bool Type::isNumber () const {
+bool Type::isIntNumber () const {
   return (
     this->isI8() || this->isI16() || this->isI32() || this->isInt() || this->isI64() ||
-    this->isU8() || this->isU16() || this->isU32() || this->isU64() ||
-    this->isFloatNumber()
+    this->isU8() || this->isU16() || this->isU32() || this->isU64()
   );
+}
+
+bool Type::isNumber () const {
+  return this->isIntNumber() || this->isFloatNumber();
 }
 
 bool Type::isObj () const {
@@ -243,12 +246,12 @@ bool Type::match (const Type *type, bool strict) const {
     return type->isObj() && this->name == type->name;
   }
 
-  return (this->name == "any") ||
+  return this->name == "any" ||
     (this->name == "bool" && type->name == "bool") ||
     (this->name == "byte" && type->name == "byte") ||
     (this->name == "char" && type->name == "char") ||
-    (this->name == "void" && type->name == "void") ||
     (this->name == "str" && type->name == "str") ||
+    (this->name == "void" && type->name == "void") ||
     numberTypeMatch(this->name, type->name);
 }
 

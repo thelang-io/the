@@ -794,10 +794,12 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
-    if (!this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
+    if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+      if (!ASTChecker(node.parent).is<ASTNodeLoop>() || !ASTChecker(node).isLast()) {
+        code = std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+      }
+    } else {
       code = std::string(this->indent, ' ') + "continue;" EOL;
-    } else if (!ASTChecker(node.parent).is<ASTNodeLoop>() || !ASTChecker(node).isLast()) {
-      code = std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
     }
 
     return this->_wrapNode(node, code);
@@ -1018,7 +1020,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
       auto initCode = this->_node(*nodeLoop.init);
       this->indent = initialIndent;
 
-      if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
+      if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_BLOCK)) {
         code = std::string(this->indent, ' ') + "{" EOL + initCode;
         code += std::string(this->indent + 2, ' ') + "for (;";
 
@@ -1032,7 +1034,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     } else {
       code = std::string(this->indent, ' ') + "for (;";
       code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
-      code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true)) + ")";
+      code += " " + this->_nodeExpr(*nodeLoop.upd, true) + ")";
     }
 
     auto saveCleanUp = this->state.cleanUp;
@@ -1146,13 +1148,11 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + R"(: \"");)" EOL;
         strFnCode += "  r = str_concat_str(r, str_escape(o->" + objFieldName + "));" EOL;
         strFnCode += R"(  r = str_concat_cstr(r, "\"");)" EOL;
-      } else if (objField.type->isAny() || objField.type->isFn() || objField.type->isVoid()) {
+      } else if (objField.type->isAny() || objField.type->isVoid()) {
         auto typeStrContent = std::string();
 
         if (objField.type->isAny()) {
           typeStrContent = "any";
-        } else if (objField.type->isFn()) {
-          typeStrContent = "fn";
         } else if (objField.type->isVoid()) {
           typeStrContent = "void";
         }

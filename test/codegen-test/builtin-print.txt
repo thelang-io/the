@@ -1,0 +1,110 @@
+======= stdin =======
+obj Test1 {
+  t: bool
+  b: byte
+  c: char
+  f1: f32
+  f2: f64
+  f: float
+  i1: i8
+  i2: i16
+  i3: i32
+  i4: i64
+  i: int
+  s: str
+  u1: u8
+  u2: u16
+  u3: u32
+  u4: u64
+  v1: Test2
+  v2: fn () void
+}
+
+obj Test2 {
+  t: bool
+  b: byte
+  c: char
+  f1: f32
+  f2: f64
+  f: float
+  i1: i8
+  i2: i16
+  i3: i32
+  i4: i64
+  i: int
+  s: str
+  u1: u8
+  u2: u16
+  u3: u32
+  u4: u64
+}
+
+fn test () {}
+
+main {
+  v1 := Test1{
+    t: true,
+    b: 1,
+    c: 'c',
+    f1: 2,
+    f2: 3,
+    f: 4,
+    i1: 5,
+    i2: 6,
+    i3: 7,
+    i4: 8,
+    i: 9,
+    s: "test",
+    u1: 10,
+    u2: 11,
+    u3: 12,
+    u4: 13,
+    v1: Test2{
+      t: false,
+      b: 14,
+      c: 'a',
+      f1: 15,
+      f2: 16,
+      f: 17,
+      i1: 18,
+      i2: 19,
+      i3: 20,
+      i4: 21,
+      i: 22,
+      s: "string",
+      u1: 23,
+      u2: 24,
+      u3: 25,
+      u4: 26
+    },
+    v2: test
+  }
+
+  t: bool = true
+  b: byte = 27
+  c: char = 'b'
+  f1: f32 = 28
+  f2: f64 = 29
+  f: float = 30
+  i1: i8 = 31
+  i2: i16 = 32
+  i3: i32 = 33
+  i4: i64 = 34
+  i: int = 35
+  s: str = "tester"
+  u1: u8 = 36
+  u2: u16 = 37
+  u3: u32 = 38
+  u4: u64 = 39
+
+  print(t, b, c, f1, f2, f, i1, i2, i3, i4, i, s, u1, u2, u3, u4, v1, test)
+  print("Tony", "Andrew", "Dan", separator: ", ", terminator: "--\n")
+
+  separator := ","
+  terminator := ", \n"
+
+  print("Max", "Lester", "Bonny", separator: separator, terminator: terminator)
+}
+======= code =======
+======= flags =======
+======= stdout =======

@@ -73,7 +73,9 @@ INSTANTIATE_TEST_SUITE_P(General, CodegenTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenTest, testing::Values(
   "expr-access",
-  "expr-access-str"
+  "expr-access-str",
+  "expr-access-obj",
+  "expr-access-fn"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenTest, testing::Values(
@@ -90,7 +92,8 @@ INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenTest, testing::Values(
   "expr-call",
-  "expr-call-obj-prop"
+  "expr-call-obj-prop",
+  "expr-call-args"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenTest, testing::Values(
@@ -140,6 +143,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenTest, testing::Values(
   "node-expr-cond",
   "node-expr-cond-str",
   "node-expr-cond-obj",
+  "node-expr-cond-fn",
   "node-expr-lit",
   "node-expr-obj",
   "node-expr-obj-str",
@@ -176,6 +180,10 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenTest, testing::Values(
   "node-loop-while",
   "node-loop-str",
   "node-loop-complex"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenTest, testing::Values(
+  "node-return"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenTest, testing::Values(
@@ -257,4 +265,8 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
   "node-var-decl-u64-init",
   "node-var-decl-u64-mut",
   "node-var-decl-u64-mut-init"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltIn, CodegenTest, testing::Values(
+  "builtin-print"
 ));

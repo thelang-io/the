@@ -407,7 +407,15 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
       auto exprCallArgExpr = this->_nodeExpr(parserExprCallArg.expr, varStack);
 
       if (!foundParam->type->match(exprCallArgExpr.type)) {
-        throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1008);
+        if (
+          exprCallArgExpr.type->isIntNumber() &&
+          std::holds_alternative<ParserExprLit>(*parserExprCallArg.expr.body) &&
+          (foundParam->type->isByte() || foundParam->type->isIntNumber())
+        ) {
+          exprCallArgExpr.type = foundParam->type;
+        } else {
+          throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1008);
+        }
       }
 
       exprCallArgs.push_back(ASTExprCallArg{foundParam->name, exprCallArgExpr});
