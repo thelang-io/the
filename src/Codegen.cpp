@@ -94,11 +94,14 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   if (this->builtins.fnByteStr) {
     this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
 
     builtinFnDeclCode += "struct str byte_str (unsigned char);" EOL;
-    builtinFnDefCode += "struct str byte_str (unsigned char c) {" EOL;
-    builtinFnDefCode += R"(  return str_alloc(&c);)" EOL;
+    builtinFnDefCode += "struct str byte_str (unsigned char x) {" EOL;
+    builtinFnDefCode += "  char buf[512];" EOL;
+    builtinFnDefCode += R"(  sprintf(buf, "%u", x);)" EOL;
+    builtinFnDefCode += "  return str_alloc(buf);" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -108,7 +111,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
     builtinFnDeclCode += "struct str char_str (char);" EOL;
     builtinFnDefCode += "struct str char_str (char c) {" EOL;
-    builtinFnDefCode += R"(  return str_alloc(&c);)" EOL;
+    builtinFnDefCode += "  char buf[2] = {c, '\\0'};" EOL;
+    builtinFnDefCode += "  return str_alloc(buf);" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -309,14 +313,14 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "      case 'e':" EOL;
     builtinFnDefCode += "      case 'f':" EOL;
     builtinFnDefCode += R"(      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;)" EOL;
-    builtinFnDefCode += R"(      case 'h': sprintf(buf, "%" PRId8, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
-    builtinFnDefCode += R"(      case 'j': sprintf(buf, "%" PRId16, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += "      case 'h':" EOL;
+    builtinFnDefCode += "      case 'j':" EOL;
+    builtinFnDefCode += "      case 'v':" EOL;
+    builtinFnDefCode += R"(      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += "      case 'i':" EOL;
     builtinFnDefCode += R"(      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += "      case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;" EOL;
-    builtinFnDefCode += R"(      case 'v': sprintf(buf, "%" PRIu8, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
-    builtinFnDefCode += R"(      case 'w': sprintf(buf, "%" PRIu16, va_arg(args, int)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += "      case 'z': fputs(va_arg(args, char *), stream); break;" EOL;
@@ -1120,8 +1124,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
 
         copyFnCode += "  r->" + objFieldName + " = " + objFieldTypeName + "_copy(o->" + objFieldName + ");" EOL;
         freeFnCode += "  " + objFieldTypeName + "_free((" + objFieldType + ") o->" + objFieldName + ");" EOL;
-
-        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + ":";
+        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + ": ";
         strFnCode += "[Function: " + objField.name + R"(]");)" EOL;
       } else if (objField.type->isObj()) {
         auto objFieldTypeName = Codegen::typeName(objField.type->codeName);
@@ -1129,12 +1132,14 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         this->_activateEntity(objFieldTypeName + "_copy", &copyFnEntity.entities);
         this->_activateEntity(objFieldTypeName + "_free", &freeFnEntity.entities);
         this->_activateBuiltin("fnStrConcatStr", &strFnEntity.builtins);
+        this->_activateEntity(objFieldTypeName + "_copy", &strFnEntity.entities);
         this->_activateEntity(objFieldTypeName + "_str", &strFnEntity.entities);
 
         copyFnCode += "  r->" + objFieldName + " = " + objFieldTypeName + "_copy(o->" + objFieldName + ");" EOL;
         freeFnCode += "  " + objFieldTypeName + "_free((" + objFieldType + ") o->" + objFieldName + ");" EOL;
         strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + R"(: ");)" EOL;
-        strFnCode += "  r = str_concat_str(r, " + objFieldTypeName + "_str(o->" + objFieldName + "));" EOL;
+        strFnCode += "  r = str_concat_str(r, " + objFieldTypeName + "_str(";
+        strFnCode += objFieldTypeName + "_copy(o->" + objFieldName + ")));" EOL;
       } else if (objField.type->isStr()) {
         this->_activateBuiltin("fnStrCopy", &copyFnEntity.builtins);
         this->_activateBuiltin("fnStrFree", &freeFnEntity.builtins);
@@ -1235,8 +1240,8 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
 
     allocFnEntity.decl = type + typeName + "_alloc (" + allocFnParamTypes.substr(2) + ");";
     allocFnEntity.def = type + typeName + "_alloc (" + allocFnParams.substr(2) + ") {" EOL + allocFnCode + "}";
-    copyFnEntity.decl = type + typeName + "_copy (" + type + ");";
-    copyFnEntity.def = type + typeName + "_copy (" + type + "o) {" EOL + copyFnCode + "}";
+    copyFnEntity.decl = type + typeName + "_copy (const " + type + ");";
+    copyFnEntity.def = type + typeName + "_copy (const " + type + "o) {" EOL + copyFnCode + "}";
     freeFnEntity.decl = "void " + typeName + "_free (" + type + ");";
     freeFnEntity.def = "void " + typeName + "_free (" + type + "o) {" EOL + freeFnCode + "}";
     reallocFnEntity.decl = type + typeName + "_realloc (" + type + ", " + type + ");";
@@ -1580,7 +1585,24 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
             argsCode += separator + ", ";
           }
 
-          if (exprCallArg.expr.type->isObj()) {
+          if (exprCallArg.expr.type->isFn()) {
+            auto argCode = std::string();
+
+            if (std::holds_alternative<ASTExprAccess>(*exprCallArg.expr.body)) {
+              auto exprAccess = std::get<ASTExprAccess>(*exprCallArg.expr.body);
+
+              if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.body)) {
+                argCode = std::get<std::shared_ptr<Var>>(*exprAccess.body)->name;
+              } else {
+                argCode = std::get<ASTMember>(*exprAccess.body).prop;
+              }
+            } else {
+              argCode = "(anonymous)";
+            }
+
+            code += "z";
+            argsCode += "(" + this->_nodeExpr(exprCallArg.expr, true) + R"(, "[Function: )" + argCode + R"(]"))";
+          } else if (exprCallArg.expr.type->isObj()) {
             auto typeName = Codegen::typeName(exprCallArg.expr.type->codeName);
             code += "s";
 

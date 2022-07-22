@@ -267,6 +267,6 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
   "node-var-decl-u64-mut-init"
 ));
 
-INSTANTIATE_TEST_SUITE_P(BuiltIn, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(Builtin, CodegenTest, testing::Values(
   "builtin-print"
 ));

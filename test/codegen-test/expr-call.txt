@@ -70,14 +70,14 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'e':
       case 'f':
       case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
-      case 'h': sprintf(buf, "%" PRId8, va_arg(args, int)); fputs(buf, stream); break;
-      case 'j': sprintf(buf, "%" PRId16, va_arg(args, int)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
       case 'i':
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;
-      case 'v': sprintf(buf, "%" PRIu8, va_arg(args, int)); fputs(buf, stream); break;
-      case 'w': sprintf(buf, "%" PRIu16, va_arg(args, int)); fputs(buf, stream); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;

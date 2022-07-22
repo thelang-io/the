@@ -51,14 +51,14 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'e':
       case 'f':
       case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
-      case 'h': sprintf(buf, "%" PRId8, va_arg(args, int)); fputs(buf, stream); break;
-      case 'j': sprintf(buf, "%" PRId16, va_arg(args, int)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
       case 'i':
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;
-      case 'v': sprintf(buf, "%" PRIu8, va_arg(args, int)); fputs(buf, stream); break;
-      case 'w': sprintf(buf, "%" PRIu16, va_arg(args, int)); fputs(buf, stream); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;
@@ -135,7 +135,7 @@ struct __THE_1_Test_0 {
 };
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, struct str);
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *);
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *);
 
@@ -145,7 +145,7 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_c, struct str __THE
   r->__THE_0_d = __THE_0_d;
   return r;
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *o) {
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   r->__THE_0_c = o->__THE_0_c;
   r->__THE_0_d = str_copy(o->__THE_0_d);
@@ -171,169 +171,6 @@ int main () {
   print(stdout, "sz", str_copy(__THE_0_a_0), "\n");
   const struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(0, str_alloc("test"));
   print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_b_0)), "\n");
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
-  str_free((struct str) __THE_0_a_0);
-}
-======= code-windows =======
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-struct str {
-  char *c;
-  size_t l;
-};
-
-struct str int_str (int32_t);
-void print (FILE *, const char *, ...);
-struct str str_alloc (const char *);
-struct str str_concat_cstr (struct str, const char *);
-struct str str_concat_str (struct str, struct str);
-struct str str_copy (const struct str);
-struct str str_escape (const struct str);
-void str_free (struct str);
-void *alloc (size_t);
-
-struct str int_str (int32_t d) {
-  char buf[512];
-  sprintf(buf, "%" PRId32, d);
-  return str_alloc(buf);
-}
-void print (FILE *stream, const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  char buf[512];
-  struct str s;
-  while (*fmt) {
-    switch (*fmt++) {
-      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
-      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
-      case 'c': fputc(va_arg(args, int), stream); break;
-      case 'e':
-      case 'f':
-      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
-      case 'h': sprintf(buf, "%" PRId8, va_arg(args, int)); fputs(buf, stream); break;
-      case 'j': sprintf(buf, "%" PRId16, va_arg(args, int)); fputs(buf, stream); break;
-      case 'i':
-      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
-      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;
-      case 'v': sprintf(buf, "%" PRIu8, va_arg(args, int)); fputs(buf, stream); break;
-      case 'w': sprintf(buf, "%" PRIu16, va_arg(args, int)); fputs(buf, stream); break;
-      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
-      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
-      case 'z': fputs(va_arg(args, char *), stream); break;
-    }
-  }
-  va_end(args);
-}
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
-}
-struct str str_concat_cstr (struct str s, const char *c) {
-  size_t l = s.l + strlen(c);
-  char *r = alloc(l);
-  memcpy(r, s.c, s.l);
-  memcpy(&r[s.l], c, l - s.l);
-  free(s.c);
-  return (struct str) {r, l};
-}
-struct str str_concat_str (struct str s1, struct str s2) {
-  size_t l = s1.l + s2.l;
-  char *r = alloc(l);
-  memcpy(r, s1.c, s1.l);
-  memcpy(&r[s1.l], s2.c, s2.l);
-  free(s1.c);
-  free(s2.c);
-  return (struct str) {r, l};
-}
-struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
-}
-struct str str_escape (const struct str s) {
-  char *r = alloc(s.l);
-  size_t l = 0;
-  for (size_t i = 0; i < s.l; i++) {
-    char c = s.c[i];
-    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
-      if (l + 2 > s.l) r = realloc(r, l + 2);
-      r[l++] = '\\';
-      if (c == '\f') r[l++] = 'f';
-      else if (c == '\n') r[l++] = 'n';
-      else if (c == '\r') r[l++] = 'r';
-      else if (c == '\t') r[l++] = 't';
-      else if (c == '\v') r[l++] = 'v';
-      else if (c == '"') r[l++] = '"';
-      continue;
-    }
-    if (l + 1 > s.l) r = realloc(r, l + 1);
-    r[l++] = c;
-  }
-  return (struct str) {r, l};
-}
-void str_free (struct str s) {
-  free(s.c);
-}
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
-struct __THE_1_Test_0;
-
-struct __THE_1_Test_0 {
-  int32_t __THE_0_c;
-  struct str __THE_0_d;
-};
-
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, struct str);
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *);
-
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_c, struct str __THE_0_d) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_c = __THE_0_c;
-  r->__THE_0_d = __THE_0_d;
-  return r;
-}
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (struct __THE_1_Test_0 *o) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_c = o->__THE_0_c;
-  r->__THE_0_d = str_copy(o->__THE_0_d);
-  return r;
-}
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  str_free((struct str) o->__THE_0_d);
-  free(o);
-}
-struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *o) {
-  struct str r = str_alloc("Test{");
-  r = str_concat_cstr(r, "c: ");
-  r = str_concat_str(r, int_str(o->__THE_0_c));
-  r = str_concat_cstr(r, ", d: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_d));
-  r = str_concat_cstr(r, "\"");
-  __THE_1_Test_0_free(o);
-  return str_concat_cstr(r, "}");
-}
-
-int main () {
-  const struct str __THE_0_a_0 = str_alloc("str");
-  print(stdout, "sz", str_copy(__THE_0_a_0), "\r\n");
-  const struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(0, str_alloc("test"));
-  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_b_0)), "\r\n");
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
   str_free((struct str) __THE_0_a_0);
 }
