@@ -6,8 +6,8 @@
  */
 
 import Error, NewError from "error"
-import OS from "os"
-import isFileSync, readFileSync, realpathSync from "fs"
+import * as fs from "fs"
+import * as os from "os"
 
 export obj Reader {
   path: str
@@ -16,34 +16,21 @@ export obj Reader {
 }
 
 export fn Reader_init (p: str) Reader {
-  mut path: str
+  path := fs.realpathSync(p)
 
-  try {
-    path = realpathSync(p)
-  } catch err: Error {
-    throw NewError("No such file \"" + path + "\"")
-  }
-
-  if !isFileSync(path) {
+  if !fs.isFileSync(path) {
     throw NewError("Path \"" + path + "\" is not a file")
   }
 
-  mut content: str
-
-  try {
-    content = readFileSync(path, "utf8")
-  } catch err: Error {
-    throw NewError("Unable to read file \"" + path + "\"")
-  }
-
+  content := fs.readFileSync(path, "utf8")
   return Reader{path: path, content: content, pos: 0}
 }
 
-export fn Reader_eof (this: Reader) bool {
+export fn Reader_eof (this: ref Reader) bool {
   return this.pos >= this.content.len
 }
 
-export fn Reader_lookahead (mut this: Reader, check: char) bool {
+export fn Reader_lookahead (mut this: ref Reader, check: char) bool {
   if this.pos + 1 >= this.content.len {
     return false
   }
@@ -51,7 +38,7 @@ export fn Reader_lookahead (mut this: Reader, check: char) bool {
   ch := this.content[this.pos + 1]
 
   if (
-    OS == "win" &&
+    os.type() == "Windows" &&
     ch == '\r' &&
     this.pos + 2 < this.content.len &&
     this.content[this.pos + 2] == '\n'
@@ -68,7 +55,7 @@ export fn Reader_lookahead (mut this: Reader, check: char) bool {
   return false
 }
 
-export fn Reader_next (mut this: Reader) char {
+export fn Reader_next (mut this: ref Reader) char {
   if Reader_eof(this) {
     throw NewError("Tried to read on eof")
   }
@@ -76,7 +63,7 @@ export fn Reader_next (mut this: Reader) char {
   ch1 := this.content[this.pos]
   this.pos++
 
-  if OS == "win" && ch1 == '\r' && !Reader_eof(this) {
+  if os.type() == "Windows" && ch1 == '\r' && !Reader_eof(this) {
     ch2 := this.content[this.pos]
 
     if ch2 == '\n' {
@@ -88,15 +75,15 @@ export fn Reader_next (mut this: Reader) char {
   return ch1
 }
 
-export fn Reader_seek (mut this: Reader, pos: int) {
+export fn Reader_seek (mut this: ref Reader, pos: int) {
   this.pos = pos
 }
 
-export fn Reader_slice (this: Reader, start: int, end: int) str {
+export fn Reader_slice (this: ref Reader, start: int?, end: int?) str {
   return this.content.slice(start, end)
 }
 
-export fn Reader_walk (mut this: Reader, match: fn (char) bool) {
+export fn Reader_walk (mut this: ref Reader, match: fn (char) bool) {
   loop !Reader_eof(this) {
     pos := this.pos
     ch := Reader_next(this)

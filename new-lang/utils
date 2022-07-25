@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-export fn char_isAlpha (this: char) bool {
+export fn char_isAlpha (this: ref char) bool {
   return
     this == 'A' || this == 'a' ||
     this == 'B' || this == 'b' ||
@@ -35,23 +35,23 @@ export fn char_isAlpha (this: char) bool {
     this == 'Z' || this == 'z'
 }
 
-export fn char_isAlphaNum (this: char) bool {
+export fn char_isAlphaNum (this: ref char) bool {
   return char_isAlpha(this) || char_isDigit(this)
 }
 
-export fn char_isDigit (this: char) bool {
+export fn char_isDigit (this: ref char) bool {
   return
     this == '0' || this == '1' || this == '2' || this == '3' || this == '4' ||
     this == '5' || this == '6' || this == '7' || this == '8' || this == '9'
 }
 
-export fn char_isSpace (this: char) bool {
+export fn char_isSpace (this: ref char) bool {
   return
     this == ' ' || this == '\t' || this == '\n' || this == '\v' ||
     this == '\f' || this == '\r'
 }
 
-export fn char_repeat (this: char, times: int) str {
+export fn char_repeat (this: ref char, times: int) str {
   mut result: str
 
   loop i < times {
@@ -61,14 +61,36 @@ export fn char_repeat (this: char, times: int) str {
   return result
 }
 
-export fn str_lines (this: str) str[] {
-  // todo
+export fn str_lines (this: ref str) str[] {
+  mut result: str[]
+  mut pushNext := true
+
+  loop i := 0; i < this.len; i++ {
+    ch := this[i]
+
+    if pushNext {
+      result.push(ch.str())
+      pushNext = false
+    } else {
+      result[result.len - 1] += ch.str()
+    }
+
+    if ch == '\r' {
+      if i != this.len - 1 && this[i + 1] == '\n' {
+        result[result.len - 1] += this[++i].str()
+      }
+
+      pushNext = true
+    } elif ch == '\n' {
+      pushNext = true
+    }
+  }
+
+  return result
 }
 
-export fn str_toUpper (this: str) str {
-  // todo
+export fn str_toUpper (this: ref str) str {
 }
 
-export fn str_toUpperFirst (this: str) str {
-  return str_toUpper(this.slice(0, 1)) + this.slice(1)
+export fn str_toUpperFirst (this: ref str) str {
 }

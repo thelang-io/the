@@ -5,8 +5,6 @@
  * Proprietary and confidential
  */
 
-import str_toUpperFirst from "./utils"
-
 export fn E0000 (unexpected: char, expected: char?) str {
   return "E0000: Unexpected token `" + unexpected.str() + "`" +
     (expected == nil ? "" : ", expected.str() `" + expected + "`")
@@ -57,6 +55,5 @@ export fn E0011 () str {
 }
 
 export fn E0012 (type: str) str {
-  return "E0012 - " + str_toUpperFirst(type) +
-    " float literals are not allowed"
+  return "E0012 - " + type.toUpperFirst() + " float literals are not allowed"
 }

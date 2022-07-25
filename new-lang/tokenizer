@@ -6,22 +6,8 @@
  */
 
 import Error, NewError from "error"
+import * as os from "os"
 
-import (
-  E0000,
-  E0001,
-  E0002,
-  E0003,
-  E0004,
-  E0005,
-  E0006,
-  E0007,
-  E0008,
-  E0009,
-  E0010,
-  E0011,
-  E0012
-) from "./error"
 import Location_locate from "./location"
 import (
   Reader,
@@ -45,10 +31,10 @@ import (
   Token_isNotNewLine,
   Token_isStrEsc
 ) from "./token"
-import char_isDigit, char_isSpace, char_repeat, str_lines from "./utils"
+import * from "./error"
 
 export obj Tokenizer {
-  reader: Reader
+  reader: ref Reader
   state: TokenizerState
   data: Token[]
   errors: str[]
@@ -61,16 +47,24 @@ export obj TokenizerState {
   handled: bool
 }
 
-export fn Tokenizer_init (reader: Reader) Tokenizer {
+export fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
   return Tokenizer{
     reader: reader,
-    state: TokenizerState{idx: 0, pos: 0, ch: '\0', handled: false},
+    state: TokenizerState{
+      idx: 0,
+      pos: 0,
+      ch: '\0',
+      handled: false
+    },
     data: [],
     errors: []
   }
 }
 
-export fn Tokenizer_next (mut this: Tokenizer, withIgnored := false) Token {
+export fn Tokenizer_next (
+  mut this: ref Tokenizer,
+  withIgnored := false
+) Token {
   if this.data.len < this.state.idx {
     return this.data[this.state.idx++]
   } elif this.data[this.data.len - 1].type == TK_EOF {
@@ -93,7 +87,7 @@ export fn Tokenizer_next (mut this: Tokenizer, withIgnored := false) Token {
   }
 }
 
-fn _Tokenizer_getToken (mut this: Tokenizer) Token {
+fn _Tokenizer_getToken (mut this: ref Tokenizer) Token {
   if Reader_eof(this.reader) {
     return Token{TK_EOF, "", this.state.pos, this.state.pos}
   }
@@ -124,7 +118,7 @@ fn _Tokenizer_getToken (mut this: Tokenizer) Token {
   }
 }
 
-fn _Tokenizer_maybeChar (mut this: Tokenizer) Token? {
+fn _Tokenizer_maybeChar (mut this: ref Tokenizer) Token? {
   if this.state.ch != '\'' {
     return nil
   }
@@ -180,7 +174,7 @@ fn _Tokenizer_maybeChar (mut this: Tokenizer) Token? {
   return _Tokenizer_wrapToken(this, TK_LIT_CHAR)
 }
 
-fn _Tokenizer_maybeCommentBlock (mut this: Tokenizer) Token? {
+fn _Tokenizer_maybeCommentBlock (mut this: ref Tokenizer) Token? {
   if this.state.ch != '/' || !Reader_lookahead(this.reader, '*') {
     return nil
   }
@@ -201,7 +195,7 @@ fn _Tokenizer_maybeCommentBlock (mut this: Tokenizer) Token? {
   return _Tokenizer_wrapToken(this, TK_COMMENT_BLOCK)
 }
 
-fn _Tokenizer_maybeCommentLine (mut this: Tokenizer) Token? {
+fn _Tokenizer_maybeCommentLine (mut this: ref Tokenizer) Token? {
   if this.state.ch != '/' || !Reader_lookahead(this.reader, '/') {
     return nil
   }
@@ -210,7 +204,7 @@ fn _Tokenizer_maybeCommentLine (mut this: Tokenizer) Token? {
   return _Tokenizer_wrapToken(this, TK_COMMENT_LINE)
 }
 
-fn _Tokenizer_maybeKeyword (mut this: Tokenizer) Token? {
+fn _Tokenizer_maybeKeyword (mut this: ref Tokenizer) Token? {
   if !Token_isIdStart(this.state.ch) {
     return nil
   }
@@ -267,8 +261,8 @@ fn _Tokenizer_maybeKeyword (mut this: Tokenizer) Token? {
   return _Tokenizer_wrapToken(this, TK_ID)
 }
 
-fn _Tokenizer_maybeNumber (mut this: Tokenizer) Token? {
-  if !char_isDigit(this.state.ch) {
+fn _Tokenizer_maybeNumber (mut this: ref Tokenizer) Token? {
+  if !this.state.ch.isDigit() {
     return nil
   }
 
@@ -321,7 +315,7 @@ fn _Tokenizer_maybeNumber (mut this: Tokenizer) Token? {
   )
 }
 
-fn _Tokenizer_maybeOp (mut this: Tokenizer) Token? {
+fn _Tokenizer_maybeOp (mut this: ref Tokenizer) Token? {
   if this.state.ch == '&' {
     if Reader_lookahead(this.reader, '&') {
       if Reader_lookahead(this.reader, '=') {
@@ -475,7 +469,7 @@ fn _Tokenizer_maybeOp (mut this: Tokenizer) Token? {
   return nil
 }
 
-fn _Tokenizer_maybeString (mut this: Tokenizer) Token? {
+fn _Tokenizer_maybeString (mut this: ref Tokenizer) Token? {
   if this.state.ch != '"' {
     return nil
   }
@@ -503,8 +497,8 @@ fn _Tokenizer_maybeString (mut this: Tokenizer) Token? {
   return _Tokenizer_wrapToken(this, TK_LIT_STR)
 }
 
-fn _Tokenizer_maybeWhitespace (mut this: Tokenizer) Token? {
-  if !char_isSpace(this.state.ch) {
+fn _Tokenizer_maybeWhitespace (mut this: ref Tokenizer) Token? {
+  if !this.state.ch.isSpace() {
     return nil
   }
 
@@ -512,14 +506,14 @@ fn _Tokenizer_maybeWhitespace (mut this: Tokenizer) Token? {
   return _Tokenizer_wrapToken(this, TK_WHITESPACE)
 }
 
-fn _Tokenizer_raise (mut this: Tokenizer, message: str, start: int) {
+fn _Tokenizer_raise (mut this: ref Tokenizer, message: str, start: int) {
   if this.state.handled {
     return
   }
 
   startLoc := Location_locate(this.reader.content, start)
   endLoc := Location_locate(this.reader.content, this.reader.pos)
-  lines := str_lines(this.reader.content)
+  lines := this.reader.content.lines()
 
   mut errorLines: str[]
   mut errorLinesNums: int[]
@@ -533,18 +527,18 @@ fn _Tokenizer_raise (mut this: Tokenizer, message: str, start: int) {
   errorLinesNums.push(startLoc.line - 1)
 
   if startLoc.line == endLoc.line && startLoc.col == endLoc.col {
-    errorLines.push(char_repeat(' ', startLoc.col - 1) + '^')
+    errorLines.push(' '.repeat(startLoc.col - 1) + '^')
   } elif startLoc.line == endLoc.line {
     errorLines.push(
-      char_repeat(' ', startLoc.col - 1) +
-      char_repeat('~', endLoc.col - startLoc.col)
+      ' '.repeat(startLoc.col - 1) +
+      '~'.repeat(endLoc.col - startLoc.col)
     )
   } else {
     errorLine := lines[startLoc.line - 1]
 
     errorLines.push(
-      char_repeat(' ', startLoc.col - 1) +
-      char_repeat('~', errorLine.len - startLoc.col)
+      ' '.repeat(startLoc.col - 1) +
+      '~'.repeat(errorLine.len - startLoc.col)
     )
   }
 
@@ -558,19 +552,19 @@ fn _Tokenizer_raise (mut this: Tokenizer, message: str, start: int) {
   gutterLen := errorLinesNums[errorLinesNums.len - 1].str().len + 1
 
   mut error := this.reader.path + ":" + startLoc.line.str() + ":" +
-    startLoc.col.str() + ": SyntaxError: " + message + EOL
+    startLoc.col.str() + ": SyntaxError: " + message + os.lineSeparator
 
   mut prevLineNum := 0
 
-  loop mut i := 0; i < errorLinesNums.len; i++ {
+  loop i := 0; i < errorLinesNums.len; i++ {
     errorLineNum := errorLinesNums[i]
     sameLine := prevLineNum == errorLineNum
 
     if sameLine {
-      error += char_repeat(gutterLen)
+      error += ' '.repeat(gutterLen)
     } else {
       errorLineNumLen := errorLineNum.str().len
-      error += errorLineNum.str() + char_repeat(gutterLen - errorLineNumLen)
+      error += errorLineNum.str() + ' '.repeat(gutterLen - errorLineNumLen)
     }
 
     error += "| " + errorLines[i]
@@ -582,7 +576,7 @@ fn _Tokenizer_raise (mut this: Tokenizer, message: str, start: int) {
 }
 
 fn _Tokenizer_wrapFloat (
-  mut this: Tokenizer,
+  mut this: ref Tokenizer,
   type: TokenType,
   errorMessage: str
 ) Token {
@@ -617,14 +611,14 @@ fn _Tokenizer_wrapFloat (
     if ch2 == '.' {
       Reader_seek(this.reader, pos1)
       return _Tokenizer_wrapToken(this, type)
-    } elif !char_isDigit(ch2) {
+    } elif !Token_isIntDec(ch2) {
       Reader_walk(this.reader, Token_isId)
       _Tokenizer_raise(this, E0010(), this.state.pos)
 
       return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
     }
 
-    Reader_walk(this.reader, char_isDigit)
+    Reader_walk(this.reader, Token_isIntDec)
 
     if Reader_eof(this.reader) {
       return _Tokenizer_wrapTokenFloat(this, type)
@@ -653,7 +647,7 @@ fn _Tokenizer_wrapFloat (
 
   ch4 := Reader_next(this.reader)
 
-  if !char_isDigit(ch4) && ch4 != '+' && ch4 != '-' {
+  if !Token_isIntDec(ch4) && ch4 != '+' && ch4 != '-' {
     Reader_walk(this.reader, Token_isId)
     _Tokenizer_raise(this, E0011(), expStartPos)
 
@@ -668,7 +662,7 @@ fn _Tokenizer_wrapFloat (
 
     ch5 := Reader_next(this.reader)
 
-    if !char_isDigit(ch5) {
+    if !Token_isIntDec(ch5) {
       Reader_walk(this.reader, Token_isId)
       _Tokenizer_raise(this, E0011(), expStartPos)
 
@@ -676,12 +670,12 @@ fn _Tokenizer_wrapFloat (
     }
   }
 
-  Reader_walk(this.reader, char_isDigit)
+  Reader_walk(this.reader, Token_isIntDec)
   return _Tokenizer_wrapTokenFloat(this, type)
 }
 
 fn _Tokenizer_wrapInt (
-  mut this: Tokenizer,
+  mut this: ref Tokenizer,
   type: TokenType,
   errorMessage: str,
   check: fn (char) bool
@@ -704,7 +698,7 @@ fn _Tokenizer_wrapInt (
   return _Tokenizer_wrapFloat(this, type, errorMessage)
 }
 
-fn _Tokenizer_wrapToken (mut this: Tokenizer, type: TokenType) Token {
+fn _Tokenizer_wrapToken (mut this: ref Tokenizer, type: TokenType) Token {
   start := this.state.pos
   this.state.pos = this.reader.pos
   this.state.handled = true
@@ -717,7 +711,7 @@ fn _Tokenizer_wrapToken (mut this: Tokenizer, type: TokenType) Token {
   }
 }
 
-fn _Tokenizer_wrapTokenFloat (mut this: Tokenizer, type: TokenType) Token {
+fn _Tokenizer_wrapTokenFloat (mut this: ref Tokenizer, type: TokenType) Token {
   if !Reader_eof(this.reader) {
     ch := Reader_next(this.reader)
 
@@ -731,11 +725,11 @@ fn _Tokenizer_wrapTokenFloat (mut this: Tokenizer, type: TokenType) Token {
     Reader_seek(this.reader, pos)
   }
 
-  if (type == TK_LIT_INT_BIN) {
+  if type == TK_LIT_INT_BIN {
     _Tokenizer_raise(this, E0014("binary"), this.state.pos)
-  } else if (type == TK_LIT_INT_HEX) {
+  } elif type == TK_LIT_INT_HEX {
     _Tokenizer_raise(this, E0014("hexadecimal"), this.state.pos)
-  } else if (type == TK_LIT_INT_OCT) {
+  } elif type == TK_LIT_INT_OCT {
     _Tokenizer_raise(this, E0014("octal"), this.state.pos)
   }
 

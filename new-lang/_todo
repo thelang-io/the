@@ -1,18 +1,31 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 // features:
-// - array
-// - optionals
-// - enum
-// - union
-// - constants
-// - try-catch | throw | NewError | Error{name: str, message: str}
+//// arrays
+//// import/import * as/export
+//// optionals
+//// enums | enums.str () str
+//// unions
+//// try/catch | throw
 
 // globals:
-// - print | realpathSync | isFileSync
-// - readFileSync | writeFileSync
-// - stderr argv
-// - EOL | OS
-// - exit | EXIT_FAILURE | EXIT_SUCCESS
-// - env vars
-// - arr.join(str) | arr.len | push | pop
-// - str.len | str.slice()
-// - int.str()
+//// print (to := process.stdout) void | exit (status := 0) void
+//// arr.len: int | arr.join (str) str | arr.pop (T) void | arr.push (T) void
+//// str.len | str.slice (int?, int?) str
+//// *.str () str
+//// utils functions
+
+// libraries:
+//// error = NewError (message: str) Error | Error{message: str}
+//// fs =
+////   realpathSync (path: str) str
+////   isFileSync (path: str) bool
+////   readFileSync (path: str, encoding: str) str
+////   writeFileSync (path: str, data: str, encoding: str) void
+//// process = args: str[] | stdin-stdout-stderr: int
+//// os = env: str[] | lineSeparator: str | pathSeparator: str | type () str

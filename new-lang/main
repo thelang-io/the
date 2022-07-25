@@ -5,56 +5,38 @@
  * Proprietary and confidential
  */
 
-import EOL from "os"
 import Error, NewError from "error"
+import * as os from "os"
 
+import Arguments_init from "./arguments"
 import Reader, Reader_init from "./reader"
 import TokenType, Token_str from "./token"
 import Tokenizer_init, Tokenizer_next from "./tokenizer"
 
 main {
   try {
-    if argv.len == 1 {
-      throw NewError("REPL is not supported")
-    }
-
-    mut fileName: str?
-
-    loop mut i := 1; i < argv.len; i++ {
-      arg := argv[i]
-
-      if arg[0] == '-' {
-        throw NewError("Bad option " + arg)
-      } elif fileName == nil {
-        fileName = arg
-      } else {
-        throw NewError("Processing multiple files is not supported")
-      }
-    }
-
-    if fileName == nil {
-      throw NewError("File is not specified")
-    }
-
-    mut reader := Reader_init(fileName)
-    mut tokenizer := Tokenizer_init(reader)
+    arguments := Arguments_init()
+    mut reader := Reader_init(arguments.fileName)
+    mut tokenizer := Tokenizer_init(ref reader)
     mut result: str[]
 
     loop (
-      mut tok := Tokenizer_next(tokenizer);
+      tok := Tokenizer_next(ref tokenizer);
       tok.type != TK_EOF;
-      tok = Tokenizer_next(tokenizer)
+      tok = Tokenizer_next(ref tokenizer)
     ) {
       result.push(Token_str(tok))
     }
 
     if tokenizer.errors.len != 0 {
-      print(tokenizer.errors.join(EOL), to: stderr)
+      throw NewError(
+        tokenizer.errors.join(os.lineSeparator + os.lineSeparator)
+      )
     } else {
-      print(result.join(EOL))
+      print(result.join(os.lineSeparator))
     }
   } catch err: Error {
-    print(err.name + ": " + err.message, to: stderr)
-    exit(EXIT_FAILURE)
+    print("Error: " + err.message, to: process.stderr)
+    exit(1)
   }
 }

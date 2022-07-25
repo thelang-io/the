@@ -1,9 +1,32 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 export obj Location {
   line: int
   col: int
-  pos: int
 }
 
 export fn Location_locate (content: str, pos: int) Location {
-  // todo
+  if pos == 0 {
+    return Location{line: 1, col: 1}
+  }
+
+  lines := content.lines()
+  mut curPos := 0
+
+  loop i := 0; i < lines.len; i++ {
+    line := lines[i]
+
+    if curPos + line.len > pos {
+      return Location{line: i + 1, col: pos - curPos + 1}
+    }
+
+    curPos += line.len
+  }
+
+  return Location{line: lines.len, col: lines[lines.len - 1].len}
 }

@@ -1826,6 +1826,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       this->_activateBuiltin("fnStrNot");
       argCode = "str_not(" + argCode + ")";
       opCode = "";
+    } else if (argCode.starts_with("*")) {
+      argCode = "(" + argCode + ")";
     }
 
     return this->_wrapNodeExpr(nodeExpr, exprUnary.prefix ? opCode + argCode : argCode + opCode);
