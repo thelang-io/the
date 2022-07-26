@@ -11,12 +11,17 @@
 #include "ASTNode.hpp"
 #include "Parser.hpp"
 
+struct ASTState {
+  bool insideLoopInit = false;
+};
+
 class AST {
  public:
   Parser *parser;
   Reader *reader;
   TypeMap typeMap;
   VarMap varMap;
+  ASTState state;
 
   static void populateParents (ASTBlock &, ASTNode * = nullptr);
 

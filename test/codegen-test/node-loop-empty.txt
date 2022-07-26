@@ -4,7 +4,7 @@ main {
 
   loop ; i < 10; i++ {
   }
-  loop mut i := 0; i < 10; i++ {}
+  loop i := 0; i < 10; i++ {}
 
   loop ;; i++ {
     if i > 10 {
@@ -16,7 +16,7 @@ main {
     i++
   }
 
-  loop mut i := 0; i < 10; {
+  loop i := 0; i < 10; {
     i++
   }
 

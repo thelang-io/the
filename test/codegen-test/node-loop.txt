@@ -8,7 +8,7 @@ main {
     i *= 2
   }
 
-  loop mut i := 0; i < 10; i++ {
+  loop i := 0; i < 10; i++ {
     j += i
 
     if j > 10 {
@@ -16,7 +16,7 @@ main {
     }
   }
 
-  loop mut i := 0; i < 10; i++ {
+  loop i := 0; i < 10; i++ {
     if (j / 2) * 2 != j {
       continue
     }
@@ -24,7 +24,7 @@ main {
     j += i
   }
 
-  loop mut i := 0; i < 10; {
+  loop i := 0; i < 10; {
     i++
 
     if i % 2 {
@@ -34,11 +34,11 @@ main {
     j += i
   }
 
-  loop mut i := 0; i < 3; i++ {
+  loop i := 0; i < 3; i++ {
     j++
   }
 
-  loop mut i := 100; i > 0; i-- {
+  loop i := 100; i > 0; i-- {
     i := 0
     j := j * 2 + i
   }
@@ -46,13 +46,13 @@ main {
   loop i = 0; i < 10; i++ {
     k := i
 
-    loop mut i := k; i < 10; i++ {
+    loop i := k; i < 10; i++ {
       j++
     }
   }
 
-  loop mut i := 0; i < 10; i++ {
-    loop mut j := 0; j < 10; j++ {
+  loop i := 0; i < 10; i++ {
+    loop j := 0; j < 10; j++ {
       if (i / 2) * 2 == i {
         break
       }

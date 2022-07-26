@@ -164,14 +164,15 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
-  "throw-E0143-node-if-expected-expr"
+  "throw-E0143-stmt-if-expected-expr"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
   "throw-E0105-stmt-loop-unexpected-init",
   "throw-E0106-stmt-loop-semi-after-init",
   "throw-E0107-stmt-loop-unexpected-token-after-init",
-  "throw-E0108-stmt-loop-semi-after-condition"
+  "throw-E0108-stmt-loop-semi-after-condition",
+  "throw-E0144-stmt-loop-unexpected-mut"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(

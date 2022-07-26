@@ -1,6 +1,6 @@
 ======= stdin =======
-loop mut i := 0 ; i < 2 , i++ {}
+loop i := 0 ; i < 2 , i++ {}
 ======= stderr =======
-/test:1:25: E0108 - Expected semicolon after loop condition
-  1 | loop mut i := 0 ; i < 2 , i++ {}
-    |                         ^
+/test:1:21: E0108 - Expected semicolon after loop condition
+  1 | loop i := 0 ; i < 2 , i++ {}
+    |                     ^

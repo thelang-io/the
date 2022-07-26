@@ -143,6 +143,14 @@ ParserStmt Parser::next () {
       throw Error(this->reader, tok2.start, E0107);
     }
 
+    if (std::holds_alternative<ParserStmtVarDecl>(*loopInit.body)) {
+      auto stmtVarDecl = std::get<ParserStmtVarDecl>(*loopInit.body);
+
+      if (stmtVarDecl.mut) {
+        throw Error(this->reader, tok1.start, E0144);
+      }
+    }
+
     if (std::holds_alternative<ParserStmtExpr>(*loopInit.body) && tok2.type == TK_OP_LBRACE) {
       this->lexer->seek(loc2);
 

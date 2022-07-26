@@ -2,7 +2,7 @@
 fn test () int {
   mut result := 0
 
-  loop mut i := ""; i != "aaa"; i += "a" {
+  loop i := ""; i != "aaa"; i += "a" {
     j := "b" + i
 
     if j == "ba" {
@@ -24,13 +24,13 @@ fn test () int {
     }
   }
 
-  loop mut i := ""; i != "aaa"; i += "a" {
+  loop i := ""; i != "aaa"; i += "a" {
     j := "b" + i
     break
     k := j + "a"
   }
 
-  loop mut i := ""; i != "aaa"; i += "a" {
+  loop i := ""; i != "aaa"; i += "a" {
     j := "b" + i
     continue
     k := j + "a"
@@ -40,7 +40,7 @@ fn test () int {
     break
   }
 
-  loop mut i := 0; i < 10; i++ {
+  loop i := 0; i < 10; i++ {
     continue
   }
 

@@ -1,0 +1,7 @@
+======= stdin =======
+loop mut i := 0;; {
+}
+======= stderr =======
+/test:1:6: E0144 - Loop initialization is mutable by default
+  1 | loop mut i := 0;; {
+    |      ^~~~~~~~~~~

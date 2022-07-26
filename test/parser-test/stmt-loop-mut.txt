@@ -1,19 +1,19 @@
 ======= stdin =======
-loop mut i := 0; i < 10; i++ {
+loop i := 0; i < 10; i++ {
   j += i
 
   if j > 10 {
     break
   }
 }
-loop mut i := 0; i < 10; i++ {
+loop i := 0; i < 10; i++ {
   if (j / 2) * 2 != j {
     continue
   }
 
   j += i
 }
-loop mut i := 0; i < 10; {
+loop i := 0; i < 10; {
   i++
 
   if i % 2 {
@@ -22,10 +22,10 @@ loop mut i := 0; i < 10; {
 
   j += i
 }
-loop mut i := 0; i < 3; i++ {
+loop i := 0; i < 3; i++ {
   j++
 }
-loop mut i := 100; i > 0; i-- {
+loop i := 100; i > 0; i-- {
   i := 0
   j := j * 2 + i
 }
@@ -33,15 +33,15 @@ loop mut i := 100; i > 0; i-- {
 <Stmt start="1:1" end="7:2">
   <StmtLoop>
     <slot name="init">
-      <Stmt start="1:6" end="1:16">
-        <StmtVarDecl mut="true">
+      <Stmt start="1:6" end="1:12">
+        <StmtVarDecl mut="false">
           <slot name="id">
-            <Token type="ID" val="i" start="1:10" end="1:11" />
+            <Token type="ID" val="i" start="1:6" end="1:7" />
           </slot>
           <slot name="init">
-            <StmtExpr parenthesized="false" start="1:15" end="1:16">
+            <StmtExpr parenthesized="false" start="1:11" end="1:12">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="0" start="1:15" end="1:16" />
+                <Token type="LIT_INT_DEC" val="0" start="1:11" end="1:12" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -49,22 +49,22 @@ loop mut i := 100; i > 0; i-- {
       </Stmt>
     </slot>
     <slot name="cond">
-      <StmtExpr parenthesized="false" start="1:18" end="1:24">
+      <StmtExpr parenthesized="false" start="1:14" end="1:20">
         <ExprBinary>
           <slot name="left">
-            <StmtExpr parenthesized="false" start="1:18" end="1:19">
+            <StmtExpr parenthesized="false" start="1:14" end="1:15">
               <ExprAccess>
-                <Token type="ID" val="i" start="1:18" end="1:19" />
+                <Token type="ID" val="i" start="1:14" end="1:15" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_LT" val="<" start="1:20" end="1:21" />
+            <Token type="OP_LT" val="<" start="1:16" end="1:17" />
           </slot>
           <slot name="right">
-            <StmtExpr parenthesized="false" start="1:22" end="1:24">
+            <StmtExpr parenthesized="false" start="1:18" end="1:20">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="10" start="1:22" end="1:24" />
+                <Token type="LIT_INT_DEC" val="10" start="1:18" end="1:20" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -72,17 +72,17 @@ loop mut i := 100; i > 0; i-- {
       </StmtExpr>
     </slot>
     <slot name="upd">
-      <StmtExpr parenthesized="false" start="1:26" end="1:29">
+      <StmtExpr parenthesized="false" start="1:22" end="1:25">
         <ExprUnary prefix="false">
           <slot name="arg">
-            <StmtExpr parenthesized="false" start="1:26" end="1:27">
+            <StmtExpr parenthesized="false" start="1:22" end="1:23">
               <ExprAccess>
-                <Token type="ID" val="i" start="1:26" end="1:27" />
+                <Token type="ID" val="i" start="1:22" end="1:23" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_PLUS_PLUS" val="++" start="1:27" end="1:29" />
+            <Token type="OP_PLUS_PLUS" val="++" start="1:23" end="1:25" />
           </slot>
         </ExprUnary>
       </StmtExpr>
@@ -147,15 +147,15 @@ loop mut i := 100; i > 0; i-- {
 <Stmt start="8:1" end="14:2">
   <StmtLoop>
     <slot name="init">
-      <Stmt start="8:6" end="8:16">
-        <StmtVarDecl mut="true">
+      <Stmt start="8:6" end="8:12">
+        <StmtVarDecl mut="false">
           <slot name="id">
-            <Token type="ID" val="i" start="8:10" end="8:11" />
+            <Token type="ID" val="i" start="8:6" end="8:7" />
           </slot>
           <slot name="init">
-            <StmtExpr parenthesized="false" start="8:15" end="8:16">
+            <StmtExpr parenthesized="false" start="8:11" end="8:12">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="0" start="8:15" end="8:16" />
+                <Token type="LIT_INT_DEC" val="0" start="8:11" end="8:12" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -163,22 +163,22 @@ loop mut i := 100; i > 0; i-- {
       </Stmt>
     </slot>
     <slot name="cond">
-      <StmtExpr parenthesized="false" start="8:18" end="8:24">
+      <StmtExpr parenthesized="false" start="8:14" end="8:20">
         <ExprBinary>
           <slot name="left">
-            <StmtExpr parenthesized="false" start="8:18" end="8:19">
+            <StmtExpr parenthesized="false" start="8:14" end="8:15">
               <ExprAccess>
-                <Token type="ID" val="i" start="8:18" end="8:19" />
+                <Token type="ID" val="i" start="8:14" end="8:15" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_LT" val="<" start="8:20" end="8:21" />
+            <Token type="OP_LT" val="<" start="8:16" end="8:17" />
           </slot>
           <slot name="right">
-            <StmtExpr parenthesized="false" start="8:22" end="8:24">
+            <StmtExpr parenthesized="false" start="8:18" end="8:20">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="10" start="8:22" end="8:24" />
+                <Token type="LIT_INT_DEC" val="10" start="8:18" end="8:20" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -186,17 +186,17 @@ loop mut i := 100; i > 0; i-- {
       </StmtExpr>
     </slot>
     <slot name="upd">
-      <StmtExpr parenthesized="false" start="8:26" end="8:29">
+      <StmtExpr parenthesized="false" start="8:22" end="8:25">
         <ExprUnary prefix="false">
           <slot name="arg">
-            <StmtExpr parenthesized="false" start="8:26" end="8:27">
+            <StmtExpr parenthesized="false" start="8:22" end="8:23">
               <ExprAccess>
-                <Token type="ID" val="i" start="8:26" end="8:27" />
+                <Token type="ID" val="i" start="8:22" end="8:23" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_PLUS_PLUS" val="++" start="8:27" end="8:29" />
+            <Token type="OP_PLUS_PLUS" val="++" start="8:23" end="8:25" />
           </slot>
         </ExprUnary>
       </StmtExpr>
@@ -293,15 +293,15 @@ loop mut i := 100; i > 0; i-- {
 <Stmt start="15:1" end="23:2">
   <StmtLoop>
     <slot name="init">
-      <Stmt start="15:6" end="15:16">
-        <StmtVarDecl mut="true">
+      <Stmt start="15:6" end="15:12">
+        <StmtVarDecl mut="false">
           <slot name="id">
-            <Token type="ID" val="i" start="15:10" end="15:11" />
+            <Token type="ID" val="i" start="15:6" end="15:7" />
           </slot>
           <slot name="init">
-            <StmtExpr parenthesized="false" start="15:15" end="15:16">
+            <StmtExpr parenthesized="false" start="15:11" end="15:12">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="0" start="15:15" end="15:16" />
+                <Token type="LIT_INT_DEC" val="0" start="15:11" end="15:12" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -309,22 +309,22 @@ loop mut i := 100; i > 0; i-- {
       </Stmt>
     </slot>
     <slot name="cond">
-      <StmtExpr parenthesized="false" start="15:18" end="15:24">
+      <StmtExpr parenthesized="false" start="15:14" end="15:20">
         <ExprBinary>
           <slot name="left">
-            <StmtExpr parenthesized="false" start="15:18" end="15:19">
+            <StmtExpr parenthesized="false" start="15:14" end="15:15">
               <ExprAccess>
-                <Token type="ID" val="i" start="15:18" end="15:19" />
+                <Token type="ID" val="i" start="15:14" end="15:15" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_LT" val="<" start="15:20" end="15:21" />
+            <Token type="OP_LT" val="<" start="15:16" end="15:17" />
           </slot>
           <slot name="right">
-            <StmtExpr parenthesized="false" start="15:22" end="15:24">
+            <StmtExpr parenthesized="false" start="15:18" end="15:20">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="10" start="15:22" end="15:24" />
+                <Token type="LIT_INT_DEC" val="10" start="15:18" end="15:20" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -407,15 +407,15 @@ loop mut i := 100; i > 0; i-- {
 <Stmt start="24:1" end="26:2">
   <StmtLoop>
     <slot name="init">
-      <Stmt start="24:6" end="24:16">
-        <StmtVarDecl mut="true">
+      <Stmt start="24:6" end="24:12">
+        <StmtVarDecl mut="false">
           <slot name="id">
-            <Token type="ID" val="i" start="24:10" end="24:11" />
+            <Token type="ID" val="i" start="24:6" end="24:7" />
           </slot>
           <slot name="init">
-            <StmtExpr parenthesized="false" start="24:15" end="24:16">
+            <StmtExpr parenthesized="false" start="24:11" end="24:12">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="0" start="24:15" end="24:16" />
+                <Token type="LIT_INT_DEC" val="0" start="24:11" end="24:12" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -423,22 +423,22 @@ loop mut i := 100; i > 0; i-- {
       </Stmt>
     </slot>
     <slot name="cond">
-      <StmtExpr parenthesized="false" start="24:18" end="24:23">
+      <StmtExpr parenthesized="false" start="24:14" end="24:19">
         <ExprBinary>
           <slot name="left">
-            <StmtExpr parenthesized="false" start="24:18" end="24:19">
+            <StmtExpr parenthesized="false" start="24:14" end="24:15">
               <ExprAccess>
-                <Token type="ID" val="i" start="24:18" end="24:19" />
+                <Token type="ID" val="i" start="24:14" end="24:15" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_LT" val="<" start="24:20" end="24:21" />
+            <Token type="OP_LT" val="<" start="24:16" end="24:17" />
           </slot>
           <slot name="right">
-            <StmtExpr parenthesized="false" start="24:22" end="24:23">
+            <StmtExpr parenthesized="false" start="24:18" end="24:19">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="3" start="24:22" end="24:23" />
+                <Token type="LIT_INT_DEC" val="3" start="24:18" end="24:19" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -446,17 +446,17 @@ loop mut i := 100; i > 0; i-- {
       </StmtExpr>
     </slot>
     <slot name="upd">
-      <StmtExpr parenthesized="false" start="24:25" end="24:28">
+      <StmtExpr parenthesized="false" start="24:21" end="24:24">
         <ExprUnary prefix="false">
           <slot name="arg">
-            <StmtExpr parenthesized="false" start="24:25" end="24:26">
+            <StmtExpr parenthesized="false" start="24:21" end="24:22">
               <ExprAccess>
-                <Token type="ID" val="i" start="24:25" end="24:26" />
+                <Token type="ID" val="i" start="24:21" end="24:22" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_PLUS_PLUS" val="++" start="24:26" end="24:28" />
+            <Token type="OP_PLUS_PLUS" val="++" start="24:22" end="24:24" />
           </slot>
         </ExprUnary>
       </StmtExpr>
@@ -484,15 +484,15 @@ loop mut i := 100; i > 0; i-- {
 <Stmt start="27:1" end="30:2">
   <StmtLoop>
     <slot name="init">
-      <Stmt start="27:6" end="27:18">
-        <StmtVarDecl mut="true">
+      <Stmt start="27:6" end="27:14">
+        <StmtVarDecl mut="false">
           <slot name="id">
-            <Token type="ID" val="i" start="27:10" end="27:11" />
+            <Token type="ID" val="i" start="27:6" end="27:7" />
           </slot>
           <slot name="init">
-            <StmtExpr parenthesized="false" start="27:15" end="27:18">
+            <StmtExpr parenthesized="false" start="27:11" end="27:14">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="100" start="27:15" end="27:18" />
+                <Token type="LIT_INT_DEC" val="100" start="27:11" end="27:14" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -500,22 +500,22 @@ loop mut i := 100; i > 0; i-- {
       </Stmt>
     </slot>
     <slot name="cond">
-      <StmtExpr parenthesized="false" start="27:20" end="27:25">
+      <StmtExpr parenthesized="false" start="27:16" end="27:21">
         <ExprBinary>
           <slot name="left">
-            <StmtExpr parenthesized="false" start="27:20" end="27:21">
+            <StmtExpr parenthesized="false" start="27:16" end="27:17">
               <ExprAccess>
-                <Token type="ID" val="i" start="27:20" end="27:21" />
+                <Token type="ID" val="i" start="27:16" end="27:17" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_GT" val=">" start="27:22" end="27:23" />
+            <Token type="OP_GT" val=">" start="27:18" end="27:19" />
           </slot>
           <slot name="right">
-            <StmtExpr parenthesized="false" start="27:24" end="27:25">
+            <StmtExpr parenthesized="false" start="27:20" end="27:21">
               <ExprLit>
-                <Token type="LIT_INT_DEC" val="0" start="27:24" end="27:25" />
+                <Token type="LIT_INT_DEC" val="0" start="27:20" end="27:21" />
               </ExprLit>
             </StmtExpr>
           </slot>
@@ -523,17 +523,17 @@ loop mut i := 100; i > 0; i-- {
       </StmtExpr>
     </slot>
     <slot name="upd">
-      <StmtExpr parenthesized="false" start="27:27" end="27:30">
+      <StmtExpr parenthesized="false" start="27:23" end="27:26">
         <ExprUnary prefix="false">
           <slot name="arg">
-            <StmtExpr parenthesized="false" start="27:27" end="27:28">
+            <StmtExpr parenthesized="false" start="27:23" end="27:24">
               <ExprAccess>
-                <Token type="ID" val="i" start="27:27" end="27:28" />
+                <Token type="ID" val="i" start="27:23" end="27:24" />
               </ExprAccess>
             </StmtExpr>
           </slot>
           <slot name="op">
-            <Token type="OP_MINUS_MINUS" val="--" start="27:28" end="27:30" />
+            <Token type="OP_MINUS_MINUS" val="--" start="27:24" end="27:26" />
           </slot>
         </ExprUnary>
       </StmtExpr>

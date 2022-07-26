@@ -219,7 +219,9 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     this->varMap.save();
 
     if (stmtLoop.init != std::nullopt) {
+      this->state.insideLoopInit = true;
       nodeLoopInit = this->_node(*stmtLoop.init, varStack);
+      this->state.insideLoopInit = false;
     }
 
     if (stmtLoop.cond != std::nullopt) {
@@ -282,7 +284,8 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       nodeVarDeclInit = this->_nodeExpr(*stmtVarDecl.init, varStack);
     }
 
-    auto nodeVarDeclVar = this->varMap.add(nodeVarDeclName, this->varMap.name(nodeVarDeclName), nodeVarDeclType, stmtVarDecl.mut);
+    auto isMut = this->state.insideLoopInit || stmtVarDecl.mut;
+    auto nodeVarDeclVar = this->varMap.add(nodeVarDeclName, this->varMap.name(nodeVarDeclName), nodeVarDeclType, isMut);
     auto nodeVarDecl = ASTNodeVarDecl{nodeVarDeclVar, nodeVarDeclInit};
 
     return this->_wrapNode(stmt, nodeVarDecl);

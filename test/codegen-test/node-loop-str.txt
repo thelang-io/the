@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  loop mut i := ""; i != "aaa"; i += "a" {
+  loop i := ""; i != "aaa"; i += "a" {
   }
 
   mut a := ""
@@ -21,11 +21,11 @@ main {
     c += "a"
   }
 
-  loop mut d := ""; d != "aaa"; {
+  loop d := ""; d != "aaa"; {
     d += "a"
   }
 
-  loop mut e := "";; e += "a" {
+  loop e := "";; e += "a" {
     if e == "aaa" {
       break
     }
