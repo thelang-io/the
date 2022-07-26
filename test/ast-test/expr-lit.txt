@@ -21,12 +21,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" name="a">
             <BuiltinType name="char" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="char" />
             </slot>
@@ -42,12 +42,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="b_0" frame="2" mut="false" name="b">
+          <Var codeName="b_0" frame="2" name="b">
             <BuiltinType name="float" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="float" />
             </slot>
@@ -63,12 +63,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="c_0" frame="2" mut="false" name="c">
+          <Var codeName="c_0" frame="2" name="c">
             <BuiltinType name="str" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="str" />
             </slot>
@@ -84,12 +84,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="a_1" frame="2" mut="false" name="a">
+          <Var codeName="a_1" frame="2" name="a">
             <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="bool" />
             </slot>
@@ -105,12 +105,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="b_1" frame="2" mut="false" name="b">
+          <Var codeName="b_1" frame="2" name="b">
             <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="bool" />
             </slot>
@@ -126,12 +126,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="c_1" frame="2" mut="false" name="c">
+          <Var codeName="c_1" frame="2" name="c">
             <BuiltinType name="char" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="char" />
             </slot>
@@ -147,12 +147,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="d_0" frame="2" mut="false" name="d">
+          <Var codeName="d_0" frame="2" name="d">
             <BuiltinType name="float" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="float" />
             </slot>
@@ -168,12 +168,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="e_0" frame="2" mut="false" name="e">
+          <Var codeName="e_0" frame="2" name="e">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -189,12 +189,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="f_0" frame="2" mut="false" name="f">
+          <Var codeName="f_0" frame="2" name="f">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -210,12 +210,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="g_0" frame="2" mut="false" name="g">
+          <Var codeName="g_0" frame="2" name="g">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -231,12 +231,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="h_0" frame="2" mut="false" name="h">
+          <Var codeName="h_0" frame="2" name="h">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -252,12 +252,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="i_0" frame="2" mut="false" name="i">
+          <Var codeName="i_0" frame="2" name="i">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -273,12 +273,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="j_0" frame="2" mut="false" name="j">
+          <Var codeName="j_0" frame="2" name="j">
             <BuiltinType name="str" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="str" />
             </slot>

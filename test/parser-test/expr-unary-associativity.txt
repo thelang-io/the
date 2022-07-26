@@ -6,7 +6,7 @@ a = -~++b
 a = -~b++
 ======= stdout =======
 <Stmt start="1:1" end="1:7">
-  <StmtExpr parenthesized="false" start="1:1" end="1:7">
+  <StmtExpr start="1:1" end="1:7">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -17,10 +17,10 @@ a = -~b++
         <Token type="OP_EQ" val="=" start="1:3" end="1:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="1:5" end="1:7">
-          <ExprUnary prefix="true">
+        <StmtExpr start="1:5" end="1:7">
+          <ExprUnary prefix>
             <slot name="arg">
-              <StmtExpr parenthesized="false" start="1:6" end="1:7">
+              <StmtExpr start="1:6" end="1:7">
                 <ExprAccess>
                   <Token type="ID" val="b" start="1:6" end="1:7" />
                 </ExprAccess>
@@ -36,7 +36,7 @@ a = -~b++
   </StmtExpr>
 </Stmt>
 <Stmt start="2:1" end="2:9">
-  <StmtExpr parenthesized="false" start="2:1" end="2:9">
+  <StmtExpr start="2:1" end="2:9">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -47,13 +47,13 @@ a = -~b++
         <Token type="OP_EQ" val="=" start="2:3" end="2:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="2:5" end="2:9">
-          <ExprUnary prefix="true">
+        <StmtExpr start="2:5" end="2:9">
+          <ExprUnary prefix>
             <slot name="arg">
-              <StmtExpr parenthesized="false" start="2:6" end="2:9">
-                <ExprUnary prefix="false">
+              <StmtExpr start="2:6" end="2:9">
+                <ExprUnary>
                   <slot name="arg">
-                    <StmtExpr parenthesized="false" start="2:6" end="2:7">
+                    <StmtExpr start="2:6" end="2:7">
                       <ExprAccess>
                         <Token type="ID" val="b" start="2:6" end="2:7" />
                       </ExprAccess>
@@ -75,7 +75,7 @@ a = -~b++
   </StmtExpr>
 </Stmt>
 <Stmt start="3:1" end="3:8">
-  <StmtExpr parenthesized="false" start="3:1" end="3:8">
+  <StmtExpr start="3:1" end="3:8">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -86,13 +86,13 @@ a = -~b++
         <Token type="OP_EQ" val="=" start="3:3" end="3:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="3:5" end="3:8">
-          <ExprUnary prefix="true">
+        <StmtExpr start="3:5" end="3:8">
+          <ExprUnary prefix>
             <slot name="arg">
-              <StmtExpr parenthesized="false" start="3:6" end="3:8">
-                <ExprUnary prefix="true">
+              <StmtExpr start="3:6" end="3:8">
+                <ExprUnary prefix>
                   <slot name="arg">
-                    <StmtExpr parenthesized="false" start="3:7" end="3:8">
+                    <StmtExpr start="3:7" end="3:8">
                       <ExprAccess>
                         <Token type="ID" val="b" start="3:7" end="3:8" />
                       </ExprAccess>
@@ -114,7 +114,7 @@ a = -~b++
   </StmtExpr>
 </Stmt>
 <Stmt start="4:1" end="4:10">
-  <StmtExpr parenthesized="false" start="4:1" end="4:10">
+  <StmtExpr start="4:1" end="4:10">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -125,16 +125,16 @@ a = -~b++
         <Token type="OP_EQ" val="=" start="4:3" end="4:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="4:5" end="4:10">
-          <ExprUnary prefix="true">
+        <StmtExpr start="4:5" end="4:10">
+          <ExprUnary prefix>
             <slot name="arg">
-              <StmtExpr parenthesized="false" start="4:6" end="4:10">
-                <ExprUnary prefix="true">
+              <StmtExpr start="4:6" end="4:10">
+                <ExprUnary prefix>
                   <slot name="arg">
-                    <StmtExpr parenthesized="false" start="4:7" end="4:10">
-                      <ExprUnary prefix="true">
+                    <StmtExpr start="4:7" end="4:10">
+                      <ExprUnary prefix>
                         <slot name="arg">
-                          <StmtExpr parenthesized="false" start="4:9" end="4:10">
+                          <StmtExpr start="4:9" end="4:10">
                             <ExprAccess>
                               <Token type="ID" val="b" start="4:9" end="4:10" />
                             </ExprAccess>
@@ -162,7 +162,7 @@ a = -~b++
   </StmtExpr>
 </Stmt>
 <Stmt start="5:1" end="5:10">
-  <StmtExpr parenthesized="false" start="5:1" end="5:10">
+  <StmtExpr start="5:1" end="5:10">
     <ExprAssign>
       <slot name="left">
         <ExprAccess>
@@ -173,16 +173,16 @@ a = -~b++
         <Token type="OP_EQ" val="=" start="5:3" end="5:4" />
       </slot>
       <slot name="right">
-        <StmtExpr parenthesized="false" start="5:5" end="5:10">
-          <ExprUnary prefix="true">
+        <StmtExpr start="5:5" end="5:10">
+          <ExprUnary prefix>
             <slot name="arg">
-              <StmtExpr parenthesized="false" start="5:6" end="5:10">
-                <ExprUnary prefix="true">
+              <StmtExpr start="5:6" end="5:10">
+                <ExprUnary prefix>
                   <slot name="arg">
-                    <StmtExpr parenthesized="false" start="5:7" end="5:10">
-                      <ExprUnary prefix="false">
+                    <StmtExpr start="5:7" end="5:10">
+                      <ExprUnary>
                         <slot name="arg">
-                          <StmtExpr parenthesized="false" start="5:7" end="5:8">
+                          <StmtExpr start="5:7" end="5:8">
                             <ExprAccess>
                               <Token type="ID" val="b" start="5:7" end="5:8" />
                             </ExprAccess>

@@ -6,7 +6,7 @@ main {
 <Node>
   <NodeMain>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="void" />
         </slot>
@@ -22,7 +22,7 @@ main {
             </slot>
             <slot name="args">
               <ExprCallArg id="items">
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="str" />
                   </slot>
@@ -34,7 +34,7 @@ main {
                 </NodeExpr>
               </ExprCallArg>
               <ExprCallArg id="items">
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="str" />
                   </slot>
@@ -46,7 +46,7 @@ main {
                 </NodeExpr>
               </ExprCallArg>
               <ExprCallArg id="items">
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="str" />
                   </slot>
@@ -58,7 +58,7 @@ main {
                 </NodeExpr>
               </ExprCallArg>
               <ExprCallArg id="separator">
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="str" />
                   </slot>

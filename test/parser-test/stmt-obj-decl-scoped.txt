@@ -8,7 +8,7 @@ if true {
 <Stmt start="1:1" end="5:2">
   <StmtIf>
     <slot name="cond">
-      <StmtExpr parenthesized="false" start="1:4" end="1:8">
+      <StmtExpr start="1:4" end="1:8">
         <ExprLit>
           <Token type="KW_TRUE" val="true" start="1:4" end="1:8" />
         </ExprLit>
@@ -26,7 +26,7 @@ if true {
                 <Token type="ID" val="a" start="2:13" end="2:14" />
               </slot>
               <slot name="type">
-                <Type parenthesized="false" start="2:16" end="2:19">
+                <Type start="2:16" end="2:19">
                   <TypeId>
                     <Token type="ID" val="int" start="2:16" end="2:19" />
                   </TypeId>
@@ -49,7 +49,7 @@ if true {
                 <Token type="ID" val="a" start="4:13" end="4:14" />
               </slot>
               <slot name="type">
-                <Type parenthesized="false" start="4:16" end="4:19">
+                <Type start="4:16" end="4:19">
                   <TypeId>
                     <Token type="ID" val="int" start="4:16" end="4:19" />
                   </TypeId>

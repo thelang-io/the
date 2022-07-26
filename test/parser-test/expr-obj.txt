@@ -6,12 +6,12 @@ b := Test2{
 }
 ======= stdout =======
 <Stmt start="1:1" end="1:17">
-  <StmtVarDecl mut="false">
+  <StmtVarDecl>
     <slot name="id">
       <Token type="ID" val="a" start="1:1" end="1:2" />
     </slot>
     <slot name="init">
-      <StmtExpr parenthesized="false" start="1:6" end="1:17">
+      <StmtExpr start="1:6" end="1:17">
         <ExprObj>
           <slot name="id">
             <Token type="ID" val="Test1" start="1:6" end="1:11" />
@@ -22,7 +22,7 @@ b := Test2{
                 <Token type="ID" val="a" start="1:12" end="1:13" />
               </slot>
               <slot name="init">
-                <StmtExpr parenthesized="false" start="1:15" end="1:16">
+                <StmtExpr start="1:15" end="1:16">
                   <ExprLit>
                     <Token type="LIT_INT_DEC" val="2" start="1:15" end="1:16" />
                   </ExprLit>
@@ -36,12 +36,12 @@ b := Test2{
   </StmtVarDecl>
 </Stmt>
 <Stmt start="2:1" end="5:2">
-  <StmtVarDecl mut="false">
+  <StmtVarDecl>
     <slot name="id">
       <Token type="ID" val="b" start="2:1" end="2:2" />
     </slot>
     <slot name="init">
-      <StmtExpr parenthesized="false" start="2:6" end="5:2">
+      <StmtExpr start="2:6" end="5:2">
         <ExprObj>
           <slot name="id">
             <Token type="ID" val="Test2" start="2:6" end="2:11" />
@@ -52,7 +52,7 @@ b := Test2{
                 <Token type="ID" val="name" start="3:3" end="3:7" />
               </slot>
               <slot name="init">
-                <StmtExpr parenthesized="false" start="3:9" end="3:15">
+                <StmtExpr start="3:9" end="3:15">
                   <ExprLit>
                     <Token type="LIT_STR" val="\"Tina\"" start="3:9" end="3:15" />
                   </ExprLit>
@@ -64,7 +64,7 @@ b := Test2{
                 <Token type="ID" val="age" start="4:3" end="4:6" />
               </slot>
               <slot name="init">
-                <StmtExpr parenthesized="false" start="4:8" end="4:10">
+                <StmtExpr start="4:8" end="4:10">
                   <ExprLit>
                     <Token type="LIT_INT_DEC" val="45" start="4:8" end="4:10" />
                   </ExprLit>

@@ -9,12 +9,12 @@ fn test (it: Test) float {
       <Token type="ID" val="test" start="1:4" end="1:8" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam variadic="false">
+      <StmtFnDeclParam>
         <slot name="id">
           <Token type="ID" val="it" start="1:10" end="1:12" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="1:14" end="1:18">
+          <Type start="1:14" end="1:18">
             <TypeId>
               <Token type="ID" val="Test" start="1:14" end="1:18" />
             </TypeId>
@@ -23,7 +23,7 @@ fn test (it: Test) float {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type parenthesized="false" start="1:20" end="1:25">
+      <Type start="1:20" end="1:25">
         <TypeId>
           <Token type="ID" val="float" start="1:20" end="1:25" />
         </TypeId>
@@ -32,13 +32,13 @@ fn test (it: Test) float {
     <slot name="body">
       <Stmt start="2:3" end="2:28">
         <StmtReturn>
-          <StmtExpr parenthesized="false" start="2:10" end="2:28">
+          <StmtExpr start="2:10" end="2:28">
             <ExprBinary>
               <slot name="left">
-                <StmtExpr parenthesized="false" start="2:10" end="2:21">
+                <StmtExpr start="2:10" end="2:21">
                   <ExprBinary>
                     <slot name="left">
-                      <StmtExpr parenthesized="false" start="2:10" end="2:14">
+                      <StmtExpr start="2:10" end="2:14">
                         <ExprAccess>
                           <slot name="obj">
                             <Token type="ID" val="it" start="2:10" end="2:12" />
@@ -53,7 +53,7 @@ fn test (it: Test) float {
                       <Token type="OP_PLUS" val="+" start="2:15" end="2:16" />
                     </slot>
                     <slot name="right">
-                      <StmtExpr parenthesized="false" start="2:17" end="2:21">
+                      <StmtExpr start="2:17" end="2:21">
                         <ExprAccess>
                           <slot name="obj">
                             <Token type="ID" val="it" start="2:17" end="2:19" />
@@ -71,7 +71,7 @@ fn test (it: Test) float {
                 <Token type="OP_PLUS" val="+" start="2:22" end="2:23" />
               </slot>
               <slot name="right">
-                <StmtExpr parenthesized="false" start="2:24" end="2:28">
+                <StmtExpr start="2:24" end="2:28">
                   <ExprAccess>
                     <slot name="obj">
                       <Token type="ID" val="it" start="2:24" end="2:26" />

@@ -6,14 +6,14 @@ test1.test2.test3.test4
 test1.test2.test3.test4.test5
 ======= stdout =======
 <Stmt start="1:1" end="1:5">
-  <StmtExpr parenthesized="false" start="1:1" end="1:5">
+  <StmtExpr start="1:1" end="1:5">
     <ExprAccess>
       <Token type="ID" val="test" start="1:1" end="1:5" />
     </ExprAccess>
   </StmtExpr>
 </Stmt>
 <Stmt start="2:1" end="2:12">
-  <StmtExpr parenthesized="false" start="2:1" end="2:12">
+  <StmtExpr start="2:1" end="2:12">
     <ExprAccess>
       <slot name="obj">
         <Token type="ID" val="test1" start="2:1" end="2:6" />
@@ -25,7 +25,7 @@ test1.test2.test3.test4.test5
   </StmtExpr>
 </Stmt>
 <Stmt start="3:1" end="3:18">
-  <StmtExpr parenthesized="false" start="3:1" end="3:18">
+  <StmtExpr start="3:1" end="3:18">
     <ExprAccess>
       <slot name="obj">
         <slot name="obj">
@@ -42,7 +42,7 @@ test1.test2.test3.test4.test5
   </StmtExpr>
 </Stmt>
 <Stmt start="4:1" end="4:24">
-  <StmtExpr parenthesized="false" start="4:1" end="4:24">
+  <StmtExpr start="4:1" end="4:24">
     <ExprAccess>
       <slot name="obj">
         <slot name="obj">
@@ -64,7 +64,7 @@ test1.test2.test3.test4.test5
   </StmtExpr>
 </Stmt>
 <Stmt start="5:1" end="5:30">
-  <StmtExpr parenthesized="false" start="5:1" end="5:30">
+  <StmtExpr start="5:1" end="5:30">
     <ExprAccess>
       <slot name="obj">
         <slot name="obj">

@@ -16,7 +16,7 @@ fn test2 () void {
       <Token type="ID" val="test2" start="2:4" end="2:9" />
     </slot>
     <slot name="returnType">
-      <Type parenthesized="false" start="2:13" end="2:17">
+      <Type start="2:13" end="2:17">
         <TypeId>
           <Token type="ID" val="void" start="2:13" end="2:17" />
         </TypeId>

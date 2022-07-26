@@ -27,7 +27,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" name="a">
             <Type codeName="Point_0" name="Point" type="obj">
               <slot name="fields">
                 <TypeObjField name="x">
@@ -41,7 +41,7 @@ main {
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <Type codeName="Point_0" name="Point" type="obj">
                 <slot name="fields">
@@ -74,7 +74,7 @@ main {
                       x
                     </slot>
                     <slot name="init">
-                      <NodeExpr parenthesized="false">
+                      <NodeExpr>
                         <slot name="type">
                           <BuiltinType name="float" />
                         </slot>
@@ -91,13 +91,13 @@ main {
                       y
                     </slot>
                     <slot name="init">
-                      <NodeExpr parenthesized="false">
+                      <NodeExpr>
                         <slot name="type">
                           <BuiltinType name="float" />
                         </slot>
                         <slot name="body">
-                          <ExprUnary op="MINUS" prefix="true">
-                            <NodeExpr parenthesized="false">
+                          <ExprUnary op="MINUS" prefix>
+                            <NodeExpr>
                               <slot name="type">
                                 <BuiltinType name="float" />
                               </slot>

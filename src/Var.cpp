@@ -17,7 +17,7 @@ std::string Var::xml (std::size_t indent) const {
 
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += R"( frame=")" + std::to_string(this->frame) + R"(")";
-  result += R"( mut=")" + std::string(this->mut ? "true" : "false") + R"(")";
+  result += this->mut ? " mut" : "";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
   result += ">" EOL + this->type->xml(indent + 2) + EOL;
 

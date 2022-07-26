@@ -21,8 +21,8 @@ std::string blockToXml (const ParserBlock &block, std::size_t indent) {
 std::string ParserStmt::xml (std::size_t indent) const {
   auto result = std::string(indent, ' ') + "<Stmt";
 
-  result += R"( start=")" + this->start.str();
-  result += R"(" end=")" + this->end.str() + R"(">)" EOL;
+  result += R"( start=")" + this->start.str() + R"(")";
+  result += R"( end=")" + this->end.str() + R"(">)" EOL;
 
   indent += 2;
 
@@ -45,8 +45,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + R"(<slot name="params">)" EOL;
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
-        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam";
-        result += R"( variadic=")" + std::string(stmtFnDeclParam.variadic ? "true" : "false") + R"(">)" EOL;
+        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam" + (stmtFnDeclParam.variadic ? " variadic" : "") + ">" EOL;
 
         result += std::string(indent + 6, ' ') + R"(<slot name="id">)" EOL;
         result += std::string(indent + 8, ' ') + stmtFnDeclParam.id.xml() + EOL;
@@ -158,8 +157,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserStmtVarDecl>(*this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*this->body);
 
-    result += std::string(indent, ' ');
-    result += R"(<StmtVarDecl mut=")" + std::string(stmtVarDecl.mut ? "true" : "false") + R"(">)" EOL;
+    result += std::string(indent, ' ') + "<StmtVarDecl" + (stmtVarDecl.mut ? " mut" : "") + ">" EOL;
     result += std::string(indent + 2, ' ') + R"(<slot name="id">)" EOL;
     result += std::string(indent + 4, ' ') + stmtVarDecl.id.xml() + EOL;
     result += std::string(indent + 2, ' ') + "</slot>" EOL;
@@ -222,11 +220,10 @@ std::string ParserStmtIf::xml (std::size_t indent) const {
 }
 
 std::string ParserType::xml (std::size_t indent) const {
-  auto result = std::string(indent, ' ') + "<Type";
+  auto result = std::string(indent, ' ') + "<Type" + (this->parenthesized ? " parenthesized" : "");
 
-  result += R"( parenthesized=")" + std::string(this->parenthesized ? "true" : "false");
-  result += R"(" start=")" + this->start.str();
-  result += R"(" end=")" + this->end.str() + R"(">)" EOL;
+  result += R"( start=")" + this->start.str() + R"(")";
+  result += R"( end=")" + this->end.str() + R"(">)" EOL;
 
   indent += 2;
 
@@ -238,9 +235,7 @@ std::string ParserType::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + R"(<slot name="params">)" EOL;
 
       for (const auto &typeFnParam : typeFn.params) {
-        result += std::string(indent + 4, ' ') + "<TypeFnParam";
-        result += R"( variadic=")" + std::string(typeFnParam.variadic ? "true" : "false") + R"(">)" EOL;
-
+        result += std::string(indent + 4, ' ') + "<TypeFnParam" + (typeFnParam.variadic ? " variadic" : "") + ">" EOL;
         result += typeFnParam.type.xml(indent + 6) + EOL;
         result += std::string(indent + 4, ' ') + "</TypeFnParam>" EOL;
       }

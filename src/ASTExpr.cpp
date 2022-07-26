@@ -128,7 +128,7 @@ std::string ASTNodeExpr::litBody () const {
 }
 
 std::string ASTNodeExpr::xml (std::size_t indent) const {
-  auto result = std::string(indent, ' ') + R"(<NodeExpr parenthesized=")" + std::string(this->parenthesized ? "true" : "false") + R"(">)" EOL;
+  auto result = std::string(indent, ' ') + "<NodeExpr" + (this->parenthesized ? " parenthesized" : "") + ">" EOL;
 
   result += std::string(indent + 2, ' ') + R"(<slot name="type">)" EOL;
   result += this->type->xml(indent + 4) + EOL;
@@ -179,8 +179,8 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
 
       for (const auto &exprCallArg : exprCall.args) {
         result += std::string(indent + 4, ' ') + "<ExprCallArg";
-        result += (exprCallArg.id != std::nullopt ? R"( id=")" + *exprCallArg.id + R"(")" : "") + ">" EOL;
-        result += exprCallArg.expr.xml(indent + 6)  + EOL;
+        result += exprCallArg.id != std::nullopt ? R"( id=")" + *exprCallArg.id + R"(")" : "";
+        result += ">" EOL + exprCallArg.expr.xml(indent + 6)  + EOL;
         result += std::string(indent + 4, ' ') + "</ExprCallArg>" EOL;
       }
 
@@ -237,9 +237,9 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ASTExprUnary>(*this->body)) {
     auto exprUnary = std::get<ASTExprUnary>(*this->body);
 
-    result += std::string(indent, ' ') + R"(<ExprUnary op=")" + exprUnaryOpStr(exprUnary.op);
-    result += R"(" prefix=")" + std::string(exprUnary.prefix ? "true" : "false") + R"(">)" EOL;
-    result += exprUnary.arg.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + R"(<ExprUnary op=")" + exprUnaryOpStr(exprUnary.op) + R"(")";
+    result += exprUnary.prefix ? " prefix" : "";
+    result += ">" EOL + exprUnary.arg.xml(indent + 2) + EOL;
     result += std::string(indent, ' ') + "</ExprUnary>" EOL;
   }
 

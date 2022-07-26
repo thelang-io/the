@@ -878,7 +878,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
 
       for (const auto &param : nodeFnDecl.params) {
         auto paramName = Codegen::name(param.var->codeName);
-        auto paramType = this->_type(param.var->type, false);
+        auto paramType = this->_type(param.var->type, param.var->mut, false);
         auto paramIdxStr = std::to_string(paramIdx);
 
         bodyCode += "  " + paramType + paramName + " = ";
@@ -899,7 +899,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
           this->_activateEntity(paramTypeName + "_free");
           this->state.cleanUp.add(paramTypeName + "_free((struct " + paramTypeName + ") " + paramName + ");");
         } else if (param.var->type->isObj()) {
-          auto cleanUpType = this->_type(param.var->type, true);
+          auto cleanUpType = this->_type(param.var->type, true, false);
           auto cleanUpTypeName = Codegen::typeName(param.var->type->codeName);
 
           this->_activateEntity(cleanUpTypeName + "_free");
@@ -918,7 +918,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     this->indent = 2;
 
     this->varMap.restore();
-    auto returnType = this->_type(fn.returnType, true);
+    auto returnType = this->_type(fn.returnType, true, false);
 
     if (!fn.returnType->isVoid() && this->state.cleanUp.valueVarUsed) {
       bodyCode.insert(0, std::string(this->indent, ' ') + returnType + "v;" EOL);
@@ -1100,7 +1100,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
       "typeStr"
     }, { typeName, typeName + "_free" }};
 
-    auto type = this->_type(nodeObjDecl.type, true);
+    auto type = this->_type(nodeObjDecl.type, true, false);
     auto bodyCode = std::string();
     auto allocFnParamTypes = std::string();
     auto allocFnParams = std::string();
@@ -1113,7 +1113,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
 
     for (const auto &objField : obj.fields) {
       auto objFieldName = Codegen::name(objField.name);
-      auto objFieldType = this->_type(objField.type, true);
+      auto objFieldType = this->_type(objField.type, true, false);
       auto strCodeDelimiter = std::string(objFieldIdx == 0 ? "" : ", ");
 
       if (objField.type->isFn()) {
@@ -1285,7 +1285,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
     auto name = Codegen::name(nodeVarDecl.var->codeName);
-    auto type = this->_type(nodeVarDecl.var->type, nodeVarDecl.var->mut);
+    auto type = this->_type(nodeVarDecl.var->type, nodeVarDecl.var->mut, false);
     auto initCode = std::string("0");
 
     if (nodeVarDecl.init != std::nullopt) {
@@ -1308,7 +1308,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
       this->_activateEntity(cleanUpTypeName + "_free");
       this->state.cleanUp.add(cleanUpTypeName + "_free((struct " + cleanUpTypeName + ") " + name + ");");
     } else if (nodeVarDecl.var->type->isObj()) {
-      auto cleanUpType = this->_type(nodeVarDecl.var->type, true);
+      auto cleanUpType = this->_type(nodeVarDecl.var->type, true, false);
       auto cleanUpTypeName = Codegen::typeName(nodeVarDecl.var->type->codeName);
 
       this->_activateEntity(cleanUpTypeName + "_free");
@@ -1918,7 +1918,7 @@ std::string Codegen::_typeNameFn (const Type *searchType) {
     paramsEntity.def = "struct " + paramsName + " {" EOL;
 
     for (const auto &param : fn.params) {
-      auto paramType = this->_type(param.type, false);
+      auto paramType = this->_type(param.type, false, false);
       auto paramIdxStr = std::to_string(paramIdx);
 
       if (!param.required) {
@@ -1936,7 +1936,7 @@ std::string Codegen::_typeNameFn (const Type *searchType) {
   auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }, { paramsName }};
   entity.decl = "struct " + typeName + ";";
   entity.def = "struct " + typeName + " {" EOL;
-  entity.def += "  " + this->_type(fn.returnType, true) + "(*f) ";
+  entity.def += "  " + this->_type(fn.returnType, true, false) + "(*f) ";
   entity.def += "(void *" + (fn.params.empty() ? "" : ", struct " + paramsName) + ");" EOL;
   entity.def += "  void *x;" EOL;
   entity.def += "  size_t l;" EOL;

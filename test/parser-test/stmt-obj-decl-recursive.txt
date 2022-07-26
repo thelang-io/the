@@ -34,7 +34,7 @@ obj Test5 {
           <Token type="ID" val="tp" start="2:3" end="2:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="2:7" end="2:10">
+          <Type start="2:7" end="2:10">
             <TypeId>
               <Token type="ID" val="int" start="2:7" end="2:10" />
             </TypeId>
@@ -46,7 +46,7 @@ obj Test5 {
           <Token type="ID" val="t" start="3:3" end="3:4" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="3:6" end="3:11">
+          <Type start="3:6" end="3:11">
             <TypeId>
               <Token type="ID" val="Test2" start="3:6" end="3:11" />
             </TypeId>
@@ -67,7 +67,7 @@ obj Test5 {
           <Token type="ID" val="t1" start="6:3" end="6:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="6:7" end="6:11">
+          <Type start="6:7" end="6:11">
             <TypeId>
               <Token type="ID" val="char" start="6:7" end="6:11" />
             </TypeId>
@@ -79,7 +79,7 @@ obj Test5 {
           <Token type="ID" val="t2" start="7:3" end="7:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="7:7" end="7:12">
+          <Type start="7:7" end="7:12">
             <TypeId>
               <Token type="ID" val="float" start="7:7" end="7:12" />
             </TypeId>
@@ -91,7 +91,7 @@ obj Test5 {
           <Token type="ID" val="t3" start="8:3" end="8:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="8:7" end="8:10">
+          <Type start="8:7" end="8:10">
             <TypeId>
               <Token type="ID" val="str" start="8:7" end="8:10" />
             </TypeId>
@@ -103,7 +103,7 @@ obj Test5 {
           <Token type="ID" val="t4" start="9:3" end="9:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="9:7" end="9:10">
+          <Type start="9:7" end="9:10">
             <TypeId>
               <Token type="ID" val="int" start="9:7" end="9:10" />
             </TypeId>
@@ -124,7 +124,7 @@ obj Test5 {
           <Token type="ID" val="t1" start="12:3" end="12:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="12:7" end="12:12">
+          <Type start="12:7" end="12:12">
             <TypeId>
               <Token type="ID" val="Test4" start="12:7" end="12:12" />
             </TypeId>
@@ -136,7 +136,7 @@ obj Test5 {
           <Token type="ID" val="t2" start="13:3" end="13:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="13:7" end="13:12">
+          <Type start="13:7" end="13:12">
             <TypeId>
               <Token type="ID" val="Test5" start="13:7" end="13:12" />
             </TypeId>
@@ -148,7 +148,7 @@ obj Test5 {
           <Token type="ID" val="t3" start="14:3" end="14:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="14:7" end="14:10">
+          <Type start="14:7" end="14:10">
             <TypeId>
               <Token type="ID" val="int" start="14:7" end="14:10" />
             </TypeId>
@@ -169,7 +169,7 @@ obj Test5 {
           <Token type="ID" val="a0" start="17:3" end="17:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="17:7" end="17:11">
+          <Type start="17:7" end="17:11">
             <TypeId>
               <Token type="ID" val="byte" start="17:7" end="17:11" />
             </TypeId>
@@ -181,7 +181,7 @@ obj Test5 {
           <Token type="ID" val="a1" start="18:3" end="18:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="18:7" end="18:12">
+          <Type start="18:7" end="18:12">
             <TypeId>
               <Token type="ID" val="float" start="18:7" end="18:12" />
             </TypeId>
@@ -202,7 +202,7 @@ obj Test5 {
           <Token type="ID" val="b1" start="21:3" end="21:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="21:7" end="21:11">
+          <Type start="21:7" end="21:11">
             <TypeId>
               <Token type="ID" val="char" start="21:7" end="21:11" />
             </TypeId>
@@ -214,7 +214,7 @@ obj Test5 {
           <Token type="ID" val="b2" start="22:3" end="22:5" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="22:7" end="22:10">
+          <Type start="22:7" end="22:10">
             <TypeId>
               <Token type="ID" val="str" start="22:7" end="22:10" />
             </TypeId>

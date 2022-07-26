@@ -34,7 +34,7 @@ main {
 <Node>
   <NodeFnDecl>
     <slot name="var">
-      <Var codeName="job_0" frame="1" mut="false" name="job">
+      <Var codeName="job_0" frame="1" name="job">
         <Type codeName="job_0" name="job" type="fn">
           <slot name="returnType">
             <BuiltinType name="int" />
@@ -45,7 +45,7 @@ main {
     <slot name="body">
       <Node>
         <NodeReturn>
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -65,12 +65,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" name="a">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -86,12 +86,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="b_0" frame="2" mut="false" name="b">
+          <Var codeName="b_0" frame="2" name="b">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -107,12 +107,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="c_0" frame="2" mut="false" name="c">
+          <Var codeName="c_0" frame="2" name="c">
             <BuiltinType name="str" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="str" />
             </slot>
@@ -128,7 +128,7 @@ main {
     <Node>
       <NodeFnDecl>
         <slot name="var">
-          <Var codeName="mainSDtest_0" frame="2" mut="false" name="test">
+          <Var codeName="mainSDtest_0" frame="2" name="test">
             <Type codeName="mainSDtest_0" name="test" type="fn">
               <slot name="returnType">
                 <BuiltinType name="int" />
@@ -137,13 +137,13 @@ main {
           </Var>
         </slot>
         <slot name="stack">
-          <Var codeName="c_0" frame="2" mut="false" name="c">
+          <Var codeName="c_0" frame="2" name="c">
             <BuiltinType name="str" />
           </Var>
-          <Var codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" name="a">
             <BuiltinType name="int" />
           </Var>
-          <Var codeName="job_0" frame="1" mut="false" name="job">
+          <Var codeName="job_0" frame="1" name="job">
             <Type codeName="job_0" name="job" type="fn">
               <slot name="returnType">
                 <BuiltinType name="int" />
@@ -155,7 +155,7 @@ main {
           <Node>
             <NodeVarDecl>
               <slot name="var">
-                <Var codeName="t_0" frame="3" mut="false" name="t">
+                <Var codeName="t_0" frame="3" name="t">
                   <Type codeName="Test_0" name="Test" type="obj">
                     <slot name="fields">
                       <TypeObjField name="a">
@@ -166,7 +166,7 @@ main {
                 </Var>
               </slot>
               <slot name="init">
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <Type codeName="Test_0" name="Test" type="obj">
                       <slot name="fields">
@@ -193,20 +193,20 @@ main {
                             a
                           </slot>
                           <slot name="init">
-                            <NodeExpr parenthesized="false">
+                            <NodeExpr>
                               <slot name="type">
                                 <BuiltinType name="int" />
                               </slot>
                               <slot name="body">
                                 <ExprBinary op="ADD">
                                   <slot name="left">
-                                    <NodeExpr parenthesized="false">
+                                    <NodeExpr>
                                       <slot name="type">
                                         <BuiltinType name="int" />
                                       </slot>
                                       <slot name="body">
                                         <ExprAccess>
-                                          <Var codeName="a_0" frame="2" mut="false" name="a">
+                                          <Var codeName="a_0" frame="2" name="a">
                                             <BuiltinType name="int" />
                                           </Var>
                                         </ExprAccess>
@@ -214,7 +214,7 @@ main {
                                     </NodeExpr>
                                   </slot>
                                   <slot name="right">
-                                    <NodeExpr parenthesized="false">
+                                    <NodeExpr>
                                       <slot name="type">
                                         <BuiltinType name="int" />
                                       </slot>
@@ -239,28 +239,28 @@ main {
           </Node>
           <Node>
             <NodeReturn>
-              <NodeExpr parenthesized="false">
+              <NodeExpr>
                 <slot name="type">
                   <BuiltinType name="int" />
                 </slot>
                 <slot name="body">
                   <ExprBinary op="ADD">
                     <slot name="left">
-                      <NodeExpr parenthesized="false">
+                      <NodeExpr>
                         <slot name="type">
                           <BuiltinType name="int" />
                         </slot>
                         <slot name="body">
                           <ExprBinary op="ADD">
                             <slot name="left">
-                              <NodeExpr parenthesized="false">
+                              <NodeExpr>
                                 <slot name="type">
                                   <BuiltinType name="int" />
                                 </slot>
                                 <slot name="body">
                                   <ExprAccess>
                                     <slot name="obj">
-                                      <Var codeName="t_0" frame="3" mut="false" name="t">
+                                      <Var codeName="t_0" frame="3" name="t">
                                         <Type codeName="Test_0" name="Test" type="obj">
                                           <slot name="fields">
                                             <TypeObjField name="a">
@@ -278,7 +278,7 @@ main {
                               </NodeExpr>
                             </slot>
                             <slot name="right">
-                              <NodeExpr parenthesized="false">
+                              <NodeExpr>
                                 <slot name="type">
                                   <BuiltinType name="int" />
                                 </slot>
@@ -286,7 +286,7 @@ main {
                                   <ExprCall>
                                     <slot name="callee">
                                       <ExprAccess>
-                                        <Var codeName="job_0" frame="1" mut="false" name="job">
+                                        <Var codeName="job_0" frame="1" name="job">
                                           <Type codeName="job_0" name="job" type="fn">
                                             <slot name="returnType">
                                               <BuiltinType name="int" />
@@ -311,14 +311,14 @@ main {
                       </NodeExpr>
                     </slot>
                     <slot name="right">
-                      <NodeExpr parenthesized="false">
+                      <NodeExpr>
                         <slot name="type">
                           <BuiltinType name="int" />
                         </slot>
                         <slot name="body">
                           <ExprAccess>
                             <slot name="obj">
-                              <Var codeName="c_0" frame="2" mut="false" name="c">
+                              <Var codeName="c_0" frame="2" name="c">
                                 <BuiltinType name="str" />
                               </Var>
                             </slot>
@@ -338,20 +338,20 @@ main {
       </NodeFnDecl>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="int" />
         </slot>
         <slot name="body">
           <ExprBinary op="ADD">
             <slot name="left">
-              <NodeExpr parenthesized="false">
+              <NodeExpr>
                 <slot name="type">
                   <BuiltinType name="int" />
                 </slot>
                 <slot name="body">
                   <ExprAccess>
-                    <Var codeName="b_0" frame="2" mut="false" name="b">
+                    <Var codeName="b_0" frame="2" name="b">
                       <BuiltinType name="int" />
                     </Var>
                   </ExprAccess>
@@ -359,7 +359,7 @@ main {
               </NodeExpr>
             </slot>
             <slot name="right">
-              <NodeExpr parenthesized="false">
+              <NodeExpr>
                 <slot name="type">
                   <BuiltinType name="int" />
                 </slot>
@@ -367,7 +367,7 @@ main {
                   <ExprCall>
                     <slot name="callee">
                       <ExprAccess>
-                        <Var codeName="mainSDtest_0" frame="2" mut="false" name="test">
+                        <Var codeName="mainSDtest_0" frame="2" name="test">
                           <Type codeName="mainSDtest_0" name="test" type="fn">
                             <slot name="returnType">
                               <BuiltinType name="int" />

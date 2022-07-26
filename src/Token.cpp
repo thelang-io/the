@@ -260,11 +260,11 @@ std::string Token::str () const {
 std::string Token::xml () const {
   auto result = std::string();
 
-  result += R"(<Token type=")" + tokenTypeToStr(this->type);
-  result += R"(" val=")" + escapeVal(this->val, true);
-  result += R"(" start=")" + this->start.str();
-  result += R"(" end=")" + this->end.str();
-  result += R"(" />)";
+  result += R"(<Token type=")" + tokenTypeToStr(this->type) + R"(")";
+  result += R"( val=")" + escapeVal(this->val, true) + R"(")";
+  result += R"( start=")" + this->start.str() + R"(")";
+  result += R"( end=")" + this->end.str() + R"(")";
+  result += R"( />)";
 
   return result;
 }

@@ -32,7 +32,7 @@ main {
 <Node>
   <NodeFnDecl>
     <slot name="var">
-      <Var codeName="test1_0" frame="1" mut="false" name="test1">
+      <Var codeName="test1_0" frame="1" name="test1">
         <Type codeName="test1_0" name="test1" type="fn">
           <slot name="returnType">
             <BuiltinType name="void" />
@@ -42,7 +42,7 @@ main {
     </slot>
     <slot name="body">
       <Node>
-        <NodeExpr parenthesized="false">
+        <NodeExpr>
           <slot name="type">
             <BuiltinType name="void" />
           </slot>
@@ -58,7 +58,7 @@ main {
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
-                  <NodeExpr parenthesized="false">
+                  <NodeExpr>
                     <slot name="type">
                       <BuiltinType name="str" />
                     </slot>
@@ -80,13 +80,13 @@ main {
 <Node>
   <NodeFnDecl>
     <slot name="var">
-      <Var codeName="test2_0" frame="1" mut="false" name="test2">
+      <Var codeName="test2_0" frame="1" name="test2">
         <Type codeName="test2_0" name="test2" type="fn">
           <slot name="returnType">
             <BuiltinType name="void" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="a" required="false" variadic="true">
+            <TypeFnParam name="a" variadic>
               <BuiltinType name="int" />
             </TypeFnParam>
           </slot>
@@ -96,7 +96,7 @@ main {
     <slot name="params">
       <NodeFnDeclParam>
         <slot name="var">
-          <Var codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" name="a">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -104,7 +104,7 @@ main {
     </slot>
     <slot name="body">
       <Node>
-        <NodeExpr parenthesized="false">
+        <NodeExpr>
           <slot name="type">
             <BuiltinType name="void" />
           </slot>
@@ -120,13 +120,13 @@ main {
               </slot>
               <slot name="args">
                 <ExprCallArg id="items">
-                  <NodeExpr parenthesized="false">
+                  <NodeExpr>
                     <slot name="type">
                       <BuiltinType name="int" />
                     </slot>
                     <slot name="body">
                       <ExprAccess>
-                        <Var codeName="a_0" frame="2" mut="false" name="a">
+                        <Var codeName="a_0" frame="2" name="a">
                           <BuiltinType name="int" />
                         </Var>
                       </ExprAccess>
@@ -146,12 +146,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" name="a">
             <BuiltinType name="bool" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="bool" />
             </slot>
@@ -167,12 +167,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="b_0" frame="2" mut="false" name="b">
+          <Var codeName="b_0" frame="2" name="b">
             <BuiltinType name="i32" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -188,7 +188,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="c_0" frame="2" mut="false" name="c">
+          <Var codeName="c_0" frame="2" name="c">
             <BuiltinType name="str" />
           </Var>
         </slot>
@@ -197,7 +197,7 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="d_0" frame="2" mut="false" name="d">
+          <Var codeName="d_0" frame="2" name="d">
             <Type codeName="test1_0" name="test1" type="fn">
               <slot name="returnType">
                 <BuiltinType name="void" />
@@ -206,7 +206,7 @@ main {
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <Type codeName="test1_0" name="test1" type="fn">
                 <slot name="returnType">
@@ -216,7 +216,7 @@ main {
             </slot>
             <slot name="body">
               <ExprAccess>
-                <Var codeName="test1_0" frame="1" mut="false" name="test1">
+                <Var codeName="test1_0" frame="1" name="test1">
                   <Type codeName="test1_0" name="test1" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
@@ -232,13 +232,13 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="e_0" frame="2" mut="true" name="e">
+          <Var codeName="e_0" frame="2" mut name="e">
             <Type type="fn">
               <slot name="returnType">
                 <BuiltinType name="void" />
               </slot>
               <slot name="params">
-                <TypeFnParam required="false" variadic="true">
+                <TypeFnParam variadic>
                   <BuiltinType name="int" />
                 </TypeFnParam>
               </slot>
@@ -250,12 +250,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="f_0" frame="2" mut="true" name="f">
+          <Var codeName="f_0" frame="2" mut name="f">
             <BuiltinType name="int" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
@@ -271,12 +271,12 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="g_0" frame="2" mut="true" name="g">
+          <Var codeName="g_0" frame="2" mut name="g">
             <BuiltinType name="f32" />
           </Var>
         </slot>
         <slot name="init">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="float" />
             </slot>
@@ -292,21 +292,21 @@ main {
     <Node>
       <NodeVarDecl>
         <slot name="var">
-          <Var codeName="h_0" frame="2" mut="true" name="h">
+          <Var codeName="h_0" frame="2" mut name="h">
             <BuiltinType name="str" />
           </Var>
         </slot>
       </NodeVarDecl>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <Type type="fn">
             <slot name="returnType">
               <BuiltinType name="void" />
             </slot>
             <slot name="params">
-              <TypeFnParam required="false" variadic="true">
+              <TypeFnParam variadic>
                 <BuiltinType name="int" />
               </TypeFnParam>
             </slot>
@@ -316,13 +316,13 @@ main {
           <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
-                <Var codeName="e_0" frame="2" mut="true" name="e">
+                <Var codeName="e_0" frame="2" mut name="e">
                   <Type type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam required="false" variadic="true">
+                      <TypeFnParam variadic>
                         <BuiltinType name="int" />
                       </TypeFnParam>
                     </slot>
@@ -331,14 +331,14 @@ main {
               </ExprAccess>
             </slot>
             <slot name="right">
-              <NodeExpr parenthesized="false">
+              <NodeExpr>
                 <slot name="type">
                   <Type codeName="test2_0" name="test2" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam name="a" required="false" variadic="true">
+                      <TypeFnParam name="a" variadic>
                         <BuiltinType name="int" />
                       </TypeFnParam>
                     </slot>
@@ -346,13 +346,13 @@ main {
                 </slot>
                 <slot name="body">
                   <ExprAccess>
-                    <Var codeName="test2_0" frame="1" mut="false" name="test2">
+                    <Var codeName="test2_0" frame="1" name="test2">
                       <Type codeName="test2_0" name="test2" type="fn">
                         <slot name="returnType">
                           <BuiltinType name="void" />
                         </slot>
                         <slot name="params">
-                          <TypeFnParam name="a" required="false" variadic="true">
+                          <TypeFnParam name="a" variadic>
                             <BuiltinType name="int" />
                           </TypeFnParam>
                         </slot>
@@ -367,7 +367,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="int" />
         </slot>
@@ -375,19 +375,19 @@ main {
           <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
-                <Var codeName="f_0" frame="2" mut="true" name="f">
+                <Var codeName="f_0" frame="2" mut name="f">
                   <BuiltinType name="int" />
                 </Var>
               </ExprAccess>
             </slot>
             <slot name="right">
-              <NodeExpr parenthesized="false">
+              <NodeExpr>
                 <slot name="type">
                   <BuiltinType name="int" />
                 </slot>
                 <slot name="body">
-                  <ExprUnary op="MINUS" prefix="true">
-                    <NodeExpr parenthesized="false">
+                  <ExprUnary op="MINUS" prefix>
+                    <NodeExpr>
                       <slot name="type">
                         <BuiltinType name="int" />
                       </slot>
@@ -406,7 +406,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="f32" />
         </slot>
@@ -414,13 +414,13 @@ main {
           <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
-                <Var codeName="g_0" frame="2" mut="true" name="g">
+                <Var codeName="g_0" frame="2" mut name="g">
                   <BuiltinType name="f32" />
                 </Var>
               </ExprAccess>
             </slot>
             <slot name="right">
-              <NodeExpr parenthesized="false">
+              <NodeExpr>
                 <slot name="type">
                   <BuiltinType name="float" />
                 </slot>
@@ -436,7 +436,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="str" />
         </slot>
@@ -444,13 +444,13 @@ main {
           <ExprAssign op="EQ">
             <slot name="left">
               <ExprAccess>
-                <Var codeName="h_0" frame="2" mut="true" name="h">
+                <Var codeName="h_0" frame="2" mut name="h">
                   <BuiltinType name="str" />
                 </Var>
               </ExprAccess>
             </slot>
             <slot name="right">
-              <NodeExpr parenthesized="false">
+              <NodeExpr>
                 <slot name="type">
                   <BuiltinType name="str" />
                 </slot>
@@ -466,7 +466,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="void" />
         </slot>
@@ -474,7 +474,7 @@ main {
           <ExprCall>
             <slot name="callee">
               <ExprAccess>
-                <Var codeName="d_0" frame="2" mut="false" name="d">
+                <Var codeName="d_0" frame="2" name="d">
                   <Type codeName="test1_0" name="test1" type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
@@ -495,7 +495,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="void" />
         </slot>
@@ -503,13 +503,13 @@ main {
           <ExprCall>
             <slot name="callee">
               <ExprAccess>
-                <Var codeName="e_0" frame="2" mut="true" name="e">
+                <Var codeName="e_0" frame="2" mut name="e">
                   <Type type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam required="false" variadic="true">
+                      <TypeFnParam variadic>
                         <BuiltinType name="int" />
                       </TypeFnParam>
                     </slot>
@@ -523,7 +523,7 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam required="false" variadic="true">
+                  <TypeFnParam variadic>
                     <BuiltinType name="int" />
                   </TypeFnParam>
                 </slot>
@@ -534,7 +534,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="void" />
         </slot>
@@ -542,13 +542,13 @@ main {
           <ExprCall>
             <slot name="callee">
               <ExprAccess>
-                <Var codeName="e_0" frame="2" mut="true" name="e">
+                <Var codeName="e_0" frame="2" mut name="e">
                   <Type type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam required="false" variadic="true">
+                      <TypeFnParam variadic>
                         <BuiltinType name="int" />
                       </TypeFnParam>
                     </slot>
@@ -562,7 +562,7 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam required="false" variadic="true">
+                  <TypeFnParam variadic>
                     <BuiltinType name="int" />
                   </TypeFnParam>
                 </slot>
@@ -570,7 +570,7 @@ main {
             </slot>
             <slot name="args">
               <ExprCallArg>
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>
@@ -587,7 +587,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="void" />
         </slot>
@@ -595,13 +595,13 @@ main {
           <ExprCall>
             <slot name="callee">
               <ExprAccess>
-                <Var codeName="e_0" frame="2" mut="true" name="e">
+                <Var codeName="e_0" frame="2" mut name="e">
                   <Type type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam required="false" variadic="true">
+                      <TypeFnParam variadic>
                         <BuiltinType name="int" />
                       </TypeFnParam>
                     </slot>
@@ -615,7 +615,7 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam required="false" variadic="true">
+                  <TypeFnParam variadic>
                     <BuiltinType name="int" />
                   </TypeFnParam>
                 </slot>
@@ -623,7 +623,7 @@ main {
             </slot>
             <slot name="args">
               <ExprCallArg>
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>
@@ -635,7 +635,7 @@ main {
                 </NodeExpr>
               </ExprCallArg>
               <ExprCallArg>
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>
@@ -652,7 +652,7 @@ main {
       </NodeExpr>
     </Node>
     <Node>
-      <NodeExpr parenthesized="false">
+      <NodeExpr>
         <slot name="type">
           <BuiltinType name="void" />
         </slot>
@@ -660,13 +660,13 @@ main {
           <ExprCall>
             <slot name="callee">
               <ExprAccess>
-                <Var codeName="e_0" frame="2" mut="true" name="e">
+                <Var codeName="e_0" frame="2" mut name="e">
                   <Type type="fn">
                     <slot name="returnType">
                       <BuiltinType name="void" />
                     </slot>
                     <slot name="params">
-                      <TypeFnParam required="false" variadic="true">
+                      <TypeFnParam variadic>
                         <BuiltinType name="int" />
                       </TypeFnParam>
                     </slot>
@@ -680,7 +680,7 @@ main {
                   <BuiltinType name="void" />
                 </slot>
                 <slot name="params">
-                  <TypeFnParam required="false" variadic="true">
+                  <TypeFnParam variadic>
                     <BuiltinType name="int" />
                   </TypeFnParam>
                 </slot>
@@ -688,7 +688,7 @@ main {
             </slot>
             <slot name="args">
               <ExprCallArg>
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>
@@ -700,7 +700,7 @@ main {
                 </NodeExpr>
               </ExprCallArg>
               <ExprCallArg>
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>
@@ -712,7 +712,7 @@ main {
                 </NodeExpr>
               </ExprCallArg>
               <ExprCallArg>
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>

@@ -13,12 +13,12 @@ main {
           <Node>
             <NodeVarDecl>
               <slot name="var">
-                <Var codeName="i_0" frame="3" mut="true" name="i">
+                <Var codeName="i_0" frame="3" mut name="i">
                   <BuiltinType name="int" />
                 </Var>
               </slot>
               <slot name="init">
-                <NodeExpr parenthesized="false">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>
@@ -33,20 +33,20 @@ main {
           </Node>
         </slot>
         <slot name="cond">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="bool" />
             </slot>
             <slot name="body">
               <ExprBinary op="LT">
                 <slot name="left">
-                  <NodeExpr parenthesized="false">
+                  <NodeExpr>
                     <slot name="type">
                       <BuiltinType name="int" />
                     </slot>
                     <slot name="body">
                       <ExprAccess>
-                        <Var codeName="i_0" frame="3" mut="true" name="i">
+                        <Var codeName="i_0" frame="3" mut name="i">
                           <BuiltinType name="int" />
                         </Var>
                       </ExprAccess>
@@ -54,7 +54,7 @@ main {
                   </NodeExpr>
                 </slot>
                 <slot name="right">
-                  <NodeExpr parenthesized="false">
+                  <NodeExpr>
                     <slot name="type">
                       <BuiltinType name="int" />
                     </slot>
@@ -70,19 +70,19 @@ main {
           </NodeExpr>
         </slot>
         <slot name="upd">
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
             <slot name="body">
-              <ExprUnary op="INCREMENT" prefix="false">
-                <NodeExpr parenthesized="false">
+              <ExprUnary op="INCREMENT">
+                <NodeExpr>
                   <slot name="type">
                     <BuiltinType name="int" />
                   </slot>
                   <slot name="body">
                     <ExprAccess>
-                      <Var codeName="i_0" frame="3" mut="true" name="i">
+                      <Var codeName="i_0" frame="3" mut name="i">
                         <BuiltinType name="int" />
                       </Var>
                     </ExprAccess>
@@ -94,7 +94,7 @@ main {
         </slot>
         <slot name="body">
           <Node>
-            <NodeExpr parenthesized="false">
+            <NodeExpr>
               <slot name="type">
                 <BuiltinType name="void" />
               </slot>
@@ -110,7 +110,7 @@ main {
                   </slot>
                   <slot name="args">
                     <ExprCallArg id="items">
-                      <NodeExpr parenthesized="false">
+                      <NodeExpr>
                         <slot name="type">
                           <BuiltinType name="str" />
                         </slot>
@@ -122,13 +122,13 @@ main {
                       </NodeExpr>
                     </ExprCallArg>
                     <ExprCallArg id="items">
-                      <NodeExpr parenthesized="false">
+                      <NodeExpr>
                         <slot name="type">
                           <BuiltinType name="int" />
                         </slot>
                         <slot name="body">
                           <ExprAccess>
-                            <Var codeName="i_0" frame="3" mut="true" name="i">
+                            <Var codeName="i_0" frame="3" mut name="i">
                               <BuiltinType name="int" />
                             </Var>
                           </ExprAccess>

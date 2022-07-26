@@ -10,13 +10,13 @@ fn test (a: int) any {
 <Node>
   <NodeFnDecl>
     <slot name="var">
-      <Var codeName="test_0" frame="1" mut="false" name="test">
+      <Var codeName="test_0" frame="1" name="test">
         <Type codeName="test_0" name="test" type="fn">
           <slot name="returnType">
             <BuiltinType name="any" />
           </slot>
           <slot name="params">
-            <TypeFnParam name="a" required="true" variadic="false">
+            <TypeFnParam name="a" required>
               <BuiltinType name="int" />
             </TypeFnParam>
           </slot>
@@ -26,7 +26,7 @@ fn test (a: int) any {
     <slot name="params">
       <NodeFnDeclParam>
         <slot name="var">
-          <Var codeName="a_0" frame="2" mut="false" name="a">
+          <Var codeName="a_0" frame="2" name="a">
             <BuiltinType name="int" />
           </Var>
         </slot>
@@ -36,14 +36,14 @@ fn test (a: int) any {
       <Node>
         <NodeIf>
           <slot name="cond">
-            <NodeExpr parenthesized="false">
+            <NodeExpr>
               <slot name="type">
                 <BuiltinType name="bool" />
               </slot>
               <slot name="body">
                 <ExprBinary op="GT">
                   <slot name="left">
-                    <NodeExpr parenthesized="false">
+                    <NodeExpr>
                       <slot name="type">
                         <BuiltinType name="int" />
                       </slot>
@@ -55,7 +55,7 @@ fn test (a: int) any {
                     </NodeExpr>
                   </slot>
                   <slot name="right">
-                    <NodeExpr parenthesized="false">
+                    <NodeExpr>
                       <slot name="type">
                         <BuiltinType name="int" />
                       </slot>
@@ -79,20 +79,20 @@ fn test (a: int) any {
       </Node>
       <Node>
         <NodeReturn>
-          <NodeExpr parenthesized="false">
+          <NodeExpr>
             <slot name="type">
               <BuiltinType name="int" />
             </slot>
             <slot name="body">
               <ExprBinary op="ADD">
                 <slot name="left">
-                  <NodeExpr parenthesized="false">
+                  <NodeExpr>
                     <slot name="type">
                       <BuiltinType name="int" />
                     </slot>
                     <slot name="body">
                       <ExprAccess>
-                        <Var codeName="a_0" frame="2" mut="false" name="a">
+                        <Var codeName="a_0" frame="2" name="a">
                           <BuiltinType name="int" />
                         </Var>
                       </ExprAccess>
@@ -100,7 +100,7 @@ fn test (a: int) any {
                   </NodeExpr>
                 </slot>
                 <slot name="right">
-                  <NodeExpr parenthesized="false">
+                  <NodeExpr>
                     <slot name="type">
                       <BuiltinType name="int" />
                     </slot>

@@ -38,10 +38,10 @@ main {
           <Token type="ID" val="a" start="2:3" end="2:4" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="2:6" end="2:16">
+          <Type start="2:6" end="2:16">
             <TypeFn>
               <slot name="returnType">
-                <Type parenthesized="false" start="2:12" end="2:16">
+                <Type start="2:12" end="2:16">
                   <TypeId>
                     <Token type="ID" val="void" start="2:12" end="2:16" />
                   </TypeId>
@@ -65,18 +65,18 @@ main {
           <Token type="ID" val="b" start="6:3" end="6:4" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="6:6" end="6:26">
+          <Type start="6:6" end="6:26">
             <TypeFn>
               <slot name="params">
-                <TypeFnParam variadic="false">
-                  <Type parenthesized="false" start="6:10" end="6:13">
+                <TypeFnParam>
+                  <Type start="6:10" end="6:13">
                     <TypeId>
                       <Token type="ID" val="int" start="6:10" end="6:13" />
                     </TypeId>
                   </Type>
                 </TypeFnParam>
-                <TypeFnParam variadic="true">
-                  <Type parenthesized="false" start="6:15" end="6:18">
+                <TypeFnParam variadic>
+                  <Type start="6:15" end="6:18">
                     <TypeId>
                       <Token type="ID" val="int" start="6:15" end="6:18" />
                     </TypeId>
@@ -84,7 +84,7 @@ main {
                 </TypeFnParam>
               </slot>
               <slot name="returnType">
-                <Type parenthesized="false" start="6:23" end="6:26">
+                <Type start="6:23" end="6:26">
                   <TypeId>
                     <Token type="ID" val="int" start="6:23" end="6:26" />
                   </TypeId>
@@ -104,7 +104,7 @@ main {
     </slot>
     <slot name="body">
       <Stmt start="10:3" end="10:25">
-        <StmtExpr parenthesized="false" start="10:3" end="10:25">
+        <StmtExpr start="10:3" end="10:25">
           <ExprCall>
             <slot name="callee">
               <ExprAccess>
@@ -114,7 +114,7 @@ main {
             <slot name="args">
               <ExprCallArg>
                 <slot name="expr">
-                  <StmtExpr parenthesized="false" start="10:9" end="10:24">
+                  <StmtExpr start="10:9" end="10:24">
                     <ExprLit>
                       <Token type="LIT_STR" val="\"Hello, World!\"" start="10:9" end="10:24" />
                     </ExprLit>
@@ -134,24 +134,24 @@ main {
       <Token type="ID" val="t2" start="13:4" end="13:6" />
     </slot>
     <slot name="params">
-      <StmtFnDeclParam variadic="false">
+      <StmtFnDeclParam>
         <slot name="id">
           <Token type="ID" val="a" start="13:8" end="13:9" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="13:11" end="13:14">
+          <Type start="13:11" end="13:14">
             <TypeId>
               <Token type="ID" val="int" start="13:11" end="13:14" />
             </TypeId>
           </Type>
         </slot>
       </StmtFnDeclParam>
-      <StmtFnDeclParam variadic="true">
+      <StmtFnDeclParam variadic>
         <slot name="id">
           <Token type="ID" val="b" start="13:16" end="13:17" />
         </slot>
         <slot name="type">
-          <Type parenthesized="false" start="13:19" end="13:22">
+          <Type start="13:19" end="13:22">
             <TypeId>
               <Token type="ID" val="int" start="13:19" end="13:22" />
             </TypeId>
@@ -160,7 +160,7 @@ main {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type parenthesized="false" start="13:27" end="13:30">
+      <Type start="13:27" end="13:30">
         <TypeId>
           <Token type="ID" val="int" start="13:27" end="13:30" />
         </TypeId>
@@ -168,7 +168,7 @@ main {
     </slot>
     <slot name="body">
       <Stmt start="14:3" end="14:11">
-        <StmtExpr parenthesized="false" start="14:3" end="14:11">
+        <StmtExpr start="14:3" end="14:11">
           <ExprCall>
             <slot name="callee">
               <ExprAccess>
@@ -178,7 +178,7 @@ main {
             <slot name="args">
               <ExprCallArg>
                 <slot name="expr">
-                  <StmtExpr parenthesized="false" start="14:9" end="14:10">
+                  <StmtExpr start="14:9" end="14:10">
                     <ExprAccess>
                       <Token type="ID" val="b" start="14:9" end="14:10" />
                     </ExprAccess>
@@ -191,7 +191,7 @@ main {
       </Stmt>
       <Stmt start="15:3" end="15:11">
         <StmtReturn>
-          <StmtExpr parenthesized="false" start="15:10" end="15:11">
+          <StmtExpr start="15:10" end="15:11">
             <ExprAccess>
               <Token type="ID" val="a" start="15:10" end="15:11" />
             </ExprAccess>
@@ -204,12 +204,12 @@ main {
 <Stmt start="18:1" end="27:2">
   <StmtMain>
     <Stmt start="19:3" end="19:24">
-      <StmtVarDecl mut="false">
+      <StmtVarDecl>
         <slot name="id">
           <Token type="ID" val="test1" start="19:3" end="19:8" />
         </slot>
         <slot name="init">
-          <StmtExpr parenthesized="false" start="19:12" end="19:24">
+          <StmtExpr start="19:12" end="19:24">
             <ExprObj>
               <slot name="id">
                 <Token type="ID" val="Test1" start="19:12" end="19:17" />
@@ -220,7 +220,7 @@ main {
                     <Token type="ID" val="a" start="19:18" end="19:19" />
                   </slot>
                   <slot name="init">
-                    <StmtExpr parenthesized="false" start="19:21" end="19:23">
+                    <StmtExpr start="19:21" end="19:23">
                       <ExprAccess>
                         <Token type="ID" val="t1" start="19:21" end="19:23" />
                       </ExprAccess>
@@ -234,12 +234,12 @@ main {
       </StmtVarDecl>
     </Stmt>
     <Stmt start="20:3" end="20:24">
-      <StmtVarDecl mut="false">
+      <StmtVarDecl>
         <slot name="id">
           <Token type="ID" val="test2" start="20:3" end="20:8" />
         </slot>
         <slot name="init">
-          <StmtExpr parenthesized="false" start="20:12" end="20:24">
+          <StmtExpr start="20:12" end="20:24">
             <ExprObj>
               <slot name="id">
                 <Token type="ID" val="Test2" start="20:12" end="20:17" />
@@ -250,7 +250,7 @@ main {
                     <Token type="ID" val="b" start="20:18" end="20:19" />
                   </slot>
                   <slot name="init">
-                    <StmtExpr parenthesized="false" start="20:21" end="20:23">
+                    <StmtExpr start="20:21" end="20:23">
                       <ExprAccess>
                         <Token type="ID" val="t2" start="20:21" end="20:23" />
                       </ExprAccess>
@@ -264,7 +264,7 @@ main {
       </StmtVarDecl>
     </Stmt>
     <Stmt start="22:3" end="22:12">
-      <StmtExpr parenthesized="false" start="22:3" end="22:12">
+      <StmtExpr start="22:3" end="22:12">
         <ExprCall>
           <slot name="callee">
             <ExprAccess>
@@ -280,7 +280,7 @@ main {
       </StmtExpr>
     </Stmt>
     <Stmt start="23:3" end="23:27">
-      <StmtExpr parenthesized="false" start="23:3" end="23:27">
+      <StmtExpr start="23:3" end="23:27">
         <ExprCall>
           <slot name="callee">
             <ExprAccess>
@@ -290,7 +290,7 @@ main {
           <slot name="args">
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="23:9" end="23:14">
+                <StmtExpr start="23:9" end="23:14">
                   <ExprLit>
                     <Token type="LIT_STR" val="\"1 =\"" start="23:9" end="23:14" />
                   </ExprLit>
@@ -299,7 +299,7 @@ main {
             </ExprCallArg>
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="23:16" end="23:26">
+                <StmtExpr start="23:16" end="23:26">
                   <ExprCall>
                     <slot name="callee">
                       <ExprAccess>
@@ -314,7 +314,7 @@ main {
                     <slot name="args">
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="23:24" end="23:25">
+                          <StmtExpr start="23:24" end="23:25">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="1" start="23:24" end="23:25" />
                             </ExprLit>
@@ -331,7 +331,7 @@ main {
       </StmtExpr>
     </Stmt>
     <Stmt start="24:3" end="24:33">
-      <StmtExpr parenthesized="false" start="24:3" end="24:33">
+      <StmtExpr start="24:3" end="24:33">
         <ExprCall>
           <slot name="callee">
             <ExprAccess>
@@ -341,7 +341,7 @@ main {
           <slot name="args">
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="24:9" end="24:17">
+                <StmtExpr start="24:9" end="24:17">
                   <ExprLit>
                     <Token type="LIT_STR" val="\"1, 2 =\"" start="24:9" end="24:17" />
                   </ExprLit>
@@ -350,7 +350,7 @@ main {
             </ExprCallArg>
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="24:19" end="24:32">
+                <StmtExpr start="24:19" end="24:32">
                   <ExprCall>
                     <slot name="callee">
                       <ExprAccess>
@@ -365,7 +365,7 @@ main {
                     <slot name="args">
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="24:27" end="24:28">
+                          <StmtExpr start="24:27" end="24:28">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="1" start="24:27" end="24:28" />
                             </ExprLit>
@@ -374,7 +374,7 @@ main {
                       </ExprCallArg>
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="24:30" end="24:31">
+                          <StmtExpr start="24:30" end="24:31">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="2" start="24:30" end="24:31" />
                             </ExprLit>
@@ -391,7 +391,7 @@ main {
       </StmtExpr>
     </Stmt>
     <Stmt start="25:3" end="25:39">
-      <StmtExpr parenthesized="false" start="25:3" end="25:39">
+      <StmtExpr start="25:3" end="25:39">
         <ExprCall>
           <slot name="callee">
             <ExprAccess>
@@ -401,7 +401,7 @@ main {
           <slot name="args">
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="25:9" end="25:20">
+                <StmtExpr start="25:9" end="25:20">
                   <ExprLit>
                     <Token type="LIT_STR" val="\"1, 2, 3 =\"" start="25:9" end="25:20" />
                   </ExprLit>
@@ -410,7 +410,7 @@ main {
             </ExprCallArg>
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="25:22" end="25:38">
+                <StmtExpr start="25:22" end="25:38">
                   <ExprCall>
                     <slot name="callee">
                       <ExprAccess>
@@ -425,7 +425,7 @@ main {
                     <slot name="args">
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="25:30" end="25:31">
+                          <StmtExpr start="25:30" end="25:31">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="1" start="25:30" end="25:31" />
                             </ExprLit>
@@ -434,7 +434,7 @@ main {
                       </ExprCallArg>
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="25:33" end="25:34">
+                          <StmtExpr start="25:33" end="25:34">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="2" start="25:33" end="25:34" />
                             </ExprLit>
@@ -443,7 +443,7 @@ main {
                       </ExprCallArg>
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="25:36" end="25:37">
+                          <StmtExpr start="25:36" end="25:37">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="3" start="25:36" end="25:37" />
                             </ExprLit>
@@ -460,7 +460,7 @@ main {
       </StmtExpr>
     </Stmt>
     <Stmt start="26:3" end="26:45">
-      <StmtExpr parenthesized="false" start="26:3" end="26:45">
+      <StmtExpr start="26:3" end="26:45">
         <ExprCall>
           <slot name="callee">
             <ExprAccess>
@@ -470,7 +470,7 @@ main {
           <slot name="args">
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="26:9" end="26:23">
+                <StmtExpr start="26:9" end="26:23">
                   <ExprLit>
                     <Token type="LIT_STR" val="\"1, 2, 3, 4 =\"" start="26:9" end="26:23" />
                   </ExprLit>
@@ -479,7 +479,7 @@ main {
             </ExprCallArg>
             <ExprCallArg>
               <slot name="expr">
-                <StmtExpr parenthesized="false" start="26:25" end="26:44">
+                <StmtExpr start="26:25" end="26:44">
                   <ExprCall>
                     <slot name="callee">
                       <ExprAccess>
@@ -494,7 +494,7 @@ main {
                     <slot name="args">
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="26:33" end="26:34">
+                          <StmtExpr start="26:33" end="26:34">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="1" start="26:33" end="26:34" />
                             </ExprLit>
@@ -503,7 +503,7 @@ main {
                       </ExprCallArg>
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="26:36" end="26:37">
+                          <StmtExpr start="26:36" end="26:37">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="2" start="26:36" end="26:37" />
                             </ExprLit>
@@ -512,7 +512,7 @@ main {
                       </ExprCallArg>
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="26:39" end="26:40">
+                          <StmtExpr start="26:39" end="26:40">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="3" start="26:39" end="26:40" />
                             </ExprLit>
@@ -521,7 +521,7 @@ main {
                       </ExprCallArg>
                       <ExprCallArg>
                         <slot name="expr">
-                          <StmtExpr parenthesized="false" start="26:42" end="26:43">
+                          <StmtExpr start="26:42" end="26:43">
                             <ExprLit>
                               <Token type="LIT_INT_DEC" val="4" start="26:42" end="26:43" />
                             </ExprLit>

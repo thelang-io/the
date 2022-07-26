@@ -37,11 +37,10 @@ std::string ParserExprAccess::xml (std::size_t indent) const {
 }
 
 std::string ParserStmtExpr::xml (std::size_t indent) const {
-  auto result = std::string(indent, ' ') + "<StmtExpr";
+  auto result = std::string(indent, ' ') + "<StmtExpr" + (this->parenthesized ? " parenthesized" : "");
 
-  result += R"( parenthesized=")" + std::string(this->parenthesized ? "true" : "false");
-  result += R"(" start=")" + this->start.str();
-  result += R"(" end=")" + this->end.str() + R"(">)" EOL;
+  result += R"( start=")" + this->start.str() + R"(")";
+  result += R"( end=")" + this->end.str() + R"(">)" EOL;
 
   indent += 2;
 
@@ -155,7 +154,7 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserExprUnary>(*this->body)) {
     auto exprUnary = std::get<ParserExprUnary>(*this->body);
 
-    result += std::string(indent, ' ') + R"(<ExprUnary prefix=")" + std::string(exprUnary.prefix ? "true" : "false") + R"(">)" EOL;
+    result += std::string(indent, ' ') + "<ExprUnary" + (exprUnary.prefix ? " prefix" : "") + ">" EOL;
     result += std::string(indent + 2, ' ') + R"(<slot name="arg">)" EOL;
     result += exprUnary.arg.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</slot>" EOL;

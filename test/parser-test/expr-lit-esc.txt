@@ -4,21 +4,21 @@
 '\''
 ======= stdout =======
 <Stmt start="1:1" end="1:25">
-  <StmtExpr parenthesized="false" start="1:1" end="1:25">
+  <StmtExpr start="1:1" end="1:25">
     <ExprLit>
       <Token type="LIT_STR" val="\"Hello,\nWorld!\\"\r\n\\\"" start="1:1" end="1:25" />
     </ExprLit>
   </StmtExpr>
 </Stmt>
 <Stmt start="2:1" end="2:4">
-  <StmtExpr parenthesized="false" start="2:1" end="2:4">
+  <StmtExpr start="2:1" end="2:4">
     <ExprLit>
       <Token type="LIT_CHAR" val="'\"'" start="2:1" end="2:4" />
     </ExprLit>
   </StmtExpr>
 </Stmt>
 <Stmt start="3:1" end="3:5">
-  <StmtExpr parenthesized="false" start="3:1" end="3:5">
+  <StmtExpr start="3:1" end="3:5">
     <ExprLit>
       <Token type="LIT_CHAR" val="'\''" start="3:1" end="3:5" />
     </ExprLit>
