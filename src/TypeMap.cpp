@@ -80,7 +80,7 @@ void TypeMap::init () {
   auto voidType = this->_items.back().get();
 
   auto strConcatTypeFn = TypeFn{strType, {
-    {"src", strType, true, false}
+    TypeFnParam{"src", strType, false, true, false}
   }};
 
   this->_items.push_back(std::make_unique<Type>(Type{"bool.str", "@bool.str", TypeFn{strType}, true}));
@@ -118,9 +118,9 @@ void TypeMap::init () {
   std::get<TypeObj>(u64Type->body).fields.push_back({"str", this->_items.back().get()});
 
   auto printTypeFn = TypeFn{voidType, {
-    {"items", anyType, false, true},
-    {"separator", strType, false, false},
-    {"terminator", strType, false, false}
+    TypeFnParam{"items", anyType, false, false, true},
+    TypeFnParam{"separator", strType, false, false, false},
+    TypeFnParam{"terminator", strType, false, false, false}
   }};
 
   this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, true}));

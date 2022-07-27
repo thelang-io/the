@@ -126,7 +126,8 @@ INSTANTIATE_TEST_SUITE_P(ExprObj, CodegenTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenTest, testing::Values(
   "expr-unary",
   "expr-unary-nested",
-  "expr-unary-str"
+  "expr-unary-str",
+  "node-expr-unary-context"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenTest, testing::Values(
@@ -165,7 +166,10 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenTest, testing::Values(
   "node-fn-decl-param-default-fn",
   "node-fn-decl-param-fn",
   "node-fn-decl-nested",
-  "node-fn-decl-complex"
+  "node-fn-decl-complex",
+  "node-fn-decl-param-mut",
+  "node-fn-decl-param-mut-obj",
+  "node-fn-decl-param-mut-fn"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenTest, testing::Values(

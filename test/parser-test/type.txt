@@ -1,0 +1,323 @@
+======= stdin =======
+main {
+  a01: int
+  a02: (int)
+  a03: any
+  a04: bool
+  a05: byte
+  a06: char
+  a07: f32
+  a08: f64
+  a09: float
+  a10: i8
+  a11: i16
+  a12: i32
+  a13: i64
+  a14: str
+  a15: u8
+  a16: u16
+  a17: u32
+  a18: u64
+  a19: void
+  a20: Test
+  a21: (Test)
+}
+======= stdout =======
+<Stmt start="1:1" end="23:2">
+  <StmtMain>
+    <Stmt start="2:3" end="2:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a01" start="2:3" end="2:6" />
+        </slot>
+        <slot name="type">
+          <Type start="2:8" end="2:11">
+            <TypeId>
+              <Token type="ID" val="int" start="2:8" end="2:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="3:3" end="3:13">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a02" start="3:3" end="3:6" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized start="3:8" end="3:13">
+            <TypeId>
+              <Token type="ID" val="int" start="3:9" end="3:12" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="4:3" end="4:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a03" start="4:3" end="4:6" />
+        </slot>
+        <slot name="type">
+          <Type start="4:8" end="4:11">
+            <TypeId>
+              <Token type="ID" val="any" start="4:8" end="4:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="5:3" end="5:12">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a04" start="5:3" end="5:6" />
+        </slot>
+        <slot name="type">
+          <Type start="5:8" end="5:12">
+            <TypeId>
+              <Token type="ID" val="bool" start="5:8" end="5:12" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="6:3" end="6:12">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a05" start="6:3" end="6:6" />
+        </slot>
+        <slot name="type">
+          <Type start="6:8" end="6:12">
+            <TypeId>
+              <Token type="ID" val="byte" start="6:8" end="6:12" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="7:3" end="7:12">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a06" start="7:3" end="7:6" />
+        </slot>
+        <slot name="type">
+          <Type start="7:8" end="7:12">
+            <TypeId>
+              <Token type="ID" val="char" start="7:8" end="7:12" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="8:3" end="8:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a07" start="8:3" end="8:6" />
+        </slot>
+        <slot name="type">
+          <Type start="8:8" end="8:11">
+            <TypeId>
+              <Token type="ID" val="f32" start="8:8" end="8:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="9:3" end="9:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a08" start="9:3" end="9:6" />
+        </slot>
+        <slot name="type">
+          <Type start="9:8" end="9:11">
+            <TypeId>
+              <Token type="ID" val="f64" start="9:8" end="9:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="10:3" end="10:13">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a09" start="10:3" end="10:6" />
+        </slot>
+        <slot name="type">
+          <Type start="10:8" end="10:13">
+            <TypeId>
+              <Token type="ID" val="float" start="10:8" end="10:13" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="11:3" end="11:10">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a10" start="11:3" end="11:6" />
+        </slot>
+        <slot name="type">
+          <Type start="11:8" end="11:10">
+            <TypeId>
+              <Token type="ID" val="i8" start="11:8" end="11:10" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="12:3" end="12:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a11" start="12:3" end="12:6" />
+        </slot>
+        <slot name="type">
+          <Type start="12:8" end="12:11">
+            <TypeId>
+              <Token type="ID" val="i16" start="12:8" end="12:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="13:3" end="13:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a12" start="13:3" end="13:6" />
+        </slot>
+        <slot name="type">
+          <Type start="13:8" end="13:11">
+            <TypeId>
+              <Token type="ID" val="i32" start="13:8" end="13:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="14:3" end="14:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a13" start="14:3" end="14:6" />
+        </slot>
+        <slot name="type">
+          <Type start="14:8" end="14:11">
+            <TypeId>
+              <Token type="ID" val="i64" start="14:8" end="14:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="15:3" end="15:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a14" start="15:3" end="15:6" />
+        </slot>
+        <slot name="type">
+          <Type start="15:8" end="15:11">
+            <TypeId>
+              <Token type="ID" val="str" start="15:8" end="15:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="16:3" end="16:10">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a15" start="16:3" end="16:6" />
+        </slot>
+        <slot name="type">
+          <Type start="16:8" end="16:10">
+            <TypeId>
+              <Token type="ID" val="u8" start="16:8" end="16:10" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="17:3" end="17:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a16" start="17:3" end="17:6" />
+        </slot>
+        <slot name="type">
+          <Type start="17:8" end="17:11">
+            <TypeId>
+              <Token type="ID" val="u16" start="17:8" end="17:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="18:3" end="18:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a17" start="18:3" end="18:6" />
+        </slot>
+        <slot name="type">
+          <Type start="18:8" end="18:11">
+            <TypeId>
+              <Token type="ID" val="u32" start="18:8" end="18:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="19:3" end="19:11">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a18" start="19:3" end="19:6" />
+        </slot>
+        <slot name="type">
+          <Type start="19:8" end="19:11">
+            <TypeId>
+              <Token type="ID" val="u64" start="19:8" end="19:11" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="20:3" end="20:12">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a19" start="20:3" end="20:6" />
+        </slot>
+        <slot name="type">
+          <Type start="20:8" end="20:12">
+            <TypeId>
+              <Token type="ID" val="void" start="20:8" end="20:12" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="21:3" end="21:12">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a20" start="21:3" end="21:6" />
+        </slot>
+        <slot name="type">
+          <Type start="21:8" end="21:12">
+            <TypeId>
+              <Token type="ID" val="Test" start="21:8" end="21:12" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+    <Stmt start="22:3" end="22:14">
+      <StmtVarDecl>
+        <slot name="id">
+          <Token type="ID" val="a21" start="22:3" end="22:6" />
+        </slot>
+        <slot name="type">
+          <Type parenthesized start="22:8" end="22:14">
+            <TypeId>
+              <Token type="ID" val="Test" start="22:9" end="22:13" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtVarDecl>
+    </Stmt>
+  </StmtMain>
+</Stmt>

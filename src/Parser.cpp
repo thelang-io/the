@@ -52,6 +52,12 @@ ParserStmt Parser::next () {
     auto fnDeclParams = std::vector<ParserStmtFnDeclParam>{};
 
     while (tok3.type != TK_OP_RPAR) {
+      auto fnDeclParamMut = tok3.type == TK_KW_MUT;
+
+      if (tok3.type == TK_KW_MUT) {
+        std::tie(_3, tok3) = this->lexer->next();
+      }
+
       if (tok3.type != TK_ID) {
         throw Error(this->reader, tok3.start, E0117);
       }
@@ -100,7 +106,14 @@ ParserStmt Parser::next () {
         throw Error(this->reader, tok4.start, E0119);
       }
 
-      fnDeclParams.push_back(ParserStmtFnDeclParam{tok3, fnDeclParamType, fnDeclParamVariadic, fnDeclParamInit});
+      fnDeclParams.push_back(ParserStmtFnDeclParam{
+        tok3,
+        fnDeclParamType,
+        fnDeclParamMut,
+        fnDeclParamVariadic,
+        fnDeclParamInit
+      });
+
       std::tie(_3, tok3) = this->lexer->next();
 
       if (tok3.type == TK_OP_COMMA) {
@@ -500,6 +513,37 @@ std::optional<ParserType> Parser::_type () {
 
     while (tok3.type != TK_OP_RPAR) {
       this->lexer->seek(loc3);
+
+      auto [loc4, tok4] = this->lexer->next();
+      auto fnParamId = std::optional<Token>{};
+      auto fnParamMut = tok4.type == TK_KW_MUT;
+
+      if (tok4.type == TK_KW_MUT) {
+        std::tie(loc4, tok4) = this->lexer->next();
+
+        if (tok4.type != TK_ID) {
+          throw Error(this->reader, tok4.start, E0145);
+        }
+
+        auto [_5, tok5] = this->lexer->next();
+
+        if (tok5.type != TK_OP_COLON) {
+          throw Error(this->reader, tok5.start, E0146);
+        }
+
+        fnParamId = tok4;
+      } else if (tok4.type == TK_ID) {
+        auto [_5, tok5] = this->lexer->next();
+
+        if (tok5.type == TK_OP_COLON) {
+          fnParamId = tok4;
+        } else {
+          this->lexer->seek(loc4);
+        }
+      } else {
+        this->lexer->seek(loc4);
+      }
+
       auto fnParamType = this->_type();
       auto fnParamVariadic = false;
 
@@ -507,15 +551,15 @@ std::optional<ParserType> Parser::_type () {
         throw Error(this->reader, this->lexer->loc, E0118);
       }
 
-      auto [loc4, tok4] = this->lexer->next();
+      auto [loc6, tok6] = this->lexer->next();
 
-      if (tok4.type == TK_OP_DOT_DOT_DOT) {
+      if (tok6.type == TK_OP_DOT_DOT_DOT) {
         fnParamVariadic = true;
       } else {
-        this->lexer->seek(loc4);
+        this->lexer->seek(loc6);
       }
 
-      fnParams.push_back(ParserTypeFnParam{*fnParamType, fnParamVariadic});
+      fnParams.push_back(ParserTypeFnParam{fnParamId, *fnParamType, fnParamMut, fnParamVariadic});
       std::tie(loc3, tok3) = this->lexer->next();
 
       if (tok3.type == TK_OP_COMMA) {

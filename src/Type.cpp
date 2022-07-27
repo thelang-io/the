@@ -231,6 +231,7 @@ bool Type::match (const Type *type, bool strict) const {
       auto lhsFnParam = lhsFn.params[i];
       auto rhsFnParam = rhsFn.params[i];
 
+      // todo check if mut on references
       if (
         (strict && lhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
         !lhsFnParam.type->match(rhsFnParam.type) ||
@@ -280,6 +281,7 @@ std::string Type::xml (std::size_t indent) const {
 
       for (const auto &typeFnParam : typeFn.params) {
         result += std::string(indent + 2, ' ') + "<TypeFnParam";
+        result += typeFnParam.mut ? " mut" : "";
 
         if (typeFnParam.name != std::nullopt) {
           result += R"( name=")" + *typeFnParam.name + R"(")";

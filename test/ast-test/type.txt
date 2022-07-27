@@ -1,0 +1,243 @@
+======= stdin =======
+obj Test { a: int }
+
+main {
+  a01: int
+  a02: (int)
+  a03: any
+  a04: bool
+  a05: byte
+  a06: char
+  a07: f32
+  a08: f64
+  a09: float
+  a10: i8
+  a11: i16
+  a12: i32
+  a13: i64
+  a14: str
+  a15: u8
+  a16: u16
+  a17: u32
+  a18: u64
+  a19: void
+  a20: Test
+  a21: (Test)
+}
+======= stdout =======
+<Node>
+  <NodeObjDecl>
+    <Type codeName="Test_0" name="Test" type="obj">
+      <slot name="fields">
+        <TypeObjField name="a">
+          <BuiltinType name="int" />
+        </TypeObjField>
+      </slot>
+    </Type>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a01_0" frame="2" name="a01">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a02_0" frame="2" name="a02">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a03_0" frame="2" name="a03">
+            <BuiltinType name="any" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a04_0" frame="2" name="a04">
+            <BuiltinType name="bool" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a05_0" frame="2" name="a05">
+            <BuiltinType name="byte" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a06_0" frame="2" name="a06">
+            <BuiltinType name="char" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a07_0" frame="2" name="a07">
+            <BuiltinType name="f32" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a08_0" frame="2" name="a08">
+            <BuiltinType name="f64" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a09_0" frame="2" name="a09">
+            <BuiltinType name="float" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a10_0" frame="2" name="a10">
+            <BuiltinType name="i8" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a11_0" frame="2" name="a11">
+            <BuiltinType name="i16" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a12_0" frame="2" name="a12">
+            <BuiltinType name="i32" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a13_0" frame="2" name="a13">
+            <BuiltinType name="i64" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a14_0" frame="2" name="a14">
+            <BuiltinType name="str" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a15_0" frame="2" name="a15">
+            <BuiltinType name="u8" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a16_0" frame="2" name="a16">
+            <BuiltinType name="u16" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a17_0" frame="2" name="a17">
+            <BuiltinType name="u32" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a18_0" frame="2" name="a18">
+            <BuiltinType name="u64" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a19_0" frame="2" name="a19">
+            <BuiltinType name="void" />
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a20_0" frame="2" name="a20">
+            <Type codeName="Test_0" name="Test" type="obj">
+              <slot name="fields">
+                <TypeObjField name="a">
+                  <BuiltinType name="int" />
+                </TypeObjField>
+              </slot>
+            </Type>
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a21_0" frame="2" name="a21">
+            <Type codeName="Test_0" name="Test" type="obj">
+              <slot name="fields">
+                <TypeObjField name="a">
+                  <BuiltinType name="int" />
+                </TypeObjField>
+              </slot>
+            </Type>
+          </Var>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+  </NodeMain>
+</Node>

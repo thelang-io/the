@@ -46,11 +46,14 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-empty",
   "stmt-fn-decl",
   "stmt-fn-decl-param-init",
-  "stmt-fn-decl-obj",
   "stmt-fn-decl-recursive",
   "stmt-fn-decl-nested",
   "stmt-fn-decl-scoped",
+  "stmt-fn-decl-param-obj",
   "stmt-fn-decl-param-fn",
+  "stmt-fn-decl-param-mut",
+  "stmt-fn-decl-param-mut-obj",
+  "stmt-fn-decl-param-mut-fn",
   "stmt-fn-decl-variadic"
 ));
 
@@ -134,6 +137,12 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-unary-nested",
   "expr-unary-precedence",
   "expr-unary-associativity"
+));
+
+INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
+  "type",
+  "type-fn",
+  "type-variadic"
 ));
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
@@ -241,4 +250,9 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0142-expr-unary-expected-lval-cond",
   "throw-E0142-expr-unary-expected-lval-lit",
   "throw-E0142-expr-unary-expected-lval-obj"
+));
+
+INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
+  "throw-E0145-type-fn-param-name-after-mut",
+  "throw-E0146-type-fn-missing-colon-after-param-name"
 ));

@@ -118,7 +118,7 @@ TEST_F(TypeTest, GetsProp) {
   EXPECT_EQ(this->tm_.get("str")->getProp("len"), this->tm_.get("int"));
 
   this->tm_.add("Test1", "Test1_0", {
-    {"a", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")}
   });
 
   EXPECT_EQ(this->tm_.get("Test1")->getProp("a"), this->tm_.get("int"));
@@ -138,8 +138,8 @@ TEST_F(TypeTest, GetsNonExistingProp) {
   }, "Error: tried to get non-existing prop type");
 
   this->tm_.add("test1", "test1_0", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
   EXPECT_THROW_WITH_MESSAGE({
@@ -147,7 +147,7 @@ TEST_F(TypeTest, GetsNonExistingProp) {
   }, "Error: tried to get non-existing prop type");
 
   this->tm_.add("Test1", "Test1_0", {
-    {"a", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")}
   });
 
   EXPECT_THROW_WITH_MESSAGE({
@@ -160,7 +160,7 @@ TEST_F(TypeTest, HasProp) {
   EXPECT_TRUE(this->tm_.get("str")->hasProp("len"));
 
   this->tm_.add("Test1", "Test1_0", {
-    {"a", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")}
   });
 
   EXPECT_TRUE(this->tm_.get("Test1")->hasProp("a"));
@@ -172,14 +172,14 @@ TEST_F(TypeTest, HasNonExistingProp) {
   EXPECT_FALSE(this->tm_.get("str")->hasProp("len2"));
 
   this->tm_.add("test1", "test1_0", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
   EXPECT_FALSE(this->tm_.get("test1")->hasProp("a"));
 
   this->tm_.add("Test1", "Test1_0", {
-    {"a", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")}
   });
 
   EXPECT_FALSE(this->tm_.get("Test1")->hasProp("b"));
@@ -241,12 +241,12 @@ TEST_F(TypeTest, CheckIfFn) {
   this->tm_.add("test1", "test1_0", {}, this->tm_.get("int"));
 
   this->tm_.add("test2", "test2_0", {
-    {"a", this->tm_.get("int"), true, false}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
   this->tm_.add("test3", "test3_0", {
-    {"a", this->tm_.get("str"), false, false},
-    {"b", this->tm_.get("int"), false, true}
+    TypeFnParam{"a", this->tm_.get("str"), false, false, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
 
   EXPECT_TRUE(this->tm_.get("test1")->isFn());
@@ -256,12 +256,12 @@ TEST_F(TypeTest, CheckIfFn) {
   EXPECT_TRUE(this->tm_.fn({}, this->tm_.get("void"))->isFn());
 
   EXPECT_TRUE(this->tm_.fn({
-    {std::nullopt, this->tm_.get("int"), true, false}
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"))->isFn());
 
   EXPECT_TRUE(this->tm_.fn({
-    {std::nullopt, this->tm_.get("str"), false, false},
-    {std::nullopt, this->tm_.get("int"), false, true}
+    TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"))->isFn());
 }
 
@@ -337,12 +337,12 @@ TEST_F(TypeTest, CheckIfObj) {
   this->tm_.add("Test1", "Test1_0", {});
 
   this->tm_.add("Test2", "Test2_0", {
-    {"a", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")}
   });
 
   this->tm_.add("Test3", "Test3_0", {
-    {"a", this->tm_.get("int")},
-    {"b", this->tm_.get("str")}
+    TypeObjField{"a", this->tm_.get("int")},
+    TypeObjField{"b", this->tm_.get("str")}
   });
 
   EXPECT_TRUE(this->tm_.get("Test1")->isObj());
@@ -563,39 +563,39 @@ TEST_F(TypeTest, MatchesInteger) {
 
 TEST_F(TypeTest, MatchesFunction) {
   this->tm_.add("test1", "test1_0", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
   this->tm_.add("test2", "test2_0", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
   this->tm_.add("test3", "test3_0", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), true, false}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
   this->tm_.add("test4", "test4_0", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("str"), false, true}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("int"));
 
   this->tm_.add("test5", "test5_0", {
-    {"a", this->tm_.get("int"), true, false},
-    {"b", this->tm_.get("int"), false, true}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
 
   this->tm_.add("test6", "test6_0", {}, this->tm_.get("int"));
 
   this->tm_.add("test7", "test7_0", {
-    {"a", this->tm_.get("int"), true, false}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
   this->tm_.add("test8", "test8_0", {
-    {std::nullopt, this->tm_.get("int"), true, false},
-    {std::nullopt, this->tm_.get("int"), false, true}
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
   EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("test1")));
@@ -615,24 +615,24 @@ TEST_F(TypeTest, MatchesFunction) {
 
 TEST_F(TypeTest, MatchesObject) {
   this->tm_.add("Test1", "Test1_0", {
-    {"a", this->tm_.get("int")},
-    {"b", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")},
+    TypeObjField{"b", this->tm_.get("int")}
   });
 
   this->tm_.add("Test2", "Test2_0", {});
 
   this->tm_.add("Test3", "Test3_0", {
-    {"a", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")}
   });
 
   this->tm_.add("Test4", "Test4_0", {
-    {"a", this->tm_.get("int")},
-    {"b", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")},
+    TypeObjField{"b", this->tm_.get("int")}
   });
 
   this->tm_.add("Test5", "Test5_0", {
-    {"a", this->tm_.get("int")},
-    {"b", this->tm_.get("str")}
+    TypeObjField{"a", this->tm_.get("int")},
+    TypeObjField{"b", this->tm_.get("str")}
   });
 
   EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("Test1")));

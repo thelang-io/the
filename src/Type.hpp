@@ -19,6 +19,7 @@ struct Type;
 struct TypeFnParam {
   std::optional<std::string> name;
   Type *type;
+  bool mut;
   bool required;
   bool variadic;
 };

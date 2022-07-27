@@ -1,0 +1,147 @@
+======= stdin =======
+fn test1 (mut a: Test) Test {
+  a.v += 1
+  return a
+}
+fn test2 (mut a: Test, mut b := 0) Test {
+  a = b
+  return a
+}
+======= stdout =======
+<Stmt start="1:1" end="4:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test1" start="1:4" end="1:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam mut>
+        <slot name="id">
+          <Token type="ID" val="a" start="1:15" end="1:16" />
+        </slot>
+        <slot name="type">
+          <Type start="1:18" end="1:22">
+            <TypeId>
+              <Token type="ID" val="Test" start="1:18" end="1:22" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type start="1:24" end="1:28">
+        <TypeId>
+          <Token type="ID" val="Test" start="1:24" end="1:28" />
+        </TypeId>
+      </Type>
+    </slot>
+    <slot name="body">
+      <Stmt start="2:3" end="2:11">
+        <StmtExpr start="2:3" end="2:11">
+          <ExprAssign>
+            <slot name="left">
+              <ExprAccess>
+                <slot name="obj">
+                  <Token type="ID" val="a" start="2:3" end="2:4" />
+                </slot>
+                <slot name="prop">
+                  <Token type="ID" val="v" start="2:5" end="2:6" />
+                </slot>
+              </ExprAccess>
+            </slot>
+            <slot name="op">
+              <Token type="OP_PLUS_EQ" val="+=" start="2:7" end="2:9" />
+            </slot>
+            <slot name="right">
+              <StmtExpr start="2:10" end="2:11">
+                <ExprLit>
+                  <Token type="LIT_INT_DEC" val="1" start="2:10" end="2:11" />
+                </ExprLit>
+              </StmtExpr>
+            </slot>
+          </ExprAssign>
+        </StmtExpr>
+      </Stmt>
+      <Stmt start="3:3" end="3:11">
+        <StmtReturn>
+          <StmtExpr start="3:10" end="3:11">
+            <ExprAccess>
+              <Token type="ID" val="a" start="3:10" end="3:11" />
+            </ExprAccess>
+          </StmtExpr>
+        </StmtReturn>
+      </Stmt>
+    </slot>
+  </StmtFnDecl>
+</Stmt>
+<Stmt start="5:1" end="8:2">
+  <StmtFnDecl>
+    <slot name="id">
+      <Token type="ID" val="test2" start="5:4" end="5:9" />
+    </slot>
+    <slot name="params">
+      <StmtFnDeclParam mut>
+        <slot name="id">
+          <Token type="ID" val="a" start="5:15" end="5:16" />
+        </slot>
+        <slot name="type">
+          <Type start="5:18" end="5:22">
+            <TypeId>
+              <Token type="ID" val="Test" start="5:18" end="5:22" />
+            </TypeId>
+          </Type>
+        </slot>
+      </StmtFnDeclParam>
+      <StmtFnDeclParam mut>
+        <slot name="id">
+          <Token type="ID" val="b" start="5:28" end="5:29" />
+        </slot>
+        <slot name="init">
+          <StmtExpr start="5:33" end="5:34">
+            <ExprLit>
+              <Token type="LIT_INT_DEC" val="0" start="5:33" end="5:34" />
+            </ExprLit>
+          </StmtExpr>
+        </slot>
+      </StmtFnDeclParam>
+    </slot>
+    <slot name="returnType">
+      <Type start="5:36" end="5:40">
+        <TypeId>
+          <Token type="ID" val="Test" start="5:36" end="5:40" />
+        </TypeId>
+      </Type>
+    </slot>
+    <slot name="body">
+      <Stmt start="6:3" end="6:8">
+        <StmtExpr start="6:3" end="6:8">
+          <ExprAssign>
+            <slot name="left">
+              <ExprAccess>
+                <Token type="ID" val="a" start="6:3" end="6:4" />
+              </ExprAccess>
+            </slot>
+            <slot name="op">
+              <Token type="OP_EQ" val="=" start="6:5" end="6:6" />
+            </slot>
+            <slot name="right">
+              <StmtExpr start="6:7" end="6:8">
+                <ExprAccess>
+                  <Token type="ID" val="b" start="6:7" end="6:8" />
+                </ExprAccess>
+              </StmtExpr>
+            </slot>
+          </ExprAssign>
+        </StmtExpr>
+      </Stmt>
+      <Stmt start="7:3" end="7:11">
+        <StmtReturn>
+          <StmtExpr start="7:10" end="7:11">
+            <ExprAccess>
+              <Token type="ID" val="a" start="7:10" end="7:11" />
+            </ExprAccess>
+          </StmtExpr>
+        </StmtReturn>
+      </Stmt>
+    </slot>
+  </StmtFnDecl>
+</Stmt>

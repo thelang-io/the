@@ -42,6 +42,9 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-expr",
   "node-fn-decl",
   "node-fn-decl-param-init",
+  "node-fn-decl-param-mut",
+  "node-fn-decl-param-mut-obj",
+  "node-fn-decl-param-mut-fn",
   "node-fn-decl-stack",
   "node-if",
   "node-loop",
@@ -63,6 +66,12 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-lit",
   "expr-obj",
   "expr-unary"
+));
+
+INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
+  "type",
+  "type-fn",
+  "type-variadic"
 ));
 
 INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(

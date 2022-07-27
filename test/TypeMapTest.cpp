@@ -21,12 +21,12 @@ TEST_F(TypeMapTest, AddInsertsFunction) {
   this->tm_.add("Test1", "Test1_0", {});
 
   this->tm_.add("Test2", "Test2_0", {
-    {"a", this->tm_.get("int")}
+    TypeObjField{"a", this->tm_.get("int")}
   });
 
   this->tm_.add("Test3", "Test3_0", {
-    {"b", this->tm_.get("any")},
-    {"c", this->tm_.get("str")}
+    TypeObjField{"b", this->tm_.get("any")},
+    TypeObjField{"c", this->tm_.get("str")}
   });
 
   EXPECT_NO_THROW(this->tm_.get("Test1"));
@@ -55,12 +55,12 @@ TEST_F(TypeMapTest, AddInsertsObject) {
   this->tm_.add("test1", "test1_0", {}, this->tm_.get("void"));
 
   this->tm_.add("test2", "test2_0", {
-    {"a", this->tm_.get("int"), true, false}
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
   this->tm_.add("test3", "test3_0", {
-    {"a", this->tm_.get("int"), false, false},
-    {"b", this->tm_.get("str"), false, true}
+    TypeFnParam{"a", this->tm_.get("int"), false, false, false},
+    TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("str"));
 
   EXPECT_NO_THROW(this->tm_.get("test1"));
@@ -81,12 +81,15 @@ TEST_F(TypeMapTest, AddInsertsObject) {
   EXPECT_EQ(fn2Body.params.size(), 1);
   EXPECT_EQ(fn3Body.params.size(), 2);
   EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].type));
+  EXPECT_FALSE(fn2Body.params[0].mut);
   EXPECT_TRUE(fn2Body.params[0].required);
   EXPECT_FALSE(fn2Body.params[0].variadic);
   EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].type));
+  EXPECT_FALSE(fn3Body.params[0].mut);
   EXPECT_FALSE(fn3Body.params[0].required);
   EXPECT_FALSE(fn3Body.params[0].variadic);
   EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].type));
+  EXPECT_FALSE(fn3Body.params[1].mut);
   EXPECT_FALSE(fn3Body.params[1].required);
   EXPECT_TRUE(fn3Body.params[1].variadic);
 }
@@ -95,12 +98,12 @@ TEST_F(TypeMapTest, FunctionGenerates) {
   auto fn1 = this->tm_.fn({}, this->tm_.get("void"));
 
   auto fn2 = this->tm_.fn({
-    {std::nullopt, this->tm_.get("int"), true, false}
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
   auto fn3 = this->tm_.fn({
-    {std::nullopt, this->tm_.get("int"), false, false},
-    {std::nullopt, this->tm_.get("str"), false, true}
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, false},
+    TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, true}
   }, this->tm_.get("str"));
 
   EXPECT_EQ(fn1->name, "@");
@@ -118,12 +121,15 @@ TEST_F(TypeMapTest, FunctionGenerates) {
   EXPECT_EQ(fn2Body.params.size(), 1);
   EXPECT_EQ(fn3Body.params.size(), 2);
   EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].type));
+  EXPECT_FALSE(fn2Body.params[0].mut);
   EXPECT_TRUE(fn2Body.params[0].required);
   EXPECT_FALSE(fn2Body.params[0].variadic);
   EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].type));
+  EXPECT_FALSE(fn3Body.params[0].mut);
   EXPECT_FALSE(fn3Body.params[0].required);
   EXPECT_FALSE(fn3Body.params[0].variadic);
   EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].type));
+  EXPECT_FALSE(fn3Body.params[1].mut);
   EXPECT_FALSE(fn3Body.params[1].required);
   EXPECT_TRUE(fn3Body.params[1].variadic);
 }

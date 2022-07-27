@@ -11,6 +11,10 @@ fn test3 (job: fn (int, int) int) int {
   return job(2, 3)
 }
 
+fn test4 (job: fn (mut a: int, mut b: int) int) int {
+  return job(b: 2, a: 3)
+}
+
 fn job1 () {
 }
 
@@ -55,6 +59,8 @@ struct __THE_1_fn$5P;
 struct __THE_1_fn$5;
 struct __THE_1_fn$4P;
 struct __THE_1_fn$4;
+struct __THE_1_fn$6P;
+struct __THE_1_fn$6;
 
 struct __THE_1_fn$1 {
   void (*f) (void *);
@@ -102,6 +108,14 @@ struct __THE_1_fn$4 {
   void *x;
   size_t l;
 };
+struct __THE_1_fn$6P {
+  const struct __THE_1_fn$5 n0;
+};
+struct __THE_1_fn$6 {
+  int32_t (*f) (void *, struct __THE_1_fn$6P);
+  void *x;
+  size_t l;
+};
 
 struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
@@ -112,6 +126,7 @@ int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$2P);
 struct __THE_1_fn$5 __THE_1_fn$5_copy (const struct __THE_1_fn$5);
 void __THE_1_fn$5_free (struct __THE_1_fn$5);
 int32_t __THE_1_test3_0 (void *, struct __THE_1_fn$4P);
+int32_t __THE_1_test4_0 (void *, struct __THE_1_fn$6P);
 void __THE_1_job1_0 (void *);
 int32_t __THE_1_job2_0 (void *, struct __THE_1_fn$3P);
 int32_t __THE_1_job3_0 (void *, struct __THE_1_fn$5P);
@@ -162,6 +177,13 @@ int32_t __THE_1_test3_0 (void *px, struct __THE_1_fn$4P p) {
   __THE_1_fn$5_free((struct __THE_1_fn$5) __THE_0_job_0);
   return v;
 }
+int32_t __THE_1_test4_0 (void *px, struct __THE_1_fn$6P p) {
+  int32_t v;
+  const struct __THE_1_fn$5 __THE_0_job_0 = p.n0;
+  v = __THE_0_job_0.f(__THE_0_job_0.x, (struct __THE_1_fn$5P) {3, 2});
+  __THE_1_fn$5_free((struct __THE_1_fn$5) __THE_0_job_0);
+  return v;
+}
 void __THE_1_job1_0 (void *px) {
 }
 int32_t __THE_1_job2_0 (void *px, struct __THE_1_fn$3P p) {
@@ -178,6 +200,7 @@ int main () {
   const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$2 __THE_0_test2_0 = (struct __THE_1_fn$2) {&__THE_1_test2_0, NULL, 0};
   const struct __THE_1_fn$4 __THE_0_test3_0 = (struct __THE_1_fn$4) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn$6 __THE_0_test4_0 = (struct __THE_1_fn$6) {&__THE_1_test4_0, NULL, 0};
   const struct __THE_1_fn$1 __THE_0_job1_0 = (struct __THE_1_fn$1) {&__THE_1_job1_0, NULL, 0};
   const struct __THE_1_fn$3 __THE_0_job2_0 = (struct __THE_1_fn$3) {&__THE_1_job2_0, NULL, 0};
   const struct __THE_1_fn$5 __THE_0_job3_0 = (struct __THE_1_fn$5) {&__THE_1_job3_0, NULL, 0};

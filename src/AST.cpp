@@ -168,7 +168,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       auto paramType = stmtFnDeclParam.type != std::nullopt
         ? this->_type(*stmtFnDeclParam.type)
         : this->_nodeExprType(*stmtFnDeclParam.init);
-      auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, false);
+      auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
       auto paramInit = std::optional<ASTNodeExpr>{};
 
       if (stmtFnDeclParam.init != std::nullopt) {
@@ -179,7 +179,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       auto paramRequired = paramInit == std::nullopt && !paramVariadic;
 
       nodeFnDeclParams.push_back(ASTNodeFnDeclParam{paramVar, paramInit});
-      nodeFnDeclVarParams.push_back(TypeFnParam{paramName, paramType, paramRequired, paramVariadic});
+      nodeFnDeclVarParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
     }
 
     auto nodeFnDeclVarName = stmtFnDecl.id.val;
@@ -257,7 +257,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
       auto fieldType = this->_type(stmtObjDeclField.type);
-      obj.fields.push_back({stmtObjDeclField.id.val, fieldType});
+      obj.fields.push_back(TypeObjField{stmtObjDeclField.id.val, fieldType});
     }
 
     auto nodeObjDecl = ASTNodeObjDecl{type};
@@ -607,8 +607,10 @@ Type *AST::_type (const ParserType &type) {
     auto fnParams = std::vector<TypeFnParam>{};
 
     for (const auto &typeFnParam : typeFn.params) {
+      auto paramName = typeFnParam.id == std::nullopt ? std::optional<std::string>{} : typeFnParam.id->val;
       auto paramType = this->_type(typeFnParam.type);
-      fnParams.push_back(TypeFnParam{std::nullopt, paramType, !typeFnParam.variadic, typeFnParam.variadic});
+
+      fnParams.push_back(TypeFnParam{paramName, paramType, typeFnParam.mut, !typeFnParam.variadic, typeFnParam.variadic});
     }
 
     return this->typeMap.fn(fnParams, fnReturnType);

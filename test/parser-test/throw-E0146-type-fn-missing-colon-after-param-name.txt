@@ -1,0 +1,6 @@
+======= stdin =======
+a: fn (a: int, mut b float) void
+======= stderr =======
+/test:1:22: E0146 - Expected colon after parameter name in function type
+  1 | a: fn (a: int, mut b float) void
+    |                      ^~~~~

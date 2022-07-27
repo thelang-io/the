@@ -59,7 +59,9 @@ struct ParserType {
 };
 
 struct ParserTypeFnParam {
+  std::optional<Token> id;
   ParserType type;
+  bool mut;
   bool variadic;
 };
 
@@ -84,6 +86,7 @@ struct ParserStmtEof {
 struct ParserStmtFnDeclParam {
   Token id;
   std::optional<ParserType> type;
+  bool mut;
   bool variadic;
   std::optional<ParserStmtExpr> init;
 };

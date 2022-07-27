@@ -45,7 +45,10 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + R"(<slot name="params">)" EOL;
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
-        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam" + (stmtFnDeclParam.variadic ? " variadic" : "") + ">" EOL;
+        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam";
+        result += stmtFnDeclParam.mut ? " mut" : "";
+        result += stmtFnDeclParam.variadic ? " variadic" : "";
+        result += ">" EOL;
 
         result += std::string(indent + 6, ' ') + R"(<slot name="id">)" EOL;
         result += std::string(indent + 8, ' ') + stmtFnDeclParam.id.xml() + EOL;
@@ -235,8 +238,11 @@ std::string ParserType::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + R"(<slot name="params">)" EOL;
 
       for (const auto &typeFnParam : typeFn.params) {
-        result += std::string(indent + 4, ' ') + "<TypeFnParam" + (typeFnParam.variadic ? " variadic" : "") + ">" EOL;
-        result += typeFnParam.type.xml(indent + 6) + EOL;
+        result += std::string(indent + 4, ' ') + "<TypeFnParam";
+        result += typeFnParam.id == std::nullopt ? "" : R"( id=")" + typeFnParam.id->val + R"(")";
+        result += typeFnParam.mut ? " mut" : "";
+        result += typeFnParam.variadic ? " variadic" : "";
+        result += ">" EOL + typeFnParam.type.xml(indent + 6) + EOL;
         result += std::string(indent + 4, ' ') + "</TypeFnParam>" EOL;
       }
 
