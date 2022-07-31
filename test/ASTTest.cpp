@@ -65,13 +65,15 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-cond",
   "expr-lit",
   "expr-obj",
+  "expr-ref",
   "expr-unary"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
   "type",
   "type-fn",
-  "type-variadic"
+  "type-variadic",
+  "type-ref"
 ));
 
 INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(

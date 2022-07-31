@@ -1,0 +1,6 @@
+======= stdin =======
+ref fn () void
+======= stderr =======
+/test:1:4: E0147 - Expected reference expression body
+  1 | ref fn () void
+    |    ^

@@ -38,7 +38,7 @@ struct __THE_1_fn$0 {
   size_t l;
 };
 struct __THE_1_fn$1P {
-  const struct __THE_1_fn$0 n0;
+  struct __THE_1_fn$0 n0;
 };
 struct __THE_1_fn$1 {
   void (*f) (void *, struct __THE_1_fn$1P);

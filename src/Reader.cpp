@@ -22,19 +22,17 @@ Reader::Reader (const std::string &p) {
   try {
     canonicalPath = std::filesystem::canonical(p).string();
   } catch (const std::exception &ex) {
-    throw Error(R"(Error: no such file ")" + p + R"(")");
+    throw Error(R"(no such file ")" + p + R"(")");
   }
 
   if (!std::filesystem::is_regular_file(canonicalPath)) {
-    throw Error(R"(Error: path ")" + p + R"(" is not a file)");
+    throw Error(R"(path ")" + p + R"(" is not a file)");
   }
 
   auto f = std::ifstream(canonicalPath);
 
-  if (!f.is_open()) {
-    throw Error(R"(Error: unable to open file ")" + p + R"(")");
-  } else if (f.fail()) {
-    throw Error(R"(Error: unable to read file ")" + p + R"(")");
+  if (!f.is_open() || f.fail()) {
+    throw Error(R"(unable to open file ")" + p + R"(")");
   }
 
   auto c = std::stringstream();
@@ -52,7 +50,7 @@ bool Reader::eof () const {
 
 std::tuple<ReaderLocation, char> Reader::next () {
   if (this->eof()) {
-    throw Error("Error: tried to read on reader eof");
+    throw Error("tried to read on reader eof");
   }
 
   auto l = this->loc;

@@ -151,6 +151,12 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprObj>" EOL;
+  } else if (std::holds_alternative<ParserExprRef>(*this->body)) {
+    auto exprRef = std::get<ParserExprRef>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprRef>" EOL;
+    result += exprRef.body.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</ExprRef>" EOL;
   } else if (std::holds_alternative<ParserExprUnary>(*this->body)) {
     auto exprUnary = std::get<ParserExprUnary>(*this->body);
 

@@ -23,9 +23,13 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
 }
 
+Type *Type::real (Type *type) {
+  return std::holds_alternative<TypeRef>(type->body) ? std::get<TypeRef>(type->body).type : type;
+}
+
 Type *Type::largest (Type *a, Type *b) {
   if (!a->isNumber() || !b->isNumber()) {
-    throw Error("Error: tried to find largest type of non-number");
+    throw Error("tried to find largest type of non-number");
   }
 
   return (
@@ -79,35 +83,41 @@ Type *Type::largest (Type *a, Type *b) {
 }
 
 Type *Type::getProp (const std::string &propName) const {
-  if (this->isFn()) {
-    throw Error("Error: tried to get non-existing prop type");
+  if (std::holds_alternative<TypeFn>(this->body)) {
+    throw Error("tried to get non-existing prop type");
+  } else if (std::holds_alternative<TypeRef>(this->body)) {
+    auto typeRef = std::get<TypeRef>(this->body);
+    return typeRef.type->getProp(propName);
   }
 
-  auto obj = std::get<TypeObj>(this->body);
+  auto typeObj = std::get<TypeObj>(this->body);
 
-  auto memberObjField = std::find_if(obj.fields.begin(), obj.fields.end(), [&propName] (const auto &it) -> bool {
+  auto memberObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
     return it.name == propName;
   });
 
-  if (memberObjField == obj.fields.end()) {
-    throw Error("Error: tried to get non-existing prop type");
+  if (memberObjField == typeObj.fields.end()) {
+    throw Error("tried to get non-existing prop type");
   }
 
   return memberObjField->type;
 }
 
 bool Type::hasProp (const std::string &propName) const {
-  if (this->isFn()) {
+  if (std::holds_alternative<TypeFn>(this->body)) {
     return false;
+  } else if (std::holds_alternative<TypeRef>(this->body)) {
+    auto typeRef = std::get<TypeRef>(this->body);
+    return typeRef.type->hasProp(propName);
   }
 
-  auto obj = std::get<TypeObj>(this->body);
+  auto typeObj = std::get<TypeObj>(this->body);
 
-  auto memberObjField = std::find_if(obj.fields.begin(), obj.fields.end(), [&propName] (const auto &it) -> bool {
+  auto memberObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
     return it.name == propName;
   });
 
-  return memberObjField != obj.fields.end();
+  return memberObjField != typeObj.fields.end();
 }
 
 bool Type::isAny () const {
@@ -185,9 +195,14 @@ bool Type::isObj () const {
     !this->isChar() &&
     !this->isNumber() &&
     !this->isFn() &&
+    !this->isRef() &&
     !this->isStr() &&
     !this->isVoid()
   );
+}
+
+bool Type::isRef () const {
+  return std::holds_alternative<TypeRef>(this->body);
 }
 
 bool Type::isStr () const {
@@ -214,8 +229,23 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
-bool Type::match (const Type *type, bool strict) const {
-  if (this->isFn()) {
+bool Type::match (const Type *type) const {
+  if (this->name == "any") {
+    return true;
+  } else if (this->isRef() || type->isRef()) {
+    if (this->isRef() && type->isRef()) {
+      auto lhsRef = std::get<TypeRef>(this->body);
+      auto rhsRef = std::get<TypeRef>(type->body);
+
+      return lhsRef.type->match(rhsRef.type);
+    } else if (this->isRef() && !type->isRef()) {
+      auto lhsRef = std::get<TypeRef>(this->body);
+      return lhsRef.type->match(type);
+    } else {
+      auto lhsRef = std::get<TypeRef>(type->body);
+      return lhsRef.type->match(this);
+    }
+  } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
     }
@@ -231,10 +261,10 @@ bool Type::match (const Type *type, bool strict) const {
       auto lhsFnParam = lhsFn.params[i];
       auto rhsFnParam = rhsFn.params[i];
 
-      // todo check if mut on references
       if (
-        (strict && lhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
+        (lhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
         !lhsFnParam.type->match(rhsFnParam.type) ||
+        (lhsFnParam.type->isRef() && lhsFnParam.mut != rhsFnParam.mut) ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic
       ) {
@@ -247,8 +277,100 @@ bool Type::match (const Type *type, bool strict) const {
     return type->isObj() && this->name == type->name;
   }
 
-  return this->name == "any" ||
-    (this->name == "bool" && type->name == "bool") ||
+  return (this->name == "bool" && type->name == "bool") ||
+    (this->name == "byte" && type->name == "byte") ||
+    (this->name == "char" && type->name == "char") ||
+    (this->name == "str" && type->name == "str") ||
+    (this->name == "void" && type->name == "void") ||
+    numberTypeMatch(this->name, type->name);
+}
+
+bool Type::matchExact (const Type *type) const {
+  if (this->isFn() || type->isFn()) {
+    if (!this->isFn() || !type->isFn()) {
+      return false;
+    }
+
+    auto lhsFn = std::get<TypeFn>(this->body);
+    auto rhsFn = std::get<TypeFn>(type->body);
+
+    if (!lhsFn.returnType->matchExact(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+      return false;
+    }
+
+    for (auto i = static_cast<std::size_t>(0); i < lhsFn.params.size(); i++) {
+      auto lhsFnParam = lhsFn.params[i];
+      auto rhsFnParam = rhsFn.params[i];
+
+      if (
+        lhsFnParam.name != rhsFnParam.name ||
+        !lhsFnParam.type->matchExact(rhsFnParam.type) ||
+        lhsFnParam.mut != rhsFnParam.mut ||
+        lhsFnParam.required != rhsFnParam.required ||
+        lhsFnParam.variadic != rhsFnParam.variadic
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  } else if (this->isRef() || type->isRef()) {
+    if (!this->isRef() || !type->isRef()) {
+      return false;
+    }
+
+    auto lhsRef = std::get<TypeRef>(this->body);
+    auto rhsRef = std::get<TypeRef>(type->body);
+
+    return lhsRef.type->matchExact(rhsRef.type);
+  }
+
+  return this->name == type->name;
+}
+
+bool Type::matchNice (const Type *type) const {
+  if (this->name == "any") {
+    return true;
+  } else if (this->isFn()) {
+    if (!type->isFn()) {
+      return false;
+    }
+
+    auto lhsFn = std::get<TypeFn>(this->body);
+    auto rhsFn = std::get<TypeFn>(type->body);
+
+    if (!lhsFn.returnType->matchNice(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+      return false;
+    }
+
+    for (auto i = static_cast<std::size_t>(0); i < lhsFn.params.size(); i++) {
+      auto lhsFnParam = lhsFn.params[i];
+      auto rhsFnParam = rhsFn.params[i];
+
+      if (
+        !lhsFnParam.type->matchNice(rhsFnParam.type) ||
+        lhsFnParam.required != rhsFnParam.required ||
+        lhsFnParam.variadic != rhsFnParam.variadic
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  } else if (this->isObj()) {
+    return type->isObj() && this->name == type->name;
+  } else if (this->isRef() || type->isRef()) {
+    if (!this->isRef() || !type->isRef()) {
+      return false;
+    }
+
+    auto lhsRef = std::get<TypeRef>(this->body);
+    auto rhsRef = std::get<TypeRef>(type->body);
+
+    return lhsRef.type->matchNice(rhsRef.type);
+  }
+
+  return (this->name == "bool" && type->name == "bool") ||
     (this->name == "byte" && type->name == "byte") ||
     (this->name == "char" && type->name == "char") ||
     (this->name == "str" && type->name == "str") ||
@@ -261,20 +383,26 @@ std::string Type::xml (std::size_t indent) const {
     return std::string(indent, ' ') + R"(<BuiltinType name=")" + this->name + R"(" />)";
   }
 
-  auto result = std::string(indent, ' ') + "<Type";
+  auto typeName = std::string("Type");
+
+  if (std::holds_alternative<TypeFn>(this->body)) {
+    typeName += "Fn";
+  } else if (std::holds_alternative<TypeObj>(this->body)) {
+    typeName += "Obj";
+  } else if (std::holds_alternative<TypeRef>(this->body)) {
+    typeName += "Ref";
+  }
+
+  auto result = std::string(indent, ' ') + "<" + typeName;
 
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
-  result += R"( type=")" + std::string(this->isFn() ? "fn" : "obj") + R"(">)" EOL;
+  result += ">" EOL;
 
   indent += 2;
 
   if (std::holds_alternative<TypeFn>(this->body)) {
     auto typeFn = std::get<TypeFn>(this->body);
-
-    result += std::string(indent, ' ') + R"(<slot name="returnType">)" EOL;
-    result += typeFn.returnType->xml(indent + 2) + EOL;
-    result += std::string(indent, ' ') + "</slot>" EOL;
 
     if (!typeFn.params.empty()) {
       result += std::string(indent, ' ') + R"(<slot name="params">)" EOL;
@@ -295,22 +423,23 @@ std::string Type::xml (std::size_t indent) const {
 
       result += std::string(indent, ' ') + "</slot>" EOL;
     }
-  } else {
+
+    result += std::string(indent, ' ') + R"(<slot name="returnType">)" EOL;
+    result += typeFn.returnType->xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</slot>" EOL;
+  } else if (std::holds_alternative<TypeObj>(this->body)) {
     auto typeObj = std::get<TypeObj>(this->body);
 
-    if (!typeObj.fields.empty()) {
-      result += std::string(indent, ' ') + R"(<slot name="fields">)" EOL;
-
-      for (const auto &typeObjField : typeObj.fields) {
-        result += std::string(indent + 2, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" EOL;
-        result += typeObjField.type->xml(indent + 4) + EOL;
-        result += std::string(indent + 2, ' ') + "</TypeObjField>" EOL;
-      }
-
-      result += std::string(indent, ' ') + "</slot>" EOL;
+    for (const auto &typeObjField : typeObj.fields) {
+      result += std::string(indent, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" EOL;
+      result += typeObjField.type->xml(indent + 2) + EOL;
+      result += std::string(indent, ' ') + "</TypeObjField>" EOL;
     }
+  } else if (std::holds_alternative<TypeRef>(this->body)) {
+    auto typeRef = std::get<TypeRef>(this->body);
+    result += typeRef.type->xml(indent) + EOL;
   }
 
   indent -= 2;
-  return result + std::string(indent, ' ') + "</Type>";
+  return result + std::string(indent, ' ') + "</" + typeName + ">";
 }

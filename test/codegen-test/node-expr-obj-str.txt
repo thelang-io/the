@@ -58,61 +58,7 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
 }
 
 int main () {
-  __THE_1_Test_0_free(__THE_1_Test_0_alloc(str_alloc("test")));
-}
-======= code-windows =======
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-struct str {
-  char *c;
-  size_t l;
-};
-
-struct str str_alloc (const char *);
-void str_free (struct str);
-void *alloc (size_t);
-
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
-}
-void str_free (struct str s) {
-  free(s.c);
-}
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
-struct __THE_1_Test_0;
-
-struct __THE_1_Test_0 {
-  struct str __THE_0_a;
-};
-
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str __THE_0_a) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = __THE_0_a;
-  return r;
-}
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  str_free((struct str) o->__THE_0_a);
-  free(o);
-}
-
-int main () {
-  __THE_1_Test_0_free(__THE_1_Test_0_alloc(str_alloc("test")));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(str_alloc("test")));
 }
 ======= flags =======
 ======= stdout =======

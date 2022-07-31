@@ -38,17 +38,13 @@ main {
           <Token type="ID" val="a" start="2:3" end="2:4" />
         </slot>
         <slot name="type">
-          <Type start="2:6" end="2:16">
-            <TypeFn>
-              <slot name="returnType">
-                <Type start="2:12" end="2:16">
-                  <TypeId>
-                    <Token type="ID" val="void" start="2:12" end="2:16" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="2:6" end="2:16">
+            <slot name="returnType">
+              <TypeId start="2:12" end="2:16">
+                <Token type="ID" val="void" start="2:12" end="2:16" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtObjDeclField>
     </slot>
@@ -65,33 +61,25 @@ main {
           <Token type="ID" val="b" start="6:3" end="6:4" />
         </slot>
         <slot name="type">
-          <Type start="6:6" end="6:26">
-            <TypeFn>
-              <slot name="params">
-                <TypeFnParam>
-                  <Type start="6:10" end="6:13">
-                    <TypeId>
-                      <Token type="ID" val="int" start="6:10" end="6:13" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-                <TypeFnParam variadic>
-                  <Type start="6:15" end="6:18">
-                    <TypeId>
-                      <Token type="ID" val="int" start="6:15" end="6:18" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <Type start="6:23" end="6:26">
-                  <TypeId>
-                    <Token type="ID" val="int" start="6:23" end="6:26" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="6:6" end="6:26">
+            <slot name="params">
+              <TypeFnParam>
+                <TypeId start="6:10" end="6:13">
+                  <Token type="ID" val="int" start="6:10" end="6:13" />
+                </TypeId>
+              </TypeFnParam>
+              <TypeFnParam variadic>
+                <TypeId start="6:15" end="6:18">
+                  <Token type="ID" val="int" start="6:15" end="6:18" />
+                </TypeId>
+              </TypeFnParam>
+            </slot>
+            <slot name="returnType">
+              <TypeId start="6:23" end="6:26">
+                <Token type="ID" val="int" start="6:23" end="6:26" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtObjDeclField>
     </slot>
@@ -139,11 +127,9 @@ main {
           <Token type="ID" val="a" start="13:8" end="13:9" />
         </slot>
         <slot name="type">
-          <Type start="13:11" end="13:14">
-            <TypeId>
-              <Token type="ID" val="int" start="13:11" end="13:14" />
-            </TypeId>
-          </Type>
+          <TypeId start="13:11" end="13:14">
+            <Token type="ID" val="int" start="13:11" end="13:14" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam variadic>
@@ -151,20 +137,16 @@ main {
           <Token type="ID" val="b" start="13:16" end="13:17" />
         </slot>
         <slot name="type">
-          <Type start="13:19" end="13:22">
-            <TypeId>
-              <Token type="ID" val="int" start="13:19" end="13:22" />
-            </TypeId>
-          </Type>
+          <TypeId start="13:19" end="13:22">
+            <Token type="ID" val="int" start="13:19" end="13:22" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="13:27" end="13:30">
-        <TypeId>
-          <Token type="ID" val="int" start="13:27" end="13:30" />
-        </TypeId>
-      </Type>
+      <TypeId start="13:27" end="13:30">
+        <Token type="ID" val="int" start="13:27" end="13:30" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="14:3" end="14:11">

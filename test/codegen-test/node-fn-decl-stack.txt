@@ -30,7 +30,7 @@ struct __THE_1_fn$0;
 struct __THE_1_mainSDtest_0X;
 
 struct __THE_1_fn$0P {
-  const int32_t n0;
+  int32_t n0;
 };
 struct __THE_1_fn$0 {
   void (*f) (void *, struct __THE_1_fn$0P);

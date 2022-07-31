@@ -20,7 +20,7 @@ class VarMap {
   std::string name (const std::string &) const;
   void restore ();
   void save ();
-  VarStack stack () const;
+  VarStack varStack () const;
 
  private:
   std::size_t _frame = 0;

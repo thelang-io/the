@@ -27,11 +27,9 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="x" start="1:11" end="1:12" />
         </slot>
         <slot name="type">
-          <Type start="1:14" end="1:17">
-            <TypeId>
-              <Token type="ID" val="int" start="1:14" end="1:17" />
-            </TypeId>
-          </Type>
+          <TypeId start="1:14" end="1:17">
+            <Token type="ID" val="int" start="1:14" end="1:17" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
     </slot>
@@ -48,11 +46,9 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="x" start="3:11" end="3:12" />
         </slot>
         <slot name="type">
-          <Type parenthesized start="3:14" end="3:19">
-            <TypeId>
-              <Token type="ID" val="int" start="3:15" end="3:18" />
-            </TypeId>
-          </Type>
+          <TypeId parenthesized start="3:14" end="3:19">
+            <Token type="ID" val="int" start="3:15" end="3:18" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
     </slot>
@@ -69,11 +65,9 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="a" start="5:11" end="5:12" />
         </slot>
         <slot name="type">
-          <Type start="5:14" end="5:17">
-            <TypeId>
-              <Token type="ID" val="int" start="5:14" end="5:17" />
-            </TypeId>
-          </Type>
+          <TypeId start="5:14" end="5:17">
+            <Token type="ID" val="int" start="5:14" end="5:17" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam variadic>
@@ -81,20 +75,16 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="b" start="5:19" end="5:20" />
         </slot>
         <slot name="type">
-          <Type start="5:22" end="5:25">
-            <TypeId>
-              <Token type="ID" val="int" start="5:22" end="5:25" />
-            </TypeId>
-          </Type>
+          <TypeId start="5:22" end="5:25">
+            <Token type="ID" val="int" start="5:22" end="5:25" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="5:30" end="5:34">
-        <TypeId>
-          <Token type="ID" val="void" start="5:30" end="5:34" />
-        </TypeId>
-      </Type>
+      <TypeId start="5:30" end="5:34">
+        <Token type="ID" val="void" start="5:30" end="5:34" />
+      </TypeId>
     </slot>
   </StmtFnDecl>
 </Stmt>
@@ -109,11 +99,9 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="x" start="7:11" end="7:12" />
         </slot>
         <slot name="type">
-          <Type start="7:14" end="7:17">
-            <TypeId>
-              <Token type="ID" val="int" start="7:14" end="7:17" />
-            </TypeId>
-          </Type>
+          <TypeId start="7:14" end="7:17">
+            <Token type="ID" val="int" start="7:14" end="7:17" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam variadic>
@@ -121,11 +109,9 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="y" start="7:19" end="7:20" />
         </slot>
         <slot name="type">
-          <Type start="7:22" end="7:25">
-            <TypeId>
-              <Token type="ID" val="int" start="7:22" end="7:25" />
-            </TypeId>
-          </Type>
+          <TypeId start="7:22" end="7:25">
+            <Token type="ID" val="int" start="7:22" end="7:25" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam>
@@ -133,20 +119,16 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="z" start="7:30" end="7:31" />
         </slot>
         <slot name="type">
-          <Type start="7:33" end="7:36">
-            <TypeId>
-              <Token type="ID" val="str" start="7:33" end="7:36" />
-            </TypeId>
-          </Type>
+          <TypeId start="7:33" end="7:36">
+            <Token type="ID" val="str" start="7:33" end="7:36" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="7:38" end="7:42">
-        <TypeId>
-          <Token type="ID" val="void" start="7:38" end="7:42" />
-        </TypeId>
-      </Type>
+      <TypeId start="7:38" end="7:42">
+        <Token type="ID" val="void" start="7:38" end="7:42" />
+      </TypeId>
     </slot>
   </StmtFnDecl>
 </Stmt>
@@ -161,35 +143,27 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="b" start="9:11" end="9:12" />
         </slot>
         <slot name="type">
-          <Type start="9:14" end="9:30">
-            <TypeFn>
-              <slot name="params">
-                <TypeFnParam variadic>
-                  <Type start="9:18" end="9:21">
-                    <TypeId>
-                      <Token type="ID" val="int" start="9:18" end="9:21" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <Type start="9:26" end="9:30">
-                  <TypeId>
-                    <Token type="ID" val="void" start="9:26" end="9:30" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="9:14" end="9:30">
+            <slot name="params">
+              <TypeFnParam variadic>
+                <TypeId start="9:18" end="9:21">
+                  <Token type="ID" val="int" start="9:18" end="9:21" />
+                </TypeId>
+              </TypeFnParam>
+            </slot>
+            <slot name="returnType">
+              <TypeId start="9:26" end="9:30">
+                <Token type="ID" val="void" start="9:26" end="9:30" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="9:32" end="9:36">
-        <TypeId>
-          <Token type="ID" val="void" start="9:32" end="9:36" />
-        </TypeId>
-      </Type>
+      <TypeId start="9:32" end="9:36">
+        <Token type="ID" val="void" start="9:32" end="9:36" />
+      </TypeId>
     </slot>
   </StmtFnDecl>
 </Stmt>
@@ -204,35 +178,27 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="b" start="11:11" end="11:12" />
         </slot>
         <slot name="type">
-          <Type start="11:14" end="11:32">
-            <TypeFn>
-              <slot name="params">
-                <TypeFnParam variadic>
-                  <Type parenthesized start="11:18" end="11:23">
-                    <TypeId>
-                      <Token type="ID" val="int" start="11:19" end="11:22" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <Type start="11:28" end="11:32">
-                  <TypeId>
-                    <Token type="ID" val="void" start="11:28" end="11:32" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="11:14" end="11:32">
+            <slot name="params">
+              <TypeFnParam variadic>
+                <TypeId parenthesized start="11:18" end="11:23">
+                  <Token type="ID" val="int" start="11:19" end="11:22" />
+                </TypeId>
+              </TypeFnParam>
+            </slot>
+            <slot name="returnType">
+              <TypeId start="11:28" end="11:32">
+                <Token type="ID" val="void" start="11:28" end="11:32" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="11:34" end="11:38">
-        <TypeId>
-          <Token type="ID" val="void" start="11:34" end="11:38" />
-        </TypeId>
-      </Type>
+      <TypeId start="11:34" end="11:38">
+        <Token type="ID" val="void" start="11:34" end="11:38" />
+      </TypeId>
     </slot>
   </StmtFnDecl>
 </Stmt>
@@ -247,42 +213,32 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="b" start="13:11" end="13:12" />
         </slot>
         <slot name="type">
-          <Type start="13:14" end="13:37">
-            <TypeFn>
-              <slot name="params">
-                <TypeFnParam>
-                  <Type start="13:18" end="13:21">
-                    <TypeId>
-                      <Token type="ID" val="int" start="13:18" end="13:21" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-                <TypeFnParam variadic>
-                  <Type parenthesized start="13:23" end="13:28">
-                    <TypeId>
-                      <Token type="ID" val="int" start="13:24" end="13:27" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <Type start="13:33" end="13:37">
-                  <TypeId>
-                    <Token type="ID" val="void" start="13:33" end="13:37" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="13:14" end="13:37">
+            <slot name="params">
+              <TypeFnParam>
+                <TypeId start="13:18" end="13:21">
+                  <Token type="ID" val="int" start="13:18" end="13:21" />
+                </TypeId>
+              </TypeFnParam>
+              <TypeFnParam variadic>
+                <TypeId parenthesized start="13:23" end="13:28">
+                  <Token type="ID" val="int" start="13:24" end="13:27" />
+                </TypeId>
+              </TypeFnParam>
+            </slot>
+            <slot name="returnType">
+              <TypeId start="13:33" end="13:37">
+                <Token type="ID" val="void" start="13:33" end="13:37" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="13:39" end="13:43">
-        <TypeId>
-          <Token type="ID" val="void" start="13:39" end="13:43" />
-        </TypeId>
-      </Type>
+      <TypeId start="13:39" end="13:43">
+        <Token type="ID" val="void" start="13:39" end="13:43" />
+      </TypeId>
     </slot>
   </StmtFnDecl>
 </Stmt>
@@ -297,49 +253,37 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <Token type="ID" val="b" start="15:11" end="15:12" />
         </slot>
         <slot name="type">
-          <Type start="15:14" end="15:42">
-            <TypeFn>
-              <slot name="params">
-                <TypeFnParam>
-                  <Type start="15:18" end="15:21">
-                    <TypeId>
-                      <Token type="ID" val="int" start="15:18" end="15:21" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-                <TypeFnParam variadic>
-                  <Type parenthesized start="15:23" end="15:28">
-                    <TypeId>
-                      <Token type="ID" val="int" start="15:24" end="15:27" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-                <TypeFnParam>
-                  <Type start="15:33" end="15:36">
-                    <TypeId>
-                      <Token type="ID" val="str" start="15:33" end="15:36" />
-                    </TypeId>
-                  </Type>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <Type start="15:38" end="15:42">
-                  <TypeId>
-                    <Token type="ID" val="void" start="15:38" end="15:42" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="15:14" end="15:42">
+            <slot name="params">
+              <TypeFnParam>
+                <TypeId start="15:18" end="15:21">
+                  <Token type="ID" val="int" start="15:18" end="15:21" />
+                </TypeId>
+              </TypeFnParam>
+              <TypeFnParam variadic>
+                <TypeId parenthesized start="15:23" end="15:28">
+                  <Token type="ID" val="int" start="15:24" end="15:27" />
+                </TypeId>
+              </TypeFnParam>
+              <TypeFnParam>
+                <TypeId start="15:33" end="15:36">
+                  <Token type="ID" val="str" start="15:33" end="15:36" />
+                </TypeId>
+              </TypeFnParam>
+            </slot>
+            <slot name="returnType">
+              <TypeId start="15:38" end="15:42">
+                <Token type="ID" val="void" start="15:38" end="15:42" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="15:44" end="15:48">
-        <TypeId>
-          <Token type="ID" val="void" start="15:44" end="15:48" />
-        </TypeId>
-      </Type>
+      <TypeId start="15:44" end="15:48">
+        <Token type="ID" val="void" start="15:44" end="15:48" />
+      </TypeId>
     </slot>
   </StmtFnDecl>
 </Stmt>

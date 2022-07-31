@@ -19,84 +19,64 @@ main {
 ======= stdout =======
 <Node>
   <NodeObjDecl>
-    <Type codeName="Test2_0" name="Test2" type="obj">
-      <slot name="fields">
-        <TypeObjField name="a">
-          <Type codeName="Test1_0" name="Test1" type="obj">
-            <slot name="fields">
-              <TypeObjField name="b">
-                <BuiltinType name="int" />
-              </TypeObjField>
-            </slot>
-          </Type>
-        </TypeObjField>
-      </slot>
-    </Type>
+    <TypeObj codeName="Test2_0" name="Test2">
+      <TypeObjField name="a">
+        <TypeObj codeName="Test1_0" name="Test1">
+          <TypeObjField name="b">
+            <BuiltinType name="int" />
+          </TypeObjField>
+        </TypeObj>
+      </TypeObjField>
+    </TypeObj>
   </NodeObjDecl>
 </Node>
 <Node>
   <NodeObjDecl>
-    <Type codeName="Test1_0" name="Test1" type="obj">
-      <slot name="fields">
-        <TypeObjField name="b">
-          <BuiltinType name="int" />
-        </TypeObjField>
-      </slot>
-    </Type>
+    <TypeObj codeName="Test1_0" name="Test1">
+      <TypeObjField name="b">
+        <BuiltinType name="int" />
+      </TypeObjField>
+    </TypeObj>
   </NodeObjDecl>
 </Node>
 <Node>
   <NodeMain>
     <Node>
       <NodeObjDecl>
-        <Type codeName="mainSDTest4_0" name="Test4" type="obj">
-          <slot name="fields">
-            <TypeObjField name="c">
-              <Type codeName="mainSDTest3_0" name="Test3" type="obj">
-                <slot name="fields">
-                  <TypeObjField name="d">
-                    <Type codeName="Test2_0" name="Test2" type="obj">
-                      <slot name="fields">
-                        <TypeObjField name="a">
-                          <Type codeName="Test1_0" name="Test1" type="obj">
-                            <slot name="fields">
-                              <TypeObjField name="b">
-                                <BuiltinType name="int" />
-                              </TypeObjField>
-                            </slot>
-                          </Type>
-                        </TypeObjField>
-                      </slot>
-                    </Type>
+        <TypeObj codeName="mainSDTest4_0" name="Test4">
+          <TypeObjField name="c">
+            <TypeObj codeName="mainSDTest3_0" name="Test3">
+              <TypeObjField name="d">
+                <TypeObj codeName="Test2_0" name="Test2">
+                  <TypeObjField name="a">
+                    <TypeObj codeName="Test1_0" name="Test1">
+                      <TypeObjField name="b">
+                        <BuiltinType name="int" />
+                      </TypeObjField>
+                    </TypeObj>
                   </TypeObjField>
-                </slot>
-              </Type>
-            </TypeObjField>
-          </slot>
-        </Type>
+                </TypeObj>
+              </TypeObjField>
+            </TypeObj>
+          </TypeObjField>
+        </TypeObj>
       </NodeObjDecl>
     </Node>
     <Node>
       <NodeObjDecl>
-        <Type codeName="mainSDTest3_0" name="Test3" type="obj">
-          <slot name="fields">
-            <TypeObjField name="d">
-              <Type codeName="Test2_0" name="Test2" type="obj">
-                <slot name="fields">
-                  <TypeObjField name="a">
-                    <Type codeName="Test1_0" name="Test1" type="obj">
-                      <slot name="fields">
-                        <TypeObjField name="b">
-                          <BuiltinType name="int" />
-                        </TypeObjField>
-                      </slot>
-                    </Type>
+        <TypeObj codeName="mainSDTest3_0" name="Test3">
+          <TypeObjField name="d">
+            <TypeObj codeName="Test2_0" name="Test2">
+              <TypeObjField name="a">
+                <TypeObj codeName="Test1_0" name="Test1">
+                  <TypeObjField name="b">
+                    <BuiltinType name="int" />
                   </TypeObjField>
-                </slot>
-              </Type>
-            </TypeObjField>
-          </slot>
-        </Type>
+                </TypeObj>
+              </TypeObjField>
+            </TypeObj>
+          </TypeObjField>
+        </TypeObj>
       </NodeObjDecl>
     </Node>
   </NodeMain>

@@ -103,14 +103,14 @@ TEST_F(VarMapTest, SavesAndRestores) {
   EXPECT_EQ(this->vm_.get("test")->frame, 0);
 }
 
-TEST_F(VarMapTest, StackGeneratesValid) {
-  EXPECT_EQ(this->vm_.stack().snapshot().size(), 0);
+TEST_F(VarMapTest, VarStackGeneratesValid) {
+  EXPECT_EQ(this->vm_.varStack().snapshot().size(), 0);
   this->vm_.save();
   this->vm_.add("test1", this->vm_.name("test1"), this->tm_.get("int"), false);
 
-  auto stack1 = this->vm_.stack();
-  stack1.mark(this->vm_.get("test1"));
-  auto s1 = stack1.snapshot();
+  auto varStack1 = this->vm_.varStack();
+  varStack1.mark(this->vm_.get("test1"));
+  auto s1 = varStack1.snapshot();
 
   EXPECT_EQ(s1.size(), 1);
   EXPECT_EQ(s1[0]->name, "test1");
@@ -119,10 +119,10 @@ TEST_F(VarMapTest, StackGeneratesValid) {
   this->vm_.save();
   this->vm_.add("test2", this->vm_.name("test2"), this->tm_.get("str"), false);
 
-  auto stack2 = this->vm_.stack();
-  stack2.mark(this->vm_.get("test1"));
-  stack2.mark(this->vm_.get("test2"));
-  auto s2 = stack2.snapshot();
+  auto varStack2 = this->vm_.varStack();
+  varStack2.mark(this->vm_.get("test1"));
+  varStack2.mark(this->vm_.get("test2"));
+  auto s2 = varStack2.snapshot();
 
   EXPECT_EQ(s2.size(), 2);
   EXPECT_EQ(s2[0]->name, "test2");
@@ -132,15 +132,15 @@ TEST_F(VarMapTest, StackGeneratesValid) {
 
   this->vm_.restore();
 
-  auto stack3 = this->vm_.stack();
-  stack3.mark(this->vm_.get("test1"));
-  auto s3 = stack3.snapshot();
+  auto varStack3 = this->vm_.varStack();
+  varStack3.mark(this->vm_.get("test1"));
+  auto s3 = varStack3.snapshot();
 
   EXPECT_EQ(s3.size(), 1);
   EXPECT_EQ(s3[0]->name, "test1");
   EXPECT_TRUE(this->tm_.get("int")->match(s3[0]->type));
 
   this->vm_.restore();
-  auto s4 = this->vm_.stack().snapshot();
+  auto s4 = this->vm_.varStack().snapshot();
   EXPECT_EQ(s4.size(), 0);
 }

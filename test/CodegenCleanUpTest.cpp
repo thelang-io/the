@@ -97,7 +97,7 @@ TEST(CodegenCleanUpTest, CurrentBreakVarOnChild) {
 
 TEST(CodegenCleanUpTest, ThrowsOnCurrentBreakVarRoot) {
   auto n0 = CodegenCleanUp();
-  EXPECT_THROW_WITH_MESSAGE(n0.currentBreakVar(), "Error: tried getting break var on nullptr in CodegenCleanUp");
+  EXPECT_THROW_WITH_MESSAGE(n0.currentBreakVar(), "tried getting break var on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, LabelsOnOneStatement) {
@@ -140,7 +140,7 @@ TEST(CodegenCleanUpTest, LabellingAddsValueToFunction) {
 
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {
   auto n0 = CodegenCleanUp();
-  EXPECT_THROW_WITH_MESSAGE(n0.currentLabel(), "Error: tried getting current label on nullptr in CodegenCleanUp");
+  EXPECT_THROW_WITH_MESSAGE(n0.currentLabel(), "tried getting current label on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabelWithParent) {
@@ -148,7 +148,7 @@ TEST(CodegenCleanUpTest, ThrowOnNothingToLabelWithParent) {
   auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
   auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
 
-  EXPECT_THROW_WITH_MESSAGE(n2.currentLabel(), "Error: tried getting current label on nullptr in CodegenCleanUp");
+  EXPECT_THROW_WITH_MESSAGE(n2.currentLabel(), "tried getting current label on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, CurrentReturnVarOnFn) {
@@ -168,7 +168,7 @@ TEST(CodegenCleanUpTest, CurrentReturnVarOnChild) {
 
 TEST(CodegenCleanUpTest, ThrowsOnCurrentReturnVarRoot) {
   auto n0 = CodegenCleanUp();
-  EXPECT_THROW_WITH_MESSAGE(n0.currentReturnVar(), "Error: tried getting return var on nullptr in CodegenCleanUp");
+  EXPECT_THROW_WITH_MESSAGE(n0.currentReturnVar(), "tried getting return var on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, CurrentValueVarOnFn) {
@@ -188,7 +188,7 @@ TEST(CodegenCleanUpTest, CurrentValueVarOnChild) {
 
 TEST(CodegenCleanUpTest, ThrowsOnCurrentValueVarRoot) {
   auto n0 = CodegenCleanUp();
-  EXPECT_THROW_WITH_MESSAGE(n0.currentValueVar(), "Error: tried getting value var on nullptr in CodegenCleanUp");
+  EXPECT_THROW_WITH_MESSAGE(n0.currentValueVar(), "tried getting value var on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, Empty) {

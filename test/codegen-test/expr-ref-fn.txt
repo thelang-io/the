@@ -1,0 +1,236 @@
+======= stdin =======
+fn job1 (mut a: ref int) ref int {
+  a += 1
+  return a
+}
+
+fn job2 (mut a: ref int) int {
+  return a
+}
+
+fn job3 (
+  mut a: ref int,
+  fn1: fn (mut a: ref int) ref int,
+  fn2: fn (mut a: ref int) int,
+  fn3: ref (fn (mut a: ref int) ref int),
+  fn4: ref (fn (mut a: ref int) int)
+) {
+  v1 := fn1(a) + fn2(a)
+  v2 := fn3(a) > fn4(a)
+  v3 := fn1(a) & fn3(a)
+  v4 := fn2(a) - fn4(a)
+  v5 := fn1(a) == fn4(a)
+  v6 := fn2(a) << fn3(a)
+}
+
+main {
+  mut a := 0
+  refA := ref a
+  refJob1 := ref job1
+  refJob2 := ref job2
+
+  v01 := job1(ref a)
+  v02 := job1(refA)
+  v03 := job2(ref a)
+  v04 := job2(refA)
+  // todo test
+  // v05 := (ref job1)(ref a)
+  // v06 := (ref job1)(refA)
+  // v07 := (ref job2)(ref a)
+  // v08 := (ref job2)(refA)
+  v09 := refJob1(ref a)
+  v10 := refJob1(refA)
+  v11 := refJob2(ref a)
+  v12 := refJob2(refA)
+  job3(ref a, job1, job2, ref job1, ref job2)
+  job3(ref a, ref job1, ref job2, ref job1, ref job2)
+  job3(refA, job1, job2, refJob1, refJob2)
+  job3(refA, refJob1, refJob2, refJob1, refJob2)
+
+  fn jobLocal1 () {
+    v21 := job1(ref a) + job2(ref a)
+    v22 := refJob1(refA) > refJob2(refA)
+    v23 := job1(refA) & refJob1(refA)
+    v24 := refJob2(ref a) - job2(ref a)
+    // todo test
+    // v26 := (ref job1)(refA) > (ref job2)(refA)
+    // v27 := job1(ref a) & (ref job1)(ref a)
+    // v28 := (ref job2)(refA) - job2(refA)
+  }
+
+  jobLocal1()
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1P;
+struct __THE_1_fn$1;
+struct __THE_1_fn$2P;
+struct __THE_1_fn$2;
+struct __THE_1_fn$3;
+struct __THE_1_mainSDjobLocal1_0X;
+
+struct __THE_1_fn$0P {
+  int32_t *n0;
+};
+struct __THE_1_fn$0 {
+  int32_t *(*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1P {
+  int32_t *n0;
+};
+struct __THE_1_fn$1 {
+  int32_t (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$2P {
+  int32_t *n0;
+  struct __THE_1_fn$0 n1;
+  struct __THE_1_fn$1 n2;
+  struct __THE_1_fn$0 *n3;
+  struct __THE_1_fn$1 *n4;
+};
+struct __THE_1_fn$2 {
+  void (*f) (void *, struct __THE_1_fn$2P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$3 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDjobLocal1_0X {
+  const struct __THE_1_fn$1 **__THE_0_refJob2_0;
+  const struct __THE_1_fn$0 **__THE_0_refJob1_0;
+  const int32_t **__THE_0_refA_0;
+  int32_t *__THE_0_a_0;
+  const struct __THE_1_fn$1 *__THE_0_job2_0;
+  const struct __THE_1_fn$0 *__THE_0_job1_0;
+};
+
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+int32_t *__THE_1_job1_0 (void *, struct __THE_1_fn$0P);
+struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+int32_t __THE_1_job2_0 (void *, struct __THE_1_fn$1P);
+void __THE_1_job3_0 (void *, struct __THE_1_fn$2P);
+void __THE_1_fn$3_free (struct __THE_1_fn$3);
+void __THE_1_mainSDjobLocal1_0 (void *);
+void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn$3 *, struct __THE_1_mainSDjobLocal1_0X);
+
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
+  if (n.x == NULL) return n;
+  void *x = alloc(n.l);
+  memcpy(x, n.x, n.l);
+  return (struct __THE_1_fn$0) {n.f, x, n.l};
+}
+void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+  free(n.x);
+}
+int32_t *__THE_1_job1_0 (void *px, struct __THE_1_fn$0P p) {
+  int32_t *__THE_0_a_0 = p.n0;
+  *__THE_0_a_0 += 1;
+  return __THE_0_a_0;
+}
+struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1 n) {
+  if (n.x == NULL) return n;
+  void *x = alloc(n.l);
+  memcpy(x, n.x, n.l);
+  return (struct __THE_1_fn$1) {n.f, x, n.l};
+}
+void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+  free(n.x);
+}
+int32_t __THE_1_job2_0 (void *px, struct __THE_1_fn$1P p) {
+  int32_t *__THE_0_a_0 = p.n0;
+  return *__THE_0_a_0;
+}
+void __THE_1_job3_0 (void *px, struct __THE_1_fn$2P p) {
+  int32_t *__THE_0_a_0 = p.n0;
+  const struct __THE_1_fn$0 __THE_0_fn1_0 = p.n1;
+  const struct __THE_1_fn$1 __THE_0_fn2_0 = p.n2;
+  const struct __THE_1_fn$0 *__THE_0_fn3_0 = p.n3;
+  const struct __THE_1_fn$1 *__THE_0_fn4_0 = p.n4;
+  const int32_t __THE_0_v1_0 = *__THE_0_fn1_0.f(__THE_0_fn1_0.x, (struct __THE_1_fn$0P) {__THE_0_a_0}) + __THE_0_fn2_0.f(__THE_0_fn2_0.x, (struct __THE_1_fn$1P) {__THE_0_a_0});
+  const bool __THE_0_v2_0 = *(*__THE_0_fn3_0).f((*__THE_0_fn3_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0}) > (*__THE_0_fn4_0).f((*__THE_0_fn4_0).x, (struct __THE_1_fn$1P) {__THE_0_a_0});
+  const int32_t __THE_0_v3_0 = *__THE_0_fn1_0.f(__THE_0_fn1_0.x, (struct __THE_1_fn$0P) {__THE_0_a_0}) & *(*__THE_0_fn3_0).f((*__THE_0_fn3_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0});
+  const int32_t __THE_0_v4_0 = __THE_0_fn2_0.f(__THE_0_fn2_0.x, (struct __THE_1_fn$1P) {__THE_0_a_0}) - (*__THE_0_fn4_0).f((*__THE_0_fn4_0).x, (struct __THE_1_fn$1P) {__THE_0_a_0});
+  const bool __THE_0_v5_0 = *__THE_0_fn1_0.f(__THE_0_fn1_0.x, (struct __THE_1_fn$0P) {__THE_0_a_0}) == (*__THE_0_fn4_0).f((*__THE_0_fn4_0).x, (struct __THE_1_fn$1P) {__THE_0_a_0});
+  const int32_t __THE_0_v6_0 = __THE_0_fn2_0.f(__THE_0_fn2_0.x, (struct __THE_1_fn$1P) {__THE_0_a_0}) << *(*__THE_0_fn3_0).f((*__THE_0_fn3_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0});
+  __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_fn2_0);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_fn1_0);
+}
+void __THE_1_fn$3_free (struct __THE_1_fn$3 n) {
+  free(n.x);
+}
+void __THE_1_mainSDjobLocal1_0 (void *px) {
+  struct __THE_1_mainSDjobLocal1_0X *x = px;
+  const struct __THE_1_fn$1 **__THE_0_refJob2_0 = x->__THE_0_refJob2_0;
+  const struct __THE_1_fn$0 **__THE_0_refJob1_0 = x->__THE_0_refJob1_0;
+  const int32_t **__THE_0_refA_0 = x->__THE_0_refA_0;
+  int32_t *__THE_0_a_0 = x->__THE_0_a_0;
+  const struct __THE_1_fn$1 *__THE_0_job2_0 = x->__THE_0_job2_0;
+  const struct __THE_1_fn$0 *__THE_0_job1_0 = x->__THE_0_job1_0;
+  const int32_t __THE_0_v21_0 = *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0}) + (*__THE_0_job2_0).f((*__THE_0_job2_0).x, (struct __THE_1_fn$1P) {__THE_0_a_0});
+  const bool __THE_0_v22_0 = *(**__THE_0_refJob1_0).f((**__THE_0_refJob1_0).x, (struct __THE_1_fn$0P) {*__THE_0_refA_0}) > (**__THE_0_refJob2_0).f((**__THE_0_refJob2_0).x, (struct __THE_1_fn$1P) {*__THE_0_refA_0});
+  const int32_t __THE_0_v23_0 = *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, (struct __THE_1_fn$0P) {*__THE_0_refA_0}) & *(**__THE_0_refJob1_0).f((**__THE_0_refJob1_0).x, (struct __THE_1_fn$0P) {*__THE_0_refA_0});
+  const int32_t __THE_0_v24_0 = (**__THE_0_refJob2_0).f((**__THE_0_refJob2_0).x, (struct __THE_1_fn$1P) {__THE_0_a_0}) - (*__THE_0_job2_0).f((*__THE_0_job2_0).x, (struct __THE_1_fn$1P) {__THE_0_a_0});
+}
+void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn$3 *n, struct __THE_1_mainSDjobLocal1_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDjobLocal1_0X);
+  struct __THE_1_mainSDjobLocal1_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDjobLocal1_0;
+  n->x = r;
+  n->l = l;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_job1_0 = (struct __THE_1_fn$0) {&__THE_1_job1_0, NULL, 0};
+  const struct __THE_1_fn$1 __THE_0_job2_0 = (struct __THE_1_fn$1) {&__THE_1_job2_0, NULL, 0};
+  const struct __THE_1_fn$2 __THE_0_job3_0 = (struct __THE_1_fn$2) {&__THE_1_job3_0, NULL, 0};
+  int32_t __THE_0_a_0 = 0;
+  const int32_t *__THE_0_refA_0 = &__THE_0_a_0;
+  const struct __THE_1_fn$0 *__THE_0_refJob1_0 = &__THE_0_job1_0;
+  const struct __THE_1_fn$1 *__THE_0_refJob2_0 = &__THE_0_job2_0;
+  const int32_t *__THE_0_v01_0 = __THE_0_job1_0.f(__THE_0_job1_0.x, (struct __THE_1_fn$0P) {&__THE_0_a_0});
+  const int32_t *__THE_0_v02_0 = __THE_0_job1_0.f(__THE_0_job1_0.x, (struct __THE_1_fn$0P) {__THE_0_refA_0});
+  const int32_t __THE_0_v03_0 = __THE_0_job2_0.f(__THE_0_job2_0.x, (struct __THE_1_fn$1P) {&__THE_0_a_0});
+  const int32_t __THE_0_v04_0 = __THE_0_job2_0.f(__THE_0_job2_0.x, (struct __THE_1_fn$1P) {__THE_0_refA_0});
+  const int32_t *__THE_0_v09_0 = (*__THE_0_refJob1_0).f((*__THE_0_refJob1_0).x, (struct __THE_1_fn$0P) {&__THE_0_a_0});
+  const int32_t *__THE_0_v10_0 = (*__THE_0_refJob1_0).f((*__THE_0_refJob1_0).x, (struct __THE_1_fn$0P) {__THE_0_refA_0});
+  const int32_t __THE_0_v11_0 = (*__THE_0_refJob2_0).f((*__THE_0_refJob2_0).x, (struct __THE_1_fn$1P) {&__THE_0_a_0});
+  const int32_t __THE_0_v12_0 = (*__THE_0_refJob2_0).f((*__THE_0_refJob2_0).x, (struct __THE_1_fn$1P) {__THE_0_refA_0});
+  __THE_0_job3_0.f(__THE_0_job3_0.x, (struct __THE_1_fn$2P) {&__THE_0_a_0, __THE_1_fn$0_copy(__THE_0_job1_0), __THE_1_fn$1_copy(__THE_0_job2_0), &__THE_0_job1_0, &__THE_0_job2_0});
+  __THE_0_job3_0.f(__THE_0_job3_0.x, (struct __THE_1_fn$2P) {&__THE_0_a_0, __THE_1_fn$0_copy(__THE_0_job1_0), __THE_1_fn$1_copy(__THE_0_job2_0), &__THE_0_job1_0, &__THE_0_job2_0});
+  __THE_0_job3_0.f(__THE_0_job3_0.x, (struct __THE_1_fn$2P) {__THE_0_refA_0, __THE_1_fn$0_copy(__THE_0_job1_0), __THE_1_fn$1_copy(__THE_0_job2_0), __THE_0_refJob1_0, __THE_0_refJob2_0});
+  __THE_0_job3_0.f(__THE_0_job3_0.x, (struct __THE_1_fn$2P) {__THE_0_refA_0, __THE_1_fn$0_copy(*__THE_0_refJob1_0), __THE_1_fn$1_copy(*__THE_0_refJob2_0), __THE_0_refJob1_0, __THE_0_refJob2_0});
+  const struct __THE_1_fn$3 __THE_0_mainSDjobLocal1_0;
+  __THE_1_mainSDjobLocal1_0_alloc((struct __THE_1_fn$3 *) &__THE_0_mainSDjobLocal1_0, (struct __THE_1_mainSDjobLocal1_0X) {&__THE_0_refJob2_0, &__THE_0_refJob1_0, &__THE_0_refA_0, &__THE_0_a_0, &__THE_0_job2_0, &__THE_0_job1_0});
+  __THE_0_mainSDjobLocal1_0.f(__THE_0_mainSDjobLocal1_0.x);
+  __THE_1_fn$3_free((struct __THE_1_fn$3) __THE_0_mainSDjobLocal1_0);
+}
+======= flags =======
+======= stdout =======

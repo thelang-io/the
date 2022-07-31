@@ -1,0 +1,1487 @@
+======= stdin =======
+obj Test {
+  me: str
+}
+
+obj One {
+  two: Two
+}
+
+obj Two {
+  three: int
+}
+
+fn job1 (mut a: ref int) {
+  a += 2
+}
+
+fn job2 (mut test: ref Test) {
+  test.me += "24"
+}
+
+fn job3 (mut b: ref str) {
+  b += "Delasy"
+}
+
+main {
+  v := 1
+  test := Test{me: "Aaron"}
+  one := One{two: Two{three: 3}}
+
+  a := ref v
+  b := ref test
+  c := ref test.me
+  d := ref one.two.three
+
+  job1(ref v)
+  job1(a)
+  job2(ref test)
+  job2(b)
+  job3(ref test.me)
+  job3(c)
+  job1(ref one.two.three)
+  job1(d)
+}
+======= stdout =======
+<Node>
+  <NodeObjDecl>
+    <TypeObj codeName="Test_0" name="Test">
+      <TypeObjField name="me">
+        <BuiltinType name="str" />
+      </TypeObjField>
+    </TypeObj>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeObjDecl>
+    <TypeObj codeName="One_0" name="One">
+      <TypeObjField name="two">
+        <TypeObj codeName="Two_0" name="Two">
+          <TypeObjField name="three">
+            <BuiltinType name="int" />
+          </TypeObjField>
+        </TypeObj>
+      </TypeObjField>
+    </TypeObj>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeObjDecl>
+    <TypeObj codeName="Two_0" name="Two">
+      <TypeObjField name="three">
+        <BuiltinType name="int" />
+      </TypeObjField>
+    </TypeObj>
+  </NodeObjDecl>
+</Node>
+<Node>
+  <NodeFnDecl>
+    <slot name="var">
+      <Var codeName="job1_0" frame="1" name="job1">
+        <TypeFn codeName="job1_0" name="fn$0">
+          <slot name="params">
+            <TypeFnParam mut name="a" required>
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </TypeFnParam>
+          </slot>
+          <slot name="returnType">
+            <BuiltinType name="void" />
+          </slot>
+        </TypeFn>
+      </Var>
+    </slot>
+    <slot name="params">
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="a_0" frame="2" mut name="a">
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+    </slot>
+    <slot name="body">
+      <Node>
+        <NodeExpr>
+          <slot name="type">
+            <BuiltinType name="int" />
+          </slot>
+          <slot name="body">
+            <ExprAssign op="ADD">
+              <slot name="left">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="a_0" frame="2" mut name="a">
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </slot>
+              <slot name="right">
+                <NodeExpr>
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="INT_DEC">
+                      2
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </slot>
+            </ExprAssign>
+          </slot>
+        </NodeExpr>
+      </Node>
+    </slot>
+  </NodeFnDecl>
+</Node>
+<Node>
+  <NodeFnDecl>
+    <slot name="var">
+      <Var codeName="job2_0" frame="1" name="job2">
+        <TypeFn codeName="job2_0" name="fn$1">
+          <slot name="params">
+            <TypeFnParam mut name="test" required>
+              <TypeRef>
+                <TypeObj codeName="Test_0" name="Test">
+                  <TypeObjField name="me">
+                    <BuiltinType name="str" />
+                  </TypeObjField>
+                </TypeObj>
+              </TypeRef>
+            </TypeFnParam>
+          </slot>
+          <slot name="returnType">
+            <BuiltinType name="void" />
+          </slot>
+        </TypeFn>
+      </Var>
+    </slot>
+    <slot name="params">
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="test_0" frame="2" mut name="test">
+            <TypeRef>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeObjField name="me">
+                  <BuiltinType name="str" />
+                </TypeObjField>
+              </TypeObj>
+            </TypeRef>
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+    </slot>
+    <slot name="body">
+      <Node>
+        <NodeExpr>
+          <slot name="type">
+            <BuiltinType name="str" />
+          </slot>
+          <slot name="body">
+            <ExprAssign op="ADD">
+              <slot name="left">
+                <NodeExpr>
+                  <slot name="type">
+                    <BuiltinType name="str" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess prop="me">
+                      <NodeExpr>
+                        <slot name="type">
+                          <TypeRef>
+                            <TypeObj codeName="Test_0" name="Test">
+                              <TypeObjField name="me">
+                                <BuiltinType name="str" />
+                              </TypeObjField>
+                            </TypeObj>
+                          </TypeRef>
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var codeName="test_0" frame="2" mut name="test">
+                              <TypeRef>
+                                <TypeObj codeName="Test_0" name="Test">
+                                  <TypeObjField name="me">
+                                    <BuiltinType name="str" />
+                                  </TypeObjField>
+                                </TypeObj>
+                              </TypeRef>
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </slot>
+              <slot name="right">
+                <NodeExpr>
+                  <slot name="type">
+                    <BuiltinType name="str" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="STR">
+                      "24"
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </slot>
+            </ExprAssign>
+          </slot>
+        </NodeExpr>
+      </Node>
+    </slot>
+  </NodeFnDecl>
+</Node>
+<Node>
+  <NodeFnDecl>
+    <slot name="var">
+      <Var codeName="job3_0" frame="1" name="job3">
+        <TypeFn codeName="job3_0" name="fn$2">
+          <slot name="params">
+            <TypeFnParam mut name="b" required>
+              <TypeRef>
+                <BuiltinType name="str" />
+              </TypeRef>
+            </TypeFnParam>
+          </slot>
+          <slot name="returnType">
+            <BuiltinType name="void" />
+          </slot>
+        </TypeFn>
+      </Var>
+    </slot>
+    <slot name="params">
+      <NodeFnDeclParam>
+        <slot name="var">
+          <Var codeName="b_0" frame="2" mut name="b">
+            <TypeRef>
+              <BuiltinType name="str" />
+            </TypeRef>
+          </Var>
+        </slot>
+      </NodeFnDeclParam>
+    </slot>
+    <slot name="body">
+      <Node>
+        <NodeExpr>
+          <slot name="type">
+            <BuiltinType name="str" />
+          </slot>
+          <slot name="body">
+            <ExprAssign op="ADD">
+              <slot name="left">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="str" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="b_0" frame="2" mut name="b">
+                        <TypeRef>
+                          <BuiltinType name="str" />
+                        </TypeRef>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </slot>
+              <slot name="right">
+                <NodeExpr>
+                  <slot name="type">
+                    <BuiltinType name="str" />
+                  </slot>
+                  <slot name="body">
+                    <ExprLit type="STR">
+                      "Delasy"
+                    </ExprLit>
+                  </slot>
+                </NodeExpr>
+              </slot>
+            </ExprAssign>
+          </slot>
+        </NodeExpr>
+      </Node>
+    </slot>
+  </NodeFnDecl>
+</Node>
+<Node>
+  <NodeMain>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="v_0" frame="2" name="v">
+            <BuiltinType name="int" />
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <BuiltinType name="int" />
+            </slot>
+            <slot name="body">
+              <ExprLit type="INT_DEC">
+                1
+              </ExprLit>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="test_0" frame="2" name="test">
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeObjField name="me">
+                <BuiltinType name="str" />
+              </TypeObjField>
+            </TypeObj>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeObjField name="me">
+                  <BuiltinType name="str" />
+                </TypeObjField>
+              </TypeObj>
+            </slot>
+            <slot name="body">
+              <ExprObj>
+                <slot name="type">
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeObjField name="me">
+                      <BuiltinType name="str" />
+                    </TypeObjField>
+                  </TypeObj>
+                </slot>
+                <slot name="props">
+                  <ExprObjProp>
+                    <slot name="id">
+                      me
+                    </slot>
+                    <slot name="init">
+                      <NodeExpr>
+                        <slot name="type">
+                          <BuiltinType name="str" />
+                        </slot>
+                        <slot name="body">
+                          <ExprLit type="STR">
+                            "Aaron"
+                          </ExprLit>
+                        </slot>
+                      </NodeExpr>
+                    </slot>
+                  </ExprObjProp>
+                </slot>
+              </ExprObj>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="one_0" frame="2" name="one">
+            <TypeObj codeName="One_0" name="One">
+              <TypeObjField name="two">
+                <TypeObj codeName="Two_0" name="Two">
+                  <TypeObjField name="three">
+                    <BuiltinType name="int" />
+                  </TypeObjField>
+                </TypeObj>
+              </TypeObjField>
+            </TypeObj>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <TypeObj codeName="One_0" name="One">
+                <TypeObjField name="two">
+                  <TypeObj codeName="Two_0" name="Two">
+                    <TypeObjField name="three">
+                      <BuiltinType name="int" />
+                    </TypeObjField>
+                  </TypeObj>
+                </TypeObjField>
+              </TypeObj>
+            </slot>
+            <slot name="body">
+              <ExprObj>
+                <slot name="type">
+                  <TypeObj codeName="One_0" name="One">
+                    <TypeObjField name="two">
+                      <TypeObj codeName="Two_0" name="Two">
+                        <TypeObjField name="three">
+                          <BuiltinType name="int" />
+                        </TypeObjField>
+                      </TypeObj>
+                    </TypeObjField>
+                  </TypeObj>
+                </slot>
+                <slot name="props">
+                  <ExprObjProp>
+                    <slot name="id">
+                      two
+                    </slot>
+                    <slot name="init">
+                      <NodeExpr>
+                        <slot name="type">
+                          <TypeObj codeName="Two_0" name="Two">
+                            <TypeObjField name="three">
+                              <BuiltinType name="int" />
+                            </TypeObjField>
+                          </TypeObj>
+                        </slot>
+                        <slot name="body">
+                          <ExprObj>
+                            <slot name="type">
+                              <TypeObj codeName="Two_0" name="Two">
+                                <TypeObjField name="three">
+                                  <BuiltinType name="int" />
+                                </TypeObjField>
+                              </TypeObj>
+                            </slot>
+                            <slot name="props">
+                              <ExprObjProp>
+                                <slot name="id">
+                                  three
+                                </slot>
+                                <slot name="init">
+                                  <NodeExpr>
+                                    <slot name="type">
+                                      <BuiltinType name="int" />
+                                    </slot>
+                                    <slot name="body">
+                                      <ExprLit type="INT_DEC">
+                                        3
+                                      </ExprLit>
+                                    </slot>
+                                  </NodeExpr>
+                                </slot>
+                              </ExprObjProp>
+                            </slot>
+                          </ExprObj>
+                        </slot>
+                      </NodeExpr>
+                    </slot>
+                  </ExprObjProp>
+                </slot>
+              </ExprObj>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="a_0" frame="2" name="a">
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </slot>
+            <slot name="body">
+              <ExprRef>
+                <NodeExpr>
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="v_0" frame="2" name="v">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprRef>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="b_0" frame="2" name="b">
+            <TypeRef>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeObjField name="me">
+                  <BuiltinType name="str" />
+                </TypeObjField>
+              </TypeObj>
+            </TypeRef>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <TypeRef>
+                <TypeObj codeName="Test_0" name="Test">
+                  <TypeObjField name="me">
+                    <BuiltinType name="str" />
+                  </TypeObjField>
+                </TypeObj>
+              </TypeRef>
+            </slot>
+            <slot name="body">
+              <ExprRef>
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeObjField name="me">
+                        <BuiltinType name="str" />
+                      </TypeObjField>
+                    </TypeObj>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="test_0" frame="2" name="test">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeObjField name="me">
+                            <BuiltinType name="str" />
+                          </TypeObjField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprRef>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="c_0" frame="2" name="c">
+            <TypeRef>
+              <BuiltinType name="str" />
+            </TypeRef>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <TypeRef>
+                <BuiltinType name="str" />
+              </TypeRef>
+            </slot>
+            <slot name="body">
+              <ExprRef>
+                <NodeExpr>
+                  <slot name="type">
+                    <BuiltinType name="str" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess prop="me">
+                      <NodeExpr>
+                        <slot name="type">
+                          <TypeObj codeName="Test_0" name="Test">
+                            <TypeObjField name="me">
+                              <BuiltinType name="str" />
+                            </TypeObjField>
+                          </TypeObj>
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var codeName="test_0" frame="2" name="test">
+                              <TypeObj codeName="Test_0" name="Test">
+                                <TypeObjField name="me">
+                                  <BuiltinType name="str" />
+                                </TypeObjField>
+                              </TypeObj>
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprRef>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeVarDecl>
+        <slot name="var">
+          <Var codeName="d_0" frame="2" name="d">
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </slot>
+            <slot name="body">
+              <ExprRef>
+                <NodeExpr>
+                  <slot name="type">
+                    <BuiltinType name="int" />
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess prop="three">
+                      <NodeExpr>
+                        <slot name="type">
+                          <TypeObj codeName="Two_0" name="Two">
+                            <TypeObjField name="three">
+                              <BuiltinType name="int" />
+                            </TypeObjField>
+                          </TypeObj>
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess prop="two">
+                            <NodeExpr>
+                              <slot name="type">
+                                <TypeObj codeName="One_0" name="One">
+                                  <TypeObjField name="two">
+                                    <TypeObj codeName="Two_0" name="Two">
+                                      <TypeObjField name="three">
+                                        <BuiltinType name="int" />
+                                      </TypeObjField>
+                                    </TypeObj>
+                                  </TypeObjField>
+                                </TypeObj>
+                              </slot>
+                              <slot name="body">
+                                <ExprAccess>
+                                  <Var codeName="one_0" frame="2" name="one">
+                                    <TypeObj codeName="One_0" name="One">
+                                      <TypeObjField name="two">
+                                        <TypeObj codeName="Two_0" name="Two">
+                                          <TypeObjField name="three">
+                                            <BuiltinType name="int" />
+                                          </TypeObjField>
+                                        </TypeObj>
+                                      </TypeObjField>
+                                    </TypeObj>
+                                  </Var>
+                                </ExprAccess>
+                              </slot>
+                            </NodeExpr>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprRef>
+            </slot>
+          </NodeExpr>
+        </slot>
+      </NodeVarDecl>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job1_0" name="fn$0">
+                    <slot name="params">
+                      <TypeFnParam mut name="a" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job1_0" frame="1" name="job1">
+                      <TypeFn codeName="job1_0" name="fn$0">
+                        <slot name="params">
+                          <TypeFnParam mut name="a" required>
+                            <TypeRef>
+                              <BuiltinType name="int" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job1_0" name="fn$0">
+                <slot name="params">
+                  <TypeFnParam mut name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="a">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprRef>
+                      <NodeExpr>
+                        <slot name="type">
+                          <BuiltinType name="int" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var codeName="v_0" frame="2" name="v">
+                              <BuiltinType name="int" />
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprRef>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job1_0" name="fn$0">
+                    <slot name="params">
+                      <TypeFnParam mut name="a" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job1_0" frame="1" name="job1">
+                      <TypeFn codeName="job1_0" name="fn$0">
+                        <slot name="params">
+                          <TypeFnParam mut name="a" required>
+                            <TypeRef>
+                              <BuiltinType name="int" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job1_0" name="fn$0">
+                <slot name="params">
+                  <TypeFnParam mut name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="a">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="a_0" frame="2" name="a">
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job2_0" name="fn$1">
+                    <slot name="params">
+                      <TypeFnParam mut name="test" required>
+                        <TypeRef>
+                          <TypeObj codeName="Test_0" name="Test">
+                            <TypeObjField name="me">
+                              <BuiltinType name="str" />
+                            </TypeObjField>
+                          </TypeObj>
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job2_0" frame="1" name="job2">
+                      <TypeFn codeName="job2_0" name="fn$1">
+                        <slot name="params">
+                          <TypeFnParam mut name="test" required>
+                            <TypeRef>
+                              <TypeObj codeName="Test_0" name="Test">
+                                <TypeObjField name="me">
+                                  <BuiltinType name="str" />
+                                </TypeObjField>
+                              </TypeObj>
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job2_0" name="fn$1">
+                <slot name="params">
+                  <TypeFnParam mut name="test" required>
+                    <TypeRef>
+                      <TypeObj codeName="Test_0" name="Test">
+                        <TypeObjField name="me">
+                          <BuiltinType name="str" />
+                        </TypeObjField>
+                      </TypeObj>
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="test">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <TypeObj codeName="Test_0" name="Test">
+                        <TypeObjField name="me">
+                          <BuiltinType name="str" />
+                        </TypeObjField>
+                      </TypeObj>
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprRef>
+                      <NodeExpr>
+                        <slot name="type">
+                          <TypeObj codeName="Test_0" name="Test">
+                            <TypeObjField name="me">
+                              <BuiltinType name="str" />
+                            </TypeObjField>
+                          </TypeObj>
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var codeName="test_0" frame="2" name="test">
+                              <TypeObj codeName="Test_0" name="Test">
+                                <TypeObjField name="me">
+                                  <BuiltinType name="str" />
+                                </TypeObjField>
+                              </TypeObj>
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprRef>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job2_0" name="fn$1">
+                    <slot name="params">
+                      <TypeFnParam mut name="test" required>
+                        <TypeRef>
+                          <TypeObj codeName="Test_0" name="Test">
+                            <TypeObjField name="me">
+                              <BuiltinType name="str" />
+                            </TypeObjField>
+                          </TypeObj>
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job2_0" frame="1" name="job2">
+                      <TypeFn codeName="job2_0" name="fn$1">
+                        <slot name="params">
+                          <TypeFnParam mut name="test" required>
+                            <TypeRef>
+                              <TypeObj codeName="Test_0" name="Test">
+                                <TypeObjField name="me">
+                                  <BuiltinType name="str" />
+                                </TypeObjField>
+                              </TypeObj>
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job2_0" name="fn$1">
+                <slot name="params">
+                  <TypeFnParam mut name="test" required>
+                    <TypeRef>
+                      <TypeObj codeName="Test_0" name="Test">
+                        <TypeObjField name="me">
+                          <BuiltinType name="str" />
+                        </TypeObjField>
+                      </TypeObj>
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="test">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <TypeObj codeName="Test_0" name="Test">
+                        <TypeObjField name="me">
+                          <BuiltinType name="str" />
+                        </TypeObjField>
+                      </TypeObj>
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="b_0" frame="2" name="b">
+                        <TypeRef>
+                          <TypeObj codeName="Test_0" name="Test">
+                            <TypeObjField name="me">
+                              <BuiltinType name="str" />
+                            </TypeObjField>
+                          </TypeObj>
+                        </TypeRef>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job3_0" name="fn$2">
+                    <slot name="params">
+                      <TypeFnParam mut name="b" required>
+                        <TypeRef>
+                          <BuiltinType name="str" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job3_0" frame="1" name="job3">
+                      <TypeFn codeName="job3_0" name="fn$2">
+                        <slot name="params">
+                          <TypeFnParam mut name="b" required>
+                            <TypeRef>
+                              <BuiltinType name="str" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job3_0" name="fn$2">
+                <slot name="params">
+                  <TypeFnParam mut name="b" required>
+                    <TypeRef>
+                      <BuiltinType name="str" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="b">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="str" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprRef>
+                      <NodeExpr>
+                        <slot name="type">
+                          <BuiltinType name="str" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess prop="me">
+                            <NodeExpr>
+                              <slot name="type">
+                                <TypeObj codeName="Test_0" name="Test">
+                                  <TypeObjField name="me">
+                                    <BuiltinType name="str" />
+                                  </TypeObjField>
+                                </TypeObj>
+                              </slot>
+                              <slot name="body">
+                                <ExprAccess>
+                                  <Var codeName="test_0" frame="2" name="test">
+                                    <TypeObj codeName="Test_0" name="Test">
+                                      <TypeObjField name="me">
+                                        <BuiltinType name="str" />
+                                      </TypeObjField>
+                                    </TypeObj>
+                                  </Var>
+                                </ExprAccess>
+                              </slot>
+                            </NodeExpr>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprRef>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job3_0" name="fn$2">
+                    <slot name="params">
+                      <TypeFnParam mut name="b" required>
+                        <TypeRef>
+                          <BuiltinType name="str" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job3_0" frame="1" name="job3">
+                      <TypeFn codeName="job3_0" name="fn$2">
+                        <slot name="params">
+                          <TypeFnParam mut name="b" required>
+                            <TypeRef>
+                              <BuiltinType name="str" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job3_0" name="fn$2">
+                <slot name="params">
+                  <TypeFnParam mut name="b" required>
+                    <TypeRef>
+                      <BuiltinType name="str" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="b">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="str" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="c_0" frame="2" name="c">
+                        <TypeRef>
+                          <BuiltinType name="str" />
+                        </TypeRef>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job1_0" name="fn$0">
+                    <slot name="params">
+                      <TypeFnParam mut name="a" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job1_0" frame="1" name="job1">
+                      <TypeFn codeName="job1_0" name="fn$0">
+                        <slot name="params">
+                          <TypeFnParam mut name="a" required>
+                            <TypeRef>
+                              <BuiltinType name="int" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job1_0" name="fn$0">
+                <slot name="params">
+                  <TypeFnParam mut name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="a">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprRef>
+                      <NodeExpr>
+                        <slot name="type">
+                          <BuiltinType name="int" />
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess prop="three">
+                            <NodeExpr>
+                              <slot name="type">
+                                <TypeObj codeName="Two_0" name="Two">
+                                  <TypeObjField name="three">
+                                    <BuiltinType name="int" />
+                                  </TypeObjField>
+                                </TypeObj>
+                              </slot>
+                              <slot name="body">
+                                <ExprAccess prop="two">
+                                  <NodeExpr>
+                                    <slot name="type">
+                                      <TypeObj codeName="One_0" name="One">
+                                        <TypeObjField name="two">
+                                          <TypeObj codeName="Two_0" name="Two">
+                                            <TypeObjField name="three">
+                                              <BuiltinType name="int" />
+                                            </TypeObjField>
+                                          </TypeObj>
+                                        </TypeObjField>
+                                      </TypeObj>
+                                    </slot>
+                                    <slot name="body">
+                                      <ExprAccess>
+                                        <Var codeName="one_0" frame="2" name="one">
+                                          <TypeObj codeName="One_0" name="One">
+                                            <TypeObjField name="two">
+                                              <TypeObj codeName="Two_0" name="Two">
+                                                <TypeObjField name="three">
+                                                  <BuiltinType name="int" />
+                                                </TypeObjField>
+                                              </TypeObj>
+                                            </TypeObjField>
+                                          </TypeObj>
+                                        </Var>
+                                      </ExprAccess>
+                                    </slot>
+                                  </NodeExpr>
+                                </ExprAccess>
+                              </slot>
+                            </NodeExpr>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
+                    </ExprRef>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+    <Node>
+      <NodeExpr>
+        <slot name="type">
+          <BuiltinType name="void" />
+        </slot>
+        <slot name="body">
+          <ExprCall>
+            <slot name="callee">
+              <NodeExpr>
+                <slot name="type">
+                  <TypeFn codeName="job1_0" name="fn$0">
+                    <slot name="params">
+                      <TypeFnParam mut name="a" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </slot>
+                    <slot name="returnType">
+                      <BuiltinType name="void" />
+                    </slot>
+                  </TypeFn>
+                </slot>
+                <slot name="body">
+                  <ExprAccess>
+                    <Var codeName="job1_0" frame="1" name="job1">
+                      <TypeFn codeName="job1_0" name="fn$0">
+                        <slot name="params">
+                          <TypeFnParam mut name="a" required>
+                            <TypeRef>
+                              <BuiltinType name="int" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </slot>
+                        <slot name="returnType">
+                          <BuiltinType name="void" />
+                        </slot>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </slot>
+              </NodeExpr>
+            </slot>
+            <slot name="calleeType">
+              <TypeFn codeName="job1_0" name="fn$0">
+                <slot name="params">
+                  <TypeFnParam mut name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </slot>
+                <slot name="returnType">
+                  <BuiltinType name="void" />
+                </slot>
+              </TypeFn>
+            </slot>
+            <slot name="args">
+              <ExprCallArg id="a">
+                <NodeExpr>
+                  <slot name="type">
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </slot>
+                  <slot name="body">
+                    <ExprAccess>
+                      <Var codeName="d_0" frame="2" name="d">
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </Var>
+                    </ExprAccess>
+                  </slot>
+                </NodeExpr>
+              </ExprCallArg>
+            </slot>
+          </ExprCall>
+        </slot>
+      </NodeExpr>
+    </Node>
+  </NodeMain>
+</Node>

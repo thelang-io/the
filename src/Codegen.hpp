@@ -36,6 +36,7 @@ struct CodegenBuiltins {
   bool fnI64Str = false;
   bool fnIntStr = false;
   bool fnPrint = false;
+  bool fnRefStr = false;
   bool fnStrAlloc = false;
   bool fnStrConcatCstr = false;
   bool fnStrConcatStr = false;
@@ -77,6 +78,7 @@ struct CodegenState {
   std::optional<std::vector<std::string> *> entities = std::nullopt;
   CodegenCleanUp cleanUp;
   std::set<std::string> contextVars = {};
+  Type *returnType = nullptr;
 };
 
 class Codegen {
@@ -89,7 +91,6 @@ class Codegen {
   VarMap varMap;
   std::vector<CodegenEntity> entities;
   CodegenState state;
-  std::vector<std::tuple<std::size_t, const Type *>> functions = {};
 
   static void compile (const std::string &, const std::tuple<std::string, std::string> &, bool = false);
   static std::string name (const std::string &);
@@ -106,11 +107,10 @@ class Codegen {
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
-  std::string _exprAccess (const std::shared_ptr<ASTMemberObj> &);
   std::string _flags () const;
   std::string _node (const ASTNode &, bool = true);
+  std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _nodeIf (const ASTNodeIf &);
-  std::string _nodeExpr (const ASTNodeExpr &, bool = false);
   std::string _type (const Type *, bool, bool);
   std::string _typeNameFn (const Type *);
   std::string _wrapNode (const ASTNode &, const std::string &) const;

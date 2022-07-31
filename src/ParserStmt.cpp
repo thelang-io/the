@@ -223,8 +223,19 @@ std::string ParserStmtIf::xml (std::size_t indent) const {
 }
 
 std::string ParserType::xml (std::size_t indent) const {
-  auto result = std::string(indent, ' ') + "<Type" + (this->parenthesized ? " parenthesized" : "");
+  auto typeName = std::string("Type");
 
+  if (std::holds_alternative<ParserTypeFn>(*this->body)) {
+    typeName += "Fn";
+  } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
+    typeName += "Id";
+  } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
+    typeName += "Ref";
+  }
+
+  auto result = std::string(indent, ' ') + "<" + typeName;
+
+  result += this->parenthesized ? " parenthesized" : "";
   result += R"( start=")" + this->start.str() + R"(")";
   result += R"( end=")" + this->end.str() + R"(">)" EOL;
 
@@ -232,35 +243,33 @@ std::string ParserType::xml (std::size_t indent) const {
 
   if (std::holds_alternative<ParserTypeFn>(*this->body)) {
     auto typeFn = std::get<ParserTypeFn>(*this->body);
-    result += std::string(indent, ' ') + "<TypeFn>" EOL;
 
     if (!typeFn.params.empty()) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="params">)" EOL;
+      result += std::string(indent, ' ') + R"(<slot name="params">)" EOL;
 
       for (const auto &typeFnParam : typeFn.params) {
-        result += std::string(indent + 4, ' ') + "<TypeFnParam";
+        result += std::string(indent + 2, ' ') + "<TypeFnParam";
         result += typeFnParam.id == std::nullopt ? "" : R"( id=")" + typeFnParam.id->val + R"(")";
         result += typeFnParam.mut ? " mut" : "";
         result += typeFnParam.variadic ? " variadic" : "";
-        result += ">" EOL + typeFnParam.type.xml(indent + 6) + EOL;
-        result += std::string(indent + 4, ' ') + "</TypeFnParam>" EOL;
+        result += ">" EOL + typeFnParam.type.xml(indent + 4) + EOL;
+        result += std::string(indent + 2, ' ') + "</TypeFnParam>" EOL;
       }
 
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent, ' ') + "</slot>" EOL;
     }
 
-    result += std::string(indent + 2, ' ') + R"(<slot name="returnType">)" EOL;
-    result += typeFn.returnType.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent, ' ') + "</TypeFn>" EOL;
+    result += std::string(indent, ' ') + R"(<slot name="returnType">)" EOL;
+    result += typeFn.returnType.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</slot>" EOL;
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     auto typeId = std::get<ParserTypeId>(*this->body);
-
-    result += std::string(indent, ' ') + "<TypeId>" EOL;
-    result += std::string(indent + 2, ' ') + typeId.id.xml() + EOL;
-    result += std::string(indent, ' ') + "</TypeId>" EOL;
+    result += std::string(indent, ' ') + typeId.id.xml() + EOL;
+  } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
+    auto typeRef = std::get<ParserTypeRef>(*this->body);
+    result += typeRef.type.xml(indent) + EOL;
   }
 
   indent -= 2;
-  return result + std::string(indent, ' ') + "</Type>";
+  return result + std::string(indent, ' ') + "</" + typeName + ">";
 }

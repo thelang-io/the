@@ -11,7 +11,7 @@
 int main (int argc, char *argv[]) {
   try {
     if (argc == 1) {
-      throw Error("Error: REPL is not supported");
+      throw Error("REPL is not supported");
     }
 
     auto isAST = false;
@@ -30,16 +30,16 @@ int main (int argc, char *argv[]) {
       } else if (i == 1 && arg == "parse") {
         isParse = true;
       } else if (isOpt) {
-        throw Error("Error: bad option " + arg);
+        throw Error("bad option " + arg);
       } else if (fileName == std::nullopt) {
         fileName = arg;
       } else {
-        throw Error("Error: processing multiple files is not supported");
+        throw Error("processing multiple files is not supported");
       }
     }
 
     if (fileName == std::nullopt) {
-      throw Error("Error: file is not specified");
+      throw Error("file is not specified");
     }
 
     auto reader = Reader(*fileName);
@@ -93,7 +93,7 @@ int main (int argc, char *argv[]) {
     Codegen::compile("build/a.out", result);
     return EXIT_SUCCESS;
   } catch (const Error &err) {
-    std::cerr << err.what() << std::endl;
+    std::cerr << "Error: " << err.what() << std::endl;
     return EXIT_FAILURE;
   }
 }

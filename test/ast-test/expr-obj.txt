@@ -10,16 +10,14 @@ main {
 ======= stdout =======
 <Node>
   <NodeObjDecl>
-    <Type codeName="Point_0" name="Point" type="obj">
-      <slot name="fields">
-        <TypeObjField name="x">
-          <BuiltinType name="float" />
-        </TypeObjField>
-        <TypeObjField name="y">
-          <BuiltinType name="float" />
-        </TypeObjField>
-      </slot>
-    </Type>
+    <TypeObj codeName="Point_0" name="Point">
+      <TypeObjField name="x">
+        <BuiltinType name="float" />
+      </TypeObjField>
+      <TypeObjField name="y">
+        <BuiltinType name="float" />
+      </TypeObjField>
+    </TypeObj>
   </NodeObjDecl>
 </Node>
 <Node>
@@ -28,45 +26,39 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a_0" frame="2" name="a">
-            <Type codeName="Point_0" name="Point" type="obj">
-              <slot name="fields">
+            <TypeObj codeName="Point_0" name="Point">
+              <TypeObjField name="x">
+                <BuiltinType name="float" />
+              </TypeObjField>
+              <TypeObjField name="y">
+                <BuiltinType name="float" />
+              </TypeObjField>
+            </TypeObj>
+          </Var>
+        </slot>
+        <slot name="init">
+          <NodeExpr>
+            <slot name="type">
+              <TypeObj codeName="Point_0" name="Point">
                 <TypeObjField name="x">
                   <BuiltinType name="float" />
                 </TypeObjField>
                 <TypeObjField name="y">
                   <BuiltinType name="float" />
                 </TypeObjField>
-              </slot>
-            </Type>
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <Type codeName="Point_0" name="Point" type="obj">
-                <slot name="fields">
-                  <TypeObjField name="x">
-                    <BuiltinType name="float" />
-                  </TypeObjField>
-                  <TypeObjField name="y">
-                    <BuiltinType name="float" />
-                  </TypeObjField>
-                </slot>
-              </Type>
+              </TypeObj>
             </slot>
             <slot name="body">
               <ExprObj>
                 <slot name="type">
-                  <Type codeName="Point_0" name="Point" type="obj">
-                    <slot name="fields">
-                      <TypeObjField name="x">
-                        <BuiltinType name="float" />
-                      </TypeObjField>
-                      <TypeObjField name="y">
-                        <BuiltinType name="float" />
-                      </TypeObjField>
-                    </slot>
-                  </Type>
+                  <TypeObj codeName="Point_0" name="Point">
+                    <TypeObjField name="x">
+                      <BuiltinType name="float" />
+                    </TypeObjField>
+                    <TypeObjField name="y">
+                      <BuiltinType name="float" />
+                    </TypeObjField>
+                  </TypeObj>
                 </slot>
                 <slot name="props">
                   <ExprObjProp>

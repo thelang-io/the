@@ -95,11 +95,9 @@ main {
               <Token type="ID" val="a" start="16:5" end="16:6" />
             </slot>
             <slot name="type">
-              <Type start="16:8" end="16:11">
-                <TypeId>
-                  <Token type="ID" val="int" start="16:8" end="16:11" />
-                </TypeId>
-              </Type>
+              <TypeId start="16:8" end="16:11">
+                <Token type="ID" val="int" start="16:8" end="16:11" />
+              </TypeId>
             </slot>
           </StmtObjDeclField>
         </slot>

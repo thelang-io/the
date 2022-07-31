@@ -1,0 +1,6 @@
+======= stdin =======
+ref 1234
+======= stderr =======
+/test:1:5: E0148 - Invalid reference to rvalue
+  1 | ref 1234
+    |     ^~~~

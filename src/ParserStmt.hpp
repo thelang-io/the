@@ -22,6 +22,7 @@ struct ParserStmtReturn;
 struct ParserStmtVarDecl;
 struct ParserTypeFn;
 struct ParserTypeId;
+struct ParserTypeRef;
 
 using ParserStmtBody = std::variant<
   ParserStmtBreak,
@@ -47,7 +48,7 @@ struct ParserStmt {
 
 using ParserBlock = std::vector<ParserStmt>;
 using ParserStmtIfCond = std::variant<ParserBlock, ParserStmtIf>;
-using ParserTypeBody = std::variant<ParserTypeFn, ParserTypeId>;
+using ParserTypeBody = std::variant<ParserTypeFn, ParserTypeId, ParserTypeRef>;
 
 struct ParserType {
   std::shared_ptr<ParserTypeBody> body;
@@ -72,6 +73,10 @@ struct ParserTypeFn {
 
 struct ParserTypeId {
   Token id;
+};
+
+struct ParserTypeRef {
+  ParserType type;
 };
 
 struct ParserStmtBreak {

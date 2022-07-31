@@ -32,11 +32,18 @@ class CodegenTest : public testing::TestWithParam<const char *> {
 
 TEST_P(CodegenTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
-  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stdout"});
+  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stdout", "stdout-linux"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
+  auto expectedOutput = sections["stdout"];
+
+  #ifdef OS_LINUX
+    if (sections.contains("stdout-linux")) {
+      expectedOutput = sections["stdout-linux"];
+    }
+  #endif
 
   #ifdef OS_WINDOWS
     if (sections.contains("code-windows")) {
@@ -57,7 +64,17 @@ TEST_P(CodegenTest, Passes) {
   );
 
   std::filesystem::remove(filePath);
-  EXPECT_EQ(sections["stdout"], actualStdout);
+
+  while (expectedOutput.find("{{--") != std::string::npos) {
+    auto placeholderStart = expectedOutput.find("{{--");
+    auto placeholderEnd = expectedOutput.find("--}}") + 4;
+    auto placeholderLen = placeholderEnd - placeholderStart;
+    auto placeholderValue = actualStdout.substr(placeholderStart, placeholderLen);
+
+    expectedOutput.replace(placeholderStart, placeholderLen, placeholderValue);
+  }
+
+  EXPECT_EQ(expectedOutput, actualStdout);
   EXPECT_EQ(actualReturnCode, 0);
 
   if (!this->testMemcheck_) {
@@ -121,6 +138,13 @@ INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(ExprObj, CodegenTest, testing::Values(
   "expr-obj",
   "expr-obj-nested"
+));
+
+INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenTest, testing::Values(
+  "expr-ref",
+  "expr-ref-str",
+  "expr-ref-fn",
+  "expr-ref-obj"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenTest, testing::Values(

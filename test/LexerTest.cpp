@@ -17,7 +17,7 @@ TEST(LexerTest, ThrowsOnUnknownToken) {
 
   EXPECT_THROW_WITH_MESSAGE({
     std::get<1>(lexer.next()).str();
-  }, "Error: tried stringify unknown token");
+  }, "tried stringify unknown token");
 }
 
 TEST(LexerTest, LexEof) {
@@ -483,11 +483,12 @@ TEST(LexerTest, LexKeywords) {
   auto r24 = testing::NiceMock<MockReader>("mut");
   auto r25 = testing::NiceMock<MockReader>("nil");
   auto r26 = testing::NiceMock<MockReader>("obj");
-  auto r27 = testing::NiceMock<MockReader>("return");
-  auto r28 = testing::NiceMock<MockReader>("throw");
-  auto r29 = testing::NiceMock<MockReader>("true");
-  auto r30 = testing::NiceMock<MockReader>("try");
-  auto r31 = testing::NiceMock<MockReader>("union");
+  auto r27 = testing::NiceMock<MockReader>("ref");
+  auto r28 = testing::NiceMock<MockReader>("return");
+  auto r29 = testing::NiceMock<MockReader>("throw");
+  auto r30 = testing::NiceMock<MockReader>("true");
+  auto r31 = testing::NiceMock<MockReader>("try");
+  auto r32 = testing::NiceMock<MockReader>("union");
 
   auto l4 = Lexer(&r4);
   auto l6 = Lexer(&r6);
@@ -509,6 +510,7 @@ TEST(LexerTest, LexKeywords) {
   auto l29 = Lexer(&r29);
   auto l30 = Lexer(&r30);
   auto l31 = Lexer(&r31);
+  auto l32 = Lexer(&r32);
 
   EXPECT_EQ(std::get<1>(l4.next()).str(), "KW_BREAK(1:1-1:6): break");
   EXPECT_EQ(std::get<1>(l6.next()).str(), "KW_CATCH(1:1-1:6): catch");
@@ -525,16 +527,17 @@ TEST(LexerTest, LexKeywords) {
   EXPECT_EQ(std::get<1>(l24.next()).str(), "KW_MUT(1:1-1:4): mut");
   EXPECT_EQ(std::get<1>(l25.next()).str(), "KW_NIL(1:1-1:4): nil");
   EXPECT_EQ(std::get<1>(l26.next()).str(), "KW_OBJ(1:1-1:4): obj");
-  EXPECT_EQ(std::get<1>(l27.next()).str(), "KW_RETURN(1:1-1:7): return");
-  EXPECT_EQ(std::get<1>(l28.next()).str(), "KW_THROW(1:1-1:6): throw");
-  EXPECT_EQ(std::get<1>(l29.next()).str(), "KW_TRUE(1:1-1:5): true");
-  EXPECT_EQ(std::get<1>(l30.next()).str(), "KW_TRY(1:1-1:4): try");
-  EXPECT_EQ(std::get<1>(l31.next()).str(), "KW_UNION(1:1-1:6): union");
+  EXPECT_EQ(std::get<1>(l27.next()).str(), "KW_REF(1:1-1:4): ref");
+  EXPECT_EQ(std::get<1>(l28.next()).str(), "KW_RETURN(1:1-1:7): return");
+  EXPECT_EQ(std::get<1>(l29.next()).str(), "KW_THROW(1:1-1:6): throw");
+  EXPECT_EQ(std::get<1>(l30.next()).str(), "KW_TRUE(1:1-1:5): true");
+  EXPECT_EQ(std::get<1>(l31.next()).str(), "KW_TRY(1:1-1:4): try");
+  EXPECT_EQ(std::get<1>(l32.next()).str(), "KW_UNION(1:1-1:6): union");
 }
 
 TEST(LexerTest, LexKeywordsWhitespace) {
   auto reader = testing::NiceMock<MockReader>(
-    " break catch continue elif else enum false fn if is loop main mut nil obj return throw true try union "
+    " break catch continue elif else enum false fn if is loop main mut nil obj ref return throw true try union "
   );
 
   auto lexer = Lexer(&reader);
@@ -554,12 +557,13 @@ TEST(LexerTest, LexKeywordsWhitespace) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_MUT(1:63-1:66): mut");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_NIL(1:67-1:70): nil");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_OBJ(1:71-1:74): obj");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_RETURN(1:75-1:81): return");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_THROW(1:82-1:87): throw");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRUE(1:88-1:92): true");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRY(1:93-1:96): try");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_UNION(1:97-1:102): union");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:103-1:103)");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_REF(1:75-1:78): ref");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_RETURN(1:79-1:85): return");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_THROW(1:86-1:91): throw");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRUE(1:92-1:96): true");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRY(1:97-1:100): try");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_UNION(1:101-1:106): union");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:107-1:107)");
 }
 
 TEST(LexerTest, LexKeywordsAsIdentifiers) {
@@ -584,11 +588,12 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   auto r24 = testing::NiceMock<MockReader>("mutable");
   auto r25 = testing::NiceMock<MockReader>("nilled");
   auto r26 = testing::NiceMock<MockReader>("object");
-  auto r27 = testing::NiceMock<MockReader>("returned");
-  auto r28 = testing::NiceMock<MockReader>("throwing");
-  auto r29 = testing::NiceMock<MockReader>("trues");
-  auto r30 = testing::NiceMock<MockReader>("tryout");
-  auto r31 = testing::NiceMock<MockReader>("unions");
+  auto r27 = testing::NiceMock<MockReader>("referring");
+  auto r28 = testing::NiceMock<MockReader>("returned");
+  auto r29 = testing::NiceMock<MockReader>("throwing");
+  auto r30 = testing::NiceMock<MockReader>("trues");
+  auto r31 = testing::NiceMock<MockReader>("tryout");
+  auto r32 = testing::NiceMock<MockReader>("unions");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -616,6 +621,7 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   auto l29 = Lexer(&r29);
   auto l30 = Lexer(&r30);
   auto l31 = Lexer(&r31);
+  auto l32 = Lexer(&r32);
 
   EXPECT_EQ(std::get<1>(l1.next()).str(), "ID(1:1-1:4): asm");
   EXPECT_EQ(std::get<1>(l2.next()).str(), "ID(1:1-1:15): asynchronously");
@@ -638,11 +644,12 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   EXPECT_EQ(std::get<1>(l24.next()).str(), "ID(1:1-1:8): mutable");
   EXPECT_EQ(std::get<1>(l25.next()).str(), "ID(1:1-1:7): nilled");
   EXPECT_EQ(std::get<1>(l26.next()).str(), "ID(1:1-1:7): object");
-  EXPECT_EQ(std::get<1>(l27.next()).str(), "ID(1:1-1:9): returned");
-  EXPECT_EQ(std::get<1>(l28.next()).str(), "ID(1:1-1:9): throwing");
-  EXPECT_EQ(std::get<1>(l29.next()).str(), "ID(1:1-1:6): trues");
-  EXPECT_EQ(std::get<1>(l30.next()).str(), "ID(1:1-1:7): tryout");
-  EXPECT_EQ(std::get<1>(l31.next()).str(), "ID(1:1-1:7): unions");
+  EXPECT_EQ(std::get<1>(l27.next()).str(), "ID(1:1-1:10): referring");
+  EXPECT_EQ(std::get<1>(l28.next()).str(), "ID(1:1-1:9): returned");
+  EXPECT_EQ(std::get<1>(l29.next()).str(), "ID(1:1-1:9): throwing");
+  EXPECT_EQ(std::get<1>(l30.next()).str(), "ID(1:1-1:6): trues");
+  EXPECT_EQ(std::get<1>(l31.next()).str(), "ID(1:1-1:7): tryout");
+  EXPECT_EQ(std::get<1>(l32.next()).str(), "ID(1:1-1:7): unions");
 }
 
 TEST(LexerTest, LexIdentifier) {

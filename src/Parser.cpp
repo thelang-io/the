@@ -372,6 +372,21 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
     return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
   }
 
+  if (tok1.type == TK_KW_REF) {
+    auto exprRefBody = this->_stmtExpr(false);
+
+    if (exprRefBody == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0147);
+    } else if (!std::holds_alternative<ParserExprAccess>(*exprRefBody->body)) {
+      throw Error(this->reader, exprRefBody->start, E0148);
+    }
+
+    auto exprRef = ParserExprRef{*exprRefBody};
+    auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprRef), false, tok1.start, this->lexer->loc};
+
+    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
+  }
+
   if (
     tok1.type == TK_OP_EXCL ||
     tok1.type == TK_OP_MINUS ||
@@ -501,6 +516,9 @@ std::optional<ParserType> Parser::_type () {
     }
 
     return ParserType{type->body, true, tok1.start, this->lexer->loc};
+  } else if (tok1.type == TK_ID) {
+    auto typeId = ParserTypeId{tok1};
+    return ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc};
   } else if (tok1.type == TK_KW_FN) {
     auto [loc2, tok2] = this->lexer->next();
 
@@ -575,9 +593,15 @@ std::optional<ParserType> Parser::_type () {
 
     auto typeFn = ParserTypeFn{fnParams, *fnReturnType};
     return ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc};
-  } else if (tok1.type == TK_ID) {
-    auto typeId = ParserTypeId{tok1};
-    return ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc};
+  } else if (tok1.type == TK_KW_REF) {
+    auto type = this->_type();
+
+    if (type == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0149);
+    }
+
+    auto typeRef = ParserTypeRef{*type};
+    return ParserType{std::make_shared<ParserTypeBody>(typeRef), false, tok1.start, this->lexer->loc};
   }
 
   this->lexer->seek(loc1);
@@ -634,14 +658,17 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
 
       return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprCond.alt.end}, shouldWrap);
     }
+  } else if (std::holds_alternative<ParserExprRef>(*stmtExpr.body) && !stmtExpr.parenthesized) {
+    auto exprRef = std::get<ParserExprRef>(*stmtExpr.body);
+    auto tkRef = Token{TK_KW_REF};
+
+    if (tkRef.precedence() < precedence) {
+      throw Error(this->reader, exprRef.body.start, E0148);
+    }
   } else if (std::holds_alternative<ParserExprUnary>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
 
-    auto shouldWrapExpr = exprUnary.op.precedence(true) == precedence
-      ? exprUnary.op.associativity(true) == TK_ASSOC_RIGHT
-      : exprUnary.op.precedence(true) < precedence;
-
-    if (exprUnary.prefix && shouldWrapExpr) {
+    if (exprUnary.prefix && exprUnary.op.precedence(true) < precedence) {
       auto [newStmtExpr, shouldWrap] = this->_wrapExpr(exprUnary.arg, loc, tok, precedence, wrap);
       auto newExprUnary = ParserExprUnary{newStmtExpr, exprUnary.op, exprUnary.prefix};
       auto newExpr = std::make_shared<ParserExpr>(newExprUnary);
@@ -826,7 +853,10 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
-  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
+  if (
+    !std::holds_alternative<ParserExprAccess>(*stmtExpr.body) &&
+    !std::holds_alternative<ParserExprRef>(*stmtExpr.body)
+  ) {
     throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0142);
   }
 

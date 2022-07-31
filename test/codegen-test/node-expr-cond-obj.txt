@@ -56,10 +56,10 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
 int main () {
   const struct __THE_1_Test_0 *__THE_0_o1_0 = __THE_1_Test_0_alloc(1);
   const struct __THE_1_Test_0 *__THE_0_o2_0 = __THE_1_Test_0_alloc(2);
-  __THE_1_Test_0_free(true ? __THE_1_Test_0_alloc(3) : __THE_1_Test_0_alloc(4));
-  __THE_1_Test_0_free(true ? __THE_1_Test_0_copy(__THE_0_o1_0) : __THE_1_Test_0_alloc(5));
-  __THE_1_Test_0_free(true ? __THE_1_Test_0_alloc(6) : __THE_1_Test_0_copy(__THE_0_o2_0));
-  __THE_1_Test_0_free(true ? __THE_1_Test_0_copy(__THE_0_o1_0) : __THE_1_Test_0_copy(__THE_0_o2_0));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) (true ? __THE_1_Test_0_alloc(3) : __THE_1_Test_0_alloc(4)));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) (true ? __THE_1_Test_0_copy(__THE_0_o1_0) : __THE_1_Test_0_alloc(5)));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) (true ? __THE_1_Test_0_alloc(6) : __THE_1_Test_0_copy(__THE_0_o2_0)));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) (true ? __THE_1_Test_0_copy(__THE_0_o1_0) : __THE_1_Test_0_copy(__THE_0_o2_0)));
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_o2_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_o1_0);
 }

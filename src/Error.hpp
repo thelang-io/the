@@ -77,6 +77,9 @@
 #define E0144 "E0144 - Loop initialization is mutable by default"
 #define E0145 "E0145 - Expected parameter name after `mut` keyword in function type"
 #define E0146 "E0146 - Expected colon after parameter name in function type"
+#define E0147 "E0147 - Expected reference expression body"
+#define E0148 "E0148 - Invalid reference to rvalue"
+#define E0149 "E0149 - Expected reference expression type"
 
 // #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"

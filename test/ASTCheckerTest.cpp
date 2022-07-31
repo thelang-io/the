@@ -47,10 +47,10 @@ TEST(ASTCheckerTest, CtorWithPointers) {
 }
 
 TEST(ASTCheckerTest, ThrowsOnNonNode) {
-  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().endsWith<ASTNodeReturn>(), "Error: tried node method on non node");
-  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().has<ASTNodeReturn>(), "Error: tried node method on non node");
-  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().is<ASTNodeFnDecl>(), "Error: tried node method on non node");
-  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().isLast(), "Error: tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().endsWith<ASTNodeReturn>(), "tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().has<ASTNodeReturn>(), "tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().is<ASTNodeFnDecl>(), "tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(astCheckerTestExprGen().isLast(), "tried node method on non node");
 }
 
 TEST(ASTCheckerTest, EndsWithReturn) {
@@ -280,10 +280,10 @@ TEST(ASTCheckerTest, ThrowsOnManyIsLast) {
     "  }" EOL
     "  return" EOL;
 
-  EXPECT_THROW_WITH_MESSAGE(astCheckerTestGen(code).isLast(), "Error: tried isLast on many nodes");
+  EXPECT_THROW_WITH_MESSAGE(astCheckerTestGen(code).isLast(), "tried isLast on many nodes");
 }
 
 TEST(ASTCheckerTest, ThrowsOnRootIsLast) {
   auto nodes = testing::NiceMock<MockAST>("main {}").gen();
-  EXPECT_THROW_WITH_MESSAGE(ASTChecker(nodes[0]).isLast(), "Error: tried isLast on root node");
+  EXPECT_THROW_WITH_MESSAGE(ASTChecker(nodes[0]).isLast(), "tried isLast on root node");
 }

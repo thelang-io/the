@@ -24,7 +24,7 @@ std::string exprAssignOpStr (enum ASTExprAssignOp op) {
     case AST_EXPR_ASSIGN_OR: return "OR";
     case AST_EXPR_ASSIGN_RSHIFT: return "RSHIFT";
     case AST_EXPR_ASSIGN_SUB: return "SUB";
-    default: throw Error("Error: tried stringify unknown assign expression operator");
+    default: throw Error("tried stringify unknown assign expression operator");
   }
 }
 
@@ -48,7 +48,7 @@ std::string exprBinaryOpStr (enum ASTExprBinaryOp op) {
     case AST_EXPR_BINARY_OR: return "OR";
     case AST_EXPR_BINARY_RSHIFT: return "RSHIFT";
     case AST_EXPR_BINARY_SUB: return "SUB";
-    default: throw Error("Error: tried stringify unknown binary expression operator");
+    default: throw Error("tried stringify unknown binary expression operator");
   }
 }
 
@@ -62,7 +62,7 @@ std::string exprLitTypeStr (enum ASTExprLitType type) {
     case AST_EXPR_LIT_INT_HEX: return "INT_HEX";
     case AST_EXPR_LIT_INT_OCT: return "INT_OCT";
     case AST_EXPR_LIT_STR: return "STR";
-    default: throw Error("Error: tried stringify unknown literal expression type");
+    default: throw Error("tried stringify unknown literal expression type");
   }
 }
 
@@ -74,36 +74,8 @@ std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
     case AST_EXPR_UNARY_MINUS: return "MINUS";
     case AST_EXPR_UNARY_NOT: return "NOT";
     case AST_EXPR_UNARY_PLUS: return "PLUS";
-    default: throw Error("Error: tried stringify unknown unary expression operator");
+    default: throw Error("tried stringify unknown unary expression operator");
   }
-}
-
-std::string memberObjXml (const std::shared_ptr<ASTMemberObj> &exprAccessBody, std::size_t indent) {
-  if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccessBody)) {
-    auto id = std::get<std::shared_ptr<Var>>(*exprAccessBody);
-    return id->xml(indent) + EOL;
-  }
-
-  auto member = std::get<ASTMember>(*exprAccessBody);
-  auto result = std::string(indent, ' ') + R"(<slot name="obj">)" EOL;
-
-  result += memberObjXml(member.obj, indent + 2);
-  result += std::string(indent, ' ') + "</slot>" EOL;
-  result += std::string(indent, ' ') + R"(<slot name="prop">)" EOL;
-  result += std::string(indent + 2, ' ') + member.prop + EOL;
-  result += std::string(indent, ' ') + "</slot>" EOL;
-
-  return result;
-}
-
-std::string ASTExprAccess::xml (std::size_t indent) const {
-  auto result = std::string();
-
-  result += std::string(indent, ' ') + "<ExprAccess>" EOL;
-  result += memberObjXml(this->body, indent + 2);
-  result += std::string(indent, ' ') + "</ExprAccess>";
-
-  return result;
 }
 
 bool ASTNodeExpr::isLit () const {
@@ -139,7 +111,17 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
 
   if (std::holds_alternative<ASTExprAccess>(*this->body)) {
     auto exprAccess = std::get<ASTExprAccess>(*this->body);
-    result += exprAccess.xml(indent) + EOL;
+    result += std::string(indent, ' ') + "<ExprAccess" + (exprAccess.prop == std::nullopt ? "" : R"( prop=")" + *exprAccess.prop + R"(")") + ">" EOL;
+
+    if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.obj)) {
+      auto var = std::get<std::shared_ptr<Var>>(exprAccess.obj);
+      result += var->xml(indent + 2) + EOL;
+    } else if (std::holds_alternative<ASTNodeExpr>(exprAccess.obj)) {
+      auto nodeExpr = std::get<ASTNodeExpr>(exprAccess.obj);
+      result += nodeExpr.xml(indent + 2) + EOL;
+    }
+
+    result += std::string(indent, ' ') + "</ExprAccess>" EOL;
   } else if (std::holds_alternative<ASTExprAssign>(*this->body)) {
     auto exprAssign = std::get<ASTExprAssign>(*this->body);
 
@@ -234,6 +216,12 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprObj>" EOL;
+  } else if (std::holds_alternative<ASTExprRef>(*this->body)) {
+    auto exprRef = std::get<ASTExprRef>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprRef>" EOL;
+    result += exprRef.body.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</ExprRef>" EOL;
   } else if (std::holds_alternative<ASTExprUnary>(*this->body)) {
     auto exprUnary = std::get<ASTExprUnary>(*this->body);
 

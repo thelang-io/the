@@ -1,0 +1,104 @@
+======= stdin =======
+main {
+  mut a := "test1"
+  mut b := "test2"
+
+  mut ref1 := ref a
+
+  ref1 += "test3"
+  ref1 = ref b
+  ref1 += "test4"
+
+  v1 := a + ref1
+  v2 := ref1 + b
+  v3 := ref1 + ref1
+  v4 := true ? a : ref1
+  v5 := false ? ref1 : b
+  v6 := false ? ref1 : ref1
+}
+======= code =======
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+void *alloc (size_t);
+
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+struct str str_concat_cstr (struct str s, const char *c) {
+  size_t l = s.l + strlen(c);
+  char *r = alloc(l);
+  memcpy(r, s.c, s.l);
+  memcpy(&r[s.l], c, l - s.l);
+  free(s.c);
+  return (struct str) {r, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *r = alloc(l);
+  memcpy(r, s1.c, s1.l);
+  memcpy(&r[s1.l], s2.c, s2.l);
+  free(s1.c);
+  free(s2.c);
+  return (struct str) {r, l};
+}
+struct str str_copy (const struct str s) {
+  char *r = alloc(s.l);
+  memcpy(r, s.c, s.l);
+  return (struct str) {r, s.l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.c);
+  return s2;
+}
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+int main () {
+  struct str __THE_0_a_0 = str_alloc("test1");
+  struct str __THE_0_b_0 = str_alloc("test2");
+  struct str *__THE_0_ref1_0 = &__THE_0_a_0;
+  *__THE_0_ref1_0 = str_realloc(*__THE_0_ref1_0, str_concat_cstr(str_copy(*__THE_0_ref1_0), "test3"));
+  __THE_0_ref1_0 = &__THE_0_b_0;
+  *__THE_0_ref1_0 = str_realloc(*__THE_0_ref1_0, str_concat_cstr(str_copy(*__THE_0_ref1_0), "test4"));
+  const struct str __THE_0_v1_0 = str_concat_str(str_copy(__THE_0_a_0), str_copy(*__THE_0_ref1_0));
+  const struct str __THE_0_v2_0 = str_concat_str(str_copy(*__THE_0_ref1_0), str_copy(__THE_0_b_0));
+  const struct str __THE_0_v3_0 = str_concat_str(str_copy(*__THE_0_ref1_0), str_copy(*__THE_0_ref1_0));
+  const struct str __THE_0_v4_0 = true ? str_copy(__THE_0_a_0) : str_copy(*__THE_0_ref1_0);
+  const struct str __THE_0_v5_0 = false ? str_copy(*__THE_0_ref1_0) : str_copy(__THE_0_b_0);
+  const struct str *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
+  str_free((struct str) __THE_0_v5_0);
+  str_free((struct str) __THE_0_v4_0);
+  str_free((struct str) __THE_0_v3_0);
+  str_free((struct str) __THE_0_v2_0);
+  str_free((struct str) __THE_0_v1_0);
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

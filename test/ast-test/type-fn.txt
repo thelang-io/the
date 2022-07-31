@@ -17,13 +17,11 @@ main {
 ======= stdout =======
 <Node>
   <NodeObjDecl>
-    <Type codeName="Test_0" name="Test" type="obj">
-      <slot name="fields">
-        <TypeObjField name="a">
-          <BuiltinType name="int" />
-        </TypeObjField>
-      </slot>
-    </Type>
+    <TypeObj codeName="Test_0" name="Test">
+      <TypeObjField name="a">
+        <BuiltinType name="int" />
+      </TypeObjField>
+    </TypeObj>
   </NodeObjDecl>
 </Node>
 <Node>
@@ -32,11 +30,11 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a01_0" frame="2" name="a01">
-            <Type type="fn">
+            <TypeFn name="fn$0">
               <slot name="returnType">
                 <BuiltinType name="void" />
               </slot>
-            </Type>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -45,16 +43,16 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a02_0" frame="2" name="a02">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$1">
               <slot name="params">
                 <TypeFnParam required>
                   <BuiltinType name="int" />
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -63,16 +61,16 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a03_0" frame="2" name="a03">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$1">
               <slot name="params">
                 <TypeFnParam name="a" required>
                   <BuiltinType name="int" />
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -81,16 +79,16 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a04_0" frame="2" name="a04">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$1">
               <slot name="params">
                 <TypeFnParam mut name="a" required>
                   <BuiltinType name="int" />
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -99,16 +97,16 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a05_0" frame="2" name="a05">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$1">
               <slot name="params">
                 <TypeFnParam required>
                   <BuiltinType name="int" />
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -117,10 +115,7 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a06_0" frame="2" name="a06">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$2">
               <slot name="params">
                 <TypeFnParam required>
                   <BuiltinType name="int" />
@@ -129,7 +124,10 @@ main {
                   <BuiltinType name="float" />
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -138,10 +136,7 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a07_0" frame="2" name="a07">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$2">
               <slot name="params">
                 <TypeFnParam name="a" required>
                   <BuiltinType name="int" />
@@ -150,7 +145,10 @@ main {
                   <BuiltinType name="float" />
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -159,10 +157,7 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a08_0" frame="2" name="a08">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$2">
               <slot name="params">
                 <TypeFnParam required>
                   <BuiltinType name="int" />
@@ -171,7 +166,10 @@ main {
                   <BuiltinType name="float" />
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -180,10 +178,7 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a09_0" frame="2" name="a09">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$3">
               <slot name="params">
                 <TypeFnParam required>
                   <BuiltinType name="int" />
@@ -192,16 +187,17 @@ main {
                   <BuiltinType name="float" />
                 </TypeFnParam>
                 <TypeFnParam required>
-                  <Type codeName="Test_0" name="Test" type="obj">
-                    <slot name="fields">
-                      <TypeObjField name="a">
-                        <BuiltinType name="int" />
-                      </TypeObjField>
-                    </slot>
-                  </Type>
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeObjField name="a">
+                      <BuiltinType name="int" />
+                    </TypeObjField>
+                  </TypeObj>
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -210,10 +206,7 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a10_0" frame="2" name="a10">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$3">
               <slot name="params">
                 <TypeFnParam name="a" required>
                   <BuiltinType name="int" />
@@ -222,16 +215,17 @@ main {
                   <BuiltinType name="float" />
                 </TypeFnParam>
                 <TypeFnParam name="c" required>
-                  <Type codeName="Test_0" name="Test" type="obj">
-                    <slot name="fields">
-                      <TypeObjField name="a">
-                        <BuiltinType name="int" />
-                      </TypeObjField>
-                    </slot>
-                  </Type>
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeObjField name="a">
+                      <BuiltinType name="int" />
+                    </TypeObjField>
+                  </TypeObj>
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -240,10 +234,7 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a11_0" frame="2" name="a11">
-            <Type type="fn">
-              <slot name="returnType">
-                <BuiltinType name="void" />
-              </slot>
+            <TypeFn name="fn$3">
               <slot name="params">
                 <TypeFnParam required>
                   <BuiltinType name="int" />
@@ -252,16 +243,17 @@ main {
                   <BuiltinType name="float" />
                 </TypeFnParam>
                 <TypeFnParam required>
-                  <Type codeName="Test_0" name="Test" type="obj">
-                    <slot name="fields">
-                      <TypeObjField name="a">
-                        <BuiltinType name="int" />
-                      </TypeObjField>
-                    </slot>
-                  </Type>
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeObjField name="a">
+                      <BuiltinType name="int" />
+                    </TypeObjField>
+                  </TypeObj>
                 </TypeFnParam>
               </slot>
-            </Type>
+              <slot name="returnType">
+                <BuiltinType name="void" />
+              </slot>
+            </TypeFn>
           </Var>
         </slot>
       </NodeVarDecl>

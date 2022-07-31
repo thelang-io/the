@@ -35,7 +35,7 @@ class AST {
   AST &operator= (const AST &);
 
   ASTBlock _block (const ParserBlock &, VarStack &);
-  ASTExprAccess _exprAccess (const std::shared_ptr<ParserMemberObj> &, VarStack &);
+  ASTNodeExpr _exprAccess (const std::shared_ptr<ParserMemberObj> &, VarStack &);
   Type *_exprAccessType (const std::shared_ptr<ParserMemberObj> &);
   void _forwardNode (const ParserBlock &);
   ASTNode _node (const ParserStmt &, VarStack &);

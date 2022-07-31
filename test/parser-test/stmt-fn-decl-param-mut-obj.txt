@@ -19,20 +19,16 @@ fn test2 (mut a: Test, mut b := 0) Test {
           <Token type="ID" val="a" start="1:15" end="1:16" />
         </slot>
         <slot name="type">
-          <Type start="1:18" end="1:22">
-            <TypeId>
-              <Token type="ID" val="Test" start="1:18" end="1:22" />
-            </TypeId>
-          </Type>
+          <TypeId start="1:18" end="1:22">
+            <Token type="ID" val="Test" start="1:18" end="1:22" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="1:24" end="1:28">
-        <TypeId>
-          <Token type="ID" val="Test" start="1:24" end="1:28" />
-        </TypeId>
-      </Type>
+      <TypeId start="1:24" end="1:28">
+        <Token type="ID" val="Test" start="1:24" end="1:28" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:11">
@@ -84,11 +80,9 @@ fn test2 (mut a: Test, mut b := 0) Test {
           <Token type="ID" val="a" start="5:15" end="5:16" />
         </slot>
         <slot name="type">
-          <Type start="5:18" end="5:22">
-            <TypeId>
-              <Token type="ID" val="Test" start="5:18" end="5:22" />
-            </TypeId>
-          </Type>
+          <TypeId start="5:18" end="5:22">
+            <Token type="ID" val="Test" start="5:18" end="5:22" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam mut>
@@ -105,11 +99,9 @@ fn test2 (mut a: Test, mut b := 0) Test {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="5:36" end="5:40">
-        <TypeId>
-          <Token type="ID" val="Test" start="5:36" end="5:40" />
-        </TypeId>
-      </Type>
+      <TypeId start="5:36" end="5:40">
+        <Token type="ID" val="Test" start="5:36" end="5:40" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="6:3" end="6:8">

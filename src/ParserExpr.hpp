@@ -20,6 +20,7 @@ struct ParserExprCall;
 struct ParserExprCond;
 struct ParserExprLit;
 struct ParserExprObj;
+struct ParserExprRef;
 struct ParserExprUnary;
 struct ParserMember;
 
@@ -31,6 +32,7 @@ using ParserExpr = std::variant<
   ParserExprCond,
   ParserExprLit,
   ParserExprObj,
+  ParserExprRef,
   ParserExprUnary
 >;
 
@@ -96,6 +98,10 @@ struct ParserExprObjProp {
 struct ParserExprObj {
   Token id;
   std::vector<ParserExprObjProp> props;
+};
+
+struct ParserExprRef {
+  ParserStmtExpr body;
 };
 
 struct ParserExprUnary {

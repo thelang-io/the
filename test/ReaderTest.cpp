@@ -48,13 +48,13 @@ class ReaderTest : public testing::Test {
 TEST_F(ReaderTest, ThrowsOnNotExisting) {
   EXPECT_THROW_WITH_MESSAGE({
     Reader("test.jpg");
-  }, R"(Error: no such file "test.jpg")");
+  }, R"(no such file "test.jpg")");
 }
 
 TEST_F(ReaderTest, ThrowsOnDirectory) {
   EXPECT_THROW_WITH_MESSAGE({
     Reader("test");
-  }, R"(Error: path "test" is not a file)");
+  }, R"(path "test" is not a file)");
 }
 
 TEST_F(ReaderTest, ReadsFile) {
@@ -115,5 +115,5 @@ TEST_F(ReaderTest, ReadsMultiline) {
 TEST_F(ReaderTest, ThrowsOnNextOnEof) {
   EXPECT_THROW_WITH_MESSAGE({
     this->r1_->next();
-  }, "Error: tried to read on reader eof");
+  }, "tried to read on reader eof");
 }

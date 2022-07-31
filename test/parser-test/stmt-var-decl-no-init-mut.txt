@@ -22,11 +22,9 @@ mut p: u64
       <Token type="ID" val="a" start="1:5" end="1:6" />
     </slot>
     <slot name="type">
-      <Type start="1:8" end="1:12">
-        <TypeId>
-          <Token type="ID" val="bool" start="1:8" end="1:12" />
-        </TypeId>
-      </Type>
+      <TypeId start="1:8" end="1:12">
+        <Token type="ID" val="bool" start="1:8" end="1:12" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -36,11 +34,9 @@ mut p: u64
       <Token type="ID" val="b" start="2:5" end="2:6" />
     </slot>
     <slot name="type">
-      <Type start="2:8" end="2:12">
-        <TypeId>
-          <Token type="ID" val="byte" start="2:8" end="2:12" />
-        </TypeId>
-      </Type>
+      <TypeId start="2:8" end="2:12">
+        <Token type="ID" val="byte" start="2:8" end="2:12" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -50,11 +46,9 @@ mut p: u64
       <Token type="ID" val="c" start="3:5" end="3:6" />
     </slot>
     <slot name="type">
-      <Type start="3:8" end="3:12">
-        <TypeId>
-          <Token type="ID" val="char" start="3:8" end="3:12" />
-        </TypeId>
-      </Type>
+      <TypeId start="3:8" end="3:12">
+        <Token type="ID" val="char" start="3:8" end="3:12" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -64,11 +58,9 @@ mut p: u64
       <Token type="ID" val="d" start="4:5" end="4:6" />
     </slot>
     <slot name="type">
-      <Type start="4:8" end="4:13">
-        <TypeId>
-          <Token type="ID" val="float" start="4:8" end="4:13" />
-        </TypeId>
-      </Type>
+      <TypeId start="4:8" end="4:13">
+        <Token type="ID" val="float" start="4:8" end="4:13" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -78,11 +70,9 @@ mut p: u64
       <Token type="ID" val="e" start="5:5" end="5:6" />
     </slot>
     <slot name="type">
-      <Type start="5:8" end="5:11">
-        <TypeId>
-          <Token type="ID" val="f32" start="5:8" end="5:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="5:8" end="5:11">
+        <Token type="ID" val="f32" start="5:8" end="5:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -92,11 +82,9 @@ mut p: u64
       <Token type="ID" val="f" start="6:5" end="6:6" />
     </slot>
     <slot name="type">
-      <Type start="6:8" end="6:11">
-        <TypeId>
-          <Token type="ID" val="f64" start="6:8" end="6:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="6:8" end="6:11">
+        <Token type="ID" val="f64" start="6:8" end="6:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -106,11 +94,9 @@ mut p: u64
       <Token type="ID" val="g" start="7:5" end="7:6" />
     </slot>
     <slot name="type">
-      <Type start="7:8" end="7:11">
-        <TypeId>
-          <Token type="ID" val="int" start="7:8" end="7:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="7:8" end="7:11">
+        <Token type="ID" val="int" start="7:8" end="7:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -120,11 +106,9 @@ mut p: u64
       <Token type="ID" val="h" start="8:5" end="8:6" />
     </slot>
     <slot name="type">
-      <Type start="8:8" end="8:10">
-        <TypeId>
-          <Token type="ID" val="i8" start="8:8" end="8:10" />
-        </TypeId>
-      </Type>
+      <TypeId start="8:8" end="8:10">
+        <Token type="ID" val="i8" start="8:8" end="8:10" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -134,11 +118,9 @@ mut p: u64
       <Token type="ID" val="i" start="9:5" end="9:6" />
     </slot>
     <slot name="type">
-      <Type start="9:8" end="9:11">
-        <TypeId>
-          <Token type="ID" val="i16" start="9:8" end="9:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="9:8" end="9:11">
+        <Token type="ID" val="i16" start="9:8" end="9:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -148,11 +130,9 @@ mut p: u64
       <Token type="ID" val="j" start="10:5" end="10:6" />
     </slot>
     <slot name="type">
-      <Type start="10:8" end="10:11">
-        <TypeId>
-          <Token type="ID" val="i32" start="10:8" end="10:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="10:8" end="10:11">
+        <Token type="ID" val="i32" start="10:8" end="10:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -162,11 +142,9 @@ mut p: u64
       <Token type="ID" val="k" start="11:5" end="11:6" />
     </slot>
     <slot name="type">
-      <Type start="11:8" end="11:11">
-        <TypeId>
-          <Token type="ID" val="i64" start="11:8" end="11:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="11:8" end="11:11">
+        <Token type="ID" val="i64" start="11:8" end="11:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -176,11 +154,9 @@ mut p: u64
       <Token type="ID" val="l" start="12:5" end="12:6" />
     </slot>
     <slot name="type">
-      <Type start="12:8" end="12:11">
-        <TypeId>
-          <Token type="ID" val="str" start="12:8" end="12:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="12:8" end="12:11">
+        <Token type="ID" val="str" start="12:8" end="12:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -190,11 +166,9 @@ mut p: u64
       <Token type="ID" val="m" start="13:5" end="13:6" />
     </slot>
     <slot name="type">
-      <Type start="13:8" end="13:10">
-        <TypeId>
-          <Token type="ID" val="u8" start="13:8" end="13:10" />
-        </TypeId>
-      </Type>
+      <TypeId start="13:8" end="13:10">
+        <Token type="ID" val="u8" start="13:8" end="13:10" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -204,11 +178,9 @@ mut p: u64
       <Token type="ID" val="n" start="14:5" end="14:6" />
     </slot>
     <slot name="type">
-      <Type start="14:8" end="14:11">
-        <TypeId>
-          <Token type="ID" val="u16" start="14:8" end="14:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="14:8" end="14:11">
+        <Token type="ID" val="u16" start="14:8" end="14:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -218,11 +190,9 @@ mut p: u64
       <Token type="ID" val="o" start="15:5" end="15:6" />
     </slot>
     <slot name="type">
-      <Type start="15:8" end="15:11">
-        <TypeId>
-          <Token type="ID" val="u32" start="15:8" end="15:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="15:8" end="15:11">
+        <Token type="ID" val="u32" start="15:8" end="15:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>
@@ -232,11 +202,9 @@ mut p: u64
       <Token type="ID" val="p" start="16:5" end="16:6" />
     </slot>
     <slot name="type">
-      <Type start="16:8" end="16:11">
-        <TypeId>
-          <Token type="ID" val="u64" start="16:8" end="16:11" />
-        </TypeId>
-      </Type>
+      <TypeId start="16:8" end="16:11">
+        <Token type="ID" val="u64" start="16:8" end="16:11" />
+      </TypeId>
     </slot>
   </StmtVarDecl>
 </Stmt>

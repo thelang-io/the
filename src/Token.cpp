@@ -44,6 +44,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_MUT: return "KW_MUT";
     case TK_KW_NIL: return "KW_NIL";
     case TK_KW_OBJ: return "KW_OBJ";
+    case TK_KW_REF: return "KW_REF";
     case TK_KW_RETURN: return "KW_RETURN";
     case TK_KW_THROW: return "KW_THROW";
     case TK_KW_TRUE: return "KW_TRUE";
@@ -109,7 +110,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_STAR: return "OP_STAR";
     case TK_OP_STAR_EQ: return "OP_STAR_EQ";
     case TK_OP_TILDE: return "OP_TILDE";
-    default: throw Error("Error: tried stringify unknown token");
+    default: throw Error("tried stringify unknown token");
   }
 }
 
@@ -155,6 +156,7 @@ bool Token::isWhitespace (char ch) {
 
 TokenAssociativity Token::associativity (bool unary) const {
   if (
+    this->type == TK_KW_REF ||
     this->type == TK_OP_LPAR || this->type == TK_OP_RPAR ||
     this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS
   ) {
@@ -191,15 +193,17 @@ TokenAssociativity Token::associativity (bool unary) const {
     return TK_ASSOC_LEFT;
   }
 
-  throw Error("Error: tried associativity for unknown token");
+  throw Error("tried associativity for unknown token");
 }
 
 int Token::precedence (bool isUnary) const {
   if (this->type == TK_OP_LPAR || this->type == TK_OP_RPAR) {
-    return 17;
+    return 18;
   } else if (this->type == TK_OP_DOT || this->type == TK_OP_LBRACK || this->type == TK_OP_RBRACK) {
-    return 16;
+    return 17;
   } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
+    return 16;
+  } else if (this->type == TK_KW_REF) {
     return 15;
   } else if (isUnary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) {
     return 14;
@@ -244,7 +248,7 @@ int Token::precedence (bool isUnary) const {
     return 1;
   }
 
-  throw Error("Error: tried precedence for unknown token");
+  throw Error("tried precedence for unknown token");
 }
 
 std::string Token::str () const {

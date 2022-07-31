@@ -8,18 +8,27 @@
 #include "TypeMap.hpp"
 #include <limits>
 
-Type *TypeMap::add (const std::string &name, const std::string &codeName, const std::vector<TypeObjField> &fields) {
-  this->_items.push_back(std::make_unique<Type>(Type{name, codeName, TypeObj{fields}, false}));
-  return this->_items.back().get();
-}
+Type *TypeMap::fn (const std::optional<std::string> &codeName, const std::vector<TypeFnParam> &params, Type *returnType) {
+  auto newType = Type{"", codeName == std::nullopt ? "@" : *codeName, TypeFn{returnType, params}, false};
 
-Type *TypeMap::add (const std::string &name, const std::string &codeName, const std::vector<TypeFnParam> &params, Type *returnType) {
-  this->_items.push_back(std::make_unique<Type>(Type{name, codeName, TypeFn{returnType, params}, false}));
-  return this->_items.back().get();
-}
+  for (auto &item : this->_items) {
+    if (!item->builtin && item->isFn() && item->codeName == newType.codeName && item->matchExact(&newType)) {
+      return item.get();
+    }
+  }
 
-Type *TypeMap::fn (const std::vector<TypeFnParam> &params, Type *returnType) {
-  this->_items.push_back(std::make_unique<Type>(Type{"@", "@", TypeFn{returnType, params}, false}));
+  for (auto &item : this->_items) {
+    if (!item->builtin && item->isFn() && item->matchNice(&newType)) {
+      newType.name = item->name;
+      break;
+    }
+  }
+
+  if (newType.name.empty()) {
+    newType.name = "fn$" + std::to_string(this->_fnIdx++);
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
   return this->_items.back().get();
 }
 
@@ -150,4 +159,24 @@ std::string TypeMap::name (const std::string &name) const {
       return fullNameTest;
     }
   }
+}
+
+Type *TypeMap::obj (const std::string &name, const std::string &codeName, const std::vector<TypeObjField> &fields) {
+  this->_items.push_back(std::make_unique<Type>(Type{name, codeName, TypeObj{fields}, false}));
+  return this->_items.back().get();
+}
+
+Type *TypeMap::ref (Type *type) {
+  for (const auto &item : this->_items) {
+    if (item->isRef()) {
+      auto typeRef = std::get<TypeRef>(item->body);
+
+      if (typeRef.type->matchExact(type)) {
+        return item.get();
+      }
+    }
+  }
+
+  this->_items.push_back(std::make_unique<Type>(Type{"@", "@", TypeRef{type}, false}));
+  return this->_items.back().get();
 }

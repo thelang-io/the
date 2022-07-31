@@ -25,11 +25,9 @@ main {
                 <Token type="ID" val="test" start="3:8" end="3:12" />
               </slot>
               <slot name="returnType">
-                <Type start="3:16" end="3:20">
-                  <TypeId>
-                    <Token type="ID" val="void" start="3:16" end="3:20" />
-                  </TypeId>
-                </Type>
+                <TypeId start="3:16" end="3:20">
+                  <Token type="ID" val="void" start="3:16" end="3:20" />
+                </TypeId>
               </slot>
             </StmtFnDecl>
           </Stmt>
@@ -41,11 +39,9 @@ main {
                 <Token type="ID" val="test" start="5:8" end="5:12" />
               </slot>
               <slot name="returnType">
-                <Type start="5:16" end="5:20">
-                  <TypeId>
-                    <Token type="ID" val="void" start="5:16" end="5:20" />
-                  </TypeId>
-                </Type>
+                <TypeId start="5:16" end="5:20">
+                  <Token type="ID" val="void" start="5:16" end="5:20" />
+                </TypeId>
               </slot>
             </StmtFnDecl>
           </Stmt>

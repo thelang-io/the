@@ -86,11 +86,11 @@ struct __THE_1_fn$1;
 struct __THE_1_mainSDtest2_0X;
 
 struct __THE_1_fn$0P {
-  const struct str n0;
+  struct str n0;
   unsigned char o1;
-  const struct str n1;
+  struct str n1;
   unsigned char o2;
-  const struct str n2;
+  struct str n2;
 };
 struct __THE_1_fn$0 {
   struct str (*f) (void *, struct __THE_1_fn$0P);
@@ -98,11 +98,11 @@ struct __THE_1_fn$0 {
   size_t l;
 };
 struct __THE_1_fn$1P {
-  const struct str n0;
+  struct str n0;
   unsigned char o1;
-  const struct str n1;
+  struct str n1;
   unsigned char o2;
-  const struct str n2;
+  struct str n2;
 };
 struct __THE_1_fn$1 {
   void (*f) (void *, struct __THE_1_fn$1P);
@@ -140,7 +140,7 @@ void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1P p) {
   const struct str __THE_0_a2_0 = p.n0;
   const struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("b");
   const struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("c");
-  *__THE_0_a_0 = str_realloc(*__THE_0_a_0, __THE_0_test1_0->f(__THE_0_test1_0->x, (struct __THE_1_fn$0P) {str_copy(__THE_0_a2_0), 1, str_copy(__THE_0_b_0), 1, str_copy(__THE_0_c_0)}));
+  *__THE_0_a_0 = str_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$0P) {str_copy(__THE_0_a2_0), 1, str_copy(__THE_0_b_0), 1, str_copy(__THE_0_c_0)}));
   str_free((struct str) __THE_0_c_0);
   str_free((struct str) __THE_0_b_0);
   str_free((struct str) __THE_0_a2_0);
@@ -156,13 +156,13 @@ void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDt
 
 int main () {
   const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
-  str_free(__THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 0, (struct str) {}, 0, (struct str) {}}));
-  str_free(__THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 0, (struct str) {}}));
-  str_free(__THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 1, str_alloc("c")}));
-  str_free(__THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 0, (struct str) {}}));
-  str_free(__THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 0, (struct str) {}, 1, str_alloc("c")}));
-  str_free(__THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 1, str_alloc("c")}));
-  str_free(__THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 1, str_alloc("c")}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 0, (struct str) {}, 0, (struct str) {}}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 0, (struct str) {}}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 1, str_alloc("c")}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 0, (struct str) {}}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 0, (struct str) {}, 1, str_alloc("c")}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 1, str_alloc("c")}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("a"), 1, str_alloc("b"), 1, str_alloc("c")}));
   struct str __THE_0_a_0 = str_alloc("a");
   const struct __THE_1_fn$1 __THE_0_mainSDtest2_0;
   __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});

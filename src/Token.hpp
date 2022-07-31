@@ -36,6 +36,7 @@ enum TokenType {
   TK_KW_MUT,
   TK_KW_NIL,
   TK_KW_OBJ,
+  TK_KW_REF,
   TK_KW_RETURN,
   TK_KW_THROW,
   TK_KW_TRUE,

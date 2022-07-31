@@ -38,12 +38,17 @@ struct TypeObj {
   std::vector<TypeObjField> fields = {};
 };
 
+struct TypeRef {
+  Type *type;
+};
+
 struct Type {
   std::string name;
   std::string codeName;
-  std::variant<TypeFn, TypeObj> body;
+  std::variant<TypeFn, TypeObj, TypeRef> body;
   bool builtin;
 
+  static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
   bool hasProp (const std::string &) const;
@@ -65,13 +70,16 @@ struct Type {
   bool isIntNumber () const;
   bool isNumber () const;
   bool isObj () const;
+  bool isRef () const;
   bool isStr () const;
   bool isU8 () const;
   bool isU16 () const;
   bool isU32 () const;
   bool isU64 () const;
   bool isVoid () const;
-  bool match (const Type *, bool = true) const;
+  bool match (const Type *) const;
+  bool matchExact (const Type *) const;
+  bool matchNice (const Type *) const;
   std::string xml (std::size_t = 0) const;
 };
 

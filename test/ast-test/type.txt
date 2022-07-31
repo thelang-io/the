@@ -27,13 +27,11 @@ main {
 ======= stdout =======
 <Node>
   <NodeObjDecl>
-    <Type codeName="Test_0" name="Test" type="obj">
-      <slot name="fields">
-        <TypeObjField name="a">
-          <BuiltinType name="int" />
-        </TypeObjField>
-      </slot>
-    </Type>
+    <TypeObj codeName="Test_0" name="Test">
+      <TypeObjField name="a">
+        <BuiltinType name="int" />
+      </TypeObjField>
+    </TypeObj>
   </NodeObjDecl>
 </Node>
 <Node>
@@ -213,13 +211,11 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a20_0" frame="2" name="a20">
-            <Type codeName="Test_0" name="Test" type="obj">
-              <slot name="fields">
-                <TypeObjField name="a">
-                  <BuiltinType name="int" />
-                </TypeObjField>
-              </slot>
-            </Type>
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeObjField name="a">
+                <BuiltinType name="int" />
+              </TypeObjField>
+            </TypeObj>
           </Var>
         </slot>
       </NodeVarDecl>
@@ -228,13 +224,11 @@ main {
       <NodeVarDecl>
         <slot name="var">
           <Var codeName="a21_0" frame="2" name="a21">
-            <Type codeName="Test_0" name="Test" type="obj">
-              <slot name="fields">
-                <TypeObjField name="a">
-                  <BuiltinType name="int" />
-                </TypeObjField>
-              </slot>
-            </Type>
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeObjField name="a">
+                <BuiltinType name="int" />
+              </TypeObjField>
+            </TypeObj>
           </Var>
         </slot>
       </NodeVarDecl>

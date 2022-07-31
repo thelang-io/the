@@ -133,6 +133,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-obj",
   "expr-obj-nested",
   "expr-obj-precedence",
+  "expr-ref",
   "expr-unary",
   "expr-unary-nested",
   "expr-unary-precedence",
@@ -142,7 +143,8 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type",
   "type-fn",
-  "type-variadic"
+  "type-variadic",
+  "type-ref"
 ));
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
@@ -249,10 +251,14 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0142-expr-unary-expected-lval-call",
   "throw-E0142-expr-unary-expected-lval-cond",
   "throw-E0142-expr-unary-expected-lval-lit",
-  "throw-E0142-expr-unary-expected-lval-obj"
+  "throw-E0142-expr-unary-expected-lval-obj",
+  "throw-E0147-expr-ref-expected-body",
+  "throw-E0148-expr-ref-invalid-rvalue",
+  "throw-E0148-expr-ref-invalid-unary-rvalue"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
   "throw-E0145-type-fn-param-name-after-mut",
-  "throw-E0146-type-fn-missing-colon-after-param-name"
+  "throw-E0146-type-fn-missing-colon-after-param-name",
+  "throw-E0149-type-ref-missing-type"
 ));

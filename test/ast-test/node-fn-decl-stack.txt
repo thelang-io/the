@@ -22,24 +22,22 @@ main {
 ======= stdout =======
 <Node>
   <NodeObjDecl>
-    <Type codeName="Test_0" name="Test" type="obj">
-      <slot name="fields">
-        <TypeObjField name="a">
-          <BuiltinType name="int" />
-        </TypeObjField>
-      </slot>
-    </Type>
+    <TypeObj codeName="Test_0" name="Test">
+      <TypeObjField name="a">
+        <BuiltinType name="int" />
+      </TypeObjField>
+    </TypeObj>
   </NodeObjDecl>
 </Node>
 <Node>
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="job_0" frame="1" name="job">
-        <Type codeName="job_0" name="job" type="fn">
+        <TypeFn codeName="job_0" name="fn$0">
           <slot name="returnType">
             <BuiltinType name="int" />
           </slot>
-        </Type>
+        </TypeFn>
       </Var>
     </slot>
     <slot name="body">
@@ -129,11 +127,11 @@ main {
       <NodeFnDecl>
         <slot name="var">
           <Var codeName="mainSDtest_0" frame="2" name="test">
-            <Type codeName="mainSDtest_0" name="test" type="fn">
+            <TypeFn codeName="mainSDtest_0" name="fn$0">
               <slot name="returnType">
                 <BuiltinType name="int" />
               </slot>
-            </Type>
+            </TypeFn>
           </Var>
         </slot>
         <slot name="stack">
@@ -144,11 +142,11 @@ main {
             <BuiltinType name="int" />
           </Var>
           <Var codeName="job_0" frame="1" name="job">
-            <Type codeName="job_0" name="job" type="fn">
+            <TypeFn codeName="job_0" name="fn$0">
               <slot name="returnType">
                 <BuiltinType name="int" />
               </slot>
-            </Type>
+            </TypeFn>
           </Var>
         </slot>
         <slot name="body">
@@ -156,36 +154,30 @@ main {
             <NodeVarDecl>
               <slot name="var">
                 <Var codeName="t_0" frame="3" name="t">
-                  <Type codeName="Test_0" name="Test" type="obj">
-                    <slot name="fields">
-                      <TypeObjField name="a">
-                        <BuiltinType name="int" />
-                      </TypeObjField>
-                    </slot>
-                  </Type>
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeObjField name="a">
+                      <BuiltinType name="int" />
+                    </TypeObjField>
+                  </TypeObj>
                 </Var>
               </slot>
               <slot name="init">
                 <NodeExpr>
                   <slot name="type">
-                    <Type codeName="Test_0" name="Test" type="obj">
-                      <slot name="fields">
-                        <TypeObjField name="a">
-                          <BuiltinType name="int" />
-                        </TypeObjField>
-                      </slot>
-                    </Type>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeObjField name="a">
+                        <BuiltinType name="int" />
+                      </TypeObjField>
+                    </TypeObj>
                   </slot>
                   <slot name="body">
                     <ExprObj>
                       <slot name="type">
-                        <Type codeName="Test_0" name="Test" type="obj">
-                          <slot name="fields">
-                            <TypeObjField name="a">
-                              <BuiltinType name="int" />
-                            </TypeObjField>
-                          </slot>
-                        </Type>
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeObjField name="a">
+                            <BuiltinType name="int" />
+                          </TypeObjField>
+                        </TypeObj>
                       </slot>
                       <slot name="props">
                         <ExprObjProp>
@@ -258,21 +250,27 @@ main {
                                   <BuiltinType name="int" />
                                 </slot>
                                 <slot name="body">
-                                  <ExprAccess>
-                                    <slot name="obj">
-                                      <Var codeName="t_0" frame="3" name="t">
-                                        <Type codeName="Test_0" name="Test" type="obj">
-                                          <slot name="fields">
-                                            <TypeObjField name="a">
-                                              <BuiltinType name="int" />
-                                            </TypeObjField>
-                                          </slot>
-                                        </Type>
-                                      </Var>
-                                    </slot>
-                                    <slot name="prop">
-                                      a
-                                    </slot>
+                                  <ExprAccess prop="a">
+                                    <NodeExpr>
+                                      <slot name="type">
+                                        <TypeObj codeName="Test_0" name="Test">
+                                          <TypeObjField name="a">
+                                            <BuiltinType name="int" />
+                                          </TypeObjField>
+                                        </TypeObj>
+                                      </slot>
+                                      <slot name="body">
+                                        <ExprAccess>
+                                          <Var codeName="t_0" frame="3" name="t">
+                                            <TypeObj codeName="Test_0" name="Test">
+                                              <TypeObjField name="a">
+                                                <BuiltinType name="int" />
+                                              </TypeObjField>
+                                            </TypeObj>
+                                          </Var>
+                                        </ExprAccess>
+                                      </slot>
+                                    </NodeExpr>
                                   </ExprAccess>
                                 </slot>
                               </NodeExpr>
@@ -285,22 +283,33 @@ main {
                                 <slot name="body">
                                   <ExprCall>
                                     <slot name="callee">
-                                      <ExprAccess>
-                                        <Var codeName="job_0" frame="1" name="job">
-                                          <Type codeName="job_0" name="job" type="fn">
+                                      <NodeExpr>
+                                        <slot name="type">
+                                          <TypeFn codeName="job_0" name="fn$0">
                                             <slot name="returnType">
                                               <BuiltinType name="int" />
                                             </slot>
-                                          </Type>
-                                        </Var>
-                                      </ExprAccess>
+                                          </TypeFn>
+                                        </slot>
+                                        <slot name="body">
+                                          <ExprAccess>
+                                            <Var codeName="job_0" frame="1" name="job">
+                                              <TypeFn codeName="job_0" name="fn$0">
+                                                <slot name="returnType">
+                                                  <BuiltinType name="int" />
+                                                </slot>
+                                              </TypeFn>
+                                            </Var>
+                                          </ExprAccess>
+                                        </slot>
+                                      </NodeExpr>
                                     </slot>
                                     <slot name="calleeType">
-                                      <Type codeName="job_0" name="job" type="fn">
+                                      <TypeFn codeName="job_0" name="fn$0">
                                         <slot name="returnType">
                                           <BuiltinType name="int" />
                                         </slot>
-                                      </Type>
+                                      </TypeFn>
                                     </slot>
                                   </ExprCall>
                                 </slot>
@@ -316,15 +325,19 @@ main {
                           <BuiltinType name="int" />
                         </slot>
                         <slot name="body">
-                          <ExprAccess>
-                            <slot name="obj">
-                              <Var codeName="c_0" frame="2" name="c">
+                          <ExprAccess prop="len">
+                            <NodeExpr>
+                              <slot name="type">
                                 <BuiltinType name="str" />
-                              </Var>
-                            </slot>
-                            <slot name="prop">
-                              len
-                            </slot>
+                              </slot>
+                              <slot name="body">
+                                <ExprAccess>
+                                  <Var codeName="c_0" frame="2" name="c">
+                                    <BuiltinType name="str" />
+                                  </Var>
+                                </ExprAccess>
+                              </slot>
+                            </NodeExpr>
                           </ExprAccess>
                         </slot>
                       </NodeExpr>
@@ -366,22 +379,33 @@ main {
                 <slot name="body">
                   <ExprCall>
                     <slot name="callee">
-                      <ExprAccess>
-                        <Var codeName="mainSDtest_0" frame="2" name="test">
-                          <Type codeName="mainSDtest_0" name="test" type="fn">
+                      <NodeExpr>
+                        <slot name="type">
+                          <TypeFn codeName="mainSDtest_0" name="fn$0">
                             <slot name="returnType">
                               <BuiltinType name="int" />
                             </slot>
-                          </Type>
-                        </Var>
-                      </ExprAccess>
+                          </TypeFn>
+                        </slot>
+                        <slot name="body">
+                          <ExprAccess>
+                            <Var codeName="mainSDtest_0" frame="2" name="test">
+                              <TypeFn codeName="mainSDtest_0" name="fn$0">
+                                <slot name="returnType">
+                                  <BuiltinType name="int" />
+                                </slot>
+                              </TypeFn>
+                            </Var>
+                          </ExprAccess>
+                        </slot>
+                      </NodeExpr>
                     </slot>
                     <slot name="calleeType">
-                      <Type codeName="mainSDtest_0" name="test" type="fn">
+                      <TypeFn codeName="mainSDtest_0" name="fn$0">
                         <slot name="returnType">
                           <BuiltinType name="int" />
                         </slot>
-                      </Type>
+                      </TypeFn>
                     </slot>
                   </ExprCall>
                 </slot>

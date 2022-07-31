@@ -1,0 +1,6 @@
+======= stdin =======
+a: ref = 1
+======= stderr =======
+/test:1:7: E0149 - Expected reference expression type
+  1 | a: ref = 1
+    |       ^

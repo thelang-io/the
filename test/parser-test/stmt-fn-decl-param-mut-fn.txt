@@ -19,26 +19,20 @@ fn test2 (mut a: fn () int, mut b := job2) int {
           <Token type="ID" val="a" start="1:15" end="1:16" />
         </slot>
         <slot name="type">
-          <Type start="1:18" end="1:27">
-            <TypeFn>
-              <slot name="returnType">
-                <Type start="1:24" end="1:27">
-                  <TypeId>
-                    <Token type="ID" val="int" start="1:24" end="1:27" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="1:18" end="1:27">
+            <slot name="returnType">
+              <TypeId start="1:24" end="1:27">
+                <Token type="ID" val="int" start="1:24" end="1:27" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="1:29" end="1:32">
-        <TypeId>
-          <Token type="ID" val="int" start="1:29" end="1:32" />
-        </TypeId>
-      </Type>
+      <TypeId start="1:29" end="1:32">
+        <Token type="ID" val="int" start="1:29" end="1:32" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:11">
@@ -105,17 +99,13 @@ fn test2 (mut a: fn () int, mut b := job2) int {
           <Token type="ID" val="a" start="5:15" end="5:16" />
         </slot>
         <slot name="type">
-          <Type start="5:18" end="5:27">
-            <TypeFn>
-              <slot name="returnType">
-                <Type start="5:24" end="5:27">
-                  <TypeId>
-                    <Token type="ID" val="int" start="5:24" end="5:27" />
-                  </TypeId>
-                </Type>
-              </slot>
-            </TypeFn>
-          </Type>
+          <TypeFn start="5:18" end="5:27">
+            <slot name="returnType">
+              <TypeId start="5:24" end="5:27">
+                <Token type="ID" val="int" start="5:24" end="5:27" />
+              </TypeId>
+            </slot>
+          </TypeFn>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam mut>
@@ -132,11 +122,9 @@ fn test2 (mut a: fn () int, mut b := job2) int {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="5:44" end="5:47">
-        <TypeId>
-          <Token type="ID" val="int" start="5:44" end="5:47" />
-        </TypeId>
-      </Type>
+      <TypeId start="5:44" end="5:47">
+        <Token type="ID" val="int" start="5:44" end="5:47" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="6:3" end="6:11">

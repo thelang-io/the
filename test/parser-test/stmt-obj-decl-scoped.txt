@@ -26,11 +26,9 @@ if true {
                 <Token type="ID" val="a" start="2:13" end="2:14" />
               </slot>
               <slot name="type">
-                <Type start="2:16" end="2:19">
-                  <TypeId>
-                    <Token type="ID" val="int" start="2:16" end="2:19" />
-                  </TypeId>
-                </Type>
+                <TypeId start="2:16" end="2:19">
+                  <Token type="ID" val="int" start="2:16" end="2:19" />
+                </TypeId>
               </slot>
             </StmtObjDeclField>
           </slot>
@@ -49,11 +47,9 @@ if true {
                 <Token type="ID" val="a" start="4:13" end="4:14" />
               </slot>
               <slot name="type">
-                <Type start="4:16" end="4:19">
-                  <TypeId>
-                    <Token type="ID" val="int" start="4:16" end="4:19" />
-                  </TypeId>
-                </Type>
+                <TypeId start="4:16" end="4:19">
+                  <Token type="ID" val="int" start="4:16" end="4:19" />
+                </TypeId>
               </slot>
             </StmtObjDeclField>
           </slot>

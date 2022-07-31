@@ -34,19 +34,21 @@ void VarMap::init (TypeMap &typeMap) {
 }
 
 std::string VarMap::name (const std::string &name) const {
+  auto fullName = name + "_";
+
   for (auto idx = static_cast<std::size_t>(0);; idx++) {
-    auto nameTest = name + "_" + std::to_string(idx);
+    auto fullNameTest = fullName + std::to_string(idx);
     auto exists = false;
 
     for (const auto &item : this->_items) {
-      if (item->codeName == nameTest) {
+      if (item->codeName == fullNameTest) {
         exists = true;
         break;
       }
     }
 
     if (!exists) {
-      return nameTest;
+      return fullNameTest;
     }
   }
 }
@@ -68,20 +70,20 @@ void VarMap::save () {
   this->_frame++;
 }
 
-VarStack VarMap::stack () const {
-  auto stack = std::vector<std::shared_ptr<Var>>{};
+VarStack VarMap::varStack () const {
+  auto result = std::vector<std::shared_ptr<Var>>{};
 
   for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
     if (!(*it)->builtin) {
-      auto stackVar = std::find_if(stack.begin(), stack.end(), [&it] (const auto &it2) -> bool {
+      auto stackVar = std::find_if(result.begin(), result.end(), [&it] (const auto &it2) -> bool {
         return it2->name == (*it)->name;
       });
 
-      if (stackVar == stack.end()) {
-        stack.push_back(*it);
+      if (stackVar == result.end()) {
+        result.push_back(*it);
       }
     }
   }
 
-  return VarStack(stack);
+  return VarStack(result);
 }

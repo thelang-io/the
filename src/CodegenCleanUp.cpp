@@ -38,7 +38,7 @@ std::string CodegenCleanUp::currentBreakVar () {
   if (this->type == CODEGEN_CLEANUP_LOOP) {
     return "b" + std::to_string(this->breakVarIdx);
   } else if (this->parent == nullptr) {
-    throw Error("Error: tried getting break var on nullptr in CodegenCleanUp");
+    throw Error("tried getting break var on nullptr in CodegenCleanUp");
   }
 
   return this->parent->currentBreakVar();
@@ -55,7 +55,7 @@ std::string CodegenCleanUp::currentLabel () {
     this->_data.back().labelUsed = true;
     return this->_data.back().label;
   } else if (this->parent == nullptr) {
-    throw Error("Error: tried getting current label on nullptr in CodegenCleanUp");
+    throw Error("tried getting current label on nullptr in CodegenCleanUp");
   }
 
   return this->parent->currentLabel();
@@ -67,7 +67,7 @@ std::string CodegenCleanUp::currentReturnVar () {
   if (this->type == CODEGEN_CLEANUP_FN) {
     return "r";
   } else if (this->parent == nullptr) {
-    throw Error("Error: tried getting return var on nullptr in CodegenCleanUp");
+    throw Error("tried getting return var on nullptr in CodegenCleanUp");
   }
 
   return this->parent->currentReturnVar();
@@ -79,7 +79,7 @@ std::string CodegenCleanUp::currentValueVar () {
   if (this->type == CODEGEN_CLEANUP_FN) {
     return "v";
   } else if (this->parent == nullptr) {
-    throw Error("Error: tried getting value var on nullptr in CodegenCleanUp");
+    throw Error("tried getting value var on nullptr in CodegenCleanUp");
   }
 
   return this->parent->currentValueVar();

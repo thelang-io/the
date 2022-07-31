@@ -11,16 +11,16 @@ fn test (a: int) any {
   <NodeFnDecl>
     <slot name="var">
       <Var codeName="test_0" frame="1" name="test">
-        <Type codeName="test_0" name="test" type="fn">
-          <slot name="returnType">
-            <BuiltinType name="any" />
-          </slot>
+        <TypeFn codeName="test_0" name="fn$0">
           <slot name="params">
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
             </TypeFnParam>
           </slot>
-        </Type>
+          <slot name="returnType">
+            <BuiltinType name="any" />
+          </slot>
+        </TypeFn>
       </Var>
     </slot>
     <slot name="params">

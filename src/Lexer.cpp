@@ -96,6 +96,7 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
     else if (this->val == "mut") return {startLoc, this->_tok(TK_KW_MUT)};
     else if (this->val == "nil") return {startLoc, this->_tok(TK_KW_NIL)};
     else if (this->val == "obj") return {startLoc, this->_tok(TK_KW_OBJ)};
+    else if (this->val == "ref") return {startLoc, this->_tok(TK_KW_REF)};
     else if (this->val == "return") return {startLoc, this->_tok(TK_KW_RETURN)};
     else if (this->val == "throw") return {startLoc, this->_tok(TK_KW_THROW)};
     else if (this->val == "true") return {startLoc, this->_tok(TK_KW_TRUE)};

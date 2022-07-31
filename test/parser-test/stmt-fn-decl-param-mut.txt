@@ -23,20 +23,16 @@ fn test3 (mut x: int, mut y: float = 0, mut z := 0) float {
           <Token type="ID" val="a" start="1:15" end="1:16" />
         </slot>
         <slot name="type">
-          <Type start="1:18" end="1:21">
-            <TypeId>
-              <Token type="ID" val="int" start="1:18" end="1:21" />
-            </TypeId>
-          </Type>
+          <TypeId start="1:18" end="1:21">
+            <Token type="ID" val="int" start="1:18" end="1:21" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="1:23" end="1:26">
-        <TypeId>
-          <Token type="ID" val="int" start="1:23" end="1:26" />
-        </TypeId>
-      </Type>
+      <TypeId start="1:23" end="1:26">
+        <Token type="ID" val="int" start="1:23" end="1:26" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:9">
@@ -83,11 +79,9 @@ fn test3 (mut x: int, mut y: float = 0, mut z := 0) float {
           <Token type="ID" val="a" start="5:15" end="5:16" />
         </slot>
         <slot name="type">
-          <Type start="5:18" end="5:21">
-            <TypeId>
-              <Token type="ID" val="int" start="5:18" end="5:21" />
-            </TypeId>
-          </Type>
+          <TypeId start="5:18" end="5:21">
+            <Token type="ID" val="int" start="5:18" end="5:21" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam mut>
@@ -104,11 +98,9 @@ fn test3 (mut x: int, mut y: float = 0, mut z := 0) float {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="5:35" end="5:38">
-        <TypeId>
-          <Token type="ID" val="int" start="5:35" end="5:38" />
-        </TypeId>
-      </Type>
+      <TypeId start="5:35" end="5:38">
+        <Token type="ID" val="int" start="5:35" end="5:38" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="6:3" end="6:8">
@@ -171,11 +163,9 @@ fn test3 (mut x: int, mut y: float = 0, mut z := 0) float {
           <Token type="ID" val="x" start="9:15" end="9:16" />
         </slot>
         <slot name="type">
-          <Type start="9:18" end="9:21">
-            <TypeId>
-              <Token type="ID" val="int" start="9:18" end="9:21" />
-            </TypeId>
-          </Type>
+          <TypeId start="9:18" end="9:21">
+            <Token type="ID" val="int" start="9:18" end="9:21" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam mut>
@@ -183,11 +173,9 @@ fn test3 (mut x: int, mut y: float = 0, mut z := 0) float {
           <Token type="ID" val="y" start="9:27" end="9:28" />
         </slot>
         <slot name="type">
-          <Type start="9:30" end="9:35">
-            <TypeId>
-              <Token type="ID" val="float" start="9:30" end="9:35" />
-            </TypeId>
-          </Type>
+          <TypeId start="9:30" end="9:35">
+            <Token type="ID" val="float" start="9:30" end="9:35" />
+          </TypeId>
         </slot>
         <slot name="init">
           <StmtExpr start="9:38" end="9:39">
@@ -211,11 +199,9 @@ fn test3 (mut x: int, mut y: float = 0, mut z := 0) float {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="9:53" end="9:58">
-        <TypeId>
-          <Token type="ID" val="float" start="9:53" end="9:58" />
-        </TypeId>
-      </Type>
+      <TypeId start="9:53" end="9:58">
+        <Token type="ID" val="float" start="9:53" end="9:58" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="10:3" end="10:8">

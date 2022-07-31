@@ -29,11 +29,9 @@ fn test3 (x: int, y: float = 0, z := 0) float {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="1:19" end="1:22">
-        <TypeId>
-          <Token type="ID" val="int" start="1:19" end="1:22" />
-        </TypeId>
-      </Type>
+      <TypeId start="1:19" end="1:22">
+        <Token type="ID" val="int" start="1:19" end="1:22" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="2:3" end="2:15">
@@ -75,11 +73,9 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           <Token type="ID" val="a" start="4:11" end="4:12" />
         </slot>
         <slot name="type">
-          <Type start="4:14" end="4:17">
-            <TypeId>
-              <Token type="ID" val="int" start="4:14" end="4:17" />
-            </TypeId>
-          </Type>
+          <TypeId start="4:14" end="4:17">
+            <Token type="ID" val="int" start="4:14" end="4:17" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam>
@@ -96,11 +92,9 @@ fn test3 (x: int, y: float = 0, z := 0) float {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="4:27" end="4:30">
-        <TypeId>
-          <Token type="ID" val="int" start="4:27" end="4:30" />
-        </TypeId>
-      </Type>
+      <TypeId start="4:27" end="4:30">
+        <Token type="ID" val="int" start="4:27" end="4:30" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="5:3" end="5:15">
@@ -142,11 +136,9 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           <Token type="ID" val="x" start="7:11" end="7:12" />
         </slot>
         <slot name="type">
-          <Type start="7:14" end="7:17">
-            <TypeId>
-              <Token type="ID" val="int" start="7:14" end="7:17" />
-            </TypeId>
-          </Type>
+          <TypeId start="7:14" end="7:17">
+            <Token type="ID" val="int" start="7:14" end="7:17" />
+          </TypeId>
         </slot>
       </StmtFnDeclParam>
       <StmtFnDeclParam>
@@ -154,11 +146,9 @@ fn test3 (x: int, y: float = 0, z := 0) float {
           <Token type="ID" val="y" start="7:19" end="7:20" />
         </slot>
         <slot name="type">
-          <Type start="7:22" end="7:27">
-            <TypeId>
-              <Token type="ID" val="float" start="7:22" end="7:27" />
-            </TypeId>
-          </Type>
+          <TypeId start="7:22" end="7:27">
+            <Token type="ID" val="float" start="7:22" end="7:27" />
+          </TypeId>
         </slot>
         <slot name="init">
           <StmtExpr start="7:30" end="7:31">
@@ -182,11 +172,9 @@ fn test3 (x: int, y: float = 0, z := 0) float {
       </StmtFnDeclParam>
     </slot>
     <slot name="returnType">
-      <Type start="7:41" end="7:46">
-        <TypeId>
-          <Token type="ID" val="float" start="7:41" end="7:46" />
-        </TypeId>
-      </Type>
+      <TypeId start="7:41" end="7:46">
+        <Token type="ID" val="float" start="7:41" end="7:46" />
+      </TypeId>
     </slot>
     <slot name="body">
       <Stmt start="8:3" end="8:19">

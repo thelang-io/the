@@ -320,6 +320,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "      case 'i':" EOL;
     builtinFnDefCode += R"(      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;)" EOL;
+    builtinFnDefCode += R"(      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += "      case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;" EOL;
     builtinFnDefCode += R"(      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;)" EOL;
@@ -327,6 +328,19 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "    }" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  va_end(args);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnRefStr) {
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+
+    builtinFnDeclCode += "struct str ref_str (void *);" EOL;
+    builtinFnDefCode += "struct str ref_str (void *p) {" EOL;
+    builtinFnDefCode += "  char buf[512];" EOL;
+    builtinFnDefCode += R"(  sprintf(buf, "%p", p);)" EOL;
+    builtinFnDefCode += "  return str_alloc(buf);" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -656,6 +670,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   else if (name == "fnI64Str") this->builtins.fnI64Str = true;
   else if (name == "fnIntStr") this->builtins.fnIntStr = true;
   else if (name == "fnPrint") this->builtins.fnPrint = true;
+  else if (name == "fnRefStr") this->builtins.fnRefStr = true;
   else if (name == "fnStrAlloc") this->builtins.fnStrAlloc = true;
   else if (name == "fnStrConcatCstr") this->builtins.fnStrConcatCstr = true;
   else if (name == "fnStrConcatStr") this->builtins.fnStrConcatStr = true;
@@ -680,7 +695,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   else if (name == "libStdlib") this->builtins.libStdlib = true;
   else if (name == "libString") this->builtins.libString = true;
   else if (name == "typeStr") this->builtins.typeStr = true;
-  else throw Error("Error: tried activating unknown builtin");
+  else throw Error("tried activating unknown builtin");
 }
 
 void Codegen::_activateEntity (const std::string &name, std::optional<std::vector<std::string> *> entityEntities) {
@@ -753,24 +768,6 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
   return code;
 }
 
-std::string Codegen::_exprAccess (const std::shared_ptr<ASTMemberObj> &exprAccessBody) {
-  if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccessBody)) {
-    auto id = std::get<std::shared_ptr<Var>>(*exprAccessBody);
-    auto code = Codegen::name(id->codeName);
-
-    if (this->state.contextVars.contains(code)) {
-      code = "*" + code;
-    }
-
-    return code;
-  }
-
-  auto member = std::get<ASTMember>(*exprAccessBody);
-  auto memberObj = this->_exprAccess(member.obj);
-
-  return memberObj + "->" + Codegen::name(member.prop);
-}
-
 std::string Codegen::_flags () const {
   auto result = std::string();
   auto idx = static_cast<std::size_t>(0);
@@ -809,7 +806,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
     auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
-    code = this->_nodeExpr(nodeExpr, true);
+    code = this->_nodeExpr(nodeExpr, nodeExpr.type, true);
 
     if (root) {
       code = std::string(this->indent, ' ') + code + ";" EOL;
@@ -819,9 +816,9 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
     auto fn = std::get<TypeFn>(nodeFnDecl.var->type->body);
-    auto fnName = Codegen::name(nodeFnDecl.var->type->codeName);
+    auto fnName = Codegen::name(nodeFnDecl.var->codeName);
     auto fnTypeName = this->_typeNameFn(nodeFnDecl.var->type);
-    auto typeName = Codegen::typeName(nodeFnDecl.var->type->codeName);
+    auto typeName = Codegen::typeName(nodeFnDecl.var->codeName);
     auto contextName = typeName + "X";
     auto paramsName = fnTypeName + "P";
 
@@ -886,8 +883,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         if (param.init == std::nullopt) {
           bodyCode += "p.n" + paramIdxStr;
         } else {
-          auto initCode = this->_nodeExpr(*param.init);
-
+          auto initCode = this->_nodeExpr(*param.init, param.var->type);
           bodyCode += "p.o" + paramIdxStr + " == 1 ? p.n" + paramIdxStr + " : " + initCode;
         }
 
@@ -914,6 +910,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     }
 
     this->indent = 0;
+    this->state.returnType = fn.returnType;
     bodyCode += this->_block(nodeFnDecl.body, false);
     this->indent = 2;
 
@@ -1018,7 +1015,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     if (nodeLoop.init == std::nullopt && nodeLoop.cond == std::nullopt && nodeLoop.upd == std::nullopt) {
       code = std::string(this->indent, ' ') + "while (1)";
     } else if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
-      code = std::string(this->indent, ' ') + "while (" + this->_nodeExpr(*nodeLoop.cond, true) + ")";
+      code = std::string(this->indent, ' ') + "while (" + this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), true) + ")";
     } else if (nodeLoop.init != std::nullopt) {
       this->indent += 2;
       auto initCode = this->_node(*nodeLoop.init);
@@ -1033,12 +1030,12 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         code = std::string(this->indent, ' ') + "for (" + this->_node(*nodeLoop.init, false) + ";";
       }
 
-      code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
-      code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, true)) + ")";
+      code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), true)) + ";";
+      code += (nodeLoop.upd == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, true)) + ")";
     } else {
       code = std::string(this->indent, ' ') + "for (;";
-      code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, true)) + ";";
-      code += " " + this->_nodeExpr(*nodeLoop.upd, true) + ")";
+      code += (nodeLoop.cond == std::nullopt ? "" : " " + this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), true)) + ";";
+      code += " " + this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, true) + ")";
     }
 
     auto saveCleanUp = this->state.cleanUp;
@@ -1123,7 +1120,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         this->_activateEntity(objFieldTypeName + "_free", &freeFnEntity.entities);
 
         copyFnCode += "  r->" + objFieldName + " = " + objFieldTypeName + "_copy(o->" + objFieldName + ");" EOL;
-        freeFnCode += "  " + objFieldTypeName + "_free((" + objFieldType + ") o->" + objFieldName + ");" EOL;
+        freeFnCode += "  " + objFieldTypeName + "_free((struct " + objFieldTypeName + ") o->" + objFieldName + ");" EOL;
         strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + ": ";
         strFnCode += "[Function: " + objField.name + R"(]");)" EOL;
       } else if (objField.type->isObj()) {
@@ -1140,6 +1137,13 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + R"(: ");)" EOL;
         strFnCode += "  r = str_concat_str(r, " + objFieldTypeName + "_str(";
         strFnCode += objFieldTypeName + "_copy(o->" + objFieldName + ")));" EOL;
+      } else if (objField.type->isRef()) {
+        this->_activateBuiltin("fnRefStr", &strFnEntity.builtins);
+        this->_activateBuiltin("fnStrConcatStr", &strFnEntity.builtins);
+
+        copyFnCode += "  r->" + objFieldName + " = o->" + objFieldName + ";" EOL;
+        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + R"(: ");)" EOL;
+        strFnCode += "  r = str_concat_str(r, ref_str((void *) o->" + objFieldName + "));" EOL;
       } else if (objField.type->isStr()) {
         this->_activateBuiltin("fnStrCopy", &copyFnEntity.builtins);
         this->_activateBuiltin("fnStrFree", &freeFnEntity.builtins);
@@ -1269,14 +1273,14 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
 
       if (nodeReturn.body != std::nullopt) {
         code += std::string(this->indent, ' ') + this->state.cleanUp.currentValueVar() + " = ";
-        code += this->_nodeExpr(*nodeReturn.body) + ";" EOL;
+        code += this->_nodeExpr(*nodeReturn.body, this->state.returnType) + ";" EOL;
       }
 
       if (!ASTChecker(node.parent).is<ASTNodeFnDecl>() || !ASTChecker(node).isLast()) {
         code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
       }
     } else if (nodeReturn.body != std::nullopt) {
-      code = std::string(this->indent, ' ') + "return " + this->_nodeExpr(*nodeReturn.body) + ";" EOL;
+      code = std::string(this->indent, ' ') + "return " + this->_nodeExpr(*nodeReturn.body, this->state.returnType) + ";" EOL;
     } else {
       code = std::string(this->indent, ' ') + "return;" EOL;
     }
@@ -1289,7 +1293,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     auto initCode = std::string("0");
 
     if (nodeVarDecl.init != std::nullopt) {
-      initCode = this->_nodeExpr(*nodeVarDecl.init);
+      initCode = this->_nodeExpr(*nodeVarDecl.init, nodeVarDecl.var->type);
     } else if (nodeVarDecl.var->type->isBool()) {
       this->_activateBuiltin("libStdbool");
       initCode = "false";
@@ -1321,58 +1325,73 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     return this->_wrapNode(node, code);
   }
 
-  throw Error("Error: tried to generate code for unknown node");
+  throw Error("tried to generate code for unknown node");
 }
 
-std::string Codegen::_nodeIf (const ASTNodeIf &nodeIf) {
-  auto code = "if (" + this->_nodeExpr(nodeIf.cond) + ") {" EOL + this->_block(nodeIf.body);
-
-  if (nodeIf.alt != std::nullopt) {
-    code += std::string(this->indent, ' ') + "} else ";
-
-    if (std::holds_alternative<ASTBlock>(**nodeIf.alt)) {
-      code += "{" EOL + this->_block(std::get<ASTBlock>(**nodeIf.alt));
-      code += std::string(this->indent, ' ') + "}";
-    } else if (std::holds_alternative<ASTNodeIf>(**nodeIf.alt)) {
-      code += this->_nodeIf(std::get<ASTNodeIf>(**nodeIf.alt));
-    }
-  } else {
-    code += std::string(this->indent, ' ') + "}";
-  }
-
-  return code;
-}
-
-std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
+std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root) {
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
     auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
-    auto code = this->_exprAccess(exprAccess.body);
+    auto code = std::string();
 
-    if (!root && nodeExpr.type->isFn()) {
-      auto typeName = this->_typeNameFn(nodeExpr.type);
+    if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.obj)) {
+      auto objVar = std::get<std::shared_ptr<Var>>(exprAccess.obj);
+      code += Codegen::name(objVar->codeName);
 
-      this->_activateEntity(typeName + "_copy");
-      code = typeName + "_copy(" + code + ")";
-    } else if (!root && nodeExpr.type->isObj()) {
-      auto typeName = Codegen::typeName(nodeExpr.type->codeName);
+      if (this->state.contextVars.contains(code) && !(!nodeExpr.type->isRef() && targetType->isRef())) {
+        code = "*" + code;
+      }
 
-      this->_activateEntity(typeName + "_copy");
-      code = typeName + "_copy(" + code + ")";
-    } else if (!root && nodeExpr.type->isStr()) {
-      this->_activateBuiltin("fnStrCopy");
-      code = "str_copy(" + code + ")";
+      if (!this->state.contextVars.contains(code) && !nodeExpr.type->isRef() && targetType->isRef()) {
+        code = "&" + code;
+      } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
+        code = "*" + code;
+      }
+    } else {
+      auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.obj);
+      auto objCode = this->_nodeExpr(objNodeExpr, Type::real(objNodeExpr.type), true);
+
+      if (objCode.starts_with("*")) {
+        objCode = "(" + objCode + ")";
+      }
+
+      code = objCode + "->" + Codegen::name(*exprAccess.prop);
+
+      if (!nodeExpr.type->isRef() && targetType->isRef()) {
+        code = "&" + code;
+      } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
+        code = "*" + code;
+      }
+    }
+
+    if (!nodeExpr.type->isRef() || !targetType->isRef()) {
+      auto realType = Type::real(nodeExpr.type);
+
+      if (!root && realType->isFn()) {
+        auto typeName = this->_typeNameFn(realType);
+
+        this->_activateEntity(typeName + "_copy");
+        code = typeName + "_copy(" + code + ")";
+      } else if (!root && realType->isObj()) {
+        auto typeName = Codegen::typeName(realType->codeName);
+
+        this->_activateEntity(typeName + "_copy");
+        code = typeName + "_copy(" + code + ")";
+      } else if (!root && realType->isStr()) {
+        this->_activateBuiltin("fnStrCopy");
+        code = "str_copy(" + code + ")";
+      }
     }
 
     return this->_wrapNodeExpr(nodeExpr, code);
   } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
     auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
-    auto leftCode = this->_exprAccess(exprAssign.left.body);
+    auto leftCode = this->_nodeExpr(exprAssign.left, nodeExpr.type, true);
 
     if (exprAssign.right.type->isFn()) {
       auto typeName = this->_typeNameFn(nodeExpr.type);
 
       this->_activateEntity(typeName + "_realloc");
-      auto code = leftCode + " = " + typeName + "_realloc(" + leftCode + ", " + this->_nodeExpr(exprAssign.right) + ")";
+      auto code = leftCode + " = " + typeName + "_realloc(" + leftCode + ", " + this->_nodeExpr(exprAssign.right, nodeExpr.type) + ")";
 
       if (!root && nodeExpr.type->isFn()) {
         this->_activateEntity(typeName + "_copy");
@@ -1384,7 +1403,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       auto typeName = Codegen::typeName(nodeExpr.type->codeName);
 
       this->_activateEntity(typeName + "_realloc");
-      auto code = leftCode + " = " + typeName + "_realloc(" + leftCode + ", " + this->_nodeExpr(exprAssign.right) + ")";
+      auto code = leftCode + " = " + typeName + "_realloc(" + leftCode + ", " + this->_nodeExpr(exprAssign.right, nodeExpr.type) + ")";
 
       if (!root && nodeExpr.type->isObj()) {
         this->_activateEntity(typeName + "_copy");
@@ -1403,10 +1422,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
           rightCode = "str_concat_cstr(str_copy(" + leftCode + "), " + exprAssign.right.litBody() + ")";
         } else {
           this->_activateBuiltin("fnStrConcatStr");
-          rightCode = "str_concat_str(str_copy(" + leftCode + "), " + this->_nodeExpr(exprAssign.right) + ")";
+          rightCode = "str_concat_str(str_copy(" + leftCode + "), " + this->_nodeExpr(exprAssign.right, nodeExpr.type) + ")";
         }
       } else {
-        rightCode = this->_nodeExpr(exprAssign.right);
+        rightCode = this->_nodeExpr(exprAssign.right, nodeExpr.type);
       }
 
       this->_activateBuiltin("fnStrRealloc");
@@ -1421,7 +1440,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     }
 
     auto opCode = std::string(" = ");
-    auto rightCode = this->_nodeExpr(exprAssign.right);
+    auto rightCode = this->_nodeExpr(exprAssign.right, nodeExpr.type);
 
     if (exprAssign.op == AST_EXPR_ASSIGN_AND) {
       rightCode = leftCode + " && " + rightCode;
@@ -1445,7 +1464,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
   } else if (std::holds_alternative<ASTExprBinary>(*nodeExpr.body)) {
     auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
 
-    if (exprBinary.left.type->isStr() && exprBinary.right.type->isStr()) {
+    if (Type::real(exprBinary.left.type)->isStr() && Type::real(exprBinary.right.type)->isStr()) {
       if (exprBinary.op == AST_EXPR_BINARY_ADD) {
         auto code = std::string();
 
@@ -1456,18 +1475,18 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
           code = "str_alloc(" + nodeExpr.litBody() + ")";
         } else if (exprBinary.left.isLit()) {
           this->_activateBuiltin("fnCstrConcatStr");
-          code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right) + ")";
+          code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
         } else if (exprBinary.right.isLit()) {
           this->_activateBuiltin("fnStrConcatCstr");
-          code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left) + ", " + exprBinary.right.litBody() + ")";
+          code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + exprBinary.right.litBody() + ")";
         } else {
           this->_activateBuiltin("fnStrConcatStr");
-          code = "str_concat_str(" + this->_nodeExpr(exprBinary.left) + ", " + this->_nodeExpr(exprBinary.right) + ")";
+          code = "str_concat_str(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
         }
 
         if (root) {
           this->_activateBuiltin("fnStrFree");
-          code = "str_free(" + code + ")";
+          code = "str_free((struct str) " + code + ")";
         }
 
         return this->_wrapNodeExpr(nodeExpr, code);
@@ -1490,7 +1509,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
             this->_activateBuiltin("fnCstrNeStr");
           }
 
-          auto rightCode = this->_nodeExpr(exprBinary.right);
+          auto rightCode = this->_nodeExpr(exprBinary.right, nodeExpr.type);
           return this->_wrapNodeExpr(nodeExpr, "cstr_" + opName + "_str(" + exprBinary.left.litBody() + ", " + rightCode + ")");
         } else if (exprBinary.right.isLit()) {
           if (exprBinary.op == AST_EXPR_BINARY_EQ) {
@@ -1499,7 +1518,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
             this->_activateBuiltin("fnStrNeCstr");
           }
 
-          auto leftCode = this->_nodeExpr(exprBinary.left);
+          auto leftCode = this->_nodeExpr(exprBinary.left, nodeExpr.type);
           return this->_wrapNodeExpr(nodeExpr, "str_" + opName + "_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")");
         } else {
           if (exprBinary.op == AST_EXPR_BINARY_EQ) {
@@ -1508,16 +1527,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
             this->_activateBuiltin("fnStrNeStr");
           }
 
-          auto leftCode = this->_nodeExpr(exprBinary.left);
-          auto rightCode = this->_nodeExpr(exprBinary.right);
+          auto leftCode = this->_nodeExpr(exprBinary.left, nodeExpr.type);
+          auto rightCode = this->_nodeExpr(exprBinary.right, nodeExpr.type);
 
           return this->_wrapNodeExpr(nodeExpr, "str_" + opName + "_str(" + leftCode + ", " + rightCode + ")");
         }
       }
     }
 
-    auto leftCode = this->_nodeExpr(exprBinary.left);
-    auto rightCode = this->_nodeExpr(exprBinary.right);
+    auto leftCode = this->_nodeExpr(exprBinary.left, nodeExpr.type);
+    auto rightCode = this->_nodeExpr(exprBinary.right, nodeExpr.type);
     auto opCode = std::string();
 
     if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
@@ -1555,14 +1574,14 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
             if (exprCallArg.expr.isLit()) {
               separator = exprCallArg.expr.litBody();
             } else {
-              separator = this->_nodeExpr(exprCallArg.expr);
+              separator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"));
               isSeparatorLit = false;
             }
           } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "terminator") {
             if (exprCallArg.expr.isLit()) {
               terminator = exprCallArg.expr.litBody();
             } else {
-              terminator = this->_nodeExpr(exprCallArg.expr);
+              terminator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"));
               isTerminatorLit = false;
             }
           }
@@ -1591,23 +1610,27 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
             if (std::holds_alternative<ASTExprAccess>(*exprCallArg.expr.body)) {
               auto exprAccess = std::get<ASTExprAccess>(*exprCallArg.expr.body);
 
-              if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.body)) {
-                argCode = std::get<std::shared_ptr<Var>>(*exprAccess.body)->name;
+              if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.obj)) {
+                argCode = std::get<std::shared_ptr<Var>>(exprAccess.obj)->name;
               } else {
-                argCode = std::get<ASTMember>(*exprAccess.body).prop;
+                argCode = *exprAccess.prop;
               }
             } else {
               argCode = "(anonymous)";
             }
 
             code += "z";
-            argsCode += "(" + this->_nodeExpr(exprCallArg.expr, true) + R"(, "[Function: )" + argCode + R"(]"))";
+            argsCode += "(" + this->_nodeExpr(exprCallArg.expr, exprCallArg.expr.type, true);
+            argsCode += R"(, "[Function: )" + argCode + R"(]"))";
           } else if (exprCallArg.expr.type->isObj()) {
             auto typeName = Codegen::typeName(exprCallArg.expr.type->codeName);
             code += "s";
 
             this->_activateEntity(typeName + "_str");
-            argsCode += typeName + "_str(" + this->_nodeExpr(exprCallArg.expr) + ")";
+            argsCode += typeName + "_str(" + this->_nodeExpr(exprCallArg.expr, exprCallArg.expr.type) + ")";
+          } else if (exprCallArg.expr.type->isRef()) {
+            code += "p";
+            argsCode += this->_nodeExpr(exprCallArg.expr, exprCallArg.expr.type);
           } else if (exprCallArg.expr.type->isStr() && exprCallArg.expr.isLit()) {
             code += "z";
             argsCode += exprCallArg.expr.litBody();
@@ -1629,7 +1652,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
             else if (exprCallArg.expr.type->isU32()) code += "u";
             else if (exprCallArg.expr.type->isU64()) code += "y";
 
-            argsCode += this->_nodeExpr(exprCallArg.expr);
+            argsCode += this->_nodeExpr(exprCallArg.expr, exprCallArg.expr.type);
           }
 
           argsCode += ", ";
@@ -1677,7 +1700,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
           bodyCode += paramIdx == 0 && param.required ? "" : ", ";
 
           if (foundArg != std::nullopt) {
-            bodyCode += this->_nodeExpr(foundArg->expr);
+            bodyCode += this->_nodeExpr(foundArg->expr, param.type);
           } else if (param.type->isBool()) {
             this->_activateBuiltin("libStdbool");
             bodyCode += "false";
@@ -1688,7 +1711,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
 
             this->_activateEntity(paramTypeName);
             bodyCode += "(struct " + paramTypeName + ") {}";
-          } else if (param.type->isObj()) {
+          } else if (param.type->isObj() || param.type->isRef()) {
             this->_activateBuiltin("libStdlib");
             bodyCode += "NULL";
           } else if (param.type->isStr()) {
@@ -1704,41 +1727,48 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
         bodyCode += "}";
       }
 
-      auto fnName = this->_exprAccess(exprCall.callee.body);
-      auto code = std::string();
+      auto fnName = this->_nodeExpr(exprCall.callee, exprCall.calleeType, true);
 
       if (fnName.starts_with("*")) {
-        code = fnName.substr(1) + "->";
-      } else {
-        code = fnName + ".";
+        fnName = "(" + fnName + ")";
       }
 
-      code += "f(" + code + "x" + (bodyCode.empty() ? "" : ", ") + bodyCode + ")";
+      auto code = fnName + ".f(" + fnName + ".x" + (bodyCode.empty() ? "" : ", ") + bodyCode + ")";
+
+      if (nodeExpr.type->isRef() && !targetType->isRef()) {
+        code = "*" + code;
+      }
 
       if (root && nodeExpr.type->isFn()) {
         auto nodeExprTypeName = this->_typeNameFn(nodeExpr.type);
 
         this->_activateEntity(nodeExprTypeName + "_free");
-        code = nodeExprTypeName + "_free(" + code + ")";
+        code = nodeExprTypeName + "_free((struct " + nodeExprTypeName + ") " + code + ")";
       } else if (root && nodeExpr.type->isObj()) {
         auto nodeExprTypeName = Codegen::typeName(nodeExpr.type->codeName);
+        auto nodeExprType = this->_type(nodeExpr.type, true, false);
 
         this->_activateEntity(nodeExprTypeName + "_free");
-        code = nodeExprTypeName + "_free(" + code + ")";
+        code = nodeExprTypeName + "_free((" + nodeExprType + ") " + code + ")";
       } else if (root && nodeExpr.type->isStr()) {
         this->_activateBuiltin("fnStrFree");
-        code = "str_free(" + code + ")";
+        code = "str_free((struct str) " + code + ")";
       }
 
       return this->_wrapNodeExpr(nodeExpr, code);
     }
   } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
     auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
-    auto condCode = this->_nodeExpr(exprCond.cond);
-    auto bodyCode = this->_nodeExpr(exprCond.body);
-    auto altCode = this->_nodeExpr(exprCond.alt);
+    auto condCode = this->_nodeExpr(exprCond.cond, this->ast->typeMap.get("bool"));
+    auto bodyCode = this->_nodeExpr(exprCond.body, nodeExpr.type);
+    auto altCode = this->_nodeExpr(exprCond.alt, nodeExpr.type);
 
-    if (std::holds_alternative<ASTExprAssign>(*exprCond.alt.body) && !exprCond.alt.parenthesized && !exprCond.alt.type->isStr()) {
+    if (
+      std::holds_alternative<ASTExprAssign>(*exprCond.alt.body) &&
+      !exprCond.alt.parenthesized &&
+      !exprCond.alt.type->isRef() &&
+      !exprCond.alt.type->isStr()
+    ) {
       altCode = "(" + altCode + ")";
     }
 
@@ -1748,15 +1778,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
       auto typeName = this->_typeNameFn(nodeExpr.type);
 
       this->_activateEntity(typeName + "_free");
-      code = typeName + "_free(" + code + ")";
+      code = typeName + "_free((struct " + typeName + ") (" + code + "))";
     } else if (root && nodeExpr.type->isObj()) {
       auto typeName = Codegen::typeName(nodeExpr.type->codeName);
+      auto type = this->_type(nodeExpr.type, true, false);
 
       this->_activateEntity(typeName + "_free");
-      code = typeName + "_free(" + code + ")";
+      code = typeName + "_free((" + type + ") (" + code + "))";
     } else if (root && nodeExpr.type->isStr()) {
       this->_activateBuiltin("fnStrFree");
-      code = "str_free(" + code + ")";
+      code = "str_free((struct str) (" + code + "))";
     }
 
     return this->_wrapNodeExpr(nodeExpr, code);
@@ -1795,21 +1826,28 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
         return it.id == objField.name;
       });
 
-      fieldsCode += ", " + this->_nodeExpr(exprObjProp->init);
+      fieldsCode += ", " + this->_nodeExpr(exprObjProp->init, objField.type);
     }
 
     this->_activateEntity(typeName + "_alloc");
     auto code = typeName + "_alloc(" + fieldsCode.substr(2) + ")";
 
     if (root) {
+      auto type = this->_type(exprObj.type, true, false);
+
       this->_activateEntity(typeName + "_free");
-      code = typeName + "_free(" + code + ")";
+      code = typeName + "_free((" + type + ") " + code + ")";
     }
+
+    return this->_wrapNodeExpr(nodeExpr, code);
+  } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
+    auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
+    auto code = this->_nodeExpr(exprRef.body, targetType, targetType->isRef());
 
     return this->_wrapNodeExpr(nodeExpr, code);
   } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.body)) {
     auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
-    auto argCode = this->_nodeExpr(exprUnary.arg);
+    auto argCode = this->_nodeExpr(exprUnary.arg, nodeExpr.type);
     auto opCode = std::string();
 
     if (exprUnary.op == AST_EXPR_UNARY_BIT_NOT) opCode = "~";
@@ -1833,7 +1871,26 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, bool root) {
     return this->_wrapNodeExpr(nodeExpr, exprUnary.prefix ? opCode + argCode : argCode + opCode);
   }
 
-  throw Error("Error: tried to generate code for unknown expression");
+  throw Error("tried to generate code for unknown expression");
+}
+
+std::string Codegen::_nodeIf (const ASTNodeIf &nodeIf) {
+  auto code = "if (" + this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool")) + ") {" EOL + this->_block(nodeIf.body);
+
+  if (nodeIf.alt != std::nullopt) {
+    code += std::string(this->indent, ' ') + "} else ";
+
+    if (std::holds_alternative<ASTBlock>(**nodeIf.alt)) {
+      code += "{" EOL + this->_block(std::get<ASTBlock>(**nodeIf.alt));
+      code += std::string(this->indent, ' ') + "}";
+    } else if (std::holds_alternative<ASTNodeIf>(**nodeIf.alt)) {
+      code += this->_nodeIf(std::get<ASTNodeIf>(**nodeIf.alt));
+    }
+  } else {
+    code += std::string(this->indent, ' ') + "}";
+  }
+
+  return code;
 }
 
 std::string Codegen::_type (const Type *type, bool mut, bool ref) {
@@ -1874,6 +1931,9 @@ std::string Codegen::_type (const Type *type, bool mut, bool ref) {
 
     this->_activateEntity(typeName);
     return std::string(mut ? "" : "const ") + "struct " + typeName + " *" + (ref ? "*" : "");
+  } else if (type->isRef()) {
+    auto typeRef = std::get<TypeRef>(type->body);
+    return this->_type(typeRef.type, mut, ref) + "*";
   } else if (type->isStr()) {
     this->_activateBuiltin("typeStr");
     typeName = "struct str";
@@ -1896,19 +1956,17 @@ std::string Codegen::_type (const Type *type, bool mut, bool ref) {
   return std::string(mut ? "" : "const ") + typeName + " " + (ref ? "*" : "");
 }
 
-std::string Codegen::_typeNameFn (const Type *searchType) {
-  for (const auto &[idx, type] : this->functions) {
-    if (searchType->match(type, false)) {
-      return Codegen::typeName("fn$" + std::to_string(idx));
+std::string Codegen::_typeNameFn (const Type *type) {
+  auto typeName = Codegen::typeName(type->name);
+
+  for (const auto &entity : this->entities) {
+    if (entity.name == typeName) {
+      return entity.name;
     }
   }
 
-  auto idx = this->functions.size();
-  this->functions.emplace_back(idx, searchType);
-
-  auto fn = std::get<TypeFn>(searchType->body);
-  auto typeName = Codegen::typeName("fn$" + std::to_string(idx));
-  auto paramsName = typeName + "P";
+  auto fn = std::get<TypeFn>(type->body);
+  auto paramsName = Codegen::typeName(type->name + "P");
 
   if (!fn.params.empty()) {
     auto paramsEntity = CodegenEntity{paramsName, CODEGEN_ENTITY_OBJ};
@@ -1918,7 +1976,7 @@ std::string Codegen::_typeNameFn (const Type *searchType) {
     paramsEntity.def = "struct " + paramsName + " {" EOL;
 
     for (const auto &param : fn.params) {
-      auto paramType = this->_type(param.type, false, false);
+      auto paramType = this->_type(param.type, true, false);
       auto paramIdxStr = std::to_string(paramIdx);
 
       if (!param.required) {

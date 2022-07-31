@@ -56,7 +56,7 @@ struct __THE_1_fn$0;
 struct __THE_1_mainSDtest_0X;
 
 struct __THE_1_fn$0P {
-  const struct str n0;
+  struct str n0;
 };
 struct __THE_1_fn$0 {
   void (*f) (void *, struct __THE_1_fn$0P);
