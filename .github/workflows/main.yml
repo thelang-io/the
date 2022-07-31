@@ -1,7 +1,7 @@
+name: Unit Tests
+
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
 
 jobs:
@@ -9,5 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -t the-core .
-      - run: docker run the-core
+      - run: sudo apt-get update
+      - run: sudo apt-get install valgrind
+      - run: mkdir -p build
+      - run: cmake . -B./build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCODEGEN_MEMCHECK=ON
+      - run: cmake --build build
+      - run: ctest --output-on-failure --test-dir build
