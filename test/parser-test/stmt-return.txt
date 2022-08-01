@@ -5,43 +5,24 @@ return 3.14
 return
 return "Hello, World!"
 ======= stdout =======
-<Stmt start="1:1" end="1:12">
-  <StmtReturn>
-    <StmtExpr start="1:8" end="1:12">
-      <ExprLit>
-        <Token type="KW_TRUE" val="true" start="1:8" end="1:12" />
-      </ExprLit>
-    </StmtExpr>
-  </StmtReturn>
-</Stmt>
-<Stmt start="2:1" end="2:11">
-  <StmtReturn>
-    <StmtExpr start="2:8" end="2:11">
-      <ExprLit>
-        <Token type="LIT_CHAR" val="'z'" start="2:8" end="2:11" />
-      </ExprLit>
-    </StmtExpr>
-  </StmtReturn>
-</Stmt>
-<Stmt start="3:1" end="3:12">
-  <StmtReturn>
-    <StmtExpr start="3:8" end="3:12">
-      <ExprLit>
-        <Token type="LIT_FLOAT" val="3.14" start="3:8" end="3:12" />
-      </ExprLit>
-    </StmtExpr>
-  </StmtReturn>
-</Stmt>
-<Stmt start="4:1" end="4:7">
-  <StmtReturn>
-  </StmtReturn>
-</Stmt>
-<Stmt start="5:1" end="5:23">
-  <StmtReturn>
-    <StmtExpr start="5:8" end="5:23">
-      <ExprLit>
-        <Token type="LIT_STR" val="\"Hello, World!\"" start="5:8" end="5:23" />
-      </ExprLit>
-    </StmtExpr>
-  </StmtReturn>
-</Stmt>
+<StmtReturn start="1:1" end="1:12">
+  <ExprLit start="1:8" end="1:12">
+    <Token type="KW_TRUE" val="true" start="1:8" end="1:12" />
+  </ExprLit>
+</StmtReturn>
+<StmtReturn start="2:1" end="2:11">
+  <ExprLit start="2:8" end="2:11">
+    <Token type="LIT_CHAR" val="'z'" start="2:8" end="2:11" />
+  </ExprLit>
+</StmtReturn>
+<StmtReturn start="3:1" end="3:12">
+  <ExprLit start="3:8" end="3:12">
+    <Token type="LIT_FLOAT" val="3.14" start="3:8" end="3:12" />
+  </ExprLit>
+</StmtReturn>
+<StmtReturn start="4:1" end="4:7" />
+<StmtReturn start="5:1" end="5:23">
+  <ExprLit start="5:8" end="5:23">
+    <Token type="LIT_STR" val="\"Hello, World!\"" start="5:8" end="5:23" />
+  </ExprLit>
+</StmtReturn>

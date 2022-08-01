@@ -9,47 +9,33 @@ if true {
 } else {
 }
 ======= stdout =======
-<Stmt start="1:1" end="2:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="1:4" end="1:9">
-        <ExprLit>
-          <Token type="KW_FALSE" val="false" start="1:4" end="1:9" />
+<StmtIf start="1:1" end="2:2">
+  <StmtIfCond>
+    <ExprLit start="1:4" end="1:9">
+      <Token type="KW_FALSE" val="false" start="1:4" end="1:9" />
+    </ExprLit>
+  </StmtIfCond>
+</StmtIf>
+<StmtIf start="3:1" end="5:2">
+  <StmtIfCond>
+    <ExprLit start="3:4" end="3:8">
+      <Token type="KW_TRUE" val="true" start="3:4" end="3:8" />
+    </ExprLit>
+  </StmtIfCond>
+</StmtIf>
+<StmtIf start="6:1" end="9:2">
+  <StmtIfCond>
+    <ExprLit start="6:4" end="6:8">
+      <Token type="KW_TRUE" val="true" start="6:4" end="6:8" />
+    </ExprLit>
+  </StmtIfCond>
+  <StmtIfAlt>
+    <StmtIf start="7:3" end="9:2">
+      <StmtIfCond>
+        <ExprLit start="7:8" end="7:13">
+          <Token type="KW_FALSE" val="false" start="7:8" end="7:13" />
         </ExprLit>
-      </StmtExpr>
-    </slot>
-  </StmtIf>
-</Stmt>
-<Stmt start="3:1" end="5:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="3:4" end="3:8">
-        <ExprLit>
-          <Token type="KW_TRUE" val="true" start="3:4" end="3:8" />
-        </ExprLit>
-      </StmtExpr>
-    </slot>
-  </StmtIf>
-</Stmt>
-<Stmt start="6:1" end="9:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="6:4" end="6:8">
-        <ExprLit>
-          <Token type="KW_TRUE" val="true" start="6:4" end="6:8" />
-        </ExprLit>
-      </StmtExpr>
-    </slot>
-    <slot name="alt">
-      <StmtIf>
-        <slot name="cond">
-          <StmtExpr start="7:8" end="7:13">
-            <ExprLit>
-              <Token type="KW_FALSE" val="false" start="7:8" end="7:13" />
-            </ExprLit>
-          </StmtExpr>
-        </slot>
-      </StmtIf>
-    </slot>
-  </StmtIf>
-</Stmt>
+      </StmtIfCond>
+    </StmtIf>
+  </StmtIfAlt>
+</StmtIf>

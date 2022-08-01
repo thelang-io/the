@@ -7,46 +7,36 @@ main {
   }
 }
 ======= stdout =======
-<Stmt start="1:1" end="7:2">
-  <StmtMain>
-    <Stmt start="2:3" end="6:4">
-      <StmtIf>
-        <slot name="cond">
-          <StmtExpr start="2:6" end="2:10">
-            <ExprLit>
-              <Token type="KW_TRUE" val="true" start="2:6" end="2:10" />
-            </ExprLit>
-          </StmtExpr>
-        </slot>
-        <slot name="body">
-          <Stmt start="3:5" end="3:23">
-            <StmtFnDecl>
-              <slot name="id">
-                <Token type="ID" val="test" start="3:8" end="3:12" />
-              </slot>
-              <slot name="returnType">
-                <TypeId start="3:16" end="3:20">
-                  <Token type="ID" val="void" start="3:16" end="3:20" />
-                </TypeId>
-              </slot>
-            </StmtFnDecl>
-          </Stmt>
-        </slot>
-        <slot name="alt">
-          <Stmt start="5:5" end="5:23">
-            <StmtFnDecl>
-              <slot name="id">
-                <Token type="ID" val="test" start="5:8" end="5:12" />
-              </slot>
-              <slot name="returnType">
-                <TypeId start="5:16" end="5:20">
-                  <Token type="ID" val="void" start="5:16" end="5:20" />
-                </TypeId>
-              </slot>
-            </StmtFnDecl>
-          </Stmt>
-        </slot>
-      </StmtIf>
-    </Stmt>
-  </StmtMain>
-</Stmt>
+<StmtMain start="1:1" end="7:2">
+  <StmtIf start="2:3" end="6:4">
+    <StmtIfCond>
+      <ExprLit start="2:6" end="2:10">
+        <Token type="KW_TRUE" val="true" start="2:6" end="2:10" />
+      </ExprLit>
+    </StmtIfCond>
+    <StmtIfBody>
+      <StmtFnDecl start="3:5" end="3:23">
+        <StmtFnDeclId>
+          <Token type="ID" val="test" start="3:8" end="3:12" />
+        </StmtFnDeclId>
+        <StmtFnDeclReturnType>
+          <TypeId start="3:16" end="3:20">
+            <Token type="ID" val="void" start="3:16" end="3:20" />
+          </TypeId>
+        </StmtFnDeclReturnType>
+      </StmtFnDecl>
+    </StmtIfBody>
+    <StmtIfAlt>
+      <StmtFnDecl start="5:5" end="5:23">
+        <StmtFnDeclId>
+          <Token type="ID" val="test" start="5:8" end="5:12" />
+        </StmtFnDeclId>
+        <StmtFnDeclReturnType>
+          <TypeId start="5:16" end="5:20">
+            <Token type="ID" val="void" start="5:16" end="5:20" />
+          </TypeId>
+        </StmtFnDeclReturnType>
+      </StmtFnDecl>
+    </StmtIfAlt>
+  </StmtIf>
+</StmtMain>

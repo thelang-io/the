@@ -16,195 +16,163 @@ n: u16
 o: u32
 p: u64
 ======= stdout =======
-<Stmt start="1:1" end="1:8">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="a" start="1:1" end="1:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="1:4" end="1:8">
-        <Token type="ID" val="bool" start="1:4" end="1:8" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="2:1" end="2:8">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="b" start="2:1" end="2:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="2:4" end="2:8">
-        <Token type="ID" val="byte" start="2:4" end="2:8" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="3:1" end="3:8">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="c" start="3:1" end="3:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="3:4" end="3:8">
-        <Token type="ID" val="char" start="3:4" end="3:8" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="4:1" end="4:9">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="d" start="4:1" end="4:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="4:4" end="4:9">
-        <Token type="ID" val="float" start="4:4" end="4:9" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="5:1" end="5:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="e" start="5:1" end="5:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="5:4" end="5:7">
-        <Token type="ID" val="f32" start="5:4" end="5:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="6:1" end="6:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="f" start="6:1" end="6:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="6:4" end="6:7">
-        <Token type="ID" val="f64" start="6:4" end="6:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="7:1" end="7:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="g" start="7:1" end="7:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="7:4" end="7:7">
-        <Token type="ID" val="int" start="7:4" end="7:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="8:1" end="8:6">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="h" start="8:1" end="8:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="8:4" end="8:6">
-        <Token type="ID" val="i8" start="8:4" end="8:6" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="9:1" end="9:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="i" start="9:1" end="9:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="9:4" end="9:7">
-        <Token type="ID" val="i16" start="9:4" end="9:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="10:1" end="10:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="j" start="10:1" end="10:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="10:4" end="10:7">
-        <Token type="ID" val="i32" start="10:4" end="10:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="11:1" end="11:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="k" start="11:1" end="11:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="11:4" end="11:7">
-        <Token type="ID" val="i64" start="11:4" end="11:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="12:1" end="12:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="l" start="12:1" end="12:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="12:4" end="12:7">
-        <Token type="ID" val="str" start="12:4" end="12:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="13:1" end="13:6">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="m" start="13:1" end="13:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="13:4" end="13:6">
-        <Token type="ID" val="u8" start="13:4" end="13:6" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="14:1" end="14:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="n" start="14:1" end="14:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="14:4" end="14:7">
-        <Token type="ID" val="u16" start="14:4" end="14:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="15:1" end="15:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="o" start="15:1" end="15:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="15:4" end="15:7">
-        <Token type="ID" val="u32" start="15:4" end="15:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="16:1" end="16:7">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="p" start="16:1" end="16:2" />
-    </slot>
-    <slot name="type">
-      <TypeId start="16:4" end="16:7">
-        <Token type="ID" val="u64" start="16:4" end="16:7" />
-      </TypeId>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
+<StmtVarDecl start="1:1" end="1:8">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="1:4" end="1:8">
+      <Token type="ID" val="bool" start="1:4" end="1:8" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="2:1" end="2:8">
+  <StmtVarDeclId>
+    <Token type="ID" val="b" start="2:1" end="2:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="2:4" end="2:8">
+      <Token type="ID" val="byte" start="2:4" end="2:8" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="3:1" end="3:8">
+  <StmtVarDeclId>
+    <Token type="ID" val="c" start="3:1" end="3:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="3:4" end="3:8">
+      <Token type="ID" val="char" start="3:4" end="3:8" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="4:1" end="4:9">
+  <StmtVarDeclId>
+    <Token type="ID" val="d" start="4:1" end="4:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="4:4" end="4:9">
+      <Token type="ID" val="float" start="4:4" end="4:9" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="5:1" end="5:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="e" start="5:1" end="5:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="5:4" end="5:7">
+      <Token type="ID" val="f32" start="5:4" end="5:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="6:1" end="6:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="f" start="6:1" end="6:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="6:4" end="6:7">
+      <Token type="ID" val="f64" start="6:4" end="6:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="7:1" end="7:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="g" start="7:1" end="7:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="7:4" end="7:7">
+      <Token type="ID" val="int" start="7:4" end="7:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="8:1" end="8:6">
+  <StmtVarDeclId>
+    <Token type="ID" val="h" start="8:1" end="8:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="8:4" end="8:6">
+      <Token type="ID" val="i8" start="8:4" end="8:6" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="9:1" end="9:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="i" start="9:1" end="9:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="9:4" end="9:7">
+      <Token type="ID" val="i16" start="9:4" end="9:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="10:1" end="10:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="j" start="10:1" end="10:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="10:4" end="10:7">
+      <Token type="ID" val="i32" start="10:4" end="10:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="11:1" end="11:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="k" start="11:1" end="11:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="11:4" end="11:7">
+      <Token type="ID" val="i64" start="11:4" end="11:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="12:1" end="12:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="l" start="12:1" end="12:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="12:4" end="12:7">
+      <Token type="ID" val="str" start="12:4" end="12:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="13:1" end="13:6">
+  <StmtVarDeclId>
+    <Token type="ID" val="m" start="13:1" end="13:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="13:4" end="13:6">
+      <Token type="ID" val="u8" start="13:4" end="13:6" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="14:1" end="14:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="n" start="14:1" end="14:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="14:4" end="14:7">
+      <Token type="ID" val="u16" start="14:4" end="14:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="15:1" end="15:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="o" start="15:1" end="15:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="15:4" end="15:7">
+      <Token type="ID" val="u32" start="15:4" end="15:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="16:1" end="16:7">
+  <StmtVarDeclId>
+    <Token type="ID" val="p" start="16:1" end="16:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclType>
+    <TypeId start="16:4" end="16:7">
+      <Token type="ID" val="u64" start="16:4" end="16:7" />
+    </TypeId>
+  </StmtVarDeclType>
+</StmtVarDecl>

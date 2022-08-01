@@ -51,7 +51,7 @@ TEST(CodegenCleanUpTest, AddsAfterLabelling) {
   auto l = n.currentLabel();
   n.add("test3;");
 
-  EXPECT_EQ(n.gen(0), "test3;" EOL + l + ":" + EOL "test2;" EOL "test1;" EOL);
+  EXPECT_EQ(n.gen(0), "test3;" EOL + l + ":" EOL "test2;" EOL "test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, AddsAfterLabellingToNonLabeled) {
@@ -62,7 +62,7 @@ TEST(CodegenCleanUpTest, AddsAfterLabellingToNonLabeled) {
   n.add("test3;");
   n.add("test4;");
 
-  EXPECT_EQ(n.gen(0), "test4;" EOL "test3;" EOL + l + ":" + EOL "test2;" EOL "test1;" EOL);
+  EXPECT_EQ(n.gen(0), "test4;" EOL "test3;" EOL + l + ":" EOL "test2;" EOL "test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, AddsToParent) {
@@ -106,7 +106,7 @@ TEST(CodegenCleanUpTest, LabelsOnOneStatement) {
   auto l = n.currentLabel();
 
   EXPECT_EQ(n.labelIdx, 1);
-  EXPECT_EQ(n.gen(0), l + ":" + EOL "test;" EOL);
+  EXPECT_EQ(n.gen(0), l + ":" EOL "test;" EOL);
 }
 
 TEST(CodegenCleanUpTest, LabelsOnMultipleStatements) {
@@ -117,7 +117,7 @@ TEST(CodegenCleanUpTest, LabelsOnMultipleStatements) {
   auto l = n.currentLabel();
 
   EXPECT_EQ(n.labelIdx, 1);
-  EXPECT_EQ(n.gen(0), l + ":" + EOL "test3;" EOL "test2;" EOL "test1;" EOL);
+  EXPECT_EQ(n.gen(0), l + ":" EOL "test3;" EOL "test2;" EOL "test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, LabelsParent) {
@@ -126,7 +126,7 @@ TEST(CodegenCleanUpTest, LabelsParent) {
   n0.add("test;");
   auto l = n1.currentLabel();
 
-  EXPECT_EQ(n0.gen(0), l + ":" + EOL "test;" EOL);
+  EXPECT_EQ(n0.gen(0), l + ":" EOL "test;" EOL);
 }
 
 TEST(CodegenCleanUpTest, LabellingAddsValueToFunction) {

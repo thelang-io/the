@@ -33,474 +33,1037 @@ main {
   job3(ref a, ref c)
 }
 ======= stdout =======
-<Node>
-  <NodeObjDecl>
-    <TypeObj codeName="Test_0" name="Test">
-      <TypeObjField name="a">
-        <BuiltinType name="int" />
-      </TypeObjField>
-    </TypeObj>
-  </NodeObjDecl>
-</Node>
-<Node>
-  <NodeFnDecl>
-    <slot name="var">
-      <Var codeName="job1_0" frame="1" name="job1">
-        <TypeFn codeName="job1_0" name="fn$0">
-          <slot name="params">
-            <TypeFnParam name="a" required>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnParam>
-          </slot>
-          <slot name="returnType">
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeObjField name="a">
+      <BuiltinType name="int" />
+    </TypeObjField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="job1" codeName="job1_0" frame="1">
+      <TypeFn codeName="job1_0" name="fn$0">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
             <TypeRef>
               <BuiltinType name="int" />
             </TypeRef>
-          </slot>
-        </TypeFn>
-      </Var>
-    </slot>
-    <slot name="params">
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
-            <TypeRef>
-              <BuiltinType name="int" />
-            </TypeRef>
-          </Var>
-        </slot>
-      </NodeFnDeclParam>
-    </slot>
-  </NodeFnDecl>
-</Node>
-<Node>
-  <NodeFnDecl>
-    <slot name="var">
-      <Var codeName="job2_0" frame="1" name="job2">
-        <TypeFn codeName="job2_0" name="fn$1">
-          <slot name="params">
-            <TypeFnParam name="a" required>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnParam>
-            <TypeFnParam name="b" required>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnParam>
-          </slot>
-          <slot name="returnType">
-            <TypeRef>
-              <TypeObj codeName="Test_0" name="Test">
-                <TypeObjField name="a">
-                  <BuiltinType name="int" />
-                </TypeObjField>
-              </TypeObj>
-            </TypeRef>
-          </slot>
-        </TypeFn>
-      </Var>
-    </slot>
-    <slot name="params">
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
-            <TypeRef>
-              <BuiltinType name="int" />
-            </TypeRef>
-          </Var>
-        </slot>
-      </NodeFnDeclParam>
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="b_0" frame="2" name="b">
-            <TypeRef>
-              <BuiltinType name="int" />
-            </TypeRef>
-          </Var>
-        </slot>
-      </NodeFnDeclParam>
-    </slot>
-  </NodeFnDecl>
-</Node>
-<Node>
-  <NodeFnDecl>
-    <slot name="var">
-      <Var codeName="job3_0" frame="1" name="job3">
-        <TypeFn codeName="job3_0" name="fn$2">
-          <slot name="params">
-            <TypeFnParam name="a" required>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnParam>
-            <TypeFnParam name="b" required>
-              <TypeRef>
-                <TypeFn name="fn$0">
-                  <slot name="params">
-                    <TypeFnParam required>
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </TypeFnParam>
-                  </slot>
-                  <slot name="returnType">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                </TypeFn>
-              </TypeRef>
-            </TypeFnParam>
-          </slot>
-          <slot name="returnType">
-            <TypeRef>
-              <BuiltinType name="int" />
-            </TypeRef>
-          </slot>
-        </TypeFn>
-      </Var>
-    </slot>
-    <slot name="params">
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
-            <TypeRef>
-              <BuiltinType name="int" />
-            </TypeRef>
-          </Var>
-        </slot>
-      </NodeFnDeclParam>
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="b_0" frame="2" name="b">
-            <TypeRef>
-              <TypeFn name="fn$0">
-                <slot name="params">
-                  <TypeFnParam required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                </slot>
-                <slot name="returnType">
-                  <TypeRef>
-                    <BuiltinType name="int" />
-                  </TypeRef>
-                </slot>
-              </TypeFn>
-            </TypeRef>
-          </Var>
-        </slot>
-      </NodeFnDeclParam>
-    </slot>
-  </NodeFnDecl>
-</Node>
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <TypeRef>
             <BuiltinType name="int" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="int" />
-            </slot>
-            <slot name="body">
-              <ExprLit type="INT_DEC">
-                2
-              </ExprLit>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="b_0" frame="2" name="b">
+          </TypeRef>
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclParams>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <TypeRef>
             <BuiltinType name="int" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
+          </TypeRef>
+        </Var>
+      </NodeFnDeclParamVar>
+    </NodeFnDeclParam>
+  </NodeFnDeclParams>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="job2" codeName="job2_0" frame="1">
+      <TypeFn codeName="job2_0" name="fn$1">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
+            <TypeRef>
               <BuiltinType name="int" />
-            </slot>
-            <slot name="body">
-              <ExprLit type="INT_DEC">
-                4
-              </ExprLit>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="test_0" frame="2" name="test">
+            </TypeRef>
+          </TypeFnParam>
+          <TypeFnParam name="b" required>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <TypeRef>
             <TypeObj codeName="Test_0" name="Test">
               <TypeObjField name="a">
                 <BuiltinType name="int" />
               </TypeObjField>
             </TypeObj>
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
+          </TypeRef>
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclParams>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <TypeRef>
+            <BuiltinType name="int" />
+          </TypeRef>
+        </Var>
+      </NodeFnDeclParamVar>
+    </NodeFnDeclParam>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="b" codeName="b_0" frame="2">
+          <TypeRef>
+            <BuiltinType name="int" />
+          </TypeRef>
+        </Var>
+      </NodeFnDeclParamVar>
+    </NodeFnDeclParam>
+  </NodeFnDeclParams>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="job3" codeName="job3_0" frame="1">
+      <TypeFn codeName="job3_0" name="fn$2">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnParam>
+          <TypeFnParam name="b" required>
+            <TypeRef>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </TypeRef>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <TypeRef>
+            <BuiltinType name="int" />
+          </TypeRef>
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclParams>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <TypeRef>
+            <BuiltinType name="int" />
+          </TypeRef>
+        </Var>
+      </NodeFnDeclParamVar>
+    </NodeFnDeclParam>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="b" codeName="b_0" frame="2">
+          <TypeRef>
+            <TypeFn name="fn$0">
+              <TypeFnParams>
+                <TypeFnParam required>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnParam>
+              </TypeFnParams>
+              <TypeFnReturnType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </TypeFnReturnType>
+            </TypeFn>
+          </TypeRef>
+        </Var>
+      </NodeFnDeclParamVar>
+    </NodeFnDeclParam>
+  </NodeFnDeclParams>
+</NodeFnDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="2" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="4" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test" codeName="test_0" frame="2">
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeObjField name="a">
+            <BuiltinType name="int" />
+          </TypeObjField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Test_0" name="Test">
+            <TypeObjField name="a">
+              <BuiltinType name="int" />
+            </TypeObjField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjType>
               <TypeObj codeName="Test_0" name="Test">
                 <TypeObjField name="a">
                   <BuiltinType name="int" />
                 </TypeObjField>
               </TypeObj>
-            </slot>
-            <slot name="body">
-              <ExprObj>
-                <slot name="type">
-                  <TypeObj codeName="Test_0" name="Test">
-                    <TypeObjField name="a">
-                      <BuiltinType name="int" />
-                    </TypeObjField>
-                  </TypeObj>
-                </slot>
-                <slot name="props">
-                  <ExprObjProp>
-                    <slot name="id">
-                      a
-                    </slot>
-                    <slot name="init">
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="a_0" frame="2" name="a">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </slot>
-                  </ExprObjProp>
-                </slot>
-              </ExprObj>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="c_0" frame="2" mut name="c">
-            <TypeFn name="fn$0">
-              <slot name="params">
-                <TypeFnParam required>
-                  <TypeRef>
+            </ExprObjType>
+            <ExprObjProps>
+              <ExprObjProp id="a">
+                <NodeExpr>
+                  <NodeExprType>
                     <BuiltinType name="int" />
-                  </TypeRef>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="d_0" frame="2" mut name="d">
-            <TypeFn name="fn$1">
-              <slot name="params">
-                <TypeFnParam required>
-                  <TypeRef>
-                    <BuiltinType name="int" />
-                  </TypeRef>
-                </TypeFnParam>
-                <TypeFnParam required>
-                  <TypeRef>
-                    <BuiltinType name="int" />
-                  </TypeRef>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <TypeRef>
-                  <TypeObj codeName="Test_0" name="Test">
-                    <TypeObjField name="a">
-                      <BuiltinType name="int" />
-                    </TypeObjField>
-                  </TypeObj>
-                </TypeRef>
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="e_0" frame="2" mut name="e">
-            <TypeFn name="fn$2">
-              <slot name="params">
-                <TypeFnParam required>
-                  <TypeRef>
-                    <BuiltinType name="int" />
-                  </TypeRef>
-                </TypeFnParam>
-                <TypeFnParam required>
-                  <TypeRef>
-                    <TypeFn name="fn$0">
-                      <slot name="params">
-                        <TypeFnParam required>
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </TypeFnParam>
-                      </slot>
-                      <slot name="returnType">
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </slot>
-                    </TypeFn>
-                  </TypeRef>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <TypeFn name="fn$0">
-            <slot name="params">
-              <TypeFnParam required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </slot>
-            <slot name="returnType">
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="a" codeName="a_0" frame="2">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+            </ExprObjProps>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="c" codeName="c_0" mut frame="2">
+        <TypeFn name="fn$0">
+          <TypeFnParams>
+            <TypeFnParam required>
               <TypeRef>
                 <BuiltinType name="int" />
               </TypeRef>
-            </slot>
-          </TypeFn>
-        </slot>
-        <slot name="body">
-          <ExprAssign op="EQ">
-            <slot name="left">
-              <NodeExpr>
-                <slot name="type">
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="d" codeName="d_0" mut frame="2">
+        <TypeFn name="fn$1">
+          <TypeFnParams>
+            <TypeFnParam required>
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </TypeFnParam>
+            <TypeFnParam required>
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <TypeRef>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeObjField name="a">
+                  <BuiltinType name="int" />
+                </TypeObjField>
+              </TypeObj>
+            </TypeRef>
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="e" codeName="e_0" mut frame="2">
+        <TypeFn name="fn$2">
+          <TypeFnParams>
+            <TypeFnParam required>
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </TypeFnParam>
+            <TypeFnParam required>
+              <TypeRef>
+                <TypeFn name="fn$0">
+                  <TypeFnParams>
+                    <TypeFnParam required>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnParam>
+                  </TypeFnParams>
+                  <TypeFnReturnType>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnReturnType>
+                </TypeFn>
+              </TypeRef>
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeFn name="fn$0">
+        <TypeFnParams>
+          <TypeFnParam required>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <TypeRef>
+            <BuiltinType name="int" />
+          </TypeRef>
+        </TypeFnReturnType>
+      </TypeFn>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAssign op="EQ">
+        <ExprAssignLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="c" codeName="c_0" mut frame="2">
                   <TypeFn name="fn$0">
-                    <slot name="params">
+                    <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef>
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
+                    </TypeFnParams>
+                    <TypeFnReturnType>
                       <TypeRef>
                         <BuiltinType name="int" />
                       </TypeRef>
-                    </slot>
+                    </TypeFnReturnType>
                   </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="c_0" frame="2" mut name="c">
-                      <TypeFn name="fn$0">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="right">
-              <NodeExpr>
-                <slot name="type">
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignLeft>
+        <ExprAssignRight>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn codeName="job1_0" name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="job1" codeName="job1_0" frame="1">
                   <TypeFn codeName="job1_0" name="fn$0">
-                    <slot name="params">
+                    <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef>
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
+                    </TypeFnParams>
+                    <TypeFnReturnType>
                       <TypeRef>
                         <BuiltinType name="int" />
                       </TypeRef>
-                    </slot>
+                    </TypeFnReturnType>
                   </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="job1_0" frame="1" name="job1">
-                      <TypeFn codeName="job1_0" name="fn$0">
-                        <slot name="params">
-                          <TypeFnParam name="a" required>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignRight>
+      </ExprAssign>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeFn name="fn$1">
+        <TypeFnParams>
+          <TypeFnParam required>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnParam>
+          <TypeFnParam required>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <TypeRef>
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeObjField name="a">
+                <BuiltinType name="int" />
+              </TypeObjField>
+            </TypeObj>
+          </TypeRef>
+        </TypeFnReturnType>
+      </TypeFn>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAssign op="EQ">
+        <ExprAssignLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeObjField name="a">
+                        <BuiltinType name="int" />
+                      </TypeObjField>
+                    </TypeObj>
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="d" codeName="d_0" mut frame="2">
+                  <TypeFn name="fn$1">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeObjField name="a">
+                            <BuiltinType name="int" />
+                          </TypeObjField>
+                        </TypeObj>
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignLeft>
+        <ExprAssignRight>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn codeName="job2_0" name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                  <TypeFnParam name="b" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeObjField name="a">
+                        <BuiltinType name="int" />
+                      </TypeObjField>
+                    </TypeObj>
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="job2" codeName="job2_0" frame="1">
+                  <TypeFn codeName="job2_0" name="fn$1">
+                    <TypeFnParams>
+                      <TypeFnParam name="a" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                      <TypeFnParam name="b" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeObjField name="a">
+                            <BuiltinType name="int" />
+                          </TypeObjField>
+                        </TypeObj>
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignRight>
+      </ExprAssign>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeFn name="fn$2">
+        <TypeFnParams>
+          <TypeFnParam required>
+            <TypeRef>
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeFnParam>
+          <TypeFnParam required>
+            <TypeRef>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </TypeRef>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <TypeRef>
+            <BuiltinType name="int" />
+          </TypeRef>
+        </TypeFnReturnType>
+      </TypeFn>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAssign op="EQ">
+        <ExprAssignLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$2">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <TypeFn name="fn$0">
+                        <TypeFnParams>
+                          <TypeFnParam required>
                             <TypeRef>
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
+                        </TypeFnParams>
+                        <TypeFnReturnType>
                           <TypeRef>
                             <BuiltinType name="int" />
                           </TypeRef>
-                        </slot>
+                        </TypeFnReturnType>
                       </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-          </ExprAssign>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="e" codeName="e_0" mut frame="2">
+                  <TypeFn name="fn$2">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <TypeFn name="fn$0">
+                            <TypeFnParams>
+                              <TypeFnParam required>
+                                <TypeRef>
+                                  <BuiltinType name="int" />
+                                </TypeRef>
+                              </TypeFnParam>
+                            </TypeFnParams>
+                            <TypeFnReturnType>
+                              <TypeRef>
+                                <BuiltinType name="int" />
+                              </TypeRef>
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignLeft>
+        <ExprAssignRight>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn codeName="job3_0" name="fn$2">
+                <TypeFnParams>
+                  <TypeFnParam name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                  <TypeFnParam name="b" required>
+                    <TypeRef>
+                      <TypeFn name="fn$0">
+                        <TypeFnParams>
+                          <TypeFnParam required>
+                            <TypeRef>
+                              <BuiltinType name="int" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </TypeFnParams>
+                        <TypeFnReturnType>
+                          <TypeRef>
+                            <BuiltinType name="int" />
+                          </TypeRef>
+                        </TypeFnReturnType>
+                      </TypeFn>
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="job3" codeName="job3_0" frame="1">
+                  <TypeFn codeName="job3_0" name="fn$2">
+                    <TypeFnParams>
+                      <TypeFnParam name="a" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                      <TypeFnParam name="b" required>
+                        <TypeRef>
+                          <TypeFn name="fn$0">
+                            <TypeFnParams>
+                              <TypeFnParam required>
+                                <TypeRef>
+                                  <BuiltinType name="int" />
+                                </TypeRef>
+                              </TypeFnParam>
+                            </TypeFnParams>
+                            <TypeFnReturnType>
+                              <TypeRef>
+                                <BuiltinType name="int" />
+                              </TypeRef>
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignRight>
+      </ExprAssign>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeRef>
+        <BuiltinType name="int" />
+      </TypeRef>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="c" codeName="c_0" mut frame="2">
+                  <TypeFn name="fn$0">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallCalleeType>
+          <TypeFn name="fn$0">
+            <TypeFnParams>
+              <TypeFnParam required>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </TypeFnReturnType>
+          </TypeFn>
+        </ExprCallCalleeType>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="a" codeName="a_0" frame="2">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeRef>
+        <BuiltinType name="int" />
+      </TypeRef>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn codeName="job1_0" name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="job1" codeName="job1_0" frame="1">
+                  <TypeFn codeName="job1_0" name="fn$0">
+                    <TypeFnParams>
+                      <TypeFnParam name="a" required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallCalleeType>
+          <TypeFn codeName="job1_0" name="fn$0">
+            <TypeFnParams>
+              <TypeFnParam name="a" required>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </TypeFnReturnType>
+          </TypeFn>
+        </ExprCallCalleeType>
+        <ExprCallArgs>
+          <ExprCallArg id="a">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="a" codeName="a_0" frame="2">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeRef>
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeObjField name="a">
+            <BuiltinType name="int" />
+          </TypeObjField>
+        </TypeObj>
+      </TypeRef>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeObjField name="a">
+                        <BuiltinType name="int" />
+                      </TypeObjField>
+                    </TypeObj>
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="d" codeName="d_0" mut frame="2">
+                  <TypeFn name="fn$1">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeObjField name="a">
+                            <BuiltinType name="int" />
+                          </TypeObjField>
+                        </TypeObj>
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallCalleeType>
           <TypeFn name="fn$1">
-            <slot name="params">
+            <TypeFnParams>
               <TypeFnParam required>
                 <TypeRef>
                   <BuiltinType name="int" />
@@ -511,8 +1074,8 @@ main {
                   <BuiltinType name="int" />
                 </TypeRef>
               </TypeFnParam>
-            </slot>
-            <slot name="returnType">
+            </TypeFnParams>
+            <TypeFnReturnType>
               <TypeRef>
                 <TypeObj codeName="Test_0" name="Test">
                   <TypeObjField name="a">
@@ -520,74 +1083,108 @@ main {
                   </TypeObjField>
                 </TypeObj>
               </TypeRef>
-            </slot>
+            </TypeFnReturnType>
           </TypeFn>
-        </slot>
-        <slot name="body">
-          <ExprAssign op="EQ">
-            <slot name="left">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn name="fn$1">
-                    <slot name="params">
-                      <TypeFnParam required>
-                        <TypeRef>
+        </ExprCallCalleeType>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="a" codeName="a_0" frame="2">
                           <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                      <TypeFnParam required>
-                        <TypeRef>
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="b" codeName="b_0" frame="2">
                           <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
-                            <BuiltinType name="int" />
-                          </TypeObjField>
-                        </TypeObj>
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="d_0" frame="2" mut name="d">
-                      <TypeFn name="fn$1">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <TypeObj codeName="Test_0" name="Test">
-                              <TypeObjField name="a">
-                                <BuiltinType name="int" />
-                              </TypeObjField>
-                            </TypeObj>
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="right">
-              <NodeExpr>
-                <slot name="type">
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeRef>
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeObjField name="a">
+            <BuiltinType name="int" />
+          </TypeObjField>
+        </TypeObj>
+      </TypeRef>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn codeName="job2_0" name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam name="a" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                  <TypeFnParam name="b" required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeObjField name="a">
+                        <BuiltinType name="int" />
+                      </TypeObjField>
+                    </TypeObj>
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="job2" codeName="job2_0" frame="1">
                   <TypeFn codeName="job2_0" name="fn$1">
-                    <slot name="params">
+                    <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef>
                           <BuiltinType name="int" />
@@ -598,8 +1195,8 @@ main {
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
+                    </TypeFnParams>
+                    <TypeFnReturnType>
                       <TypeRef>
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeObjField name="a">
@@ -607,49 +1204,180 @@ main {
                           </TypeObjField>
                         </TypeObj>
                       </TypeRef>
-                    </slot>
+                    </TypeFnReturnType>
                   </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="job2_0" frame="1" name="job2">
-                      <TypeFn codeName="job2_0" name="fn$1">
-                        <slot name="params">
-                          <TypeFnParam name="a" required>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallCalleeType>
+          <TypeFn codeName="job2_0" name="fn$1">
+            <TypeFnParams>
+              <TypeFnParam name="a" required>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </TypeFnParam>
+              <TypeFnParam name="b" required>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <TypeRef>
+                <TypeObj codeName="Test_0" name="Test">
+                  <TypeObjField name="a">
+                    <BuiltinType name="int" />
+                  </TypeObjField>
+                </TypeObj>
+              </TypeRef>
+            </TypeFnReturnType>
+          </TypeFn>
+        </ExprCallCalleeType>
+        <ExprCallArgs>
+          <ExprCallArg id="a">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="a" codeName="a_0" frame="2">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="b">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="b" codeName="b_0" frame="2">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeRef>
+        <BuiltinType name="int" />
+      </TypeRef>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$2">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <BuiltinType name="int" />
+                    </TypeRef>
+                  </TypeFnParam>
+                  <TypeFnParam required>
+                    <TypeRef>
+                      <TypeFn name="fn$0">
+                        <TypeFnParams>
+                          <TypeFnParam required>
                             <TypeRef>
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
-                          <TypeFnParam name="b" required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
+                        </TypeFnParams>
+                        <TypeFnReturnType>
                           <TypeRef>
-                            <TypeObj codeName="Test_0" name="Test">
-                              <TypeObjField name="a">
-                                <BuiltinType name="int" />
-                              </TypeObjField>
-                            </TypeObj>
+                            <BuiltinType name="int" />
                           </TypeRef>
-                        </slot>
+                        </TypeFnReturnType>
                       </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-          </ExprAssign>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
+                    </TypeRef>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <TypeRef>
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="e" codeName="e_0" mut frame="2">
+                  <TypeFn name="fn$2">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <TypeFn name="fn$0">
+                            <TypeFnParams>
+                              <TypeFnParam required>
+                                <TypeRef>
+                                  <BuiltinType name="int" />
+                                </TypeRef>
+                              </TypeFnParam>
+                            </TypeFnParams>
+                            <TypeFnReturnType>
+                              <TypeRef>
+                                <BuiltinType name="int" />
+                              </TypeRef>
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallCalleeType>
           <TypeFn name="fn$2">
-            <slot name="params">
+            <TypeFnParams>
               <TypeFnParam required>
                 <TypeRef>
                   <BuiltinType name="int" />
@@ -658,985 +1386,136 @@ main {
               <TypeFnParam required>
                 <TypeRef>
                   <TypeFn name="fn$0">
-                    <slot name="params">
+                    <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef>
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
+                    </TypeFnParams>
+                    <TypeFnReturnType>
                       <TypeRef>
                         <BuiltinType name="int" />
                       </TypeRef>
-                    </slot>
+                    </TypeFnReturnType>
                   </TypeFn>
                 </TypeRef>
               </TypeFnParam>
-            </slot>
-            <slot name="returnType">
+            </TypeFnParams>
+            <TypeFnReturnType>
               <TypeRef>
                 <BuiltinType name="int" />
               </TypeRef>
-            </slot>
+            </TypeFnReturnType>
           </TypeFn>
-        </slot>
-        <slot name="body">
-          <ExprAssign op="EQ">
-            <slot name="left">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn name="fn$2">
-                    <slot name="params">
-                      <TypeFnParam required>
-                        <TypeRef>
+        </ExprCallCalleeType>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="a" codeName="a_0" frame="2">
                           <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                      <TypeFnParam required>
-                        <TypeRef>
-                          <TypeFn name="fn$0">
-                            <slot name="params">
-                              <TypeFnParam required>
-                                <TypeRef>
-                                  <BuiltinType name="int" />
-                                </TypeRef>
-                              </TypeFnParam>
-                            </slot>
-                            <slot name="returnType">
-                              <TypeRef>
-                                <BuiltinType name="int" />
-                              </TypeRef>
-                            </slot>
-                          </TypeFn>
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="e_0" frame="2" mut name="e">
-                      <TypeFn name="fn$2">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <TypeFn name="fn$0">
-                                <slot name="params">
-                                  <TypeFnParam required>
-                                    <TypeRef>
-                                      <BuiltinType name="int" />
-                                    </TypeRef>
-                                  </TypeFnParam>
-                                </slot>
-                                <slot name="returnType">
-                                  <TypeRef>
-                                    <BuiltinType name="int" />
-                                  </TypeRef>
-                                </slot>
-                              </TypeFn>
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="right">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn codeName="job3_0" name="fn$2">
-                    <slot name="params">
-                      <TypeFnParam name="a" required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                      <TypeFnParam name="b" required>
-                        <TypeRef>
-                          <TypeFn name="fn$0">
-                            <slot name="params">
-                              <TypeFnParam required>
-                                <TypeRef>
-                                  <BuiltinType name="int" />
-                                </TypeRef>
-                              </TypeFnParam>
-                            </slot>
-                            <slot name="returnType">
-                              <TypeRef>
-                                <BuiltinType name="int" />
-                              </TypeRef>
-                            </slot>
-                          </TypeFn>
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="job3_0" frame="1" name="job3">
-                      <TypeFn codeName="job3_0" name="fn$2">
-                        <slot name="params">
-                          <TypeFnParam name="a" required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                          <TypeFnParam name="b" required>
-                            <TypeRef>
-                              <TypeFn name="fn$0">
-                                <slot name="params">
-                                  <TypeFnParam required>
-                                    <TypeRef>
-                                      <BuiltinType name="int" />
-                                    </TypeRef>
-                                  </TypeFnParam>
-                                </slot>
-                                <slot name="returnType">
-                                  <TypeRef>
-                                    <BuiltinType name="int" />
-                                  </TypeRef>
-                                </slot>
-                              </TypeFn>
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-          </ExprAssign>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <TypeRef>
-            <BuiltinType name="int" />
-          </TypeRef>
-        </slot>
-        <slot name="body">
-          <ExprCall>
-            <slot name="callee">
-              <NodeExpr>
-                <slot name="type">
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
                   <TypeFn name="fn$0">
-                    <slot name="params">
+                    <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef>
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
+                    </TypeFnParams>
+                    <TypeFnReturnType>
                       <TypeRef>
                         <BuiltinType name="int" />
                       </TypeRef>
-                    </slot>
+                    </TypeFnReturnType>
                   </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="c_0" frame="2" mut name="c">
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
                       <TypeFn name="fn$0">
-                        <slot name="params">
+                        <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef>
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
+                        </TypeFnParams>
+                        <TypeFnReturnType>
                           <TypeRef>
                             <BuiltinType name="int" />
                           </TypeRef>
-                        </slot>
+                        </TypeFnReturnType>
                       </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="calleeType">
-              <TypeFn name="fn$0">
-                <slot name="params">
-                  <TypeFnParam required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                </slot>
-                <slot name="returnType">
-                  <TypeRef>
-                    <BuiltinType name="int" />
-                  </TypeRef>
-                </slot>
-              </TypeFn>
-            </slot>
-            <slot name="args">
-              <ExprCallArg>
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="a_0" frame="2" name="a">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <TypeRef>
-            <BuiltinType name="int" />
-          </TypeRef>
-        </slot>
-        <slot name="body">
-          <ExprCall>
-            <slot name="callee">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn codeName="job1_0" name="fn$0">
-                    <slot name="params">
-                      <TypeFnParam name="a" required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="job1_0" frame="1" name="job1">
-                      <TypeFn codeName="job1_0" name="fn$0">
-                        <slot name="params">
-                          <TypeFnParam name="a" required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="calleeType">
-              <TypeFn codeName="job1_0" name="fn$0">
-                <slot name="params">
-                  <TypeFnParam name="a" required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                </slot>
-                <slot name="returnType">
-                  <TypeRef>
-                    <BuiltinType name="int" />
-                  </TypeRef>
-                </slot>
-              </TypeFn>
-            </slot>
-            <slot name="args">
-              <ExprCallArg id="a">
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="a_0" frame="2" name="a">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <TypeRef>
-            <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="a">
-                <BuiltinType name="int" />
-              </TypeObjField>
-            </TypeObj>
-          </TypeRef>
-        </slot>
-        <slot name="body">
-          <ExprCall>
-            <slot name="callee">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn name="fn$1">
-                    <slot name="params">
-                      <TypeFnParam required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                      <TypeFnParam required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
-                            <BuiltinType name="int" />
-                          </TypeObjField>
-                        </TypeObj>
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="d_0" frame="2" mut name="d">
-                      <TypeFn name="fn$1">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <TypeObj codeName="Test_0" name="Test">
-                              <TypeObjField name="a">
-                                <BuiltinType name="int" />
-                              </TypeObjField>
-                            </TypeObj>
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="calleeType">
-              <TypeFn name="fn$1">
-                <slot name="params">
-                  <TypeFnParam required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                  <TypeFnParam required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                </slot>
-                <slot name="returnType">
-                  <TypeRef>
-                    <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="a">
-                        <BuiltinType name="int" />
-                      </TypeObjField>
-                    </TypeObj>
-                  </TypeRef>
-                </slot>
-              </TypeFn>
-            </slot>
-            <slot name="args">
-              <ExprCallArg>
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="a_0" frame="2" name="a">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-              <ExprCallArg>
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="b_0" frame="2" name="b">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <TypeRef>
-            <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="a">
-                <BuiltinType name="int" />
-              </TypeObjField>
-            </TypeObj>
-          </TypeRef>
-        </slot>
-        <slot name="body">
-          <ExprCall>
-            <slot name="callee">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn codeName="job2_0" name="fn$1">
-                    <slot name="params">
-                      <TypeFnParam name="a" required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                      <TypeFnParam name="b" required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
-                            <BuiltinType name="int" />
-                          </TypeObjField>
-                        </TypeObj>
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="job2_0" frame="1" name="job2">
-                      <TypeFn codeName="job2_0" name="fn$1">
-                        <slot name="params">
-                          <TypeFnParam name="a" required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                          <TypeFnParam name="b" required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <TypeObj codeName="Test_0" name="Test">
-                              <TypeObjField name="a">
-                                <BuiltinType name="int" />
-                              </TypeObjField>
-                            </TypeObj>
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="calleeType">
-              <TypeFn codeName="job2_0" name="fn$1">
-                <slot name="params">
-                  <TypeFnParam name="a" required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                  <TypeFnParam name="b" required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                </slot>
-                <slot name="returnType">
-                  <TypeRef>
-                    <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="a">
-                        <BuiltinType name="int" />
-                      </TypeObjField>
-                    </TypeObj>
-                  </TypeRef>
-                </slot>
-              </TypeFn>
-            </slot>
-            <slot name="args">
-              <ExprCallArg id="a">
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="a_0" frame="2" name="a">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-              <ExprCallArg id="b">
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="b_0" frame="2" name="b">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <TypeRef>
-            <BuiltinType name="int" />
-          </TypeRef>
-        </slot>
-        <slot name="body">
-          <ExprCall>
-            <slot name="callee">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn name="fn$2">
-                    <slot name="params">
-                      <TypeFnParam required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                      <TypeFnParam required>
-                        <TypeRef>
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="c" codeName="c_0" mut frame="2">
                           <TypeFn name="fn$0">
-                            <slot name="params">
+                            <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef>
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
-                            </slot>
-                            <slot name="returnType">
+                            </TypeFnParams>
+                            <TypeFnReturnType>
                               <TypeRef>
                                 <BuiltinType name="int" />
                               </TypeRef>
-                            </slot>
+                            </TypeFnReturnType>
                           </TypeFn>
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="e_0" frame="2" mut name="e">
-                      <TypeFn name="fn$2">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <TypeFn name="fn$0">
-                                <slot name="params">
-                                  <TypeFnParam required>
-                                    <TypeRef>
-                                      <BuiltinType name="int" />
-                                    </TypeRef>
-                                  </TypeFnParam>
-                                </slot>
-                                <slot name="returnType">
-                                  <TypeRef>
-                                    <BuiltinType name="int" />
-                                  </TypeRef>
-                                </slot>
-                              </TypeFn>
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="calleeType">
-              <TypeFn name="fn$2">
-                <slot name="params">
-                  <TypeFnParam required>
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </TypeFnParam>
-                  <TypeFnParam required>
-                    <TypeRef>
-                      <TypeFn name="fn$0">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </TypeRef>
-                  </TypeFnParam>
-                </slot>
-                <slot name="returnType">
-                  <TypeRef>
-                    <BuiltinType name="int" />
-                  </TypeRef>
-                </slot>
-              </TypeFn>
-            </slot>
-            <slot name="args">
-              <ExprCallArg>
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="a_0" frame="2" name="a">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-              <ExprCallArg>
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <TypeFn name="fn$0">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
-                          <TypeFn name="fn$0">
-                            <slot name="params">
-                              <TypeFnParam required>
-                                <TypeRef>
-                                  <BuiltinType name="int" />
-                                </TypeRef>
-                              </TypeFnParam>
-                            </slot>
-                            <slot name="returnType">
-                              <TypeRef>
-                                <BuiltinType name="int" />
-                              </TypeRef>
-                            </slot>
-                          </TypeFn>
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="c_0" frame="2" mut name="c">
-                              <TypeFn name="fn$0">
-                                <slot name="params">
-                                  <TypeFnParam required>
-                                    <TypeRef>
-                                      <BuiltinType name="int" />
-                                    </TypeRef>
-                                  </TypeFnParam>
-                                </slot>
-                                <slot name="returnType">
-                                  <TypeRef>
-                                    <BuiltinType name="int" />
-                                  </TypeRef>
-                                </slot>
-                              </TypeFn>
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </slot>
-      </NodeExpr>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <TypeRef>
-            <BuiltinType name="int" />
-          </TypeRef>
-        </slot>
-        <slot name="body">
-          <ExprCall>
-            <slot name="callee">
-              <NodeExpr>
-                <slot name="type">
-                  <TypeFn codeName="job3_0" name="fn$2">
-                    <slot name="params">
-                      <TypeFnParam name="a" required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                      <TypeFnParam name="b" required>
-                        <TypeRef>
-                          <TypeFn name="fn$0">
-                            <slot name="params">
-                              <TypeFnParam required>
-                                <TypeRef>
-                                  <BuiltinType name="int" />
-                                </TypeRef>
-                              </TypeFnParam>
-                            </slot>
-                            <slot name="returnType">
-                              <TypeRef>
-                                <BuiltinType name="int" />
-                              </TypeRef>
-                            </slot>
-                          </TypeFn>
-                        </TypeRef>
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </slot>
-                  </TypeFn>
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="job3_0" frame="1" name="job3">
-                      <TypeFn codeName="job3_0" name="fn$2">
-                        <slot name="params">
-                          <TypeFnParam name="a" required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                          <TypeFnParam name="b" required>
-                            <TypeRef>
-                              <TypeFn name="fn$0">
-                                <slot name="params">
-                                  <TypeFnParam required>
-                                    <TypeRef>
-                                      <BuiltinType name="int" />
-                                    </TypeRef>
-                                  </TypeFnParam>
-                                </slot>
-                                <slot name="returnType">
-                                  <TypeRef>
-                                    <BuiltinType name="int" />
-                                  </TypeRef>
-                                </slot>
-                              </TypeFn>
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="calleeType">
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeRef>
+        <BuiltinType name="int" />
+      </TypeRef>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
               <TypeFn codeName="job3_0" name="fn$2">
-                <slot name="params">
+                <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef>
                       <BuiltinType name="int" />
@@ -1645,123 +1524,195 @@ main {
                   <TypeFnParam name="b" required>
                     <TypeRef>
                       <TypeFn name="fn$0">
-                        <slot name="params">
+                        <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef>
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
+                        </TypeFnParams>
+                        <TypeFnReturnType>
                           <TypeRef>
                             <BuiltinType name="int" />
                           </TypeRef>
-                        </slot>
+                        </TypeFnReturnType>
                       </TypeFn>
                     </TypeRef>
                   </TypeFnParam>
-                </slot>
-                <slot name="returnType">
+                </TypeFnParams>
+                <TypeFnReturnType>
                   <TypeRef>
                     <BuiltinType name="int" />
                   </TypeRef>
-                </slot>
+                </TypeFnReturnType>
               </TypeFn>
-            </slot>
-            <slot name="args">
-              <ExprCallArg id="a">
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <BuiltinType name="int" />
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="job3" codeName="job3_0" frame="1">
+                  <TypeFn codeName="job3_0" name="fn$2">
+                    <TypeFnParams>
+                      <TypeFnParam name="a" required>
+                        <TypeRef>
                           <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="a_0" frame="2" name="a">
-                              <BuiltinType name="int" />
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-              <ExprCallArg id="b">
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeRef>
-                      <TypeFn name="fn$0">
-                        <slot name="params">
-                          <TypeFnParam required>
-                            <TypeRef>
-                              <BuiltinType name="int" />
-                            </TypeRef>
-                          </TypeFnParam>
-                        </slot>
-                        <slot name="returnType">
-                          <TypeRef>
-                            <BuiltinType name="int" />
-                          </TypeRef>
-                        </slot>
-                      </TypeFn>
-                    </TypeRef>
-                  </slot>
-                  <slot name="body">
-                    <ExprRef>
-                      <NodeExpr>
-                        <slot name="type">
+                        </TypeRef>
+                      </TypeFnParam>
+                      <TypeFnParam name="b" required>
+                        <TypeRef>
                           <TypeFn name="fn$0">
-                            <slot name="params">
+                            <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef>
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
-                            </slot>
-                            <slot name="returnType">
+                            </TypeFnParams>
+                            <TypeFnReturnType>
                               <TypeRef>
                                 <BuiltinType name="int" />
                               </TypeRef>
-                            </slot>
+                            </TypeFnReturnType>
                           </TypeFn>
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess>
-                            <Var codeName="c_0" frame="2" mut name="c">
-                              <TypeFn name="fn$0">
-                                <slot name="params">
-                                  <TypeFnParam required>
-                                    <TypeRef>
-                                      <BuiltinType name="int" />
-                                    </TypeRef>
-                                  </TypeFnParam>
-                                </slot>
-                                <slot name="returnType">
-                                  <TypeRef>
-                                    <BuiltinType name="int" />
-                                  </TypeRef>
-                                </slot>
-                              </TypeFn>
-                            </Var>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </ExprRef>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </slot>
-      </NodeExpr>
-    </Node>
-  </NodeMain>
-</Node>
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallCalleeType>
+          <TypeFn codeName="job3_0" name="fn$2">
+            <TypeFnParams>
+              <TypeFnParam name="a" required>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </TypeFnParam>
+              <TypeFnParam name="b" required>
+                <TypeRef>
+                  <TypeFn name="fn$0">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeRef>
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <TypeRef>
+                <BuiltinType name="int" />
+              </TypeRef>
+            </TypeFnReturnType>
+          </TypeFn>
+        </ExprCallCalleeType>
+        <ExprCallArgs>
+          <ExprCallArg id="a">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="a" codeName="a_0" frame="2">
+                          <BuiltinType name="int" />
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="b">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeRef>
+                  <TypeFn name="fn$0">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <TypeRef>
+                          <BuiltinType name="int" />
+                        </TypeRef>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef>
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeRef>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprRef>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <TypeFn name="fn$0">
+                        <TypeFnParams>
+                          <TypeFnParam required>
+                            <TypeRef>
+                              <BuiltinType name="int" />
+                            </TypeRef>
+                          </TypeFnParam>
+                        </TypeFnParams>
+                        <TypeFnReturnType>
+                          <TypeRef>
+                            <BuiltinType name="int" />
+                          </TypeRef>
+                        </TypeFnReturnType>
+                      </TypeFn>
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="c" codeName="c_0" mut frame="2">
+                          <TypeFn name="fn$0">
+                            <TypeFnParams>
+                              <TypeFnParam required>
+                                <TypeRef>
+                                  <BuiltinType name="int" />
+                                </TypeRef>
+                              </TypeFnParam>
+                            </TypeFnParams>
+                            <TypeFnReturnType>
+                              <TypeRef>
+                                <BuiltinType name="int" />
+                              </TypeRef>
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprRef>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

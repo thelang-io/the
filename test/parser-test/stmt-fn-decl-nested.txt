@@ -23,554 +23,444 @@ fn test3 () int {
   return test4()
 }
 ======= stdout =======
-<Stmt start="1:1" end="12:2">
-  <StmtFnDecl>
-    <slot name="id">
-      <Token type="ID" val="test1" start="1:4" end="1:9" />
-    </slot>
-    <slot name="params">
-      <StmtFnDeclParam>
-        <slot name="id">
-          <Token type="ID" val="a" start="1:11" end="1:12" />
-        </slot>
-        <slot name="type">
-          <TypeId start="1:14" end="1:17">
-            <Token type="ID" val="int" start="1:14" end="1:17" />
-          </TypeId>
-        </slot>
-      </StmtFnDeclParam>
-      <StmtFnDeclParam>
-        <slot name="id">
-          <Token type="ID" val="b" start="1:19" end="1:20" />
-        </slot>
-        <slot name="init">
-          <StmtExpr start="1:24" end="1:25">
-            <ExprLit>
-              <Token type="LIT_INT_DEC" val="1" start="1:24" end="1:25" />
-            </ExprLit>
-          </StmtExpr>
-        </slot>
-      </StmtFnDeclParam>
-      <StmtFnDeclParam>
-        <slot name="id">
-          <Token type="ID" val="c" start="1:27" end="1:28" />
-        </slot>
-        <slot name="init">
-          <StmtExpr start="1:32" end="1:33">
-            <ExprLit>
-              <Token type="LIT_INT_DEC" val="2" start="1:32" end="1:33" />
-            </ExprLit>
-          </StmtExpr>
-        </slot>
-      </StmtFnDeclParam>
-    </slot>
-    <slot name="returnType">
-      <TypeId start="1:35" end="1:38">
-        <Token type="ID" val="int" start="1:35" end="1:38" />
-      </TypeId>
-    </slot>
-    <slot name="body">
-      <Stmt start="2:3" end="4:4">
-        <StmtFnDecl>
-          <slot name="id">
-            <Token type="ID" val="test2" start="2:6" end="2:11" />
-          </slot>
-          <slot name="params">
-            <StmtFnDeclParam>
-              <slot name="id">
-                <Token type="ID" val="d" start="2:13" end="2:14" />
-              </slot>
-              <slot name="type">
-                <TypeId start="2:16" end="2:19">
-                  <Token type="ID" val="int" start="2:16" end="2:19" />
-                </TypeId>
-              </slot>
-            </StmtFnDeclParam>
-            <StmtFnDeclParam>
-              <slot name="id">
-                <Token type="ID" val="e" start="2:21" end="2:22" />
-              </slot>
-              <slot name="type">
-                <TypeId start="2:24" end="2:27">
-                  <Token type="ID" val="int" start="2:24" end="2:27" />
-                </TypeId>
-              </slot>
-            </StmtFnDeclParam>
-            <StmtFnDeclParam>
-              <slot name="id">
-                <Token type="ID" val="f" start="2:29" end="2:30" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="2:34" end="2:35">
-                  <ExprLit>
-                    <Token type="LIT_INT_DEC" val="3" start="2:34" end="2:35" />
-                  </ExprLit>
-                </StmtExpr>
-              </slot>
-            </StmtFnDeclParam>
-            <StmtFnDeclParam>
-              <slot name="id">
-                <Token type="ID" val="g" start="2:37" end="2:38" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="2:42" end="2:43">
-                  <ExprLit>
-                    <Token type="LIT_INT_DEC" val="4" start="2:42" end="2:43" />
-                  </ExprLit>
-                </StmtExpr>
-              </slot>
-            </StmtFnDeclParam>
-          </slot>
-          <slot name="returnType">
-            <TypeId start="2:45" end="2:48">
-              <Token type="ID" val="int" start="2:45" end="2:48" />
+<StmtFnDecl start="1:1" end="12:2">
+  <StmtFnDeclId>
+    <Token type="ID" val="test1" start="1:4" end="1:9" />
+  </StmtFnDeclId>
+  <StmtFnDeclParams>
+    <StmtFnDeclParam>
+      <StmtFnDeclParamId>
+        <Token type="ID" val="a" start="1:11" end="1:12" />
+      </StmtFnDeclParamId>
+      <StmtFnDeclParamType>
+        <TypeId start="1:14" end="1:17">
+          <Token type="ID" val="int" start="1:14" end="1:17" />
+        </TypeId>
+      </StmtFnDeclParamType>
+    </StmtFnDeclParam>
+    <StmtFnDeclParam>
+      <StmtFnDeclParamId>
+        <Token type="ID" val="b" start="1:19" end="1:20" />
+      </StmtFnDeclParamId>
+      <StmtFnDeclParamInit>
+        <ExprLit start="1:24" end="1:25">
+          <Token type="LIT_INT_DEC" val="1" start="1:24" end="1:25" />
+        </ExprLit>
+      </StmtFnDeclParamInit>
+    </StmtFnDeclParam>
+    <StmtFnDeclParam>
+      <StmtFnDeclParamId>
+        <Token type="ID" val="c" start="1:27" end="1:28" />
+      </StmtFnDeclParamId>
+      <StmtFnDeclParamInit>
+        <ExprLit start="1:32" end="1:33">
+          <Token type="LIT_INT_DEC" val="2" start="1:32" end="1:33" />
+        </ExprLit>
+      </StmtFnDeclParamInit>
+    </StmtFnDeclParam>
+  </StmtFnDeclParams>
+  <StmtFnDeclReturnType>
+    <TypeId start="1:35" end="1:38">
+      <Token type="ID" val="int" start="1:35" end="1:38" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+  <StmtFnDeclBody>
+    <StmtFnDecl start="2:3" end="4:4">
+      <StmtFnDeclId>
+        <Token type="ID" val="test2" start="2:6" end="2:11" />
+      </StmtFnDeclId>
+      <StmtFnDeclParams>
+        <StmtFnDeclParam>
+          <StmtFnDeclParamId>
+            <Token type="ID" val="d" start="2:13" end="2:14" />
+          </StmtFnDeclParamId>
+          <StmtFnDeclParamType>
+            <TypeId start="2:16" end="2:19">
+              <Token type="ID" val="int" start="2:16" end="2:19" />
             </TypeId>
-          </slot>
-          <slot name="body">
-            <Stmt start="3:5" end="3:25">
-              <StmtReturn>
-                <StmtExpr start="3:12" end="3:25">
-                  <ExprBinary>
-                    <slot name="left">
-                      <StmtExpr start="3:12" end="3:21">
-                        <ExprBinary>
-                          <slot name="left">
-                            <StmtExpr start="3:12" end="3:17">
-                              <ExprBinary>
-                                <slot name="left">
-                                  <StmtExpr start="3:12" end="3:13">
-                                    <ExprAccess>
-                                      <Token type="ID" val="d" start="3:12" end="3:13" />
-                                    </ExprAccess>
-                                  </StmtExpr>
-                                </slot>
-                                <slot name="op">
-                                  <Token type="OP_PLUS" val="+" start="3:14" end="3:15" />
-                                </slot>
-                                <slot name="right">
-                                  <StmtExpr start="3:16" end="3:17">
-                                    <ExprAccess>
-                                      <Token type="ID" val="e" start="3:16" end="3:17" />
-                                    </ExprAccess>
-                                  </StmtExpr>
-                                </slot>
-                              </ExprBinary>
-                            </StmtExpr>
-                          </slot>
-                          <slot name="op">
-                            <Token type="OP_PLUS" val="+" start="3:18" end="3:19" />
-                          </slot>
-                          <slot name="right">
-                            <StmtExpr start="3:20" end="3:21">
-                              <ExprAccess>
-                                <Token type="ID" val="f" start="3:20" end="3:21" />
-                              </ExprAccess>
-                            </StmtExpr>
-                          </slot>
-                        </ExprBinary>
-                      </StmtExpr>
-                    </slot>
-                    <slot name="op">
-                      <Token type="OP_PLUS" val="+" start="3:22" end="3:23" />
-                    </slot>
-                    <slot name="right">
-                      <StmtExpr start="3:24" end="3:25">
-                        <ExprAccess>
-                          <Token type="ID" val="g" start="3:24" end="3:25" />
-                        </ExprAccess>
-                      </StmtExpr>
-                    </slot>
+          </StmtFnDeclParamType>
+        </StmtFnDeclParam>
+        <StmtFnDeclParam>
+          <StmtFnDeclParamId>
+            <Token type="ID" val="e" start="2:21" end="2:22" />
+          </StmtFnDeclParamId>
+          <StmtFnDeclParamType>
+            <TypeId start="2:24" end="2:27">
+              <Token type="ID" val="int" start="2:24" end="2:27" />
+            </TypeId>
+          </StmtFnDeclParamType>
+        </StmtFnDeclParam>
+        <StmtFnDeclParam>
+          <StmtFnDeclParamId>
+            <Token type="ID" val="f" start="2:29" end="2:30" />
+          </StmtFnDeclParamId>
+          <StmtFnDeclParamInit>
+            <ExprLit start="2:34" end="2:35">
+              <Token type="LIT_INT_DEC" val="3" start="2:34" end="2:35" />
+            </ExprLit>
+          </StmtFnDeclParamInit>
+        </StmtFnDeclParam>
+        <StmtFnDeclParam>
+          <StmtFnDeclParamId>
+            <Token type="ID" val="g" start="2:37" end="2:38" />
+          </StmtFnDeclParamId>
+          <StmtFnDeclParamInit>
+            <ExprLit start="2:42" end="2:43">
+              <Token type="LIT_INT_DEC" val="4" start="2:42" end="2:43" />
+            </ExprLit>
+          </StmtFnDeclParamInit>
+        </StmtFnDeclParam>
+      </StmtFnDeclParams>
+      <StmtFnDeclReturnType>
+        <TypeId start="2:45" end="2:48">
+          <Token type="ID" val="int" start="2:45" end="2:48" />
+        </TypeId>
+      </StmtFnDeclReturnType>
+      <StmtFnDeclBody>
+        <StmtReturn start="3:5" end="3:25">
+          <ExprBinary start="3:12" end="3:25">
+            <ExprBinaryLeft>
+              <ExprBinary start="3:12" end="3:21">
+                <ExprBinaryLeft>
+                  <ExprBinary start="3:12" end="3:17">
+                    <ExprBinaryLeft>
+                      <ExprAccess start="3:12" end="3:13">
+                        <Token type="ID" val="d" start="3:12" end="3:13" />
+                      </ExprAccess>
+                    </ExprBinaryLeft>
+                    <ExprBinaryOp>
+                      <Token type="OP_PLUS" val="+" start="3:14" end="3:15" />
+                    </ExprBinaryOp>
+                    <ExprBinaryRight>
+                      <ExprAccess start="3:16" end="3:17">
+                        <Token type="ID" val="e" start="3:16" end="3:17" />
+                      </ExprAccess>
+                    </ExprBinaryRight>
                   </ExprBinary>
-                </StmtExpr>
-              </StmtReturn>
-            </Stmt>
-          </slot>
-        </StmtFnDecl>
-      </Stmt>
-      <Stmt start="6:3" end="11:26">
-        <StmtReturn>
-          <StmtExpr start="6:10" end="11:26">
-            <ExprBinary>
-              <slot name="left">
-                <StmtExpr start="6:10" end="10:32">
-                  <ExprBinary>
-                    <slot name="left">
-                      <StmtExpr start="6:10" end="9:25">
-                        <ExprBinary>
-                          <slot name="left">
-                            <StmtExpr start="6:10" end="8:22">
-                              <ExprBinary>
-                                <slot name="left">
-                                  <StmtExpr start="6:10" end="7:16">
-                                    <ExprBinary>
-                                      <slot name="left">
-                                        <StmtExpr start="6:10" end="6:19">
-                                          <ExprBinary>
-                                            <slot name="left">
-                                              <StmtExpr start="6:10" end="6:15">
-                                                <ExprBinary>
-                                                  <slot name="left">
-                                                    <StmtExpr start="6:10" end="6:11">
-                                                      <ExprAccess>
-                                                        <Token type="ID" val="a" start="6:10" end="6:11" />
-                                                      </ExprAccess>
-                                                    </StmtExpr>
-                                                  </slot>
-                                                  <slot name="op">
-                                                    <Token type="OP_PLUS" val="+" start="6:12" end="6:13" />
-                                                  </slot>
-                                                  <slot name="right">
-                                                    <StmtExpr start="6:14" end="6:15">
-                                                      <ExprAccess>
-                                                        <Token type="ID" val="b" start="6:14" end="6:15" />
-                                                      </ExprAccess>
-                                                    </StmtExpr>
-                                                  </slot>
-                                                </ExprBinary>
-                                              </StmtExpr>
-                                            </slot>
-                                            <slot name="op">
-                                              <Token type="OP_PLUS" val="+" start="6:16" end="6:17" />
-                                            </slot>
-                                            <slot name="right">
-                                              <StmtExpr start="6:18" end="6:19">
-                                                <ExprAccess>
-                                                  <Token type="ID" val="c" start="6:18" end="6:19" />
-                                                </ExprAccess>
-                                              </StmtExpr>
-                                            </slot>
-                                          </ExprBinary>
-                                        </StmtExpr>
-                                      </slot>
-                                      <slot name="op">
-                                        <Token type="OP_PLUS" val="+" start="6:20" end="6:21" />
-                                      </slot>
-                                      <slot name="right">
-                                        <StmtExpr start="7:5" end="7:16">
-                                          <ExprCall>
-                                            <slot name="callee">
-                                              <ExprAccess>
-                                                <Token type="ID" val="test2" start="7:5" end="7:10" />
-                                              </ExprAccess>
-                                            </slot>
-                                            <slot name="args">
-                                              <ExprCallArg>
-                                                <slot name="expr">
-                                                  <StmtExpr start="7:11" end="7:12">
-                                                    <ExprLit>
-                                                      <Token type="LIT_INT_DEC" val="5" start="7:11" end="7:12" />
-                                                    </ExprLit>
-                                                  </StmtExpr>
-                                                </slot>
-                                              </ExprCallArg>
-                                              <ExprCallArg>
-                                                <slot name="expr">
-                                                  <StmtExpr start="7:14" end="7:15">
-                                                    <ExprLit>
-                                                      <Token type="LIT_INT_DEC" val="6" start="7:14" end="7:15" />
-                                                    </ExprLit>
-                                                  </StmtExpr>
-                                                </slot>
-                                              </ExprCallArg>
-                                            </slot>
-                                          </ExprCall>
-                                        </StmtExpr>
-                                      </slot>
-                                    </ExprBinary>
-                                  </StmtExpr>
-                                </slot>
-                                <slot name="op">
-                                  <Token type="OP_PLUS" val="+" start="7:17" end="7:18" />
-                                </slot>
-                                <slot name="right">
-                                  <StmtExpr start="8:5" end="8:22">
-                                    <ExprCall>
-                                      <slot name="callee">
-                                        <ExprAccess>
-                                          <Token type="ID" val="test2" start="8:5" end="8:10" />
-                                        </ExprAccess>
-                                      </slot>
-                                      <slot name="args">
-                                        <ExprCallArg>
-                                          <slot name="expr">
-                                            <StmtExpr start="8:11" end="8:12">
-                                              <ExprLit>
-                                                <Token type="LIT_INT_DEC" val="7" start="8:11" end="8:12" />
-                                              </ExprLit>
-                                            </StmtExpr>
-                                          </slot>
-                                        </ExprCallArg>
-                                        <ExprCallArg>
-                                          <slot name="expr">
-                                            <StmtExpr start="8:14" end="8:15">
-                                              <ExprLit>
-                                                <Token type="LIT_INT_DEC" val="8" start="8:14" end="8:15" />
-                                              </ExprLit>
-                                            </StmtExpr>
-                                          </slot>
-                                        </ExprCallArg>
-                                        <ExprCallArg>
-                                          <slot name="id">
-                                            <Token type="ID" val="f" start="8:17" end="8:18" />
-                                          </slot>
-                                          <slot name="expr">
-                                            <StmtExpr start="8:20" end="8:21">
-                                              <ExprLit>
-                                                <Token type="LIT_INT_DEC" val="9" start="8:20" end="8:21" />
-                                              </ExprLit>
-                                            </StmtExpr>
-                                          </slot>
-                                        </ExprCallArg>
-                                      </slot>
-                                    </ExprCall>
-                                  </StmtExpr>
-                                </slot>
-                              </ExprBinary>
-                            </StmtExpr>
-                          </slot>
-                          <slot name="op">
-                            <Token type="OP_PLUS" val="+" start="8:23" end="8:24" />
-                          </slot>
-                          <slot name="right">
-                            <StmtExpr start="9:5" end="9:25">
-                              <ExprCall>
-                                <slot name="callee">
-                                  <ExprAccess>
-                                    <Token type="ID" val="test2" start="9:5" end="9:10" />
+                </ExprBinaryLeft>
+                <ExprBinaryOp>
+                  <Token type="OP_PLUS" val="+" start="3:18" end="3:19" />
+                </ExprBinaryOp>
+                <ExprBinaryRight>
+                  <ExprAccess start="3:20" end="3:21">
+                    <Token type="ID" val="f" start="3:20" end="3:21" />
+                  </ExprAccess>
+                </ExprBinaryRight>
+              </ExprBinary>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_PLUS" val="+" start="3:22" end="3:23" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprAccess start="3:24" end="3:25">
+                <Token type="ID" val="g" start="3:24" end="3:25" />
+              </ExprAccess>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtReturn>
+      </StmtFnDeclBody>
+    </StmtFnDecl>
+    <StmtReturn start="6:3" end="11:26">
+      <ExprBinary start="6:10" end="11:26">
+        <ExprBinaryLeft>
+          <ExprBinary start="6:10" end="10:32">
+            <ExprBinaryLeft>
+              <ExprBinary start="6:10" end="9:25">
+                <ExprBinaryLeft>
+                  <ExprBinary start="6:10" end="8:22">
+                    <ExprBinaryLeft>
+                      <ExprBinary start="6:10" end="7:16">
+                        <ExprBinaryLeft>
+                          <ExprBinary start="6:10" end="6:19">
+                            <ExprBinaryLeft>
+                              <ExprBinary start="6:10" end="6:15">
+                                <ExprBinaryLeft>
+                                  <ExprAccess start="6:10" end="6:11">
+                                    <Token type="ID" val="a" start="6:10" end="6:11" />
                                   </ExprAccess>
-                                </slot>
-                                <slot name="args">
-                                  <ExprCallArg>
-                                    <slot name="expr">
-                                      <StmtExpr start="9:11" end="9:13">
-                                        <ExprLit>
-                                          <Token type="LIT_INT_DEC" val="10" start="9:11" end="9:13" />
-                                        </ExprLit>
-                                      </StmtExpr>
-                                    </slot>
-                                  </ExprCallArg>
-                                  <ExprCallArg>
-                                    <slot name="expr">
-                                      <StmtExpr start="9:15" end="9:17">
-                                        <ExprLit>
-                                          <Token type="LIT_INT_DEC" val="11" start="9:15" end="9:17" />
-                                        </ExprLit>
-                                      </StmtExpr>
-                                    </slot>
-                                  </ExprCallArg>
-                                  <ExprCallArg>
-                                    <slot name="id">
-                                      <Token type="ID" val="g" start="9:19" end="9:20" />
-                                    </slot>
-                                    <slot name="expr">
-                                      <StmtExpr start="9:22" end="9:24">
-                                        <ExprLit>
-                                          <Token type="LIT_INT_DEC" val="12" start="9:22" end="9:24" />
-                                        </ExprLit>
-                                      </StmtExpr>
-                                    </slot>
-                                  </ExprCallArg>
-                                </slot>
-                              </ExprCall>
-                            </StmtExpr>
-                          </slot>
-                        </ExprBinary>
-                      </StmtExpr>
-                    </slot>
-                    <slot name="op">
-                      <Token type="OP_PLUS" val="+" start="9:26" end="9:27" />
-                    </slot>
-                    <slot name="right">
-                      <StmtExpr start="10:5" end="10:32">
-                        <ExprCall>
-                          <slot name="callee">
-                            <ExprAccess>
-                              <Token type="ID" val="test2" start="10:5" end="10:10" />
-                            </ExprAccess>
-                          </slot>
-                          <slot name="args">
-                            <ExprCallArg>
-                              <slot name="expr">
-                                <StmtExpr start="10:11" end="10:13">
-                                  <ExprLit>
-                                    <Token type="LIT_INT_DEC" val="13" start="10:11" end="10:13" />
+                                </ExprBinaryLeft>
+                                <ExprBinaryOp>
+                                  <Token type="OP_PLUS" val="+" start="6:12" end="6:13" />
+                                </ExprBinaryOp>
+                                <ExprBinaryRight>
+                                  <ExprAccess start="6:14" end="6:15">
+                                    <Token type="ID" val="b" start="6:14" end="6:15" />
+                                  </ExprAccess>
+                                </ExprBinaryRight>
+                              </ExprBinary>
+                            </ExprBinaryLeft>
+                            <ExprBinaryOp>
+                              <Token type="OP_PLUS" val="+" start="6:16" end="6:17" />
+                            </ExprBinaryOp>
+                            <ExprBinaryRight>
+                              <ExprAccess start="6:18" end="6:19">
+                                <Token type="ID" val="c" start="6:18" end="6:19" />
+                              </ExprAccess>
+                            </ExprBinaryRight>
+                          </ExprBinary>
+                        </ExprBinaryLeft>
+                        <ExprBinaryOp>
+                          <Token type="OP_PLUS" val="+" start="6:20" end="6:21" />
+                        </ExprBinaryOp>
+                        <ExprBinaryRight>
+                          <ExprCall start="7:5" end="7:16">
+                            <ExprCallCallee>
+                              <ExprAccess start="7:5" end="7:10">
+                                <Token type="ID" val="test2" start="7:5" end="7:10" />
+                              </ExprAccess>
+                            </ExprCallCallee>
+                            <ExprCallArgs>
+                              <ExprCallArg>
+                                <ExprCallArgExpr>
+                                  <ExprLit start="7:11" end="7:12">
+                                    <Token type="LIT_INT_DEC" val="5" start="7:11" end="7:12" />
                                   </ExprLit>
-                                </StmtExpr>
-                              </slot>
-                            </ExprCallArg>
-                            <ExprCallArg>
-                              <slot name="expr">
-                                <StmtExpr start="10:15" end="10:17">
-                                  <ExprLit>
-                                    <Token type="LIT_INT_DEC" val="14" start="10:15" end="10:17" />
+                                </ExprCallArgExpr>
+                              </ExprCallArg>
+                              <ExprCallArg>
+                                <ExprCallArgExpr>
+                                  <ExprLit start="7:14" end="7:15">
+                                    <Token type="LIT_INT_DEC" val="6" start="7:14" end="7:15" />
                                   </ExprLit>
-                                </StmtExpr>
-                              </slot>
-                            </ExprCallArg>
-                            <ExprCallArg>
-                              <slot name="id">
-                                <Token type="ID" val="g" start="10:19" end="10:20" />
-                              </slot>
-                              <slot name="expr">
-                                <StmtExpr start="10:22" end="10:24">
-                                  <ExprLit>
-                                    <Token type="LIT_INT_DEC" val="15" start="10:22" end="10:24" />
-                                  </ExprLit>
-                                </StmtExpr>
-                              </slot>
-                            </ExprCallArg>
-                            <ExprCallArg>
-                              <slot name="id">
-                                <Token type="ID" val="f" start="10:26" end="10:27" />
-                              </slot>
-                              <slot name="expr">
-                                <StmtExpr start="10:29" end="10:31">
-                                  <ExprLit>
-                                    <Token type="LIT_INT_DEC" val="16" start="10:29" end="10:31" />
-                                  </ExprLit>
-                                </StmtExpr>
-                              </slot>
-                            </ExprCallArg>
-                          </slot>
-                        </ExprCall>
-                      </StmtExpr>
-                    </slot>
+                                </ExprCallArgExpr>
+                              </ExprCallArg>
+                            </ExprCallArgs>
+                          </ExprCall>
+                        </ExprBinaryRight>
+                      </ExprBinary>
+                    </ExprBinaryLeft>
+                    <ExprBinaryOp>
+                      <Token type="OP_PLUS" val="+" start="7:17" end="7:18" />
+                    </ExprBinaryOp>
+                    <ExprBinaryRight>
+                      <ExprCall start="8:5" end="8:22">
+                        <ExprCallCallee>
+                          <ExprAccess start="8:5" end="8:10">
+                            <Token type="ID" val="test2" start="8:5" end="8:10" />
+                          </ExprAccess>
+                        </ExprCallCallee>
+                        <ExprCallArgs>
+                          <ExprCallArg>
+                            <ExprCallArgExpr>
+                              <ExprLit start="8:11" end="8:12">
+                                <Token type="LIT_INT_DEC" val="7" start="8:11" end="8:12" />
+                              </ExprLit>
+                            </ExprCallArgExpr>
+                          </ExprCallArg>
+                          <ExprCallArg>
+                            <ExprCallArgExpr>
+                              <ExprLit start="8:14" end="8:15">
+                                <Token type="LIT_INT_DEC" val="8" start="8:14" end="8:15" />
+                              </ExprLit>
+                            </ExprCallArgExpr>
+                          </ExprCallArg>
+                          <ExprCallArg>
+                            <ExprCallArgId>
+                              <Token type="ID" val="f" start="8:17" end="8:18" />
+                            </ExprCallArgId>
+                            <ExprCallArgExpr>
+                              <ExprLit start="8:20" end="8:21">
+                                <Token type="LIT_INT_DEC" val="9" start="8:20" end="8:21" />
+                              </ExprLit>
+                            </ExprCallArgExpr>
+                          </ExprCallArg>
+                        </ExprCallArgs>
+                      </ExprCall>
+                    </ExprBinaryRight>
                   </ExprBinary>
-                </StmtExpr>
-              </slot>
-              <slot name="op">
-                <Token type="OP_PLUS" val="+" start="10:33" end="10:34" />
-              </slot>
-              <slot name="right">
-                <StmtExpr start="11:5" end="11:26">
-                  <ExprCall>
-                    <slot name="callee">
-                      <ExprAccess>
-                        <Token type="ID" val="test2" start="11:5" end="11:10" />
+                </ExprBinaryLeft>
+                <ExprBinaryOp>
+                  <Token type="OP_PLUS" val="+" start="8:23" end="8:24" />
+                </ExprBinaryOp>
+                <ExprBinaryRight>
+                  <ExprCall start="9:5" end="9:25">
+                    <ExprCallCallee>
+                      <ExprAccess start="9:5" end="9:10">
+                        <Token type="ID" val="test2" start="9:5" end="9:10" />
                       </ExprAccess>
-                    </slot>
-                    <slot name="args">
+                    </ExprCallCallee>
+                    <ExprCallArgs>
                       <ExprCallArg>
-                        <slot name="expr">
-                          <StmtExpr start="11:11" end="11:13">
-                            <ExprLit>
-                              <Token type="LIT_INT_DEC" val="17" start="11:11" end="11:13" />
-                            </ExprLit>
-                          </StmtExpr>
-                        </slot>
+                        <ExprCallArgExpr>
+                          <ExprLit start="9:11" end="9:13">
+                            <Token type="LIT_INT_DEC" val="10" start="9:11" end="9:13" />
+                          </ExprLit>
+                        </ExprCallArgExpr>
                       </ExprCallArg>
                       <ExprCallArg>
-                        <slot name="expr">
-                          <StmtExpr start="11:15" end="11:17">
-                            <ExprLit>
-                              <Token type="LIT_INT_DEC" val="18" start="11:15" end="11:17" />
-                            </ExprLit>
-                          </StmtExpr>
-                        </slot>
+                        <ExprCallArgExpr>
+                          <ExprLit start="9:15" end="9:17">
+                            <Token type="LIT_INT_DEC" val="11" start="9:15" end="9:17" />
+                          </ExprLit>
+                        </ExprCallArgExpr>
                       </ExprCallArg>
                       <ExprCallArg>
-                        <slot name="expr">
-                          <StmtExpr start="11:19" end="11:21">
-                            <ExprLit>
-                              <Token type="LIT_INT_DEC" val="19" start="11:19" end="11:21" />
-                            </ExprLit>
-                          </StmtExpr>
-                        </slot>
+                        <ExprCallArgId>
+                          <Token type="ID" val="g" start="9:19" end="9:20" />
+                        </ExprCallArgId>
+                        <ExprCallArgExpr>
+                          <ExprLit start="9:22" end="9:24">
+                            <Token type="LIT_INT_DEC" val="12" start="9:22" end="9:24" />
+                          </ExprLit>
+                        </ExprCallArgExpr>
                       </ExprCallArg>
-                      <ExprCallArg>
-                        <slot name="expr">
-                          <StmtExpr start="11:23" end="11:25">
-                            <ExprLit>
-                              <Token type="LIT_INT_DEC" val="20" start="11:23" end="11:25" />
-                            </ExprLit>
-                          </StmtExpr>
-                        </slot>
-                      </ExprCallArg>
-                    </slot>
+                    </ExprCallArgs>
                   </ExprCall>
-                </StmtExpr>
-              </slot>
-            </ExprBinary>
-          </StmtExpr>
-        </StmtReturn>
-      </Stmt>
-    </slot>
-  </StmtFnDecl>
-</Stmt>
-<Stmt start="13:1" end="23:2">
-  <StmtFnDecl>
-    <slot name="id">
-      <Token type="ID" val="test3" start="13:4" end="13:9" />
-    </slot>
-    <slot name="returnType">
-      <TypeId start="13:13" end="13:16">
-        <Token type="ID" val="int" start="13:13" end="13:16" />
-      </TypeId>
-    </slot>
-    <slot name="body">
-      <Stmt start="14:3" end="20:4">
-        <StmtFnDecl>
-          <slot name="id">
-            <Token type="ID" val="test4" start="14:6" end="14:11" />
-          </slot>
-          <slot name="returnType">
-            <TypeId start="14:15" end="14:18">
-              <Token type="ID" val="int" start="14:15" end="14:18" />
+                </ExprBinaryRight>
+              </ExprBinary>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_PLUS" val="+" start="9:26" end="9:27" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprCall start="10:5" end="10:32">
+                <ExprCallCallee>
+                  <ExprAccess start="10:5" end="10:10">
+                    <Token type="ID" val="test2" start="10:5" end="10:10" />
+                  </ExprAccess>
+                </ExprCallCallee>
+                <ExprCallArgs>
+                  <ExprCallArg>
+                    <ExprCallArgExpr>
+                      <ExprLit start="10:11" end="10:13">
+                        <Token type="LIT_INT_DEC" val="13" start="10:11" end="10:13" />
+                      </ExprLit>
+                    </ExprCallArgExpr>
+                  </ExprCallArg>
+                  <ExprCallArg>
+                    <ExprCallArgExpr>
+                      <ExprLit start="10:15" end="10:17">
+                        <Token type="LIT_INT_DEC" val="14" start="10:15" end="10:17" />
+                      </ExprLit>
+                    </ExprCallArgExpr>
+                  </ExprCallArg>
+                  <ExprCallArg>
+                    <ExprCallArgId>
+                      <Token type="ID" val="g" start="10:19" end="10:20" />
+                    </ExprCallArgId>
+                    <ExprCallArgExpr>
+                      <ExprLit start="10:22" end="10:24">
+                        <Token type="LIT_INT_DEC" val="15" start="10:22" end="10:24" />
+                      </ExprLit>
+                    </ExprCallArgExpr>
+                  </ExprCallArg>
+                  <ExprCallArg>
+                    <ExprCallArgId>
+                      <Token type="ID" val="f" start="10:26" end="10:27" />
+                    </ExprCallArgId>
+                    <ExprCallArgExpr>
+                      <ExprLit start="10:29" end="10:31">
+                        <Token type="LIT_INT_DEC" val="16" start="10:29" end="10:31" />
+                      </ExprLit>
+                    </ExprCallArgExpr>
+                  </ExprCallArg>
+                </ExprCallArgs>
+              </ExprCall>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_PLUS" val="+" start="10:33" end="10:34" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprCall start="11:5" end="11:26">
+            <ExprCallCallee>
+              <ExprAccess start="11:5" end="11:10">
+                <Token type="ID" val="test2" start="11:5" end="11:10" />
+              </ExprAccess>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg>
+                <ExprCallArgExpr>
+                  <ExprLit start="11:11" end="11:13">
+                    <Token type="LIT_INT_DEC" val="17" start="11:11" end="11:13" />
+                  </ExprLit>
+                </ExprCallArgExpr>
+              </ExprCallArg>
+              <ExprCallArg>
+                <ExprCallArgExpr>
+                  <ExprLit start="11:15" end="11:17">
+                    <Token type="LIT_INT_DEC" val="18" start="11:15" end="11:17" />
+                  </ExprLit>
+                </ExprCallArgExpr>
+              </ExprCallArg>
+              <ExprCallArg>
+                <ExprCallArgExpr>
+                  <ExprLit start="11:19" end="11:21">
+                    <Token type="LIT_INT_DEC" val="19" start="11:19" end="11:21" />
+                  </ExprLit>
+                </ExprCallArgExpr>
+              </ExprCallArg>
+              <ExprCallArg>
+                <ExprCallArgExpr>
+                  <ExprLit start="11:23" end="11:25">
+                    <Token type="LIT_INT_DEC" val="20" start="11:23" end="11:25" />
+                  </ExprLit>
+                </ExprCallArgExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtReturn>
+  </StmtFnDeclBody>
+</StmtFnDecl>
+<StmtFnDecl start="13:1" end="23:2">
+  <StmtFnDeclId>
+    <Token type="ID" val="test3" start="13:4" end="13:9" />
+  </StmtFnDeclId>
+  <StmtFnDeclReturnType>
+    <TypeId start="13:13" end="13:16">
+      <Token type="ID" val="int" start="13:13" end="13:16" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+  <StmtFnDeclBody>
+    <StmtFnDecl start="14:3" end="20:4">
+      <StmtFnDeclId>
+        <Token type="ID" val="test4" start="14:6" end="14:11" />
+      </StmtFnDeclId>
+      <StmtFnDeclReturnType>
+        <TypeId start="14:15" end="14:18">
+          <Token type="ID" val="int" start="14:15" end="14:18" />
+        </TypeId>
+      </StmtFnDeclReturnType>
+      <StmtFnDeclBody>
+        <StmtFnDecl start="15:5" end="17:6">
+          <StmtFnDeclId>
+            <Token type="ID" val="test5" start="15:8" end="15:13" />
+          </StmtFnDeclId>
+          <StmtFnDeclReturnType>
+            <TypeId start="15:17" end="15:20">
+              <Token type="ID" val="int" start="15:17" end="15:20" />
             </TypeId>
-          </slot>
-          <slot name="body">
-            <Stmt start="15:5" end="17:6">
-              <StmtFnDecl>
-                <slot name="id">
-                  <Token type="ID" val="test5" start="15:8" end="15:13" />
-                </slot>
-                <slot name="returnType">
-                  <TypeId start="15:17" end="15:20">
-                    <Token type="ID" val="int" start="15:17" end="15:20" />
-                  </TypeId>
-                </slot>
-                <slot name="body">
-                  <Stmt start="16:7" end="16:15">
-                    <StmtReturn>
-                      <StmtExpr start="16:14" end="16:15">
-                        <ExprLit>
-                          <Token type="LIT_INT_DEC" val="4" start="16:14" end="16:15" />
-                        </ExprLit>
-                      </StmtExpr>
-                    </StmtReturn>
-                  </Stmt>
-                </slot>
-              </StmtFnDecl>
-            </Stmt>
-            <Stmt start="19:5" end="19:19">
-              <StmtReturn>
-                <StmtExpr start="19:12" end="19:19">
-                  <ExprCall>
-                    <slot name="callee">
-                      <ExprAccess>
-                        <Token type="ID" val="test5" start="19:12" end="19:17" />
-                      </ExprAccess>
-                    </slot>
-                  </ExprCall>
-                </StmtExpr>
-              </StmtReturn>
-            </Stmt>
-          </slot>
+          </StmtFnDeclReturnType>
+          <StmtFnDeclBody>
+            <StmtReturn start="16:7" end="16:15">
+              <ExprLit start="16:14" end="16:15">
+                <Token type="LIT_INT_DEC" val="4" start="16:14" end="16:15" />
+              </ExprLit>
+            </StmtReturn>
+          </StmtFnDeclBody>
         </StmtFnDecl>
-      </Stmt>
-      <Stmt start="22:3" end="22:17">
-        <StmtReturn>
-          <StmtExpr start="22:10" end="22:17">
-            <ExprCall>
-              <slot name="callee">
-                <ExprAccess>
-                  <Token type="ID" val="test4" start="22:10" end="22:15" />
-                </ExprAccess>
-              </slot>
-            </ExprCall>
-          </StmtExpr>
+        <StmtReturn start="19:5" end="19:19">
+          <ExprCall start="19:12" end="19:19">
+            <ExprCallCallee>
+              <ExprAccess start="19:12" end="19:17">
+                <Token type="ID" val="test5" start="19:12" end="19:17" />
+              </ExprAccess>
+            </ExprCallCallee>
+          </ExprCall>
         </StmtReturn>
-      </Stmt>
-    </slot>
-  </StmtFnDecl>
-</Stmt>
+      </StmtFnDeclBody>
+    </StmtFnDecl>
+    <StmtReturn start="22:3" end="22:17">
+      <ExprCall start="22:10" end="22:17">
+        <ExprCallCallee>
+          <ExprAccess start="22:10" end="22:15">
+            <Token type="ID" val="test4" start="22:10" end="22:15" />
+          </ExprAccess>
+        </ExprCallCallee>
+      </ExprCall>
+    </StmtReturn>
+  </StmtFnDeclBody>
+</StmtFnDecl>

@@ -5,75 +5,61 @@ b := Test2{
   age: 45
 }
 ======= stdout =======
-<Stmt start="1:1" end="1:17">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="a" start="1:1" end="1:2" />
-    </slot>
-    <slot name="init">
-      <StmtExpr start="1:6" end="1:17">
-        <ExprObj>
-          <slot name="id">
-            <Token type="ID" val="Test1" start="1:6" end="1:11" />
-          </slot>
-          <slot name="props">
-            <ExprObjProp>
-              <slot name="id">
-                <Token type="ID" val="a" start="1:12" end="1:13" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="1:15" end="1:16">
-                  <ExprLit>
-                    <Token type="LIT_INT_DEC" val="2" start="1:15" end="1:16" />
-                  </ExprLit>
-                </StmtExpr>
-              </slot>
-            </ExprObjProp>
-          </slot>
-        </ExprObj>
-      </StmtExpr>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="2:1" end="5:2">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="b" start="2:1" end="2:2" />
-    </slot>
-    <slot name="init">
-      <StmtExpr start="2:6" end="5:2">
-        <ExprObj>
-          <slot name="id">
-            <Token type="ID" val="Test2" start="2:6" end="2:11" />
-          </slot>
-          <slot name="props">
-            <ExprObjProp>
-              <slot name="id">
-                <Token type="ID" val="name" start="3:3" end="3:7" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="3:9" end="3:15">
-                  <ExprLit>
-                    <Token type="LIT_STR" val="\"Tina\"" start="3:9" end="3:15" />
-                  </ExprLit>
-                </StmtExpr>
-              </slot>
-            </ExprObjProp>
-            <ExprObjProp>
-              <slot name="id">
-                <Token type="ID" val="age" start="4:3" end="4:6" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="4:8" end="4:10">
-                  <ExprLit>
-                    <Token type="LIT_INT_DEC" val="45" start="4:8" end="4:10" />
-                  </ExprLit>
-                </StmtExpr>
-              </slot>
-            </ExprObjProp>
-          </slot>
-        </ExprObj>
-      </StmtExpr>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
+<StmtVarDecl start="1:1" end="1:17">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprObj start="1:6" end="1:17">
+      <ExprObjId>
+        <Token type="ID" val="Test1" start="1:6" end="1:11" />
+      </ExprObjId>
+      <ExprObjProps>
+        <ExprObjProp>
+          <ExprObjPropId>
+            <Token type="ID" val="a" start="1:12" end="1:13" />
+          </ExprObjPropId>
+          <ExprObjPropInit>
+            <ExprLit start="1:15" end="1:16">
+              <Token type="LIT_INT_DEC" val="2" start="1:15" end="1:16" />
+            </ExprLit>
+          </ExprObjPropInit>
+        </ExprObjProp>
+      </ExprObjProps>
+    </ExprObj>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="2:1" end="5:2">
+  <StmtVarDeclId>
+    <Token type="ID" val="b" start="2:1" end="2:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprObj start="2:6" end="5:2">
+      <ExprObjId>
+        <Token type="ID" val="Test2" start="2:6" end="2:11" />
+      </ExprObjId>
+      <ExprObjProps>
+        <ExprObjProp>
+          <ExprObjPropId>
+            <Token type="ID" val="name" start="3:3" end="3:7" />
+          </ExprObjPropId>
+          <ExprObjPropInit>
+            <ExprLit start="3:9" end="3:15">
+              <Token type="LIT_STR" val="\"Tina\"" start="3:9" end="3:15" />
+            </ExprLit>
+          </ExprObjPropInit>
+        </ExprObjProp>
+        <ExprObjProp>
+          <ExprObjPropId>
+            <Token type="ID" val="age" start="4:3" end="4:6" />
+          </ExprObjPropId>
+          <ExprObjPropInit>
+            <ExprLit start="4:8" end="4:10">
+              <Token type="LIT_INT_DEC" val="45" start="4:8" end="4:10" />
+            </ExprLit>
+          </ExprObjPropInit>
+        </ExprObjProp>
+      </ExprObjProps>
+    </ExprObj>
+  </StmtVarDeclInit>
+</StmtVarDecl>

@@ -3,83 +3,71 @@ main {
   print("Dog", "Cat", "Hamster", separator: " ")
 }
 ======= stdout =======
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <BuiltinType name="void" />
-        </slot>
-        <slot name="body">
-          <ExprCall>
-            <slot name="callee">
-              <NodeExpr>
-                <slot name="type">
-                  <BuiltinType name="print" />
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <BuiltinVar name="print" />
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="calleeType">
+<NodeMain>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
               <BuiltinType name="print" />
-            </slot>
-            <slot name="args">
-              <ExprCallArg id="items">
-                <NodeExpr>
-                  <slot name="type">
-                    <BuiltinType name="str" />
-                  </slot>
-                  <slot name="body">
-                    <ExprLit type="STR">
-                      "Dog"
-                    </ExprLit>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-              <ExprCallArg id="items">
-                <NodeExpr>
-                  <slot name="type">
-                    <BuiltinType name="str" />
-                  </slot>
-                  <slot name="body">
-                    <ExprLit type="STR">
-                      "Cat"
-                    </ExprLit>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-              <ExprCallArg id="items">
-                <NodeExpr>
-                  <slot name="type">
-                    <BuiltinType name="str" />
-                  </slot>
-                  <slot name="body">
-                    <ExprLit type="STR">
-                      "Hamster"
-                    </ExprLit>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-              <ExprCallArg id="separator">
-                <NodeExpr>
-                  <slot name="type">
-                    <BuiltinType name="str" />
-                  </slot>
-                  <slot name="body">
-                    <ExprLit type="STR">
-                      " "
-                    </ExprLit>
-                  </slot>
-                </NodeExpr>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </slot>
-      </NodeExpr>
-    </Node>
-  </NodeMain>
-</Node>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <BuiltinVar name="print" />
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallCalleeType>
+          <BuiltinType name="print" />
+        </ExprCallCalleeType>
+        <ExprCallArgs>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Dog\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Cat\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Hamster\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="separator">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\" \"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

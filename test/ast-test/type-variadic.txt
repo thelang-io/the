@@ -10,165 +10,149 @@ main {
   a6: fn (int, (fn (int, (int)...) int)...) int
 }
 ======= stdout =======
-<Node>
-  <NodeObjDecl>
-    <TypeObj codeName="Test_0" name="Test">
-      <TypeObjField name="a">
-        <BuiltinType name="int" />
-      </TypeObjField>
-    </TypeObj>
-  </NodeObjDecl>
-</Node>
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a1_0" frame="2" name="a1">
-            <TypeFn name="fn$0">
-              <slot name="params">
-                <TypeFnParam variadic>
-                  <BuiltinType name="int" />
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeObjField name="a">
+      <BuiltinType name="int" />
+    </TypeObjField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a1" codeName="a1_0" frame="2">
+        <TypeFn name="fn$0">
+          <TypeFnParams>
+            <TypeFnParam variadic>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="int" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a2" codeName="a2_0" frame="2">
+        <TypeFn name="fn$0">
+          <TypeFnParams>
+            <TypeFnParam variadic>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="int" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a3" codeName="a3_0" frame="2">
+        <TypeFn name="fn$1">
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam variadic>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeObjField name="a">
                 <BuiltinType name="int" />
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a2_0" frame="2" name="a2">
-            <TypeFn name="fn$0">
-              <slot name="params">
-                <TypeFnParam variadic>
-                  <BuiltinType name="int" />
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
+              </TypeObjField>
+            </TypeObj>
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a4" codeName="a4_0" frame="2">
+        <TypeFn name="fn$1">
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam variadic>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeObjField name="a">
                 <BuiltinType name="int" />
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a3_0" frame="2" name="a3">
-            <TypeFn name="fn$1">
-              <slot name="params">
-                <TypeFnParam required>
-                  <BuiltinType name="int" />
-                </TypeFnParam>
-                <TypeFnParam variadic>
-                  <BuiltinType name="int" />
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <TypeObj codeName="Test_0" name="Test">
-                  <TypeObjField name="a">
+              </TypeObjField>
+            </TypeObj>
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a5" codeName="a5_0" frame="2">
+        <TypeFn name="fn$2">
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam variadic>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam variadic>
                     <BuiltinType name="int" />
-                  </TypeObjField>
-                </TypeObj>
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a4_0" frame="2" name="a4">
-            <TypeFn name="fn$1">
-              <slot name="params">
-                <TypeFnParam required>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
                   <BuiltinType name="int" />
-                </TypeFnParam>
-                <TypeFnParam variadic>
-                  <BuiltinType name="int" />
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <TypeObj codeName="Test_0" name="Test">
-                  <TypeObjField name="a">
+                </TypeFnReturnType>
+              </TypeFn>
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="int" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a6" codeName="a6_0" frame="2">
+        <TypeFn name="fn$4">
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam variadic>
+              <TypeFn name="fn$3">
+                <TypeFnParams>
+                  <TypeFnParam required>
                     <BuiltinType name="int" />
-                  </TypeObjField>
-                </TypeObj>
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a5_0" frame="2" name="a5">
-            <TypeFn name="fn$2">
-              <slot name="params">
-                <TypeFnParam required>
+                  </TypeFnParam>
+                  <TypeFnParam variadic>
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
                   <BuiltinType name="int" />
-                </TypeFnParam>
-                <TypeFnParam variadic>
-                  <TypeFn name="fn$0">
-                    <slot name="params">
-                      <TypeFnParam variadic>
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <BuiltinType name="int" />
-                    </slot>
-                  </TypeFn>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <BuiltinType name="int" />
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a6_0" frame="2" name="a6">
-            <TypeFn name="fn$4">
-              <slot name="params">
-                <TypeFnParam required>
-                  <BuiltinType name="int" />
-                </TypeFnParam>
-                <TypeFnParam variadic>
-                  <TypeFn name="fn$3">
-                    <slot name="params">
-                      <TypeFnParam required>
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                      <TypeFnParam variadic>
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                    </slot>
-                    <slot name="returnType">
-                      <BuiltinType name="int" />
-                    </slot>
-                  </TypeFn>
-                </TypeFnParam>
-              </slot>
-              <slot name="returnType">
-                <BuiltinType name="int" />
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-  </NodeMain>
-</Node>
+                </TypeFnReturnType>
+              </TypeFn>
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="int" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+</NodeMain>

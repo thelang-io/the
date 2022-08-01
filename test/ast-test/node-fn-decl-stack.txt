@@ -20,400 +20,363 @@ main {
   b + test()
 }
 ======= stdout =======
-<Node>
-  <NodeObjDecl>
-    <TypeObj codeName="Test_0" name="Test">
-      <TypeObjField name="a">
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeObjField name="a">
+      <BuiltinType name="int" />
+    </TypeObjField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="job" codeName="job_0" frame="1">
+      <TypeFn codeName="job_0" name="fn$0">
+        <TypeFnReturnType>
+          <BuiltinType name="int" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclBody>
+    <NodeReturn>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="2" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeReturn>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
         <BuiltinType name="int" />
-      </TypeObjField>
-    </TypeObj>
-  </NodeObjDecl>
-</Node>
-<Node>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="0" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="1" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="c" codeName="c_0" frame="2">
+        <BuiltinType name="str" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="str" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="STR" value="\"str\"" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
   <NodeFnDecl>
-    <slot name="var">
-      <Var codeName="job_0" frame="1" name="job">
-        <TypeFn codeName="job_0" name="fn$0">
-          <slot name="returnType">
+    <NodeFnDeclVar>
+      <Var name="test" codeName="mainSDtest_0" frame="2">
+        <TypeFn codeName="mainSDtest_0" name="fn$0">
+          <TypeFnReturnType>
             <BuiltinType name="int" />
-          </slot>
+          </TypeFnReturnType>
         </TypeFn>
       </Var>
-    </slot>
-    <slot name="body">
-      <Node>
-        <NodeReturn>
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="int" />
-            </slot>
-            <slot name="body">
-              <ExprLit type="INT_DEC">
-                2
-              </ExprLit>
-            </slot>
-          </NodeExpr>
-        </NodeReturn>
-      </Node>
-    </slot>
-  </NodeFnDecl>
-</Node>
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
+    </NodeFnDeclVar>
+    <NodeFnDeclCtx>
+      <Var name="c" codeName="c_0" frame="2">
+        <BuiltinType name="str" />
+      </Var>
+      <Var name="a" codeName="a_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+      <Var name="job" codeName="job_0" frame="1">
+        <TypeFn codeName="job_0" name="fn$0">
+          <TypeFnReturnType>
             <BuiltinType name="int" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="int" />
-            </slot>
-            <slot name="body">
-              <ExprLit type="INT_DEC">
-                0
-              </ExprLit>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeFnDeclCtx>
+    <NodeFnDeclBody>
       <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="b_0" frame="2" name="b">
-            <BuiltinType name="int" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="int" />
-            </slot>
-            <slot name="body">
-              <ExprLit type="INT_DEC">
-                1
-              </ExprLit>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="c_0" frame="2" name="c">
-            <BuiltinType name="str" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="str" />
-            </slot>
-            <slot name="body">
-              <ExprLit type="STR">
-                "str"
-              </ExprLit>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeFnDecl>
-        <slot name="var">
-          <Var codeName="mainSDtest_0" frame="2" name="test">
-            <TypeFn codeName="mainSDtest_0" name="fn$0">
-              <slot name="returnType">
+        <NodeVarDeclVar>
+          <Var name="t" codeName="t_0" frame="3">
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeObjField name="a">
                 <BuiltinType name="int" />
-              </slot>
-            </TypeFn>
+              </TypeObjField>
+            </TypeObj>
           </Var>
-        </slot>
-        <slot name="stack">
-          <Var codeName="c_0" frame="2" name="c">
-            <BuiltinType name="str" />
-          </Var>
-          <Var codeName="a_0" frame="2" name="a">
-            <BuiltinType name="int" />
-          </Var>
-          <Var codeName="job_0" frame="1" name="job">
-            <TypeFn codeName="job_0" name="fn$0">
-              <slot name="returnType">
-                <BuiltinType name="int" />
-              </slot>
-            </TypeFn>
-          </Var>
-        </slot>
-        <slot name="body">
-          <Node>
-            <NodeVarDecl>
-              <slot name="var">
-                <Var codeName="t_0" frame="3" name="t">
+        </NodeVarDeclVar>
+        <NodeVarDeclInit>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeObjField name="a">
+                  <BuiltinType name="int" />
+                </TypeObjField>
+              </TypeObj>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprObj>
+                <ExprObjType>
                   <TypeObj codeName="Test_0" name="Test">
                     <TypeObjField name="a">
                       <BuiltinType name="int" />
                     </TypeObjField>
                   </TypeObj>
-                </Var>
-              </slot>
-              <slot name="init">
-                <NodeExpr>
-                  <slot name="type">
-                    <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="a">
+                </ExprObjType>
+                <ExprObjProps>
+                  <ExprObjProp id="a">
+                    <NodeExpr>
+                      <NodeExprType>
                         <BuiltinType name="int" />
-                      </TypeObjField>
-                    </TypeObj>
-                  </slot>
-                  <slot name="body">
-                    <ExprObj>
-                      <slot name="type">
-                        <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
-                            <BuiltinType name="int" />
-                          </TypeObjField>
-                        </TypeObj>
-                      </slot>
-                      <slot name="props">
-                        <ExprObjProp>
-                          <slot name="id">
-                            a
-                          </slot>
-                          <slot name="init">
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprBinary op="ADD">
+                          <ExprBinaryLeft>
                             <NodeExpr>
-                              <slot name="type">
+                              <NodeExprType>
                                 <BuiltinType name="int" />
-                              </slot>
-                              <slot name="body">
-                                <ExprBinary op="ADD">
-                                  <slot name="left">
-                                    <NodeExpr>
-                                      <slot name="type">
-                                        <BuiltinType name="int" />
-                                      </slot>
-                                      <slot name="body">
-                                        <ExprAccess>
-                                          <Var codeName="a_0" frame="2" name="a">
-                                            <BuiltinType name="int" />
-                                          </Var>
-                                        </ExprAccess>
-                                      </slot>
-                                    </NodeExpr>
-                                  </slot>
-                                  <slot name="right">
-                                    <NodeExpr>
-                                      <slot name="type">
-                                        <BuiltinType name="int" />
-                                      </slot>
-                                      <slot name="body">
-                                        <ExprLit type="INT_DEC">
-                                          1
-                                        </ExprLit>
-                                      </slot>
-                                    </NodeExpr>
-                                  </slot>
-                                </ExprBinary>
-                              </slot>
-                            </NodeExpr>
-                          </slot>
-                        </ExprObjProp>
-                      </slot>
-                    </ExprObj>
-                  </slot>
-                </NodeExpr>
-              </slot>
-            </NodeVarDecl>
-          </Node>
-          <Node>
-            <NodeReturn>
-              <NodeExpr>
-                <slot name="type">
-                  <BuiltinType name="int" />
-                </slot>
-                <slot name="body">
-                  <ExprBinary op="ADD">
-                    <slot name="left">
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprBinary op="ADD">
-                            <slot name="left">
-                              <NodeExpr>
-                                <slot name="type">
-                                  <BuiltinType name="int" />
-                                </slot>
-                                <slot name="body">
-                                  <ExprAccess prop="a">
-                                    <NodeExpr>
-                                      <slot name="type">
-                                        <TypeObj codeName="Test_0" name="Test">
-                                          <TypeObjField name="a">
-                                            <BuiltinType name="int" />
-                                          </TypeObjField>
-                                        </TypeObj>
-                                      </slot>
-                                      <slot name="body">
-                                        <ExprAccess>
-                                          <Var codeName="t_0" frame="3" name="t">
-                                            <TypeObj codeName="Test_0" name="Test">
-                                              <TypeObjField name="a">
-                                                <BuiltinType name="int" />
-                                              </TypeObjField>
-                                            </TypeObj>
-                                          </Var>
-                                        </ExprAccess>
-                                      </slot>
-                                    </NodeExpr>
-                                  </ExprAccess>
-                                </slot>
-                              </NodeExpr>
-                            </slot>
-                            <slot name="right">
-                              <NodeExpr>
-                                <slot name="type">
-                                  <BuiltinType name="int" />
-                                </slot>
-                                <slot name="body">
-                                  <ExprCall>
-                                    <slot name="callee">
-                                      <NodeExpr>
-                                        <slot name="type">
-                                          <TypeFn codeName="job_0" name="fn$0">
-                                            <slot name="returnType">
-                                              <BuiltinType name="int" />
-                                            </slot>
-                                          </TypeFn>
-                                        </slot>
-                                        <slot name="body">
-                                          <ExprAccess>
-                                            <Var codeName="job_0" frame="1" name="job">
-                                              <TypeFn codeName="job_0" name="fn$0">
-                                                <slot name="returnType">
-                                                  <BuiltinType name="int" />
-                                                </slot>
-                                              </TypeFn>
-                                            </Var>
-                                          </ExprAccess>
-                                        </slot>
-                                      </NodeExpr>
-                                    </slot>
-                                    <slot name="calleeType">
-                                      <TypeFn codeName="job_0" name="fn$0">
-                                        <slot name="returnType">
-                                          <BuiltinType name="int" />
-                                        </slot>
-                                      </TypeFn>
-                                    </slot>
-                                  </ExprCall>
-                                </slot>
-                              </NodeExpr>
-                            </slot>
-                          </ExprBinary>
-                        </slot>
-                      </NodeExpr>
-                    </slot>
-                    <slot name="right">
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="int" />
-                        </slot>
-                        <slot name="body">
-                          <ExprAccess prop="len">
-                            <NodeExpr>
-                              <slot name="type">
-                                <BuiltinType name="str" />
-                              </slot>
-                              <slot name="body">
+                              </NodeExprType>
+                              <NodeExprBody>
                                 <ExprAccess>
-                                  <Var codeName="c_0" frame="2" name="c">
-                                    <BuiltinType name="str" />
+                                  <Var name="a" codeName="a_0" frame="2">
+                                    <BuiltinType name="int" />
                                   </Var>
                                 </ExprAccess>
-                              </slot>
+                              </NodeExprBody>
                             </NodeExpr>
-                          </ExprAccess>
-                        </slot>
-                      </NodeExpr>
-                    </slot>
-                  </ExprBinary>
-                </slot>
-              </NodeExpr>
-            </NodeReturn>
-          </Node>
-        </slot>
-      </NodeFnDecl>
-    </Node>
-    <Node>
-      <NodeExpr>
-        <slot name="type">
-          <BuiltinType name="int" />
-        </slot>
-        <slot name="body">
-          <ExprBinary op="ADD">
-            <slot name="left">
-              <NodeExpr>
-                <slot name="type">
-                  <BuiltinType name="int" />
-                </slot>
-                <slot name="body">
-                  <ExprAccess>
-                    <Var codeName="b_0" frame="2" name="b">
-                      <BuiltinType name="int" />
-                    </Var>
-                  </ExprAccess>
-                </slot>
-              </NodeExpr>
-            </slot>
-            <slot name="right">
-              <NodeExpr>
-                <slot name="type">
-                  <BuiltinType name="int" />
-                </slot>
-                <slot name="body">
-                  <ExprCall>
-                    <slot name="callee">
+                          </ExprBinaryLeft>
+                          <ExprBinaryRight>
+                            <NodeExpr>
+                              <NodeExprType>
+                                <BuiltinType name="int" />
+                              </NodeExprType>
+                              <NodeExprBody>
+                                <ExprLit type="INT_DEC" value="1" />
+                              </NodeExprBody>
+                            </NodeExpr>
+                          </ExprBinaryRight>
+                        </ExprBinary>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprObjProp>
+                </ExprObjProps>
+              </ExprObj>
+            </NodeExprBody>
+          </NodeExpr>
+        </NodeVarDeclInit>
+      </NodeVarDecl>
+      <NodeReturn>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="int" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprBinary op="ADD">
+              <ExprBinaryLeft>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprBinary op="ADD">
+                      <ExprBinaryLeft>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess prop="a">
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <TypeObj codeName="Test_0" name="Test">
+                                    <TypeObjField name="a">
+                                      <BuiltinType name="int" />
+                                    </TypeObjField>
+                                  </TypeObj>
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprAccess>
+                                    <Var name="t" codeName="t_0" frame="3">
+                                      <TypeObj codeName="Test_0" name="Test">
+                                        <TypeObjField name="a">
+                                          <BuiltinType name="int" />
+                                        </TypeObjField>
+                                      </TypeObj>
+                                    </Var>
+                                  </ExprAccess>
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprBinaryLeft>
+                      <ExprBinaryRight>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprCall>
+                              <ExprCallCallee>
+                                <NodeExpr>
+                                  <NodeExprType>
+                                    <TypeFn codeName="job_0" name="fn$0">
+                                      <TypeFnReturnType>
+                                        <BuiltinType name="int" />
+                                      </TypeFnReturnType>
+                                    </TypeFn>
+                                  </NodeExprType>
+                                  <NodeExprBody>
+                                    <ExprAccess>
+                                      <Var name="job" codeName="job_0" frame="1">
+                                        <TypeFn codeName="job_0" name="fn$0">
+                                          <TypeFnReturnType>
+                                            <BuiltinType name="int" />
+                                          </TypeFnReturnType>
+                                        </TypeFn>
+                                      </Var>
+                                    </ExprAccess>
+                                  </NodeExprBody>
+                                </NodeExpr>
+                              </ExprCallCallee>
+                              <ExprCallCalleeType>
+                                <TypeFn codeName="job_0" name="fn$0">
+                                  <TypeFnReturnType>
+                                    <BuiltinType name="int" />
+                                  </TypeFnReturnType>
+                                </TypeFn>
+                              </ExprCallCalleeType>
+                            </ExprCall>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprBinaryRight>
+                    </ExprBinary>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryLeft>
+              <ExprBinaryRight>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess prop="len">
                       <NodeExpr>
-                        <slot name="type">
-                          <TypeFn codeName="mainSDtest_0" name="fn$0">
-                            <slot name="returnType">
-                              <BuiltinType name="int" />
-                            </slot>
-                          </TypeFn>
-                        </slot>
-                        <slot name="body">
+                        <NodeExprType>
+                          <BuiltinType name="str" />
+                        </NodeExprType>
+                        <NodeExprBody>
                           <ExprAccess>
-                            <Var codeName="mainSDtest_0" frame="2" name="test">
-                              <TypeFn codeName="mainSDtest_0" name="fn$0">
-                                <slot name="returnType">
-                                  <BuiltinType name="int" />
-                                </slot>
-                              </TypeFn>
+                            <Var name="c" codeName="c_0" frame="2">
+                              <BuiltinType name="str" />
                             </Var>
                           </ExprAccess>
-                        </slot>
+                        </NodeExprBody>
                       </NodeExpr>
-                    </slot>
-                    <slot name="calleeType">
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryRight>
+            </ExprBinary>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeReturn>
+    </NodeFnDeclBody>
+  </NodeFnDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="int" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprBinary op="ADD">
+        <ExprBinaryLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="b" codeName="b_0" frame="2">
+                  <BuiltinType name="int" />
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprBinaryLeft>
+        <ExprBinaryRight>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprCall>
+                <ExprCallCallee>
+                  <NodeExpr>
+                    <NodeExprType>
                       <TypeFn codeName="mainSDtest_0" name="fn$0">
-                        <slot name="returnType">
+                        <TypeFnReturnType>
                           <BuiltinType name="int" />
-                        </slot>
+                        </TypeFnReturnType>
                       </TypeFn>
-                    </slot>
-                  </ExprCall>
-                </slot>
-              </NodeExpr>
-            </slot>
-          </ExprBinary>
-        </slot>
-      </NodeExpr>
-    </Node>
-  </NodeMain>
-</Node>
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="test" codeName="mainSDtest_0" frame="2">
+                          <TypeFn codeName="mainSDtest_0" name="fn$0">
+                            <TypeFnReturnType>
+                              <BuiltinType name="int" />
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallCallee>
+                <ExprCallCalleeType>
+                  <TypeFn codeName="mainSDtest_0" name="fn$0">
+                    <TypeFnReturnType>
+                      <BuiltinType name="int" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </ExprCallCalleeType>
+              </ExprCall>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

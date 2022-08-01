@@ -4,97 +4,77 @@ b := ref Test.me
 c := ref one.two.three
 d += ref a
 ======= stdout =======
-<Stmt start="1:1" end="1:11">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="a" start="1:1" end="1:2" />
-    </slot>
-    <slot name="init">
-      <StmtExpr start="1:6" end="1:11">
-        <ExprRef>
-          <StmtExpr start="1:10" end="1:11">
-            <ExprAccess>
-              <Token type="ID" val="v" start="1:10" end="1:11" />
-            </ExprAccess>
-          </StmtExpr>
-        </ExprRef>
-      </StmtExpr>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="2:1" end="2:17">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="b" start="2:1" end="2:2" />
-    </slot>
-    <slot name="init">
-      <StmtExpr start="2:6" end="2:17">
-        <ExprRef>
-          <StmtExpr start="2:10" end="2:17">
-            <ExprAccess>
-              <slot name="obj">
-                <Token type="ID" val="Test" start="2:10" end="2:14" />
-              </slot>
-              <slot name="prop">
-                <Token type="ID" val="me" start="2:15" end="2:17" />
-              </slot>
-            </ExprAccess>
-          </StmtExpr>
-        </ExprRef>
-      </StmtExpr>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="3:1" end="3:23">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="c" start="3:1" end="3:2" />
-    </slot>
-    <slot name="init">
-      <StmtExpr start="3:6" end="3:23">
-        <ExprRef>
-          <StmtExpr start="3:10" end="3:23">
-            <ExprAccess>
-              <slot name="obj">
-                <slot name="obj">
-                  <Token type="ID" val="one" start="3:10" end="3:13" />
-                </slot>
-                <slot name="prop">
-                  <Token type="ID" val="two" start="3:14" end="3:17" />
-                </slot>
-              </slot>
-              <slot name="prop">
-                <Token type="ID" val="three" start="3:18" end="3:23" />
-              </slot>
-            </ExprAccess>
-          </StmtExpr>
-        </ExprRef>
-      </StmtExpr>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
-<Stmt start="4:1" end="4:11">
-  <StmtExpr start="4:1" end="4:11">
-    <ExprAssign>
-      <slot name="left">
-        <ExprAccess>
-          <Token type="ID" val="d" start="4:1" end="4:2" />
-        </ExprAccess>
-      </slot>
-      <slot name="op">
-        <Token type="OP_PLUS_EQ" val="+=" start="4:3" end="4:5" />
-      </slot>
-      <slot name="right">
-        <StmtExpr start="4:6" end="4:11">
-          <ExprRef>
-            <StmtExpr start="4:10" end="4:11">
-              <ExprAccess>
-                <Token type="ID" val="a" start="4:10" end="4:11" />
+<StmtVarDecl start="1:1" end="1:11">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprRef start="1:6" end="1:11">
+      <ExprAccess start="1:10" end="1:11">
+        <Token type="ID" val="v" start="1:10" end="1:11" />
+      </ExprAccess>
+    </ExprRef>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="2:1" end="2:17">
+  <StmtVarDeclId>
+    <Token type="ID" val="b" start="2:1" end="2:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprRef start="2:6" end="2:17">
+      <ExprAccess start="2:10" end="2:17">
+        <ExprAccessExpr>
+          <ExprAccess start="2:10" end="2:14">
+            <Token type="ID" val="Test" start="2:10" end="2:14" />
+          </ExprAccess>
+        </ExprAccessExpr>
+        <ExprAccessProp>
+          <Token type="ID" val="me" start="2:15" end="2:17" />
+        </ExprAccessProp>
+      </ExprAccess>
+    </ExprRef>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="3:1" end="3:23">
+  <StmtVarDeclId>
+    <Token type="ID" val="c" start="3:1" end="3:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprRef start="3:6" end="3:23">
+      <ExprAccess start="3:10" end="3:23">
+        <ExprAccessExpr>
+          <ExprAccess start="3:10" end="3:17">
+            <ExprAccessExpr>
+              <ExprAccess start="3:10" end="3:13">
+                <Token type="ID" val="one" start="3:10" end="3:13" />
               </ExprAccess>
-            </StmtExpr>
-          </ExprRef>
-        </StmtExpr>
-      </slot>
-    </ExprAssign>
-  </StmtExpr>
-</Stmt>
+            </ExprAccessExpr>
+            <ExprAccessProp>
+              <Token type="ID" val="two" start="3:14" end="3:17" />
+            </ExprAccessProp>
+          </ExprAccess>
+        </ExprAccessExpr>
+        <ExprAccessProp>
+          <Token type="ID" val="three" start="3:18" end="3:23" />
+        </ExprAccessProp>
+      </ExprAccess>
+    </ExprRef>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<ExprAssign start="4:1" end="4:11">
+  <ExprAssignLeft>
+    <ExprAccess start="4:1" end="4:2">
+      <Token type="ID" val="d" start="4:1" end="4:2" />
+    </ExprAccess>
+  </ExprAssignLeft>
+  <ExprAssignOp>
+    <Token type="OP_PLUS_EQ" val="+=" start="4:3" end="4:5" />
+  </ExprAssignOp>
+  <ExprAssignRight>
+    <ExprRef start="4:6" end="4:11">
+      <ExprAccess start="4:10" end="4:11">
+        <Token type="ID" val="a" start="4:10" end="4:11" />
+      </ExprAccess>
+    </ExprRef>
+  </ExprAssignRight>
+</ExprAssign>

@@ -7,115 +7,101 @@ fn test (a: int) any {
   return a + 4
 }
 ======= stdout =======
-<Node>
-  <NodeFnDecl>
-    <slot name="var">
-      <Var codeName="test_0" frame="1" name="test">
-        <TypeFn codeName="test_0" name="fn$0">
-          <slot name="params">
-            <TypeFnParam name="a" required>
-              <BuiltinType name="int" />
-            </TypeFnParam>
-          </slot>
-          <slot name="returnType">
-            <BuiltinType name="any" />
-          </slot>
-        </TypeFn>
-      </Var>
-    </slot>
-    <slot name="params">
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test" codeName="test_0" frame="1">
+      <TypeFn codeName="test_0" name="fn$0">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
             <BuiltinType name="int" />
-          </Var>
-        </slot>
-      </NodeFnDeclParam>
-    </slot>
-    <slot name="body">
-      <Node>
-        <NodeIf>
-          <slot name="cond">
-            <NodeExpr>
-              <slot name="type">
-                <BuiltinType name="bool" />
-              </slot>
-              <slot name="body">
-                <ExprBinary op="GT">
-                  <slot name="left">
-                    <NodeExpr>
-                      <slot name="type">
-                        <BuiltinType name="int" />
-                      </slot>
-                      <slot name="body">
-                        <ExprLit type="INT_DEC">
-                          1
-                        </ExprLit>
-                      </slot>
-                    </NodeExpr>
-                  </slot>
-                  <slot name="right">
-                    <NodeExpr>
-                      <slot name="type">
-                        <BuiltinType name="int" />
-                      </slot>
-                      <slot name="body">
-                        <ExprLit type="INT_DEC">
-                          2
-                        </ExprLit>
-                      </slot>
-                    </NodeExpr>
-                  </slot>
-                </ExprBinary>
-              </slot>
-            </NodeExpr>
-          </slot>
-          <slot name="body">
-            <Node>
-              <NodeReturn />
-            </Node>
-          </slot>
-        </NodeIf>
-      </Node>
-      <Node>
-        <NodeReturn>
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="int" />
-            </slot>
-            <slot name="body">
-              <ExprBinary op="ADD">
-                <slot name="left">
-                  <NodeExpr>
-                    <slot name="type">
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="any" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclParams>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <BuiltinType name="int" />
+        </Var>
+      </NodeFnDeclParamVar>
+    </NodeFnDeclParam>
+  </NodeFnDeclParams>
+  <NodeFnDeclBody>
+    <NodeIf>
+      <NodeIfCond>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="bool" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprBinary op="GT">
+              <ExprBinaryLeft>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="INT_DEC" value="1" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryLeft>
+              <ExprBinaryRight>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="INT_DEC" value="2" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryRight>
+            </ExprBinary>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeIfCond>
+      <NodeIfBody>
+        <NodeReturn />
+      </NodeIfBody>
+    </NodeIf>
+    <NodeReturn>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprBinary op="ADD">
+            <ExprBinaryLeft>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="a" codeName="a_0" frame="2">
                       <BuiltinType name="int" />
-                    </slot>
-                    <slot name="body">
-                      <ExprAccess>
-                        <Var codeName="a_0" frame="2" name="a">
-                          <BuiltinType name="int" />
-                        </Var>
-                      </ExprAccess>
-                    </slot>
-                  </NodeExpr>
-                </slot>
-                <slot name="right">
-                  <NodeExpr>
-                    <slot name="type">
-                      <BuiltinType name="int" />
-                    </slot>
-                    <slot name="body">
-                      <ExprLit type="INT_DEC">
-                        4
-                      </ExprLit>
-                    </slot>
-                  </NodeExpr>
-                </slot>
-              </ExprBinary>
-            </slot>
-          </NodeExpr>
-        </NodeReturn>
-      </Node>
-    </slot>
-  </NodeFnDecl>
-</Node>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryLeft>
+            <ExprBinaryRight>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="4" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeReturn>
+  </NodeFnDeclBody>
+</NodeFnDecl>

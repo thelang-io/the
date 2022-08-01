@@ -18,201 +18,145 @@ if !test {
   fn test4 () {}
 }
 ======= stdout =======
-<Stmt start="1:1" end="3:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="1:4" end="1:5">
-        <ExprLit>
-          <Token type="LIT_INT_DEC" val="0" start="1:4" end="1:5" />
-        </ExprLit>
-      </StmtExpr>
-    </slot>
-    <slot name="body">
-      <Stmt start="2:3" end="2:27">
-        <StmtExpr start="2:3" end="2:27">
-          <ExprCall>
-            <slot name="callee">
-              <ExprAccess>
-                <Token type="ID" val="print" start="2:3" end="2:8" />
-              </ExprAccess>
-            </slot>
-            <slot name="args">
-              <ExprCallArg>
-                <slot name="expr">
-                  <StmtExpr start="2:9" end="2:26">
-                    <ExprLit>
-                      <Token type="LIT_STR" val="\"False condition\"" start="2:9" end="2:26" />
-                    </ExprLit>
-                  </StmtExpr>
-                </slot>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </StmtExpr>
-      </Stmt>
-    </slot>
-  </StmtIf>
-</Stmt>
-<Stmt start="4:1" end="6:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="4:4" end="4:5">
-        <ExprLit>
-          <Token type="LIT_INT_DEC" val="1" start="4:4" end="4:5" />
-        </ExprLit>
-      </StmtExpr>
-    </slot>
-    <slot name="body">
-      <Stmt start="5:3" end="5:26">
-        <StmtExpr start="5:3" end="5:26">
-          <ExprCall>
-            <slot name="callee">
-              <ExprAccess>
-                <Token type="ID" val="print" start="5:3" end="5:8" />
-              </ExprAccess>
-            </slot>
-            <slot name="args">
-              <ExprCallArg>
-                <slot name="expr">
-                  <StmtExpr start="5:9" end="5:25">
-                    <ExprLit>
-                      <Token type="LIT_STR" val="\"True condition\"" start="5:9" end="5:25" />
-                    </ExprLit>
-                  </StmtExpr>
-                </slot>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </StmtExpr>
-      </Stmt>
-    </slot>
-  </StmtIf>
-</Stmt>
-<Stmt start="7:1" end="9:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="7:4" end="7:8">
-        <ExprAccess>
-          <Token type="ID" val="test" start="7:4" end="7:8" />
+<StmtIf start="1:1" end="3:2">
+  <StmtIfCond>
+    <ExprLit start="1:4" end="1:5">
+      <Token type="LIT_INT_DEC" val="0" start="1:4" end="1:5" />
+    </ExprLit>
+  </StmtIfCond>
+  <StmtIfBody>
+    <ExprCall start="2:3" end="2:27">
+      <ExprCallCallee>
+        <ExprAccess start="2:3" end="2:8">
+          <Token type="ID" val="print" start="2:3" end="2:8" />
         </ExprAccess>
-      </StmtExpr>
-    </slot>
-    <slot name="body">
-      <Stmt start="8:3" end="8:26">
-        <StmtExpr start="8:3" end="8:26">
-          <ExprCall>
-            <slot name="callee">
-              <ExprAccess>
-                <Token type="ID" val="print" start="8:3" end="8:8" />
-              </ExprAccess>
-            </slot>
-            <slot name="args">
-              <ExprCallArg>
-                <slot name="expr">
-                  <StmtExpr start="8:9" end="8:25">
-                    <ExprLit>
-                      <Token type="LIT_STR" val="\"Test condition\"" start="8:9" end="8:25" />
-                    </ExprLit>
-                  </StmtExpr>
-                </slot>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </StmtExpr>
-      </Stmt>
-    </slot>
-  </StmtIf>
-</Stmt>
-<Stmt start="10:1" end="12:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="10:4" end="10:9">
-        <ExprUnary prefix>
-          <slot name="arg">
-            <StmtExpr start="10:5" end="10:9">
-              <ExprAccess>
-                <Token type="ID" val="test" start="10:5" end="10:9" />
-              </ExprAccess>
-            </StmtExpr>
-          </slot>
-          <slot name="op">
-            <Token type="OP_EXCL" val="!" start="10:4" end="10:5" />
-          </slot>
-        </ExprUnary>
-      </StmtExpr>
-    </slot>
-    <slot name="body">
-      <Stmt start="11:3" end="11:30">
-        <StmtExpr start="11:3" end="11:30">
-          <ExprCall>
-            <slot name="callee">
-              <ExprAccess>
-                <Token type="ID" val="print" start="11:3" end="11:8" />
-              </ExprAccess>
-            </slot>
-            <slot name="args">
-              <ExprCallArg>
-                <slot name="expr">
-                  <StmtExpr start="11:9" end="11:29">
-                    <ExprLit>
-                      <Token type="LIT_STR" val="\"Not test condition\"" start="11:9" end="11:29" />
-                    </ExprLit>
-                  </StmtExpr>
-                </slot>
-              </ExprCallArg>
-            </slot>
-          </ExprCall>
-        </StmtExpr>
-      </Stmt>
-    </slot>
-  </StmtIf>
-</Stmt>
-<Stmt start="13:1" end="15:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="13:4" end="13:8">
-        <ExprAccess>
-          <Token type="ID" val="test" start="13:4" end="13:8" />
+      </ExprCallCallee>
+      <ExprCallArgs>
+        <ExprCallArg>
+          <ExprCallArgExpr>
+            <ExprLit start="2:9" end="2:26">
+              <Token type="LIT_STR" val="\"False condition\"" start="2:9" end="2:26" />
+            </ExprLit>
+          </ExprCallArgExpr>
+        </ExprCallArg>
+      </ExprCallArgs>
+    </ExprCall>
+  </StmtIfBody>
+</StmtIf>
+<StmtIf start="4:1" end="6:2">
+  <StmtIfCond>
+    <ExprLit start="4:4" end="4:5">
+      <Token type="LIT_INT_DEC" val="1" start="4:4" end="4:5" />
+    </ExprLit>
+  </StmtIfCond>
+  <StmtIfBody>
+    <ExprCall start="5:3" end="5:26">
+      <ExprCallCallee>
+        <ExprAccess start="5:3" end="5:8">
+          <Token type="ID" val="print" start="5:3" end="5:8" />
         </ExprAccess>
-      </StmtExpr>
-    </slot>
-    <slot name="body">
-      <Stmt start="14:3" end="14:17">
-        <StmtFnDecl>
-          <slot name="id">
-            <Token type="ID" val="test3" start="14:6" end="14:11" />
-          </slot>
-        </StmtFnDecl>
-      </Stmt>
-    </slot>
-  </StmtIf>
-</Stmt>
-<Stmt start="16:1" end="18:2">
-  <StmtIf>
-    <slot name="cond">
-      <StmtExpr start="16:4" end="16:9">
-        <ExprUnary prefix>
-          <slot name="arg">
-            <StmtExpr start="16:5" end="16:9">
-              <ExprAccess>
-                <Token type="ID" val="test" start="16:5" end="16:9" />
-              </ExprAccess>
-            </StmtExpr>
-          </slot>
-          <slot name="op">
-            <Token type="OP_EXCL" val="!" start="16:4" end="16:5" />
-          </slot>
-        </ExprUnary>
-      </StmtExpr>
-    </slot>
-    <slot name="body">
-      <Stmt start="17:3" end="17:17">
-        <StmtFnDecl>
-          <slot name="id">
-            <Token type="ID" val="test4" start="17:6" end="17:11" />
-          </slot>
-        </StmtFnDecl>
-      </Stmt>
-    </slot>
-  </StmtIf>
-</Stmt>
+      </ExprCallCallee>
+      <ExprCallArgs>
+        <ExprCallArg>
+          <ExprCallArgExpr>
+            <ExprLit start="5:9" end="5:25">
+              <Token type="LIT_STR" val="\"True condition\"" start="5:9" end="5:25" />
+            </ExprLit>
+          </ExprCallArgExpr>
+        </ExprCallArg>
+      </ExprCallArgs>
+    </ExprCall>
+  </StmtIfBody>
+</StmtIf>
+<StmtIf start="7:1" end="9:2">
+  <StmtIfCond>
+    <ExprAccess start="7:4" end="7:8">
+      <Token type="ID" val="test" start="7:4" end="7:8" />
+    </ExprAccess>
+  </StmtIfCond>
+  <StmtIfBody>
+    <ExprCall start="8:3" end="8:26">
+      <ExprCallCallee>
+        <ExprAccess start="8:3" end="8:8">
+          <Token type="ID" val="print" start="8:3" end="8:8" />
+        </ExprAccess>
+      </ExprCallCallee>
+      <ExprCallArgs>
+        <ExprCallArg>
+          <ExprCallArgExpr>
+            <ExprLit start="8:9" end="8:25">
+              <Token type="LIT_STR" val="\"Test condition\"" start="8:9" end="8:25" />
+            </ExprLit>
+          </ExprCallArgExpr>
+        </ExprCallArg>
+      </ExprCallArgs>
+    </ExprCall>
+  </StmtIfBody>
+</StmtIf>
+<StmtIf start="10:1" end="12:2">
+  <StmtIfCond>
+    <ExprUnary start="10:4" end="10:9" prefix>
+      <ExprUnaryArg>
+        <ExprAccess start="10:5" end="10:9">
+          <Token type="ID" val="test" start="10:5" end="10:9" />
+        </ExprAccess>
+      </ExprUnaryArg>
+      <ExprUnaryOp>
+        <Token type="OP_EXCL" val="!" start="10:4" end="10:5" />
+      </ExprUnaryOp>
+    </ExprUnary>
+  </StmtIfCond>
+  <StmtIfBody>
+    <ExprCall start="11:3" end="11:30">
+      <ExprCallCallee>
+        <ExprAccess start="11:3" end="11:8">
+          <Token type="ID" val="print" start="11:3" end="11:8" />
+        </ExprAccess>
+      </ExprCallCallee>
+      <ExprCallArgs>
+        <ExprCallArg>
+          <ExprCallArgExpr>
+            <ExprLit start="11:9" end="11:29">
+              <Token type="LIT_STR" val="\"Not test condition\"" start="11:9" end="11:29" />
+            </ExprLit>
+          </ExprCallArgExpr>
+        </ExprCallArg>
+      </ExprCallArgs>
+    </ExprCall>
+  </StmtIfBody>
+</StmtIf>
+<StmtIf start="13:1" end="15:2">
+  <StmtIfCond>
+    <ExprAccess start="13:4" end="13:8">
+      <Token type="ID" val="test" start="13:4" end="13:8" />
+    </ExprAccess>
+  </StmtIfCond>
+  <StmtIfBody>
+    <StmtFnDecl start="14:3" end="14:17">
+      <StmtFnDeclId>
+        <Token type="ID" val="test3" start="14:6" end="14:11" />
+      </StmtFnDeclId>
+    </StmtFnDecl>
+  </StmtIfBody>
+</StmtIf>
+<StmtIf start="16:1" end="18:2">
+  <StmtIfCond>
+    <ExprUnary start="16:4" end="16:9" prefix>
+      <ExprUnaryArg>
+        <ExprAccess start="16:5" end="16:9">
+          <Token type="ID" val="test" start="16:5" end="16:9" />
+        </ExprAccess>
+      </ExprUnaryArg>
+      <ExprUnaryOp>
+        <Token type="OP_EXCL" val="!" start="16:4" end="16:5" />
+      </ExprUnaryOp>
+    </ExprUnary>
+  </StmtIfCond>
+  <StmtIfBody>
+    <StmtFnDecl start="17:3" end="17:17">
+      <StmtFnDeclId>
+        <Token type="ID" val="test4" start="17:6" end="17:11" />
+      </StmtFnDeclId>
+    </StmtFnDecl>
+  </StmtIfBody>
+</StmtIf>

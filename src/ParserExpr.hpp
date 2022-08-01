@@ -22,7 +22,6 @@ struct ParserExprLit;
 struct ParserExprObj;
 struct ParserExprRef;
 struct ParserExprUnary;
-struct ParserMember;
 
 using ParserExpr = std::variant<
   ParserExprAccess,
@@ -45,21 +44,13 @@ struct ParserStmtExpr {
   std::string xml (std::size_t = 0) const;
 };
 
-using ParserMemberObj = std::variant<Token, ParserMember>;
-
-struct ParserMember {
-  std::shared_ptr<ParserMemberObj> obj;
-  Token prop;
-};
-
 struct ParserExprAccess {
-  std::shared_ptr<ParserMemberObj> body;
-
-  std::string xml (std::size_t = 0) const;
+  std::variant<Token, ParserStmtExpr> expr;
+  std::optional<Token> prop;
 };
 
 struct ParserExprAssign {
-  ParserExprAccess left;
+  ParserStmtExpr left;
   Token op;
   ParserStmtExpr right;
 };
@@ -76,7 +67,7 @@ struct ParserExprCallArg {
 };
 
 struct ParserExprCall {
-  ParserExprAccess callee;
+  ParserStmtExpr callee;
   std::vector<ParserExprCallArg> args;
 };
 
@@ -101,7 +92,7 @@ struct ParserExprObj {
 };
 
 struct ParserExprRef {
-  ParserStmtExpr body;
+  ParserStmtExpr expr;
 };
 
 struct ParserExprUnary {

@@ -8,37 +8,45 @@ main {
   a := Point{x: 37.7681251, y: -122.5138329}
 }
 ======= stdout =======
-<Node>
-  <NodeObjDecl>
-    <TypeObj codeName="Point_0" name="Point">
-      <TypeObjField name="x">
-        <BuiltinType name="float" />
-      </TypeObjField>
-      <TypeObjField name="y">
-        <BuiltinType name="float" />
-      </TypeObjField>
-    </TypeObj>
-  </NodeObjDecl>
-</Node>
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
-            <TypeObj codeName="Point_0" name="Point">
-              <TypeObjField name="x">
-                <BuiltinType name="float" />
-              </TypeObjField>
-              <TypeObjField name="y">
-                <BuiltinType name="float" />
-              </TypeObjField>
-            </TypeObj>
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
+<NodeObjDecl>
+  <TypeObj codeName="Point_0" name="Point">
+    <TypeObjField name="x">
+      <BuiltinType name="float" />
+    </TypeObjField>
+    <TypeObjField name="y">
+      <BuiltinType name="float" />
+    </TypeObjField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <TypeObj codeName="Point_0" name="Point">
+          <TypeObjField name="x">
+            <BuiltinType name="float" />
+          </TypeObjField>
+          <TypeObjField name="y">
+            <BuiltinType name="float" />
+          </TypeObjField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Point_0" name="Point">
+            <TypeObjField name="x">
+              <BuiltinType name="float" />
+            </TypeObjField>
+            <TypeObjField name="y">
+              <BuiltinType name="float" />
+            </TypeObjField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjType>
               <TypeObj codeName="Point_0" name="Point">
                 <TypeObjField name="x">
                   <BuiltinType name="float" />
@@ -47,69 +55,41 @@ main {
                   <BuiltinType name="float" />
                 </TypeObjField>
               </TypeObj>
-            </slot>
-            <slot name="body">
-              <ExprObj>
-                <slot name="type">
-                  <TypeObj codeName="Point_0" name="Point">
-                    <TypeObjField name="x">
-                      <BuiltinType name="float" />
-                    </TypeObjField>
-                    <TypeObjField name="y">
-                      <BuiltinType name="float" />
-                    </TypeObjField>
-                  </TypeObj>
-                </slot>
-                <slot name="props">
-                  <ExprObjProp>
-                    <slot name="id">
-                      x
-                    </slot>
-                    <slot name="init">
+            </ExprObjType>
+            <ExprObjProps>
+              <ExprObjProp id="x">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="float" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="FLOAT" value="37.7681251" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+              <ExprObjProp id="y">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="float" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprUnary op="MINUS" prefix>
                       <NodeExpr>
-                        <slot name="type">
+                        <NodeExprType>
                           <BuiltinType name="float" />
-                        </slot>
-                        <slot name="body">
-                          <ExprLit type="FLOAT">
-                            37.7681251
-                          </ExprLit>
-                        </slot>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprLit type="FLOAT" value="122.5138329" />
+                        </NodeExprBody>
                       </NodeExpr>
-                    </slot>
-                  </ExprObjProp>
-                  <ExprObjProp>
-                    <slot name="id">
-                      y
-                    </slot>
-                    <slot name="init">
-                      <NodeExpr>
-                        <slot name="type">
-                          <BuiltinType name="float" />
-                        </slot>
-                        <slot name="body">
-                          <ExprUnary op="MINUS" prefix>
-                            <NodeExpr>
-                              <slot name="type">
-                                <BuiltinType name="float" />
-                              </slot>
-                              <slot name="body">
-                                <ExprLit type="FLOAT">
-                                  122.5138329
-                                </ExprLit>
-                              </slot>
-                            </NodeExpr>
-                          </ExprUnary>
-                        </slot>
-                      </NodeExpr>
-                    </slot>
-                  </ExprObjProp>
-                </slot>
-              </ExprObj>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-  </NodeMain>
-</Node>
+                    </ExprUnary>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+            </ExprObjProps>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>

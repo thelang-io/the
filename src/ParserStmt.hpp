@@ -9,6 +9,7 @@
 #define SRC_PARSER_STMT_HPP
 
 #include "ParserExpr.hpp"
+#include "ParserType.hpp"
 
 struct ParserStmtBreak;
 struct ParserStmtContinue;
@@ -20,9 +21,6 @@ struct ParserStmtMain;
 struct ParserStmtObjDecl;
 struct ParserStmtReturn;
 struct ParserStmtVarDecl;
-struct ParserTypeFn;
-struct ParserTypeId;
-struct ParserTypeRef;
 
 using ParserStmtBody = std::variant<
   ParserStmtBreak,
@@ -47,37 +45,6 @@ struct ParserStmt {
 };
 
 using ParserBlock = std::vector<ParserStmt>;
-using ParserStmtIfCond = std::variant<ParserBlock, ParserStmtIf>;
-using ParserTypeBody = std::variant<ParserTypeFn, ParserTypeId, ParserTypeRef>;
-
-struct ParserType {
-  std::shared_ptr<ParserTypeBody> body;
-  bool parenthesized;
-  ReaderLocation start;
-  ReaderLocation end;
-
-  std::string xml (std::size_t = 0) const;
-};
-
-struct ParserTypeFnParam {
-  std::optional<Token> id;
-  ParserType type;
-  bool mut;
-  bool variadic;
-};
-
-struct ParserTypeFn {
-  std::vector<ParserTypeFnParam> params;
-  ParserType returnType;
-};
-
-struct ParserTypeId {
-  Token id;
-};
-
-struct ParserTypeRef {
-  ParserType type;
-};
 
 struct ParserStmtBreak {
 };
@@ -106,9 +73,7 @@ struct ParserStmtFnDecl {
 struct ParserStmtIf {
   ParserStmtExpr cond;
   ParserBlock body;
-  std::optional<std::shared_ptr<ParserStmtIfCond>> alt;
-
-  std::string xml (std::size_t = 0) const;
+  std::optional<std::variant<ParserBlock, ParserStmt>> alt;
 };
 
 struct ParserStmtLoop {

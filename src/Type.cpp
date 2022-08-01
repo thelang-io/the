@@ -92,15 +92,15 @@ Type *Type::getProp (const std::string &propName) const {
 
   auto typeObj = std::get<TypeObj>(this->body);
 
-  auto memberObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
+  auto typeObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
     return it.name == propName;
   });
 
-  if (memberObjField == typeObj.fields.end()) {
+  if (typeObjField == typeObj.fields.end()) {
     throw Error("tried to get non-existing prop type");
   }
 
-  return memberObjField->type;
+  return typeObjField->type;
 }
 
 bool Type::hasProp (const std::string &propName) const {
@@ -399,47 +399,42 @@ std::string Type::xml (std::size_t indent) const {
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
   result += ">" EOL;
 
-  indent += 2;
-
   if (std::holds_alternative<TypeFn>(this->body)) {
     auto typeFn = std::get<TypeFn>(this->body);
 
     if (!typeFn.params.empty()) {
-      result += std::string(indent, ' ') + R"(<slot name="params">)" EOL;
+      result += std::string(indent + 2, ' ') + "<TypeFnParams>" EOL;
 
       for (const auto &typeFnParam : typeFn.params) {
-        result += std::string(indent + 2, ' ') + "<TypeFnParam";
-        result += typeFnParam.mut ? " mut" : "";
+        auto paramAttrs = typeFnParam.name == std::nullopt ? "" : R"( name=")" + *typeFnParam.name + R"(")";
 
-        if (typeFnParam.name != std::nullopt) {
-          result += R"( name=")" + *typeFnParam.name + R"(")";
-        }
+        paramAttrs += typeFnParam.mut ? " mut" : "";
+        paramAttrs += typeFnParam.required ? " required" : "";
+        paramAttrs += typeFnParam.variadic ? " variadic" : "";
 
-        result += typeFnParam.required ? " required" : "";
-        result += typeFnParam.variadic ? " variadic" : "";
-        result += ">" EOL + typeFnParam.type->xml(indent + 4) + EOL;
-        result += std::string(indent + 2, ' ') + "</TypeFnParam>" EOL;
+        result += std::string(indent + 4, ' ') + "<TypeFnParam" + paramAttrs + ">" EOL;
+        result += typeFnParam.type->xml(indent + 6) + EOL;
+        result += std::string(indent + 4, ' ') + "</TypeFnParam>" EOL;
       }
 
-      result += std::string(indent, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</TypeFnParams>" EOL;
     }
 
-    result += std::string(indent, ' ') + R"(<slot name="returnType">)" EOL;
-    result += typeFn.returnType->xml(indent + 2) + EOL;
-    result += std::string(indent, ' ') + "</slot>" EOL;
+    result += std::string(indent + 2, ' ') + "<TypeFnReturnType>" EOL;
+    result += typeFn.returnType->xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</TypeFnReturnType>" EOL;
   } else if (std::holds_alternative<TypeObj>(this->body)) {
     auto typeObj = std::get<TypeObj>(this->body);
 
     for (const auto &typeObjField : typeObj.fields) {
-      result += std::string(indent, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" EOL;
-      result += typeObjField.type->xml(indent + 2) + EOL;
-      result += std::string(indent, ' ') + "</TypeObjField>" EOL;
+      result += std::string(indent + 2, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" EOL;
+      result += typeObjField.type->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</TypeObjField>" EOL;
     }
   } else if (std::holds_alternative<TypeRef>(this->body)) {
     auto typeRef = std::get<TypeRef>(this->body);
-    result += typeRef.type->xml(indent) + EOL;
+    result += typeRef.type->xml(indent + 2) + EOL;
   }
 
-  indent -= 2;
   return result + std::string(indent, ' ') + "</" + typeName + ">";
 }

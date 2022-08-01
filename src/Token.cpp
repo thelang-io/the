@@ -8,23 +8,6 @@
 #include "Token.hpp"
 #include "Error.hpp"
 
-std::string escapeVal (const std::string &val, bool insideAttr = false) {
-  auto result = std::string();
-  result.reserve(val.size());
-
-  for (auto idx = static_cast<std::size_t>(0); idx < val.size(); idx++) {
-    if (val[idx] == '\f') result += R"(\f)";
-    else if (val[idx] == '\n') result += R"(\n)";
-    else if (val[idx] == '\r') result += R"(\r)";
-    else if (val[idx] == '\t') result += R"(\t)";
-    else if (val[idx] == '\v') result += R"(\v)";
-    else if (val[idx] == '"' && insideAttr) result += R"(\")";
-    else result += val[idx];
-  }
-
-  return result;
-}
-
 std::string tokenTypeToStr (TokenType type) {
   switch (type) {
     case TK_EOF: return "EOF";
@@ -112,6 +95,23 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_TILDE: return "OP_TILDE";
     default: throw Error("tried stringify unknown token");
   }
+}
+
+std::string Token::escape (const std::string &val, bool insideAttr) {
+  auto result = std::string();
+  result.reserve(val.size());
+
+  for (auto idx = static_cast<std::size_t>(0); idx < val.size(); idx++) {
+    if (val[idx] == '\f') result += R"(\f)";
+    else if (val[idx] == '\n') result += R"(\n)";
+    else if (val[idx] == '\r') result += R"(\r)";
+    else if (val[idx] == '\t') result += R"(\t)";
+    else if (val[idx] == '\v') result += R"(\v)";
+    else if (val[idx] == '"' && insideAttr) result += R"(\")";
+    else result += val[idx];
+  }
+
+  return result;
 }
 
 bool Token::isDigit (char ch) {
@@ -251,9 +251,9 @@ int Token::precedence (bool isUnary) const {
   throw Error("tried precedence for unknown token");
 }
 
-std::string Token::str () const {
-  auto escVal = escapeVal(this->val);
-  auto result = std::string();
+std::string Token::str (std::size_t indent) const {
+  auto escVal = Token::escape(this->val);
+  auto result = std::string(indent, ' ');
 
   result += tokenTypeToStr(this->type) + "(" + this->start.str() + "-" + this->end.str() + ")";
   result += escVal.empty() ? "" : ": " + escVal;
@@ -261,14 +261,14 @@ std::string Token::str () const {
   return result;
 }
 
-std::string Token::xml () const {
-  auto result = std::string();
+std::string Token::xml (std::size_t indent) const {
+  auto result = std::string(indent, ' ');
 
   result += R"(<Token type=")" + tokenTypeToStr(this->type) + R"(")";
-  result += R"( val=")" + escapeVal(this->val, true) + R"(")";
+  result += R"( val=")" + Token::escape(this->val, true) + R"(")";
   result += R"( start=")" + this->start.str() + R"(")";
   result += R"( end=")" + this->end.str() + R"(")";
-  result += R"( />)";
+  result += " />";
 
   return result;
 }

@@ -1,6 +1,4 @@
 ======= stdin =======
 continue
 ======= stdout =======
-<Stmt start="1:1" end="1:9">
-  <StmtContinue />
-</Stmt>
+<StmtContinue start="1:1" end="1:9" />

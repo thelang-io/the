@@ -4,152 +4,144 @@ fn test1 (p1 := "1", p2 := p1) {
   print(p2)
 }
 ======= stdout =======
-<Node>
-  <NodeFnDecl>
-    <slot name="var">
-      <Var codeName="test1_0" frame="1" name="test1">
-        <TypeFn codeName="test1_0" name="fn$0">
-          <slot name="params">
-            <TypeFnParam name="p1">
-              <BuiltinType name="str" />
-            </TypeFnParam>
-            <TypeFnParam name="p2">
-              <BuiltinType name="str" />
-            </TypeFnParam>
-          </slot>
-          <slot name="returnType">
-            <BuiltinType name="void" />
-          </slot>
-        </TypeFn>
-      </Var>
-    </slot>
-    <slot name="params">
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="p1_0" frame="2" name="p1">
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test1" codeName="test1_0" frame="1">
+      <TypeFn codeName="test1_0" name="fn$0">
+        <TypeFnParams>
+          <TypeFnParam name="p1">
             <BuiltinType name="str" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="str" />
-            </slot>
-            <slot name="body">
-              <ExprLit type="STR">
-                "1"
-              </ExprLit>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeFnDeclParam>
-      <NodeFnDeclParam>
-        <slot name="var">
-          <Var codeName="p2_0" frame="2" name="p2">
+          </TypeFnParam>
+          <TypeFnParam name="p2">
             <BuiltinType name="str" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="str" />
-            </slot>
-            <slot name="body">
-              <ExprAccess>
-                <Var codeName="p1_0" frame="2" name="p1">
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclParams>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="p1" codeName="p1_0" frame="2">
+          <BuiltinType name="str" />
+        </Var>
+      </NodeFnDeclParamVar>
+      <NodeFnDeclParamInit>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="str" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprLit type="STR" value="\"1\"" />
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeFnDeclParamInit>
+    </NodeFnDeclParam>
+    <NodeFnDeclParam>
+      <NodeFnDeclParamVar>
+        <Var name="p2" codeName="p2_0" frame="2">
+          <BuiltinType name="str" />
+        </Var>
+      </NodeFnDeclParamVar>
+      <NodeFnDeclParamInit>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="str" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprAccess>
+              <Var name="p1" codeName="p1_0" frame="2">
+                <BuiltinType name="str" />
+              </Var>
+            </ExprAccess>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeFnDeclParamInit>
+    </NodeFnDeclParam>
+  </NodeFnDeclParams>
+  <NodeFnDeclBody>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallCalleeType>
+            <BuiltinType name="print" />
+          </ExprCallCalleeType>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="str" />
-                </Var>
-              </ExprAccess>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeFnDeclParam>
-    </slot>
-    <slot name="body">
-      <Node>
-        <NodeExpr>
-          <slot name="type">
-            <BuiltinType name="void" />
-          </slot>
-          <slot name="body">
-            <ExprCall>
-              <slot name="callee">
-                <NodeExpr>
-                  <slot name="type">
-                    <BuiltinType name="print" />
-                  </slot>
-                  <slot name="body">
-                    <ExprAccess>
-                      <BuiltinVar name="print" />
-                    </ExprAccess>
-                  </slot>
-                </NodeExpr>
-              </slot>
-              <slot name="calleeType">
-                <BuiltinType name="print" />
-              </slot>
-              <slot name="args">
-                <ExprCallArg id="items">
-                  <NodeExpr>
-                    <slot name="type">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="p1" codeName="p1_0" frame="2">
                       <BuiltinType name="str" />
-                    </slot>
-                    <slot name="body">
-                      <ExprAccess>
-                        <Var codeName="p1_0" frame="2" name="p1">
-                          <BuiltinType name="str" />
-                        </Var>
-                      </ExprAccess>
-                    </slot>
-                  </NodeExpr>
-                </ExprCallArg>
-              </slot>
-            </ExprCall>
-          </slot>
-        </NodeExpr>
-      </Node>
-      <Node>
-        <NodeExpr>
-          <slot name="type">
-            <BuiltinType name="void" />
-          </slot>
-          <slot name="body">
-            <ExprCall>
-              <slot name="callee">
-                <NodeExpr>
-                  <slot name="type">
-                    <BuiltinType name="print" />
-                  </slot>
-                  <slot name="body">
-                    <ExprAccess>
-                      <BuiltinVar name="print" />
-                    </ExprAccess>
-                  </slot>
-                </NodeExpr>
-              </slot>
-              <slot name="calleeType">
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
                 <BuiltinType name="print" />
-              </slot>
-              <slot name="args">
-                <ExprCallArg id="items">
-                  <NodeExpr>
-                    <slot name="type">
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallCalleeType>
+            <BuiltinType name="print" />
+          </ExprCallCalleeType>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="p2" codeName="p2_0" frame="2">
                       <BuiltinType name="str" />
-                    </slot>
-                    <slot name="body">
-                      <ExprAccess>
-                        <Var codeName="p2_0" frame="2" name="p2">
-                          <BuiltinType name="str" />
-                        </Var>
-                      </ExprAccess>
-                    </slot>
-                  </NodeExpr>
-                </ExprCallArg>
-              </slot>
-            </ExprCall>
-          </slot>
-        </NodeExpr>
-      </Node>
-    </slot>
-  </NodeFnDecl>
-</Node>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+  </NodeFnDeclBody>
+</NodeFnDecl>

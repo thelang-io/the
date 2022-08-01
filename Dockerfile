@@ -11,8 +11,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 COPY . .
-RUN mkdir -p build
-RUN cmake . -B./build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCODEGEN_MEMCHECK=ON
-RUN cmake --build build
+RUN cmake . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCODEGEN_MEMCHECK=ON
+RUN cmake --build .
 
-ENTRYPOINT ["ctest", "--output-on-failure", "--test-dir", "build"]
+ENTRYPOINT ["ctest", "--output-on-failure"]

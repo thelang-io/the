@@ -112,6 +112,8 @@ struct Token {
   ReaderLocation start = {};
   ReaderLocation end = {};
 
+  // todo test
+  static std::string escape (const std::string &, bool = false);
   static bool isDigit (char);
   static bool isIdContinue (char);
   static bool isIdStart (char);
@@ -125,8 +127,8 @@ struct Token {
 
   TokenAssociativity associativity (bool = false) const;
   int precedence (bool = false) const;
-  std::string str () const;
-  std::string xml () const;
+  std::string str (std::size_t = 0) const;
+  std::string xml (std::size_t = 0) const;
 };
 
 #endif

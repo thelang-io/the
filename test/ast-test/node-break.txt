@@ -5,16 +5,10 @@ main {
   }
 }
 ======= stdout =======
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeLoop>
-        <slot name="body">
-          <Node>
-            <NodeBreak />
-          </Node>
-        </slot>
-      </NodeLoop>
-    </Node>
-  </NodeMain>
-</Node>
+<NodeMain>
+  <NodeLoop>
+    <NodeLoopBody>
+      <NodeBreak />
+    </NodeLoopBody>
+  </NodeLoop>
+</NodeMain>

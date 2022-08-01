@@ -19,257 +19,201 @@ std::string blockToXml (const ParserBlock &block, std::size_t indent) {
 }
 
 std::string ParserStmt::xml (std::size_t indent) const {
-  auto result = std::string(indent, ' ') + "<Stmt";
+  auto result = std::string();
+  auto attrs = std::string();
 
-  result += R"( start=")" + this->start.str() + R"(")";
-  result += R"( end=")" + this->end.str() + R"(">)" EOL;
-
-  indent += 2;
+  attrs += R"( start=")" + this->start.str() + R"(")";
+  attrs += R"( end=")" + this->end.str() + R"(")";
 
   if (std::holds_alternative<ParserStmtBreak>(*this->body)) {
-    result += std::string(indent, ' ') + "<StmtBreak />" EOL;
+    result += std::string(indent, ' ') + "<StmtBreak" + attrs + " />";
   } else if (std::holds_alternative<ParserStmtContinue>(*this->body)) {
-    result += std::string(indent, ' ') + "<StmtContinue />" EOL;
+    result += std::string(indent, ' ') + "<StmtContinue" + attrs + " />";
   } else if (std::holds_alternative<ParserStmtExpr>(*this->body)) {
     auto stmtExpr = std::get<ParserStmtExpr>(*this->body);
-    result += stmtExpr.xml(indent) + EOL;
+    result += stmtExpr.xml(indent);
   } else if (std::holds_alternative<ParserStmtFnDecl>(*this->body)) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtFnDecl>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="id">)" EOL;
-    result += std::string(indent + 4, ' ') + stmtFnDecl.id.xml() + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
+    result += std::string(indent, ' ') + "<StmtFnDecl" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtFnDeclId>" EOL;
+    result += stmtFnDecl.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtFnDeclId>" EOL;
 
     if (!stmtFnDecl.params.empty()) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="params">)" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtFnDeclParams>" EOL;
 
       for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
-        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam";
-        result += stmtFnDeclParam.mut ? " mut" : "";
-        result += stmtFnDeclParam.variadic ? " variadic" : "";
-        result += ">" EOL;
+        auto paramAttrs = std::string();
 
-        result += std::string(indent + 6, ' ') + R"(<slot name="id">)" EOL;
-        result += std::string(indent + 8, ' ') + stmtFnDeclParam.id.xml() + EOL;
-        result += std::string(indent + 6, ' ') + "</slot>" EOL;
+        paramAttrs += stmtFnDeclParam.mut ? " mut" : "";
+        paramAttrs += stmtFnDeclParam.variadic ? " variadic" : "";
+
+        result += std::string(indent + 4, ' ') + "<StmtFnDeclParam" + paramAttrs + ">" EOL;
+        result += std::string(indent + 6, ' ') + "<StmtFnDeclParamId>" EOL;
+        result += stmtFnDeclParam.id.xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</StmtFnDeclParamId>" EOL;
 
         if (stmtFnDeclParam.type != std::nullopt) {
-          result += std::string(indent + 6, ' ') + R"(<slot name="type">)" EOL;
-          result += (*stmtFnDeclParam.type).xml(indent + 8) + EOL;
-          result += std::string(indent + 6, ' ') + "</slot>" EOL;
+          result += std::string(indent + 6, ' ') + "<StmtFnDeclParamType>" EOL;
+          result += stmtFnDeclParam.type->xml(indent + 8) + EOL;
+          result += std::string(indent + 6, ' ') + "</StmtFnDeclParamType>" EOL;
         }
 
         if (stmtFnDeclParam.init != std::nullopt) {
-          result += std::string(indent + 6, ' ') + R"(<slot name="init">)" EOL;
-          result += (*stmtFnDeclParam.init).xml(indent + 8) + EOL;
-          result += std::string(indent + 6, ' ') + "</slot>" EOL;
+          result += std::string(indent + 6, ' ') + "<StmtFnDeclParamInit>" EOL;
+          result += stmtFnDeclParam.init->xml(indent + 8) + EOL;
+          result += std::string(indent + 6, ' ') + "</StmtFnDeclParamInit>" EOL;
         }
 
         result += std::string(indent + 4, ' ') + "</StmtFnDeclParam>" EOL;
       }
 
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</StmtFnDeclParams>" EOL;
     }
 
     if (stmtFnDecl.returnType != std::nullopt) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="returnType">)" EOL;
-      result += (*stmtFnDecl.returnType).xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtFnDeclReturnType>" EOL;
+      result += stmtFnDecl.returnType->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</StmtFnDeclReturnType>" EOL;
     }
 
     if (!stmtFnDecl.body.empty()) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="body">)" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtFnDeclBody>" EOL;
       result += blockToXml(stmtFnDecl.body, indent + 4);
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</StmtFnDeclBody>" EOL;
     }
 
-    result += std::string(indent, ' ') + "</StmtFnDecl>" EOL;
+    result += std::string(indent, ' ') + "</StmtFnDecl>";
   } else if (std::holds_alternative<ParserStmtIf>(*this->body)) {
     auto stmtIf = std::get<ParserStmtIf>(*this->body);
-    result += stmtIf.xml(indent) + EOL;
+
+    result += std::string(indent, ' ') + "<StmtIf" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtIfCond>" EOL;
+    result += stmtIf.cond.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtIfCond>" EOL;
+
+    if (!stmtIf.body.empty()) {
+      result += std::string(indent + 2, ' ') + "<StmtIfBody>" EOL;
+      result += blockToXml(stmtIf.body, indent + 4);
+      result += std::string(indent + 2, ' ') + "</StmtIfBody>" EOL;
+    }
+
+    if (stmtIf.alt != std::nullopt) {
+      if (
+        (std::holds_alternative<ParserBlock>(*stmtIf.alt) && !std::get<ParserBlock>(*stmtIf.alt).empty()) ||
+        std::holds_alternative<ParserStmt>(*stmtIf.alt)
+      ) {
+        result += std::string(indent + 2, ' ') + "<StmtIfAlt>" EOL;
+
+        if (std::holds_alternative<ParserBlock>(*stmtIf.alt)) {
+          auto altElse = std::get<ParserBlock>(*stmtIf.alt);
+          result += blockToXml(altElse, indent + 4);
+        } else if (std::holds_alternative<ParserStmt>(*stmtIf.alt)) {
+          auto altElif = std::get<ParserStmt>(*stmtIf.alt);
+          result += altElif.xml(indent + 4) + EOL;
+        }
+
+        result += std::string(indent + 2, ' ') + "</StmtIfAlt>" EOL;
+      }
+    }
+
+    result += std::string(indent, ' ') + "</StmtIf>";
   } else if (std::holds_alternative<ParserStmtLoop>(*this->body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(*this->body);
-    result += std::string(indent, ' ') + "<StmtLoop>" EOL;
+    result += std::string(indent, ' ') + "<StmtLoop" + attrs + ">" EOL;
 
     if (stmtLoop.init != std::nullopt) {
       auto stmtLoopInit = *stmtLoop.init;
 
-      result += std::string(indent + 2, ' ') + R"(<slot name="init">)" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtLoopInit>" EOL;
       result += stmtLoopInit.xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</StmtLoopInit>" EOL;
     }
 
     if (stmtLoop.cond != std::nullopt) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" EOL;
-      result += (*stmtLoop.cond).xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtLoopCond>" EOL;
+      result += stmtLoop.cond->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</StmtLoopCond>" EOL;
     }
 
     if (stmtLoop.upd != std::nullopt) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="upd">)" EOL;
-      result += (*stmtLoop.upd).xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtLoopUpd>" EOL;
+      result += stmtLoop.upd->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</StmtLoopUpd>" EOL;
     }
 
     if (!stmtLoop.body.empty()) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="body">)" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtLoopBody>" EOL;
       result += blockToXml(stmtLoop.body, indent + 4);
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</StmtLoopBody>" EOL;
     }
 
-    result += std::string(indent, ' ') + "</StmtLoop>" EOL;
+    result += std::string(indent, ' ') + "</StmtLoop>";
   } else if (std::holds_alternative<ParserStmtMain>(*this->body)) {
     auto stmtMain = std::get<ParserStmtMain>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtMain>" EOL;
+    result += std::string(indent, ' ') + "<StmtMain" + attrs + ">" EOL;
     result += blockToXml(stmtMain.body, indent + 2);
-    result += std::string(indent, ' ') + "</StmtMain>" EOL;
+    result += std::string(indent, ' ') + "</StmtMain>";
   } else if (std::holds_alternative<ParserStmtObjDecl>(*this->body)) {
     auto stmtObjDecl = std::get<ParserStmtObjDecl>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtObjDecl>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="id">)" EOL;
-    result += std::string(indent + 4, ' ') + stmtObjDecl.id.xml() + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
+    result += std::string(indent, ' ') + "<StmtObjDecl" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtObjDeclId>" EOL;
+    result += stmtObjDecl.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtObjDeclId>" EOL;
 
     if (!stmtObjDecl.fields.empty()) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="fields">)" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtObjDeclFields>" EOL;
 
       for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
         result += std::string(indent + 4, ' ') + "<StmtObjDeclField>" EOL;
-        result += std::string(indent + 6, ' ') + R"(<slot name="id">)" EOL;
-        result += std::string(indent + 8, ' ') + stmtObjDeclField.id.xml() + EOL;
-        result += std::string(indent + 6, ' ') + "</slot>" EOL;
-        result += std::string(indent + 6, ' ') + R"(<slot name="type">)" EOL;
+        result += std::string(indent + 6, ' ') + "<StmtObjDeclFieldId>" EOL;
+        result += stmtObjDeclField.id.xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</StmtObjDeclFieldId>" EOL;
+        result += std::string(indent + 6, ' ') + "<StmtObjDeclFieldType>" EOL;
         result += stmtObjDeclField.type.xml(indent + 8) + EOL;
-        result += std::string(indent + 6, ' ') + "</slot>" EOL;
+        result += std::string(indent + 6, ' ') + "</StmtObjDeclFieldType>" EOL;
         result += std::string(indent + 4, ' ') + "</StmtObjDeclField>" EOL;
       }
 
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</StmtObjDeclFields>" EOL;
     }
 
-    result += std::string(indent, ' ') + "</StmtObjDecl>" EOL;
+    result += std::string(indent, ' ') + "</StmtObjDecl>";
   } else if (std::holds_alternative<ParserStmtReturn>(*this->body)) {
     auto stmtReturn = std::get<ParserStmtReturn>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtReturn>" EOL;
-    result += stmtReturn.body != std::nullopt ? ((*stmtReturn.body).xml(indent + 2) + EOL) : "";
-    result += std::string(indent, ' ') + "</StmtReturn>" EOL;
+    if (stmtReturn.body == std::nullopt) {
+      result += std::string(indent, ' ') + "<StmtReturn" + attrs + " />";
+    } else {
+      result += std::string(indent, ' ') + "<StmtReturn" + attrs + ">" EOL;
+      result += stmtReturn.body->xml(indent + 2) + EOL;
+      result += std::string(indent, ' ') + "</StmtReturn>";
+    }
   } else if (std::holds_alternative<ParserStmtVarDecl>(*this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtVarDecl" + (stmtVarDecl.mut ? " mut" : "") + ">" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="id">)" EOL;
-    result += std::string(indent + 4, ' ') + stmtVarDecl.id.xml() + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
+    result += std::string(indent, ' ') + "<StmtVarDecl" + attrs + (stmtVarDecl.mut ? " mut" : "") + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtVarDeclId>" EOL;
+    result += stmtVarDecl.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtVarDeclId>" EOL;
 
     if (stmtVarDecl.type != std::nullopt) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="type">)" EOL;
-      result += (*stmtVarDecl.type).xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtVarDeclType>" EOL;
+      result += stmtVarDecl.type->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</StmtVarDeclType>" EOL;
     }
 
     if (stmtVarDecl.init != std::nullopt) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="init">)" EOL;
-      result += (*stmtVarDecl.init).xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "<StmtVarDeclInit>" EOL;
+      result += stmtVarDecl.init->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</StmtVarDeclInit>" EOL;
     }
 
-    result += std::string(indent, ' ') + "</StmtVarDecl>" EOL;
+    result += std::string(indent, ' ') + "</StmtVarDecl>";
   }
 
-  indent -= 2;
-  return result + std::string(indent, ' ') + "</Stmt>";
-}
-
-std::string ParserStmtIf::xml (std::size_t indent) const {
-  auto result = std::string();
-
-  result += std::string(indent, ' ') + "<StmtIf>" EOL;
-  result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" EOL;
-  result += this->cond.xml(indent + 4) + EOL;
-  result += std::string(indent + 2, ' ') + "</slot>" EOL;
-
-  if (!this->body.empty()) {
-    result += std::string(indent + 2, ' ') + R"(<slot name="body">)" EOL;
-    result += blockToXml(this->body, indent + 4);
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-  }
-
-  if (this->alt != std::nullopt) {
-    auto altBody = **this->alt;
-
-    if (
-      (std::holds_alternative<ParserBlock>(altBody) && !std::get<ParserBlock>(altBody).empty()) ||
-      std::holds_alternative<ParserStmtIf>(altBody)
-    ) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="alt">)" EOL;
-
-      if (std::holds_alternative<ParserBlock>(altBody)) {
-        auto altElse = std::get<ParserBlock>(altBody);
-        result += blockToXml(altElse, indent + 4);
-      } else if (std::holds_alternative<ParserStmtIf>(altBody)) {
-        auto altElif = std::get<ParserStmtIf>(altBody);
-        result += altElif.xml(indent + 4) + EOL;
-      }
-
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    }
-  }
-
-  return result + std::string(indent, ' ') + "</StmtIf>";
-}
-
-std::string ParserType::xml (std::size_t indent) const {
-  auto typeName = std::string("Type");
-
-  if (std::holds_alternative<ParserTypeFn>(*this->body)) {
-    typeName += "Fn";
-  } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
-    typeName += "Id";
-  } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
-    typeName += "Ref";
-  }
-
-  auto result = std::string(indent, ' ') + "<" + typeName;
-
-  result += this->parenthesized ? " parenthesized" : "";
-  result += R"( start=")" + this->start.str() + R"(")";
-  result += R"( end=")" + this->end.str() + R"(">)" EOL;
-
-  indent += 2;
-
-  if (std::holds_alternative<ParserTypeFn>(*this->body)) {
-    auto typeFn = std::get<ParserTypeFn>(*this->body);
-
-    if (!typeFn.params.empty()) {
-      result += std::string(indent, ' ') + R"(<slot name="params">)" EOL;
-
-      for (const auto &typeFnParam : typeFn.params) {
-        result += std::string(indent + 2, ' ') + "<TypeFnParam";
-        result += typeFnParam.id == std::nullopt ? "" : R"( id=")" + typeFnParam.id->val + R"(")";
-        result += typeFnParam.mut ? " mut" : "";
-        result += typeFnParam.variadic ? " variadic" : "";
-        result += ">" EOL + typeFnParam.type.xml(indent + 4) + EOL;
-        result += std::string(indent + 2, ' ') + "</TypeFnParam>" EOL;
-      }
-
-      result += std::string(indent, ' ') + "</slot>" EOL;
-    }
-
-    result += std::string(indent, ' ') + R"(<slot name="returnType">)" EOL;
-    result += typeFn.returnType.xml(indent + 2) + EOL;
-    result += std::string(indent, ' ') + "</slot>" EOL;
-  } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
-    auto typeId = std::get<ParserTypeId>(*this->body);
-    result += std::string(indent, ' ') + typeId.id.xml() + EOL;
-  } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
-    auto typeRef = std::get<ParserTypeRef>(*this->body);
-    result += typeRef.type.xml(indent) + EOL;
-  }
-
-  indent -= 2;
-  return result + std::string(indent, ' ') + "</" + typeName + ">";
+  return result;
 }

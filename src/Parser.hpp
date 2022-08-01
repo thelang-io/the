@@ -26,7 +26,6 @@ class Parser {
 
   ParserBlock _block ();
   std::optional<ParserStmtExpr> _stmtExpr (bool = true);
-  ParserStmtIf _stmtIf ();
   ParserStmtLoop _stmtLoop (const std::optional<ParserStmt> &);
   std::optional<ParserType> _type ();
   std::tuple<ParserStmtExpr, bool> _wrapExpr (
@@ -36,6 +35,7 @@ class Parser {
     int,
     const std::function<std::tuple<ParserStmtExpr, bool> (const ParserStmtExpr &, ReaderLocation, const Token &)> &
   );
+  std::tuple<ParserStmtExpr, bool> _wrapExprAccess (const ParserStmtExpr &, ReaderLocation, const Token &);
   std::tuple<ParserStmtExpr, bool> _wrapExprAssign (const ParserStmtExpr &, ReaderLocation, const Token &);
   std::tuple<ParserStmtExpr, bool> _wrapExprBinary (const ParserStmtExpr &, ReaderLocation, const Token &);
   std::tuple<ParserStmtExpr, bool> _wrapExprCall (const ParserStmtExpr &, ReaderLocation, const Token &);

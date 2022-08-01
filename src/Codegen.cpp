@@ -997,9 +997,25 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     auto nodeIf = std::get<ASTNodeIf>(*node.body);
 
+    code = std::string(this->indent, ' ') + "if (" + this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool")) + ") {" EOL;
     this->varMap.save();
-    code += std::string(this->indent, ' ') + this->_nodeIf(nodeIf) + EOL;
+    code += this->_block(nodeIf.body);
     this->varMap.restore();
+
+    if (nodeIf.alt != std::nullopt) {
+      code += std::string(this->indent, ' ') + "} else ";
+
+      if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
+        code += "{" EOL + this->_block(std::get<ASTBlock>(*nodeIf.alt));
+        code += std::string(this->indent, ' ') + "}" EOL;
+      } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
+        auto elseIfCode = this->_node(std::get<ASTNode>(*nodeIf.alt));
+        // todo test
+        code += elseIfCode.starts_with(" ") ? elseIfCode.substr(elseIfCode.find_first_not_of(' ')) : elseIfCode;
+      }
+    } else {
+      code += std::string(this->indent, ' ') + "}" EOL;
+    }
 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
@@ -1333,11 +1349,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
     auto code = std::string();
 
-    if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.obj)) {
-      auto objVar = std::get<std::shared_ptr<Var>>(exprAccess.obj);
-      code += Codegen::name(objVar->codeName);
+    if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.expr)) {
+      auto objVar = std::get<std::shared_ptr<Var>>(exprAccess.expr);
+      code = Codegen::name(objVar->codeName);
 
-      if (this->state.contextVars.contains(code) && !(!nodeExpr.type->isRef() && targetType->isRef())) {
+      if (this->state.contextVars.contains(code) && (nodeExpr.type->isRef() || !targetType->isRef())) {
         code = "*" + code;
       }
 
@@ -1347,7 +1363,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "*" + code;
       }
     } else {
-      auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.obj);
+      auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
       auto objCode = this->_nodeExpr(objNodeExpr, Type::real(objNodeExpr.type), true);
 
       if (objCode.starts_with("*")) {
@@ -1610,10 +1626,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
             if (std::holds_alternative<ASTExprAccess>(*exprCallArg.expr.body)) {
               auto exprAccess = std::get<ASTExprAccess>(*exprCallArg.expr.body);
 
-              if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.obj)) {
-                argCode = std::get<std::shared_ptr<Var>>(exprAccess.obj)->name;
-              } else {
+              if (exprAccess.prop != std::nullopt) {
                 argCode = *exprAccess.prop;
+              } else {
+                auto exprAccessVar = std::get<std::shared_ptr<Var>>(exprAccess.expr);
+                argCode = exprAccessVar->name;
               }
             } else {
               argCode = "(anonymous)";
@@ -1842,7 +1859,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     return this->_wrapNodeExpr(nodeExpr, code);
   } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
     auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
-    auto code = this->_nodeExpr(exprRef.body, targetType, targetType->isRef());
+    auto code = this->_nodeExpr(exprRef.expr, targetType, targetType->isRef());
 
     return this->_wrapNodeExpr(nodeExpr, code);
   } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.body)) {
@@ -1872,25 +1889,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
   }
 
   throw Error("tried to generate code for unknown expression");
-}
-
-std::string Codegen::_nodeIf (const ASTNodeIf &nodeIf) {
-  auto code = "if (" + this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool")) + ") {" EOL + this->_block(nodeIf.body);
-
-  if (nodeIf.alt != std::nullopt) {
-    code += std::string(this->indent, ' ') + "} else ";
-
-    if (std::holds_alternative<ASTBlock>(**nodeIf.alt)) {
-      code += "{" EOL + this->_block(std::get<ASTBlock>(**nodeIf.alt));
-      code += std::string(this->indent, ' ') + "}";
-    } else if (std::holds_alternative<ASTNodeIf>(**nodeIf.alt)) {
-      code += this->_nodeIf(std::get<ASTNodeIf>(**nodeIf.alt));
-    }
-  } else {
-    code += std::string(this->indent, ' ') + "}";
-  }
-
-  return code;
 }
 
 std::string Codegen::_type (const Type *type, bool mut, bool ref) {

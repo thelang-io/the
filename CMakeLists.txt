@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the-core VERSION 0.11.4 LANGUAGES CXX)
+project(the-core VERSION 0.11.5 LANGUAGES CXX)
 
 option(BUILD_TESTS "Build test programs" OFF)
 option(CODEGEN_MEMCHECK "Memory check codegen binaries" OFF)
@@ -21,6 +21,7 @@ set(
   src/Parser.cpp src/Parser.hpp
   src/ParserExpr.cpp src/ParserExpr.hpp
   src/ParserStmt.cpp src/ParserStmt.hpp
+  src/ParserType.cpp src/ParserType.hpp
   src/Reader.cpp src/Reader.hpp
   src/Token.cpp src/Token.hpp
   src/Type.cpp src/Type.hpp

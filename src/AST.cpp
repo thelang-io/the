@@ -84,60 +84,6 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
   return result;
 }
 
-ASTNodeExpr AST::_exprAccess (const std::shared_ptr<ParserMemberObj> &exprAccessBody, VarStack &varStack) {
-  if (std::holds_alternative<Token>(*exprAccessBody)) {
-    auto parserId = std::get<Token>(*exprAccessBody);
-    auto var = this->varMap.get(parserId.val);
-
-    if (var == nullptr) {
-      throw Error(this->reader, parserId.start, parserId.end, E1011);
-    }
-
-    varStack.mark(var);
-
-    auto exprAccess = ASTExprAccess{var, std::nullopt};
-    auto exprAccessType = this->_exprAccessType(exprAccessBody);
-
-    return ASTNodeExpr{exprAccessType, std::make_shared<ASTExpr>(exprAccess), false};
-  }
-
-  auto parserMember = std::get<ParserMember>(*exprAccessBody);
-  auto obj = this->_exprAccess(parserMember.obj, varStack);
-
-  if (std::holds_alternative<Token>(*parserMember.obj)) {
-    auto objExprAccess = std::get<ASTExprAccess>(*obj.body);
-    auto objVar = std::get<std::shared_ptr<Var>>(objExprAccess.obj);
-
-    varStack.mark(objVar);
-  }
-
-  auto exprAccess = ASTExprAccess{obj, parserMember.prop.val};
-  auto exprAccessType = this->_exprAccessType(exprAccessBody);
-
-  return ASTNodeExpr{exprAccessType, std::make_shared<ASTExpr>(exprAccess), false};
-}
-
-Type *AST::_exprAccessType (const std::shared_ptr<ParserMemberObj> &exprAccessBody) {
-  if (std::holds_alternative<Token>(*exprAccessBody)) {
-    auto parserId = std::get<Token>(*exprAccessBody);
-
-    if (!this->varMap.has(parserId.val)) {
-      throw Error(this->reader, parserId.start, parserId.end, E1011);
-    }
-
-    return this->varMap.get(parserId.val)->type;
-  }
-
-  auto parserMember = std::get<ParserMember>(*exprAccessBody);
-  auto memberObjType = this->_exprAccessType(parserMember.obj);
-
-  if (!memberObjType->hasProp(parserMember.prop.val)) {
-    throw Error(this->reader, parserMember.prop.start, parserMember.prop.end, E1001);
-  }
-
-  return memberObjType->getProp(parserMember.prop.val);
-}
-
 void AST::_forwardNode (const ParserBlock &block) {
   for (const auto &stmt : block) {
     if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
@@ -209,8 +155,25 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto nodeFnDecl = ASTNodeFnDecl{nodeFnDeclVar, nodeFnDeclStack, nodeFnDeclParams, nodeFnDeclBody};
     return this->_wrapNode(stmt, nodeFnDecl);
   } else if (std::holds_alternative<ParserStmtIf>(*stmt.body)) {
-    auto nodeIf = this->_nodeIf(std::get<ParserStmtIf>(*stmt.body), varStack);
-    return this->_wrapNode(stmt, nodeIf);
+    auto stmtIf = std::get<ParserStmtIf>(*stmt.body);
+
+    this->varMap.save();
+    auto nodeLoopCond = this->_nodeExpr(stmtIf.cond, varStack);
+    auto nodeLoopBody = this->_block(stmtIf.body, varStack);
+    auto nodeLoopAlt = std::optional<std::variant<ASTBlock, ASTNode>>{};
+    this->varMap.restore();
+
+    if (stmtIf.alt != std::nullopt) {
+      if (std::holds_alternative<ParserBlock>(*stmtIf.alt)) {
+        this->varMap.save();
+        nodeLoopAlt = this->_block(std::get<ParserBlock>(*stmtIf.alt), varStack);
+        this->varMap.restore();
+      } else if (std::holds_alternative<ParserStmt>(*stmtIf.alt)) {
+        nodeLoopAlt = this->_node(std::get<ParserStmt>(*stmtIf.alt), varStack);
+      }
+    }
+
+    return this->_wrapNode(stmt, ASTNodeIf{nodeLoopCond, nodeLoopBody, nodeLoopAlt});
   } else if (std::holds_alternative<ParserStmtLoop>(*stmt.body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(*stmt.body);
     auto nodeLoopInit = std::optional<ASTNode>{};
@@ -298,10 +261,23 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) {
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     auto parserExprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
-    auto exprAccess = this->_exprAccess(parserExprAccess.body, varStack);
 
-    exprAccess.parenthesized = stmtExpr.parenthesized;
-    return exprAccess;
+    if (std::holds_alternative<Token>(parserExprAccess.expr)) {
+      auto tok = std::get<Token>(parserExprAccess.expr);
+      auto var = this->varMap.get(tok.val);
+
+      if (var == nullptr) {
+        throw Error(this->reader, tok.start, tok.end, E1011);
+      }
+
+      varStack.mark(var);
+      return this->_wrapNodeExpr(stmtExpr, ASTExprAccess{var, std::nullopt});
+    } else {
+      auto exprAccessStmtExpr = std::get<ParserStmtExpr>(parserExprAccess.expr);
+      auto exprAccessExpr = this->_nodeExpr(exprAccessStmtExpr, varStack);
+
+      return this->_wrapNodeExpr(stmtExpr, ASTExprAccess{exprAccessExpr, parserExprAccess.prop->val});
+    }
   } else if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     auto parserExprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto exprAssignOp = ASTExprAssignOp{};
@@ -320,7 +296,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     else if (parserExprAssign.op.type == TK_OP_SLASH_EQ) exprAssignOp = AST_EXPR_ASSIGN_DIV;
     else if (parserExprAssign.op.type == TK_OP_STAR_EQ) exprAssignOp = AST_EXPR_ASSIGN_MUL;
 
-    auto exprAssignLeft = this->_exprAccess(parserExprAssign.left.body, varStack);
+    auto exprAssignLeft = this->_nodeExpr(parserExprAssign.left, varStack);
     auto exprAssignRight = this->_nodeExpr(parserExprAssign.right, varStack);
 
     return this->_wrapNodeExpr(stmtExpr, ASTExprAssign{exprAssignLeft, exprAssignOp, exprAssignRight});
@@ -360,8 +336,8 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     return this->_wrapNodeExpr(stmtExpr, ASTExprBinary{exprBinaryLeft, exprBinaryOp, exprBinaryRight});
   } else if (std::holds_alternative<ParserExprCall>(*stmtExpr.body)) {
     auto parserExprCall = std::get<ParserExprCall>(*stmtExpr.body);
-    auto exprCallCallee = this->_exprAccess(parserExprCall.callee.body, varStack);
-    auto exprCallCalleeType = Type::real(this->_exprAccessType(parserExprCall.callee.body));
+    auto exprCallCallee = this->_nodeExpr(parserExprCall.callee, varStack);
+    auto exprCallCalleeType = Type::real(this->_nodeExprType(parserExprCall.callee));
     auto exprCallCalleeFn = std::get<TypeFn>(exprCallCalleeType->body);
     auto exprCallArgs = std::vector<ASTExprCallArg>{};
     auto exprCallArgIdx = static_cast<std::size_t>(0);
@@ -487,9 +463,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
     return this->_wrapNodeExpr(stmtExpr, ASTExprObj{type, exprObjProps});
   } else if (std::holds_alternative<ParserExprRef>(*stmtExpr.body)) {
     auto parserExprRef = std::get<ParserExprRef>(*stmtExpr.body);
-    auto exprRefBody = this->_nodeExpr(parserExprRef.body, varStack);
+    auto exprRefExpr = this->_nodeExpr(parserExprRef.expr, varStack);
 
-    return this->_wrapNodeExpr(stmtExpr, ASTExprRef{exprRefBody});
+    return this->_wrapNodeExpr(stmtExpr, ASTExprRef{exprRefExpr});
   } else if (std::holds_alternative<ParserExprUnary>(*stmtExpr.body)) {
     auto parserExprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto op = ASTExprUnaryOp{};
@@ -511,10 +487,28 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
 Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
-    return this->_exprAccessType(exprAccess.body);
+
+    if (std::holds_alternative<Token>(exprAccess.expr)) {
+      auto tok = std::get<Token>(exprAccess.expr);
+
+      if (!this->varMap.has(tok.val)) {
+        throw Error(this->reader, tok.start, tok.end, E1011);
+      }
+
+      return this->varMap.get(tok.val)->type;
+    }
+
+    auto exprAccessStmtExpr = std::get<ParserStmtExpr>(exprAccess.expr);
+    auto objType = this->_nodeExprType(exprAccessStmtExpr);
+
+    if (!objType->hasProp(exprAccess.prop->val)) {
+      throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1001);
+    }
+
+    return objType->getProp(exprAccess.prop->val);
   } else if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
-    auto leftType = this->_exprAccessType(exprAssign.left.body);
+    auto leftType = this->_nodeExprType(exprAssign.left);
     auto rightType = this->_nodeExprType(exprAssign.right);
 
     return leftType->isRef() && !rightType->isRef() ? Type::real(leftType) : leftType;
@@ -542,7 +536,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
     }
   } else if (std::holds_alternative<ParserExprCall>(*stmtExpr.body)) {
     auto exprCall = std::get<ParserExprCall>(*stmtExpr.body);
-    auto exprCallCalleeType = Type::real(this->_exprAccessType(exprCall.callee.body));
+    auto exprCallCalleeType = Type::real(this->_nodeExprType(exprCall.callee));
 
     return std::get<TypeFn>(exprCallCalleeType->body).returnType;
   } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body)) {
@@ -581,9 +575,9 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
     return this->typeMap.get(exprObj.id.val);
   } else if (std::holds_alternative<ParserExprRef>(*stmtExpr.body)) {
     auto exprRef = std::get<ParserExprRef>(*stmtExpr.body);
-    auto exprRefBodyType = this->_nodeExprType(exprRef.body);
+    auto exprRefExprType = this->_nodeExprType(exprRef.expr);
 
-    return this->typeMap.ref(exprRefBodyType);
+    return this->typeMap.ref(exprRefExprType);
   } else if (std::holds_alternative<ParserExprUnary>(*stmtExpr.body)) {
     auto exprUnary = std::get<ParserExprUnary>(*stmtExpr.body);
     auto exprUnaryArgType = this->_nodeExprType(exprUnary.arg);
@@ -596,29 +590,6 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
   }
 
   throw Error("tried to analyze unknown expression type");
-}
-
-ASTNodeIf AST::_nodeIf (const ParserStmtIf &stmtIf, VarStack &varStack) {
-  this->varMap.save();
-  auto cond = this->_nodeExpr(stmtIf.cond, varStack);
-  auto body = this->_block(stmtIf.body, varStack);
-  auto alt = std::optional<std::shared_ptr<ASTNodeIfCond>>{};
-  this->varMap.restore();
-
-  if (stmtIf.alt != std::nullopt) {
-    if (std::holds_alternative<ParserBlock>(**stmtIf.alt)) {
-      this->varMap.save();
-      auto nodeIfAltElse = this->_block(std::get<ParserBlock>(**stmtIf.alt), varStack);
-      this->varMap.restore();
-
-      alt = std::make_shared<ASTNodeIfCond>(nodeIfAltElse);
-    } else if (std::holds_alternative<ParserStmtIf>(**stmtIf.alt)) {
-      auto nodeIfAltElif = this->_nodeIf(std::get<ParserStmtIf>(**stmtIf.alt), varStack);
-      alt = std::make_shared<ASTNodeIfCond>(nodeIfAltElif);
-    }
-  }
-
-  return ASTNodeIf{cond, body, alt};
 }
 
 Type *AST::_type (const ParserType &type) {

@@ -9,356 +9,270 @@ print("Dog", "Cat", "Hamster", separator: " ")
 print("Spider", "Snake", "Wolf", separator: ",", terminator: " ")
 print("Monkey", "Panda", "Elephant", terminator: "\n", separator: "_")
 ======= stdout =======
-<Stmt start="1:1" end="1:8">
-  <StmtExpr start="1:1" end="1:8">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="1:1" end="1:6" />
-        </ExprAccess>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="2:1" end="2:9">
-  <StmtExpr start="2:1" end="2:9">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="2:1" end="2:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="2:7" end="2:8">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="3" start="2:7" end="2:8" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="3:1" end="3:12">
-  <StmtExpr start="3:1" end="3:12">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="3:1" end="3:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="3:7" end="3:8">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="5" start="3:7" end="3:8" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="3:10" end="3:11">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="6" start="3:10" end="3:11" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="4:1" end="4:23">
-  <StmtExpr start="4:1" end="4:23">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="4:1" end="4:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="4:7" end="4:22">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Hello, World!\"" start="4:7" end="4:22" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="5:1" end="5:16">
-  <StmtExpr start="5:1" end="5:16">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="5:1" end="5:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="5:7" end="5:12">
-              <ExprBinary>
-                <slot name="left">
-                  <StmtExpr start="5:7" end="5:8">
-                    <ExprLit>
-                      <Token type="LIT_INT_DEC" val="1" start="5:7" end="5:8" />
-                    </ExprLit>
-                  </StmtExpr>
-                </slot>
-                <slot name="op">
-                  <Token type="OP_PLUS" val="+" start="5:9" end="5:10" />
-                </slot>
-                <slot name="right">
-                  <StmtExpr start="5:11" end="5:12">
-                    <ExprLit>
-                      <Token type="LIT_INT_DEC" val="2" start="5:11" end="5:12" />
-                    </ExprLit>
-                  </StmtExpr>
-                </slot>
-              </ExprBinary>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="5:14" end="5:15">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="4" start="5:14" end="5:15" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="6:1" end="6:16">
-  <StmtExpr start="6:1" end="6:16">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="6:1" end="6:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="6:7" end="6:9">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="10" start="6:7" end="6:9" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="6:11" end="6:12">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="4" start="6:11" end="6:12" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="6:14" end="6:15">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="2" start="6:14" end="6:15" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="7:1" end="7:47">
-  <StmtExpr start="7:1" end="7:47">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="7:1" end="7:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="7:7" end="7:12">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Dog\"" start="7:7" end="7:12" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="7:14" end="7:19">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Cat\"" start="7:14" end="7:19" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="7:21" end="7:30">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Hamster\"" start="7:21" end="7:30" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="id">
-            <Token type="ID" val="separator" start="7:32" end="7:41" />
-          </slot>
-          <slot name="expr">
-            <StmtExpr start="7:43" end="7:46">
-              <ExprLit>
-                <Token type="LIT_STR" val="\" \"" start="7:43" end="7:46" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="8:1" end="8:66">
-  <StmtExpr start="8:1" end="8:66">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="8:1" end="8:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="8:7" end="8:15">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Spider\"" start="8:7" end="8:15" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="8:17" end="8:24">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Snake\"" start="8:17" end="8:24" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="8:26" end="8:32">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Wolf\"" start="8:26" end="8:32" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="id">
-            <Token type="ID" val="separator" start="8:34" end="8:43" />
-          </slot>
-          <slot name="expr">
-            <StmtExpr start="8:45" end="8:48">
-              <ExprLit>
-                <Token type="LIT_STR" val="\",\"" start="8:45" end="8:48" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="id">
-            <Token type="ID" val="terminator" start="8:50" end="8:60" />
-          </slot>
-          <slot name="expr">
-            <StmtExpr start="8:62" end="8:65">
-              <ExprLit>
-                <Token type="LIT_STR" val="\" \"" start="8:62" end="8:65" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
-<Stmt start="9:1" end="9:71">
-  <StmtExpr start="9:1" end="9:71">
-    <ExprCall>
-      <slot name="callee">
-        <ExprAccess>
-          <Token type="ID" val="print" start="9:1" end="9:6" />
-        </ExprAccess>
-      </slot>
-      <slot name="args">
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="9:7" end="9:15">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Monkey\"" start="9:7" end="9:15" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="9:17" end="9:24">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Panda\"" start="9:17" end="9:24" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="expr">
-            <StmtExpr start="9:26" end="9:36">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"Elephant\"" start="9:26" end="9:36" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="id">
-            <Token type="ID" val="terminator" start="9:38" end="9:48" />
-          </slot>
-          <slot name="expr">
-            <StmtExpr start="9:50" end="9:54">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"\n\"" start="9:50" end="9:54" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-        <ExprCallArg>
-          <slot name="id">
-            <Token type="ID" val="separator" start="9:56" end="9:65" />
-          </slot>
-          <slot name="expr">
-            <StmtExpr start="9:67" end="9:70">
-              <ExprLit>
-                <Token type="LIT_STR" val="\"_\"" start="9:67" end="9:70" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprCallArg>
-      </slot>
-    </ExprCall>
-  </StmtExpr>
-</Stmt>
+<ExprCall start="1:1" end="1:8">
+  <ExprCallCallee>
+    <ExprAccess start="1:1" end="1:6">
+      <Token type="ID" val="print" start="1:1" end="1:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+</ExprCall>
+<ExprCall start="2:1" end="2:9">
+  <ExprCallCallee>
+    <ExprAccess start="2:1" end="2:6">
+      <Token type="ID" val="print" start="2:1" end="2:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="2:7" end="2:8">
+          <Token type="LIT_INT_DEC" val="3" start="2:7" end="2:8" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>
+<ExprCall start="3:1" end="3:12">
+  <ExprCallCallee>
+    <ExprAccess start="3:1" end="3:6">
+      <Token type="ID" val="print" start="3:1" end="3:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="3:7" end="3:8">
+          <Token type="LIT_INT_DEC" val="5" start="3:7" end="3:8" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="3:10" end="3:11">
+          <Token type="LIT_INT_DEC" val="6" start="3:10" end="3:11" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>
+<ExprCall start="4:1" end="4:23">
+  <ExprCallCallee>
+    <ExprAccess start="4:1" end="4:6">
+      <Token type="ID" val="print" start="4:1" end="4:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="4:7" end="4:22">
+          <Token type="LIT_STR" val="\"Hello, World!\"" start="4:7" end="4:22" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>
+<ExprCall start="5:1" end="5:16">
+  <ExprCallCallee>
+    <ExprAccess start="5:1" end="5:6">
+      <Token type="ID" val="print" start="5:1" end="5:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprBinary start="5:7" end="5:12">
+          <ExprBinaryLeft>
+            <ExprLit start="5:7" end="5:8">
+              <Token type="LIT_INT_DEC" val="1" start="5:7" end="5:8" />
+            </ExprLit>
+          </ExprBinaryLeft>
+          <ExprBinaryOp>
+            <Token type="OP_PLUS" val="+" start="5:9" end="5:10" />
+          </ExprBinaryOp>
+          <ExprBinaryRight>
+            <ExprLit start="5:11" end="5:12">
+              <Token type="LIT_INT_DEC" val="2" start="5:11" end="5:12" />
+            </ExprLit>
+          </ExprBinaryRight>
+        </ExprBinary>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="5:14" end="5:15">
+          <Token type="LIT_INT_DEC" val="4" start="5:14" end="5:15" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>
+<ExprCall start="6:1" end="6:16">
+  <ExprCallCallee>
+    <ExprAccess start="6:1" end="6:6">
+      <Token type="ID" val="print" start="6:1" end="6:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="6:7" end="6:9">
+          <Token type="LIT_INT_DEC" val="10" start="6:7" end="6:9" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="6:11" end="6:12">
+          <Token type="LIT_INT_DEC" val="4" start="6:11" end="6:12" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="6:14" end="6:15">
+          <Token type="LIT_INT_DEC" val="2" start="6:14" end="6:15" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>
+<ExprCall start="7:1" end="7:47">
+  <ExprCallCallee>
+    <ExprAccess start="7:1" end="7:6">
+      <Token type="ID" val="print" start="7:1" end="7:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="7:7" end="7:12">
+          <Token type="LIT_STR" val="\"Dog\"" start="7:7" end="7:12" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="7:14" end="7:19">
+          <Token type="LIT_STR" val="\"Cat\"" start="7:14" end="7:19" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="7:21" end="7:30">
+          <Token type="LIT_STR" val="\"Hamster\"" start="7:21" end="7:30" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgId>
+        <Token type="ID" val="separator" start="7:32" end="7:41" />
+      </ExprCallArgId>
+      <ExprCallArgExpr>
+        <ExprLit start="7:43" end="7:46">
+          <Token type="LIT_STR" val="\" \"" start="7:43" end="7:46" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>
+<ExprCall start="8:1" end="8:66">
+  <ExprCallCallee>
+    <ExprAccess start="8:1" end="8:6">
+      <Token type="ID" val="print" start="8:1" end="8:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="8:7" end="8:15">
+          <Token type="LIT_STR" val="\"Spider\"" start="8:7" end="8:15" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="8:17" end="8:24">
+          <Token type="LIT_STR" val="\"Snake\"" start="8:17" end="8:24" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="8:26" end="8:32">
+          <Token type="LIT_STR" val="\"Wolf\"" start="8:26" end="8:32" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgId>
+        <Token type="ID" val="separator" start="8:34" end="8:43" />
+      </ExprCallArgId>
+      <ExprCallArgExpr>
+        <ExprLit start="8:45" end="8:48">
+          <Token type="LIT_STR" val="\",\"" start="8:45" end="8:48" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgId>
+        <Token type="ID" val="terminator" start="8:50" end="8:60" />
+      </ExprCallArgId>
+      <ExprCallArgExpr>
+        <ExprLit start="8:62" end="8:65">
+          <Token type="LIT_STR" val="\" \"" start="8:62" end="8:65" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>
+<ExprCall start="9:1" end="9:71">
+  <ExprCallCallee>
+    <ExprAccess start="9:1" end="9:6">
+      <Token type="ID" val="print" start="9:1" end="9:6" />
+    </ExprAccess>
+  </ExprCallCallee>
+  <ExprCallArgs>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="9:7" end="9:15">
+          <Token type="LIT_STR" val="\"Monkey\"" start="9:7" end="9:15" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="9:17" end="9:24">
+          <Token type="LIT_STR" val="\"Panda\"" start="9:17" end="9:24" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgExpr>
+        <ExprLit start="9:26" end="9:36">
+          <Token type="LIT_STR" val="\"Elephant\"" start="9:26" end="9:36" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgId>
+        <Token type="ID" val="terminator" start="9:38" end="9:48" />
+      </ExprCallArgId>
+      <ExprCallArgExpr>
+        <ExprLit start="9:50" end="9:54">
+          <Token type="LIT_STR" val="\"\n\"" start="9:50" end="9:54" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+    <ExprCallArg>
+      <ExprCallArgId>
+        <Token type="ID" val="separator" start="9:56" end="9:65" />
+      </ExprCallArgId>
+      <ExprCallArgExpr>
+        <ExprLit start="9:67" end="9:70">
+          <Token type="LIT_STR" val="\"_\"" start="9:67" end="9:70" />
+        </ExprLit>
+      </ExprCallArgExpr>
+    </ExprCallArg>
+  </ExprCallArgs>
+</ExprCall>

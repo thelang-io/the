@@ -17,53 +17,28 @@ main {
   }
 }
 ======= stdout =======
-<Node>
+<NodeObjDecl>
+  <TypeObj codeName="Test2_0" name="Test2">
+    <TypeObjField name="a">
+      <TypeObj codeName="Test1_0" name="Test1">
+        <TypeObjField name="b">
+          <BuiltinType name="int" />
+        </TypeObjField>
+      </TypeObj>
+    </TypeObjField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeObjDecl>
+  <TypeObj codeName="Test1_0" name="Test1">
+    <TypeObjField name="b">
+      <BuiltinType name="int" />
+    </TypeObjField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
   <NodeObjDecl>
-    <TypeObj codeName="Test2_0" name="Test2">
-      <TypeObjField name="a">
-        <TypeObj codeName="Test1_0" name="Test1">
-          <TypeObjField name="b">
-            <BuiltinType name="int" />
-          </TypeObjField>
-        </TypeObj>
-      </TypeObjField>
-    </TypeObj>
-  </NodeObjDecl>
-</Node>
-<Node>
-  <NodeObjDecl>
-    <TypeObj codeName="Test1_0" name="Test1">
-      <TypeObjField name="b">
-        <BuiltinType name="int" />
-      </TypeObjField>
-    </TypeObj>
-  </NodeObjDecl>
-</Node>
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeObjDecl>
-        <TypeObj codeName="mainSDTest4_0" name="Test4">
-          <TypeObjField name="c">
-            <TypeObj codeName="mainSDTest3_0" name="Test3">
-              <TypeObjField name="d">
-                <TypeObj codeName="Test2_0" name="Test2">
-                  <TypeObjField name="a">
-                    <TypeObj codeName="Test1_0" name="Test1">
-                      <TypeObjField name="b">
-                        <BuiltinType name="int" />
-                      </TypeObjField>
-                    </TypeObj>
-                  </TypeObjField>
-                </TypeObj>
-              </TypeObjField>
-            </TypeObj>
-          </TypeObjField>
-        </TypeObj>
-      </NodeObjDecl>
-    </Node>
-    <Node>
-      <NodeObjDecl>
+    <TypeObj codeName="mainSDTest4_0" name="Test4">
+      <TypeObjField name="c">
         <TypeObj codeName="mainSDTest3_0" name="Test3">
           <TypeObjField name="d">
             <TypeObj codeName="Test2_0" name="Test2">
@@ -77,7 +52,22 @@ main {
             </TypeObj>
           </TypeObjField>
         </TypeObj>
-      </NodeObjDecl>
-    </Node>
-  </NodeMain>
-</Node>
+      </TypeObjField>
+    </TypeObj>
+  </NodeObjDecl>
+  <NodeObjDecl>
+    <TypeObj codeName="mainSDTest3_0" name="Test3">
+      <TypeObjField name="d">
+        <TypeObj codeName="Test2_0" name="Test2">
+          <TypeObjField name="a">
+            <TypeObj codeName="Test1_0" name="Test1">
+              <TypeObjField name="b">
+                <BuiltinType name="int" />
+              </TypeObjField>
+            </TypeObj>
+          </TypeObjField>
+        </TypeObj>
+      </TypeObjField>
+    </TypeObj>
+  </NodeObjDecl>
+</NodeMain>

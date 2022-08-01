@@ -4,205 +4,183 @@ main {
   mut b := (2 * (3 + 4) + 4 / 2) * 3
 }
 ======= stdout =======
-<Node>
-  <NodeMain>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="a_0" frame="2" name="a">
-            <BuiltinType name="bool" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="bool" />
-            </slot>
-            <slot name="body">
-              <ExprUnary op="NOT" prefix>
-                <NodeExpr parenthesized>
-                  <slot name="type">
-                    <BuiltinType name="int" />
-                  </slot>
-                  <slot name="body">
-                    <ExprBinary op="ADD">
-                      <slot name="left">
-                        <NodeExpr>
-                          <slot name="type">
-                            <BuiltinType name="int" />
-                          </slot>
-                          <slot name="body">
-                            <ExprLit type="INT_DEC">
-                              1
-                            </ExprLit>
-                          </slot>
-                        </NodeExpr>
-                      </slot>
-                      <slot name="right">
-                        <NodeExpr>
-                          <slot name="type">
-                            <BuiltinType name="int" />
-                          </slot>
-                          <slot name="body">
-                            <ExprUnary op="BIT_NOT" prefix>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <BuiltinType name="bool" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="bool" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprUnary op="NOT" prefix>
+            <NodeExpr parenthesized>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprBinary op="ADD">
+                  <ExprBinaryLeft>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="INT_DEC" value="1" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprBinaryLeft>
+                  <ExprBinaryRight>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprUnary op="BIT_NOT" prefix>
+                          <NodeExpr>
+                            <NodeExprType>
+                              <BuiltinType name="int" />
+                            </NodeExprType>
+                            <NodeExprBody>
+                              <ExprLit type="INT_DEC" value="1" />
+                            </NodeExprBody>
+                          </NodeExpr>
+                        </ExprUnary>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprBinaryRight>
+                </ExprBinary>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprUnary>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" mut frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprBinary op="MUL">
+            <ExprBinaryLeft>
+              <NodeExpr parenthesized>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprBinary op="ADD">
+                    <ExprBinaryLeft>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprBinary op="MUL">
+                            <ExprBinaryLeft>
                               <NodeExpr>
-                                <slot name="type">
+                                <NodeExprType>
                                   <BuiltinType name="int" />
-                                </slot>
-                                <slot name="body">
-                                  <ExprLit type="INT_DEC">
-                                    1
-                                  </ExprLit>
-                                </slot>
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprLit type="INT_DEC" value="2" />
+                                </NodeExprBody>
                               </NodeExpr>
-                            </ExprUnary>
-                          </slot>
-                        </NodeExpr>
-                      </slot>
-                    </ExprBinary>
-                  </slot>
-                </NodeExpr>
-              </ExprUnary>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-    <Node>
-      <NodeVarDecl>
-        <slot name="var">
-          <Var codeName="b_0" frame="2" mut name="b">
-            <BuiltinType name="int" />
-          </Var>
-        </slot>
-        <slot name="init">
-          <NodeExpr>
-            <slot name="type">
-              <BuiltinType name="int" />
-            </slot>
-            <slot name="body">
-              <ExprBinary op="MUL">
-                <slot name="left">
-                  <NodeExpr parenthesized>
-                    <slot name="type">
-                      <BuiltinType name="int" />
-                    </slot>
-                    <slot name="body">
-                      <ExprBinary op="ADD">
-                        <slot name="left">
-                          <NodeExpr>
-                            <slot name="type">
-                              <BuiltinType name="int" />
-                            </slot>
-                            <slot name="body">
-                              <ExprBinary op="MUL">
-                                <slot name="left">
-                                  <NodeExpr>
-                                    <slot name="type">
-                                      <BuiltinType name="int" />
-                                    </slot>
-                                    <slot name="body">
-                                      <ExprLit type="INT_DEC">
-                                        2
-                                      </ExprLit>
-                                    </slot>
-                                  </NodeExpr>
-                                </slot>
-                                <slot name="right">
-                                  <NodeExpr parenthesized>
-                                    <slot name="type">
-                                      <BuiltinType name="int" />
-                                    </slot>
-                                    <slot name="body">
-                                      <ExprBinary op="ADD">
-                                        <slot name="left">
-                                          <NodeExpr>
-                                            <slot name="type">
-                                              <BuiltinType name="int" />
-                                            </slot>
-                                            <slot name="body">
-                                              <ExprLit type="INT_DEC">
-                                                3
-                                              </ExprLit>
-                                            </slot>
-                                          </NodeExpr>
-                                        </slot>
-                                        <slot name="right">
-                                          <NodeExpr>
-                                            <slot name="type">
-                                              <BuiltinType name="int" />
-                                            </slot>
-                                            <slot name="body">
-                                              <ExprLit type="INT_DEC">
-                                                4
-                                              </ExprLit>
-                                            </slot>
-                                          </NodeExpr>
-                                        </slot>
-                                      </ExprBinary>
-                                    </slot>
-                                  </NodeExpr>
-                                </slot>
-                              </ExprBinary>
-                            </slot>
-                          </NodeExpr>
-                        </slot>
-                        <slot name="right">
-                          <NodeExpr>
-                            <slot name="type">
-                              <BuiltinType name="int" />
-                            </slot>
-                            <slot name="body">
-                              <ExprBinary op="DIV">
-                                <slot name="left">
-                                  <NodeExpr>
-                                    <slot name="type">
-                                      <BuiltinType name="int" />
-                                    </slot>
-                                    <slot name="body">
-                                      <ExprLit type="INT_DEC">
-                                        4
-                                      </ExprLit>
-                                    </slot>
-                                  </NodeExpr>
-                                </slot>
-                                <slot name="right">
-                                  <NodeExpr>
-                                    <slot name="type">
-                                      <BuiltinType name="int" />
-                                    </slot>
-                                    <slot name="body">
-                                      <ExprLit type="INT_DEC">
-                                        2
-                                      </ExprLit>
-                                    </slot>
-                                  </NodeExpr>
-                                </slot>
-                              </ExprBinary>
-                            </slot>
-                          </NodeExpr>
-                        </slot>
-                      </ExprBinary>
-                    </slot>
-                  </NodeExpr>
-                </slot>
-                <slot name="right">
-                  <NodeExpr>
-                    <slot name="type">
-                      <BuiltinType name="int" />
-                    </slot>
-                    <slot name="body">
-                      <ExprLit type="INT_DEC">
-                        3
-                      </ExprLit>
-                    </slot>
-                  </NodeExpr>
-                </slot>
-              </ExprBinary>
-            </slot>
-          </NodeExpr>
-        </slot>
-      </NodeVarDecl>
-    </Node>
-  </NodeMain>
-</Node>
+                            </ExprBinaryLeft>
+                            <ExprBinaryRight>
+                              <NodeExpr parenthesized>
+                                <NodeExprType>
+                                  <BuiltinType name="int" />
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprBinary op="ADD">
+                                    <ExprBinaryLeft>
+                                      <NodeExpr>
+                                        <NodeExprType>
+                                          <BuiltinType name="int" />
+                                        </NodeExprType>
+                                        <NodeExprBody>
+                                          <ExprLit type="INT_DEC" value="3" />
+                                        </NodeExprBody>
+                                      </NodeExpr>
+                                    </ExprBinaryLeft>
+                                    <ExprBinaryRight>
+                                      <NodeExpr>
+                                        <NodeExprType>
+                                          <BuiltinType name="int" />
+                                        </NodeExprType>
+                                        <NodeExprBody>
+                                          <ExprLit type="INT_DEC" value="4" />
+                                        </NodeExprBody>
+                                      </NodeExpr>
+                                    </ExprBinaryRight>
+                                  </ExprBinary>
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprBinaryRight>
+                          </ExprBinary>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryLeft>
+                    <ExprBinaryRight>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprBinary op="DIV">
+                            <ExprBinaryLeft>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <BuiltinType name="int" />
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprLit type="INT_DEC" value="4" />
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprBinaryLeft>
+                            <ExprBinaryRight>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <BuiltinType name="int" />
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprLit type="INT_DEC" value="2" />
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprBinaryRight>
+                          </ExprBinary>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryRight>
+                  </ExprBinary>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryLeft>
+            <ExprBinaryRight>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="3" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>

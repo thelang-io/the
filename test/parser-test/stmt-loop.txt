@@ -3,92 +3,68 @@ loop i = 0; i < 3; i++ {
   i *= 2
 }
 ======= stdout =======
-<Stmt start="1:1" end="3:2">
-  <StmtLoop>
-    <slot name="init">
-      <Stmt start="1:6" end="1:11">
-        <StmtExpr start="1:6" end="1:11">
-          <ExprAssign>
-            <slot name="left">
-              <ExprAccess>
-                <Token type="ID" val="i" start="1:6" end="1:7" />
-              </ExprAccess>
-            </slot>
-            <slot name="op">
-              <Token type="OP_EQ" val="=" start="1:8" end="1:9" />
-            </slot>
-            <slot name="right">
-              <StmtExpr start="1:10" end="1:11">
-                <ExprLit>
-                  <Token type="LIT_INT_DEC" val="0" start="1:10" end="1:11" />
-                </ExprLit>
-              </StmtExpr>
-            </slot>
-          </ExprAssign>
-        </StmtExpr>
-      </Stmt>
-    </slot>
-    <slot name="cond">
-      <StmtExpr start="1:13" end="1:18">
-        <ExprBinary>
-          <slot name="left">
-            <StmtExpr start="1:13" end="1:14">
-              <ExprAccess>
-                <Token type="ID" val="i" start="1:13" end="1:14" />
-              </ExprAccess>
-            </StmtExpr>
-          </slot>
-          <slot name="op">
-            <Token type="OP_LT" val="<" start="1:15" end="1:16" />
-          </slot>
-          <slot name="right">
-            <StmtExpr start="1:17" end="1:18">
-              <ExprLit>
-                <Token type="LIT_INT_DEC" val="3" start="1:17" end="1:18" />
-              </ExprLit>
-            </StmtExpr>
-          </slot>
-        </ExprBinary>
-      </StmtExpr>
-    </slot>
-    <slot name="upd">
-      <StmtExpr start="1:20" end="1:23">
-        <ExprUnary>
-          <slot name="arg">
-            <StmtExpr start="1:20" end="1:21">
-              <ExprAccess>
-                <Token type="ID" val="i" start="1:20" end="1:21" />
-              </ExprAccess>
-            </StmtExpr>
-          </slot>
-          <slot name="op">
-            <Token type="OP_PLUS_PLUS" val="++" start="1:21" end="1:23" />
-          </slot>
-        </ExprUnary>
-      </StmtExpr>
-    </slot>
-    <slot name="body">
-      <Stmt start="2:3" end="2:9">
-        <StmtExpr start="2:3" end="2:9">
-          <ExprAssign>
-            <slot name="left">
-              <ExprAccess>
-                <Token type="ID" val="i" start="2:3" end="2:4" />
-              </ExprAccess>
-            </slot>
-            <slot name="op">
-              <Token type="OP_STAR_EQ" val="*=" start="2:5" end="2:7" />
-            </slot>
-            <slot name="right">
-              <StmtExpr start="2:8" end="2:9">
-                <ExprLit>
-                  <Token type="LIT_INT_DEC" val="2" start="2:8" end="2:9" />
-                </ExprLit>
-              </StmtExpr>
-            </slot>
-          </ExprAssign>
-        </StmtExpr>
-      </Stmt>
-    </slot>
-  </StmtLoop>
-</Stmt>
+<StmtLoop start="1:1" end="3:2">
+  <StmtLoopInit>
+    <ExprAssign start="1:6" end="1:11">
+      <ExprAssignLeft>
+        <ExprAccess start="1:6" end="1:7">
+          <Token type="ID" val="i" start="1:6" end="1:7" />
+        </ExprAccess>
+      </ExprAssignLeft>
+      <ExprAssignOp>
+        <Token type="OP_EQ" val="=" start="1:8" end="1:9" />
+      </ExprAssignOp>
+      <ExprAssignRight>
+        <ExprLit start="1:10" end="1:11">
+          <Token type="LIT_INT_DEC" val="0" start="1:10" end="1:11" />
+        </ExprLit>
+      </ExprAssignRight>
+    </ExprAssign>
+  </StmtLoopInit>
+  <StmtLoopCond>
+    <ExprBinary start="1:13" end="1:18">
+      <ExprBinaryLeft>
+        <ExprAccess start="1:13" end="1:14">
+          <Token type="ID" val="i" start="1:13" end="1:14" />
+        </ExprAccess>
+      </ExprBinaryLeft>
+      <ExprBinaryOp>
+        <Token type="OP_LT" val="<" start="1:15" end="1:16" />
+      </ExprBinaryOp>
+      <ExprBinaryRight>
+        <ExprLit start="1:17" end="1:18">
+          <Token type="LIT_INT_DEC" val="3" start="1:17" end="1:18" />
+        </ExprLit>
+      </ExprBinaryRight>
+    </ExprBinary>
+  </StmtLoopCond>
+  <StmtLoopUpd>
+    <ExprUnary start="1:20" end="1:23">
+      <ExprUnaryArg>
+        <ExprAccess start="1:20" end="1:21">
+          <Token type="ID" val="i" start="1:20" end="1:21" />
+        </ExprAccess>
+      </ExprUnaryArg>
+      <ExprUnaryOp>
+        <Token type="OP_PLUS_PLUS" val="++" start="1:21" end="1:23" />
+      </ExprUnaryOp>
+    </ExprUnary>
+  </StmtLoopUpd>
+  <StmtLoopBody>
+    <ExprAssign start="2:3" end="2:9">
+      <ExprAssignLeft>
+        <ExprAccess start="2:3" end="2:4">
+          <Token type="ID" val="i" start="2:3" end="2:4" />
+        </ExprAccess>
+      </ExprAssignLeft>
+      <ExprAssignOp>
+        <Token type="OP_STAR_EQ" val="*=" start="2:5" end="2:7" />
+      </ExprAssignOp>
+      <ExprAssignRight>
+        <ExprLit start="2:8" end="2:9">
+          <Token type="LIT_INT_DEC" val="2" start="2:8" end="2:9" />
+        </ExprLit>
+      </ExprAssignRight>
+    </ExprAssign>
+  </StmtLoopBody>
+</StmtLoop>

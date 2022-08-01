@@ -10,118 +10,98 @@ a := Test1{
   tp: 2
 }
 ======= stdout =======
-<Stmt start="1:1" end="10:2">
-  <StmtVarDecl>
-    <slot name="id">
-      <Token type="ID" val="a" start="1:1" end="1:2" />
-    </slot>
-    <slot name="init">
-      <StmtExpr start="1:6" end="10:2">
-        <ExprObj>
-          <slot name="id">
-            <Token type="ID" val="Test1" start="1:6" end="1:11" />
-          </slot>
-          <slot name="props">
-            <ExprObjProp>
-              <slot name="id">
-                <Token type="ID" val="t" start="2:3" end="2:4" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="2:6" end="7:4">
-                  <ExprObj>
-                    <slot name="id">
-                      <Token type="ID" val="Test2" start="2:6" end="2:11" />
-                    </slot>
-                    <slot name="props">
-                      <ExprObjProp>
-                        <slot name="id">
-                          <Token type="ID" val="t1" start="3:5" end="3:7" />
-                        </slot>
-                        <slot name="init">
-                          <StmtExpr start="3:9" end="3:12">
-                            <ExprLit>
-                              <Token type="LIT_CHAR" val="'z'" start="3:9" end="3:12" />
-                            </ExprLit>
-                          </StmtExpr>
-                        </slot>
-                      </ExprObjProp>
-                      <ExprObjProp>
-                        <slot name="id">
-                          <Token type="ID" val="t2" start="4:5" end="4:7" />
-                        </slot>
-                        <slot name="init">
-                          <StmtExpr start="4:9" end="4:13">
-                            <ExprLit>
-                              <Token type="LIT_FLOAT" val="3.14" start="4:9" end="4:13" />
-                            </ExprLit>
-                          </StmtExpr>
-                        </slot>
-                      </ExprObjProp>
-                      <ExprObjProp>
-                        <slot name="id">
-                          <Token type="ID" val="t3" start="5:5" end="5:7" />
-                        </slot>
-                        <slot name="init">
-                          <StmtExpr start="5:9" end="5:16">
-                            <ExprLit>
-                              <Token type="LIT_STR" val="\"Thing\"" start="5:9" end="5:16" />
-                            </ExprLit>
-                          </StmtExpr>
-                        </slot>
-                      </ExprObjProp>
-                      <ExprObjProp>
-                        <slot name="id">
-                          <Token type="ID" val="t4" start="6:5" end="6:7" />
-                        </slot>
-                        <slot name="init">
-                          <StmtExpr start="6:9" end="6:11">
-                            <ExprUnary prefix>
-                              <slot name="arg">
-                                <StmtExpr start="6:10" end="6:11">
-                                  <ExprLit>
-                                    <Token type="LIT_INT_DEC" val="1" start="6:10" end="6:11" />
-                                  </ExprLit>
-                                </StmtExpr>
-                              </slot>
-                              <slot name="op">
-                                <Token type="OP_MINUS" val="-" start="6:9" end="6:10" />
-                              </slot>
-                            </ExprUnary>
-                          </StmtExpr>
-                        </slot>
-                      </ExprObjProp>
-                    </slot>
-                  </ExprObj>
-                </StmtExpr>
-              </slot>
-            </ExprObjProp>
-            <ExprObjProp>
-              <slot name="id">
-                <Token type="ID" val="ta" start="8:3" end="8:5" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="8:7" end="8:8">
-                  <ExprAccess>
-                    <Token type="ID" val="a" start="8:7" end="8:8" />
-                  </ExprAccess>
-                </StmtExpr>
-              </slot>
-            </ExprObjProp>
-            <ExprObjProp>
-              <slot name="id">
-                <Token type="ID" val="tp" start="9:3" end="9:5" />
-              </slot>
-              <slot name="init">
-                <StmtExpr start="9:7" end="9:8">
-                  <ExprLit>
-                    <Token type="LIT_INT_DEC" val="2" start="9:7" end="9:8" />
-                  </ExprLit>
-                </StmtExpr>
-              </slot>
-            </ExprObjProp>
-          </slot>
-        </ExprObj>
-      </StmtExpr>
-    </slot>
-  </StmtVarDecl>
-</Stmt>
+<StmtVarDecl start="1:1" end="10:2">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprObj start="1:6" end="10:2">
+      <ExprObjId>
+        <Token type="ID" val="Test1" start="1:6" end="1:11" />
+      </ExprObjId>
+      <ExprObjProps>
+        <ExprObjProp>
+          <ExprObjPropId>
+            <Token type="ID" val="t" start="2:3" end="2:4" />
+          </ExprObjPropId>
+          <ExprObjPropInit>
+            <ExprObj start="2:6" end="7:4">
+              <ExprObjId>
+                <Token type="ID" val="Test2" start="2:6" end="2:11" />
+              </ExprObjId>
+              <ExprObjProps>
+                <ExprObjProp>
+                  <ExprObjPropId>
+                    <Token type="ID" val="t1" start="3:5" end="3:7" />
+                  </ExprObjPropId>
+                  <ExprObjPropInit>
+                    <ExprLit start="3:9" end="3:12">
+                      <Token type="LIT_CHAR" val="'z'" start="3:9" end="3:12" />
+                    </ExprLit>
+                  </ExprObjPropInit>
+                </ExprObjProp>
+                <ExprObjProp>
+                  <ExprObjPropId>
+                    <Token type="ID" val="t2" start="4:5" end="4:7" />
+                  </ExprObjPropId>
+                  <ExprObjPropInit>
+                    <ExprLit start="4:9" end="4:13">
+                      <Token type="LIT_FLOAT" val="3.14" start="4:9" end="4:13" />
+                    </ExprLit>
+                  </ExprObjPropInit>
+                </ExprObjProp>
+                <ExprObjProp>
+                  <ExprObjPropId>
+                    <Token type="ID" val="t3" start="5:5" end="5:7" />
+                  </ExprObjPropId>
+                  <ExprObjPropInit>
+                    <ExprLit start="5:9" end="5:16">
+                      <Token type="LIT_STR" val="\"Thing\"" start="5:9" end="5:16" />
+                    </ExprLit>
+                  </ExprObjPropInit>
+                </ExprObjProp>
+                <ExprObjProp>
+                  <ExprObjPropId>
+                    <Token type="ID" val="t4" start="6:5" end="6:7" />
+                  </ExprObjPropId>
+                  <ExprObjPropInit>
+                    <ExprUnary start="6:9" end="6:11" prefix>
+                      <ExprUnaryArg>
+                        <ExprLit start="6:10" end="6:11">
+                          <Token type="LIT_INT_DEC" val="1" start="6:10" end="6:11" />
+                        </ExprLit>
+                      </ExprUnaryArg>
+                      <ExprUnaryOp>
+                        <Token type="OP_MINUS" val="-" start="6:9" end="6:10" />
+                      </ExprUnaryOp>
+                    </ExprUnary>
+                  </ExprObjPropInit>
+                </ExprObjProp>
+              </ExprObjProps>
+            </ExprObj>
+          </ExprObjPropInit>
+        </ExprObjProp>
+        <ExprObjProp>
+          <ExprObjPropId>
+            <Token type="ID" val="ta" start="8:3" end="8:5" />
+          </ExprObjPropId>
+          <ExprObjPropInit>
+            <ExprAccess start="8:7" end="8:8">
+              <Token type="ID" val="a" start="8:7" end="8:8" />
+            </ExprAccess>
+          </ExprObjPropInit>
+        </ExprObjProp>
+        <ExprObjProp>
+          <ExprObjPropId>
+            <Token type="ID" val="tp" start="9:3" end="9:5" />
+          </ExprObjPropId>
+          <ExprObjPropInit>
+            <ExprLit start="9:7" end="9:8">
+              <Token type="LIT_INT_DEC" val="2" start="9:7" end="9:8" />
+            </ExprLit>
+          </ExprObjPropInit>
+        </ExprObjProp>
+      </ExprObjProps>
+    </ExprObj>
+  </StmtVarDeclInit>
+</StmtVarDecl>

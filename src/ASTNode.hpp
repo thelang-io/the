@@ -41,7 +41,6 @@ struct ASTNode {
 };
 
 using ASTBlock = std::vector<ASTNode>;
-using ASTNodeIfCond = std::variant<ASTBlock, ASTNodeIf>;
 
 struct ASTNodeBreak {
 };
@@ -64,9 +63,7 @@ struct ASTNodeFnDecl {
 struct ASTNodeIf {
   ASTNodeExpr cond;
   ASTBlock body;
-  std::optional<std::shared_ptr<ASTNodeIfCond>> alt;
-
-  std::string xml (std::size_t = 0) const;
+  std::optional<std::variant<ASTBlock, ASTNode>> alt;
 };
 
 struct ASTNodeLoop {

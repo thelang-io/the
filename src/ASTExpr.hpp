@@ -76,7 +76,6 @@ struct ASTExprLit;
 struct ASTExprObj;
 struct ASTExprRef;
 struct ASTExprUnary;
-struct ASTMember;
 
 using ASTExpr = std::variant<
   ASTExprAccess,
@@ -101,7 +100,7 @@ struct ASTNodeExpr {
 };
 
 struct ASTExprAccess {
-  std::variant<std::shared_ptr<Var>, ASTNodeExpr> obj;
+  std::variant<std::shared_ptr<Var>, ASTNodeExpr> expr;
   std::optional<std::string> prop;
 };
 
@@ -124,7 +123,7 @@ struct ASTExprCallArg {
 
 struct ASTExprCall {
   ASTNodeExpr callee;
-  Type *calleeType;
+  Type *calleeType; // todo remove
   std::vector<ASTExprCallArg> args;
 };
 
@@ -150,7 +149,7 @@ struct ASTExprObj {
 };
 
 struct ASTExprRef {
-  ASTNodeExpr body;
+  ASTNodeExpr expr;
 };
 
 struct ASTExprUnary {

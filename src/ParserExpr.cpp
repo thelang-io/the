@@ -8,168 +8,154 @@
 #include "ParserExpr.hpp"
 #include "config.hpp"
 
-std::string memberObjXml (const std::shared_ptr<ParserMemberObj> &exprAccessBody, std::size_t indent) {
-  if (std::holds_alternative<Token>(*exprAccessBody)) {
-    auto id = std::get<Token>(*exprAccessBody);
-    return std::string(indent, ' ') + id.xml() + EOL;
-  }
-
-  auto member = std::get<ParserMember>(*exprAccessBody);
-  auto result = std::string(indent, ' ') + R"(<slot name="obj">)" EOL;
-
-  result += memberObjXml(member.obj, indent + 2);
-  result += std::string(indent, ' ') + "</slot>" EOL;
-  result += std::string(indent, ' ') + R"(<slot name="prop">)" EOL;
-  result += std::string(indent + 2, ' ') + member.prop.xml() + EOL;
-  result += std::string(indent, ' ') + "</slot>" EOL;
-
-  return result;
-}
-
-std::string ParserExprAccess::xml (std::size_t indent) const {
-  auto result = std::string();
-
-  result += std::string(indent, ' ') + "<ExprAccess>" EOL;
-  result += memberObjXml(this->body, indent + 2);
-  result += std::string(indent, ' ') + "</ExprAccess>";
-
-  return result;
-}
-
 std::string ParserStmtExpr::xml (std::size_t indent) const {
-  auto result = std::string(indent, ' ') + "<StmtExpr" + (this->parenthesized ? " parenthesized" : "");
+  auto result = std::string();
+  auto attrs = std::string(this->parenthesized ? " parenthesized" : "");
 
-  result += R"( start=")" + this->start.str() + R"(")";
-  result += R"( end=")" + this->end.str() + R"(">)" EOL;
-
-  indent += 2;
+  attrs += R"( start=")" + this->start.str() + R"(")";
+  attrs += R"( end=")" + this->end.str() + R"(")";
 
   if (std::holds_alternative<ParserExprAccess>(*this->body)) {
     auto exprAccess = std::get<ParserExprAccess>(*this->body);
-    result += exprAccess.xml(indent) + EOL;
+    result += std::string(indent, ' ') + "<ExprAccess" + attrs + ">" EOL;
+
+    if (std::holds_alternative<Token>(exprAccess.expr)) {
+      auto tok = std::get<Token>(exprAccess.expr);
+      result += tok.xml(indent + 2) + EOL;
+    } else {
+      auto stmtExpr = std::get<ParserStmtExpr>(exprAccess.expr);
+
+      result += std::string(indent + 2, ' ') + "<ExprAccessExpr>" EOL;
+      result += stmtExpr.xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</ExprAccessExpr>" EOL;
+      result += std::string(indent + 2, ' ') + "<ExprAccessProp>" EOL;
+      result += exprAccess.prop->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</ExprAccessProp>" EOL;
+    }
+
+    result += std::string(indent, ' ') + "</ExprAccess>";
   } else if (std::holds_alternative<ParserExprAssign>(*this->body)) {
     auto exprAssign = std::get<ParserExprAssign>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprAssign>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="left">)" EOL;
+    result += std::string(indent, ' ') + "<ExprAssign" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprAssignLeft>" EOL;
     result += exprAssign.left.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="op">)" EOL;
-    result += std::string(indent + 4, ' ') + exprAssign.op.xml() + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="right">)" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprAssignLeft>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprAssignOp>" EOL;
+    result += exprAssign.op.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprAssignOp>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprAssignRight>" EOL;
     result += exprAssign.right.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent, ' ') + "</ExprAssign>" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprAssignRight>" EOL;
+    result += std::string(indent, ' ') + "</ExprAssign>";
   } else if (std::holds_alternative<ParserExprBinary>(*this->body)) {
     auto exprBinary = std::get<ParserExprBinary>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprBinary>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="left">)" EOL;
+    result += std::string(indent, ' ') + "<ExprBinary" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprBinaryLeft>" EOL;
     result += exprBinary.left.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="op">)" EOL;
-    result += std::string(indent + 4, ' ') + exprBinary.op.xml() + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="right">)" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprBinaryLeft>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprBinaryOp>" EOL;
+    result += exprBinary.op.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprBinaryOp>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprBinaryRight>" EOL;
     result += exprBinary.right.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent, ' ') + "</ExprBinary>" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprBinaryRight>" EOL;
+    result += std::string(indent, ' ') + "</ExprBinary>";
   } else if (std::holds_alternative<ParserExprCall>(*this->body)) {
     auto exprCall = std::get<ParserExprCall>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprCall>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="callee">)" EOL;
+    result += std::string(indent, ' ') + "<ExprCall" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprCallCallee>" EOL;
     result += exprCall.callee.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprCallCallee>" EOL;
 
     if (!exprCall.args.empty()) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="args">)" EOL;
+      result += std::string(indent + 2, ' ') + "<ExprCallArgs>" EOL;
 
       for (const auto &exprCallArg : exprCall.args) {
         result += std::string(indent + 4, ' ') + "<ExprCallArg>" EOL;
 
         if (exprCallArg.id != std::nullopt) {
-          result += std::string(indent + 6, ' ') + R"(<slot name="id">)" EOL;
-          result += std::string(indent + 8, ' ') +  exprCallArg.id->xml()  + EOL;
-          result += std::string(indent + 6, ' ') + "</slot>" EOL;
+          result += std::string(indent + 6, ' ') + "<ExprCallArgId>" EOL;
+          result += exprCallArg.id->xml(indent + 8)  + EOL;
+          result += std::string(indent + 6, ' ') + "</ExprCallArgId>" EOL;
         }
 
-        result += std::string(indent + 6, ' ') + R"(<slot name="expr">)" EOL;
+        result += std::string(indent + 6, ' ') + "<ExprCallArgExpr>" EOL;
         result += exprCallArg.expr.xml(indent + 8)  + EOL;
-        result += std::string(indent + 6, ' ') + "</slot>" EOL;
+        result += std::string(indent + 6, ' ') + "</ExprCallArgExpr>" EOL;
         result += std::string(indent + 4, ' ') + "</ExprCallArg>" EOL;
       }
 
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</ExprCallArgs>" EOL;
     }
 
-    result += std::string(indent, ' ') + "</ExprCall>" EOL;
+    result += std::string(indent, ' ') + "</ExprCall>";
   } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
     auto exprCond = std::get<ParserExprCond>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprCond>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="cond">)" EOL;
+    result += std::string(indent, ' ') + "<ExprCond" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprCondCond>" EOL;
     result += exprCond.cond.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="body">)" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprCondCond>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprCondBody>" EOL;
     result += exprCond.body.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="alt">)" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprCondBody>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprCondAlt>" EOL;
     result += exprCond.alt.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent, ' ') + "</ExprCond>" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprCondAlt>" EOL;
+    result += std::string(indent, ' ') + "</ExprCond>";
   } else if (std::holds_alternative<ParserExprLit>(*this->body)) {
     auto exprLit = std::get<ParserExprLit>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprLit>" EOL;
-    result += std::string(indent + 2, ' ') + exprLit.body.xml() + EOL;
-    result += std::string(indent, ' ') + "</ExprLit>" EOL;
+    result += std::string(indent, ' ') + "<ExprLit" + attrs + ">" EOL;
+    result += exprLit.body.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</ExprLit>";
   } else if (std::holds_alternative<ParserExprObj>(*this->body)) {
     auto exprObj = std::get<ParserExprObj>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprObj>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="id">)" EOL;
-    result += std::string(indent + 4, ' ') + exprObj.id.xml() + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
+    result += std::string(indent, ' ') + "<ExprObj" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprObjId>" EOL;
+    result += exprObj.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprObjId>" EOL;
 
     if (!exprObj.props.empty()) {
-      result += std::string(indent + 2, ' ') + R"(<slot name="props">)" EOL;
+      result += std::string(indent + 2, ' ') + "<ExprObjProps>" EOL;
 
       for (const auto &exprObjProp : exprObj.props) {
         result += std::string(indent + 4, ' ') + "<ExprObjProp>" EOL;
-        result += std::string(indent + 6, ' ') + R"(<slot name="id">)" EOL;
-        result += std::string(indent + 8, ' ') + exprObjProp.id.xml() + EOL;
-        result += std::string(indent + 6, ' ') + "</slot>" EOL;
-        result += std::string(indent + 6, ' ') + R"(<slot name="init">)" EOL;
+        result += std::string(indent + 6, ' ') + "<ExprObjPropId>" EOL;
+        result += exprObjProp.id.xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</ExprObjPropId>" EOL;
+        result += std::string(indent + 6, ' ') + "<ExprObjPropInit>" EOL;
         result += exprObjProp.init.xml(indent + 8) + EOL;
-        result += std::string(indent + 6, ' ') + "</slot>" EOL;
+        result += std::string(indent + 6, ' ') + "</ExprObjPropInit>" EOL;
         result += std::string(indent + 4, ' ') + "</ExprObjProp>" EOL;
       }
 
-      result += std::string(indent + 2, ' ') + "</slot>" EOL;
+      result += std::string(indent + 2, ' ') + "</ExprObjProps>" EOL;
     }
 
-    result += std::string(indent, ' ') + "</ExprObj>" EOL;
+    result += std::string(indent, ' ') + "</ExprObj>";
   } else if (std::holds_alternative<ParserExprRef>(*this->body)) {
     auto exprRef = std::get<ParserExprRef>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprRef>" EOL;
-    result += exprRef.body.xml(indent + 2) + EOL;
-    result += std::string(indent, ' ') + "</ExprRef>" EOL;
+    result += std::string(indent, ' ') + "<ExprRef" + attrs + ">" EOL;
+    result += exprRef.expr.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</ExprRef>";
   } else if (std::holds_alternative<ParserExprUnary>(*this->body)) {
     auto exprUnary = std::get<ParserExprUnary>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprUnary" + (exprUnary.prefix ? " prefix" : "") + ">" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="arg">)" EOL;
+    result += std::string(indent, ' ') + "<ExprUnary" + attrs + (exprUnary.prefix ? " prefix" : "") + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprUnaryArg>" EOL;
     result += exprUnary.arg.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent + 2, ' ') + R"(<slot name="op">)" EOL;
-    result += std::string(indent + 4, ' ') + exprUnary.op.xml() + EOL;
-    result += std::string(indent + 2, ' ') + "</slot>" EOL;
-    result += std::string(indent, ' ') + "</ExprUnary>" EOL;
+    result += std::string(indent + 2, ' ') + "</ExprUnaryArg>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprUnaryOp>" EOL;
+    result += exprUnary.op.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprUnaryOp>" EOL;
+    result += std::string(indent, ' ') + "</ExprUnary>";
   }
 
-  indent -= 2;
-  return result + std::string(indent, ' ') + "</StmtExpr>";
+  return result;
 }

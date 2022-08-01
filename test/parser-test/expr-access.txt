@@ -1,10 +1,6 @@
 ======= stdin =======
 test
 ======= stdout =======
-<Stmt start="1:1" end="1:5">
-  <StmtExpr start="1:1" end="1:5">
-    <ExprAccess>
-      <Token type="ID" val="test" start="1:1" end="1:5" />
-    </ExprAccess>
-  </StmtExpr>
-</Stmt>
+<ExprAccess start="1:1" end="1:5">
+  <Token type="ID" val="test" start="1:1" end="1:5" />
+</ExprAccess>
