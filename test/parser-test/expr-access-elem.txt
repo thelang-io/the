@@ -1,0 +1,28 @@
+======= stdin =======
+test[1]
+test[num]
+======= stdout =======
+<ExprAccess start="1:1" end="1:8">
+  <ExprAccessExpr>
+    <ExprAccess start="1:1" end="1:5">
+      <Token type="ID" val="test" start="1:1" end="1:5" />
+    </ExprAccess>
+  </ExprAccessExpr>
+  <ExprAccessElem>
+    <ExprLit start="1:6" end="1:7">
+      <Token type="LIT_INT_DEC" val="1" start="1:6" end="1:7" />
+    </ExprLit>
+  </ExprAccessElem>
+</ExprAccess>
+<ExprAccess start="2:1" end="2:10">
+  <ExprAccessExpr>
+    <ExprAccess start="2:1" end="2:5">
+      <Token type="ID" val="test" start="2:1" end="2:5" />
+    </ExprAccess>
+  </ExprAccessExpr>
+  <ExprAccessElem>
+    <ExprAccess start="2:6" end="2:9">
+      <Token type="ID" val="num" start="2:6" end="2:9" />
+    </ExprAccess>
+  </ExprAccessElem>
+</ExprAccess>

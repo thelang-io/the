@@ -271,12 +271,17 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
       }
 
       varStack.mark(var);
-      return this->_wrapNodeExpr(stmtExpr, ASTExprAccess{var, std::nullopt});
-    } else {
-      auto exprAccessStmtExpr = std::get<ParserStmtExpr>(parserExprAccess.expr);
-      auto exprAccessExpr = this->_nodeExpr(exprAccessStmtExpr, varStack);
+      return this->_wrapNodeExpr(stmtExpr, ASTExprAccess{var, std::nullopt, std::nullopt});
+    }
 
-      return this->_wrapNodeExpr(stmtExpr, ASTExprAccess{exprAccessExpr, parserExprAccess.prop->val});
+    auto exprAccessStmtExpr = std::get<ParserStmtExpr>(parserExprAccess.expr);
+    auto exprAccessExpr = this->_nodeExpr(exprAccessStmtExpr, varStack);
+
+    if (parserExprAccess.prop != std::nullopt) {
+      return this->_wrapNodeExpr(stmtExpr, ASTExprAccess{exprAccessExpr, std::nullopt, parserExprAccess.prop->val});
+    } else if (parserExprAccess.elem != std::nullopt) {
+      auto exprAccessElem = this->_nodeExpr(*parserExprAccess.elem, varStack);
+      return this->_wrapNodeExpr(stmtExpr, ASTExprAccess{exprAccessExpr, exprAccessElem, std::nullopt});
     }
   } else if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     auto parserExprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
@@ -337,8 +342,13 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
   } else if (std::holds_alternative<ParserExprCall>(*stmtExpr.body)) {
     auto parserExprCall = std::get<ParserExprCall>(*stmtExpr.body);
     auto exprCallCallee = this->_nodeExpr(parserExprCall.callee, varStack);
-    auto exprCallCalleeType = Type::real(this->_nodeExprType(parserExprCall.callee));
-    auto exprCallCalleeFn = std::get<TypeFn>(exprCallCalleeType->body);
+    auto exprCallCalleeRealType = Type::real(exprCallCallee.type);
+
+    if (!exprCallCalleeRealType->isFn()) {
+      throw Error(this->reader, parserExprCall.callee.start, parserExprCall.callee.end, E1014);
+    }
+
+    auto exprCallCalleeFn = std::get<TypeFn>(exprCallCalleeRealType->body);
     auto exprCallArgs = std::vector<ASTExprCallArg>{};
     auto exprCallArgIdx = static_cast<std::size_t>(0);
     auto passedArgs = std::vector<std::string>{};
@@ -420,7 +430,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, VarStack &varStack) 
       }
     }
 
-    return this->_wrapNodeExpr(stmtExpr, ASTExprCall{exprCallCallee, exprCallCalleeType, exprCallArgs});
+    return this->_wrapNodeExpr(stmtExpr, ASTExprCall{exprCallCallee, exprCallArgs});
   } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body)) {
     auto parserExprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto exprCondCond = this->_nodeExpr(parserExprCond.cond, varStack);
@@ -501,11 +511,23 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr) {
     auto exprAccessStmtExpr = std::get<ParserStmtExpr>(exprAccess.expr);
     auto objType = this->_nodeExprType(exprAccessStmtExpr);
 
-    if (!objType->hasProp(exprAccess.prop->val)) {
-      throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1001);
+    if (exprAccess.prop != std::nullopt) {
+      if (!objType->hasProp(exprAccess.prop->val)) {
+        throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1001);
+      }
+
+      return objType->getProp(exprAccess.prop->val);
     }
 
-    return objType->getProp(exprAccess.prop->val);
+    auto exprAccessElemType = this->_nodeExprType(*exprAccess.elem);
+
+    if (!exprAccessElemType->isIntNumber()) {
+      throw Error(this->reader, exprAccess.elem->start, exprAccess.elem->end, E1012);
+    } else if (!objType->isStr()) {
+      throw Error(this->reader, exprAccessStmtExpr.start, exprAccessStmtExpr.end, E1013);
+    }
+
+    return this->typeMap.get("char");
   } else if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto leftType = this->_nodeExprType(exprAssign.left);

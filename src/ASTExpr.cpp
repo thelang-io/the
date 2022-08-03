@@ -119,7 +119,17 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
       result += var->xml(indent + 2) + EOL;
     } else if (std::holds_alternative<ASTNodeExpr>(exprAccess.expr)) {
       auto nodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
-      result += nodeExpr.xml(indent + 2) + EOL;
+
+      if (exprAccess.elem != std::nullopt) {
+        result += std::string(indent + 2, ' ') + "<ExprAccessExpr>" EOL;
+        result += nodeExpr.xml(indent + 4) + EOL;
+        result += std::string(indent + 2, ' ') + "</ExprAccessExpr>" EOL;
+        result += std::string(indent + 2, ' ') + "<ExprAccessElem>" EOL;
+        result += exprAccess.elem->xml(indent + 4) + EOL;
+        result += std::string(indent + 2, ' ') + "</ExprAccessElem>" EOL;
+      } else {
+        result += nodeExpr.xml(indent + 2) + EOL;
+      }
     }
 
     result += std::string(indent, ' ') + "</ExprAccess>" EOL;
@@ -152,9 +162,6 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     result += std::string(indent + 2, ' ') + "<ExprCallCallee>" EOL;
     result += exprCall.callee.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</ExprCallCallee>" EOL;
-    result += std::string(indent + 2, ' ') + "<ExprCallCalleeType>" EOL;
-    result += exprCall.calleeType->xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</ExprCallCalleeType>" EOL;
 
     if (!exprCall.args.empty()) {
       result += std::string(indent + 2, ' ') + "<ExprCallArgs>" EOL;

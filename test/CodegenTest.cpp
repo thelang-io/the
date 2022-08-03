@@ -90,6 +90,8 @@ INSTANTIATE_TEST_SUITE_P(General, CodegenTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenTest, testing::Values(
   "expr-access",
+  "expr-access-prop",
+  "expr-access-elem",
   "expr-access-str",
   "expr-access-obj",
   "expr-access-fn"
@@ -98,7 +100,8 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenTest, testing::Values(
   "expr-assign",
   "expr-assign-op",
-  "expr-assign-str"
+  "expr-assign-str",
+  "expr-assign-elem"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenTest, testing::Values(
@@ -296,5 +299,21 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(Builtin, CodegenTest, testing::Values(
-  "builtin-print"
+  "builtin-bool-str",
+  "builtin-byte-str",
+  "builtin-char-str",
+  "builtin-f32-str",
+  "builtin-f64-str",
+  "builtin-float-str",
+  "builtin-i8-str",
+  "builtin-i16-str",
+  "builtin-i32-str",
+  "builtin-i64-str",
+  "builtin-int-str",
+  "builtin-print",
+  "builtin-str-len",
+  "builtin-u8-str",
+  "builtin-u16-str",
+  "builtin-u32-str",
+  "builtin-u64-str"
 ));

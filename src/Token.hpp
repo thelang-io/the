@@ -112,7 +112,6 @@ struct Token {
   ReaderLocation start = {};
   ReaderLocation end = {};
 
-  // todo test
   static std::string escape (const std::string &, bool = false);
   static bool isDigit (char);
   static bool isIdContinue (char);

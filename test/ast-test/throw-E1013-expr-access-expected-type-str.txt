@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  test := 1
+  b := test[2]
+}
+======= stderr =======
+/test:3:8: E1013 - Indexing allowed only on strings
+  3 |   b := test[2]
+    |        ^~~~

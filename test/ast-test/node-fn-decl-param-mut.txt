@@ -421,18 +421,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test1_0" name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="a" mut required>
-                <BuiltinType name="int" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="int" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>
@@ -492,21 +480,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="a" mut required>
-                <BuiltinType name="int" />
-              </TypeFnParam>
-              <TypeFnParam name="b" mut>
-                <BuiltinType name="int" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="int" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>
@@ -582,24 +555,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test3_0" name="fn$2">
-            <TypeFnParams>
-              <TypeFnParam name="a" mut required>
-                <BuiltinType name="int" />
-              </TypeFnParam>
-              <TypeFnParam name="b" mut>
-                <BuiltinType name="int" />
-              </TypeFnParam>
-              <TypeFnParam name="c" mut>
-                <BuiltinType name="float" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="int" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>

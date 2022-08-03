@@ -690,20 +690,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job1_0" name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="a" mut required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>
@@ -776,20 +762,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job1_0" name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="a" mut required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>
@@ -863,24 +835,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="test" mut required>
-                <TypeRef>
-                  <TypeObj codeName="Test_0" name="Test">
-                    <TypeObjField name="me">
-                      <BuiltinType name="str" />
-                    </TypeObjField>
-                  </TypeObj>
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="test">
             <NodeExpr>
@@ -973,24 +927,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="test" mut required>
-                <TypeRef>
-                  <TypeObj codeName="Test_0" name="Test">
-                    <TypeObjField name="me">
-                      <BuiltinType name="str" />
-                    </TypeObjField>
-                  </TypeObj>
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="test">
             <NodeExpr>
@@ -1064,20 +1000,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job3_0" name="fn$2">
-            <TypeFnParams>
-              <TypeFnParam name="b" mut required>
-                <TypeRef>
-                  <BuiltinType name="str" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="b">
             <NodeExpr>
@@ -1167,20 +1089,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job3_0" name="fn$2">
-            <TypeFnParams>
-              <TypeFnParam name="b" mut required>
-                <TypeRef>
-                  <BuiltinType name="str" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="b">
             <NodeExpr>
@@ -1246,20 +1154,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job1_0" name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="a" mut required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>
@@ -1370,20 +1264,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job1_0" name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="a" mut required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>

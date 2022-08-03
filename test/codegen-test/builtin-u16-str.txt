@@ -1,0 +1,180 @@
+======= stdin =======
+obj Test1 {
+  i: u16
+}
+
+fn testCall () u16 {
+  return 1
+}
+
+main {
+  test: u16 = 2
+  refTest := ref test
+  test1 := Test1{i: 3}
+  mut test2: u16 = 4
+
+  v1 := test.str()
+  v2 := test1.i.str()
+  v3 := (test2 = 5).str()
+  v4 := (test + test2).str()
+  v5 := testCall().str()
+  v6 := (1 > 2 ? test : test2).str()
+  v7 := (ref test).str()
+  v8 := refTest.str()
+  v9 := (+test).str()
+
+  fn testCtx () {
+    v11 := test.str()
+    v12 := test1.i.str()
+    v13 := (test2 = 6).str()
+    v14 := testCall().str()
+    v15 := (ref test).str()
+    v16 := refTest.str()
+  }
+}
+======= code =======
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct str u16_str (uint16_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+struct str u16_str (uint16_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu16, d);
+  return str_alloc(buf);
+}
+
+struct __THE_1_Test1_0;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1;
+struct __THE_1_mainSDtestCtx_0X;
+
+struct __THE_1_Test1_0 {
+  uint16_t __THE_0_i;
+};
+struct __THE_1_fn$0 {
+  uint16_t (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDtestCtx_0X {
+  uint16_t *__THE_0_test2_0;
+  const struct __THE_1_Test1_0 **__THE_0_test1_0;
+  const uint16_t **__THE_0_refTest_0;
+  const uint16_t *__THE_0_test_0;
+  const struct __THE_1_fn$0 *__THE_0_testCall_0;
+};
+
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (uint16_t);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+uint16_t __THE_1_testCall_0 (void *);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtestCtx_0 (void *);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
+
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (uint16_t __THE_0_i) {
+  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
+  r->__THE_0_i = __THE_0_i;
+  return r;
+}
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
+  free(o);
+}
+uint16_t __THE_1_testCall_0 (void *px) {
+  return 1;
+}
+void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+  free(n.x);
+}
+void __THE_1_mainSDtestCtx_0 (void *px) {
+  struct __THE_1_mainSDtestCtx_0X *x = px;
+  uint16_t *__THE_0_test2_0 = x->__THE_0_test2_0;
+  const struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
+  const uint16_t **__THE_0_refTest_0 = x->__THE_0_refTest_0;
+  const uint16_t *__THE_0_test_0 = x->__THE_0_test_0;
+  const struct __THE_1_fn$0 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
+  const struct str __THE_0_v11_0 = u16_str(*__THE_0_test_0);
+  const struct str __THE_0_v12_0 = u16_str((*__THE_0_test1_0)->__THE_0_i);
+  const struct str __THE_0_v13_0 = u16_str(*__THE_0_test2_0 = 6);
+  const struct str __THE_0_v14_0 = u16_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
+  const struct str __THE_0_v15_0 = u16_str(*__THE_0_test_0);
+  const struct str __THE_0_v16_0 = u16_str(**__THE_0_refTest_0);
+  str_free((struct str) __THE_0_v16_0);
+  str_free((struct str) __THE_0_v15_0);
+  str_free((struct str) __THE_0_v14_0);
+  str_free((struct str) __THE_0_v13_0);
+  str_free((struct str) __THE_0_v12_0);
+  str_free((struct str) __THE_0_v11_0);
+}
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
+  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtestCtx_0;
+  n->x = r;
+  n->l = l;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_testCall_0 = (struct __THE_1_fn$0) {&__THE_1_testCall_0, NULL, 0};
+  const uint16_t __THE_0_test_0 = 2;
+  const uint16_t *__THE_0_refTest_0 = &__THE_0_test_0;
+  const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(3);
+  uint16_t __THE_0_test2_0 = 4;
+  const struct str __THE_0_v1_0 = u16_str(__THE_0_test_0);
+  const struct str __THE_0_v2_0 = u16_str(__THE_0_test1_0->__THE_0_i);
+  const struct str __THE_0_v3_0 = u16_str(__THE_0_test2_0 = 5);
+  const struct str __THE_0_v4_0 = u16_str(__THE_0_test_0 + __THE_0_test2_0);
+  const struct str __THE_0_v5_0 = u16_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
+  const struct str __THE_0_v6_0 = u16_str(1 > 2 ? __THE_0_test_0 : __THE_0_test2_0);
+  const struct str __THE_0_v7_0 = u16_str(__THE_0_test_0);
+  const struct str __THE_0_v8_0 = u16_str(*__THE_0_refTest_0);
+  const struct str __THE_0_v9_0 = u16_str(+__THE_0_test_0);
+  const struct __THE_1_fn$1 __THE_0_mainSDtestCtx_0;
+  __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
+  __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_mainSDtestCtx_0);
+  str_free((struct str) __THE_0_v9_0);
+  str_free((struct str) __THE_0_v8_0);
+  str_free((struct str) __THE_0_v7_0);
+  str_free((struct str) __THE_0_v6_0);
+  str_free((struct str) __THE_0_v5_0);
+  str_free((struct str) __THE_0_v4_0);
+  str_free((struct str) __THE_0_v3_0);
+  str_free((struct str) __THE_0_v2_0);
+  str_free((struct str) __THE_0_v1_0);
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
+}
+======= flags =======
+======= stdout =======

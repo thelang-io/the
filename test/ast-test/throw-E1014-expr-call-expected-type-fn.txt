@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  test := 1
+  test()
+}
+======= stderr =======
+/test:3:3: E1014 - Called object expected to be a function
+  3 |   test()
+    |   ^~~~

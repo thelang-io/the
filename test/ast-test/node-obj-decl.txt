@@ -127,9 +127,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -246,13 +243,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <TypeFn name="fn$1">
-              <TypeFnReturnType>
-                <BuiltinType name="any" />
-              </TypeFnReturnType>
-            </TypeFn>
-          </ExprCallCalleeType>
         </ExprCall>
       </NodeExprBody>
     </NodeExpr>
@@ -287,9 +277,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -563,28 +550,6 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprCallCallee>
-            <ExprCallCalleeType>
-              <TypeFn codeName="mainSDcreateCat_0" name="fn$3">
-                <TypeFnParams>
-                  <TypeFnParam name="breed" required>
-                    <BuiltinType name="str" />
-                  </TypeFnParam>
-                  <TypeFnParam name="sex" required>
-                    <BuiltinType name="str" />
-                  </TypeFnParam>
-                </TypeFnParams>
-                <TypeFnReturnType>
-                  <TypeObj codeName="mainSDCat_0" name="Cat">
-                    <TypeObjField name="breed">
-                      <BuiltinType name="str" />
-                    </TypeObjField>
-                    <TypeObjField name="sex">
-                      <BuiltinType name="str" />
-                    </TypeObjField>
-                  </TypeObj>
-                </TypeFnReturnType>
-              </TypeFn>
-            </ExprCallCalleeType>
             <ExprCallArgs>
               <ExprCallArg id="breed">
                 <NodeExpr>
@@ -739,9 +704,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <BuiltinType name="print" />
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="items">
             <NodeExpr>
@@ -827,21 +789,6 @@ main {
                       </NodeExprBody>
                     </NodeExpr>
                   </ExprCallCallee>
-                  <ExprCallCalleeType>
-                    <TypeFn name="fn$0">
-                      <TypeFnParams>
-                        <TypeFnParam required>
-                          <BuiltinType name="int" />
-                        </TypeFnParam>
-                        <TypeFnParam variadic>
-                          <BuiltinType name="int" />
-                        </TypeFnParam>
-                      </TypeFnParams>
-                      <TypeFnReturnType>
-                        <BuiltinType name="int" />
-                      </TypeFnReturnType>
-                    </TypeFn>
-                  </ExprCallCalleeType>
                   <ExprCallArgs>
                     <ExprCallArg>
                       <NodeExpr>
@@ -1062,22 +1009,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn name="fn$2">
-            <TypeFnParams>
-              <TypeFnParam required>
-                <TypeFn name="fn$1">
-                  <TypeFnReturnType>
-                    <BuiltinType name="any" />
-                  </TypeFnReturnType>
-                </TypeFn>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg>
             <NodeExpr>

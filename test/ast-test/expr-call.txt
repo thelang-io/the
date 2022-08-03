@@ -22,9 +22,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <BuiltinType name="print" />
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="items">
             <NodeExpr>

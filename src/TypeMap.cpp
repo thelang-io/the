@@ -88,10 +88,6 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"void", "@void", TypeObj{}, true}));
   auto voidType = this->_items.back().get();
 
-  auto strConcatTypeFn = TypeFn{strType, {
-    TypeFnParam{"src", strType, false, true, false}
-  }};
-
   this->_items.push_back(std::make_unique<Type>(Type{"bool.str", "@bool.str", TypeFn{strType}, true}));
   std::get<TypeObj>(boolType->body).fields.push_back({"str", this->_items.back().get()});
   this->_items.push_back(std::make_unique<Type>(Type{"byte.str", "@byte.str", TypeFn{strType}, true}));
@@ -114,8 +110,6 @@ void TypeMap::init () {
   std::get<TypeObj>(i64Type->body).fields.push_back({"str", this->_items.back().get()});
   this->_items.push_back(std::make_unique<Type>(Type{"int.str", "@int.str", TypeFn{strType}, true}));
   std::get<TypeObj>(intType->body).fields.push_back({"str", this->_items.back().get()});
-  this->_items.push_back(std::make_unique<Type>(Type{"str.concat", "@str.concat", strConcatTypeFn, true}));
-  std::get<TypeObj>(strType->body).fields.push_back({"concat", this->_items.back().get()});
   std::get<TypeObj>(strType->body).fields.push_back({"len", intType});
   this->_items.push_back(std::make_unique<Type>(Type{"u8.str", "@u8.str", TypeFn{strType}, true}));
   std::get<TypeObj>(u8Type->body).fields.push_back({"str", this->_items.back().get()});

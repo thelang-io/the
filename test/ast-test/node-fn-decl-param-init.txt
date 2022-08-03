@@ -81,9 +81,6 @@ fn test1 (p1 := "1", p2 := p1) {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -121,9 +118,6 @@ fn test1 (p1 := "1", p2 := p1) {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>

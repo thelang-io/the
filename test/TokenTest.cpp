@@ -9,6 +9,20 @@
 #include "../src/Token.hpp"
 #include "utils.hpp"
 
+TEST(TokenTest, Escapes) {
+  EXPECT_EQ(Token::escape(""), "");
+  EXPECT_EQ(Token::escape("hello"), "hello");
+  EXPECT_EQ(Token::escape(R"(")" "prefix \f\n\r\t\v postfix" R"(")"), R"(")" "prefix \\f\\n\\r\\t\\v postfix" R"(")");
+  EXPECT_EQ(Token::escape(R"(")" "prefix \\f\\n\\r\\t\\v postfix" R"(")"), R"(")" "prefix \\f\\n\\r\\t\\v postfix" R"(")");
+}
+
+TEST(TokenTest, EscapesInsideAttributes) {
+  EXPECT_EQ(Token::escape("", true), "");
+  EXPECT_EQ(Token::escape("hello", true), "hello");
+  EXPECT_EQ(Token::escape(R"(")" "prefix \f\n\r\t\v postfix" R"(")", true), R"(\")" "prefix \\f\\n\\r\\t\\v postfix" R"(\")");
+  EXPECT_EQ(Token::escape(R"(")" "prefix \\f\\n\\r\\t\\v postfix" R"(")", true), R"(\")" "prefix \\f\\n\\r\\t\\v postfix" R"(\")");
+}
+
 TEST(TokenTest, IsDigit) {
   EXPECT_TRUE(Token::isDigit('0'));
   EXPECT_TRUE(Token::isDigit('9'));

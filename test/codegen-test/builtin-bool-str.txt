@@ -1,0 +1,187 @@
+======= stdin =======
+obj Test1 {
+  b: bool
+}
+
+fn testCall () bool {
+  return true
+}
+
+main {
+  test := true
+  refTest := ref test
+  test1 := Test1{b: true}
+  mut test2 := true
+
+  v01 := test.str()
+  v02 := test1.b.str()
+  v03 := (test2 = false).str()
+  v04 := (1 > 2).str()
+  v05 := testCall().str()
+  v06 := (1 > 2 ? true : false).str()
+  v07 := true.str()
+  v08 := false.str()
+  v09 := (ref test).str()
+  v10 := refTest.str()
+  v11 := (!1).str()
+  v12 := (!!1).str()
+
+  fn testCtx () {
+    v101 := test.str()
+    v102 := test1.b.str()
+    v103 := (test2 = false).str()
+    v104 := testCall().str()
+    v105 := (ref test).str()
+    v106 := refTest.str()
+  }
+}
+======= code =======
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str bool_str (bool);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str bool_str (bool t) {
+  return str_alloc(t ? "true" : "false");
+}
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+
+struct __THE_1_Test1_0;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1;
+struct __THE_1_mainSDtestCtx_0X;
+
+struct __THE_1_Test1_0 {
+  bool __THE_0_b;
+};
+struct __THE_1_fn$0 {
+  bool (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDtestCtx_0X {
+  bool *__THE_0_test2_0;
+  const struct __THE_1_Test1_0 **__THE_0_test1_0;
+  const bool **__THE_0_refTest_0;
+  const bool *__THE_0_test_0;
+  const struct __THE_1_fn$0 *__THE_0_testCall_0;
+};
+
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (bool);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+bool __THE_1_testCall_0 (void *);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtestCtx_0 (void *);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
+
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (bool __THE_0_b) {
+  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
+  r->__THE_0_b = __THE_0_b;
+  return r;
+}
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
+  free(o);
+}
+bool __THE_1_testCall_0 (void *px) {
+  return true;
+}
+void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+  free(n.x);
+}
+void __THE_1_mainSDtestCtx_0 (void *px) {
+  struct __THE_1_mainSDtestCtx_0X *x = px;
+  bool *__THE_0_test2_0 = x->__THE_0_test2_0;
+  const struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
+  const bool **__THE_0_refTest_0 = x->__THE_0_refTest_0;
+  const bool *__THE_0_test_0 = x->__THE_0_test_0;
+  const struct __THE_1_fn$0 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
+  const struct str __THE_0_v101_0 = bool_str(*__THE_0_test_0);
+  const struct str __THE_0_v102_0 = bool_str((*__THE_0_test1_0)->__THE_0_b);
+  const struct str __THE_0_v103_0 = bool_str(*__THE_0_test2_0 = false);
+  const struct str __THE_0_v104_0 = bool_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
+  const struct str __THE_0_v105_0 = bool_str(*__THE_0_test_0);
+  const struct str __THE_0_v106_0 = bool_str(**__THE_0_refTest_0);
+  str_free((struct str) __THE_0_v106_0);
+  str_free((struct str) __THE_0_v105_0);
+  str_free((struct str) __THE_0_v104_0);
+  str_free((struct str) __THE_0_v103_0);
+  str_free((struct str) __THE_0_v102_0);
+  str_free((struct str) __THE_0_v101_0);
+}
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
+  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtestCtx_0;
+  n->x = r;
+  n->l = l;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_testCall_0 = (struct __THE_1_fn$0) {&__THE_1_testCall_0, NULL, 0};
+  const bool __THE_0_test_0 = true;
+  const bool *__THE_0_refTest_0 = &__THE_0_test_0;
+  const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(true);
+  bool __THE_0_test2_0 = true;
+  const struct str __THE_0_v01_0 = bool_str(__THE_0_test_0);
+  const struct str __THE_0_v02_0 = bool_str(__THE_0_test1_0->__THE_0_b);
+  const struct str __THE_0_v03_0 = bool_str(__THE_0_test2_0 = false);
+  const struct str __THE_0_v04_0 = bool_str(1 > 2);
+  const struct str __THE_0_v05_0 = bool_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
+  const struct str __THE_0_v06_0 = bool_str(1 > 2 ? true : false);
+  const struct str __THE_0_v07_0 = bool_str(true);
+  const struct str __THE_0_v08_0 = bool_str(false);
+  const struct str __THE_0_v09_0 = bool_str(__THE_0_test_0);
+  const struct str __THE_0_v10_0 = bool_str(*__THE_0_refTest_0);
+  const struct str __THE_0_v11_0 = bool_str(!1);
+  const struct str __THE_0_v12_0 = bool_str(!!1);
+  const struct __THE_1_fn$1 __THE_0_mainSDtestCtx_0;
+  __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
+  __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_mainSDtestCtx_0);
+  str_free((struct str) __THE_0_v12_0);
+  str_free((struct str) __THE_0_v11_0);
+  str_free((struct str) __THE_0_v10_0);
+  str_free((struct str) __THE_0_v09_0);
+  str_free((struct str) __THE_0_v08_0);
+  str_free((struct str) __THE_0_v07_0);
+  str_free((struct str) __THE_0_v06_0);
+  str_free((struct str) __THE_0_v05_0);
+  str_free((struct str) __THE_0_v04_0);
+  str_free((struct str) __THE_0_v03_0);
+  str_free((struct str) __THE_0_v02_0);
+  str_free((struct str) __THE_0_v01_0);
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
+}
+======= flags =======
+======= stdout =======

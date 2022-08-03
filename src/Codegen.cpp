@@ -50,13 +50,14 @@ Codegen::Codegen (AST *a) {
 
 std::tuple<std::string, std::string> Codegen::gen () {
   auto nodes = this->ast->gen();
-  auto mainCode = std::string();
+  auto mainCode = std::string("int main () {" EOL);
 
   for (const auto &node : nodes) {
     mainCode += this->_node(node);
   }
 
   mainCode += this->state.cleanUp.gen(2);
+  mainCode += "}" EOL;
 
   auto fnDeclCode = std::string();
   auto fnDefCode = std::string();
@@ -81,11 +82,26 @@ std::tuple<std::string, std::string> Codegen::gen () {
   auto builtinFnDefCode = std::string();
   auto builtinStructDefCode = std::string();
 
-  if (this->builtins.fnBoolStr) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("typeStr");
+  if (this->builtins.typeStr) {
+    builtinStructDefCode += "struct str {" EOL;
+    builtinStructDefCode += "  char *c;" EOL;
+    builtinStructDefCode += "  size_t l;" EOL;
+    builtinStructDefCode += "};" EOL;
+  }
 
+  if (this->builtins.fnAlloc) {
+    builtinFnDeclCode += "void *alloc (size_t);" EOL;
+    builtinFnDefCode += "void *alloc (size_t l) {" EOL;
+    builtinFnDefCode += "  void *r = malloc(l);" EOL;
+    builtinFnDefCode += "  if (r == NULL) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes)" ESC_EOL R"(", l);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnBoolStr) {
     builtinFnDeclCode += "struct str bool_str (bool);" EOL;
     builtinFnDefCode += "struct str bool_str (bool t) {" EOL;
     builtinFnDefCode += R"(  return str_alloc(t ? "true" : "false");)" EOL;
@@ -93,10 +109,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnByteStr) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str byte_str (unsigned char);" EOL;
     builtinFnDefCode += "struct str byte_str (unsigned char x) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -106,9 +118,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnCharStr) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str char_str (char);" EOL;
     builtinFnDefCode += "struct str char_str (char c) {" EOL;
     builtinFnDefCode += "  char buf[2] = {c, '\\0'};" EOL;
@@ -117,11 +126,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnCstrConcatStr) {
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str cstr_concat_str (const char *, struct str);" EOL;
     builtinFnDefCode += "struct str cstr_concat_str (const char *c, struct str s) {" EOL;
     builtinFnDefCode += "  size_t l = s.l + strlen(c);" EOL;
@@ -134,9 +138,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnCstrEqCstr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libString");
-
     builtinFnDeclCode += "bool cstr_eq_cstr (const char *, const char *);" EOL;
     builtinFnDefCode += "bool cstr_eq_cstr (const char *c1, const char *c2) {" EOL;
     builtinFnDefCode += "  size_t l = strlen(c1);" EOL;
@@ -145,11 +146,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnCstrEqStr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "bool cstr_eq_str (const char *, struct str);" EOL;
     builtinFnDefCode += "bool cstr_eq_str (const char *c, struct str s) {" EOL;
     builtinFnDefCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
@@ -159,9 +155,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnCstrNeCstr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libString");
-
     builtinFnDeclCode += "bool cstr_ne_cstr (const char *, const char *);" EOL;
     builtinFnDefCode += "bool cstr_ne_cstr (const char *c1, const char *c2) {" EOL;
     builtinFnDefCode += "  size_t l = strlen(c1);" EOL;
@@ -170,11 +163,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnCstrNeStr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "bool cstr_ne_str (const char *, struct str);" EOL;
     builtinFnDefCode += "bool cstr_ne_str (const char *c, struct str s) {" EOL;
     builtinFnDefCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
@@ -184,10 +172,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnF32Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str f32_str (float);" EOL;
     builtinFnDefCode += "struct str f32_str (float f) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -197,10 +181,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnF64Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str f64_str (double);" EOL;
     builtinFnDefCode += "struct str f64_str (double f) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -210,10 +190,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnFloatStr) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str float_str (double);" EOL;
     builtinFnDefCode += "struct str float_str (double f) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -223,11 +199,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnI8Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str i8_str (int8_t);" EOL;
     builtinFnDefCode += "struct str i8_str (int8_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -237,11 +208,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnI16Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str i16_str (int16_t);" EOL;
     builtinFnDefCode += "struct str i16_str (int16_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -251,11 +217,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnI32Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str i32_str (int32_t);" EOL;
     builtinFnDefCode += "struct str i32_str (int32_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -265,11 +226,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnI64Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str i64_str (int64_t);" EOL;
     builtinFnDefCode += "struct str i64_str (int64_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -279,11 +235,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnIntStr) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str int_str (int32_t);" EOL;
     builtinFnDefCode += "struct str int_str (int32_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -293,12 +244,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnPrint) {
-    this->_activateBuiltin("fnStrFree");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdarg");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "void print (FILE *, const char *, ...);" EOL;
     builtinFnDefCode += "void print (FILE *stream, const char *fmt, ...) {" EOL;
     builtinFnDefCode += "  va_list args;" EOL;
@@ -332,10 +277,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnRefStr) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str ref_str (void *);" EOL;
     builtinFnDefCode += "struct str ref_str (void *p) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -345,10 +286,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrAlloc) {
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str str_alloc (const char *);" EOL;
     builtinFnDefCode += "struct str str_alloc (const char *c) {" EOL;
     builtinFnDefCode += "  size_t l = strlen(c);" EOL;
@@ -359,11 +296,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrConcatCstr) {
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str str_concat_cstr (struct str, const char *);" EOL;
     builtinFnDefCode += "struct str str_concat_cstr (struct str s, const char *c) {" EOL;
     builtinFnDefCode += "  size_t l = s.l + strlen(c);" EOL;
@@ -376,11 +308,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrConcatStr) {
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str str_concat_str (struct str, struct str);" EOL;
     builtinFnDefCode += "struct str str_concat_str (struct str s1, struct str s2) {" EOL;
     builtinFnDefCode += "  size_t l = s1.l + s2.l;" EOL;
@@ -394,10 +321,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrCopy) {
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str str_copy (const struct str);" EOL;
     builtinFnDefCode += "struct str str_copy (const struct str s) {" EOL;
     builtinFnDefCode += "  char *r = alloc(s.l);" EOL;
@@ -407,11 +330,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrEqCstr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "bool str_eq_cstr (struct str, const char *);" EOL;
     builtinFnDefCode += "bool str_eq_cstr (struct str s, const char *c) {" EOL;
     builtinFnDefCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
@@ -421,11 +339,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrEqStr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "bool str_eq_str (struct str, struct str);" EOL;
     builtinFnDefCode += "bool str_eq_str (struct str s1, struct str s2) {" EOL;
     builtinFnDefCode += "  bool r = s1.l == s2.l && memcmp(s1.c, s2.c, s1.l) == 0;" EOL;
@@ -436,10 +349,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrEscape) {
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str str_escape (const struct str);" EOL;
     builtinFnDefCode += "struct str str_escape (const struct str s) {" EOL;
     builtinFnDefCode += "  char *r = alloc(s.l);" EOL;
@@ -465,21 +374,22 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrFree) {
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "void str_free (struct str);" EOL;
     builtinFnDefCode += "void str_free (struct str s) {" EOL;
     builtinFnDefCode += "  free(s.c);" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
-  if (this->builtins.fnStrNeCstr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
+  if (this->builtins.fnStrLen) {
+    builtinFnDeclCode += "int32_t str_len (struct str);" EOL;
+    builtinFnDefCode += "int32_t str_len (struct str s) {" EOL;
+    builtinFnDefCode += "  int32_t l = s.l;" EOL;
+    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  return l;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
 
+  if (this->builtins.fnStrNeCstr) {
     builtinFnDeclCode += "bool str_ne_cstr (struct str, const char *);" EOL;
     builtinFnDefCode += "bool str_ne_cstr (struct str s, const char *c) {" EOL;
     builtinFnDefCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
@@ -489,11 +399,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrNeStr) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "bool str_ne_str (struct str, struct str);" EOL;
     builtinFnDefCode += "bool str_ne_str (struct str s1, struct str s2) {" EOL;
     builtinFnDefCode += "  bool r = s1.l != s2.l || memcmp(s1.c, s2.c, s1.l) != 0;" EOL;
@@ -504,10 +409,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrNot) {
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "bool str_not (struct str);" EOL;
     builtinFnDefCode += "bool str_not (struct str s) {" EOL;
     builtinFnDefCode += "  bool r = s.l == 0;" EOL;
@@ -517,9 +418,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnStrRealloc) {
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str str_realloc (struct str, struct str);" EOL;
     builtinFnDefCode += "struct str str_realloc (struct str s1, struct str s2) {" EOL;
     builtinFnDefCode += "  free(s1.c);" EOL;
@@ -528,11 +426,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnU8Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str u8_str (uint8_t);" EOL;
     builtinFnDefCode += "struct str u8_str (uint8_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -542,11 +435,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnU16Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str u16_str (uint16_t);" EOL;
     builtinFnDefCode += "struct str u16_str (uint16_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -556,11 +444,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnU32Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str u32_str (uint32_t);" EOL;
     builtinFnDefCode += "struct str u32_str (uint32_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
@@ -570,41 +453,12 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnU64Str) {
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libInttypes");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("typeStr");
-
     builtinFnDeclCode += "struct str u64_str (uint64_t);" EOL;
     builtinFnDefCode += "struct str u64_str (uint64_t d) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
     builtinFnDefCode += R"(  sprintf(buf, "%" PRIu64, d);)" EOL;
     builtinFnDefCode += "  return str_alloc(buf);" EOL;
     builtinFnDefCode += "}" EOL;
-  }
-
-  if (this->builtins.fnAlloc) {
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("libStdlib");
-
-    builtinFnDeclCode += "void *alloc (size_t);" EOL;
-    builtinFnDefCode += "void *alloc (size_t l) {" EOL;
-    builtinFnDefCode += "  void *r = malloc(l);" EOL;
-    builtinFnDefCode += "  if (r == NULL) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes)" ESC_EOL R"(", l);)" EOL;
-    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
-    builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += "  return r;" EOL;
-    builtinFnDefCode += "}" EOL;
-  }
-
-  if (this->builtins.typeStr) {
-    this->_activateBuiltin("libStdlib");
-
-    builtinStructDefCode += "struct str {" EOL;
-    builtinStructDefCode += "  char *c;" EOL;
-    builtinStructDefCode += "  size_t l;" EOL;
-    builtinStructDefCode += "};" EOL;
   }
 
   builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
@@ -634,9 +488,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += structDefCode;
   output += fnDeclCode;
   output += fnDefCode;
-  output += "int main () {" EOL;
   output += mainCode;
-  output += "}" EOL;
 
   return std::make_tuple(output, this->_flags());
 }
@@ -652,50 +504,220 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     return;
   }
 
-  if (name == "fnAlloc") this->builtins.fnAlloc = true;
-  else if (name == "fnBoolStr") this->builtins.fnBoolStr = true;
-  else if (name == "fnByteStr") this->builtins.fnByteStr = true;
-  else if (name == "fnCharStr") this->builtins.fnCharStr = true;
-  else if (name == "fnCstrConcatStr") this->builtins.fnCstrConcatStr = true;
-  else if (name == "fnCstrEqCstr") this->builtins.fnCstrEqCstr = true;
-  else if (name == "fnCstrEqStr") this->builtins.fnCstrEqStr = true;
-  else if (name == "fnCstrNeCstr") this->builtins.fnCstrNeCstr = true;
-  else if (name == "fnCstrNeStr") this->builtins.fnCstrNeStr = true;
-  else if (name == "fnF32Str") this->builtins.fnF32Str = true;
-  else if (name == "fnF64Str") this->builtins.fnF64Str = true;
-  else if (name == "fnFloatStr") this->builtins.fnFloatStr = true;
-  else if (name == "fnI8Str") this->builtins.fnI8Str = true;
-  else if (name == "fnI16Str") this->builtins.fnI16Str = true;
-  else if (name == "fnI32Str") this->builtins.fnI32Str = true;
-  else if (name == "fnI64Str") this->builtins.fnI64Str = true;
-  else if (name == "fnIntStr") this->builtins.fnIntStr = true;
-  else if (name == "fnPrint") this->builtins.fnPrint = true;
-  else if (name == "fnRefStr") this->builtins.fnRefStr = true;
-  else if (name == "fnStrAlloc") this->builtins.fnStrAlloc = true;
-  else if (name == "fnStrConcatCstr") this->builtins.fnStrConcatCstr = true;
-  else if (name == "fnStrConcatStr") this->builtins.fnStrConcatStr = true;
-  else if (name == "fnStrCopy") this->builtins.fnStrCopy = true;
-  else if (name == "fnStrEqCstr") this->builtins.fnStrEqCstr = true;
-  else if (name == "fnStrEqStr") this->builtins.fnStrEqStr = true;
-  else if (name == "fnStrEscape") this->builtins.fnStrEscape = true;
-  else if (name == "fnStrFree") this->builtins.fnStrFree = true;
-  else if (name == "fnStrNeCstr") this->builtins.fnStrNeCstr = true;
-  else if (name == "fnStrNeStr") this->builtins.fnStrNeStr = true;
-  else if (name == "fnStrNot") this->builtins.fnStrNot = true;
-  else if (name == "fnStrRealloc") this->builtins.fnStrRealloc = true;
-  else if (name == "fnU8Str") this->builtins.fnU8Str = true;
-  else if (name == "fnU16Str") this->builtins.fnU16Str = true;
-  else if (name == "fnU32Str") this->builtins.fnU32Str = true;
-  else if (name == "fnU64Str") this->builtins.fnU64Str = true;
-  else if (name == "libInttypes") this->builtins.libInttypes = true;
-  else if (name == "libStdarg") this->builtins.libStdarg = true;
-  else if (name == "libStdbool") this->builtins.libStdbool = true;
-  else if (name == "libStdint") this->builtins.libStdint = true;
-  else if (name == "libStdio") this->builtins.libStdio = true;
-  else if (name == "libStdlib") this->builtins.libStdlib = true;
-  else if (name == "libString") this->builtins.libString = true;
-  else if (name == "typeStr") this->builtins.typeStr = true;
-  else throw Error("tried activating unknown builtin");
+  if (name == "libInttypes") {
+    this->builtins.libInttypes = true;
+  } else if (name == "libStdarg") {
+    this->builtins.libStdarg = true;
+  } else if (name == "libStdbool") {
+    this->builtins.libStdbool = true;
+  } else if (name == "libStdint") {
+    this->builtins.libStdint = true;
+  } else if (name == "libStdio") {
+    this->builtins.libStdio = true;
+  } else if (name == "libStdlib") {
+    this->builtins.libStdlib = true;
+  } else if (name == "libString") {
+    this->builtins.libString = true;
+  } else if (name == "fnAlloc") {
+    this->builtins.fnAlloc = true;
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
+  } else if (name == "fnBoolStr") {
+    this->builtins.fnBoolStr = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnByteStr") {
+    this->builtins.fnByteStr = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnCharStr") {
+    this->builtins.fnCharStr = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnCstrConcatStr") {
+    this->builtins.fnCstrConcatStr = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnCstrEqCstr") {
+    this->builtins.fnCstrEqCstr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libString");
+  } else if (name == "fnCstrEqStr") {
+    this->builtins.fnCstrEqStr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnCstrNeCstr") {
+    this->builtins.fnCstrNeCstr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libString");
+  } else if (name == "fnCstrNeStr") {
+    this->builtins.fnCstrNeStr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnF32Str") {
+    this->builtins.fnF32Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnF64Str") {
+    this->builtins.fnF64Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnFloatStr") {
+    this->builtins.fnFloatStr = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnI8Str") {
+    this->builtins.fnI8Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnI16Str") {
+    this->builtins.fnI16Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnI32Str") {
+    this->builtins.fnI32Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnI64Str") {
+    this->builtins.fnI64Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnIntStr") {
+    this->builtins.fnIntStr = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnPrint") {
+    this->builtins.fnPrint = true;
+    this->_activateBuiltin("fnStrFree");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdarg");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnRefStr") {
+    this->builtins.fnRefStr = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrAlloc") {
+    this->builtins.fnStrAlloc = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrConcatCstr") {
+    this->builtins.fnStrConcatCstr = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrConcatStr") {
+    this->builtins.fnStrConcatStr = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrCopy") {
+    this->builtins.fnStrCopy = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrEqCstr") {
+    this->builtins.fnStrEqCstr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrEqStr") {
+    this->builtins.fnStrEqStr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrEscape") {
+    this->builtins.fnStrEscape = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrFree") {
+    this->builtins.fnStrFree = true;
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrLen") {
+    this->builtins.fnStrLen = true;
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrNeCstr") {
+    this->builtins.fnStrNeCstr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrNeStr") {
+    this->builtins.fnStrNeStr = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrNot") {
+    this->builtins.fnStrNot = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrRealloc") {
+    this->builtins.fnStrRealloc = true;
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnU8Str") {
+    this->builtins.fnU8Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnU16Str") {
+    this->builtins.fnU16Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnU32Str") {
+    this->builtins.fnU32Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnU64Str") {
+    this->builtins.fnU64Str = true;
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libInttypes");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "typeStr") {
+    this->builtins.typeStr = true;
+    this->_activateBuiltin("libStdlib");
+  } else {
+    throw Error("tried activating unknown builtin");
+  }
 }
 
 void Codegen::_activateEntity (const std::string &name, std::optional<std::vector<std::string> *> entityEntities) {
@@ -1010,8 +1032,7 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         code += std::string(this->indent, ' ') + "}" EOL;
       } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
         auto elseIfCode = this->_node(std::get<ASTNode>(*nodeIf.alt));
-        // todo test
-        code += elseIfCode.starts_with(" ") ? elseIfCode.substr(elseIfCode.find_first_not_of(' ')) : elseIfCode;
+        code += elseIfCode.substr(elseIfCode.find_first_not_of(' '));
       }
     } else {
       code += std::string(this->indent, ' ') + "}" EOL;
@@ -1129,7 +1150,18 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
       auto objFieldType = this->_type(objField.type, true, false);
       auto strCodeDelimiter = std::string(objFieldIdx == 0 ? "" : ", ");
 
-      if (objField.type->isFn()) {
+      if (objField.type->isAny() || objField.type->isVoid()) {
+        auto typeStrContent = std::string();
+
+        if (objField.type->isAny()) {
+          typeStrContent = "any";
+        } else if (objField.type->isVoid()) {
+          typeStrContent = "void";
+        }
+
+        copyFnCode += "  r->" + objFieldName + " = o->" + objFieldName + ";" EOL;
+        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + ": [" + typeStrContent + R"(]");)" EOL;
+      } else if (objField.type->isFn()) {
         auto objFieldTypeName = this->_typeNameFn(objField.type);
 
         this->_activateEntity(objFieldTypeName + "_copy", &copyFnEntity.entities);
@@ -1173,17 +1205,6 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + R"(: \"");)" EOL;
         strFnCode += "  r = str_concat_str(r, str_escape(o->" + objFieldName + "));" EOL;
         strFnCode += R"(  r = str_concat_cstr(r, "\"");)" EOL;
-      } else if (objField.type->isAny() || objField.type->isVoid()) {
-        auto typeStrContent = std::string();
-
-        if (objField.type->isAny()) {
-          typeStrContent = "any";
-        } else if (objField.type->isVoid()) {
-          typeStrContent = "void";
-        }
-
-        copyFnCode += "  r->" + objFieldName + " = o->" + objFieldName + ";" EOL;
-        strFnCode += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + objField.name + ": [" + typeStrContent + R"(]");)" EOL;
       } else {
         auto typeStrFn = std::string();
 
@@ -1364,13 +1385,33 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
     } else {
       auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
-      auto objCode = this->_nodeExpr(objNodeExpr, Type::real(objNodeExpr.type), true);
 
-      if (objCode.starts_with("*")) {
-        objCode = "(" + objCode + ")";
+      if (exprAccess.prop == "len" && Type::real(objNodeExpr.type)->isStr()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, Type::real(objNodeExpr.type));
+        this->_activateBuiltin("fnStrLen");
+
+        if (objNodeExpr.parenthesized) {
+          code = "str_len" + objCode;
+        } else {
+          code = "str_len(" + objCode + ")";
+        }
+      } else if (exprAccess.prop != std::nullopt) {
+        auto objCode = this->_nodeExpr(objNodeExpr, Type::real(objNodeExpr.type), true);
+
+        if (objCode.starts_with("*")) {
+          objCode = "(" + objCode + ")";
+        }
+
+        code = objCode + "->" + Codegen::name(*exprAccess.prop);
+      } else if (exprAccess.elem != std::nullopt) {
+        auto objCode = this->_nodeExpr(objNodeExpr, Type::real(objNodeExpr.type), true);
+
+        if (objCode.starts_with("*")) {
+          objCode = "(" + objCode + ")";
+        }
+
+        code = objCode + ".c[" + this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type) + "]";
       }
-
-      code = objCode + "->" + Codegen::name(*exprAccess.prop);
 
       if (!nodeExpr.type->isRef() && targetType->isRef()) {
         code = "&" + code;
@@ -1577,9 +1618,85 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     return this->_wrapNodeExpr(nodeExpr, leftCode + opCode + rightCode);
   } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
     auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
+    auto exprCallCalleeRealType = Type::real(exprCall.callee.type);
 
-    if (exprCall.calleeType->builtin) {
-      if (exprCall.calleeType->codeName == "@print") {
+    if (exprCallCalleeRealType->builtin) {
+      if (
+        exprCallCalleeRealType->codeName == "@bool.str" ||
+        exprCallCalleeRealType->codeName == "@byte.str" ||
+        exprCallCalleeRealType->codeName == "@char.str" ||
+        exprCallCalleeRealType->codeName == "@f32.str" ||
+        exprCallCalleeRealType->codeName == "@f64.str" ||
+        exprCallCalleeRealType->codeName == "@float.str" ||
+        exprCallCalleeRealType->codeName == "@i8.str" ||
+        exprCallCalleeRealType->codeName == "@i16.str" ||
+        exprCallCalleeRealType->codeName == "@i32.str" ||
+        exprCallCalleeRealType->codeName == "@i64.str" ||
+        exprCallCalleeRealType->codeName == "@int.str" ||
+        exprCallCalleeRealType->codeName == "@u8.str" ||
+        exprCallCalleeRealType->codeName == "@u16.str" ||
+        exprCallCalleeRealType->codeName == "@u32.str" ||
+        exprCallCalleeRealType->codeName == "@u64.str"
+      ) {
+        auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
+        auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
+        auto typeStrFn = std::string();
+
+        if (exprCallCalleeRealType->codeName == "@bool.str") {
+          this->_activateBuiltin("fnBoolStr");
+          typeStrFn = "bool_str";
+        } else if (exprCallCalleeRealType->codeName == "@byte.str") {
+          this->_activateBuiltin("fnByteStr");
+          typeStrFn = "byte_str";
+        } else if (exprCallCalleeRealType->codeName == "@char.str") {
+          this->_activateBuiltin("fnCharStr");
+          typeStrFn = "char_str";
+        } else if (exprCallCalleeRealType->codeName == "@f32.str") {
+          this->_activateBuiltin("fnF32Str");
+          typeStrFn = "f32_str";
+        } else if (exprCallCalleeRealType->codeName == "@f64.str") {
+          this->_activateBuiltin("fnF64Str");
+          typeStrFn = "f64_str";
+        } else if (exprCallCalleeRealType->codeName == "@float.str") {
+          this->_activateBuiltin("fnFloatStr");
+          typeStrFn = "float_str";
+        } else if (exprCallCalleeRealType->codeName == "@i8.str") {
+          this->_activateBuiltin("fnI8Str");
+          typeStrFn = "i8_str";
+        } else if (exprCallCalleeRealType->codeName == "@i16.str") {
+          this->_activateBuiltin("fnI16Str");
+          typeStrFn = "i16_str";
+        } else if (exprCallCalleeRealType->codeName == "@i32.str") {
+          this->_activateBuiltin("fnI32Str");
+          typeStrFn = "i32_str";
+        } else if (exprCallCalleeRealType->codeName == "@i64.str") {
+          this->_activateBuiltin("fnI64Str");
+          typeStrFn = "i64_str";
+        } else if (exprCallCalleeRealType->codeName == "@int.str") {
+          this->_activateBuiltin("fnIntStr");
+          typeStrFn = "int_str";
+        } else if (exprCallCalleeRealType->codeName == "@u8.str") {
+          this->_activateBuiltin("fnU8Str");
+          typeStrFn = "u8_str";
+        } else if (exprCallCalleeRealType->codeName == "@u16.str") {
+          this->_activateBuiltin("fnU16Str");
+          typeStrFn = "u16_str";
+        } else if (exprCallCalleeRealType->codeName == "@u32.str") {
+          this->_activateBuiltin("fnU32Str");
+          typeStrFn = "u32_str";
+        } else if (exprCallCalleeRealType->codeName == "@u64.str") {
+          this->_activateBuiltin("fnU64Str");
+          typeStrFn = "u64_str";
+        }
+
+        auto code = this->_nodeExpr(calleeNodeExpr, exprCallCalleeRealType);
+
+        if (!calleeNodeExpr.parenthesized) {
+          code = "(" + code + ")";
+        }
+
+        return this->_wrapNodeExpr(nodeExpr, typeStrFn + code);
+      } else if (exprCallCalleeRealType->codeName == "@print") {
         auto separator = std::string(R"(" ")");
         auto isSeparatorLit = true;
         auto terminator = std::string(R"(")" ESC_EOL R"(")");
@@ -1623,16 +1740,19 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
           if (exprCallArg.expr.type->isFn()) {
             auto argCode = std::string();
 
+            // todo should evaluate at runtime
             if (std::holds_alternative<ASTExprAccess>(*exprCallArg.expr.body)) {
               auto exprAccess = std::get<ASTExprAccess>(*exprCallArg.expr.body);
 
               if (exprAccess.prop != std::nullopt) {
                 argCode = *exprAccess.prop;
-              } else {
+              } else if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.expr)) {
                 auto exprAccessVar = std::get<std::shared_ptr<Var>>(exprAccess.expr);
                 argCode = exprAccessVar->name;
               }
-            } else {
+            }
+
+            if (argCode.empty()) {
               argCode = "(anonymous)";
             }
 
@@ -1685,8 +1805,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         return this->_wrapNodeExpr(nodeExpr, code + ")");
       }
     } else {
-      auto fn = std::get<TypeFn>(exprCall.calleeType->body);
-      auto typeName = this->_typeNameFn(exprCall.calleeType);
+      auto fn = std::get<TypeFn>(exprCallCalleeRealType->body);
+      auto typeName = this->_typeNameFn(exprCallCalleeRealType);
       auto paramsName = typeName + "P";
       auto bodyCode = std::string();
 
@@ -1744,7 +1864,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         bodyCode += "}";
       }
 
-      auto fnName = this->_nodeExpr(exprCall.callee, exprCall.calleeType, true);
+      auto fnName = this->_nodeExpr(exprCall.callee, exprCallCalleeRealType, true);
 
       if (fnName.starts_with("*")) {
         fnName = "(" + fnName + ")";
@@ -1894,9 +2014,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 std::string Codegen::_type (const Type *type, bool mut, bool ref) {
   auto typeName = std::string();
 
-  if (type->isAny()) {
-    return std::string(mut ? "" : "const ") + "void *" + (ref ? "*" : "");
-  } else if (type->isByte()) {
+  if (type->isByte()) {
     typeName = "unsigned char";
   } else if (type->isChar()) {
     typeName = "char";

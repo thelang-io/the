@@ -851,22 +851,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg>
             <NodeExpr>
@@ -945,22 +929,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job1_0" name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="a" required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>
@@ -1061,31 +1029,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-              <TypeFnParam required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <TypeRef>
-                <TypeObj codeName="Test_0" name="Test">
-                  <TypeObjField name="a">
-                    <BuiltinType name="int" />
-                  </TypeObjField>
-                </TypeObj>
-              </TypeRef>
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg>
             <NodeExpr>
@@ -1211,31 +1154,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="a" required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-              <TypeFnParam name="b" required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <TypeRef>
-                <TypeObj codeName="Test_0" name="Test">
-                  <TypeObjField name="a">
-                    <BuiltinType name="int" />
-                  </TypeObjField>
-                </TypeObj>
-              </TypeRef>
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>
@@ -1375,40 +1293,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn name="fn$2">
-            <TypeFnParams>
-              <TypeFnParam required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-              <TypeFnParam required>
-                <TypeRef>
-                  <TypeFn name="fn$0">
-                    <TypeFnParams>
-                      <TypeFnParam required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                    </TypeFnParams>
-                    <TypeFnReturnType>
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg>
             <NodeExpr>
@@ -1587,40 +1471,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="job3_0" name="fn$2">
-            <TypeFnParams>
-              <TypeFnParam name="a" required>
-                <TypeRef>
-                  <BuiltinType name="int" />
-                </TypeRef>
-              </TypeFnParam>
-              <TypeFnParam name="b" required>
-                <TypeRef>
-                  <TypeFn name="fn$0">
-                    <TypeFnParams>
-                      <TypeFnParam required>
-                        <TypeRef>
-                          <BuiltinType name="int" />
-                        </TypeRef>
-                      </TypeFnParam>
-                    </TypeFnParams>
-                    <TypeFnReturnType>
-                      <TypeRef>
-                        <BuiltinType name="int" />
-                      </TypeRef>
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeRef>
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <TypeRef>
-                <BuiltinType name="int" />
-              </TypeRef>
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="a">
             <NodeExpr>

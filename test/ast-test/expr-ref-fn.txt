@@ -1,0 +1,262 @@
+======= stdin =======
+fn job1 () int {
+  return 1
+}
+
+fn job2 () int {
+  return 2
+}
+
+main {
+  mut refJob := ref job1
+  refJob()
+  refJob = ref job2
+  refJob()
+}
+======= stdout =======
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="job1" codeName="job1_0" frame="1">
+      <TypeFn codeName="job1_0" name="fn$0">
+        <TypeFnReturnType>
+          <BuiltinType name="int" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclBody>
+    <NodeReturn>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="1" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeReturn>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="job2" codeName="job2_0" frame="1">
+      <TypeFn codeName="job2_0" name="fn$0">
+        <TypeFnReturnType>
+          <BuiltinType name="int" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclBody>
+    <NodeReturn>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="2" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeReturn>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="refJob" codeName="refJob_0" mut frame="2">
+        <TypeRef>
+          <TypeFn codeName="job1_0" name="fn$0">
+            <TypeFnReturnType>
+              <BuiltinType name="int" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </TypeRef>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeRef>
+            <TypeFn codeName="job1_0" name="fn$0">
+              <TypeFnReturnType>
+                <BuiltinType name="int" />
+              </TypeFnReturnType>
+            </TypeFn>
+          </TypeRef>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprRef>
+            <NodeExpr>
+              <NodeExprType>
+                <TypeFn codeName="job1_0" name="fn$0">
+                  <TypeFnReturnType>
+                    <BuiltinType name="int" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="job1" codeName="job1_0" frame="1">
+                    <TypeFn codeName="job1_0" name="fn$0">
+                      <TypeFnReturnType>
+                        <BuiltinType name="int" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprRef>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="int" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeRef>
+                <TypeFn codeName="job1_0" name="fn$0">
+                  <TypeFnReturnType>
+                    <BuiltinType name="int" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </TypeRef>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="refJob" codeName="refJob_0" mut frame="2">
+                  <TypeRef>
+                    <TypeFn codeName="job1_0" name="fn$0">
+                      <TypeFnReturnType>
+                        <BuiltinType name="int" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </TypeRef>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeRef>
+        <TypeFn codeName="job1_0" name="fn$0">
+          <TypeFnReturnType>
+            <BuiltinType name="int" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </TypeRef>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAssign op="EQ">
+        <ExprAssignLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeRef>
+                <TypeFn codeName="job1_0" name="fn$0">
+                  <TypeFnReturnType>
+                    <BuiltinType name="int" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </TypeRef>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="refJob" codeName="refJob_0" mut frame="2">
+                  <TypeRef>
+                    <TypeFn codeName="job1_0" name="fn$0">
+                      <TypeFnReturnType>
+                        <BuiltinType name="int" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </TypeRef>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignLeft>
+        <ExprAssignRight>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeRef>
+                <TypeFn codeName="job1_0" name="fn$0">
+                  <TypeFnReturnType>
+                    <BuiltinType name="int" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </TypeRef>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprRef>
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeFn codeName="job2_0" name="fn$0">
+                      <TypeFnReturnType>
+                        <BuiltinType name="int" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="job2" codeName="job2_0" frame="1">
+                        <TypeFn codeName="job2_0" name="fn$0">
+                          <TypeFnReturnType>
+                            <BuiltinType name="int" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprRef>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignRight>
+      </ExprAssign>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="int" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeRef>
+                <TypeFn codeName="job1_0" name="fn$0">
+                  <TypeFnReturnType>
+                    <BuiltinType name="int" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </TypeRef>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="refJob" codeName="refJob_0" mut frame="2">
+                  <TypeRef>
+                    <TypeFn codeName="job1_0" name="fn$0">
+                      <TypeFnReturnType>
+                        <BuiltinType name="int" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </TypeRef>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

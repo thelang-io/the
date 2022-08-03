@@ -58,6 +58,8 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-access",
+  "expr-access-prop",
+  "expr-access-elem",
   "expr-assign",
   "expr-binary",
   "expr-call",
@@ -66,6 +68,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-lit",
   "expr-obj",
   "expr-ref",
+  "expr-ref-fn",
   "expr-unary"
 ));
 
@@ -101,5 +104,8 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1011-expr-cond-undeclared-body-var",
   "throw-E1011-expr-cond-undeclared-var",
   "throw-E1011-expr-unary-undeclared-var",
-  "throw-E1011-node-fn-decl-undeclared-param-var"
+  "throw-E1011-node-fn-decl-undeclared-param-var",
+  "throw-E1012-expr-access-expected-int",
+  "throw-E1013-expr-access-expected-type-str",
+  "throw-E1014-expr-call-expected-type-fn"
 ));

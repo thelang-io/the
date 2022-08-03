@@ -45,6 +45,7 @@ struct CodegenBuiltins {
   bool fnStrEqStr = false;
   bool fnStrEscape = false;
   bool fnStrFree = false;
+  bool fnStrLen = false;
   bool fnStrNeCstr = false;
   bool fnStrNeStr = false;
   bool fnStrNot = false;

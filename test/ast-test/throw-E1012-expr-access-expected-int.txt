@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  a := "test"
+  b := a['t']
+}
+======= stderr =======
+/test:3:10: E1012 - Index type expected to be integer
+  3 |   b := a['t']
+    |          ^~~

@@ -29,12 +29,20 @@ struct str {
   size_t l;
 };
 
+void *alloc (size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 bool str_not (struct str);
-void *alloc (size_t);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
@@ -52,14 +60,6 @@ void str_free (struct str s) {
 bool str_not (struct str s) {
   bool r = s.l == 0;
   free(s.c);
-  return r;
-}
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
-    exit(EXIT_FAILURE);
-  }
   return r;
 }
 
@@ -94,12 +94,20 @@ struct str {
   size_t l;
 };
 
+void *alloc (size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 bool str_not (struct str);
-void *alloc (size_t);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
@@ -117,14 +125,6 @@ void str_free (struct str s) {
 bool str_not (struct str s) {
   bool r = s.l == 0;
   free(s.c);
-  return r;
-}
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
-    exit(EXIT_FAILURE);
-  }
   return r;
 }
 

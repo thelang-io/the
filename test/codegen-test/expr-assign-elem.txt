@@ -1,0 +1,44 @@
+======= stdin =======
+main {
+  mut test := "zest"
+  test[0] = 't'
+}
+======= code =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *c;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *c) {
+  size_t l = strlen(c);
+  char *r = alloc(l);
+  memcpy(r, c, l);
+  return (struct str) {r, l};
+}
+void str_free (struct str s) {
+  free(s.c);
+}
+
+int main () {
+  struct str __THE_0_test_0 = str_alloc("zest");
+  __THE_0_test_0.c[0] = 't';
+  str_free((struct str) __THE_0_test_0);
+}
+======= flags =======
+======= stdout =======

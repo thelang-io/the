@@ -46,6 +46,7 @@ struct ParserStmtExpr {
 
 struct ParserExprAccess {
   std::variant<Token, ParserStmtExpr> expr;
+  std::optional<ParserStmtExpr> elem;
   std::optional<Token> prop;
 };
 

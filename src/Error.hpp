@@ -16,7 +16,6 @@
 #define E0003 "E0003 - Unterminated string literal"
 #define E0004 "E0004 - Empty character literal"
 #define E0005 "E0005 - Illegal character escape sequence"
-// +1 from here in new lang
 #define E0006 "E0006 - Too many characters in character literal"
 #define E0007 "E0007 - Integer literals with leading zero are not allowed"
 #define E0008 "E0008 - Invalid binary integer literal"
@@ -31,7 +30,6 @@
 #define E0017 "E0017 - New line is not allowed as character literal"
 
 #define E0100 "E0100 - Unexpected statement"
-// #define E0101 "E0101 - Unexpected expression statement"
 #define E0102 "E0102 - Expected variable type after colon"
 #define E0103 "E0103 - Expected left brace"
 #define E0104 "E0104 - Expected right brace"
@@ -71,7 +69,6 @@
 #define E0138 "E0138 - Expected ternary body expression"
 #define E0139 "E0139 - Expected ternary alternative expression"
 #define E0140 "E0140 - Expected lvalue as left operand of assignment"
-#define E0141 "E0141 - Called object expected to be a function"
 #define E0142 "E0142 - lvalue required as operand"
 #define E0143 "E0143 - Expected if condition expression"
 #define E0144 "E0144 - Loop initialization is mutable by default"
@@ -80,8 +77,9 @@
 #define E0147 "E0147 - Expected reference expression body"
 #define E0148 "E0148 - Invalid reference to rvalue"
 #define E0149 "E0149 - Expected reference expression type"
+#define E0150 "E0150 - Expected expression after left bracket"
+#define E0151 "E0151 - Expected right bracket"
 
-// #define E1000 "E1000 - Tried accessing property of non object variable"
 #define E1001 "E1001 - Tried accessing non existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
 #define E1003 "E1003 - Binary operator cannot be applied to these operands"
@@ -93,6 +91,9 @@
 #define E1009 "E1009 - Missing required arguments"
 #define E1010 "E1010 - Use of undeclared type"
 #define E1011 "E1011 - Use of undeclared variable"
+#define E1012 "E1012 - Index type expected to be integer"
+#define E1013 "E1013 - Indexing allowed only on strings"
+#define E1014 "E1014 - Called object expected to be a function"
 
 class Error : public std::exception {
  public:

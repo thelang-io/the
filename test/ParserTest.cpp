@@ -109,7 +109,8 @@ INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-access",
-  "expr-access-member",
+  "expr-access-prop",
+  "expr-access-elem",
   "expr-access-associativity",
   "expr-assign",
   "expr-assign-member",
@@ -239,22 +240,18 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0140-expr-assign-expected-lvalue-obj",
   "throw-E0140-expr-assign-expected-lvalue-unary",
   "throw-E0140-expr-assign-expected-lvalue-unary-prefix",
-  "throw-E0141-expr-call-expected-fn-assign",
-  "throw-E0141-expr-call-expected-fn-binary",
-  "throw-E0141-expr-call-expected-fn-cond",
-  "throw-E0141-expr-call-expected-fn-lit",
-  "throw-E0141-expr-call-expected-fn-obj",
-  "throw-E0141-expr-call-expected-fn-unary",
-  "throw-E0141-expr-call-expected-fn-unary-par",
   "throw-E0142-expr-unary-expected-lval-assign",
   "throw-E0142-expr-unary-expected-lval-binary",
   "throw-E0142-expr-unary-expected-lval-call",
   "throw-E0142-expr-unary-expected-lval-cond",
   "throw-E0142-expr-unary-expected-lval-lit",
   "throw-E0142-expr-unary-expected-lval-obj",
+  "throw-E0142-expr-unary-prefix-expected-lval",
   "throw-E0147-expr-ref-expected-body",
   "throw-E0148-expr-ref-invalid-rvalue",
-  "throw-E0148-expr-ref-invalid-unary-rvalue"
+  "throw-E0148-expr-ref-invalid-unary-rvalue",
+  "throw-E0150-expr-access-elem-missing-expr",
+  "throw-E0151-expr-access-missing-rbrack"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(

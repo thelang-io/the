@@ -1,6 +1,0 @@
-======= stdin =======
-(!a)()
-======= stderr =======
-/test:1:1: E0141 - Called object expected to be a function
-  1 | (!a)()
-    | ^~~~

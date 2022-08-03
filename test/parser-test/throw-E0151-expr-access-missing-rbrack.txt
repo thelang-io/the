@@ -1,0 +1,6 @@
+======= stdin =======
+test[1
+======= stderr =======
+/test:1:7: E0151 - Expected right bracket
+  1 | test[1
+    |       ^

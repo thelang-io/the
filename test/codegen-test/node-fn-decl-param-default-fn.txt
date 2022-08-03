@@ -56,10 +56,18 @@ struct str {
   size_t l;
 };
 
+void *alloc (size_t);
 struct str str_alloc (const char *);
 struct str str_concat_str (struct str, struct str);
-void *alloc (size_t);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 struct str str_alloc (const char *c) {
   size_t l = strlen(c);
   char *r = alloc(l);
@@ -74,14 +82,6 @@ struct str str_concat_str (struct str s1, struct str s2) {
   free(s1.c);
   free(s2.c);
   return (struct str) {r, l};
-}
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
 }
 
 struct __THE_1_fn$0;

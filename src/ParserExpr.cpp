@@ -28,9 +28,16 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "<ExprAccessExpr>" EOL;
       result += stmtExpr.xml(indent + 4) + EOL;
       result += std::string(indent + 2, ' ') + "</ExprAccessExpr>" EOL;
-      result += std::string(indent + 2, ' ') + "<ExprAccessProp>" EOL;
-      result += exprAccess.prop->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</ExprAccessProp>" EOL;
+
+      if (exprAccess.elem != std::nullopt) {
+        result += std::string(indent + 2, ' ') + "<ExprAccessElem>" EOL;
+        result += exprAccess.elem->xml(indent + 4) + EOL;
+        result += std::string(indent + 2, ' ') + "</ExprAccessElem>" EOL;
+      } else if (exprAccess.prop != std::nullopt) {
+        result += std::string(indent + 2, ' ') + "<ExprAccessProp>" EOL;
+        result += exprAccess.prop->xml(indent + 4) + EOL;
+        result += std::string(indent + 2, ' ') + "</ExprAccessProp>" EOL;
+      }
     }
 
     result += std::string(indent, ' ') + "</ExprAccess>";

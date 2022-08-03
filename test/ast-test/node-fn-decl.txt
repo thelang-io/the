@@ -89,9 +89,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -129,9 +126,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -216,9 +210,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -256,9 +247,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -388,21 +376,6 @@ main {
                                 </NodeExprBody>
                               </NodeExpr>
                             </ExprCallCallee>
-                            <ExprCallCalleeType>
-                              <TypeFn name="fn$2">
-                                <TypeFnParams>
-                                  <TypeFnParam required>
-                                    <BuiltinType name="int" />
-                                  </TypeFnParam>
-                                  <TypeFnParam variadic>
-                                    <BuiltinType name="int" />
-                                  </TypeFnParam>
-                                </TypeFnParams>
-                                <TypeFnReturnType>
-                                  <BuiltinType name="int" />
-                                </TypeFnReturnType>
-                              </TypeFn>
-                            </ExprCallCalleeType>
                             <ExprCallArgs>
                               <ExprCallArg>
                                 <NodeExpr>
@@ -464,21 +437,6 @@ main {
                                 </NodeExprBody>
                               </NodeExpr>
                             </ExprCallCallee>
-                            <ExprCallCalleeType>
-                              <TypeFn name="fn$2">
-                                <TypeFnParams>
-                                  <TypeFnParam required>
-                                    <BuiltinType name="int" />
-                                  </TypeFnParam>
-                                  <TypeFnParam variadic>
-                                    <BuiltinType name="int" />
-                                  </TypeFnParam>
-                                </TypeFnParams>
-                                <TypeFnReturnType>
-                                  <BuiltinType name="int" />
-                                </TypeFnReturnType>
-                              </TypeFn>
-                            </ExprCallCalleeType>
                             <ExprCallArgs>
                               <ExprCallArg>
                                 <NodeExpr>
@@ -554,21 +512,6 @@ main {
                         </NodeExprBody>
                       </NodeExpr>
                     </ExprCallCallee>
-                    <ExprCallCalleeType>
-                      <TypeFn name="fn$2">
-                        <TypeFnParams>
-                          <TypeFnParam required>
-                            <BuiltinType name="int" />
-                          </TypeFnParam>
-                          <TypeFnParam variadic>
-                            <BuiltinType name="int" />
-                          </TypeFnParam>
-                        </TypeFnParams>
-                        <TypeFnReturnType>
-                          <BuiltinType name="int" />
-                        </TypeFnReturnType>
-                      </TypeFn>
-                    </ExprCallCalleeType>
                     <ExprCallArgs>
                       <ExprCallArg>
                         <NodeExpr>
@@ -654,9 +597,6 @@ main {
               </NodeExprBody>
             </NodeExpr>
           </ExprCallCallee>
-          <ExprCallCalleeType>
-            <BuiltinType name="print" />
-          </ExprCallCalleeType>
           <ExprCallArgs>
             <ExprCallArg id="items">
               <NodeExpr>
@@ -756,9 +696,6 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprCallCallee>
-            <ExprCallCalleeType>
-              <BuiltinType name="print" />
-            </ExprCallCalleeType>
             <ExprCallArgs>
               <ExprCallArg id="items">
                 <NodeExpr>
@@ -796,9 +733,6 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprCallCallee>
-            <ExprCallCalleeType>
-              <BuiltinType name="print" />
-            </ExprCallCalleeType>
             <ExprCallArgs>
               <ExprCallArg id="items">
                 <NodeExpr>
@@ -878,21 +812,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test1_0" name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="p1" required>
-                <BuiltinType name="str" />
-              </TypeFnParam>
-              <TypeFnParam name="l1" required>
-                <BuiltinType name="str" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="p1">
             <NodeExpr>
@@ -962,21 +881,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="p2">
-                <BuiltinType name="str" />
-              </TypeFnParam>
-              <TypeFnParam name="args" variadic>
-                <BuiltinType name="str" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
       </ExprCall>
     </NodeExprBody>
   </NodeExpr>
@@ -1024,21 +928,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="p2">
-                <BuiltinType name="str" />
-              </TypeFnParam>
-              <TypeFnParam name="args" variadic>
-                <BuiltinType name="str" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="p2">
             <NodeExpr>
@@ -1098,21 +987,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="p2">
-                <BuiltinType name="str" />
-              </TypeFnParam>
-              <TypeFnParam name="args" variadic>
-                <BuiltinType name="str" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="p2">
             <NodeExpr>
@@ -1182,21 +1056,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <TypeFn codeName="test2_0" name="fn$1">
-            <TypeFnParams>
-              <TypeFnParam name="p2">
-                <BuiltinType name="str" />
-              </TypeFnParam>
-              <TypeFnParam name="args" variadic>
-                <BuiltinType name="str" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="void" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="p2">
             <NodeExpr>
@@ -1250,9 +1109,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <BuiltinType name="print" />
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="items">
             <NodeExpr>
@@ -1327,30 +1183,6 @@ main {
                       </NodeExprBody>
                     </NodeExpr>
                   </ExprCallCallee>
-                  <ExprCallCalleeType>
-                    <TypeFn codeName="test3_0" name="fn$3">
-                      <TypeFnParams>
-                        <TypeFnParam name="sum" required>
-                          <TypeFn name="fn$2">
-                            <TypeFnParams>
-                              <TypeFnParam required>
-                                <BuiltinType name="int" />
-                              </TypeFnParam>
-                              <TypeFnParam variadic>
-                                <BuiltinType name="int" />
-                              </TypeFnParam>
-                            </TypeFnParams>
-                            <TypeFnReturnType>
-                              <BuiltinType name="int" />
-                            </TypeFnReturnType>
-                          </TypeFn>
-                        </TypeFnParam>
-                      </TypeFnParams>
-                      <TypeFnReturnType>
-                        <BuiltinType name="int" />
-                      </TypeFnReturnType>
-                    </TypeFn>
-                  </ExprCallCalleeType>
                   <ExprCallArgs>
                     <ExprCallArg id="sum">
                       <NodeExpr>
@@ -1417,9 +1249,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <BuiltinType name="print" />
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="items">
             <NodeExpr>
@@ -1476,21 +1305,6 @@ main {
                       </NodeExprBody>
                     </NodeExpr>
                   </ExprCallCallee>
-                  <ExprCallCalleeType>
-                    <TypeFn codeName="mainSDtest0_0" name="fn$4">
-                      <TypeFnParams>
-                        <TypeFnParam name="p0" required>
-                          <BuiltinType name="int" />
-                        </TypeFnParam>
-                        <TypeFnParam name="l0">
-                          <BuiltinType name="int" />
-                        </TypeFnParam>
-                      </TypeFnParams>
-                      <TypeFnReturnType>
-                        <BuiltinType name="int" />
-                      </TypeFnReturnType>
-                    </TypeFn>
-                  </ExprCallCalleeType>
                   <ExprCallArgs>
                     <ExprCallArg id="p0">
                       <NodeExpr>
@@ -1529,9 +1343,6 @@ main {
             </NodeExprBody>
           </NodeExpr>
         </ExprCallCallee>
-        <ExprCallCalleeType>
-          <BuiltinType name="print" />
-        </ExprCallCalleeType>
         <ExprCallArgs>
           <ExprCallArg id="items">
             <NodeExpr>
@@ -1588,21 +1399,6 @@ main {
                       </NodeExprBody>
                     </NodeExpr>
                   </ExprCallCallee>
-                  <ExprCallCalleeType>
-                    <TypeFn codeName="mainSDtest0_0" name="fn$4">
-                      <TypeFnParams>
-                        <TypeFnParam name="p0" required>
-                          <BuiltinType name="int" />
-                        </TypeFnParam>
-                        <TypeFnParam name="l0">
-                          <BuiltinType name="int" />
-                        </TypeFnParam>
-                      </TypeFnParams>
-                      <TypeFnReturnType>
-                        <BuiltinType name="int" />
-                      </TypeFnReturnType>
-                    </TypeFn>
-                  </ExprCallCalleeType>
                   <ExprCallArgs>
                     <ExprCallArg id="p0">
                       <NodeExpr>

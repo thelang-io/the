@@ -1,0 +1,6 @@
+======= stdin =======
+test[]
+======= stderr =======
+/test:1:6: E0150 - Expected expression after left bracket
+  1 | test[]
+    |      ^

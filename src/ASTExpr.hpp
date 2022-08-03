@@ -101,6 +101,7 @@ struct ASTNodeExpr {
 
 struct ASTExprAccess {
   std::variant<std::shared_ptr<Var>, ASTNodeExpr> expr;
+  std::optional<ASTNodeExpr> elem;
   std::optional<std::string> prop;
 };
 
@@ -123,7 +124,6 @@ struct ASTExprCallArg {
 
 struct ASTExprCall {
   ASTNodeExpr callee;
-  Type *calleeType; // todo remove
   std::vector<ASTExprCallArg> args;
 };
 
