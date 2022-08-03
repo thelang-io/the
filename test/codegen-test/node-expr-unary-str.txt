@@ -15,7 +15,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -33,78 +33,23 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 bool str_not (struct str s) {
   bool r = s.l == 0;
-  free(s.c);
-  return r;
-}
-
-int main () {
-  const struct str __THE_0_a_0 = str_alloc("str1");
-  str_not(str_copy(__THE_0_a_0));
-  str_not(str_alloc(""));
-  str_not(str_alloc("str"));
-  !str_not(str_copy(__THE_0_a_0));
-  !str_not(str_alloc(""));
-  !str_not(str_alloc("str"));
-  str_free((struct str) __THE_0_a_0);
-}
-======= code-windows =======
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-struct str {
-  char *c;
-  size_t l;
-};
-
-void *alloc (size_t);
-struct str str_alloc (const char *);
-struct str str_copy (const struct str);
-void str_free (struct str);
-bool str_not (struct str);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
-}
-struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
-}
-void str_free (struct str s) {
-  free(s.c);
-}
-bool str_not (struct str s) {
-  bool r = s.l == 0;
-  free(s.c);
+  free(s.d);
   return r;
 }
 

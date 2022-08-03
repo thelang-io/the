@@ -37,7 +37,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -58,14 +58,14 @@ struct str char_str (char c) {
   char buf[2] = {c, '\0'};
   return str_alloc(buf);
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 
 struct __THE_1_Test1_0;

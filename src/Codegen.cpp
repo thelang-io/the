@@ -84,7 +84,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   if (this->builtins.typeStr) {
     builtinStructDefCode += "struct str {" EOL;
-    builtinStructDefCode += "  char *c;" EOL;
+    builtinStructDefCode += "  char *d;" EOL;
     builtinStructDefCode += "  size_t l;" EOL;
     builtinStructDefCode += "};" EOL;
   }
@@ -127,13 +127,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   if (this->builtins.fnCstrConcatStr) {
     builtinFnDeclCode += "struct str cstr_concat_str (const char *, struct str);" EOL;
-    builtinFnDefCode += "struct str cstr_concat_str (const char *c, struct str s) {" EOL;
-    builtinFnDefCode += "  size_t l = s.l + strlen(c);" EOL;
-    builtinFnDefCode += "  char *r = alloc(l);" EOL;
-    builtinFnDefCode += "  memcpy(r, s.c, s.l);" EOL;
-    builtinFnDefCode += "  memcpy(&r[s.l], c, l - s.l);" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
-    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "struct str cstr_concat_str (const char *r, struct str s) {" EOL;
+    builtinFnDefCode += "  size_t l = s.l + strlen(r);" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
+    builtinFnDefCode += "  memcpy(&d[s.l], r, l - s.l);" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -148,8 +148,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnCstrEqStr) {
     builtinFnDeclCode += "bool cstr_eq_str (const char *, struct str);" EOL;
     builtinFnDefCode += "bool cstr_eq_str (const char *c, struct str s) {" EOL;
-    builtinFnDefCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  bool r = s.l == strlen(c) && memcmp(s.d, c, s.l) == 0;" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return r;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -164,9 +164,9 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   if (this->builtins.fnCstrNeStr) {
     builtinFnDeclCode += "bool cstr_ne_str (const char *, struct str);" EOL;
-    builtinFnDefCode += "bool cstr_ne_str (const char *c, struct str s) {" EOL;
-    builtinFnDefCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "bool cstr_ne_str (const char *d, struct str s) {" EOL;
+    builtinFnDefCode += "  bool r = s.l != strlen(d) || memcmp(s.d, d, s.l) != 0;" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return r;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -266,7 +266,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += R"(      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;)" EOL;
-    builtinFnDefCode += "      case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;" EOL;
+    builtinFnDefCode += "      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;" EOL;
     builtinFnDefCode += R"(      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += R"(      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;)" EOL;
     builtinFnDefCode += "      case 'z': fputs(va_arg(args, char *), stream); break;" EOL;
@@ -287,23 +287,23 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   if (this->builtins.fnStrAlloc) {
     builtinFnDeclCode += "struct str str_alloc (const char *);" EOL;
-    builtinFnDefCode += "struct str str_alloc (const char *c) {" EOL;
-    builtinFnDefCode += "  size_t l = strlen(c);" EOL;
-    builtinFnDefCode += "  char *r = alloc(l);" EOL;
-    builtinFnDefCode += "  memcpy(r, c, l);" EOL;
-    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "struct str str_alloc (const char *r) {" EOL;
+    builtinFnDefCode += "  size_t l = strlen(r);" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, r, l);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrConcatCstr) {
     builtinFnDeclCode += "struct str str_concat_cstr (struct str, const char *);" EOL;
-    builtinFnDefCode += "struct str str_concat_cstr (struct str s, const char *c) {" EOL;
-    builtinFnDefCode += "  size_t l = s.l + strlen(c);" EOL;
-    builtinFnDefCode += "  char *r = alloc(l);" EOL;
-    builtinFnDefCode += "  memcpy(r, s.c, s.l);" EOL;
-    builtinFnDefCode += "  memcpy(&r[s.l], c, l - s.l);" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
-    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "struct str str_concat_cstr (struct str s, const char *r) {" EOL;
+    builtinFnDefCode += "  size_t l = s.l + strlen(r);" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
+    builtinFnDefCode += "  memcpy(&d[s.l], r, l - s.l);" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -311,39 +311,39 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDeclCode += "struct str str_concat_str (struct str, struct str);" EOL;
     builtinFnDefCode += "struct str str_concat_str (struct str s1, struct str s2) {" EOL;
     builtinFnDefCode += "  size_t l = s1.l + s2.l;" EOL;
-    builtinFnDefCode += "  char *r = alloc(l);" EOL;
-    builtinFnDefCode += "  memcpy(r, s1.c, s1.l);" EOL;
-    builtinFnDefCode += "  memcpy(&r[s1.l], s2.c, s2.l);" EOL;
-    builtinFnDefCode += "  free(s1.c);" EOL;
-    builtinFnDefCode += "  free(s2.c);" EOL;
-    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s1.d, s1.l);" EOL;
+    builtinFnDefCode += "  memcpy(&d[s1.l], s2.d, s2.l);" EOL;
+    builtinFnDefCode += "  free(s1.d);" EOL;
+    builtinFnDefCode += "  free(s2.d);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrCopy) {
     builtinFnDeclCode += "struct str str_copy (const struct str);" EOL;
     builtinFnDefCode += "struct str str_copy (const struct str s) {" EOL;
-    builtinFnDefCode += "  char *r = alloc(s.l);" EOL;
-    builtinFnDefCode += "  memcpy(r, s.c, s.l);" EOL;
-    builtinFnDefCode += "  return (struct str) {r, s.l};" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrEqCstr) {
     builtinFnDeclCode += "bool str_eq_cstr (struct str, const char *);" EOL;
-    builtinFnDefCode += "bool str_eq_cstr (struct str s, const char *c) {" EOL;
-    builtinFnDefCode += "  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
-    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "bool str_eq_cstr (struct str s, const char *r) {" EOL;
+    builtinFnDefCode += "  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
+    builtinFnDefCode += "  return d;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrEqStr) {
     builtinFnDeclCode += "bool str_eq_str (struct str, struct str);" EOL;
     builtinFnDefCode += "bool str_eq_str (struct str s1, struct str s2) {" EOL;
-    builtinFnDefCode += "  bool r = s1.l == s2.l && memcmp(s1.c, s2.c, s1.l) == 0;" EOL;
-    builtinFnDefCode += "  free(s1.c);" EOL;
-    builtinFnDefCode += "  free(s2.c);" EOL;
+    builtinFnDefCode += "  bool r = s1.l == s2.l && memcmp(s1.d, s2.d, s1.l) == 0;" EOL;
+    builtinFnDefCode += "  free(s1.d);" EOL;
+    builtinFnDefCode += "  free(s2.d);" EOL;
     builtinFnDefCode += "  return r;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -351,32 +351,32 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrEscape) {
     builtinFnDeclCode += "struct str str_escape (const struct str);" EOL;
     builtinFnDefCode += "struct str str_escape (const struct str s) {" EOL;
-    builtinFnDefCode += "  char *r = alloc(s.l);" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
     builtinFnDefCode += "  size_t l = 0;" EOL;
     builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) {" EOL;
-    builtinFnDefCode += "    char c = s.c[i];" EOL;
+    builtinFnDefCode += "    char c = s.d[i];" EOL;
     builtinFnDefCode += R"(    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {)" EOL;
-    builtinFnDefCode += "      if (l + 2 > s.l) r = realloc(r, l + 2);" EOL;
-    builtinFnDefCode += R"(      r[l++] = '\\';)" EOL;
-    builtinFnDefCode += R"(      if (c == '\f') r[l++] = 'f';)" EOL;
-    builtinFnDefCode += R"(      else if (c == '\n') r[l++] = 'n';)" EOL;
-    builtinFnDefCode += R"(      else if (c == '\r') r[l++] = 'r';)" EOL;
-    builtinFnDefCode += R"(      else if (c == '\t') r[l++] = 't';)" EOL;
-    builtinFnDefCode += R"(      else if (c == '\v') r[l++] = 'v';)" EOL;
-    builtinFnDefCode += R"(      else if (c == '"') r[l++] = '"';)" EOL;
+    builtinFnDefCode += "      if (l + 2 > s.l) d = realloc(d, l + 2);" EOL;
+    builtinFnDefCode += R"(      d[l++] = '\\';)" EOL;
+    builtinFnDefCode += R"(      if (c == '\f') d[l++] = 'f';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\n') d[l++] = 'n';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\r') d[l++] = 'r';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\t') d[l++] = 't';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '\v') d[l++] = 'v';)" EOL;
+    builtinFnDefCode += R"(      else if (c == '"') d[l++] = '"';)" EOL;
     builtinFnDefCode += "      continue;" EOL;
     builtinFnDefCode += "    }" EOL;
-    builtinFnDefCode += "    if (l + 1 > s.l) r = realloc(r, l + 1);" EOL;
-    builtinFnDefCode += "    r[l++] = c;" EOL;
+    builtinFnDefCode += "    if (l + 1 > s.l) d = realloc(d, l + 1);" EOL;
+    builtinFnDefCode += "    d[l++] = c;" EOL;
     builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrFree) {
     builtinFnDeclCode += "void str_free (struct str);" EOL;
     builtinFnDefCode += "void str_free (struct str s) {" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -384,7 +384,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDeclCode += "int32_t str_len (struct str);" EOL;
     builtinFnDefCode += "int32_t str_len (struct str s) {" EOL;
     builtinFnDefCode += "  int32_t l = s.l;" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return l;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -392,8 +392,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrNeCstr) {
     builtinFnDeclCode += "bool str_ne_cstr (struct str, const char *);" EOL;
     builtinFnDefCode += "bool str_ne_cstr (struct str s, const char *c) {" EOL;
-    builtinFnDefCode += "  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  bool r = s.l != strlen(c) || memcmp(s.d, c, s.l) != 0;" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return r;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -401,9 +401,9 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrNeStr) {
     builtinFnDeclCode += "bool str_ne_str (struct str, struct str);" EOL;
     builtinFnDefCode += "bool str_ne_str (struct str s1, struct str s2) {" EOL;
-    builtinFnDefCode += "  bool r = s1.l != s2.l || memcmp(s1.c, s2.c, s1.l) != 0;" EOL;
-    builtinFnDefCode += "  free(s1.c);" EOL;
-    builtinFnDefCode += "  free(s2.c);" EOL;
+    builtinFnDefCode += "  bool r = s1.l != s2.l || memcmp(s1.d, s2.d, s1.l) != 0;" EOL;
+    builtinFnDefCode += "  free(s1.d);" EOL;
+    builtinFnDefCode += "  free(s2.d);" EOL;
     builtinFnDefCode += "  return r;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -412,7 +412,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDeclCode += "bool str_not (struct str);" EOL;
     builtinFnDefCode += "bool str_not (struct str s) {" EOL;
     builtinFnDefCode += "  bool r = s.l == 0;" EOL;
-    builtinFnDefCode += "  free(s.c);" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return r;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -420,7 +420,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrRealloc) {
     builtinFnDeclCode += "struct str str_realloc (struct str, struct str);" EOL;
     builtinFnDefCode += "struct str str_realloc (struct str s1, struct str s2) {" EOL;
-    builtinFnDefCode += "  free(s1.c);" EOL;
+    builtinFnDefCode += "  free(s1.d);" EOL;
     builtinFnDefCode += "  return s2;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -1410,7 +1410,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
           objCode = "(" + objCode + ")";
         }
 
-        code = objCode + ".c[" + this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type) + "]";
+        code = objCode + ".d[" + this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type) + "]";
       }
 
       if (!nodeExpr.type->isRef() && targetType->isRef()) {

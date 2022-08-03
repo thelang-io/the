@@ -41,7 +41,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -60,149 +60,30 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
-struct str str_concat_cstr (struct str s, const char *c) {
-  size_t l = s.l + strlen(c);
-  char *r = alloc(l);
-  memcpy(r, s.c, s.l);
-  memcpy(&r[s.l], c, l - s.l);
-  free(s.c);
-  return (struct str) {r, l};
-}
-struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
-}
-void str_free (struct str s) {
-  free(s.c);
-}
-struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.c);
-  return s2;
-}
-
-struct __THE_1_Point_0;
-struct __THE_1_Test_0;
-struct __THE_1_Human_0;
-
-struct __THE_1_Point_0 {
-  double __THE_0_x;
-  double __THE_0_y;
-};
-struct __THE_1_Test_0 {
-  int32_t __THE_0_a;
-};
-struct __THE_1_Human_0 {
-  struct str __THE_0_name;
-  int32_t __THE_0_age;
-};
-
-struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
-void __THE_1_Point_0_free (struct __THE_1_Point_0 *);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, int32_t);
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-
-struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_y) {
-  struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
-  r->__THE_0_x = __THE_0_x;
-  r->__THE_0_y = __THE_0_y;
-  return r;
-}
-void __THE_1_Point_0_free (struct __THE_1_Point_0 *o) {
-  free(o);
-}
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = __THE_0_a;
-  return r;
-}
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
-}
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
-  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  r->__THE_0_name = __THE_0_name;
-  r->__THE_0_age = __THE_0_age;
-  return r;
-}
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
-  str_free((struct str) o->__THE_0_name);
-  free(o);
-}
-
-int main () {
-  struct __THE_1_Point_0 *__THE_0_a1_0 = __THE_1_Point_0_alloc(37.7681251, -122.5138329);
-  struct __THE_1_Point_0 *__THE_0_a2_0 = __THE_1_Point_0_alloc(37.7681251, -122.5138329);
-  __THE_0_a1_0->__THE_0_x += 2;
-  __THE_0_a2_0->__THE_0_y /= 0.2;
-  const struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(2);
-  const struct __THE_1_Human_0 *__THE_0_tina_0 = __THE_1_Human_0_alloc(str_alloc("Tina"), 45);
-  struct __THE_1_Human_0 *__THE_0_nina_0 = __THE_1_Human_0_alloc(str_alloc("Nina"), 33);
-  __THE_0_nina_0->__THE_0_name = str_realloc(__THE_0_nina_0->__THE_0_name, str_concat_cstr(str_copy(__THE_0_nina_0->__THE_0_name), "Test"));
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_nina_0);
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_tina_0);
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
-  __THE_1_Point_0_free((struct __THE_1_Point_0 *) __THE_0_a2_0);
-  __THE_1_Point_0_free((struct __THE_1_Point_0 *) __THE_0_a1_0);
-}
-======= code-windows =======
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-struct str {
-  char *c;
-  size_t l;
-};
-
-void *alloc (size_t);
-struct str str_alloc (const char *);
-struct str str_concat_cstr (struct str, const char *);
-struct str str_copy (const struct str);
-void str_free (struct str);
-struct str str_realloc (struct str, struct str);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
-}
-struct str str_concat_cstr (struct str s, const char *c) {
-  size_t l = s.l + strlen(c);
-  char *r = alloc(l);
-  memcpy(r, s.c, s.l);
-  memcpy(&r[s.l], c, l - s.l);
-  free(s.c);
-  return (struct str) {r, l};
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.c);
+  free(s1.d);
   return s2;
 }
 

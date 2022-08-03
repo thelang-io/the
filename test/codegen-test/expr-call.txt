@@ -39,7 +39,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -86,7 +86,7 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.c, 1, s.l, stream); str_free(s); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;
@@ -94,52 +94,52 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
-struct str str_concat_cstr (struct str s, const char *c) {
-  size_t l = s.l + strlen(c);
-  char *r = alloc(l);
-  memcpy(r, s.c, s.l);
-  memcpy(&r[s.l], c, l - s.l);
-  free(s.c);
-  return (struct str) {r, l};
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
 }
 struct str str_concat_str (struct str s1, struct str s2) {
   size_t l = s1.l + s2.l;
-  char *r = alloc(l);
-  memcpy(r, s1.c, s1.l);
-  memcpy(&r[s1.l], s2.c, s2.l);
-  free(s1.c);
-  free(s2.c);
-  return (struct str) {r, l};
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
 }
 struct str str_escape (const struct str s) {
-  char *r = alloc(s.l);
+  char *d = alloc(s.l);
   size_t l = 0;
   for (size_t i = 0; i < s.l; i++) {
-    char c = s.c[i];
+    char c = s.d[i];
     if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
-      if (l + 2 > s.l) r = realloc(r, l + 2);
-      r[l++] = '\\';
-      if (c == '\f') r[l++] = 'f';
-      else if (c == '\n') r[l++] = 'n';
-      else if (c == '\r') r[l++] = 'r';
-      else if (c == '\t') r[l++] = 't';
-      else if (c == '\v') r[l++] = 'v';
-      else if (c == '"') r[l++] = '"';
+      if (l + 2 > s.l) d = realloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
       continue;
     }
-    if (l + 1 > s.l) r = realloc(r, l + 1);
-    r[l++] = c;
+    if (l + 1 > s.l) d = realloc(d, l + 1);
+    d[l++] = c;
   }
-  return (struct str) {r, l};
+  return (struct str) {d, l};
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 
 struct __THE_1_Human_0;

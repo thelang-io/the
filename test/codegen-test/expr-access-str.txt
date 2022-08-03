@@ -17,7 +17,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -36,102 +36,31 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
 struct str str_concat_str (struct str s1, struct str s2) {
   size_t l = s1.l + s2.l;
-  char *r = alloc(l);
-  memcpy(r, s1.c, s1.l);
-  memcpy(&r[s1.l], s2.c, s2.l);
-  free(s1.c);
-  free(s2.c);
-  return (struct str) {r, l};
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.c);
-  return s2;
-}
-
-int main () {
-  const struct str __THE_0_a_0 = str_alloc("test");
-  struct str __THE_0_b_0 = str_copy(__THE_0_a_0);
-  __THE_0_b_0 = str_realloc(__THE_0_b_0, str_copy(__THE_0_a_0));
-  struct str __THE_0_c_0 = str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0));
-  __THE_0_c_0 = str_realloc(__THE_0_c_0, str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)));
-  struct str __THE_0_d_0 = str_concat_str(str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0));
-  __THE_0_d_0 = str_realloc(__THE_0_d_0, str_concat_str(str_copy(__THE_0_d_0), str_concat_str(str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0))));
-  const struct str __THE_0_e_0 = true ? str_copy(__THE_0_a_0) : str_concat_str(str_copy(__THE_0_b_0), str_copy(__THE_0_c_0));
-  const struct str __THE_0_f_0 = true ? str_concat_str(str_concat_str(str_copy(__THE_0_c_0), str_copy(__THE_0_d_0)), str_copy(__THE_0_e_0)) : (str_copy(__THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_str(str_copy(__THE_0_b_0), str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_c_0))))));
-  str_free((struct str) __THE_0_f_0);
-  str_free((struct str) __THE_0_e_0);
-  str_free((struct str) __THE_0_d_0);
-  str_free((struct str) __THE_0_c_0);
-  str_free((struct str) __THE_0_b_0);
-  str_free((struct str) __THE_0_a_0);
-}
-======= code-windows =======
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-struct str {
-  char *c;
-  size_t l;
-};
-
-void *alloc (size_t);
-struct str str_alloc (const char *);
-struct str str_concat_str (struct str, struct str);
-struct str str_copy (const struct str);
-void str_free (struct str);
-struct str str_realloc (struct str, struct str);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\r\n", l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
-}
-struct str str_concat_str (struct str s1, struct str s2) {
-  size_t l = s1.l + s2.l;
-  char *r = alloc(l);
-  memcpy(r, s1.c, s1.l);
-  memcpy(&r[s1.l], s2.c, s2.l);
-  free(s1.c);
-  free(s2.c);
-  return (struct str) {r, l};
-}
-struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
-}
-void str_free (struct str s) {
-  free(s.c);
-}
-struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.c);
+  free(s1.d);
   return s2;
 }
 

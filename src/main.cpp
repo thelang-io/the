@@ -15,6 +15,7 @@ int main (int argc, char *argv[]) {
     }
 
     auto isAST = false;
+    auto isCodegen = false;
     auto isLex = false;
     auto isParse = false;
     auto fileName = std::optional<std::string>{};
@@ -25,6 +26,8 @@ int main (int argc, char *argv[]) {
 
       if (i == 1 && arg == "ast") {
         isAST = true;
+      } else if (i == 1 && arg == "codegen") {
+        isCodegen = true;
       } else if (i == 1 && arg == "lex") {
         isLex = true;
       } else if (i == 1 && arg == "parse") {
@@ -89,6 +92,12 @@ int main (int argc, char *argv[]) {
 
     auto codegen = Codegen(&ast);
     auto result = codegen.gen();
+
+    if (isCodegen) {
+      std::cout << std::get<0>(result);
+      return EXIT_SUCCESS;
+    }
+
 
     Codegen::compile("build/a.out", result);
     return EXIT_SUCCESS;

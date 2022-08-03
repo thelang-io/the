@@ -6,21 +6,35 @@ import subprocess
 
 def update(directory: str, action: str):
     files = os.listdir(directory)
+    code_sep = "======= code ======="
+    flags_sep = "======= flags ======="
     stdin_sep = "======= stdin ======="
     stdout_sep = "======= stdout ======="
     stderr_sep = "======= stderr ======="
 
     for file in files:
+        if file.startswith("."):
+            continue
+
         filepath = directory + "/" + file
         is_error_file = file.startswith("throw-")
 
         f = open(filepath, "r")
         content = f.read()[len(stdin_sep) + 1:]
-        parts = content.split(stderr_sep) if is_error_file else content.split(stdout_sep)
+        trailing_code = ""
+
+        if is_error_file:
+            stdin = content.split(stderr_sep)[0]
+        elif action == "codegen":
+            stdin = content.split(code_sep)[0]
+            trailing_code = flags_sep + content.split(flags_sep)[1]
+        else:
+            stdin = content.split(stdout_sep)[0]
+
         f.close()
 
         f = open(filepath, "w")
-        f.write(parts[0][0:-1])
+        f.write(stdin[0:-1])
         f.close()
 
         process = subprocess.Popen(
@@ -31,14 +45,15 @@ def update(directory: str, action: str):
         )
 
         stdout, stderr = process.communicate()
-
         f = open(filepath, "w")
 
         if is_error_file:
             result = "/test" + stderr[stderr.find(":", 10):]
-            f.write(stdin_sep + "\n" + parts[0] + stderr_sep + "\n" + result)
+            f.write(stdin_sep + "\n" + stdin + stderr_sep + "\n" + result)
+        elif action == "codegen":
+            f.write(stdin_sep + "\n" + stdin + code_sep + "\n" + stdout[150:] + trailing_code)
         else:
-            f.write(stdin_sep + "\n" + parts[0] + stdout_sep + "\n" + stdout)
+            f.write(stdin_sep + "\n" + stdin + stdout_sep + "\n" + stdout)
 
         f.close()
 
@@ -46,6 +61,7 @@ def update(directory: str, action: str):
 def main():
     update("test/parser-test", "parse")
     update("test/ast-test", "ast")
+    update("test/codegen-test", "codegen")
 
 
 if __name__ == "__main__":

@@ -64,7 +64,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -86,48 +86,48 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct str cstr_concat_str (const char *c, struct str s) {
-  size_t l = s.l + strlen(c);
-  char *r = alloc(l);
-  memcpy(r, s.c, s.l);
-  memcpy(&r[s.l], c, l - s.l);
-  free(s.c);
-  return (struct str) {r, l};
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
-struct str str_concat_cstr (struct str s, const char *c) {
-  size_t l = s.l + strlen(c);
-  char *r = alloc(l);
-  memcpy(r, s.c, s.l);
-  memcpy(&r[s.l], c, l - s.l);
-  free(s.c);
-  return (struct str) {r, l};
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
-bool str_eq_cstr (struct str s, const char *c) {
-  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
-  free(s.c);
-  return r;
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 bool str_ne_cstr (struct str s, const char *c) {
-  bool r = s.l != strlen(c) || memcmp(s.c, c, s.l) != 0;
-  free(s.c);
+  bool r = s.l != strlen(c) || memcmp(s.d, c, s.l) != 0;
+  free(s.d);
   return r;
 }
 struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.c);
+  free(s1.d);
   return s2;
 }
 

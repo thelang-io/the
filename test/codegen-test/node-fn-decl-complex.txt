@@ -71,7 +71,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -96,33 +96,33 @@ bool cstr_eq_cstr (const char *c1, const char *c2) {
   size_t l = strlen(c1);
   return l == strlen(c2) && memcmp(c1, c2, l) == 0;
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
-bool str_eq_cstr (struct str s, const char *c) {
-  bool r = s.l == strlen(c) && memcmp(s.c, c, s.l) == 0;
-  free(s.c);
-  return r;
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
 }
 bool str_eq_str (struct str s1, struct str s2) {
-  bool r = s1.l == s2.l && memcmp(s1.c, s2.c, s1.l) == 0;
-  free(s1.c);
-  free(s2.c);
+  bool r = s1.l == s2.l && memcmp(s1.d, s2.d, s1.l) == 0;
+  free(s1.d);
+  free(s2.d);
   return r;
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.c);
+  free(s1.d);
   return s2;
 }
 

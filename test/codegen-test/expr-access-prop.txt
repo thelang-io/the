@@ -39,7 +39,7 @@ main {
 #include <string.h>
 
 struct str {
-  char *c;
+  char *d;
   size_t l;
 };
 
@@ -78,23 +78,23 @@ struct str int_str (int32_t d) {
   sprintf(buf, "%" PRId32, d);
   return str_alloc(buf);
 }
-struct str str_alloc (const char *c) {
-  size_t l = strlen(c);
-  char *r = alloc(l);
-  memcpy(r, c, l);
-  return (struct str) {r, l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
-  char *r = alloc(s.l);
-  memcpy(r, s.c, s.l);
-  return (struct str) {r, s.l};
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
-  free(s.c);
+  free(s.d);
 }
 int32_t str_len (struct str s) {
   int32_t l = s.l;
-  free(s.c);
+  free(s.d);
   return l;
 }
 
