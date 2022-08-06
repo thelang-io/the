@@ -74,9 +74,9 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Test_0" name="Test">
-    <TypeObjField name="i">
+    <TypeField name="i">
       <BuiltinType name="int" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeFnDecl>
@@ -145,9 +145,9 @@ main {
           </TypeFnParam>
           <TypeFnParam name="v1" required>
             <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="i">
+              <TypeField name="i">
                 <BuiltinType name="int" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </TypeFnParam>
           <TypeFnParam name="v2" required>
@@ -281,9 +281,9 @@ main {
       <NodeFnDeclParamVar>
         <Var name="v1" codeName="v1_0" frame="2">
           <TypeObj codeName="Test_0" name="Test">
-            <TypeObjField name="i">
+            <TypeField name="i">
               <BuiltinType name="int" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </Var>
       </NodeFnDeclParamVar>
@@ -356,9 +356,9 @@ main {
           </TypeFnParam>
           <TypeFnParam name="v1">
             <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="i">
+              <TypeField name="i">
                 <BuiltinType name="int" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </TypeFnParam>
           <TypeFnParam name="v2">
@@ -661,9 +661,9 @@ main {
       <NodeFnDeclParamVar>
         <Var name="v1" codeName="v1_0" frame="2">
           <TypeObj codeName="Test_0" name="Test">
-            <TypeObjField name="i">
+            <TypeField name="i">
               <BuiltinType name="int" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </Var>
       </NodeFnDeclParamVar>
@@ -671,18 +671,18 @@ main {
         <NodeExpr>
           <NodeExprType>
             <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="i">
+              <TypeField name="i">
                 <BuiltinType name="int" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </NodeExprType>
           <NodeExprBody>
             <ExprObj>
               <ExprObjType>
                 <TypeObj codeName="Test_0" name="Test">
-                  <TypeObjField name="i">
+                  <TypeField name="i">
                     <BuiltinType name="int" />
-                  </TypeObjField>
+                  </TypeField>
                 </TypeObj>
               </ExprObjType>
               <ExprObjProps>
@@ -799,9 +799,9 @@ main {
                   </TypeFnParam>
                   <TypeFnParam name="v1" required>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="i">
+                      <TypeField name="i">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </TypeFnParam>
                   <TypeFnParam name="v2" required>
@@ -872,9 +872,9 @@ main {
                       </TypeFnParam>
                       <TypeFnParam name="v1" required>
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="i">
+                          <TypeField name="i">
                             <BuiltinType name="int" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </TypeFnParam>
                       <TypeFnParam name="v2" required>
@@ -1059,18 +1059,18 @@ main {
             <NodeExpr>
               <NodeExprType>
                 <TypeObj codeName="Test_0" name="Test">
-                  <TypeObjField name="i">
+                  <TypeField name="i">
                     <BuiltinType name="int" />
-                  </TypeObjField>
+                  </TypeField>
                 </TypeObj>
               </NodeExprType>
               <NodeExprBody>
                 <ExprObj>
                   <ExprObjType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="i">
+                      <TypeField name="i">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </ExprObjType>
                   <ExprObjProps>
@@ -1176,9 +1176,9 @@ main {
                   </TypeFnParam>
                   <TypeFnParam name="v1">
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="i">
+                      <TypeField name="i">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </TypeFnParam>
                   <TypeFnParam name="v2">
@@ -1249,9 +1249,9 @@ main {
                       </TypeFnParam>
                       <TypeFnParam name="v1">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="i">
+                          <TypeField name="i">
                             <BuiltinType name="int" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </TypeFnParam>
                       <TypeFnParam name="v2">

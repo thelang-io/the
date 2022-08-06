@@ -430,6 +430,32 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
     return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
   }
 
+  if (tok1.type == TK_OP_LBRACK) {
+    auto [loc2, tok2] = this->lexer->next();
+    auto exprArrayElements = std::vector<ParserStmtExpr>{};
+
+    while (tok2.type != TK_OP_RBRACK) {
+      this->lexer->seek(loc2);
+      auto exprArrayElement = this->_stmtExpr();
+
+      if (exprArrayElement == std::nullopt) { // todo test
+        throw Error(this->reader, this->lexer->loc, E0152);
+      }
+
+      exprArrayElements.push_back(*exprArrayElement);
+      std::tie(loc2, tok2) = this->lexer->next();
+
+      if (tok2.type == TK_OP_COMMA) {
+        std::tie(loc2, tok2) = this->lexer->next();
+      }
+    }
+
+    auto exprArray = ParserExprArray{exprArrayElements};
+    auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprArray), false, tok1.start, this->lexer->loc};
+
+    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr; // todo test
+  }
+
   if (tok1.type == TK_ID) {
     auto exprAccess = ParserExprAccess{tok1, std::nullopt, std::nullopt};
     auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, tok1.start, this->lexer->loc};
@@ -450,11 +476,8 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
       throw Error(this->reader, tok2.start, E0109);
     }
 
-    stmtExpr->parenthesized = true;
-    stmtExpr->start = tok1.start;
-    stmtExpr->end = this->lexer->loc;
-
-    return root ? this->_wrapStmtExpr(*stmtExpr) : stmtExpr;
+    auto newStmtExpr = ParserStmtExpr{stmtExpr->body, true, tok1.start, this->lexer->loc};
+    return root ? this->_wrapStmtExpr(newStmtExpr) : newStmtExpr;
   }
 
   this->lexer->seek(loc1);
@@ -495,10 +518,10 @@ std::optional<ParserType> Parser::_type () {
       throw Error(this->reader, this->lexer->loc, E0127);
     }
 
-    return ParserType{type->body, true, tok1.start, this->lexer->loc};
+    return this->_wrapType(ParserType{type->body, true, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_ID) {
     auto typeId = ParserTypeId{tok1};
-    return ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_KW_FN) {
     auto [loc2, tok2] = this->lexer->next();
 
@@ -572,7 +595,7 @@ std::optional<ParserType> Parser::_type () {
     }
 
     auto typeFn = ParserTypeFn{fnParams, *fnReturnType};
-    return ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_KW_REF) {
     auto type = this->_type();
 
@@ -581,7 +604,7 @@ std::optional<ParserType> Parser::_type () {
     }
 
     auto typeRef = ParserTypeRef{*type};
-    return ParserType{std::make_shared<ParserTypeBody>(typeRef), false, tok1.start, this->lexer->loc};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeRef), false, tok1.start, this->lexer->loc});
   }
 
   this->lexer->seek(loc1);
@@ -963,4 +986,37 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
 
   this->lexer->seek(loc);
   return stmtExpr;
+}
+
+ParserType Parser::_wrapType (const ParserType &type) {
+  auto [loc1, tok1] = this->lexer->next();
+
+  if (tok1.type == TK_OP_LBRACK) { // todo test
+    auto [loc2, tok2] = this->lexer->next();
+
+    if (tok2.type != TK_OP_RBRACK) {
+      this->lexer->seek(loc2);
+      throw Error(this->reader, this->lexer->loc, E0151);
+    }
+
+    if (std::holds_alternative<ParserTypeFn>(*type.body) && !type.parenthesized) {
+      auto typeFn = std::get<ParserTypeFn>(*type.body);
+      auto typeArray = ParserTypeArray{typeFn.returnType};
+
+      typeFn.returnType = ParserType{std::make_shared<ParserTypeBody>(typeArray), false, typeFn.returnType.start, this->lexer->loc};
+      return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, type.start, this->lexer->loc});
+    } else if (std::holds_alternative<ParserTypeRef>(*type.body) && !type.parenthesized) {
+      auto typeRef = std::get<ParserTypeRef>(*type.body);
+      auto typeArray = ParserTypeArray{typeRef.refType};
+
+      typeRef.refType = ParserType{std::make_shared<ParserTypeBody>(typeArray), false, typeRef.refType.start, this->lexer->loc};
+      return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeRef), false, type.start, this->lexer->loc});
+    }
+
+    auto typeArray = ParserTypeArray{type};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeArray), false, type.start, this->lexer->loc});
+  }
+
+  this->lexer->seek(loc1);
+  return type;
 }

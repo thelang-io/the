@@ -34,7 +34,9 @@ main {
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <BuiltinType name="char" />
+              <TypeRef name="ref_char">
+                <BuiltinType name="char" />
+              </TypeRef>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
@@ -98,14 +100,18 @@ main {
   </NodeVarDecl>
   <NodeExpr>
     <NodeExprType>
-      <BuiltinType name="char" />
+      <TypeRef name="ref_char">
+        <BuiltinType name="char" />
+      </TypeRef>
     </NodeExprType>
     <NodeExprBody>
       <ExprAssign op="EQ">
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <BuiltinType name="char" />
+              <TypeRef name="ref_char">
+                <BuiltinType name="char" />
+              </TypeRef>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
@@ -144,7 +150,9 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <BuiltinType name="char" />
+              <TypeRef name="ref_char">
+                <BuiltinType name="char" />
+              </TypeRef>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>

@@ -47,17 +47,17 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Animal_0" name="Animal">
-    <TypeObjField name="age">
+    <TypeField name="age">
       <BuiltinType name="int" />
-    </TypeObjField>
-    <TypeObjField name="name">
+    </TypeField>
+    <TypeField name="name">
       <BuiltinType name="str" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
   <TypeObj codeName="Test_0" name="Test">
-    <TypeObjField name="sum">
+    <TypeField name="sum">
       <TypeFn name="fn$0">
         <TypeFnParams>
           <TypeFnParam required>
@@ -71,7 +71,7 @@ main {
           <BuiltinType name="int" />
         </TypeFnReturnType>
       </TypeFn>
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeFnDecl>
@@ -164,7 +164,7 @@ main {
 </NodeFnDecl>
 <NodeObjDecl>
   <TypeObj codeName="Callback_0" name="Callback">
-    <TypeObjField name="logic">
+    <TypeField name="logic">
       <TypeFn name="fn$2">
         <TypeFnParams>
           <TypeFnParam required>
@@ -179,7 +179,7 @@ main {
           <BuiltinType name="void" />
         </TypeFnReturnType>
       </TypeFn>
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeFnDecl>
@@ -297,12 +297,12 @@ main {
 <NodeMain>
   <NodeObjDecl>
     <TypeObj codeName="mainSDCat_0" name="Cat">
-      <TypeObjField name="breed">
+      <TypeField name="breed">
         <BuiltinType name="str" />
-      </TypeObjField>
-      <TypeObjField name="sex">
+      </TypeField>
+      <TypeField name="sex">
         <BuiltinType name="str" />
-      </TypeObjField>
+      </TypeField>
     </TypeObj>
   </NodeObjDecl>
   <NodeFnDecl>
@@ -319,12 +319,12 @@ main {
           </TypeFnParams>
           <TypeFnReturnType>
             <TypeObj codeName="mainSDCat_0" name="Cat">
-              <TypeObjField name="breed">
+              <TypeField name="breed">
                 <BuiltinType name="str" />
-              </TypeObjField>
-              <TypeObjField name="sex">
+              </TypeField>
+              <TypeField name="sex">
                 <BuiltinType name="str" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </TypeFnReturnType>
         </TypeFn>
@@ -351,24 +351,24 @@ main {
         <NodeExpr>
           <NodeExprType>
             <TypeObj codeName="mainSDCat_0" name="Cat">
-              <TypeObjField name="breed">
+              <TypeField name="breed">
                 <BuiltinType name="str" />
-              </TypeObjField>
-              <TypeObjField name="sex">
+              </TypeField>
+              <TypeField name="sex">
                 <BuiltinType name="str" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </NodeExprType>
           <NodeExprBody>
             <ExprObj>
               <ExprObjType>
                 <TypeObj codeName="mainSDCat_0" name="Cat">
-                  <TypeObjField name="breed">
+                  <TypeField name="breed">
                     <BuiltinType name="str" />
-                  </TypeObjField>
-                  <TypeObjField name="sex">
+                  </TypeField>
+                  <TypeField name="sex">
                     <BuiltinType name="str" />
-                  </TypeObjField>
+                  </TypeField>
                 </TypeObj>
               </ExprObjType>
               <ExprObjProps>
@@ -411,12 +411,12 @@ main {
     <NodeVarDeclVar>
       <Var name="animal1" codeName="animal1_0" frame="2">
         <TypeObj codeName="Animal_0" name="Animal">
-          <TypeObjField name="age">
+          <TypeField name="age">
             <BuiltinType name="int" />
-          </TypeObjField>
-          <TypeObjField name="name">
+          </TypeField>
+          <TypeField name="name">
             <BuiltinType name="str" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -424,24 +424,24 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Animal_0" name="Animal">
-            <TypeObjField name="age">
+            <TypeField name="age">
               <BuiltinType name="int" />
-            </TypeObjField>
-            <TypeObjField name="name">
+            </TypeField>
+            <TypeField name="name">
               <BuiltinType name="str" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Animal_0" name="Animal">
-                <TypeObjField name="age">
+                <TypeField name="age">
                   <BuiltinType name="int" />
-                </TypeObjField>
-                <TypeObjField name="name">
+                </TypeField>
+                <TypeField name="name">
                   <BuiltinType name="str" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
@@ -475,12 +475,12 @@ main {
     <NodeVarDeclVar>
       <Var name="cat1" codeName="cat1_0" frame="2">
         <TypeObj codeName="mainSDCat_0" name="Cat">
-          <TypeObjField name="breed">
+          <TypeField name="breed">
             <BuiltinType name="str" />
-          </TypeObjField>
-          <TypeObjField name="sex">
+          </TypeField>
+          <TypeField name="sex">
             <BuiltinType name="str" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -488,12 +488,12 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="mainSDCat_0" name="Cat">
-            <TypeObjField name="breed">
+            <TypeField name="breed">
               <BuiltinType name="str" />
-            </TypeObjField>
-            <TypeObjField name="sex">
+            </TypeField>
+            <TypeField name="sex">
               <BuiltinType name="str" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
@@ -512,12 +512,12 @@ main {
                     </TypeFnParams>
                     <TypeFnReturnType>
                       <TypeObj codeName="mainSDCat_0" name="Cat">
-                        <TypeObjField name="breed">
+                        <TypeField name="breed">
                           <BuiltinType name="str" />
-                        </TypeObjField>
-                        <TypeObjField name="sex">
+                        </TypeField>
+                        <TypeField name="sex">
                           <BuiltinType name="str" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </TypeFnReturnType>
                   </TypeFn>
@@ -536,12 +536,12 @@ main {
                         </TypeFnParams>
                         <TypeFnReturnType>
                           <TypeObj codeName="mainSDCat_0" name="Cat">
-                            <TypeObjField name="breed">
+                            <TypeField name="breed">
                               <BuiltinType name="str" />
-                            </TypeObjField>
-                            <TypeObjField name="sex">
+                            </TypeField>
+                            <TypeField name="sex">
                               <BuiltinType name="str" />
-                            </TypeObjField>
+                            </TypeField>
                           </TypeObj>
                         </TypeFnReturnType>
                       </TypeFn>
@@ -581,7 +581,7 @@ main {
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="sum">
+          <TypeField name="sum">
             <TypeFn name="fn$0">
               <TypeFnParams>
                 <TypeFnParam required>
@@ -595,7 +595,7 @@ main {
                 <BuiltinType name="int" />
               </TypeFnReturnType>
             </TypeFn>
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -603,7 +603,7 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Test_0" name="Test">
-            <TypeObjField name="sum">
+            <TypeField name="sum">
               <TypeFn name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam required>
@@ -617,14 +617,14 @@ main {
                   <BuiltinType name="int" />
                 </TypeFnReturnType>
               </TypeFn>
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Test_0" name="Test">
-                <TypeObjField name="sum">
+                <TypeField name="sum">
                   <TypeFn name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam required>
@@ -638,7 +638,7 @@ main {
                       <BuiltinType name="int" />
                     </TypeFnReturnType>
                   </TypeFn>
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
@@ -744,7 +744,7 @@ main {
                           <NodeExpr>
                             <NodeExprType>
                               <TypeObj codeName="Test_0" name="Test">
-                                <TypeObjField name="sum">
+                                <TypeField name="sum">
                                   <TypeFn name="fn$0">
                                     <TypeFnParams>
                                       <TypeFnParam required>
@@ -758,14 +758,14 @@ main {
                                       <BuiltinType name="int" />
                                     </TypeFnReturnType>
                                   </TypeFn>
-                                </TypeObjField>
+                                </TypeField>
                               </TypeObj>
                             </NodeExprType>
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="test" codeName="test_0" frame="2">
                                   <TypeObj codeName="Test_0" name="Test">
-                                    <TypeObjField name="sum">
+                                    <TypeField name="sum">
                                       <TypeFn name="fn$0">
                                         <TypeFnParams>
                                           <TypeFnParam required>
@@ -779,7 +779,7 @@ main {
                                           <BuiltinType name="int" />
                                         </TypeFnReturnType>
                                       </TypeFn>
-                                    </TypeObjField>
+                                    </TypeField>
                                   </TypeObj>
                                 </Var>
                               </ExprAccess>
@@ -823,7 +823,7 @@ main {
     <NodeVarDeclVar>
       <Var name="callback" codeName="callback_0" frame="2">
         <TypeObj codeName="Callback_0" name="Callback">
-          <TypeObjField name="logic">
+          <TypeField name="logic">
             <TypeFn name="fn$2">
               <TypeFnParams>
                 <TypeFnParam required>
@@ -838,7 +838,7 @@ main {
                 <BuiltinType name="void" />
               </TypeFnReturnType>
             </TypeFn>
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -846,7 +846,7 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Callback_0" name="Callback">
-            <TypeObjField name="logic">
+            <TypeField name="logic">
               <TypeFn name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam required>
@@ -861,14 +861,14 @@ main {
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
               </TypeFn>
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Callback_0" name="Callback">
-                <TypeObjField name="logic">
+                <TypeField name="logic">
                   <TypeFn name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam required>
@@ -883,7 +883,7 @@ main {
                       <BuiltinType name="void" />
                     </TypeFnReturnType>
                   </TypeFn>
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
@@ -962,7 +962,7 @@ main {
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Callback_0" name="Callback">
-                      <TypeObjField name="logic">
+                      <TypeField name="logic">
                         <TypeFn name="fn$2">
                           <TypeFnParams>
                             <TypeFnParam required>
@@ -977,14 +977,14 @@ main {
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
                         </TypeFn>
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="callback" codeName="callback_0" frame="2">
                         <TypeObj codeName="Callback_0" name="Callback">
-                          <TypeObjField name="logic">
+                          <TypeField name="logic">
                             <TypeFn name="fn$2">
                               <TypeFnParams>
                                 <TypeFnParam required>
@@ -999,7 +999,7 @@ main {
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
                             </TypeFn>
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>

@@ -35,9 +35,9 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Test_0" name="Test">
-    <TypeObjField name="a">
+    <TypeField name="a">
       <BuiltinType name="int" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeFnDecl>
@@ -46,13 +46,13 @@ main {
       <TypeFn codeName="job1_0" name="fn$0">
         <TypeFnParams>
           <TypeFnParam name="a" required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </TypeFnReturnType>
@@ -63,7 +63,7 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="a" codeName="a_0" frame="2">
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </Var>
@@ -77,22 +77,22 @@ main {
       <TypeFn codeName="job2_0" name="fn$1">
         <TypeFnParams>
           <TypeFnParam name="a" required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
           <TypeFnParam name="b" required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef>
+          <TypeRef name="ref_Test">
             <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="a">
+              <TypeField name="a">
                 <BuiltinType name="int" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </TypeRef>
         </TypeFnReturnType>
@@ -103,7 +103,7 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="a" codeName="a_0" frame="2">
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </Var>
@@ -112,7 +112,7 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="b" codeName="b_0" frame="2">
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </Var>
@@ -126,22 +126,22 @@ main {
       <TypeFn codeName="job3_0" name="fn$2">
         <TypeFnParams>
           <TypeFnParam name="a" required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
           <TypeFnParam name="b" required>
-            <TypeRef>
+            <TypeRef name="ref_fn$0">
               <TypeFn name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -150,7 +150,7 @@ main {
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </TypeFnReturnType>
@@ -161,7 +161,7 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="a" codeName="a_0" frame="2">
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </Var>
@@ -170,17 +170,17 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="b" codeName="b_0" frame="2">
-          <TypeRef>
+          <TypeRef name="ref_fn$0">
             <TypeFn name="fn$0">
               <TypeFnParams>
                 <TypeFnParam required>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnParam>
               </TypeFnParams>
               <TypeFnReturnType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </TypeFnReturnType>
@@ -230,9 +230,9 @@ main {
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="a">
+          <TypeField name="a">
             <BuiltinType name="int" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -240,18 +240,18 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Test_0" name="Test">
-            <TypeObjField name="a">
+            <TypeField name="a">
               <BuiltinType name="int" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Test_0" name="Test">
-                <TypeObjField name="a">
+                <TypeField name="a">
                   <BuiltinType name="int" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
@@ -281,13 +281,13 @@ main {
         <TypeFn name="fn$0">
           <TypeFnParams>
             <TypeFnParam required>
-              <TypeRef>
+              <TypeRef name="ref_int">
                 <BuiltinType name="int" />
               </TypeRef>
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnReturnType>
@@ -301,22 +301,22 @@ main {
         <TypeFn name="fn$1">
           <TypeFnParams>
             <TypeFnParam required>
-              <TypeRef>
+              <TypeRef name="ref_int">
                 <BuiltinType name="int" />
               </TypeRef>
             </TypeFnParam>
             <TypeFnParam required>
-              <TypeRef>
+              <TypeRef name="ref_int">
                 <BuiltinType name="int" />
               </TypeRef>
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeRef>
+            <TypeRef name="ref_Test">
               <TypeObj codeName="Test_0" name="Test">
-                <TypeObjField name="a">
+                <TypeField name="a">
                   <BuiltinType name="int" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </TypeRef>
           </TypeFnReturnType>
@@ -330,22 +330,22 @@ main {
         <TypeFn name="fn$2">
           <TypeFnParams>
             <TypeFnParam required>
-              <TypeRef>
+              <TypeRef name="ref_int">
                 <BuiltinType name="int" />
               </TypeRef>
             </TypeFnParam>
             <TypeFnParam required>
-              <TypeRef>
+              <TypeRef name="ref_fn$0">
                 <TypeFn name="fn$0">
                   <TypeFnParams>
                     <TypeFnParam required>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnParam>
                   </TypeFnParams>
                   <TypeFnReturnType>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnReturnType>
@@ -354,7 +354,7 @@ main {
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnReturnType>
@@ -367,13 +367,13 @@ main {
       <TypeFn name="fn$0">
         <TypeFnParams>
           <TypeFnParam required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </TypeFnReturnType>
@@ -387,13 +387,13 @@ main {
               <TypeFn name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -405,13 +405,13 @@ main {
                   <TypeFn name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -427,13 +427,13 @@ main {
               <TypeFn codeName="job1_0" name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -445,13 +445,13 @@ main {
                   <TypeFn codeName="job1_0" name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -469,22 +469,22 @@ main {
       <TypeFn name="fn$1">
         <TypeFnParams>
           <TypeFnParam required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
           <TypeFnParam required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef>
+          <TypeRef name="ref_Test">
             <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="a">
+              <TypeField name="a">
                 <BuiltinType name="int" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </TypeRef>
         </TypeFnReturnType>
@@ -498,22 +498,22 @@ main {
               <TypeFn name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_Test">
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="a">
+                      <TypeField name="a">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnReturnType>
@@ -525,22 +525,22 @@ main {
                   <TypeFn name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_Test">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
+                          <TypeField name="a">
                             <BuiltinType name="int" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </TypeRef>
                     </TypeFnReturnType>
@@ -556,22 +556,22 @@ main {
               <TypeFn codeName="job2_0" name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam name="b" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_Test">
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="a">
+                      <TypeField name="a">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnReturnType>
@@ -583,22 +583,22 @@ main {
                   <TypeFn codeName="job2_0" name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam name="b" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_Test">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
+                          <TypeField name="a">
                             <BuiltinType name="int" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </TypeRef>
                     </TypeFnReturnType>
@@ -616,22 +616,22 @@ main {
       <TypeFn name="fn$2">
         <TypeFnParams>
           <TypeFnParam required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
           <TypeFnParam required>
-            <TypeRef>
+            <TypeRef name="ref_fn$0">
               <TypeFn name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -640,7 +640,7 @@ main {
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </TypeFnReturnType>
@@ -654,22 +654,22 @@ main {
               <TypeFn name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_fn$0">
                       <TypeFn name="fn$0">
                         <TypeFnParams>
                           <TypeFnParam required>
-                            <TypeRef>
+                            <TypeRef name="ref_int">
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
                         </TypeFnParams>
                         <TypeFnReturnType>
-                          <TypeRef>
+                          <TypeRef name="ref_int">
                             <BuiltinType name="int" />
                           </TypeRef>
                         </TypeFnReturnType>
@@ -678,7 +678,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -690,22 +690,22 @@ main {
                   <TypeFn name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_fn$0">
                           <TypeFn name="fn$0">
                             <TypeFnParams>
                               <TypeFnParam required>
-                                <TypeRef>
+                                <TypeRef name="ref_int">
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
                             </TypeFnParams>
                             <TypeFnReturnType>
-                              <TypeRef>
+                              <TypeRef name="ref_int">
                                 <BuiltinType name="int" />
                               </TypeRef>
                             </TypeFnReturnType>
@@ -714,7 +714,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -730,22 +730,22 @@ main {
               <TypeFn codeName="job3_0" name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam name="b" required>
-                    <TypeRef>
+                    <TypeRef name="ref_fn$0">
                       <TypeFn name="fn$0">
                         <TypeFnParams>
                           <TypeFnParam required>
-                            <TypeRef>
+                            <TypeRef name="ref_int">
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
                         </TypeFnParams>
                         <TypeFnReturnType>
-                          <TypeRef>
+                          <TypeRef name="ref_int">
                             <BuiltinType name="int" />
                           </TypeRef>
                         </TypeFnReturnType>
@@ -754,7 +754,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -766,22 +766,22 @@ main {
                   <TypeFn codeName="job3_0" name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam name="b" required>
-                        <TypeRef>
+                        <TypeRef name="ref_fn$0">
                           <TypeFn name="fn$0">
                             <TypeFnParams>
                               <TypeFnParam required>
-                                <TypeRef>
+                                <TypeRef name="ref_int">
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
                             </TypeFnParams>
                             <TypeFnReturnType>
-                              <TypeRef>
+                              <TypeRef name="ref_int">
                                 <BuiltinType name="int" />
                               </TypeRef>
                             </TypeFnReturnType>
@@ -790,7 +790,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -805,7 +805,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef>
+      <TypeRef name="ref_int">
         <BuiltinType name="int" />
       </TypeRef>
     </NodeExprType>
@@ -817,13 +817,13 @@ main {
               <TypeFn name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -835,13 +835,13 @@ main {
                   <TypeFn name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -855,7 +855,7 @@ main {
           <ExprCallArg>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -883,7 +883,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef>
+      <TypeRef name="ref_int">
         <BuiltinType name="int" />
       </TypeRef>
     </NodeExprType>
@@ -895,13 +895,13 @@ main {
               <TypeFn codeName="job1_0" name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -913,13 +913,13 @@ main {
                   <TypeFn codeName="job1_0" name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -933,7 +933,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -961,11 +961,11 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef>
+      <TypeRef name="ref_Test">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="a">
+          <TypeField name="a">
             <BuiltinType name="int" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </TypeRef>
     </NodeExprType>
@@ -977,22 +977,22 @@ main {
               <TypeFn name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_Test">
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="a">
+                      <TypeField name="a">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnReturnType>
@@ -1004,22 +1004,22 @@ main {
                   <TypeFn name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_Test">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
+                          <TypeField name="a">
                             <BuiltinType name="int" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </TypeRef>
                     </TypeFnReturnType>
@@ -1033,7 +1033,7 @@ main {
           <ExprCallArg>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -1058,7 +1058,7 @@ main {
           <ExprCallArg>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -1086,11 +1086,11 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef>
+      <TypeRef name="ref_Test">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="a">
+          <TypeField name="a">
             <BuiltinType name="int" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </TypeRef>
     </NodeExprType>
@@ -1102,22 +1102,22 @@ main {
               <TypeFn codeName="job2_0" name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam name="b" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_Test">
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="a">
+                      <TypeField name="a">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnReturnType>
@@ -1129,22 +1129,22 @@ main {
                   <TypeFn codeName="job2_0" name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam name="b" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_Test">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="a">
+                          <TypeField name="a">
                             <BuiltinType name="int" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </TypeRef>
                     </TypeFnReturnType>
@@ -1158,7 +1158,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -1183,7 +1183,7 @@ main {
           <ExprCallArg id="b">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -1211,7 +1211,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef>
+      <TypeRef name="ref_int">
         <BuiltinType name="int" />
       </TypeRef>
     </NodeExprType>
@@ -1223,22 +1223,22 @@ main {
               <TypeFn name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam required>
-                    <TypeRef>
+                    <TypeRef name="ref_fn$0">
                       <TypeFn name="fn$0">
                         <TypeFnParams>
                           <TypeFnParam required>
-                            <TypeRef>
+                            <TypeRef name="ref_int">
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
                         </TypeFnParams>
                         <TypeFnReturnType>
-                          <TypeRef>
+                          <TypeRef name="ref_int">
                             <BuiltinType name="int" />
                           </TypeRef>
                         </TypeFnReturnType>
@@ -1247,7 +1247,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -1259,22 +1259,22 @@ main {
                   <TypeFn name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_fn$0">
                           <TypeFn name="fn$0">
                             <TypeFnParams>
                               <TypeFnParam required>
-                                <TypeRef>
+                                <TypeRef name="ref_int">
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
                             </TypeFnParams>
                             <TypeFnReturnType>
-                              <TypeRef>
+                              <TypeRef name="ref_int">
                                 <BuiltinType name="int" />
                               </TypeRef>
                             </TypeFnReturnType>
@@ -1283,7 +1283,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -1297,7 +1297,7 @@ main {
           <ExprCallArg>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -1322,17 +1322,17 @@ main {
           <ExprCallArg>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_fn$0">
                   <TypeFn name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -1346,13 +1346,13 @@ main {
                       <TypeFn name="fn$0">
                         <TypeFnParams>
                           <TypeFnParam required>
-                            <TypeRef>
+                            <TypeRef name="ref_int">
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
                         </TypeFnParams>
                         <TypeFnReturnType>
-                          <TypeRef>
+                          <TypeRef name="ref_int">
                             <BuiltinType name="int" />
                           </TypeRef>
                         </TypeFnReturnType>
@@ -1364,13 +1364,13 @@ main {
                           <TypeFn name="fn$0">
                             <TypeFnParams>
                               <TypeFnParam required>
-                                <TypeRef>
+                                <TypeRef name="ref_int">
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
                             </TypeFnParams>
                             <TypeFnReturnType>
-                              <TypeRef>
+                              <TypeRef name="ref_int">
                                 <BuiltinType name="int" />
                               </TypeRef>
                             </TypeFnReturnType>
@@ -1389,7 +1389,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef>
+      <TypeRef name="ref_int">
         <BuiltinType name="int" />
       </TypeRef>
     </NodeExprType>
@@ -1401,22 +1401,22 @@ main {
               <TypeFn codeName="job3_0" name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam name="b" required>
-                    <TypeRef>
+                    <TypeRef name="ref_fn$0">
                       <TypeFn name="fn$0">
                         <TypeFnParams>
                           <TypeFnParam required>
-                            <TypeRef>
+                            <TypeRef name="ref_int">
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
                         </TypeFnParams>
                         <TypeFnReturnType>
-                          <TypeRef>
+                          <TypeRef name="ref_int">
                             <BuiltinType name="int" />
                           </TypeRef>
                         </TypeFnReturnType>
@@ -1425,7 +1425,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </TypeFnReturnType>
@@ -1437,22 +1437,22 @@ main {
                   <TypeFn codeName="job3_0" name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam name="b" required>
-                        <TypeRef>
+                        <TypeRef name="ref_fn$0">
                           <TypeFn name="fn$0">
                             <TypeFnParams>
                               <TypeFnParam required>
-                                <TypeRef>
+                                <TypeRef name="ref_int">
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
                             </TypeFnParams>
                             <TypeFnReturnType>
-                              <TypeRef>
+                              <TypeRef name="ref_int">
                                 <BuiltinType name="int" />
                               </TypeRef>
                             </TypeFnReturnType>
@@ -1461,7 +1461,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -1475,7 +1475,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -1500,17 +1500,17 @@ main {
           <ExprCallArg id="b">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_fn$0">
                   <TypeFn name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef>
+                      <TypeRef name="ref_int">
                         <BuiltinType name="int" />
                       </TypeRef>
                     </TypeFnReturnType>
@@ -1524,13 +1524,13 @@ main {
                       <TypeFn name="fn$0">
                         <TypeFnParams>
                           <TypeFnParam required>
-                            <TypeRef>
+                            <TypeRef name="ref_int">
                               <BuiltinType name="int" />
                             </TypeRef>
                           </TypeFnParam>
                         </TypeFnParams>
                         <TypeFnReturnType>
-                          <TypeRef>
+                          <TypeRef name="ref_int">
                             <BuiltinType name="int" />
                           </TypeRef>
                         </TypeFnReturnType>
@@ -1542,13 +1542,13 @@ main {
                           <TypeFn name="fn$0">
                             <TypeFnParams>
                               <TypeFnParam required>
-                                <TypeRef>
+                                <TypeRef name="ref_int">
                                   <BuiltinType name="int" />
                                 </TypeRef>
                               </TypeFnParam>
                             </TypeFnParams>
                             <TypeFnReturnType>
-                              <TypeRef>
+                              <TypeRef name="ref_int">
                                 <BuiltinType name="int" />
                               </TypeRef>
                             </TypeFnReturnType>

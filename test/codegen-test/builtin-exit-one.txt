@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  exit(1)
+}
+======= code =======
+#include <stdlib.h>
+
+int main () {
+  exit(1);
+}
+======= flags =======
+======= stdout =======

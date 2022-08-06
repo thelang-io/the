@@ -38,6 +38,7 @@ struct CodegenBuiltins {
   bool fnPrint = false;
   bool fnRefStr = false;
   bool fnStrAlloc = false;
+  bool fnStrAt = false;
   bool fnStrConcatCstr = false;
   bool fnStrConcatStr = false;
   bool fnStrCopy = false;
@@ -50,6 +51,7 @@ struct CodegenBuiltins {
   bool fnStrNeStr = false;
   bool fnStrNot = false;
   bool fnStrRealloc = false;
+  bool fnStrSlice = false;
   bool fnU8Str = false;
   bool fnU16Str = false;
   bool fnU32Str = false;
@@ -61,6 +63,8 @@ struct CodegenBuiltins {
   bool libStdio = false;
   bool libStdlib = false;
   bool libString = false;
+  bool libUnistd = false;
+  bool libWindows = false;
   bool typeStr = false;
 };
 
@@ -112,6 +116,7 @@ class Codegen {
   std::string _node (const ASTNode &, bool = true);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _type (const Type *, bool, bool);
+  std::string _typeNameArray (const Type *);
   std::string _typeNameFn (const Type *);
   std::string _wrapNode (const ASTNode &, const std::string &) const;
   std::string _wrapNodeExpr (const ASTNodeExpr &, const std::string &) const;

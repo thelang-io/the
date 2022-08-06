@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import sys
 
 
 def update(directory: str, action: str):
@@ -59,9 +60,16 @@ def update(directory: str, action: str):
 
 
 def main():
-    update("test/parser-test", "parse")
-    update("test/ast-test", "ast")
-    update("test/codegen-test", "codegen")
+    if sys.argv[1] == "ast":
+        update("test/ast-test", "ast")
+    elif sys.argv[1] == "codegen":
+        update("test/codegen-test", "codegen")
+    elif sys.argv[1] == "parser":
+        update("test/parser-test", "parse")
+    else:
+        update("test/parser-test", "parse")
+        update("test/ast-test", "ast")
+        update("test/codegen-test", "codegen")
 
 
 if __name__ == "__main__":

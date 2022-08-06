@@ -12,9 +12,9 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Test_0" name="Test">
-    <TypeObjField name="a">
+    <TypeField name="a">
       <BuiltinType name="float" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeMain>
@@ -39,9 +39,9 @@ main {
     <NodeVarDeclVar>
       <Var name="test2" codeName="test2_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="a">
+          <TypeField name="a">
             <BuiltinType name="float" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -49,18 +49,18 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Test_0" name="Test">
-            <TypeObjField name="a">
+            <TypeField name="a">
               <BuiltinType name="float" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Test_0" name="Test">
-                <TypeObjField name="a">
+                <TypeField name="a">
                   <BuiltinType name="float" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
@@ -123,18 +123,18 @@ main {
                   <NodeExpr>
                     <NodeExprType>
                       <TypeObj codeName="Test_0" name="Test">
-                        <TypeObjField name="a">
+                        <TypeField name="a">
                           <BuiltinType name="float" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test2" codeName="test2_0" frame="2">
                           <TypeObj codeName="Test_0" name="Test">
-                            <TypeObjField name="a">
+                            <TypeField name="a">
                               <BuiltinType name="float" />
-                            </TypeObjField>
+                            </TypeField>
                           </TypeObj>
                         </Var>
                       </ExprAccess>

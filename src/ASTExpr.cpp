@@ -133,6 +133,20 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprAccess>" EOL;
+  } else if (std::holds_alternative<ASTExprArray>(*this->body)) {
+    auto exprArray = std::get<ASTExprArray>(*this->body);
+
+    if (exprArray.elements.empty()) {
+      result += std::string(indent, ' ') + "<ExprArray />" EOL;
+    } else {
+      result += std::string(indent, ' ') + "<ExprArray>" EOL;
+
+      for (const auto &element : exprArray.elements) {
+        result += element.xml(indent + 2) + EOL;
+      }
+
+      result += std::string(indent, ' ') + "</ExprArray>" EOL;
+    }
   } else if (std::holds_alternative<ASTExprAssign>(*this->body)) {
     auto exprAssign = std::get<ASTExprAssign>(*this->body);
 

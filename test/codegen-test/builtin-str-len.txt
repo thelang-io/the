@@ -44,7 +44,7 @@ main {
   testCtx()
 }
 ======= code =======
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,7 +60,7 @@ struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-int32_t str_len (struct str);
+size_t str_len (struct str);
 struct str str_realloc (struct str, struct str);
 
 void *alloc (size_t l) {
@@ -101,8 +101,8 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-int32_t str_len (struct str s) {
-  int32_t l = s.l;
+size_t str_len (struct str s) {
+  size_t l = s.l;
   free(s.d);
   return l;
 }

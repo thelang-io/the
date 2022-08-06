@@ -20,7 +20,7 @@ const auto valgrindArguments = std::string(
   "--track-origins=yes"
 );
 
-class CodegenTest : public testing::TestWithParam<const char *> {
+class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
   bool testMemcheck_ = false;
 
@@ -30,7 +30,10 @@ class CodegenTest : public testing::TestWithParam<const char *> {
   }
 };
 
-TEST_P(CodegenTest, Passes) {
+class CodegenThrowTest : public testing::TestWithParam<const char *> {
+};
+
+TEST_P(CodegenPassTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stdout", "stdout-linux"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
@@ -39,13 +42,11 @@ TEST_P(CodegenTest, Passes) {
   auto expectedCode = sections["code"];
   auto expectedOutput = sections["stdout"];
 
-  #ifdef OS_LINUX
+  #if defined(OS_LINUX)
     if (sections.contains("stdout-linux")) {
       expectedOutput = sections["stdout-linux"];
     }
-  #endif
-
-  #ifdef OS_WINDOWS
+  #elif defined(OS_WINDOWS)
     if (sections.contains("code-windows")) {
       expectedCode = sections["code-windows"];
     }
@@ -75,7 +76,12 @@ TEST_P(CodegenTest, Passes) {
   }
 
   EXPECT_EQ(expectedOutput, actualStdout);
-  EXPECT_EQ(actualReturnCode, 0);
+
+  if (param == "builtin-exit-one") {
+    EXPECT_NE(actualReturnCode, 0);
+  } else {
+    EXPECT_EQ(actualReturnCode, 0);
+  }
 
   if (!this->testMemcheck_) {
     EXPECT_EQ(actualStderr, "");
@@ -84,11 +90,40 @@ TEST_P(CodegenTest, Passes) {
   }
 }
 
-INSTANTIATE_TEST_SUITE_P(General, CodegenTest, testing::Values(
+TEST_P(CodegenThrowTest, Throws) {
+  auto param = std::string(testing::TestWithParam<const char *>::GetParam());
+  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stderr"});
+  auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
+  auto codegen = Codegen(&ast);
+  auto result = codegen.gen();
+  auto expectedCode = sections["code"];
+
+  #if defined(OS_WINDOWS)
+    if (sections.contains("code-windows")) {
+      expectedCode = sections["code-windows"];
+    }
+  #endif
+
+  ASSERT_EQ(expectedCode, std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
+  ASSERT_EQ(sections["flags"], std::get<1>(result));
+
+  auto fileName = std::string("build") + OS_PATH_SEP + param;
+  auto filePath = fileName + OS_FILE_EXT;
+
+  Codegen::compile(filePath, result, true);
+  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(filePath, fileName);
+  std::filesystem::remove(filePath);
+  actualStderr.erase(actualStderr.find_last_not_of("\r\n") + 1);
+
+  EXPECT_EQ(sections["stderr"], actualStderr);
+  EXPECT_NE(actualReturnCode, 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(General, CodegenPassTest, testing::Values(
   "empty"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
@@ -97,33 +132,33 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenTest, testing::Values(
   "expr-access-fn"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign",
   "expr-assign-op",
   "expr-assign-str",
   "expr-assign-elem"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
   "expr-binary",
   "expr-binary-str",
   "expr-binary-nested"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenPassTest, testing::Values(
   "expr-call",
   "expr-call-obj-prop",
   "expr-call-args"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
   "expr-cond",
   "expr-cond-nested",
   "expr-cond-str",
   "expr-cond-operands"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenPassTest, testing::Values(
   "expr-lit-bool-false",
   "expr-lit-bool-true",
   "expr-lit-char",
@@ -138,26 +173,26 @@ INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenTest, testing::Values(
   "expr-lit-str-esc"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprObj, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprObj, CodegenPassTest, testing::Values(
   "expr-obj",
   "expr-obj-nested"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenPassTest, testing::Values(
   "expr-ref",
   "expr-ref-str",
   "expr-ref-fn",
   "expr-ref-obj"
 ));
 
-INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenPassTest, testing::Values(
   "expr-unary",
   "expr-unary-nested",
   "expr-unary-str",
   "node-expr-unary-context"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-access",
   "node-expr-access-str",
   "node-expr-access-obj",
@@ -180,7 +215,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenTest, testing::Values(
   "node-expr-unary-obj"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-empty",
   "node-fn-decl-stack",
   "node-fn-decl-stack-str",
@@ -199,13 +234,13 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenTest, testing::Values(
   "node-fn-decl-param-mut-fn"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if",
   "node-if-cmp-num",
   "node-if-cmp-str"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
   "node-loop",
   "node-loop-empty",
   "node-loop-while",
@@ -213,15 +248,15 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenTest, testing::Values(
   "node-loop-complex"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
   "node-var-decl-bool",
   "node-var-decl-bool-init",
   "node-var-decl-bool-short",
@@ -298,10 +333,22 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenTest, testing::Values(
   "node-var-decl-u64-mut-init"
 ));
 
-INSTANTIATE_TEST_SUITE_P(Builtin, CodegenTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
+  "builtin-array-alloc",
+  "builtin-array-at",
+  "builtin-array-join",
+  "builtin-array-len",
+  "builtin-array-pop",
+  "builtin-array-push",
+  "builtin-array-reverse",
+  "builtin-array-slice",
+  "builtin-array-str",
   "builtin-bool-str",
   "builtin-byte-str",
   "builtin-char-str",
+  "builtin-exit-empty",
+  "builtin-exit-one",
+  "builtin-exit-zero",
   "builtin-f32-str",
   "builtin-f64-str",
   "builtin-float-str",
@@ -311,9 +358,21 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenTest, testing::Values(
   "builtin-i64-str",
   "builtin-int-str",
   "builtin-print",
+  "builtin-sleep",
+  "builtin-str-at",
   "builtin-str-len",
+  "builtin-str-slice",
   "builtin-u8-str",
   "builtin-u16-str",
   "builtin-u32-str",
   "builtin-u64-str"
+));
+
+INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
+  "throw-builtin-array-at-empty",
+  "throw-builtin-array-at-high",
+  "throw-builtin-array-at-low",
+  "throw-builtin-str-at-empty",
+  "throw-builtin-str-at-high",
+  "throw-builtin-str-at-low"
 ));

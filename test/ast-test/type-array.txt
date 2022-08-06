@@ -1,0 +1,231 @@
+======= stdin =======
+obj Test { a: int }
+
+main {
+  a01: int[]
+  a02: int[][]
+  a03: int[][][]
+  a04: int[][][][]
+  a05: int[][][][][]
+  a06: int[][][][][][]
+  a07: ref int[][][][][][][]
+  a08: (ref int)[][][][][][][]
+  a09: ref Test[][][][][][][]
+  a10: (ref Test)[][][][][][][]
+  a11: (fn (int, int) void)[]
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeField name="a">
+      <BuiltinType name="int" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a01" codeName="a01_0" frame="2">
+        <TypeArray name="array_int">
+          <BuiltinType name="int" />
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a02" codeName="a02_0" frame="2">
+        <TypeArray name="array_array_int">
+          <TypeArray name="array_int">
+            <BuiltinType name="int" />
+          </TypeArray>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a03" codeName="a03_0" frame="2">
+        <TypeArray name="array_array_array_int">
+          <TypeArray name="array_array_int">
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
+          </TypeArray>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a04" codeName="a04_0" frame="2">
+        <TypeArray name="array_array_array_array_int">
+          <TypeArray name="array_array_array_int">
+            <TypeArray name="array_array_int">
+              <TypeArray name="array_int">
+                <BuiltinType name="int" />
+              </TypeArray>
+            </TypeArray>
+          </TypeArray>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a05" codeName="a05_0" frame="2">
+        <TypeArray name="array_array_array_array_array_int">
+          <TypeArray name="array_array_array_array_int">
+            <TypeArray name="array_array_array_int">
+              <TypeArray name="array_array_int">
+                <TypeArray name="array_int">
+                  <BuiltinType name="int" />
+                </TypeArray>
+              </TypeArray>
+            </TypeArray>
+          </TypeArray>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a06" codeName="a06_0" frame="2">
+        <TypeArray name="array_array_array_array_array_array_int">
+          <TypeArray name="array_array_array_array_array_int">
+            <TypeArray name="array_array_array_array_int">
+              <TypeArray name="array_array_array_int">
+                <TypeArray name="array_array_int">
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </TypeArray>
+              </TypeArray>
+            </TypeArray>
+          </TypeArray>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a07" codeName="a07_0" frame="2">
+        <TypeRef name="ref_array_array_array_array_array_array_array_int">
+          <TypeArray name="array_array_array_array_array_array_array_int">
+            <TypeArray name="array_array_array_array_array_array_int">
+              <TypeArray name="array_array_array_array_array_int">
+                <TypeArray name="array_array_array_array_int">
+                  <TypeArray name="array_array_array_int">
+                    <TypeArray name="array_array_int">
+                      <TypeArray name="array_int">
+                        <BuiltinType name="int" />
+                      </TypeArray>
+                    </TypeArray>
+                  </TypeArray>
+                </TypeArray>
+              </TypeArray>
+            </TypeArray>
+          </TypeArray>
+        </TypeRef>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a08" codeName="a08_0" frame="2">
+        <TypeArray name="array_array_array_array_array_array_array_ref_int">
+          <TypeArray name="array_array_array_array_array_array_ref_int">
+            <TypeArray name="array_array_array_array_array_ref_int">
+              <TypeArray name="array_array_array_array_ref_int">
+                <TypeArray name="array_array_array_ref_int">
+                  <TypeArray name="array_array_ref_int">
+                    <TypeArray name="array_ref_int">
+                      <TypeRef name="ref_int">
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </TypeArray>
+                  </TypeArray>
+                </TypeArray>
+              </TypeArray>
+            </TypeArray>
+          </TypeArray>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a09" codeName="a09_0" frame="2">
+        <TypeRef name="ref_array_array_array_array_array_array_array_Test">
+          <TypeArray name="array_array_array_array_array_array_array_Test">
+            <TypeArray name="array_array_array_array_array_array_Test">
+              <TypeArray name="array_array_array_array_array_Test">
+                <TypeArray name="array_array_array_array_Test">
+                  <TypeArray name="array_array_array_Test">
+                    <TypeArray name="array_array_Test">
+                      <TypeArray name="array_Test">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="a">
+                            <BuiltinType name="int" />
+                          </TypeField>
+                        </TypeObj>
+                      </TypeArray>
+                    </TypeArray>
+                  </TypeArray>
+                </TypeArray>
+              </TypeArray>
+            </TypeArray>
+          </TypeArray>
+        </TypeRef>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a10" codeName="a10_0" frame="2">
+        <TypeArray name="array_array_array_array_array_array_array_ref_Test">
+          <TypeArray name="array_array_array_array_array_array_ref_Test">
+            <TypeArray name="array_array_array_array_array_ref_Test">
+              <TypeArray name="array_array_array_array_ref_Test">
+                <TypeArray name="array_array_array_ref_Test">
+                  <TypeArray name="array_array_ref_Test">
+                    <TypeArray name="array_ref_Test">
+                      <TypeRef name="ref_Test">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="a">
+                            <BuiltinType name="int" />
+                          </TypeField>
+                        </TypeObj>
+                      </TypeRef>
+                    </TypeArray>
+                  </TypeArray>
+                </TypeArray>
+              </TypeArray>
+            </TypeArray>
+          </TypeArray>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a11" codeName="a11_0" frame="2">
+        <TypeArray name="array_fn$0">
+          <TypeFn name="fn$0">
+            <TypeFnParams>
+              <TypeFnParam required>
+                <BuiltinType name="int" />
+              </TypeFnParam>
+              <TypeFnParam required>
+                <BuiltinType name="int" />
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <BuiltinType name="void" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+</NodeMain>

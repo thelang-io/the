@@ -4,6 +4,7 @@ main {
   test[0] = 't'
 }
 ======= code =======
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +16,7 @@ struct str {
 
 void *alloc (size_t);
 struct str str_alloc (const char *);
+char *str_at (struct str, int64_t);
 void str_free (struct str);
 
 void *alloc (size_t l) {
@@ -31,13 +33,20 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+char *str_at (struct str s, int64_t i) {
+  if ((i >= 0 && i >= s.l) || (i < 0 && i < -s.l)) {
+    fprintf(stderr, "Error: index %" PRId64 " out of string bounds\n", i);
+    exit(EXIT_FAILURE);
+  }
+  return i < 0 ? &s.d[s.l + (size_t) i] : &s.d[(size_t) i];
+}
 void str_free (struct str s) {
   free(s.d);
 }
 
 int main () {
   struct str __THE_0_test_0 = str_alloc("zest");
-  __THE_0_test_0.d[0] = 't';
+  *str_at(__THE_0_test_0, 0) = 't';
   str_free((struct str) __THE_0_test_0);
 }
 ======= flags =======

@@ -14,11 +14,12 @@
 #include <vector>
 #include "Token.hpp"
 
+struct ParserTypeArray;
 struct ParserTypeFn;
 struct ParserTypeId;
 struct ParserTypeRef;
 
-using ParserTypeBody = std::variant<ParserTypeFn, ParserTypeId, ParserTypeRef>;
+using ParserTypeBody = std::variant<ParserTypeArray, ParserTypeFn, ParserTypeId, ParserTypeRef>;
 
 struct ParserType {
   std::shared_ptr<ParserTypeBody> body;
@@ -27,6 +28,10 @@ struct ParserType {
   ReaderLocation end;
 
   std::string xml (std::size_t = 0) const;
+};
+
+struct ParserTypeArray {
+  ParserType elementType;
 };
 
 struct ParserTypeFnParam {
@@ -46,7 +51,7 @@ struct ParserTypeId {
 };
 
 struct ParserTypeRef {
-  ParserType type;
+  ParserType refType;
 };
 
 #endif

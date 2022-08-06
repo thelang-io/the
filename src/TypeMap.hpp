@@ -14,12 +14,14 @@ class TypeMap {
  public:
   std::vector<std::string> stack;
 
+  // todo test
+  Type *arrayOf (Type *);
   Type *fn (const std::optional<std::string> &, const std::vector<TypeFnParam> &, Type *);
   Type *get (const std::string &);
   bool has (const std::string &);
   void init ();
   std::string name (const std::string &) const;
-  Type *obj (const std::string &, const std::string &, const std::vector<TypeObjField> & = {});
+  Type *obj (const std::string &, const std::string &, const std::vector<TypeField> & = {});
   Type *ref (Type *);
 
  private:

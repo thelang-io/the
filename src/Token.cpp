@@ -6,6 +6,7 @@
  */
 
 #include "Token.hpp"
+#include <algorithm>
 #include "Error.hpp"
 
 std::string tokenTypeToStr (TokenType type) {
@@ -152,6 +153,10 @@ bool Token::isLitStrEscape (char ch) {
 
 bool Token::isWhitespace (char ch) {
   return std::isspace(ch);
+}
+
+std::string Token::upperFirst (const std::string &str) {
+  return std::string(1, static_cast<char>(toupper(str[0]))) + str.substr(1);
 }
 
 TokenAssociativity Token::associativity (bool unary) const {

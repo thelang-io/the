@@ -24,7 +24,7 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
 }
 
 Type *Type::real (Type *type) {
-  return std::holds_alternative<TypeRef>(type->body) ? std::get<TypeRef>(type->body).type : type;
+  return std::holds_alternative<TypeRef>(type->body) ? std::get<TypeRef>(type->body).refType : type;
 }
 
 Type *Type::largest (Type *a, Type *b) {
@@ -83,11 +83,23 @@ Type *Type::largest (Type *a, Type *b) {
 }
 
 Type *Type::getProp (const std::string &propName) const {
-  if (std::holds_alternative<TypeFn>(this->body)) {
+  if (std::holds_alternative<TypeArray>(this->body)) {// todo test
+    auto typeArray = std::get<TypeArray>(this->body);
+
+    auto typeArrayField = std::find_if(typeArray.fields.begin(), typeArray.fields.end(), [&propName] (const auto &it) -> bool {
+      return it.name == propName;
+    });
+
+    if (typeArrayField == typeArray.fields.end()) {
+      throw Error("tried to get non-existing prop type");
+    }
+
+    return typeArrayField->type;
+  } else if (std::holds_alternative<TypeFn>(this->body)) {
     throw Error("tried to get non-existing prop type");
   } else if (std::holds_alternative<TypeRef>(this->body)) {
     auto typeRef = std::get<TypeRef>(this->body);
-    return typeRef.type->getProp(propName);
+    return typeRef.refType->getProp(propName);
   }
 
   auto typeObj = std::get<TypeObj>(this->body);
@@ -104,24 +116,36 @@ Type *Type::getProp (const std::string &propName) const {
 }
 
 bool Type::hasProp (const std::string &propName) const {
-  if (std::holds_alternative<TypeFn>(this->body)) {
+  if (std::holds_alternative<TypeArray>(this->body)) {// todo test
+    auto typeArray = std::get<TypeArray>(this->body);
+
+    auto typeArrayField = std::find_if(typeArray.fields.begin(), typeArray.fields.end(), [&propName] (const auto &it) -> bool {
+      return it.name == propName;
+    });
+
+    return typeArrayField != typeArray.fields.end();
+  } else if (std::holds_alternative<TypeFn>(this->body)) {
     return false;
   } else if (std::holds_alternative<TypeRef>(this->body)) {
     auto typeRef = std::get<TypeRef>(this->body);
-    return typeRef.type->hasProp(propName);
+    return typeRef.refType->hasProp(propName);
   }
 
   auto typeObj = std::get<TypeObj>(this->body);
 
-  auto memberObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
+  auto typeObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
     return it.name == propName;
   });
 
-  return memberObjField != typeObj.fields.end();
+  return typeObjField != typeObj.fields.end();
 }
 
 bool Type::isAny () const {
   return this->name == "any";
+}
+
+bool Type::isArray () const {
+  return std::holds_alternative<TypeArray>(this->body);
 }
 
 bool Type::isBool () const {
@@ -187,9 +211,11 @@ bool Type::isNumber () const {
   return this->isIntNumber() || this->isFloatNumber();
 }
 
+// todo re-test
 bool Type::isObj () const {
   return (
     !this->isAny() &&
+    !this->isArray() &&
     !this->isBool() &&
     !this->isByte() &&
     !this->isChar() &&
@@ -203,6 +229,18 @@ bool Type::isObj () const {
 
 bool Type::isRef () const {
   return std::holds_alternative<TypeRef>(this->body);
+}
+
+bool Type::isSmallForVarArg () const {
+  return
+    this->isBool() ||
+    this->isByte() ||
+    this->isChar() ||
+    this->isF32() ||
+    this->isI8() ||
+    this->isI16() ||
+    this->isU8() ||
+    this->isU16();
 }
 
 bool Type::isStr () const {
@@ -237,14 +275,23 @@ bool Type::match (const Type *type) const {
       auto lhsRef = std::get<TypeRef>(this->body);
       auto rhsRef = std::get<TypeRef>(type->body);
 
-      return lhsRef.type->match(rhsRef.type);
+      return lhsRef.refType->match(rhsRef.refType);
     } else if (this->isRef() && !type->isRef()) {
       auto lhsRef = std::get<TypeRef>(this->body);
-      return lhsRef.type->match(type);
+      return lhsRef.refType->match(type);
     } else {
       auto lhsRef = std::get<TypeRef>(type->body);
-      return lhsRef.type->match(this);
+      return lhsRef.refType->match(this);
     }
+  } else if (this->isArray() || type->isArray()) {// todo test
+    if (!this->isArray() || !type->isArray()) {
+      return false;
+    }
+
+    auto lhsArray = std::get<TypeArray>(this->body);
+    auto rhsArray = std::get<TypeArray>(type->body);
+
+    return lhsArray.elementType->match(rhsArray.elementType);
   } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -286,7 +333,16 @@ bool Type::match (const Type *type) const {
 }
 
 bool Type::matchExact (const Type *type) const {
-  if (this->isFn() || type->isFn()) {
+  if (this->isArray() || type->isArray()) {// todo test
+    if (!this->isArray() || !type->isArray()) {
+      return false;
+    }
+
+    auto lhsArray = std::get<TypeArray>(this->body);
+    auto rhsArray = std::get<TypeArray>(type->body);
+
+    return lhsArray.elementType->matchExact(rhsArray.elementType);
+  } else if (this->isFn() || type->isFn()) {
     if (!this->isFn() || !type->isFn()) {
       return false;
     }
@@ -322,7 +378,7 @@ bool Type::matchExact (const Type *type) const {
     auto lhsRef = std::get<TypeRef>(this->body);
     auto rhsRef = std::get<TypeRef>(type->body);
 
-    return lhsRef.type->matchExact(rhsRef.type);
+    return lhsRef.refType->matchExact(rhsRef.refType);
   }
 
   return this->name == type->name;
@@ -331,6 +387,15 @@ bool Type::matchExact (const Type *type) const {
 bool Type::matchNice (const Type *type) const {
   if (this->name == "any") {
     return true;
+  } else if (this->isArray() || type->isArray()) {// todo test
+    if (!this->isArray() || !type->isArray()) {
+      return false;
+    }
+
+    auto lhsArray = std::get<TypeArray>(this->body);
+    auto rhsArray = std::get<TypeArray>(type->body);
+
+    return lhsArray.elementType->matchNice(rhsArray.elementType);
   } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -367,7 +432,7 @@ bool Type::matchNice (const Type *type) const {
     auto lhsRef = std::get<TypeRef>(this->body);
     auto rhsRef = std::get<TypeRef>(type->body);
 
-    return lhsRef.type->matchNice(rhsRef.type);
+    return lhsRef.refType->matchNice(rhsRef.refType);
   }
 
   return (this->name == "bool" && type->name == "bool") ||
@@ -385,7 +450,9 @@ std::string Type::xml (std::size_t indent) const {
 
   auto typeName = std::string("Type");
 
-  if (std::holds_alternative<TypeFn>(this->body)) {
+  if (std::holds_alternative<TypeArray>(this->body)) {
+    typeName += "Array";
+  } else if (std::holds_alternative<TypeFn>(this->body)) {
     typeName += "Fn";
   } else if (std::holds_alternative<TypeObj>(this->body)) {
     typeName += "Obj";
@@ -399,7 +466,10 @@ std::string Type::xml (std::size_t indent) const {
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
   result += ">" EOL;
 
-  if (std::holds_alternative<TypeFn>(this->body)) {
+  if (std::holds_alternative<TypeArray>(this->body)) {
+    auto typeArray = std::get<TypeArray>(this->body);
+    result += typeArray.elementType->xml(indent + 2) + EOL;
+  } else if (std::holds_alternative<TypeFn>(this->body)) {
     auto typeFn = std::get<TypeFn>(this->body);
 
     if (!typeFn.params.empty()) {
@@ -427,13 +497,13 @@ std::string Type::xml (std::size_t indent) const {
     auto typeObj = std::get<TypeObj>(this->body);
 
     for (const auto &typeObjField : typeObj.fields) {
-      result += std::string(indent + 2, ' ') + R"(<TypeObjField name=")" + typeObjField.name + R"(">)" EOL;
+      result += std::string(indent + 2, ' ') + R"(<TypeField name=")" + typeObjField.name + R"(">)" EOL;
       result += typeObjField.type->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</TypeObjField>" EOL;
+      result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
     }
   } else if (std::holds_alternative<TypeRef>(this->body)) {
     auto typeRef = std::get<TypeRef>(this->body);
-    result += typeRef.type->xml(indent + 2) + EOL;
+    result += typeRef.refType->xml(indent + 2) + EOL;
   }
 
   return result + std::string(indent, ' ') + "</" + typeName + ">";

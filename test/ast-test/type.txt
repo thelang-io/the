@@ -27,9 +27,9 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Test_0" name="Test">
-    <TypeObjField name="a">
+    <TypeField name="a">
       <BuiltinType name="int" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeMain>
@@ -170,9 +170,9 @@ main {
     <NodeVarDeclVar>
       <Var name="a20" codeName="a20_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="a">
+          <TypeField name="a">
             <BuiltinType name="int" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -181,9 +181,9 @@ main {
     <NodeVarDeclVar>
       <Var name="a21" codeName="a21_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="a">
+          <TypeField name="a">
             <BuiltinType name="int" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>

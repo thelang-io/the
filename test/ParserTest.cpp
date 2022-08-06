@@ -112,6 +112,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-access-prop",
   "expr-access-elem",
   "expr-access-associativity",
+  "expr-array",
   "expr-assign",
   "expr-assign-member",
   "expr-assign-op",
@@ -143,6 +144,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type",
+  "type-array",
   "type-fn",
   "type-variadic",
   "type-ref"

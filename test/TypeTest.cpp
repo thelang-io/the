@@ -202,7 +202,7 @@ TEST_F(TypeTest, GetsProp) {
   EXPECT_EQ(this->tm_.get("str")->getProp("len"), this->tm_.get("int"));
 
   this->tm_.obj("Test1", "Test1_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   EXPECT_EQ(this->tm_.get("Test1")->getProp("a"), this->tm_.get("int"));
@@ -241,7 +241,7 @@ TEST_F(TypeTest, GetsNonExistingProp) {
   }, "tried to get non-existing prop type");
 
   this->tm_.obj("Test1", "Test1_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   EXPECT_THROW_WITH_MESSAGE({
@@ -257,7 +257,7 @@ TEST_F(TypeTest, HasProp) {
   EXPECT_TRUE(this->tm_.get("str")->hasProp("len"));
 
   this->tm_.obj("Test1", "Test1_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   EXPECT_TRUE(this->tm_.get("Test1")->hasProp("a"));
@@ -280,7 +280,7 @@ TEST_F(TypeTest, HasNonExistingProp) {
   EXPECT_FALSE(type1->hasProp("a"));
 
   this->tm_.obj("Test1", "Test1_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   EXPECT_FALSE(this->tm_.get("Test1")->hasProp("b"));
@@ -441,12 +441,12 @@ TEST_F(TypeTest, CheckIfObj) {
   this->tm_.obj("Test1", "Test1_0");
 
   this->tm_.obj("Test2", "Test2_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test3", "Test3_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("str")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("str")}
   });
 
   EXPECT_TRUE(this->tm_.get("Test1")->isObj());
@@ -751,24 +751,24 @@ TEST_F(TypeTest, MatchesFunction) {
 
 TEST_F(TypeTest, MatchesObject) {
   this->tm_.obj("Test1", "Test1_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test2", "Test2_0");
 
   this->tm_.obj("Test3", "Test3_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test4", "Test4_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test5", "Test5_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("str")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("str")}
   });
 
   EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("Test1")));
@@ -895,24 +895,24 @@ TEST_F(TypeTest, MatchesExactFunction) {
 
 TEST_F(TypeTest, MatchesExactObject) {
   this->tm_.obj("Test1", "Test1_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test2", "Test2_0");
 
   this->tm_.obj("Test3", "Test3_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test4", "Test4_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test5", "Test5_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("str")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("str")}
   });
 
   EXPECT_FALSE(this->tm_.get("any")->matchExact(this->tm_.get("Test1")));
@@ -1205,24 +1205,24 @@ TEST_F(TypeTest, MatchesNiceFunction) {
 
 TEST_F(TypeTest, MatchesNiceObject) {
   this->tm_.obj("Test1", "Test1_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test2", "Test2_0");
 
   this->tm_.obj("Test3", "Test3_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test4", "Test4_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test5", "Test5_0", {
-    TypeObjField{"a", this->tm_.get("int")},
-    TypeObjField{"b", this->tm_.get("str")}
+    TypeField{"a", this->tm_.get("int")},
+    TypeField{"b", this->tm_.get("str")}
   });
 
   EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("Test1")));

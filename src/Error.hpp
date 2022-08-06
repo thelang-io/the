@@ -79,6 +79,7 @@
 #define E0149 "E0149 - Expected reference expression type"
 #define E0150 "E0150 - Expected expression after left bracket"
 #define E0151 "E0151 - Expected right bracket"
+#define E0152 "E0152 - Expected array expression element"
 
 #define E1001 "E1001 - Tried accessing non existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
@@ -92,7 +93,7 @@
 #define E1010 "E1010 - Use of undeclared type"
 #define E1011 "E1011 - Use of undeclared variable"
 #define E1012 "E1012 - Index type expected to be integer"
-#define E1013 "E1013 - Indexing allowed only on strings"
+#define E1013 "E1013 - Indexing allowed only on arrays and strings"
 #define E1014 "E1014 - Called object expected to be a function"
 
 class Error : public std::exception {

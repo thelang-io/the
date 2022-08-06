@@ -998,7 +998,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="m" codeName="m_0" frame="2">
-        <TypeRef>
+        <TypeRef name="ref_int">
           <BuiltinType name="int" />
         </TypeRef>
       </Var>
@@ -1006,7 +1006,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </NodeExprType>
@@ -1025,7 +1025,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </NodeExprType>
@@ -1050,7 +1050,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </NodeExprType>
@@ -1117,7 +1117,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </NodeExprType>
@@ -1170,7 +1170,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeRef>
+                  <TypeRef name="ref_int">
                     <BuiltinType name="int" />
                   </TypeRef>
                 </NodeExprType>

@@ -1,0 +1,24 @@
+======= stdin =======
+main {
+  sleep(0)
+  sleep(10)
+  sleep(999)
+}
+======= code =======
+#include <unistd.h>
+
+int main () {
+  usleep((0) * 1000);
+  usleep((10) * 1000);
+  usleep((999) * 1000);
+}
+======= code-windows =======
+#include <windows.h>
+
+int main () {
+  Sleep(0);
+  Sleep(10);
+  Sleep(999);
+}
+======= flags =======
+======= stdout =======

@@ -196,12 +196,12 @@ TEST_F(TypeMapTest, ObjectInserts) {
   this->tm_.obj("Test1", "Test1_0");
 
   this->tm_.obj("Test2", "Test2_0", {
-    TypeObjField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int")}
   });
 
   this->tm_.obj("Test3", "Test3_0", {
-    TypeObjField{"b", this->tm_.get("any")},
-    TypeObjField{"c", this->tm_.get("str")}
+    TypeField{"b", this->tm_.get("any")},
+    TypeField{"c", this->tm_.get("str")}
   });
 
   EXPECT_NO_THROW(this->tm_.get("Test1"));
@@ -235,6 +235,6 @@ TEST_F(TypeMapTest, ReferenceInserts) {
 
   auto ref1Body = std::get<TypeRef>(type1->body);
 
-  EXPECT_TRUE(this->tm_.get("int")->match(ref1Body.type));
+  EXPECT_TRUE(this->tm_.get("int")->match(ref1Body.refType));
   EXPECT_EQ(type1, type2);
 }

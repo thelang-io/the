@@ -19,55 +19,55 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Test2_0" name="Test2">
-    <TypeObjField name="a">
+    <TypeField name="a">
       <TypeObj codeName="Test1_0" name="Test1">
-        <TypeObjField name="b">
+        <TypeField name="b">
           <BuiltinType name="int" />
-        </TypeObjField>
+        </TypeField>
       </TypeObj>
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
   <TypeObj codeName="Test1_0" name="Test1">
-    <TypeObjField name="b">
+    <TypeField name="b">
       <BuiltinType name="int" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeMain>
   <NodeObjDecl>
     <TypeObj codeName="mainSDTest4_0" name="Test4">
-      <TypeObjField name="c">
+      <TypeField name="c">
         <TypeObj codeName="mainSDTest3_0" name="Test3">
-          <TypeObjField name="d">
+          <TypeField name="d">
             <TypeObj codeName="Test2_0" name="Test2">
-              <TypeObjField name="a">
+              <TypeField name="a">
                 <TypeObj codeName="Test1_0" name="Test1">
-                  <TypeObjField name="b">
+                  <TypeField name="b">
                     <BuiltinType name="int" />
-                  </TypeObjField>
+                  </TypeField>
                 </TypeObj>
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
-      </TypeObjField>
+      </TypeField>
     </TypeObj>
   </NodeObjDecl>
   <NodeObjDecl>
     <TypeObj codeName="mainSDTest3_0" name="Test3">
-      <TypeObjField name="d">
+      <TypeField name="d">
         <TypeObj codeName="Test2_0" name="Test2">
-          <TypeObjField name="a">
+          <TypeField name="a">
             <TypeObj codeName="Test1_0" name="Test1">
-              <TypeObjField name="b">
+              <TypeField name="b">
                 <BuiltinType name="int" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
-      </TypeObjField>
+      </TypeField>
     </TypeObj>
   </NodeObjDecl>
 </NodeMain>

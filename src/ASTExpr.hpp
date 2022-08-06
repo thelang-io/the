@@ -68,6 +68,7 @@ enum ASTExprUnaryOp {
 };
 
 struct ASTExprAccess;
+struct ASTExprArray;
 struct ASTExprAssign;
 struct ASTExprBinary;
 struct ASTExprCall;
@@ -79,6 +80,7 @@ struct ASTExprUnary;
 
 using ASTExpr = std::variant<
   ASTExprAccess,
+  ASTExprArray,
   ASTExprAssign,
   ASTExprBinary,
   ASTExprCall,
@@ -103,6 +105,10 @@ struct ASTExprAccess {
   std::variant<std::shared_ptr<Var>, ASTNodeExpr> expr;
   std::optional<ASTNodeExpr> elem;
   std::optional<std::string> prop;
+};
+
+struct ASTExprArray {
+  std::vector<ASTNodeExpr> elements;
 };
 
 struct ASTExprAssign {

@@ -45,27 +45,27 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Test_0" name="Test">
-    <TypeObjField name="me">
+    <TypeField name="me">
       <BuiltinType name="str" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
   <TypeObj codeName="One_0" name="One">
-    <TypeObjField name="two">
+    <TypeField name="two">
       <TypeObj codeName="Two_0" name="Two">
-        <TypeObjField name="three">
+        <TypeField name="three">
           <BuiltinType name="int" />
-        </TypeObjField>
+        </TypeField>
       </TypeObj>
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
   <TypeObj codeName="Two_0" name="Two">
-    <TypeObjField name="three">
+    <TypeField name="three">
       <BuiltinType name="int" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeFnDecl>
@@ -74,7 +74,7 @@ main {
       <TypeFn codeName="job1_0" name="fn$0">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
-            <TypeRef>
+            <TypeRef name="ref_int">
               <BuiltinType name="int" />
             </TypeRef>
           </TypeFnParam>
@@ -89,7 +89,7 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="a" codeName="a_0" mut frame="2">
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </Var>
@@ -106,14 +106,14 @@ main {
           <ExprAssignLeft>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="a" codeName="a_0" mut frame="2">
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </Var>
@@ -142,11 +142,11 @@ main {
       <TypeFn codeName="job2_0" name="fn$1">
         <TypeFnParams>
           <TypeFnParam name="test" mut required>
-            <TypeRef>
+            <TypeRef name="ref_Test">
               <TypeObj codeName="Test_0" name="Test">
-                <TypeObjField name="me">
+                <TypeField name="me">
                   <BuiltinType name="str" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </TypeRef>
           </TypeFnParam>
@@ -161,11 +161,11 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="test" codeName="test_0" mut frame="2">
-          <TypeRef>
+          <TypeRef name="ref_Test">
             <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="me">
+              <TypeField name="me">
                 <BuiltinType name="str" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </TypeRef>
         </Var>
@@ -188,22 +188,22 @@ main {
                 <ExprAccess prop="me">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeRef>
+                      <TypeRef name="ref_Test">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeObjField name="me">
+                          <TypeField name="me">
                             <BuiltinType name="str" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </TypeRef>
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test" codeName="test_0" mut frame="2">
-                          <TypeRef>
+                          <TypeRef name="ref_Test">
                             <TypeObj codeName="Test_0" name="Test">
-                              <TypeObjField name="me">
+                              <TypeField name="me">
                                 <BuiltinType name="str" />
-                              </TypeObjField>
+                              </TypeField>
                             </TypeObj>
                           </TypeRef>
                         </Var>
@@ -235,7 +235,7 @@ main {
       <TypeFn codeName="job3_0" name="fn$2">
         <TypeFnParams>
           <TypeFnParam name="b" mut required>
-            <TypeRef>
+            <TypeRef name="ref_str">
               <BuiltinType name="str" />
             </TypeRef>
           </TypeFnParam>
@@ -250,7 +250,7 @@ main {
     <NodeFnDeclParam>
       <NodeFnDeclParamVar>
         <Var name="b" codeName="b_0" mut frame="2">
-          <TypeRef>
+          <TypeRef name="ref_str">
             <BuiltinType name="str" />
           </TypeRef>
         </Var>
@@ -267,14 +267,14 @@ main {
           <ExprAssignLeft>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_str">
                   <BuiltinType name="str" />
                 </TypeRef>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="b" codeName="b_0" mut frame="2">
-                    <TypeRef>
+                    <TypeRef name="ref_str">
                       <BuiltinType name="str" />
                     </TypeRef>
                   </Var>
@@ -319,9 +319,9 @@ main {
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeObjField name="me">
+          <TypeField name="me">
             <BuiltinType name="str" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -329,18 +329,18 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Test_0" name="Test">
-            <TypeObjField name="me">
+            <TypeField name="me">
               <BuiltinType name="str" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Test_0" name="Test">
-                <TypeObjField name="me">
+                <TypeField name="me">
                   <BuiltinType name="str" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
@@ -364,13 +364,13 @@ main {
     <NodeVarDeclVar>
       <Var name="one" codeName="one_0" frame="2">
         <TypeObj codeName="One_0" name="One">
-          <TypeObjField name="two">
+          <TypeField name="two">
             <TypeObj codeName="Two_0" name="Two">
-              <TypeObjField name="three">
+              <TypeField name="three">
                 <BuiltinType name="int" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -378,26 +378,26 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="One_0" name="One">
-            <TypeObjField name="two">
+            <TypeField name="two">
               <TypeObj codeName="Two_0" name="Two">
-                <TypeObjField name="three">
+                <TypeField name="three">
                   <BuiltinType name="int" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="One_0" name="One">
-                <TypeObjField name="two">
+                <TypeField name="two">
                   <TypeObj codeName="Two_0" name="Two">
-                    <TypeObjField name="three">
+                    <TypeField name="three">
                       <BuiltinType name="int" />
-                    </TypeObjField>
+                    </TypeField>
                   </TypeObj>
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
@@ -405,18 +405,18 @@ main {
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Two_0" name="Two">
-                      <TypeObjField name="three">
+                      <TypeField name="three">
                         <BuiltinType name="int" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprObj>
                       <ExprObjType>
                         <TypeObj codeName="Two_0" name="Two">
-                          <TypeObjField name="three">
+                          <TypeField name="three">
                             <BuiltinType name="int" />
-                          </TypeObjField>
+                          </TypeField>
                         </TypeObj>
                       </ExprObjType>
                       <ExprObjProps>
@@ -444,7 +444,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a" codeName="a_0" frame="2">
-        <TypeRef>
+        <TypeRef name="ref_int">
           <BuiltinType name="int" />
         </TypeRef>
       </Var>
@@ -452,7 +452,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </NodeExprType>
@@ -478,11 +478,11 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b" codeName="b_0" frame="2">
-        <TypeRef>
+        <TypeRef name="ref_Test">
           <TypeObj codeName="Test_0" name="Test">
-            <TypeObjField name="me">
+            <TypeField name="me">
               <BuiltinType name="str" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </TypeRef>
       </Var>
@@ -490,11 +490,11 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeRef>
+          <TypeRef name="ref_Test">
             <TypeObj codeName="Test_0" name="Test">
-              <TypeObjField name="me">
+              <TypeField name="me">
                 <BuiltinType name="str" />
-              </TypeObjField>
+              </TypeField>
             </TypeObj>
           </TypeRef>
         </NodeExprType>
@@ -503,18 +503,18 @@ main {
             <NodeExpr>
               <NodeExprType>
                 <TypeObj codeName="Test_0" name="Test">
-                  <TypeObjField name="me">
+                  <TypeField name="me">
                     <BuiltinType name="str" />
-                  </TypeObjField>
+                  </TypeField>
                 </TypeObj>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="test" codeName="test_0" frame="2">
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeObjField name="me">
+                      <TypeField name="me">
                         <BuiltinType name="str" />
-                      </TypeObjField>
+                      </TypeField>
                     </TypeObj>
                   </Var>
                 </ExprAccess>
@@ -528,7 +528,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="c" codeName="c_0" frame="2">
-        <TypeRef>
+        <TypeRef name="ref_str">
           <BuiltinType name="str" />
         </TypeRef>
       </Var>
@@ -536,7 +536,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeRef>
+          <TypeRef name="ref_str">
             <BuiltinType name="str" />
           </TypeRef>
         </NodeExprType>
@@ -551,18 +551,18 @@ main {
                   <NodeExpr>
                     <NodeExprType>
                       <TypeObj codeName="Test_0" name="Test">
-                        <TypeObjField name="me">
+                        <TypeField name="me">
                           <BuiltinType name="str" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test" codeName="test_0" frame="2">
                           <TypeObj codeName="Test_0" name="Test">
-                            <TypeObjField name="me">
+                            <TypeField name="me">
                               <BuiltinType name="str" />
-                            </TypeObjField>
+                            </TypeField>
                           </TypeObj>
                         </Var>
                       </ExprAccess>
@@ -579,7 +579,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="d" codeName="d_0" frame="2">
-        <TypeRef>
+        <TypeRef name="ref_int">
           <BuiltinType name="int" />
         </TypeRef>
       </Var>
@@ -587,7 +587,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeRef>
+          <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </NodeExprType>
@@ -602,9 +602,9 @@ main {
                   <NodeExpr>
                     <NodeExprType>
                       <TypeObj codeName="Two_0" name="Two">
-                        <TypeObjField name="three">
+                        <TypeField name="three">
                           <BuiltinType name="int" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </NodeExprType>
                     <NodeExprBody>
@@ -612,26 +612,26 @@ main {
                         <NodeExpr>
                           <NodeExprType>
                             <TypeObj codeName="One_0" name="One">
-                              <TypeObjField name="two">
+                              <TypeField name="two">
                                 <TypeObj codeName="Two_0" name="Two">
-                                  <TypeObjField name="three">
+                                  <TypeField name="three">
                                     <BuiltinType name="int" />
-                                  </TypeObjField>
+                                  </TypeField>
                                 </TypeObj>
-                              </TypeObjField>
+                              </TypeField>
                             </TypeObj>
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="one" codeName="one_0" frame="2">
                                 <TypeObj codeName="One_0" name="One">
-                                  <TypeObjField name="two">
+                                  <TypeField name="two">
                                     <TypeObj codeName="Two_0" name="Two">
-                                      <TypeObjField name="three">
+                                      <TypeField name="three">
                                         <BuiltinType name="int" />
-                                      </TypeObjField>
+                                      </TypeField>
                                     </TypeObj>
-                                  </TypeObjField>
+                                  </TypeField>
                                 </TypeObj>
                               </Var>
                             </ExprAccess>
@@ -660,7 +660,7 @@ main {
               <TypeFn codeName="job1_0" name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
@@ -676,7 +676,7 @@ main {
                   <TypeFn codeName="job1_0" name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
@@ -694,7 +694,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -732,7 +732,7 @@ main {
               <TypeFn codeName="job1_0" name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
@@ -748,7 +748,7 @@ main {
                   <TypeFn codeName="job1_0" name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
@@ -766,14 +766,14 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="a" codeName="a_0" frame="2">
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </Var>
@@ -797,11 +797,11 @@ main {
               <TypeFn codeName="job2_0" name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam name="test" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_Test">
                       <TypeObj codeName="Test_0" name="Test">
-                        <TypeObjField name="me">
+                        <TypeField name="me">
                           <BuiltinType name="str" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </TypeFnParam>
@@ -817,11 +817,11 @@ main {
                   <TypeFn codeName="job2_0" name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam name="test" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_Test">
                           <TypeObj codeName="Test_0" name="Test">
-                            <TypeObjField name="me">
+                            <TypeField name="me">
                               <BuiltinType name="str" />
-                            </TypeObjField>
+                            </TypeField>
                           </TypeObj>
                         </TypeRef>
                       </TypeFnParam>
@@ -839,11 +839,11 @@ main {
           <ExprCallArg id="test">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_Test">
                   <TypeObj codeName="Test_0" name="Test">
-                    <TypeObjField name="me">
+                    <TypeField name="me">
                       <BuiltinType name="str" />
-                    </TypeObjField>
+                    </TypeField>
                   </TypeObj>
                 </TypeRef>
               </NodeExprType>
@@ -852,18 +852,18 @@ main {
                   <NodeExpr>
                     <NodeExprType>
                       <TypeObj codeName="Test_0" name="Test">
-                        <TypeObjField name="me">
+                        <TypeField name="me">
                           <BuiltinType name="str" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test" codeName="test_0" frame="2">
                           <TypeObj codeName="Test_0" name="Test">
-                            <TypeObjField name="me">
+                            <TypeField name="me">
                               <BuiltinType name="str" />
-                            </TypeObjField>
+                            </TypeField>
                           </TypeObj>
                         </Var>
                       </ExprAccess>
@@ -889,11 +889,11 @@ main {
               <TypeFn codeName="job2_0" name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam name="test" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_Test">
                       <TypeObj codeName="Test_0" name="Test">
-                        <TypeObjField name="me">
+                        <TypeField name="me">
                           <BuiltinType name="str" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </TypeFnParam>
@@ -909,11 +909,11 @@ main {
                   <TypeFn codeName="job2_0" name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam name="test" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_Test">
                           <TypeObj codeName="Test_0" name="Test">
-                            <TypeObjField name="me">
+                            <TypeField name="me">
                               <BuiltinType name="str" />
-                            </TypeObjField>
+                            </TypeField>
                           </TypeObj>
                         </TypeRef>
                       </TypeFnParam>
@@ -931,22 +931,22 @@ main {
           <ExprCallArg id="test">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_Test">
                   <TypeObj codeName="Test_0" name="Test">
-                    <TypeObjField name="me">
+                    <TypeField name="me">
                       <BuiltinType name="str" />
-                    </TypeObjField>
+                    </TypeField>
                   </TypeObj>
                 </TypeRef>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="b" codeName="b_0" frame="2">
-                    <TypeRef>
+                    <TypeRef name="ref_Test">
                       <TypeObj codeName="Test_0" name="Test">
-                        <TypeObjField name="me">
+                        <TypeField name="me">
                           <BuiltinType name="str" />
-                        </TypeObjField>
+                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </Var>
@@ -970,7 +970,7 @@ main {
               <TypeFn codeName="job3_0" name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam name="b" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_str">
                       <BuiltinType name="str" />
                     </TypeRef>
                   </TypeFnParam>
@@ -986,7 +986,7 @@ main {
                   <TypeFn codeName="job3_0" name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam name="b" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_str">
                           <BuiltinType name="str" />
                         </TypeRef>
                       </TypeFnParam>
@@ -1004,7 +1004,7 @@ main {
           <ExprCallArg id="b">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_str">
                   <BuiltinType name="str" />
                 </TypeRef>
               </NodeExprType>
@@ -1019,18 +1019,18 @@ main {
                         <NodeExpr>
                           <NodeExprType>
                             <TypeObj codeName="Test_0" name="Test">
-                              <TypeObjField name="me">
+                              <TypeField name="me">
                                 <BuiltinType name="str" />
-                              </TypeObjField>
+                              </TypeField>
                             </TypeObj>
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test" codeName="test_0" frame="2">
                                 <TypeObj codeName="Test_0" name="Test">
-                                  <TypeObjField name="me">
+                                  <TypeField name="me">
                                     <BuiltinType name="str" />
-                                  </TypeObjField>
+                                  </TypeField>
                                 </TypeObj>
                               </Var>
                             </ExprAccess>
@@ -1059,7 +1059,7 @@ main {
               <TypeFn codeName="job3_0" name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam name="b" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_str">
                       <BuiltinType name="str" />
                     </TypeRef>
                   </TypeFnParam>
@@ -1075,7 +1075,7 @@ main {
                   <TypeFn codeName="job3_0" name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam name="b" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_str">
                           <BuiltinType name="str" />
                         </TypeRef>
                       </TypeFnParam>
@@ -1093,14 +1093,14 @@ main {
           <ExprCallArg id="b">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_str">
                   <BuiltinType name="str" />
                 </TypeRef>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="c" codeName="c_0" frame="2">
-                    <TypeRef>
+                    <TypeRef name="ref_str">
                       <BuiltinType name="str" />
                     </TypeRef>
                   </Var>
@@ -1124,7 +1124,7 @@ main {
               <TypeFn codeName="job1_0" name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
@@ -1140,7 +1140,7 @@ main {
                   <TypeFn codeName="job1_0" name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
@@ -1158,7 +1158,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
@@ -1173,9 +1173,9 @@ main {
                         <NodeExpr>
                           <NodeExprType>
                             <TypeObj codeName="Two_0" name="Two">
-                              <TypeObjField name="three">
+                              <TypeField name="three">
                                 <BuiltinType name="int" />
-                              </TypeObjField>
+                              </TypeField>
                             </TypeObj>
                           </NodeExprType>
                           <NodeExprBody>
@@ -1183,26 +1183,26 @@ main {
                               <NodeExpr>
                                 <NodeExprType>
                                   <TypeObj codeName="One_0" name="One">
-                                    <TypeObjField name="two">
+                                    <TypeField name="two">
                                       <TypeObj codeName="Two_0" name="Two">
-                                        <TypeObjField name="three">
+                                        <TypeField name="three">
                                           <BuiltinType name="int" />
-                                        </TypeObjField>
+                                        </TypeField>
                                       </TypeObj>
-                                    </TypeObjField>
+                                    </TypeField>
                                   </TypeObj>
                                 </NodeExprType>
                                 <NodeExprBody>
                                   <ExprAccess>
                                     <Var name="one" codeName="one_0" frame="2">
                                       <TypeObj codeName="One_0" name="One">
-                                        <TypeObjField name="two">
+                                        <TypeField name="two">
                                           <TypeObj codeName="Two_0" name="Two">
-                                            <TypeObjField name="three">
+                                            <TypeField name="three">
                                               <BuiltinType name="int" />
-                                            </TypeObjField>
+                                            </TypeField>
                                           </TypeObj>
-                                        </TypeObjField>
+                                        </TypeField>
                                       </TypeObj>
                                     </Var>
                                   </ExprAccess>
@@ -1234,7 +1234,7 @@ main {
               <TypeFn codeName="job1_0" name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </TypeFnParam>
@@ -1250,7 +1250,7 @@ main {
                   <TypeFn codeName="job1_0" name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
-                        <TypeRef>
+                        <TypeRef name="ref_int">
                           <BuiltinType name="int" />
                         </TypeRef>
                       </TypeFnParam>
@@ -1268,14 +1268,14 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef>
+                <TypeRef name="ref_int">
                   <BuiltinType name="int" />
                 </TypeRef>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="d" codeName="d_0" frame="2">
-                    <TypeRef>
+                    <TypeRef name="ref_int">
                       <BuiltinType name="int" />
                     </TypeRef>
                   </Var>

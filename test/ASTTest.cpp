@@ -60,6 +60,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
+  "expr-array",
   "expr-assign",
   "expr-binary",
   "expr-call",
@@ -74,6 +75,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
   "type",
+  "type-array",
   "type-fn",
   "type-variadic",
   "type-ref"

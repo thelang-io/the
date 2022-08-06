@@ -1,0 +1,172 @@
+======= stdin =======
+main {
+  test0: int[]
+  test1 := [1]
+  test2 := [1, 2]
+  test3 := [1, 2, 3]
+
+  print(test0, test0.reverse())
+  print(test1, test1.reverse())
+  print(test2, test2.reverse())
+  print(test3, test3.reverse())
+}
+======= code =======
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str int_str (int32_t);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+struct __THE_1_array_int;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+struct __THE_1_array_int __THE_1_array_int_reverse (struct __THE_1_array_int);
+struct str __THE_1_array_int_str (struct __THE_1_array_int);
+
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(x * sizeof(int32_t));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
+  va_end(args);
+  return (struct __THE_1_array_int) {d, x};
+}
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
+  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(n.l * sizeof(int32_t));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
+  return (struct __THE_1_array_int) {d, n.l};
+}
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
+  free(n.d);
+}
+struct __THE_1_array_int __THE_1_array_int_reverse (struct __THE_1_array_int n) {
+  if (n.l == 0) {
+    __THE_1_array_int_free(n);
+    return (struct __THE_1_array_int) {NULL, 0};
+  }
+  int32_t *d = alloc(n.l * sizeof(int32_t));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[n.l - i - 1];
+  __THE_1_array_int_free(n);
+  return (struct __THE_1_array_int) {d, n.l};
+}
+struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
+  struct str r = str_alloc("[");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_str(r, int_str(n.d[i]));
+  }
+  __THE_1_array_int_free(n);
+  return str_concat_cstr(r, "]");
+}
+
+int main () {
+  const struct __THE_1_array_int __THE_0_test0_0 = __THE_1_array_int_alloc(0);
+  const struct __THE_1_array_int __THE_0_test1_0 = __THE_1_array_int_alloc(1, 1);
+  const struct __THE_1_array_int __THE_0_test2_0 = __THE_1_array_int_alloc(2, 1, 2);
+  const struct __THE_1_array_int __THE_0_test3_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test0_0))), "\n");
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test1_0))), "\n");
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test2_0))), "\n");
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test3_0))), "\n");
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test3_0);
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test2_0);
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0);
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test0_0);
+}
+======= flags =======
+======= stdout =======
+[] []
+[1] [1]
+[1, 2] [2, 1]
+[1, 2, 3] [3, 2, 1]

@@ -16,6 +16,16 @@
 
 struct Type;
 
+struct TypeField {
+  std::string name;
+  Type *type;
+};
+
+struct TypeArray {
+  Type *elementType;
+  std::vector<TypeField> fields = {};
+};
+
 struct TypeFnParam {
   std::optional<std::string> name;
   Type *type;
@@ -29,23 +39,18 @@ struct TypeFn {
   std::vector<TypeFnParam> params = {};
 };
 
-struct TypeObjField {
-  std::string name;
-  Type *type;
-};
-
 struct TypeObj {
-  std::vector<TypeObjField> fields = {};
+  std::vector<TypeField> fields = {};
 };
 
 struct TypeRef {
-  Type *type;
+  Type *refType;
 };
 
 struct Type {
   std::string name;
   std::string codeName;
-  std::variant<TypeFn, TypeObj, TypeRef> body;
+  std::variant<TypeArray, TypeFn, TypeObj, TypeRef> body;
   bool builtin;
 
   static Type *real (Type *);
@@ -54,6 +59,8 @@ struct Type {
   bool hasProp (const std::string &) const;
   Type *getProp (const std::string &) const;
   bool isAny () const;
+  // todo test
+  bool isArray () const;
   bool isBool () const;
   bool isByte () const;
   bool isChar () const;
@@ -71,6 +78,8 @@ struct Type {
   bool isNumber () const;
   bool isObj () const;
   bool isRef () const;
+  // todo test
+  bool isSmallForVarArg () const;
   bool isStr () const;
   bool isU8 () const;
   bool isU16 () const;

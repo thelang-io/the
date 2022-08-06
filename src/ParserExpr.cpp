@@ -41,6 +41,20 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprAccess>";
+  } else if (std::holds_alternative<ParserExprArray>(*this->body)) {
+    auto exprArray = std::get<ParserExprArray>(*this->body);
+
+    if (exprArray.elements.empty()) {
+      result += std::string(indent, ' ') + "<ExprArray" + attrs + " />";
+    } else {
+      result += std::string(indent, ' ') + "<ExprArray" + attrs + ">" EOL;
+
+      for (const auto &element : exprArray.elements) {
+        result += element.xml(indent + 2) + EOL;
+      }
+
+      result += std::string(indent, ' ') + "</ExprArray>";
+    }
   } else if (std::holds_alternative<ParserExprAssign>(*this->body)) {
     auto exprAssign = std::get<ParserExprAssign>(*this->body);
 

@@ -30,7 +30,9 @@ bool VarMap::has (const std::string &name) const {
 }
 
 void VarMap::init (TypeMap &typeMap) {
+  this->_items.push_back(std::make_shared<Var>(Var{"exit", "@exit", typeMap.get("exit"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"print", "@print", typeMap.get("print"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"sleep", "@sleep", typeMap.get("sleep"), false, true, this->_frame}));
 }
 
 std::string VarMap::name (const std::string &name) const {

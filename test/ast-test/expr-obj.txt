@@ -10,12 +10,12 @@ main {
 ======= stdout =======
 <NodeObjDecl>
   <TypeObj codeName="Point_0" name="Point">
-    <TypeObjField name="x">
+    <TypeField name="x">
       <BuiltinType name="float" />
-    </TypeObjField>
-    <TypeObjField name="y">
+    </TypeField>
+    <TypeField name="y">
       <BuiltinType name="float" />
-    </TypeObjField>
+    </TypeField>
   </TypeObj>
 </NodeObjDecl>
 <NodeMain>
@@ -23,12 +23,12 @@ main {
     <NodeVarDeclVar>
       <Var name="a" codeName="a_0" frame="2">
         <TypeObj codeName="Point_0" name="Point">
-          <TypeObjField name="x">
+          <TypeField name="x">
             <BuiltinType name="float" />
-          </TypeObjField>
-          <TypeObjField name="y">
+          </TypeField>
+          <TypeField name="y">
             <BuiltinType name="float" />
-          </TypeObjField>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -36,24 +36,24 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Point_0" name="Point">
-            <TypeObjField name="x">
+            <TypeField name="x">
               <BuiltinType name="float" />
-            </TypeObjField>
-            <TypeObjField name="y">
+            </TypeField>
+            <TypeField name="y">
               <BuiltinType name="float" />
-            </TypeObjField>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Point_0" name="Point">
-                <TypeObjField name="x">
+                <TypeField name="x">
                   <BuiltinType name="float" />
-                </TypeObjField>
-                <TypeObjField name="y">
+                </TypeField>
+                <TypeField name="y">
                   <BuiltinType name="float" />
-                </TypeObjField>
+                </TypeField>
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>

@@ -11,7 +11,9 @@
 std::string ParserType::xml (std::size_t indent) const {
   auto typeName = std::string("Type");
 
-  if (std::holds_alternative<ParserTypeFn>(*this->body)) {
+  if (std::holds_alternative<ParserTypeArray>(*this->body)) {
+    typeName += "Array";
+  } else if (std::holds_alternative<ParserTypeFn>(*this->body)) {
     typeName += "Fn";
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     typeName += "Id";
@@ -26,7 +28,10 @@ std::string ParserType::xml (std::size_t indent) const {
 
   auto result = std::string(indent, ' ') + "<" + typeName + attrs + ">" EOL;
 
-  if (std::holds_alternative<ParserTypeFn>(*this->body)) {
+  if (std::holds_alternative<ParserTypeArray>(*this->body)) {
+    auto typeArray = std::get<ParserTypeArray>(*this->body);
+    result += typeArray.elementType.xml(indent + 2) + EOL;
+  } else if (std::holds_alternative<ParserTypeFn>(*this->body)) {
     auto typeFn = std::get<ParserTypeFn>(*this->body);
 
     if (!typeFn.params.empty()) {
@@ -63,7 +68,7 @@ std::string ParserType::xml (std::size_t indent) const {
     result += typeId.id.xml(indent + 2) + EOL;
   } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
     auto typeRef = std::get<ParserTypeRef>(*this->body);
-    result += typeRef.type.xml(indent + 2) + EOL;
+    result += typeRef.refType.xml(indent + 2) + EOL;
   }
 
   return result + std::string(indent, ' ') + "</" + typeName + ">";

@@ -13,6 +13,7 @@
 
 struct ASTState {
   bool insideLoopInit = false;
+  Type *returnType = nullptr;
 };
 
 class AST {
@@ -37,11 +38,11 @@ class AST {
   ASTBlock _block (const ParserBlock &, VarStack &);
   void _forwardNode (const ParserBlock &);
   ASTNode _node (const ParserStmt &, VarStack &);
-  ASTNodeExpr _nodeExpr (const ParserStmtExpr &, VarStack &);
-  Type *_nodeExprType (const ParserStmtExpr &);
+  ASTNodeExpr _nodeExpr (const ParserStmtExpr &, Type *, VarStack &);
+  Type *_nodeExprType (const ParserStmtExpr &, Type *);
   Type *_type (const ParserType &);
   ASTNode _wrapNode (const ParserStmt &, const ASTNodeBody &);
-  ASTNodeExpr _wrapNodeExpr (const ParserStmtExpr &, const ASTExpr &);
+  ASTNodeExpr _wrapNodeExpr (const ParserStmtExpr &, Type *, const ASTExpr &);
 };
 
 #endif
