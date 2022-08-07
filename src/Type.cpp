@@ -83,7 +83,7 @@ Type *Type::largest (Type *a, Type *b) {
 }
 
 Type *Type::getProp (const std::string &propName) const {
-  if (std::holds_alternative<TypeArray>(this->body)) {// todo test
+  if (std::holds_alternative<TypeArray>(this->body)) {
     auto typeArray = std::get<TypeArray>(this->body);
 
     auto typeArrayField = std::find_if(typeArray.fields.begin(), typeArray.fields.end(), [&propName] (const auto &it) -> bool {
@@ -116,7 +116,7 @@ Type *Type::getProp (const std::string &propName) const {
 }
 
 bool Type::hasProp (const std::string &propName) const {
-  if (std::holds_alternative<TypeArray>(this->body)) {// todo test
+  if (std::holds_alternative<TypeArray>(this->body)) {
     auto typeArray = std::get<TypeArray>(this->body);
 
     auto typeArrayField = std::find_if(typeArray.fields.begin(), typeArray.fields.end(), [&propName] (const auto &it) -> bool {
@@ -211,7 +211,6 @@ bool Type::isNumber () const {
   return this->isIntNumber() || this->isFloatNumber();
 }
 
-// todo re-test
 bool Type::isObj () const {
   return (
     !this->isAny() &&
@@ -283,7 +282,7 @@ bool Type::match (const Type *type) const {
       auto lhsRef = std::get<TypeRef>(type->body);
       return lhsRef.refType->match(this);
     }
-  } else if (this->isArray() || type->isArray()) {// todo test
+  } else if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
     }
@@ -333,7 +332,7 @@ bool Type::match (const Type *type) const {
 }
 
 bool Type::matchExact (const Type *type) const {
-  if (this->isArray() || type->isArray()) {// todo test
+  if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
     }
@@ -387,7 +386,7 @@ bool Type::matchExact (const Type *type) const {
 bool Type::matchNice (const Type *type) const {
   if (this->name == "any") {
     return true;
-  } else if (this->isArray() || type->isArray()) {// todo test
+  } else if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
     }

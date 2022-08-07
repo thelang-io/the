@@ -438,7 +438,7 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
       this->lexer->seek(loc2);
       auto exprArrayElement = this->_stmtExpr();
 
-      if (exprArrayElement == std::nullopt) { // todo test
+      if (exprArrayElement == std::nullopt) {
         throw Error(this->reader, this->lexer->loc, E0152);
       }
 
@@ -453,7 +453,7 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
     auto exprArray = ParserExprArray{exprArrayElements};
     auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprArray), false, tok1.start, this->lexer->loc};
 
-    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr; // todo test
+    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
   }
 
   if (tok1.type == TK_ID) {
@@ -991,26 +991,12 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
 ParserType Parser::_wrapType (const ParserType &type) {
   auto [loc1, tok1] = this->lexer->next();
 
-  if (tok1.type == TK_OP_LBRACK) { // todo test
+  if (tok1.type == TK_OP_LBRACK) {
     auto [loc2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_RBRACK) {
       this->lexer->seek(loc2);
       throw Error(this->reader, this->lexer->loc, E0151);
-    }
-
-    if (std::holds_alternative<ParserTypeFn>(*type.body) && !type.parenthesized) {
-      auto typeFn = std::get<ParserTypeFn>(*type.body);
-      auto typeArray = ParserTypeArray{typeFn.returnType};
-
-      typeFn.returnType = ParserType{std::make_shared<ParserTypeBody>(typeArray), false, typeFn.returnType.start, this->lexer->loc};
-      return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, type.start, this->lexer->loc});
-    } else if (std::holds_alternative<ParserTypeRef>(*type.body) && !type.parenthesized) {
-      auto typeRef = std::get<ParserTypeRef>(*type.body);
-      auto typeArray = ParserTypeArray{typeRef.refType};
-
-      typeRef.refType = ParserType{std::make_shared<ParserTypeBody>(typeArray), false, typeRef.refType.start, this->lexer->loc};
-      return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeRef), false, type.start, this->lexer->loc});
     }
 
     auto typeArray = ParserTypeArray{type};

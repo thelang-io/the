@@ -95,6 +95,9 @@
 #define E1012 "E1012 - Index type expected to be integer"
 #define E1013 "E1013 - Indexing allowed only on arrays and strings"
 #define E1014 "E1014 - Called object expected to be a function"
+#define E1015 "E1015 - Tried setting non existing object property"
+#define E1016 "E1016 - Unable to deduce array literal type"
+#define E1017 "E1017 - Incompatible array literal element types"
 
 class Error : public std::exception {
  public:

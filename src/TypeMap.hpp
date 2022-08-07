@@ -14,7 +14,6 @@ class TypeMap {
  public:
   std::vector<std::string> stack;
 
-  // todo test
   Type *arrayOf (Type *);
   Type *fn (const std::optional<std::string> &, const std::vector<TypeFnParam> &, Type *);
   Type *get (const std::string &);

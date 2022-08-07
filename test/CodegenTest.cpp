@@ -136,7 +136,8 @@ INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign",
   "expr-assign-op",
   "expr-assign-str",
-  "expr-assign-elem"
+  "expr-assign-elem",
+  "expr-assign-array"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
@@ -154,6 +155,7 @@ INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
   "expr-cond",
   "expr-cond-nested",
+  "expr-cond-array",
   "expr-cond-str",
   "expr-cond-operands"
 ));
@@ -205,6 +207,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-call",
   "node-expr-cond",
   "node-expr-cond-str",
+  "node-expr-cond-array",
   "node-expr-cond-obj",
   "node-expr-cond-fn",
   "node-expr-lit",
@@ -224,6 +227,7 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-scope",
   "node-fn-decl-param-default",
   "node-fn-decl-param-default-str",
+  "node-fn-decl-param-default-array",
   "node-fn-decl-param-default-obj",
   "node-fn-decl-param-default-fn",
   "node-fn-decl-param-fn",
@@ -253,7 +257,8 @@ INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
-  "node-obj-decl"
+  "node-obj-decl",
+  "node-obj-decl-field-array"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(

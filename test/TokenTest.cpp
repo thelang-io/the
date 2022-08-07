@@ -136,6 +136,16 @@ TEST(TokenTest, IsNotWhitespace) {
   EXPECT_FALSE(Token::isWhitespace('#'));
 }
 
+TEST(TokenTest, UpperFirst) {
+  EXPECT_EQ(Token::upperFirst(""), "");
+  EXPECT_EQ(Token::upperFirst(" test"), " test");
+  EXPECT_EQ(Token::upperFirst("a"), "A");
+  EXPECT_EQ(Token::upperFirst("1"), "1");
+  EXPECT_EQ(Token::upperFirst("test"), "Test");
+  EXPECT_EQ(Token::upperFirst("test string"), "Test string");
+  EXPECT_EQ(Token::upperFirst("testTest"), "TestTest");
+}
+
 TEST(TokenTest, AssociativityThrowsOnUnknown) {
   EXPECT_THROW_WITH_MESSAGE({
     Token{TK_EOF}.associativity();

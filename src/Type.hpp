@@ -59,7 +59,6 @@ struct Type {
   bool hasProp (const std::string &) const;
   Type *getProp (const std::string &) const;
   bool isAny () const;
-  // todo test
   bool isArray () const;
   bool isBool () const;
   bool isByte () const;
@@ -78,7 +77,6 @@ struct Type {
   bool isNumber () const;
   bool isObj () const;
   bool isRef () const;
-  // todo test
   bool isSmallForVarArg () const;
   bool isStr () const;
   bool isU8 () const;

@@ -156,6 +156,10 @@ bool Token::isWhitespace (char ch) {
 }
 
 std::string Token::upperFirst (const std::string &str) {
+  if (str.empty()) {
+    return "";
+  }
+
   return std::string(1, static_cast<char>(toupper(str[0]))) + str.substr(1);
 }
 

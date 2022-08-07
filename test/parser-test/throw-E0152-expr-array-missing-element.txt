@@ -1,0 +1,6 @@
+======= stdin =======
+a := [1, if true {}]
+======= stderr =======
+/test:1:9: E0152 - Expected array expression element
+  1 | a := [1, if true {}]
+    |         ^

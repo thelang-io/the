@@ -30,6 +30,8 @@ main {
   v09.push([4, 5])
   v09[0].push(3)
   v09[1][1] = 4
+
+  v10 := true ? [1, 2, 3] : [3, 4, 5]
 }
 ======= stdout =======
 <NodeObjDecl>
@@ -1243,4 +1245,110 @@ main {
       </ExprAssign>
     </NodeExprBody>
   </NodeExpr>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="v10" codeName="v10_0" frame="2">
+        <TypeArray name="array_int">
+          <BuiltinType name="int" />
+        </TypeArray>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeArray name="array_int">
+            <BuiltinType name="int" />
+          </TypeArray>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprArray>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="INT_DEC" value="1" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="INT_DEC" value="2" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="INT_DEC" value="3" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprArray>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprArray>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="INT_DEC" value="3" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="INT_DEC" value="4" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="INT_DEC" value="5" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprArray>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
 </NodeMain>

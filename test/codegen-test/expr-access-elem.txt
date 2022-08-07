@@ -42,8 +42,8 @@ struct str char_str (char c) {
 struct str cstr_concat_str (const char *r, struct str s) {
   size_t l = s.l + strlen(r);
   char *d = alloc(l);
-  memcpy(d, s.d, s.l);
-  memcpy(&d[s.l], r, l - s.l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
 }

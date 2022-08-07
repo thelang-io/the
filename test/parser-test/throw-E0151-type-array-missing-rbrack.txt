@@ -1,0 +1,6 @@
+======= stdin =======
+a: int[ = []
+======= stderr =======
+/test:1:8: E0151 - Expected right bracket
+  1 | a: int[ = []
+    |        ^

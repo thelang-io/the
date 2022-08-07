@@ -109,5 +109,8 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1011-node-fn-decl-undeclared-param-var",
   "throw-E1012-expr-access-expected-int",
   "throw-E1013-expr-access-expected-type-str",
-  "throw-E1014-expr-call-expected-type-fn"
+  "throw-E1014-expr-call-expected-type-fn",
+  "throw-E1015-expr-obj-not-existing-prop",
+  "throw-E1016-expr-array-unknown-type",
+  "throw-E1017-expr-array-incompatible-element-type"
 ));

@@ -1,0 +1,8 @@
+======= stdin =======
+main {
+  test := []
+}
+======= stderr =======
+/test:2:11: E1016 - Unable to deduce array literal type
+  2 |   test := []
+    |           ^~

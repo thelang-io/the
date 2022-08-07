@@ -253,7 +253,9 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0148-expr-ref-invalid-rvalue",
   "throw-E0148-expr-ref-invalid-unary-rvalue",
   "throw-E0150-expr-access-elem-missing-expr",
-  "throw-E0151-expr-access-missing-rbrack"
+  "throw-E0151-expr-access-missing-rbrack",
+  "throw-E0151-type-array-missing-rbrack",
+  "throw-E0152-expr-array-missing-element"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(

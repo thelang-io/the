@@ -292,9 +292,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
   } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
     auto parserExprArray = std::get<ParserExprArray>(*stmtExpr.body);
     auto exprArrayElements = std::vector<ASTNodeExpr>{};
-    auto elementsType = targetType != nullptr && targetType->isArray()
-      ? std::get<TypeArray>(targetType->body).elementType
-      : nullptr; // todo test
+    auto elementsType = targetType == nullptr || !targetType->isArray()
+      ? nullptr
+      : std::get<TypeArray>(targetType->body).elementType;
 
     for (const auto &element : parserExprArray.elements) {
       exprArrayElements.push_back(this->_nodeExpr(element, elementsType, varStack));
@@ -320,7 +320,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     else if (parserExprAssign.op.type == TK_OP_STAR_EQ) exprAssignOp = AST_EXPR_ASSIGN_MUL;
 
     auto exprAssignLeft = this->_nodeExpr(parserExprAssign.left, nullptr, varStack);
-    auto exprAssignRight = this->_nodeExpr(parserExprAssign.right, nullptr, varStack);
+    auto exprAssignRight = this->_nodeExpr(parserExprAssign.right, exprAssignLeft.type, varStack);
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAssign{exprAssignLeft, exprAssignOp, exprAssignRight});
   } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body)) {
@@ -486,8 +486,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
     for (const auto &parserExprObjProp : parserExprObj.props) {
       if (!type->hasProp(parserExprObjProp.id.val)) {
-        // todo test
-        throw Error(this->reader, this->reader->loc, E0000);
+        throw Error(this->reader, parserExprObjProp.id.start, parserExprObjProp.init.end, E1015);
       }
 
       auto propType = type->getProp(parserExprObjProp.id.val);
@@ -562,13 +561,12 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     }
 
     throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1013);
-  } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {  // todo test
+  } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
     auto exprArray = std::get<ParserExprArray>(*stmtExpr.body);
 
     if (exprArray.elements.empty()) {
       if (targetType == nullptr) {
-        // todo test
-        throw Error(this->reader, this->reader->loc, E0000);
+        throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1016);
       }
 
       return targetType;
@@ -582,8 +580,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       if (elementsType == nullptr) {
         elementsType = elementExprType;
       } else if (!elementExprType->matchExact(elementsType)) {
-        // todo test
-        throw Error(this->reader, this->reader->loc, E0000);
+        throw Error(this->reader, element.start, element.end, E1017);
       }
     }
 

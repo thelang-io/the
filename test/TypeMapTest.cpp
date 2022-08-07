@@ -17,6 +17,33 @@ class TypeMapTest : public testing::Test {
   }
 };
 
+TEST_F(TypeMapTest, ArrayInserts) {
+  auto type1 = this->tm_.arrayOf(this->tm_.get("int"));
+  auto type2 = this->tm_.arrayOf(this->tm_.get("str"));
+
+  EXPECT_NO_THROW(this->tm_.get("array_int"));
+  EXPECT_NO_THROW(this->tm_.get("array_str"));
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeArray>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeArray>(type2->body));
+
+  auto arr1Body = std::get<TypeArray>(type1->body);
+  auto arr2Body = std::get<TypeArray>(type2->body);
+
+  EXPECT_TRUE(this->tm_.get("int")->matchExact(arr1Body.elementType));
+  EXPECT_TRUE(this->tm_.get("str")->matchExact(arr2Body.elementType));
+}
+
+TEST_F(TypeMapTest, ArrayDoesNotInsertExact) {
+  auto type1 = this->tm_.arrayOf(this->tm_.get("int"));
+  auto type2 = this->tm_.arrayOf(this->tm_.get("int"));
+
+  EXPECT_EQ(type1->name, "array_int");
+  EXPECT_EQ(type1->name, type2->name);
+  EXPECT_EQ(type1, type2);
+}
+
 TEST_F(TypeMapTest, FunctionInserts) {
   auto type1 = this->tm_.fn("test1_0", {}, this->tm_.get("void"));
 
@@ -105,45 +132,6 @@ TEST_F(TypeMapTest, FunctionDoesNotInsertExact) {
   EXPECT_EQ(type3, type4);
 }
 
-TEST_F(TypeMapTest, FunctionGenerates) {
-  auto type1 = this->tm_.fn(std::nullopt, {}, this->tm_.get("void"));
-
-  auto type2 = this->tm_.fn(std::nullopt, {
-    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"));
-
-  auto type3 = this->tm_.fn(std::nullopt, {
-    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, false},
-    TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, true}
-  }, this->tm_.get("str"));
-
-  EXPECT_FALSE(type1->builtin);
-  EXPECT_TRUE(std::holds_alternative<TypeFn>(type1->body));
-
-  auto fn1Body = std::get<TypeFn>(type1->body);
-  auto fn2Body = std::get<TypeFn>(type2->body);
-  auto fn3Body = std::get<TypeFn>(type3->body);
-
-  EXPECT_TRUE(this->tm_.get("void")->match(fn1Body.returnType));
-  EXPECT_TRUE(this->tm_.get("void")->match(fn2Body.returnType));
-  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.returnType));
-  EXPECT_EQ(fn1Body.params.size(), 0);
-  EXPECT_EQ(fn2Body.params.size(), 1);
-  EXPECT_EQ(fn3Body.params.size(), 2);
-  EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].type));
-  EXPECT_FALSE(fn2Body.params[0].mut);
-  EXPECT_TRUE(fn2Body.params[0].required);
-  EXPECT_FALSE(fn2Body.params[0].variadic);
-  EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].type));
-  EXPECT_FALSE(fn3Body.params[0].mut);
-  EXPECT_FALSE(fn3Body.params[0].required);
-  EXPECT_FALSE(fn3Body.params[0].variadic);
-  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].type));
-  EXPECT_FALSE(fn3Body.params[1].mut);
-  EXPECT_FALSE(fn3Body.params[1].required);
-  EXPECT_TRUE(fn3Body.params[1].variadic);
-}
-
 TEST_F(TypeMapTest, GetReturnsItem) {
   this->tm_.obj("Test", "Test");
   this->tm_.fn("test", {}, this->tm_.get("void"));
@@ -219,11 +207,11 @@ TEST_F(TypeMapTest, ObjectInserts) {
   EXPECT_EQ(typeObj2Body.fields.size(), 1);
   EXPECT_EQ(typeObj3Body.fields.size(), 2);
   EXPECT_EQ(typeObj2Body.fields[0].name, "a");
-  EXPECT_TRUE(this->tm_.get("int")->match(typeObj2Body.fields[0].type));
+  EXPECT_TRUE(this->tm_.get("int")->matchExact(typeObj2Body.fields[0].type));
   EXPECT_EQ(typeObj3Body.fields[0].name, "b");
-  EXPECT_TRUE(this->tm_.get("any")->match(typeObj3Body.fields[0].type));
+  EXPECT_TRUE(this->tm_.get("any")->matchExact(typeObj3Body.fields[0].type));
   EXPECT_EQ(typeObj3Body.fields[1].name, "c");
-  EXPECT_TRUE(this->tm_.get("str")->match(typeObj3Body.fields[1].type));
+  EXPECT_TRUE(this->tm_.get("str")->matchExact(typeObj3Body.fields[1].type));
 }
 
 TEST_F(TypeMapTest, ReferenceInserts) {
@@ -235,6 +223,6 @@ TEST_F(TypeMapTest, ReferenceInserts) {
 
   auto ref1Body = std::get<TypeRef>(type1->body);
 
-  EXPECT_TRUE(this->tm_.get("int")->match(ref1Body.refType));
+  EXPECT_TRUE(this->tm_.get("int")->matchExact(ref1Body.refType));
   EXPECT_EQ(type1, type2);
 }
