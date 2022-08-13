@@ -135,8 +135,8 @@ void __THE_1_fn$1_free (struct __THE_1_fn$1);
 int32_t __THE_1_job2_0 (void *, struct __THE_1_fn$1P);
 void __THE_1_job3_0 (void *, struct __THE_1_fn$2P);
 void __THE_1_fn$3_free (struct __THE_1_fn$3);
-void __THE_1_mainSDjobLocal1_0 (void *);
 void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn$3 *, struct __THE_1_mainSDjobLocal1_0X);
+void __THE_1_mainSDjobLocal1_0 (void *);
 
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   if (n.x == NULL) return n;
@@ -183,6 +183,14 @@ void __THE_1_job3_0 (void *px, struct __THE_1_fn$2P p) {
 void __THE_1_fn$3_free (struct __THE_1_fn$3 n) {
   free(n.x);
 }
+void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn$3 *n, struct __THE_1_mainSDjobLocal1_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDjobLocal1_0X);
+  struct __THE_1_mainSDjobLocal1_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDjobLocal1_0;
+  n->x = r;
+  n->l = l;
+}
 void __THE_1_mainSDjobLocal1_0 (void *px) {
   struct __THE_1_mainSDjobLocal1_0X *x = px;
   const struct __THE_1_fn$1 **__THE_0_refJob2_0 = x->__THE_0_refJob2_0;
@@ -198,14 +206,6 @@ void __THE_1_mainSDjobLocal1_0 (void *px) {
   const bool __THE_0_v26_0 = *(__THE_1_fn$0_copy(*__THE_0_job1_0)).f((__THE_1_fn$0_copy(*__THE_0_job1_0)).x, (struct __THE_1_fn$0P) {*__THE_0_refA_0}) > (__THE_1_fn$1_copy(*__THE_0_job2_0)).f((__THE_1_fn$1_copy(*__THE_0_job2_0)).x, (struct __THE_1_fn$1P) {*__THE_0_refA_0});
   const int32_t __THE_0_v27_0 = *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0}) & *(__THE_1_fn$0_copy(*__THE_0_job1_0)).f((__THE_1_fn$0_copy(*__THE_0_job1_0)).x, (struct __THE_1_fn$0P) {__THE_0_a_0});
   const int32_t __THE_0_v28_0 = (__THE_1_fn$1_copy(*__THE_0_job2_0)).f((__THE_1_fn$1_copy(*__THE_0_job2_0)).x, (struct __THE_1_fn$1P) {*__THE_0_refA_0}) - (*__THE_0_job2_0).f((*__THE_0_job2_0).x, (struct __THE_1_fn$1P) {*__THE_0_refA_0});
-}
-void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn$3 *n, struct __THE_1_mainSDjobLocal1_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDjobLocal1_0X);
-  struct __THE_1_mainSDjobLocal1_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDjobLocal1_0;
-  n->x = r;
-  n->l = l;
 }
 
 int main () {

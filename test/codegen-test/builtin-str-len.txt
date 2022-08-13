@@ -148,8 +148,8 @@ struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
 void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
 struct str __THE_1_testCall_0 (void *);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtestCtx_0 (void *);
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
+void __THE_1_mainSDtestCtx_0 (void *);
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_test2) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
@@ -180,6 +180,14 @@ struct str __THE_1_testCall_0 (void *px) {
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
   free(n.x);
 }
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
+  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtestCtx_0;
+  n->x = r;
+  n->l = l;
+}
 void __THE_1_mainSDtestCtx_0 (void *px) {
   struct __THE_1_mainSDtestCtx_0X *x = px;
   struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
@@ -196,14 +204,6 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   const int32_t __THE_0_b09_0 = str_len((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
   const int32_t __THE_0_b10_0 = str_len(str_copy(*__THE_0_test_0));
   const int32_t __THE_0_b11_0 = str_len(str_copy(**__THE_0_refTest_0));
-}
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
-  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtestCtx_0;
-  n->x = r;
-  n->l = l;
 }
 
 int main () {

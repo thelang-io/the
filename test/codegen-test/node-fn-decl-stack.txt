@@ -42,17 +42,11 @@ struct __THE_1_mainSDtest_0X {
 };
 
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$0P);
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest_0X);
+void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$0P);
 
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   free(n.x);
-}
-void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$0P p) {
-  struct __THE_1_mainSDtest_0X *x = px;
-  int32_t *__THE_0_a_0 = x->__THE_0_a_0;
-  const int32_t __THE_0_newA_0 = p.n0;
-  *__THE_0_a_0 = __THE_0_newA_0;
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);
@@ -61,6 +55,12 @@ void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDte
   n->f = &__THE_1_mainSDtest_0;
   n->x = r;
   n->l = l;
+}
+void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$0P p) {
+  struct __THE_1_mainSDtest_0X *x = px;
+  int32_t *__THE_0_a_0 = x->__THE_0_a_0;
+  const int32_t __THE_0_newA_0 = p.n0;
+  *__THE_0_a_0 = __THE_0_newA_0;
 }
 
 int main () {

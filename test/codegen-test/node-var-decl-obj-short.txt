@@ -1,0 +1,48 @@
+======= stdin =======
+obj Test {
+  a: int
+}
+
+main {
+  a := Test{a: 1}
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  int32_t __THE_0_a;
+};
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  r->__THE_0_a = __THE_0_a;
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  free(o);
+}
+
+int main () {
+  const struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc(1);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

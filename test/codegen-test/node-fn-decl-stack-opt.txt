@@ -1,0 +1,99 @@
+======= stdin =======
+main {
+  mut a: int? = 1
+
+  fn test (newA: int?) {
+    a = newA
+  }
+
+  test(nil)
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_mainSDtest_0X;
+
+struct __THE_1_fn$0P {
+  int32_t *n0;
+};
+struct __THE_1_fn$0 {
+  void (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDtest_0X {
+  int32_t **__THE_0_a_0;
+};
+
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+int32_t *__THE_1_opt_int_realloc (int32_t *, int32_t *);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest_0X);
+void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$0P);
+
+int32_t *__THE_1_opt_int_alloc (int32_t n) {
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = n;
+  return r;
+}
+int32_t *__THE_1_opt_int_copy (const int32_t *n) {
+  if (n == NULL) return NULL;
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = *n;
+  return r;
+}
+void __THE_1_opt_int_free (int32_t *n) {
+  if (n == NULL) return;
+  free(n);
+}
+int32_t *__THE_1_opt_int_realloc (int32_t *n1, int32_t *n2) {
+  __THE_1_opt_int_free(n1);
+  return n2;
+}
+void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+  free(n.x);
+}
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDtest_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtest_0X);
+  struct __THE_1_mainSDtest_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtest_0;
+  n->x = r;
+  n->l = l;
+}
+void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$0P p) {
+  struct __THE_1_mainSDtest_0X *x = px;
+  int32_t **__THE_0_a_0 = x->__THE_0_a_0;
+  const int32_t *__THE_0_newA_0 = p.n0;
+  *__THE_0_a_0 = __THE_1_opt_int_realloc(*__THE_0_a_0, __THE_1_opt_int_copy(__THE_0_newA_0));
+  __THE_1_opt_int_free((int32_t *) __THE_0_newA_0);
+}
+
+int main () {
+  int32_t *__THE_0_a_0 = __THE_1_opt_int_alloc(1);
+  const struct __THE_1_fn$0 __THE_0_mainSDtest_0;
+  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$0 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
+  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$0P) {NULL});
+  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_mainSDtest_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

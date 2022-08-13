@@ -77,7 +77,7 @@ char *str_at (struct str s, int64_t i) {
     fprintf(stderr, "Error: index %" PRId64 " out of string bounds\n", i);
     exit(EXIT_FAILURE);
   }
-  return i < 0 ? &s.d[s.l + (size_t) i] : &s.d[(size_t) i];
+  return i < 0 ? &s.d[s.l + i] : &s.d[i];
 }
 void str_free (struct str s) {
   free(s.d);

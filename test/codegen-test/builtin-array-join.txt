@@ -63,7 +63,6 @@ struct str {
 void *alloc (size_t);
 struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
-struct str ref_str (void *);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -111,11 +110,6 @@ void print (FILE *stream, const char *fmt, ...) {
     }
   }
   va_end(args);
-}
-struct str ref_str (void *p) {
-  char buf[512];
-  sprintf(buf, "%p", p);
-  return str_alloc(buf);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -197,6 +191,7 @@ void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *);
 struct str __THE_1_TestObj_0_str (struct __THE_1_TestObj_0 *);
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
+struct str __THE_1_fn$0_str (struct __THE_1_fn$0);
 void __THE_1_fn1_0 (void *);
 void __THE_1_fn2_0 (void *);
 void __THE_1_fn3_0 (void *);
@@ -254,6 +249,9 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   free(n.x);
+}
+struct str __THE_1_fn$0_str (struct __THE_1_fn$0 n) {
+  return str_alloc("[Function]");
 }
 void __THE_1_fn1_0 (void *px) {
 }
@@ -353,7 +351,7 @@ struct str __THE_1_array_fn$0_join (struct __THE_1_array_fn$0 n, unsigned char o
   struct str r = str_alloc("");
   for (size_t i = 0; i < n.l; i++) {
     if (i != 0) r = str_concat_str(r, str_copy(x));
-    r = str_concat_cstr(r, "[Function: (anonymous)]");
+    r = str_concat_str(r, __THE_1_fn$0_str(__THE_1_fn$0_copy(n.d[i])));
   }
   str_free(x);
   __THE_1_array_fn$0_free(n);
@@ -442,7 +440,7 @@ struct str __THE_1_array_ref_int_join (struct __THE_1_array_ref_int n, unsigned 
   struct str r = str_alloc("");
   for (size_t i = 0; i < n.l; i++) {
     if (i != 0) r = str_concat_str(r, str_copy(x));
-    r = str_concat_str(r, ref_str(n.d[i]));
+    r = str_concat_str(r, int_str(*n.d[i]));
   }
   str_free(x);
   __THE_1_array_ref_int_free(n);
@@ -511,27 +509,27 @@ int main () {
 ======= flags =======
 ======= stdout =======
  [0, 1, 2] [0, 1, 2],[3, 4, 5],[6, 7, 8]
- [Function: (anonymous)] [Function: (anonymous)],[Function: (anonymous)],[Function: (anonymous)]
+ [Function] [Function],[Function],[Function]
  TestObj{a: 1} TestObj{a: 1},TestObj{a: 2},TestObj{a: 3}
  test1 test1,test2,test3
- {{----------}} {{----------}},{{----------}},{{----------}}
+ 1 1,2,3
  1 1,2,3
  [0, 1, 2] [0, 1, 2]_[3, 4, 5]_[6, 7, 8]
- [Function: (anonymous)] [Function: (anonymous)]_[Function: (anonymous)]_[Function: (anonymous)]
+ [Function] [Function]_[Function]_[Function]
  TestObj{a: 1} TestObj{a: 1}_TestObj{a: 2}_TestObj{a: 3}
  test1 test1_test2_test3
- {{----------}} {{----------}}_{{----------}}_{{----------}}
+ 1 1_2_3
  1 1_2_3
 ======= stdout-linux =======
  [0, 1, 2] [0, 1, 2],[3, 4, 5],[6, 7, 8]
- [Function: (anonymous)] [Function: (anonymous)],[Function: (anonymous)],[Function: (anonymous)]
+ [Function] [Function],[Function],[Function]
  TestObj{a: 1} TestObj{a: 1},TestObj{a: 2},TestObj{a: 3}
  test1 test1,test2,test3
- {{--------}} {{--------}},{{--------}},{{--------}}
+ 1 1,2,3
  1 1,2,3
  [0, 1, 2] [0, 1, 2]_[3, 4, 5]_[6, 7, 8]
- [Function: (anonymous)] [Function: (anonymous)]_[Function: (anonymous)]_[Function: (anonymous)]
+ [Function] [Function]_[Function]_[Function]
  TestObj{a: 1} TestObj{a: 1}_TestObj{a: 2}_TestObj{a: 3}
  test1 test1_test2_test3
- {{--------}} {{--------}}_{{--------}}_{{--------}}
+ 1 1_2_3
  1 1_2_3

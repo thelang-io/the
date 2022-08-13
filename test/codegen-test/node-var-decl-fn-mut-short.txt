@@ -1,0 +1,53 @@
+======= stdin =======
+fn test () {}
+
+main {
+  mut a := test
+}
+======= code =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_fn$0;
+
+struct __THE_1_fn$0 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_test_0 (void *);
+
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
+  if (n.x == NULL) return n;
+  void *x = alloc(n.l);
+  memcpy(x, n.x, n.l);
+  return (struct __THE_1_fn$0) {n.f, x, n.l};
+}
+void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+  free(n.x);
+}
+void __THE_1_test_0 (void *px) {
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_test_0 = (struct __THE_1_fn$0) {&__THE_1_test_0, NULL, 0};
+  struct __THE_1_fn$0 __THE_0_a_0 = __THE_1_fn$0_copy(__THE_0_test_0);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

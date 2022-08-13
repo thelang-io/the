@@ -1,0 +1,8 @@
+======= stdin =======
+main {
+  test: int = nil
+}
+======= stderr =======
+/test:2:15: E1019 - `nil` literal is not assignable to type `int`
+  2 |   test: int = nil
+    |               ^~~

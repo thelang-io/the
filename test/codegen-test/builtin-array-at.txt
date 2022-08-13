@@ -91,7 +91,7 @@ int32_t *__THE_1_array_int_at (struct __THE_1_array_int n, int64_t i) {
     fprintf(stderr, "Error: index %" PRId64 " out of array bounds\n", i);
     exit(EXIT_FAILURE);
   }
-  return i < 0 ? &n.d[n.l + (size_t) i] : &n.d[(size_t) i];
+  return i < 0 ? &n.d[n.l + i] : &n.d[i];
 }
 void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);

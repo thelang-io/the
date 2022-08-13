@@ -67,6 +67,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-call-args",
   "expr-cond",
   "expr-lit",
+  "expr-lit-nil",
   "expr-obj",
   "expr-ref",
   "expr-ref-fn",
@@ -77,6 +78,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
+  "type-optional",
   "type-variadic",
   "type-ref"
 ));
@@ -112,5 +114,8 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1014-expr-call-expected-type-fn",
   "throw-E1015-expr-obj-not-existing-prop",
   "throw-E1016-expr-array-unknown-type",
-  "throw-E1017-expr-array-incompatible-element-type"
+  "throw-E1017-expr-array-incompatible-element-type",
+  "throw-E1018-node-var-decl-unknown-nil-type",
+  "throw-E1019-node-var-decl-not-assignable-to-nil",
+  "throw-E1020-expr-binary-unknown-operand-type"
 ));

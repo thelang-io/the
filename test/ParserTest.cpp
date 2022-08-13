@@ -132,6 +132,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-cond-associativity",
   "expr-lit",
   "expr-lit-esc",
+  "expr-lit-nil",
   "expr-obj",
   "expr-obj-nested",
   "expr-obj-precedence",
@@ -146,6 +147,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
+  "type-optional",
   "type-variadic",
   "type-ref"
 ));

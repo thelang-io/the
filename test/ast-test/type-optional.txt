@@ -1,0 +1,253 @@
+======= stdin =======
+obj Test { a: int }
+
+main {
+  a: int[]?
+  b: bool?
+  c: byte?
+  d: char?
+  e: f32?
+  f: f64?
+  g: float?
+  h: i8?
+  l: i16?
+  m: i32?
+  n: i64?
+  o: int?
+  p: Test?
+  q: ref int?
+  r: (ref int)?
+  s: str?
+  t: u8?
+  u: u16?
+  v: u32?
+  w: u64?
+  x: fn () void?
+  y: (fn () void)?
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeField name="a">
+      <BuiltinType name="int" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <TypeOptional name="opt_array_int">
+          <TypeArray name="array_int">
+            <BuiltinType name="int" />
+          </TypeArray>
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" frame="2">
+        <TypeOptional name="opt_bool">
+          <BuiltinType name="bool" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="c" codeName="c_0" frame="2">
+        <TypeOptional name="opt_byte">
+          <BuiltinType name="byte" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="d" codeName="d_0" frame="2">
+        <TypeOptional name="opt_char">
+          <BuiltinType name="char" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="e" codeName="e_0" frame="2">
+        <TypeOptional name="opt_f32">
+          <BuiltinType name="f32" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="f" codeName="f_0" frame="2">
+        <TypeOptional name="opt_f64">
+          <BuiltinType name="f64" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="g" codeName="g_0" frame="2">
+        <TypeOptional name="opt_float">
+          <BuiltinType name="float" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="h" codeName="h_0" frame="2">
+        <TypeOptional name="opt_i8">
+          <BuiltinType name="i8" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="l" codeName="l_0" frame="2">
+        <TypeOptional name="opt_i16">
+          <BuiltinType name="i16" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="m" codeName="m_0" frame="2">
+        <TypeOptional name="opt_i32">
+          <BuiltinType name="i32" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="n" codeName="n_0" frame="2">
+        <TypeOptional name="opt_i64">
+          <BuiltinType name="i64" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="o" codeName="o_0" frame="2">
+        <TypeOptional name="opt_int">
+          <BuiltinType name="int" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="p" codeName="p_0" frame="2">
+        <TypeOptional name="opt_Test">
+          <TypeObj codeName="Test_0" name="Test">
+            <TypeField name="a">
+              <BuiltinType name="int" />
+            </TypeField>
+          </TypeObj>
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="q" codeName="q_0" frame="2">
+        <TypeRef name="ref_opt_int">
+          <TypeOptional name="opt_int">
+            <BuiltinType name="int" />
+          </TypeOptional>
+        </TypeRef>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="r" codeName="r_0" frame="2">
+        <TypeOptional name="opt_ref_int">
+          <TypeRef name="ref_int">
+            <BuiltinType name="int" />
+          </TypeRef>
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="s" codeName="s_0" frame="2">
+        <TypeOptional name="opt_str">
+          <BuiltinType name="str" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="t" codeName="t_0" frame="2">
+        <TypeOptional name="opt_u8">
+          <BuiltinType name="u8" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="u" codeName="u_0" frame="2">
+        <TypeOptional name="opt_u16">
+          <BuiltinType name="u16" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="v" codeName="v_0" frame="2">
+        <TypeOptional name="opt_u32">
+          <BuiltinType name="u32" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="w" codeName="w_0" frame="2">
+        <TypeOptional name="opt_u64">
+          <BuiltinType name="u64" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="x" codeName="x_0" frame="2">
+        <TypeFn name="fn$0">
+          <TypeFnReturnType>
+            <TypeOptional name="opt_void">
+              <BuiltinType name="void" />
+            </TypeOptional>
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="y" codeName="y_0" frame="2">
+        <TypeOptional name="opt_fn$1">
+          <TypeFn name="fn$1">
+            <TypeFnReturnType>
+              <BuiltinType name="void" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+</NodeMain>

@@ -24,7 +24,7 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
 }
 
 Type *Type::real (Type *type) {
-  return std::holds_alternative<TypeRef>(type->body) ? std::get<TypeRef>(type->body).refType : type;
+  return type->isRef() ? std::get<TypeRef>(type->body).refType : type;
 }
 
 Type *Type::largest (Type *a, Type *b) {
@@ -83,61 +83,31 @@ Type *Type::largest (Type *a, Type *b) {
 }
 
 Type *Type::getProp (const std::string &propName) const {
-  if (std::holds_alternative<TypeArray>(this->body)) {
-    auto typeArray = std::get<TypeArray>(this->body);
-
-    auto typeArrayField = std::find_if(typeArray.fields.begin(), typeArray.fields.end(), [&propName] (const auto &it) -> bool {
-      return it.name == propName;
-    });
-
-    if (typeArrayField == typeArray.fields.end()) {
-      throw Error("tried to get non-existing prop type");
-    }
-
-    return typeArrayField->type;
-  } else if (std::holds_alternative<TypeFn>(this->body)) {
-    throw Error("tried to get non-existing prop type");
-  } else if (std::holds_alternative<TypeRef>(this->body)) {
-    auto typeRef = std::get<TypeRef>(this->body);
-    return typeRef.refType->getProp(propName);
+  if (this->isRef()) {
+    return std::get<TypeRef>(this->body).refType->getProp(propName);
   }
 
-  auto typeObj = std::get<TypeObj>(this->body);
-
-  auto typeObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&propName] (const auto &it) -> bool {
     return it.name == propName;
   });
 
-  if (typeObjField == typeObj.fields.end()) {
+  if (typeField == this->fields.end()) {
     throw Error("tried to get non-existing prop type");
   }
 
-  return typeObjField->type;
+  return typeField->type;
 }
 
 bool Type::hasProp (const std::string &propName) const {
-  if (std::holds_alternative<TypeArray>(this->body)) {
-    auto typeArray = std::get<TypeArray>(this->body);
-
-    auto typeArrayField = std::find_if(typeArray.fields.begin(), typeArray.fields.end(), [&propName] (const auto &it) -> bool {
-      return it.name == propName;
-    });
-
-    return typeArrayField != typeArray.fields.end();
-  } else if (std::holds_alternative<TypeFn>(this->body)) {
-    return false;
-  } else if (std::holds_alternative<TypeRef>(this->body)) {
-    auto typeRef = std::get<TypeRef>(this->body);
-    return typeRef.refType->hasProp(propName);
+  if (this->isRef()) {
+    return std::get<TypeRef>(this->body).refType->hasProp(propName);
   }
 
-  auto typeObj = std::get<TypeObj>(this->body);
-
-  auto typeObjField = std::find_if(typeObj.fields.begin(), typeObj.fields.end(), [&propName] (const auto &it) -> bool {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&propName] (const auto &it) -> bool {
     return it.name == propName;
   });
 
-  return typeObjField != typeObj.fields.end();
+  return typeField != this->fields.end();
 }
 
 bool Type::isAny () const {
@@ -220,13 +190,26 @@ bool Type::isObj () const {
     !this->isChar() &&
     !this->isNumber() &&
     !this->isFn() &&
+    !this->isOpt() &&
     !this->isRef() &&
     !this->isStr() &&
     !this->isVoid()
   );
 }
 
+bool Type::isOpt () const {
+  return std::holds_alternative<TypeOptional>(this->body);
+}
+
 bool Type::isRef () const {
+  return std::holds_alternative<TypeRef>(this->body);
+}
+
+bool Type::isRefExt () const {
+  if (this->isOpt()) {
+    return std::get<TypeOptional>(this->body).type->isRef();
+  }
+
   return std::holds_alternative<TypeRef>(this->body);
 }
 
@@ -321,10 +304,21 @@ bool Type::match (const Type *type) const {
     return true;
   } else if (this->isObj()) {
     return type->isObj() && this->name == type->name;
+  } else if (this->isOpt()) { // todo test
+    if (!type->isOpt()) {
+      auto lhsOptional = std::get<TypeOptional>(this->body);
+      return lhsOptional.type->match(type);
+    }
+
+    auto lhsOptional = std::get<TypeOptional>(this->body);
+    auto rhsOptional = std::get<TypeOptional>(type->body);
+
+    return lhsOptional.type->match(rhsOptional.type);
   }
 
   return (this->name == "bool" && type->name == "bool") ||
-    (this->name == "byte" && type->name == "byte") ||
+    (this->name == "byte" && (type->name == "byte" || type->isIntNumber())) ||
+    (type->name == "byte" && (this->name == "byte" || this->isIntNumber())) ||
     (this->name == "char" && type->name == "char") ||
     (this->name == "str" && type->name == "str") ||
     (this->name == "void" && type->name == "void") ||
@@ -369,6 +363,15 @@ bool Type::matchExact (const Type *type) const {
     }
 
     return true;
+  } else if (this->isOpt() || type->isOpt()) { // todo test
+    if (!this->isOpt() || !type->isOpt()) {
+      return false;
+    }
+
+    auto lhsOptional = std::get<TypeOptional>(this->body);
+    auto rhsOptional = std::get<TypeOptional>(type->body);
+
+    return lhsOptional.type->matchExact(rhsOptional.type);
   } else if (this->isRef() || type->isRef()) {
     if (!this->isRef() || !type->isRef()) {
       return false;
@@ -386,6 +389,15 @@ bool Type::matchExact (const Type *type) const {
 bool Type::matchNice (const Type *type) const {
   if (this->name == "any") {
     return true;
+  } else if (this->isRef() || type->isRef()) {
+    if (!this->isRef() || !type->isRef()) {
+      return false;
+    }
+
+    auto lhsRef = std::get<TypeRef>(this->body);
+    auto rhsRef = std::get<TypeRef>(type->body);
+
+    return lhsRef.refType->matchNice(rhsRef.refType);
   } else if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
@@ -395,6 +407,15 @@ bool Type::matchNice (const Type *type) const {
     auto rhsArray = std::get<TypeArray>(type->body);
 
     return lhsArray.elementType->matchNice(rhsArray.elementType);
+  } else if (this->isOpt() || type->isOpt()) { // todo test
+    if (!this->isOpt() || !type->isOpt()) {
+      return false;
+    }
+
+    auto lhsOptional = std::get<TypeOptional>(this->body);
+    auto rhsOptional = std::get<TypeOptional>(type->body);
+
+    return lhsOptional.type->matchExact(rhsOptional.type);
   } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -423,19 +444,11 @@ bool Type::matchNice (const Type *type) const {
     return true;
   } else if (this->isObj()) {
     return type->isObj() && this->name == type->name;
-  } else if (this->isRef() || type->isRef()) {
-    if (!this->isRef() || !type->isRef()) {
-      return false;
-    }
-
-    auto lhsRef = std::get<TypeRef>(this->body);
-    auto rhsRef = std::get<TypeRef>(type->body);
-
-    return lhsRef.refType->matchNice(rhsRef.refType);
   }
 
   return (this->name == "bool" && type->name == "bool") ||
-    (this->name == "byte" && type->name == "byte") ||
+    (this->name == "byte" && (type->name == "byte" || type->isIntNumber())) ||
+    (type->name == "byte" && (this->name == "byte" || this->isIntNumber())) ||
     (this->name == "char" && type->name == "char") ||
     (this->name == "str" && type->name == "str") ||
     (this->name == "void" && type->name == "void") ||
@@ -449,13 +462,15 @@ std::string Type::xml (std::size_t indent) const {
 
   auto typeName = std::string("Type");
 
-  if (std::holds_alternative<TypeArray>(this->body)) {
+  if (this->isArray()) {
     typeName += "Array";
-  } else if (std::holds_alternative<TypeFn>(this->body)) {
+  } else if (this->isFn()) {
     typeName += "Fn";
-  } else if (std::holds_alternative<TypeObj>(this->body)) {
+  } else if (this->isObj()) {
     typeName += "Obj";
-  } else if (std::holds_alternative<TypeRef>(this->body)) {
+  } else if (this->isOpt()) {
+    typeName += "Optional";
+  } else if (this->isRef()) {
     typeName += "Ref";
   }
 
@@ -465,10 +480,10 @@ std::string Type::xml (std::size_t indent) const {
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
   result += ">" EOL;
 
-  if (std::holds_alternative<TypeArray>(this->body)) {
+  if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
     result += typeArray.elementType->xml(indent + 2) + EOL;
-  } else if (std::holds_alternative<TypeFn>(this->body)) {
+  } else if (this->isFn()) {
     auto typeFn = std::get<TypeFn>(this->body);
 
     if (!typeFn.params.empty()) {
@@ -492,15 +507,20 @@ std::string Type::xml (std::size_t indent) const {
     result += std::string(indent + 2, ' ') + "<TypeFnReturnType>" EOL;
     result += typeFn.returnType->xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeFnReturnType>" EOL;
-  } else if (std::holds_alternative<TypeObj>(this->body)) {
-    auto typeObj = std::get<TypeObj>(this->body);
+  } else if (this->isObj()) {
+    for (const auto &typeField : this->fields) {
+      if (typeField.builtin) {
+        continue;
+      }
 
-    for (const auto &typeObjField : typeObj.fields) {
-      result += std::string(indent + 2, ' ') + R"(<TypeField name=")" + typeObjField.name + R"(">)" EOL;
-      result += typeObjField.type->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + R"(<TypeField name=")" + typeField.name + R"(">)" EOL;
+      result += typeField.type->xml(indent + 4) + EOL;
       result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
     }
-  } else if (std::holds_alternative<TypeRef>(this->body)) {
+  } else if (this->isOpt()) {
+    auto typeOptional = std::get<TypeOptional>(this->body);
+    result += typeOptional.type->xml(indent + 2) + EOL;
+  } else if (this->isRef()) {
     auto typeRef = std::get<TypeRef>(this->body);
     result += typeRef.refType->xml(indent + 2) + EOL;
   }

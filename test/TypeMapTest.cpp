@@ -133,11 +133,11 @@ TEST_F(TypeMapTest, FunctionDoesNotInsertExact) {
 }
 
 TEST_F(TypeMapTest, GetReturnsItem) {
-  this->tm_.obj("Test", "Test");
   this->tm_.fn("test", {}, this->tm_.get("void"));
+  this->tm_.obj("Test", "Test");
 
-  EXPECT_NO_THROW(this->tm_.get("Test"));
   EXPECT_NO_THROW(this->tm_.get("fn$0"));
+  EXPECT_NO_THROW(this->tm_.get("Test"));
 }
 
 TEST_F(TypeMapTest, GetReturnsNull) {
@@ -145,11 +145,11 @@ TEST_F(TypeMapTest, GetReturnsNull) {
 }
 
 TEST_F(TypeMapTest, HasExisting) {
-  this->tm_.obj("Test", "Test");
   this->tm_.fn("test", {}, this->tm_.get("void"));
+  this->tm_.obj("Test", "Test");
 
-  EXPECT_TRUE(this->tm_.has("Test"));
   EXPECT_TRUE(this->tm_.has("fn$0"));
+  EXPECT_TRUE(this->tm_.has("Test"));
 }
 
 TEST_F(TypeMapTest, HasNotExisting) {
@@ -181,13 +181,13 @@ TEST_F(TypeMapTest, NameGeneratesValid) {
 }
 
 TEST_F(TypeMapTest, ObjectInserts) {
-  this->tm_.obj("Test1", "Test1_0");
+  auto type1 = this->tm_.obj("Test1", "Test1_0");
 
-  this->tm_.obj("Test2", "Test2_0", {
+  auto type2 = this->tm_.obj("Test2", "Test2_0", {
     TypeField{"a", this->tm_.get("int")}
   });
 
-  this->tm_.obj("Test3", "Test3_0", {
+  auto type3 = this->tm_.obj("Test3", "Test3_0", {
     TypeField{"b", this->tm_.get("any")},
     TypeField{"c", this->tm_.get("str")}
   });
@@ -195,23 +195,24 @@ TEST_F(TypeMapTest, ObjectInserts) {
   EXPECT_NO_THROW(this->tm_.get("Test1"));
   EXPECT_NO_THROW(this->tm_.get("Test2"));
   EXPECT_NO_THROW(this->tm_.get("Test3"));
-  EXPECT_EQ(this->tm_.get("Test1")->name, "Test1");
-  EXPECT_FALSE(this->tm_.get("Test1")->builtin);
-  EXPECT_TRUE(std::holds_alternative<TypeObj>(this->tm_.get("Test1")->body));
-
-  auto typeObj1Body = std::get<TypeObj>(this->tm_.get("Test1")->body);
-  auto typeObj2Body = std::get<TypeObj>(this->tm_.get("Test2")->body);
-  auto typeObj3Body = std::get<TypeObj>(this->tm_.get("Test3")->body);
-
-  EXPECT_EQ(typeObj1Body.fields.size(), 0);
-  EXPECT_EQ(typeObj2Body.fields.size(), 1);
-  EXPECT_EQ(typeObj3Body.fields.size(), 2);
-  EXPECT_EQ(typeObj2Body.fields[0].name, "a");
-  EXPECT_TRUE(this->tm_.get("int")->matchExact(typeObj2Body.fields[0].type));
-  EXPECT_EQ(typeObj3Body.fields[0].name, "b");
-  EXPECT_TRUE(this->tm_.get("any")->matchExact(typeObj3Body.fields[0].type));
-  EXPECT_EQ(typeObj3Body.fields[1].name, "c");
-  EXPECT_TRUE(this->tm_.get("str")->matchExact(typeObj3Body.fields[1].type));
+  EXPECT_EQ(type1->name, "Test1");
+  EXPECT_EQ(type2->name, "Test2");
+  EXPECT_EQ(type3->name, "Test3");
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_FALSE(type3->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeObj>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeObj>(type2->body));
+  EXPECT_TRUE(std::holds_alternative<TypeObj>(type3->body));
+  EXPECT_EQ(type1->fields.size(), 1);
+  EXPECT_EQ(type2->fields.size(), 2);
+  EXPECT_EQ(type3->fields.size(), 3);
+  EXPECT_EQ(type2->fields[0].name, "a");
+  EXPECT_TRUE(this->tm_.get("int")->matchExact(type2->fields[0].type));
+  EXPECT_EQ(type3->fields[0].name, "b");
+  EXPECT_TRUE(this->tm_.get("any")->matchExact(type3->fields[0].type));
+  EXPECT_EQ(type3->fields[1].name, "c");
+  EXPECT_TRUE(this->tm_.get("str")->matchExact(type3->fields[1].type));
 }
 
 TEST_F(TypeMapTest, ReferenceInserts) {

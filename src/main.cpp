@@ -98,7 +98,6 @@ int main (int argc, char *argv[]) {
       return EXIT_SUCCESS;
     }
 
-
     Codegen::compile("build/a.out", result);
     return EXIT_SUCCESS;
   } catch (const Error &err) {

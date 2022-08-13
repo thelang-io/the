@@ -98,6 +98,9 @@
 #define E1015 "E1015 - Tried setting non existing object property"
 #define E1016 "E1016 - Unable to deduce array literal type"
 #define E1017 "E1017 - Incompatible array literal element types"
+#define E1018 "E1018 - Unable to deduce optional type"
+#define E1019 "E1019 - `nil` literal is not assignable to type `@type`"
+#define E1020 "E1020 - Unable to deduce types for expression"
 
 class Error : public std::exception {
  public:

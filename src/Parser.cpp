@@ -375,6 +375,7 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
 
   if (
     tok1.type == TK_KW_FALSE ||
+    tok1.type == TK_KW_NIL ||
     tok1.type == TK_KW_TRUE ||
     tok1.type == TK_LIT_CHAR ||
     tok1.type == TK_LIT_FLOAT ||
@@ -1001,6 +1002,9 @@ ParserType Parser::_wrapType (const ParserType &type) {
 
     auto typeArray = ParserTypeArray{type};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeArray), false, type.start, this->lexer->loc});
+  } else if (tok1.type == TK_OP_QN) {
+    auto typeOptional = ParserTypeOptional{type};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeOptional), false, type.start, this->lexer->loc});
   }
 
   this->lexer->seek(loc1);

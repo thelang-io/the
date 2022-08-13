@@ -116,8 +116,8 @@ struct __THE_1_mainSDtest2_0X {
 
 struct str __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1P);
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtest2_0X);
+void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1P);
 
 struct str __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
   struct str v;
@@ -133,6 +133,14 @@ struct str __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
   free(n.x);
 }
+void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtest2_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
+  struct __THE_1_mainSDtest2_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtest2_0;
+  n->x = r;
+  n->l = l;
+}
 void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1P p) {
   struct __THE_1_mainSDtest2_0X *x = px;
   struct str *__THE_0_a_0 = x->__THE_0_a_0;
@@ -144,14 +152,6 @@ void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1P p) {
   str_free((struct str) __THE_0_c_0);
   str_free((struct str) __THE_0_b_0);
   str_free((struct str) __THE_0_a2_0);
-}
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtest2_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
-  struct __THE_1_mainSDtest2_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtest2_0;
-  n->x = r;
-  n->l = l;
 }
 
 int main () {

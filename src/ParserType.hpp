@@ -17,9 +17,10 @@
 struct ParserTypeArray;
 struct ParserTypeFn;
 struct ParserTypeId;
+struct ParserTypeOptional;
 struct ParserTypeRef;
 
-using ParserTypeBody = std::variant<ParserTypeArray, ParserTypeFn, ParserTypeId, ParserTypeRef>;
+using ParserTypeBody = std::variant<ParserTypeArray, ParserTypeFn, ParserTypeId, ParserTypeOptional, ParserTypeRef>;
 
 struct ParserType {
   std::shared_ptr<ParserTypeBody> body;
@@ -48,6 +49,10 @@ struct ParserTypeFn {
 
 struct ParserTypeId {
   Token id;
+};
+
+struct ParserTypeOptional {
+  ParserType type;
 };
 
 struct ParserTypeRef {

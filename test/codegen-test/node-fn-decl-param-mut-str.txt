@@ -1,0 +1,131 @@
+======= stdin =======
+fn test1 (mut a: str) str {
+  a += "str"
+  return a
+}
+fn test2 (mut a: str, mut b := "test") str {
+  b = a
+  a += b
+  return a
+}
+main {
+  test1("string1")
+  test2("string2")
+}
+======= code =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
+}
+
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1P;
+struct __THE_1_fn$1;
+
+struct __THE_1_fn$0P {
+  struct str n0;
+};
+struct __THE_1_fn$0 {
+  struct str (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1P {
+  struct str n0;
+  unsigned char o1;
+  struct str n1;
+};
+struct __THE_1_fn$1 {
+  struct str (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
+};
+
+struct str __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
+struct str __THE_1_test2_0 (void *, struct __THE_1_fn$1P);
+
+struct str __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
+  struct str v;
+  struct str __THE_0_a_0 = p.n0;
+  __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "str"));
+  v = str_copy(__THE_0_a_0);
+  str_free((struct str) __THE_0_a_0);
+  return v;
+}
+struct str __THE_1_test2_0 (void *px, struct __THE_1_fn$1P p) {
+  struct str v;
+  struct str __THE_0_a_0 = p.n0;
+  struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("test");
+  __THE_0_b_0 = str_realloc(__THE_0_b_0, str_copy(__THE_0_a_0));
+  __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)));
+  v = str_copy(__THE_0_a_0);
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a_0);
+  return v;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1 __THE_0_test2_0 = (struct __THE_1_fn$1) {&__THE_1_test2_0, NULL, 0};
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("string1")}));
+  str_free((struct str) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1P) {str_alloc("string2"), 0, (struct str) {}}));
+}
+======= flags =======
+======= stdout =======

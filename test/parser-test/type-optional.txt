@@ -1,0 +1,156 @@
+======= stdin =======
+main {
+  a1: int?
+  a2: (int)?
+  a3: (int?)
+  a4: int[]?
+  a5: (int[]?)
+  a6: int?[]
+  a7: (int?)[]
+  a8: (fn () void)?
+  a9: fn () int?
+  a10: fn () (int?)
+}
+======= stdout =======
+<StmtMain start="1:1" end="12:2">
+  <StmtVarDecl start="2:3" end="2:11">
+    <StmtVarDeclId>
+      <Token type="ID" val="a1" start="2:3" end="2:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeOptional start="2:7" end="2:11">
+        <TypeId start="2:7" end="2:10">
+          <Token type="ID" val="int" start="2:7" end="2:10" />
+        </TypeId>
+      </TypeOptional>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="3:3" end="3:13">
+    <StmtVarDeclId>
+      <Token type="ID" val="a2" start="3:3" end="3:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeOptional start="3:7" end="3:13">
+        <TypeId parenthesized start="3:7" end="3:12">
+          <Token type="ID" val="int" start="3:8" end="3:11" />
+        </TypeId>
+      </TypeOptional>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="4:3" end="4:13">
+    <StmtVarDeclId>
+      <Token type="ID" val="a3" start="4:3" end="4:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeOptional parenthesized start="4:7" end="4:13">
+        <TypeId start="4:8" end="4:11">
+          <Token type="ID" val="int" start="4:8" end="4:11" />
+        </TypeId>
+      </TypeOptional>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="5:3" end="5:13">
+    <StmtVarDeclId>
+      <Token type="ID" val="a4" start="5:3" end="5:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeOptional start="5:7" end="5:13">
+        <TypeArray start="5:7" end="5:12">
+          <TypeId start="5:7" end="5:10">
+            <Token type="ID" val="int" start="5:7" end="5:10" />
+          </TypeId>
+        </TypeArray>
+      </TypeOptional>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="6:3" end="6:15">
+    <StmtVarDeclId>
+      <Token type="ID" val="a5" start="6:3" end="6:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeOptional parenthesized start="6:7" end="6:15">
+        <TypeArray start="6:8" end="6:13">
+          <TypeId start="6:8" end="6:11">
+            <Token type="ID" val="int" start="6:8" end="6:11" />
+          </TypeId>
+        </TypeArray>
+      </TypeOptional>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="7:3" end="7:13">
+    <StmtVarDeclId>
+      <Token type="ID" val="a6" start="7:3" end="7:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeArray start="7:7" end="7:13">
+        <TypeOptional start="7:7" end="7:11">
+          <TypeId start="7:7" end="7:10">
+            <Token type="ID" val="int" start="7:7" end="7:10" />
+          </TypeId>
+        </TypeOptional>
+      </TypeArray>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="8:3" end="8:15">
+    <StmtVarDeclId>
+      <Token type="ID" val="a7" start="8:3" end="8:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeArray start="8:7" end="8:15">
+        <TypeOptional parenthesized start="8:7" end="8:13">
+          <TypeId start="8:8" end="8:11">
+            <Token type="ID" val="int" start="8:8" end="8:11" />
+          </TypeId>
+        </TypeOptional>
+      </TypeArray>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="9:3" end="9:20">
+    <StmtVarDeclId>
+      <Token type="ID" val="a8" start="9:3" end="9:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeOptional start="9:7" end="9:20">
+        <TypeFn parenthesized start="9:7" end="9:19">
+          <TypeFnReturnType>
+            <TypeId start="9:14" end="9:18">
+              <Token type="ID" val="void" start="9:14" end="9:18" />
+            </TypeId>
+          </TypeFnReturnType>
+        </TypeFn>
+      </TypeOptional>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="10:3" end="10:17">
+    <StmtVarDeclId>
+      <Token type="ID" val="a9" start="10:3" end="10:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeFn start="10:7" end="10:17">
+        <TypeFnReturnType>
+          <TypeOptional start="10:13" end="10:17">
+            <TypeId start="10:13" end="10:16">
+              <Token type="ID" val="int" start="10:13" end="10:16" />
+            </TypeId>
+          </TypeOptional>
+        </TypeFnReturnType>
+      </TypeFn>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="11:3" end="11:20">
+    <StmtVarDeclId>
+      <Token type="ID" val="a10" start="11:3" end="11:6" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeFn start="11:8" end="11:20">
+        <TypeFnReturnType>
+          <TypeOptional parenthesized start="11:14" end="11:20">
+            <TypeId start="11:15" end="11:18">
+              <Token type="ID" val="int" start="11:15" end="11:18" />
+            </TypeId>
+          </TypeOptional>
+        </TypeFnReturnType>
+      </TypeFn>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+</StmtMain>

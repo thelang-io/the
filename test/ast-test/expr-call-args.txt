@@ -908,7 +908,7 @@ main {
           <ExprCallArg id="b">
             <NodeExpr>
               <NodeExprType>
-                <BuiltinType name="byte" />
+                <BuiltinType name="int" />
               </NodeExprType>
               <NodeExprBody>
                 <ExprLit type="INT_DEC" value="1" />

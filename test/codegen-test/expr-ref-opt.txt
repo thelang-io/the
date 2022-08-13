@@ -1,0 +1,118 @@
+======= stdin =======
+main {
+  mut a: int? = 1
+  mut b: int? = 2
+
+  mut ref1 := ref a
+
+  ref1.str()
+  ref1 = ref b
+  ref1.str()
+
+  v4 := true ? a : ref1
+  v5 := false ? ref1 : b
+  v6 := false ? ref1 : ref1
+}
+======= code =======
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str int_str (int32_t);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+struct str __THE_1_opt_int_str (int32_t *);
+
+int32_t *__THE_1_opt_int_alloc (int32_t n) {
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = n;
+  return r;
+}
+int32_t *__THE_1_opt_int_copy (const int32_t *n) {
+  if (n == NULL) return NULL;
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = *n;
+  return r;
+}
+void __THE_1_opt_int_free (int32_t *n) {
+  if (n == NULL) return;
+  free(n);
+}
+struct str __THE_1_opt_int_str (int32_t *n) {
+  if (n == NULL) return str_alloc("nil");
+  struct str r = int_str(*n);
+  __THE_1_opt_int_free(n);
+  return r;
+}
+
+int main () {
+  int32_t *__THE_0_a_0 = __THE_1_opt_int_alloc(1);
+  int32_t *__THE_0_b_0 = __THE_1_opt_int_alloc(2);
+  int32_t **__THE_0_ref1_0 = &__THE_0_a_0;
+  str_free((struct str) __THE_1_opt_int_str(__THE_1_opt_int_copy(*__THE_0_ref1_0)));
+  __THE_0_ref1_0 = &__THE_0_b_0;
+  str_free((struct str) __THE_1_opt_int_str(__THE_1_opt_int_copy(*__THE_0_ref1_0)));
+  const int32_t *__THE_0_v4_0 = true ? __THE_1_opt_int_copy(__THE_0_a_0) : __THE_1_opt_int_copy(*__THE_0_ref1_0);
+  const int32_t *__THE_0_v5_0 = false ? __THE_1_opt_int_copy(*__THE_0_ref1_0) : __THE_1_opt_int_copy(__THE_0_b_0);
+  const int32_t **__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
+  __THE_1_opt_int_free((int32_t *) __THE_0_v5_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_v4_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_b_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

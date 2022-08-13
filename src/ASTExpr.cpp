@@ -62,6 +62,7 @@ std::string exprLitTypeStr (enum ASTExprLitType type) {
     case AST_EXPR_LIT_INT_DEC: return "INT_DEC";
     case AST_EXPR_LIT_INT_HEX: return "INT_HEX";
     case AST_EXPR_LIT_INT_OCT: return "INT_OCT";
+    case AST_EXPR_LIT_NIL: return "NIL";
     case AST_EXPR_LIT_STR: return "STR";
     default: throw Error("tried stringify unknown literal expression type");
   }

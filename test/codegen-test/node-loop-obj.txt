@@ -1,0 +1,112 @@
+======= stdin =======
+obj Test { a: int }
+
+main {
+  loop i := Test{a: 0}; i.a < 3; i.a++ {
+  }
+
+  mut a := Test{a: 0}
+  loop ; a.a < 3; a.a++ {
+  }
+
+  mut b := Test{a: 0}
+  loop ; b.a < 3; {
+    b.a++
+  }
+
+  mut c := Test{a: 0}
+  loop {
+    if c.a == 3 {
+      break
+    }
+
+    c.a++
+  }
+
+  loop d := Test{a: 0}; d.a < 3; {
+    d.a++
+  }
+
+  loop e := Test{a: 0};; e.a++ {
+    if e.a == 3 {
+      break
+    }
+  }
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  int32_t __THE_0_a;
+};
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  r->__THE_0_a = __THE_0_a;
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  free(o);
+}
+
+int main () {
+  {
+    struct __THE_1_Test_0 *__THE_0_i_0 = __THE_1_Test_0_alloc(0);
+    for (; __THE_0_i_0->__THE_0_a < 3; __THE_0_i_0->__THE_0_a++) {
+    }
+    __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_i_0);
+  }
+  struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc(0);
+  for (; __THE_0_a_0->__THE_0_a < 3; __THE_0_a_0->__THE_0_a++) {
+  }
+  struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(0);
+  while (__THE_0_b_0->__THE_0_a < 3) {
+    __THE_0_b_0->__THE_0_a++;
+  }
+  struct __THE_1_Test_0 *__THE_0_c_0 = __THE_1_Test_0_alloc(0);
+  while (1) {
+    if (__THE_0_c_0->__THE_0_a == 3) {
+      break;
+    }
+    __THE_0_c_0->__THE_0_a++;
+  }
+  {
+    struct __THE_1_Test_0 *__THE_0_d_0 = __THE_1_Test_0_alloc(0);
+    for (; __THE_0_d_0->__THE_0_a < 3;) {
+      __THE_0_d_0->__THE_0_a++;
+    }
+    __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_d_0);
+  }
+  {
+    struct __THE_1_Test_0 *__THE_0_e_0 = __THE_1_Test_0_alloc(0);
+    for (;; __THE_0_e_0->__THE_0_a++) {
+      if (__THE_0_e_0->__THE_0_a == 3) {
+        break;
+      }
+    }
+    __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_e_0);
+  }
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_c_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

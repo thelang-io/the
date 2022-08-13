@@ -17,6 +17,8 @@ std::string ParserType::xml (std::size_t indent) const {
     typeName += "Fn";
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     typeName += "Id";
+  } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
+    typeName += "Optional";
   } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
     typeName += "Ref";
   }
@@ -66,6 +68,9 @@ std::string ParserType::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     auto typeId = std::get<ParserTypeId>(*this->body);
     result += typeId.id.xml(indent + 2) + EOL;
+  } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
+    auto typeOptional = std::get<ParserTypeOptional>(*this->body);
+    result += typeOptional.type.xml(indent + 2) + EOL;
   } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
     auto typeRef = std::get<ParserTypeRef>(*this->body);
     result += typeRef.refType.xml(indent + 2) + EOL;

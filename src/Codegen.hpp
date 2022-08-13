@@ -36,7 +36,6 @@ struct CodegenBuiltins {
   bool fnI64Str = false;
   bool fnIntStr = false;
   bool fnPrint = false;
-  bool fnRefStr = false;
   bool fnStrAlloc = false;
   bool fnStrAt = false;
   bool fnStrConcatCstr = false;
@@ -86,6 +85,25 @@ struct CodegenState {
   Type *returnType = nullptr;
 };
 
+struct CodegenTypeInfo {
+  Type *type;
+  std::string typeName;
+  std::string typeCode;
+  std::string typeCodeConst;
+  std::string typeCodeTrimmed;
+  std::string typeCodeConstTrimmed;
+  std::string typeRefCode;
+  std::string typeRefCodeConst;
+  Type *realType;
+  std::string realTypeName;
+  std::string realTypeCode;
+  std::string realTypeCodeConst;
+  std::string realTypeCodeTrimmed;
+  std::string realTypeCodeConstTrimmed;
+  std::string realTypeRefCode;
+  std::string realTypeRefCodeConst;
+};
+
 class Codegen {
  public:
   AST *ast;
@@ -115,11 +133,13 @@ class Codegen {
   std::string _flags () const;
   std::string _node (const ASTNode &, bool = true);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
-  std::string _type (const Type *, bool, bool);
+  std::string _type (const Type *);
+  CodegenTypeInfo _typeInfo (Type *);
   std::string _typeNameArray (const Type *);
   std::string _typeNameFn (const Type *);
-  std::string _wrapNode (const ASTNode &, const std::string &) const;
-  std::string _wrapNodeExpr (const ASTNodeExpr &, const std::string &) const;
+  std::string _typeNameOpt (const Type *);
+  std::string _wrapNode (const ASTNode &, const std::string &);
+  std::string _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::string &);
 };
 
 #endif

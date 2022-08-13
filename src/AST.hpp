@@ -43,6 +43,7 @@ class AST {
   Type *_type (const ParserType &);
   ASTNode _wrapNode (const ParserStmt &, const ASTNodeBody &);
   ASTNodeExpr _wrapNodeExpr (const ParserStmtExpr &, Type *, const ASTExpr &);
+  Type *_wrapNodeExprType (const ParserStmtExpr &, Type *, Type *);
 };
 
 #endif

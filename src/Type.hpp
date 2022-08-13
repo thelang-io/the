@@ -19,11 +19,11 @@ struct Type;
 struct TypeField {
   std::string name;
   Type *type;
+  bool builtin;
 };
 
 struct TypeArray {
   Type *elementType;
-  std::vector<TypeField> fields = {};
 };
 
 struct TypeFnParam {
@@ -40,7 +40,10 @@ struct TypeFn {
 };
 
 struct TypeObj {
-  std::vector<TypeField> fields = {};
+};
+
+struct TypeOptional {
+  Type *type;
 };
 
 struct TypeRef {
@@ -50,8 +53,9 @@ struct TypeRef {
 struct Type {
   std::string name;
   std::string codeName;
-  std::variant<TypeArray, TypeFn, TypeObj, TypeRef> body;
-  bool builtin;
+  std::variant<TypeArray, TypeFn, TypeObj, TypeOptional, TypeRef> body;
+  std::vector<TypeField> fields = {};
+  bool builtin = false;
 
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
@@ -76,7 +80,9 @@ struct Type {
   bool isIntNumber () const;
   bool isNumber () const;
   bool isObj () const;
+  bool isOpt () const;
   bool isRef () const;
+  bool isRefExt () const;
   bool isSmallForVarArg () const;
   bool isStr () const;
   bool isU8 () const;

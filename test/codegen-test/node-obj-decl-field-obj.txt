@@ -1,0 +1,98 @@
+======= stdin =======
+obj Test2 {
+  b: int
+}
+
+obj Test {
+  a: Test2
+}
+
+main {
+  test1 := Test{a: Test2{b: 1}}
+  mut test2 := test1
+  test2 = Test{a: Test2{b: 2}}
+  test2.a = test1.a
+  test2.a = Test2{b: 3}
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_Test2_0;
+struct __THE_1_Test_0;
+
+struct __THE_1_Test2_0 {
+  int32_t __THE_0_b;
+};
+struct __THE_1_Test_0 {
+  struct __THE_1_Test2_0 *__THE_0_a;
+};
+
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (int32_t);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_realloc (struct __THE_1_Test2_0 *, struct __THE_1_Test2_0 *);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_Test2_0 *);
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
+
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (int32_t __THE_0_b) {
+  struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
+  r->__THE_0_b = __THE_0_b;
+  return r;
+}
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *o) {
+  struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
+  r->__THE_0_b = o->__THE_0_b;
+  return r;
+}
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
+  free(o);
+}
+struct __THE_1_Test2_0 *__THE_1_Test2_0_realloc (struct __THE_1_Test2_0 *o1, struct __THE_1_Test2_0 *o2) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o1);
+  return o2;
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_Test2_0 *__THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  r->__THE_0_a = __THE_0_a;
+  return r;
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  r->__THE_0_a = __THE_1_Test2_0_copy(o->__THE_0_a);
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o->__THE_0_a);
+  free(o);
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct __THE_1_Test_0 *o2) {
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
+  return o2;
+}
+
+int main () {
+  const struct __THE_1_Test_0 *__THE_0_test1_0 = __THE_1_Test_0_alloc(__THE_1_Test2_0_alloc(1));
+  struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_copy(__THE_0_test1_0);
+  __THE_0_test2_0 = __THE_1_Test_0_realloc(__THE_0_test2_0, __THE_1_Test_0_alloc(__THE_1_Test2_0_alloc(2)));
+  __THE_0_test2_0->__THE_0_a = __THE_1_Test2_0_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_Test2_0_copy(__THE_0_test1_0->__THE_0_a));
+  __THE_0_test2_0->__THE_0_a = __THE_1_Test2_0_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_Test2_0_alloc(3));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test1_0);
+}
+======= flags =======
+======= stdout =======

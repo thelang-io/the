@@ -1,0 +1,71 @@
+======= stdin =======
+main {
+  mut a: int? = nil
+  a = nil
+  if a == nil {
+    print()
+  }
+}
+======= stdout =======
+<StmtMain start="1:1" end="7:2">
+  <StmtVarDecl start="2:3" end="2:20" mut>
+    <StmtVarDeclId>
+      <Token type="ID" val="a" start="2:7" end="2:8" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeOptional start="2:10" end="2:14">
+        <TypeId start="2:10" end="2:13">
+          <Token type="ID" val="int" start="2:10" end="2:13" />
+        </TypeId>
+      </TypeOptional>
+    </StmtVarDeclType>
+    <StmtVarDeclInit>
+      <ExprLit start="2:17" end="2:20">
+        <Token type="KW_NIL" val="nil" start="2:17" end="2:20" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+  <ExprAssign start="3:3" end="3:10">
+    <ExprAssignLeft>
+      <ExprAccess start="3:3" end="3:4">
+        <Token type="ID" val="a" start="3:3" end="3:4" />
+      </ExprAccess>
+    </ExprAssignLeft>
+    <ExprAssignOp>
+      <Token type="OP_EQ" val="=" start="3:5" end="3:6" />
+    </ExprAssignOp>
+    <ExprAssignRight>
+      <ExprLit start="3:7" end="3:10">
+        <Token type="KW_NIL" val="nil" start="3:7" end="3:10" />
+      </ExprLit>
+    </ExprAssignRight>
+  </ExprAssign>
+  <StmtIf start="4:3" end="6:4">
+    <StmtIfCond>
+      <ExprBinary start="4:6" end="4:14">
+        <ExprBinaryLeft>
+          <ExprAccess start="4:6" end="4:7">
+            <Token type="ID" val="a" start="4:6" end="4:7" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_EQ_EQ" val="==" start="4:8" end="4:10" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprLit start="4:11" end="4:14">
+            <Token type="KW_NIL" val="nil" start="4:11" end="4:14" />
+          </ExprLit>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtIfCond>
+    <StmtIfBody>
+      <ExprCall start="5:5" end="5:12">
+        <ExprCallCallee>
+          <ExprAccess start="5:5" end="5:10">
+            <Token type="ID" val="print" start="5:5" end="5:10" />
+          </ExprAccess>
+        </ExprCallCallee>
+      </ExprCall>
+    </StmtIfBody>
+  </StmtIf>
+</StmtMain>
