@@ -1,0 +1,194 @@
+======= stdin =======
+obj TestObj {
+  a: int
+}
+
+fn testFn () {}
+
+main {
+  ;[true]
+  ;[1]
+  ;['a']
+  ;[3.14]
+  ;[testFn]
+  ;[TestObj{a: 1}]
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="TestObj_0" name="TestObj">
+    <TypeField name="a">
+      <BuiltinType name="int" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="testFn" codeName="testFn_0" frame="1">
+      <TypeFn codeName="testFn_0" name="fn$0">
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+</NodeFnDecl>
+<NodeMain>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeArray name="array_bool">
+        <BuiltinType name="bool" />
+      </TypeArray>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprArray>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="bool" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprLit type="BOOL" value="true" />
+          </NodeExprBody>
+        </NodeExpr>
+      </ExprArray>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeArray name="array_int">
+        <BuiltinType name="int" />
+      </TypeArray>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprArray>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="int" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprLit type="INT_DEC" value="1" />
+          </NodeExprBody>
+        </NodeExpr>
+      </ExprArray>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeArray name="array_char">
+        <BuiltinType name="char" />
+      </TypeArray>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprArray>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="char" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprLit type="CHAR" value="'a'" />
+          </NodeExprBody>
+        </NodeExpr>
+      </ExprArray>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeArray name="array_float">
+        <BuiltinType name="float" />
+      </TypeArray>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprArray>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="float" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprLit type="FLOAT" value="3.14" />
+          </NodeExprBody>
+        </NodeExpr>
+      </ExprArray>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeArray name="array_fn$0">
+        <TypeFn codeName="testFn_0" name="fn$0">
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </TypeArray>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprArray>
+        <NodeExpr>
+          <NodeExprType>
+            <TypeFn codeName="testFn_0" name="fn$0">
+              <TypeFnReturnType>
+                <BuiltinType name="void" />
+              </TypeFnReturnType>
+            </TypeFn>
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprAccess>
+              <Var name="testFn" codeName="testFn_0" frame="1">
+                <TypeFn codeName="testFn_0" name="fn$0">
+                  <TypeFnReturnType>
+                    <BuiltinType name="void" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </Var>
+            </ExprAccess>
+          </NodeExprBody>
+        </NodeExpr>
+      </ExprArray>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeArray name="array_TestObj">
+        <TypeObj codeName="TestObj_0" name="TestObj">
+          <TypeField name="a">
+            <BuiltinType name="int" />
+          </TypeField>
+        </TypeObj>
+      </TypeArray>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprArray>
+        <NodeExpr>
+          <NodeExprType>
+            <TypeObj codeName="TestObj_0" name="TestObj">
+              <TypeField name="a">
+                <BuiltinType name="int" />
+              </TypeField>
+            </TypeObj>
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprObj>
+              <ExprObjType>
+                <TypeObj codeName="TestObj_0" name="TestObj">
+                  <TypeField name="a">
+                    <BuiltinType name="int" />
+                  </TypeField>
+                </TypeObj>
+              </ExprObjType>
+              <ExprObjProps>
+                <ExprObjProp id="a">
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="int" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprLit type="INT_DEC" value="1" />
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprObjProp>
+              </ExprObjProps>
+            </ExprObj>
+          </NodeExprBody>
+        </NodeExpr>
+      </ExprArray>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

@@ -184,7 +184,7 @@ struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
     if (i != 0) r = str_concat_cstr(r, ", ");
     r = str_concat_str(r, int_str(n.d[i]));
   }
-  __THE_1_array_int_free(n);
+  __THE_1_array_int_free((struct __THE_1_array_int) n);
   return str_concat_cstr(r, "]");
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
@@ -203,7 +203,7 @@ struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str 
   return (struct __THE_1_array_str) {d, n.l};
 }
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
-  for (size_t i = 0; i < n.l; i++) str_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
 struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
@@ -214,7 +214,7 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
     r = str_concat_str(r, str_escape(n.d[i]));
     r = str_concat_cstr(r, "\"");
   }
-  __THE_1_array_str_free(n);
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
   return str_concat_cstr(r, "]");
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_array_int __THE_0_a, struct __THE_1_array_str __THE_0_b) {
@@ -244,7 +244,7 @@ struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *o) {
   r = str_concat_str(r, __THE_1_array_int_str(__THE_1_array_int_copy(o->__THE_0_a)));
   r = str_concat_cstr(r, ", b: ");
   r = str_concat_str(r, __THE_1_array_str_str(__THE_1_array_str_copy(o->__THE_0_b)));
-  __THE_1_Test_0_free(o);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o);
   return str_concat_cstr(r, "}");
 }
 

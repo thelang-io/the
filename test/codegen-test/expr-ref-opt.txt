@@ -95,7 +95,7 @@ void __THE_1_opt_int_free (int32_t *n) {
 struct str __THE_1_opt_int_str (int32_t *n) {
   if (n == NULL) return str_alloc("nil");
   struct str r = int_str(*n);
-  __THE_1_opt_int_free(n);
+  __THE_1_opt_int_free((int32_t *) n);
   return r;
 }
 

@@ -178,7 +178,7 @@ struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", age: ");
   r = str_concat_str(r, int_str(o->__THE_0_age));
-  __THE_1_Human_0_free(o);
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o);
   return str_concat_cstr(r, "}");
 }
 int32_t __THE_1_b_0 (void *px) {

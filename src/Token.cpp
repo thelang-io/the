@@ -11,6 +11,7 @@
 
 std::string tokenTypeToStr (TokenType type) {
   switch (type) {
+    case TK_UNKNOWN: return "UNKNOWN";
     case TK_EOF: return "EOF";
     case TK_ID: return "ID";
     case TK_KW_BREAK: return "KW_BREAK";
@@ -94,8 +95,9 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_STAR: return "OP_STAR";
     case TK_OP_STAR_EQ: return "OP_STAR_EQ";
     case TK_OP_TILDE: return "OP_TILDE";
-    default: throw Error("tried stringify unknown token");
   }
+
+  throw Error("tried stringify unknown token");
 }
 
 std::string Token::escape (const std::string &val, bool insideAttr) {

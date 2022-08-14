@@ -163,7 +163,7 @@ struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *o) {
   r = str_concat_cstr(r, ", d: \"");
   r = str_concat_str(r, str_escape(o->__THE_0_d));
   r = str_concat_cstr(r, "\"");
-  __THE_1_Test_0_free(o);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o);
   return str_concat_cstr(r, "}");
 }
 

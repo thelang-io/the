@@ -81,7 +81,7 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 }
 size_t __THE_1_array_int_len (struct __THE_1_array_int n) {
   size_t l = n.l;
-  __THE_1_array_int_free(n);
+  __THE_1_array_int_free((struct __THE_1_array_int) n);
   return l;
 }
 void __THE_1_array_int_push (struct __THE_1_array_int *n, size_t x, ...) {

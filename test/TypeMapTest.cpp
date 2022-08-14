@@ -215,15 +215,46 @@ TEST_F(TypeMapTest, ObjectInserts) {
   EXPECT_TRUE(this->tm_.get("str")->matchExact(type3->fields[1].type));
 }
 
+TEST_F(TypeMapTest, OptionalInserts) {
+  auto type1 = this->tm_.opt(this->tm_.get("int"));
+  auto type2 = this->tm_.opt(this->tm_.get("str"));
+
+  EXPECT_NO_THROW(this->tm_.get("opt_int"));
+  EXPECT_NO_THROW(this->tm_.get("opt_str"));
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeOptional>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeOptional>(type2->body));
+  EXPECT_TRUE(this->tm_.get("int")->matchExact(std::get<TypeOptional>(type1->body).type));
+  EXPECT_TRUE(this->tm_.get("str")->matchExact(std::get<TypeOptional>(type2->body).type));
+}
+
+TEST_F(TypeMapTest, OptionalDoesNotInsertExact) {
+  auto type1 = this->tm_.opt(this->tm_.get("int"));
+  auto type2 = this->tm_.opt(this->tm_.get("int"));
+
+  EXPECT_EQ(type1->name, "opt_int");
+  EXPECT_EQ(type1->name, type2->name);
+  EXPECT_EQ(type1, type2);
+}
+
 TEST_F(TypeMapTest, ReferenceInserts) {
+  auto type1 = this->tm_.ref(this->tm_.get("int"));
+  auto type2 = this->tm_.ref(this->tm_.get("str"));
+
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeRef>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeRef>(type2->body));
+  EXPECT_TRUE(this->tm_.get("int")->matchExact(std::get<TypeRef>(type1->body).refType));
+  EXPECT_TRUE(this->tm_.get("str")->matchExact(std::get<TypeRef>(type2->body).refType));
+}
+
+TEST_F(TypeMapTest, ReferenceDoesNotInsertExact) {
   auto type1 = this->tm_.ref(this->tm_.get("int"));
   auto type2 = this->tm_.ref(this->tm_.get("int"));
 
-  EXPECT_FALSE(type1->builtin);
-  EXPECT_TRUE(std::holds_alternative<TypeRef>(type1->body));
-
-  auto ref1Body = std::get<TypeRef>(type1->body);
-
-  EXPECT_TRUE(this->tm_.get("int")->matchExact(ref1Body.refType));
+  EXPECT_EQ(type1->name, "ref_int");
+  EXPECT_EQ(type1->name, type2->name);
   EXPECT_EQ(type1, type2);
 }

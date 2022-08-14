@@ -79,6 +79,10 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
   auto result = ASTBlock{};
 
   for (const auto &stmt : block) {
+    if (std::holds_alternative<ParserStmtEmpty>(*stmt.body)) {
+      continue;
+    }
+
     result.push_back(this->_node(stmt, varStack));
   }
 
@@ -463,9 +467,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     auto exprCondOperandsType = static_cast<Type *>(nullptr);
 
     try {
-      exprCondOperandsType = this->_nodeExprType(parserExprCond.body, nullptr);
+      exprCondOperandsType = this->_nodeExprType(parserExprCond.body, targetType);
     } catch (const Error &err) {
-      exprCondOperandsType = this->_nodeExprType(parserExprCond.alt, nullptr);
+      exprCondOperandsType = this->_nodeExprType(parserExprCond.alt, targetType);
     }
 
     auto exprCondBody = this->_nodeExpr(parserExprCond.body, exprCondOperandsType, varStack);
@@ -585,8 +589,6 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       realTargetType = targetType;
     } else if (targetType != nullptr && targetType->isOpt() && std::get<TypeOptional>(targetType->body).type->isArray()) {
       realTargetType = std::get<TypeOptional>(targetType->body).type;
-    } else if (targetType != nullptr && targetType->isRef() && std::get<TypeRef>(targetType->body).refType->isArray()) {
-      realTargetType = std::get<TypeRef>(targetType->body).refType;
     }
 
     auto exprArray = std::get<ParserExprArray>(*stmtExpr.body);
@@ -668,16 +670,16 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     auto exprCondAltType = static_cast<Type *>(nullptr);
 
     try {
-      exprCondBodyType = this->_nodeExprType(exprCond.body, nullptr);
+      exprCondBodyType = this->_nodeExprType(exprCond.body, targetType);
     } catch (const Error &err1) {
       try {
-        exprCondAltType = this->_nodeExprType(exprCond.alt, nullptr);
+        exprCondAltType = this->_nodeExprType(exprCond.alt, targetType);
       } catch (const Error &err2) {
       }
     }
 
     if (exprCondBodyType == nullptr && exprCondAltType == nullptr) {
-      throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1020);
+      throw Error(this->reader, exprCond.body.start, exprCond.alt.end, E1020);
     } else if (exprCondBodyType == nullptr) {
       exprCondBodyType = this->_nodeExprType(exprCond.body, exprCondAltType);
     } else if (exprCondAltType == nullptr) {
@@ -685,9 +687,9 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     }
 
     if (Type::real(exprCondBodyType)->isOpt() && !Type::real(exprCondAltType)->isOpt()) {
-      exprCondAltType = this->typeMap.optional(Type::real(exprCondAltType));
+      exprCondAltType = this->typeMap.opt(Type::real(exprCondAltType));
     } else if (Type::real(exprCondAltType)->isOpt() && !Type::real(exprCondBodyType)->isOpt()) {
-      exprCondBodyType = this->typeMap.optional(Type::real(exprCondBodyType));
+      exprCondBodyType = this->typeMap.opt(Type::real(exprCondBodyType));
     }
 
     if (exprCondBodyType->isNumber() && exprCondAltType->isNumber()) {
@@ -800,7 +802,7 @@ Type *AST::_type (const ParserType &type) {
     auto typeOptional = std::get<ParserTypeOptional>(*type.body);
     auto typeType = this->_type(typeOptional.type);
 
-    return this->typeMap.optional(typeType);
+    return this->typeMap.opt(typeType);
   } else if (std::holds_alternative<ParserTypeRef>(*type.body)) {
     auto typeRef = std::get<ParserTypeRef>(*type.body);
     auto refType = this->_type(typeRef.refType);

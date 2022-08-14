@@ -1,6 +1,0 @@
-======= stdin =======
-loop i = 0 , i < 2 , i++ {}
-======= stderr =======
-/test:1:12: E0107 - Unexpected token after loop initialization
-  1 | loop i = 0 , i < 2 , i++ {}
-    |            ^

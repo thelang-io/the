@@ -14,6 +14,7 @@ class TypeTest : public testing::Test {
   Type *arr_;
   Type *fn_;
   Type *obj_;
+  Type *opt_;
   Type *ref_;
   TypeMap tm_;
 
@@ -30,6 +31,7 @@ class TypeTest : public testing::Test {
       TypeField{"a", this->tm_.get("int")}
     });
 
+    this->opt_ = this->tm_.opt(this->tm_.get("int"));
     this->ref_ = this->tm_.ref(this->tm_.get("int"));
   }
 };
@@ -212,6 +214,7 @@ TEST_F(TypeTest, RealOnRef) {
 TEST_F(TypeTest, GetsProp) {
   EXPECT_EQ(this->arr_->getProp("len"), this->tm_.get("int"));
   EXPECT_EQ(this->obj_->getProp("a"), this->tm_.get("int"));
+  EXPECT_NE(this->opt_->getProp("str"), nullptr);
   EXPECT_NE(this->ref_->getProp("str"), nullptr);
   EXPECT_NE(this->tm_.get("int")->getProp("str"), nullptr);
   EXPECT_EQ(this->tm_.get("str")->getProp("len"), this->tm_.get("int"));
@@ -231,6 +234,10 @@ TEST_F(TypeTest, GetsNonExistingProp) {
   }, "tried to get non-existing prop type");
 
   EXPECT_THROW_WITH_MESSAGE({
+    this->opt_->getProp("b");
+  }, "tried to get non-existing prop type");
+
+  EXPECT_THROW_WITH_MESSAGE({
     this->ref_->getProp("a");
   }, "tried to get non-existing prop type");
 
@@ -246,6 +253,7 @@ TEST_F(TypeTest, GetsNonExistingProp) {
 TEST_F(TypeTest, HasProp) {
   EXPECT_TRUE(this->arr_->hasProp("str"));
   EXPECT_TRUE(this->obj_->hasProp("a"));
+  EXPECT_TRUE(this->opt_->hasProp("str"));
   EXPECT_TRUE(this->ref_->hasProp("str"));
   EXPECT_TRUE(this->tm_.get("int")->hasProp("str"));
   EXPECT_TRUE(this->tm_.get("str")->hasProp("len"));
@@ -255,6 +263,7 @@ TEST_F(TypeTest, HasNonExistingProp) {
   EXPECT_FALSE(this->arr_->hasProp("a"));
   EXPECT_FALSE(this->fn_->hasProp("a"));
   EXPECT_FALSE(this->obj_->hasProp("b"));
+  EXPECT_FALSE(this->opt_->hasProp("b"));
   EXPECT_FALSE(this->ref_->hasProp("a"));
   EXPECT_FALSE(this->tm_.get("int")->hasProp("a"));
   EXPECT_FALSE(this->tm_.get("str")->hasProp("a"));
@@ -524,6 +533,35 @@ TEST_F(TypeTest, CheckIfNotObj) {
   EXPECT_FALSE(this->tm_.get("void")->isObj());
 }
 
+TEST_F(TypeTest, CheckIfOptional) {
+  EXPECT_TRUE(this->opt_->isOpt());
+}
+
+TEST_F(TypeTest, CheckIfNotOptional) {
+  EXPECT_FALSE(this->fn_->isOpt());
+  EXPECT_FALSE(this->obj_->isOpt());
+  EXPECT_FALSE(this->ref_->isOpt());
+
+  EXPECT_FALSE(this->tm_.get("any")->isOpt());
+  EXPECT_FALSE(this->tm_.get("bool")->isOpt());
+  EXPECT_FALSE(this->tm_.get("byte")->isOpt());
+  EXPECT_FALSE(this->tm_.get("char")->isOpt());
+  EXPECT_FALSE(this->tm_.get("f32")->isOpt());
+  EXPECT_FALSE(this->tm_.get("f64")->isOpt());
+  EXPECT_FALSE(this->tm_.get("float")->isOpt());
+  EXPECT_FALSE(this->tm_.get("i8")->isOpt());
+  EXPECT_FALSE(this->tm_.get("i16")->isOpt());
+  EXPECT_FALSE(this->tm_.get("i32")->isOpt());
+  EXPECT_FALSE(this->tm_.get("i64")->isOpt());
+  EXPECT_FALSE(this->tm_.get("int")->isOpt());
+  EXPECT_FALSE(this->tm_.get("str")->isOpt());
+  EXPECT_FALSE(this->tm_.get("u8")->isOpt());
+  EXPECT_FALSE(this->tm_.get("u16")->isOpt());
+  EXPECT_FALSE(this->tm_.get("u32")->isOpt());
+  EXPECT_FALSE(this->tm_.get("u64")->isOpt());
+  EXPECT_FALSE(this->tm_.get("void")->isOpt());
+}
+
 TEST_F(TypeTest, CheckIfRef) {
   EXPECT_TRUE(this->ref_->isRef());
 }
@@ -551,6 +589,38 @@ TEST_F(TypeTest, CheckIfNotRef) {
   EXPECT_FALSE(this->tm_.get("u32")->isRef());
   EXPECT_FALSE(this->tm_.get("u64")->isRef());
   EXPECT_FALSE(this->tm_.get("void")->isRef());
+}
+
+TEST_F(TypeTest, CheckIfRefExt) {
+  auto type1 = this->tm_.opt(this->ref_);
+
+  EXPECT_TRUE(this->ref_->isRefExt());
+  EXPECT_TRUE(type1->isRefExt());
+}
+
+TEST_F(TypeTest, CheckIfNotRefExt) {
+  EXPECT_FALSE(this->arr_->isRefExt());
+  EXPECT_FALSE(this->fn_->isRefExt());
+  EXPECT_FALSE(this->obj_->isRefExt());
+
+  EXPECT_FALSE(this->tm_.get("any")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("bool")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("byte")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("char")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("f32")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("f64")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("float")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("i8")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("i16")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("i32")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("i64")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("int")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("str")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("u8")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("u16")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("u32")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("u64")->isRefExt());
+  EXPECT_FALSE(this->tm_.get("void")->isRefExt());
 }
 
 TEST_F(TypeTest, CheckIfSmallForVarArg) {
@@ -611,6 +681,8 @@ TEST_F(TypeTest, Matches) {
 
   EXPECT_TRUE(this->tm_.get("bool")->match(this->tm_.get("bool")));
   EXPECT_TRUE(this->tm_.get("byte")->match(this->tm_.get("byte")));
+  EXPECT_TRUE(this->tm_.get("byte")->match(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("byte")));
   EXPECT_TRUE(this->tm_.get("char")->match(this->tm_.get("char")));
   EXPECT_TRUE(this->tm_.get("str")->match(this->tm_.get("str")));
   EXPECT_TRUE(this->tm_.get("void")->match(this->tm_.get("void")));
@@ -916,6 +988,17 @@ TEST_F(TypeTest, MatchesObject) {
   EXPECT_FALSE(type1->match(this->tm_.get("int")));
 }
 
+TEST_F(TypeTest, MatchesOptional) {
+  auto type1 = this->tm_.opt(this->tm_.get("int"));
+  auto type2 = this->tm_.opt(this->tm_.get("str"));
+
+  EXPECT_TRUE(type1->match(type1));
+  EXPECT_FALSE(type1->match(type2));
+  EXPECT_FALSE(type2->match(type1));
+  EXPECT_TRUE(type1->match(this->tm_.get("int")));
+  EXPECT_FALSE(this->tm_.get("int")->match(type1));
+}
+
 TEST_F(TypeTest, MatchesReference) {
   auto type1 = this->tm_.ref(this->tm_.get("int"));
   auto type2 = this->tm_.ref(this->tm_.get("int"));
@@ -1097,6 +1180,17 @@ TEST_F(TypeTest, MatchesExactObject) {
   EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
 }
 
+TEST_F(TypeTest, MatchesExactOptional) {
+  auto type1 = this->tm_.opt(this->tm_.get("int"));
+  auto type2 = this->tm_.opt(this->tm_.get("str"));
+
+  EXPECT_TRUE(type1->matchExact(type1));
+  EXPECT_FALSE(type1->matchExact(type2));
+  EXPECT_FALSE(type2->matchExact(type1));
+  EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
+  EXPECT_FALSE(this->tm_.get("int")->matchExact(type1));
+}
+
 TEST_F(TypeTest, MatchesExactReference) {
   auto type1 = this->tm_.ref(this->tm_.get("int"));
   auto type2 = this->tm_.ref(this->tm_.get("int"));
@@ -1118,6 +1212,8 @@ TEST_F(TypeTest, MatchesNice) {
 
   EXPECT_TRUE(this->tm_.get("bool")->matchNice(this->tm_.get("bool")));
   EXPECT_TRUE(this->tm_.get("byte")->matchNice(this->tm_.get("byte")));
+  EXPECT_TRUE(this->tm_.get("byte")->matchNice(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("int")->matchNice(this->tm_.get("byte")));
   EXPECT_TRUE(this->tm_.get("char")->matchNice(this->tm_.get("char")));
   EXPECT_TRUE(this->tm_.get("str")->matchNice(this->tm_.get("str")));
   EXPECT_TRUE(this->tm_.get("void")->matchNice(this->tm_.get("void")));
@@ -1421,6 +1517,17 @@ TEST_F(TypeTest, MatchesNiceObject) {
   EXPECT_FALSE(type1->matchNice(type4));
   EXPECT_FALSE(type1->matchNice(type5));
   EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
+}
+
+TEST_F(TypeTest, MatchesNiceOptional) {
+  auto type1 = this->tm_.opt(this->tm_.get("int"));
+  auto type2 = this->tm_.opt(this->tm_.get("str"));
+
+  EXPECT_TRUE(type1->matchNice(type1));
+  EXPECT_FALSE(type1->matchNice(type2));
+  EXPECT_FALSE(type2->matchNice(type1));
+  EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
+  EXPECT_FALSE(this->tm_.get("int")->matchNice(type1));
 }
 
 TEST_F(TypeTest, MatchesNiceReference) {

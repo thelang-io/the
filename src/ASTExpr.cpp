@@ -10,7 +10,7 @@
 #include "Token.hpp"
 #include "config.hpp"
 
-std::string exprAssignOpStr (enum ASTExprAssignOp op) {
+std::string exprAssignOpStr (ASTExprAssignOp op) {
   switch (op) {
     case AST_EXPR_ASSIGN_ADD: return "ADD";
     case AST_EXPR_ASSIGN_AND: return "AND";
@@ -25,11 +25,12 @@ std::string exprAssignOpStr (enum ASTExprAssignOp op) {
     case AST_EXPR_ASSIGN_OR: return "OR";
     case AST_EXPR_ASSIGN_RSHIFT: return "RSHIFT";
     case AST_EXPR_ASSIGN_SUB: return "SUB";
-    default: throw Error("tried stringify unknown assign expression operator");
   }
+
+  throw Error("tried stringify unknown assign expression operator");
 }
 
-std::string exprBinaryOpStr (enum ASTExprBinaryOp op) {
+std::string exprBinaryOpStr (ASTExprBinaryOp op) {
   switch (op) {
     case AST_EXPR_BINARY_ADD: return "ADD";
     case AST_EXPR_BINARY_AND: return "AND";
@@ -49,11 +50,12 @@ std::string exprBinaryOpStr (enum ASTExprBinaryOp op) {
     case AST_EXPR_BINARY_OR: return "OR";
     case AST_EXPR_BINARY_RSHIFT: return "RSHIFT";
     case AST_EXPR_BINARY_SUB: return "SUB";
-    default: throw Error("tried stringify unknown binary expression operator");
   }
+
+  throw Error("tried stringify unknown binary expression operator");
 }
 
-std::string exprLitTypeStr (enum ASTExprLitType type) {
+std::string exprLitTypeStr (ASTExprLitType type) {
   switch (type) {
     case AST_EXPR_LIT_BOOL: return "BOOL";
     case AST_EXPR_LIT_CHAR: return "CHAR";
@@ -64,11 +66,12 @@ std::string exprLitTypeStr (enum ASTExprLitType type) {
     case AST_EXPR_LIT_INT_OCT: return "INT_OCT";
     case AST_EXPR_LIT_NIL: return "NIL";
     case AST_EXPR_LIT_STR: return "STR";
-    default: throw Error("tried stringify unknown literal expression type");
   }
+
+  throw Error("tried stringify unknown literal expression type");
 }
 
-std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
+std::string exprUnaryOpStr (ASTExprUnaryOp op) {
   switch (op) {
     case AST_EXPR_UNARY_BIT_NOT: return "BIT_NOT";
     case AST_EXPR_UNARY_DECREMENT: return "DECREMENT";
@@ -76,8 +79,9 @@ std::string exprUnaryOpStr (enum ASTExprUnaryOp op) {
     case AST_EXPR_UNARY_MINUS: return "MINUS";
     case AST_EXPR_UNARY_NOT: return "NOT";
     case AST_EXPR_UNARY_PLUS: return "PLUS";
-    default: throw Error("tried stringify unknown unary expression operator");
   }
+
+  throw Error("tried stringify unknown unary expression operator");
 }
 
 bool ASTNodeExpr::isLit () const {

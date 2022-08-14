@@ -790,7 +790,7 @@ struct __THE_1_array_fn$0 __THE_1_array_fn$0_copy (const struct __THE_1_array_fn
   return (struct __THE_1_array_fn$0) {d, n.l};
 }
 void __THE_1_array_fn$0_free (struct __THE_1_array_fn$0 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_fn$0_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_fn$0_free((struct __THE_1_fn$0) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_i8 __THE_1_array_i8_alloc (size_t x, ...) {
@@ -899,7 +899,7 @@ struct __THE_1_array_TestObj __THE_1_array_TestObj_copy (const struct __THE_1_ar
   return (struct __THE_1_array_TestObj) {d, n.l};
 }
 void __THE_1_array_TestObj_free (struct __THE_1_array_TestObj n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_TestObj_0_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_ref_int __THE_1_array_ref_int_alloc (size_t x, ...) {
@@ -936,7 +936,7 @@ struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str 
   return (struct __THE_1_array_str) {d, n.l};
 }
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
-  for (size_t i = 0; i < n.l; i++) str_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_u8 __THE_1_array_u8_alloc (size_t x, ...) {
@@ -1027,7 +1027,7 @@ struct __THE_1_array_array_bool __THE_1_array_array_bool_copy (const struct __TH
   return (struct __THE_1_array_array_bool) {d, n.l};
 }
 void __THE_1_array_array_bool_free (struct __THE_1_array_array_bool n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_bool_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_bool_free((struct __THE_1_array_bool) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_byte __THE_1_array_array_byte_alloc (size_t x, ...) {
@@ -1046,7 +1046,7 @@ struct __THE_1_array_array_byte __THE_1_array_array_byte_copy (const struct __TH
   return (struct __THE_1_array_array_byte) {d, n.l};
 }
 void __THE_1_array_array_byte_free (struct __THE_1_array_array_byte n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_byte_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_byte_free((struct __THE_1_array_byte) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_char __THE_1_array_array_char_alloc (size_t x, ...) {
@@ -1065,7 +1065,7 @@ struct __THE_1_array_array_char __THE_1_array_array_char_copy (const struct __TH
   return (struct __THE_1_array_array_char) {d, n.l};
 }
 void __THE_1_array_array_char_free (struct __THE_1_array_array_char n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_char_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_char_free((struct __THE_1_array_char) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_f32 __THE_1_array_array_f32_alloc (size_t x, ...) {
@@ -1084,7 +1084,7 @@ struct __THE_1_array_array_f32 __THE_1_array_array_f32_copy (const struct __THE_
   return (struct __THE_1_array_array_f32) {d, n.l};
 }
 void __THE_1_array_array_f32_free (struct __THE_1_array_array_f32 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_f32_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_f32_free((struct __THE_1_array_f32) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_f64 __THE_1_array_array_f64_alloc (size_t x, ...) {
@@ -1103,7 +1103,7 @@ struct __THE_1_array_array_f64 __THE_1_array_array_f64_copy (const struct __THE_
   return (struct __THE_1_array_array_f64) {d, n.l};
 }
 void __THE_1_array_array_f64_free (struct __THE_1_array_array_f64 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_f64_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_f64_free((struct __THE_1_array_f64) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_float __THE_1_array_array_float_alloc (size_t x, ...) {
@@ -1122,7 +1122,7 @@ struct __THE_1_array_array_float __THE_1_array_array_float_copy (const struct __
   return (struct __THE_1_array_array_float) {d, n.l};
 }
 void __THE_1_array_array_float_free (struct __THE_1_array_array_float n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_float_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_float_free((struct __THE_1_array_float) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_fn$0 __THE_1_array_array_fn$0_alloc (size_t x, ...) {
@@ -1141,7 +1141,7 @@ struct __THE_1_array_array_fn$0 __THE_1_array_array_fn$0_copy (const struct __TH
   return (struct __THE_1_array_array_fn$0) {d, n.l};
 }
 void __THE_1_array_array_fn$0_free (struct __THE_1_array_array_fn$0 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_fn$0_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_fn$0_free((struct __THE_1_array_fn$0) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_i8 __THE_1_array_array_i8_alloc (size_t x, ...) {
@@ -1160,7 +1160,7 @@ struct __THE_1_array_array_i8 __THE_1_array_array_i8_copy (const struct __THE_1_
   return (struct __THE_1_array_array_i8) {d, n.l};
 }
 void __THE_1_array_array_i8_free (struct __THE_1_array_array_i8 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_i8_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_i8_free((struct __THE_1_array_i8) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_i16 __THE_1_array_array_i16_alloc (size_t x, ...) {
@@ -1179,7 +1179,7 @@ struct __THE_1_array_array_i16 __THE_1_array_array_i16_copy (const struct __THE_
   return (struct __THE_1_array_array_i16) {d, n.l};
 }
 void __THE_1_array_array_i16_free (struct __THE_1_array_array_i16 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_i16_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_i16_free((struct __THE_1_array_i16) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_i32 __THE_1_array_array_i32_alloc (size_t x, ...) {
@@ -1198,7 +1198,7 @@ struct __THE_1_array_array_i32 __THE_1_array_array_i32_copy (const struct __THE_
   return (struct __THE_1_array_array_i32) {d, n.l};
 }
 void __THE_1_array_array_i32_free (struct __THE_1_array_array_i32 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_i32_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_i32_free((struct __THE_1_array_i32) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_i64 __THE_1_array_array_i64_alloc (size_t x, ...) {
@@ -1217,7 +1217,7 @@ struct __THE_1_array_array_i64 __THE_1_array_array_i64_copy (const struct __THE_
   return (struct __THE_1_array_array_i64) {d, n.l};
 }
 void __THE_1_array_array_i64_free (struct __THE_1_array_array_i64 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_i64_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_i64_free((struct __THE_1_array_i64) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_int __THE_1_array_array_int_alloc (size_t x, ...) {
@@ -1236,7 +1236,7 @@ struct __THE_1_array_array_int __THE_1_array_array_int_copy (const struct __THE_
   return (struct __THE_1_array_array_int) {d, n.l};
 }
 void __THE_1_array_array_int_free (struct __THE_1_array_array_int n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_int_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_int_free((struct __THE_1_array_int) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_TestObj __THE_1_array_array_TestObj_alloc (size_t x, ...) {
@@ -1255,7 +1255,7 @@ struct __THE_1_array_array_TestObj __THE_1_array_array_TestObj_copy (const struc
   return (struct __THE_1_array_array_TestObj) {d, n.l};
 }
 void __THE_1_array_array_TestObj_free (struct __THE_1_array_array_TestObj n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_TestObj_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_TestObj_free((struct __THE_1_array_TestObj) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_ref_int __THE_1_array_array_ref_int_alloc (size_t x, ...) {
@@ -1274,7 +1274,7 @@ struct __THE_1_array_array_ref_int __THE_1_array_array_ref_int_copy (const struc
   return (struct __THE_1_array_array_ref_int) {d, n.l};
 }
 void __THE_1_array_array_ref_int_free (struct __THE_1_array_array_ref_int n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_ref_int_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_ref_int_free((struct __THE_1_array_ref_int) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t x, ...) {
@@ -1293,7 +1293,7 @@ struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_
   return (struct __THE_1_array_array_str) {d, n.l};
 }
 void __THE_1_array_array_str_free (struct __THE_1_array_array_str n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_str_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_str_free((struct __THE_1_array_str) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_u8 __THE_1_array_array_u8_alloc (size_t x, ...) {
@@ -1312,7 +1312,7 @@ struct __THE_1_array_array_u8 __THE_1_array_array_u8_copy (const struct __THE_1_
   return (struct __THE_1_array_array_u8) {d, n.l};
 }
 void __THE_1_array_array_u8_free (struct __THE_1_array_array_u8 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_u8_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_u8_free((struct __THE_1_array_u8) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_u16 __THE_1_array_array_u16_alloc (size_t x, ...) {
@@ -1331,7 +1331,7 @@ struct __THE_1_array_array_u16 __THE_1_array_array_u16_copy (const struct __THE_
   return (struct __THE_1_array_array_u16) {d, n.l};
 }
 void __THE_1_array_array_u16_free (struct __THE_1_array_array_u16 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_u16_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_u16_free((struct __THE_1_array_u16) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_u32 __THE_1_array_array_u32_alloc (size_t x, ...) {
@@ -1350,7 +1350,7 @@ struct __THE_1_array_array_u32 __THE_1_array_array_u32_copy (const struct __THE_
   return (struct __THE_1_array_array_u32) {d, n.l};
 }
 void __THE_1_array_array_u32_free (struct __THE_1_array_array_u32 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_u32_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_u32_free((struct __THE_1_array_u32) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_u64 __THE_1_array_array_u64_alloc (size_t x, ...) {
@@ -1369,7 +1369,7 @@ struct __THE_1_array_array_u64 __THE_1_array_array_u64_copy (const struct __THE_
   return (struct __THE_1_array_array_u64) {d, n.l};
 }
 void __THE_1_array_array_u64_free (struct __THE_1_array_array_u64 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_u64_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_u64_free((struct __THE_1_array_u64) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_bool __THE_1_array_array_array_bool_alloc (size_t x, ...) {
@@ -1382,7 +1382,7 @@ struct __THE_1_array_array_array_bool __THE_1_array_array_array_bool_alloc (size
   return (struct __THE_1_array_array_array_bool) {d, x};
 }
 void __THE_1_array_array_array_bool_free (struct __THE_1_array_array_array_bool n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_bool_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_bool_free((struct __THE_1_array_array_bool) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_byte __THE_1_array_array_array_byte_alloc (size_t x, ...) {
@@ -1395,7 +1395,7 @@ struct __THE_1_array_array_array_byte __THE_1_array_array_array_byte_alloc (size
   return (struct __THE_1_array_array_array_byte) {d, x};
 }
 void __THE_1_array_array_array_byte_free (struct __THE_1_array_array_array_byte n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_byte_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_byte_free((struct __THE_1_array_array_byte) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_char __THE_1_array_array_array_char_alloc (size_t x, ...) {
@@ -1408,7 +1408,7 @@ struct __THE_1_array_array_array_char __THE_1_array_array_array_char_alloc (size
   return (struct __THE_1_array_array_array_char) {d, x};
 }
 void __THE_1_array_array_array_char_free (struct __THE_1_array_array_array_char n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_char_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_char_free((struct __THE_1_array_array_char) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_f32 __THE_1_array_array_array_f32_alloc (size_t x, ...) {
@@ -1421,7 +1421,7 @@ struct __THE_1_array_array_array_f32 __THE_1_array_array_array_f32_alloc (size_t
   return (struct __THE_1_array_array_array_f32) {d, x};
 }
 void __THE_1_array_array_array_f32_free (struct __THE_1_array_array_array_f32 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_f32_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_f32_free((struct __THE_1_array_array_f32) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_f64 __THE_1_array_array_array_f64_alloc (size_t x, ...) {
@@ -1434,7 +1434,7 @@ struct __THE_1_array_array_array_f64 __THE_1_array_array_array_f64_alloc (size_t
   return (struct __THE_1_array_array_array_f64) {d, x};
 }
 void __THE_1_array_array_array_f64_free (struct __THE_1_array_array_array_f64 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_f64_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_f64_free((struct __THE_1_array_array_f64) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_float __THE_1_array_array_array_float_alloc (size_t x, ...) {
@@ -1447,7 +1447,7 @@ struct __THE_1_array_array_array_float __THE_1_array_array_array_float_alloc (si
   return (struct __THE_1_array_array_array_float) {d, x};
 }
 void __THE_1_array_array_array_float_free (struct __THE_1_array_array_array_float n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_float_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_float_free((struct __THE_1_array_array_float) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_fn$0 __THE_1_array_array_array_fn$0_alloc (size_t x, ...) {
@@ -1460,7 +1460,7 @@ struct __THE_1_array_array_array_fn$0 __THE_1_array_array_array_fn$0_alloc (size
   return (struct __THE_1_array_array_array_fn$0) {d, x};
 }
 void __THE_1_array_array_array_fn$0_free (struct __THE_1_array_array_array_fn$0 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_fn$0_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_fn$0_free((struct __THE_1_array_array_fn$0) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_i8 __THE_1_array_array_array_i8_alloc (size_t x, ...) {
@@ -1473,7 +1473,7 @@ struct __THE_1_array_array_array_i8 __THE_1_array_array_array_i8_alloc (size_t x
   return (struct __THE_1_array_array_array_i8) {d, x};
 }
 void __THE_1_array_array_array_i8_free (struct __THE_1_array_array_array_i8 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i8_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i8_free((struct __THE_1_array_array_i8) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_i16 __THE_1_array_array_array_i16_alloc (size_t x, ...) {
@@ -1486,7 +1486,7 @@ struct __THE_1_array_array_array_i16 __THE_1_array_array_array_i16_alloc (size_t
   return (struct __THE_1_array_array_array_i16) {d, x};
 }
 void __THE_1_array_array_array_i16_free (struct __THE_1_array_array_array_i16 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i16_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i16_free((struct __THE_1_array_array_i16) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_i32 __THE_1_array_array_array_i32_alloc (size_t x, ...) {
@@ -1499,7 +1499,7 @@ struct __THE_1_array_array_array_i32 __THE_1_array_array_array_i32_alloc (size_t
   return (struct __THE_1_array_array_array_i32) {d, x};
 }
 void __THE_1_array_array_array_i32_free (struct __THE_1_array_array_array_i32 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i32_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i32_free((struct __THE_1_array_array_i32) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_i64 __THE_1_array_array_array_i64_alloc (size_t x, ...) {
@@ -1512,7 +1512,7 @@ struct __THE_1_array_array_array_i64 __THE_1_array_array_array_i64_alloc (size_t
   return (struct __THE_1_array_array_array_i64) {d, x};
 }
 void __THE_1_array_array_array_i64_free (struct __THE_1_array_array_array_i64 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i64_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_i64_free((struct __THE_1_array_array_i64) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_int __THE_1_array_array_array_int_alloc (size_t x, ...) {
@@ -1525,7 +1525,7 @@ struct __THE_1_array_array_array_int __THE_1_array_array_array_int_alloc (size_t
   return (struct __THE_1_array_array_array_int) {d, x};
 }
 void __THE_1_array_array_array_int_free (struct __THE_1_array_array_array_int n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_int_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_int_free((struct __THE_1_array_array_int) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_TestObj __THE_1_array_array_array_TestObj_alloc (size_t x, ...) {
@@ -1538,7 +1538,7 @@ struct __THE_1_array_array_array_TestObj __THE_1_array_array_array_TestObj_alloc
   return (struct __THE_1_array_array_array_TestObj) {d, x};
 }
 void __THE_1_array_array_array_TestObj_free (struct __THE_1_array_array_array_TestObj n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_TestObj_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_TestObj_free((struct __THE_1_array_array_TestObj) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_ref_int __THE_1_array_array_array_ref_int_alloc (size_t x, ...) {
@@ -1551,7 +1551,7 @@ struct __THE_1_array_array_array_ref_int __THE_1_array_array_array_ref_int_alloc
   return (struct __THE_1_array_array_array_ref_int) {d, x};
 }
 void __THE_1_array_array_array_ref_int_free (struct __THE_1_array_array_array_ref_int n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_ref_int_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_ref_int_free((struct __THE_1_array_array_ref_int) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_str __THE_1_array_array_array_str_alloc (size_t x, ...) {
@@ -1564,7 +1564,7 @@ struct __THE_1_array_array_array_str __THE_1_array_array_array_str_alloc (size_t
   return (struct __THE_1_array_array_array_str) {d, x};
 }
 void __THE_1_array_array_array_str_free (struct __THE_1_array_array_array_str n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_str_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_str_free((struct __THE_1_array_array_str) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_u8 __THE_1_array_array_array_u8_alloc (size_t x, ...) {
@@ -1577,7 +1577,7 @@ struct __THE_1_array_array_array_u8 __THE_1_array_array_array_u8_alloc (size_t x
   return (struct __THE_1_array_array_array_u8) {d, x};
 }
 void __THE_1_array_array_array_u8_free (struct __THE_1_array_array_array_u8 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u8_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u8_free((struct __THE_1_array_array_u8) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_u16 __THE_1_array_array_array_u16_alloc (size_t x, ...) {
@@ -1590,7 +1590,7 @@ struct __THE_1_array_array_array_u16 __THE_1_array_array_array_u16_alloc (size_t
   return (struct __THE_1_array_array_array_u16) {d, x};
 }
 void __THE_1_array_array_array_u16_free (struct __THE_1_array_array_array_u16 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u16_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u16_free((struct __THE_1_array_array_u16) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_u32 __THE_1_array_array_array_u32_alloc (size_t x, ...) {
@@ -1603,7 +1603,7 @@ struct __THE_1_array_array_array_u32 __THE_1_array_array_array_u32_alloc (size_t
   return (struct __THE_1_array_array_array_u32) {d, x};
 }
 void __THE_1_array_array_array_u32_free (struct __THE_1_array_array_array_u32 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u32_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u32_free((struct __THE_1_array_array_u32) n.d[i]);
   free(n.d);
 }
 struct __THE_1_array_array_array_u64 __THE_1_array_array_array_u64_alloc (size_t x, ...) {
@@ -1616,7 +1616,7 @@ struct __THE_1_array_array_array_u64 __THE_1_array_array_array_u64_alloc (size_t
   return (struct __THE_1_array_array_array_u64) {d, x};
 }
 void __THE_1_array_array_array_u64_free (struct __THE_1_array_array_array_u64 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u64_free(n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_array_u64_free((struct __THE_1_array_array_u64) n.d[i]);
   free(n.d);
 }
 

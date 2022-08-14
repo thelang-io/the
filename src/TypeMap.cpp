@@ -80,7 +80,6 @@ Type *TypeMap::fn (const std::optional<std::string> &codeName, const std::vector
 
   auto strTypeFn = TypeFn{this->get("str")};
 
-  // todo test
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".str", "@fn.str", strTypeFn, {}, true}));
   self->fields.push_back(TypeField{"str", this->_items.back().get(), true});
 
@@ -237,14 +236,13 @@ Type *TypeMap::obj (const std::string &name, const std::string &codeName, const 
 
   auto strTypeFn = TypeFn{this->get("str")};
 
-  // todo test
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".str", "@opt.str", strTypeFn, {}, true}));
   self->fields.push_back(TypeField{"str", this->_items.back().get(), true});
 
   return self;
 }
 
-Type *TypeMap::optional (Type *type) {
+Type *TypeMap::opt (Type *type) {
   for (const auto &item : this->_items) {
     if (item->isOpt() && std::get<TypeOptional>(item->body).type->matchExact(type)) {
       return item.get();
@@ -256,7 +254,6 @@ Type *TypeMap::optional (Type *type) {
 
   auto strTypeFn = TypeFn{this->get("str")};
 
-  // todo test
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".str", "@opt.str", strTypeFn, {}, true}));
   self->fields.push_back(TypeField{"str", this->_items.back().get(), true});
 

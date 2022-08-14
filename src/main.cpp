@@ -65,28 +65,14 @@ int main (int argc, char *argv[]) {
     auto parser = Parser(&lexer);
 
     if (isParse) {
-      while (true) {
-        auto stmt = parser.next();
-
-        if (std::holds_alternative<ParserStmtEof>(*stmt.body)) {
-          break;
-        }
-
-        std::cout << stmt.xml() << std::endl;
-      }
-
+      std::cout << parser.xml();
       return EXIT_SUCCESS;
     }
 
     auto ast = AST(&parser);
 
     if (isAST) {
-      auto nodes = ast.gen();
-
-      for (const auto &node : nodes) {
-        std::cout << node.xml() << std::endl;
-      }
-
+      std::cout << ast.xml();
       return EXIT_SUCCESS;
     }
 

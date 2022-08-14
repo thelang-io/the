@@ -74,7 +74,7 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
-  __THE_1_array_int_free(n1);
+  __THE_1_array_int_free((struct __THE_1_array_int) n1);
   return n2;
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {

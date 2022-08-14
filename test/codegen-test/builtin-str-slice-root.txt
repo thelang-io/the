@@ -1,0 +1,171 @@
+======= stdin =======
+main {
+  test := "123"
+
+  test.slice()
+  test.slice(0)
+  test.slice(1)
+  test.slice(2)
+  test.slice(3)
+  test.slice(0, 0)
+  test.slice(0, 1)
+  test.slice(0, 2)
+  test.slice(0, 3)
+  test.slice(1, 0)
+  test.slice(1, 1)
+  test.slice(1, 2)
+  test.slice(1, 3)
+  test.slice(2, 0)
+  test.slice(2, 1)
+  test.slice(2, 2)
+  test.slice(2, 3)
+  test.slice(3, 0)
+  test.slice(3, 1)
+  test.slice(3, 2)
+  test.slice(3, 3)
+  test.slice(0, -1)
+  test.slice(0, -2)
+  test.slice(0, -3)
+  test.slice(1, -1)
+  test.slice(1, -2)
+  test.slice(1, -3)
+  test.slice(2, -1)
+  test.slice(2, -2)
+  test.slice(2, -3)
+  test.slice(3, -1)
+  test.slice(3, -2)
+  test.slice(3, -3)
+  test.slice(-1, 0)
+  test.slice(-1, 1)
+  test.slice(-1, 2)
+  test.slice(-1, 3)
+  test.slice(-2, 0)
+  test.slice(-2, 1)
+  test.slice(-2, 2)
+  test.slice(-2, 3)
+  test.slice(-3, 0)
+  test.slice(-3, 1)
+  test.slice(-3, 2)
+  test.slice(-3, 3)
+  test.slice(-1, -1)
+  test.slice(-1, -2)
+  test.slice(-1, -3)
+  test.slice(-2, -1)
+  test.slice(-2, -2)
+  test.slice(-2, -3)
+  test.slice(-3, -1)
+  test.slice(-3, -3)
+  test.slice(-3, -2)
+}
+======= code =======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct str str_slice (struct str, unsigned char, int64_t, unsigned char, int64_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {
+  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -s.l ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));
+  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -s.l ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));
+  if (i1 >= i2 || i1 >= s.l) {
+    free(s.d);
+    return str_alloc("");
+  }
+  size_t l = i2 - i1;
+  char *d = alloc(l);
+  for (size_t i = 0; i1 < i2; i1++) d[i++] = s.d[i1];
+  free(s.d);
+  return (struct str) {d, l};
+}
+
+int main () {
+  const struct str __THE_0_test_0 = str_alloc("123");
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 0, 0, 0, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 0, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 0, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 0, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 0, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 1, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 1, 1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 1, 2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 1, 3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 1, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 1, 1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 1, 2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 1, 3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 1, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 1, 1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 1, 2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 1, 3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 1, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 1, 1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 1, 2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 1, 3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 1, -1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 1, -2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 0, 1, -3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 1, -1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 1, -2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 1, 1, -3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 1, -1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 1, -2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 2, 1, -3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 1, -1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 1, -2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, 3, 1, -3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -1, 1, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -1, 1, 1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -1, 1, 2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -1, 1, 3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -2, 1, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -2, 1, 1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -2, 1, 2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -2, 1, 3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -3, 1, 0));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -3, 1, 1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -3, 1, 2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -3, 1, 3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -1, 1, -1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -1, 1, -2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -1, 1, -3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -2, 1, -1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -2, 1, -2));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -2, 1, -3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -3, 1, -1));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -3, 1, -3));
+  str_free((struct str) str_slice(str_copy(__THE_0_test_0), 1, -3, 1, -2));
+  str_free((struct str) __THE_0_test_0);
+}
+======= flags =======
+======= stdout =======

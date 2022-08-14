@@ -36,6 +36,8 @@ TEST_P(ParserThrowTest, Throws) {
 }
 
 INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
+  "semi",
+  "stmt-empty",
   "stmt-eof",
   "stmt-expr",
   "stmt-break",
@@ -186,7 +188,6 @@ INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
   "throw-E0105-stmt-loop-unexpected-init",
   "throw-E0106-stmt-loop-semi-after-init",
-  "throw-E0107-stmt-loop-unexpected-token-after-init",
   "throw-E0108-stmt-loop-semi-after-condition",
   "throw-E0144-stmt-loop-unexpected-mut"
 ));

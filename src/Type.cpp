@@ -304,7 +304,7 @@ bool Type::match (const Type *type) const {
     return true;
   } else if (this->isObj()) {
     return type->isObj() && this->name == type->name;
-  } else if (this->isOpt()) { // todo test
+  } else if (this->isOpt()) {
     if (!type->isOpt()) {
       auto lhsOptional = std::get<TypeOptional>(this->body);
       return lhsOptional.type->match(type);
@@ -363,7 +363,7 @@ bool Type::matchExact (const Type *type) const {
     }
 
     return true;
-  } else if (this->isOpt() || type->isOpt()) { // todo test
+  } else if (this->isOpt() || type->isOpt()) {
     if (!this->isOpt() || !type->isOpt()) {
       return false;
     }
@@ -407,7 +407,7 @@ bool Type::matchNice (const Type *type) const {
     auto rhsArray = std::get<TypeArray>(type->body);
 
     return lhsArray.elementType->matchNice(rhsArray.elementType);
-  } else if (this->isOpt() || type->isOpt()) { // todo test
+  } else if (this->isOpt() || type->isOpt()) {
     if (!this->isOpt() || !type->isOpt()) {
       return false;
     }

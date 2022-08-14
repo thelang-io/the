@@ -1,0 +1,267 @@
+======= stdin =======
+main {
+  1 == 1;
+  fn test1 () {
+    return;
+  };
+  if false {};
+  loop false {
+    continue;
+    break;
+  };
+  obj Test1 {a: int};
+  a := 1;
+
+  fn testCtx () {
+    ;1 == 1
+    ;fn test2 () {
+      ;return
+    }
+    ;if false {}
+    ;loop false {
+      ;continue
+      ;break
+    }
+    ;obj Test2 {a: int}
+    ;b := 1
+  }
+
+  testCtx();
+};
+======= stdout =======
+<NodeMain>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="bool" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprBinary op="EQ">
+        <ExprBinaryLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprBinaryLeft>
+        <ExprBinaryRight>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeFnDecl>
+    <NodeFnDeclVar>
+      <Var name="test1" codeName="mainSDtest1_0" frame="2">
+        <TypeFn codeName="mainSDtest1_0" name="fn$0">
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeFnDeclVar>
+    <NodeFnDeclBody>
+      <NodeReturn />
+    </NodeFnDeclBody>
+  </NodeFnDecl>
+  <NodeIf>
+    <NodeIfCond>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="bool" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="BOOL" value="false" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeIfCond>
+  </NodeIf>
+  <NodeLoop>
+    <NodeLoopCond>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="bool" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="BOOL" value="false" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeLoopCond>
+    <NodeLoopBody>
+      <NodeContinue />
+      <NodeBreak />
+    </NodeLoopBody>
+  </NodeLoop>
+  <NodeObjDecl>
+    <TypeObj codeName="mainSDTest1_0" name="Test1">
+      <TypeField name="a">
+        <BuiltinType name="int" />
+      </TypeField>
+    </TypeObj>
+  </NodeObjDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="1" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeFnDecl>
+    <NodeFnDeclVar>
+      <Var name="testCtx" codeName="mainSDtestCtx_0" frame="2">
+        <TypeFn codeName="mainSDtestCtx_0" name="fn$0">
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeFnDeclVar>
+    <NodeFnDeclBody>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="bool" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprBinary op="EQ">
+            <ExprBinaryLeft>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryLeft>
+            <ExprBinaryRight>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </NodeExprBody>
+      </NodeExpr>
+      <NodeFnDecl>
+        <NodeFnDeclVar>
+          <Var name="test2" codeName="mainSDtestCtxSDtest2_0" frame="3">
+            <TypeFn codeName="mainSDtestCtxSDtest2_0" name="fn$0">
+              <TypeFnReturnType>
+                <BuiltinType name="void" />
+              </TypeFnReturnType>
+            </TypeFn>
+          </Var>
+        </NodeFnDeclVar>
+        <NodeFnDeclBody>
+          <NodeReturn />
+        </NodeFnDeclBody>
+      </NodeFnDecl>
+      <NodeIf>
+        <NodeIfCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="false" />
+            </NodeExprBody>
+          </NodeExpr>
+        </NodeIfCond>
+      </NodeIf>
+      <NodeLoop>
+        <NodeLoopCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="false" />
+            </NodeExprBody>
+          </NodeExpr>
+        </NodeLoopCond>
+        <NodeLoopBody>
+          <NodeContinue />
+          <NodeBreak />
+        </NodeLoopBody>
+      </NodeLoop>
+      <NodeObjDecl>
+        <TypeObj codeName="mainSDtestCtxSDTest2_0" name="Test2">
+          <TypeField name="a">
+            <BuiltinType name="int" />
+          </TypeField>
+        </TypeObj>
+      </NodeObjDecl>
+      <NodeVarDecl>
+        <NodeVarDeclVar>
+          <Var name="b" codeName="b_0" frame="3">
+            <BuiltinType name="int" />
+          </Var>
+        </NodeVarDeclVar>
+        <NodeVarDeclInit>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </NodeVarDeclInit>
+      </NodeVarDecl>
+    </NodeFnDeclBody>
+  </NodeFnDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn codeName="mainSDtestCtx_0" name="fn$0">
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testCtx" codeName="mainSDtestCtx_0" frame="2">
+                  <TypeFn codeName="mainSDtestCtx_0" name="fn$0">
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

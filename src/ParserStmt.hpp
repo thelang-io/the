@@ -13,6 +13,7 @@
 
 struct ParserStmtBreak;
 struct ParserStmtContinue;
+struct ParserStmtEmpty;
 struct ParserStmtEof;
 struct ParserStmtFnDecl;
 struct ParserStmtIf;
@@ -25,6 +26,7 @@ struct ParserStmtVarDecl;
 using ParserStmtBody = std::variant<
   ParserStmtBreak,
   ParserStmtContinue,
+  ParserStmtEmpty,
   ParserStmtEof,
   ParserStmtExpr,
   ParserStmtFnDecl,
@@ -50,6 +52,9 @@ struct ParserStmtBreak {
 };
 
 struct ParserStmtContinue {
+};
+
+struct ParserStmtEmpty {
 };
 
 struct ParserStmtEof {

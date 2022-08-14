@@ -11,13 +11,11 @@
 #include "MockReader.hpp"
 #include "utils.hpp"
 
-TEST(LexerTest, ThrowsOnUnknownToken) {
-  auto reader = testing::NiceMock<MockReader>("å");
+TEST(LexerTest, LexUnknown) {
+  auto reader = testing::NiceMock<MockReader>("∆");
   auto lexer = Lexer(&reader);
 
-  EXPECT_THROW_WITH_MESSAGE({
-    std::get<1>(lexer.next()).str();
-  }, "tried stringify unknown token");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "UNKNOWN(1:1-1:2): \xE2");
 }
 
 TEST(LexerTest, LexEof) {

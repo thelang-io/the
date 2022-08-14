@@ -406,7 +406,7 @@ struct str *__THE_1_opt_str_alloc (struct str n) {
 }
 void __THE_1_opt_str_free (struct str *n) {
   if (n == NULL) return;
-  str_free(*n);
+  str_free((struct str) *n);
   free(n);
 }
 uint8_t *__THE_1_opt_u8_alloc (uint8_t n) {

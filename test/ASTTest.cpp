@@ -37,8 +37,10 @@ TEST_P(ASTThrowTest, Throws) {
 
 INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "empty",
+  "semi",
   "node-break",
   "node-continue",
+  "node-empty",
   "node-expr",
   "node-fn-decl",
   "node-fn-decl-param-init",
@@ -61,11 +63,13 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-access-prop",
   "expr-access-elem",
   "expr-array",
+  "expr-array-root",
   "expr-assign",
   "expr-binary",
   "expr-call",
   "expr-call-args",
   "expr-cond",
+  "expr-cond-opt",
   "expr-lit",
   "expr-lit-nil",
   "expr-obj",
@@ -117,5 +121,6 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1017-expr-array-incompatible-element-type",
   "throw-E1018-node-var-decl-unknown-nil-type",
   "throw-E1019-node-var-decl-not-assignable-to-nil",
-  "throw-E1020-expr-binary-unknown-operand-type"
+  "throw-E1020-expr-binary-unknown-operand-type",
+  "throw-E1020-expr-cond-unknown-operand-type"
 ));

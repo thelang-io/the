@@ -132,12 +132,12 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 }
 struct __THE_1_array_int __THE_1_array_int_reverse (struct __THE_1_array_int n) {
   if (n.l == 0) {
-    __THE_1_array_int_free(n);
+    __THE_1_array_int_free((struct __THE_1_array_int) n);
     return (struct __THE_1_array_int) {NULL, 0};
   }
   int32_t *d = alloc(n.l * sizeof(int32_t));
   for (size_t i = 0; i < n.l; i++) d[i] = n.d[n.l - i - 1];
-  __THE_1_array_int_free(n);
+  __THE_1_array_int_free((struct __THE_1_array_int) n);
   return (struct __THE_1_array_int) {d, n.l};
 }
 struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
@@ -146,7 +146,7 @@ struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
     if (i != 0) r = str_concat_cstr(r, ", ");
     r = str_concat_str(r, int_str(n.d[i]));
   }
-  __THE_1_array_int_free(n);
+  __THE_1_array_int_free((struct __THE_1_array_int) n);
   return str_concat_cstr(r, "]");
 }
 

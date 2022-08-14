@@ -6,9 +6,11 @@ main {
   a4: fn (ref int, ref (int)) (ref Test)
   a5: fn (ref int, ref fn (ref int) ref int) ref int
   a6: fn (ref int, ref (fn (ref int, ref (int)) ref int)) (ref int)
+  a7: ref int
+  a8: ref int[]
 }
 ======= stdout =======
-<StmtMain start="1:1" end="8:2">
+<StmtMain start="1:1" end="10:2">
   <StmtVarDecl start="2:3" end="2:27">
     <StmtVarDeclId>
       <Token type="ID" val="a1" start="2:3" end="2:5" />
@@ -248,6 +250,32 @@ main {
           </TypeRef>
         </TypeFnReturnType>
       </TypeFn>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="8:3" end="8:14">
+    <StmtVarDeclId>
+      <Token type="ID" val="a7" start="8:3" end="8:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeRef start="8:7" end="8:14">
+        <TypeId start="8:11" end="8:14">
+          <Token type="ID" val="int" start="8:11" end="8:14" />
+        </TypeId>
+      </TypeRef>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="9:3" end="9:16">
+    <StmtVarDeclId>
+      <Token type="ID" val="a8" start="9:3" end="9:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeRef start="9:7" end="9:16">
+        <TypeArray start="9:11" end="9:16">
+          <TypeId start="9:11" end="9:14">
+            <Token type="ID" val="int" start="9:11" end="9:14" />
+          </TypeId>
+        </TypeArray>
+      </TypeRef>
     </StmtVarDeclType>
   </StmtVarDecl>
 </StmtMain>

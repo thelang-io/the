@@ -35,7 +35,7 @@ void __THE_1_opt_int_free (int32_t *n) {
   free(n);
 }
 int32_t *__THE_1_opt_int_realloc (int32_t *n1, int32_t *n2) {
-  __THE_1_opt_int_free(n1);
+  __THE_1_opt_int_free((int32_t *) n1);
   return n2;
 }
 

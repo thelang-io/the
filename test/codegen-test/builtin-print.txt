@@ -494,7 +494,7 @@ struct str __THE_1_Test1_0_str (struct __THE_1_Test1_0 *o) {
   r = str_concat_str(r, __THE_1_Test2_0_str(__THE_1_Test2_0_copy(o->__THE_0_v1)));
   r = str_concat_cstr(r, ", v2: ");
   r = str_concat_str(r, __THE_1_fn$0_str(__THE_1_fn$0_copy(o->__THE_0_v2)));
-  __THE_1_Test1_0_free(o);
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) o);
   return str_concat_cstr(r, "}");
 }
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (bool __THE_0_t, unsigned char __THE_0_b, char __THE_0_c, float __THE_0_f1, double __THE_0_f2, double __THE_0_f, int8_t __THE_0_i1, int16_t __THE_0_i2, int32_t __THE_0_i3, int64_t __THE_0_i4, int32_t __THE_0_i, int32_t *__THE_0_p, struct str __THE_0_s, uint8_t __THE_0_u1, uint16_t __THE_0_u2, uint32_t __THE_0_u3, uint64_t __THE_0_u4) {
@@ -580,7 +580,7 @@ struct str __THE_1_Test2_0_str (struct __THE_1_Test2_0 *o) {
   r = str_concat_str(r, u32_str(o->__THE_0_u3));
   r = str_concat_cstr(r, ", u4: ");
   r = str_concat_str(r, u64_str(o->__THE_0_u4));
-  __THE_1_Test2_0_free(o);
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o);
   return str_concat_cstr(r, "}");
 }
 void __THE_1_test_0 (void *px) {

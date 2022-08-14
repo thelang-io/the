@@ -35,7 +35,6 @@
 #define E0104 "E0104 - Expected right brace"
 #define E0105 "E0105 - Unexpected statement in loop initialization"
 #define E0106 "E0106 - Expected semicolon after loop initialization"
-#define E0107 "E0107 - Unexpected token after loop initialization"
 #define E0108 "E0108 - Expected semicolon after loop condition"
 #define E0109 "E0109 - Expected right parentheses"
 #define E0110 "E0110 - Expected property name after dot"

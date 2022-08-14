@@ -29,6 +29,8 @@ std::string ParserStmt::xml (std::size_t indent) const {
     result += std::string(indent, ' ') + "<StmtBreak" + attrs + " />";
   } else if (std::holds_alternative<ParserStmtContinue>(*this->body)) {
     result += std::string(indent, ' ') + "<StmtContinue" + attrs + " />";
+  } else if (std::holds_alternative<ParserStmtEmpty>(*this->body)) {
+    result += std::string(indent, ' ') + "<StmtEmpty" + attrs + " />";
   } else if (std::holds_alternative<ParserStmtExpr>(*this->body)) {
     auto stmtExpr = std::get<ParserStmtExpr>(*this->body);
     result += stmtExpr.xml(indent);

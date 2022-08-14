@@ -1,0 +1,8 @@
+======= stdin =======
+main {
+  test := true ? nil : nil
+}
+======= stderr =======
+/test:2:18: E1020 - Unable to deduce types for expression
+  2 |   test := true ? nil : nil
+    |                  ^~~~~~~~~

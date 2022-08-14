@@ -21,7 +21,7 @@ class TypeMap {
   void init ();
   std::string name (const std::string &) const;
   Type *obj (const std::string &, const std::string &, const std::vector<TypeField> & = {});
-  Type *optional (Type *);
+  Type *opt (Type *);
   Type *ref (Type *);
 
  private:

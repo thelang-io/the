@@ -1,0 +1,7 @@
+======= stdin =======
+main {
+  ;
+}
+======= stdout =======
+<NodeMain>
+</NodeMain>
