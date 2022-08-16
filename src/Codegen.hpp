@@ -131,6 +131,14 @@ class Codegen {
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
   std::string _flags () const;
+  std::string _genEqFn (
+    const CodegenTypeInfo &,
+    const std::variant<std::string, ASTNodeExpr> &,
+    const std::variant<std::string, ASTNodeExpr> &,
+    const std::optional<std::vector<std::string> *> & = std::nullopt,
+    const std::optional<std::vector<std::string> *> & = std::nullopt,
+    bool = false
+  );
   std::string _node (const ASTNode &, bool = true);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _type (const Type *);
