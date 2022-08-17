@@ -1,0 +1,12 @@
+// features:
+//// enums | enums.str () str
+
+// globals:
+//// OS | EOL | args
+//// print (to := "stdout" | "stderr") void
+//// char_isAlpha () bool | char_isAlphaNum () bool | char_isDigit () bool
+//// char_isSpace () bool | char_repeat (times: int) str
+//// str_toUpper () str | str_toUpperFirst () str | str_lines () str[]
+//// realpathSync (path: str) str | isFileSync (path: str) bool
+//// readFileSync (path: str, encoding: str) str
+//// writeFileSync (path: str, data: str, encoding: str) void
