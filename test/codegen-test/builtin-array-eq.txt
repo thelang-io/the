@@ -236,7 +236,7 @@ void __THE_1_opt_int_free (int32_t *n) {
   free(n);
 }
 bool __THE_1_opt_int_ne (int32_t *n1, int32_t *n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 != n2 : *n1 != *n2;
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : *n1 != *n2;
   __THE_1_opt_int_free((int32_t *) n1);
   __THE_1_opt_int_free((int32_t *) n2);
   return r;

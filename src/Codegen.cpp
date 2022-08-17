@@ -881,7 +881,6 @@ std::string Codegen::_genEqFn (
       (Type::real(exprLeftExpr.type)->isOpt() && Type::real(exprRightExpr.type)->isOpt())
     ) {
       auto nodeTypeInfo = this->_typeInfo(exprLeftExpr.type);
-
       auto leftCode = this->_nodeExpr(exprLeftExpr, exprLeftExpr.type);
       auto rightCode = this->_nodeExpr(exprRightExpr, exprRightExpr.type);
 
@@ -906,11 +905,6 @@ std::string Codegen::_genEqFn (
         this->_activateBuiltin("fnStr" + eqFnNameB + "Str");
         code = "str_" + eqFnName + "_str(" + leftCode + ", " + rightCode + ")";
       }
-    } else {
-      auto leftCode = this->_nodeExpr(exprLeftExpr, exprLeftExpr.type);
-      auto rightCode = this->_nodeExpr(exprRightExpr, exprRightExpr.type);
-
-      code = leftCode + " " + eqFnOp + " " + rightCode;
     }
   }
 
@@ -1728,7 +1722,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
   } else if (std::holds_alternative<ASTExprBinary>(*nodeExpr.body)) {
     auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
 
-    if (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) {
+    if ((exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) && (
+      (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
+      (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
+      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt()) ||
+      (Type::real(exprBinary.left.type)->isStr() && Type::real(exprBinary.right.type)->isStr())
+    )) {
       auto nodeTypeInfo = this->_typeInfo(exprBinary.left.type);
       auto code = this->_genEqFn(nodeTypeInfo, exprBinary.left, exprBinary.right, std::nullopt, std::nullopt, exprBinary.op == AST_EXPR_BINARY_NE);
       return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
@@ -1773,6 +1772,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     else if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = " | ";
     else if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = " ^ ";
     else if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = " / ";
+    else if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = " == ";
     else if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = " >= ";
     else if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = " > ";
     else if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = " << ";
@@ -1780,6 +1780,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     else if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = " < ";
     else if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = " % ";
     else if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = " * ";
+    else if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = " != ";
     else if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = " || ";
     else if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = " >> ";
     else if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = " - ";
@@ -2897,7 +2898,7 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName + "_free" }};
   eqFnEntity.decl += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
   eqFnEntity.def += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-  eqFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 == n2 : ";
+  eqFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : ";
   eqFnEntity.def += this->_genEqFn(underlyingTypeInfo, "*n1", "*n2", &eqFnEntity.builtins, &eqFnEntity.entities) + ";" EOL;
   eqFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n1);" EOL;
   eqFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n2);" EOL;
@@ -2928,7 +2929,7 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName + "_free" }};
   neFnEntity.decl += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
   neFnEntity.def += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-  neFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 != n2 : ";
+  neFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : ";
   neFnEntity.def += this->_genEqFn(underlyingTypeInfo, "*n1", "*n2", &neFnEntity.builtins, &neFnEntity.entities, true) + ";" EOL;
   neFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n1);" EOL;
   neFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n2);" EOL;
@@ -3009,11 +3010,9 @@ std::string Codegen::_wrapNode ([[maybe_unused]] const ASTNode &node, const std:
 
 std::string Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const std::string &code) {
   auto result = code;
-  auto realNodeExprType = Type::real(nodeExpr.type);
-  auto realTargetType = Type::real(targetType);
 
-  if (!root && realTargetType->isOpt() && !realNodeExprType->isOpt()) {
-    auto targetTypeInfo = this->_typeInfo(realTargetType);
+  if (!root && Type::real(targetType)->isOpt() && !Type::real(nodeExpr.type)->isOpt()) {
+    auto targetTypeInfo = this->_typeInfo(Type::real(targetType));
     this->_activateEntity(targetTypeInfo.typeName + "_alloc");
     result = targetTypeInfo.typeName + "_alloc(" + code + ")";
   }

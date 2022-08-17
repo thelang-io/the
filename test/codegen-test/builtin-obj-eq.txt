@@ -17,30 +17,30 @@ main {
   intA := 1
   intB := 2
   optIntA: int? = intA
-  optIntB: int? = nil
-  optRefIntA: int? = ref intA
-  optRefIntB: int? = nil
+  optIntB: int?
+  optRefIntA: (ref int)? = ref intA
+  optRefIntB: (ref int)?
 
-  print("TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]}", TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]})
-  print("TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]}", TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]})
-  print("TestBool{a: true} == TestBool{a: true}", TestBool{a: true} == TestBool{a: true})
-  print("TestBool{a: true} != TestBool{a: false}", TestBool{a: true} != TestBool{a: false})
-  print("TestChar{a: 'a'} == TestChar{a: 'a'}", TestChar{a: 'a'} == TestChar{a: 'a'})
-  print("TestChar{a: 'a'} != TestChar{a: 'c'}", TestChar{a: 'a'} != TestChar{a: 'c'})
-  print("TestFloat{a: 3.14} == TestFloat{a: 3.14}", TestFloat{a: 3.14} == TestFloat{a: 3.14})
-  print("TestFloat{a: 3.14} != TestFloat{a: 2.16}", TestFloat{a: 3.14} != TestFloat{a: 2.16})
-  print("TestInt{a: 1} == TestInt{a: 1}", TestInt{a: 1} == TestInt{a: 1})
-  print("TestInt{a: 1} != TestInt{a: 0}", TestInt{a: 1} != TestInt{a: 0})
-  print("TestOptInt{a: optIntA} == TestOptInt{a: optIntA}", TestOptInt{a: optIntA} == TestOptInt{a: optIntA})
-  print("TestOptInt{a: optIntA} != TestOptInt{a: optIntB}", TestOptInt{a: optIntA} != TestOptInt{a: optIntB})
-  print("TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA}", TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA})
-  print("TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB}", TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB})
-  print("TestRefInt{a: ref intA} == TestRefInt{a: ref intA}", TestRefInt{a: ref intA} == TestRefInt{a: ref intA})
-  print("TestRefInt{a: ref intA} != TestRefInt{a: ref intB}", TestRefInt{a: ref intA} != TestRefInt{a: ref intB})
-  print("TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA}", TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA})
-  print("TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB}", TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB})
-  print("TestStr{a: \"test1\"} == TestStr{a: \"test1\"}", TestStr{a: "test1"} == TestStr{a: "test1"})
-  print("TestStr{a: \"test1\"} != TestStr{a: \"test2\"}", TestStr{a: "test1"} != TestStr{a: "test2"})
+  print("TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]}:", TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]})
+  print("TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]}:", TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]})
+  print("TestBool{a: true} == TestBool{a: true}:", TestBool{a: true} == TestBool{a: true})
+  print("TestBool{a: true} != TestBool{a: false}:", TestBool{a: true} != TestBool{a: false})
+  print("TestChar{a: 'a'} == TestChar{a: 'a'}:", TestChar{a: 'a'} == TestChar{a: 'a'})
+  print("TestChar{a: 'a'} != TestChar{a: 'c'}:", TestChar{a: 'a'} != TestChar{a: 'c'})
+  print("TestFloat{a: 3.14} == TestFloat{a: 3.14}:", TestFloat{a: 3.14} == TestFloat{a: 3.14})
+  print("TestFloat{a: 3.14} != TestFloat{a: 2.16}:", TestFloat{a: 3.14} != TestFloat{a: 2.16})
+  print("TestInt{a: 1} == TestInt{a: 1}:", TestInt{a: 1} == TestInt{a: 1})
+  print("TestInt{a: 1} != TestInt{a: 0}:", TestInt{a: 1} != TestInt{a: 0})
+  print("TestOptInt{a: optIntA} == TestOptInt{a: optIntA}:", TestOptInt{a: optIntA} == TestOptInt{a: optIntA})
+  print("TestOptInt{a: optIntA} != TestOptInt{a: optIntB}:", TestOptInt{a: optIntA} != TestOptInt{a: optIntB})
+  print("TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA}:", TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA})
+  print("TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB}:", TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB})
+  print("TestRefInt{a: ref intA} == TestRefInt{a: ref intA}:", TestRefInt{a: ref intA} == TestRefInt{a: ref intA})
+  print("TestRefInt{a: ref intA} != TestRefInt{a: ref intB}:", TestRefInt{a: ref intA} != TestRefInt{a: ref intB})
+  print("TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA}:", TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA})
+  print("TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB}:", TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB})
+  print("TestStr{a: \"test1\"} == TestStr{a: \"test1\"}:", TestStr{a: "test1"} == TestStr{a: "test1"})
+  print("TestStr{a: \"test1\"} != TestStr{a: \"test2\"}:", TestStr{a: "test1"} != TestStr{a: "test2"})
 }
 ======= code =======
 #include <inttypes.h>
@@ -208,6 +208,7 @@ struct __THE_1_TestOptInt_0 *__THE_1_TestOptInt_0_alloc (int32_t *);
 bool __THE_1_TestOptInt_0_eq (struct __THE_1_TestOptInt_0 *, struct __THE_1_TestOptInt_0 *);
 void __THE_1_TestOptInt_0_free (struct __THE_1_TestOptInt_0 *);
 bool __THE_1_TestOptInt_0_ne (struct __THE_1_TestOptInt_0 *, struct __THE_1_TestOptInt_0 *);
+int32_t **__THE_1_opt_ref_int_alloc (int32_t *);
 int32_t **__THE_1_opt_ref_int_copy (const int32_t **);
 bool __THE_1_opt_ref_int_eq (int32_t **, int32_t **);
 void __THE_1_opt_ref_int_free (int32_t **);
@@ -389,7 +390,7 @@ int32_t *__THE_1_opt_int_copy (const int32_t *n) {
   return r;
 }
 bool __THE_1_opt_int_eq (int32_t *n1, int32_t *n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 == n2 : *n1 == *n2;
+  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : *n1 == *n2;
   __THE_1_opt_int_free((int32_t *) n1);
   __THE_1_opt_int_free((int32_t *) n2);
   return r;
@@ -399,7 +400,7 @@ void __THE_1_opt_int_free (int32_t *n) {
   free(n);
 }
 bool __THE_1_opt_int_ne (int32_t *n1, int32_t *n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 != n2 : *n1 != *n2;
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : *n1 != *n2;
   __THE_1_opt_int_free((int32_t *) n1);
   __THE_1_opt_int_free((int32_t *) n2);
   return r;
@@ -425,6 +426,11 @@ bool __THE_1_TestOptInt_0_ne (struct __THE_1_TestOptInt_0 *o1, struct __THE_1_Te
   __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) o2);
   return r;
 }
+int32_t **__THE_1_opt_ref_int_alloc (int32_t *n) {
+  int32_t **r = alloc(sizeof(int32_t *));
+  *r = n;
+  return r;
+}
 int32_t **__THE_1_opt_ref_int_copy (const int32_t **n) {
   if (n == NULL) return NULL;
   int32_t **r = alloc(sizeof(int32_t *));
@@ -432,7 +438,7 @@ int32_t **__THE_1_opt_ref_int_copy (const int32_t **n) {
   return r;
 }
 bool __THE_1_opt_ref_int_eq (int32_t **n1, int32_t **n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 == n2 : *n1 == *n2;
+  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : *n1 == *n2;
   __THE_1_opt_ref_int_free((int32_t **) n1);
   __THE_1_opt_ref_int_free((int32_t **) n2);
   return r;
@@ -442,7 +448,7 @@ void __THE_1_opt_ref_int_free (int32_t **n) {
   free(n);
 }
 bool __THE_1_opt_ref_int_ne (int32_t **n1, int32_t **n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 != n2 : *n1 != *n2;
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : *n1 != *n2;
   __THE_1_opt_ref_int_free((int32_t **) n1);
   __THE_1_opt_ref_int_free((int32_t **) n2);
   return r;
@@ -535,52 +541,52 @@ int main () {
   const int32_t __THE_0_intB_0 = 2;
   const int32_t *__THE_0_optIntA_0 = __THE_1_opt_int_alloc(__THE_0_intA_0);
   const int32_t *__THE_0_optIntB_0 = NULL;
-  const int32_t *__THE_0_optRefIntA_0 = __THE_1_opt_int_alloc(__THE_0_intA_0);
-  const int32_t *__THE_0_optRefIntB_0 = NULL;
-  print(stdout, "zztz", "TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]}", " ", __THE_1_TestArrInt_0_eq(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2))), "\n");
-  print(stdout, "zztz", "TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]}", " ", __THE_1_TestArrInt_0_ne(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 3, 4))), "\n");
-  print(stdout, "zztz", "TestBool{a: true} == TestBool{a: true}", " ", __THE_1_TestBool_0_eq(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(true)), "\n");
-  print(stdout, "zztz", "TestBool{a: true} != TestBool{a: false}", " ", __THE_1_TestBool_0_ne(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(false)), "\n");
-  print(stdout, "zztz", "TestChar{a: 'a'} == TestChar{a: 'a'}", " ", __THE_1_TestChar_0_eq(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('a')), "\n");
-  print(stdout, "zztz", "TestChar{a: 'a'} != TestChar{a: 'c'}", " ", __THE_1_TestChar_0_ne(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('c')), "\n");
-  print(stdout, "zztz", "TestFloat{a: 3.14} == TestFloat{a: 3.14}", " ", __THE_1_TestFloat_0_eq(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(3.14)), "\n");
-  print(stdout, "zztz", "TestFloat{a: 3.14} != TestFloat{a: 2.16}", " ", __THE_1_TestFloat_0_ne(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(2.16)), "\n");
-  print(stdout, "zztz", "TestInt{a: 1} == TestInt{a: 1}", " ", __THE_1_TestInt_0_eq(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(1)), "\n");
-  print(stdout, "zztz", "TestInt{a: 1} != TestInt{a: 0}", " ", __THE_1_TestInt_0_ne(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(0)), "\n");
-  print(stdout, "zztz", "TestOptInt{a: optIntA} == TestOptInt{a: optIntA}", " ", __THE_1_TestOptInt_0_eq(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0))), "\n");
-  print(stdout, "zztz", "TestOptInt{a: optIntA} != TestOptInt{a: optIntB}", " ", __THE_1_TestOptInt_0_ne(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntB_0))), "\n");
-  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA}", " ", __THE_1_TestOptRefInt_0_eq(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_int_copy(&__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_int_copy(&__THE_0_optRefIntA_0))), "\n");
-  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB}", " ", __THE_1_TestOptRefInt_0_ne(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_int_copy(&__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_int_copy(&__THE_0_optRefIntB_0))), "\n");
-  print(stdout, "zztz", "TestRefInt{a: ref intA} == TestRefInt{a: ref intA}", " ", __THE_1_TestRefInt_0_eq(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intA_0)), "\n");
-  print(stdout, "zztz", "TestRefInt{a: ref intA} != TestRefInt{a: ref intB}", " ", __THE_1_TestRefInt_0_ne(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intB_0)), "\n");
-  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA}", " ", __THE_1_TestRefOptInt_0_eq(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0)), "\n");
-  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB}", " ", __THE_1_TestRefOptInt_0_ne(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntB_0)), "\n");
-  print(stdout, "zztz", "TestStr{a: \"test1\"} == TestStr{a: \"test1\"}", " ", __THE_1_TestStr_0_eq(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test1"))), "\n");
-  print(stdout, "zztz", "TestStr{a: \"test1\"} != TestStr{a: \"test2\"}", " ", __THE_1_TestStr_0_ne(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test2"))), "\n");
-  __THE_1_opt_int_free((int32_t *) __THE_0_optRefIntB_0);
-  __THE_1_opt_int_free((int32_t *) __THE_0_optRefIntA_0);
+  const int32_t **__THE_0_optRefIntA_0 = __THE_1_opt_ref_int_alloc(&__THE_0_intA_0);
+  const int32_t **__THE_0_optRefIntB_0 = NULL;
+  print(stdout, "zztz", "TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]}:", " ", __THE_1_TestArrInt_0_eq(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2))), "\n");
+  print(stdout, "zztz", "TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]}:", " ", __THE_1_TestArrInt_0_ne(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 3, 4))), "\n");
+  print(stdout, "zztz", "TestBool{a: true} == TestBool{a: true}:", " ", __THE_1_TestBool_0_eq(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(true)), "\n");
+  print(stdout, "zztz", "TestBool{a: true} != TestBool{a: false}:", " ", __THE_1_TestBool_0_ne(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(false)), "\n");
+  print(stdout, "zztz", "TestChar{a: 'a'} == TestChar{a: 'a'}:", " ", __THE_1_TestChar_0_eq(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('a')), "\n");
+  print(stdout, "zztz", "TestChar{a: 'a'} != TestChar{a: 'c'}:", " ", __THE_1_TestChar_0_ne(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('c')), "\n");
+  print(stdout, "zztz", "TestFloat{a: 3.14} == TestFloat{a: 3.14}:", " ", __THE_1_TestFloat_0_eq(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(3.14)), "\n");
+  print(stdout, "zztz", "TestFloat{a: 3.14} != TestFloat{a: 2.16}:", " ", __THE_1_TestFloat_0_ne(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(2.16)), "\n");
+  print(stdout, "zztz", "TestInt{a: 1} == TestInt{a: 1}:", " ", __THE_1_TestInt_0_eq(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(1)), "\n");
+  print(stdout, "zztz", "TestInt{a: 1} != TestInt{a: 0}:", " ", __THE_1_TestInt_0_ne(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(0)), "\n");
+  print(stdout, "zztz", "TestOptInt{a: optIntA} == TestOptInt{a: optIntA}:", " ", __THE_1_TestOptInt_0_eq(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0))), "\n");
+  print(stdout, "zztz", "TestOptInt{a: optIntA} != TestOptInt{a: optIntB}:", " ", __THE_1_TestOptInt_0_ne(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntB_0))), "\n");
+  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA}:", " ", __THE_1_TestOptRefInt_0_eq(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0))), "\n");
+  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB}:", " ", __THE_1_TestOptRefInt_0_ne(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntB_0))), "\n");
+  print(stdout, "zztz", "TestRefInt{a: ref intA} == TestRefInt{a: ref intA}:", " ", __THE_1_TestRefInt_0_eq(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intA_0)), "\n");
+  print(stdout, "zztz", "TestRefInt{a: ref intA} != TestRefInt{a: ref intB}:", " ", __THE_1_TestRefInt_0_ne(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intB_0)), "\n");
+  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA}:", " ", __THE_1_TestRefOptInt_0_eq(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0)), "\n");
+  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB}:", " ", __THE_1_TestRefOptInt_0_ne(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntB_0)), "\n");
+  print(stdout, "zztz", "TestStr{a: \"test1\"} == TestStr{a: \"test1\"}:", " ", __THE_1_TestStr_0_eq(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test1"))), "\n");
+  print(stdout, "zztz", "TestStr{a: \"test1\"} != TestStr{a: \"test2\"}:", " ", __THE_1_TestStr_0_ne(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test2"))), "\n");
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntB_0);
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntA_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_optIntB_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_optIntA_0);
 }
 ======= flags =======
 ======= stdout =======
-TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]} true
-TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]} true
-TestBool{a: true} == TestBool{a: true} true
-TestBool{a: true} != TestBool{a: false} true
-TestChar{a: 'a'} == TestChar{a: 'a'} true
-TestChar{a: 'a'} != TestChar{a: 'c'} true
-TestFloat{a: 3.14} == TestFloat{a: 3.14} true
-TestFloat{a: 3.14} != TestFloat{a: 2.16} true
-TestInt{a: 1} == TestInt{a: 1} true
-TestInt{a: 1} != TestInt{a: 0} true
-TestOptInt{a: optIntA} == TestOptInt{a: optIntA} true
-TestOptInt{a: optIntA} != TestOptInt{a: optIntB} true
-TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA} true
-TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB} true
-TestRefInt{a: ref intA} == TestRefInt{a: ref intA} true
-TestRefInt{a: ref intA} != TestRefInt{a: ref intB} true
-TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA} true
-TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB} true
-TestStr{a: "test1"} == TestStr{a: "test1"} true
-TestStr{a: "test1"} != TestStr{a: "test2"} true
+TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]}: true
+TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]}: true
+TestBool{a: true} == TestBool{a: true}: true
+TestBool{a: true} != TestBool{a: false}: true
+TestChar{a: 'a'} == TestChar{a: 'a'}: true
+TestChar{a: 'a'} != TestChar{a: 'c'}: true
+TestFloat{a: 3.14} == TestFloat{a: 3.14}: true
+TestFloat{a: 3.14} != TestFloat{a: 2.16}: true
+TestInt{a: 1} == TestInt{a: 1}: true
+TestInt{a: 1} != TestInt{a: 0}: true
+TestOptInt{a: optIntA} == TestOptInt{a: optIntA}: true
+TestOptInt{a: optIntA} != TestOptInt{a: optIntB}: true
+TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA}: true
+TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB}: true
+TestRefInt{a: ref intA} == TestRefInt{a: ref intA}: true
+TestRefInt{a: ref intA} != TestRefInt{a: ref intB}: true
+TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA}: true
+TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB}: true
+TestStr{a: "test1"} == TestStr{a: "test1"}: true
+TestStr{a: "test1"} != TestStr{a: "test2"}: true

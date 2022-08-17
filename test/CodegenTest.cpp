@@ -172,6 +172,7 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-obj-str",
   "builtin-obj-str-root",
   "builtin-opt-alloc",
+  "builtin-opt-eq",
   "builtin-opt-str",
   "builtin-opt-str-root",
   "builtin-print",
