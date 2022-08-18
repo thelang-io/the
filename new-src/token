@@ -1,0 +1,112 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+fn Token_isCharEsc (ch: char) bool {
+  return
+    ch == '0' ||
+    ch == 'b' ||
+    ch == 'f' ||
+    ch == 'n' ||
+    ch == 'r' ||
+    ch == 't' ||
+    ch == 'v' ||
+    ch == '"' ||
+    ch == '\'' ||
+    ch == '\\'
+}
+
+fn Token_isId (ch: char) bool {
+  return ch.isAlphaNum() || ch == '_'
+}
+
+fn Token_isIdStart (ch: char) bool {
+  return ch.isAlpha() || ch == '_'
+}
+
+fn Token_isIntBin (ch: char) bool {
+  return ch == '0' || ch == '1'
+}
+
+fn Token_isIntDec (ch: char) bool {
+  return ch.isDigit()
+}
+
+fn Token_isIntHex (ch: char) bool {
+  return
+    ch.isDigit() ||
+    ch == 'A' || ch == 'a' ||
+    ch == 'B' || ch == 'b' ||
+    ch == 'C' || ch == 'c' ||
+    ch == 'D' || ch == 'd' ||
+    ch == 'E' || ch == 'e' ||
+    ch == 'F' || ch == 'f'
+}
+
+fn Token_isIntOct (ch: char) bool {
+  return
+    ch == '0' ||
+    ch == '1' ||
+    ch == '2' ||
+    ch == '3' ||
+    ch == '4' ||
+    ch == '5' ||
+    ch == '6' ||
+    ch == '7'
+}
+
+fn Token_isNotNewLine (ch: char) bool {
+  return ch != '\n'
+}
+
+fn Token_isStrEsc (ch: char) bool {
+  return Token_isCharEsc(ch)
+}
+
+fn Token_str (this: Token) str {
+  val := _Token_valEscaped(this)
+
+  return
+    this.type.str().slice(3) +
+    "(" + this.start.str() + "-" + this.end.str() + ")" +
+    (val == "" ? "" : ": " + val)
+}
+
+fn Token_xml (this: Token) str {
+  return
+    "<Token" +
+    " type=\"" + this.type.str().slice(3) + "\"" +
+    " val=\"" + _Token_valEscaped(this, true) + "\"" +
+    " start=\"" + this.start.str() + "\"" +
+    " end=\"" + this.end.str() + "\"" +
+    " />"
+}
+
+fn _Token_valEscaped (this: Token, xml := false) str {
+  mut result := ""
+
+  loop i := 0; i < this.val.len; i++ {
+    ch := this.val[i]
+
+    if ch == '\f' {
+      result += "\\f"
+    } elif ch == '\n' {
+      result += "\\n"
+    } elif ch == '\r' {
+      result += "\\r"
+    } elif ch == '\t' {
+      result += "\\t"
+    } elif ch == '\v' {
+      result += "\\v"
+    } elif ch == '"' && xml {
+      result += "\\\""
+    } else {
+      result += ch
+    }
+  }
+
+  return result
+}

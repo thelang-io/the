@@ -1,0 +1,64 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+fn RaiseError (message: str) void {
+  print(message, to: "stderr")
+  exit(1)
+}
+
+fn E0000 (unexpected: char, expected: char?) str {
+  return "E0000: Unexpected token `" + unexpected.str() + "`" +
+    (expected == nil ? "" : ", expected.str() `" + expected + "`")
+}
+
+fn E0001 () str {
+  return "E0001 - Unterminated comment"
+}
+
+fn E0002 () str {
+  return "E0002 - Unterminated character literal"
+}
+
+fn E0003 () str {
+  return "E0003 - Unterminated string literal"
+}
+
+fn E0004 () str {
+  return "E0004 - Empty character literal"
+}
+
+fn E0005 () str {
+  return "E0005 - Illegal character escape sequence"
+}
+
+fn E0006 () str {
+  return "E0006 - Illegal string escape sequence"
+}
+
+fn E0007 () str {
+  return "E0007 - Too many characters in character literal"
+}
+
+fn E0008 () str {
+  return "E0008 - Leading zero integer literals are not allowed"
+}
+
+fn E0009 (type: str) str {
+  return "E0009 - Invalid " + type + " integer literal"
+}
+
+fn E0010 () str {
+  return "E0010 - Invalid float literal"
+}
+
+fn E0011 () str {
+  return "E0011 - Invalid float literal exponent"
+}
+
+fn E0012 (type: str) str {
+  return "E0012 - " + type.toUpperFirst() + " float literals are not allowed"
+}

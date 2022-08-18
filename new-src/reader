@@ -1,0 +1,86 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+fn Reader_init (p: str) Reader {
+  path := realpathSync(p)
+
+  if !isFileSync(path) {
+    RaiseError("Path \"" + path + "\" is not a file")
+  }
+
+  content := readFileSync(path, "utf8")
+  return Reader{path: path, content: content}
+}
+
+fn Reader_eof (this: ref Reader) bool {
+  return this.pos >= this.content.len
+}
+
+fn Reader_lookahead (mut this: ref Reader, check: char) bool {
+  if this.pos + 1 >= this.content.len {
+    return false
+  }
+
+  ch := this.content[this.pos + 1]
+
+  if (
+    OS == "Windows" &&
+    ch == '\r' &&
+    this.pos + 2 < this.content.len &&
+    this.content[this.pos + 2] == '\n'
+  ) {
+    if check == '\n' {
+      this.pos += 2
+      return true
+    }
+  } elif check == ch {
+    this.pos++
+    return true
+  }
+
+  return false
+}
+
+fn Reader_next (mut this: ref Reader) char {
+  if Reader_eof(this) {
+    RaiseError("Tried to read on eof")
+  }
+
+  ch1 := this.content[this.pos]
+  this.pos++
+
+  if OS == "Windows" && ch1 == '\r' && !Reader_eof(this) {
+    ch2 := this.content[this.pos]
+
+    if ch2 == '\n' {
+      this.pos++
+      return ch2
+    }
+  }
+
+  return ch1
+}
+
+fn Reader_seek (mut this: ref Reader, pos: int) {
+  this.pos = pos
+}
+
+fn Reader_slice (this: ref Reader, start: int?, end: int?) str {
+  return this.content.slice(start, end)
+}
+
+fn Reader_walk (mut this: ref Reader, match: fn (char) bool) {
+  loop !Reader_eof(this) {
+    pos := this.pos
+    ch := Reader_next(this)
+
+    if !match(ch) {
+      Reader_seek(this, pos)
+      break
+    }
+  }
+}

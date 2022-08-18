@@ -1,0 +1,20 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+obj Tokenizer {
+  reader: ref Reader
+  state: TokenizerState
+  data: Token[]
+  errors: str[]
+}
+
+obj TokenizerState {
+  idx: int
+  pos: int
+  ch: char
+  handled: bool
+}

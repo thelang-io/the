@@ -1,0 +1,695 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
+  return Tokenizer{
+    reader: reader,
+    state: TokenizerState{
+      idx: 0,
+      pos: 0,
+      ch: '\0',
+      handled: false
+    },
+    data: [],
+    errors: []
+  }
+}
+
+fn Tokenizer_next (
+  mut this: ref Tokenizer,
+  withIgnored := false
+) Token {
+  if this.data.len < this.state.idx {
+    return this.data[this.state.idx++]
+  } elif this.data[this.data.len - 1].type == TK_EOF {
+    RaiseError("Tried to tokenize on eof")
+  }
+
+  loop {
+    tok := _Tokenizer_getToken(this)
+
+    this.data.push(tok)
+    this.state.idx++
+
+    if withIgnored || (
+      tok.type != TK_WHITESPACE &&
+      tok.type != TK_COMMENT_BLOCK &&
+      tok.type != TK_COMMENT_LINE
+    ) {
+      return tok
+    }
+  }
+}
+
+fn _Tokenizer_getToken (mut this: ref Tokenizer) Token {
+  if Reader_eof(this.reader) {
+    return Token{TK_EOF, "", this.state.pos, this.state.pos}
+  }
+
+  this.state.ch = Reader_next(this.reader)
+  this.state.handled = false
+  mut tok: Token?
+
+  if (tok = _Tokenizer_maybeWhitespace(this)) != nil {
+    return tok
+  } elif (tok = _Tokenizer_maybeCommentBlock(this)) != nil {
+    return tok
+  } elif (tok = _Tokenizer_maybeCommentLine(this)) != nil {
+    return tok
+  } elif (tok = _Tokenizer_maybeOp(this)) != nil {
+    return tok
+  } elif (tok = _Tokenizer_maybeKeyword(this)) != nil {
+    return tok
+  } elif (tok = _Tokenizer_maybeNumber(this)) != nil {
+    return tok
+  } elif (tok = _Tokenizer_maybeString(this)) != nil {
+    return tok
+  } elif (tok = _Tokenizer_maybeChar(this)) != nil {
+    return tok
+  } else {
+    _Tokenizer_raise(this, E0000(ch), this.state.pos)
+    return _Tokenizer_wrapToken(this, TK_UNKNOWN)
+  }
+}
+
+fn _Tokenizer_maybeChar (mut this: ref Tokenizer) Token? {
+  if this.state.ch != '\'' {
+    return nil
+  }
+
+  if Reader_eof(this.reader) {
+    _Tokenizer_raise(this, E0002(), this.state.pos)
+    return _Tokenizer_wrapToken(this, TK_LIT_CHAR)
+  }
+
+  ch1 := Reader_next(this.reader)
+
+  if ch1 == '\n' {
+    _Tokenizer_raise(this, E0002(), this.state.pos)
+    return _Tokenizer_wrapToken(this, TK_LIT_CHAR)
+  } elif ch1 == '\'' {
+    _Tokenizer_raise(this, E0004(), this.state.pos)
+    return _Tokenizer_wrapToken(this, TK_LIT_CHAR)
+  } elif ch1 == '\\' {
+    if Reader_eof(this.reader) {
+      _Tokenizer_raise(this, E0002(), this.state.pos)
+      return _Tokenizer_wrapToken(this, TK_LIT_CHAR)
+    }
+
+    ch2 := Reader_next(this.reader)
+
+    if !Token_isCharEsc(ch2) {
+      _Tokenizer_raise(this, E0005(), this.state.pos)
+    }
+  }
+
+  if !Reader_lookahead(this.reader, '\'') {
+    loop {
+      if Reader_eof(this.reader) {
+        _Tokenizer_raise(this, E0002(), this.state.pos)
+        break
+      }
+
+      pos3 := this.reader.pos
+      ch3 := Reader_next(this.reader)
+
+      if ch3 == '\'' {
+        _Tokenizer_raise(this, E0007(), this.state.pos)
+        break
+      } elif ch3 == '\n' {
+        Reader_seek(this.reader, pos3)
+        _Tokenizer_raise(this, E0002(), this.state.pos)
+
+        break
+      }
+    }
+  }
+
+  return _Tokenizer_wrapToken(this, TK_LIT_CHAR)
+}
+
+fn _Tokenizer_maybeCommentBlock (mut this: ref Tokenizer) Token? {
+  if this.state.ch != '/' || !Reader_lookahead(this.reader, '*') {
+    return nil
+  }
+
+  loop {
+    if Reader_eof(this.reader) {
+      _Tokenizer_raise(this, E0001(), this.state.pos)
+      break
+    }
+
+    ch := Reader_next(this.reader)
+
+    if ch == '*' && Reader_lookahead(this.reader, '/') {
+      break
+    }
+  }
+
+  return _Tokenizer_wrapToken(this, TK_COMMENT_BLOCK)
+}
+
+fn _Tokenizer_maybeCommentLine (mut this: ref Tokenizer) Token? {
+  if this.state.ch != '/' || !Reader_lookahead(this.reader, '/') {
+    return nil
+  }
+
+  Reader_walk(this.reader, Token_isNotNewLine)
+  return _Tokenizer_wrapToken(this, TK_COMMENT_LINE)
+}
+
+fn _Tokenizer_maybeKeyword (mut this: ref Tokenizer) Token? {
+  if !Token_isIdStart(this.state.ch) {
+    return nil
+  }
+
+  Reader_walk(this.reader, Token_isId)
+  val := Reader_slice(this.reader, this.state.pos, this.reader.pos)
+
+  if val == "break" {
+    return _Tokenizer_wrapToken(this, TK_KW_BREAK)
+  } elif val == "catch" {
+    return _Tokenizer_wrapToken(this, TK_KW_CATCH)
+  } elif val == "continue" {
+    return _Tokenizer_wrapToken(this, TK_KW_CONTINUE)
+  } elif val == "elif" {
+    return _Tokenizer_wrapToken(this, TK_KW_ELIF)
+  } elif val == "else" {
+    return _Tokenizer_wrapToken(this, TK_KW_ELSE)
+  } elif val == "enum" {
+    return _Tokenizer_wrapToken(this, TK_KW_ENUM)
+  } elif val == "export" {
+    return _Tokenizer_wrapToken(this, TK_KW_EXPORT)
+  } elif val == "false" {
+    return _Tokenizer_wrapToken(this, TK_KW_FALSE)
+  } elif val == "fn" {
+    return _Tokenizer_wrapToken(this, TK_KW_FN)
+  } elif val == "if" {
+    return _Tokenizer_wrapToken(this, TK_KW_IF)
+  } elif val == "import" {
+    return _Tokenizer_wrapToken(this, TK_KW_IMPORT)
+  } elif val == "is" {
+    return _Tokenizer_wrapToken(this, TK_KW_IS)
+  } elif val == "loop" {
+    return _Tokenizer_wrapToken(this, TK_KW_LOOP)
+  } elif val == "main" {
+    return _Tokenizer_wrapToken(this, TK_KW_MAIN)
+  } elif val == "mut" {
+    return _Tokenizer_wrapToken(this, TK_KW_MUT)
+  } elif val == "nil" {
+    return _Tokenizer_wrapToken(this, TK_KW_NIL)
+  } elif val == "obj" {
+    return _Tokenizer_wrapToken(this, TK_KW_OBJ)
+  } elif val == "return" {
+    return _Tokenizer_wrapToken(this, TK_KW_RETURN)
+  } elif val == "throw" {
+    return _Tokenizer_wrapToken(this, TK_KW_THROW)
+  } elif val == "true" {
+    return _Tokenizer_wrapToken(this, TK_KW_TRUE)
+  } elif val == "try" {
+    return _Tokenizer_wrapToken(this, TK_KW_TRY)
+  } elif val == "union" {
+    return _Tokenizer_wrapToken(this, TK_KW_UNION)
+  }
+
+  return _Tokenizer_wrapToken(this, TK_ID)
+}
+
+fn _Tokenizer_maybeNumber (mut this: ref Tokenizer) Token? {
+  if !this.state.ch.isDigit() {
+    return nil
+  }
+
+  if this.state.ch == '0' {
+    if Reader_eof(this.reader) {
+      return _Tokenizer_wrapToken(this, TK_LIT_INT_DEC)
+    }
+
+    pos := this.reader.pos
+    ch := Reader_next(this.reader)
+
+    if Token_isIntDec(ch) {
+      Reader_walk(this.reader, Token_isId)
+      _Tokenizer_raise(this, E0008(), this.state.pos)
+
+      return _Tokenizer_wrapToken(this, TK_LIT_INT_DEC)
+    } elif ch == 'B' || ch == 'b' {
+      return _Tokenizer_wrapInt(
+        this,
+        TK_LIT_INT_BIN,
+        E0009("binary"),
+        Token_isIntBin
+      )
+    } elif ch == 'O' || ch == 'o' {
+      return _Tokenizer_wrapInt(
+        this,
+        TK_LIT_INT_OCT,
+        E009("octal"),
+        Token_isIntOct
+      )
+    } elif ch == 'X' || ch == 'x' {
+      return _Tokenizer_wrapInt(
+        this,
+        TK_LIT_INT_HEX,
+        E0009("hexadecimal"),
+        Token_isIntHex
+      )
+    }
+
+    Reader_seek(this.reader, pos)
+  } else {
+    Reader_walk(this.reader, Token_isIntDec)
+  }
+
+  return _Tokenizer_wrapInt(
+    this,
+    TK_LIT_INT_DEC,
+    E009("decimal"),
+    Token_isIntDec
+  )
+}
+
+fn _Tokenizer_maybeOp (mut this: ref Tokenizer) Token? {
+  if this.state.ch == '&' {
+    if Reader_lookahead(this.reader, '&') {
+      if Reader_lookahead(this.reader, '=') {
+        return _Tokenizer_wrapToken(this, TK_OP_AMP_AMP_EQ)
+      } else {
+        return _Tokenizer_wrapToken(this, TK_OP_AMP_AMP)
+      }
+    } elif Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_AMP_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_AMP)
+    }
+  } elif this.state.ch == '@' {
+    return _Tokenizer_wrapToken(this, TK_OP_AT)
+  } elif this.state.ch == '`' {
+    return _Tokenizer_wrapToken(this, TK_OP_BACKTICK)
+  } elif this.state.ch == '\\' {
+    return _Tokenizer_wrapToken(this, TK_OP_BACKSLASH)
+  } elif this.state.ch == '^' {
+    if Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_CARET_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_CARET)
+    }
+  } elif this.state.ch == ':' {
+    if Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_COLON_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_COLON)
+    }
+  } elif this.state.ch == ',' {
+    return _Tokenizer_wrapToken(this, TK_OP_COMMA)
+  } elif this.state.ch == '.' {
+    pos := this.reader.pos
+
+    if (
+      Reader_lookahead(this.reader, '.') &&
+      Reader_lookahead(this.reader, '.')
+    ) {
+      return _Tokenizer_wrapToken(this, TK_OP_ELLIPSIS)
+    }
+
+    Reader_seek(this.reader, pos)
+    return _Tokenizer_wrapToken(this, TK_OP_DOT)
+  } elif this.state.ch == '$' {
+    return _Tokenizer_wrapToken(this, TK_OP_DOLLAR)
+  } elif this.state.ch == '=' {
+    if Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_EQ_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_EQ)
+    }
+  } elif this.state.ch == '!' {
+    if Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_EXCL_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_EXCL)
+    }
+  } elif this.state.ch == '>' {
+    if Reader_lookahead(this.reader, '>') {
+      if Reader_lookahead(this.reader, '=') {
+        return _Tokenizer_wrapToken(this, TK_OP_RSHIFT_EQ)
+      } else {
+        return _Tokenizer_wrapToken(this, TK_OP_RSHIFT)
+      }
+    } elif Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_GT_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_GT)
+    }
+  } elif this.state.ch == '#' {
+    return _Tokenizer_wrapToken(this, TK_OP_HASH)
+  } elif this.state.ch == '{' {
+    return _Tokenizer_wrapToken(this, TK_OP_LBRACE)
+  } elif this.state.ch == '[' {
+    return _Tokenizer_wrapToken(this, TK_OP_LBRACK)
+  } elif this.state.ch == '(' {
+    return _Tokenizer_wrapToken(this, TK_OP_LPAR)
+  } elif this.state.ch == '<' {
+    if Reader_lookahead(this.reader, '<') {
+      if Reader_lookahead(this.reader, '=') {
+        return _Tokenizer_wrapToken(this, TK_OP_LSHIFT_EQ)
+      } else {
+        return _Tokenizer_wrapToken(this, TK_OP_LSHIFT)
+      }
+    } elif Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_LT_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_LT)
+    }
+  } elif this.state.ch == '-' {
+    if Reader_lookahead(this.reader, '-') {
+      return _Tokenizer_wrapToken(this, TK_OP_MINUS_MINUS)
+    } elif Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_MINUS_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_MINUS)
+    }
+  } elif this.state.ch == '|' {
+    if Reader_lookahead(this.reader, '|') {
+      if Reader_lookahead(this.reader, '=') {
+        return _Tokenizer_wrapToken(this, TK_OP_PIPE_PIPE_EQ)
+      } else {
+        return _Tokenizer_wrapToken(this, TK_OP_PIPE_PIPE)
+      }
+    } elif Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_PIPE_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_PIPE)
+    }
+  } elif this.state.ch == '%' {
+    if Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_PERCENT_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_PERCENT)
+    }
+  } elif this.state.ch == '+' {
+    if Reader_lookahead(this.reader, '+') {
+      return _Tokenizer_wrapToken(this, TK_OP_PLUS_PLUS)
+    } elif Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_PLUS_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_PLUS)
+    }
+  } elif this.state.ch == '?' {
+    return _Tokenizer_wrapToken(this, TK_OP_QN)
+  } elif this.state.ch == '}' {
+    return _Tokenizer_wrapToken(this, TK_OP_RBRACE)
+  } elif this.state.ch == ']' {
+    return _Tokenizer_wrapToken(this, TK_OP_RBRACK)
+  } elif this.state.ch == ')' {
+    return _Tokenizer_wrapToken(this, TK_OP_RPAR)
+  } elif this.state.ch == ';' {
+    return _Tokenizer_wrapToken(this, TK_OP_SEMI)
+  } elif this.state.ch == '/' {
+    if Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_SLASH_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_SLASH)
+    }
+  } elif this.state.ch == '*' {
+    if Reader_lookahead(this.reader, '=') {
+      return _Tokenizer_wrapToken(this, TK_OP_STAR_EQ)
+    } else {
+      return _Tokenizer_wrapToken(this, TK_OP_STAR)
+    }
+  } elif this.state.ch == '~' {
+    return _Tokenizer_wrapToken(this, TK_OP_TILDE)
+  }
+
+  return nil
+}
+
+fn _Tokenizer_maybeString (mut this: ref Tokenizer) Token? {
+  if this.state.ch != '"' {
+    return nil
+  }
+
+  loop {
+    if Reader_eof(this.reader) {
+      _Tokenizer_raise(this, E0003(), this.state.pos)
+      break
+    }
+
+    pos1 := this.reader.pos
+    ch1 := Reader_next(this.reader)
+
+    if ch1 == '"' {
+      break
+    } elif ch1 == '\\' {
+      ch2 := Reader_next(this.reader)
+
+      if !Token_isStrEsc(ch2) {
+        _Tokenizer_raise(this, E0006(), pos1)
+      }
+    }
+  }
+
+  return _Tokenizer_wrapToken(this, TK_LIT_STR)
+}
+
+fn _Tokenizer_maybeWhitespace (mut this: ref Tokenizer) Token? {
+  if !this.state.ch.isSpace() {
+    return nil
+  }
+
+  Reader_walk(this.reader, Token_isWhitespace)
+  return _Tokenizer_wrapToken(this, TK_WHITESPACE)
+}
+
+fn _Tokenizer_raise (mut this: ref Tokenizer, message: str, start: int) {
+  if this.state.handled {
+    return
+  }
+
+  startLoc := Location_locate(this.reader.content, start)
+  endLoc := Location_locate(this.reader.content, this.reader.pos)
+  lines := this.reader.content.lines()
+
+  mut errorLines: str[]
+  mut errorLinesNums: int[]
+
+  if startLoc.line != 1 {
+    errorLines.push(lines[startLoc.line - 2])
+    errorLinesNums.push(startLoc.line - 2)
+  }
+
+  errorLines.push(lines[startLoc.line - 1])
+  errorLinesNums.push(startLoc.line - 1)
+
+  if startLoc.line == endLoc.line && startLoc.col == endLoc.col {
+    errorLines.push(' '.repeat(startLoc.col - 1) + '^')
+  } elif startLoc.line == endLoc.line {
+    errorLines.push(
+      ' '.repeat(startLoc.col - 1) +
+      '~'.repeat(endLoc.col - startLoc.col)
+    )
+  } else {
+    errorLine := lines[startLoc.line - 1]
+
+    errorLines.push(
+      ' '.repeat(startLoc.col - 1) +
+      '~'.repeat(errorLine.len - startLoc.col)
+    )
+  }
+
+  errorLinesNums.push(startLoc.line - 1)
+
+  if startLoc.line != lines.len {
+    errorLines.push(lines[startLoc.line])
+    errorLinesNums.push(startLoc.line)
+  }
+
+  gutterLen := errorLinesNums[errorLinesNums.len - 1].str().len + 1
+
+  mut error := this.reader.path + ":" + startLoc.line.str() + ":" +
+    startLoc.col.str() + ": SyntaxError: " + message + EOL
+
+  mut prevLineNum := 0
+
+  loop i := 0; i < errorLinesNums.len; i++ {
+    errorLineNum := errorLinesNums[i]
+    sameLine := prevLineNum == errorLineNum
+
+    if sameLine {
+      error += ' '.repeat(gutterLen)
+    } else {
+      errorLineNumLen := errorLineNum.str().len
+      error += errorLineNum.str() + ' '.repeat(gutterLen - errorLineNumLen)
+    }
+
+    error += "| " + errorLines[i]
+    prevLineNum = errorLineNum
+  }
+
+  this.errors.push(error)
+  this.state.handled = true
+}
+
+fn _Tokenizer_wrapFloat (
+  mut this: ref Tokenizer,
+  type: TokenType,
+  errorMessage: str
+) Token {
+  if Reader_eof(this.reader) {
+    return _Tokenizer_wrapToken(this, type)
+  }
+
+  pos1 := this.reader.pos
+  ch1 := Reader_next(this.reader)
+
+  if Token_isId(ch1) && ch1 != 'E' && ch1 != 'e' {
+    Reader_walk(this.reader, Token_isId)
+    _Tokenizer_raise(this, errorMessage, this.state.pos)
+
+    return _Tokenizer_wrapToken(this, type)
+  } elif ch1 != '.' && ch1 != 'E' && ch1 != 'e' {
+    Reader_seek(this.reader, pos1)
+    return _Tokenizer_wrapToken(this, type)
+  }
+
+  mut expStartPos := pos1
+
+  if ch1 == '.' {
+    if Reader_eof(this.reader) {
+      _Tokenizer_raise(this, E0010(), this.state.pos)
+      return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+    }
+
+    pos2 := this.reader.pos
+    ch2 := Reader_next(this.reader)
+
+    if ch2 == '.' {
+      Reader_seek(this.reader, pos1)
+      return _Tokenizer_wrapToken(this, type)
+    } elif !Token_isIntDec(ch2) {
+      Reader_walk(this.reader, Token_isId)
+      _Tokenizer_raise(this, E0010(), this.state.pos)
+
+      return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+    }
+
+    Reader_walk(this.reader, Token_isIntDec)
+
+    if Reader_eof(this.reader) {
+      return _Tokenizer_wrapTokenFloat(this, type)
+    }
+
+    pos3 := this.reader.pos
+    ch3 := Reader_next(this.reader)
+
+    if Token_isId(ch3) && ch3 != 'E' && ch3 != 'e' {
+      Reader_walk(this.reader, Token_isId)
+      _Tokenizer_raise(this, E0010(), this.state.pos)
+
+      return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+    } elif ch3 != 'E' && ch3 != 'e' {
+      Reader_seek(this.reader, pos2)
+      return _Tokenizer_wrapTokenFloat(this, type)
+    }
+
+    expStartPos = pos3
+  }
+
+  if Reader_eof(this.reader) {
+    _Tokenizer_raise(this, E0011(), expStartPos)
+    return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+  }
+
+  ch4 := Reader_next(this.reader)
+
+  if !Token_isIntDec(ch4) && ch4 != '+' && ch4 != '-' {
+    Reader_walk(this.reader, Token_isId)
+    _Tokenizer_raise(this, E0011(), expStartPos)
+
+    return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+  }
+
+  if ch4 == '+' || ch4 == '-' {
+    if Reader_eof(this.reader) {
+      _Tokenizer_raise(this, E0011(), expStartPos)
+      return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+    }
+
+    ch5 := Reader_next(this.reader)
+
+    if !Token_isIntDec(ch5) {
+      Reader_walk(this.reader, Token_isId)
+      _Tokenizer_raise(this, E0011(), expStartPos)
+
+      return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+    }
+  }
+
+  Reader_walk(this.reader, Token_isIntDec)
+  return _Tokenizer_wrapTokenFloat(this, type)
+}
+
+fn _Tokenizer_wrapInt (
+  mut this: ref Tokenizer,
+  type: TokenType,
+  errorMessage: str,
+  check: fn (char) bool
+) Token {
+  if Reader_eof(this.reader) {
+    _Tokenizer_raise(this, errorMessage, this.state.pos)
+    return _Tokenizer_wrapToken(this, type)
+  }
+
+  ch := Reader_next(this.reader)
+
+  if !check(ch) {
+    Reader_walk(this.reader, Token_isId)
+    _Tokenizer_raise(this, errorMessage, this.state.pos)
+
+    return _Tokenizer_wrapToken(this, type)
+  }
+
+  Reader_walk(this.reader, check)
+  return _Tokenizer_wrapFloat(this, type, errorMessage)
+}
+
+fn _Tokenizer_wrapToken (mut this: ref Tokenizer, type: TokenType) Token {
+  start := this.state.pos
+  this.state.pos = this.reader.pos
+  this.state.handled = true
+
+  return Token{
+    type: type,
+    val: Reader_slice(this.reader, start, this.state.pos),
+    start: start,
+    end: this.state.pos
+  }
+}
+
+fn _Tokenizer_wrapTokenFloat (mut this: ref Tokenizer, type: TokenType) Token {
+  if !Reader_eof(this.reader) {
+    ch := Reader_next(this.reader)
+
+    if Token_isId(ch) {
+      Reader_walk(this.reader, Token_isId)
+      _Tokenizer_raise(this, E0010(), this.state.pos)
+
+      return _Tokenizer_wrapToken(this, TK_LIT_FLOAT)
+    }
+
+    Reader_seek(this.reader, pos)
+  }
+
+  if type == TK_LIT_INT_BIN {
+    _Tokenizer_raise(this, E0014("binary"), this.state.pos)
+  } elif type == TK_LIT_INT_HEX {
+    _Tokenizer_raise(this, E0014("hexadecimal"), this.state.pos)
+  } elif type == TK_LIT_INT_OCT {
+    _Tokenizer_raise(this, E0014("octal"), this.state.pos)
+  }
+
+  return _Tokenizer_wrapToken(TK_LIT_FLOAT)
+}

@@ -1,0 +1,32 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+fn Arguments_init () Arguments {
+  if process.args.len == 1 {
+    RaiseError("REPL is not supported")
+  }
+
+  mut fileName: str?
+
+  loop i := 1; i < process.args.len; i++ {
+    arg := process.args[i]
+
+    if arg[0] == '-' {
+      RaiseError("Bad option " + arg)
+    } elif fileName == nil {
+      fileName = arg
+    } else {
+      RaiseError("Processing multiple files is not supported")
+    }
+  }
+
+  if fileName == nil {
+    RaiseError("File is not specified")
+  }
+
+  return Arguments{fileName: fileName}
+}
