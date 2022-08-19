@@ -50,6 +50,11 @@ fn test () int {
     return -1
   }
 
+  loop {
+    test2 := ""
+    break
+  }
+
   return result
 }
 
@@ -218,6 +223,13 @@ L9:
     r = 1;
     v = -1;
     goto L4;
+  }
+  while (1) {
+    unsigned char b1 = 0;
+    const struct str __THE_0_test2_0 = str_alloc("");
+    b1 = 1;
+    str_free((struct str) __THE_0_test2_0);
+    if (b1 == 1) break;
   }
   v = __THE_0_result_0;
 L4:

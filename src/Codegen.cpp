@@ -803,9 +803,9 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
     code += this->state.cleanUp.gen(this->indent);
 
     if (
-      !ASTChecker(nodes).endsWith<ASTNodeBreak>() &&
-      !ASTChecker(nodes).endsWith<ASTNodeContinue>() &&
-      !ASTChecker(nodes).endsWith<ASTNodeReturn>() &&
+      (!ASTChecker(nodes).endsWith<ASTNodeBreak>() || ASTChecker(nodes[0].parent).is<ASTNodeLoop>()) &&
+      (!ASTChecker(nodes).endsWith<ASTNodeContinue>() || ASTChecker(nodes[0].parent).is<ASTNodeLoop>()) &&
+      (!ASTChecker(nodes).endsWith<ASTNodeReturn>() || ASTChecker(nodes[0].parent).is<ASTNodeLoop>()) &&
       this->state.cleanUp.breakVarUsed
     ) {
       code += std::string(this->indent, ' ') + "if (" + initialCleanUp.currentBreakVar() + " == 1) break;" EOL;
