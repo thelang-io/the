@@ -822,6 +822,41 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
   return code;
 }
 
+std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen::_evalTypeCasts (const ASTNodeExpr &nodeExpr) {
+  auto bodyTypeCasts = std::map<std::string, Type *>{};
+  auto altTypeCasts = std::map<std::string, Type *>{};
+
+  if (std::holds_alternative<ASTExprBinary>(*nodeExpr.body)) {
+    auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
+
+    if (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) {
+      if (
+        (std::holds_alternative<ASTExprAccess>(*exprBinary.left.body) && std::holds_alternative<ASTExprLit>(*exprBinary.right.body)) ||
+        (std::holds_alternative<ASTExprAccess>(*exprBinary.right.body) && std::holds_alternative<ASTExprLit>(*exprBinary.left.body))
+      ) {
+        auto exprBinaryLeft = std::holds_alternative<ASTExprAccess>(*exprBinary.left.body) ? exprBinary.left : exprBinary.right;
+        auto exprBinaryRight = std::holds_alternative<ASTExprLit>(*exprBinary.right.body) ? exprBinary.right : exprBinary.left;
+
+        auto exprBinaryLeftAccess = std::get<ASTExprAccess>(*exprBinaryLeft.body);
+        auto exprBinaryRightLit = std::get<ASTExprLit>(*exprBinaryRight.body);
+
+        if (exprBinaryLeft.type->isOpt() && exprBinaryRightLit.type == AST_EXPR_LIT_NIL) {
+          auto exprBinaryLeftAccessCode = this->_nodeExpr(exprBinaryLeft, exprBinaryLeft.type, true);
+          auto exprBinaryLeftAccessTypeOpt = std::get<TypeOptional>(exprBinaryLeft.type->body);
+
+          if (exprBinary.op == AST_EXPR_BINARY_EQ) {
+            altTypeCasts[exprBinaryLeftAccessCode] = exprBinaryLeftAccessTypeOpt.type;
+          } else {
+            bodyTypeCasts[exprBinaryLeftAccessCode] = exprBinaryLeftAccessTypeOpt.type;
+          }
+        }
+      }
+    }
+  }
+
+  return std::make_tuple(bodyTypeCasts, altTypeCasts);
+}
+
 std::string Codegen::_flags () const {
   auto result = std::string();
   auto idx = static_cast<std::size_t>(0);
@@ -1122,22 +1157,32 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
     return this->_wrapNode(node, code + EOL);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     auto nodeIf = std::get<ASTNodeIf>(*node.body);
+    auto initialStateTypeCasts = this->state.typeCasts;
+    auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond);
 
     code = std::string(this->indent, ' ') + "if (" + this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool")) + ") {" EOL;
+
+    this->state.typeCasts.merge(bodyTypeCasts);
     this->varMap.save();
     code += this->_block(nodeIf.body);
     this->varMap.restore();
+    this->state.typeCasts = initialStateTypeCasts;
 
     if (nodeIf.alt != std::nullopt) {
       code += std::string(this->indent, ' ') + "} else ";
+      this->state.typeCasts.merge(altTypeCasts);
 
       if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
+        this->varMap.save();
         code += "{" EOL + this->_block(std::get<ASTBlock>(*nodeIf.alt));
         code += std::string(this->indent, ' ') + "}" EOL;
+        this->varMap.restore();
       } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
         auto elseIfCode = this->_node(std::get<ASTNode>(*nodeIf.alt));
         code += elseIfCode.substr(elseIfCode.find_first_not_of(' '));
       }
+
+      this->state.typeCasts = initialStateTypeCasts;
     } else {
       code += std::string(this->indent, ' ') + "}" EOL;
     }
@@ -1550,65 +1595,91 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.expr)) {
       auto objVar = std::get<std::shared_ptr<Var>>(exprAccess.expr);
-      code = Codegen::name(objVar->codeName);
+      auto objCode = Codegen::name(objVar->codeName);
+      auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;
 
-      if (this->state.contextVars.contains(code) && (nodeExpr.type->isRefExt() || !targetType->isRefExt())) {
+      code = objCode;
+
+      if (objVar->type->isOpt() && !objType->isOpt()) {
         code = "*" + code;
       }
 
-      if (!this->state.contextVars.contains(code) && !nodeExpr.type->isRefExt() && targetType->isRefExt()) {
+      if (this->state.contextVars.contains(objCode) && (nodeExpr.type->isRefExt() || !targetType->isRefExt())) {
+        code = "*" + code;
+      }
+
+      if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRefExt() && targetType->isRefExt()) {
         code = "&" + code;
       } else if (nodeExpr.type->isRefExt() && !targetType->isRefExt()) {
         code = "*" + code;
       }
-    } else {
-      auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
-      auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
 
-      if (exprAccess.prop == "len" && objTypeInfo.realType->isArray()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+      if (!objType->isRef() || !targetType->isRef()) {
+        auto nodeTypeInfo = this->_typeInfo(objType);
 
-        if (!objNodeExpr.parenthesized) {
-          objCode = "(" + objCode + ")";
-        }
-
-        this->_activateEntity(objTypeInfo.realTypeName + "_len");
-        code = objTypeInfo.realTypeName + "_len" + objCode;
-      } else if (exprAccess.prop == "len" && objTypeInfo.realType->isStr()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        this->_activateBuiltin("fnStrLen");
-
-        if (objNodeExpr.parenthesized) {
-          code = "str_len" + objCode;
-        } else {
-          code = "str_len(" + objCode + ")";
-        }
-      } else if (exprAccess.prop != std::nullopt) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
-
-        if (objCode.starts_with("*")) {
-          objCode = "(" + objCode + ")";
-        }
-
-        code = objCode + "->" + Codegen::name(*exprAccess.prop);
-      } else if (exprAccess.elem != std::nullopt) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
-        auto objElemCode = this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type);
-
-        if (objTypeInfo.realType->isArray()) {
-          this->_activateEntity(objTypeInfo.realTypeName + "_at");
-          code = objTypeInfo.realTypeName + "_at(" + objCode + ", " + objElemCode + ")";
-        } else if (objTypeInfo.realType->isStr()) {
-          this->_activateBuiltin("fnStrAt");
-          code = "str_at(" + objCode + ", " + objElemCode + ")";
+        if (
+          (!root && nodeTypeInfo.realType->isArray()) ||
+          (!root && nodeTypeInfo.realType->isFn()) ||
+          (!root && nodeTypeInfo.realType->isObj()) ||
+          (!root && nodeTypeInfo.realType->isOpt())
+        ) {
+          this->_activateEntity(nodeTypeInfo.realTypeName + "_copy");
+          code = nodeTypeInfo.realTypeName + "_copy(" + code + ")";
+        } else if (!root && nodeTypeInfo.realType->isStr()) {
+          this->_activateBuiltin("fnStrCopy");
+          code = "str_copy(" + code + ")";
         }
       }
 
-      if (!nodeExpr.type->isRef() && targetType->isRef()) {
-        code = "&" + code;
-      } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
-        code = "*" + code;
+      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+    }
+
+    auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
+    auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
+
+    if (exprAccess.prop == "len" && objTypeInfo.realType->isArray()) {
+      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+
+      if (!objNodeExpr.parenthesized) {
+        objCode = "(" + objCode + ")";
       }
+
+      this->_activateEntity(objTypeInfo.realTypeName + "_len");
+      code = objTypeInfo.realTypeName + "_len" + objCode;
+    } else if (exprAccess.prop == "len" && objTypeInfo.realType->isStr()) {
+      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+      this->_activateBuiltin("fnStrLen");
+
+      if (objNodeExpr.parenthesized) {
+        code = "str_len" + objCode;
+      } else {
+        code = "str_len(" + objCode + ")";
+      }
+    } else if (exprAccess.prop != std::nullopt) {
+      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
+
+      if (objCode.starts_with("*")) {
+        objCode = "(" + objCode + ")";
+      }
+
+      code = objCode + "->" + Codegen::name(*exprAccess.prop);
+    } else if (exprAccess.elem != std::nullopt) {
+      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
+      auto objElemCode = this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type);
+
+      if (objTypeInfo.realType->isArray()) {
+        this->_activateEntity(objTypeInfo.realTypeName + "_at");
+        code = objTypeInfo.realTypeName + "_at(" + objCode + ", " + objElemCode + ")";
+      } else if (objTypeInfo.realType->isStr()) {
+        this->_activateBuiltin("fnStrAt");
+        code = "str_at(" + objCode + ", " + objElemCode + ")";
+      }
+    }
+
+    if (!nodeExpr.type->isRef() && targetType->isRef()) {
+      code = "&" + code;
+    } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
+      code = "*" + code;
     }
 
     if (!nodeExpr.type->isRef() || !targetType->isRef()) {

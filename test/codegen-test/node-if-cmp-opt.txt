@@ -4,13 +4,15 @@ main {
   b: int? = nil
 
   if a == nil {
-  } elif a != nil {
-  } else {
+  }
+
+  if a != nil {
   }
 
   if b == nil {
-  } elif b != nil {
-  } else {
+  }
+
+  if b != nil {
   }
 }
 ======= code =======
@@ -68,12 +70,12 @@ int main () {
   const int32_t *__THE_0_a_0 = __THE_1_opt_int_alloc(1);
   const int32_t *__THE_0_b_0 = NULL;
   if (__THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_a_0), NULL)) {
-  } else if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_a_0), NULL)) {
-  } else {
+  }
+  if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_a_0), NULL)) {
   }
   if (__THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_b_0), NULL)) {
-  } else if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_b_0), NULL)) {
-  } else {
+  }
+  if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_b_0), NULL)) {
   }
   __THE_1_opt_int_free((int32_t *) __THE_0_b_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_a_0);

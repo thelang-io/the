@@ -8,6 +8,7 @@
 #ifndef SRC_CODEGEN_HPP
 #define SRC_CODEGEN_HPP
 
+#include <map>
 #include <set>
 #include "AST.hpp"
 #include "CodegenCleanUp.hpp"
@@ -83,6 +84,7 @@ struct CodegenState {
   CodegenCleanUp cleanUp;
   std::set<std::string> contextVars = {};
   Type *returnType = nullptr;
+  std::map<std::string, Type *> typeCasts = {};
 };
 
 struct CodegenTypeInfo {
@@ -130,6 +132,7 @@ class Codegen {
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
+  std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
   std::string _flags () const;
   std::string _genEqFn (
     const CodegenTypeInfo &,
