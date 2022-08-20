@@ -123,5 +123,10 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1019-node-var-decl-not-assignable-to-nil",
   "throw-E1020-expr-binary-unknown-operand-type",
   "throw-E1020-expr-cond-unknown-operand-type",
-  "throw-E1021-node-fn-decl-main"
+  "throw-E1021-node-fn-decl-main",
+  "throw-E1022-node-fn-decl-void-param-type",
+  "throw-E1022-node-fn-decl-void-param-init",
+  "throw-E1022-node-obj-decl-void-field-type",
+  "throw-E1022-node-var-decl-void-type",
+  "throw-E1022-node-var-decl-void-init"
 ));

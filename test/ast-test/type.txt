@@ -20,7 +20,6 @@ main {
   a16: u16
   a17: u32
   a18: u64
-  a19: void
   a20: Test
   a21: (Test)
 }
@@ -156,13 +155,6 @@ main {
     <NodeVarDeclVar>
       <Var name="a18" codeName="a18_0" frame="2">
         <BuiltinType name="u64" />
-      </Var>
-    </NodeVarDeclVar>
-  </NodeVarDecl>
-  <NodeVarDecl>
-    <NodeVarDeclVar>
-      <Var name="a19" codeName="a19_0" frame="2">
-        <BuiltinType name="void" />
       </Var>
     </NodeVarDeclVar>
   </NodeVarDecl>

@@ -101,6 +101,7 @@
 #define E1019 "E1019 - `nil` literal is not assignable to type `@type`"
 #define E1020 "E1020 - Unable to deduce types for expression"
 #define E1021 "E1021 - Function declaration with name `main` is not allowed"
+#define E1022 "E1022 - Void type can only be used as function return type"
 
 class Error : public std::exception {
  public:

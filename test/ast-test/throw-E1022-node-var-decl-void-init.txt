@@ -1,0 +1,7 @@
+======= stdin =======
+fn job () {}
+test := job()
+======= stderr =======
+/test:2:9: E1022 - Void type can only be used as function return type
+  2 | test := job()
+    |         ^~~~~

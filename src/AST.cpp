@@ -132,6 +132,13 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       auto paramType = stmtFnDeclParam.type != std::nullopt
         ? this->_type(*stmtFnDeclParam.type)
         : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
+
+      if (paramType->isVoid() && stmtFnDeclParam.type == std::nullopt) {
+        throw Error(this->reader, stmtFnDeclParam.init->start, stmtFnDeclParam.init->end, E1022);
+      } else if (paramType->isVoid()) {
+        throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
+      }
+
       auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
       auto paramInit = std::optional<ASTNodeExpr>{};
 
@@ -236,6 +243,11 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
       auto fieldType = this->_type(stmtObjDeclField.type);
+
+      if (fieldType->isVoid()) {
+        throw Error(this->reader, stmtObjDeclField.type.start, stmtObjDeclField.type.end, E1022);
+      }
+
       type->fields.push_back(TypeField{stmtObjDeclField.id.val, fieldType, false});
     }
 
@@ -257,6 +269,13 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto nodeVarDeclType = stmtVarDecl.type != std::nullopt
       ? this->_type(*stmtVarDecl.type)
       : this->_nodeExprType(*stmtVarDecl.init, nullptr);
+
+    if (nodeVarDeclType != nullptr && nodeVarDeclType->isVoid() && stmtVarDecl.type == std::nullopt) {
+      throw Error(this->reader, stmtVarDecl.init->start, stmtVarDecl.init->end, E1022);
+    } else if (nodeVarDeclType != nullptr && nodeVarDeclType->isVoid()) {
+      throw Error(this->reader, stmtVarDecl.type->start, stmtVarDecl.type->end, E1022);
+    }
+
     auto nodeVarDeclInit = std::optional<ASTNodeExpr>{};
 
     if (stmtVarDecl.init != std::nullopt) {
