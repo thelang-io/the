@@ -66,30 +66,30 @@ fn Token_isStrEsc (ch: char) bool {
   return Token_isCharEsc(ch)
 }
 
-fn Token_str (this: Token) str {
-  val := _Token_valEscaped(this)
+fn Token_str (self: Token) str {
+  val := _Token_valEscaped(self)
 
   return
-    this.type.str().slice(3) +
-    "(" + this.start.str() + "-" + this.end.str() + ")" +
+    self.type.str().slice(3) +
+    "(" + self.start.str() + "-" + self.end.str() + ")" +
     (val == "" ? "" : ": " + val)
 }
 
-fn Token_xml (this: Token) str {
+fn Token_xml (self: Token) str {
   return
     "<Token" +
-    " type=\"" + this.type.str().slice(3) + "\"" +
-    " val=\"" + _Token_valEscaped(this, true) + "\"" +
-    " start=\"" + this.start.str() + "\"" +
-    " end=\"" + this.end.str() + "\"" +
+    " type=\"" + self.type.str().slice(3) + "\"" +
+    " val=\"" + _Token_valEscaped(self, true) + "\"" +
+    " start=\"" + self.start.str() + "\"" +
+    " end=\"" + self.end.str() + "\"" +
     " />"
 }
 
-fn _Token_valEscaped (this: Token, xml := false) str {
+fn _Token_valEscaped (self: Token, xml := false) str {
   mut result := ""
 
-  loop i := 0; i < this.val.len; i++ {
-    ch := this.val[i]
+  loop i := 0; i < self.val.len; i++ {
+    ch := self.val[i]
 
     if ch == '\f' {
       result += "\\f"

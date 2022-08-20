@@ -16,48 +16,48 @@ fn Reader_init (p: str) Reader {
   return Reader{path: path, content: content}
 }
 
-fn Reader_eof (this: ref Reader) bool {
-  return this.pos >= this.content.len
+fn Reader_eof (self: ref Reader) bool {
+  return self.pos >= self.content.len
 }
 
-fn Reader_lookahead (mut this: ref Reader, check: char) bool {
-  if this.pos + 1 >= this.content.len {
+fn Reader_lookahead (mut self: ref Reader, check: char) bool {
+  if self.pos + 1 >= self.content.len {
     return false
   }
 
-  ch := this.content[this.pos + 1]
+  ch := self.content[self.pos + 1]
 
   if (
     OS == "Windows" &&
     ch == '\r' &&
-    this.pos + 2 < this.content.len &&
-    this.content[this.pos + 2] == '\n'
+    self.pos + 2 < self.content.len &&
+    self.content[self.pos + 2] == '\n'
   ) {
     if check == '\n' {
-      this.pos += 2
+      self.pos += 2
       return true
     }
   } elif check == ch {
-    this.pos++
+    self.pos++
     return true
   }
 
   return false
 }
 
-fn Reader_next (mut this: ref Reader) char {
-  if Reader_eof(this) {
+fn Reader_next (mut self: ref Reader) char {
+  if Reader_eof(self) {
     RaiseError("Tried to read on eof")
   }
 
-  ch1 := this.content[this.pos]
-  this.pos++
+  ch1 := self.content[self.pos]
+  self.pos++
 
-  if OS == "Windows" && ch1 == '\r' && !Reader_eof(this) {
-    ch2 := this.content[this.pos]
+  if OS == "Windows" && ch1 == '\r' && !Reader_eof(self) {
+    ch2 := self.content[self.pos]
 
     if ch2 == '\n' {
-      this.pos++
+      self.pos++
       return ch2
     }
   }
@@ -65,21 +65,21 @@ fn Reader_next (mut this: ref Reader) char {
   return ch1
 }
 
-fn Reader_seek (mut this: ref Reader, pos: int) {
-  this.pos = pos
+fn Reader_seek (mut self: ref Reader, pos: int) {
+  self.pos = pos
 }
 
-fn Reader_slice (this: ref Reader, start: int?, end: int?) str {
-  return this.content.slice(start, end)
+fn Reader_slice (self: ref Reader, start: int?, end: int?) str {
+  return self.content.slice(start, end)
 }
 
-fn Reader_walk (mut this: ref Reader, match: fn (char) bool) {
-  loop !Reader_eof(this) {
-    pos := this.pos
-    ch := Reader_next(this)
+fn Reader_walk (mut self: ref Reader, match: fn (char) bool) {
+  loop !Reader_eof(self) {
+    pos := self.pos
+    ch := Reader_next(self)
 
     if !match(ch) {
-      Reader_seek(this, pos)
+      Reader_seek(self, pos)
       break
     }
   }
