@@ -58,7 +58,7 @@ ParserStmt Parser::next (bool allowSemi) {
   if (tok0.type == TK_KW_FN) {
     auto [_1, tok1] = this->lexer->next();
 
-    if (tok1.type != TK_ID) {
+    if (tok1.type != TK_ID && tok1.type != TK_KW_MAIN) {
       throw Error(this->reader, tok1.start, E0115);
     }
 

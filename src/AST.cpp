@@ -115,6 +115,12 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
   } else if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
     auto initialState = this->state;
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
+    auto nodeFnDeclName = stmtFnDecl.id.val;
+
+    if (nodeFnDeclName == "main") {
+      throw Error(this->reader, stmtFnDecl.id.start, stmtFnDecl.id.end, E1021);
+    }
+
     auto nodeFnDeclParams = std::vector<ASTNodeFnDeclParam>{};
     auto nodeFnDeclVarStack = this->varMap.varStack();
     auto nodeFnDeclVarParams = std::vector<TypeFnParam>{};
@@ -140,7 +146,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       nodeFnDeclVarParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
     }
 
-    auto nodeFnDeclName = stmtFnDecl.id.val;
     auto nodeFnDeclCodeName = this->typeMap.name(nodeFnDeclName);
     auto nodeFnDeclVarReturnType = stmtFnDecl.returnType == std::nullopt
       ? this->typeMap.get("void")

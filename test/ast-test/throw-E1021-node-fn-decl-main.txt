@@ -1,0 +1,7 @@
+======= stdin =======
+fn main () {
+}
+======= stderr =======
+/test:1:4: E1021 - Function declaration with name `main` is not allowed
+  1 | fn main () {
+    |    ^~~~

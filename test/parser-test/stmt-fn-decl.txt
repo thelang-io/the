@@ -14,6 +14,8 @@ fn test4 (a: int, b: int) int {
 fn test5 (x: int, y: int, z: int) int {
   return x - y - z
 }
+fn main () {
+}
 ======= stdout =======
 <StmtFnDecl start="1:1" end="3:2">
   <StmtFnDeclId>
@@ -237,4 +239,9 @@ fn test5 (x: int, y: int, z: int) int {
       </ExprBinary>
     </StmtReturn>
   </StmtFnDeclBody>
+</StmtFnDecl>
+<StmtFnDecl start="16:1" end="17:2">
+  <StmtFnDeclId>
+    <Token type="KW_MAIN" val="main" start="16:4" end="16:8" />
+  </StmtFnDeclId>
 </StmtFnDecl>
