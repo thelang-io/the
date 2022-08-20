@@ -1,4 +1,4 @@
-# @thelang-io/core
+# @thelang-io/the
 
 ## Running
 
