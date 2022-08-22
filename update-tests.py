@@ -39,7 +39,7 @@ def update(directory: str, action: str):
         f.close()
 
         process = subprocess.Popen(
-            ["build/the-core", action, filepath],
+            ["build/the", action, filepath],
             stderr=subprocess.PIPE,
             stdout=subprocess.PIPE,
             text=True

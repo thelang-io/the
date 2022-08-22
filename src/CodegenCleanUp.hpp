@@ -5,8 +5,8 @@
  * Proprietary and confidential
  */
 
-#ifndef THE_CORE_CODEGEN_CLEAN_UP_HPP
-#define THE_CORE_CODEGEN_CLEAN_UP_HPP
+#ifndef SRC_CODEGEN_CLEAN_UP_HPP
+#define SRC_CODEGEN_CLEAN_UP_HPP
 
 #include <string>
 #include <vector>
