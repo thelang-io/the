@@ -91,7 +91,47 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
 
 void AST::_forwardNode (const ParserBlock &block) {
   for (const auto &stmt : block) {
-    if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
+    if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
+      auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
+      auto nodeFnDeclName = stmtFnDecl.id.val;
+
+      if (nodeFnDeclName == "main") {
+        throw Error(this->reader, stmtFnDecl.id.start, stmtFnDecl.id.end, E1021);
+      }
+
+      auto nodeFnDeclVarParams = std::vector<TypeFnParam>{};
+      this->varMap.save();
+
+      for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
+        auto paramName = stmtFnDeclParam.id.val;
+        auto paramType = stmtFnDeclParam.type != std::nullopt
+          ? this->_type(*stmtFnDeclParam.type)
+          : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
+
+        if (paramType->isVoid() && stmtFnDeclParam.type == std::nullopt) {
+          throw Error(this->reader, stmtFnDeclParam.init->start, stmtFnDeclParam.init->end, E1022);
+        } else if (paramType->isVoid()) {
+          throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
+        }
+
+        this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
+
+        auto paramVariadic = stmtFnDeclParam.variadic;
+        auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
+
+        nodeFnDeclVarParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
+      }
+
+      auto nodeFnDeclCodeName = this->typeMap.name(nodeFnDeclName);
+      auto nodeFnDeclVarReturnType = stmtFnDecl.returnType == std::nullopt
+        ? this->typeMap.get("void")
+        : this->_type(*stmtFnDecl.returnType);
+
+      this->varMap.restore();
+      auto nodeFnDeclVarType = this->typeMap.fn(nodeFnDeclCodeName, nodeFnDeclVarParams, nodeFnDeclVarReturnType);
+
+      this->varMap.add(nodeFnDeclName, nodeFnDeclCodeName, nodeFnDeclVarType, false);
+    } else if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
       auto objName = stmtObjDecl.id.val;
 
@@ -116,14 +156,10 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto initialState = this->state;
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
     auto nodeFnDeclName = stmtFnDecl.id.val;
-
-    if (nodeFnDeclName == "main") {
-      throw Error(this->reader, stmtFnDecl.id.start, stmtFnDecl.id.end, E1021);
-    }
-
+    auto nodeFnDeclVar = this->varMap.get(nodeFnDeclName);
+    auto type = std::get<TypeFn>(nodeFnDeclVar->type->body);
     auto nodeFnDeclParams = std::vector<ASTNodeFnDeclParam>{};
     auto nodeFnDeclVarStack = this->varMap.varStack();
-    auto nodeFnDeclVarParams = std::vector<TypeFnParam>{};
 
     this->varMap.save();
 
@@ -133,12 +169,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         ? this->_type(*stmtFnDeclParam.type)
         : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
 
-      if (paramType->isVoid() && stmtFnDeclParam.type == std::nullopt) {
-        throw Error(this->reader, stmtFnDeclParam.init->start, stmtFnDeclParam.init->end, E1022);
-      } else if (paramType->isVoid()) {
-        throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
-      }
-
       auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
       auto paramInit = std::optional<ASTNodeExpr>{};
 
@@ -146,24 +176,11 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         paramInit = this->_nodeExpr(*stmtFnDeclParam.init, paramType, nodeFnDeclVarStack);
       }
 
-      auto paramVariadic = stmtFnDeclParam.variadic;
-      auto paramRequired = paramInit == std::nullopt && !paramVariadic;
-
       nodeFnDeclParams.push_back(ASTNodeFnDeclParam{paramVar, paramInit});
-      nodeFnDeclVarParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
     }
 
-    auto nodeFnDeclCodeName = this->typeMap.name(nodeFnDeclName);
-    auto nodeFnDeclVarReturnType = stmtFnDecl.returnType == std::nullopt
-      ? this->typeMap.get("void")
-      : this->_type(*stmtFnDecl.returnType);
-    auto nodeFnDeclVarType = this->typeMap.fn(nodeFnDeclCodeName, nodeFnDeclVarParams, nodeFnDeclVarReturnType);
-    auto nodeFnDeclVar = this->varMap.add(nodeFnDeclName, nodeFnDeclCodeName, nodeFnDeclVarType, false);
-
-    nodeFnDeclVar->frame -= 1;
-
     this->typeMap.stack.emplace_back(nodeFnDeclVar->name);
-    this->state.returnType = nodeFnDeclVarReturnType;
+    this->state.returnType = type.returnType;
     auto nodeFnDeclBody = this->_block(stmtFnDecl.body, nodeFnDeclVarStack);
     this->varMap.restore();
     this->typeMap.stack.pop_back();

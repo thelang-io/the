@@ -1,0 +1,107 @@
+======= stdin =======
+obj Test1 {
+  t2: Test2
+}
+
+obj Test2 {
+  a: int
+}
+
+obj Test3 {
+  a: int
+}
+
+obj Test4 {
+  t3: Test3
+}
+
+main {
+  v1 := Test1{t2: Test2{a: 1}}
+  v2 := Test4{t3: Test3{a: 2}}
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+
+struct __THE_1_Test1_0;
+struct __THE_1_Test2_0;
+struct __THE_1_Test3_0;
+struct __THE_1_Test4_0;
+
+struct __THE_1_Test1_0 {
+  struct __THE_1_Test2_0 *__THE_0_t2;
+};
+struct __THE_1_Test2_0 {
+  int32_t __THE_0_a;
+};
+struct __THE_1_Test3_0 {
+  int32_t __THE_0_a;
+};
+struct __THE_1_Test4_0 {
+  struct __THE_1_Test3_0 *__THE_0_t3;
+};
+
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (int32_t);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+struct __THE_1_Test3_0 *__THE_1_Test3_0_alloc (int32_t);
+void __THE_1_Test3_0_free (struct __THE_1_Test3_0 *);
+struct __THE_1_Test4_0 *__THE_1_Test4_0_alloc (struct __THE_1_Test3_0 *);
+void __THE_1_Test4_0_free (struct __THE_1_Test4_0 *);
+
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_t2) {
+  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
+  r->__THE_0_t2 = __THE_0_t2;
+  return r;
+}
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o->__THE_0_t2);
+  free(o);
+}
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
+  r->__THE_0_a = __THE_0_a;
+  return r;
+}
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
+  free(o);
+}
+struct __THE_1_Test3_0 *__THE_1_Test3_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_Test3_0 *r = alloc(sizeof(struct __THE_1_Test3_0));
+  r->__THE_0_a = __THE_0_a;
+  return r;
+}
+void __THE_1_Test3_0_free (struct __THE_1_Test3_0 *o) {
+  free(o);
+}
+struct __THE_1_Test4_0 *__THE_1_Test4_0_alloc (struct __THE_1_Test3_0 *__THE_0_t3) {
+  struct __THE_1_Test4_0 *r = alloc(sizeof(struct __THE_1_Test4_0));
+  r->__THE_0_t3 = __THE_0_t3;
+  return r;
+}
+void __THE_1_Test4_0_free (struct __THE_1_Test4_0 *o) {
+  __THE_1_Test3_0_free((struct __THE_1_Test3_0 *) o->__THE_0_t3);
+  free(o);
+}
+
+int main () {
+  const struct __THE_1_Test1_0 *__THE_0_v1_0 = __THE_1_Test1_0_alloc(__THE_1_Test2_0_alloc(1));
+  const struct __THE_1_Test4_0 *__THE_0_v2_0 = __THE_1_Test4_0_alloc(__THE_1_Test3_0_alloc(2));
+  __THE_1_Test4_0_free((struct __THE_1_Test4_0 *) __THE_0_v2_0);
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_v1_0);
+}
+======= flags =======
+======= stdout =======

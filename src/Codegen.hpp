@@ -18,6 +18,12 @@ enum CodegenEntityType {
   CODEGEN_ENTITY_OBJ
 };
 
+enum CodegenPhase {
+  CODEGEN_PHASE_ALLOC,
+  CODEGEN_PHASE_INIT,
+  CODEGEN_PHASE_FULL
+};
+
 struct CodegenBuiltins {
   bool fnAlloc = false;
   bool fnBoolStr = false;
@@ -142,7 +148,7 @@ class Codegen {
     const std::optional<std::vector<std::string> *> & = std::nullopt,
     bool = false
   );
-  std::string _node (const ASTNode &, bool = true);
+  std::string _node (const ASTNode &, bool = true, CodegenPhase phase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _type (const Type *);
   CodegenTypeInfo _typeInfo (Type *);

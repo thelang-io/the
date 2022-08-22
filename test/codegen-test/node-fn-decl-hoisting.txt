@@ -1,0 +1,311 @@
+======= stdin =======
+fn factorial (n: i64) i64 {
+  return n <= 1 ? 1 : n * factorial(n - 1)
+}
+
+fn test1 (mut a: int) int {
+  if a == 1 {
+    return test1(a + 10)
+  } elif a == 10 {
+    return test2(a + 100)
+  } else {
+    return 2
+  }
+}
+fn test2 (a: int) int {
+  if a == 11 {
+    return test1(a - 10)
+  } elif a == 101 {
+    return test2(a - 100)
+  } else {
+    return 21
+  }
+}
+
+main {
+  loop i := -1; i < 10; i++ {
+    print("factorial(" + i.str() + "):", factorial(i))
+  }
+
+  print("test1(0):", test1(0))
+  print("test1(1):", test1(1))
+  print("test1(2):", test1(2))
+  print("test1(10):", test1(10))
+  print("test1(11):", test1(11))
+  print("test1(12):", test1(12))
+  print("test1(20):", test1(20))
+  print("test1(21):", test1(21))
+  print("test1(22):", test1(22))
+  print("test1(100):", test1(100))
+  print("test1(101):", test1(101))
+  print("test1(102):", test1(102))
+  print("test2(0):", test2(0))
+  print("test2(1):", test2(1))
+  print("test2(2):", test2(2))
+  print("test2(10):", test2(10))
+  print("test2(11):", test2(11))
+  print("test2(12):", test2(12))
+  print("test2(20):", test2(20))
+  print("test2(21):", test2(21))
+  print("test2(22):", test2(22))
+  print("test2(100):", test2(100))
+  print("test2(101):", test2(101))
+  print("test2(102):", test2(102))
+}
+======= code =======
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
+struct str int_str (int32_t);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_factorial_0X;
+struct __THE_1_test1_0X;
+struct __THE_1_test2_0X;
+
+struct __THE_1_fn$0P {
+  int64_t n0;
+};
+struct __THE_1_fn$0 {
+  int64_t (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_factorial_0X {
+  const struct __THE_1_fn$0 *__THE_0_factorial_0;
+};
+struct __THE_1_test1_0X {
+  const struct __THE_1_fn$0 *__THE_0_test2_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0;
+};
+struct __THE_1_test2_0X {
+  const struct __THE_1_fn$0 *__THE_0_test2_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0;
+};
+
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_factorial_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_factorial_0X);
+int64_t __THE_1_factorial_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test1_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test1_0X);
+int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test2_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test2_0X);
+int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$0P);
+
+void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+  free(n.x);
+}
+void __THE_1_factorial_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_factorial_0X x) {
+  size_t l = sizeof(struct __THE_1_factorial_0X);
+  struct __THE_1_factorial_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_factorial_0;
+  n->x = r;
+  n->l = l;
+}
+int64_t __THE_1_factorial_0 (void *px, struct __THE_1_fn$0P p) {
+  struct __THE_1_factorial_0X *x = px;
+  const struct __THE_1_fn$0 *__THE_0_factorial_0 = x->__THE_0_factorial_0;
+  const int64_t __THE_0_n_0 = p.n0;
+  return __THE_0_n_0 <= 1 ? 1 : __THE_0_n_0 * (*__THE_0_factorial_0).f((*__THE_0_factorial_0).x, (struct __THE_1_fn$0P) {__THE_0_n_0 - 1});
+}
+void __THE_1_test1_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_test1_0X x) {
+  size_t l = sizeof(struct __THE_1_test1_0X);
+  struct __THE_1_test1_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_test1_0;
+  n->x = r;
+  n->l = l;
+}
+int32_t __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
+  struct __THE_1_test1_0X *x = px;
+  const struct __THE_1_fn$0 *__THE_0_test2_0 = x->__THE_0_test2_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  int32_t __THE_0_a_0 = p.n0;
+  if (__THE_0_a_0 == 1) {
+    return (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0 + 10});
+  } else if (__THE_0_a_0 == 10) {
+    return (*__THE_0_test2_0).f((*__THE_0_test2_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0 + 100});
+  } else {
+    return 2;
+  }
+}
+void __THE_1_test2_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_test2_0X x) {
+  size_t l = sizeof(struct __THE_1_test2_0X);
+  struct __THE_1_test2_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_test2_0;
+  n->x = r;
+  n->l = l;
+}
+int32_t __THE_1_test2_0 (void *px, struct __THE_1_fn$0P p) {
+  struct __THE_1_test2_0X *x = px;
+  const struct __THE_1_fn$0 *__THE_0_test2_0 = x->__THE_0_test2_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const int32_t __THE_0_a_0 = p.n0;
+  if (__THE_0_a_0 == 11) {
+    return (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0 - 10});
+  } else if (__THE_0_a_0 == 101) {
+    return (*__THE_0_test2_0).f((*__THE_0_test2_0).x, (struct __THE_1_fn$0P) {__THE_0_a_0 - 100});
+  } else {
+    return 21;
+  }
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_factorial_0;
+  const struct __THE_1_fn$0 __THE_0_test1_0;
+  const struct __THE_1_fn$0 __THE_0_test2_0;
+  __THE_1_factorial_0_alloc((struct __THE_1_fn$0 *) &__THE_0_factorial_0, (struct __THE_1_factorial_0X) {&__THE_0_factorial_0});
+  __THE_1_test1_0_alloc((struct __THE_1_fn$0 *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
+  __THE_1_test2_0_alloc((struct __THE_1_fn$0 *) &__THE_0_test2_0, (struct __THE_1_test2_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
+  for (int32_t __THE_0_i_0 = -1; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "szlz", str_concat_cstr(cstr_concat_str("factorial(", int_str(__THE_0_i_0)), "):"), " ", __THE_0_factorial_0.f(__THE_0_factorial_0.x, (struct __THE_1_fn$0P) {__THE_0_i_0}), "\n");
+  }
+  print(stdout, "zziz", "test1(0):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {0}), "\n");
+  print(stdout, "zziz", "test1(1):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {1}), "\n");
+  print(stdout, "zziz", "test1(2):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {2}), "\n");
+  print(stdout, "zziz", "test1(10):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {10}), "\n");
+  print(stdout, "zziz", "test1(11):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {11}), "\n");
+  print(stdout, "zziz", "test1(12):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {12}), "\n");
+  print(stdout, "zziz", "test1(20):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {20}), "\n");
+  print(stdout, "zziz", "test1(21):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {21}), "\n");
+  print(stdout, "zziz", "test1(22):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {22}), "\n");
+  print(stdout, "zziz", "test1(100):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {100}), "\n");
+  print(stdout, "zziz", "test1(101):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {101}), "\n");
+  print(stdout, "zziz", "test1(102):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {102}), "\n");
+  print(stdout, "zziz", "test2(0):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {0}), "\n");
+  print(stdout, "zziz", "test2(1):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {1}), "\n");
+  print(stdout, "zziz", "test2(2):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {2}), "\n");
+  print(stdout, "zziz", "test2(10):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {10}), "\n");
+  print(stdout, "zziz", "test2(11):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {11}), "\n");
+  print(stdout, "zziz", "test2(12):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {12}), "\n");
+  print(stdout, "zziz", "test2(20):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {20}), "\n");
+  print(stdout, "zziz", "test2(21):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {21}), "\n");
+  print(stdout, "zziz", "test2(22):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {22}), "\n");
+  print(stdout, "zziz", "test2(100):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {100}), "\n");
+  print(stdout, "zziz", "test2(101):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {101}), "\n");
+  print(stdout, "zziz", "test2(102):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {102}), "\n");
+  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_test2_0);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_test1_0);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_factorial_0);
+}
+======= flags =======
+======= stdout =======
+factorial(-1): 1
+factorial(0): 1
+factorial(1): 1
+factorial(2): 2
+factorial(3): 6
+factorial(4): 24
+factorial(5): 120
+factorial(6): 720
+factorial(7): 5040
+factorial(8): 40320
+factorial(9): 362880
+test1(0): 2
+test1(1): 2
+test1(2): 2
+test1(10): 21
+test1(11): 2
+test1(12): 2
+test1(20): 2
+test1(21): 2
+test1(22): 2
+test1(100): 2
+test1(101): 2
+test1(102): 2
+test2(0): 21
+test2(1): 21
+test2(2): 21
+test2(10): 21
+test2(11): 2
+test2(12): 21
+test2(20): 21
+test2(21): 21
+test2(22): 21
+test2(100): 21
+test2(101): 21
+test2(102): 21

@@ -329,7 +329,8 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-param-mut-fn",
   "node-fn-decl-param-mut-array",
   "node-fn-decl-param-mut-opt",
-  "node-fn-decl-param-mut-str"
+  "node-fn-decl-param-mut-str",
+  "node-fn-decl-hoisting"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
@@ -361,7 +362,8 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-field-fn",
   "node-obj-decl-field-obj",
   "node-obj-decl-field-opt",
-  "node-obj-decl-field-str"
+  "node-obj-decl-field-str",
+  "node-obj-decl-forward-decl"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(

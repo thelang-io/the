@@ -50,12 +50,9 @@ Codegen::Codegen (AST *a) {
 
 std::tuple<std::string, std::string> Codegen::gen () {
   auto nodes = this->ast->gen();
+
   auto mainCode = std::string("int main () {" EOL);
-
-  for (const auto &node : nodes) {
-    mainCode += this->_node(node);
-  }
-
+  mainCode += this->_block(nodes, false);
   mainCode += this->state.cleanUp.gen(2);
   mainCode += "}" EOL;
 
@@ -795,8 +792,30 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
 
   this->indent += 2;
 
-  for (const auto &node : nodes) {
-    code += this->_node(node);
+  for (auto i = static_cast<std::size_t>(0); i < nodes.size(); i++) {
+    if (
+      std::holds_alternative<ASTNodeFnDecl>(*nodes[i].body) &&
+      i != nodes.size() - 1 &&
+      std::holds_alternative<ASTNodeFnDecl>(*nodes[i + 1].body)
+    ) {
+      for (auto j = i; j < nodes.size() && std::holds_alternative<ASTNodeFnDecl>(*nodes[j].body); j++) {
+        code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC);
+      }
+
+      for (; i < nodes.size() && std::holds_alternative<ASTNodeFnDecl>(*nodes[i].body); i++) {
+        code += this->_node(nodes[i], true, CODEGEN_PHASE_INIT);
+      }
+
+      i--;
+    } else if (std::holds_alternative<ASTNodeMain>(*nodes[i].body)) {
+      auto saveIndent = this->indent;
+
+      this->indent = 0;
+      code += this->_node(nodes[i]);
+      this->indent = saveIndent;
+    } else {
+      code += this->_node(nodes[i]);
+    }
   }
 
   if (saveCleanUp) {
@@ -950,7 +969,7 @@ std::string Codegen::_genEqFn (
   return code;
 }
 
-std::string Codegen::_node (const ASTNode &node, bool root) {
+std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) {
   auto code = std::string();
 
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
@@ -987,149 +1006,156 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
     auto varTypeInfo = this->_typeInfo(nodeFnDecl.var->type);
-    auto fnName = Codegen::name(nodeFnDecl.var->codeName);
     auto typeName = Codegen::typeName(nodeFnDecl.var->codeName);
     auto contextName = typeName + "X";
-    auto paramsName = varTypeInfo.typeName + "P";
 
     auto saveIndent = this->indent;
-    auto saveStateBuiltins = this->state.builtins;
-    auto saveStateEntities = this->state.entities;
-    auto initialStateCleanUp = this->state.cleanUp;
-    auto saveStateContextVars = this->state.contextVars;
 
-    auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_FN, {}, { varTypeInfo.typeName }};
+    if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
+      auto saveStateBuiltins = this->state.builtins;
+      auto saveStateEntities = this->state.entities;
+      auto initialStateCleanUp = this->state.cleanUp;
+      auto saveStateContextVars = this->state.contextVars;
 
-    this->varMap.save();
-    this->indent = 2;
-    this->state.builtins = &entity.builtins;
-    this->state.entities = &entity.entities;
-    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
+      auto paramsName = varTypeInfo.typeName + "P";
+      auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_FN, {}, { varTypeInfo.typeName }};
 
-    auto bodyCode = std::string();
+      this->varMap.save();
+      this->indent = 2;
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+      this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
 
-    if (!nodeFnDecl.stack.empty()) {
-      bodyCode += "  struct " + contextName + " *x = px;" EOL;
+      auto bodyCode = std::string();
 
-      auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, { varTypeInfo.typeName, typeName, contextName }};
-      allocFnEntity.decl += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + ", struct " + contextName + ");";
-      allocFnEntity.def += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + "n, struct " + contextName + " x) {" EOL;
-      allocFnEntity.def += "  size_t l = sizeof(struct " + contextName + ");" EOL;
-      allocFnEntity.def += "  struct " + contextName + " *r = alloc(l);" EOL;
-      allocFnEntity.def += "  memcpy(r, &x, l);" EOL;
-      allocFnEntity.def += "  n->f = &" + typeName + ";" EOL;
-      allocFnEntity.def += "  n->x = r;" EOL;
-      allocFnEntity.def += "  n->l = l;" EOL;
-      allocFnEntity.def += "}";
+      if (!nodeFnDecl.stack.empty()) {
+        bodyCode += "  struct " + contextName + " *x = px;" EOL;
 
-      auto contextEntity = CodegenEntity{contextName, CODEGEN_ENTITY_OBJ};
-      contextEntity.decl += "struct " + contextName + ";";
-      contextEntity.def += "struct " + contextName + " {" EOL;
+        auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, { varTypeInfo.typeName, typeName, contextName }};
+        allocFnEntity.decl += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + ", struct " + contextName + ");";
+        allocFnEntity.def += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + "n, struct " + contextName + " x) {" EOL;
+        allocFnEntity.def += "  size_t l = sizeof(struct " + contextName + ");" EOL;
+        allocFnEntity.def += "  struct " + contextName + " *r = alloc(l);" EOL;
+        allocFnEntity.def += "  memcpy(r, &x, l);" EOL;
+        allocFnEntity.def += "  n->f = &" + typeName + ";" EOL;
+        allocFnEntity.def += "  n->x = r;" EOL;
+        allocFnEntity.def += "  n->l = l;" EOL;
+        allocFnEntity.def += "}";
 
-      for (const auto &contextVar : nodeFnDecl.stack) {
-        auto contextVarName = Codegen::name(contextVar->codeName);
-        auto contextVarTypeInfo = this->_typeInfo(contextVar->type);
+        auto contextEntity = CodegenEntity{contextName, CODEGEN_ENTITY_OBJ};
+        contextEntity.decl += "struct " + contextName + ";";
+        contextEntity.def += "struct " + contextName + " {" EOL;
 
-        contextEntity.def += "  " + (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst) + contextVarName + ";" EOL;
-        bodyCode += "  " + (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst) + contextVarName + " = x->" + contextVarName + ";" EOL;
+        for (const auto &contextVar : nodeFnDecl.stack) {
+          auto contextVarName = Codegen::name(contextVar->codeName);
+          auto contextVarTypeInfo = this->_typeInfo(contextVar->type);
 
-        this->state.contextVars.insert(contextVarName);
-      }
+          contextEntity.def += "  " + (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst) + contextVarName + ";" EOL;
+          bodyCode += "  " + (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst) + contextVarName + " = x->" + contextVarName + ";" EOL;
 
-      contextEntity.def += "};";
-
-      this->entities.push_back(allocFnEntity);
-      this->entities.push_back(contextEntity);
-      this->_activateEntity(contextName, &entity.entities);
-    }
-
-    if (!nodeFnDecl.params.empty()) {
-      auto paramIdx = static_cast<std::size_t>(0);
-
-      for (const auto &param : nodeFnDecl.params) {
-        auto paramName = Codegen::name(param.var->codeName);
-        auto paramTypeInfo = this->_typeInfo(param.var->type);
-        auto paramIdxStr = std::to_string(paramIdx);
-
-        bodyCode += "  " + (param.var->mut ? paramTypeInfo.typeCode : paramTypeInfo.typeCodeConst) + paramName + " = ";
-
-        if (param.init == std::nullopt) {
-          bodyCode += "p.n" + paramIdxStr;
-        } else {
-          auto initCode = this->_nodeExpr(*param.init, paramTypeInfo.type);
-          bodyCode += "p.o" + paramIdxStr + " == 1 ? p.n" + paramIdxStr + " : " + initCode;
+          this->state.contextVars.insert(contextVarName);
         }
 
-        bodyCode += ";" EOL;
+        contextEntity.def += "};";
 
-        if (
-          paramTypeInfo.type->isArray() ||
-          paramTypeInfo.type->isFn() ||
-          paramTypeInfo.type->isObj() ||
-          paramTypeInfo.type->isOpt()
-        ) {
-          this->_activateEntity(paramTypeInfo.typeName + "_free");
-          this->state.cleanUp.add(paramTypeInfo.typeName + "_free((" + paramTypeInfo.typeCodeTrimmed + ") " + paramName + ");");
-        } else if (paramTypeInfo.type->isStr()) {
-          this->_activateBuiltin("fnStrFree");
-          this->state.cleanUp.add("str_free((struct str) " + paramName + ");");
-        }
-
-        paramIdx++;
+        this->entities.push_back(allocFnEntity);
+        this->entities.push_back(contextEntity);
+        this->_activateEntity(contextName, &entity.entities);
       }
 
-      this->_activateEntity(paramsName, &entity.entities);
+      if (!nodeFnDecl.params.empty()) {
+        auto paramIdx = static_cast<std::size_t>(0);
+
+        for (const auto &param : nodeFnDecl.params) {
+          auto paramName = Codegen::name(param.var->codeName);
+          auto paramTypeInfo = this->_typeInfo(param.var->type);
+          auto paramIdxStr = std::to_string(paramIdx);
+
+          bodyCode += "  " + (param.var->mut ? paramTypeInfo.typeCode : paramTypeInfo.typeCodeConst) + paramName + " = ";
+
+          if (param.init == std::nullopt) {
+            bodyCode += "p.n" + paramIdxStr;
+          } else {
+            auto initCode = this->_nodeExpr(*param.init, paramTypeInfo.type);
+            bodyCode += "p.o" + paramIdxStr + " == 1 ? p.n" + paramIdxStr + " : " + initCode;
+          }
+
+          bodyCode += ";" EOL;
+
+          if (
+            paramTypeInfo.type->isArray() ||
+            paramTypeInfo.type->isFn() ||
+            paramTypeInfo.type->isObj() ||
+            paramTypeInfo.type->isOpt()
+          ) {
+            this->_activateEntity(paramTypeInfo.typeName + "_free");
+            this->state.cleanUp.add(paramTypeInfo.typeName + "_free((" + paramTypeInfo.typeCodeTrimmed + ") " + paramName + ");");
+          } else if (paramTypeInfo.type->isStr()) {
+            this->_activateBuiltin("fnStrFree");
+            this->state.cleanUp.add("str_free((struct str) " + paramName + ");");
+          }
+
+          paramIdx++;
+        }
+
+        this->_activateEntity(paramsName, &entity.entities);
+      }
+
+      auto returnTypeInfo = this->_typeInfo(std::get<TypeFn>(nodeFnDecl.var->type->body).returnType);
+
+      this->indent = 0;
+      this->state.returnType = returnTypeInfo.type;
+      bodyCode += this->_block(nodeFnDecl.body, false);
+      this->indent = 2;
+
+      this->varMap.restore();
+
+      if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
+        bodyCode.insert(0, std::string(this->indent, ' ') + returnTypeInfo.typeCode + "v;" EOL);
+        bodyCode += this->state.cleanUp.gen(this->indent);
+        bodyCode += std::string(this->indent, ' ') + "return v;" EOL;
+      } else {
+        bodyCode += this->state.cleanUp.gen(this->indent);
+      }
+
+      if (this->state.cleanUp.returnVarUsed) {
+        bodyCode.insert(0, std::string(this->indent, ' ') + "unsigned char r = 0;" EOL);
+      }
+
+      if (nodeFnDecl.params.empty()) {
+        entity.decl += returnTypeInfo.typeCode + typeName + " (void *);";
+        entity.def += returnTypeInfo.typeCode + typeName + " (void *px) {" EOL + bodyCode + "}";
+      } else {
+        entity.decl += returnTypeInfo.typeCode + typeName + " (void *, struct " + paramsName + ");";
+        entity.def += returnTypeInfo.typeCode + typeName + " (void *px, struct " + paramsName + " p) {" EOL + bodyCode + "}";
+      }
+
+      this->entities.push_back(entity);
+
+      this->state.builtins = saveStateBuiltins;
+      this->state.entities = saveStateEntities;
+      this->state.cleanUp = initialStateCleanUp;
+      this->state.contextVars = saveStateContextVars;
     }
 
-    auto returnTypeInfo = this->_typeInfo(std::get<TypeFn>(nodeFnDecl.var->type->body).returnType);
+    this->indent = saveIndent;
+    auto fnName = Codegen::name(nodeFnDecl.var->codeName);
 
-    this->indent = 0;
-    this->state.returnType = returnTypeInfo.type;
-    bodyCode += this->_block(nodeFnDecl.body, false);
-    this->indent = 2;
-
-    this->varMap.restore();
-
-    if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
-      bodyCode.insert(0, std::string(this->indent, ' ') + returnTypeInfo.typeCode + "v;" EOL);
-      bodyCode += this->state.cleanUp.gen(this->indent);
-      bodyCode += std::string(this->indent, ' ') + "return v;" EOL;
-    } else {
-      bodyCode += this->state.cleanUp.gen(this->indent);
+    if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
+      this->_activateEntity(varTypeInfo.typeName);
+      code += std::string(this->indent, ' ') + "const " + varTypeInfo.typeCode + fnName;
     }
 
-    if (this->state.cleanUp.returnVarUsed) {
-      bodyCode.insert(0, std::string(this->indent, ' ') + "unsigned char r = 0;" EOL);
-    }
-
-    if (nodeFnDecl.params.empty()) {
-      entity.decl += returnTypeInfo.typeCode + typeName + " (void *);";
-      entity.def += returnTypeInfo.typeCode + typeName + " (void *px) {" EOL + bodyCode + "}";
-    } else {
-      entity.decl += returnTypeInfo.typeCode + typeName + " (void *, struct " + paramsName + ");";
-      entity.def += returnTypeInfo.typeCode + typeName + " (void *px, struct " + paramsName + " p) {" EOL + bodyCode + "}";
-    }
-
-    this->entities.push_back(entity);
-
-    this->indent = saveIndent == 0 ? 2 : saveIndent;
-    this->state.builtins = saveStateBuiltins;
-    this->state.entities = saveStateEntities;
-    this->state.cleanUp = initialStateCleanUp;
-    this->state.contextVars = saveStateContextVars;
-
-    code = std::string(this->indent, ' ');
-    code += "const " + varTypeInfo.typeCode + fnName;
-    this->_activateEntity(varTypeInfo.typeName);
-
-    if (nodeFnDecl.stack.empty()) {
-      code += " = (" + varTypeInfo.typeCodeTrimmed + ") {&" + typeName + ", NULL, 0};";
-
+    if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && nodeFnDecl.stack.empty()) {
       this->_activateBuiltin("libStdlib");
       this->_activateEntity(typeName);
-    } else {
-      code += ";" EOL;
 
+      code += " = (" + varTypeInfo.typeCodeTrimmed + ") {&" + typeName + ", NULL, 0};" EOL;
+    } else if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
+      code += ";" EOL;
+    }
+
+    if ((phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) && !nodeFnDecl.stack.empty()) {
       this->_activateEntity(typeName + "_alloc");
       code += std::string(this->indent, ' ') + typeName + "_alloc((" + varTypeInfo.typeRefCode + ") &" + fnName + ", ";
 
@@ -1147,14 +1173,14 @@ std::string Codegen::_node (const ASTNode &node, bool root) {
         contextVarIdx++;
       }
 
-      code += "});";
+      code += "});" EOL;
 
       this->_activateEntity(varTypeInfo.typeName + "_free");
       this->state.cleanUp.add(varTypeInfo.typeName + "_free((" + varTypeInfo.typeCodeTrimmed + ") " + fnName + ");");
     }
 
     this->indent = saveIndent;
-    return this->_wrapNode(node, code + EOL);
+    return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     auto nodeIf = std::get<ASTNodeIf>(*node.body);
     auto initialStateTypeCasts = this->state.typeCasts;
