@@ -14,6 +14,7 @@
 #include "CodegenCleanUp.hpp"
 
 enum CodegenEntityType {
+  CODEGEN_ENTITY_DEF,
   CODEGEN_ENTITY_FN,
   CODEGEN_ENTITY_OBJ
 };
@@ -26,6 +27,10 @@ enum CodegenPhase {
 
 struct CodegenBuiltins {
   bool fnAlloc = false;
+  bool fnAnyCopy = false;
+  bool fnAnyFree = false;
+  bool fnAnyRealloc = false;
+  bool fnAnyStr = false;
   bool fnBoolStr = false;
   bool fnByteStr = false;
   bool fnCharStr = false;
@@ -71,6 +76,7 @@ struct CodegenBuiltins {
   bool libString = false;
   bool libUnistd = false;
   bool libWindows = false;
+  bool typeAny = false;
   bool typeStr = false;
 };
 
@@ -115,13 +121,15 @@ struct CodegenTypeInfo {
 class Codegen {
  public:
   AST *ast;
+  Reader *reader;
+  CodegenState state;
+  VarMap varMap;
+  std::map<std::string, const Type *> anyTypes;
   CodegenBuiltins builtins = {};
+  std::vector<CodegenEntity> entities;
   std::vector<std::string> flags;
   std::size_t indent = 0;
-  Reader *reader;
-  VarMap varMap;
-  std::vector<CodegenEntity> entities;
-  CodegenState state;
+  std::size_t lastAnyIdx = 1;
 
   static void compile (const std::string &, const std::tuple<std::string, std::string> &, bool = false);
   static std::string name (const std::string &);
@@ -152,6 +160,7 @@ class Codegen {
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _type (const Type *);
   CodegenTypeInfo _typeInfo (Type *);
+  std::string _typeNameAny (Type *);
   std::string _typeNameArray (const Type *);
   std::string _typeNameFn (const Type *);
   std::string _typeNameOpt (const Type *);

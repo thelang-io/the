@@ -136,6 +136,16 @@ TEST(TokenTest, IsNotWhitespace) {
   EXPECT_FALSE(Token::isWhitespace('#'));
 }
 
+TEST(TokenTest, Upper) {
+  EXPECT_EQ(Token::upper(""), "");
+  EXPECT_EQ(Token::upper(" test"), " TEST");
+  EXPECT_EQ(Token::upper("a"), "A");
+  EXPECT_EQ(Token::upper("1"), "1");
+  EXPECT_EQ(Token::upper("test"), "TEST");
+  EXPECT_EQ(Token::upper("test string"), "TEST STRING");
+  EXPECT_EQ(Token::upper("testTest"), "TESTTEST");
+}
+
 TEST(TokenTest, UpperFirst) {
   EXPECT_EQ(Token::upperFirst(""), "");
   EXPECT_EQ(Token::upperFirst(" test"), " test");

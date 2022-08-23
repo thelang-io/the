@@ -1,0 +1,76 @@
+======= stdin =======
+main {
+  a: any
+  b: any = 1
+  c := true ? a : b
+  d := false ? b : a
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_ANY_int 1
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  void (*f) (struct any);
+};
+
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  void *d = alloc(n.l);
+  memcpy(d, n.d, n.l);
+  return (struct any) {n.t, d, n.l, n.f};
+}
+void any_free (struct any n) {
+  if (n.f != NULL) n.f(n);
+}
+
+struct any_int;
+
+struct any_int {
+  int32_t d;
+};
+
+struct any any_int_alloc (int32_t);
+void any_int_free (struct any);
+
+struct any any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct any_int);
+  struct any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_free};
+}
+void any_int_free (struct any _n) {
+  struct any_int *n = _n.d;
+  free(n);
+}
+
+int main () {
+  const struct any __THE_0_a_0 = {0, NULL, 0, NULL};
+  const struct any __THE_0_b_0 = any_int_alloc(1);
+  const struct any __THE_0_c_0 = true ? any_copy(__THE_0_a_0) : any_copy(__THE_0_b_0);
+  const struct any __THE_0_d_0 = false ? any_copy(__THE_0_b_0) : any_copy(__THE_0_a_0);
+  any_free((struct any) __THE_0_d_0);
+  any_free((struct any) __THE_0_c_0);
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

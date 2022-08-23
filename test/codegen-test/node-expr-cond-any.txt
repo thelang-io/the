@@ -1,0 +1,21 @@
+======= stdin =======
+main {
+  a: any
+  b: any = 2
+
+  false ? a : 2
+  true ? 3 : b
+  false ? a : b
+}
+======= code =======
+int main () {
+  const struct any __THE_0_a_0 = {0, NULL, 0, NULL};
+  const struct any __THE_0_b_0 = any_int_alloc(2);
+  any_free((struct any) (false ? any_copy(__THE_0_a_0) : any_int_alloc(2)));
+  any_free((struct any) (true ? any_int_alloc(3) : any_copy(__THE_0_b_0)));
+  any_free((struct any) (false ? any_copy(__THE_0_a_0) : any_copy(__THE_0_b_0)));
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

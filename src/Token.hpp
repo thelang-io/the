@@ -123,6 +123,7 @@ struct Token {
   static bool isLitIntOct (char);
   static bool isLitStrEscape (char);
   static bool isWhitespace (char);
+  static std::string upper (const std::string &);
   static std::string upperFirst (const std::string &);
 
   TokenAssociativity associativity (bool = false) const;

@@ -1,0 +1,34 @@
+======= stdin =======
+main {
+  mut a: any
+  mut b: any = 2
+
+  mut ref1 := ref a
+  ref1 = ref b
+
+  v4 := true ? a : ref1
+  v5 := false ? ref1 : b
+  v6 := true ? a : ref a
+  v7 := false ? ref b : b
+  v8 := false ? ref1 : ref1
+}
+======= code =======
+int main () {
+  struct any __THE_0_a_0 = {0, NULL, NULL};
+  struct any __THE_0_b_0 = any_int_alloc(2);
+  struct any *__THE_0_ref1_0 = &__THE_0_a_0;
+  __THE_0_ref1_0 = &__THE_0_b_0;
+  const struct any __THE_0_v4_0 = true ? any_copy(__THE_0_a_0) : any_copy(*__THE_0_ref1_0);
+  const struct any __THE_0_v5_0 = false ? any_copy(*__THE_0_ref1_0) : any_copy(__THE_0_b_0);
+  const struct any __THE_0_v6_0 = true ? any_copy(__THE_0_a_0) : any_copy(__THE_0_a_0);
+  const struct any __THE_0_v7_0 = false ? any_copy(__THE_0_b_0) : any_copy(__THE_0_b_0);
+  const struct any *__THE_0_v8_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
+  any_free((struct any) __THE_0_v7_0);
+  any_free((struct any) __THE_0_v6_0);
+  any_free((struct any) __THE_0_v5_0);
+  any_free((struct any) __THE_0_v4_0);
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

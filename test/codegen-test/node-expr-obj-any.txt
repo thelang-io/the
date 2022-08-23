@@ -1,0 +1,113 @@
+======= stdin =======
+obj Test {
+  a: any
+}
+
+main {
+  Test{a: 1}
+  Test{a: "test"}
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_ANY_int 1
+#define TYPE_ANY_str 2
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  void (*f) (struct any);
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void any_free (struct any);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void any_free (struct any n) {
+  if (n.f != NULL) n.f(n);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+struct __THE_1_Test_0;
+struct any_int;
+struct any_str;
+
+struct __THE_1_Test_0 {
+  struct any __THE_0_a;
+};
+struct any_int {
+  int32_t d;
+};
+struct any_str {
+  struct str d;
+};
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct any any_int_alloc (int32_t);
+void any_int_free (struct any);
+struct any any_str_alloc (struct str);
+void any_str_free (struct any);
+
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any __THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  r->__THE_0_a = __THE_0_a;
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  any_free((struct any) o->__THE_0_a);
+  free(o);
+}
+struct any any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct any_int);
+  struct any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_free};
+}
+void any_int_free (struct any _n) {
+  struct any_int *n = _n.d;
+  free(n);
+}
+struct any any_str_alloc (struct str d) {
+  size_t l = sizeof(struct any_str);
+  struct any_str *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_str, r, l, &any_str_free};
+}
+void any_str_free (struct any _n) {
+  struct any_str *n = _n.d;
+  str_free((struct str) n->d);
+  free(n);
+}
+
+int main () {
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(any_int_alloc(1)));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(any_str_alloc(str_alloc("test"))));
+}
+======= flags =======
+======= stdout =======

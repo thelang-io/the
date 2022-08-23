@@ -1,0 +1,26 @@
+======= stdin =======
+main {
+  a: any
+}
+======= code =======
+#include <stdlib.h>
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  void (*f) (struct any);
+};
+
+void any_free (struct any);
+
+void any_free (struct any n) {
+  if (n.f != NULL) n.f(n);
+}
+
+int main () {
+  const struct any __THE_0_a_0 = {0, NULL, 0, NULL};
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

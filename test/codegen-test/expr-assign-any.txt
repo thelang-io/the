@@ -1,0 +1,124 @@
+======= stdin =======
+main {
+  a: any
+  mut b := a
+  b = a
+  mut c: any = 2
+  c = b = a
+  mut d: any = "test3"
+  d = c = b = a
+  d = true ? b : a
+  d = true ? b = c : a
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_ANY_int 1
+#define TYPE_ANY_str 2
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  void (*f) (struct any);
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+struct any any_realloc (struct any, struct any);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  void *d = alloc(n.l);
+  memcpy(d, n.d, n.l);
+  return (struct any) {n.t, d, n.l, n.f};
+}
+void any_free (struct any n) {
+  if (n.f != NULL) n.f(n);
+}
+struct any any_realloc (struct any n1, struct any n2) {
+  if (n1.f != NULL) n1.f(n1);
+  return n2;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+struct any_int;
+struct any_str;
+
+struct any_int {
+  int32_t d;
+};
+struct any_str {
+  struct str d;
+};
+
+struct any any_int_alloc (int32_t);
+void any_int_free (struct any);
+struct any any_str_alloc (struct str);
+void any_str_free (struct any);
+
+struct any any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct any_int);
+  struct any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_free};
+}
+void any_int_free (struct any _n) {
+  struct any_int *n = _n.d;
+  free(n);
+}
+struct any any_str_alloc (struct str d) {
+  size_t l = sizeof(struct any_str);
+  struct any_str *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_str, r, l, &any_str_free};
+}
+void any_str_free (struct any _n) {
+  struct any_str *n = _n.d;
+  str_free((struct str) n->d);
+  free(n);
+}
+
+int main () {
+  const struct any __THE_0_a_0 = {0, NULL, 0, NULL};
+  struct any __THE_0_b_0 = any_copy(__THE_0_a_0);
+  __THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_a_0));
+  struct any __THE_0_c_0 = any_int_alloc(2);
+  __THE_0_c_0 = any_realloc(__THE_0_c_0, any_copy(__THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_a_0))));
+  struct any __THE_0_d_0 = any_str_alloc(str_alloc("test3"));
+  __THE_0_d_0 = any_realloc(__THE_0_d_0, any_copy(__THE_0_c_0 = any_realloc(__THE_0_c_0, any_copy(__THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_a_0))))));
+  __THE_0_d_0 = any_realloc(__THE_0_d_0, true ? any_copy(__THE_0_b_0) : any_copy(__THE_0_a_0));
+  __THE_0_d_0 = any_realloc(__THE_0_d_0, true ? any_copy(__THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_c_0))) : any_copy(__THE_0_a_0));
+  any_free((struct any) __THE_0_d_0);
+  any_free((struct any) __THE_0_c_0);
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

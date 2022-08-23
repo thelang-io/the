@@ -1,0 +1,71 @@
+======= stdin =======
+main {
+  mut test1: any
+  test1 = 3
+  mut test2: any = 2
+  test2 = 4
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TYPE_ANY_int 1
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  void (*f) (struct any);
+};
+
+void *alloc (size_t);
+void any_free (struct any);
+struct any any_realloc (struct any, struct any);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void any_free (struct any n) {
+  if (n.f != NULL) n.f(n);
+}
+struct any any_realloc (struct any n1, struct any n2) {
+  if (n1.f != NULL) n1.f(n1);
+  return n2;
+}
+
+struct any_int;
+
+struct any_int {
+  int32_t d;
+};
+
+struct any any_int_alloc (int32_t);
+void any_int_free (struct any);
+
+struct any any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct any_int);
+  struct any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_free};
+}
+void any_int_free (struct any _n) {
+  struct any_int *n = _n.d;
+  free(n);
+}
+
+int main () {
+  struct any __THE_0_test1_0 = {0, NULL, 0, NULL};
+  __THE_0_test1_0 = any_realloc(__THE_0_test1_0, any_int_alloc(3));
+  struct any __THE_0_test2_0 = any_int_alloc(2);
+  __THE_0_test2_0 = any_realloc(__THE_0_test2_0, any_int_alloc(4));
+  any_free((struct any) __THE_0_test2_0);
+  any_free((struct any) __THE_0_test1_0);
+}
+======= flags =======
+======= stdout =======

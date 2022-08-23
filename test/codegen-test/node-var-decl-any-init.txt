@@ -1,0 +1,59 @@
+======= stdin =======
+main {
+  a: any = 1
+}
+======= code =======
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TYPE_ANY_int 1
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  void (*f) (struct any);
+};
+
+void *alloc (size_t);
+void any_free (struct any);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void any_free (struct any n) {
+  if (n.f != NULL) n.f(n);
+}
+
+struct any_int;
+
+struct any_int {
+  int32_t d;
+};
+
+struct any any_int_alloc (int32_t);
+void any_int_free (struct any);
+
+struct any any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct any_int);
+  struct any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_free};
+}
+void any_int_free (struct any _n) {
+  struct any_int *n = _n.d;
+  free(n);
+}
+
+int main () {
+  const struct any __THE_0_a_0 = any_int_alloc(1);
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

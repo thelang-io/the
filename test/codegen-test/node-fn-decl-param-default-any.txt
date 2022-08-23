@@ -1,0 +1,31 @@
+======= stdin =======
+fn test1 (a: any, b: any = 3, c: any = false) any {
+  return a
+}
+
+main {
+  test1(1)
+  test1(1, "test2")
+  test1(1, "test2", '3')
+  test1(1, b: "test2")
+  test1(1, c: '3')
+  test1(1, b: "test2", c: '3')
+  test1(1, c: '3', b: "test2")
+
+  mut a: any
+
+  fn test2 (a2: any, b: any = "test5", c: any = '6') {
+    a = test1(a2, b, c)
+  }
+
+  test2(7)
+  test2(7, "test8")
+  test2(7, "test8", '9')
+  test2(7, b: "test8")
+  test2(7, c: '9')
+  test2(7, b: "test8", c: '9')
+  test2(7, c: '9', b: "test8")
+}
+======= code =======
+======= flags =======
+======= stdout =======
