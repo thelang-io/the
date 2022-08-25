@@ -22,15 +22,24 @@ const auto valgrindArguments = std::string(
 
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
+  bool testCompile_ = false;
   bool testMemcheck_ = false;
 
   void SetUp () override {
     auto envVars = getEnvVars();
+    this->testCompile_ = envVars.contains("CODEGEN_COMPILE") && envVars["CODEGEN_COMPILE"] == "ON";
     this->testMemcheck_ = envVars.contains("CODEGEN_MEMCHECK") && envVars["CODEGEN_MEMCHECK"] == "ON";
   }
 };
 
 class CodegenThrowTest : public testing::TestWithParam<const char *> {
+ protected:
+  bool testCompile_ = false;
+
+  void SetUp () override {
+    auto envVars = getEnvVars();
+    this->testCompile_ = envVars.contains("CODEGEN_COMPILE") && envVars["CODEGEN_COMPILE"] == "ON";
+  }
 };
 
 TEST_P(CodegenPassTest, Passes) {
@@ -54,6 +63,10 @@ TEST_P(CodegenPassTest, Passes) {
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], std::get<1>(result));
+
+  if (!this->testCompile_) {
+    return;
+  }
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
@@ -106,6 +119,10 @@ TEST_P(CodegenThrowTest, Throws) {
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(143 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], std::get<1>(result));
+
+  if (!this->testCompile_) {
+    return;
+  }
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
