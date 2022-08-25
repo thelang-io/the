@@ -1210,6 +1210,7 @@ TEST_F(TypeTest, MatchesNice) {
   EXPECT_TRUE(this->obj_->matchNice(this->obj_));
   EXPECT_TRUE(this->ref_->matchNice(this->ref_));
 
+  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("any")));
   EXPECT_TRUE(this->tm_.get("bool")->matchNice(this->tm_.get("bool")));
   EXPECT_TRUE(this->tm_.get("byte")->matchNice(this->tm_.get("byte")));
   EXPECT_TRUE(this->tm_.get("byte")->matchNice(this->tm_.get("int")));
@@ -1217,32 +1218,6 @@ TEST_F(TypeTest, MatchesNice) {
   EXPECT_TRUE(this->tm_.get("char")->matchNice(this->tm_.get("char")));
   EXPECT_TRUE(this->tm_.get("str")->matchNice(this->tm_.get("str")));
   EXPECT_TRUE(this->tm_.get("void")->matchNice(this->tm_.get("void")));
-}
-
-TEST_F(TypeTest, MatchesNiceAny) {
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->arr_));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->fn_));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->obj_));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->ref_));
-
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("any")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("bool")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("byte")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("char")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("float")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("f32")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("f64")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("int")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("i8")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("i16")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("i32")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("i64")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("str")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("u8")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("u16")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("u32")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("u64")));
-  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("void")));
 }
 
 TEST_F(TypeTest, MatchesNiceFloat) {

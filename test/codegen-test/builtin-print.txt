@@ -131,7 +131,8 @@ struct any {
   int t;
   void *d;
   size_t l;
-  void (*f) (struct any);
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
 };
 struct str {
   char *d;
@@ -174,15 +175,13 @@ void *alloc (size_t l) {
   return r;
 }
 struct any any_copy (const struct any n) {
-  void *d = alloc(n.l);
-  memcpy(d, n.d, n.l);
-  return (struct any) {n.t, d, n.l, n.f};
+  return n.d == NULL ? n : n._copy(n);
 }
 void any_free (struct any n) {
-  if (n.f != NULL) n.f(n);
+  if (n.d != NULL) n._free(n);
 }
 struct str any_str (struct any n) {
-  if (n.f != NULL) n.f(n);
+  if (n.d != NULL) n._free(n);
   return str_alloc("any");
 }
 struct str bool_str (bool t) {
@@ -645,7 +644,7 @@ int main () {
   const struct __THE_1_fn$1 __THE_0_testAnon_0;
   __THE_1_testAnon_0_alloc((struct __THE_1_fn$1 *) &__THE_0_testAnon_0, (struct __THE_1_testAnon_0X) {&__THE_0_test_0});
   int32_t __THE_0_a_0 = 1;
-  struct any __THE_0_va_0 = {0, NULL, 0, NULL};
+  struct any __THE_0_va_0 = {0, NULL, 0, NULL, NULL};
   const struct __THE_1_Test1_0 *__THE_0_v1_0 = __THE_1_Test1_0_alloc(any_copy(__THE_0_va_0), true, 1, 'c', 2, 3, 4, 5, 6, 7, 8, 9, &__THE_0_a_0, str_alloc("test"), 10, 11, 12, 13, __THE_1_Test2_0_alloc(any_copy(__THE_0_va_0), false, 14, 'a', 15, 16, 17, 18, 19, 20, 21, 22, &__THE_0_a_0, str_alloc("string"), 23, 24, 25, 26), __THE_1_fn$0_copy(__THE_0_test_0));
   const bool __THE_0_t_0 = true;
   const unsigned char __THE_0_b_0 = 27;

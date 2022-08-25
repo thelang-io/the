@@ -9,17 +9,18 @@ struct any {
   int t;
   void *d;
   size_t l;
-  void (*f) (struct any);
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
 };
 
 void any_free (struct any);
 
 void any_free (struct any n) {
-  if (n.f != NULL) n.f(n);
+  if (n.d != NULL) n._free(n);
 }
 
 int main () {
-  const struct any __THE_0_a_0 = {0, NULL, 0, NULL};
+  const struct any __THE_0_a_0 = {0, NULL, 0, NULL, NULL};
   any_free((struct any) __THE_0_a_0);
 }
 ======= flags =======

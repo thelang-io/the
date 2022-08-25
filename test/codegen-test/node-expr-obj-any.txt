@@ -20,7 +20,8 @@ struct any {
   int t;
   void *d;
   size_t l;
-  void (*f) (struct any);
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
 };
 struct str {
   char *d;
@@ -30,6 +31,7 @@ struct str {
 void *alloc (size_t);
 void any_free (struct any);
 struct str str_alloc (const char *);
+struct str str_copy (const struct str);
 void str_free (struct str);
 
 void *alloc (size_t l) {
@@ -41,13 +43,18 @@ void *alloc (size_t l) {
   return r;
 }
 void any_free (struct any n) {
-  if (n.f != NULL) n.f(n);
+  if (n.d != NULL) n._free(n);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
   free(s.d);
@@ -70,8 +77,10 @@ struct any_str {
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 struct any any_int_alloc (int32_t);
+struct any any_int_copy (const struct any);
 void any_int_free (struct any);
 struct any any_str_alloc (struct str);
+struct any any_str_copy (const struct any);
 void any_str_free (struct any);
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any __THE_0_a) {
@@ -87,7 +96,13 @@ struct any any_int_alloc (int32_t d) {
   size_t l = sizeof(struct any_int);
   struct any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_int, r, l, &any_int_free};
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+}
+struct any any_int_copy (const struct any n) {
+  struct any_int *o = n.d;
+  struct any_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
 void any_int_free (struct any _n) {
   struct any_int *n = _n.d;
@@ -97,7 +112,13 @@ struct any any_str_alloc (struct str d) {
   size_t l = sizeof(struct any_str);
   struct any_str *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_str, r, l, &any_str_free};
+  return (struct any) {TYPE_ANY_str, r, l, &any_str_copy, &any_str_free};
+}
+struct any any_str_copy (const struct any n) {
+  struct any_str *o = n.d;
+  struct any_str *r = alloc(n.l);
+  r->d = str_copy(o->d);
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
 void any_str_free (struct any _n) {
   struct any_str *n = _n.d;

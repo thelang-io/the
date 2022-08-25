@@ -251,7 +251,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="callbackLogicCb" codeName="callbackLogicCb_0" frame="1">
-      <TypeFn codeName="callbackLogicCb_0" name="fn$1">
+      <TypeFn codeName="callbackLogicCb_0" name="fn$3">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -308,7 +308,7 @@ main {
   <NodeFnDecl>
     <NodeFnDeclVar>
       <Var name="createCat" codeName="mainSDcreateCat_0" frame="2">
-        <TypeFn codeName="mainSDcreateCat_0" name="fn$3">
+        <TypeFn codeName="mainSDcreateCat_0" name="fn$4">
           <TypeFnParams>
             <TypeFnParam name="breed" required>
               <BuiltinType name="str" />
@@ -501,7 +501,7 @@ main {
             <ExprCallCallee>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeFn codeName="mainSDcreateCat_0" name="fn$3">
+                  <TypeFn codeName="mainSDcreateCat_0" name="fn$4">
                     <TypeFnParams>
                       <TypeFnParam name="breed" required>
                         <BuiltinType name="str" />
@@ -525,7 +525,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="createCat" codeName="mainSDcreateCat_0" frame="2">
-                      <TypeFn codeName="mainSDcreateCat_0" name="fn$3">
+                      <TypeFn codeName="mainSDcreateCat_0" name="fn$4">
                         <TypeFnParams>
                           <TypeFnParam name="breed" required>
                             <BuiltinType name="str" />
@@ -1013,7 +1013,7 @@ main {
           <ExprCallArg>
             <NodeExpr>
               <NodeExprType>
-                <TypeFn codeName="callbackLogicCb_0" name="fn$1">
+                <TypeFn codeName="callbackLogicCb_0" name="fn$3">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
                   </TypeFnReturnType>
@@ -1022,7 +1022,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="callbackLogicCb" codeName="callbackLogicCb_0" frame="1">
-                    <TypeFn codeName="callbackLogicCb_0" name="fn$1">
+                    <TypeFn codeName="callbackLogicCb_0" name="fn$3">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>

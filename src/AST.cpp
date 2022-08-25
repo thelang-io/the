@@ -727,7 +727,11 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       exprCondAltType = this->_nodeExprType(exprCond.alt, exprCondBodyType);
     }
 
-    if (Type::real(exprCondBodyType)->isOpt() && !Type::real(exprCondAltType)->isOpt()) {
+    if (Type::real(exprCondBodyType)->isAny() && !Type::real(exprCondAltType)->isAny()) {
+      exprCondAltType = this->typeMap.get("any");
+    } else if (Type::real(exprCondAltType)->isAny() && !Type::real(exprCondBodyType)->isAny()) {
+      exprCondBodyType = this->typeMap.get("any");
+    } else if (Type::real(exprCondBodyType)->isOpt() && !Type::real(exprCondAltType)->isOpt()) {
       exprCondAltType = this->typeMap.opt(Type::real(exprCondAltType));
     } else if (Type::real(exprCondAltType)->isOpt() && !Type::real(exprCondBodyType)->isOpt()) {
       exprCondBodyType = this->typeMap.opt(Type::real(exprCondBodyType));

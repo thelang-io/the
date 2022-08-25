@@ -10,7 +10,6 @@ main {
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #define TYPE_ANY_int 1
 
@@ -18,7 +17,8 @@ struct any {
   int t;
   void *d;
   size_t l;
-  void (*f) (struct any);
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
 };
 
 void *alloc (size_t);
@@ -34,12 +34,10 @@ void *alloc (size_t l) {
   return r;
 }
 struct any any_copy (const struct any n) {
-  void *d = alloc(n.l);
-  memcpy(d, n.d, n.l);
-  return (struct any) {n.t, d, n.l, n.f};
+  return n.d == NULL ? n : n._copy(n);
 }
 void any_free (struct any n) {
-  if (n.f != NULL) n.f(n);
+  if (n.d != NULL) n._free(n);
 }
 
 struct any_int;
@@ -49,13 +47,20 @@ struct any_int {
 };
 
 struct any any_int_alloc (int32_t);
+struct any any_int_copy (const struct any);
 void any_int_free (struct any);
 
 struct any any_int_alloc (int32_t d) {
   size_t l = sizeof(struct any_int);
   struct any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_int, r, l, &any_int_free};
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+}
+struct any any_int_copy (const struct any n) {
+  struct any_int *o = n.d;
+  struct any_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
 void any_int_free (struct any _n) {
   struct any_int *n = _n.d;
@@ -63,7 +68,7 @@ void any_int_free (struct any _n) {
 }
 
 int main () {
-  const struct any __THE_0_a_0 = {0, NULL, 0, NULL};
+  const struct any __THE_0_a_0 = {0, NULL, 0, NULL, NULL};
   const struct any __THE_0_b_0 = any_int_alloc(1);
   const struct any __THE_0_c_0 = true ? any_copy(__THE_0_a_0) : any_copy(__THE_0_b_0);
   const struct any __THE_0_d_0 = false ? any_copy(__THE_0_b_0) : any_copy(__THE_0_a_0);

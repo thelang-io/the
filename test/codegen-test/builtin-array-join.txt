@@ -520,16 +520,3 @@ int main () {
  test1 test1_test2_test3
  1 1_2_3
  1 1_2_3
-======= stdout-linux =======
- [0, 1, 2] [0, 1, 2],[3, 4, 5],[6, 7, 8]
- [Function] [Function],[Function],[Function]
- TestObj{a: 1} TestObj{a: 1},TestObj{a: 2},TestObj{a: 3}
- test1 test1,test2,test3
- 1 1,2,3
- 1 1,2,3
- [0, 1, 2] [0, 1, 2]_[3, 4, 5]_[6, 7, 8]
- [Function] [Function]_[Function]_[Function]
- TestObj{a: 1} TestObj{a: 1}_TestObj{a: 2}_TestObj{a: 3}
- test1 test1_test2_test3
- 1 1_2_3
- 1 1_2_3

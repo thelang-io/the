@@ -387,9 +387,7 @@ bool Type::matchExact (const Type *type) const {
 }
 
 bool Type::matchNice (const Type *type) const {
-  if (this->name == "any") {
-    return true;
-  } else if (this->isRef() || type->isRef()) {
+  if (this->isRef() || type->isRef()) {
     if (!this->isRef() || !type->isRef()) {
       return false;
     }
@@ -446,7 +444,8 @@ bool Type::matchNice (const Type *type) const {
     return type->isObj() && this->name == type->name;
   }
 
-  return (this->name == "bool" && type->name == "bool") ||
+  return (this->name == "any" && type->name == "any") ||
+    (this->name == "bool" && type->name == "bool") ||
     (this->name == "byte" && (type->name == "byte" || type->isIntNumber())) ||
     (type->name == "byte" && (this->name == "byte" || this->isIntNumber())) ||
     (this->name == "char" && type->name == "char") ||
