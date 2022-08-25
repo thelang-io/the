@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 project(the VERSION 0.11.16 LANGUAGES CXX)
 
 option(BUILD_TESTS "Build test programs" OFF)
-option(CODEGEN_COMPILE "Whether codegen binaries should be compiled" ON)
-option(CODEGEN_MEMCHECK "Memory check codegen binaries" OFF)
+option(TEST_CODEGEN_COMPILE "Whether codegen tests binaries should be compiled" ON)
+option(TEST_CODEGEN_MEMCHECK "Memory check tests codegen binaries" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -98,6 +98,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   gtest_discover_tests(
     ${PROJECT_NAME}-test
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    PROPERTIES ENVIRONMENT "$<IF:$<BOOL:CODEGEN_COMPILE>,CODEGEN_COMPILE=ON;,>$<IF:$<BOOL:CODEGEN_MEMCHECK>,CODEGEN_MEMCHECK=ON;,>"
+    PROPERTIES
+    ENVIRONMENT "TEST_CODEGEN_COMPILE=${TEST_CODEGEN_COMPILE}"
+    ENVIRONMENT "TEST_CODEGEN_MEMCHECK=${TEST_CODEGEN_MEMCHECK}"
   )
 endif ()
