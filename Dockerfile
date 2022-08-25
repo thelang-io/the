@@ -3,7 +3,7 @@ FROM ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y build-essential cmake git valgrind && \
+    apt-get install -y build-essential cmake git ninja-build valgrind && \
     apt-get autoclean && \
     apt-get autoremove && \
     apt-get clean && \
@@ -11,7 +11,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 COPY . .
-RUN cmake . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCODEGEN_MEMCHECK=ON
+RUN cmake . -D CMAKE_BUILD_TYPE=Debug -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON -G "Ninja"
 RUN cmake --build .
 
 ENTRYPOINT ["ctest", "--output-on-failure"]
