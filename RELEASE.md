@@ -1,5 +1,5 @@
 # Release
-Instructions on how to do release
+Instructions on how to release The Programming Language:
 
 - Create release of core on [GitHub](https://github.com/thelang-io/the/releases/new)
 - Create release of CLI on [GitHub](https://github.com/thelang-io/cli/releases/new)

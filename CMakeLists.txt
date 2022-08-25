@@ -32,7 +32,7 @@ set(
   src/config.hpp
 )
 
-function (target_add_flags target)
+function (the_target_add_flags target)
   target_compile_options(${target} PRIVATE -Wall)
   target_compile_options(${target} PRIVATE -Wconversion)
   target_compile_options(${target} PRIVATE -Werror)
@@ -45,17 +45,26 @@ function (target_add_flags target)
   target_compile_options(${target} PRIVATE -pedantic-errors)
 endfunction ()
 
-add_executable(${PROJECT_NAME} ${sources} src/main.cpp)
-target_add_flags(${PROJECT_NAME})
+add_library(${PROJECT_NAME}-lib STATIC ${sources})
+the_target_add_flags(${PROJECT_NAME}-lib)
+
+add_executable(${PROJECT_NAME} src/main.cpp)
+the_target_add_flags(${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
-  enable_testing()
-
-  include(CTest)
   include(FetchContent)
   include(GoogleTest)
 
-  FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip)
+  enable_testing()
+
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+  )
+
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(googletest)
 
   set(
@@ -82,12 +91,12 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/utils.cpp test/utils.hpp
   )
 
-  add_executable(${PROJECT_NAME}-test ${sources} ${tests})
-  target_link_libraries(${PROJECT_NAME}-test gmock_main)
+  add_executable(${PROJECT_NAME}-test ${tests})
+  target_link_libraries(${PROJECT_NAME}-test gmock_main ${PROJECT_NAME}-lib)
 
-  if (CODEGEN_MEMCHECK)
-    gtest_discover_tests(${PROJECT_NAME}-test WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTIES ENVIRONMENT "CODEGEN_MEMCHECK=ON")
-  else ()
-    gtest_discover_tests(${PROJECT_NAME}-test WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-  endif ()
+  gtest_discover_tests(
+    ${PROJECT_NAME}-test
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    PROPERTIES ENVIRONMENT "$<IF:$<BOOL:CODEGEN_MEMCHECK>,CODEGEN_MEMCHECK=ON,>"
+  )
 endif ()
