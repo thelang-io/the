@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <filesystem>
 #include <iostream>
+#include <regex>
 #include "../src/Codegen.hpp"
 #include "../src/config.hpp"
 #include "MockAST.hpp"
@@ -44,18 +45,14 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
 
 TEST_P(CodegenPassTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
-  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stdout", "stdout-linux"});
+  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stdout"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
   auto expectedOutput = sections["stdout"];
 
-  #if defined(OS_LINUX)
-    if (sections.contains("stdout-linux")) {
-      expectedOutput = sections["stdout-linux"];
-    }
-  #elif defined(OS_WINDOWS)
+  #if defined(OS_WINDOWS)
     if (sections.contains("code-windows")) {
       expectedCode = sections["code-windows"];
     }
@@ -79,12 +76,18 @@ TEST_P(CodegenPassTest, Passes) {
 
   std::filesystem::remove(filePath);
 
-  while (expectedOutput.find("{{--") != std::string::npos) {
-    auto placeholderStart = expectedOutput.find("{{--");
-    auto placeholderEnd = expectedOutput.find("--}}") + 4;
+  while (expectedOutput.find("{{ ") != std::string::npos) {
+    auto placeholderStart = expectedOutput.find("{{ ");
+    auto placeholderEnd = expectedOutput.find(" }}") + 3;
     auto placeholderLen = placeholderEnd - placeholderStart;
-    auto placeholderValue = actualStdout.substr(placeholderStart, placeholderLen);
+    auto placeholderRegexPattern = expectedOutput.substr(placeholderStart + 3, placeholderLen - 6);
+    auto placeholderRegex = std::regex(placeholderRegexPattern);
 
+    const auto actualStdoutSlice = actualStdout.substr(placeholderStart);
+    auto match = std::smatch();
+    std::regex_search(actualStdoutSlice, match, placeholderRegex);
+
+    auto placeholderValue = actualStdout.substr(placeholderStart, match[0].length());
     expectedOutput.replace(placeholderStart, placeholderLen, placeholderValue);
   }
 

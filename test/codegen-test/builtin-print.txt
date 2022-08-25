@@ -678,10 +678,6 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-any true 27 b 28.000000 29.000000 30.000000 31 32 33 34 35 {{----------}} tester 36 37 38 39 Test1{a: any, t: true, b: 1, c: c, f1: 2.000000, f2: 3.000000, f: 4.000000, i1: 5, i2: 6, i3: 7, i4: 8, i: 9, p: 1, s: "test", u1: 10, u2: 11, u3: 12, u4: 13, v1: Test2{a: any, t: false, b: 14, c: a, f1: 15.000000, f2: 16.000000, f: 17.000000, i1: 18, i2: 19, i3: 20, i4: 21, i: 22, p: 1, s: "string", u1: 23, u2: 24, u3: 25, u4: 26}, v2: [Function]} [Function] [Function] [Function]
-Tony, Andrew, Dan--
-Max,Lester,Bonny,
-======= stdout-linux =======
-any true 27 b 28.000000 29.000000 30.000000 31 32 33 34 35 {{--------}} tester 36 37 38 39 Test1{a: any, t: true, b: 1, c: c, f1: 2.000000, f2: 3.000000, f: 4.000000, i1: 5, i2: 6, i3: 7, i4: 8, i: 9, p: 1, s: "test", u1: 10, u2: 11, u3: 12, u4: 13, v1: Test2{a: any, t: false, b: 14, c: a, f1: 15.000000, f2: 16.000000, f: 17.000000, i1: 18, i2: 19, i3: 20, i4: 21, i: 22, p: 1, s: "string", u1: 23, u2: 24, u3: 25, u4: 26}, v2: [Function]} [Function] [Function] [Function]
+any true 27 b 28.000000 29.000000 30.000000 31 32 33 34 35 {{ \w+ }} tester 36 37 38 39 Test1{a: any, t: true, b: 1, c: c, f1: 2.000000, f2: 3.000000, f: 4.000000, i1: 5, i2: 6, i3: 7, i4: 8, i: 9, p: 1, s: "test", u1: 10, u2: 11, u3: 12, u4: 13, v1: Test2{a: any, t: false, b: 14, c: a, f1: 15.000000, f2: 16.000000, f: 17.000000, i1: 18, i2: 19, i3: 20, i4: 21, i: 22, p: 1, s: "string", u1: 23, u2: 24, u3: 25, u4: 26}, v2: [Function]} [Function] [Function] [Function]
 Tony, Andrew, Dan--
 Max,Lester,Bonny,
