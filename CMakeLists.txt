@@ -7,7 +7,7 @@ option(TEST_CODEGEN_COMPILE "Whether codegen tests binaries should be compiled" 
 option(TEST_CODEGEN_MEMCHECK "Memory check tests codegen binaries" OFF)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Build type set to `Debug`")
+  message(STATUS "Build type - Debug")
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Specify the build type for single-configuration generators" FORCE)
 endif ()
 
