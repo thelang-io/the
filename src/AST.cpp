@@ -858,6 +858,7 @@ Type *AST::_type (const ParserType &type) {
   throw Error("tried to analyze unknown type");
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 ASTNode AST::_wrapNode ([[maybe_unused]] const ParserStmt &stmt, const ASTNodeBody &body) {
   return ASTNode{std::make_shared<ASTNodeBody>(body), nullptr};
 }
@@ -867,6 +868,7 @@ ASTNodeExpr AST::_wrapNodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType
   return ASTNodeExpr{nodeExprType, std::make_shared<ASTExpr>(expr), stmtExpr.parenthesized};
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 Type *AST::_wrapNodeExprType ([[maybe_unused]] const ParserStmtExpr &stmtExpr, [[maybe_unused]] Type *targetType, Type *resultType) {
   return resultType;
 }

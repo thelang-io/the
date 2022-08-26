@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 #include "../src/VarMap.hpp"
-#include "utils.hpp"
 
 class VarMapTest : public testing::Test {
  protected:

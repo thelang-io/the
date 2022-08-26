@@ -2,6 +2,7 @@
 obj Test {
   a: int
 
+  p00: any
   p01: int[]
   p02: int?[]
   p03: int[]?[]
@@ -37,12 +38,20 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
 struct str {
   char *d;
   size_t l;
 };
 
 void *alloc (size_t);
+void any_free (struct any);
 struct str str_alloc (const char *);
 void str_free (struct str);
 
@@ -53,6 +62,9 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -88,6 +100,7 @@ struct __THE_1_array_array_opt_int {
 };
 struct __THE_1_Test_0 {
   int32_t __THE_0_a;
+  struct any __THE_0_p00;
   struct __THE_1_array_int __THE_0_p01;
   struct __THE_1_array_opt_int __THE_0_p02;
   struct __THE_1_array_opt_array_int __THE_0_p03;
@@ -123,7 +136,7 @@ void __THE_1_array_opt_array_int_free (struct __THE_1_array_opt_array_int);
 struct __THE_1_array_array_opt_int __THE_1_array_array_opt_int_alloc (size_t, ...);
 void __THE_1_array_array_opt_int_free (struct __THE_1_array_array_opt_int);
 void __THE_1_opt_ref_array_int_free (struct __THE_1_array_int **);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, struct __THE_1_array_int, struct __THE_1_array_opt_int, struct __THE_1_array_opt_array_int, struct __THE_1_array_array_opt_int, bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, struct __THE_1_array_int *, struct __THE_1_array_int **, struct str, uint8_t, uint16_t, uint32_t, uint64_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, struct any, struct __THE_1_array_int, struct __THE_1_array_opt_int, struct __THE_1_array_opt_array_int, struct __THE_1_array_array_opt_int, bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, struct __THE_1_array_int *, struct __THE_1_array_int **, struct str, uint8_t, uint16_t, uint32_t, uint64_t);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
@@ -190,9 +203,10 @@ void __THE_1_opt_ref_array_int_free (struct __THE_1_array_int **n) {
   if (n == NULL) return;
   free(n);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, struct __THE_1_array_int __THE_0_p01, struct __THE_1_array_opt_int __THE_0_p02, struct __THE_1_array_opt_array_int __THE_0_p03, struct __THE_1_array_array_opt_int __THE_0_p04, bool __THE_0_p05, unsigned char __THE_0_p06, char __THE_0_p07, float __THE_0_p08, double __THE_0_p09, double __THE_0_p11, int8_t __THE_0_p12, int16_t __THE_0_p13, int32_t __THE_0_p14, int64_t __THE_0_p15, int32_t __THE_0_p16, struct __THE_1_array_int *__THE_0_p17, struct __THE_1_array_int **__THE_0_p18, struct str __THE_0_p19, uint8_t __THE_0_p20, uint16_t __THE_0_p21, uint32_t __THE_0_p22, uint64_t __THE_0_p23) {
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, struct any __THE_0_p00, struct __THE_1_array_int __THE_0_p01, struct __THE_1_array_opt_int __THE_0_p02, struct __THE_1_array_opt_array_int __THE_0_p03, struct __THE_1_array_array_opt_int __THE_0_p04, bool __THE_0_p05, unsigned char __THE_0_p06, char __THE_0_p07, float __THE_0_p08, double __THE_0_p09, double __THE_0_p11, int8_t __THE_0_p12, int16_t __THE_0_p13, int32_t __THE_0_p14, int64_t __THE_0_p15, int32_t __THE_0_p16, struct __THE_1_array_int *__THE_0_p17, struct __THE_1_array_int **__THE_0_p18, struct str __THE_0_p19, uint8_t __THE_0_p20, uint16_t __THE_0_p21, uint32_t __THE_0_p22, uint64_t __THE_0_p23) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   r->__THE_0_a = __THE_0_a;
+  r->__THE_0_p00 = __THE_0_p00;
   r->__THE_0_p01 = __THE_0_p01;
   r->__THE_0_p02 = __THE_0_p02;
   r->__THE_0_p03 = __THE_0_p03;
@@ -218,6 +232,7 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, struct __THE_1_a
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  any_free((struct any) o->__THE_0_p00);
   __THE_1_array_int_free((struct __THE_1_array_int) o->__THE_0_p01);
   __THE_1_array_opt_int_free((struct __THE_1_array_opt_int) o->__THE_0_p02);
   __THE_1_array_opt_array_int_free((struct __THE_1_array_opt_array_int) o->__THE_0_p03);
@@ -229,7 +244,7 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
 }
 
 int main () {
-  const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(1, __THE_1_array_int_alloc(0), __THE_1_array_opt_int_alloc(0), __THE_1_array_opt_array_int_alloc(0), __THE_1_array_array_opt_int_alloc(0), false, 0, '\0', 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, str_alloc(""), 0, 0, 0, 0);
+  const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(1, (struct any) {0, NULL, 0, NULL, NULL}, __THE_1_array_int_alloc(0), __THE_1_array_opt_int_alloc(0), __THE_1_array_opt_array_int_alloc(0), __THE_1_array_array_opt_int_alloc(0), false, 0, '\0', 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, str_alloc(""), 0, 0, 0, 0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
 }
 ======= flags =======

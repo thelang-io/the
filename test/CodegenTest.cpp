@@ -145,6 +145,8 @@ INSTANTIATE_TEST_SUITE_P(General, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-any-alloc",
+  "builtin-any-str",
+  "builtin-any-str-root",
   "builtin-array-alloc",
   "builtin-array-alloc-root",
   "builtin-array-at",

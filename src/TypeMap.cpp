@@ -142,6 +142,8 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"void", "@void", TypeObj{}, {}, true}));
   auto voidType = this->_items.back().get();
 
+  this->_items.push_back(std::make_unique<Type>(Type{"any.str", "@any.str", TypeFn{strType}, {}, true}));
+  anyType->fields.push_back(TypeField{"str", this->_items.back().get(), true});
   this->_items.push_back(std::make_unique<Type>(Type{"bool.str", "@bool.str", TypeFn{strType}, {}, true}));
   boolType->fields.push_back(TypeField{"str", this->_items.back().get(), true});
   this->_items.push_back(std::make_unique<Type>(Type{"byte.str", "@byte.str", TypeFn{strType}, {}, true}));

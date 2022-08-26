@@ -1,10 +1,12 @@
 ======= stdin =======
 obj Test {
   a: str
+  b: str
 }
 
 main {
-  Test{a: "test"}
+  Test{a: "test", b: "str"}
+  Test{b: "skip"}
 }
 ======= code =======
 #include <stdio.h>
@@ -42,23 +44,27 @@ struct __THE_1_Test_0;
 
 struct __THE_1_Test_0 {
   struct str __THE_0_a;
+  struct str __THE_0_b;
 };
 
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str, struct str);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str __THE_0_a) {
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str __THE_0_a, struct str __THE_0_b) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   r->__THE_0_a = __THE_0_a;
+  r->__THE_0_b = __THE_0_b;
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
   str_free((struct str) o->__THE_0_a);
+  str_free((struct str) o->__THE_0_b);
   free(o);
 }
 
 int main () {
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(str_alloc("test")));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(str_alloc("test"), str_alloc("str")));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(str_alloc(""), str_alloc("skip")));
 }
 ======= flags =======
 ======= stdout =======

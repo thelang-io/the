@@ -1995,6 +1995,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto code = std::string();
 
     if (exprCallCalleeTypeInfo.realType->builtin && (
+      exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
       exprCallCalleeTypeInfo.realType->codeName == "@array.join" ||
       exprCallCalleeTypeInfo.realType->codeName == "@array.pop" ||
       exprCallCalleeTypeInfo.realType->codeName == "@array.push" ||
@@ -2066,6 +2067,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
       } else if (
+        exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@bool.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@byte.str" ||
@@ -2087,7 +2089,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       ) {
         auto typeStrFn = std::string();
 
-        if (
+        if (exprCallCalleeTypeInfo.realType->codeName == "@any.str") {
+          this->_activateBuiltin("fnAnyStr");
+          typeStrFn = "any_str";
+        } else if (
           exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@opt.str"
@@ -2728,10 +2733,7 @@ std::string Codegen::_typeNameAny (Type *type) {
   copyFnEntity.def += "  struct " + typeName + " *r = alloc(n.l);" EOL;
   copyFnEntity.def += "  r->d = ";
 
-  if (typeInfo.type->isAny()) {
-    this->_activateBuiltin("fnAnyCopy", &copyFnEntity.builtins);
-    copyFnEntity.def += "any_copy(o->d);" EOL;
-  } else if (
+  if (
     typeInfo.type->isArray() ||
     typeInfo.type->isFn() ||
     typeInfo.type->isObj() ||
@@ -2754,10 +2756,7 @@ std::string Codegen::_typeNameAny (Type *type) {
   freeFnEntity.def += "void " + typeName + "_free (struct any _n) {" EOL;
   freeFnEntity.def += "  struct " + typeName + " *n = _n.d;" EOL;
 
-  if (typeInfo.type->isAny()) {
-    this->_activateBuiltin("fnAnyFree", &freeFnEntity.builtins);
-    freeFnEntity.def += "  any_free((struct any) n->d);" EOL;
-  } else if (
+  if (
     typeInfo.type->isArray() ||
     typeInfo.type->isFn() ||
     typeInfo.type->isObj() ||
@@ -3357,6 +3356,7 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   return typeName;
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::string Codegen::_wrapNode ([[maybe_unused]] const ASTNode &node, const std::string &code) {
   return code;
 }

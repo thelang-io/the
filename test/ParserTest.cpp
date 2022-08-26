@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 #include "../src/Parser.hpp"
-#include "../src/config.hpp"
 #include "MockLexer.hpp"
 #include "utils.hpp"
 

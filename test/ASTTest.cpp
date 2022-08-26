@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 #include "../src/AST.hpp"
-#include "../src/config.hpp"
 #include "MockParser.hpp"
 #include "utils.hpp"
 
@@ -45,8 +44,8 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-fn-decl",
   "node-fn-decl-param-init",
   "node-fn-decl-param-mut",
-  "node-fn-decl-param-mut-obj",
   "node-fn-decl-param-mut-fn",
+  "node-fn-decl-param-mut-obj",
   "node-fn-decl-stack",
   "node-if",
   "node-loop",
@@ -69,6 +68,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-call",
   "expr-call-args",
   "expr-cond",
+  "expr-cond-any",
   "expr-cond-opt",
   "expr-lit",
   "expr-lit-nil",
@@ -82,9 +82,9 @@ INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
-  "type-optional",
-  "type-variadic",
-  "type-ref"
+  "type-opt",
+  "type-ref",
+  "type-variadic"
 ));
 
 INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(

@@ -870,6 +870,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprObj), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
   if (
     (tok.type == TK_OP_MINUS_MINUS || tok.type == TK_OP_PLUS_PLUS) &&
