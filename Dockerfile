@@ -11,7 +11,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 COPY . .
-RUN cmake . -D CMAKE_BUILD_TYPE=Debug -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON -G "Ninja"
+RUN cmake . -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
 RUN cmake --build .
 
 ENTRYPOINT ["ctest", "--output-on-failure"]

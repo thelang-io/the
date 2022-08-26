@@ -1,12 +1,22 @@
 cmake_minimum_required(VERSION 3.14)
 project(the VERSION 0.11.16 LANGUAGES CXX)
 
+option(BUILD_COVERAGE "Build coverage" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
 option(TEST_CODEGEN_COMPILE "Whether codegen tests binaries should be compiled" ON)
 option(TEST_CODEGEN_MEMCHECK "Memory check tests codegen binaries" OFF)
 
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Build type set to `Debug`")
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Specify the build type for single-configuration generators" FORCE)
+endif ()
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (BUILD_COVERAGE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
+endif ()
 
 set(
   sources

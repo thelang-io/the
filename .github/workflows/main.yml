@@ -12,6 +12,6 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install ninja-build valgrind
       - run: mkdir -p build
-      - run: cmake . -B ./build -D CMAKE_BUILD_TYPE=Debug -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON -G "Ninja"
+      - run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
