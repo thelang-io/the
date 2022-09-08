@@ -2100,7 +2100,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       code += ")";
-    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleep") {
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u64"));
 
       #if defined(OS_WINDOWS)

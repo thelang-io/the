@@ -199,7 +199,7 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-opt-str",
   "builtin-opt-str-root",
   "builtin-print",
-  "builtin-sleep",
+  "builtin-sleep-sync",
   "builtin-str-at",
   "builtin-str-at-root",
   "builtin-str-len",

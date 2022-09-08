@@ -1,8 +1,8 @@
 ======= stdin =======
 main {
-  sleep(0)
-  sleep(10)
-  sleep(999)
+  sleepSync(0)
+  sleepSync(10)
+  sleepSync(999)
 }
 ======= code =======
 #include <unistd.h>
