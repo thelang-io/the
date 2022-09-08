@@ -238,7 +238,7 @@ Type *TypeMap::obj (const std::string &name, const std::string &codeName, const 
 
   auto strTypeFn = TypeFn{this->get("str")};
 
-  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".str", "@opt.str", strTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".str", "@obj.str", strTypeFn, {}, true}));
   self->fields.push_back(TypeField{"str", this->_items.back().get(), true});
 
   return self;

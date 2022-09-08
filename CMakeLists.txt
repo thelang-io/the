@@ -3,8 +3,8 @@ project(the VERSION 0.11.16 LANGUAGES CXX)
 
 option(BUILD_COVERAGE "Build coverage" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
-option(TEST_CODEGEN_COMPILE "Whether codegen tests binaries should be compiled" ON)
-option(TEST_CODEGEN_MEMCHECK "Memory check tests codegen binaries" OFF)
+option(TEST_CODEGEN_COMPILE "Whether codegen tests binary should be compiled" ON)
+option(TEST_CODEGEN_MEMCHECK "Whether codegen tests binary should be memory checked" OFF)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Build type - Debug")

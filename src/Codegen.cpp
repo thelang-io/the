@@ -1994,176 +1994,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto exprCallCalleeTypeInfo = this->_typeInfo(exprCall.callee.type);
     auto code = std::string();
 
-    if (exprCallCalleeTypeInfo.realType->builtin && (
-      exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@array.join" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@array.pop" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@array.push" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@array.reverse" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@array.slice" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@bool.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@byte.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@char.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@f32.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@f64.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@float.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@i8.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@i16.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@i32.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@i64.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@int.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@opt.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@str.slice" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@u8.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@u16.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@u32.str" ||
-      exprCallCalleeTypeInfo.realType->codeName == "@u64.str"
-    )) {
-      auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
-      auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
-      auto calleeTypeInfo = this->_typeInfo(calleeNodeExpr.type);
-
-      if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
-        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
-        auto arg2Expr = std::string();
-
-        if (exprCall.args.empty()) {
-          this->_activateBuiltin("typeStr");
-          arg2Expr = "(struct str) {}";
-        } else {
-          arg2Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-        }
-
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_join");
-        code = calleeTypeInfo.realTypeName + "_join(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.pop") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_pop");
-        code = calleeTypeInfo.realTypeName + "_pop(" + calleeCode + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.push") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_push");
-        code = calleeTypeInfo.realTypeName + "_push(" + calleeCode + ", " + std::to_string(exprCall.args.size());
-
-        for (const auto &arg : exprCall.args) {
-          code += ", " + this->_nodeExpr(arg.expr, arg.expr.type);
-        }
-
-        code += ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.reverse") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_reverse");
-        code = calleeTypeInfo.realTypeName + "_reverse(" + calleeCode + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.slice") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
-        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
-        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
-        auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
-        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("i64"));
-
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
-        code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
-      } else if (
-        exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@bool.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@byte.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@char.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@f32.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@f64.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@float.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i8.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i16.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i32.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i64.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@int.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@opt.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u8.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u16.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u32.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u64.str"
-      ) {
-        auto typeStrFn = std::string();
-
-        if (exprCallCalleeTypeInfo.realType->codeName == "@any.str") {
-          this->_activateBuiltin("fnAnyStr");
-          typeStrFn = "any_str";
-        } else if (
-          exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@opt.str"
-        ) {
-          this->_activateEntity(calleeTypeInfo.realTypeName + "_str");
-          typeStrFn = calleeTypeInfo.realTypeName + "_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@bool.str") {
-          this->_activateBuiltin("fnBoolStr");
-          typeStrFn = "bool_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@byte.str") {
-          this->_activateBuiltin("fnByteStr");
-          typeStrFn = "byte_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.str") {
-          this->_activateBuiltin("fnCharStr");
-          typeStrFn = "char_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@f32.str") {
-          this->_activateBuiltin("fnF32Str");
-          typeStrFn = "f32_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@f64.str") {
-          this->_activateBuiltin("fnF64Str");
-          typeStrFn = "f64_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@float.str") {
-          this->_activateBuiltin("fnFloatStr");
-          typeStrFn = "float_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i8.str") {
-          this->_activateBuiltin("fnI8Str");
-          typeStrFn = "i8_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i16.str") {
-          this->_activateBuiltin("fnI16Str");
-          typeStrFn = "i16_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i32.str") {
-          this->_activateBuiltin("fnI32Str");
-          typeStrFn = "i32_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i64.str") {
-          this->_activateBuiltin("fnI64Str");
-          typeStrFn = "i64_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@int.str") {
-          this->_activateBuiltin("fnIntStr");
-          typeStrFn = "int_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u8.str") {
-          this->_activateBuiltin("fnU8Str");
-          typeStrFn = "u8_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u16.str") {
-          this->_activateBuiltin("fnU16Str");
-          typeStrFn = "u16_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u32.str") {
-          this->_activateBuiltin("fnU32Str");
-          typeStrFn = "u32_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u64.str") {
-          this->_activateBuiltin("fnU64Str");
-          typeStrFn = "u64_str";
-        }
-
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
-
-        if (!calleeNodeExpr.parenthesized) {
-          calleeCode = "(" + calleeCode + ")";
-        }
-
-        code = typeStrFn + calleeCode;
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
-        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
-        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
-        auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
-        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("i64"));
-
-        this->_activateBuiltin("fnStrSlice");
-        code = "str_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
-      }
-    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@exit") {
+    if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@exit") {
       auto arg1Expr = std::string("0");
 
       if (!exprCall.args.empty()) {
@@ -2283,7 +2114,152 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("libUnistd");
         code = "usleep(" + arg1Expr + " * 1000)";
       #endif
-    } else if (!exprCallCalleeTypeInfo.realType->builtin) {
+    } else if (exprCallCalleeTypeInfo.realType->builtin) {
+      auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
+      auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
+      auto calleeTypeInfo = this->_typeInfo(calleeNodeExpr.type);
+
+      if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
+        auto arg2Expr = std::string();
+
+        if (exprCall.args.empty()) {
+          this->_activateBuiltin("typeStr");
+          arg2Expr = "(struct str) {}";
+        } else {
+          arg2Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+        }
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_join");
+        code = calleeTypeInfo.realTypeName + "_join(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.pop") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_pop");
+        code = calleeTypeInfo.realTypeName + "_pop(" + calleeCode + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.push") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_push");
+        code = calleeTypeInfo.realTypeName + "_push(" + calleeCode + ", " + std::to_string(exprCall.args.size());
+
+        for (const auto &arg : exprCall.args) {
+          code += ", " + this->_nodeExpr(arg.expr, arg.expr.type);
+        }
+
+        code += ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.reverse") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_reverse");
+        code = calleeTypeInfo.realTypeName + "_reverse(" + calleeCode + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.slice") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
+        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
+        auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
+        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("i64"));
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
+        code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
+      } else if (
+        exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@bool.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@byte.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@char.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@f32.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@f64.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@float.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@i8.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@i16.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@i32.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@i64.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@int.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@opt.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@u8.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@u16.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@u32.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@u64.str"
+      ) {
+        auto typeStrFn = std::string();
+
+        if (exprCallCalleeTypeInfo.realType->codeName == "@any.str") {
+          this->_activateBuiltin("fnAnyStr");
+          typeStrFn = "any_str";
+        } else if (
+          exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@opt.str"
+        ) {
+          this->_activateEntity(calleeTypeInfo.realTypeName + "_str");
+          typeStrFn = calleeTypeInfo.realTypeName + "_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@bool.str") {
+          this->_activateBuiltin("fnBoolStr");
+          typeStrFn = "bool_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@byte.str") {
+          this->_activateBuiltin("fnByteStr");
+          typeStrFn = "byte_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.str") {
+          this->_activateBuiltin("fnCharStr");
+          typeStrFn = "char_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@f32.str") {
+          this->_activateBuiltin("fnF32Str");
+          typeStrFn = "f32_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@f64.str") {
+          this->_activateBuiltin("fnF64Str");
+          typeStrFn = "f64_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@float.str") {
+          this->_activateBuiltin("fnFloatStr");
+          typeStrFn = "float_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i8.str") {
+          this->_activateBuiltin("fnI8Str");
+          typeStrFn = "i8_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i16.str") {
+          this->_activateBuiltin("fnI16Str");
+          typeStrFn = "i16_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i32.str") {
+          this->_activateBuiltin("fnI32Str");
+          typeStrFn = "i32_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i64.str") {
+          this->_activateBuiltin("fnI64Str");
+          typeStrFn = "i64_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@int.str") {
+          this->_activateBuiltin("fnIntStr");
+          typeStrFn = "int_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u8.str") {
+          this->_activateBuiltin("fnU8Str");
+          typeStrFn = "u8_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u16.str") {
+          this->_activateBuiltin("fnU16Str");
+          typeStrFn = "u16_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u32.str") {
+          this->_activateBuiltin("fnU32Str");
+          typeStrFn = "u32_str";
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u64.str") {
+          this->_activateBuiltin("fnU64Str");
+          typeStrFn = "u64_str";
+        }
+
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
+
+        if (!calleeNodeExpr.parenthesized) {
+          calleeCode = "(" + calleeCode + ")";
+        }
+
+        code = typeStrFn + calleeCode;
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
+        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
+        auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
+        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("i64"));
+
+        this->_activateBuiltin("fnStrSlice");
+        code = "str_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
+      }
+    } else {
       auto fn = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);
       auto paramsName = exprCallCalleeTypeInfo.realTypeName + "P";
       auto bodyCode = std::string();
