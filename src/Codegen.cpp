@@ -3343,11 +3343,19 @@ std::string Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetTyp
   if (!root && targetType->isAny() && !Type::real(nodeExpr.type)->isAny()) {
     auto typeName = this->_typeNameAny(Type::real(nodeExpr.type));
     this->_activateEntity(typeName + "_alloc");
-    result = typeName + "_alloc(" + code + ")";
+    result = typeName + "_alloc(" + result + ")";
   } else if (!root && Type::real(targetType)->isOpt() && !Type::real(nodeExpr.type)->isOpt()) {
     auto targetTypeInfo = this->_typeInfo(Type::real(targetType));
+    auto optionalType = std::get<TypeOptional>(targetTypeInfo.type->body);
+
+    if (Type::real(optionalType.type)->isAny() && !Type::real(nodeExpr.type)->isAny()) {
+      auto typeName = this->_typeNameAny(Type::real(nodeExpr.type));
+      this->_activateEntity(typeName + "_alloc");
+      result = typeName + "_alloc(" + result + ")";
+    }
+
     this->_activateEntity(targetTypeInfo.typeName + "_alloc");
-    result = targetTypeInfo.typeName + "_alloc(" + code + ")";
+    result = targetTypeInfo.typeName + "_alloc(" + result + ")";
   }
 
   if (nodeExpr.parenthesized) {

@@ -124,6 +124,8 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
+#define TYPE_ANY_int 1
+
 struct any {
   int t;
   void *d;
@@ -175,6 +177,7 @@ void str_free (struct str s) {
 struct __THE_1_TestObj_0;
 struct __THE_1_fn$0;
 struct __THE_1_array_int;
+struct any_int;
 
 struct __THE_1_TestObj_0 {
   int32_t __THE_0_a;
@@ -187,6 +190,9 @@ struct __THE_1_fn$0 {
 struct __THE_1_array_int {
   int32_t *d;
   size_t l;
+};
+struct any_int {
+  int32_t d;
 };
 
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t);
@@ -240,6 +246,9 @@ uint32_t *__THE_1_opt_u32_alloc (uint32_t);
 void __THE_1_opt_u32_free (uint32_t *);
 uint64_t *__THE_1_opt_u64_alloc (uint64_t);
 void __THE_1_opt_u64_free (uint64_t *);
+struct any any_int_alloc (int32_t);
+struct any any_int_copy (const struct any);
+void any_int_free (struct any);
 
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
@@ -477,6 +486,22 @@ void __THE_1_opt_u64_free (uint64_t *n) {
   if (n == NULL) return;
   free(n);
 }
+struct any any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct any_int);
+  struct any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+}
+struct any any_int_copy (const struct any n) {
+  struct any_int *o = n.d;
+  struct any_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void any_int_free (struct any _n) {
+  struct any_int *n = _n.d;
+  free(n);
+}
 
 int main () {
   const struct __THE_1_fn$0 __THE_0_testFn_0 = (struct __THE_1_fn$0) {&__THE_1_testFn_0, NULL, 0};
@@ -542,7 +567,7 @@ int main () {
   const uint16_t *__THE_0_optU16NilInit_0 = NULL;
   const uint32_t *__THE_0_optU32NilInit_0 = NULL;
   const uint64_t *__THE_0_optU64NilInit_0 = NULL;
-  const struct any *__THE_0_optAnyValInit_0 = __THE_1_opt_any_alloc(1);
+  const struct any *__THE_0_optAnyValInit_0 = __THE_1_opt_any_alloc(any_int_alloc(1));
   const struct __THE_1_array_int *__THE_0_optArrayIntValInit_0 = __THE_1_opt_array_int_alloc(__THE_1_array_int_alloc(1, 1));
   const bool *__THE_0_optBoolValInit_0 = __THE_1_opt_bool_alloc(true);
   const unsigned char *__THE_0_optByteValInit_0 = __THE_1_opt_byte_alloc(1);
