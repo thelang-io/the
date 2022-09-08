@@ -1,0 +1,22 @@
+# https://github.com/probot/stale
+
+exemptAssignees: true
+exemptMilestones: true
+exemptProjects: true
+staleLabel: wontfix
+
+issues:
+  daysUntilStale: 14
+  daysUntilClose: 14
+
+  closeComment: >
+    This issue has been automatically closed because of inactivity.
+    You can re-open it if needed.
+
+pulls:
+  daysUntilStale: 30
+  daysUntilClose: 30
+
+  closeComment: >
+    This pull request has been automatically closed because of inactivity.
+    You can re-open it if needed.
