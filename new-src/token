@@ -66,6 +66,15 @@ fn Token_isStrEsc (ch: char) bool {
   return Token_isCharEsc(ch)
 }
 
+fn Token_isWhitespace (ch: char) bool {
+  return ch == ' ' ||
+    ch == '\f' ||
+    ch == '\n' ||
+    ch == '\r' ||
+    ch == '\t' ||
+    ch == '\v'
+}
+
 fn Token_str (self: Token) str {
   val := _Token_valEscaped(self)
 
