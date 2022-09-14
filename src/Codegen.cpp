@@ -40,8 +40,12 @@ void Codegen::compile (const std::string &path, const std::tuple<std::string, st
   f.close();
 
   auto cmd = "gcc build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
-  std::system(cmd.c_str());
+  auto returnCode = std::system(cmd.c_str());
   std::filesystem::remove("build/output.c");
+
+  if (returnCode != 0) {
+    throw Error("failed to compile generated code");
+  }
 }
 
 std::string Codegen::name (const std::string &name) {
