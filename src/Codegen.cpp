@@ -39,7 +39,7 @@ void Codegen::compile (const std::string &path, const std::tuple<std::string, st
   f << code;
   f.close();
 
-  auto cmd = "gcc build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
+  auto cmd = "clang build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
   auto returnCode = std::system(cmd.c_str());
   std::filesystem::remove("build/output.c");
 

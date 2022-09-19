@@ -3,7 +3,7 @@ FROM ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y build-essential cmake git ninja-build valgrind && \
+    apt-get install -y build-essential clang cmake git ninja-build valgrind && \
     apt-get autoclean && \
     apt-get autoremove && \
     apt-get clean && \
