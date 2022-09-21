@@ -30,6 +30,7 @@ int main (int argc, char *argv[]) {
     auto isLex = false;
     auto isParse = false;
     auto fileName = std::optional<std::string>{};
+    auto platform = std::string("default");
 
     for (auto i = 1; i < argc; i++) {
       auto arg = std::string(argv[i]);
@@ -44,7 +45,24 @@ int main (int argc, char *argv[]) {
       } else if (i == 1 && arg == "parse") {
         isParse = true;
       } else if (isOpt) {
-        throw Error("bad option " + arg);
+        auto shorthandOpt = !arg.starts_with("--");
+
+        if (shorthandOpt) {
+          throw Error("bad option " + arg);
+        }
+
+        auto optName = arg.substr(2, arg.find('=') - 2);
+        auto optVal = arg.substr(arg.find('=') + 1);
+
+        if (optName == "platform") {
+          if (std::set<std::string>{"linux", "macos", "windows"}.contains(optVal)) {
+            platform = optVal;
+          } else {
+            throw Error("unsupported platform " + optVal);
+          }
+        } else {
+          throw Error("bad option " + arg);
+        }
       } else if (fileName == std::nullopt) {
         fileName = arg;
       } else {
@@ -95,7 +113,7 @@ int main (int argc, char *argv[]) {
       return EXIT_SUCCESS;
     }
 
-    Codegen::compile("build/a.out", result);
+    Codegen::compile("build/a.out", result, platform);
     return EXIT_SUCCESS;
   } catch (const Error &err) {
     std::cerr << "Error: " << err.what() << std::endl;

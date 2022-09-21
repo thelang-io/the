@@ -140,7 +140,7 @@ class Codegen {
   std::size_t indent = 0;
   std::size_t lastAnyIdx = 1;
 
-  static void compile (const std::string &, const std::tuple<std::string, std::string> &, bool = false);
+  static void compile (const std::string &, const std::tuple<std::string, std::string> &, const std::string &, bool = false);
   static std::string name (const std::string &);
   static std::string typeName (const std::string &);
 

@@ -76,7 +76,7 @@ TEST_P(CodegenPassTest, Passes) {
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
-  Codegen::compile(filePath, result, true);
+  Codegen::compile(filePath, result, "default", true);
 
   auto [actualStdout, actualStderr, actualReturnCode] = execCmd(
     (this->testMemcheck_ ? "valgrind " + valgrindArguments + " " : "") + filePath,
@@ -139,7 +139,7 @@ TEST_P(CodegenThrowTest, Throws) {
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
 
-  Codegen::compile(filePath, result, true);
+  Codegen::compile(filePath, result, "default", true);
   auto [actualStdout, actualStderr, actualReturnCode] = execCmd(filePath, fileName);
   std::filesystem::remove(filePath);
   actualStderr.erase(actualStderr.find_last_not_of("\r\n") + 1);

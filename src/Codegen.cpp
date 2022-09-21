@@ -31,7 +31,22 @@ const auto banner = std::string(
   EOL
 );
 
-void Codegen::compile (const std::string &path, const std::tuple<std::string, std::string> &result, bool debug) {
+std::string getCompilerFromPlatform (const std::string &platform) {
+  if (platform == "macos") {
+    return "o64-clang";
+  } else if (platform == "windows") {
+    return "x86_64-w64-mingw32-gcc";
+  }
+
+  return "clang";
+}
+
+void Codegen::compile (
+  const std::string &path,
+  const std::tuple<std::string, std::string> &result,
+  const std::string &platform,
+  bool debug
+) {
   auto code = std::get<0>(result);
   auto flags = std::get<1>(result);
   auto f = std::ofstream("build/output.c");
@@ -39,8 +54,10 @@ void Codegen::compile (const std::string &path, const std::tuple<std::string, st
   f << code;
   f.close();
 
-  auto cmd = "clang build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
+  auto compiler = getCompilerFromPlatform(platform);
+  auto cmd = compiler + " build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
   auto returnCode = std::system(cmd.c_str());
+
   std::filesystem::remove("build/output.c");
 
   if (returnCode != 0) {
