@@ -64,10 +64,10 @@ the_target_add_flags(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
+  enable_testing()
+
   include(FetchContent)
   include(GoogleTest)
-
-  enable_testing()
 
   FetchContent_Declare(
     googletest
@@ -102,11 +102,11 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/utils.cpp test/utils.hpp
   )
 
-  add_executable(${PROJECT_NAME}-test ${tests})
-  target_link_libraries(${PROJECT_NAME}-test gmock_main ${PROJECT_NAME}-lib)
+  add_executable(${PROJECT_NAME}-tests ${tests})
+  target_link_libraries(${PROJECT_NAME}-tests gmock_main ${PROJECT_NAME}-lib)
 
   gtest_discover_tests(
-    ${PROJECT_NAME}-test
+    ${PROJECT_NAME}-tests
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     PROPERTIES
     ENVIRONMENT "TEST_CODEGEN_COMPILE=${TEST_CODEGEN_COMPILE}"
