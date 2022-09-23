@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2022]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build valgrind
+      - if: runner.os == 'Windows'
+        run: choco install ninja
+      - if: runner.os == 'macOS'
+        run: brew install ninja
+      - run: mkdir -p build
+      - if: runner.os != 'Linux'
+        run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON
+      - if: runner.os == 'Linux'
+        run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
+      - run: cmake --build build
+      - run: ctest --output-on-failure --test-dir build
