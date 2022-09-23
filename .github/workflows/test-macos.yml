@@ -1,0 +1,16 @@
+name: Test macOS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ["macos-11", "macos-12"]
+    steps:
+      - uses: actions/checkout@v2
+      - run: brew install ninja
+      - run: mkdir -p build
+      - run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON
+      - run: cmake --build build
+      - run: ctest --output-on-failure --test-dir build
