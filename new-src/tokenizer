@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
+obj Tokenizer {
+  reader: ref Reader
+  state: TokenizerState
+  data: Token[]
+  errors: str[]
+}
+
+obj TokenizerState {
+  idx: int
+  pos: int
+  ch: char
+  handled: bool
+}
+
 fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
   return Tokenizer{
     reader: reader,

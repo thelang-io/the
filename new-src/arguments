@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+obj Arguments {
+  fileName: str
+}
+
 fn Arguments_init () Arguments {
   if process.args.len == 1 {
     RaiseError("REPL is not supported")

@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+obj Reader {
+  path: str
+  content: str
+  pos: int
+}
+
 fn Reader_init (p: str) Reader {
   path := realpathSync(p)
 
