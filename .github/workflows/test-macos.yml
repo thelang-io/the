@@ -6,7 +6,10 @@ on:
 
 jobs:
   test:
-    runs-on: ["macos-11", "macos-12"]
+    strategy:
+      matrix:
+        os: [macos-11, macos-12]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - run: brew install ninja
