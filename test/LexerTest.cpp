@@ -1240,6 +1240,7 @@ TEST(LexerTest, LexLitStr) {
     R"("\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v")"
   );
 
+  auto complexEscapeSequence = std::string(R"(\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v)");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:1-1:3): "")");
@@ -1249,7 +1250,7 @@ TEST(LexerTest, LexLitStr) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:8-2:23): "Hello,\rWorld!")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:23-2:38): "Hello,\tWorld!")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:38-2:58): "multiple \\n lines")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:58-2:91)" R"(: "\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(2:58-2:91): ")" + complexEscapeSequence + R"(")");
 }
 
 TEST(LexerTest, LexLitStrWhitespace) {
@@ -1261,13 +1262,14 @@ TEST(LexerTest, LexLitStrWhitespace) {
     R"( "\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v")"
   );
 
+  auto complexEscapeSequence = std::string(R"(\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v)");
   auto lexer = Lexer(&reader);
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:2-1:4): "")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:5-1:11): "test")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:12-1:28): "Hello,\nWorld!")");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:29-1:49): "multiple \\n lines")");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:50-1:83)" R"(: "\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v")");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), R"(LIT_STR(1:50-1:83): ")" + complexEscapeSequence + R"(")");
 }
 
 TEST(LexerTest, LexLitStrEof) {
@@ -1277,6 +1279,7 @@ TEST(LexerTest, LexLitStrEof) {
   auto r4 = testing::NiceMock<MockReader>(R"("multiple \\n lines")");
   auto r5 = testing::NiceMock<MockReader>(R"("\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v")");
 
+  auto complexEscapeSequence = std::string(R"(\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v)");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -1287,7 +1290,7 @@ TEST(LexerTest, LexLitStrEof) {
   EXPECT_EQ(std::get<1>(l2.next()).str(), R"(LIT_STR(1:1-1:7): "test")");
   EXPECT_EQ(std::get<1>(l3.next()).str(), R"(LIT_STR(1:1-1:17): "Hello,\nWorld!")");
   EXPECT_EQ(std::get<1>(l4.next()).str(), R"(LIT_STR(1:1-1:21): "multiple \\n lines")");
-  EXPECT_EQ(std::get<1>(l5.next()).str(), R"(LIT_STR(1:1-1:34)" R"(: "\\0\\r\\t\\f\\v\"\'\\\0\r\t\f\v")");
+  EXPECT_EQ(std::get<1>(l5.next()).str(), R"(LIT_STR(1:1-1:34): ")" + complexEscapeSequence + R"(")");
 }
 
 TEST(LexerTest, ThrowsOnEmptyLitStr) {
