@@ -45,7 +45,9 @@ set(
 
 function (the_target_add_flags target)
   target_compile_options(${target} PRIVATE -Wall)
-  target_compile_options(${target} PRIVATE -Wconversion)
+  if (NOT MSVC)
+    target_compile_options(${target} PRIVATE -Wconversion)
+  endif ()
   target_compile_options(${target} PRIVATE -Werror)
   target_compile_options(${target} PRIVATE -Wextra)
   target_compile_options(${target} PRIVATE -Wold-style-cast)
