@@ -30,7 +30,7 @@ Reader::Reader (const std::string &p) {
 
   try {
     canonicalPath = std::filesystem::canonical(p).string();
-  } catch (const std::exception &ex) {
+  } catch (const std::exception &err) {
     throw Error(R"(no such file ")" + p + R"(")");
   }
 

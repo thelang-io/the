@@ -6,10 +6,11 @@ on:
 
 jobs:
   test:
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2022]
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - if: runner.os == 'Linux'

@@ -52,7 +52,7 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
       throw Error("Error: failed to execute binary file");
     }
 
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
       stdoutOutput += buffer.data();
     }
   }
