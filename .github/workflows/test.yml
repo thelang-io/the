@@ -22,7 +22,7 @@ jobs:
       - if: runner.os == 'Linux'
         run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
       - if: runner.os == 'Windows'
-        run: cmake . -B ./build -G "Visual Studio 17 2022" -D BUILD_TESTS=ON
+        run: cmake . -A x64 -B ./build -G "Visual Studio 17 2022" -D BUILD_TESTS=ON
       - if: runner.os == 'macOS'
         run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON
       - run: cmake --build build

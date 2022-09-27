@@ -45,7 +45,7 @@ set(
 
 function (the_target_add_flags target)
   if (MSVC)
-    target_compile_options(${target} PRIVATE /W4 /WX)
+    target_compile_options(${target} PRIVATE /W4)
   else ()
     target_compile_options(${target} PRIVATE -Wall)
     target_compile_options(${target} PRIVATE -Wconversion)
