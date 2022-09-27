@@ -18,6 +18,7 @@
 #define SRC_AST_CHECKER_HPP
 
 #include "ASTNode.hpp"
+#include <algorithm>
 #include "Error.hpp"
 
 class ASTChecker {

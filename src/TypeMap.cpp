@@ -15,6 +15,7 @@
  */
 
 #include "TypeMap.hpp"
+#include <algorithm>
 #include <limits>
 
 Type *TypeMap::arrayOf (Type *elementType) {

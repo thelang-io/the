@@ -15,6 +15,7 @@
  */
 
 #include "VarMap.hpp"
+#include <algorithm>
 #include "Error.hpp"
 
 std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &codeName, Type *type, bool mut) {
