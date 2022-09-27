@@ -18,6 +18,7 @@
 #define TEST_UTILS_HPP
 
 #include <map>
+#include <optional>
 #include <vector>
 #include "../src/Error.hpp"
 
