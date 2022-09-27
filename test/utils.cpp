@@ -22,13 +22,15 @@
 #include <sstream>
 #include "../src/config.hpp"
 
-extern char **environ;
-
 std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const std::string &tmpName) {
   auto returnCode = -1;
 
   auto pcloseWrapper = [&returnCode] (FILE *fd) {
-    returnCode = pclose(fd);
+    #if defined(OS_WINDOWS)
+      returnCode = _pclose(fd);
+    #else
+      returnCode = pclose(fd);
+    #endif
   };
 
   auto stderrFileName = tmpName + "-stderr.txt";
@@ -40,7 +42,11 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
     auto stderrFile = std::ofstream(stderrFileName);
     stderrFile.close();
 
-    auto pipe = std::unique_ptr<FILE, decltype(pcloseWrapper)>{popen(actualCmd.c_str(), "r"), pcloseWrapper};
+    #if defined(OS_WINDOWS)
+      auto pipe = std::unique_ptr<FILE, decltype(pcloseWrapper)>{_popen(actualCmd.c_str(), "r"), pcloseWrapper};
+    #else
+      auto pipe = std::unique_ptr<FILE, decltype(pcloseWrapper)>{popen(actualCmd.c_str(), "r"), pcloseWrapper};
+    #endif
 
     if (!pipe) {
       throw Error("Error: failed to execute binary file");
@@ -61,16 +67,9 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
   return std::make_tuple(stdoutOutput, stderrOutput.str(), returnCode);
 }
 
-std::map<std::string, std::string> getEnvVars () {
-  auto result = std::map<std::string, std::string>{};
-  char **s = environ;
-
-  for (; *s; s++) {
-    auto var = std::string(*s);
-    result[var.substr(0, var.find('='))] = var.substr(var.find('=') + 1);
-  }
-
-  return result;
+std::optional<std::string> getEnvVar (const std::string &name) {
+  const char *result = getenv(name.c_str());
+  return result == nullptr ? std::optional<std::string>{} : std::string(result);
 }
 
 std::map<std::string, std::string> readTestFile (

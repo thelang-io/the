@@ -65,7 +65,7 @@ std::tuple<ReaderLocation, char> Reader::next () {
   auto l = this->loc;
   auto ch = this->content[this->loc.pos];
 
-  #ifdef OS_WINDOWS
+  #if defined(OS_WINDOWS)
     if (ch == '\r' && this->content[this->loc.pos + 1] == '\n') {
       ch = '\n';
 

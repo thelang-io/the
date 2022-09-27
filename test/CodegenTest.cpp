@@ -36,9 +36,11 @@ class CodegenPassTest : public testing::TestWithParam<const char *> {
   bool testMemcheck_ = false;
 
   void SetUp () override {
-    auto envVars = getEnvVars();
-    this->testCompile_ = envVars.contains("TEST_CODEGEN_COMPILE") && envVars["TEST_CODEGEN_COMPILE"] == "ON";
-    this->testMemcheck_ = envVars.contains("TEST_CODEGEN_MEMCHECK") && envVars["TEST_CODEGEN_MEMCHECK"] == "ON";
+    auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
+    auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
+
+    this->testCompile_ = testCompile != std::nullopt && testCompile == "ON";
+    this->testMemcheck_ = testMemcheck != std::nullopt && testMemcheck == "ON";
   }
 };
 
@@ -47,8 +49,8 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
   bool testCompile_ = false;
 
   void SetUp () override {
-    auto envVars = getEnvVars();
-    this->testCompile_ = envVars.contains("TEST_CODEGEN_COMPILE") && envVars["TEST_CODEGEN_COMPILE"] == "ON";
+    auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
+    this->testCompile_ = testCompile != std::nullopt && testCompile == "ON";
   }
 };
 

@@ -31,7 +31,7 @@
   }, Error)
 
 std::tuple<std::string, std::string, int> execCmd (const std::string &, const std::string &);
-std::map<std::string, std::string> getEnvVars ();
+std::optional<std::string> getEnvVar (const std::string &);
 std::map<std::string, std::string> readTestFile (const std::string &, const std::string &, const std::vector<std::string> &);
 std::vector<std::string> splitFileContent (const std::string &);
 
