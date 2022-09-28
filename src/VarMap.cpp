@@ -24,9 +24,19 @@ std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &co
 }
 
 std::shared_ptr<Var> VarMap::get (const std::string &name) {
-  for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
-    if ((*it)->name == name) {
-      return *it;
+  if (this->_items.empty()) {
+    return nullptr;
+  }
+
+  for (auto idx = this->_items.size() - 1;; idx--) {
+    auto item = this->_items[idx];
+
+    if (item->name == name) {
+      return item;
+    }
+
+    if (idx == 0) {
+      break;
     }
   }
 
@@ -66,13 +76,15 @@ std::string VarMap::name (const std::string &name) const {
 }
 
 void VarMap::restore () {
-  for (auto it = this->_items.begin(); it != this->_items.end();) {
-    if ((*it)->frame == this->_frame) {
-      this->_items.erase(it);
+  for (auto idx = static_cast<std::size_t>(0); idx < this->_items.size();) {
+    auto item = this->_items[idx];
+
+    if (item->frame == this->_frame) {
+      this->_items.erase(this->_items.begin() + static_cast<std::ptrdiff_t>(idx));
       continue;
     }
 
-    it++;
+    idx++;
   }
 
   this->_frame--;
@@ -83,17 +95,27 @@ void VarMap::save () {
 }
 
 VarStack VarMap::varStack () const {
+  if (this->_items.empty()) {
+    return VarStack({});
+  }
+
   auto result = std::vector<std::shared_ptr<Var>>{};
 
-  for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
-    if (!(*it)->builtin) {
-      auto stackVar = std::find_if(result.begin(), result.end(), [&it] (const auto &it2) -> bool {
-        return it2->name == (*it)->name;
+  for (auto idx = this->_items.size() - 1;; idx--) {
+    auto item = this->_items[idx];
+
+    if (!item->builtin) {
+      auto stackVar = std::find_if(result.begin(), result.end(), [&item] (const auto &it2) -> bool {
+        return it2->name == item->name;
       });
 
       if (stackVar == result.end()) {
-        result.push_back(*it);
+        result.push_back(item);
       }
+    }
+
+    if (idx == 0) {
+      break;
     }
   }
 

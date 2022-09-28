@@ -99,10 +99,14 @@ bool CodegenCleanUp::empty () const {
 }
 
 std::string CodegenCleanUp::gen (std::size_t indent) const {
+  if (this->_data.empty()) {
+    return "";
+  }
+
   auto result = std::string();
 
-  for (auto it = this->_data.rbegin(); it != this->_data.rend(); it++) {
-    auto item = *it;
+  for (auto idx = this->_data.size() - 1;; idx--) {
+    auto item = this->_data[idx];
 
     if (item.labelUsed) {
       result += item.label + ":" EOL;
@@ -118,6 +122,10 @@ std::string CodegenCleanUp::gen (std::size_t indent) const {
       }
 
       result += std::string(indent, ' ') + item.content.substr(last) + EOL;
+    }
+
+    if (idx == 0) {
+      break;
     }
   }
 

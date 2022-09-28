@@ -62,6 +62,11 @@ TEST_F(VarMapTest, AddInsertsVar) {
   EXPECT_EQ(this->vm_.get("test1")->frame, 1);
 }
 
+TEST_F(VarMapTest, GetThrowOnEmpty) {
+  auto vm = VarMap();
+  EXPECT_EQ(vm.get("test1"), nullptr);
+}
+
 TEST_F(VarMapTest, GetReturnsItem) {
   this->vm_.add("test1", "test1_0", this->tm_.get("int"), false);
   EXPECT_EQ(this->vm_.get("test1")->codeName, "test1_0");
@@ -109,6 +114,11 @@ TEST_F(VarMapTest, SavesAndRestores) {
   EXPECT_EQ(this->vm_.get("test")->frame, 1);
   this->vm_.restore();
   EXPECT_EQ(this->vm_.get("test")->frame, 0);
+}
+
+TEST_F(VarMapTest, VarEmptyStackGeneratesValid) {
+  auto vm = VarMap();
+  EXPECT_EQ(vm.varStack().snapshot().size(), 0);
 }
 
 TEST_F(VarMapTest, VarStackGeneratesValid) {
