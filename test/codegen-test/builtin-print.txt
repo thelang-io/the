@@ -115,9 +115,10 @@ main {
   print("Tony", "Andrew", "Dan", separator: ", ", terminator: "--\n")
 
   separator := ","
-  terminator := ",\n"
+  terminator := ","
 
   print("Max", "Lester", "Bonny", separator: separator, terminator: terminator)
+  print()
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -678,8 +679,9 @@ int main () {
   print(stdout, "sztzbzczezgzfzhzjzkzlzizpzszvzwzuzyzszszszsz", any_str(any_copy(__THE_0_va_0)), " ", __THE_0_t_0, " ", __THE_0_b_0, " ", __THE_0_c_0, " ", __THE_0_f1_0, " ", __THE_0_f2_0, " ", __THE_0_f_0, " ", __THE_0_i1_0, " ", __THE_0_i2_0, " ", __THE_0_i3_0, " ", __THE_0_i4_0, " ", __THE_0_i_0, " ", __THE_0_p_0, " ", str_copy(__THE_0_s_0), " ", __THE_0_u1_0, " ", __THE_0_u2_0, " ", __THE_0_u3_0, " ", __THE_0_u4_0, " ", __THE_1_Test1_0_str(__THE_1_Test1_0_copy(__THE_0_v1_0)), " ", __THE_1_fn$0_str(__THE_1_fn$0_copy(__THE_0_v1_0->__THE_0_v2)), " ", __THE_1_fn$0_str(__THE_1_fn$0_copy(__THE_0_test_0)), " ", __THE_1_fn$0_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
   print(stdout, "zzzzzz", "Tony", ", ", "Andrew", ", ", "Dan", "--\n");
   const struct str __THE_0_separator_0 = str_alloc(",");
-  const struct str __THE_0_terminator_0 = str_alloc(",\n");
+  const struct str __THE_0_terminator_0 = str_alloc(",");
   print(stdout, "zszszs", "Max", str_copy(__THE_0_separator_0), "Lester", str_copy(__THE_0_separator_0), "Bonny", str_copy(__THE_0_terminator_0));
+  print(stdout, "z", THE_EOL);
   str_free((struct str) __THE_0_terminator_0);
   str_free((struct str) __THE_0_separator_0);
   str_free((struct str) __THE_0_s_0);
@@ -690,5 +692,4 @@ int main () {
 ======= flags =======
 ======= stdout =======
 any true 27 b 28.000000 29.000000 30.000000 31 32 33 34 35 {{ \w+ }} tester 36 37 38 39 Test1{a: any, t: true, b: 1, c: c, f1: 2.000000, f2: 3.000000, f: 4.000000, i1: 5, i2: 6, i3: 7, i4: 8, i: 9, p: 1, s: "test", u1: 10, u2: 11, u3: 12, u4: 13, v1: Test2{a: any, t: false, b: 14, c: a, f1: 15.000000, f2: 16.000000, f: 17.000000, i1: 18, i2: 19, i3: 20, i4: 21, i: 22, p: 1, s: "string", u1: 23, u2: 24, u3: 25, u4: 26}, v2: [Function]} [Function] [Function] [Function]
-Tony, Andrew, Dan--
-Max,Lester,Bonny,
+Tony, Andrew, Dan--{{ \s+ }}Max,Lester,Bonny,

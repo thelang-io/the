@@ -844,6 +844,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.fnStrSlice = true;
     this->_activateBuiltin("fnAlloc");
     this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdint");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnU8Str") {
