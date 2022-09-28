@@ -43,6 +43,18 @@ main {
   print("TestStr{a: \"test1\"} != TestStr{a: \"test2\"}:", TestStr{a: "test1"} != TestStr{a: "test2"})
 }
 ======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -66,7 +78,7 @@ bool str_ne_str (struct str, struct str);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -543,26 +555,26 @@ int main () {
   const int32_t *__THE_0_optIntB_0 = NULL;
   const int32_t **__THE_0_optRefIntA_0 = __THE_1_opt_ref_int_alloc(&__THE_0_intA_0);
   const int32_t **__THE_0_optRefIntB_0 = NULL;
-  print(stdout, "zztz", "TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]}:", " ", __THE_1_TestArrInt_0_eq(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2))), "\n");
-  print(stdout, "zztz", "TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]}:", " ", __THE_1_TestArrInt_0_ne(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 3, 4))), "\n");
-  print(stdout, "zztz", "TestBool{a: true} == TestBool{a: true}:", " ", __THE_1_TestBool_0_eq(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(true)), "\n");
-  print(stdout, "zztz", "TestBool{a: true} != TestBool{a: false}:", " ", __THE_1_TestBool_0_ne(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(false)), "\n");
-  print(stdout, "zztz", "TestChar{a: 'a'} == TestChar{a: 'a'}:", " ", __THE_1_TestChar_0_eq(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('a')), "\n");
-  print(stdout, "zztz", "TestChar{a: 'a'} != TestChar{a: 'c'}:", " ", __THE_1_TestChar_0_ne(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('c')), "\n");
-  print(stdout, "zztz", "TestFloat{a: 3.14} == TestFloat{a: 3.14}:", " ", __THE_1_TestFloat_0_eq(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(3.14)), "\n");
-  print(stdout, "zztz", "TestFloat{a: 3.14} != TestFloat{a: 2.16}:", " ", __THE_1_TestFloat_0_ne(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(2.16)), "\n");
-  print(stdout, "zztz", "TestInt{a: 1} == TestInt{a: 1}:", " ", __THE_1_TestInt_0_eq(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(1)), "\n");
-  print(stdout, "zztz", "TestInt{a: 1} != TestInt{a: 0}:", " ", __THE_1_TestInt_0_ne(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(0)), "\n");
-  print(stdout, "zztz", "TestOptInt{a: optIntA} == TestOptInt{a: optIntA}:", " ", __THE_1_TestOptInt_0_eq(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0))), "\n");
-  print(stdout, "zztz", "TestOptInt{a: optIntA} != TestOptInt{a: optIntB}:", " ", __THE_1_TestOptInt_0_ne(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntB_0))), "\n");
-  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA}:", " ", __THE_1_TestOptRefInt_0_eq(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0))), "\n");
-  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB}:", " ", __THE_1_TestOptRefInt_0_ne(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntB_0))), "\n");
-  print(stdout, "zztz", "TestRefInt{a: ref intA} == TestRefInt{a: ref intA}:", " ", __THE_1_TestRefInt_0_eq(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intA_0)), "\n");
-  print(stdout, "zztz", "TestRefInt{a: ref intA} != TestRefInt{a: ref intB}:", " ", __THE_1_TestRefInt_0_ne(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intB_0)), "\n");
-  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA}:", " ", __THE_1_TestRefOptInt_0_eq(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0)), "\n");
-  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB}:", " ", __THE_1_TestRefOptInt_0_ne(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntB_0)), "\n");
-  print(stdout, "zztz", "TestStr{a: \"test1\"} == TestStr{a: \"test1\"}:", " ", __THE_1_TestStr_0_eq(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test1"))), "\n");
-  print(stdout, "zztz", "TestStr{a: \"test1\"} != TestStr{a: \"test2\"}:", " ", __THE_1_TestStr_0_ne(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test2"))), "\n");
+  print(stdout, "zztz", "TestArrInt{a: [1, 2]} == TestArrInt{a: [1, 2]}:", " ", __THE_1_TestArrInt_0_eq(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2))), THE_EOL);
+  print(stdout, "zztz", "TestArrInt{a: [1, 2]} != TestArrInt{a: [3, 4]}:", " ", __THE_1_TestArrInt_0_ne(__THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 1, 2)), __THE_1_TestArrInt_0_alloc(__THE_1_array_int_alloc(2, 3, 4))), THE_EOL);
+  print(stdout, "zztz", "TestBool{a: true} == TestBool{a: true}:", " ", __THE_1_TestBool_0_eq(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(true)), THE_EOL);
+  print(stdout, "zztz", "TestBool{a: true} != TestBool{a: false}:", " ", __THE_1_TestBool_0_ne(__THE_1_TestBool_0_alloc(true), __THE_1_TestBool_0_alloc(false)), THE_EOL);
+  print(stdout, "zztz", "TestChar{a: 'a'} == TestChar{a: 'a'}:", " ", __THE_1_TestChar_0_eq(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('a')), THE_EOL);
+  print(stdout, "zztz", "TestChar{a: 'a'} != TestChar{a: 'c'}:", " ", __THE_1_TestChar_0_ne(__THE_1_TestChar_0_alloc('a'), __THE_1_TestChar_0_alloc('c')), THE_EOL);
+  print(stdout, "zztz", "TestFloat{a: 3.14} == TestFloat{a: 3.14}:", " ", __THE_1_TestFloat_0_eq(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(3.14)), THE_EOL);
+  print(stdout, "zztz", "TestFloat{a: 3.14} != TestFloat{a: 2.16}:", " ", __THE_1_TestFloat_0_ne(__THE_1_TestFloat_0_alloc(3.14), __THE_1_TestFloat_0_alloc(2.16)), THE_EOL);
+  print(stdout, "zztz", "TestInt{a: 1} == TestInt{a: 1}:", " ", __THE_1_TestInt_0_eq(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(1)), THE_EOL);
+  print(stdout, "zztz", "TestInt{a: 1} != TestInt{a: 0}:", " ", __THE_1_TestInt_0_ne(__THE_1_TestInt_0_alloc(1), __THE_1_TestInt_0_alloc(0)), THE_EOL);
+  print(stdout, "zztz", "TestOptInt{a: optIntA} == TestOptInt{a: optIntA}:", " ", __THE_1_TestOptInt_0_eq(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0))), THE_EOL);
+  print(stdout, "zztz", "TestOptInt{a: optIntA} != TestOptInt{a: optIntB}:", " ", __THE_1_TestOptInt_0_ne(__THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_TestOptInt_0_alloc(__THE_1_opt_int_copy(__THE_0_optIntB_0))), THE_EOL);
+  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} == TestOptRefInt{a: optRefIntA}:", " ", __THE_1_TestOptRefInt_0_eq(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0))), THE_EOL);
+  print(stdout, "zztz", "TestOptRefInt{a: optRefIntA} != TestOptRefInt{a: optRefIntB}:", " ", __THE_1_TestOptRefInt_0_ne(__THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntA_0)), __THE_1_TestOptRefInt_0_alloc(__THE_1_opt_ref_int_copy(__THE_0_optRefIntB_0))), THE_EOL);
+  print(stdout, "zztz", "TestRefInt{a: ref intA} == TestRefInt{a: ref intA}:", " ", __THE_1_TestRefInt_0_eq(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intA_0)), THE_EOL);
+  print(stdout, "zztz", "TestRefInt{a: ref intA} != TestRefInt{a: ref intB}:", " ", __THE_1_TestRefInt_0_ne(__THE_1_TestRefInt_0_alloc(&__THE_0_intA_0), __THE_1_TestRefInt_0_alloc(&__THE_0_intB_0)), THE_EOL);
+  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} == TestRefOptInt{a: ref optIntA}:", " ", __THE_1_TestRefOptInt_0_eq(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0)), THE_EOL);
+  print(stdout, "zztz", "TestRefOptInt{a: ref optIntA} != TestRefOptInt{a: ref optIntB}:", " ", __THE_1_TestRefOptInt_0_ne(__THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntA_0), __THE_1_TestRefOptInt_0_alloc(&__THE_0_optIntB_0)), THE_EOL);
+  print(stdout, "zztz", "TestStr{a: \"test1\"} == TestStr{a: \"test1\"}:", " ", __THE_1_TestStr_0_eq(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test1"))), THE_EOL);
+  print(stdout, "zztz", "TestStr{a: \"test1\"} != TestStr{a: \"test2\"}:", " ", __THE_1_TestStr_0_ne(__THE_1_TestStr_0_alloc(str_alloc("test1")), __THE_1_TestStr_0_alloc(str_alloc("test2"))), THE_EOL);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntB_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntA_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_optIntB_0);

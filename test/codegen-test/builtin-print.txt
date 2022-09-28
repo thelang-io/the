@@ -120,6 +120,18 @@ main {
   print("Max", "Lester", "Bonny", separator: separator, terminator: terminator)
 }
 ======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -169,7 +181,7 @@ struct str u64_str (uint64_t);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -663,7 +675,7 @@ int main () {
   const uint16_t __THE_0_u2_0 = 37;
   const uint32_t __THE_0_u3_0 = 38;
   const uint64_t __THE_0_u4_0 = 39;
-  print(stdout, "sztzbzczezgzfzhzjzkzlzizpzszvzwzuzyzszszszsz", any_str(any_copy(__THE_0_va_0)), " ", __THE_0_t_0, " ", __THE_0_b_0, " ", __THE_0_c_0, " ", __THE_0_f1_0, " ", __THE_0_f2_0, " ", __THE_0_f_0, " ", __THE_0_i1_0, " ", __THE_0_i2_0, " ", __THE_0_i3_0, " ", __THE_0_i4_0, " ", __THE_0_i_0, " ", __THE_0_p_0, " ", str_copy(__THE_0_s_0), " ", __THE_0_u1_0, " ", __THE_0_u2_0, " ", __THE_0_u3_0, " ", __THE_0_u4_0, " ", __THE_1_Test1_0_str(__THE_1_Test1_0_copy(__THE_0_v1_0)), " ", __THE_1_fn$0_str(__THE_1_fn$0_copy(__THE_0_v1_0->__THE_0_v2)), " ", __THE_1_fn$0_str(__THE_1_fn$0_copy(__THE_0_test_0)), " ", __THE_1_fn$0_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), "\n");
+  print(stdout, "sztzbzczezgzfzhzjzkzlzizpzszvzwzuzyzszszszsz", any_str(any_copy(__THE_0_va_0)), " ", __THE_0_t_0, " ", __THE_0_b_0, " ", __THE_0_c_0, " ", __THE_0_f1_0, " ", __THE_0_f2_0, " ", __THE_0_f_0, " ", __THE_0_i1_0, " ", __THE_0_i2_0, " ", __THE_0_i3_0, " ", __THE_0_i4_0, " ", __THE_0_i_0, " ", __THE_0_p_0, " ", str_copy(__THE_0_s_0), " ", __THE_0_u1_0, " ", __THE_0_u2_0, " ", __THE_0_u3_0, " ", __THE_0_u4_0, " ", __THE_1_Test1_0_str(__THE_1_Test1_0_copy(__THE_0_v1_0)), " ", __THE_1_fn$0_str(__THE_1_fn$0_copy(__THE_0_v1_0->__THE_0_v2)), " ", __THE_1_fn$0_str(__THE_1_fn$0_copy(__THE_0_test_0)), " ", __THE_1_fn$0_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
   print(stdout, "zzzzzz", "Tony", ", ", "Andrew", ", ", "Dan", "--\n");
   const struct str __THE_0_separator_0 = str_alloc(",");
   const struct str __THE_0_terminator_0 = str_alloc(",\n");

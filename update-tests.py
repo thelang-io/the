@@ -52,7 +52,7 @@ def update(directory: str, action: str):
             result = "/test" + stderr[stderr.find(":", 10):]
             f.write(stdin_sep + "\n" + stdin + stderr_sep + "\n" + result)
         elif action == "codegen":
-            f.write(stdin_sep + "\n" + stdin + code_sep + "\n" + stdout[150:] + trailing_code)
+            f.write(stdin_sep + "\n" + stdin + code_sep + "\n" + stdout[155:] + trailing_code)
         else:
             f.write(stdin_sep + "\n" + stdin + stdout_sep + "\n" + stdout)
 

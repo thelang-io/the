@@ -49,6 +49,18 @@ main {
   print(testEmptyInt.join("_"), testOneInt.join("_"), testMultipleInt.join("_"))
 }
 ======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -72,7 +84,7 @@ void str_free (struct str);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -475,18 +487,18 @@ int main () {
   const struct __THE_1_array_str __THE_0_testMultipleStr_0 = __THE_1_array_str_alloc(3, str_alloc("test1"), str_alloc("test2"), str_alloc("test3"));
   const struct __THE_1_array_ref_int __THE_0_testMultipleRefInt_0 = __THE_1_array_ref_int_alloc(3, __THE_0_refInt1_0, __THE_0_refInt2_0, __THE_0_refInt3_0);
   const struct __THE_1_array_int __THE_0_testMultipleInt_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
-  print(stdout, "szszsz", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testEmptyArrayInt_0), 0, (struct str) {}), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testOneArrayInt_0), 0, (struct str) {}), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testMultipleArrayInt_0), 0, (struct str) {}), "\n");
-  print(stdout, "szszsz", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testEmptyFn_0), 0, (struct str) {}), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testOneFn_0), 0, (struct str) {}), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testMultipleFn_0), 0, (struct str) {}), "\n");
-  print(stdout, "szszsz", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testEmptyObj_0), 0, (struct str) {}), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testOneObj_0), 0, (struct str) {}), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testMultipleObj_0), 0, (struct str) {}), "\n");
-  print(stdout, "szszsz", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testEmptyStr_0), 0, (struct str) {}), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testOneStr_0), 0, (struct str) {}), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testMultipleStr_0), 0, (struct str) {}), "\n");
-  print(stdout, "szszsz", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testEmptyRefInt_0), 0, (struct str) {}), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testOneRefInt_0), 0, (struct str) {}), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testMultipleRefInt_0), 0, (struct str) {}), "\n");
-  print(stdout, "szszsz", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testEmptyInt_0), 0, (struct str) {}), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testOneInt_0), 0, (struct str) {}), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testMultipleInt_0), 0, (struct str) {}), "\n");
-  print(stdout, "szszsz", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testEmptyArrayInt_0), 1, str_alloc("_")), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testOneArrayInt_0), 1, str_alloc("_")), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testMultipleArrayInt_0), 1, str_alloc("_")), "\n");
-  print(stdout, "szszsz", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testEmptyFn_0), 1, str_alloc("_")), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testOneFn_0), 1, str_alloc("_")), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testMultipleFn_0), 1, str_alloc("_")), "\n");
-  print(stdout, "szszsz", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testEmptyObj_0), 1, str_alloc("_")), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testOneObj_0), 1, str_alloc("_")), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testMultipleObj_0), 1, str_alloc("_")), "\n");
-  print(stdout, "szszsz", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testEmptyStr_0), 1, str_alloc("_")), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testOneStr_0), 1, str_alloc("_")), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testMultipleStr_0), 1, str_alloc("_")), "\n");
-  print(stdout, "szszsz", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testEmptyRefInt_0), 1, str_alloc("_")), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testOneRefInt_0), 1, str_alloc("_")), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testMultipleRefInt_0), 1, str_alloc("_")), "\n");
-  print(stdout, "szszsz", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testEmptyInt_0), 1, str_alloc("_")), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testOneInt_0), 1, str_alloc("_")), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testMultipleInt_0), 1, str_alloc("_")), "\n");
+  print(stdout, "szszsz", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testEmptyArrayInt_0), 0, (struct str) {}), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testOneArrayInt_0), 0, (struct str) {}), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testMultipleArrayInt_0), 0, (struct str) {}), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testEmptyFn_0), 0, (struct str) {}), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testOneFn_0), 0, (struct str) {}), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testMultipleFn_0), 0, (struct str) {}), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testEmptyObj_0), 0, (struct str) {}), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testOneObj_0), 0, (struct str) {}), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testMultipleObj_0), 0, (struct str) {}), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testEmptyStr_0), 0, (struct str) {}), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testOneStr_0), 0, (struct str) {}), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testMultipleStr_0), 0, (struct str) {}), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testEmptyRefInt_0), 0, (struct str) {}), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testOneRefInt_0), 0, (struct str) {}), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testMultipleRefInt_0), 0, (struct str) {}), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testEmptyInt_0), 0, (struct str) {}), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testOneInt_0), 0, (struct str) {}), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testMultipleInt_0), 0, (struct str) {}), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testEmptyArrayInt_0), 1, str_alloc("_")), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testOneArrayInt_0), 1, str_alloc("_")), " ", __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testMultipleArrayInt_0), 1, str_alloc("_")), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testEmptyFn_0), 1, str_alloc("_")), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testOneFn_0), 1, str_alloc("_")), " ", __THE_1_array_fn$0_join(__THE_1_array_fn$0_copy(__THE_0_testMultipleFn_0), 1, str_alloc("_")), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testEmptyObj_0), 1, str_alloc("_")), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testOneObj_0), 1, str_alloc("_")), " ", __THE_1_array_TestObj_join(__THE_1_array_TestObj_copy(__THE_0_testMultipleObj_0), 1, str_alloc("_")), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testEmptyStr_0), 1, str_alloc("_")), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testOneStr_0), 1, str_alloc("_")), " ", __THE_1_array_str_join(__THE_1_array_str_copy(__THE_0_testMultipleStr_0), 1, str_alloc("_")), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testEmptyRefInt_0), 1, str_alloc("_")), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testOneRefInt_0), 1, str_alloc("_")), " ", __THE_1_array_ref_int_join(__THE_1_array_ref_int_copy(__THE_0_testMultipleRefInt_0), 1, str_alloc("_")), THE_EOL);
+  print(stdout, "szszsz", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testEmptyInt_0), 1, str_alloc("_")), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testOneInt_0), 1, str_alloc("_")), " ", __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testMultipleInt_0), 1, str_alloc("_")), THE_EOL);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_testMultipleInt_0);
   __THE_1_array_ref_int_free((struct __THE_1_array_ref_int) __THE_0_testMultipleRefInt_0);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_testMultipleStr_0);

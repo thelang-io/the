@@ -41,6 +41,18 @@ main {
   print("optStr1 != optStr2:", optStr1 != optStr2)
 }
 ======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -64,7 +76,7 @@ bool str_ne_str (struct str, struct str);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -499,22 +511,22 @@ int main () {
   const int32_t **__THE_0_optRefInt2_0 = NULL;
   const struct str *__THE_0_optStr1_0 = __THE_1_opt_str_alloc(str_alloc("test"));
   const struct str *__THE_0_optStr2_0 = NULL;
-  print(stdout, "zztz", "optArrInt1 == optArrInt1:", " ", __THE_1_opt_array_int_eq(__THE_1_opt_array_int_copy(__THE_0_optArrInt1_0), __THE_1_opt_array_int_copy(__THE_0_optArrInt1_0)), "\n");
-  print(stdout, "zztz", "optArrInt1 != optArrInt2:", " ", __THE_1_opt_array_int_ne(__THE_1_opt_array_int_copy(__THE_0_optArrInt1_0), __THE_1_opt_array_int_copy(__THE_0_optArrInt2_0)), "\n");
-  print(stdout, "zztz", "optBool1 == optBool1:", " ", __THE_1_opt_bool_eq(__THE_1_opt_bool_copy(__THE_0_optBool1_0), __THE_1_opt_bool_copy(__THE_0_optBool1_0)), "\n");
-  print(stdout, "zztz", "optBool1 != optBool2:", " ", __THE_1_opt_bool_ne(__THE_1_opt_bool_copy(__THE_0_optBool1_0), __THE_1_opt_bool_copy(__THE_0_optBool2_0)), "\n");
-  print(stdout, "zztz", "optChar1 == optChar1:", " ", __THE_1_opt_char_eq(__THE_1_opt_char_copy(__THE_0_optChar1_0), __THE_1_opt_char_copy(__THE_0_optChar1_0)), "\n");
-  print(stdout, "zztz", "optChar1 != optChar2:", " ", __THE_1_opt_char_ne(__THE_1_opt_char_copy(__THE_0_optChar1_0), __THE_1_opt_char_copy(__THE_0_optChar2_0)), "\n");
-  print(stdout, "zztz", "optFloat1 == optFloat1:", " ", __THE_1_opt_float_eq(__THE_1_opt_float_copy(__THE_0_optFloat1_0), __THE_1_opt_float_copy(__THE_0_optFloat1_0)), "\n");
-  print(stdout, "zztz", "optFloat1 != optFloat2:", " ", __THE_1_opt_float_ne(__THE_1_opt_float_copy(__THE_0_optFloat1_0), __THE_1_opt_float_copy(__THE_0_optFloat2_0)), "\n");
-  print(stdout, "zztz", "optInt1 == optInt1:", " ", __THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_optInt1_0), __THE_1_opt_int_copy(__THE_0_optInt1_0)), "\n");
-  print(stdout, "zztz", "optInt1 != optInt2:", " ", __THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_optInt1_0), __THE_1_opt_int_copy(__THE_0_optInt2_0)), "\n");
-  print(stdout, "zztz", "optObj1 == optObj1:", " ", __THE_1_opt_TestObj_eq(__THE_1_opt_TestObj_copy(__THE_0_optObj1_0), __THE_1_opt_TestObj_copy(__THE_0_optObj1_0)), "\n");
-  print(stdout, "zztz", "optObj1 != optObj2:", " ", __THE_1_opt_TestObj_ne(__THE_1_opt_TestObj_copy(__THE_0_optObj1_0), __THE_1_opt_TestObj_copy(__THE_0_optObj2_0)), "\n");
-  print(stdout, "zztz", "optRefInt1 == optRefInt1:", " ", __THE_1_opt_ref_int_eq(__THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0), __THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0)), "\n");
-  print(stdout, "zztz", "optRefInt1 != optRefInt2:", " ", __THE_1_opt_ref_int_ne(__THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0), __THE_1_opt_ref_int_copy(__THE_0_optRefInt2_0)), "\n");
-  print(stdout, "zztz", "optStr1 == optStr1:", " ", __THE_1_opt_str_eq(__THE_1_opt_str_copy(__THE_0_optStr1_0), __THE_1_opt_str_copy(__THE_0_optStr1_0)), "\n");
-  print(stdout, "zztz", "optStr1 != optStr2:", " ", __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_optStr1_0), __THE_1_opt_str_copy(__THE_0_optStr2_0)), "\n");
+  print(stdout, "zztz", "optArrInt1 == optArrInt1:", " ", __THE_1_opt_array_int_eq(__THE_1_opt_array_int_copy(__THE_0_optArrInt1_0), __THE_1_opt_array_int_copy(__THE_0_optArrInt1_0)), THE_EOL);
+  print(stdout, "zztz", "optArrInt1 != optArrInt2:", " ", __THE_1_opt_array_int_ne(__THE_1_opt_array_int_copy(__THE_0_optArrInt1_0), __THE_1_opt_array_int_copy(__THE_0_optArrInt2_0)), THE_EOL);
+  print(stdout, "zztz", "optBool1 == optBool1:", " ", __THE_1_opt_bool_eq(__THE_1_opt_bool_copy(__THE_0_optBool1_0), __THE_1_opt_bool_copy(__THE_0_optBool1_0)), THE_EOL);
+  print(stdout, "zztz", "optBool1 != optBool2:", " ", __THE_1_opt_bool_ne(__THE_1_opt_bool_copy(__THE_0_optBool1_0), __THE_1_opt_bool_copy(__THE_0_optBool2_0)), THE_EOL);
+  print(stdout, "zztz", "optChar1 == optChar1:", " ", __THE_1_opt_char_eq(__THE_1_opt_char_copy(__THE_0_optChar1_0), __THE_1_opt_char_copy(__THE_0_optChar1_0)), THE_EOL);
+  print(stdout, "zztz", "optChar1 != optChar2:", " ", __THE_1_opt_char_ne(__THE_1_opt_char_copy(__THE_0_optChar1_0), __THE_1_opt_char_copy(__THE_0_optChar2_0)), THE_EOL);
+  print(stdout, "zztz", "optFloat1 == optFloat1:", " ", __THE_1_opt_float_eq(__THE_1_opt_float_copy(__THE_0_optFloat1_0), __THE_1_opt_float_copy(__THE_0_optFloat1_0)), THE_EOL);
+  print(stdout, "zztz", "optFloat1 != optFloat2:", " ", __THE_1_opt_float_ne(__THE_1_opt_float_copy(__THE_0_optFloat1_0), __THE_1_opt_float_copy(__THE_0_optFloat2_0)), THE_EOL);
+  print(stdout, "zztz", "optInt1 == optInt1:", " ", __THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_optInt1_0), __THE_1_opt_int_copy(__THE_0_optInt1_0)), THE_EOL);
+  print(stdout, "zztz", "optInt1 != optInt2:", " ", __THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_optInt1_0), __THE_1_opt_int_copy(__THE_0_optInt2_0)), THE_EOL);
+  print(stdout, "zztz", "optObj1 == optObj1:", " ", __THE_1_opt_TestObj_eq(__THE_1_opt_TestObj_copy(__THE_0_optObj1_0), __THE_1_opt_TestObj_copy(__THE_0_optObj1_0)), THE_EOL);
+  print(stdout, "zztz", "optObj1 != optObj2:", " ", __THE_1_opt_TestObj_ne(__THE_1_opt_TestObj_copy(__THE_0_optObj1_0), __THE_1_opt_TestObj_copy(__THE_0_optObj2_0)), THE_EOL);
+  print(stdout, "zztz", "optRefInt1 == optRefInt1:", " ", __THE_1_opt_ref_int_eq(__THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0), __THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0)), THE_EOL);
+  print(stdout, "zztz", "optRefInt1 != optRefInt2:", " ", __THE_1_opt_ref_int_ne(__THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0), __THE_1_opt_ref_int_copy(__THE_0_optRefInt2_0)), THE_EOL);
+  print(stdout, "zztz", "optStr1 == optStr1:", " ", __THE_1_opt_str_eq(__THE_1_opt_str_copy(__THE_0_optStr1_0), __THE_1_opt_str_copy(__THE_0_optStr1_0)), THE_EOL);
+  print(stdout, "zztz", "optStr1 != optStr2:", " ", __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_optStr1_0), __THE_1_opt_str_copy(__THE_0_optStr2_0)), THE_EOL);
   __THE_1_opt_str_free((struct str *) __THE_0_optStr2_0);
   __THE_1_opt_str_free((struct str *) __THE_0_optStr1_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefInt2_0);

@@ -369,7 +369,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  #else" EOL;
     builtinFnDefCode += "    usleep((unsigned int) (i * 1000));" EOL;
     builtinFnDefCode += "  #endif" EOL;
-    builtinFnDefCode += "  " EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -600,8 +599,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   auto output = std::string();
   output += banner;
-  output += headers;
   output += builtinDefineCode;
+  output += headers;
   output += defineCode;
   output += builtinStructDefCode;
   output += builtinFnDeclCode;
@@ -626,7 +625,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     return;
   }
 
-  if (name == "libInttypes") {
+  if (name == "definitions") {
+    this->builtins.definitions = true;
+  } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;

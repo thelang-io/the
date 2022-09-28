@@ -10,6 +10,18 @@ main {
   test3()
 }
 ======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +42,7 @@ void str_free (struct str);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -55,7 +67,7 @@ struct str str_alloc (const char *r) {
 }
 char *str_at (struct str s, int64_t i) {
   if ((i >= 0 && i >= s.l) || (i < 0 && i < -s.l)) {
-    fprintf(stderr, "Error: index %" PRId64 " out of string bounds\n", i);
+    fprintf(stderr, "Error: index %" PRId64 " out of string bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &s.d[s.l + i] : &s.d[i];

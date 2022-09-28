@@ -11,6 +11,18 @@ main {
   print(test3, test3.reverse())
 }
 ======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -33,7 +45,7 @@ void str_free (struct str);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -155,10 +167,10 @@ int main () {
   const struct __THE_1_array_int __THE_0_test1_0 = __THE_1_array_int_alloc(1, 1);
   const struct __THE_1_array_int __THE_0_test2_0 = __THE_1_array_int_alloc(2, 1, 2);
   const struct __THE_1_array_int __THE_0_test3_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test0_0))), "\n");
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test1_0))), "\n");
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test2_0))), "\n");
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test3_0))), "\n");
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test0_0))), THE_EOL);
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test1_0))), THE_EOL);
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test2_0))), THE_EOL);
+  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), " ", __THE_1_array_int_str(__THE_1_array_int_reverse(__THE_1_array_int_copy(__THE_0_test3_0))), THE_EOL);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test3_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test2_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0);

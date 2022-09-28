@@ -27,6 +27,18 @@ main {
   print("[\"test1\"] != [\"test2\"]:", ["test1"] != ["test2"])
 }
 ======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -49,7 +61,7 @@ bool str_ne_str (struct str, struct str);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes\n", l);
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -626,24 +638,24 @@ int main () {
   const int32_t __THE_0_intB_0 = 2;
   const int32_t *__THE_0_optIntA_0 = __THE_1_opt_int_alloc(__THE_0_intA_0);
   const int32_t *__THE_0_optIntB_0 = NULL;
-  print(stdout, "zztz", "[[1, 2], [3, 4]] == [[1, 2], [3, 4]]:", " ", __THE_1_array_array_int_eq(__THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 1, 2), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 1, 2), __THE_1_array_int_alloc(2, 3, 4))), "\n");
-  print(stdout, "zztz", "[[1, 2], [3, 4]] != [[0, 1], [2, 3]]:", " ", __THE_1_array_array_int_ne(__THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 1, 2), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 0, 1), __THE_1_array_int_alloc(2, 2, 3))), "\n");
-  print(stdout, "zztz", "[true] == [true]:", " ", __THE_1_array_bool_eq(__THE_1_array_bool_alloc(1, true), __THE_1_array_bool_alloc(1, true)), "\n");
-  print(stdout, "zztz", "[false] != [true]:", " ", __THE_1_array_bool_ne(__THE_1_array_bool_alloc(1, false), __THE_1_array_bool_alloc(1, true)), "\n");
-  print(stdout, "zztz", "['a'] == ['a']:", " ", __THE_1_array_char_eq(__THE_1_array_char_alloc(1, 'a'), __THE_1_array_char_alloc(1, 'a')), "\n");
-  print(stdout, "zztz", "['a'] != ['c']:", " ", __THE_1_array_char_ne(__THE_1_array_char_alloc(1, 'a'), __THE_1_array_char_alloc(1, 'c')), "\n");
-  print(stdout, "zztz", "[3.14] == [3.14]:", " ", __THE_1_array_float_eq(__THE_1_array_float_alloc(1, 3.14), __THE_1_array_float_alloc(1, 3.14)), "\n");
-  print(stdout, "zztz", "[3.14] != [2.16]:", " ", __THE_1_array_float_ne(__THE_1_array_float_alloc(1, 3.14), __THE_1_array_float_alloc(1, 2.16)), "\n");
-  print(stdout, "zztz", "[1] == [1]:", " ", __THE_1_array_int_eq(__THE_1_array_int_alloc(1, 1), __THE_1_array_int_alloc(1, 1)), "\n");
-  print(stdout, "zztz", "[1] != [0]:", " ", __THE_1_array_int_ne(__THE_1_array_int_alloc(1, 1), __THE_1_array_int_alloc(1, 0)), "\n");
-  print(stdout, "zztz", "[TestObj{a: 1}] == [TestObj{a: 1}]:", " ", __THE_1_array_TestObj_eq(__THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(1)), __THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(1))), "\n");
-  print(stdout, "zztz", "[TestObj{a: 1}] != [TestObj{a: 2}]:", " ", __THE_1_array_TestObj_ne(__THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(1)), __THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(2))), "\n");
-  print(stdout, "zztz", "[optIntA] == [optIntA]:", " ", __THE_1_array_opt_int_eq(__THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntA_0))), "\n");
-  print(stdout, "zztz", "[optIntA] != [optIntB]:", " ", __THE_1_array_opt_int_ne(__THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntB_0))), "\n");
-  print(stdout, "zztz", "[ref intA] == [ref intA]:", " ", __THE_1_array_ref_int_eq(__THE_1_array_ref_int_alloc(1, &__THE_0_intA_0), __THE_1_array_ref_int_alloc(1, &__THE_0_intA_0)), "\n");
-  print(stdout, "zztz", "[ref intA] != [ref intB]:", " ", __THE_1_array_ref_int_ne(__THE_1_array_ref_int_alloc(1, &__THE_0_intA_0), __THE_1_array_ref_int_alloc(1, &__THE_0_intB_0)), "\n");
-  print(stdout, "zztz", "[\"test1\"] == [\"test1\"]:", " ", __THE_1_array_str_eq(__THE_1_array_str_alloc(1, str_alloc("test1")), __THE_1_array_str_alloc(1, str_alloc("test1"))), "\n");
-  print(stdout, "zztz", "[\"test1\"] != [\"test2\"]:", " ", __THE_1_array_str_ne(__THE_1_array_str_alloc(1, str_alloc("test1")), __THE_1_array_str_alloc(1, str_alloc("test2"))), "\n");
+  print(stdout, "zztz", "[[1, 2], [3, 4]] == [[1, 2], [3, 4]]:", " ", __THE_1_array_array_int_eq(__THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 1, 2), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 1, 2), __THE_1_array_int_alloc(2, 3, 4))), THE_EOL);
+  print(stdout, "zztz", "[[1, 2], [3, 4]] != [[0, 1], [2, 3]]:", " ", __THE_1_array_array_int_ne(__THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 1, 2), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_array_array_int_alloc(2, __THE_1_array_int_alloc(2, 0, 1), __THE_1_array_int_alloc(2, 2, 3))), THE_EOL);
+  print(stdout, "zztz", "[true] == [true]:", " ", __THE_1_array_bool_eq(__THE_1_array_bool_alloc(1, true), __THE_1_array_bool_alloc(1, true)), THE_EOL);
+  print(stdout, "zztz", "[false] != [true]:", " ", __THE_1_array_bool_ne(__THE_1_array_bool_alloc(1, false), __THE_1_array_bool_alloc(1, true)), THE_EOL);
+  print(stdout, "zztz", "['a'] == ['a']:", " ", __THE_1_array_char_eq(__THE_1_array_char_alloc(1, 'a'), __THE_1_array_char_alloc(1, 'a')), THE_EOL);
+  print(stdout, "zztz", "['a'] != ['c']:", " ", __THE_1_array_char_ne(__THE_1_array_char_alloc(1, 'a'), __THE_1_array_char_alloc(1, 'c')), THE_EOL);
+  print(stdout, "zztz", "[3.14] == [3.14]:", " ", __THE_1_array_float_eq(__THE_1_array_float_alloc(1, 3.14), __THE_1_array_float_alloc(1, 3.14)), THE_EOL);
+  print(stdout, "zztz", "[3.14] != [2.16]:", " ", __THE_1_array_float_ne(__THE_1_array_float_alloc(1, 3.14), __THE_1_array_float_alloc(1, 2.16)), THE_EOL);
+  print(stdout, "zztz", "[1] == [1]:", " ", __THE_1_array_int_eq(__THE_1_array_int_alloc(1, 1), __THE_1_array_int_alloc(1, 1)), THE_EOL);
+  print(stdout, "zztz", "[1] != [0]:", " ", __THE_1_array_int_ne(__THE_1_array_int_alloc(1, 1), __THE_1_array_int_alloc(1, 0)), THE_EOL);
+  print(stdout, "zztz", "[TestObj{a: 1}] == [TestObj{a: 1}]:", " ", __THE_1_array_TestObj_eq(__THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(1)), __THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(1))), THE_EOL);
+  print(stdout, "zztz", "[TestObj{a: 1}] != [TestObj{a: 2}]:", " ", __THE_1_array_TestObj_ne(__THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(1)), __THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(2))), THE_EOL);
+  print(stdout, "zztz", "[optIntA] == [optIntA]:", " ", __THE_1_array_opt_int_eq(__THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntA_0))), THE_EOL);
+  print(stdout, "zztz", "[optIntA] != [optIntB]:", " ", __THE_1_array_opt_int_ne(__THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_array_opt_int_alloc(1, __THE_1_opt_int_copy(__THE_0_optIntB_0))), THE_EOL);
+  print(stdout, "zztz", "[ref intA] == [ref intA]:", " ", __THE_1_array_ref_int_eq(__THE_1_array_ref_int_alloc(1, &__THE_0_intA_0), __THE_1_array_ref_int_alloc(1, &__THE_0_intA_0)), THE_EOL);
+  print(stdout, "zztz", "[ref intA] != [ref intB]:", " ", __THE_1_array_ref_int_ne(__THE_1_array_ref_int_alloc(1, &__THE_0_intA_0), __THE_1_array_ref_int_alloc(1, &__THE_0_intB_0)), THE_EOL);
+  print(stdout, "zztz", "[\"test1\"] == [\"test1\"]:", " ", __THE_1_array_str_eq(__THE_1_array_str_alloc(1, str_alloc("test1")), __THE_1_array_str_alloc(1, str_alloc("test1"))), THE_EOL);
+  print(stdout, "zztz", "[\"test1\"] != [\"test2\"]:", " ", __THE_1_array_str_ne(__THE_1_array_str_alloc(1, str_alloc("test1")), __THE_1_array_str_alloc(1, str_alloc("test2"))), THE_EOL);
   __THE_1_opt_int_free((int32_t *) __THE_0_optIntB_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_optIntA_0);
 }
