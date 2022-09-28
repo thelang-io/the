@@ -114,7 +114,7 @@ std::string CodegenCleanUp::gen (std::size_t indent) const {
 
       while ((next = item.content.find(EOL, last)) != std::string::npos) {
         result += std::string(indent, ' ') + item.content.substr(last, next - last) + EOL;
-        last = next + 1;
+        last = next + std::string(EOL).size();
       }
 
       result += std::string(indent, ' ') + item.content.substr(last) + EOL;
