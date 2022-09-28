@@ -108,9 +108,24 @@ std::tuple<std::string, std::string> Codegen::gen () {
     }
   }
 
+  auto builtinDefineCode = std::string();
   auto builtinFnDeclCode = std::string();
   auto builtinFnDefCode = std::string();
   auto builtinStructDefCode = std::string();
+
+  if (this->builtins.definitions) {
+    builtinDefineCode += "#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)" EOL;
+    builtinDefineCode += "  #define THE_OS_WINDOWS" EOL;
+    builtinDefineCode += R"(  #define THE_EOL "\r\n")" EOL;
+    builtinDefineCode += "#else" EOL;
+    builtinDefineCode += "  #if defined(__APPLE__)" EOL;
+    builtinDefineCode += "    #define THE_OS_MACOS" EOL;
+    builtinDefineCode += "  #elif defined(__linux__)" EOL;
+    builtinDefineCode += "    #define THE_OS_LINUX" EOL;
+    builtinDefineCode += "  #endif" EOL;
+    builtinDefineCode += R"(  #define THE_EOL "\n")" EOL;
+    builtinDefineCode += "#endif" EOL;
+  }
 
   if (this->builtins.typeAny) {
     builtinStructDefCode += "struct any {" EOL;
@@ -134,7 +149,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "void *alloc (size_t l) {" EOL;
     builtinFnDefCode += "  void *r = malloc(l);" EOL;
     builtinFnDefCode += "  if (r == NULL) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes)" ESC_EOL R"(", l);)" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);)" EOL;
     builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  return r;" EOL;
@@ -346,6 +361,18 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnSleepSync) {
+    builtinFnDeclCode += "void sleep_sync (uint32_t);" EOL;
+    builtinFnDefCode += "void sleep_sync (uint32_t i) {" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += "    Sleep((unsigned int) i);" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    usleep((unsigned int) (i * 1000));" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  " EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnStrAlloc) {
     builtinFnDeclCode += "struct str str_alloc (const char *);" EOL;
     builtinFnDefCode += "struct str str_alloc (const char *r) {" EOL;
@@ -360,7 +387,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDeclCode += "char *str_at (struct str, int64_t);" EOL;
     builtinFnDefCode += "char *str_at (struct str s, int64_t i) {" EOL;
     builtinFnDefCode += "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -s.l)) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: index %" PRId64 " out of string bounds)" ESC_EOL R"(", i);)" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: index %" PRId64 " out of string bounds" THE_EOL, i);)" EOL;
     builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  return i < 0 ? &s.d[s.l + i] : &s.d[i];" EOL;
@@ -550,6 +577,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  builtinDefineCode += builtinDefineCode.empty() ? "" : EOL;
   defineCode += defineCode.empty() ? "" : EOL;
   builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
   builtinFnDeclCode += builtinFnDeclCode.empty() ? "" : EOL;
@@ -566,13 +594,14 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
-  headers += this->builtins.libUnistd ? "#include <unistd.h>" EOL : "";
-  headers += this->builtins.libWindows ? "#include <windows.h>" EOL : "";
+  headers += this->builtins.libUnistd ? "#ifndef THE_OS_WINDOWS" EOL "  #include <unistd.h>" EOL "#endif" EOL : "";
+  headers += this->builtins.libWindows ? "#ifdef THE_OS_WINDOWS" EOL "  #include <windows.h>" EOL "#endif" EOL : "";
   headers += headers.empty() ? "" : EOL;
 
   auto output = std::string();
   output += banner;
   output += headers;
+  output += builtinDefineCode;
   output += defineCode;
   output += builtinStructDefCode;
   output += builtinFnDeclCode;
@@ -617,6 +646,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libWindows = true;
   } else if (name == "fnAlloc") {
     this->builtins.fnAlloc = true;
+    this->_activateBuiltin("definitions");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("libStdlib");
   } else if (name == "fnAnyCopy") {
@@ -729,6 +759,12 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdarg");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnSleepSync") {
+    this->builtins.fnSleepSync = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libStdint");
+    this->_activateBuiltin("libUnistd");
+    this->_activateBuiltin("libWindows");
   } else if (name == "fnStrAlloc") {
     this->builtins.fnStrAlloc = true;
     this->_activateBuiltin("fnAlloc");
@@ -736,6 +772,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrAt") {
     this->builtins.fnStrAt = true;
+    this->_activateBuiltin("definitions");
     this->_activateBuiltin("libInttypes");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("libStdlib");
@@ -2036,7 +2073,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@print") {
       auto separator = std::string(R"(" ")");
       auto isSeparatorLit = true;
-      auto terminator = std::string(R"(")" ESC_EOL R"(")");
+      this->_activateBuiltin("definitions");
+      auto terminator = std::string("THE_EOL");
       auto isTerminatorLit = true;
 
       for (const auto &exprCallArg : exprCall.args) {
@@ -2133,17 +2171,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u64"));
 
-      #if defined(OS_WINDOWS)
-        this->_activateBuiltin("libWindows");
-        code = "Sleep(" + arg1Expr + ")";
-      #else
-        if (!exprCall.args[0].expr.parenthesized) {
-          arg1Expr = "(" + arg1Expr + ")";
-        }
-
-        this->_activateBuiltin("libUnistd");
-        code = "usleep(" + arg1Expr + " * 1000)";
-      #endif
+      this->_activateBuiltin("fnSleepSync");
+      code = "sleep_sync(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin) {
       auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
       auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
@@ -2828,11 +2857,17 @@ std::string Codegen::_typeNameArray (const Type *type) {
   allocFnEntity.def += "  return (struct " + typeName + ") {d, x};" EOL;
   allocFnEntity.def += "}";
 
-  auto atFnEntity = CodegenEntity{typeName + "_at", CODEGEN_ENTITY_FN, { "libInttypes", "libStdio", "libStdlib" }, { typeName }};
+  auto atFnEntity = CodegenEntity{typeName + "_at", CODEGEN_ENTITY_FN, {
+    "definitions",
+    "libInttypes",
+    "libStdio",
+    "libStdlib"
+  }, { typeName }};
+
   atFnEntity.decl += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + ", int64_t);";
   atFnEntity.def += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + " n, int64_t i) {" EOL;
   atFnEntity.def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {" EOL;
-  atFnEntity.def += R"(    fprintf(stderr, "Error: index %" PRId64 " out of array bounds)" ESC_EOL R"(", i);)" EOL;
+  atFnEntity.def += R"(    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);)" EOL;
   atFnEntity.def += "    exit(EXIT_FAILURE);" EOL;
   atFnEntity.def += "  }" EOL;
   atFnEntity.def += "  return i < 0 ? &n.d[n.l + i] : &n.d[i];" EOL;

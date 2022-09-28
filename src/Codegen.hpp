@@ -35,6 +35,7 @@ enum CodegenPhase {
 };
 
 struct CodegenBuiltins {
+  bool definitions = false;
   bool fnAlloc = false;
   bool fnAnyCopy = false;
   bool fnAnyFree = false;
@@ -57,6 +58,7 @@ struct CodegenBuiltins {
   bool fnI64Str = false;
   bool fnIntStr = false;
   bool fnPrint = false;
+  bool fnSleepSync = false;
   bool fnStrAlloc = false;
   bool fnStrAt = false;
   bool fnStrConcatCstr = false;

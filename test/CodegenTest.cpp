@@ -56,18 +56,12 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
 
 TEST_P(CodegenPassTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
-  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stdout"});
+  auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stdout"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
   auto expectedOutput = sections["stdout"];
-
-  #if defined(OS_WINDOWS)
-    if (sections.contains("code-windows")) {
-      expectedCode = sections["code-windows"];
-    }
-  #endif
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], std::get<1>(result));
@@ -119,17 +113,11 @@ TEST_P(CodegenPassTest, Passes) {
 
 TEST_P(CodegenThrowTest, Throws) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
-  auto sections = readTestFile("codegen", param, {"stdin", "code", "code-windows", "flags", "stderr"});
+  auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stderr"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
-
-  #if defined(OS_WINDOWS)
-    if (sections.contains("code-windows")) {
-      expectedCode = sections["code-windows"];
-    }
-  #endif
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], std::get<1>(result));

@@ -17,7 +17,7 @@
 #ifndef SRC_CONFIG_HPP
 #define SRC_CONFIG_HPP
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define EOL "\r\n"
   #define ESC_EOL "\\r\\n"
   #define OS_FILE_EXT ".exe"

@@ -210,7 +210,7 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, {}, true}));
 
   auto sleepSyncTypeFn = TypeFn{voidType, {
-    TypeFnParam{"milliseconds", u64Type, false, true, false}
+    TypeFnParam{"milliseconds", u32Type, false, true, false}
   }};
 
   this->_items.push_back(std::make_unique<Type>(Type{"sleepSync", "@sleepSync", sleepSyncTypeFn, {}, true}));
