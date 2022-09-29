@@ -55,30 +55,12 @@ systems:
 | Windows          | 10                | Intel x86-64      | Official         |
 |                  |                   |                   |                  |
 
-## Testing
-
-```sh
-$ cmake . -D BUILD_TESTS=ON
-$ cmake --build .
-$ ctest --output-on-failure
-```
-
-## Memory Checking
-
-```sh
-$ cmake . -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
-$ cmake --build .
-$ ctest --output-on-failure
-```
-
-## Coverage
-
-```sh
-$ cmake . -D BUILD_COVERAGE=ON -D BUILD_TESTS=ON
-$ cmake --build .
-$ gcov src/*
-```
-
 ## The Author
 The Programming Language was designed and developed by
 [Aaron Delasy](https://github.com/delasy).
+
+## License
+The Programming Language is licensed under the
+[Apache 2.0 License][apache2-license], see the [LICENSE](LICENSE) file.
+
+[apache2-license]: http://opensource.org/licenses/Apache-2.0
