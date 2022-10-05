@@ -24,11 +24,11 @@ def update(directory: str, action: str):
         content = f.read()[len(stdin_sep) + 1:]
         trailing_code = ""
 
-        if is_error_file:
-            stdin = content.split(stderr_sep)[0]
-        elif action == "codegen":
+        if action == "codegen":
             stdin = content.split(code_sep)[0]
             trailing_code = flags_sep + content.split(flags_sep)[1]
+        elif is_error_file:
+            stdin = content.split(stderr_sep)[0]
         else:
             stdin = content.split(stdout_sep)[0]
 
@@ -48,11 +48,11 @@ def update(directory: str, action: str):
         stdout, stderr = process.communicate()
         f = open(filepath, "w")
 
-        if is_error_file:
+        if action == "codegen":
+            f.write(stdin_sep + "\n" + stdin + code_sep + "\n" + stdout[155:] + trailing_code)
+        elif is_error_file:
             result = "/test" + stderr[stderr.find(":", 10):]
             f.write(stdin_sep + "\n" + stdin + stderr_sep + "\n" + result)
-        elif action == "codegen":
-            f.write(stdin_sep + "\n" + stdin + code_sep + "\n" + stdout[155:] + trailing_code)
         else:
             f.write(stdin_sep + "\n" + stdin + stdout_sep + "\n" + stdout)
 
