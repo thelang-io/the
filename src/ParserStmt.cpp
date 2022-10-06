@@ -179,7 +179,9 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "<StmtObjDeclFields>" EOL;
 
       for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
-        result += std::string(indent + 4, ' ') + "<StmtObjDeclField>" EOL;
+        auto fieldAttrs = std::string(stmtObjDeclField.mut ? " mut" : "");
+
+        result += std::string(indent + 4, ' ') + "<StmtObjDeclField" + fieldAttrs + ">" EOL;
         result += std::string(indent + 6, ' ') + "<StmtObjDeclFieldId>" EOL;
         result += stmtObjDeclField.id.xml(indent + 8) + EOL;
         result += std::string(indent + 6, ' ') + "</StmtObjDeclFieldId>" EOL;

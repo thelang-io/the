@@ -44,7 +44,7 @@ void *alloc (size_t l) {
 struct __THE_1_Test_0;
 
 struct __THE_1_Test_0 {
-  int32_t __THE_0_i;
+  const int32_t __THE_0_i;
 };
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
@@ -54,12 +54,14 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct _
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_i) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_i = __THE_0_i;
+  struct __THE_1_Test_0 s = {__THE_0_i};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_i = o->__THE_0_i;
+  struct __THE_1_Test_0 s = {o->__THE_0_i};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {

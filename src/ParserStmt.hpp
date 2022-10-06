@@ -104,6 +104,7 @@ struct ParserStmtMain {
 struct ParserStmtObjDeclField {
   Token id;
   ParserType type;
+  bool mut;
 };
 
 struct ParserStmtObjDecl {
@@ -119,7 +120,7 @@ struct ParserStmtVarDecl {
   Token id;
   std::optional<ParserType> type;
   std::optional<ParserStmtExpr> init;
-  bool mut = false;
+  bool mut;
 };
 
 #endif

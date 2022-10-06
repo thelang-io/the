@@ -45,7 +45,7 @@ struct __THE_1_fn$0 {
   size_t l;
 };
 struct __THE_1_Test_0 {
-  struct __THE_1_fn$0 __THE_0_a;
+  const struct __THE_1_fn$0 __THE_0_a;
 };
 
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
@@ -65,7 +65,8 @@ void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn$0 __THE_0_a) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_Test_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {

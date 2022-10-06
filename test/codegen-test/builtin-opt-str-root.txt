@@ -108,7 +108,7 @@ struct __THE_1_fn$1;
 struct __THE_1_mainSDtestCtx_0X;
 
 struct __THE_1_Test1_0 {
-  int32_t *__THE_0_o;
+  const int32_t *__THE_0_o;
 };
 struct __THE_1_fn$0 {
   int32_t *(*f) (void *);
@@ -167,7 +167,8 @@ struct str __THE_1_opt_int_str (int32_t *n) {
 }
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t *__THE_0_o) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  r->__THE_0_o = __THE_0_o;
+  struct __THE_1_Test1_0 s = {__THE_0_o};
+  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {

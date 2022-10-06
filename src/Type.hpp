@@ -28,6 +28,7 @@ struct Type;
 struct TypeField {
   std::string name;
   Type *type;
+  bool mut;
   bool builtin;
 };
 

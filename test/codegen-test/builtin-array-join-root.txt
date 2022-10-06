@@ -121,7 +121,7 @@ struct __THE_1_array_str;
 struct __THE_1_array_ref_int;
 
 struct __THE_1_TestObj_0 {
-  int32_t __THE_0_a;
+  const int32_t __THE_0_a;
 };
 struct __THE_1_fn$0 {
   void (*f) (void *);
@@ -191,12 +191,14 @@ struct str __THE_1_array_ref_int_join (struct __THE_1_array_ref_int, unsigned ch
 
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestObj_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
   return r;
 }
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *o) {
   struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  r->__THE_0_a = o->__THE_0_a;
+  struct __THE_1_TestObj_0 s = {o->__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
   return r;
 }
 void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *o) {

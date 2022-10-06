@@ -55,8 +55,8 @@ void str_free (struct str s) {
 struct __THE_1_Test_0;
 
 struct __THE_1_Test_0 {
-  struct str __THE_0_a;
-  struct str __THE_0_b;
+  const struct str __THE_0_a;
+  const struct str __THE_0_b;
 };
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str, struct str);
@@ -64,8 +64,8 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str __THE_0_a, struct str __THE_0_b) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = __THE_0_a;
-  r->__THE_0_b = __THE_0_b;
+  struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {

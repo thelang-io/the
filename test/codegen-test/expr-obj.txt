@@ -1,7 +1,7 @@
 ======= stdin =======
 obj Point {
-  x: float
-  y: float
+  mut x: float
+  mut y: float
 }
 
 obj Test {
@@ -9,7 +9,7 @@ obj Test {
 }
 
 obj Human {
-  name: str
+  mut name: str
   age: int
 }
 
@@ -108,11 +108,11 @@ struct __THE_1_Point_0 {
   double __THE_0_y;
 };
 struct __THE_1_Test_0 {
-  int32_t __THE_0_a;
+  const int32_t __THE_0_a;
 };
 struct __THE_1_Human_0 {
   struct str __THE_0_name;
-  int32_t __THE_0_age;
+  const int32_t __THE_0_age;
 };
 
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
@@ -124,8 +124,8 @@ void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
 
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_y) {
   struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
-  r->__THE_0_x = __THE_0_x;
-  r->__THE_0_y = __THE_0_y;
+  struct __THE_1_Point_0 s = {__THE_0_x, __THE_0_y};
+  memcpy(r, &s, sizeof(struct __THE_1_Point_0));
   return r;
 }
 void __THE_1_Point_0_free (struct __THE_1_Point_0 *o) {
@@ -133,7 +133,8 @@ void __THE_1_Point_0_free (struct __THE_1_Point_0 *o) {
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_Test_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
@@ -141,8 +142,8 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
 }
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
   struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  r->__THE_0_name = __THE_0_name;
-  r->__THE_0_age = __THE_0_age;
+  struct __THE_1_Human_0 s = {__THE_0_name, __THE_0_age};
+  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
   return r;
 }
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {

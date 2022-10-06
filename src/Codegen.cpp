@@ -61,6 +61,7 @@ void Codegen::compile (
   std::filesystem::remove("build/output.c");
 
   if (returnCode != 0) {
+    // todo test
     throw Error("failed to compile generated code");
   }
 }
@@ -1446,7 +1447,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
       auto fieldName = Codegen::name(field.name);
       auto fieldTypeInfo = this->_typeInfo(field.type);
 
-      objEntity.def += "  " + fieldTypeInfo.typeCode + fieldName + ";" EOL;
+      objEntity.def += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
     }
 
     objEntity.def += "};";
@@ -1473,20 +1474,19 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
       allocFnParamTypes += ", " + fieldTypeInfo.typeCodeTrimmed;
       allocFnParams += ", " + fieldTypeInfo.typeCode + fieldName;
-      allocFnCode += "  r->" + fieldName + " = " + fieldName + ";" EOL;
+      allocFnCode += ", " + fieldName;
     }
 
     allocFnEntity.decl += typeInfo.typeCode + typeName + "_alloc (" + allocFnParamTypes.substr(2) + ");";
     allocFnEntity.def += typeInfo.typeCode + typeName + "_alloc (" + allocFnParams.substr(2) + ") {" EOL;
     allocFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
-    allocFnEntity.def += allocFnCode;
+    allocFnEntity.def += "  struct " + typeName + " s = {" + allocFnCode.substr(2) + "};" EOL;
+    allocFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
     allocFnEntity.def += "  return r;" EOL;
     allocFnEntity.def += "}";
 
     auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc" }, { typeName }};
-    copyFnEntity.decl += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + ");";
-    copyFnEntity.def += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + "o) {" EOL;
-    copyFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
+    auto copyFnCode = std::string();
 
     this->state.builtins = &copyFnEntity.builtins;
     this->state.entities = &copyFnEntity.entities;
@@ -1501,7 +1501,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
       if (fieldTypeInfo.type->isAny()) {
         this->_activateBuiltin("fnAnyCopy");
-        copyFnEntity.def += "  r->" + fieldName + " = any_copy(o->" + fieldName + ");" EOL;
+        copyFnCode += ", any_copy(o->" + fieldName + ")";
       } else if (
         fieldTypeInfo.type->isArray() ||
         fieldTypeInfo.type->isFn() ||
@@ -1509,15 +1509,20 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
         fieldTypeInfo.type->isOpt()
       ) {
         this->_activateEntity(fieldTypeInfo.typeName + "_copy");
-        copyFnEntity.def += "  r->" + fieldName + " = " + fieldTypeInfo.typeName + "_copy(o->" + fieldName + ");" EOL;
+        copyFnCode += ", " + fieldTypeInfo.typeName + "_copy(o->" + fieldName + ")";
       } else if (fieldTypeInfo.type->isStr()) {
         this->_activateBuiltin("fnStrCopy");
-        copyFnEntity.def += "  r->" + fieldName + " = str_copy(o->" + fieldName + ");" EOL;
+        copyFnCode += ", str_copy(o->" + fieldName + ")";
       } else {
-        copyFnEntity.def += "  r->" + fieldName + " = o->" + fieldName + ";" EOL;
+        copyFnCode += ", o->" + fieldName;
       }
     }
 
+    copyFnEntity.decl += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + ");";
+    copyFnEntity.def += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + "o) {" EOL;
+    copyFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
+    copyFnEntity.def += "  struct " + typeName + " s = {" + copyFnCode.substr(2) + "};" EOL;
+    copyFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
     copyFnEntity.def += "  return r;" EOL;
     copyFnEntity.def += "}";
 

@@ -158,8 +158,8 @@ struct __THE_1_Human_0;
 struct __THE_1_fn$0;
 
 struct __THE_1_Human_0 {
-  struct str __THE_0_name;
-  int32_t __THE_0_age;
+  const struct str __THE_0_name;
+  const int32_t __THE_0_age;
 };
 struct __THE_1_fn$0 {
   int32_t (*f) (void *);
@@ -175,8 +175,8 @@ int32_t __THE_1_d_0 (void *);
 
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
   struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  r->__THE_0_name = __THE_0_name;
-  r->__THE_0_age = __THE_0_age;
+  struct __THE_1_Human_0 s = {__THE_0_name, __THE_0_age};
+  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
   return r;
 }
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {

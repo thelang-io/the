@@ -45,8 +45,8 @@ struct __THE_1_array_int {
   size_t l;
 };
 struct __THE_1_Test_0 {
-  struct __THE_1_array_int __THE_0_a;
-  struct __THE_1_array_int __THE_0_b;
+  const struct __THE_1_array_int __THE_0_a;
+  const struct __THE_1_array_int __THE_0_b;
 };
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
@@ -68,8 +68,8 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_array_int __THE_0_a, struct __THE_1_array_int __THE_0_b) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = __THE_0_a;
-  r->__THE_0_b = __THE_0_b;
+  struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
