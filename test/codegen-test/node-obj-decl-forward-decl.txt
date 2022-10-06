@@ -53,16 +53,16 @@ struct __THE_1_Test3_0;
 struct __THE_1_Test4_0;
 
 struct __THE_1_Test1_0 {
-  struct __THE_1_Test2_0 *__THE_0_t2;
+  const struct __THE_1_Test2_0 *__THE_0_t2;
 };
 struct __THE_1_Test2_0 {
-  int32_t __THE_0_a;
+  const int32_t __THE_0_a;
 };
 struct __THE_1_Test3_0 {
-  int32_t __THE_0_a;
+  const int32_t __THE_0_a;
 };
 struct __THE_1_Test4_0 {
-  struct __THE_1_Test3_0 *__THE_0_t3;
+  const struct __THE_1_Test3_0 *__THE_0_t3;
 };
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *);
@@ -76,7 +76,8 @@ void __THE_1_Test4_0_free (struct __THE_1_Test4_0 *);
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_t2) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  r->__THE_0_t2 = __THE_0_t2;
+  struct __THE_1_Test1_0 s = {__THE_0_t2};
+  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
@@ -85,7 +86,8 @@ void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
 }
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_Test2_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
   return r;
 }
 void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
@@ -93,7 +95,8 @@ void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
 }
 struct __THE_1_Test3_0 *__THE_1_Test3_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test3_0 *r = alloc(sizeof(struct __THE_1_Test3_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_Test3_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test3_0));
   return r;
 }
 void __THE_1_Test3_0_free (struct __THE_1_Test3_0 *o) {
@@ -101,7 +104,8 @@ void __THE_1_Test3_0_free (struct __THE_1_Test3_0 *o) {
 }
 struct __THE_1_Test4_0 *__THE_1_Test4_0_alloc (struct __THE_1_Test3_0 *__THE_0_t3) {
   struct __THE_1_Test4_0 *r = alloc(sizeof(struct __THE_1_Test4_0));
-  r->__THE_0_t3 = __THE_0_t3;
+  struct __THE_1_Test4_0 s = {__THE_0_t3};
+  memcpy(r, &s, sizeof(struct __THE_1_Test4_0));
   return r;
 }
 void __THE_1_Test4_0_free (struct __THE_1_Test4_0 *o) {

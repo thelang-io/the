@@ -521,7 +521,12 @@ std::string Type::xml (std::size_t indent) const {
         continue;
       }
 
-      result += std::string(indent + 2, ' ') + R"(<TypeField name=")" + typeField.name + R"(">)" EOL;
+      auto fieldAttrs = std::string();
+
+      fieldAttrs += typeField.mut ? " mut" : "";
+      fieldAttrs += R"( name=")" + typeField.name + R"(")";
+
+      result += std::string(indent + 2, ' ') + "<TypeField" + fieldAttrs + ">" EOL;
       result += typeField.type->xml(indent + 4) + EOL;
       result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
     }

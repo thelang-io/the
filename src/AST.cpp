@@ -274,7 +274,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         throw Error(this->reader, stmtObjDeclField.type.start, stmtObjDeclField.type.end, E1022);
       }
 
-      type->fields.push_back(TypeField{stmtObjDeclField.id.val, fieldType, false});
+      type->fields.push_back(TypeField{stmtObjDeclField.id.val, fieldType, stmtObjDeclField.mut, false});
     }
 
     auto nodeObjDecl = ASTNodeObjDecl{type};

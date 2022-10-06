@@ -156,34 +156,34 @@ struct __THE_1_array_int {
   size_t l;
 };
 struct __THE_1_TestArrInt_0 {
-  struct __THE_1_array_int __THE_0_a;
+  const struct __THE_1_array_int __THE_0_a;
 };
 struct __THE_1_TestBool_0 {
-  bool __THE_0_a;
+  const bool __THE_0_a;
 };
 struct __THE_1_TestChar_0 {
-  char __THE_0_a;
+  const char __THE_0_a;
 };
 struct __THE_1_TestFloat_0 {
-  double __THE_0_a;
+  const double __THE_0_a;
 };
 struct __THE_1_TestInt_0 {
-  int32_t __THE_0_a;
+  const int32_t __THE_0_a;
 };
 struct __THE_1_TestOptInt_0 {
-  int32_t *__THE_0_a;
+  const int32_t *__THE_0_a;
 };
 struct __THE_1_TestOptRefInt_0 {
-  int32_t **__THE_0_a;
+  const int32_t **__THE_0_a;
 };
 struct __THE_1_TestRefInt_0 {
-  int32_t *__THE_0_a;
+  const int32_t *__THE_0_a;
 };
 struct __THE_1_TestRefOptInt_0 {
-  int32_t **__THE_0_a;
+  const int32_t **__THE_0_a;
 };
 struct __THE_1_TestStr_0 {
-  struct str __THE_0_a;
+  const struct str __THE_0_a;
 };
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
@@ -291,7 +291,8 @@ bool __THE_1_array_int_ne (struct __THE_1_array_int n1, struct __THE_1_array_int
 }
 struct __THE_1_TestArrInt_0 *__THE_1_TestArrInt_0_alloc (struct __THE_1_array_int __THE_0_a) {
   struct __THE_1_TestArrInt_0 *r = alloc(sizeof(struct __THE_1_TestArrInt_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestArrInt_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestArrInt_0));
   return r;
 }
 bool __THE_1_TestArrInt_0_eq (struct __THE_1_TestArrInt_0 *o1, struct __THE_1_TestArrInt_0 *o2) {
@@ -312,7 +313,8 @@ bool __THE_1_TestArrInt_0_ne (struct __THE_1_TestArrInt_0 *o1, struct __THE_1_Te
 }
 struct __THE_1_TestBool_0 *__THE_1_TestBool_0_alloc (bool __THE_0_a) {
   struct __THE_1_TestBool_0 *r = alloc(sizeof(struct __THE_1_TestBool_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestBool_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestBool_0));
   return r;
 }
 bool __THE_1_TestBool_0_eq (struct __THE_1_TestBool_0 *o1, struct __THE_1_TestBool_0 *o2) {
@@ -332,7 +334,8 @@ bool __THE_1_TestBool_0_ne (struct __THE_1_TestBool_0 *o1, struct __THE_1_TestBo
 }
 struct __THE_1_TestChar_0 *__THE_1_TestChar_0_alloc (char __THE_0_a) {
   struct __THE_1_TestChar_0 *r = alloc(sizeof(struct __THE_1_TestChar_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestChar_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestChar_0));
   return r;
 }
 bool __THE_1_TestChar_0_eq (struct __THE_1_TestChar_0 *o1, struct __THE_1_TestChar_0 *o2) {
@@ -352,7 +355,8 @@ bool __THE_1_TestChar_0_ne (struct __THE_1_TestChar_0 *o1, struct __THE_1_TestCh
 }
 struct __THE_1_TestFloat_0 *__THE_1_TestFloat_0_alloc (double __THE_0_a) {
   struct __THE_1_TestFloat_0 *r = alloc(sizeof(struct __THE_1_TestFloat_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestFloat_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestFloat_0));
   return r;
 }
 bool __THE_1_TestFloat_0_eq (struct __THE_1_TestFloat_0 *o1, struct __THE_1_TestFloat_0 *o2) {
@@ -372,7 +376,8 @@ bool __THE_1_TestFloat_0_ne (struct __THE_1_TestFloat_0 *o1, struct __THE_1_Test
 }
 struct __THE_1_TestInt_0 *__THE_1_TestInt_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_TestInt_0 *r = alloc(sizeof(struct __THE_1_TestInt_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestInt_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestInt_0));
   return r;
 }
 bool __THE_1_TestInt_0_eq (struct __THE_1_TestInt_0 *o1, struct __THE_1_TestInt_0 *o2) {
@@ -419,7 +424,8 @@ bool __THE_1_opt_int_ne (int32_t *n1, int32_t *n2) {
 }
 struct __THE_1_TestOptInt_0 *__THE_1_TestOptInt_0_alloc (int32_t *__THE_0_a) {
   struct __THE_1_TestOptInt_0 *r = alloc(sizeof(struct __THE_1_TestOptInt_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestOptInt_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestOptInt_0));
   return r;
 }
 bool __THE_1_TestOptInt_0_eq (struct __THE_1_TestOptInt_0 *o1, struct __THE_1_TestOptInt_0 *o2) {
@@ -467,7 +473,8 @@ bool __THE_1_opt_ref_int_ne (int32_t **n1, int32_t **n2) {
 }
 struct __THE_1_TestOptRefInt_0 *__THE_1_TestOptRefInt_0_alloc (int32_t **__THE_0_a) {
   struct __THE_1_TestOptRefInt_0 *r = alloc(sizeof(struct __THE_1_TestOptRefInt_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestOptRefInt_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestOptRefInt_0));
   return r;
 }
 bool __THE_1_TestOptRefInt_0_eq (struct __THE_1_TestOptRefInt_0 *o1, struct __THE_1_TestOptRefInt_0 *o2) {
@@ -488,7 +495,8 @@ bool __THE_1_TestOptRefInt_0_ne (struct __THE_1_TestOptRefInt_0 *o1, struct __TH
 }
 struct __THE_1_TestRefInt_0 *__THE_1_TestRefInt_0_alloc (int32_t *__THE_0_a) {
   struct __THE_1_TestRefInt_0 *r = alloc(sizeof(struct __THE_1_TestRefInt_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestRefInt_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestRefInt_0));
   return r;
 }
 bool __THE_1_TestRefInt_0_eq (struct __THE_1_TestRefInt_0 *o1, struct __THE_1_TestRefInt_0 *o2) {
@@ -508,7 +516,8 @@ bool __THE_1_TestRefInt_0_ne (struct __THE_1_TestRefInt_0 *o1, struct __THE_1_Te
 }
 struct __THE_1_TestRefOptInt_0 *__THE_1_TestRefOptInt_0_alloc (int32_t **__THE_0_a) {
   struct __THE_1_TestRefOptInt_0 *r = alloc(sizeof(struct __THE_1_TestRefOptInt_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestRefOptInt_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestRefOptInt_0));
   return r;
 }
 bool __THE_1_TestRefOptInt_0_eq (struct __THE_1_TestRefOptInt_0 *o1, struct __THE_1_TestRefOptInt_0 *o2) {
@@ -528,7 +537,8 @@ bool __THE_1_TestRefOptInt_0_ne (struct __THE_1_TestRefOptInt_0 *o1, struct __TH
 }
 struct __THE_1_TestStr_0 *__THE_1_TestStr_0_alloc (struct str __THE_0_a) {
   struct __THE_1_TestStr_0 *r = alloc(sizeof(struct __THE_1_TestStr_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_TestStr_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_TestStr_0));
   return r;
 }
 bool __THE_1_TestStr_0_eq (struct __THE_1_TestStr_0 *o1, struct __THE_1_TestStr_0 *o2) {

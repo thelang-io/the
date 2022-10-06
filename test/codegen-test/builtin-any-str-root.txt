@@ -111,7 +111,7 @@ struct __THE_1_fn$1;
 struct __THE_1_mainSDtestCtx_0X;
 
 struct __THE_1_Test1_0 {
-  struct any __THE_0_a;
+  const struct any __THE_0_a;
 };
 struct __THE_1_fn$0 {
   struct any (*f) (void *);
@@ -146,7 +146,8 @@ void __THE_1_mainSDtestCtx_0 (void *);
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct any __THE_0_a) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  r->__THE_0_a = __THE_0_a;
+  struct __THE_1_Test1_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {

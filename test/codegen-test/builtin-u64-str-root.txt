@@ -91,7 +91,7 @@ struct __THE_1_fn$1;
 struct __THE_1_mainSDtestCtx_0X;
 
 struct __THE_1_Test1_0 {
-  uint64_t __THE_0_i;
+  const uint64_t __THE_0_i;
 };
 struct __THE_1_fn$0 {
   uint64_t (*f) (void *);
@@ -120,7 +120,8 @@ void __THE_1_mainSDtestCtx_0 (void *);
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (uint64_t __THE_0_i) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  r->__THE_0_i = __THE_0_i;
+  struct __THE_1_Test1_0 s = {__THE_0_i};
+  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {

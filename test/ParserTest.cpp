@@ -99,7 +99,8 @@ INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserPassTest, testing::Values(
   "stmt-obj-decl",
   "stmt-obj-decl-recursive",
   "stmt-obj-decl-scoped",
-  "stmt-obj-decl-field-fn"
+  "stmt-obj-decl-field-fn",
+  "stmt-obj-decl-mut-field"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
@@ -205,6 +206,8 @@ INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
   "throw-E0122-stmt-obj-decl-missing-lbrace",
   "throw-E0123-stmt-obj-decl-missing-field-name",
   "throw-E0123-stmt-obj-decl-missing-multi-field-name",
+  "throw-E0123-stmt-obj-decl-mut-missing-field-name",
+  "throw-E0123-stmt-obj-decl-mut-missing-multi-field-name",
   "throw-E0124-stmt-obj-decl-missing-colon-after-field-name",
   "throw-E0125-stmt-obj-decl-missing-field-type",
   "throw-E0126-stmt-obj-decl-empty",

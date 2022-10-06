@@ -111,30 +111,30 @@ struct __THE_1_array_array_opt_int {
   size_t l;
 };
 struct __THE_1_Test_0 {
-  int32_t __THE_0_a;
-  struct any __THE_0_p00;
-  struct __THE_1_array_int __THE_0_p01;
-  struct __THE_1_array_opt_int __THE_0_p02;
-  struct __THE_1_array_opt_array_int __THE_0_p03;
-  struct __THE_1_array_array_opt_int __THE_0_p04;
-  bool __THE_0_p05;
-  unsigned char __THE_0_p06;
-  char __THE_0_p07;
-  float __THE_0_p08;
-  double __THE_0_p09;
-  double __THE_0_p11;
-  int8_t __THE_0_p12;
-  int16_t __THE_0_p13;
-  int32_t __THE_0_p14;
-  int64_t __THE_0_p15;
-  int32_t __THE_0_p16;
-  struct __THE_1_array_int *__THE_0_p17;
-  struct __THE_1_array_int **__THE_0_p18;
-  struct str __THE_0_p19;
-  uint8_t __THE_0_p20;
-  uint16_t __THE_0_p21;
-  uint32_t __THE_0_p22;
-  uint64_t __THE_0_p23;
+  const int32_t __THE_0_a;
+  const struct any __THE_0_p00;
+  const struct __THE_1_array_int __THE_0_p01;
+  const struct __THE_1_array_opt_int __THE_0_p02;
+  const struct __THE_1_array_opt_array_int __THE_0_p03;
+  const struct __THE_1_array_array_opt_int __THE_0_p04;
+  const bool __THE_0_p05;
+  const unsigned char __THE_0_p06;
+  const char __THE_0_p07;
+  const float __THE_0_p08;
+  const double __THE_0_p09;
+  const double __THE_0_p11;
+  const int8_t __THE_0_p12;
+  const int16_t __THE_0_p13;
+  const int32_t __THE_0_p14;
+  const int64_t __THE_0_p15;
+  const int32_t __THE_0_p16;
+  const struct __THE_1_array_int *__THE_0_p17;
+  const struct __THE_1_array_int **__THE_0_p18;
+  const struct str __THE_0_p19;
+  const uint8_t __THE_0_p20;
+  const uint16_t __THE_0_p21;
+  const uint32_t __THE_0_p22;
+  const uint64_t __THE_0_p23;
 };
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
@@ -217,30 +217,8 @@ void __THE_1_opt_ref_array_int_free (struct __THE_1_array_int **n) {
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, struct any __THE_0_p00, struct __THE_1_array_int __THE_0_p01, struct __THE_1_array_opt_int __THE_0_p02, struct __THE_1_array_opt_array_int __THE_0_p03, struct __THE_1_array_array_opt_int __THE_0_p04, bool __THE_0_p05, unsigned char __THE_0_p06, char __THE_0_p07, float __THE_0_p08, double __THE_0_p09, double __THE_0_p11, int8_t __THE_0_p12, int16_t __THE_0_p13, int32_t __THE_0_p14, int64_t __THE_0_p15, int32_t __THE_0_p16, struct __THE_1_array_int *__THE_0_p17, struct __THE_1_array_int **__THE_0_p18, struct str __THE_0_p19, uint8_t __THE_0_p20, uint16_t __THE_0_p21, uint32_t __THE_0_p22, uint64_t __THE_0_p23) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_a = __THE_0_a;
-  r->__THE_0_p00 = __THE_0_p00;
-  r->__THE_0_p01 = __THE_0_p01;
-  r->__THE_0_p02 = __THE_0_p02;
-  r->__THE_0_p03 = __THE_0_p03;
-  r->__THE_0_p04 = __THE_0_p04;
-  r->__THE_0_p05 = __THE_0_p05;
-  r->__THE_0_p06 = __THE_0_p06;
-  r->__THE_0_p07 = __THE_0_p07;
-  r->__THE_0_p08 = __THE_0_p08;
-  r->__THE_0_p09 = __THE_0_p09;
-  r->__THE_0_p11 = __THE_0_p11;
-  r->__THE_0_p12 = __THE_0_p12;
-  r->__THE_0_p13 = __THE_0_p13;
-  r->__THE_0_p14 = __THE_0_p14;
-  r->__THE_0_p15 = __THE_0_p15;
-  r->__THE_0_p16 = __THE_0_p16;
-  r->__THE_0_p17 = __THE_0_p17;
-  r->__THE_0_p18 = __THE_0_p18;
-  r->__THE_0_p19 = __THE_0_p19;
-  r->__THE_0_p20 = __THE_0_p20;
-  r->__THE_0_p21 = __THE_0_p21;
-  r->__THE_0_p22 = __THE_0_p22;
-  r->__THE_0_p23 = __THE_0_p23;
+  struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_p00, __THE_0_p01, __THE_0_p02, __THE_0_p03, __THE_0_p04, __THE_0_p05, __THE_0_p06, __THE_0_p07, __THE_0_p08, __THE_0_p09, __THE_0_p11, __THE_0_p12, __THE_0_p13, __THE_0_p14, __THE_0_p15, __THE_0_p16, __THE_0_p17, __THE_0_p18, __THE_0_p19, __THE_0_p20, __THE_0_p21, __THE_0_p22, __THE_0_p23};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {

@@ -261,14 +261,27 @@ ParserStmt Parser::next (bool allowSemi) {
     auto objDeclFields = std::vector<ParserStmtObjDeclField>{};
 
     while (tok3.type != TK_OP_RBRACE) {
-      if (tok3.type != TK_ID) {
+      auto fieldId = tok3;
+      auto fieldMut = false;
+
+      if (tok3.type == TK_KW_MUT) {
+        fieldMut = true;
+
+        auto [_4, tok4] = this->lexer->next();
+
+        if (tok4.type != TK_ID) {
+          throw Error(this->reader, tok4.start, E0123);
+        }
+
+        fieldId = tok4;
+      } else if (tok3.type != TK_ID) {
         throw Error(this->reader, tok3.start, E0123);
       }
 
-      auto [_4, tok4] = this->lexer->next();
+      auto [_5, tok5] = this->lexer->next();
 
-      if (tok4.type != TK_OP_COLON) {
-        throw Error(this->reader, tok4.start, E0124);
+      if (tok5.type != TK_OP_COLON) {
+        throw Error(this->reader, tok5.start, E0124);
       }
 
       auto objDeclFieldType = this->_type();
@@ -277,7 +290,7 @@ ParserStmt Parser::next (bool allowSemi) {
         throw Error(this->reader, this->lexer->loc, E0125);
       }
 
-      objDeclFields.push_back(ParserStmtObjDeclField{tok3, *objDeclFieldType});
+      objDeclFields.push_back(ParserStmtObjDeclField{fieldId, *objDeclFieldType, fieldMut});
       std::tie(_3, tok3) = this->lexer->next();
     }
 
@@ -311,7 +324,7 @@ ParserStmt Parser::next (bool allowSemi) {
         this->lexer->seek(loc2);
       }
 
-      return this->_wrapStmt(allowSemi, ParserStmtVarDecl{tok0, varDeclType, varDeclInit}, tok0.start);
+      return this->_wrapStmt(allowSemi, ParserStmtVarDecl{tok0, varDeclType, varDeclInit, false}, tok0.start);
     } else if (tok1.type == TK_OP_COLON_EQ) {
       auto varDeclInit = this->_stmtExpr();
 
@@ -319,7 +332,7 @@ ParserStmt Parser::next (bool allowSemi) {
         throw Error(this->reader, this->lexer->loc, E0131);
       }
 
-      return this->_wrapStmt(allowSemi, ParserStmtVarDecl{tok0, std::nullopt, varDeclInit}, tok0.start);
+      return this->_wrapStmt(allowSemi, ParserStmtVarDecl{tok0, std::nullopt, varDeclInit, false}, tok0.start);
     }
 
     this->lexer->seek(loc1);

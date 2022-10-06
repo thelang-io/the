@@ -193,12 +193,12 @@ TEST_F(TypeMapTest, ObjectInserts) {
   auto type1 = this->tm_.obj("Test1", "Test1_0");
 
   auto type2 = this->tm_.obj("Test2", "Test2_0", {
-    TypeField{"a", this->tm_.get("int")}
+    TypeField{"a", this->tm_.get("int"), false, false}
   });
 
   auto type3 = this->tm_.obj("Test3", "Test3_0", {
-    TypeField{"b", this->tm_.get("any")},
-    TypeField{"c", this->tm_.get("str")}
+    TypeField{"b", this->tm_.get("any"), false, false},
+    TypeField{"c", this->tm_.get("str"), false, false}
   });
 
   EXPECT_NO_THROW(this->tm_.get("Test1"));

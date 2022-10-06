@@ -143,8 +143,8 @@ void str_free (struct str s) {
 struct __THE_1_Test_0;
 
 struct __THE_1_Test_0 {
-  int32_t __THE_0_c;
-  struct str __THE_0_d;
+  const int32_t __THE_0_c;
+  const struct str __THE_0_d;
 };
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, struct str);
@@ -154,14 +154,14 @@ struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *);
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_c, struct str __THE_0_d) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_c = __THE_0_c;
-  r->__THE_0_d = __THE_0_d;
+  struct __THE_1_Test_0 s = {__THE_0_c, __THE_0_d};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  r->__THE_0_c = o->__THE_0_c;
-  r->__THE_0_d = str_copy(o->__THE_0_d);
+  struct __THE_1_Test_0 s = {o->__THE_0_c, str_copy(o->__THE_0_d)};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {

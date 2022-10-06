@@ -88,7 +88,7 @@ struct __THE_1_fn$1;
 struct __THE_1_mainSDtestCtx_0X;
 
 struct __THE_1_Test1_0 {
-  float __THE_0_f;
+  const float __THE_0_f;
 };
 struct __THE_1_fn$0 {
   float (*f) (void *);
@@ -117,7 +117,8 @@ void __THE_1_mainSDtestCtx_0 (void *);
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (float __THE_0_f) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  r->__THE_0_f = __THE_0_f;
+  struct __THE_1_Test1_0 s = {__THE_0_f};
+  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {

@@ -1,0 +1,290 @@
+======= stdin =======
+obj Animal {
+  name: str
+  mut age: int
+}
+
+obj Human {
+  name: str
+  mut pets: Animal[]
+}
+
+main {
+  mut person1 := Human{name: "Peter"}
+  mut person2 := Human{name: "Brian"}
+
+  person1.pets.push(Animal{
+    name: "Cleo",
+    age: 1
+  })
+
+  person1.pets.push(Animal{
+    name: "Bella",
+    age: 1
+  })
+
+  person1.pets[0].age++
+
+  person2.pets.push(Animal{
+    name: "Luxor",
+    age: 10
+  })
+
+  person3 := person1
+  person1 = person2
+  person2 = person3
+
+  testStr := person1.str()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str int_str (int32_t);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+struct str str_escape (const struct str);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+struct str str_escape (const struct str s) {
+  char *d = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) d = realloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) d = realloc(d, l + 1);
+    d[l++] = c;
+  }
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+struct __THE_1_Animal_0;
+struct __THE_1_array_Animal;
+struct __THE_1_Human_0;
+
+struct __THE_1_Animal_0 {
+  const struct str __THE_0_name;
+  int32_t __THE_0_age;
+};
+struct __THE_1_array_Animal {
+  struct __THE_1_Animal_0 **d;
+  size_t l;
+};
+struct __THE_1_Human_0 {
+  const struct str __THE_0_name;
+  struct __THE_1_array_Animal __THE_0_pets;
+};
+
+struct __THE_1_Animal_0 *__THE_1_Animal_0_alloc (struct str, int32_t);
+struct __THE_1_Animal_0 *__THE_1_Animal_0_copy (const struct __THE_1_Animal_0 *);
+void __THE_1_Animal_0_free (struct __THE_1_Animal_0 *);
+struct str __THE_1_Animal_0_str (struct __THE_1_Animal_0 *);
+struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t, ...);
+struct __THE_1_Animal_0 **__THE_1_array_Animal_at (struct __THE_1_array_Animal, int64_t);
+struct __THE_1_array_Animal __THE_1_array_Animal_copy (const struct __THE_1_array_Animal);
+void __THE_1_array_Animal_free (struct __THE_1_array_Animal);
+void __THE_1_array_Animal_push (struct __THE_1_array_Animal *, size_t, ...);
+struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal);
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, struct __THE_1_array_Animal);
+struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
+struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *, struct __THE_1_Human_0 *);
+struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *);
+
+struct __THE_1_Animal_0 *__THE_1_Animal_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
+  struct __THE_1_Animal_0 *r = alloc(sizeof(struct __THE_1_Animal_0));
+  struct __THE_1_Animal_0 s = {__THE_0_name, __THE_0_age};
+  memcpy(r, &s, sizeof(struct __THE_1_Animal_0));
+  return r;
+}
+struct __THE_1_Animal_0 *__THE_1_Animal_0_copy (const struct __THE_1_Animal_0 *o) {
+  struct __THE_1_Animal_0 *r = alloc(sizeof(struct __THE_1_Animal_0));
+  struct __THE_1_Animal_0 s = {str_copy(o->__THE_0_name), o->__THE_0_age};
+  memcpy(r, &s, sizeof(struct __THE_1_Animal_0));
+  return r;
+}
+void __THE_1_Animal_0_free (struct __THE_1_Animal_0 *o) {
+  str_free((struct str) o->__THE_0_name);
+  free(o);
+}
+struct str __THE_1_Animal_0_str (struct __THE_1_Animal_0 *o) {
+  struct str r = str_alloc("Animal{");
+  r = str_concat_cstr(r, "name: \"");
+  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_cstr(r, "\"");
+  r = str_concat_cstr(r, ", age: ");
+  r = str_concat_str(r, int_str(o->__THE_0_age));
+  __THE_1_Animal_0_free((struct __THE_1_Animal_0 *) o);
+  return str_concat_cstr(r, "}");
+}
+struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_Animal) {NULL, 0};
+  struct __THE_1_Animal_0 **d = alloc(x * sizeof(struct __THE_1_Animal_0 *));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_Animal_0 *);
+  va_end(args);
+  return (struct __THE_1_array_Animal) {d, x};
+}
+struct __THE_1_Animal_0 **__THE_1_array_Animal_at (struct __THE_1_array_Animal n, int64_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {
+    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+    exit(EXIT_FAILURE);
+  }
+  return i < 0 ? &n.d[n.l + i] : &n.d[i];
+}
+struct __THE_1_array_Animal __THE_1_array_Animal_copy (const struct __THE_1_array_Animal n) {
+  if (n.l == 0) return (struct __THE_1_array_Animal) {NULL, 0};
+  struct __THE_1_Animal_0 **d = alloc(n.l * sizeof(struct __THE_1_Animal_0 *));
+  for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_Animal_0_copy(n.d[i]);
+  return (struct __THE_1_array_Animal) {d, n.l};
+}
+void __THE_1_array_Animal_free (struct __THE_1_array_Animal n) {
+  for (size_t i = 0; i < n.l; i++) __THE_1_Animal_0_free((struct __THE_1_Animal_0 *) n.d[i]);
+  free(n.d);
+}
+void __THE_1_array_Animal_push (struct __THE_1_array_Animal *n, size_t x, ...) {
+  if (x == 0) return;
+  n->l += x;
+  n->d = realloc(n->d, n->l * sizeof(struct __THE_1_Animal_0 *));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, struct __THE_1_Animal_0 *);
+  va_end(args);
+}
+struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal n) {
+  struct str r = str_alloc("[");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_str(r, __THE_1_Animal_0_str(__THE_1_Animal_0_copy(n.d[i])));
+  }
+  __THE_1_array_Animal_free((struct __THE_1_array_Animal) n);
+  return str_concat_cstr(r, "]");
+}
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, struct __THE_1_array_Animal __THE_0_pets) {
+  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
+  struct __THE_1_Human_0 s = {__THE_0_name, __THE_0_pets};
+  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
+  return r;
+}
+struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *o) {
+  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
+  struct __THE_1_Human_0 s = {str_copy(o->__THE_0_name), __THE_1_array_Animal_copy(o->__THE_0_pets)};
+  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
+  return r;
+}
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
+  str_free((struct str) o->__THE_0_name);
+  __THE_1_array_Animal_free((struct __THE_1_array_Animal) o->__THE_0_pets);
+  free(o);
+}
+struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *o1, struct __THE_1_Human_0 *o2) {
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o1);
+  return o2;
+}
+struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
+  struct str r = str_alloc("Human{");
+  r = str_concat_cstr(r, "name: \"");
+  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_cstr(r, "\"");
+  r = str_concat_cstr(r, ", pets: ");
+  r = str_concat_str(r, __THE_1_array_Animal_str(__THE_1_array_Animal_copy(o->__THE_0_pets)));
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o);
+  return str_concat_cstr(r, "}");
+}
+
+int main () {
+  struct __THE_1_Human_0 *__THE_0_person1_0 = __THE_1_Human_0_alloc(str_alloc("Peter"), __THE_1_array_Animal_alloc(0));
+  struct __THE_1_Human_0 *__THE_0_person2_0 = __THE_1_Human_0_alloc(str_alloc("Brian"), __THE_1_array_Animal_alloc(0));
+  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, 1, __THE_1_Animal_0_alloc(str_alloc("Cleo"), 1));
+  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, 1, __THE_1_Animal_0_alloc(str_alloc("Bella"), 1));
+  (*__THE_1_array_Animal_at(__THE_0_person1_0->__THE_0_pets, 0))->__THE_0_age++;
+  __THE_1_array_Animal_push(&__THE_0_person2_0->__THE_0_pets, 1, __THE_1_Animal_0_alloc(str_alloc("Luxor"), 10));
+  const struct __THE_1_Human_0 *__THE_0_person3_0 = __THE_1_Human_0_copy(__THE_0_person1_0);
+  __THE_0_person1_0 = __THE_1_Human_0_realloc(__THE_0_person1_0, __THE_1_Human_0_copy(__THE_0_person2_0));
+  __THE_0_person2_0 = __THE_1_Human_0_realloc(__THE_0_person2_0, __THE_1_Human_0_copy(__THE_0_person3_0));
+  const struct str __THE_0_testStr_0 = __THE_1_Human_0_str(__THE_1_Human_0_copy(__THE_0_person1_0));
+  str_free((struct str) __THE_0_testStr_0);
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person3_0);
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person2_0);
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person1_0);
+}
+======= flags =======
+======= stdout =======

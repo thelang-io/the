@@ -1,0 +1,147 @@
+======= stdin =======
+obj Animal {
+  mut age: int
+  name: str
+}
+
+main {
+  animal := Animal{
+    age: 2,
+    name: "Sam"
+  }
+
+  animal.age = 1
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Animal_0" name="Animal">
+    <TypeField mut name="age">
+      <BuiltinType name="int" />
+    </TypeField>
+    <TypeField name="name">
+      <BuiltinType name="str" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="animal" codeName="animal_0" frame="2">
+        <TypeObj codeName="Animal_0" name="Animal">
+          <TypeField mut name="age">
+            <BuiltinType name="int" />
+          </TypeField>
+          <TypeField name="name">
+            <BuiltinType name="str" />
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Animal_0" name="Animal">
+            <TypeField mut name="age">
+              <BuiltinType name="int" />
+            </TypeField>
+            <TypeField name="name">
+              <BuiltinType name="str" />
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjType>
+              <TypeObj codeName="Animal_0" name="Animal">
+                <TypeField mut name="age">
+                  <BuiltinType name="int" />
+                </TypeField>
+                <TypeField name="name">
+                  <BuiltinType name="str" />
+                </TypeField>
+              </TypeObj>
+            </ExprObjType>
+            <ExprObjProps>
+              <ExprObjProp id="age">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="INT_DEC" value="2" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+              <ExprObjProp id="name">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"Sam\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+            </ExprObjProps>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="int" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAssign op="EQ">
+        <ExprAssignLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="age">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeObj codeName="Animal_0" name="Animal">
+                      <TypeField mut name="age">
+                        <BuiltinType name="int" />
+                      </TypeField>
+                      <TypeField name="name">
+                        <BuiltinType name="str" />
+                      </TypeField>
+                    </TypeObj>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="animal" codeName="animal_0" frame="2">
+                        <TypeObj codeName="Animal_0" name="Animal">
+                          <TypeField mut name="age">
+                            <BuiltinType name="int" />
+                          </TypeField>
+                          <TypeField name="name">
+                            <BuiltinType name="str" />
+                          </TypeField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignLeft>
+        <ExprAssignRight>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignRight>
+      </ExprAssign>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>
