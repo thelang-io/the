@@ -21,7 +21,7 @@ obj Reader {
 }
 
 fn Reader_init (p: str) Reader {
-  path := realpathSync(p)
+  path := fs_realpathSync(p)
 
   if !isFileSync(path) {
     RaiseError("Path \"" + path + "\" is not a file")

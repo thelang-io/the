@@ -70,7 +70,12 @@ fn Tokenizer_next (
 
 fn _Tokenizer_getToken (mut self: ref Tokenizer) Token {
   if Reader_eof(self.reader) {
-    return Token{TK_EOF, "", self.state.pos, self.state.pos}
+    return Token{
+      type: TK_EOF,
+      val: "",
+      start: self.state.pos,
+      end: self.state.pos
+    }
   }
 
   self.state.ch = Reader_next(self.reader)
@@ -227,6 +232,8 @@ fn _Tokenizer_maybeKeyword (mut self: ref Tokenizer) Token? {
     return _Tokenizer_wrapToken(self, TK_KW_NIL)
   } elif val == "obj" {
     return _Tokenizer_wrapToken(self, TK_KW_OBJ)
+  } elif val == "ref" {
+    return _Tokenizer_wrapToken(self, TK_KW_REF)
   } elif val == "return" {
     return _Tokenizer_wrapToken(self, TK_KW_RETURN)
   } elif val == "throw" {
@@ -533,7 +540,7 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
   gutterLen := errorLinesNums[errorLinesNums.len - 1].str().len + 1
 
   mut error := self.reader.path + ":" + startLoc.line.str() + ":" +
-    startLoc.col.str() + ": SyntaxError: " + message + EOL
+    startLoc.col.str() + ": SyntaxError: " + message + os_EOL
 
   mut prevLineNum := 0
 
@@ -556,11 +563,7 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
   self.state.handled = true
 }
 
-fn _Tokenizer_wrapFloat (
-  mut self: ref Tokenizer,
-  type: TokenType,
-  errorMessage: str
-) Token {
+fn _Tokenizer_wrapFloat (mut self: ref Tokenizer, type: int, errorMessage: str) Token {
   if Reader_eof(self.reader) {
     return _Tokenizer_wrapToken(self, type)
   }
@@ -657,7 +660,7 @@ fn _Tokenizer_wrapFloat (
 
 fn _Tokenizer_wrapInt (
   mut self: ref Tokenizer,
-  type: TokenType,
+  type: int,
   errorMessage: str,
   check: fn (char) bool
 ) Token {
@@ -679,7 +682,7 @@ fn _Tokenizer_wrapInt (
   return _Tokenizer_wrapFloat(self, type, errorMessage)
 }
 
-fn _Tokenizer_wrapToken (mut self: ref Tokenizer, type: TokenType) Token {
+fn _Tokenizer_wrapToken (mut self: ref Tokenizer, type: int) Token {
   start := self.state.pos
   self.state.pos = self.reader.pos
   self.state.handled = true
@@ -692,7 +695,7 @@ fn _Tokenizer_wrapToken (mut self: ref Tokenizer, type: TokenType) Token {
   }
 }
 
-fn _Tokenizer_wrapTokenFloat (mut self: ref Tokenizer, type: TokenType) Token {
+fn _Tokenizer_wrapTokenFloat (mut self: ref Tokenizer, type: int) Token {
   if !Reader_eof(self.reader) {
     ch := Reader_next(self.reader)
 

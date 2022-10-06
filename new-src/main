@@ -29,8 +29,8 @@ main {
   }
 
   if tokenizer.errors.len != 0 {
-    RaiseError(tokenizer.errors.join(EOL + EOL))
+    RaiseError(tokenizer.errors.join(os_EOL + os_EOL))
   } else {
-    print(result.join(EOL))
+    print(result.join(os_EOL))
   }
 }
