@@ -21,11 +21,11 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef THE_OS_WINDOWS
-  #include <unistd.h>
-#endif
 #ifdef THE_OS_WINDOWS
   #include <direct.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <unistd.h>
 #endif
 
 struct str {

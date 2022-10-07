@@ -94,7 +94,10 @@ struct str str_trim (struct str s) {
     if (j == 0) break;
     j--;
   }
-  if (i >= j) return str_alloc("");
+  if (i >= j) {
+    free(s.d);
+    return str_alloc("");
+  }
   size_t l = j - i;
   char *r = alloc(l);
   for (size_t k = 0; k < l;) r[k++] = s.d[i++];

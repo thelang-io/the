@@ -385,7 +385,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnProcessArgs) {
     builtinFnDeclCode += "struct " + Codegen::typeName("array_str") + " process_args (int, char **);" EOL;
     builtinFnDefCode += "struct " + Codegen::typeName("array_str") + " process_args (int argc, char *argv[]) {" EOL;
-    builtinFnDefCode += "  struct str *d = alloc(sizeof(argc * sizeof(struct str)));" EOL;
+    builtinFnDefCode += "  struct str *d = alloc(argc * sizeof(struct str));" EOL;
     builtinFnDefCode += "  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);" EOL;
     builtinFnDefCode += "  return (struct " + Codegen::typeName("array_str") + ") {d, (size_t) argc};" EOL;
     builtinFnDefCode += "}" EOL;
@@ -617,7 +617,10 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "    if (j == 0) break;" EOL;
     builtinFnDefCode += "    j--;" EOL;
     builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += R"(  if (i >= j) return str_alloc("");)" EOL;
+    builtinFnDefCode += "  if (i >= j) {" EOL;
+    builtinFnDefCode += "    free(s.d);" EOL;
+    builtinFnDefCode += R"(    return str_alloc("");)" EOL;
+    builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  size_t l = j - i;" EOL;
     builtinFnDefCode += "  char *r = alloc(l);" EOL;
     builtinFnDefCode += "  for (size_t k = 0; k < l;) r[k++] = s.d[i++];" EOL;
@@ -680,13 +683,18 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
-  headers += this->builtins.libSysUtsname ? "#include <sys/utsname.h>" EOL : "";
-  headers += this->builtins.libUnistd ? "#ifndef THE_OS_WINDOWS" EOL "  #include <unistd.h>" EOL "#endif" EOL : "";
 
   if (this->builtins.libDirect || this->builtins.libWindows) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libDirect ? "  #include <direct.h>" EOL : "";
     headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
+    headers += "#endif" EOL;
+  }
+
+  if (this->builtins.libSysUtsname || this->builtins.libUnistd) {
+    headers += "#ifndef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
+    headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
     headers += "#endif" EOL;
   }
 
@@ -861,6 +869,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("libString");
     this->_activateBuiltin("libSysUtsname");
+    this->_activateBuiltin("libWindows");
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnPrint") {
@@ -2384,8 +2393,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
       } else if (
-        exprCallCalleeTypeInfo.realType->codeName == "@Buffer.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@CompletedProcess.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@buffer_Buffer.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@process_CompletedProcess.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@bool.str" ||
@@ -2409,9 +2418,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       ) {
         auto typeStrFn = std::string();
 
-        if (exprCallCalleeTypeInfo.realType->codeName == "@Buffer.str") {
+        if (exprCallCalleeTypeInfo.realType->codeName == "@buffer_Buffer.str") {
           // todo
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@CompletedProcess.str") {
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@process_CompletedProcess.str") {
           // todo
         } else if (exprCallCalleeTypeInfo.realType->codeName == "@any.str") {
           this->_activateBuiltin("fnAnyStr");

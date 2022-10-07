@@ -115,10 +115,10 @@ bool TypeMap::has (const std::string &name) {
 void TypeMap::init () {
   this->stack.reserve(std::numeric_limits<short>::max());
 
-  this->_items.push_back(std::make_unique<Type>(Type{"Buffer", "@Buffer", TypeObj{}, {}, true}));
-  auto bufferType = this->_items.back().get();
-  this->_items.push_back(std::make_unique<Type>(Type{"CompletedProcess", "@CompletedProcess", TypeObj{}, {}, true}));
-  auto completedProcessType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"buffer_Buffer", "@buffer_Buffer", TypeObj{}, {}, true}));
+  auto bufferBufferType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"process_CompletedProcess", "@process_CompletedProcess", TypeObj{}, {}, true}));
+  auto processCompletedProcessType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"any", "@any", TypeObj{}, {}, true}));
   auto anyType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"bool", "@bool", TypeObj{}, {}, true}));
@@ -156,14 +156,14 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"void", "@void", TypeObj{}, {}, true}));
   auto voidType = this->_items.back().get();
 
-  this->_items.push_back(std::make_unique<Type>(Type{"Buffer.str", "@Buffer.str", TypeFn{strType}, {}, true}));
-  bufferType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"buffer_Buffer.str", "@buffer_Buffer.str", TypeFn{strType}, {}, true}));
+  bufferBufferType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 
-  completedProcessType->fields.push_back(TypeField{"code", intType, false, true});
-  completedProcessType->fields.push_back(TypeField{"stdout", bufferType, false, true});
-  completedProcessType->fields.push_back(TypeField{"stderr", bufferType, false, true});
-  this->_items.push_back(std::make_unique<Type>(Type{"CompletedProcess.str", "@CompletedProcess.str", TypeFn{strType}, {}, true}));
-  completedProcessType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+  processCompletedProcessType->fields.push_back(TypeField{"code", intType, false, true});
+  processCompletedProcessType->fields.push_back(TypeField{"stdout", bufferBufferType, false, true});
+  processCompletedProcessType->fields.push_back(TypeField{"stderr", bufferBufferType, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"process_CompletedProcess.str", "@process_CompletedProcess.str", TypeFn{strType}, {}, true}));
+  processCompletedProcessType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 
   this->_items.push_back(std::make_unique<Type>(Type{"any.str", "@any.str", TypeFn{strType}, {}, true}));
   anyType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
@@ -204,7 +204,7 @@ void TypeMap::init () {
   strType->fields.push_back(TypeField{"find", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.slice", "@str.slice", sliceStrTypeFn, {}, true}));
   strType->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true});
-  this->_items.push_back(std::make_unique<Type>(Type{"str.toBuffer", "@str.toBuffer", TypeFn{bufferType}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"str.toBuffer", "@str.toBuffer", TypeFn{bufferBufferType}, {}, true}));
   strType->fields.push_back(TypeField{"toBuffer", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.trim", "@str.trim", TypeFn{strType}, {}, true}));
   strType->fields.push_back(TypeField{"trim", this->_items.back().get(), false, true});
@@ -228,7 +228,7 @@ void TypeMap::init () {
     TypeFnParam{"terminator", strType, false, false, false}
   }};
 
-  auto processRunTypeFn = TypeFn{completedProcessType, {
+  auto processRunTypeFn = TypeFn{processCompletedProcessType, {
     TypeFnParam{"command", strType, false, true, false}
   }};
 

@@ -18,11 +18,11 @@ main {
 #endif
 
 #include <stdint.h>
-#ifndef THE_OS_WINDOWS
-  #include <unistd.h>
-#endif
 #ifdef THE_OS_WINDOWS
   #include <windows.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <unistd.h>
 #endif
 
 void sleep_sync (uint32_t);

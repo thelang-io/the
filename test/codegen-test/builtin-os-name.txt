@@ -21,7 +21,12 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/utsname.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <sys/utsname.h>
+#endif
 
 struct str {
   char *d;
