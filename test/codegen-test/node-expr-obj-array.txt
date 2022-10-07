@@ -26,17 +26,6 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
-void *alloc (size_t);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
 struct __THE_1_array_int;
 struct __THE_1_Test_0;
 
@@ -48,6 +37,17 @@ struct __THE_1_Test_0 {
   const struct __THE_1_array_int __THE_0_a;
   const struct __THE_1_array_int __THE_0_b;
 };
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 void __THE_1_array_int_free (struct __THE_1_array_int);

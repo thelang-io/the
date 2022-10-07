@@ -34,6 +34,30 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1P;
+struct __THE_1_fn$1;
+
+struct __THE_1_fn$0P {
+  struct str n0;
+};
+struct __THE_1_fn$0 {
+  struct str (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1P {
+  struct str n0;
+  unsigned char o1;
+  struct str n1;
+};
+struct __THE_1_fn$1 {
+  struct str (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
+};
+
 void *alloc (size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
@@ -85,30 +109,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-struct __THE_1_fn$0P;
-struct __THE_1_fn$0;
-struct __THE_1_fn$1P;
-struct __THE_1_fn$1;
-
-struct __THE_1_fn$0P {
-  struct str n0;
-};
-struct __THE_1_fn$0 {
-  struct str (*f) (void *, struct __THE_1_fn$0P);
-  void *x;
-  size_t l;
-};
-struct __THE_1_fn$1P {
-  struct str n0;
-  unsigned char o1;
-  struct str n1;
-};
-struct __THE_1_fn$1 {
-  struct str (*f) (void *, struct __THE_1_fn$1P);
-  void *x;
-  size_t l;
-};
 
 struct str __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
 struct str __THE_1_test2_0 (void *, struct __THE_1_fn$1P);

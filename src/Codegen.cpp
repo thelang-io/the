@@ -82,7 +82,7 @@ Codegen::Codegen (AST *a) {
 std::tuple<std::string, std::string> Codegen::gen () {
   auto nodes = this->ast->gen();
 
-  auto mainCode = std::string("int main () {" EOL);
+  auto mainCode = std::string();
   mainCode += this->_block(nodes, false);
   mainCode += this->state.cleanUp.gen(2);
   mainCode += "}" EOL;
@@ -329,6 +329,26 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnOSName) {
+    builtinFnDeclCode += "struct str os_name ();" EOL;
+    builtinFnDefCode += "struct str os_name () {" EOL;
+    builtinFnDefCode += "  struct utsname buf;" EOL;
+    builtinFnDefCode += "  if (uname(&buf) < 0) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += R"(  if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");)" EOL;
+    builtinFnDefCode += R"(  if (strcmp(buf.sysname, "WindowsNT") == 0 || )";
+    builtinFnDefCode += R"(strcmp(buf.sysname, "Windows_NT") == 0 || )";
+    builtinFnDefCode += R"(strcmp(buf.sysname, "MS-DOS") == 0 || )";
+    builtinFnDefCode += R"(strncmp(buf.sysname, "MSYS_NT", 7) == 0 || )";
+    builtinFnDefCode += R"(strncmp(buf.sysname, "MINGW32_NT", 10) == 0 || )";
+    builtinFnDefCode += R"(strncmp(buf.sysname, "MINGW64_NT", 10) == 0 || )";
+    builtinFnDefCode += R"(strncmp(buf.sysname, "CYGWIN_NT", 9) == 0) return str_alloc("Windows");)" EOL;
+    builtinFnDefCode += "  return str_alloc(buf.sysname);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnPrint) {
     builtinFnDeclCode += "void print (FILE *, const char *, ...);" EOL;
     builtinFnDefCode += "void print (FILE *stream, const char *fmt, ...) {" EOL;
@@ -359,6 +379,32 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "    }" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  va_end(args);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnProcessArgs) {
+    builtinFnDeclCode += "struct " + Codegen::typeName("array_str") + " process_args (int, char **);" EOL;
+    builtinFnDefCode += "struct " + Codegen::typeName("array_str") + " process_args (int argc, char *argv[]) {" EOL;
+    builtinFnDefCode += "  struct str *d = alloc(sizeof(argc * sizeof(struct str)));" EOL;
+    builtinFnDefCode += "  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);" EOL;
+    builtinFnDefCode += "  return (struct " + Codegen::typeName("array_str") + ") {d, (size_t) argc};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnProcessCwd) {
+    builtinFnDeclCode += "struct str process_cwd ();" EOL;
+    builtinFnDefCode += "struct str process_cwd () {" EOL;
+    builtinFnDefCode += "  char buf[256];" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += "    char *p = _getcwd(buf, 256);" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    char *p = getcwd(buf, 256);" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  if (p == NULL) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to retrieve current working directory information" THE_EOL);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return str_alloc(buf);" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -594,8 +640,16 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
+  headers += this->builtins.libSysUtsname ? "#include <sys/utsname.h>" EOL : "";
   headers += this->builtins.libUnistd ? "#ifndef THE_OS_WINDOWS" EOL "  #include <unistd.h>" EOL "#endif" EOL : "";
-  headers += this->builtins.libWindows ? "#ifdef THE_OS_WINDOWS" EOL "  #include <windows.h>" EOL "#endif" EOL : "";
+
+  if (this->builtins.libDirect || this->builtins.libWindows) {
+    headers += "#ifdef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libDirect ? "  #include <direct.h>" EOL : "";
+    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
+    headers += "#endif" EOL;
+  }
+
   headers += headers.empty() ? "" : EOL;
 
   auto output = std::string();
@@ -604,12 +658,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += headers;
   output += defineCode;
   output += builtinStructDefCode;
-  output += builtinFnDeclCode;
-  output += builtinFnDefCode;
   output += structDeclCode;
   output += structDefCode;
+  output += builtinFnDeclCode;
+  output += builtinFnDefCode;
   output += fnDeclCode;
   output += fnDefCode;
+  output += "int main (" + std::string(this->needMainArgs ? "int argc, char *argv[]" : "") + ") {" EOL;
   output += mainCode;
 
   return std::make_tuple(output, this->_flags());
@@ -628,6 +683,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
 
   if (name == "definitions") {
     this->builtins.definitions = true;
+  } else if (name == "libDirect") {
+    this->builtins.libDirect = true;
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
   } else if (name == "libStdarg") {
@@ -642,6 +699,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libStdlib = true;
   } else if (name == "libString") {
     this->builtins.libString = true;
+  } else if (name == "libSysUtsname") {
+    this->builtins.libSysUtsname = true;
   } else if (name == "libUnistd") {
     this->builtins.libUnistd = true;
   } else if (name == "libWindows") {
@@ -754,12 +813,37 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libInttypes");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnOSName") {
+    this->builtins.fnOSName = true;
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("libSysUtsname");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("typeStr");
   } else if (name == "fnPrint") {
     this->builtins.fnPrint = true;
     this->_activateBuiltin("fnStrFree");
     this->_activateBuiltin("libInttypes");
     this->_activateBuiltin("libStdarg");
     this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnProcessArgs") {
+    this->builtins.fnProcessArgs = true;
+    this->needMainArgs = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+    this->_activateEntity(Codegen::typeName("array_str"));
+  } else if (name == "fnProcessCwd") {
+    this->builtins.fnProcessCwd = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libDirect");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libUnistd");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnSleepSync") {
     this->builtins.fnSleepSync = true;
@@ -1782,45 +1866,55 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.expr)) {
       auto objVar = std::get<std::shared_ptr<Var>>(exprAccess.expr);
-      auto objCode = Codegen::name(objVar->codeName);
-      auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;
 
-      code = objCode;
+      if (objVar->builtin && objVar->codeName == "@os_EOL") {
+        this->_activateBuiltin("definitions");
+        this->_activateBuiltin("fnStrAlloc");
+        code = "str_alloc(THE_EOL)";
+      } else if (objVar->builtin && objVar->codeName == "@process_args") {
+        this->_activateBuiltin("fnProcessArgs");
+        code = "process_args(argc, argv)";
+      } else {
+        auto objCode = Codegen::name(objVar->codeName);
+        auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;
 
-      if (objVar->type->isOpt() && !objType->isOpt()) {
-        code = "*" + code;
-      }
+        code = objCode;
 
-      if (this->state.contextVars.contains(objCode) && (nodeExpr.type->isRefExt() || !targetType->isRefExt())) {
-        code = "*" + code;
-      }
+        if (objVar->type->isOpt() && !objType->isOpt()) {
+          code = "*" + code;
+        }
 
-      if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRefExt() && targetType->isRefExt()) {
-        code = "&" + code;
-      } else if (
-        (nodeExpr.type->isRefExt() && !targetType->isAny() && !targetType->isRefExt()) ||
-        (objType->isRef() && targetType->isAny())
-      ) {
-        code = "*" + code;
-      }
+        if (this->state.contextVars.contains(objCode) && (nodeExpr.type->isRefExt() || !targetType->isRefExt())) {
+          code = "*" + code;
+        }
 
-      if (!objType->isRef() || !targetType->isRef()) {
-        auto nodeTypeInfo = this->_typeInfo(objType);
-
-        if (!root && nodeTypeInfo.realType->isAny()) {
-          this->_activateBuiltin("fnAnyCopy");
-          code = "any_copy(" + code + ")";
+        if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRefExt() && targetType->isRefExt()) {
+          code = "&" + code;
         } else if (
-          (!root && nodeTypeInfo.realType->isArray()) ||
-          (!root && nodeTypeInfo.realType->isFn()) ||
-          (!root && nodeTypeInfo.realType->isObj()) ||
-          (!root && nodeTypeInfo.realType->isOpt())
+          (nodeExpr.type->isRefExt() && !targetType->isAny() && !targetType->isRefExt()) ||
+          (objType->isRef() && targetType->isAny())
         ) {
-          this->_activateEntity(nodeTypeInfo.realTypeName + "_copy");
-          code = nodeTypeInfo.realTypeName + "_copy(" + code + ")";
-        } else if (!root && nodeTypeInfo.realType->isStr()) {
-          this->_activateBuiltin("fnStrCopy");
-          code = "str_copy(" + code + ")";
+          code = "*" + code;
+        }
+
+        if (!objType->isRef() || !targetType->isRef()) {
+          auto nodeTypeInfo = this->_typeInfo(objType);
+
+          if (!root && nodeTypeInfo.realType->isAny()) {
+            this->_activateBuiltin("fnAnyCopy");
+            code = "any_copy(" + code + ")";
+          } else if (
+            (!root && nodeTypeInfo.realType->isArray()) ||
+            (!root && nodeTypeInfo.realType->isFn()) ||
+            (!root && nodeTypeInfo.realType->isObj()) ||
+            (!root && nodeTypeInfo.realType->isOpt())
+          ) {
+            this->_activateEntity(nodeTypeInfo.realTypeName + "_copy");
+            code = nodeTypeInfo.realTypeName + "_copy(" + code + ")";
+          } else if (!root && nodeTypeInfo.realType->isStr()) {
+            this->_activateBuiltin("fnStrCopy");
+            code = "str_copy(" + code + ")";
+          }
         }
       }
 
@@ -2077,6 +2171,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       this->_activateBuiltin("libStdlib");
       code = "exit(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@os_name") {
+      this->_activateBuiltin("fnOSName");
+      code = "os_name()";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@print") {
       auto separator = std::string(R"(" ")");
       auto isSeparatorLit = true;
@@ -2175,6 +2272,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       code += ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_cwd") {
+      this->_activateBuiltin("fnProcessCwd");
+      code = "process_cwd()";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_runSync") {
+      // todo
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u64"));
 
@@ -2227,6 +2329,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
       } else if (
+        exprCallCalleeTypeInfo.realType->codeName == "@Buffer.str" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@CompletedProcess.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
         exprCallCalleeTypeInfo.realType->codeName == "@bool.str" ||
@@ -2250,7 +2354,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       ) {
         auto typeStrFn = std::string();
 
-        if (exprCallCalleeTypeInfo.realType->codeName == "@any.str") {
+        if (exprCallCalleeTypeInfo.realType->codeName == "@Buffer.str") {
+          // todo
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@CompletedProcess.str") {
+          // todo
+        } else if (exprCallCalleeTypeInfo.realType->codeName == "@any.str") {
           this->_activateBuiltin("fnAnyStr");
           typeStrFn = "any_str";
         } else if (
@@ -2315,6 +2423,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
 
         code = typeStrFn + calleeCode;
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.find") {
+        // todo
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -2324,6 +2434,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         this->_activateBuiltin("fnStrSlice");
         code = "str_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.toBuffer") {
+        // todo
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.trim") {
+        // todo
       }
     } else {
       auto fn = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);

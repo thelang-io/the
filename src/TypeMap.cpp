@@ -115,6 +115,10 @@ bool TypeMap::has (const std::string &name) {
 void TypeMap::init () {
   this->stack.reserve(std::numeric_limits<short>::max());
 
+  this->_items.push_back(std::make_unique<Type>(Type{"Buffer", "@Buffer", TypeObj{}, {}, true}));
+  auto bufferType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"CompletedProcess", "@CompletedProcess", TypeObj{}, {}, true}));
+  auto completedProcessType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"any", "@any", TypeObj{}, {}, true}));
   auto anyType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"bool", "@bool", TypeObj{}, {}, true}));
@@ -152,6 +156,15 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"void", "@void", TypeObj{}, {}, true}));
   auto voidType = this->_items.back().get();
 
+  this->_items.push_back(std::make_unique<Type>(Type{"Buffer.str", "@Buffer.str", TypeFn{strType}, {}, true}));
+  bufferType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  completedProcessType->fields.push_back(TypeField{"code", intType, false, true});
+  completedProcessType->fields.push_back(TypeField{"stdout", bufferType, false, true});
+  completedProcessType->fields.push_back(TypeField{"stderr", bufferType, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"CompletedProcess.str", "@CompletedProcess.str", TypeFn{strType}, {}, true}));
+  completedProcessType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
   this->_items.push_back(std::make_unique<Type>(Type{"any.str", "@any.str", TypeFn{strType}, {}, true}));
   anyType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"bool.str", "@bool.str", TypeFn{strType}, {}, true}));
@@ -176,15 +189,25 @@ void TypeMap::init () {
   i64Type->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"int.str", "@int.str", TypeFn{strType}, {}, true}));
   intType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
-  strType->fields.push_back(TypeField{"len", intType, false, true});
+
+  auto findStrTypeFn = TypeFn{intType, {
+    TypeFnParam{"search", strType, false, true, false}
+  }};
 
   auto sliceStrTypeFn = TypeFn{strType, {
     TypeFnParam{"start", i64Type, false, false, false},
     TypeFnParam{"end", i64Type, false, false, false}
   }};
 
+  strType->fields.push_back(TypeField{"len", intType, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.find", "@str.find", findStrTypeFn, {}, true}));
+  strType->fields.push_back(TypeField{"find", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.slice", "@str.slice", sliceStrTypeFn, {}, true}));
   strType->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.toBuffer", "@str.toBuffer", TypeFn{bufferType}, {}, true}));
+  strType->fields.push_back(TypeField{"toBuffer", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.trim", "@str.trim", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"trim", this->_items.back().get(), false, true});
 
   this->_items.push_back(std::make_unique<Type>(Type{"u8.str", "@u8.str", TypeFn{strType}, {}, true}));
   u8Type->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
@@ -199,20 +222,25 @@ void TypeMap::init () {
     TypeFnParam{"status", intType, false, false, false}
   }};
 
-  this->_items.push_back(std::make_unique<Type>(Type{"exit", "@exit", exitTypeFn, {}, true}));
-
   auto printTypeFn = TypeFn{voidType, {
     TypeFnParam{"items", anyType, false, false, true},
     TypeFnParam{"separator", strType, false, false, false},
     TypeFnParam{"terminator", strType, false, false, false}
   }};
 
-  this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, {}, true}));
+  auto processRunTypeFn = TypeFn{completedProcessType, {
+    TypeFnParam{"command", strType, false, true, false}
+  }};
 
   auto sleepSyncTypeFn = TypeFn{voidType, {
     TypeFnParam{"milliseconds", u32Type, false, true, false}
   }};
 
+  this->_items.push_back(std::make_unique<Type>(Type{"exit", "@exit", exitTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"os_name", "@os_name", TypeFn{strType}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"process_cwd", "@process_cwd", TypeFn{strType}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"process_runSync", "@process_runSync", processRunTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"sleepSync", "@sleepSync", sleepSyncTypeFn, {}, true}));
 }
 

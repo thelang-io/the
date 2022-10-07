@@ -25,6 +25,12 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  const int32_t *__THE_0_a;
+};
+
 void *alloc (size_t);
 
 void *alloc (size_t l) {
@@ -35,12 +41,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_Test_0;
-
-struct __THE_1_Test_0 {
-  const int32_t *__THE_0_a;
-};
 
 int32_t *__THE_1_opt_int_alloc (int32_t);
 int32_t *__THE_1_opt_int_copy (const int32_t *);

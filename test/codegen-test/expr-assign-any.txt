@@ -44,6 +44,16 @@ struct str {
   size_t l;
 };
 
+struct any_int;
+struct any_str;
+
+struct any_int {
+  int32_t d;
+};
+struct any_str {
+  struct str d;
+};
+
 void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
@@ -84,16 +94,6 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct any_int;
-struct any_str;
-
-struct any_int {
-  int32_t d;
-};
-struct any_str {
-  struct str d;
-};
 
 struct any any_int_alloc (int32_t);
 struct any any_int_copy (const struct any);

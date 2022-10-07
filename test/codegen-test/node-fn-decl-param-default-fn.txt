@@ -68,34 +68,6 @@ struct str {
   size_t l;
 };
 
-void *alloc (size_t);
-struct str str_alloc (const char *);
-struct str str_concat_str (struct str, struct str);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-struct str str_concat_str (struct str s1, struct str s2) {
-  size_t l = s1.l + s2.l;
-  char *d = alloc(l);
-  memcpy(d, s1.d, s1.l);
-  memcpy(&d[s1.l], s2.d, s2.l);
-  free(s1.d);
-  free(s2.d);
-  return (struct str) {d, l};
-}
-
 struct __THE_1_fn$0;
 struct __THE_1_fn$1P;
 struct __THE_1_fn$1;
@@ -149,6 +121,34 @@ struct __THE_1_mainSDtest2_0X {
   const struct __THE_1_fn$0 *__THE_0_jobC_0;
   const struct __THE_1_fn$0 *__THE_0_jobB_0;
 };
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_concat_str (struct str, struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
 
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);

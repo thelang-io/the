@@ -30,6 +30,13 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  const struct str __THE_0_a;
+  const struct str __THE_0_b;
+};
+
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -51,13 +58,6 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_Test_0;
-
-struct __THE_1_Test_0 {
-  const struct str __THE_0_a;
-  const struct str __THE_0_b;
-};
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str, struct str);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);

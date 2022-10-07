@@ -57,6 +57,22 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_Point_0;
+struct __THE_1_Test_0;
+struct __THE_1_Human_0;
+
+struct __THE_1_Point_0 {
+  double __THE_0_x;
+  double __THE_0_y;
+};
+struct __THE_1_Test_0 {
+  const int32_t __THE_0_a;
+};
+struct __THE_1_Human_0 {
+  struct str __THE_0_name;
+  const int32_t __THE_0_age;
+};
+
 void *alloc (size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
@@ -98,22 +114,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-struct __THE_1_Point_0;
-struct __THE_1_Test_0;
-struct __THE_1_Human_0;
-
-struct __THE_1_Point_0 {
-  double __THE_0_x;
-  double __THE_0_y;
-};
-struct __THE_1_Test_0 {
-  const int32_t __THE_0_a;
-};
-struct __THE_1_Human_0 {
-  struct str __THE_0_name;
-  const int32_t __THE_0_age;
-};
 
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
 void __THE_1_Point_0_free (struct __THE_1_Point_0 *);

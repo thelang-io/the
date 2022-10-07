@@ -65,6 +65,17 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_TestObj_0;
+struct __THE_1_array_int;
+
+struct __THE_1_TestObj_0 {
+  const int32_t __THE_0_a;
+};
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
@@ -136,17 +147,6 @@ bool str_ne_str (struct str s1, struct str s2) {
   free(s2.d);
   return r;
 }
-
-struct __THE_1_TestObj_0;
-struct __THE_1_array_int;
-
-struct __THE_1_TestObj_0 {
-  const int32_t __THE_0_a;
-};
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
 
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t);
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *);

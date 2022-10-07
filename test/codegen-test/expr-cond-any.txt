@@ -33,6 +33,12 @@ struct any {
   void (*_free) (struct any);
 };
 
+struct any_int;
+
+struct any_int {
+  int32_t d;
+};
+
 void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
@@ -51,12 +57,6 @@ struct any any_copy (const struct any n) {
 void any_free (struct any n) {
   if (n.d != NULL) n._free(n);
 }
-
-struct any_int;
-
-struct any_int {
-  int32_t d;
-};
 
 struct any any_int_alloc (int32_t);
 struct any any_int_copy (const struct any);

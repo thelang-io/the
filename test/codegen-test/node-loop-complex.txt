@@ -85,6 +85,14 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_fn$0;
+
+struct __THE_1_fn$0 {
+  int32_t (*f) (void *);
+  void *x;
+  size_t l;
+};
+
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 struct str str_alloc (const char *);
@@ -147,14 +155,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-struct __THE_1_fn$0;
-
-struct __THE_1_fn$0 {
-  int32_t (*f) (void *);
-  void *x;
-  size_t l;
-};
 
 int32_t __THE_1_test_0 (void *);
 

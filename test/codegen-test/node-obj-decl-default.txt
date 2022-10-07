@@ -62,32 +62,6 @@ struct str {
   size_t l;
 };
 
-void *alloc (size_t);
-void any_free (struct any);
-struct str str_alloc (const char *);
-void str_free (struct str);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void any_free (struct any n) {
-  if (n.d != NULL) n._free(n);
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-void str_free (struct str s) {
-  free(s.d);
-}
-
 struct __THE_1_array_int;
 struct __THE_1_array_opt_int;
 struct __THE_1_array_opt_array_int;
@@ -136,6 +110,32 @@ struct __THE_1_Test_0 {
   const uint32_t __THE_0_p22;
   const uint64_t __THE_0_p23;
 };
+
+void *alloc (size_t);
+void any_free (struct any);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 void __THE_1_array_int_free (struct __THE_1_array_int);

@@ -88,6 +88,40 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1;
+struct __THE_1_Test1_0;
+struct __THE_1_Test2_0;
+
+struct __THE_1_fn$0P {
+  int32_t *n0;
+};
+struct __THE_1_fn$0 {
+  int32_t *(*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1 {
+  int32_t (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_Test1_0 {
+  int32_t __THE_0_a;
+  struct str __THE_0_b;
+  int32_t *__THE_0_refA;
+  struct str *__THE_0_refB;
+  const struct __THE_1_fn$0 __THE_0_fn1;
+  const struct __THE_1_fn$0 *__THE_0_refFn1;
+  const struct __THE_1_fn$1 __THE_0_fn2;
+  const struct __THE_1_fn$1 *__THE_0_refFn2;
+};
+struct __THE_1_Test2_0 {
+  const struct __THE_1_Test1_0 *__THE_0_test1;
+  const struct __THE_1_Test1_0 **__THE_0_refTest1;
+};
+
 void *alloc (size_t);
 struct str str_alloc (const char *);
 struct str str_concat_str (struct str, struct str);
@@ -130,40 +164,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-struct __THE_1_fn$0P;
-struct __THE_1_fn$0;
-struct __THE_1_fn$1;
-struct __THE_1_Test1_0;
-struct __THE_1_Test2_0;
-
-struct __THE_1_fn$0P {
-  int32_t *n0;
-};
-struct __THE_1_fn$0 {
-  int32_t *(*f) (void *, struct __THE_1_fn$0P);
-  void *x;
-  size_t l;
-};
-struct __THE_1_fn$1 {
-  int32_t (*f) (void *);
-  void *x;
-  size_t l;
-};
-struct __THE_1_Test1_0 {
-  int32_t __THE_0_a;
-  struct str __THE_0_b;
-  int32_t *__THE_0_refA;
-  struct str *__THE_0_refB;
-  const struct __THE_1_fn$0 __THE_0_fn1;
-  const struct __THE_1_fn$0 *__THE_0_refFn1;
-  const struct __THE_1_fn$1 __THE_0_fn2;
-  const struct __THE_1_fn$1 *__THE_0_refFn2;
-};
-struct __THE_1_Test2_0 {
-  const struct __THE_1_Test1_0 *__THE_0_test1;
-  const struct __THE_1_Test1_0 **__THE_0_refTest1;
-};
 
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);

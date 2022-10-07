@@ -33,6 +33,16 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
+struct __THE_1_Test1_0;
+struct __THE_1_Test2_0;
+
+struct __THE_1_Test1_0 {
+  int32_t __THE_0_a;
+};
+struct __THE_1_Test2_0 {
+  struct __THE_1_Test1_0 *__THE_0_a;
+};
+
 void *alloc (size_t);
 
 void *alloc (size_t l) {
@@ -43,16 +53,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_Test1_0;
-struct __THE_1_Test2_0;
-
-struct __THE_1_Test1_0 {
-  int32_t __THE_0_a;
-};
-struct __THE_1_Test2_0 {
-  struct __THE_1_Test1_0 *__THE_0_a;
-};
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *);

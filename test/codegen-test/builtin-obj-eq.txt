@@ -67,6 +67,53 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_array_int;
+struct __THE_1_TestArrInt_0;
+struct __THE_1_TestBool_0;
+struct __THE_1_TestChar_0;
+struct __THE_1_TestFloat_0;
+struct __THE_1_TestInt_0;
+struct __THE_1_TestOptInt_0;
+struct __THE_1_TestOptRefInt_0;
+struct __THE_1_TestRefInt_0;
+struct __THE_1_TestRefOptInt_0;
+struct __THE_1_TestStr_0;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+struct __THE_1_TestArrInt_0 {
+  const struct __THE_1_array_int __THE_0_a;
+};
+struct __THE_1_TestBool_0 {
+  const bool __THE_0_a;
+};
+struct __THE_1_TestChar_0 {
+  const char __THE_0_a;
+};
+struct __THE_1_TestFloat_0 {
+  const double __THE_0_a;
+};
+struct __THE_1_TestInt_0 {
+  const int32_t __THE_0_a;
+};
+struct __THE_1_TestOptInt_0 {
+  const int32_t *__THE_0_a;
+};
+struct __THE_1_TestOptRefInt_0 {
+  const int32_t **__THE_0_a;
+};
+struct __THE_1_TestRefInt_0 {
+  const int32_t *__THE_0_a;
+};
+struct __THE_1_TestRefOptInt_0 {
+  const int32_t **__THE_0_a;
+};
+struct __THE_1_TestStr_0 {
+  const struct str __THE_0_a;
+};
+
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
@@ -138,53 +185,6 @@ bool str_ne_str (struct str s1, struct str s2) {
   free(s2.d);
   return r;
 }
-
-struct __THE_1_array_int;
-struct __THE_1_TestArrInt_0;
-struct __THE_1_TestBool_0;
-struct __THE_1_TestChar_0;
-struct __THE_1_TestFloat_0;
-struct __THE_1_TestInt_0;
-struct __THE_1_TestOptInt_0;
-struct __THE_1_TestOptRefInt_0;
-struct __THE_1_TestRefInt_0;
-struct __THE_1_TestRefOptInt_0;
-struct __THE_1_TestStr_0;
-
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
-struct __THE_1_TestArrInt_0 {
-  const struct __THE_1_array_int __THE_0_a;
-};
-struct __THE_1_TestBool_0 {
-  const bool __THE_0_a;
-};
-struct __THE_1_TestChar_0 {
-  const char __THE_0_a;
-};
-struct __THE_1_TestFloat_0 {
-  const double __THE_0_a;
-};
-struct __THE_1_TestInt_0 {
-  const int32_t __THE_0_a;
-};
-struct __THE_1_TestOptInt_0 {
-  const int32_t *__THE_0_a;
-};
-struct __THE_1_TestOptRefInt_0 {
-  const int32_t **__THE_0_a;
-};
-struct __THE_1_TestRefInt_0 {
-  const int32_t *__THE_0_a;
-};
-struct __THE_1_TestRefOptInt_0 {
-  const int32_t **__THE_0_a;
-};
-struct __THE_1_TestStr_0 {
-  const struct str __THE_0_a;
-};
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);

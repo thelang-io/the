@@ -60,6 +60,23 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_Animal_0;
+struct __THE_1_array_Animal;
+struct __THE_1_Human_0;
+
+struct __THE_1_Animal_0 {
+  const struct str __THE_0_name;
+  int32_t __THE_0_age;
+};
+struct __THE_1_array_Animal {
+  struct __THE_1_Animal_0 **d;
+  size_t l;
+};
+struct __THE_1_Human_0 {
+  const struct str __THE_0_name;
+  struct __THE_1_array_Animal __THE_0_pets;
+};
+
 void *alloc (size_t);
 struct str int_str (int32_t);
 struct str str_alloc (const char *);
@@ -134,23 +151,6 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_Animal_0;
-struct __THE_1_array_Animal;
-struct __THE_1_Human_0;
-
-struct __THE_1_Animal_0 {
-  const struct str __THE_0_name;
-  int32_t __THE_0_age;
-};
-struct __THE_1_array_Animal {
-  struct __THE_1_Animal_0 **d;
-  size_t l;
-};
-struct __THE_1_Human_0 {
-  const struct str __THE_0_name;
-  struct __THE_1_array_Animal __THE_0_pets;
-};
 
 struct __THE_1_Animal_0 *__THE_1_Animal_0_alloc (struct str, int32_t);
 struct __THE_1_Animal_0 *__THE_1_Animal_0_copy (const struct __THE_1_Animal_0 *);

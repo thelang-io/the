@@ -39,6 +39,13 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_array_int;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
@@ -83,13 +90,6 @@ void print (FILE *stream, const char *fmt, ...) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_array_int;
-
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);

@@ -57,6 +57,32 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_Test1_0;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1;
+struct __THE_1_mainSDtestCtx_0X;
+
+struct __THE_1_Test1_0 {
+  const uint16_t __THE_0_i;
+};
+struct __THE_1_fn$0 {
+  uint16_t (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDtestCtx_0X {
+  uint16_t *__THE_0_test2_0;
+  const struct __THE_1_Test1_0 **__THE_0_test1_0;
+  const uint16_t **__THE_0_refTest_0;
+  const uint16_t *__THE_0_test_0;
+  const struct __THE_1_fn$0 *__THE_0_testCall_0;
+};
+
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -84,32 +110,6 @@ struct str u16_str (uint16_t d) {
   sprintf(buf, "%" PRIu16, d);
   return str_alloc(buf);
 }
-
-struct __THE_1_Test1_0;
-struct __THE_1_fn$0;
-struct __THE_1_fn$1;
-struct __THE_1_mainSDtestCtx_0X;
-
-struct __THE_1_Test1_0 {
-  const uint16_t __THE_0_i;
-};
-struct __THE_1_fn$0 {
-  uint16_t (*f) (void *);
-  void *x;
-  size_t l;
-};
-struct __THE_1_fn$1 {
-  void (*f) (void *);
-  void *x;
-  size_t l;
-};
-struct __THE_1_mainSDtestCtx_0X {
-  uint16_t *__THE_0_test2_0;
-  const struct __THE_1_Test1_0 **__THE_0_test1_0;
-  const uint16_t **__THE_0_refTest_0;
-  const uint16_t *__THE_0_test_0;
-  const struct __THE_1_fn$0 *__THE_0_testCall_0;
-};
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (uint16_t);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);

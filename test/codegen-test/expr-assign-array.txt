@@ -29,6 +29,13 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
+struct __THE_1_array_int;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
 void *alloc (size_t);
 
 void *alloc (size_t l) {
@@ -39,13 +46,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_array_int;
-
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
 
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);

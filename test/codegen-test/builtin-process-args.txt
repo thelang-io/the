@@ -1,14 +1,7 @@
 ======= stdin =======
 main {
-  test0: int[]
-  test1 := [1]
-  test2 := [1, 2]
-  test3 := [1, 2, 3]
-
-  print(test0, test0.str())
-  print(test1, test1.str())
-  print(test2, test2.str())
-  print(test3, test3.str())
+  print(process_args)
+  print(process_args.len)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -34,19 +27,20 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_array_int;
+struct __THE_1_array_str;
 
-struct __THE_1_array_int {
-  int32_t *d;
+struct __THE_1_array_str {
+  struct str *d;
   size_t l;
 };
 
 void *alloc (size_t);
-struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
+struct __THE_1_array_str process_args (int, char **);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
+struct str str_escape (const struct str);
 void str_free (struct str);
 
 void *alloc (size_t l) {
@@ -56,11 +50,6 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
-}
-struct str int_str (int32_t d) {
-  char buf[512];
-  sprintf(buf, "%" PRId32, d);
-  return str_alloc(buf);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -91,6 +80,11 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
+struct __THE_1_array_str process_args (int argc, char *argv[]) {
+  struct str *d = alloc(sizeof(argc * sizeof(struct str)));
+  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);
+  return (struct __THE_1_array_str) {d, (size_t) argc};
+}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -114,60 +108,61 @@ struct str str_concat_str (struct str s1, struct str s2) {
   free(s2.d);
   return (struct str) {d, l};
 }
+struct str str_escape (const struct str s) {
+  char *d = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) d = realloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) d = realloc(d, l + 1);
+    d[l++] = c;
+  }
+  return (struct str) {d, l};
+}
 void str_free (struct str s) {
   free(s.d);
 }
 
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-struct str __THE_1_array_int_str (struct __THE_1_array_int);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+size_t __THE_1_array_str_len (struct __THE_1_array_str);
+struct str __THE_1_array_str_str (struct __THE_1_array_str);
 
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
-  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(x * sizeof(int32_t));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
-  va_end(args);
-  return (struct __THE_1_array_int) {d, x};
-}
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
-  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(n.l * sizeof(int32_t));
-  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
-  return (struct __THE_1_array_int) {d, n.l};
-}
-void __THE_1_array_int_free (struct __THE_1_array_int n) {
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
-struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
+size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
+  size_t l = n.l;
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return l;
+}
+struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   struct str r = str_alloc("[");
   for (size_t i = 0; i < n.l; i++) {
     if (i != 0) r = str_concat_cstr(r, ", ");
-    r = str_concat_str(r, int_str(n.d[i]));
+    r = str_concat_cstr(r, "\"");
+    r = str_concat_str(r, str_escape(n.d[i]));
+    r = str_concat_cstr(r, "\"");
   }
-  __THE_1_array_int_free((struct __THE_1_array_int) n);
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
   return str_concat_cstr(r, "]");
 }
 
-int main () {
-  const struct __THE_1_array_int __THE_0_test0_0 = __THE_1_array_int_alloc(0);
-  const struct __THE_1_array_int __THE_0_test1_0 = __THE_1_array_int_alloc(1, 1);
-  const struct __THE_1_array_int __THE_0_test2_0 = __THE_1_array_int_alloc(2, 1, 2);
-  const struct __THE_1_array_int __THE_0_test3_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), " ", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), THE_EOL);
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), " ", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), THE_EOL);
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), " ", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), THE_EOL);
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), " ", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), THE_EOL);
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test3_0);
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test2_0);
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0);
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test0_0);
+int main (int argc, char *argv[]) {
+  print(stdout, "sz", __THE_1_array_str_str(process_args(argc, argv)), THE_EOL);
+  print(stdout, "iz", __THE_1_array_str_len(process_args(argc, argv)), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
-[] []
-[1] [1]
-[1, 2] [1, 2]
-[1, 2, 3] [1, 2, 3]
+["build/builtin-process-args.out"]
+1

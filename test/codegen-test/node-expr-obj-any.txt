@@ -42,6 +42,25 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_Test_0;
+struct any_str;
+struct any_int;
+struct any_float;
+
+struct __THE_1_Test_0 {
+  const struct any __THE_0_a;
+  const struct any __THE_0_b;
+};
+struct any_str {
+  struct str d;
+};
+struct any_int {
+  int32_t d;
+};
+struct any_float {
+  double d;
+};
+
 void *alloc (size_t);
 void any_free (struct any);
 struct str str_alloc (const char *);
@@ -73,25 +92,6 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_Test_0;
-struct any_str;
-struct any_int;
-struct any_float;
-
-struct __THE_1_Test_0 {
-  const struct any __THE_0_a;
-  const struct any __THE_0_b;
-};
-struct any_str {
-  struct str d;
-};
-struct any_int {
-  int32_t d;
-};
-struct any_float {
-  double d;
-};
 
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any, struct any);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);

@@ -77,17 +77,6 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-void *alloc (size_t);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
 struct __THE_1_fn$0;
 struct __THE_1_A_0;
 struct __THE_1_fn$1P;
@@ -160,6 +149,17 @@ struct __THE_1_fn$3 {
 struct __THE_1_E_0 {
   const struct __THE_1_fn$3 __THE_0_f;
 };
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);

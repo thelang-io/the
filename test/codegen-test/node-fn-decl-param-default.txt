@@ -44,17 +44,6 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-void *alloc (size_t);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
 struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
 struct __THE_1_fn$1P;
@@ -88,6 +77,17 @@ struct __THE_1_fn$1 {
 struct __THE_1_mainSDtest2_0X {
   int32_t *__THE_0_a_0;
 };
+
+void *alloc (size_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 
 int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);

@@ -58,32 +58,6 @@ struct str {
   size_t l;
 };
 
-void *alloc (size_t);
-struct str bool_str (bool);
-struct str str_alloc (const char *);
-void str_free (struct str);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct str bool_str (bool t) {
-  return str_alloc(t ? "true" : "false");
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-void str_free (struct str s) {
-  free(s.d);
-}
-
 struct __THE_1_Test1_0;
 struct __THE_1_fn$0;
 struct __THE_1_fn$1;
@@ -109,6 +83,32 @@ struct __THE_1_mainSDtestCtx_0X {
   const bool *__THE_0_test_0;
   const struct __THE_1_fn$0 *__THE_0_testCall_0;
 };
+
+void *alloc (size_t);
+struct str bool_str (bool);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str bool_str (bool t) {
+  return str_alloc(t ? "true" : "false");
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
 
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (bool);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
