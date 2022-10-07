@@ -70,6 +70,7 @@ struct CodegenBuiltins {
   bool fnStrEqCstr = false;
   bool fnStrEqStr = false;
   bool fnStrEscape = false;
+  bool fnStrFind = false;
   bool fnStrFree = false;
   bool fnStrLen = false;
   bool fnStrNeCstr = false;
@@ -77,10 +78,12 @@ struct CodegenBuiltins {
   bool fnStrNot = false;
   bool fnStrRealloc = false;
   bool fnStrSlice = false;
+  bool fnStrTrim = false;
   bool fnU8Str = false;
   bool fnU16Str = false;
   bool fnU32Str = false;
   bool fnU64Str = false;
+  bool libCtype = false;
   bool libDirect = false;
   bool libInttypes = false;
   bool libStdarg = false;
