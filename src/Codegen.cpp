@@ -612,8 +612,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  size_t j = s.l;" EOL;
     builtinFnDefCode += "  while (i < s.l && isspace(s.d[i])) i++;" EOL;
     builtinFnDefCode += "  while (j >= 0 && isspace(s.d[j - 1])) {" EOL;
-    builtinFnDefCode += "    if (j == 0) break;" EOL;
     builtinFnDefCode += "    j--;" EOL;
+    builtinFnDefCode += "    if (j == 0) break;" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  if (i >= j) {" EOL;
     builtinFnDefCode += "    free(s.d);" EOL;

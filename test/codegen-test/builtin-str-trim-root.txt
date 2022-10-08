@@ -53,8 +53,8 @@ struct str str_trim (struct str s) {
   size_t j = s.l;
   while (i < s.l && isspace(s.d[i])) i++;
   while (j >= 0 && isspace(s.d[j - 1])) {
-    if (j == 0) break;
     j--;
+    if (j == 0) break;
   }
   if (i >= j) {
     free(s.d);
