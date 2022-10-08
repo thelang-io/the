@@ -332,20 +332,17 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnOSName) {
     builtinFnDeclCode += "struct str os_name ();" EOL;
     builtinFnDefCode += "struct str os_name () {" EOL;
-    builtinFnDefCode += "  struct utsname buf;" EOL;
-    builtinFnDefCode += "  if (uname(&buf) < 0) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);)" EOL;
-    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
-    builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += R"(  if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");)" EOL;
-    builtinFnDefCode += R"(  if (strcmp(buf.sysname, "WindowsNT") == 0 || )";
-    builtinFnDefCode += R"(strcmp(buf.sysname, "Windows_NT") == 0 || )";
-    builtinFnDefCode += R"(strcmp(buf.sysname, "MS-DOS") == 0 || )";
-    builtinFnDefCode += R"(strncmp(buf.sysname, "MSYS_NT", 7) == 0 || )";
-    builtinFnDefCode += R"(strncmp(buf.sysname, "MINGW32_NT", 10) == 0 || )";
-    builtinFnDefCode += R"(strncmp(buf.sysname, "MINGW64_NT", 10) == 0 || )";
-    builtinFnDefCode += R"(strncmp(buf.sysname, "CYGWIN_NT", 9) == 0) return str_alloc("Windows");)" EOL;
-    builtinFnDefCode += "  return str_alloc(buf.sysname);" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += R"(    return str_alloc("Windows");)" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    struct utsname buf;" EOL;
+    builtinFnDefCode += "    if (uname(&buf) < 0) {" EOL;
+    builtinFnDefCode += R"(      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);)" EOL;
+    builtinFnDefCode += "      exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += R"(    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");)" EOL;
+    builtinFnDefCode += "    return str_alloc(buf.sysname);" EOL;
+    builtinFnDefCode += "  #endif" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -610,6 +607,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrTrim) {
     builtinFnDeclCode += "struct str str_trim (struct str);" EOL;
     builtinFnDefCode += "struct str str_trim (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l == 0) return s;" EOL;
     builtinFnDefCode += "  size_t i = 0;" EOL;
     builtinFnDefCode += "  size_t j = s.l;" EOL;
     builtinFnDefCode += "  while (i < s.l && isspace(s.d[i])) i++;" EOL;
@@ -865,11 +863,11 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("typeStr");
   } else if (name == "fnOSName") {
     this->builtins.fnOSName = true;
+    this->_activateBuiltin("definitions");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("libString");
     this->_activateBuiltin("libSysUtsname");
-    this->_activateBuiltin("libWindows");
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnPrint") {
@@ -886,7 +884,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
-    this->_activateEntity(Codegen::typeName("array_str"));
+
+    auto typeInfo = this->_typeInfo(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")));
+    this->_activateEntity(typeInfo.typeName);
   } else if (name == "fnProcessCwd") {
     this->builtins.fnProcessCwd = true;
     this->_activateBuiltin("definitions");
@@ -1935,9 +1935,21 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("definitions");
         this->_activateBuiltin("fnStrAlloc");
         code = "str_alloc(THE_EOL)";
+
+        if (root) {
+          this->_activateBuiltin("fnStrFree");
+          code = "str_free((struct str) " + code + ")";
+        }
       } else if (objVar->builtin && objVar->codeName == "@process_args") {
         this->_activateBuiltin("fnProcessArgs");
         code = "process_args(argc, argv)";
+
+        if (root) {
+          auto typeInfo = this->_typeInfo(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")));
+
+          this->_activateEntity(typeInfo.typeName + "_free");
+          code = typeInfo.typeName + "_free((struct " + typeInfo.typeName + ") " + code + ")";
+        }
       } else {
         auto objCode = Codegen::name(objVar->codeName);
         auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;

@@ -87,6 +87,7 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct str str_trim (struct str s) {
+  if (s.l == 0) return s;
   size_t i = 0;
   size_t j = s.l;
   while (i < s.l && isspace(s.d[i])) i++;

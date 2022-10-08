@@ -164,5 +164,5 @@ int main (int argc, char *argv[]) {
 }
 ======= flags =======
 ======= stdout =======
-["build/builtin-process-args.{{ (out|exe) }}"]
+["build{{ [/\\] }}builtin-process-args.{{ (out|exe) }}"]
 1
