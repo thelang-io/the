@@ -1,6 +1,10 @@
 ======= stdin =======
 main {
-  process_runSync("exit 1")
+  if os_name() == "Windows" {
+    process_runSync("exit /b 1")
+  } else {
+    process_runSync("exit 1")
+  }
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -15,9 +19,13 @@ main {
   #define THE_EOL "\n"
 #endif
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <sys/utsname.h>
+#endif
 
 struct buffer {
   unsigned char *d;
@@ -29,8 +37,10 @@ struct str {
 };
 
 void *alloc (size_t);
-void buffer_free (struct buffer);struct buffer process_run_sync (struct str);
+void buffer_free (struct buffer);struct str os_name ();
+struct buffer process_run_sync (struct str);
 struct str str_alloc (const char *);
+bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 
 void *alloc (size_t l) {
@@ -43,6 +53,19 @@ void *alloc (size_t l) {
 }
 void buffer_free (struct buffer o) {
   free(o.d);
+}
+struct str os_name () {
+  #ifdef THE_OS_WINDOWS
+    return str_alloc("Windows");
+  #else
+    struct utsname buf;
+    if (uname(&buf) < 0) {
+      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
+    return str_alloc(buf.sysname);
+  #endif
 }
 struct buffer process_run_sync (struct str s) {
   char *c = alloc(s.l + 1);
@@ -85,13 +108,22 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
 
 int main () {
-  buffer_free((struct buffer) process_run_sync(str_alloc("exit 1")));
+  if (str_eq_cstr(os_name(), "Windows")) {
+    buffer_free((struct buffer) process_run_sync(str_alloc("exit /b 1")));
+  } else {
+    buffer_free((struct buffer) process_run_sync(str_alloc("exit 1")));
+  }
 }
 ======= flags =======
 ======= stderr =======
-Error: process `exit 1` exited with exit code 1
+Error: process `{{ (exit 1|exit /b 1) }}` exited with exit code 1

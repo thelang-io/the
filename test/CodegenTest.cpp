@@ -118,6 +118,7 @@ TEST_P(CodegenThrowTest, Throws) {
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
+  auto expectedStderr = sections["stderr"];
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], std::get<1>(result));
@@ -134,7 +135,22 @@ TEST_P(CodegenThrowTest, Throws) {
   std::filesystem::remove(filePath);
   actualStderr.erase(actualStderr.find_last_not_of("\r\n") + 1);
 
-  EXPECT_EQ(sections["stderr"], actualStderr);
+  while (expectedStderr.find("{{ ") != std::string::npos) {
+    auto placeholderStart = expectedStderr.find("{{ ");
+    auto placeholderEnd = expectedStderr.find(" }}") + 3;
+    auto placeholderLen = placeholderEnd - placeholderStart;
+    auto placeholderRegexPattern = expectedStderr.substr(placeholderStart + 3, placeholderLen - 6);
+    auto placeholderRegex = std::regex(placeholderRegexPattern);
+
+    const auto actualStderrSlice = actualStderr.substr(placeholderStart);
+    auto match = std::smatch();
+    std::regex_search(actualStderrSlice, match, placeholderRegex);
+
+    auto placeholderValue = actualStderr.substr(placeholderStart, match[0].length());
+    expectedStderr.replace(placeholderStart, placeholderLen, placeholderValue);
+  }
+
+  EXPECT_EQ(expectedStderr, actualStderr);
   EXPECT_NE(actualReturnCode, 0);
 }
 
