@@ -514,6 +514,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  free(c);" EOL;
+    builtinFnDefCode += "  str_free((struct str) s);" EOL;
     builtinFnDefCode += "  return (struct buffer) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -1033,6 +1034,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.fnProcessRunSync = true;
     this->_activateBuiltin("definitions");
     this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrFree");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("libString");

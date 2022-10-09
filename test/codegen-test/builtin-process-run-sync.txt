@@ -115,6 +115,7 @@ struct buffer process_run_sync (struct str s) {
     exit(EXIT_FAILURE);
   }
   free(c);
+  str_free((struct str) s);
   return (struct buffer) {d, l};
 }
 struct str str_alloc (const char *r) {
@@ -132,4 +133,4 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-[Buffer 48 65 6c 6c 6f 2c 20 57 6f 72 6c 64 21 0a]
+[Buffer {{ (22 )? }}48 65 6c 6c 6f 2c 20 57 6f 72 6c 64 21 {{ (22 )? }}0a]

@@ -27,7 +27,7 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
 
   auto pcloseWrapper = [&returnCode] (FILE *fd) {
     #if defined(OS_WINDOWS)
-      returnCode = _pclose(fd) / 256;
+      returnCode = _pclose(fd);
     #else
       returnCode = pclose(fd) / 256;
     #endif

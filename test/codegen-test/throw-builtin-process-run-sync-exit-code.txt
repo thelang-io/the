@@ -31,6 +31,7 @@ struct str {
 void *alloc (size_t);
 void buffer_free (struct buffer);struct buffer process_run_sync (struct str);
 struct str str_alloc (const char *);
+void str_free (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -75,6 +76,7 @@ struct buffer process_run_sync (struct str s) {
     exit(EXIT_FAILURE);
   }
   free(c);
+  str_free((struct str) s);
   return (struct buffer) {d, l};
 }
 struct str str_alloc (const char *r) {
@@ -82,6 +84,9 @@ struct str str_alloc (const char *r) {
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 
 int main () {
