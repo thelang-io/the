@@ -505,7 +505,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "    l += y;" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
-    builtinFnDefCode += "    int e = _pclose(f) / 256;" EOL;
+    builtinFnDefCode += "    int e = _pclose(f);" EOL;
     builtinFnDefCode += "  #else" EOL;
     builtinFnDefCode += "    int e = pclose(f) / 256;" EOL;
     builtinFnDefCode += "  #endif" EOL;

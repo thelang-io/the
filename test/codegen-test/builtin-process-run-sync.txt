@@ -106,7 +106,7 @@ struct buffer process_run_sync (struct str s) {
     l += y;
   }
   #ifdef THE_OS_WINDOWS
-    int e = _pclose(f) / 256;
+    int e = _pclose(f);
   #else
     int e = pclose(f) / 256;
   #endif
