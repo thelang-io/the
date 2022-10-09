@@ -117,6 +117,7 @@ struct str buffer_str (struct buffer b) {
   memcpy(d, "[Buffer", 7);
   for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);
   d[l - 1] = ']';
+  free(b.d);
   return (struct str) {d, l};
 }
 struct str str_alloc (const char *r) {
