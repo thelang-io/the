@@ -126,4 +126,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: process `{{ (exit 1|exit /b 1) }}` exited with exit code 1
+Error: process `{{ (exit 1|exit \/b 1) }}` exited with exit code 1
