@@ -253,6 +253,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += R"(  memcpy(d, "[Buffer", 7);)" EOL;
     builtinFnDefCode += R"(  for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);)" EOL;
     builtinFnDefCode += "  d[l - 1] = ']';" EOL;
+    builtinFnDefCode += "  free(b.d);" EOL;
     builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
