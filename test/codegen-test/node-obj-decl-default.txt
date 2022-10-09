@@ -182,7 +182,7 @@ void __THE_1_array_opt_int_free (struct __THE_1_array_opt_int n) {
 }
 void __THE_1_opt_array_int_free (struct __THE_1_array_int *n) {
   if (n == NULL) return;
-  __THE_1_array_int_free(*n);
+  __THE_1_array_int_free((struct __THE_1_array_int) *n);
   free(n);
 }
 struct __THE_1_array_opt_array_int __THE_1_array_opt_array_int_alloc (size_t x, ...) {

@@ -463,6 +463,11 @@ bool Type::matchNice (const Type *type) const {
     numberTypeMatch(this->name, type->name);
 }
 
+// todo test
+bool Type::shouldBeFreed () const {
+  return this->isAny() || this->isArray() || this->isFn() || this->isObj() || this->isOpt() || this->isStr();
+}
+
 std::string Type::xml (std::size_t indent) const {
   if (this->builtin) {
     return std::string(indent, ' ') + R"(<BuiltinType name=")" + this->name + R"(" />)";

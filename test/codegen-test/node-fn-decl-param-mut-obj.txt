@@ -31,6 +31,7 @@ main {
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct __THE_1_Test_0;
 struct __THE_1_fn$0P;

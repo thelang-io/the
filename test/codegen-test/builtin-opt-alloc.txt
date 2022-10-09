@@ -323,7 +323,7 @@ struct __THE_1_array_int *__THE_1_opt_array_int_alloc (struct __THE_1_array_int 
 }
 void __THE_1_opt_array_int_free (struct __THE_1_array_int *n) {
   if (n == NULL) return;
-  __THE_1_array_int_free(*n);
+  __THE_1_array_int_free((struct __THE_1_array_int) *n);
   free(n);
 }
 bool *__THE_1_opt_bool_alloc (bool n) {
@@ -387,7 +387,7 @@ struct __THE_1_fn$0 *__THE_1_opt_fn$0_alloc (struct __THE_1_fn$0 n) {
 }
 void __THE_1_opt_fn$0_free (struct __THE_1_fn$0 *n) {
   if (n == NULL) return;
-  __THE_1_fn$0_free(*n);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) *n);
   free(n);
 }
 int8_t *__THE_1_opt_i8_alloc (int8_t n) {
@@ -442,7 +442,7 @@ struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_TestObj_0 *
 }
 void __THE_1_opt_TestObj_free (struct __THE_1_TestObj_0 **n) {
   if (n == NULL) return;
-  __THE_1_TestObj_0_free(*n);
+  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) *n);
   free(n);
 }
 int32_t **__THE_1_opt_ref_int_alloc (int32_t *n) {

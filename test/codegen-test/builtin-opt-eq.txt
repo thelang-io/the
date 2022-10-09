@@ -346,7 +346,7 @@ bool __THE_1_opt_array_int_eq (struct __THE_1_array_int *n1, struct __THE_1_arra
 }
 void __THE_1_opt_array_int_free (struct __THE_1_array_int *n) {
   if (n == NULL) return;
-  __THE_1_array_int_free(*n);
+  __THE_1_array_int_free((struct __THE_1_array_int) *n);
   free(n);
 }
 bool __THE_1_opt_array_int_ne (struct __THE_1_array_int *n1, struct __THE_1_array_int *n2) {
@@ -455,7 +455,7 @@ bool __THE_1_opt_TestObj_eq (struct __THE_1_TestObj_0 **n1, struct __THE_1_TestO
 }
 void __THE_1_opt_TestObj_free (struct __THE_1_TestObj_0 **n) {
   if (n == NULL) return;
-  __THE_1_TestObj_0_free(*n);
+  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) *n);
   free(n);
 }
 bool __THE_1_opt_TestObj_ne (struct __THE_1_TestObj_0 **n1, struct __THE_1_TestObj_0 **n2) {

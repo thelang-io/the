@@ -42,6 +42,12 @@ struct CodegenBuiltins {
   bool fnAnyRealloc = false;
   bool fnAnyStr = false;
   bool fnBoolStr = false;
+  bool fnBufferCopy = false;
+  bool fnBufferEq = false;
+  bool fnBufferFree = false;
+  bool fnBufferNe = false;
+  bool fnBufferRealloc = false;
+  bool fnBufferStr = false;
   bool fnByteStr = false;
   bool fnCharStr = false;
   bool fnCstrConcatStr = false;
@@ -78,6 +84,7 @@ struct CodegenBuiltins {
   bool fnStrNot = false;
   bool fnStrRealloc = false;
   bool fnStrSlice = false;
+  bool fnStrToBuffer = false;
   bool fnStrTrim = false;
   bool fnU8Str = false;
   bool fnU16Str = false;
@@ -96,6 +103,7 @@ struct CodegenBuiltins {
   bool libUnistd = false;
   bool libWindows = false;
   bool typeAny = false;
+  bool typeBuffer = false;
   bool typeStr = false;
 };
 
@@ -168,13 +176,40 @@ class Codegen {
   std::string _block (const ASTBlock &, bool = true);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
   std::string _flags () const;
+  std::string _genCopyFn (
+    Type *,
+    const std::string &,
+    const std::optional<std::vector<std::string> *> & = std::nullopt,
+    const std::optional<std::vector<std::string> *> & = std::nullopt
+  );
   std::string _genEqFn (
-    const CodegenTypeInfo &,
-    const std::variant<std::string, ASTNodeExpr> &,
-    const std::variant<std::string, ASTNodeExpr> &,
+    Type *,
+    const std::string &,
+    const std::string &,
     const std::optional<std::vector<std::string> *> & = std::nullopt,
     const std::optional<std::vector<std::string> *> & = std::nullopt,
     bool = false
+  );
+  std::string _genFreeFn (
+    Type *,
+    const std::string &,
+    const std::optional<std::vector<std::string> *> & = std::nullopt,
+    const std::optional<std::vector<std::string> *> & = std::nullopt
+  );
+  std::string _genReallocFn (
+    Type *,
+    const std::string &,
+    const std::string &,
+    const std::optional<std::vector<std::string> *> & = std::nullopt,
+    const std::optional<std::vector<std::string> *> & = std::nullopt
+  );
+  std::string _genStrFn (
+    Type *,
+    const std::string &,
+    const std::optional<std::vector<std::string> *> & = std::nullopt,
+    const std::optional<std::vector<std::string> *> & = std::nullopt,
+    bool = true,
+    bool = true
   );
   std::string _node (const ASTNode &, bool = true, CodegenPhase phase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);

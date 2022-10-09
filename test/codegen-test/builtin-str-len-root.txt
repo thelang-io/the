@@ -56,7 +56,6 @@ main {
   #define THE_EOL "\n"
 #endif
 
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -103,6 +103,7 @@ struct Type {
   bool match (const Type *) const;
   bool matchExact (const Type *) const;
   bool matchNice (const Type *) const;
+  bool shouldBeFreed () const;
   std::string xml (std::size_t = 0) const;
 };
 
