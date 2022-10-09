@@ -1,0 +1,92 @@
+======= stdin =======
+main {
+  process_runSync("exit 1")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void buffer_free (struct buffer);struct buffer process_run_sync (struct str);
+struct str str_alloc (const char *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
+struct buffer process_run_sync (struct str s) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  #ifdef THE_OS_WINDOWS
+    FILE *f = _popen(c, "r");
+  #else
+    FILE *f = popen(c, "r");
+  #endif
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to run process `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  unsigned char *d = NULL;
+  unsigned char b[4096];
+  size_t l = 0;
+  size_t y;
+  while ((y = fread(b, 1, sizeof(b), f)) > 0) {
+    d = realloc(d, l + y);
+    memcpy(&d[l], b, y);
+    l += y;
+  }
+  #ifdef THE_OS_WINDOWS
+    int e = _pclose(f) / 256;
+  #else
+    int e = pclose(f) / 256;
+  #endif
+  if (e != 0) {
+    fprintf(stderr, "Error: process `%s` exited with exit code %d" THE_EOL, c, e);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  return (struct buffer) {d, l};
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+
+int main () {
+  buffer_free((struct buffer) process_run_sync(str_alloc("exit 1")));
+}
+======= flags =======
+======= stderr =======
+Error: process `exit 1` exited with exit code 1

@@ -117,8 +117,6 @@ void TypeMap::init () {
 
   this->_items.push_back(std::make_unique<Type>(Type{"buffer_Buffer", "@buffer_Buffer", TypeObj{}, {}, true}));
   auto bufferBufferType = this->_items.back().get();
-  this->_items.push_back(std::make_unique<Type>(Type{"process_CompletedProcess", "@process_CompletedProcess", TypeObj{}, {}, true}));
-  auto processCompletedProcessType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"any", "@any", TypeObj{}, {}, true}));
   auto anyType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"bool", "@bool", TypeObj{}, {}, true}));
@@ -158,12 +156,6 @@ void TypeMap::init () {
 
   this->_items.push_back(std::make_unique<Type>(Type{"buffer_Buffer.str", "@buffer_Buffer.str", TypeFn{strType}, {}, true}));
   bufferBufferType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
-
-  processCompletedProcessType->fields.push_back(TypeField{"code", intType, false, true});
-  processCompletedProcessType->fields.push_back(TypeField{"stdout", bufferBufferType, false, true});
-  processCompletedProcessType->fields.push_back(TypeField{"stderr", bufferBufferType, false, true});
-  this->_items.push_back(std::make_unique<Type>(Type{"process_CompletedProcess.str", "@process_CompletedProcess.str", TypeFn{strType}, {}, true}));
-  processCompletedProcessType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 
   this->_items.push_back(std::make_unique<Type>(Type{"any.str", "@any.str", TypeFn{strType}, {}, true}));
   anyType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
@@ -228,7 +220,7 @@ void TypeMap::init () {
     TypeFnParam{"terminator", strType, false, false, false}
   }};
 
-  auto processRunTypeFn = TypeFn{processCompletedProcessType, {
+  auto processRunTypeFn = TypeFn{bufferBufferType, {
     TypeFnParam{"command", strType, false, true, false}
   }};
 

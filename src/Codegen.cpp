@@ -480,6 +480,44 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnProcessRunSync) {
+    builtinFnDeclCode += "struct buffer process_run_sync (struct str);" EOL;
+    builtinFnDefCode += "struct buffer process_run_sync (struct str s) {" EOL;
+    builtinFnDefCode += "  char *c = alloc(s.l + 1);" EOL;
+    builtinFnDefCode += "  memcpy(c, s.d, s.l);" EOL;
+    builtinFnDefCode += R"(  c[s.l] = '\0';)" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += R"(    FILE *f = _popen(c, "r");)" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += R"(    FILE *f = popen(c, "r");)" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  if (f == NULL) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to run process `%s`" THE_EOL, c);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  unsigned char *d = NULL;" EOL;
+    builtinFnDefCode += "  unsigned char b[4096];" EOL;
+    builtinFnDefCode += "  size_t l = 0;" EOL;
+    builtinFnDefCode += "  size_t y;" EOL;
+    builtinFnDefCode += "  while ((y = fread(b, 1, sizeof(b), f)) > 0) {" EOL;
+    builtinFnDefCode += "    d = realloc(d, l + y);" EOL;
+    builtinFnDefCode += "    memcpy(&d[l], b, y);" EOL;
+    builtinFnDefCode += "    l += y;" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += "    int e = _pclose(f) / 256;" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    int e = pclose(f) / 256;" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  if (e != 0) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: process `%s` exited with exit code %d" THE_EOL, c, e);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  free(c);" EOL;
+    builtinFnDefCode += "  return (struct buffer) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnStrAlloc) {
     builtinFnDeclCode += "struct str str_alloc (const char *);" EOL;
     builtinFnDefCode += "struct str str_alloc (const char *r) {" EOL;
@@ -991,6 +1029,15 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdint");
     this->_activateBuiltin("libUnistd");
     this->_activateBuiltin("libWindows");
+  } else if (name == "fnProcessRunSync") {
+    this->builtins.fnProcessRunSync = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
+    this->_activateBuiltin("typeStr");
   } else if (name == "fnStrAlloc") {
     this->builtins.fnStrAlloc = true;
     this->_activateBuiltin("fnAlloc");
@@ -2471,9 +2518,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       this->_activateBuiltin("fnProcessCwd");
       code = "process_cwd()";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_runSync") {
-      // todo
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+
+      this->_activateBuiltin("fnProcessRunSync");
+      code = "process_run_sync(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u64"));
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
 
       this->_activateBuiltin("fnSleepSync");
       code = "sleep_sync(" + arg1Expr + ")";
@@ -2529,8 +2579,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         if (exprCallCalleeTypeInfo.realType->codeName == "@buffer_Buffer.str") {
           this->_activateBuiltin("fnBufferStr");
           typeStrFn = "buffer_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@process_CompletedProcess.str") {
-          // todo
         } else if (
           exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
@@ -2555,7 +2603,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = typeStrFn + calleeCode;
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.find") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
-        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
 
         this->_activateBuiltin("fnStrFind");
         code = "str_find(" + calleeCode + ", " + arg1Expr + ")";
@@ -2838,7 +2886,7 @@ std::string Codegen::_type (const Type *type) {
     return "struct buffer ";
   } else if (type->isObj()) {
     if (type->builtin) {
-      return type->name;
+      return "struct " + type->name + " ";
     }
 
     auto typeName = Codegen::typeName(type->codeName);

@@ -67,6 +67,7 @@ struct CodegenBuiltins {
   bool fnPrint = false;
   bool fnProcessArgs = false;
   bool fnProcessCwd = false;
+  bool fnProcessRunSync = false;
   bool fnSleepSync = false;
   bool fnStrAlloc = false;
   bool fnStrAt = false;

@@ -99,7 +99,7 @@ TEST_P(CodegenPassTest, Passes) {
   EXPECT_EQ(expectedOutput, actualStdout);
 
   if (param == "builtin-exit-one") {
-    EXPECT_NE(actualReturnCode, 0);
+    EXPECT_EQ(actualReturnCode, 1);
   } else {
     EXPECT_EQ(actualReturnCode, 0);
   }
@@ -209,6 +209,8 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-process-args-root",
   "builtin-process-cwd",
   "builtin-process-cwd-root",
+  "builtin-process-run-sync",
+  "builtin-process-run-sync-root",
   "builtin-sleep-sync",
   "builtin-str-at",
   "builtin-str-at-root",
@@ -525,6 +527,7 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
   "throw-builtin-array-at-empty",
   "throw-builtin-array-at-high",
   "throw-builtin-array-at-low",
+  "throw-builtin-process-run-sync-exit-code",
   "throw-builtin-str-at-empty",
   "throw-builtin-str-at-high",
   "throw-builtin-str-at-low"
