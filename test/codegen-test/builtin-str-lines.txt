@@ -161,34 +161,35 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct __THE_1_array_str str_lines (struct str s, unsigned char o1, bool n1) {
-  if (s.l == 0) return (struct __THE_1_array_str) {NULL, 0};
   bool k = o1 == 0 ? false : n1;
   struct str *r = NULL;
   size_t l = 0;
-  char *d = alloc(s.l);
-  size_t i = 0;
-  for (size_t j = 0; j < s.l; j++) {
-    char c = s.d[j];
-    if (c == '\r' || c == '\n') {
-      if (k) d[i++] = c;
-      if (c == '\r' && j + 1 < s.l && s.d[j + 1] == '\n') {
-        j++;
-        if (k) d[i++] = s.d[j];
+  if (s.l == 0) {
+    char *d = alloc(s.l);
+    size_t i = 0;
+    for (size_t j = 0; j < s.l; j++) {
+      char c = s.d[j];
+      if (c == '\r' || c == '\n') {
+        if (k) d[i++] = c;
+        if (c == '\r' && j + 1 < s.l && s.d[j + 1] == '\n') {
+          j++;
+          if (k) d[i++] = s.d[j];
+        }
+        char *a = alloc(i);
+        memcpy(a, d, i);
+        r = re_alloc(r, ++l * sizeof(struct str));
+        r[l - 1] = (struct str) {a, i};
+        i = 0;
+      } else {
+        d[i++] = c;
       }
+    }
+    if (i != 0) {
       char *a = alloc(i);
       memcpy(a, d, i);
       r = re_alloc(r, ++l * sizeof(struct str));
       r[l - 1] = (struct str) {a, i};
-      i = 0;
-    } else {
-      d[i++] = c;
     }
-  }
-  if (i != 0) {
-    char *a = alloc(i);
-    memcpy(a, d, i);
-    r = re_alloc(r, ++l * sizeof(struct str));
-    r[l - 1] = (struct str) {a, i};
   }
   free(d);
   free(s.d);
