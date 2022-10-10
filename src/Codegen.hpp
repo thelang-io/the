@@ -49,6 +49,11 @@ struct CodegenBuiltins {
   bool fnBufferRealloc = false;
   bool fnBufferStr = false;
   bool fnByteStr = false;
+  bool fnCharIsAlpha = false;
+  bool fnCharIsAlphaNum = false;
+  bool fnCharIsDigit = false;
+  bool fnCharIsSpace = false;
+  bool fnCharRepeat = false;
   bool fnCharStr = false;
   bool fnCstrConcatStr = false;
   bool fnCstrEqCstr = false;
@@ -68,6 +73,7 @@ struct CodegenBuiltins {
   bool fnProcessArgs = false;
   bool fnProcessCwd = false;
   bool fnProcessRunSync = false;
+  bool fnReAlloc = false;
   bool fnSleepSync = false;
   bool fnStrAlloc = false;
   bool fnStrAt = false;
@@ -80,6 +86,9 @@ struct CodegenBuiltins {
   bool fnStrFind = false;
   bool fnStrFree = false;
   bool fnStrLen = false;
+  bool fnStrLines = false;
+  bool fnStrLower = false;
+  bool fnStrLowerFirst = false;
   bool fnStrNeCstr = false;
   bool fnStrNeStr = false;
   bool fnStrNot = false;
@@ -87,6 +96,8 @@ struct CodegenBuiltins {
   bool fnStrSlice = false;
   bool fnStrToBuffer = false;
   bool fnStrTrim = false;
+  bool fnStrUpper = false;
+  bool fnStrUpperFirst = false;
   bool fnU8Str = false;
   bool fnU16Str = false;
   bool fnU32Str = false;

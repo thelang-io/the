@@ -35,6 +35,7 @@ struct __THE_1_array_str {
 };
 
 void *alloc (size_t);
+void *re_alloc (void *, size_t);
 void print (FILE *, const char *, ...);
 struct __THE_1_array_str process_args (int, char **);
 struct str str_alloc (const char *);
@@ -47,6 +48,14 @@ void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -114,7 +123,7 @@ struct str str_escape (const struct str s) {
   for (size_t i = 0; i < s.l; i++) {
     char c = s.d[i];
     if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
-      if (l + 2 > s.l) d = realloc(d, l + 2);
+      if (l + 2 > s.l) d = re_alloc(d, l + 2);
       d[l++] = '\\';
       if (c == '\f') d[l++] = 'f';
       else if (c == '\n') d[l++] = 'n';
@@ -124,7 +133,7 @@ struct str str_escape (const struct str s) {
       else if (c == '"') d[l++] = '"';
       continue;
     }
-    if (l + 1 > s.l) d = realloc(d, l + 1);
+    if (l + 1 > s.l) d = re_alloc(d, l + 1);
     d[l++] = c;
   }
   return (struct str) {d, l};

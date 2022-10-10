@@ -164,6 +164,18 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnReAlloc) {
+    builtinFnDeclCode += "void *re_alloc (void *, size_t);" EOL;
+    builtinFnDefCode += "void *re_alloc (void *d, size_t l) {" EOL;
+    builtinFnDefCode += "  void *r = realloc(d, l);" EOL;
+    builtinFnDefCode += "  if (r == NULL) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnAnyCopy) {
     builtinFnDeclCode += "struct any any_copy (const struct any);" EOL;
     builtinFnDefCode += "struct any any_copy (const struct any n) {" EOL;
@@ -264,6 +276,46 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  char buf[512];" EOL;
     builtinFnDefCode += R"(  sprintf(buf, "%u", x);)" EOL;
     builtinFnDefCode += "  return str_alloc(buf);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsAlpha) {
+    builtinFnDeclCode += "bool char_is_alpha (char);" EOL;
+    builtinFnDefCode += "bool char_is_alpha (char c) {" EOL;
+    builtinFnDefCode += "  return isalpha(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsAlphaNum) {
+    builtinFnDeclCode += "bool char_is_alpha_num (char);" EOL;
+    builtinFnDefCode += "bool char_is_alpha_num (char c) {" EOL;
+    builtinFnDefCode += "  return isalnum(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsDigit) {
+    builtinFnDeclCode += "bool char_is_digit (char);" EOL;
+    builtinFnDefCode += "bool char_is_digit (char c) {" EOL;
+    builtinFnDefCode += "  return isdigit(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsSpace) {
+    builtinFnDeclCode += "bool char_is_space (char);" EOL;
+    builtinFnDefCode += "bool char_is_space (char c) {" EOL;
+    builtinFnDefCode += "  return isspace(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharRepeat) {
+    builtinFnDeclCode += "struct str char_repeat (char, uint32_t);" EOL;
+    builtinFnDefCode += "struct str char_repeat (char c, uint32_t k) {" EOL;
+    builtinFnDefCode += R"(  if (k == 0) return str_alloc("");)" EOL;
+    builtinFnDefCode += "  size_t l = (size_t) k;" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  size_t i = 0;" EOL;
+    builtinFnDefCode += "  while (i < l) d[i++] = c;" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -500,7 +552,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  size_t l = 0;" EOL;
     builtinFnDefCode += "  size_t y;" EOL;
     builtinFnDefCode += "  while ((y = fread(b, 1, sizeof(b), f)) > 0) {" EOL;
-    builtinFnDefCode += "    d = realloc(d, l + y);" EOL;
+    builtinFnDefCode += "    d = re_alloc(d, l + y);" EOL;
     builtinFnDefCode += "    memcpy(&d[l], b, y);" EOL;
     builtinFnDefCode += "    l += y;" EOL;
     builtinFnDefCode += "  }" EOL;
@@ -601,7 +653,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) {" EOL;
     builtinFnDefCode += "    char c = s.d[i];" EOL;
     builtinFnDefCode += R"(    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {)" EOL;
-    builtinFnDefCode += "      if (l + 2 > s.l) d = realloc(d, l + 2);" EOL;
+    builtinFnDefCode += "      if (l + 2 > s.l) d = re_alloc(d, l + 2);" EOL;
     builtinFnDefCode += R"(      d[l++] = '\\';)" EOL;
     builtinFnDefCode += R"(      if (c == '\f') d[l++] = 'f';)" EOL;
     builtinFnDefCode += R"(      else if (c == '\n') d[l++] = 'n';)" EOL;
@@ -611,7 +663,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += R"(      else if (c == '"') d[l++] = '"';)" EOL;
     builtinFnDefCode += "      continue;" EOL;
     builtinFnDefCode += "    }" EOL;
-    builtinFnDefCode += "    if (l + 1 > s.l) d = realloc(d, l + 1);" EOL;
+    builtinFnDefCode += "    if (l + 1 > s.l) d = re_alloc(d, l + 1);" EOL;
     builtinFnDefCode += "    d[l++] = c;" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  return (struct str) {d, l};" EOL;
@@ -651,6 +703,63 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  size_t l = s.l;" EOL;
     builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return l;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrLines) {
+    builtinFnDeclCode += "struct " + Codegen::typeName("array_str") + " str_lines (struct str, unsigned char, bool);" EOL;
+    builtinFnDefCode += "struct " + Codegen::typeName("array_str") + " str_lines (struct str s, unsigned char o1, bool n1) {" EOL;
+    builtinFnDefCode += "  if (s.l == 0) return (struct " + Codegen::typeName("array_str") + ") {NULL, 0};" EOL;
+    builtinFnDefCode += "  bool k = o1 == 0 ? false : n1;" EOL;
+    builtinFnDefCode += "  struct str *r = NULL;" EOL;
+    builtinFnDefCode += "  size_t l = 0;" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
+    builtinFnDefCode += "  size_t i = 0;" EOL;
+    builtinFnDefCode += "  for (size_t j = 0; j < s.l; j++) {" EOL;
+    builtinFnDefCode += "    char c = s.d[j];" EOL;
+    builtinFnDefCode += R"(    if (c == '\r' || c == '\n') {)" EOL;
+    builtinFnDefCode += "      if (k) d[i++] = c;" EOL;
+    builtinFnDefCode += R"(      if (c == '\r' && j + 1 < s.l && s.d[j + 1] == '\n') {)" EOL;
+    builtinFnDefCode += "        j++;" EOL;
+    builtinFnDefCode += "        if (k) d[i++] = s.d[j];" EOL;
+    builtinFnDefCode += "      }" EOL;
+    builtinFnDefCode += "      char *a = alloc(i);" EOL;
+    builtinFnDefCode += "      memcpy(a, d, i);" EOL;
+    builtinFnDefCode += "      r = re_alloc(r, ++l * sizeof(struct str));" EOL;
+    builtinFnDefCode += "      r[l - 1] = (struct str) {a, i};" EOL;
+    builtinFnDefCode += "      i = 0;" EOL;
+    builtinFnDefCode += "    } else {" EOL;
+    builtinFnDefCode += "      d[i++] = c;" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  if (i != 0) {" EOL;
+    builtinFnDefCode += "    char *a = alloc(i);" EOL;
+    builtinFnDefCode += "    memcpy(a, d, i);" EOL;
+    builtinFnDefCode += "    r = re_alloc(r, ++l * sizeof(struct str));" EOL;
+    builtinFnDefCode += "    r[l - 1] = (struct str) {a, i};" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return (struct " + Codegen::typeName("array_str") + ") {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrLower) {
+    builtinFnDeclCode += "struct str str_lower (struct str);" EOL;
+    builtinFnDefCode += "struct str str_lower (struct str s) {" EOL;
+    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
+    builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) d[i] = tolower(s.d[i]);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrLowerFirst) {
+    builtinFnDeclCode += "struct str str_lower_first (struct str);" EOL;
+    builtinFnDefCode += "struct str str_lower_first (struct str s) {" EOL;
+    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
+    builtinFnDefCode += "  d[0] = tolower(d[0]);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -734,6 +843,27 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  for (size_t k = 0; k < l;) r[k++] = s.d[i++];" EOL;
     builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrUpper) {
+    builtinFnDeclCode += "struct str str_upper (struct str);" EOL;
+    builtinFnDefCode += "struct str str_upper (struct str s) {" EOL;
+    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
+    builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) d[i] = toupper(s.d[i]);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrUpperFirst) {
+    builtinFnDeclCode += "struct str str_upper_first (struct str);" EOL;
+    builtinFnDefCode += "struct str str_upper_first (struct str s) {" EOL;
+    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
+    builtinFnDefCode += "  d[0] = toupper(d[0]);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -914,6 +1044,29 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnCharIsAlpha") {
+    this->builtins.fnCharIsAlpha = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsAlphaNum") {
+    this->builtins.fnCharIsAlphaNum = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsDigit") {
+    this->builtins.fnCharIsDigit = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsSpace") {
+    this->builtins.fnCharIsSpace = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharRepeat") {
+    this->builtins.fnCharRepeat = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdint");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
   } else if (name == "fnCharStr") {
     this->builtins.fnCharStr = true;
     this->_activateBuiltin("fnStrAlloc");
@@ -1024,22 +1177,28 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("libUnistd");
     this->_activateBuiltin("typeStr");
-  } else if (name == "fnSleepSync") {
-    this->builtins.fnSleepSync = true;
-    this->_activateBuiltin("definitions");
-    this->_activateBuiltin("libStdint");
-    this->_activateBuiltin("libUnistd");
-    this->_activateBuiltin("libWindows");
   } else if (name == "fnProcessRunSync") {
     this->builtins.fnProcessRunSync = true;
     this->_activateBuiltin("definitions");
     this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnReAlloc");
     this->_activateBuiltin("fnStrFree");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("libString");
     this->_activateBuiltin("typeBuffer");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnReAlloc") {
+    this->builtins.fnReAlloc = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
+  } else if (name == "fnSleepSync") {
+    this->builtins.fnSleepSync = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libStdint");
+    this->_activateBuiltin("libUnistd");
+    this->_activateBuiltin("libWindows");
   } else if (name == "fnStrAlloc") {
     this->builtins.fnStrAlloc = true;
     this->_activateBuiltin("fnAlloc");
@@ -1083,6 +1242,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "fnStrEscape") {
     this->builtins.fnStrEscape = true;
     this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnReAlloc");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrFind") {
@@ -1098,6 +1258,31 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "fnStrLen") {
     this->builtins.fnStrLen = true;
     this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrLines") {
+    this->builtins.fnStrLines = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnReAlloc");
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+
+    auto typeInfo = this->_typeInfo(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")));
+    this->_activateEntity(typeInfo.typeName);
+  } else if (name == "fnStrLower") {
+    this->builtins.fnStrLower = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrLowerFirst") {
+    this->builtins.fnStrLowerFirst = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libString");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrNeCstr") {
     this->builtins.fnStrNeCstr = true;
@@ -1137,6 +1322,18 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libCtype");
     this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrUpper") {
+    this->builtins.fnStrUpper = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrUpperFirst") {
+    this->builtins.fnStrUpperFirst = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libCtype");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnU8Str") {
     this->builtins.fnU8Str = true;
@@ -2542,7 +2739,35 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
       auto calleeTypeInfo = this->_typeInfo(calleeNodeExpr.type);
 
-      if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
+      if (exprCallCalleeTypeInfo.realType->codeName.ends_with(".str")) {
+        auto typeStrFn = std::string();
+
+        if (exprCallCalleeTypeInfo.realType->codeName == "@buffer_Buffer.str") {
+          this->_activateBuiltin("fnBufferStr");
+          typeStrFn = "buffer_str";
+        } else if (
+          exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@opt.str"
+        ) {
+          this->_activateEntity(calleeTypeInfo.realTypeName + "_str");
+          typeStrFn = calleeTypeInfo.realTypeName + "_str";
+        } else {
+          auto codeName = exprCallCalleeTypeInfo.realType->codeName.substr(1);
+
+          this->_activateBuiltin("fn" + Token::upperFirst(codeName.substr(0, codeName.find('.'))) + "Str");
+          typeStrFn = codeName.substr(0, codeName.find('.')) + "_str";
+        }
+
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
+
+        if (!calleeNodeExpr.parenthesized) {
+          calleeCode = "(" + calleeCode + ")";
+        }
+
+        code = typeStrFn + calleeCode;
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
         auto arg2Expr = std::string();
@@ -2571,9 +2796,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         code += ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.reverse") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         this->_activateEntity(calleeTypeInfo.realTypeName + "_reverse");
-        code = calleeTypeInfo.realTypeName + "_reverse(" + calleeCode + ")";
+        code = calleeTypeInfo.realTypeName + "_reverse(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -2583,40 +2807,39 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName.ends_with(".str")) {
-        auto typeStrFn = std::string();
-
-        if (exprCallCalleeTypeInfo.realType->codeName == "@buffer_Buffer.str") {
-          this->_activateBuiltin("fnBufferStr");
-          typeStrFn = "buffer_str";
-        } else if (
-          exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@opt.str"
-        ) {
-          this->_activateEntity(calleeTypeInfo.realTypeName + "_str");
-          typeStrFn = calleeTypeInfo.realTypeName + "_str";
-        } else {
-          auto codeName = exprCallCalleeTypeInfo.realType->codeName.substr(1);
-
-          this->_activateBuiltin("fn" + Token::upperFirst(codeName.substr(0, codeName.find('.'))) + "Str");
-          typeStrFn = codeName.substr(0, codeName.find('.')) + "_str";
-        }
-
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
-
-        if (!calleeNodeExpr.parenthesized) {
-          calleeCode = "(" + calleeCode + ")";
-        }
-
-        code = typeStrFn + calleeCode;
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlpha") {
+        this->_activateBuiltin("fnCharIsAlpha");
+        code = "char_is_alpha(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlphaNum") {
+        this->_activateBuiltin("fnCharIsAlphaNum");
+        code = "char_is_alpha_num(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isDigit") {
+        this->_activateBuiltin("fnCharIsDigit");
+        code = "char_is_digit(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isSpace") {
+        this->_activateBuiltin("fnCharIsSpace");
+        code = "char_is_space(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.repeat") {
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
+        this->_activateBuiltin("fnCharRepeat");
+        code = "char_repeat(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ", " + arg1Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.find") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-
         this->_activateBuiltin("fnStrFind");
-        code = "str_find(" + calleeCode + ", " + arg1Expr + ")";
+        code = "str_find(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lines") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
+        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("bool"));
+
+        this->_activateBuiltin("fnStrLines");
+        code = "str_lines(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lower") {
+        this->_activateBuiltin("fnStrLower");
+        code = "str_lower(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lowerFirst") {
+        this->_activateBuiltin("fnStrLowerFirst");
+        code = "str_lower_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -2632,6 +2855,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.trim") {
         this->_activateBuiltin("fnStrTrim");
         code = "str_trim(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upper") {
+        this->_activateBuiltin("fnStrUpper");
+        code = "str_upper(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upperFirst") {
+        this->_activateBuiltin("fnStrUpperFirst");
+        code = "str_upper_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
       }
     } else {
       auto fn = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);
@@ -3223,12 +3452,12 @@ std::string Codegen::_typeNameArray (const Type *type) {
   popFnEntity.def += "  return n->d[n->l];" EOL;
   popFnEntity.def += "}";
 
-  auto pushFnEntity = CodegenEntity{typeName + "_push", CODEGEN_ENTITY_FN, { "libStdarg", "libStdlib" }, { typeName }};
+  auto pushFnEntity = CodegenEntity{typeName + "_push", CODEGEN_ENTITY_FN, { "fnReAlloc", "libStdarg", "libStdlib" }, { typeName }};
   pushFnEntity.decl += "void " + typeName + "_push (struct " + typeName + " *, size_t, ...);";
   pushFnEntity.def += "void " + typeName + "_push (struct " + typeName + " *n, size_t x, ...) {" EOL;
   pushFnEntity.def += "  if (x == 0) return;" EOL;
   pushFnEntity.def += "  n->l += x;" EOL;
-  pushFnEntity.def += "  n->d = realloc(n->d, n->l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+  pushFnEntity.def += "  n->d = re_alloc(n->d, n->l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
   pushFnEntity.def += "  va_list args;" EOL;
   pushFnEntity.def += "  va_start(args, x);" EOL;
   pushFnEntity.def += "  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, " + varArgTypeCode + ");" EOL;

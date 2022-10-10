@@ -1,6 +1,8 @@
 ======= stdin =======
 main {
-  print(process_runSync("echo \"Hello, World!\""))
+  print('a'.repeat(0))
+  print('z'.repeat(1))
+  print('0'.repeat(29))
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -21,20 +23,14 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-struct buffer {
-  unsigned char *d;
-  size_t l;
-};
 struct str {
   char *d;
   size_t l;
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
-struct str buffer_str (struct buffer);
+struct str char_repeat (char, uint32_t);
 void print (FILE *, const char *, ...);
-struct buffer process_run_sync (struct str);
 struct str str_alloc (const char *);
 void str_free (struct str);
 
@@ -46,21 +42,12 @@ void *alloc (size_t l) {
   }
   return r;
 }
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct str buffer_str (struct buffer b) {
-  size_t l = 8 + (b.l * 3);
+struct str char_repeat (char c, uint32_t k) {
+  if (k == 0) return str_alloc("");
+  size_t l = (size_t) k;
   char *d = alloc(l);
-  memcpy(d, "[Buffer", 7);
-  for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);
-  d[l - 1] = ']';
-  free(b.d);
+  size_t i = 0;
+  while (i < l) d[i++] = c;
   return (struct str) {d, l};
 }
 void print (FILE *stream, const char *fmt, ...) {
@@ -92,41 +79,6 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-struct buffer process_run_sync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
-  #ifdef THE_OS_WINDOWS
-    FILE *f = _popen(c, "r");
-  #else
-    FILE *f = popen(c, "r");
-  #endif
-  if (f == NULL) {
-    fprintf(stderr, "Error: failed to run process `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  }
-  unsigned char *d = NULL;
-  unsigned char b[4096];
-  size_t l = 0;
-  size_t y;
-  while ((y = fread(b, 1, sizeof(b), f)) > 0) {
-    d = re_alloc(d, l + y);
-    memcpy(&d[l], b, y);
-    l += y;
-  }
-  #ifdef THE_OS_WINDOWS
-    int e = _pclose(f);
-  #else
-    int e = pclose(f) / 256;
-  #endif
-  if (e != 0) {
-    fprintf(stderr, "Error: process `%s` exited with exit code %d" THE_EOL, c, e);
-    exit(EXIT_FAILURE);
-  }
-  free(c);
-  str_free((struct str) s);
-  return (struct buffer) {d, l};
-}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -138,8 +90,12 @@ void str_free (struct str s) {
 }
 
 int main () {
-  print(stdout, "sz", buffer_str(process_run_sync(str_alloc("echo \"Hello, World!\""))), THE_EOL);
+  print(stdout, "sz", char_repeat('a', 0), THE_EOL);
+  print(stdout, "sz", char_repeat('z', 1), THE_EOL);
+  print(stdout, "sz", char_repeat('0', 29), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
-[Buffer {{ (22 )? }}48 65 6c 6c 6f 2c 20 57 6f 72 6c 64 21 {{ (22 )? }}0a]
+
+z
+00000000000000000000000000000

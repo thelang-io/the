@@ -1,0 +1,209 @@
+======= stdin =======
+main {
+  "".lines()
+  "\r".lines()
+  "\r\n".lines()
+  "\n".lines()
+  "\r\r".lines()
+  "\r\n\r\n".lines()
+  "\n\n".lines()
+  "Test1".lines()
+  "Test1\r".lines()
+  "Test1\n".lines()
+  "Test1\r\n".lines()
+  "Test1\rTest2".lines()
+  "Test1\nTest2".lines()
+  "Test1\r\nTest2".lines()
+  "Test1\rTest2\r".lines()
+  "Test1\rTest2\r\n".lines()
+  "Test1\rTest2\n".lines()
+  "Test1\r\nTest2\r".lines()
+  "Test1\r\nTest2\n".lines()
+  "Test1\r\nTest2\r\n".lines()
+  "Test1\nTest2\r\n".lines()
+  "Test1\nTest2\r".lines()
+  "Test1\nTest2\n".lines()
+  "Test1\nTest2\nTest3".lines()
+  "Test1\nTest2\nTest3\n".lines()
+
+  "".lines(true)
+  "\r".lines(true)
+  "\r\n".lines(true)
+  "\n".lines(true)
+  "\r\r".lines(true)
+  "\r\n\r\n".lines(true)
+  "\n\n".lines(true)
+  "Test1".lines(true)
+  "Test1\r".lines(true)
+  "Test1\n".lines(true)
+  "Test1\r\n".lines(true)
+  "Test1\rTest2".lines(true)
+  "Test1\nTest2".lines(true)
+  "Test1\r\nTest2".lines(true)
+  "Test1\rTest2\r".lines(true)
+  "Test1\rTest2\r\n".lines(true)
+  "Test1\rTest2\n".lines(true)
+  "Test1\r\nTest2\r".lines(true)
+  "Test1\r\nTest2\n".lines(true)
+  "Test1\r\nTest2\r\n".lines(true)
+  "Test1\nTest2\r\n".lines(true)
+  "Test1\nTest2\r".lines(true)
+  "Test1\nTest2\n".lines(true)
+  "Test1\nTest2\nTest3".lines(true)
+  "Test1\nTest2\nTest3\n".lines(true)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_array_str;
+
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct __THE_1_array_str str_lines (struct str, unsigned char, bool);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_array_str str_lines (struct str s, unsigned char o1, bool n1) {
+  if (s.l == 0) return (struct __THE_1_array_str) {NULL, 0};
+  bool k = o1 == 0 ? false : n1;
+  struct str *r = NULL;
+  size_t l = 0;
+  char *d = alloc(s.l);
+  size_t i = 0;
+  for (size_t j = 0; j < s.l; j++) {
+    char c = s.d[j];
+    if (c == '\r' || c == '\n') {
+      if (k) d[i++] = c;
+      if (c == '\r' && j + 1 < s.l && s.d[j + 1] == '\n') {
+        j++;
+        if (k) d[i++] = s.d[j];
+      }
+      char *a = alloc(i);
+      memcpy(a, d, i);
+      r = re_alloc(r, ++l * sizeof(struct str));
+      r[l - 1] = (struct str) {a, i};
+      i = 0;
+    } else {
+      d[i++] = c;
+    }
+  }
+  if (i != 0) {
+    char *a = alloc(i);
+    memcpy(a, d, i);
+    r = re_alloc(r, ++l * sizeof(struct str));
+    r[l - 1] = (struct str) {a, i};
+  }
+  return (struct __THE_1_array_str) {r, l};
+}
+
+void __THE_1_array_str_free (struct __THE_1_array_str);
+
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+
+int main () {
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc(""), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r\r"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r\n\r\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\n\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2\r"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2\r\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2\r"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2\r\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\r\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\r"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\nTest3"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\nTest3\n"), 0, 0));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc(""), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r\r"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\r\n\r\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("\n\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2\r"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2\r\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\rTest2\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2\r"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\r\nTest2\r\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\r\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\r"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\n"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\nTest3"), 1, true));
+  __THE_1_array_str_free((struct __THE_1_array_str) str_lines(str_alloc("Test1\nTest2\nTest3\n"), 1, true));
+}
+======= flags =======
+======= stdout =======

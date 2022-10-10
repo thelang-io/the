@@ -40,11 +40,20 @@ struct __THE_1_array_int {
 };
 
 void *alloc (size_t);
+void *re_alloc (void *, size_t);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -76,7 +85,7 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 void __THE_1_array_int_push (struct __THE_1_array_int *n, size_t x, ...) {
   if (x == 0) return;
   n->l += x;
-  n->d = realloc(n->d, n->l * sizeof(int32_t));
+  n->d = re_alloc(n->d, n->l * sizeof(int32_t));
   va_list args;
   va_start(args, x);
   for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, int32_t);

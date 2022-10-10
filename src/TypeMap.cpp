@@ -163,8 +163,24 @@ void TypeMap::init () {
   boolType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"byte.str", "@byte.str", TypeFn{strType}, {}, true}));
   byteType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  auto repeatCharTypeFn = TypeFn{strType, {
+    TypeFnParam{"times", u32Type, false, true, false}
+  }};
+
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isAlpha", "@char.isAlpha", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isAlpha", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isAlphaNum", "@char.isAlphaNum", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isAlphaNum", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isDigit", "@char.isDigit", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isDigit", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isSpace", "@char.isSpace", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isSpace", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.repeat", "@char.repeat", repeatCharTypeFn, {}, true}));
+  charType->fields.push_back(TypeField{"repeat", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"char.str", "@char.str", TypeFn{strType}, {}, true}));
   charType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
   this->_items.push_back(std::make_unique<Type>(Type{"f32.str", "@f32.str", TypeFn{strType}, {}, true}));
   f32Type->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"f64.str", "@f64.str", TypeFn{strType}, {}, true}));
@@ -186,6 +202,10 @@ void TypeMap::init () {
     TypeFnParam{"search", strType, false, true, false}
   }};
 
+  auto linesStrTypeFn = TypeFn{this->arrayOf(strType), {
+    TypeFnParam{"keepLineBreaks", boolType, false, false, false}
+  }};
+
   auto sliceStrTypeFn = TypeFn{strType, {
     TypeFnParam{"start", i64Type, false, false, false},
     TypeFnParam{"end", i64Type, false, false, false}
@@ -194,12 +214,22 @@ void TypeMap::init () {
   strType->fields.push_back(TypeField{"len", intType, false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.find", "@str.find", findStrTypeFn, {}, true}));
   strType->fields.push_back(TypeField{"find", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.lines", "@str.lines", linesStrTypeFn, {}, true}));
+  strType->fields.push_back(TypeField{"lines", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.toLower", "@str.lower", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"lower", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.toLowerFirst", "@str.lowerFirst", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"lowerFirst", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.slice", "@str.slice", sliceStrTypeFn, {}, true}));
   strType->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.toBuffer", "@str.toBuffer", TypeFn{bufferBufferType}, {}, true}));
   strType->fields.push_back(TypeField{"toBuffer", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.trim", "@str.trim", TypeFn{strType}, {}, true}));
   strType->fields.push_back(TypeField{"trim", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.upper", "@str.upper", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"upper", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.upperFirst", "@str.upperFirst", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"upperFirst", this->_items.back().get(), false, true});
 
   this->_items.push_back(std::make_unique<Type>(Type{"u8.str", "@u8.str", TypeFn{strType}, {}, true}));
   u8Type->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
