@@ -712,7 +712,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  bool k = o1 == 0 ? false : n1;" EOL;
     builtinFnDefCode += "  struct str *r = NULL;" EOL;
     builtinFnDefCode += "  size_t l = 0;" EOL;
-    builtinFnDefCode += "  if (s.l == 0) {" EOL;
+    builtinFnDefCode += "  if (s.l != 0) {" EOL;
     builtinFnDefCode += "    char *d = alloc(s.l);" EOL;
     builtinFnDefCode += "    size_t i = 0;" EOL;
     builtinFnDefCode += "    for (size_t j = 0; j < s.l; j++) {" EOL;
@@ -738,8 +738,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "      r = re_alloc(r, ++l * sizeof(struct str));" EOL;
     builtinFnDefCode += "      r[l - 1] = (struct str) {a, i};" EOL;
     builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    free(d);" EOL;
     builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += "  free(d);" EOL;
     builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return (struct " + Codegen::typeName("array_str") + ") {r, l};" EOL;
     builtinFnDefCode += "}" EOL;
