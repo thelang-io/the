@@ -2427,9 +2427,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@print") {
       auto separator = std::string(R"(" ")");
       auto isSeparatorLit = true;
-      this->_activateBuiltin("definitions");
       auto terminator = std::string("THE_EOL");
       auto isTerminatorLit = true;
+      auto to = std::string("stdout");
 
       for (const auto &exprCallArg : exprCall.args) {
         if (exprCallArg.id != std::nullopt && exprCallArg.id == "separator") {
@@ -2446,13 +2446,21 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
             terminator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"));
             isTerminatorLit = false;
           }
+        } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "to") {
+          if (exprCallArg.expr.isLit()) {
+            to = exprCallArg.expr.litBody() == R"("stderr")" ? "stderr" : "stdout";
+          } else {
+            this->_activateBuiltin("fnCstrEqStr");
+            to = R"(cstr_eq_str("stderr", )" + this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str")) + R"() ? stderr : stdout)";
+          }
         }
       }
 
+      this->_activateBuiltin("definitions");
       this->_activateBuiltin("fnPrint");
       this->_activateBuiltin("libStdio");
 
-      code = std::string(R"(print(stdout, ")");
+      code = "print(" + to + R"(, ")";
 
       auto argsCode = std::string();
       auto argIdx = static_cast<std::size_t>(0);

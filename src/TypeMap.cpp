@@ -217,7 +217,8 @@ void TypeMap::init () {
   auto printTypeFn = TypeFn{voidType, {
     TypeFnParam{"items", anyType, false, false, true},
     TypeFnParam{"separator", strType, false, false, false},
-    TypeFnParam{"terminator", strType, false, false, false}
+    TypeFnParam{"terminator", strType, false, false, false},
+    TypeFnParam{"to", strType, false, false, false}
   }};
 
   auto processRunTypeFn = TypeFn{bufferBufferType, {

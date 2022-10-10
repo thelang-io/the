@@ -104,7 +104,7 @@ TEST_P(CodegenPassTest, Passes) {
     EXPECT_EQ(actualReturnCode, 0);
   }
 
-  if (!this->testMemcheck_) {
+  if (!this->testMemcheck_ && !std::set<std::string>{"builtin-print-to"}.contains(param)) {
     EXPECT_EQ(actualStderr, "");
   } else if (actualReturnCode != 0) {
     std::cout << actualStderr;
@@ -221,6 +221,7 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-os-name",
   "builtin-os-name-root",
   "builtin-print",
+  "builtin-print-to",
   "builtin-process-args",
   "builtin-process-args-root",
   "builtin-process-cwd",
