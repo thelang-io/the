@@ -190,6 +190,8 @@ struct __THE_1_array_str str_lines (struct str s, unsigned char o1, bool n1) {
     r = re_alloc(r, ++l * sizeof(struct str));
     r[l - 1] = (struct str) {a, i};
   }
+  free(d);
+  free(s.d);
   return (struct __THE_1_array_str) {r, l};
 }
 

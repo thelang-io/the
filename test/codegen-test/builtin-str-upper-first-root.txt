@@ -52,11 +52,8 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct str str_upper_first (struct str s) {
-  if (s.l == 0) return str_alloc("");
-  char *d = alloc(s.l);
-  memcpy(d, s.d, s.l);
-  d[0] = toupper(d[0]);
-  return (struct str) {d, s.l};
+  if (s.l != 0) s.d[0] = toupper(s.d[0]);
+  return s;
 }
 
 int main () {

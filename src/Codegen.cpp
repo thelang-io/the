@@ -738,6 +738,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "    r = re_alloc(r, ++l * sizeof(struct str));" EOL;
     builtinFnDefCode += "    r[l - 1] = (struct str) {a, i};" EOL;
     builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  free(d);" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return (struct " + Codegen::typeName("array_str") + ") {r, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -745,21 +747,18 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrLower) {
     builtinFnDeclCode += "struct str str_lower (struct str);" EOL;
     builtinFnDefCode += "struct str str_lower (struct str s) {" EOL;
-    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
-    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
-    builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) d[i] = tolower(s.d[i]);" EOL;
-    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
+    builtinFnDefCode += "  if (s.l != 0) {" EOL;
+    builtinFnDefCode += "    for (size_t i = 0; i < s.l; i++) s.d[i] = tolower(s.d[i]);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrLowerFirst) {
     builtinFnDeclCode += "struct str str_lower_first (struct str);" EOL;
     builtinFnDefCode += "struct str str_lower_first (struct str s) {" EOL;
-    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
-    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
-    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
-    builtinFnDefCode += "  d[0] = tolower(d[0]);" EOL;
-    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
+    builtinFnDefCode += "  if (s.l != 0) s.d[0] = tolower(s.d[0]);" EOL;
+    builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -849,21 +848,18 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrUpper) {
     builtinFnDeclCode += "struct str str_upper (struct str);" EOL;
     builtinFnDefCode += "struct str str_upper (struct str s) {" EOL;
-    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
-    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
-    builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) d[i] = toupper(s.d[i]);" EOL;
-    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
+    builtinFnDefCode += "  if (s.l != 0) {" EOL;
+    builtinFnDefCode += "    for (size_t i = 0; i < s.l; i++) s.d[i] = toupper(s.d[i]);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
   if (this->builtins.fnStrUpperFirst) {
     builtinFnDeclCode += "struct str str_upper_first (struct str);" EOL;
     builtinFnDefCode += "struct str str_upper_first (struct str s) {" EOL;
-    builtinFnDefCode += R"(  if (s.l == 0) return str_alloc("");)" EOL;
-    builtinFnDefCode += "  char *d = alloc(s.l);" EOL;
-    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
-    builtinFnDefCode += "  d[0] = toupper(d[0]);" EOL;
-    builtinFnDefCode += "  return (struct str) {d, s.l};" EOL;
+    builtinFnDefCode += "  if (s.l != 0) s.d[0] = toupper(s.d[0]);" EOL;
+    builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -1272,15 +1268,11 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateEntity(typeInfo.typeName);
   } else if (name == "fnStrLower") {
     this->builtins.fnStrLower = true;
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libCtype");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrLowerFirst") {
     this->builtins.fnStrLowerFirst = true;
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libCtype");
     this->_activateBuiltin("libString");
     this->_activateBuiltin("typeStr");
@@ -1325,15 +1317,13 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrUpper") {
     this->builtins.fnStrUpper = true;
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrUpperFirst") {
     this->builtins.fnStrUpperFirst = true;
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnU8Str") {
     this->builtins.fnU8Str = true;

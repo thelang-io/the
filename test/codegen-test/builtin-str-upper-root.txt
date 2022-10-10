@@ -52,10 +52,10 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct str str_upper (struct str s) {
-  if (s.l == 0) return str_alloc("");
-  char *d = alloc(s.l);
-  for (size_t i = 0; i < s.l; i++) d[i] = toupper(s.d[i]);
-  return (struct str) {d, s.l};
+  if (s.l != 0) {
+    for (size_t i = 0; i < s.l; i++) s.d[i] = toupper(s.d[i]);
+  }
+  return s;
 }
 
 int main () {
