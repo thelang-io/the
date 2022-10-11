@@ -1,29 +1,56 @@
 ======= stdin =======
 main {
-  print(path_basename(""))
-  print(path_basename("t"))
-  print(path_basename("test"))
-  print(path_basename("/"))
-  print(path_basename("t/"))
-  print(path_basename("test/"))
-  print(path_basename("/t"))
-  print(path_basename("/test"))
-  print(path_basename("t/t"))
-  print(path_basename("t/test"))
-  print(path_basename("test/t"))
-  print(path_basename("test/test"))
-  print(path_basename("/t/t"))
-  print(path_basename("/t/test"))
-  print(path_basename("/test/t"))
-  print(path_basename("/test/test"))
-  print(path_basename("/t/t/"))
-  print(path_basename("/t/test/"))
-  print(path_basename("/test/t/"))
-  print(path_basename("/test/test/"))
-  print(path_basename("/t/t/t"))
-  print(path_basename("/t/test/test"))
-  print(path_basename("/test/t/t"))
-  print(path_basename("/test/test/test"))
+  if os_name() == "Windows" {
+    print(path_basename(""))
+    print(path_basename("t"))
+    print(path_basename("test"))
+    print(path_basename("\\"))
+    print(path_basename("t\\"))
+    print(path_basename("test\\"))
+    print(path_basename("\\t"))
+    print(path_basename("\\test"))
+    print(path_basename("t\\t"))
+    print(path_basename("t\\test"))
+    print(path_basename("test\\t"))
+    print(path_basename("test\\test"))
+    print(path_basename("\\t\\t"))
+    print(path_basename("\\t\\test"))
+    print(path_basename("\\test\\t"))
+    print(path_basename("\\test\\test"))
+    print(path_basename("\\t\\t\\"))
+    print(path_basename("\\t\\test\\"))
+    print(path_basename("\\test\\t\\"))
+    print(path_basename("\\test\\test\\"))
+    print(path_basename("\\t\\t\\t"))
+    print(path_basename("\\t\\test\\test"))
+    print(path_basename("\\test\\t\\t"))
+    print(path_basename("\\test\\test\\test"))
+  } else {
+    print(path_basename(""))
+    print(path_basename("t"))
+    print(path_basename("test"))
+    print(path_basename("/"))
+    print(path_basename("t/"))
+    print(path_basename("test/"))
+    print(path_basename("/t"))
+    print(path_basename("/test"))
+    print(path_basename("t/t"))
+    print(path_basename("t/test"))
+    print(path_basename("test/t"))
+    print(path_basename("test/test"))
+    print(path_basename("/t/t"))
+    print(path_basename("/t/test"))
+    print(path_basename("/test/t"))
+    print(path_basename("/test/test"))
+    print(path_basename("/t/t/"))
+    print(path_basename("/t/test/"))
+    print(path_basename("/test/t/"))
+    print(path_basename("/test/test/"))
+    print(path_basename("/t/t/t"))
+    print(path_basename("/t/test/test"))
+    print(path_basename("/test/t/t"))
+    print(path_basename("/test/test/test"))
+  }
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -40,9 +67,13 @@ main {
 
 #include <inttypes.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <sys/utsname.h>
+#endif
 
 struct str {
   char *d;
@@ -50,9 +81,11 @@ struct str {
 };
 
 void *alloc (size_t);
+struct str os_name ();
 struct str path_basename (struct str);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 
 void *alloc (size_t l) {
@@ -62,6 +95,19 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
+}
+struct str os_name () {
+  #ifdef THE_OS_WINDOWS
+    return str_alloc("Windows");
+  #else
+    struct utsname buf;
+    if (uname(&buf) < 0) {
+      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
+    return str_alloc(buf.sysname);
+  #endif
 }
 struct str path_basename (struct str s) {
   if (s.l == 0) return s;
@@ -128,35 +174,67 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
 
 int main () {
-  print(stdout, "sz", path_basename(str_alloc("")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("test")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("t/")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("test/")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/test")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("t/t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("t/test")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("test/t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("test/test")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/t/t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/t/test")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/test/t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/test/test")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/t/t/")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/t/test/")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/test/t/")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/test/test/")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/t/t/t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/t/test/test")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/test/t/t")), THE_EOL);
-  print(stdout, "sz", path_basename(str_alloc("/test/test/test")), THE_EOL);
+  if (str_eq_cstr(os_name(), "Windows")) {
+    print(stdout, "sz", path_basename(str_alloc("")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t\\")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test\\")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t\\t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t\\test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test\\t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test\\test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\t\\t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\t\\test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\test\\t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\test\\test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\t\\t\\")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\t\\test\\")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\test\\t\\")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\test\\test\\")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\t\\t\\t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\t\\test\\test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\test\\t\\t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("\\test\\test\\test")), THE_EOL);
+  } else {
+    print(stdout, "sz", path_basename(str_alloc("")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t/")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test/")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t/t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("t/test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test/t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("test/test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/t/t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/t/test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/test/t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/test/test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/t/t/")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/t/test/")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/test/t/")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/test/test/")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/t/t/t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/t/test/test")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/test/t/t")), THE_EOL);
+    print(stdout, "sz", path_basename(str_alloc("/test/test/test")), THE_EOL);
+  }
 }
 ======= flags =======
 ======= stdout =======
