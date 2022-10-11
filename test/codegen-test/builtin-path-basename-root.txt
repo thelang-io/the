@@ -1,0 +1,130 @@
+======= stdin =======
+main {
+  path_basename("")
+  path_basename("t")
+  path_basename("test")
+  path_basename("/")
+  path_basename("t/")
+  path_basename("test/")
+  path_basename("/t")
+  path_basename("/test")
+  path_basename("t/t")
+  path_basename("t/test")
+  path_basename("test/t")
+  path_basename("test/test")
+  path_basename("/t/t")
+  path_basename("/t/test")
+  path_basename("/test/t")
+  path_basename("/test/test")
+  path_basename("/t/t/")
+  path_basename("/t/test/")
+  path_basename("/test/t/")
+  path_basename("/test/test/")
+  path_basename("/t/t/t")
+  path_basename("/t/test/test")
+  path_basename("/test/t/t")
+  path_basename("/test/test/test")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str path_basename (struct str);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str path_basename (struct str s) {
+  if (s.l == 0) return s;
+  #ifdef THE_OS_WINDOWS
+    char e = '\\';
+  #else
+    char e = '/';
+  #endif
+  size_t a = 0;
+  size_t b = 0;
+  unsigned char k = 0;
+  for (size_t i = s.l - 1;; i--) {
+    if (k == 1 && s.d[i] == e) {
+      a = i + 1;
+      break;
+    } else if (k == 0 && s.d[i] != e) {
+      k = 1;
+      b = i + 1;
+    }
+    if (i == 0) break;
+  }
+  if (k == 0) {
+    str_free(s);
+    return str_alloc("");
+  }
+  size_t l = b - a;
+  char *d = alloc(l);
+  memcpy(d, &s.d[a], l);
+  str_free(s);
+  return (struct str) {d, l};
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  str_free((struct str) path_basename(str_alloc("")));
+  str_free((struct str) path_basename(str_alloc("t")));
+  str_free((struct str) path_basename(str_alloc("test")));
+  str_free((struct str) path_basename(str_alloc("/")));
+  str_free((struct str) path_basename(str_alloc("t/")));
+  str_free((struct str) path_basename(str_alloc("test/")));
+  str_free((struct str) path_basename(str_alloc("/t")));
+  str_free((struct str) path_basename(str_alloc("/test")));
+  str_free((struct str) path_basename(str_alloc("t/t")));
+  str_free((struct str) path_basename(str_alloc("t/test")));
+  str_free((struct str) path_basename(str_alloc("test/t")));
+  str_free((struct str) path_basename(str_alloc("test/test")));
+  str_free((struct str) path_basename(str_alloc("/t/t")));
+  str_free((struct str) path_basename(str_alloc("/t/test")));
+  str_free((struct str) path_basename(str_alloc("/test/t")));
+  str_free((struct str) path_basename(str_alloc("/test/test")));
+  str_free((struct str) path_basename(str_alloc("/t/t/")));
+  str_free((struct str) path_basename(str_alloc("/t/test/")));
+  str_free((struct str) path_basename(str_alloc("/test/t/")));
+  str_free((struct str) path_basename(str_alloc("/test/test/")));
+  str_free((struct str) path_basename(str_alloc("/t/t/t")));
+  str_free((struct str) path_basename(str_alloc("/t/test/test")));
+  str_free((struct str) path_basename(str_alloc("/test/t/t")));
+  str_free((struct str) path_basename(str_alloc("/test/test/test")));
+}
+======= flags =======
+======= stdout =======

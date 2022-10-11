@@ -69,6 +69,8 @@ struct CodegenBuiltins {
   bool fnI64Str = false;
   bool fnIntStr = false;
   bool fnOSName = false;
+  bool fnPathBasename = false;
+  bool fnPathDirname = false;
   bool fnPrint = false;
   bool fnProcessArgs = false;
   bool fnProcessCwd = false;

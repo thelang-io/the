@@ -244,6 +244,14 @@ void TypeMap::init () {
     TypeFnParam{"status", intType, false, false, false}
   }};
 
+  auto pathBasenameTypeFn = TypeFn{strType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto pathDirnameTypeFn = TypeFn{strType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
   auto printTypeFn = TypeFn{voidType, {
     TypeFnParam{"items", anyType, false, false, true},
     TypeFnParam{"separator", strType, false, false, false},
@@ -262,6 +270,8 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"exit", "@exit", exitTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"os_name", "@os_name", TypeFn{strType}, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"path_basename", "@path_basename", pathBasenameTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"path_dirname", "@path_dirname", pathDirnameTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"process_cwd", "@process_cwd", TypeFn{strType}, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"process_runSync", "@process_runSync", processRunTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"sleepSync", "@sleepSync", sleepSyncTypeFn, {}, true}));

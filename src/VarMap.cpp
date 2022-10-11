@@ -53,6 +53,8 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"exit", "@exit", typeMap.get("exit"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"os_EOL", "@os_EOL", typeMap.get("str"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"os_name", "@os_name", typeMap.get("os_name"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"path_basename", "@path_basename", typeMap.get("path_basename"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"path_dirname", "@path_dirname", typeMap.get("path_dirname"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"print", "@print", typeMap.get("print"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"process_args", "@process_args", typeMap.arrayOf(typeMap.get("str")), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"process_cwd", "@process_cwd", typeMap.get("process_cwd"), false, true, this->_frame}));

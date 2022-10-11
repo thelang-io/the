@@ -1,0 +1,186 @@
+======= stdin =======
+main {
+  print(path_basename(""))
+  print(path_basename("t"))
+  print(path_basename("test"))
+  print(path_basename("/"))
+  print(path_basename("t/"))
+  print(path_basename("test/"))
+  print(path_basename("/t"))
+  print(path_basename("/test"))
+  print(path_basename("t/t"))
+  print(path_basename("t/test"))
+  print(path_basename("test/t"))
+  print(path_basename("test/test"))
+  print(path_basename("/t/t"))
+  print(path_basename("/t/test"))
+  print(path_basename("/test/t"))
+  print(path_basename("/test/test"))
+  print(path_basename("/t/t/"))
+  print(path_basename("/t/test/"))
+  print(path_basename("/test/t/"))
+  print(path_basename("/test/test/"))
+  print(path_basename("/t/t/t"))
+  print(path_basename("/t/test/test"))
+  print(path_basename("/test/t/t"))
+  print(path_basename("/test/test/test"))
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str path_basename (struct str);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str path_basename (struct str s) {
+  if (s.l == 0) return s;
+  #ifdef THE_OS_WINDOWS
+    char e = '\\';
+  #else
+    char e = '/';
+  #endif
+  size_t a = 0;
+  size_t b = 0;
+  unsigned char k = 0;
+  for (size_t i = s.l - 1;; i--) {
+    if (k == 1 && s.d[i] == e) {
+      a = i + 1;
+      break;
+    } else if (k == 0 && s.d[i] != e) {
+      k = 1;
+      b = i + 1;
+    }
+    if (i == 0) break;
+  }
+  if (k == 0) {
+    str_free(s);
+    return str_alloc("");
+  }
+  size_t l = b - a;
+  char *d = alloc(l);
+  memcpy(d, &s.d[a], l);
+  str_free(s);
+  return (struct str) {d, l};
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  print(stdout, "sz", path_basename(str_alloc("")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("test")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("t/")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("test/")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/test")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("t/t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("t/test")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("test/t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("test/test")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/t/t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/t/test")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/test/t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/test/test")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/t/t/")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/t/test/")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/test/t/")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/test/test/")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/t/t/t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/t/test/test")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/test/t/t")), THE_EOL);
+  print(stdout, "sz", path_basename(str_alloc("/test/test/test")), THE_EOL);
+}
+======= flags =======
+======= stdout =======
+
+t
+test
+
+t
+test
+t
+test
+t
+test
+t
+test
+t
+test
+t
+test
+t
+test
+t
+test
+t
+test
+t
+test

@@ -462,6 +462,75 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnPathBasename) {
+    builtinFnDeclCode += "struct str path_basename (struct str);" EOL;
+    builtinFnDefCode += "struct str path_basename (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l == 0) return s;" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += R"(    char e = '\\';)" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    char e = '/';" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  size_t a = 0;" EOL;
+    builtinFnDefCode += "  size_t b = 0;" EOL;
+    builtinFnDefCode += "  unsigned char k = 0;" EOL;
+    builtinFnDefCode += "  for (size_t i = s.l - 1;; i--) {" EOL;
+    builtinFnDefCode += "    if (k == 1 && s.d[i] == e) {" EOL;
+    builtinFnDefCode += "      a = i + 1;" EOL;
+    builtinFnDefCode += "      break;" EOL;
+    builtinFnDefCode += "    } else if (k == 0 && s.d[i] != e) {" EOL;
+    builtinFnDefCode += "      k = 1;" EOL;
+    builtinFnDefCode += "      b = i + 1;" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    if (i == 0) break;" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  if (k == 0) {" EOL;
+    builtinFnDefCode += "    str_free(s);" EOL;
+    builtinFnDefCode += R"(    return str_alloc("");)" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  size_t l = b - a;" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, &s.d[a], l);" EOL;
+    builtinFnDefCode += "  str_free(s);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnPathDirname) {
+    builtinFnDeclCode += "struct str path_dirname (struct str);" EOL;
+    builtinFnDefCode += "struct str path_dirname (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l == 0) {" EOL;
+    builtinFnDefCode += "    str_free(s);" EOL;
+    builtinFnDefCode += R"(    return str_alloc(".");)" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += R"(    char e = '\\';)" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    char e = '/';" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  size_t l = 0;" EOL;
+    builtinFnDefCode += "  unsigned char k = 0;" EOL;
+    builtinFnDefCode += "  for (size_t i = s.l - 1;; i--) {" EOL;
+    builtinFnDefCode += "    if (k == 1 && s.d[i] == e) {" EOL;
+    builtinFnDefCode += "      l = i;" EOL;
+    builtinFnDefCode += "      break;" EOL;
+    builtinFnDefCode += "    } else if (k == 0 && s.d[i] != e) {" EOL;
+    builtinFnDefCode += "      k = 1;" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    if (i == 0) break;" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  if (l == 0) {" EOL;
+    builtinFnDefCode += "    s.d = re_alloc(s.d, 1);" EOL;
+    builtinFnDefCode += "    if (s.d[0] != e) s.d[0] = '.';" EOL;
+    builtinFnDefCode += "    return (struct str) {s.d, 1};" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, l);" EOL;
+    builtinFnDefCode += "  str_free(s);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnPrint) {
     builtinFnDeclCode += "void print (FILE *, const char *, ...);" EOL;
     builtinFnDefCode += "void print (FILE *stream, const char *fmt, ...) {" EOL;
@@ -1147,6 +1216,25 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libString");
     this->_activateBuiltin("libSysUtsname");
     this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnPathBasename") {
+    this->builtins.fnPathBasename = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("fnStrFree");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnPathDirname") {
+    this->builtins.fnPathDirname = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnReAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("fnStrFree");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnPrint") {
     this->builtins.fnPrint = true;
@@ -2612,6 +2700,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@os_name") {
       this->_activateBuiltin("fnOSName");
       code = "os_name()";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@path_basename") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+
+      this->_activateBuiltin("fnPathBasename");
+      code = "path_basename(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@path_dirname") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+
+      this->_activateBuiltin("fnPathDirname");
+      code = "path_dirname(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@print") {
       auto separator = std::string(R"(" ")");
       auto isSeparatorLit = true;
