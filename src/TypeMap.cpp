@@ -286,11 +286,11 @@ void TypeMap::init () {
     TypeFnParam{"path", strType, false, true, false}
   }};
 
-  auto fsIsFileSyncTypeFn = TypeFn{boolType, {
+  auto fsIsDirectorySyncTypeFn = TypeFn{boolType, {
     TypeFnParam{"path", strType, false, true, false}
   }};
 
-  auto fsIsDirectorySyncTypeFn = TypeFn{boolType, {
+  auto fsIsFileSyncTypeFn = TypeFn{boolType, {
     TypeFnParam{"path", strType, false, true, false}
   }};
 
@@ -299,8 +299,7 @@ void TypeMap::init () {
   }};
 
   auto fsMkdirSyncTypeFn = TypeFn{voidType, {
-    TypeFnParam{"path", strType, false, true, false},
-    TypeFnParam{"recursive", boolType, false, false, false}
+    TypeFnParam{"path", strType, false, true, false}
   }};
 
   auto fsReadFileSyncTypeFn = TypeFn{bufferBufferType, {
@@ -360,8 +359,8 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"fs_chownSync", "@fs_chownSync", fsChownSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_existsSync", "@fs_existsSync", fsExistsSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_isAbsoluteSync", "@fs_isAbsoluteSync", fsIsAbsoluteSyncTypeFn, {}, true}));
-  this->_items.push_back(std::make_unique<Type>(Type{"fs_isFileSync", "@fs_isFileSync", fsIsFileSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_isDirectorySync", "@fs_isDirectorySync", fsIsDirectorySyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_isFileSync", "@fs_isFileSync", fsIsFileSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_isSymbolicLinkSync", "@fs_isSymbolicLinkSync", fsIsSymbolicLinkSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_mkdirSync", "@fs_mkdirSync", fsMkdirSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_readFileSync", "@fs_readFileSync", fsReadFileSyncTypeFn, {}, true}));

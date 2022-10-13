@@ -182,7 +182,7 @@ void fs_writeFileSync (struct str s, struct buffer b) {
   c[s.l] = '\0';
   FILE *f = fopen(c, "wb");
   if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s`" THE_EOL, c);
+    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
     exit(EXIT_FAILURE);
   }
   if (fwrite(b.d, b.l, 1, f) != 0) {

@@ -930,6 +930,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   fnDefCode += fnDefCode.empty() ? "" : EOL;
 
   auto headers = std::string(this->builtins.libCtype ? "#include <ctype.h>" EOL : "");
+  headers += this->builtins.libDirent ? "#include <dirent.h>" EOL : "";
   headers += this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
   headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
@@ -939,9 +940,10 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
 
-  if (this->builtins.libDirect || this->builtins.libWindows) {
+  if (this->builtins.libDirect || this->builtins.libIo || this->builtins.libWindows) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libDirect ? "  #include <direct.h>" EOL : "";
+    headers += this->builtins.libIo ? "  #include <io.h>" EOL : "";
     headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += "#endif" EOL;
   }
@@ -991,8 +993,13 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libDirect") {
     this->builtins.libDirect = true;
     this->_activateBuiltin("definitions");
+  } else if (name == "libDirent") {
+    this->builtins.libDirent = true;
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
+  } else if (name == "libIo") {
+    this->builtins.libIo = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
@@ -2654,21 +2661,18 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isAbsoluteSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{fs_isAbsoluteSync}") + "(" + arg1Expr + ")";
-    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isFileSync") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_isFileSync}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isDirectorySync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{fs_isDirectorySync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isFileSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isFileSync}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isSymbolicLinkSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{fs_isSymbolicLinkSync}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_mkdirSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      auto arg2Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
-      auto arg3Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("bool"));
-
-      code = this->_apiEval("_{fs_mkdirSync}") + "(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ")";
+      code = this->_apiEval("_{fs_mkdirSync}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_readFileSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{fs_readFileSync}") + "(" + arg1Expr + ")";

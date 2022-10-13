@@ -112,6 +112,19 @@ _getdrive: libDirect
 _mkdir: libDirect
 _rmdir: libDirect
 
+DIR: libDirent
+struct dirent: libDirent
+alphasort: libDirent
+closedir: libDirent
+dirfd: libDirent
+fdopendir: libDirent
+opendir: libDirent
+readdir: libDirent
+rewinddir: libDirent
+scandir: libDirent
+seekdir: libDirent
+telldir: libDirent
+
 PRId8: libInttypes
 PRId16: libInttypes
 PRId32: libInttypes
@@ -272,6 +285,30 @@ strtoimax: libInttypes
 strtoumax: libInttypes
 wcstoimax: libInttypes
 wcstoumax: libInttypes
+
+_access: libIo
+_chmod: libIo
+_chsize: libIo
+_close: libIo
+_commit: libIo
+_creat: libIo
+_dup: libIo
+_dup2: libIo
+_eof: libIo
+_filelength: libIo
+_findfirst32: libIo
+_findnext32: libIo
+_findclose: libIo
+_isatty: libIo
+_locking: libIo
+_lseek: libIo
+lseek64: libIo
+_mktemp: libIo
+_read: libIo
+_setmode: libIo
+_tell: libIo
+_umask: libIo
+_write: libIo
 
 va_start: libStdarg
 va_arg: libStdarg
@@ -489,6 +526,8 @@ wctomb: libStdlib
 mbstowcs: libStdlib
 wcstombs: libStdlib
 MB_CUR_MAX: libStdlib
+putenv: libStdlib
+realpath: libStdlib
 rand: libStdlib
 srand: libStdlib
 RAND_MAX: libStdlib
@@ -598,7 +637,6 @@ getgid: libUnistd
 getgroups: libUnistd
 gethostid: libUnistd
 getlogin: libUnistd
-getlogin_r: libUnistd
 getopt: libUnistd
 getpagesize: libUnistd
 getpass: libUnistd
@@ -641,7 +679,6 @@ tcgetpgrp: libUnistd
 tcsetpgrp: libUnistd
 truncate: libUnistd
 ttyname: libUnistd
-ttyname_r: libUnistd
 ualarm: libUnistd
 unlink: libUnistd
 usleep: libUnistd

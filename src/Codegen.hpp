@@ -111,7 +111,9 @@ struct CodegenBuiltins {
   bool fnU64Str = false;
   bool libCtype = false;
   bool libDirect = false;
+  bool libDirent = false;
   bool libInttypes = false;
+  bool libIo = false;
   bool libStdarg = false;
   bool libStdbool = false;
   bool libStddef = false;
