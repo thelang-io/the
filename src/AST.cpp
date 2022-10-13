@@ -46,12 +46,11 @@ void AST::populateParents (ASTBlock &nodes, ASTNode *parent) {
 AST::AST (Parser *p) {
   this->parser = p;
   this->reader = this->parser->reader;
+  this->typeMap.init();
+  this->varMap.init(this->typeMap);
 }
 
 ASTBlock AST::gen () {
-  this->typeMap.init();
-  this->varMap.init(this->typeMap);
-
   auto block = ParserBlock{};
 
   while (true) {

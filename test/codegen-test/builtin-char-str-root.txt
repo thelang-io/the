@@ -85,6 +85,12 @@ void *alloc (size_t);
 struct str char_str (char);
 struct str str_alloc (const char *);
 void str_free (struct str);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (char);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+char __THE_1_testCall_0 (void *);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
+void __THE_1_mainSDtestCtx_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -107,14 +113,6 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (char);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-char __THE_1_testCall_0 (void *);
-void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
-void __THE_1_mainSDtestCtx_0 (void *);
-
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (char __THE_0_c) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
   struct __THE_1_Test1_0 s = {__THE_0_c};

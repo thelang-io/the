@@ -34,6 +34,14 @@ enum CodegenPhase {
   CODEGEN_PHASE_FULL
 };
 
+struct CodegenApiItem {
+  bool enabled = false;
+  std::string name;
+  std::string decl;
+  std::string def;
+  std::set<std::string> dependencies;
+};
+
 struct CodegenBuiltins {
   bool definitions = false;
   bool fnAlloc = false;
@@ -72,9 +80,6 @@ struct CodegenBuiltins {
   bool fnPathBasename = false;
   bool fnPathDirname = false;
   bool fnPrint = false;
-  bool fnProcessArgs = false;
-  bool fnProcessCwd = false;
-  bool fnProcessRunSync = false;
   bool fnReAlloc = false;
   bool fnSleepSync = false;
   bool fnStrAlloc = false;
@@ -109,10 +114,12 @@ struct CodegenBuiltins {
   bool libInttypes = false;
   bool libStdarg = false;
   bool libStdbool = false;
+  bool libStddef = false;
   bool libStdint = false;
   bool libStdio = false;
   bool libStdlib = false;
   bool libString = false;
+  bool libSysStat = false;
   bool libSysUtsname = false;
   bool libUnistd = false;
   bool libWindows = false;
@@ -161,6 +168,8 @@ struct CodegenTypeInfo {
 
 class Codegen {
  public:
+  std::map<std::string, CodegenApiItem> api = {};
+  std::map<std::string, std::string> metadata = {};
   AST *ast;
   Reader *reader;
   CodegenState state;
@@ -185,6 +194,10 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
+  void _apiLoad (const std::vector<std::string> &);
+  // todo add limit param
+  std::string _apiEval (const std::string &, const std::optional<std::set<std::string> *> & = std::nullopt);
+  void _apiMetadata ();
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
@@ -233,6 +246,7 @@ class Codegen {
   std::string _typeNameArray (const Type *);
   std::string _typeNameFn (const Type *);
   std::string _typeNameOpt (const Type *);
+  void _typeObj (Type *, bool = false);
   std::string _wrapNode (const ASTNode &, const std::string &);
   std::string _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::string &);
 };

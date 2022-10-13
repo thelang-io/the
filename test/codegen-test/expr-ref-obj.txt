@@ -128,6 +128,17 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t, struct str, int32_t *, struct str *, struct __THE_1_fn$0, struct __THE_1_fn$0 *, struct __THE_1_fn$1, struct __THE_1_fn$1 *);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_Test1_0 *, struct __THE_1_Test1_0 **);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+int32_t *__THE_1_job1_0 (void *, struct __THE_1_fn$0P);
+int32_t __THE_1_job2_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -164,19 +175,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
-struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1);
-void __THE_1_fn$1_free (struct __THE_1_fn$1);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t, struct str, int32_t *, struct str *, struct __THE_1_fn$0, struct __THE_1_fn$0 *, struct __THE_1_fn$1, struct __THE_1_fn$1 *);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_Test1_0 *, struct __THE_1_Test1_0 **);
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
-int32_t *__THE_1_job1_0 (void *, struct __THE_1_fn$0P);
-int32_t __THE_1_job2_0 (void *);
-
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);

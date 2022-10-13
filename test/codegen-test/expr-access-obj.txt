@@ -38,6 +38,10 @@ struct __THE_1_Test_0 {
 };
 
 void *alloc (size_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -47,12 +51,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
-
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_i) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_i};

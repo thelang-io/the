@@ -46,6 +46,9 @@ void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
 struct any any_realloc (struct any, struct any);
+struct any any_int_alloc (int32_t);
+struct any any_int_copy (const struct any);
+void any_int_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -65,11 +68,6 @@ struct any any_realloc (struct any n1, struct any n2) {
   if (n1.d != NULL) n1._free(n1);
   return n2;
 }
-
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
-
 struct any any_int_alloc (int32_t d) {
   size_t l = sizeof(struct any_int);
   struct any_int *r = alloc(l);

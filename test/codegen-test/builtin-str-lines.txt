@@ -67,6 +67,8 @@ struct str str_concat_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 struct __THE_1_array_str str_lines (struct str, unsigned char, bool);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+struct str __THE_1_array_str_str (struct __THE_1_array_str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -195,10 +197,6 @@ struct __THE_1_array_str str_lines (struct str s, unsigned char o1, bool n1) {
   free(s.d);
   return (struct __THE_1_array_str) {r, l};
 }
-
-void __THE_1_array_str_free (struct __THE_1_array_str);
-struct str __THE_1_array_str_str (struct __THE_1_array_str);
-
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);

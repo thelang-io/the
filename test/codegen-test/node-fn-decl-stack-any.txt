@@ -60,6 +60,12 @@ void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
 struct any any_realloc (struct any, struct any);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest_0X);
+void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$0P);
+struct any any_int_alloc (int32_t);
+struct any any_int_copy (const struct any);
+void any_int_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -79,14 +85,6 @@ struct any any_realloc (struct any n1, struct any n2) {
   if (n1.d != NULL) n1._free(n1);
   return n2;
 }
-
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest_0X);
-void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$0P);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
-
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   free(n.x);
 }

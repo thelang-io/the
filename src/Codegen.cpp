@@ -20,6 +20,8 @@
 #include <fstream>
 #include "ASTChecker.hpp"
 #include "config.hpp"
+#include "codegen/fs.hpp"
+#include "codegen/process.hpp"
 
 const auto banner = std::string(
   "/*!" EOL
@@ -61,7 +63,6 @@ void Codegen::compile (
   std::filesystem::remove("build/output.c");
 
   if (returnCode != 0) {
-    // todo test
     throw Error("failed to compile generated code");
   }
 }
@@ -80,13 +81,13 @@ Codegen::Codegen (AST *a) {
 }
 
 std::tuple<std::string, std::string> Codegen::gen () {
+  this->_apiMetadata();
+  this->_typeObj(this->ast->typeMap.get("fs_Stats"), true);
+  this->_apiLoad(codegenFs);
+  this->_apiLoad(codegenProcess);
+
   auto nodes = this->ast->gen();
-
-  auto mainCode = std::string();
-  mainCode += this->_block(nodes, false);
-  mainCode += this->state.cleanUp.gen(2);
-  mainCode += "}" EOL;
-
+  auto mainCode = this->_block(nodes, false) + this->state.cleanUp.gen(2);
   auto defineCode = std::string();
   auto fnDeclCode = std::string();
   auto fnDefCode = std::string();
@@ -233,7 +234,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   }
 
   if (this->builtins.fnBufferFree) {
-    builtinFnDeclCode += "void buffer_free (struct buffer);";
+    builtinFnDeclCode += "void buffer_free (struct buffer);" EOL;
     builtinFnDefCode += "void buffer_free (struct buffer o) {" EOL;
     builtinFnDefCode += "  free(o.d);" EOL;
     builtinFnDefCode += "}" EOL;
@@ -564,32 +565,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
-  if (this->builtins.fnProcessArgs) {
-    builtinFnDeclCode += "struct " + Codegen::typeName("array_str") + " process_args (int, char **);" EOL;
-    builtinFnDefCode += "struct " + Codegen::typeName("array_str") + " process_args (int argc, char *argv[]) {" EOL;
-    builtinFnDefCode += "  struct str *d = alloc(argc * sizeof(struct str));" EOL;
-    builtinFnDefCode += "  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);" EOL;
-    builtinFnDefCode += "  return (struct " + Codegen::typeName("array_str") + ") {d, (size_t) argc};" EOL;
-    builtinFnDefCode += "}" EOL;
-  }
-
-  if (this->builtins.fnProcessCwd) {
-    builtinFnDeclCode += "struct str process_cwd ();" EOL;
-    builtinFnDefCode += "struct str process_cwd () {" EOL;
-    builtinFnDefCode += "  char buf[256];" EOL;
-    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
-    builtinFnDefCode += "    char *p = _getcwd(buf, 256);" EOL;
-    builtinFnDefCode += "  #else" EOL;
-    builtinFnDefCode += "    char *p = getcwd(buf, 256);" EOL;
-    builtinFnDefCode += "  #endif" EOL;
-    builtinFnDefCode += "  if (p == NULL) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to retrieve current working directory information" THE_EOL);)" EOL;
-    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
-    builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += "  return str_alloc(buf);" EOL;
-    builtinFnDefCode += "}" EOL;
-  }
-
   if (this->builtins.fnSleepSync) {
     builtinFnDeclCode += "void sleep_sync (uint32_t);" EOL;
     builtinFnDefCode += "void sleep_sync (uint32_t i) {" EOL;
@@ -598,45 +573,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  #else" EOL;
     builtinFnDefCode += "    usleep((unsigned int) (i * 1000));" EOL;
     builtinFnDefCode += "  #endif" EOL;
-    builtinFnDefCode += "}" EOL;
-  }
-
-  if (this->builtins.fnProcessRunSync) {
-    builtinFnDeclCode += "struct buffer process_run_sync (struct str);" EOL;
-    builtinFnDefCode += "struct buffer process_run_sync (struct str s) {" EOL;
-    builtinFnDefCode += "  char *c = alloc(s.l + 1);" EOL;
-    builtinFnDefCode += "  memcpy(c, s.d, s.l);" EOL;
-    builtinFnDefCode += R"(  c[s.l] = '\0';)" EOL;
-    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
-    builtinFnDefCode += R"(    FILE *f = _popen(c, "r");)" EOL;
-    builtinFnDefCode += "  #else" EOL;
-    builtinFnDefCode += R"(    FILE *f = popen(c, "r");)" EOL;
-    builtinFnDefCode += "  #endif" EOL;
-    builtinFnDefCode += "  if (f == NULL) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to run process `%s`" THE_EOL, c);)" EOL;
-    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
-    builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += "  unsigned char *d = NULL;" EOL;
-    builtinFnDefCode += "  unsigned char b[4096];" EOL;
-    builtinFnDefCode += "  size_t l = 0;" EOL;
-    builtinFnDefCode += "  size_t y;" EOL;
-    builtinFnDefCode += "  while ((y = fread(b, 1, sizeof(b), f)) > 0) {" EOL;
-    builtinFnDefCode += "    d = re_alloc(d, l + y);" EOL;
-    builtinFnDefCode += "    memcpy(&d[l], b, y);" EOL;
-    builtinFnDefCode += "    l += y;" EOL;
-    builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
-    builtinFnDefCode += "    int e = _pclose(f);" EOL;
-    builtinFnDefCode += "  #else" EOL;
-    builtinFnDefCode += "    int e = pclose(f) / 256;" EOL;
-    builtinFnDefCode += "  #endif" EOL;
-    builtinFnDefCode += "  if (e != 0) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: process `%s` exited with exit code %d" THE_EOL, c, e);)" EOL;
-    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
-    builtinFnDefCode += "  }" EOL;
-    builtinFnDefCode += "  free(c);" EOL;
-    builtinFnDefCode += "  str_free((struct str) s);" EOL;
-    builtinFnDefCode += "  return (struct buffer) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -969,11 +905,21 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  for (const auto &[_, item] : this->api) {
+    if (!item.enabled) {
+      continue;
+    }
+
+    builtinFnDeclCode += item.decl;
+    builtinFnDefCode += item.def;
+  }
+
+  fnDeclCode = builtinFnDeclCode + fnDeclCode;
+  fnDefCode = builtinFnDefCode + fnDefCode;
+
   builtinDefineCode += builtinDefineCode.empty() ? "" : EOL;
   defineCode += defineCode.empty() ? "" : EOL;
   builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
-  builtinFnDeclCode += builtinFnDeclCode.empty() ? "" : EOL;
-  builtinFnDefCode += builtinFnDefCode.empty() ? "" : EOL;
   structDeclCode += structDeclCode.empty() ? "" : EOL;
   structDefCode += structDefCode.empty() ? "" : EOL;
   fnDeclCode += fnDeclCode.empty() ? "" : EOL;
@@ -983,6 +929,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
   headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
+  headers += this->builtins.libStddef && !this->builtins.libStdlib ? "#include <stddef.h>" EOL : "";
   headers += this->builtins.libStdint && !this->builtins.libInttypes ? "#include <stdint.h>" EOL : "";
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
@@ -995,8 +942,9 @@ std::tuple<std::string, std::string> Codegen::gen () {
     headers += "#endif" EOL;
   }
 
-  if (this->builtins.libSysUtsname || this->builtins.libUnistd) {
+  if (this->builtins.libSysStat || this->builtins.libSysUtsname || this->builtins.libUnistd) {
     headers += "#ifndef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libSysStat ? "  #include <sys/stat.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
     headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
     headers += "#endif" EOL;
@@ -1012,12 +960,11 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += builtinStructDefCode;
   output += structDeclCode;
   output += structDefCode;
-  output += builtinFnDeclCode;
-  output += builtinFnDefCode;
   output += fnDeclCode;
   output += fnDefCode;
   output += "int main (" + std::string(this->needMainArgs ? "int argc, char *argv[]" : "") + ") {" EOL;
   output += mainCode;
+  output += "}" EOL;
 
   return std::make_tuple(output, this->_flags());
 }
@@ -1039,12 +986,15 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libCtype = true;
   } else if (name == "libDirect") {
     this->builtins.libDirect = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
     this->builtins.libStdbool = true;
+  } else if (name == "libStddef") {
+    this->builtins.libStddef = true;
   } else if (name == "libStdint") {
     this->builtins.libStdint = true;
   } else if (name == "libStdio") {
@@ -1053,12 +1003,18 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libStdlib = true;
   } else if (name == "libString") {
     this->builtins.libString = true;
+  } else if (name == "libSysStat") {
+    this->builtins.libSysStat = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libSysUtsname") {
     this->builtins.libSysUtsname = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libUnistd") {
     this->builtins.libUnistd = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libWindows") {
     this->builtins.libWindows = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "fnAlloc") {
     this->builtins.fnAlloc = true;
     this->_activateBuiltin("definitions");
@@ -1243,36 +1199,6 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdarg");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
-  } else if (name == "fnProcessArgs") {
-    this->builtins.fnProcessArgs = true;
-    this->needMainArgs = true;
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("typeStr");
-
-    auto typeInfo = this->_typeInfo(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")));
-    this->_activateEntity(typeInfo.typeName);
-  } else if (name == "fnProcessCwd") {
-    this->builtins.fnProcessCwd = true;
-    this->_activateBuiltin("definitions");
-    this->_activateBuiltin("fnStrAlloc");
-    this->_activateBuiltin("libDirect");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libUnistd");
-    this->_activateBuiltin("typeStr");
-  } else if (name == "fnProcessRunSync") {
-    this->builtins.fnProcessRunSync = true;
-    this->_activateBuiltin("definitions");
-    this->_activateBuiltin("fnAlloc");
-    this->_activateBuiltin("fnReAlloc");
-    this->_activateBuiltin("fnStrFree");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("libStdlib");
-    this->_activateBuiltin("libString");
-    this->_activateBuiltin("typeBuffer");
-    this->_activateBuiltin("typeStr");
   } else if (name == "fnReAlloc") {
     this->builtins.fnReAlloc = true;
     this->_activateBuiltin("definitions");
@@ -1447,6 +1373,25 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "typeStr") {
     this->builtins.typeStr = true;
     this->_activateBuiltin("libStdlib");
+  } else if (this->api.contains(name)) {
+    this->api[name].enabled = true;
+
+    for (const auto &dep : this->api[name].dependencies) {
+      auto existsInEntities = false;
+
+      for (const auto &entity : this->entities) {
+        if (entity.name == dep) {
+          existsInEntities = true;
+          break;
+        }
+      }
+
+      if (existsInEntities) {
+        this->_activateEntity(dep);
+      } else {
+        this->_activateBuiltin(dep);
+      }
+    }
   } else {
     throw Error("tried activating unknown builtin");
   }
@@ -1484,6 +1429,179 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
   }
 
   throw Error("tried activating unknown entity");
+}
+
+void Codegen::_apiLoad (const std::vector<std::string> &items) {
+  for (const auto &item : items) {
+    auto apiItem = CodegenApiItem{};
+    auto firstLine = std::string();
+
+    for (auto i = static_cast<std::size_t>(0); i < item.size(); i++) {
+      auto ch = item[i];
+
+      if (ch == '\n' || (ch == '\r' && i + 1 < item.size() && item[i + 1] == '\n')) {
+        break;
+      } else {
+        firstLine += ch;
+      }
+    }
+
+    firstLine.erase(firstLine.size() - 2, 2);
+    auto isName = false;
+    auto isParamName = false;
+
+    for (auto i = firstLine.size() - 1;; i--) {
+      auto ch = firstLine[i];
+
+      if (ch == ')' || ch == ',') {
+        apiItem.decl.insert(0, 1, ch);
+
+        if (i != 0 && firstLine[i - 1] != '(') {
+          isParamName = true;
+        }
+      } else if (ch == ' ' && i + 1 < firstLine.size() && firstLine[i + 1] == '(') {
+        apiItem.decl.insert(0, 1, ch);
+        isParamName = false;
+        isName = true;
+      } else if (isParamName && ch == ' ') {
+        isParamName = false;
+      } else if (isParamName && (ch == '*' || ch == '&')) {
+        isParamName = false;
+        apiItem.decl.insert(0, 1, ch);
+      } else if (isName && (ch == ' ' || ch == '*' || ch == '&')) {
+        apiItem.decl.insert(0, 1, ch);
+        isName = false;
+      } else if (isName) {
+        apiItem.name.insert(0, 1, ch);
+        apiItem.decl.insert(0, 1, ch);
+      } else if (!isParamName) {
+        apiItem.decl.insert(0, 1, ch);
+      }
+
+      if (i == 0) {
+        break;
+      }
+    }
+
+    apiItem.decl = this->_apiEval(apiItem.decl, &apiItem.dependencies) + ";" EOL;
+    apiItem.def = this->_apiEval(item, &apiItem.dependencies);
+
+    this->api[apiItem.name] = apiItem;
+  }
+}
+
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+std::string Codegen::_apiEval (const std::string &code, const std::optional<std::set<std::string> *> &dependencies) {
+  auto name = std::string();
+  auto isName = false;
+  auto result = std::string();
+
+  for (auto i = static_cast<std::size_t>(0); i < code.size(); i++) {
+    auto ch = code[i];
+
+    if (ch == '_' && i + 1 < code.size() && code[i + 1] == '{') {
+      isName = true;
+      i += 1;
+    } else if (isName && ch == '}') {
+      if (this->metadata.contains(name)) {
+        if (dependencies == std::nullopt) {
+          this->_activateBuiltin(this->metadata[name]);
+        } else if (!(*dependencies)->contains(this->metadata[name])) {
+          (*dependencies)->emplace(this->metadata[name]);
+        }
+      } else if (this->api.contains(name)) {
+        if (dependencies == std::nullopt) {
+          this->_activateBuiltin(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
+      } else if (name.starts_with("array_")) {
+        name = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get(name.substr(6))));
+
+        if (dependencies == std::nullopt) {
+          this->_activateEntity(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
+      } else {
+        auto existsInEntities = false;
+
+        for (const auto &entity : this->entities) {
+          if (entity.name == name) {
+            existsInEntities = true;
+            break;
+          }
+        }
+
+        if (!existsInEntities) {
+          throw Error("can't find code generator entity `" + name + "`");
+        }
+
+        if (dependencies == std::nullopt) {
+          this->_activateEntity(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
+      }
+
+      result += name;
+      isName = false;
+      name.clear();
+    } else if (isName) {
+      name += ch;
+    } else {
+      result += ch;
+    }
+  }
+
+  return result;
+}
+
+void Codegen::_apiMetadata () {
+  auto f = std::ifstream("data/codegen-metadata.txt");
+
+  if (!f.is_open() || f.fail()) {
+    throw Error("failed to read data/codegen-metadata.txt");
+  }
+
+  auto content = std::string(std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
+  f.close();
+
+  auto lineStart = static_cast<std::size_t>(0);
+  auto lineLen = static_cast<std::size_t>(0);
+  auto lineNum = static_cast<std::size_t>(1);
+
+  for (auto i = static_cast<std::size_t>(0), size = content.size(); i < size; i++) {
+    auto ch = content[i];
+
+    if (
+      ch == '\n' ||
+      (ch == '\r' && i + 1 < content.size() && content[i + 1] == '\n') ||
+      i == size - 1
+    ) {
+      auto line = content.substr(lineStart, lineLen);
+
+      if (!line.empty() && !line.starts_with('#')) {
+        auto delimiterPos = line.find(": ");
+
+        if (delimiterPos == std::string::npos) {
+          throw Error("invalid data in data/codegen-metadata.txt on line " + std::to_string(lineNum));
+        }
+
+        this->metadata[line.substr(0, delimiterPos)] = line.substr(delimiterPos + 2);
+      }
+
+      if (ch == '\r') {
+        i++;
+      }
+
+      lineStart = i + 1;
+      lineLen = 0;
+      lineNum += 1;
+    } else {
+      lineLen += 1;
+    }
+  }
 }
 
 std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
@@ -2109,190 +2227,8 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
-    auto typeName = Codegen::typeName(nodeObjDecl.type->codeName);
 
-    auto saveStateBuiltins = this->state.builtins;
-    auto saveStateEntities = this->state.entities;
-
-    auto objEntity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
-    objEntity.decl += "struct " + typeName + ";";
-    objEntity.def += "struct " + typeName + " {" EOL;
-
-    this->state.builtins = &objEntity.builtins;
-    this->state.entities = &objEntity.entities;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-
-      objEntity.def += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
-    }
-
-    objEntity.def += "};";
-
-    this->entities.push_back(objEntity);
-    auto typeInfo = this->_typeInfo(nodeObjDecl.type);
-    auto fieldIdx = static_cast<std::size_t>(0);
-
-    auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, { typeName }};
-    auto allocFnParamTypes = std::string();
-    auto allocFnParams = std::string();
-    auto allocFnCode = std::string();
-
-    this->state.builtins = &allocFnEntity.builtins;
-    this->state.entities = &allocFnEntity.entities;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (!field.builtin) {
-        auto fieldName = Codegen::name(field.name);
-        auto fieldTypeInfo = this->_typeInfo(field.type);
-
-        allocFnParamTypes += ", " + fieldTypeInfo.typeCodeTrimmed;
-        allocFnParams += ", " + fieldTypeInfo.typeCode + fieldName;
-        allocFnCode += ", " + fieldName;
-      }
-    }
-
-    allocFnEntity.decl += typeInfo.typeCode + typeName + "_alloc (" + allocFnParamTypes.substr(2) + ");";
-    allocFnEntity.def += typeInfo.typeCode + typeName + "_alloc (" + allocFnParams.substr(2) + ") {" EOL;
-    allocFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
-    allocFnEntity.def += "  struct " + typeName + " s = {" + allocFnCode.substr(2) + "};" EOL;
-    allocFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
-    allocFnEntity.def += "  return r;" EOL;
-    allocFnEntity.def += "}";
-
-    auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, { typeName }};
-    auto copyFnCode = std::string();
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (!field.builtin) {
-        auto fieldName = Codegen::name(field.name);
-        copyFnCode += ", " + this->_genCopyFn(field.type, "o->" + fieldName, &copyFnEntity.builtins, &copyFnEntity.entities);
-      }
-    }
-
-    copyFnEntity.decl += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + ");";
-    copyFnEntity.def += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + "o) {" EOL;
-    copyFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
-    copyFnEntity.def += "  struct " + typeName + " s = {" + copyFnCode.substr(2) + "};" EOL;
-    copyFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
-    copyFnEntity.def += "  return r;" EOL;
-    copyFnEntity.def += "}";
-
-    auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool" }, { typeName }};
-    eqFnEntity.decl += "bool " + typeName + "_eq (" + typeInfo.typeCode + ", " + typeInfo.typeCode + ");";
-    eqFnEntity.def += "bool " + typeName + "_eq (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
-    eqFnEntity.def += "  bool r = ";
-
-    fieldIdx = 0;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (!field.builtin) {
-        auto fieldName = Codegen::name(field.name);
-        eqFnEntity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName, &eqFnEntity.builtins, &eqFnEntity.entities);
-        fieldIdx++;
-      }
-    }
-
-    eqFnEntity.def += ";" EOL;
-    eqFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o1", &eqFnEntity.builtins, &eqFnEntity.entities) + ";" EOL;
-    eqFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o2", &eqFnEntity.builtins, &eqFnEntity.entities) + ";" EOL;
-    eqFnEntity.def += "  return r;" EOL;
-    eqFnEntity.def += "}";
-
-    auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName }};
-    freeFnEntity.decl += "void " + typeName + "_free (" + typeInfo.typeCode + ");";
-    freeFnEntity.def += "void " + typeName + "_free (" + typeInfo.typeCode + "o) {" EOL;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (!field.builtin && field.type->shouldBeFreed()) {
-        auto fieldName = Codegen::name(field.name);
-        freeFnEntity.def += "  " + this->_genFreeFn(field.type, "o->" + fieldName, &freeFnEntity.builtins, &freeFnEntity.entities) + ";" EOL;
-      }
-    }
-
-    freeFnEntity.def += "  free(o);" EOL;
-    freeFnEntity.def += "}";
-
-    auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN, { "libStdbool" }, { typeName }};
-    neFnEntity.decl += "bool " + typeName + "_ne (" + typeInfo.typeCode + ", " + typeInfo.typeCode + ");";
-    neFnEntity.def += "bool " + typeName + "_ne (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
-    neFnEntity.def += "  bool r = ";
-
-    fieldIdx = 0;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (!field.builtin) {
-        auto fieldName = Codegen::name(field.name);
-        neFnEntity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName, &neFnEntity.builtins, &neFnEntity.entities, true);
-        fieldIdx++;
-      }
-    }
-
-    neFnEntity.def += ";" EOL;
-    neFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o1", &neFnEntity.builtins, &neFnEntity.entities) + ";" EOL;
-    neFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o2", &neFnEntity.builtins, &neFnEntity.entities) + ";" EOL;
-    neFnEntity.def += "  return r;" EOL;
-    neFnEntity.def += "}";
-
-    auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN, {}, { typeName }};
-    reallocFnEntity.decl += typeInfo.typeCode + typeName + "_realloc (" + typeInfo.typeCode + ", " + typeInfo.typeCode + ");";
-    reallocFnEntity.def += typeInfo.typeCode + typeName + "_realloc (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
-    reallocFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o1", &reallocFnEntity.builtins, &reallocFnEntity.entities) + ";" EOL;
-    reallocFnEntity.def += "  return o2;" EOL;
-    reallocFnEntity.def += "}";
-
-    auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN, {
-      "fnStrAlloc",
-      "fnStrConcatCstr",
-      "fnStrConcatStr",
-      "typeStr"
-    }, { typeName }};
-
-    strFnEntity.decl += "struct str " + typeName + "_str (" + typeInfo.typeCode + ");";
-    strFnEntity.def += "struct str " + typeName + "_str (" + typeInfo.typeCode + "o) {" EOL;
-    strFnEntity.def += R"(  struct str r = str_alloc(")" + nodeObjDecl.type->name + R"({");)" EOL;
-
-    fieldIdx = 0;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (!field.builtin) {
-        auto fieldName = Codegen::name(field.name);
-        auto fieldCode = std::string(field.type->isRef() ? "*" : "") + "o->" + fieldName;
-        auto strCodeDelimiter = std::string(fieldIdx == 0 ? "" : ", ");
-
-        if (field.type->isStr()) {
-          strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: \"");)" EOL;
-          strFnEntity.def += "  r = str_concat_str(r, " + this->_genStrFn(field.type, fieldCode, &strFnEntity.builtins, &strFnEntity.entities) + ");" EOL;
-          strFnEntity.def += R"(  r = str_concat_cstr(r, "\"");)" EOL;
-        } else {
-          strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: ");)" EOL;
-          strFnEntity.def += "  r = str_concat_str(r, " + this->_genStrFn(field.type, fieldCode, &strFnEntity.builtins, &strFnEntity.entities) + ");" EOL;
-        }
-
-        fieldIdx++;
-      }
-    }
-
-    strFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o", &strFnEntity.builtins, &strFnEntity.entities) + ";" EOL;
-    strFnEntity.def += R"(  return str_concat_cstr(r, "}");)" EOL;
-    strFnEntity.def += "}";
-
-    this->entities.push_back(allocFnEntity);
-    this->entities.push_back(copyFnEntity);
-    this->entities.push_back(eqFnEntity);
-    this->entities.push_back(freeFnEntity);
-    this->entities.push_back(neFnEntity);
-    this->entities.push_back(reallocFnEntity);
-    this->entities.push_back(strFnEntity);
-
-    this->state.builtins = saveStateBuiltins;
-    this->state.entities = saveStateEntities;
-
+    this->_typeObj(nodeObjDecl.type);
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
     auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
@@ -2373,8 +2309,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "str_alloc(THE_EOL)";
         code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else if (objVar->builtin && objVar->codeName == "@process_args") {
-        this->_activateBuiltin("fnProcessArgs");
-        code = "process_args(argc, argv)";
+        this->needMainArgs = true;
+        code = this->_apiEval("_{process_args}(argc, argv)");
         code = !root ? code : this->_genFreeFn(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")), code);
       } else {
         auto objCode = Codegen::name(objVar->codeName);
@@ -2697,6 +2633,61 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       this->_activateBuiltin("libStdlib");
       code = "exit(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_chmodSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
+
+      code = this->_apiEval("_{fs_chmodSync}") + "(" + arg1Expr + ", " + arg2Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_chownSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
+      auto arg3Expr = this->_nodeExpr(exprCall.args[2].expr, this->ast->typeMap.get("int"));
+
+      code = this->_apiEval("_{fs_chownSync}") + "(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_existsSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_existsSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isAbsoluteSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isAbsoluteSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isFileSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isFileSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isDirectorySync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isDirectorySync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isSymbolicLinkSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isSymbolicLinkSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_mkdirSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
+      auto arg3Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("bool"));
+
+      code = this->_apiEval("_{fs_mkdirSync}") + "(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_readFileSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_readFileSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_realpathSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_realpathSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_rmSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_rmSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_rmdirSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_rmdirSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_scandirSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_scandirSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_statSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_statSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_writeFileSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("buffer_Buffer"));
+
+      code = this->_apiEval("_{fs_writeFileSync}") + "(" + arg1Expr + ", " + arg2Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@os_name") {
       this->_activateBuiltin("fnOSName");
       code = "os_name()";
@@ -2811,13 +2802,14 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       code += ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_cwd") {
-      this->_activateBuiltin("fnProcessCwd");
-      code = "process_cwd()";
+      code = this->_apiEval("_{process_cwd}()");
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_getgid") {
+      code = this->_apiEval("_{process_getgid}()");
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_getuid") {
+      code = this->_apiEval("_{process_getuid}()");
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_runSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-
-      this->_activateBuiltin("fnProcessRunSync");
-      code = "process_run_sync(" + arg1Expr + ")";
+      code = this->_apiEval("_{process_runSync}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
 
@@ -3213,11 +3205,7 @@ std::string Codegen::_type (const Type *type) {
     this->_activateBuiltin("typeBuffer");
     return "struct buffer ";
   } else if (type->isObj()) {
-    if (type->builtin) {
-      return "struct " + type->name + " ";
-    }
-
-    auto typeName = Codegen::typeName(type->codeName);
+    auto typeName = type->builtin ? type->name : Codegen::typeName(type->codeName);
     this->_activateEntity(typeName);
     return "struct " + typeName + " *";
   } else if (type->isOpt()) {
@@ -3409,13 +3397,19 @@ std::string Codegen::_typeNameArray (const Type *type) {
     }
   }
 
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
+
+  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+
   auto elementTypeInfo = this->_typeInfo(std::get<TypeArray>(type->body).elementType);
   auto varArgTypeCode = elementTypeInfo.type->isSmallForVarArg()
     ? elementTypeInfo.type->isF32() ? "double" : "int"
     : elementTypeInfo.typeCodeTrimmed;
   auto elementRealTypeCode = std::string(elementTypeInfo.type->isRef() ? "*" : "") + "n.d[i]";
 
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
   entity.decl += "struct " + typeName + ";";
   entity.def += "struct " + typeName + " {" EOL;
   entity.def += "  " + elementTypeInfo.typeRefCode + "d;" EOL;
@@ -3648,6 +3642,9 @@ std::string Codegen::_typeNameArray (const Type *type) {
   this->entities.push_back(sliceFnEntity);
   this->entities.push_back(strFnEntity);
 
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
+
   return typeName;
 }
 
@@ -3660,13 +3657,22 @@ std::string Codegen::_typeNameFn (const Type *type) {
     }
   }
 
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
+
   auto fn = std::get<TypeFn>(type->body);
   auto paramsName = Codegen::typeName(type->name + "P");
-  auto returnTypeInfo = this->_typeInfo(fn.returnType);
   auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+
+  auto returnTypeInfo = this->_typeInfo(fn.returnType);
 
   if (!fn.params.empty()) {
     auto paramsEntity = CodegenEntity{paramsName, CODEGEN_ENTITY_OBJ};
+    this->state.builtins = &paramsEntity.builtins;
+    this->state.entities = &paramsEntity.entities;
+
     auto paramIdx = static_cast<std::size_t>(0);
 
     paramsEntity.decl += "struct " + paramsName + ";";
@@ -3688,6 +3694,9 @@ std::string Codegen::_typeNameFn (const Type *type) {
     this->entities.push_back(paramsEntity);
     this->_activateEntity(paramsName, &entity.entities);
   }
+
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
 
   entity.decl += "struct " + typeName + ";";
   entity.def += "struct " + typeName + " {" EOL;
@@ -3731,6 +3740,9 @@ std::string Codegen::_typeNameFn (const Type *type) {
   this->entities.push_back(reallocFnEntity);
   this->entities.push_back(strFnEntity);
 
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
+
   return typeName;
 }
 
@@ -3743,10 +3755,15 @@ std::string Codegen::_typeNameOpt (const Type *type) {
     }
   }
 
-  auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
-  auto underlyingRealTypeCode = std::string(underlyingTypeInfo.type->isRef() ? "*" : "") + "*n";
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
 
   auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, {}};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+
+  auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+  auto underlyingRealTypeCode = std::string(underlyingTypeInfo.type->isRef() ? "*" : "") + "*n";
 
   auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc" }, {}};
   allocFnEntity.decl += underlyingTypeInfo.typeRefCode + typeName + "_alloc (" + underlyingTypeInfo.typeCodeTrimmed + ");";
@@ -3848,7 +3865,211 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   this->entities.push_back(reallocFnEntity);
   this->entities.push_back(strFnEntity);
 
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
+
   return typeName;
+}
+
+void Codegen::_typeObj (Type *type, bool builtin) {
+  auto saveStateBuiltins = this->state.builtins;
+  auto saveStateEntities = this->state.entities;
+  auto typeName = builtin ? type->name : Codegen::typeName(type->codeName);
+  auto objEntity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
+  this->state.builtins = &objEntity.builtins;
+  this->state.entities = &objEntity.entities;
+
+  objEntity.decl += "struct " + typeName + ";";
+  objEntity.def += "struct " + typeName + " {" EOL;
+
+  for (const auto &field : type->fields) {
+    if (field.builtin) {
+      continue;
+    }
+
+    auto fieldName = Codegen::name(field.name);
+    auto fieldTypeInfo = this->_typeInfo(field.type);
+
+    objEntity.def += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
+  }
+
+  objEntity.def += "};";
+
+  this->entities.push_back(objEntity);
+  auto typeInfo = this->_typeInfo(type);
+  auto fieldIdx = static_cast<std::size_t>(0);
+
+  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, { typeName }};
+  this->state.builtins = &allocFnEntity.builtins;
+  this->state.entities = &allocFnEntity.entities;
+
+  auto allocFnParamTypes = std::string();
+  auto allocFnParams = std::string();
+  auto allocFnCode = std::string();
+
+  for (const auto &field : type->fields) {
+    if (!field.builtin) {
+      auto fieldName = Codegen::name(field.name);
+      auto fieldTypeInfo = this->_typeInfo(field.type);
+
+      allocFnParamTypes += ", " + fieldTypeInfo.typeCodeTrimmed;
+      allocFnParams += ", " + fieldTypeInfo.typeCode + fieldName;
+      allocFnCode += ", " + fieldName;
+    }
+  }
+
+  allocFnEntity.decl += typeInfo.typeCode + typeName + "_alloc (" + allocFnParamTypes.substr(2) + ");";
+  allocFnEntity.def += typeInfo.typeCode + typeName + "_alloc (" + allocFnParams.substr(2) + ") {" EOL;
+  allocFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
+  allocFnEntity.def += "  struct " + typeName + " s = {" + allocFnCode.substr(2) + "};" EOL;
+  allocFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
+  allocFnEntity.def += "  return r;" EOL;
+  allocFnEntity.def += "}";
+
+  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, { typeName }};
+  this->state.builtins = &copyFnEntity.builtins;
+  this->state.entities = &copyFnEntity.entities;
+
+  auto copyFnCode = std::string();
+
+  for (const auto &field : type->fields) {
+    if (!field.builtin) {
+      auto fieldName = Codegen::name(field.name);
+      copyFnCode += ", " + this->_genCopyFn(field.type, "o->" + fieldName);
+    }
+  }
+
+  copyFnEntity.decl += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCodeTrimmed + ");";
+  copyFnEntity.def += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + "o) {" EOL;
+  copyFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
+  copyFnEntity.def += "  struct " + typeName + " s = {" + copyFnCode.substr(2) + "};" EOL;
+  copyFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
+  copyFnEntity.def += "  return r;" EOL;
+  copyFnEntity.def += "}";
+
+  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool" }, { typeName }};
+  this->state.builtins = &eqFnEntity.builtins;
+  this->state.entities = &eqFnEntity.entities;
+
+  eqFnEntity.decl += "bool " + typeName + "_eq (" + typeInfo.typeCodeTrimmed + ", " + typeInfo.typeCodeTrimmed + ");";
+  eqFnEntity.def += "bool " + typeName + "_eq (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
+  eqFnEntity.def += "  bool r = ";
+
+  fieldIdx = 0;
+
+  for (const auto &field : type->fields) {
+    if (!field.builtin) {
+      auto fieldName = Codegen::name(field.name);
+      eqFnEntity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName);
+      fieldIdx++;
+    }
+  }
+
+  eqFnEntity.def += ";" EOL;
+  eqFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o1") + ";" EOL;
+  eqFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o2") + ";" EOL;
+  eqFnEntity.def += "  return r;" EOL;
+  eqFnEntity.def += "}";
+
+  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName }};
+  this->state.builtins = &freeFnEntity.builtins;
+  this->state.entities = &freeFnEntity.entities;
+
+  freeFnEntity.decl += "void " + typeName + "_free (" + typeInfo.typeCodeTrimmed + ");";
+  freeFnEntity.def += "void " + typeName + "_free (" + typeInfo.typeCode + "o) {" EOL;
+
+  for (const auto &field : type->fields) {
+    if (!field.builtin && field.type->shouldBeFreed()) {
+      auto fieldName = Codegen::name(field.name);
+      freeFnEntity.def += "  " + this->_genFreeFn(field.type, "o->" + fieldName) + ";" EOL;
+    }
+  }
+
+  freeFnEntity.def += "  free(o);" EOL;
+  freeFnEntity.def += "}";
+
+  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN, { "libStdbool" }, { typeName }};
+  this->state.builtins = &neFnEntity.builtins;
+  this->state.entities = &neFnEntity.entities;
+
+  neFnEntity.decl += "bool " + typeName + "_ne (" + typeInfo.typeCodeTrimmed + ", " + typeInfo.typeCodeTrimmed + ");";
+  neFnEntity.def += "bool " + typeName + "_ne (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
+  neFnEntity.def += "  bool r = ";
+
+  fieldIdx = 0;
+
+  for (const auto &field : type->fields) {
+    if (!field.builtin) {
+      auto fieldName = Codegen::name(field.name);
+      neFnEntity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName, std::nullopt, std::nullopt, true);
+      fieldIdx++;
+    }
+  }
+
+  neFnEntity.def += ";" EOL;
+  neFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o1") + ";" EOL;
+  neFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o2") + ";" EOL;
+  neFnEntity.def += "  return r;" EOL;
+  neFnEntity.def += "}";
+
+  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN, {}, { typeName }};
+  this->state.builtins = &reallocFnEntity.builtins;
+  this->state.entities = &reallocFnEntity.entities;
+
+  reallocFnEntity.decl += typeInfo.typeCode + typeName + "_realloc (" + typeInfo.typeCodeTrimmed + ", " + typeInfo.typeCodeTrimmed + ");";
+  reallocFnEntity.def += typeInfo.typeCode + typeName + "_realloc (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
+  reallocFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o1") + ";" EOL;
+  reallocFnEntity.def += "  return o2;" EOL;
+  reallocFnEntity.def += "}";
+
+  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN, {
+    "fnStrAlloc",
+    "fnStrConcatCstr",
+    "fnStrConcatStr",
+    "typeStr"
+  }, { typeName }};
+  this->state.builtins = &strFnEntity.builtins;
+  this->state.entities = &strFnEntity.entities;
+
+  strFnEntity.decl += "struct str " + typeName + "_str (" + typeInfo.typeCodeTrimmed + ");";
+  strFnEntity.def += "struct str " + typeName + "_str (" + typeInfo.typeCode + "o) {" EOL;
+  strFnEntity.def += R"(  struct str r = str_alloc(")" + type->name + R"({");)" EOL;
+
+  fieldIdx = 0;
+
+  for (const auto &field : type->fields) {
+    if (!field.builtin) {
+      auto fieldName = Codegen::name(field.name);
+      auto fieldCode = std::string(field.type->isRef() ? "*" : "") + "o->" + fieldName;
+      auto strCodeDelimiter = std::string(fieldIdx == 0 ? "" : ", ");
+
+      if (field.type->isStr()) {
+        strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: \"");)" EOL;
+        strFnEntity.def += "  r = str_concat_str(r, " + this->_genStrFn(field.type, fieldCode) + ");" EOL;
+        strFnEntity.def += R"(  r = str_concat_cstr(r, "\"");)" EOL;
+      } else {
+        strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: ");)" EOL;
+        strFnEntity.def += "  r = str_concat_str(r, " + this->_genStrFn(field.type, fieldCode) + ");" EOL;
+      }
+
+      fieldIdx++;
+    }
+  }
+
+  strFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "o") + ";" EOL;
+  strFnEntity.def += R"(  return str_concat_cstr(r, "}");)" EOL;
+  strFnEntity.def += "}";
+
+  this->entities.push_back(allocFnEntity);
+  this->entities.push_back(copyFnEntity);
+  this->entities.push_back(eqFnEntity);
+  this->entities.push_back(freeFnEntity);
+  this->entities.push_back(neFnEntity);
+  this->entities.push_back(reallocFnEntity);
+  this->entities.push_back(strFnEntity);
+
+  this->state.builtins = saveStateBuiltins;
+  this->state.entities = saveStateEntities;
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)

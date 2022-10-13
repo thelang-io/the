@@ -79,6 +79,12 @@ struct str str_concat_cstr (struct str, const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
+struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
+void __THE_1_Point_0_free (struct __THE_1_Point_0 *);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, int32_t);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -114,14 +120,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
-void __THE_1_Point_0_free (struct __THE_1_Point_0 *);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, int32_t);
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_y) {
   struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
   struct __THE_1_Point_0 s = {__THE_0_x, __THE_0_y};

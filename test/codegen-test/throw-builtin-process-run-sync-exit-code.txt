@@ -38,11 +38,12 @@ struct str {
 
 void *alloc (size_t);
 void *re_alloc (void *, size_t);
-void buffer_free (struct buffer);struct str os_name ();
-struct buffer process_run_sync (struct str);
+void buffer_free (struct buffer);
+struct str os_name ();
 struct str str_alloc (const char *);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
+struct buffer process_runSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -76,7 +77,21 @@ struct str os_name () {
     return str_alloc(buf.sysname);
   #endif
 }
-struct buffer process_run_sync (struct str s) {
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct buffer process_runSync (struct str s) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
@@ -111,26 +126,12 @@ struct buffer process_run_sync (struct str s) {
   str_free((struct str) s);
   return (struct buffer) {d, l};
 }
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-bool str_eq_cstr (struct str s, const char *r) {
-  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
-  free(s.d);
-  return d;
-}
-void str_free (struct str s) {
-  free(s.d);
-}
 
 int main () {
   if (str_eq_cstr(os_name(), "Windows")) {
-    buffer_free((struct buffer) process_run_sync(str_alloc("exit /b 1")));
+    buffer_free((struct buffer) process_runSync(str_alloc("exit /b 1")));
   } else {
-    buffer_free((struct buffer) process_run_sync(str_alloc("exit 1")));
+    buffer_free((struct buffer) process_runSync(str_alloc("exit 1")));
   }
 }
 ======= flags =======

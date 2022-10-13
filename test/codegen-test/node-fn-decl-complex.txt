@@ -103,6 +103,9 @@ bool str_eq_cstr (struct str, const char *);
 bool str_eq_str (struct str, struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
+int32_t __THE_1_test1_0 (void *);
+int32_t __THE_1_test2_0 (void *);
+int32_t __THE_1_test3_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -145,11 +148,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-int32_t __THE_1_test1_0 (void *);
-int32_t __THE_1_test2_0 (void *);
-int32_t __THE_1_test3_0 (void *);
-
 int32_t __THE_1_test1_0 (void *px) {
   unsigned char r = 0;
   int32_t v;

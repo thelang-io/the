@@ -83,11 +83,18 @@ struct __THE_1_mainSDtestCtx_0X {
 
 void *alloc (size_t);
 struct buffer buffer_copy (const struct buffer);
-void buffer_free (struct buffer);struct buffer buffer_realloc (struct buffer, struct buffer);
+void buffer_free (struct buffer);
+struct buffer buffer_realloc (struct buffer, struct buffer);
 struct str buffer_str (struct buffer);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct buffer str_to_buffer (struct str);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct buffer __THE_1_testCall_0 (void *);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
+void __THE_1_mainSDtestCtx_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -130,14 +137,6 @@ void str_free (struct str s) {
 struct buffer str_to_buffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
-
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-struct buffer __THE_1_testCall_0 (void *);
-void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
-void __THE_1_mainSDtestCtx_0 (void *);
-
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer __THE_0_b) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
   struct __THE_1_Test1_0 s = {__THE_0_b};

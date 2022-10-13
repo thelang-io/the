@@ -40,6 +40,8 @@ struct __THE_1_Test_0 {
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str, struct str);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -58,10 +60,6 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str, struct str);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str __THE_0_a, struct str __THE_0_b) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_b};

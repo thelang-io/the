@@ -102,6 +102,7 @@ bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 bool str_ne_cstr (struct str, const char *);
 struct str str_realloc (struct str, struct str);
+int32_t __THE_1_test_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -155,9 +156,6 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-
-int32_t __THE_1_test_0 (void *);
-
 int32_t __THE_1_test_0 (void *px) {
   unsigned char r = 0;
   int32_t v;

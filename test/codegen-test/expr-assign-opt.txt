@@ -29,6 +29,10 @@ main {
 #include <stdlib.h>
 
 void *alloc (size_t);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+int32_t *__THE_1_opt_int_realloc (int32_t *, int32_t *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -38,12 +42,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-int32_t *__THE_1_opt_int_alloc (int32_t);
-int32_t *__THE_1_opt_int_copy (const int32_t *);
-void __THE_1_opt_int_free (int32_t *);
-int32_t *__THE_1_opt_int_realloc (int32_t *, int32_t *);
-
 int32_t *__THE_1_opt_int_alloc (int32_t n) {
   int32_t *r = alloc(sizeof(int32_t));
   *r = n;

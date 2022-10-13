@@ -103,16 +103,6 @@ struct __THE_1_mainSDtest2_0X {
 };
 
 void *alloc (size_t);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
 int32_t *__THE_1_opt_int_alloc (int32_t);
 int32_t *__THE_1_opt_int_copy (const int32_t *);
 void __THE_1_opt_int_free (int32_t *);
@@ -123,6 +113,14 @@ void __THE_1_fn$1_free (struct __THE_1_fn$1);
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtest2_0X);
 void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1P);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 int32_t *__THE_1_opt_int_alloc (int32_t n) {
   int32_t *r = alloc(sizeof(int32_t));
   *r = n;

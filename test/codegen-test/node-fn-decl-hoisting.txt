@@ -109,6 +109,13 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 void str_free (struct str);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_factorial_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_factorial_0X);
+int64_t __THE_1_factorial_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test1_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test1_0X);
+int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test2_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test2_0X);
+int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$0P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -177,15 +184,6 @@ struct str str_concat_cstr (struct str s, const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_factorial_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_factorial_0X);
-int64_t __THE_1_factorial_0 (void *, struct __THE_1_fn$0P);
-void __THE_1_test1_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test1_0X);
-int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
-void __THE_1_test2_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test2_0X);
-int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$0P);
-
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   free(n.x);
 }

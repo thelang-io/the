@@ -70,16 +70,6 @@ struct __THE_1_test2_0X {
 };
 
 void *alloc (size_t);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
 struct __THE_1_fn$0 __THE_1_fn$0_realloc (struct __THE_1_fn$0, struct __THE_1_fn$0);
@@ -92,6 +82,14 @@ void __THE_1_fn$2_free (struct __THE_1_fn$2);
 void __THE_1_test2_0_alloc (struct __THE_1_fn$2 *, struct __THE_1_test2_0X);
 int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$2P);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);

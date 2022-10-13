@@ -55,9 +55,6 @@ os_name: fnOSName
 path_basename: fnPathBasename
 path_dirname: fnPathDirname
 print: fnPrint
-process_args: fnProcessArgs
-process_cwd: fnProcessCwd
-process_run_sync: fnProcessRunSync
 re_alloc: fnReAlloc
 sleep_sync: fnSleepSync
 str_alloc: fnStrAlloc

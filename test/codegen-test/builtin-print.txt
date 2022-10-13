@@ -232,7 +232,8 @@ void any_free (struct any);
 struct str any_str (struct any);
 struct str bool_str (bool);
 struct buffer buffer_copy (const struct buffer);
-void buffer_free (struct buffer);struct str buffer_str (struct buffer);
+void buffer_free (struct buffer);
+struct str buffer_str (struct buffer);
 struct str byte_str (unsigned char);
 struct str char_str (char);
 struct str f32_str (float);
@@ -255,6 +256,21 @@ struct str u8_str (uint8_t);
 struct str u16_str (uint16_t);
 struct str u32_str (uint32_t);
 struct str u64_str (uint64_t);
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+struct str __THE_1_fn$0_str (struct __THE_1_fn$0);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer, struct any, bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, int32_t *, struct str, uint8_t, uint16_t, uint32_t, uint64_t, struct __THE_1_Test2_0 *, struct __THE_1_fn$0);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct str __THE_1_Test1_0_str (struct __THE_1_Test1_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct buffer, struct any, bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, int32_t *, struct str, uint8_t, uint16_t, uint32_t, uint64_t);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+struct str __THE_1_Test2_0_str (struct __THE_1_Test2_0 *);
+void __THE_1_test_0 (void *);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_testAnon_0X);
+struct __THE_1_fn$0 __THE_1_testAnon_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -455,23 +471,6 @@ struct str u64_str (uint64_t d) {
   sprintf(buf, "%" PRIu64, d);
   return str_alloc(buf);
 }
-
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
-struct str __THE_1_fn$0_str (struct __THE_1_fn$0);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer, struct any, bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, int32_t *, struct str, uint8_t, uint16_t, uint32_t, uint64_t, struct __THE_1_Test2_0 *, struct __THE_1_fn$0);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-struct str __THE_1_Test1_0_str (struct __THE_1_Test1_0 *);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct buffer, struct any, bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, int32_t *, struct str, uint8_t, uint16_t, uint32_t, uint64_t);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
-struct str __THE_1_Test2_0_str (struct __THE_1_Test2_0 *);
-void __THE_1_test_0 (void *);
-void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_testAnon_0X);
-struct __THE_1_fn$0 __THE_1_testAnon_0 (void *);
-
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);

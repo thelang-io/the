@@ -35,6 +35,10 @@ struct __THE_1_array_int {
 };
 
 void *alloc (size_t);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -44,12 +48,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
-
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
   int32_t *d = alloc(x * sizeof(int32_t));

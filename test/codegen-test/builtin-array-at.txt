@@ -43,6 +43,9 @@ struct __THE_1_array_int {
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+int32_t *__THE_1_array_int_at (struct __THE_1_array_int, int64_t);
+void __THE_1_array_int_free (struct __THE_1_array_int);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -84,11 +87,6 @@ void print (FILE *stream, const char *fmt, ...) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-int32_t *__THE_1_array_int_at (struct __THE_1_array_int, int64_t);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
   int32_t *d = alloc(x * sizeof(int32_t));

@@ -59,6 +59,12 @@ struct __THE_1_Test2_0 {
 };
 
 void *alloc (size_t);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *, int32_t);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (char, double, int32_t);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_realloc (struct __THE_1_Test2_0 *, struct __THE_1_Test2_0 *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -68,14 +74,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *, int32_t);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (char, double, int32_t);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_realloc (struct __THE_1_Test2_0 *, struct __THE_1_Test2_0 *);
-
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_t, int32_t __THE_0_i) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
   struct __THE_1_Test1_0 s = {__THE_0_t, __THE_0_i};

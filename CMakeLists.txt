@@ -21,6 +21,8 @@ endif ()
 set(
   sources
 
+  src/codegen/fs.cpp src/codegen/fs.hpp
+  src/codegen/process.cpp src/codegen/process.hpp
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
   src/ASTExpr.cpp src/ASTExpr.hpp

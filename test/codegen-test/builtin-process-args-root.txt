@@ -32,9 +32,10 @@ struct __THE_1_array_str {
 };
 
 void *alloc (size_t);
-struct __THE_1_array_str process_args (int, char **);
 struct str str_alloc (const char *);
 void str_free (struct str);
+struct __THE_1_array_str process_args (int, char **);
+void __THE_1_array_str_free (struct __THE_1_array_str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -43,11 +44,6 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
-}
-struct __THE_1_array_str process_args (int argc, char *argv[]) {
-  struct str *d = alloc(argc * sizeof(struct str));
-  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);
-  return (struct __THE_1_array_str) {d, (size_t) argc};
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -58,9 +54,11 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-void __THE_1_array_str_free (struct __THE_1_array_str);
-
+struct __THE_1_array_str process_args (int argc, char **argv) {
+  struct str *d = alloc(argc * sizeof(struct str));
+  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);
+  return (struct __THE_1_array_str) {d, (size_t) argc};
+}
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);

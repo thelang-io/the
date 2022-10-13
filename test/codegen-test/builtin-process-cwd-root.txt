@@ -31,9 +31,9 @@ struct str {
 };
 
 void *alloc (size_t);
-struct str process_cwd ();
 struct str str_alloc (const char *);
 void str_free (struct str);
+struct str process_cwd ();
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -42,6 +42,15 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 struct str process_cwd () {
   char buf[256];
@@ -55,15 +64,6 @@ struct str process_cwd () {
     exit(EXIT_FAILURE);
   }
   return str_alloc(buf);
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-void str_free (struct str s) {
-  free(s.d);
 }
 
 int main () {

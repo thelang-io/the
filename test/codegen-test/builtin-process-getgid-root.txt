@@ -1,0 +1,33 @@
+======= stdin =======
+main {
+  process_getgid()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <stdint.h>
+#ifndef THE_OS_WINDOWS
+  #include <unistd.h>
+#endif
+
+int32_t process_getgid ();
+
+int32_t process_getgid () {
+  return getgid();
+}
+
+int main () {
+  process_getgid();
+}
+======= flags =======
+======= stdout =======

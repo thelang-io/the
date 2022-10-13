@@ -30,9 +30,10 @@ struct str {
 
 void *alloc (size_t);
 void *re_alloc (void *, size_t);
-void buffer_free (struct buffer);struct buffer process_run_sync (struct str);
+void buffer_free (struct buffer);
 struct str str_alloc (const char *);
 void str_free (struct str);
+struct buffer process_runSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -53,7 +54,16 @@ void *re_alloc (void *d, size_t l) {
 void buffer_free (struct buffer o) {
   free(o.d);
 }
-struct buffer process_run_sync (struct str s) {
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct buffer process_runSync (struct str s) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
@@ -88,18 +98,9 @@ struct buffer process_run_sync (struct str s) {
   str_free((struct str) s);
   return (struct buffer) {d, l};
 }
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-void str_free (struct str s) {
-  free(s.d);
-}
 
 int main () {
-  buffer_free((struct buffer) process_run_sync(str_alloc("echo \"Hello, World!\"")));
+  buffer_free((struct buffer) process_runSync(str_alloc("echo \"Hello, World!\"")));
 }
 ======= flags =======
 ======= stdout =======

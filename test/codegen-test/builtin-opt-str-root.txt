@@ -87,6 +87,17 @@ struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 void str_free (struct str);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+int32_t *__THE_1_opt_int_realloc (int32_t *, int32_t *);
+struct str __THE_1_opt_int_str (int32_t *);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t *);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+int32_t *__THE_1_testCall_0 (void *);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
+void __THE_1_mainSDtestCtx_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -127,19 +138,6 @@ struct str str_concat_str (struct str s1, struct str s2) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-int32_t *__THE_1_opt_int_alloc (int32_t);
-int32_t *__THE_1_opt_int_copy (const int32_t *);
-void __THE_1_opt_int_free (int32_t *);
-int32_t *__THE_1_opt_int_realloc (int32_t *, int32_t *);
-struct str __THE_1_opt_int_str (int32_t *);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t *);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-int32_t *__THE_1_testCall_0 (void *);
-void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
-void __THE_1_mainSDtestCtx_0 (void *);
-
 int32_t *__THE_1_opt_int_alloc (int32_t n) {
   int32_t *r = alloc(sizeof(int32_t));
   *r = n;
