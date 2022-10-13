@@ -78,7 +78,7 @@ const auto statSync = std::string(
   R"(  #ifdef _{THE_OS_MACOS})" EOL
   R"(    return _{fs_Stats_alloc}(r.st_dev, r.st_mode, r.st_nlink, r.st_ino, r.st_uid, r.st_gid, r.st_rdev, r.st_atimespec.tv_sec, r.st_atimespec.tv_nsec, r.st_mtimespec.tv_sec, r.st_mtimespec.tv_nsec, r.st_ctimespec.tv_sec, r.st_ctimespec.tv_nsec, r.st_birthtimespec.tv_sec, r.st_birthtimespec.tv_nsec, r.st_size, r.st_blocks, r.st_blksize);)" EOL
   R"(  #else)" EOL
-  R"(    return _{fs_Stats_alloc}(r.st_dev, r.st_mode, r.st_nlink, r.st_ino, r.st_uid, r.st_gid, r.st_rdev, r.st_atime.tv_sec, r.st_atime.tv_nsec, r.st_mtime.tv_sec, r.st_mtime.tv_nsec, r.st_ctime.tv_sec, r.st_ctime.tv_nsec, r.st_ctime.tv_sec, r.st_ctime.tv_nsec, r.st_size, r.st_blocks, r.st_blksize);)" EOL
+  R"(    return _{fs_Stats_alloc}(r.st_dev, r.st_mode, r.st_nlink, r.st_ino, r.st_uid, r.st_gid, r.st_rdev, r.st_atim.tv_sec, r.st_atim.tv_nsec, r.st_mtim.tv_sec, r.st_mtim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_size, r.st_blocks, r.st_blksize);)" EOL
   R"(  #endif)" EOL
   R"(})" EOL
 );
