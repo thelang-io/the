@@ -177,8 +177,6 @@ void TypeMap::init () {
   fsStatsType->fields.push_back(TypeField{"size", i64Type, false, false});
   fsStatsType->fields.push_back(TypeField{"blocks", i64Type, false, false});
   fsStatsType->fields.push_back(TypeField{"blksize", i32Type, false, false});
-  fsStatsType->fields.push_back(TypeField{"flags", u32Type, false, false});
-  fsStatsType->fields.push_back(TypeField{"gen", u32Type, false, false});
   this->_items.push_back(std::make_unique<Type>(Type{"fs_Stats.str", "@fs_Stats.str", TypeFn{strType}, {}, true}));
   fsStatsType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 

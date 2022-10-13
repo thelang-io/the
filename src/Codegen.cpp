@@ -87,7 +87,11 @@ std::tuple<std::string, std::string> Codegen::gen () {
   this->_apiLoad(codegenProcess);
 
   auto nodes = this->ast->gen();
-  auto mainCode = this->_block(nodes, false) + this->state.cleanUp.gen(2);
+  auto mainCode = std::string();
+
+  mainCode += this->_block(nodes, false);
+  mainCode += this->state.cleanUp.gen(2);
+
   auto defineCode = std::string();
   auto fnDeclCode = std::string();
   auto fnDefCode = std::string();
