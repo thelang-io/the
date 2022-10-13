@@ -91,7 +91,7 @@ const auto runSync = std::string(
   R"(})" EOL
 );
 
-const auto codegenProcess = std::vector<std::string>{
+const std::vector<std::string> codegenProcess = {
   args,
   cwd,
   getgid,

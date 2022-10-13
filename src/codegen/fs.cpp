@@ -103,7 +103,7 @@ const auto writeFileSync = std::string(
   R"(})" EOL
 );
 
-const auto codegenFs = std::vector<std::string>{
+const std::vector<std::string> codegenFs = {
   chmodSync,
   chownSync,
   rmSync,
