@@ -117,7 +117,6 @@ const auto isSymbolicLinkSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto linkSync = std::string(
   R"(void fs_linkSync (_{struct str} s1, _{struct str} s2) {)" EOL
   R"(  char *c1 = _{alloc}(s1.l + 1);)" EOL
@@ -127,7 +126,6 @@ const auto linkSync = std::string(
   R"(  _{memcpy}(c2, s2.d, s2.l);)" EOL
   R"(  c2[s2.l] = '\0';)" EOL
   R"(  if (_{symlink}(c1, c2) != 0) {)" EOL
-  // todo test error when already exists
   R"(    _{fprintf}(_{stderr}, "Error: failed to create symbolic link from `%s` to `%s`" _{THE_EOL}, c1, c2);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -138,7 +136,6 @@ const auto linkSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto mkdirSync = std::string(
   R"(void fs_mkdirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -150,7 +147,6 @@ const auto mkdirSync = std::string(
   R"(    int r = _{mkdir}(c, 0777);)" EOL
   R"(  #endif)" EOL
   R"(  if (r != 0) {)" EOL
-  // todo test error
   R"(    _{fprintf}(_{stderr}, "Error: failed to create directory `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -159,15 +155,13 @@ const auto mkdirSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto readFileSync = std::string(
-  R"(void fs_readFileSync (_{struct str} s) {)" EOL
+  R"(_{struct buffer} fs_readFileSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{FILE} *f = _{fopen}(c, "rb");)" EOL
   R"(  if (f == _{NULL}) {)" EOL
-  // todo test error
   R"(    _{fprintf}(_{stderr}, "Error: failed to open file `%s` for reading" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -175,7 +169,7 @@ const auto readFileSync = std::string(
   R"(  unsigned char b[4096];)" EOL
   R"(  _{size_t} l = 0;)" EOL
   R"(  _{size_t} y;)" EOL
-  R"(  while ((y = _{fread}(b, sizeof(b), 1, f)) > 0) {)" EOL
+  R"(  while ((y = _{fread}(b, 1, sizeof(b), f)) > 0) {)" EOL
   R"(    d = _{re_alloc}(d, l + y);)" EOL
   R"(    _{memcpy}(&d[l], b, y);)" EOL
   R"(    l += y;)" EOL

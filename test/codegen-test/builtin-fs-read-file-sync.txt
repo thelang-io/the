@@ -1,0 +1,133 @@
+======= stdin =======
+main {
+  print(fs_readFileSync("test/fixtures/test.txt"))
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void *re_alloc (void *, size_t);
+struct str buffer_str (struct buffer);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct buffer fs_readFileSync (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str buffer_str (struct buffer b) {
+  size_t l = 8 + (b.l * 3);
+  char *d = alloc(l);
+  memcpy(d, "[Buffer", 7);
+  for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);
+  d[l - 1] = ']';
+  free(b.d);
+  return (struct str) {d, l};
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct buffer fs_readFileSync (struct str s) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  FILE *f = fopen(c, "rb");
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to open file `%s` for reading" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  unsigned char *d = NULL;
+  unsigned char b[4096];
+  size_t l = 0;
+  size_t y;
+  while ((y = fread(b, 1, sizeof(b), f)) > 0) {
+    d = re_alloc(d, l + y);
+    memcpy(&d[l], b, y);
+    l += y;
+  }
+  fclose(f);
+  free(c);
+  str_free((struct str) s);
+  return (struct buffer) {d, l};
+}
+
+int main () {
+  print(stdout, "sz", buffer_str(fs_readFileSync(str_alloc("test/fixtures/test.txt"))), THE_EOL);
+}
+======= flags =======
+======= stdout =======
+[Buffer {{ (22 )? }}6c 6f 72 65 6d 20 69 70 73 75 6d 20 64 6f 6c 6f 72 20 73 69 74 20 61 6d 65 74 {{ (22 )? }}0a]
