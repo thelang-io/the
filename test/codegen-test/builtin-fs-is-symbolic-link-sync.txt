@@ -1,0 +1,148 @@
+======= stdin =======
+main {
+  print(fs_isSymbolicLinkSync("delasy.txt"))
+  print(fs_isSymbolicLinkSync("test"))
+  print(fs_isSymbolicLinkSync("LICENSE.txt"))
+
+  fs_linkSync("LICENSE.txt", "LICENSE.out")
+  print(fs_isSymbolicLinkSync("LICENSE.out"))
+  fs_rmSync("LICENSE.out")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <sys/stat.h>
+  #include <unistd.h>
+#endif
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+void str_free (struct str);
+bool fs_isSymbolicLinkSync (struct str);
+void fs_linkSync (struct str, struct str);
+void fs_rmSync (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+bool fs_isSymbolicLinkSync (struct str s) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  struct stat r;
+  bool b = false;
+  if (lstat(c, &r) == 0) {
+    b = S_ISLNK(r.st_mode);
+  }
+  free(c);
+  str_free(s);
+  return b;
+}
+void fs_linkSync (struct str s1, struct str s2) {
+  char *c1 = alloc(s1.l + 1);
+  memcpy(c1, s1.d, s1.l);
+  c1[s1.l] = '\0';
+  char *c2 = alloc(s2.l + 1);
+  memcpy(c2, s2.d, s2.l);
+  c2[s2.l] = '\0';
+  if (symlink(c1, c2) != 0) {
+    fprintf(stderr, "Error: failed to create symbolic link from `%s` to `%s`" THE_EOL, c1, c2);
+    exit(EXIT_FAILURE);
+  }
+  str_free(s1);
+  str_free(s2);
+  free(c1);
+  free(c2);
+}
+void fs_rmSync (struct str s) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  if (remove(c) != 0) {
+    fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
+
+int main () {
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("delasy.txt")), THE_EOL);
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test")), THE_EOL);
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("LICENSE.txt")), THE_EOL);
+  fs_linkSync(str_alloc("LICENSE.txt"), str_alloc("LICENSE.out"));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("LICENSE.out")), THE_EOL);
+  fs_rmSync(str_alloc("LICENSE.out"));
+}
+======= flags =======
+======= stdout =======
+false
+false
+false
+true

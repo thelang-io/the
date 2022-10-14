@@ -45,7 +45,6 @@ const auto chownSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto existsSync = std::string(
   R"(_{bool} fs_existsSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -62,17 +61,14 @@ const auto existsSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto isAbsoluteSync = std::string(
   R"(_{bool} fs_isAbsoluteSync (_{struct str} s) {)" EOL
-  // todo test every platform
-  R"(  _{bool} r = (s.l > 0 && s.d[0] == '/') || (s.l > 2 && _{isalpha}(s.d[0]) && s.d[1] == ':' && s.d[2] == '\\'));)" EOL
+  R"(  _{bool} r = (s.l > 0 && s.d[0] == '/') || (s.l > 2 && _{isalpha}(s.d[0]) && s.d[1] == ':' && s.d[2] == '\\');)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL
 );
 
-// todo test
 const auto isDirectorySync = std::string(
   R"(_{bool} fs_isDirectorySync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -80,9 +76,7 @@ const auto isDirectorySync = std::string(
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{struct stat} r;)" EOL
   R"(  _{bool} b = false;)" EOL
-  // todo test error
   R"(  if (_{stat}(c, &r) == 0) {)" EOL
-  // todo test error
   R"(    b = _{S_ISDIR}(r.st_mode);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
@@ -91,7 +85,6 @@ const auto isDirectorySync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto isFileSync = std::string(
   R"(_{bool} fs_isFileSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -99,9 +92,7 @@ const auto isFileSync = std::string(
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{struct stat} r;)" EOL
   R"(  _{bool} b = false;)" EOL
-  // todo test error
   R"(  if (_{stat}(c, &r) == 0) {)" EOL
-  // todo test error
   R"(    b = _{S_ISREG}(r.st_mode);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
@@ -110,7 +101,6 @@ const auto isFileSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto isSymbolicLinkSync = std::string(
   R"(_{bool} fs_isSymbolicLinkSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -118,13 +108,33 @@ const auto isSymbolicLinkSync = std::string(
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{struct stat} r;)" EOL
   R"(  _{bool} b = false;)" EOL
-  R"(  if (_{stat}(c, &r) == 0) {)" EOL
-  // todo test error
+  R"(  if (_{lstat}(c, &r) == 0) {)" EOL
   R"(    b = _{S_ISLNK}(r.st_mode);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return b;)" EOL
+  R"(})" EOL
+);
+
+// todo test
+const auto linkSync = std::string(
+  R"(void fs_linkSync (_{struct str} s1, _{struct str} s2) {)" EOL
+  R"(  char *c1 = _{alloc}(s1.l + 1);)" EOL
+  R"(  _{memcpy}(c1, s1.d, s1.l);)" EOL
+  R"(  c1[s1.l] = '\0';)" EOL
+  R"(  char *c2 = _{alloc}(s2.l + 1);)" EOL
+  R"(  _{memcpy}(c2, s2.d, s2.l);)" EOL
+  R"(  c2[s2.l] = '\0';)" EOL
+  R"(  if (_{symlink}(c1, c2) != 0) {)" EOL
+  // todo test error when already exists
+  R"(    _{fprintf}(_{stderr}, "Error: failed to create symbolic link from `%s` to `%s`" _{THE_EOL}, c1, c2);)" EOL
+  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  })" EOL
+  R"(  _{str_free}(s1);)" EOL
+  R"(  _{str_free}(s2);)" EOL
+  R"(  _{free}(c1);)" EOL
+  R"(  _{free}(c2);)" EOL
   R"(})" EOL
 );
 
@@ -312,6 +322,7 @@ const std::vector<std::string> codegenFs = {
   isDirectorySync,
   isFileSync,
   isSymbolicLinkSync,
+  linkSync,
   mkdirSync,
   readFileSync,
   realpathSync,

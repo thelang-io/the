@@ -58,6 +58,7 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"fs_isFileSync", "@fs_isFileSync", typeMap.get("fs_isFileSync"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_isDirectorySync", "@fs_isDirectorySync", typeMap.get("fs_isDirectorySync"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_isSymbolicLinkSync", "@fs_isSymbolicLinkSync", typeMap.get("fs_isSymbolicLinkSync"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_linkSync", "@fs_linkSync", typeMap.get("fs_linkSync"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_mkdirSync", "@fs_mkdirSync", typeMap.get("fs_mkdirSync"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_readFileSync", "@fs_readFileSync", typeMap.get("fs_readFileSync"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_realpathSync", "@fs_realpathSync", typeMap.get("fs_realpathSync"), false, true, this->_frame}));
