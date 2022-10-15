@@ -181,4 +181,4 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-["test2.txt", "test.txt"]
+["{{ test2? }}.txt", "{{ test2? }}.txt"]
