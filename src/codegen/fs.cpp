@@ -181,21 +181,19 @@ const auto readFileSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto realpathSync = std::string(
-  R"(void fs_realpathSync (_{struct str} s) {)" EOL
+  R"(_{struct str} fs_realpathSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  char *r = _{realpath}(c, _{NULL});)" EOL
-  R"(  if (r == _{NULL}) {)" EOL
-  // todo test error
+  R"(  char *d = _{realpath}(c, _{NULL});)" EOL
+  R"(  if (d == _{NULL}) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to get real path of file `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
-  R"(  return (_{struct str}) {d, _{strlen}(r)};)" EOL
+  R"(  return (_{struct str}) {d, _{strlen}(d)};)" EOL
   R"(})" EOL
 );
 
