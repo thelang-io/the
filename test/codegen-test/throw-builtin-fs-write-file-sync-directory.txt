@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_readFileSync("test/fixtures/throw-builtin-fs-read-file-sync-non-existing.txt")
+  fs_writeFileSync("test/fixtures", "test".toBuffer())
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -29,24 +29,16 @@ struct str {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct buffer fs_readFileSync (struct str);
+struct buffer str_to_buffer (struct str);
+void fs_writeFileSync (struct str, struct buffer);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -63,33 +55,33 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer fs_readFileSync (struct str s) {
+struct buffer str_to_buffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
+}
+void fs_writeFileSync (struct str s, struct buffer b) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
-  FILE *f = fopen(c, "rb");
+  FILE *f = fopen(c, "wb");
   if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s` for reading" THE_EOL, c);
+    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
     exit(EXIT_FAILURE);
   }
-  unsigned char *d = NULL;
-  unsigned char b[4096];
-  size_t l = 0;
-  size_t y;
-  while ((y = fread(b, 1, sizeof(b), f)) > 0) {
-    d = re_alloc(d, l + y);
-    memcpy(&d[l], b, y);
-    l += y;
+  if (b.l != 0) {
+    if (fwrite(b.d, b.l, 1, f) != 1) {
+      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
   }
   fclose(f);
   free(c);
-  str_free((struct str) s);
-  return (struct buffer) {d, l};
+  str_free(s);
+  buffer_free(b);
 }
 
 int main () {
-  buffer_free((struct buffer) fs_readFileSync(str_alloc("test/fixtures/throw-builtin-fs-read-file-sync-non-existing.txt")));
+  fs_writeFileSync(str_alloc("test/fixtures"), str_to_buffer(str_alloc("test")));
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to open file `test/fixtures/throw-builtin-fs-read-file-sync-non-existing.txt` for reading
+Error: failed to open file `test/fixtures` for writing

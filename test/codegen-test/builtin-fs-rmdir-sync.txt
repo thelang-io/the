@@ -1,7 +1,9 @@
 ======= stdin =======
 main {
-  fs_mkdirSync("test/fixtures/new")
-  fs_rmdirSync("test/fixtures/new")
+  dirName := "test/fixtures/builtin-fs-rmdir-sync"
+
+  fs_mkdirSync(dirName)
+  fs_rmdirSync(dirName)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -34,6 +36,7 @@ struct str {
 
 void *alloc (size_t);
 struct str str_alloc (const char *);
+struct str str_copy (const struct str);
 void str_free (struct str);
 void fs_mkdirSync (struct str);
 void fs_rmdirSync (struct str);
@@ -51,6 +54,11 @@ struct str str_alloc (const char *r) {
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
   free(s.d);
@@ -89,8 +97,10 @@ void fs_rmdirSync (struct str s) {
 }
 
 int main () {
-  fs_mkdirSync(str_alloc("test/fixtures/new"));
-  fs_rmdirSync(str_alloc("test/fixtures/new"));
+  const struct str __THE_0_dirName_0 = str_alloc("test/fixtures/builtin-fs-rmdir-sync");
+  fs_mkdirSync(str_copy(__THE_0_dirName_0));
+  fs_rmdirSync(str_copy(__THE_0_dirName_0));
+  str_free((struct str) __THE_0_dirName_0);
 }
 ======= flags =======
 ======= stdout =======

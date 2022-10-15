@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_mkdirSync("src")
+  fs_mkdirSync("test/fixtures")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -70,8 +70,8 @@ void fs_mkdirSync (struct str s) {
 }
 
 int main () {
-  fs_mkdirSync(str_alloc("src"));
+  fs_mkdirSync(str_alloc("test/fixtures"));
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to create directory `src`
+Error: failed to create directory `test/fixtures`

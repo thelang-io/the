@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_realpathSync("test/fixtures/test1.txt")
+  fs_realpathSync("test/fixtures/throw-builtin-fs-realpath-sync-non-existing.txt")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -61,8 +61,8 @@ struct str fs_realpathSync (struct str s) {
 }
 
 int main () {
-  str_free((struct str) fs_realpathSync(str_alloc("test/fixtures/test1.txt")));
+  str_free((struct str) fs_realpathSync(str_alloc("test/fixtures/throw-builtin-fs-realpath-sync-non-existing.txt")));
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to get real path of file `test/fixtures/test1.txt`
+Error: failed to get real path of file `test/fixtures/throw-builtin-fs-realpath-sync-non-existing.txt`

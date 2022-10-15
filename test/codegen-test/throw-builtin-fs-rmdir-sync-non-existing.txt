@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_rmdirSync("test/fixtures/test1.txt")
+  fs_rmdirSync("test/fixtures/throw-builtin-fs-rmdir-sync-non-existing")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -70,8 +70,8 @@ void fs_rmdirSync (struct str s) {
 }
 
 int main () {
-  fs_rmdirSync(str_alloc("test/fixtures/test1.txt"));
+  fs_rmdirSync(str_alloc("test/fixtures/throw-builtin-fs-rmdir-sync-non-existing"));
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to remove directory `test/fixtures/test1.txt`
+Error: failed to remove directory `test/fixtures/throw-builtin-fs-rmdir-sync-non-existing`

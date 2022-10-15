@@ -1,8 +1,10 @@
 ======= stdin =======
 main {
-  fs_mkdirSync("delasy")
-  print(fs_isDirectorySync("delasy"))
-  fs_rmdirSync("delasy")
+  dirName := "test/fixtures/builtin-fs-mkdir-sync"
+
+  fs_mkdirSync(dirName)
+  print(fs_isDirectorySync(dirName))
+  fs_rmdirSync(dirName)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -39,6 +41,7 @@ struct str {
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+struct str str_copy (const struct str);
 void str_free (struct str);
 bool fs_isDirectorySync (struct str);
 void fs_mkdirSync (struct str);
@@ -86,6 +89,11 @@ struct str str_alloc (const char *r) {
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
   free(s.d);
@@ -137,9 +145,11 @@ void fs_rmdirSync (struct str s) {
 }
 
 int main () {
-  fs_mkdirSync(str_alloc("delasy"));
-  print(stdout, "tz", fs_isDirectorySync(str_alloc("delasy")), THE_EOL);
-  fs_rmdirSync(str_alloc("delasy"));
+  const struct str __THE_0_dirName_0 = str_alloc("test/fixtures/builtin-fs-mkdir-sync");
+  fs_mkdirSync(str_copy(__THE_0_dirName_0));
+  print(stdout, "tz", fs_isDirectorySync(str_copy(__THE_0_dirName_0)), THE_EOL);
+  fs_rmdirSync(str_copy(__THE_0_dirName_0));
+  str_free((struct str) __THE_0_dirName_0);
 }
 ======= flags =======
 ======= stdout =======

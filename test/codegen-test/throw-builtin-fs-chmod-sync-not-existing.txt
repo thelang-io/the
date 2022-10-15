@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_chmodSync("delasy.txt", 0o000)
+  fs_chmodSync("test/fixtures/throw-builtin-fs-chmod-sync-not-existing.txt", 0o000)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -63,8 +63,8 @@ void fs_chmodSync (struct str s, int32_t m) {
 }
 
 int main () {
-  fs_chmodSync(str_alloc("delasy.txt"), 0000);
+  fs_chmodSync(str_alloc("test/fixtures/throw-builtin-fs-chmod-sync-not-existing.txt"), 0000);
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to change mode to 0 for file `delasy.txt`
+Error: failed to change mode to 0 for file `test/fixtures/throw-builtin-fs-chmod-sync-not-existing.txt`

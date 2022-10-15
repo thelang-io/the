@@ -1,12 +1,11 @@
 ======= stdin =======
 main {
-  print(fs_isAbsoluteSync("delasy.txt"))
-  print(fs_isAbsoluteSync("LICENSE.txt"))
+  print(fs_isAbsoluteSync("test/fixtures/builtin-fs-is-absolute-sync.txt"))
 
   if os_name() == "Windows" {
-    print(fs_isAbsoluteSync("C:\\test"))
+    print(fs_isAbsoluteSync("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync.txt"))
   } else {
-    print(fs_isAbsoluteSync("/test"))
+    print(fs_isAbsoluteSync("/test/fixtures/builtin-fs-is-absolute-sync.txt"))
   }
 }
 ======= code =======
@@ -117,16 +116,14 @@ bool fs_isAbsoluteSync (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", fs_isAbsoluteSync(str_alloc("delasy.txt")), THE_EOL);
-  print(stdout, "tz", fs_isAbsoluteSync(str_alloc("LICENSE.txt")), THE_EOL);
+  print(stdout, "tz", fs_isAbsoluteSync(str_alloc("test/fixtures/builtin-fs-is-absolute-sync.txt")), THE_EOL);
   if (str_eq_cstr(os_name(), "Windows")) {
-    print(stdout, "tz", fs_isAbsoluteSync(str_alloc("C:\\test")), THE_EOL);
+    print(stdout, "tz", fs_isAbsoluteSync(str_alloc("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync.txt")), THE_EOL);
   } else {
-    print(stdout, "tz", fs_isAbsoluteSync(str_alloc("/test")), THE_EOL);
+    print(stdout, "tz", fs_isAbsoluteSync(str_alloc("/test/fixtures/builtin-fs-is-absolute-sync.txt")), THE_EOL);
   }
 }
 ======= flags =======
 ======= stdout =======
-false
 false
 true

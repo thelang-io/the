@@ -1,7 +1,7 @@
 ======= stdin =======
 main {
-  fs_existsSync("delasy.txt")
-  fs_existsSync("LICENSE.txt")
+  fs_existsSync("test/fixtures/builtin-fs-exists-sync-root.txt")
+  fs_existsSync("test/fixtures/test.txt")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -69,8 +69,8 @@ bool fs_existsSync (struct str s) {
 }
 
 int main () {
-  fs_existsSync(str_alloc("delasy.txt"));
-  fs_existsSync(str_alloc("LICENSE.txt"));
+  fs_existsSync(str_alloc("test/fixtures/builtin-fs-exists-sync-root.txt"));
+  fs_existsSync(str_alloc("test/fixtures/test.txt"));
 }
 ======= flags =======
 ======= stdout =======

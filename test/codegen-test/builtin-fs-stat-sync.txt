@@ -1,13 +1,7 @@
 ======= stdin =======
 main {
-  fileName := "test/fixtures/test-builtin-fs-chown-sync.txt"
-  fs_writeFileSync(fileName, "".toBuffer())
-
-  fs_chownSync(fileName, process_getuid(), process_getgid())
-  stat := fs_statSync(fileName)
-  print(stat.uid, stat.gid)
-
-  fs_rmSync(fileName)
+  print(fs_statSync("test/fixtures"))
+  print(fs_statSync("test/fixtures/test.txt"))
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -29,13 +23,8 @@ main {
 #include <string.h>
 #ifndef THE_OS_WINDOWS
   #include <sys/stat.h>
-  #include <unistd.h>
 #endif
 
-struct buffer {
-  unsigned char *d;
-  size_t l;
-};
 struct str {
   char *d;
   size_t l;
@@ -65,20 +54,20 @@ struct fs_Stats {
 };
 
 void *alloc (size_t);
-void buffer_free (struct buffer);
+struct str i32_str (int32_t);
+struct str i64_str (int64_t);
+struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
-struct str str_copy (const struct str);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
-void fs_chownSync (struct str, int32_t, int32_t);
-void fs_rmSync (struct str);
+struct str u16_str (uint16_t);
+struct str u64_str (uint64_t);
 struct fs_Stats *fs_statSync (struct str);
-void fs_writeFileSync (struct str, struct buffer);
-int32_t process_getgid ();
-int32_t process_getuid ();
 struct fs_Stats *fs_Stats_alloc (int32_t, uint16_t, uint16_t, uint64_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int64_t, int64_t, int32_t);
 void fs_Stats_free (struct fs_Stats *);
+struct str fs_Stats_str (struct fs_Stats *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -88,8 +77,20 @@ void *alloc (size_t l) {
   }
   return r;
 }
-void buffer_free (struct buffer o) {
-  free(o.d);
+struct str i32_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+struct str i64_str (int64_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId64, d);
+  return str_alloc(buf);
+}
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -126,38 +127,35 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-struct str str_copy (const struct str s) {
-  char *d = alloc(s.l);
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
   memcpy(d, s.d, s.l);
-  return (struct str) {d, s.l};
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
 }
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
-  return (struct buffer) {(unsigned char *) s.d, s.l};
+struct str u16_str (uint16_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu16, d);
+  return str_alloc(buf);
 }
-void fs_chownSync (struct str s, int32_t u, int32_t g) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
-  if (chown(c, u, g) != 0) {
-    fprintf(stderr, "Error: failed to change owner to %" PRId32 " and group to %" PRId32 " for file `%s`" THE_EOL, u, g, c);
-    exit(EXIT_FAILURE);
-  }
-  str_free(s);
-  free(c);
-}
-void fs_rmSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
-  if (remove(c) != 0) {
-    fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  }
-  free(c);
-  str_free(s);
+struct str u64_str (uint64_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu64, d);
+  return str_alloc(buf);
 }
 struct fs_Stats *fs_statSync (struct str s) {
   char *c = alloc(s.l + 1);
@@ -176,32 +174,6 @@ struct fs_Stats *fs_statSync (struct str s) {
     return fs_Stats_alloc(r.st_dev, r.st_mode, r.st_nlink, r.st_ino, r.st_uid, r.st_gid, r.st_rdev, r.st_atim.tv_sec, r.st_atim.tv_nsec, r.st_mtim.tv_sec, r.st_mtim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_size, r.st_blocks, r.st_blksize);
   #endif
 }
-void fs_writeFileSync (struct str s, struct buffer b) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
-  FILE *f = fopen(c, "wb");
-  if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  }
-  if (b.l != 0) {
-    if (fwrite(b.d, b.l, 1, f) != 1) {
-      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
-    }
-  }
-  fclose(f);
-  free(c);
-  str_free(s);
-  buffer_free(b);
-}
-int32_t process_getgid () {
-  return getgid();
-}
-int32_t process_getuid () {
-  return getuid();
-}
 struct fs_Stats *fs_Stats_alloc (int32_t __THE_0_dev, uint16_t __THE_0_mode, uint16_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, int32_t __THE_0_rdev, int32_t __THE_0_atime, int32_t __THE_0_atimeNs, int32_t __THE_0_mtime, int32_t __THE_0_mtimeNs, int32_t __THE_0_ctime, int32_t __THE_0_ctimeNs, int32_t __THE_0_birthtime, int32_t __THE_0_birthtimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int32_t __THE_0_blksize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
   struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_birthtime, __THE_0_birthtimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blksize};
@@ -211,17 +183,53 @@ struct fs_Stats *fs_Stats_alloc (int32_t __THE_0_dev, uint16_t __THE_0_mode, uin
 void fs_Stats_free (struct fs_Stats *o) {
   free(o);
 }
+struct str fs_Stats_str (struct fs_Stats *o) {
+  struct str r = str_alloc("fs_Stats{");
+  r = str_concat_cstr(r, "dev: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_dev));
+  r = str_concat_cstr(r, ", mode: ");
+  r = str_concat_str(r, u16_str(o->__THE_0_mode));
+  r = str_concat_cstr(r, ", nlink: ");
+  r = str_concat_str(r, u16_str(o->__THE_0_nlink));
+  r = str_concat_cstr(r, ", ino: ");
+  r = str_concat_str(r, u64_str(o->__THE_0_ino));
+  r = str_concat_cstr(r, ", uid: ");
+  r = str_concat_str(r, int_str(o->__THE_0_uid));
+  r = str_concat_cstr(r, ", gid: ");
+  r = str_concat_str(r, int_str(o->__THE_0_gid));
+  r = str_concat_cstr(r, ", rdev: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_rdev));
+  r = str_concat_cstr(r, ", atime: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_atime));
+  r = str_concat_cstr(r, ", atimeNs: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_atimeNs));
+  r = str_concat_cstr(r, ", mtime: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_mtime));
+  r = str_concat_cstr(r, ", mtimeNs: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_mtimeNs));
+  r = str_concat_cstr(r, ", ctime: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_ctime));
+  r = str_concat_cstr(r, ", ctimeNs: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_ctimeNs));
+  r = str_concat_cstr(r, ", birthtime: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_birthtime));
+  r = str_concat_cstr(r, ", birthtimeNs: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_birthtimeNs));
+  r = str_concat_cstr(r, ", size: ");
+  r = str_concat_str(r, i64_str(o->__THE_0_size));
+  r = str_concat_cstr(r, ", blocks: ");
+  r = str_concat_str(r, i64_str(o->__THE_0_blocks));
+  r = str_concat_cstr(r, ", blksize: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_blksize));
+  fs_Stats_free((struct fs_Stats *) o);
+  return str_concat_cstr(r, "}");
+}
 
 int main () {
-  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/test-builtin-fs-chown-sync.txt");
-  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_to_buffer(str_alloc("")));
-  fs_chownSync(str_copy(__THE_0_fileName_0), process_getuid(), process_getgid());
-  const struct fs_Stats *__THE_0_stat_0 = fs_statSync(str_copy(__THE_0_fileName_0));
-  print(stdout, "iziz", __THE_0_stat_0->__THE_0_uid, " ", __THE_0_stat_0->__THE_0_gid, THE_EOL);
-  fs_rmSync(str_copy(__THE_0_fileName_0));
-  fs_Stats_free((struct fs_Stats *) __THE_0_stat_0);
-  str_free((struct str) __THE_0_fileName_0);
+  print(stdout, "sz", fs_Stats_str(fs_statSync(str_alloc("test/fixtures"))), THE_EOL);
+  print(stdout, "sz", fs_Stats_str(fs_statSync(str_alloc("test/fixtures/test.txt"))), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
-{{ \d+ }} {{ \d+ }}
+fs_Stats{dev: {{ \d+ }}, mode: {{ \d+ }}, nlink: {{ \d+ }}, ino: {{ \d+ }}, uid: {{ \d+ }}, gid: {{ \d+ }}, rdev: {{ \d+ }}, atime: {{ \d+ }}, atimeNs: {{ \d+ }}, mtime: {{ \d+ }}, mtimeNs: {{ \d+ }}, ctime: {{ \d+ }}, ctimeNs: {{ \d+ }}, birthtime: {{ \d+ }}, birthtimeNs: {{ \d+ }}, size: {{ \d+ }}, blocks: {{ \d+ }}, blksize: {{ \d+ }}}
+fs_Stats{dev: {{ \d+ }}, mode: {{ \d+ }}, nlink: {{ \d+ }}, ino: {{ \d+ }}, uid: {{ \d+ }}, gid: {{ \d+ }}, rdev: {{ \d+ }}, atime: {{ \d+ }}, atimeNs: {{ \d+ }}, mtime: {{ \d+ }}, mtimeNs: {{ \d+ }}, ctime: {{ \d+ }}, ctimeNs: {{ \d+ }}, birthtime: {{ \d+ }}, birthtimeNs: {{ \d+ }}, size: {{ \d+ }}, blocks: {{ \d+ }}, blksize: {{ \d+ }}}

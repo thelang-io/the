@@ -1,21 +1,21 @@
 ======= stdin =======
 main {
-  file := "./test-builtin-fs-chmod-sync.txt"
-  fs_writeFileSync(file, "".toBuffer())
+  fileName := "test/fixtures/test-builtin-fs-chmod-sync.txt"
+  fs_writeFileSync(fileName, "".toBuffer())
 
-  fs_chmodSync(file, 0o000)
-  stat1 := fs_statSync(file)
+  fs_chmodSync(fileName, 0o000)
+  stat1 := fs_statSync(fileName)
   print(stat1.mode)
 
-  fs_chmodSync(file, 0o100 | 0o001)
-  stat2 := fs_statSync(file)
+  fs_chmodSync(fileName, 0o100 | 0o001)
+  stat2 := fs_statSync(fileName)
   print(stat2.mode)
 
-  fs_chmodSync(file, 0o777)
-  stat3 := fs_statSync(file)
+  fs_chmodSync(fileName, 0o777)
+  stat3 := fs_statSync(fileName)
   print(stat3.mode)
 
-  fs_rmSync(file)
+  fs_rmSync(fileName)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -190,9 +190,11 @@ void fs_writeFileSync (struct str s, struct buffer b) {
     fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
     exit(EXIT_FAILURE);
   }
-  if (fwrite(b.d, b.l, 1, f) != 0) {
-    fprintf(stderr, "Error: failed to write to file `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+  if (b.l != 0) {
+    if (fwrite(b.d, b.l, 1, f) != 1) {
+      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
   }
   fclose(f);
   free(c);
@@ -210,22 +212,22 @@ void fs_Stats_free (struct fs_Stats *o) {
 }
 
 int main () {
-  const struct str __THE_0_file_0 = str_alloc("./test-builtin-fs-chmod-sync.txt");
-  fs_writeFileSync(str_copy(__THE_0_file_0), str_to_buffer(str_alloc("")));
-  fs_chmodSync(str_copy(__THE_0_file_0), 0000);
-  const struct fs_Stats *__THE_0_stat1_0 = fs_statSync(str_copy(__THE_0_file_0));
+  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/test-builtin-fs-chmod-sync.txt");
+  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_to_buffer(str_alloc("")));
+  fs_chmodSync(str_copy(__THE_0_fileName_0), 0000);
+  const struct fs_Stats *__THE_0_stat1_0 = fs_statSync(str_copy(__THE_0_fileName_0));
   print(stdout, "wz", __THE_0_stat1_0->__THE_0_mode, THE_EOL);
-  fs_chmodSync(str_copy(__THE_0_file_0), 0100 | 0001);
-  const struct fs_Stats *__THE_0_stat2_0 = fs_statSync(str_copy(__THE_0_file_0));
+  fs_chmodSync(str_copy(__THE_0_fileName_0), 0100 | 0001);
+  const struct fs_Stats *__THE_0_stat2_0 = fs_statSync(str_copy(__THE_0_fileName_0));
   print(stdout, "wz", __THE_0_stat2_0->__THE_0_mode, THE_EOL);
-  fs_chmodSync(str_copy(__THE_0_file_0), 0777);
-  const struct fs_Stats *__THE_0_stat3_0 = fs_statSync(str_copy(__THE_0_file_0));
+  fs_chmodSync(str_copy(__THE_0_fileName_0), 0777);
+  const struct fs_Stats *__THE_0_stat3_0 = fs_statSync(str_copy(__THE_0_fileName_0));
   print(stdout, "wz", __THE_0_stat3_0->__THE_0_mode, THE_EOL);
-  fs_rmSync(str_copy(__THE_0_file_0));
+  fs_rmSync(str_copy(__THE_0_fileName_0));
   fs_Stats_free((struct fs_Stats *) __THE_0_stat3_0);
   fs_Stats_free((struct fs_Stats *) __THE_0_stat2_0);
   fs_Stats_free((struct fs_Stats *) __THE_0_stat1_0);
-  str_free((struct str) __THE_0_file_0);
+  str_free((struct str) __THE_0_fileName_0);
 }
 ======= flags =======
 ======= stdout =======

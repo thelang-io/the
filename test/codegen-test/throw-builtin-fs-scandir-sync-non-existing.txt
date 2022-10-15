@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_scandirSync("test/fixtures/test1")
+  fs_scandirSync("test/fixtures/throw-builtin-fs-scandir-sync-non-existing")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -92,8 +92,8 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
 }
 
 int main () {
-  __THE_1_array_str_free((struct __THE_1_array_str) fs_scandirSync(str_alloc("test/fixtures/test1")));
+  __THE_1_array_str_free((struct __THE_1_array_str) fs_scandirSync(str_alloc("test/fixtures/throw-builtin-fs-scandir-sync-non-existing")));
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to open directory `test/fixtures/test1`
+Error: failed to open directory `test/fixtures/throw-builtin-fs-scandir-sync-non-existing`

@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_linkSync("LICENSE.txt", "Dockerfile")
+  fs_linkSync("test/fixtures/test.txt", "test/fixtures/test2.txt")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -67,8 +67,8 @@ void fs_linkSync (struct str s1, struct str s2) {
 }
 
 int main () {
-  fs_linkSync(str_alloc("LICENSE.txt"), str_alloc("Dockerfile"));
+  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_alloc("test/fixtures/test2.txt"));
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to create symbolic link from `LICENSE.txt` to `Dockerfile`
+Error: failed to create symbolic link from `test/fixtures/test.txt` to `test/fixtures/test2.txt`

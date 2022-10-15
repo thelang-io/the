@@ -1,12 +1,14 @@
 ======= stdin =======
 main {
-  print(fs_isSymbolicLinkSync("delasy.txt"))
-  print(fs_isSymbolicLinkSync("test"))
-  print(fs_isSymbolicLinkSync("LICENSE.txt"))
+  fileName := "test/fixtures/builtin-fs-is-symbolic-sync.txt"
 
-  fs_linkSync("LICENSE.txt", "LICENSE.out")
-  print(fs_isSymbolicLinkSync("LICENSE.out"))
-  fs_rmSync("LICENSE.out")
+  print(fs_isSymbolicLinkSync(fileName))
+  print(fs_isSymbolicLinkSync("test/fixtures"))
+  print(fs_isSymbolicLinkSync("test/fixtures/test.txt"))
+
+  fs_linkSync("test/fixtures/test.txt", fileName)
+  print(fs_isSymbolicLinkSync(fileName))
+  fs_rmSync(fileName)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -40,6 +42,7 @@ struct str {
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+struct str str_copy (const struct str);
 void str_free (struct str);
 bool fs_isSymbolicLinkSync (struct str);
 void fs_linkSync (struct str, struct str);
@@ -88,6 +91,11 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
 void str_free (struct str s) {
   free(s.d);
 }
@@ -133,12 +141,14 @@ void fs_rmSync (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("delasy.txt")), THE_EOL);
-  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test")), THE_EOL);
-  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("LICENSE.txt")), THE_EOL);
-  fs_linkSync(str_alloc("LICENSE.txt"), str_alloc("LICENSE.out"));
-  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("LICENSE.out")), THE_EOL);
-  fs_rmSync(str_alloc("LICENSE.out"));
+  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-is-symbolic-sync.txt");
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures")), THE_EOL);
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures/test.txt")), THE_EOL);
+  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  fs_rmSync(str_copy(__THE_0_fileName_0));
+  str_free((struct str) __THE_0_fileName_0);
 }
 ======= flags =======
 ======= stdout =======

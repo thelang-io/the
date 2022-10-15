@@ -1,7 +1,9 @@
 ======= stdin =======
 main {
-  fs_writeFileSync("test/fixtures/new.txt", "".toBuffer())
-  fs_rmSync("test/fixtures/new.txt")
+  fileName := "test/fixtures/builtin-fs-rm-sync.txt"
+
+  fs_writeFileSync(fileName, "".toBuffer())
+  fs_rmSync(fileName)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -32,6 +34,7 @@ struct str {
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str str_alloc (const char *);
+struct str str_copy (const struct str);
 void str_free (struct str);
 struct buffer str_to_buffer (struct str);
 void fs_rmSync (struct str);
@@ -53,6 +56,11 @@ struct str str_alloc (const char *r) {
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
   free(s.d);
@@ -80,9 +88,11 @@ void fs_writeFileSync (struct str s, struct buffer b) {
     fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
     exit(EXIT_FAILURE);
   }
-  if (fwrite(b.d, b.l, 1, f) != 0) {
-    fprintf(stderr, "Error: failed to write to file `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+  if (b.l != 0) {
+    if (fwrite(b.d, b.l, 1, f) != 1) {
+      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
   }
   fclose(f);
   free(c);
@@ -91,8 +101,10 @@ void fs_writeFileSync (struct str s, struct buffer b) {
 }
 
 int main () {
-  fs_writeFileSync(str_alloc("test/fixtures/new.txt"), str_to_buffer(str_alloc("")));
-  fs_rmSync(str_alloc("test/fixtures/new.txt"));
+  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-rm-sync.txt");
+  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_to_buffer(str_alloc("")));
+  fs_rmSync(str_copy(__THE_0_fileName_0));
+  str_free((struct str) __THE_0_fileName_0);
 }
 ======= flags =======
 ======= stdout =======

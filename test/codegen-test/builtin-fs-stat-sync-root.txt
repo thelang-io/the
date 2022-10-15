@@ -1,0 +1,111 @@
+======= stdin =======
+main {
+  fs_statSync("test/fixtures")
+  fs_statSync("test/fixtures/test.txt")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <sys/stat.h>
+#endif
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct fs_Stats;
+
+struct fs_Stats {
+  const int32_t __THE_0_dev;
+  const uint16_t __THE_0_mode;
+  const uint16_t __THE_0_nlink;
+  const uint64_t __THE_0_ino;
+  const int32_t __THE_0_uid;
+  const int32_t __THE_0_gid;
+  const int32_t __THE_0_rdev;
+  const int32_t __THE_0_atime;
+  const int32_t __THE_0_atimeNs;
+  const int32_t __THE_0_mtime;
+  const int32_t __THE_0_mtimeNs;
+  const int32_t __THE_0_ctime;
+  const int32_t __THE_0_ctimeNs;
+  const int32_t __THE_0_birthtime;
+  const int32_t __THE_0_birthtimeNs;
+  const int64_t __THE_0_size;
+  const int64_t __THE_0_blocks;
+  const int32_t __THE_0_blksize;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct fs_Stats *fs_statSync (struct str);
+struct fs_Stats *fs_Stats_alloc (int32_t, uint16_t, uint16_t, uint64_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int64_t, int64_t, int32_t);
+void fs_Stats_free (struct fs_Stats *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct fs_Stats *fs_statSync (struct str s) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  struct stat r;
+  if (stat(c, &r) != 0) {
+    fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+  #ifdef THE_OS_MACOS
+    return fs_Stats_alloc(r.st_dev, r.st_mode, r.st_nlink, r.st_ino, r.st_uid, r.st_gid, r.st_rdev, r.st_atimespec.tv_sec, r.st_atimespec.tv_nsec, r.st_mtimespec.tv_sec, r.st_mtimespec.tv_nsec, r.st_ctimespec.tv_sec, r.st_ctimespec.tv_nsec, r.st_birthtimespec.tv_sec, r.st_birthtimespec.tv_nsec, r.st_size, r.st_blocks, r.st_blksize);
+  #else
+    return fs_Stats_alloc(r.st_dev, r.st_mode, r.st_nlink, r.st_ino, r.st_uid, r.st_gid, r.st_rdev, r.st_atim.tv_sec, r.st_atim.tv_nsec, r.st_mtim.tv_sec, r.st_mtim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_size, r.st_blocks, r.st_blksize);
+  #endif
+}
+struct fs_Stats *fs_Stats_alloc (int32_t __THE_0_dev, uint16_t __THE_0_mode, uint16_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, int32_t __THE_0_rdev, int32_t __THE_0_atime, int32_t __THE_0_atimeNs, int32_t __THE_0_mtime, int32_t __THE_0_mtimeNs, int32_t __THE_0_ctime, int32_t __THE_0_ctimeNs, int32_t __THE_0_birthtime, int32_t __THE_0_birthtimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int32_t __THE_0_blksize) {
+  struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
+  struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_birthtime, __THE_0_birthtimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blksize};
+  memcpy(r, &s, sizeof(struct fs_Stats));
+  return r;
+}
+void fs_Stats_free (struct fs_Stats *o) {
+  free(o);
+}
+
+int main () {
+  fs_Stats_free((struct fs_Stats *) fs_statSync(str_alloc("test/fixtures")));
+  fs_Stats_free((struct fs_Stats *) fs_statSync(str_alloc("test/fixtures/test.txt")));
+}
+======= flags =======
+======= stdout =======

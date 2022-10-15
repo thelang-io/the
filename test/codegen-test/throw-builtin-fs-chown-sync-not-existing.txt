@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_chownSync("delasy.txt", 0, 0)
+  fs_chownSync("test/fixtures/throw-builtin-fs-chown-sync-not-existing.txt", 0, 0)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -63,8 +63,8 @@ void fs_chownSync (struct str s, int32_t u, int32_t g) {
 }
 
 int main () {
-  fs_chownSync(str_alloc("delasy.txt"), 0, 0);
+  fs_chownSync(str_alloc("test/fixtures/throw-builtin-fs-chown-sync-not-existing.txt"), 0, 0);
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to change owner to 0 and group to 0 for file `delasy.txt`
+Error: failed to change owner to 0 and group to 0 for file `test/fixtures/throw-builtin-fs-chown-sync-not-existing.txt`

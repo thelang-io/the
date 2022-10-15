@@ -231,6 +231,9 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-fs-rmdir-sync",
   "builtin-fs-scandir-sync",
   "builtin-fs-scandir-sync-root",
+  "builtin-fs-stat-sync",
+  "builtin-fs-stat-sync-root",
+  "builtin-fs-write-file-sync",
   "builtin-i8-str",
   "builtin-i8-str-root",
   "builtin-i16-str",
@@ -607,6 +610,8 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
   "throw-builtin-fs-rmdir-sync-file",
   "throw-builtin-fs-rmdir-sync-non-existing",
   "throw-builtin-fs-scandir-sync-non-existing",
+  "throw-builtin-fs-stat-sync-non-existing",
+  "throw-builtin-fs-write-file-sync-directory",
   "throw-builtin-str-at-empty",
   "throw-builtin-str-at-high",
   "throw-builtin-str-at-low"

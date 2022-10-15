@@ -1,9 +1,9 @@
 ======= stdin =======
 main {
-  fileName := "test/fixtures/builtin-fs-link-sync.txt"
+  fileName := "test/fixtures/builtin-fs-write-file-sync.txt"
 
-  fs_linkSync("test/fixtures/test.txt", fileName)
-  print(fs_isSymbolicLinkSync(fileName))
+  fs_writeFileSync(fileName, "test".toBuffer())
+  print(fs_readFileSync(fileName))
   fs_rmSync(fileName)
 }
 ======= code =======
@@ -21,28 +21,31 @@ main {
 
 #include <inttypes.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef THE_OS_WINDOWS
-  #include <sys/stat.h>
-  #include <unistd.h>
-#endif
 
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
 struct str {
   char *d;
   size_t l;
 };
 
 void *alloc (size_t);
+void *re_alloc (void *, size_t);
+void buffer_free (struct buffer);
+struct str buffer_str (struct buffer);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-bool fs_isSymbolicLinkSync (struct str);
-void fs_linkSync (struct str, struct str);
+struct buffer str_to_buffer (struct str);
+struct buffer fs_readFileSync (struct str);
 void fs_rmSync (struct str);
+void fs_writeFileSync (struct str, struct buffer);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -51,6 +54,26 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
+struct str buffer_str (struct buffer b) {
+  size_t l = 8 + (b.l * 3);
+  char *d = alloc(l);
+  memcpy(d, "[Buffer", 7);
+  for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);
+  d[l - 1] = ']';
+  free(b.d);
+  return (struct str) {d, l};
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -95,34 +118,31 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-bool fs_isSymbolicLinkSync (struct str s) {
+struct buffer str_to_buffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
+}
+struct buffer fs_readFileSync (struct str s) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
-  struct stat r;
-  bool b = false;
-  if (lstat(c, &r) == 0) {
-    b = S_ISLNK(r.st_mode);
-  }
-  free(c);
-  str_free(s);
-  return b;
-}
-void fs_linkSync (struct str s1, struct str s2) {
-  char *c1 = alloc(s1.l + 1);
-  memcpy(c1, s1.d, s1.l);
-  c1[s1.l] = '\0';
-  char *c2 = alloc(s2.l + 1);
-  memcpy(c2, s2.d, s2.l);
-  c2[s2.l] = '\0';
-  if (symlink(c1, c2) != 0) {
-    fprintf(stderr, "Error: failed to create symbolic link from `%s` to `%s`" THE_EOL, c1, c2);
+  FILE *f = fopen(c, "rb");
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to open file `%s` for reading" THE_EOL, c);
     exit(EXIT_FAILURE);
   }
-  str_free(s1);
-  str_free(s2);
-  free(c1);
-  free(c2);
+  unsigned char *d = NULL;
+  unsigned char b[4096];
+  size_t l = 0;
+  size_t y;
+  while ((y = fread(b, 1, sizeof(b), f)) > 0) {
+    d = re_alloc(d, l + y);
+    memcpy(&d[l], b, y);
+    l += y;
+  }
+  fclose(f);
+  free(c);
+  str_free((struct str) s);
+  return (struct buffer) {d, l};
 }
 void fs_rmSync (struct str s) {
   char *c = alloc(s.l + 1);
@@ -135,14 +155,34 @@ void fs_rmSync (struct str s) {
   free(c);
   str_free(s);
 }
+void fs_writeFileSync (struct str s, struct buffer b) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  FILE *f = fopen(c, "wb");
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  if (b.l != 0) {
+    if (fwrite(b.d, b.l, 1, f) != 1) {
+      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+  }
+  fclose(f);
+  free(c);
+  str_free(s);
+  buffer_free(b);
+}
 
 int main () {
-  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-link-sync.txt");
-  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
-  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-write-file-sync.txt");
+  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_to_buffer(str_alloc("test")));
+  print(stdout, "sz", buffer_str(fs_readFileSync(str_copy(__THE_0_fileName_0))), THE_EOL);
   fs_rmSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName_0);
 }
 ======= flags =======
 ======= stdout =======
-true
+[Buffer 74 65 73 74]

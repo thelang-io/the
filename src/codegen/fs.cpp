@@ -17,7 +17,7 @@
 #include "fs.hpp"
 #include "../config.hpp"
 
-const auto chmodSync = std::string(
+const std::vector<std::string> codegenFs = {
   R"(void fs_chmodSync (_{struct str} s, _{int32_t} m) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -28,10 +28,8 @@ const auto chmodSync = std::string(
   R"(  })" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{free}(c);)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto chownSync = std::string(
   R"(void fs_chownSync (_{struct str} s, _{int32_t} u, _{int32_t} g) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -42,10 +40,8 @@ const auto chownSync = std::string(
   R"(  })" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{free}(c);)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto existsSync = std::string(
   R"(_{bool} fs_existsSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -58,18 +54,14 @@ const auto existsSync = std::string(
   R"(  _{str_free}(s);)" EOL
   R"(  _{free}(c);)" EOL
   R"(  return r == 0 ? true : false;)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto isAbsoluteSync = std::string(
   R"(_{bool} fs_isAbsoluteSync (_{struct str} s) {)" EOL
   R"(  _{bool} r = (s.l > 0 && s.d[0] == '/') || (s.l > 2 && _{isalpha}(s.d[0]) && s.d[1] == ':' && s.d[2] == '\\');)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return r;)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto isDirectorySync = std::string(
   R"(_{bool} fs_isDirectorySync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -82,10 +74,8 @@ const auto isDirectorySync = std::string(
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return b;)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto isFileSync = std::string(
   R"(_{bool} fs_isFileSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -98,10 +88,8 @@ const auto isFileSync = std::string(
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return b;)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto isSymbolicLinkSync = std::string(
   R"(_{bool} fs_isSymbolicLinkSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -114,10 +102,8 @@ const auto isSymbolicLinkSync = std::string(
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return b;)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto linkSync = std::string(
   R"(void fs_linkSync (_{struct str} s1, _{struct str} s2) {)" EOL
   R"(  char *c1 = _{alloc}(s1.l + 1);)" EOL
   R"(  _{memcpy}(c1, s1.d, s1.l);)" EOL
@@ -133,10 +119,8 @@ const auto linkSync = std::string(
   R"(  _{str_free}(s2);)" EOL
   R"(  _{free}(c1);)" EOL
   R"(  _{free}(c2);)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto mkdirSync = std::string(
   R"(void fs_mkdirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -152,10 +136,8 @@ const auto mkdirSync = std::string(
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto readFileSync = std::string(
   R"(_{struct buffer} fs_readFileSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -178,10 +160,8 @@ const auto readFileSync = std::string(
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
   R"(  return (_{struct buffer}) {d, l};)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto realpathSync = std::string(
   R"(_{struct str} fs_realpathSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -194,10 +174,8 @@ const auto realpathSync = std::string(
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
   R"(  return (_{struct str}) {d, _{strlen}(d)};)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto rmSync = std::string(
   R"(void fs_rmSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -208,10 +186,8 @@ const auto rmSync = std::string(
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto rmdirSync = std::string(
   R"(void fs_rmdirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -227,10 +203,8 @@ const auto rmdirSync = std::string(
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto scandirSync = std::string(
   R"(struct _{array_str} fs_scandirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -252,17 +226,13 @@ const auto scandirSync = std::string(
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return (struct _{array_str}) {r, l};)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-// todo test
-const auto statSync = std::string(
   R"(struct _{fs_Stats} *fs_statSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{struct stat} r;)" EOL
-  // todo test error
   R"(  if (_{stat}(c, &r) != 0) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to stat file `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
@@ -274,48 +244,26 @@ const auto statSync = std::string(
   R"(  #else)" EOL
   R"(    return _{fs_Stats_alloc}(r.st_dev, r.st_mode, r.st_nlink, r.st_ino, r.st_uid, r.st_gid, r.st_rdev, r.st_atim.tv_sec, r.st_atim.tv_nsec, r.st_mtim.tv_sec, r.st_mtim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_ctim.tv_sec, r.st_ctim.tv_nsec, r.st_size, r.st_blocks, r.st_blksize);)" EOL
   R"(  #endif)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-// todo test
-const auto writeFileSync = std::string(
   R"(void fs_writeFileSync (_{struct str} s, _{struct buffer} b) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{FILE} *f = _{fopen}(c, "wb");)" EOL
-  // todo test error
   R"(  if (f == NULL) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to open file `%s` for writing" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
-  // todo test error
-  R"(  if (_{fwrite}(b.d, b.l, 1, f) != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to write to file `%s`" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  if (b.l != 0) {)" EOL
+  R"(    if (_{fwrite}(b.d, b.l, 1, f) != 1) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to write file `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
   R"(  })" EOL
   R"(  _{fclose}(f);)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{buffer_free}(b);)" EOL
   R"(})" EOL
-);
-
-const std::vector<std::string> codegenFs = {
-  chmodSync,
-  chownSync,
-  existsSync,
-  isAbsoluteSync,
-  isDirectorySync,
-  isFileSync,
-  isSymbolicLinkSync,
-  linkSync,
-  mkdirSync,
-  readFileSync,
-  realpathSync,
-  rmSync,
-  rmdirSync,
-  scandirSync,
-  statSync,
-  writeFileSync
 };

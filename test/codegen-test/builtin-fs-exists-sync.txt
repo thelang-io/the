@@ -1,7 +1,7 @@
 ======= stdin =======
 main {
-  print(fs_existsSync("delasy.txt"))
-  print(fs_existsSync("LICENSE.txt"))
+  print(fs_existsSync("test/fixtures/builtin-fs-exists-sync.txt"))
+  print(fs_existsSync("test/fixtures/test.txt"))
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -101,8 +101,8 @@ bool fs_existsSync (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", fs_existsSync(str_alloc("delasy.txt")), THE_EOL);
-  print(stdout, "tz", fs_existsSync(str_alloc("LICENSE.txt")), THE_EOL);
+  print(stdout, "tz", fs_existsSync(str_alloc("test/fixtures/builtin-fs-exists-sync.txt")), THE_EOL);
+  print(stdout, "tz", fs_existsSync(str_alloc("test/fixtures/test.txt")), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

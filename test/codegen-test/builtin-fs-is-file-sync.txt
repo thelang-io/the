@@ -1,8 +1,8 @@
 ======= stdin =======
 main {
-  print(fs_isFileSync("delasy.txt"))
-  print(fs_isFileSync("test"))
-  print(fs_isFileSync("LICENSE.txt"))
+  print(fs_isFileSync("test/fixtures/builtin-fs-is-file-sync.txt"))
+  print(fs_isFileSync("test/fixtures"))
+  print(fs_isFileSync("test/fixtures/test.txt"))
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -99,9 +99,9 @@ bool fs_isFileSync (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", fs_isFileSync(str_alloc("delasy.txt")), THE_EOL);
-  print(stdout, "tz", fs_isFileSync(str_alloc("test")), THE_EOL);
-  print(stdout, "tz", fs_isFileSync(str_alloc("LICENSE.txt")), THE_EOL);
+  print(stdout, "tz", fs_isFileSync(str_alloc("test/fixtures/builtin-fs-is-file-sync.txt")), THE_EOL);
+  print(stdout, "tz", fs_isFileSync(str_alloc("test/fixtures")), THE_EOL);
+  print(stdout, "tz", fs_isFileSync(str_alloc("test/fixtures/test.txt")), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
