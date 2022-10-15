@@ -1,0 +1,98 @@
+======= stdin =======
+main {
+  fs_writeFileSync("test/fixtures/new.txt", "".toBuffer())
+  fs_rmSync("test/fixtures/new.txt")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void buffer_free (struct buffer);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct buffer str_to_buffer (struct str);
+void fs_rmSync (struct str);
+void fs_writeFileSync (struct str, struct buffer);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct buffer str_to_buffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
+}
+void fs_rmSync (struct str s) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  if (remove(c) != 0) {
+    fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
+void fs_writeFileSync (struct str s, struct buffer b) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  FILE *f = fopen(c, "wb");
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  if (fwrite(b.d, b.l, 1, f) != 0) {
+    fprintf(stderr, "Error: failed to write to file `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  fclose(f);
+  free(c);
+  str_free(s);
+  buffer_free(b);
+}
+
+int main () {
+  fs_writeFileSync(str_alloc("test/fixtures/new.txt"), str_to_buffer(str_alloc("")));
+  fs_rmSync(str_alloc("test/fixtures/new.txt"));
+}
+======= flags =======
+======= stdout =======

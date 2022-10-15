@@ -197,13 +197,11 @@ const auto realpathSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto rmSync = std::string(
   R"(void fs_rmSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  // todo test error
   R"(  if (_{remove}(c) != 0) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to remove file `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
@@ -213,7 +211,6 @@ const auto rmSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto rmdirSync = std::string(
   R"(void fs_rmdirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -224,7 +221,6 @@ const auto rmdirSync = std::string(
   R"(  #else)" EOL
   R"(    int r = _{rmdir}(c);)" EOL
   R"(  #endif)" EOL
-  // todo test error
   R"(  if (r != 0) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to remove directory `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
@@ -234,7 +230,6 @@ const auto rmdirSync = std::string(
   R"(})" EOL
 );
 
-// todo test
 const auto scandirSync = std::string(
   R"(struct _{array_str} fs_scandirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -242,7 +237,6 @@ const auto scandirSync = std::string(
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{DIR} *f = _{opendir}(c);)" EOL
   R"(  if (f == _{NULL}) {)" EOL
-  // todo test error
   R"(    _{fprintf}(_{stderr}, "Error: failed to open directory `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -250,6 +244,7 @@ const auto scandirSync = std::string(
   R"(  _{struct str} *r = _{NULL};)" EOL
   R"(  _{size_t} l = 0;)" EOL
   R"(  while ((a = _{readdir}(f)) != _{NULL}) {)" EOL
+  R"(    if (_{strcmp}(a->d_name, ".") == 0 || _{strcmp}(a->d_name, "..") == 0) continue;)" EOL
   R"(    r = _{re_alloc}(r, ++l * sizeof(_{struct str}));)" EOL
   R"(    r[l - 1] = _{str_alloc}(a->d_name);)" EOL
   R"(  })" EOL
