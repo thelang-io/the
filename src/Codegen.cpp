@@ -938,6 +938,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
+  headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";;
 
   if (this->builtins.libDirect || this->builtins.libIo || this->builtins.libWindows) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
@@ -947,10 +948,9 @@ std::tuple<std::string, std::string> Codegen::gen () {
     headers += "#endif" EOL;
   }
 
-  if (this->builtins.libDirent || this->builtins.libSysStat || this->builtins.libSysUtsname || this->builtins.libUnistd) {
+  if (this->builtins.libDirent || this->builtins.libSysUtsname || this->builtins.libUnistd) {
     headers += "#ifndef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
-    headers += this->builtins.libSysStat ? "  #include <sys/stat.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
     headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
     headers += "#endif" EOL;
@@ -1017,7 +1017,6 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libString = true;
   } else if (name == "libSysStat") {
     this->builtins.libSysStat = true;
-    this->_activateBuiltin("definitions");
   } else if (name == "libSysUtsname") {
     this->builtins.libSysUtsname = true;
     this->_activateBuiltin("definitions");

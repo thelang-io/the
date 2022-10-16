@@ -23,9 +23,7 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef THE_OS_WINDOWS
-  #include <sys/stat.h>
-#endif
+#include <sys/stat.h>
 
 struct str {
   char *d;
@@ -91,7 +89,7 @@ bool fs_isDirectorySync (struct str s) {
   struct stat r;
   bool b = false;
   if (stat(c, &r) == 0) {
-    b = S_ISDIR(r.st_mode);
+    b = (r.st_mode & S_IFMT) == S_IFDIR;
   }
   free(c);
   str_free(s);

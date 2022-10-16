@@ -25,12 +25,12 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifdef THE_OS_WINDOWS
   #include <direct.h>
   #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
-  #include <sys/stat.h>
   #include <unistd.h>
 #endif
 
@@ -106,7 +106,7 @@ bool fs_isDirectorySync (struct str s) {
   struct stat r;
   bool b = false;
   if (stat(c, &r) == 0) {
-    b = S_ISDIR(r.st_mode);
+    b = (r.st_mode & S_IFMT) == S_IFDIR;
   }
   free(c);
   str_free(s);
@@ -117,7 +117,7 @@ void fs_mkdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    int r = CreateDirectoryW(c, NULL);
+    int r = CreateDirectoryA(c, NULL);
   #else
     int r = mkdir(c, 0777);
   #endif
@@ -133,7 +133,7 @@ void fs_rmdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    int r = _wrmdir(c);
+    int r = _rmdir(c);
   #else
     int r = rmdir(c);
   #endif

@@ -27,8 +27,8 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifndef THE_OS_WINDOWS
-  #include <sys/stat.h>
   #include <unistd.h>
 #endif
 
@@ -74,7 +74,7 @@ bool fs_isSymbolicLinkSync (struct str s) {
   struct stat r;
   bool b = false;
   if (lstat(c, &r) == 0) {
-    b = S_ISLNK(r.st_mode);
+    b = (r.st_mode & S_IFMT) == S_IFLNK;
   }
   free(c);
   str_free(s);
