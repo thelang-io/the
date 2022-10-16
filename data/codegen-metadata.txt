@@ -110,7 +110,9 @@ _getcwd: libDirect
 _getwd: libDirect
 _getdrive: libDirect
 _mkdir: libDirect
+_wmkdir: libDirect
 _rmdir: libDirect
+_wrmdir: libDirect
 
 DIR: libDirent
 struct dirent: libDirent

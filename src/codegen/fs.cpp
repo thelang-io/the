@@ -18,6 +18,7 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenFs = {
+  // todo test windows
   R"(void fs_chmodSync (_{struct str} s, _{int32_t} m) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -31,6 +32,10 @@ const std::vector<std::string> codegenFs = {
   R"(})" EOL,
 
   R"(void fs_chownSync (_{struct str} s, _{int32_t} u, _{int32_t} g) {)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{str_free}(s);)" EOL
+  R"(    return;)" EOL
+  R"(  #endif)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
@@ -62,6 +67,7 @@ const std::vector<std::string> codegenFs = {
   R"(  return r;)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(_{bool} fs_isDirectorySync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -76,6 +82,7 @@ const std::vector<std::string> codegenFs = {
   R"(  return b;)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(_{bool} fs_isFileSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -90,6 +97,7 @@ const std::vector<std::string> codegenFs = {
   R"(  return b;)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(_{bool} fs_isSymbolicLinkSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -104,6 +112,7 @@ const std::vector<std::string> codegenFs = {
   R"(  return b;)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(void fs_linkSync (_{struct str} s1, _{struct str} s2) {)" EOL
   R"(  char *c1 = _{alloc}(s1.l + 1);)" EOL
   R"(  _{memcpy}(c1, s1.d, s1.l);)" EOL
@@ -121,12 +130,13 @@ const std::vector<std::string> codegenFs = {
   R"(  _{free}(c2);)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(void fs_mkdirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    int r = _{_mkdir}(c, 0777);)" EOL
+  R"(    int r = _{CreateDirectoryW}(c, NULL);)" EOL
   R"(  #else)" EOL
   R"(    int r = _{mkdir}(c, 0777);)" EOL
   R"(  #endif)" EOL
@@ -162,6 +172,7 @@ const std::vector<std::string> codegenFs = {
   R"(  return (_{struct buffer}) {d, l};)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(_{struct str} fs_realpathSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -188,12 +199,13 @@ const std::vector<std::string> codegenFs = {
   R"(  _{str_free}(s);)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(void fs_rmdirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    int r = _{_rmdir}(c);)" EOL
+  R"(    int r = _{_wrmdir}(c);)" EOL
   R"(  #else)" EOL
   R"(    int r = _{rmdir}(c);)" EOL
   R"(  #endif)" EOL
@@ -205,6 +217,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{str_free}(s);)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(struct _{array_str} fs_scandirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -228,6 +241,7 @@ const std::vector<std::string> codegenFs = {
   R"(  return (struct _{array_str}) {r, l};)" EOL
   R"(})" EOL,
 
+  // todo test windows
   R"(struct _{fs_Stats} *fs_statSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL

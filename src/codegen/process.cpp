@@ -17,15 +17,13 @@
 #include "process.hpp"
 #include "../config.hpp"
 
-const auto args = std::string(
+const std::vector<std::string> codegenProcess = {
   R"(struct _{array_str} process_args (int argc, char **argv) {)" EOL
   R"(  _{struct str} *d = _{alloc}(argc * sizeof(_{struct str}));)" EOL
   R"(  for (int i = 0; i < argc; i++) d[i] = _{str_alloc}(argv[i]);)" EOL
   R"(  return (struct _{array_str}) {d, (_{size_t}) argc};)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto cwd = std::string(
   R"(_{struct str} process_cwd () {)" EOL
   R"(  char buf[256];)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
@@ -38,22 +36,18 @@ const auto cwd = std::string(
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
   R"(  return _{str_alloc}(buf);)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto getgid = std::string(
   R"(_{int32_t} process_getgid () {)" EOL
+  R"(  if (_{THE_OS_WINDOWS}) return 0;)" EOL
   R"(  return _{getgid}();)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto getuid = std::string(
   R"(_{int32_t} process_getuid () {)" EOL
+  R"(  if (_{THE_OS_WINDOWS}) return 0;)" EOL
   R"(  return _{getuid}();)" EOL
-  R"(})" EOL
-);
+  R"(})" EOL,
 
-const auto runSync = std::string(
   R"(_{struct buffer} process_runSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
@@ -89,12 +83,4 @@ const auto runSync = std::string(
   R"(  _{str_free}((_{struct str}) s);)" EOL
   R"(  return (_{struct buffer}) {d, l};)" EOL
   R"(})" EOL
-);
-
-const std::vector<std::string> codegenProcess = {
-  args,
-  cwd,
-  getgid,
-  getuid,
-  runSync
 };

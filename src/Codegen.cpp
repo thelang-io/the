@@ -930,7 +930,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
   fnDefCode += fnDefCode.empty() ? "" : EOL;
 
   auto headers = std::string(this->builtins.libCtype ? "#include <ctype.h>" EOL : "");
-  headers += this->builtins.libDirent ? "#include <dirent.h>" EOL : "";
   headers += this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
   headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
@@ -948,8 +947,9 @@ std::tuple<std::string, std::string> Codegen::gen () {
     headers += "#endif" EOL;
   }
 
-  if (this->builtins.libSysStat || this->builtins.libSysUtsname || this->builtins.libUnistd) {
+  if (this->builtins.libDirent || this->builtins.libSysStat || this->builtins.libSysUtsname || this->builtins.libUnistd) {
     headers += "#ifndef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
     headers += this->builtins.libSysStat ? "  #include <sys/stat.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
     headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
@@ -995,6 +995,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("definitions");
   } else if (name == "libDirent") {
     this->builtins.libDirent = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
   } else if (name == "libIo") {
