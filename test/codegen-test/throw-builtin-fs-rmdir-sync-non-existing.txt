@@ -57,7 +57,7 @@ void fs_rmdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    int r = _rmdir(c);
+    int r = _wrmdir(c);
   #else
     int r = rmdir(c);
   #endif

@@ -15,10 +15,12 @@ main {
   #define THE_EOL "\n"
 #endif
 
-#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <dirent.h>
+#endif
 
 struct str {
   char *d;

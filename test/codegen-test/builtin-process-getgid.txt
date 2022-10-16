@@ -65,7 +65,11 @@ void str_free (struct str s) {
   free(s.d);
 }
 int32_t process_getgid () {
-  return getgid();
+  #ifdef THE_OS_WINDOWS
+    return 0;
+  #else
+    return getgid();
+  #endif
 }
 
 int main () {

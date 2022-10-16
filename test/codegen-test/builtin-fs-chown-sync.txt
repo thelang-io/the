@@ -138,6 +138,10 @@ struct buffer str_to_buffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 void fs_chownSync (struct str s, int32_t u, int32_t g) {
+  #ifdef THE_OS_WINDOWS
+    str_free(s);
+    return;
+  #endif
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
@@ -197,10 +201,18 @@ void fs_writeFileSync (struct str s, struct buffer b) {
   buffer_free(b);
 }
 int32_t process_getgid () {
-  return getgid();
+  #ifdef THE_OS_WINDOWS
+    return 0;
+  #else
+    return getgid();
+  #endif
 }
 int32_t process_getuid () {
-  return getuid();
+  #ifdef THE_OS_WINDOWS
+    return 0;
+  #else
+    return getuid();
+  #endif
 }
 struct fs_Stats *fs_Stats_alloc (int32_t __THE_0_dev, uint16_t __THE_0_mode, uint16_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, int32_t __THE_0_rdev, int32_t __THE_0_atime, int32_t __THE_0_atimeNs, int32_t __THE_0_mtime, int32_t __THE_0_mtimeNs, int32_t __THE_0_ctime, int32_t __THE_0_ctimeNs, int32_t __THE_0_birthtime, int32_t __THE_0_birthtimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int32_t __THE_0_blksize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));

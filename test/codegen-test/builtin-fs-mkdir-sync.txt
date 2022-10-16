@@ -27,6 +27,7 @@ main {
 #include <string.h>
 #ifdef THE_OS_WINDOWS
   #include <direct.h>
+  #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
   #include <sys/stat.h>
@@ -116,7 +117,7 @@ void fs_mkdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    int r = _mkdir(c, 0777);
+    int r = CreateDirectoryW(c, NULL);
   #else
     int r = mkdir(c, 0777);
   #endif
@@ -132,7 +133,7 @@ void fs_rmdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    int r = _rmdir(c);
+    int r = _wrmdir(c);
   #else
     int r = rmdir(c);
   #endif

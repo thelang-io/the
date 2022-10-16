@@ -23,7 +23,11 @@ main {
 int32_t process_getuid ();
 
 int32_t process_getuid () {
-  return getuid();
+  #ifdef THE_OS_WINDOWS
+    return 0;
+  #else
+    return getuid();
+  #endif
 }
 
 int main () {

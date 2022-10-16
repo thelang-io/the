@@ -39,13 +39,19 @@ const std::vector<std::string> codegenProcess = {
   R"(})" EOL,
 
   R"(_{int32_t} process_getgid () {)" EOL
-  R"(  if (_{THE_OS_WINDOWS}) return 0;)" EOL
-  R"(  return _{getgid}();)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    return 0;)" EOL
+  R"(  #else)" EOL
+  R"(    return _{getgid}();)" EOL
+  R"(  #endif)" EOL
   R"(})" EOL,
 
   R"(_{int32_t} process_getuid () {)" EOL
-  R"(  if (_{THE_OS_WINDOWS}) return 0;)" EOL
-  R"(  return _{getuid}();)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    return 0;)" EOL
+  R"(  #else)" EOL
+  R"(    return _{getuid}();)" EOL
+  R"(  #endif)" EOL
   R"(})" EOL,
 
   R"(_{struct buffer} process_runSync (_{struct str} s) {)" EOL
