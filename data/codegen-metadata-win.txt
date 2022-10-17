@@ -1,0 +1,333 @@
+#
+# Copyright (c) 2018 Aaron Delasy
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+struct _stat: libSysStat
+struct _stat32: libSysStat
+struct _stat32i64: libSysStat
+struct _stat64: libSysStat
+struct _stat64i32: libSysStat
+_S_IEXEC: libSysStat
+_S_IFBLK: libSysStat
+_S_IFCHR: libSysStat
+_S_IFDIR: libSysStat
+_S_IFIFO: libSysStat
+_S_IFMT: libSysStat
+_S_IFREG: libSysStat
+_S_IREAD: libSysStat
+_S_IRUSR: libSysStat
+_S_IRWXU: libSysStat
+_S_IWRITE: libSysStat
+_S_IWUSR: libSysStat
+_S_IXUSR: libSysStat
+_dev_t: libSysStat
+_fstat32: libSysStat
+_fstat32i64: libSysStat
+_fstat64: libSysStat
+_fstat64i32: libSysStat
+_fstati64: libSysStat
+_ino_t: libSysStat
+_mode_t: libSysStat
+_off_t: libSysStat
+_off64_t: libSysStat
+_pid_t: libSysStat
+_sigset_t: libSysStat
+_stat32: libSysStat
+_stat32i64: libSysStat
+_stat64: libSysStat
+_stat64i32: libSysStat
+_stati64: libSysStat
+_wstat32: libSysStat
+_wstat32i64: libSysStat
+_wstat64: libSysStat
+_wstat64i32: libSysStat
+_wstati64: libSysStat
+
+_chdir: libWinDirect
+_chdrive: libWinDirect
+_getcwd: libWinDirect
+_getdcwd: libWinDirect
+_getdcwd_nolock: libWinDirect
+_getdiskfree: libWinDirect
+_getdrive: libWinDirect
+_getdrives: libWinDirect
+_mkdir: libWinDirect
+_rmdir: libWinDirect
+_wchdir: libWinDirect
+_wgetcwd: libWinDirect
+_wgetdcwd: libWinDirect
+_wgetdcwd_nolock: libWinDirect
+_wmkdir: libWinDirect
+_wrmdir: libWinDirect
+
+struct __finddata64_t: libWinIo
+struct _finddata32_t: libWinIo
+struct _finddata32i64_t: libWinIo
+struct _finddata64i32_t: libWinIo
+struct _wfinddata32_t: libWinIo
+struct _wfinddata32i64_t: libWinIo
+struct _wfinddata64_t: libWinIo
+struct _wfinddata64i32_t: libWinIo
+_access: libWinIo
+_access_s: libWinIo
+_chmod: libWinIo
+_chsize: libWinIo
+_chsize_s: libWinIo
+_close: libWinIo
+_commit: libWinIo
+_creat: libWinIo
+_dup: libWinIo
+_dup2: libWinIo
+_eof: libWinIo
+_filelength: libWinIo
+_filelengthi64: libWinIo
+_findclose: libWinIo
+_finddata_t: libWinIo
+_finddatai64_t: libWinIo
+_findfirst: libWinIo
+_findfirst32: libWinIo
+_findfirst32i64: libWinIo
+_findfirst64: libWinIo
+_findfirst64i32: libWinIo
+_findfirsti64: libWinIo
+_findnext: libWinIo
+_findnext32: libWinIo
+_findnext32i64: libWinIo
+_findnext64: libWinIo
+_findnext64i32: libWinIo
+_findnexti64: libWinIo
+_get_osfhandle: libWinIo
+_isatty: libWinIo
+_locking: libWinIo
+_lseek: libWinIo
+_lseeki64: libWinIo
+_mktemp: libWinIo
+_mktemp_s: libWinIo
+_open: libWinIo
+_open_osfhandle: libWinIo
+_pipe: libWinIo
+_read: libWinIo
+_setmode: libWinIo
+_sopen: libWinIo
+_sopen_s: libWinIo
+_tell: libWinIo
+_telli64: libWinIo
+_umask: libWinIo
+_umask_s: libWinIo
+_unlink: libWinIo
+_unlock_fhandle: libWinIo
+_waccess: libWinIo
+_waccess_s: libWinIo
+_wchmod: libWinIo
+_wcreat: libWinIo
+_wfinddata_t: libWinIo
+_wfinddatai64_t: libWinIo
+_wfindfirst: libWinIo
+_wfindfirst32: libWinIo
+_wfindfirst32i64: libWinIo
+_wfindfirst64: libWinIo
+_wfindfirst64i32: libWinIo
+_wfindfirsti64: libWinIo
+_wfindnext: libWinIo
+_wfindnext32: libWinIo
+_wfindnext32i64: libWinIo
+_wfindnext64: libWinIo
+_wfindnext64i32: libWinIo
+_wfindnexti64: libWinIo
+_wmktemp: libWinIo
+_wmktemp_s: libWinIo
+_wopen: libWinIo
+_wrename: libWinIo
+_write: libWinIo
+_wsopen: libWinIo
+_wsopen_s: libWinIo
+_wunlink: libWinIo
+
+# todo apiset.h
+# todo apisetcconv.h
+# todo basetsd.h
+# todo bemapiset.h
+# todo concurrencysal.h
+# todo corecrt.h
+# todo crtdefs.h
+# todo debugapi.h
+# todo driverspecs.h
+# todo errhandlingapi.h
+# todo excpt.h
+# todo fibersapi.h
+# todo guiddef.h
+# todo handleapi.h
+# todo heapapi.h
+# todo interlockedapi.h
+# todo ioapiset.h
+# todo jobapi.h
+# todo libloaderapi.h
+# todo memoryapi.h
+# todo minwinbase.h
+# todo minwindef.h
+# todo namedpipeapi.h
+# todo namespaceapi.h
+# todo processenv.h
+# todo processthreadsapi.h
+# todo processtopologyapi.h
+# todo profileapi.h
+# todo psdk_inc/intrin-impl.h
+# todo realtimeapiset.h
+# todo sal.h
+# todo sdkddkver.h
+# todo securityappcontainer.h
+# todo securitybaseapi.h
+# todo specstrings.h
+# todo synchapi.h
+# todo sysinfoapi.h
+# todo systemtopologyapi.h
+# todo threadpoolapiset.h
+# todo threadpoollegacyapiset.h
+# todo timezoneapi.h
+# todo utilapiset.h
+# todo winapifamily.h
+# todo winnt.h
+# todo wow64apiset.h
+
+struct _BY_HANDLE_FILE_INFORMATION: libWindows
+struct _CREATEFILE2_EXTENDED_PARAMETERS: libWindows
+struct _WIN32_FILE_ATTRIBUTE_DATA: libWindows
+BY_HANDLE_FILE_INFORMATION: libWindows
+CREATE_ALWAYS: libWindows
+CREATE_NEW: libWindows
+CREATEFILE2_EXTENDED_PARAMETERS: libWindows
+INVALID_FILE_ATTRIBUTES: libWindows
+INVALID_FILE_SIZE: libWindows
+INVALID_SET_FILE_POINTER: libWindows
+LPBY_HANDLE_FILE_INFORMATION: libWindows
+LPCREATEFILE2_EXTENDED_PARAMETERS: libWindows
+LPWIN32_FILE_ATTRIBUTE_DATA: libWindows
+OPEN_ALWAYS: libWindows
+OPEN_EXISTING: libWindows
+PBY_HANDLE_FILE_INFORMATION: libWindows
+PCREATEFILE2_EXTENDED_PARAMETERS: libWindows
+TRUNCATE_EXISTING: libWindows
+WIN32_FILE_ATTRIBUTE_DATA: libWindows
+CompareFileTime: libWindows
+CreateDirectory: libWindows
+CreateDirectoryA: libWindows
+CreateDirectoryW: libWindows
+CreateFile: libWindows
+CreateFile2: libWindows
+CreateFileA: libWindows
+CreateFileW: libWindows
+DefineDosDevice: libWindows
+DefineDosDeviceW: libWindows
+DeleteFile: libWindows
+DeleteFileA: libWindows
+DeleteFileW: libWindows
+DeleteVolumeMountPoint: libWindows
+DeleteVolumeMountPointW: libWindows
+FileTimeToLocalFileTime: libWindows
+FindClose: libWindows
+FindCloseChangeNotification: libWindows
+FindFirstChangeNotification: libWindows
+FindFirstChangeNotificationA: libWindows
+FindFirstChangeNotificationW: libWindows
+FindFirstFile: libWindows
+FindFirstFileA: libWindows
+FindFirstFileEx: libWindows
+FindFirstFileExA: libWindows
+FindFirstFileExW: libWindows
+FindFirstFileW: libWindows
+FindFirstVolume: libWindows
+FindFirstVolumeW: libWindows
+FindNextChangeNotification: libWindows
+FindNextFile: libWindows
+FindNextFileA: libWindows
+FindNextFileW: libWindows
+FindNextVolume: libWindows
+FindNextVolumeW: libWindows
+FindVolumeClose: libWindows
+FlushFileBuffers: libWindows
+GetDiskFreeSpace: libWindows
+GetDiskFreeSpaceA: libWindows
+GetDiskFreeSpaceEx: libWindows
+GetDiskFreeSpaceExA: libWindows
+GetDiskFreeSpaceExW: libWindows
+GetDiskFreeSpaceW: libWindows
+GetDriveType: libWindows
+GetDriveTypeA: libWindows
+GetDriveTypeW: libWindows
+GetFileAttributes: libWindows
+GetFileAttributesA: libWindows
+GetFileAttributesEx: libWindows
+GetFileAttributesExA: libWindows
+GetFileAttributesExW: libWindows
+GetFileAttributesW: libWindows
+GetFileInformationByHandle: libWindows
+GetFileSize: libWindows
+GetFileSizeEx: libWindows
+GetFileTime: libWindows
+GetFileType: libWindows
+GetFinalPathNameByHandle: libWindows
+GetFinalPathNameByHandleA: libWindows
+GetFinalPathNameByHandleW: libWindows
+GetFullPathName: libWindows
+GetFullPathNameA: libWindows
+GetFullPathNameW: libWindows
+GetLogicalDrives: libWindows
+GetLogicalDriveStrings: libWindows
+GetLogicalDriveStringsW: libWindows
+GetLongPathName: libWindows
+GetLongPathNameA: libWindows
+GetLongPathNameW: libWindows
+GetShortPathName: libWindows
+GetShortPathNameW: libWindows
+GetTempFileName: libWindows
+GetTempFileNameA: libWindows
+GetTempFileNameW: libWindows
+GetTempPath: libWindows
+GetTempPathA: libWindows
+GetTempPathW: libWindows
+GetVolumeInformation: libWindows
+GetVolumeInformationByHandleW: libWindows
+GetVolumeInformationW: libWindows
+GetVolumeNameForVolumeMountPoint: libWindows
+GetVolumeNameForVolumeMountPointW: libWindows
+GetVolumePathName: libWindows
+GetVolumePathNamesForVolumeName: libWindows
+GetVolumePathNamesForVolumeNameW: libWindows
+GetVolumePathNameW: libWindows
+LocalFileTimeToFileTime: libWindows
+LockFile: libWindows
+LockFileEx: libWindows
+QueryDosDevice: libWindows
+QueryDosDeviceW: libWindows
+ReadFile: libWindows
+ReadFileEx: libWindows
+ReadFileScatter: libWindows
+RemoveDirectory: libWindows
+RemoveDirectoryA: libWindows
+RemoveDirectoryW: libWindows
+SetEndOfFile: libWindows
+SetFileAttributes: libWindows
+SetFileAttributesA: libWindows
+SetFileAttributesW: libWindows
+SetFileInformationByHandle: libWindows
+SetFilePointer: libWindows
+SetFilePointerEx: libWindows
+SetFileTime: libWindows
+SetFileValidData: libWindows
+UnlockFile: libWindows
+UnlockFileEx: libWindows
+WriteFile: libWindows
+WriteFileEx: libWindows
+WriteFileGather: libWindows

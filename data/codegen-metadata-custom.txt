@@ -1,0 +1,90 @@
+#
+# Copyright (c) 2018 Aaron Delasy
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+THE_EOL: definitions
+THE_OS_LINUX: definitions
+THE_OS_MACOS: definitions
+THE_OS_WINDOWS: definitions
+
+alloc: fnAlloc
+any_copy: fnAnyCopy
+any_free: fnAnyFree
+any_realloc: fnAnyRealloc
+any_str: fnAnyStr
+bool_str: fnBoolStr
+buffer_copy: fnBufferCopy
+buffer_eq: fnBufferEq
+buffer_free: fnBufferFree
+buffer_ne: fnBufferNe
+buffer_realloc: fnBufferRealloc
+buffer_str: fnBufferStr
+byte_str: fnByteStr
+char_is_alpha: fnCharIsAlpha
+char_is_alpha_num: fnCharIsAlphaNum
+char_is_digit: fnCharIsDigit
+char_is_space: fnCharIsSpace
+char_repeat: fnCharRepeat
+char_str: fnCharStr
+cstr_concat_str: fnCstrConcatStr
+cstr_eq_cstr: fnCstrEqCstr
+cstr_eq_str: fnCstrEqStr
+cstr_ne_cstr: fnCstrNeCstr
+cstr_ne_str: fnCstrNeStr
+f32_str: fnF32Str
+f64_str: fnF64Str
+float_str: fnFloatStr
+i8_str: fnI8Str
+i16_str: fnI16Str
+i32_str: fnI32Str
+i64_str: fnI64Str
+int_str: fnIntStr
+os_name: fnOSName
+path_basename: fnPathBasename
+path_dirname: fnPathDirname
+print: fnPrint
+re_alloc: fnReAlloc
+sleep_sync: fnSleepSync
+str_alloc: fnStrAlloc
+str_at: fnStrAt
+str_concat_cstr: fnStrConcatCstr
+str_concat_str: fnStrConcatStr
+str_copy: fnStrCopy
+str_eq_cstr: fnStrEqCstr
+str_eq_str: fnStrEqStr
+str_escape: fnStrEscape
+str_find: fnStrFind
+str_free: fnStrFree
+str_len: fnStrLen
+str_lines: fnStrLines
+str_lower: fnStrLower
+str_lower_first: fnStrLowerFirst
+str_ne_cstr: fnStrNeCstr
+str_ne_str: fnStrNeStr
+str_not: fnStrNot
+str_realloc: fnStrRealloc
+str_slice: fnStrSlice
+str_to_buffer: fnStrToBuffer
+str_trim: fnStrTrim
+str_upper: fnStrUpper
+str_upper_first: fnStrUpperFirst
+u8_str: fnU8Str
+u16_str: fnU16Str
+u32_str: fnU32Str
+u64_str: fnU64Str
+
+struct any: typeAny
+struct buffer: typeBuffer
+struct str: typeStr

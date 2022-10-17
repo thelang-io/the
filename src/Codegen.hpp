@@ -110,10 +110,8 @@ struct CodegenBuiltins {
   bool fnU32Str = false;
   bool fnU64Str = false;
   bool libCtype = false;
-  bool libDirect = false;
   bool libDirent = false;
   bool libInttypes = false;
-  bool libIo = false;
   bool libStdarg = false;
   bool libStdbool = false;
   bool libStddef = false;
@@ -124,6 +122,9 @@ struct CodegenBuiltins {
   bool libSysStat = false;
   bool libSysUtsname = false;
   bool libUnistd = false;
+  bool libWinDirect = false;
+  bool libWinIo = false;
+  bool libWinNtifs = false;
   bool libWindows = false;
   bool typeAny = false;
   bool typeBuffer = false;

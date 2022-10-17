@@ -940,10 +940,11 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
   headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";;
 
-  if (this->builtins.libDirect || this->builtins.libIo || this->builtins.libWindows) {
+  if (this->builtins.libWinDirect || this->builtins.libWinIo || this->builtins.libWinNtifs || this->builtins.libWindows) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
-    headers += this->builtins.libDirect ? "  #include <direct.h>" EOL : "";
-    headers += this->builtins.libIo ? "  #include <io.h>" EOL : "";
+    headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
+    headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
+    headers += this->builtins.libWinNtifs ? "  #include <ntifs.h>" EOL : "";
     headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += "#endif" EOL;
   }
@@ -990,17 +991,11 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.definitions = true;
   } else if (name == "libCtype") {
     this->builtins.libCtype = true;
-  } else if (name == "libDirect") {
-    this->builtins.libDirect = true;
-    this->_activateBuiltin("definitions");
   } else if (name == "libDirent") {
     this->builtins.libDirent = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
-  } else if (name == "libIo") {
-    this->builtins.libIo = true;
-    this->_activateBuiltin("definitions");
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
@@ -1022,6 +1017,15 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("definitions");
   } else if (name == "libUnistd") {
     this->builtins.libUnistd = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinDirect") {
+    this->builtins.libWinDirect = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinIo") {
+    this->builtins.libWinIo = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinNtifs") {
+    this->builtins.libWinNtifs = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libWindows") {
     this->builtins.libWindows = true;
@@ -1569,48 +1573,56 @@ std::string Codegen::_apiEval (const std::string &code, const std::optional<std:
 }
 
 void Codegen::_apiMetadata () {
-  auto f = std::ifstream("data/codegen-metadata.txt");
+  for (const auto &metaType : std::vector<std::string>{"custom", "unix", "win"}) {
+    auto f = std::ifstream("data/codegen-metadata-" + metaType + ".txt");
 
-  if (!f.is_open() || f.fail()) {
-    throw Error("failed to read data/codegen-metadata.txt");
-  }
+    if (!f.is_open() || f.fail()) {
+      throw Error("failed to read data/codegen-metadata-" + metaType + ".txt");
+    }
 
-  auto content = std::string(std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
-  f.close();
+    auto content = std::string(std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
+    f.close();
 
-  auto lineStart = static_cast<std::size_t>(0);
-  auto lineLen = static_cast<std::size_t>(0);
-  auto lineNum = static_cast<std::size_t>(1);
+    auto lineStart = static_cast<std::size_t>(0);
+    auto lineLen = static_cast<std::size_t>(0);
+    auto lineNum = static_cast<std::size_t>(1);
 
-  for (auto i = static_cast<std::size_t>(0), size = content.size(); i < size; i++) {
-    auto ch = content[i];
+    for (auto i = static_cast<std::size_t>(0), size = content.size(); i < size; i++) {
+      auto ch = content[i];
 
-    if (
-      ch == '\n' ||
-      (ch == '\r' && i + 1 < content.size() && content[i + 1] == '\n') ||
-      i == size - 1
-    ) {
-      auto line = content.substr(lineStart, lineLen);
+      if (
+        ch == '\n' ||
+        (ch == '\r' && i + 1 < content.size() && content[i + 1] == '\n') ||
+        i == size - 1
+      ) {
+        auto line = content.substr(lineStart, lineLen);
 
-      if (!line.empty() && !line.starts_with('#')) {
-        auto delimiterPos = line.find(": ");
+        if (!line.empty() && !line.starts_with('#')) {
+          auto delimiterPos = line.find(": ");
 
-        if (delimiterPos == std::string::npos) {
-          throw Error("invalid data in data/codegen-metadata.txt on line " + std::to_string(lineNum));
+          if (delimiterPos == std::string::npos) {
+            throw Error("invalid data in data/codegen-metadata-" + metaType + ".txt on line " + std::to_string(lineNum));
+          }
+
+          auto name = line.substr(0, delimiterPos);
+
+          if (this->metadata.contains(name)) {
+            throw Error("duplicate key `" + name + "` in data/codegen-metadata-" + metaType + ".txt");
+          }
+
+          this->metadata[name] = line.substr(delimiterPos + 2);
         }
 
-        this->metadata[line.substr(0, delimiterPos)] = line.substr(delimiterPos + 2);
-      }
+        if (ch == '\r') {
+          i++;
+        }
 
-      if (ch == '\r') {
-        i++;
+        lineStart = i + 1;
+        lineLen = 0;
+        lineNum += 1;
+      } else {
+        lineLen += 1;
       }
-
-      lineStart = i + 1;
-      lineLen = 0;
-      lineNum += 1;
-    } else {
-      lineLen += 1;
     }
   }
 }
