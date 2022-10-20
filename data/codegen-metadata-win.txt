@@ -217,7 +217,6 @@ struct tagLC_ID: libWindows
 struct threadlocaleinfostruct: libWindows
 struct threadmbcinfostruct: libWindows
 struct WIN32_MEMORY_REGION_INFORMATION: libWindows
-: libWindows
 _APISETCCONV_: libWindows
 _CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES: libWindows
 _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES: libWindows
