@@ -62,6 +62,9 @@ def parse_whitespace(s, i):
 
 
 def parse_stmt_end(s):
+    if s == ";":
+        return
+
     i = 0
 
     while True:
@@ -319,12 +322,14 @@ def main():
                 while True:
                     j = parse_word(stmt.val, i)
                     last_word = stmt.val[i:j]
-                    j = parse_whitespace(stmt.val, j)
+
+                    while stmt.val[j].isspace() or stmt.val[j] == "*":
+                        j += 1
+
                     i = j
 
                     if stmt.val[i] == "(":
                         break
-
 
                 while True:
                     if stmt.val[i] == ")":
