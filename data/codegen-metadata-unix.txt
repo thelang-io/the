@@ -491,16 +491,6 @@ mkfifo: libSysStat
 mknod: libSysStat
 stat: libSysStat
 umask: libSysStat
-struct _stat: libSysStat
-_S_IFMT: libSysStat
-_S_IFDIR: libSysStat
-_S_IFCHR: libSysStat
-_S_IFREG: libSysStat
-_S_IREAD: libSysStat
-_S_IWRITE: libSysStat
-_S_IEXEC: libSysStat
-_fstat: libSysStat
-_stat: libSysStat
 
 uname: libSysUtsname
 
