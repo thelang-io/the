@@ -154,7 +154,6 @@ _wsopen: libWinIo
 _wsopen_s: libWinIo
 _wunlink: libWinIo
 
-PVOID GetCurrentFiber(void);: libWindows
 enum IMAGE_AUX_SYMBOL_TYPE: libWindows
 enum IMPORT_OBJECT_NAME_TYPE: libWindows
 enum IMPORT_OBJECT_TYPE: libWindows
@@ -8348,6 +8347,39 @@ Yield: libWindows
 YieldProcessor: libWindows
 ZeroMemory: libWindows
 ZombifyActCtx: libWindows
+abnormal_termination: libWindows
+cdecl: libWindows
+errcode: libWindows
+exception_code: libWindows
+exception_info: libWindows
+far: libWindows
+lstrcat: libWindows
+lstrcatA: libWindows
+lstrcatW: libWindows
+lstrcmp: libWindows
+lstrcmpA: libWindows
+lstrcmpW: libWindows
+lstrcmpi: libWindows
+lstrcmpiA: libWindows
+lstrcmpiW: libWindows
+lstrcpy: libWindows
+lstrcpyA: libWindows
+lstrcpyW: libWindows
+lstrcpyn: libWindows
+lstrcpynA: libWindows
+lstrcpynW: libWindows
+lstrlen: libWindows
+lstrlenA: libWindows
+lstrlenW: libWindows
+max: libWindows
+memcpy_inline: libWindows
+min: libWindows
+near: libWindows
+pascal: libWindows
+pthreadlocinfo: libWindows
+pthreadmbcinfo: libWindows
+threadlocinfo: libWindows
+wWinMain: libWindows
 _Acquires_exclusive_lock_: libWindows
 _Acquires_lock_: libWindows
 _Acquires_nonreentrant_lock_: libWindows
@@ -8787,36 +8819,3 @@ _rotr64: libWindows
 _rotr8: libWindows
 _umul128: libWindows
 _xgetbv: libWindows
-abnormal_termination: libWindows
-cdecl: libWindows
-errcode: libWindows
-exception_code: libWindows
-exception_info: libWindows
-far: libWindows
-lstrcat: libWindows
-lstrcatA: libWindows
-lstrcatW: libWindows
-lstrcmp: libWindows
-lstrcmpA: libWindows
-lstrcmpW: libWindows
-lstrcmpi: libWindows
-lstrcmpiA: libWindows
-lstrcmpiW: libWindows
-lstrcpy: libWindows
-lstrcpyA: libWindows
-lstrcpyW: libWindows
-lstrcpyn: libWindows
-lstrcpynA: libWindows
-lstrcpynW: libWindows
-lstrlen: libWindows
-lstrlenA: libWindows
-lstrlenW: libWindows
-max: libWindows
-memcpy_inline: libWindows
-min: libWindows
-near: libWindows
-pascal: libWindows
-pthreadlocinfo: libWindows
-pthreadmbcinfo: libWindows
-threadlocinfo: libWindows
-wWinMain: libWindows
