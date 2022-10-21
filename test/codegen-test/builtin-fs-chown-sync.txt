@@ -29,6 +29,7 @@ main {
 #include <string.h>
 #include <sys/stat.h>
 #ifdef THE_OS_WINDOWS
+  #include <ntifs.h>
   #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
