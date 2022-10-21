@@ -944,7 +944,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
     headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
-    headers += this->builtins.libWinNtifs ? "  #include <ntifs.h>" EOL : "";
+    headers += this->builtins.libWinNtifs ? "  #include <ntddk.h>" EOL : "";
     headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += "#endif" EOL;
   }
