@@ -166,7 +166,7 @@ struct fs_Stats *fs_statSync (struct str s) {
       fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
       exit(EXIT_FAILURE);
     }
-    r = fs_Stats_alloc(st_dev, st_mode, st_nlink, st_ino, 0, 0, 0, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, st_size, st_blocks, st_blksize);
+    r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, sb.st_size, 0, 4096);
   #else
     struct stat sb;
     if (stat(c, &sb) != 0) {

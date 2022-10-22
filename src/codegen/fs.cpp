@@ -250,7 +250,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{fprintf}(_{stderr}, "Error: failed to stat file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
-  R"(    r = _{fs_Stats_alloc}(st_dev, st_mode, st_nlink, st_ino, 0, 0, 0, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, st_size, st_blocks, st_blksize);)" EOL
+  R"(    r = _{fs_Stats_alloc}(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, sb.st_size, 0, 4096);)" EOL
   R"(  #else)" EOL
   R"(    _{struct stat} sb;)" EOL
   R"(    if (_{stat}(c, &sb) != 0) {)" EOL
