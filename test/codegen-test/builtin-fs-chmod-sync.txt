@@ -36,10 +36,6 @@ main {
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#ifdef THE_OS_WINDOWS
-  #include <ntddk.h>
-  #include <windows.h>
-#endif
 
 struct buffer {
   unsigned char *d;
@@ -172,43 +168,12 @@ struct fs_Stats *fs_statSync (struct str s) {
   c[s.l] = '\0';
   struct fs_Stats *r;
   #ifdef THE_OS_WINDOWS
-    HANDLE h = CreateFileA(c, FILE_READ_ATTRIBUTES, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
-    if (h == INVALID_HANDLE_VALUE) {
-      fprintf(stderr, "Error: failed to create handle" THE_EOL);
+    struct _stat sb;
+    if (_stat(c, &sb) != 0) {
+      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
       exit(EXIT_FAILURE);
     }
-    IO_STATUS_BLOCK iosb;
-    FILE_ALL_INFORMATION fi;
-    FILE_FS_VOLUME_INFORMATION vi;
-    if (NT_ERROR(pNtQueryInformationFile(h, &iosb, &fi, sizeof(fi), FileAllInformation))) {
-      fprintf(stderr, "Error: failed to query file information" THE_EOL);
-      exit(EXIT_FAILURE);
-    } else if (NT_ERROR(pNtQueryVolumeInformationFile(h, &iosb, &vi, sizeof(vi), FileFsVolumeInformation))) {
-      fprintf(stderr, "Error: failed to query file volume information" THE_EOL);
-      exit(EXIT_FAILURE);
-    }
-    int32_t st_dev = iosb.Status == STATUS_NOT_IMPLEMENTED ? 0 : vi.VolumeSerialNumber;
-    uint16_t st_mode = fi.BasicInformation.FileAttributes & FILE_ATTRIBUTE_DIRECTORY ? _S_IFDIR : _S_IFREG;
-    if (fi.BasicInformation.FileAttributes & FILE_ATTRIBUTE_READONLY) {
-      st_mode |= _S_IREAD | (_S_IREAD >> 3) | (_S_IREAD >> 6);
-    } else {
-      st_mode |= (_S_IREAD | _S_IWRITE) | ((_S_IREAD | _S_IWRITE) >> 3) | ((_S_IREAD | _S_IWRITE) >> 6);
-    }
-    uint16_t st_nlink = fi.StandardInformation.NumberOfLinks;
-    uint64_t st_ino = fi.InternalInformation.IndexNumber.QuadPart;
-    int32_t st_atim_tv_sec = (fi.BasicInformation.LastAccessTime.QuadPart - 116444736e9) / 1e7;
-    int32_t st_atim_tv_nsec = (fi.BasicInformation.LastAccessTime.QuadPart - 116444736e9 - (st_atim_tv_sec * 1e7)) * 1e2;
-    int32_t st_ctim_tv_sec = (fi.BasicInformation.ChangeTime.QuadPart - 116444736e9) / 1e7;
-    int32_t st_ctim_tv_nsec = (fi.BasicInformation.ChangeTime.QuadPart - 116444736e9 - (st_ctim_tv_sec * 1e7)) * 1e2;
-    int32_t st_mtim_tv_sec = (fi.BasicInformation.LastWriteTime.QuadPart - 116444736e9) / 1e7;
-    int32_t st_mtim_tv_nsec = (fi.BasicInformation.LastWriteTime.QuadPart - 116444736e9 - (st_mtim_tv_sec * 1e7)) * 1e2;
-    int32_t st_birthtim_tv_sec = (fi.BasicInformation.CreationTime.QuadPart - 116444736e9) / 1e7;
-    int32_t st_birthtim_tv_nsec = (fi.BasicInformation.CreationTime.QuadPart - 116444736e9 - (st_birthtim_tv_sec * 1e7)) * 1e2;
-    int64_t st_size = fi.BasicInformation.FileAttributes & FILE_ATTRIBUTE_DIRECTORY ? 0 : fi.StandardInformation.EndOfFile.QuadPart;
-    int64_t st_blocks = fi.StandardInformation.AllocationSize.QuadPart >> 9;
-    int32_t st_blksize = 4096;
-    CloseHandle(h);
-    r = fs_Stats_alloc(st_dev, st_mode, st_nlink, st_ino, 0, 0, 0, st_atim_tv_sec, st_atim_tv_nsec, st_mtim_tv_sec, st_mtim_tv_nsec, st_ctim_tv_sec, st_ctim_tv_nsec, st_ctim_tv_sec, st_ctim_tv_nsec, st_size, st_blocks, st_blksize);
+    r = fs_Stats_alloc(st_dev, st_mode, st_nlink, st_ino, 0, 0, 0, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, st_size, st_blocks, st_blksize);
   #else
     struct stat sb;
     if (stat(c, &sb) != 0) {

@@ -124,7 +124,6 @@ struct CodegenBuiltins {
   bool libUnistd = false;
   bool libWinDirect = false;
   bool libWinIo = false;
-  bool libWinNtifs = false;
   bool libWindows = false;
   bool typeAny = false;
   bool typeBuffer = false;

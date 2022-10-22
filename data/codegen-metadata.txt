@@ -88,3 +88,80 @@ u64_str: fnU64Str
 struct any: typeAny
 struct buffer: typeBuffer
 struct str: typeStr
+
+isalpha: libCtype
+
+DIR: libDirent
+struct dirent: libDirent
+closedir: libDirent
+opendir: libDirent
+readdir: libDirent
+
+PRId8: libInttypes
+PRId16: libInttypes
+PRId32: libInttypes
+PRId64: libInttypes
+
+bool: libStdbool
+true: libStdbool
+false: libStdbool
+
+size_t: libStddef
+NULL: libStddef
+
+int8_t: libStdint
+int16_t: libStdint
+int32_t: libStdint
+int64_t: libStdint
+
+FILE: libStdio
+fclose: libStdio
+fopen: libStdio
+fprintf: libStdio
+fread: libStdio
+fwrite: libStdio
+pclose: libStdio
+popen: libStdio
+remove: libStdio
+stderr: libStdio
+stdin: libStdio
+stdout: libStdio
+_pclose: libStdio
+_popen: libStdio
+
+EXIT_SUCCESS: libStdlib
+EXIT_FAILURE: libStdlib
+exit: libStdlib
+free: libStdlib
+realpath: libStdlib
+
+memcpy: libString
+strcmp: libString
+strlen: libString
+
+struct stat: libSysStat
+struct _stat: libSysStat
+S_IFDIR: libSysStat
+S_IFLNK: libSysStat
+S_IFMT: libSysStat
+S_IFREG: libSysStat
+chmod: libSysStat
+lstat: libSysStat
+mkdir: libSysStat
+stat: libSysStat
+_stat: libSysStat
+
+access: libUnistd
+chown: libUnistd
+getcwd: libUnistd
+getgid: libUnistd
+getuid: libUnistd
+rmdir: libUnistd
+symlink: libUnistd
+
+_getcwd: libWinDirect
+_rmdir: libWinDirect
+
+_access: libWinIo
+
+CreateDirectoryA: libWindows

@@ -245,43 +245,12 @@ const std::vector<std::string> codegenFs = {
   R"(  c[s.l] = '\0';)" EOL
   R"(  struct _{fs_Stats} *r;)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{HANDLE} h = _{CreateFileA}(c, _{FILE_READ_ATTRIBUTES}, _{FILE_SHARE_READ} | _{FILE_SHARE_WRITE} | _{FILE_SHARE_DELETE}, _{NULL}, _{OPEN_EXISTING}, _{FILE_FLAG_BACKUP_SEMANTICS}, _{NULL});)" EOL
-  R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: failed to create handle" _{THE_EOL});)" EOL
+  R"(    _{struct _stat} sb;)" EOL
+  R"(    if (_{_stat}(c, &sb) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to stat file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
-  R"(    _{IO_STATUS_BLOCK} iosb;)" EOL
-  R"(    _{FILE_ALL_INFORMATION} fi;)" EOL
-  R"(    _{FILE_FS_VOLUME_INFORMATION} vi;)" EOL
-  R"(    if (_{NT_ERROR}(_{pNtQueryInformationFile}(h, &iosb, &fi, sizeof(fi), _{FileAllInformation}))) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: failed to query file information" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
-  R"(    } else if (_{NT_ERROR}(_{pNtQueryVolumeInformationFile}(h, &iosb, &vi, sizeof(vi), _{FileFsVolumeInformation}))) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: failed to query file volume information" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
-  R"(    })" EOL
-  R"(    _{int32_t} st_dev = iosb.Status == _{STATUS_NOT_IMPLEMENTED} ? 0 : vi.VolumeSerialNumber;)" EOL
-  R"(    _{uint16_t} st_mode = fi.BasicInformation.FileAttributes & _{FILE_ATTRIBUTE_DIRECTORY} ? _{_S_IFDIR} : _{_S_IFREG};)" EOL
-  R"(    if (fi.BasicInformation.FileAttributes & _{FILE_ATTRIBUTE_READONLY}) {)" EOL
-  R"(      st_mode |= _{_S_IREAD} | (_{_S_IREAD} >> 3) | (_{_S_IREAD} >> 6);)" EOL
-  R"(    } else {)" EOL
-  R"(      st_mode |= (_{_S_IREAD} | _{_S_IWRITE}) | ((_{_S_IREAD} | _{_S_IWRITE}) >> 3) | ((_{_S_IREAD} | _{_S_IWRITE}) >> 6);)" EOL
-  R"(    })" EOL
-  R"(    _{uint16_t} st_nlink = fi.StandardInformation.NumberOfLinks;)" EOL
-  R"(    _{uint64_t} st_ino = fi.InternalInformation.IndexNumber.QuadPart;)" EOL
-  R"(    _{int32_t} st_atim_tv_sec = (fi.BasicInformation.LastAccessTime.QuadPart - 116444736e9) / 1e7;)" EOL
-  R"(    _{int32_t} st_atim_tv_nsec = (fi.BasicInformation.LastAccessTime.QuadPart - 116444736e9 - (st_atim_tv_sec * 1e7)) * 1e2;)" EOL
-  R"(    _{int32_t} st_ctim_tv_sec = (fi.BasicInformation.ChangeTime.QuadPart - 116444736e9) / 1e7;)" EOL
-  R"(    _{int32_t} st_ctim_tv_nsec = (fi.BasicInformation.ChangeTime.QuadPart - 116444736e9 - (st_ctim_tv_sec * 1e7)) * 1e2;)" EOL
-  R"(    _{int32_t} st_mtim_tv_sec = (fi.BasicInformation.LastWriteTime.QuadPart - 116444736e9) / 1e7;)" EOL
-  R"(    _{int32_t} st_mtim_tv_nsec = (fi.BasicInformation.LastWriteTime.QuadPart - 116444736e9 - (st_mtim_tv_sec * 1e7)) * 1e2;)" EOL
-  R"(    _{int32_t} st_birthtim_tv_sec = (fi.BasicInformation.CreationTime.QuadPart - 116444736e9) / 1e7;)" EOL
-  R"(    _{int32_t} st_birthtim_tv_nsec = (fi.BasicInformation.CreationTime.QuadPart - 116444736e9 - (st_birthtim_tv_sec * 1e7)) * 1e2;)" EOL
-  R"(    _{int64_t} st_size = fi.BasicInformation.FileAttributes & _{FILE_ATTRIBUTE_DIRECTORY} ? 0 : fi.StandardInformation.EndOfFile.QuadPart;)" EOL
-  R"(    _{int64_t} st_blocks = fi.StandardInformation.AllocationSize.QuadPart >> 9;)" EOL
-  R"(    _{int32_t} st_blksize = 4096;)" EOL
-  R"(    _{CloseHandle}(h);)" EOL
-  R"(    r = _{fs_Stats_alloc}(st_dev, st_mode, st_nlink, st_ino, 0, 0, 0, st_atim_tv_sec, st_atim_tv_nsec, st_mtim_tv_sec, st_mtim_tv_nsec, st_ctim_tv_sec, st_ctim_tv_nsec, st_ctim_tv_sec, st_ctim_tv_nsec, st_size, st_blocks, st_blksize);)" EOL
+  R"(    r = _{fs_Stats_alloc}(st_dev, st_mode, st_nlink, st_ino, 0, 0, 0, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, st_size, st_blocks, st_blksize);)" EOL
   R"(  #else)" EOL
   R"(    _{struct stat} sb;)" EOL
   R"(    if (_{stat}(c, &sb) != 0) {)" EOL
