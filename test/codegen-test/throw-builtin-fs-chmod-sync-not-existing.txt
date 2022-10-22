@@ -16,10 +16,14 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#ifdef THE_OS_WINDOWS
+  #include <io.h>
+#endif
 
 struct str {
   char *d;
@@ -52,7 +56,12 @@ void fs_chmodSync (struct str s, int32_t m) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
-  if (chmod(c, m) != 0) {
+  #ifdef THE_OS_WINDOWS
+    bool r = _chmod(c, m) == 0;
+  #else
+    bool r = chmod(c, m) == 0;
+  #endif
+  if (!r) {
     fprintf(stderr, "Error: failed to change mode to %" PRId32 " for file `%s`" THE_EOL, m, c);
     exit(EXIT_FAILURE);
   }

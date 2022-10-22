@@ -15,6 +15,7 @@ main {
   #define THE_EOL "\n"
 #endif
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,11 +56,11 @@ void fs_mkdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    int r = CreateDirectoryA(c, NULL);
+    bool r = CreateDirectoryA(c, NULL) == 0;
   #else
-    int r = mkdir(c, 0777);
+    bool r = mkdir(c, 0777) == 0;
   #endif
-  if (r != 0) {
+  if (!r) {
     fprintf(stderr, "Error: failed to create directory `%s`" THE_EOL, c);
     exit(EXIT_FAILURE);
   }

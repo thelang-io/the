@@ -54,11 +54,18 @@ bool fs_isFileSync (struct str s) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
-  struct stat r;
   bool b = false;
-  if (stat(c, &r) == 0) {
-    b = (r.st_mode & S_IFMT) == S_IFREG;
-  }
+  #ifdef THE_OS_WINDOWS
+    struct _stat sb;
+    if (_stat(c, &sb) == 0) {
+      b = (sb.st_mode & _S_IFMT) == _S_IFREG;
+    }
+  #else
+    struct stat sb;
+    if (stat(c, &sb) == 0) {
+      b = (sb.st_mode & S_IFMT) == S_IFREG;
+    }
+  #endif
   free(c);
   str_free(s);
   return b;

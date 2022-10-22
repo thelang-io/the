@@ -18,12 +18,16 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenFs = {
-  // todo test windows
   R"(void fs_chmodSync (_{struct str} s, _{int32_t} m) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  if (_{chmod}(c, m) != 0) {)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{bool} r = _{_chmod}(c, m) == 0;)" EOL
+  R"(  #else)" EOL
+  R"(    _{bool} r = _{chmod}(c, m) == 0;)" EOL
+  R"(  #endif)" EOL
+  R"(  if (!r) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to change mode to %" _{PRId32} " for file `%s`" _{THE_EOL}, m, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -52,13 +56,13 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    int r = _{_access}(c, 0);)" EOL
+  R"(    _{bool} r = _{_access}(c, 0) == 0;)" EOL
   R"(  #else)" EOL
-  R"(    int r = _{access}(c, 0);)" EOL
+  R"(    _{bool} r = _{access}(c, 0) == 0;)" EOL
   R"(  #endif)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{free}(c);)" EOL
-  R"(  return r == 0 ? true : false;)" EOL
+  R"(  return r;)" EOL
   R"(})" EOL,
 
   R"(_{bool} fs_isAbsoluteSync (_{struct str} s) {)" EOL
@@ -67,46 +71,64 @@ const std::vector<std::string> codegenFs = {
   R"(  return r;)" EOL
   R"(})" EOL,
 
-  // todo test windows
   R"(_{bool} fs_isDirectorySync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  _{struct stat} r;)" EOL
   R"(  _{bool} b = false;)" EOL
-  R"(  if (_{stat}(c, &r) == 0) {)" EOL
-  R"(    b = (r.st_mode & _{S_IFMT}) == _{S_IFDIR};)" EOL
-  R"(  })" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{struct _stat} sb;)" EOL
+  R"(    if (_{_stat}(c, &sb) == 0) {)" EOL
+  R"(      b = (sb.st_mode & _{_S_IFMT}) == _{_S_IFDIR};)" EOL
+  R"(    })" EOL
+  R"(  #else)" EOL
+  R"(    _{struct stat} sb;)" EOL
+  R"(    if (_{stat}(c, &sb) == 0) {)" EOL
+  R"(      b = (sb.st_mode & _{S_IFMT}) == _{S_IFDIR};)" EOL
+  R"(    })" EOL
+  R"(  #endif)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return b;)" EOL
   R"(})" EOL,
 
-  // todo test windows
   R"(_{bool} fs_isFileSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  _{struct stat} r;)" EOL
   R"(  _{bool} b = false;)" EOL
-  R"(  if (_{stat}(c, &r) == 0) {)" EOL
-  R"(    b = (r.st_mode & _{S_IFMT}) == _{S_IFREG};)" EOL
-  R"(  })" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{struct _stat} sb;)" EOL
+  R"(    if (_{_stat}(c, &sb) == 0) {)" EOL
+  R"(      b = (sb.st_mode & _{_S_IFMT}) == _{_S_IFREG};)" EOL
+  R"(    })" EOL
+  R"(  #else)" EOL
+  R"(    _{struct stat} sb;)" EOL
+  R"(    if (_{stat}(c, &sb) == 0) {)" EOL
+  R"(      b = (sb.st_mode & _{S_IFMT}) == _{S_IFREG};)" EOL
+  R"(    })" EOL
+  R"(  #endif)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return b;)" EOL
   R"(})" EOL,
 
-  // todo test windows
   R"(_{bool} fs_isSymbolicLinkSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  _{struct stat} r;)" EOL
   R"(  _{bool} b = false;)" EOL
-  R"(  if (_{lstat}(c, &r) == 0) {)" EOL
-  R"(    b = (r.st_mode & _{S_IFMT}) == _{S_IFLNK};)" EOL
-  R"(  })" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{struct _stat} sb;)" EOL
+  R"(    if (_{_lstat}(c, &sb) == 0) {)" EOL
+  R"(      b = (sb.st_mode & _{_S_IFMT}) == _{_S_IFLNK};)" EOL
+  R"(    })" EOL
+  R"(  #else)" EOL
+  R"(    _{struct stat} sb;)" EOL
+  R"(    if (_{lstat}(c, &sb) == 0) {)" EOL
+  R"(      b = (sb.st_mode & _{S_IFMT}) == _{S_IFLNK};)" EOL
+  R"(    })" EOL
+  R"(  #endif)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return b;)" EOL
@@ -135,11 +157,11 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    int r = _{CreateDirectoryA}(c, NULL);)" EOL
+  R"(    _{bool} r = _{CreateDirectoryA}(c, NULL) == 0;)" EOL
   R"(  #else)" EOL
-  R"(    int r = _{mkdir}(c, 0777);)" EOL
+  R"(    _{bool} r = _{mkdir}(c, 0777) == 0;)" EOL
   R"(  #endif)" EOL
-  R"(  if (r != 0) {)" EOL
+  R"(  if (!r) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to create directory `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -171,19 +193,49 @@ const std::vector<std::string> codegenFs = {
   R"(  return (_{struct buffer}) {d, l};)" EOL
   R"(})" EOL,
 
-  // todo test windows
   R"(_{struct str} fs_realpathSync (_{struct str} s) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  char *d = _{realpath}(c, _{NULL});)" EOL
-  R"(  if (d == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to get real path of file `%s`" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
-  R"(  })" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{HANDLE} h = _{CreateFileA}(c, 0, 0, _{NULL}, _{OPEN_EXISTING}, _{FILE_ATTRIBUTE_NORMAL} | _{FILE_FLAG_BACKUP_SEMANTICS}, _{NULL});)" EOL
+  R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to create handle to get real path of file `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{size_t} l = _{GetFinalPathNameByHandleA}(h, _{NULL}, 0, _{VOLUME_NAME_DOS});)" EOL
+  R"(    if (l == 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to find size of real path of file `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    char *d = _{alloc}(l + 1);)" EOL
+  R"(    if (_{GetFinalPathNameByHandleA}(h, d, l, _{VOLUME_NAME_DOS}) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to get real path of file `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    if (_{strncmp}(d, "\\\\?\\UNC\\", 8) == 0) {)" EOL
+  R"(      d += 6;)" EOL
+  R"(      d[0] = '\\';)" EOL
+  R"(      l -= 6;)" EOL
+  R"(    } else if (_{strncmp}(d, "\\\\?\\", 4) == 0) {)" EOL
+  R"(      d += 4;)" EOL
+  R"(      l -= 4;)" EOL
+  R"(    } else {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to get real path of file `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{CloseHandle}(h);)" EOL
+  R"(  #else)" EOL
+  R"(    char *d = _{realpath}(c, _{NULL});)" EOL
+  R"(    if (d == _{NULL}) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to get real path of file `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{size_t} l = _{strlen}(d);)" EOL
+  R"(  #endif)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
-  R"(  return (_{struct str}) {d, _{strlen}(d)};)" EOL
+  R"(  return (_{struct str}) {d, l};)" EOL
   R"(})" EOL,
 
   R"(void fs_rmSync (_{struct str} s) {)" EOL
@@ -203,11 +255,11 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    int r = _{_rmdir}(c);)" EOL
+  R"(    _{bool} r = _{_rmdir}(c) == 0;)" EOL
   R"(  #else)" EOL
-  R"(    int r = _{rmdir}(c);)" EOL
+  R"(    _{bool} r = _{rmdir}(c) == 0;)" EOL
   R"(  #endif)" EOL
-  R"(  if (r != 0) {)" EOL
+  R"(  if (!r) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to remove directory `%s`" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL

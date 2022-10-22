@@ -138,6 +138,7 @@ realpath: libStdlib
 memcpy: libString
 strcmp: libString
 strlen: libString
+strncmp: libString
 
 struct stat: libSysStat
 struct _stat: libSysStat
@@ -149,6 +150,11 @@ chmod: libSysStat
 lstat: libSysStat
 mkdir: libSysStat
 stat: libSysStat
+_S_IFDIR: libSysStat
+_S_IFLNK: libSysStat
+_S_IFMT: libSysStat
+_S_IFREG: libSysStat
+_lstat: libSysStat
 _stat: libSysStat
 
 access: libUnistd
@@ -163,5 +169,15 @@ _getcwd: libWinDirect
 _rmdir: libWinDirect
 
 _access: libWinIo
+_chmod: libWinIo
 
+FILE_ATTRIBUTE_NORMAL: libWindows
+FILE_FLAG_BACKUP_SEMANTICS: libWindows
+HANDLE: libWindows
+INVALID_HANDLE_VALUE: libWindows
+OPEN_EXISTING: libWindows
+VOLUME_NAME_DOS: libWindows
+CloseHandle: libWindows
 CreateDirectoryA: libWindows
+CreateFileA: libWindows
+GetFinalPathNameByHandleA: libWindows

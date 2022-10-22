@@ -99,11 +99,18 @@ bool fs_isSymbolicLinkSync (struct str s) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
-  struct stat r;
   bool b = false;
-  if (lstat(c, &r) == 0) {
-    b = (r.st_mode & S_IFMT) == S_IFLNK;
-  }
+  #ifdef THE_OS_WINDOWS
+    struct _stat sb;
+    if (_lstat(c, &sb) == 0) {
+      b = (sb.st_mode & _S_IFMT) == _S_IFLNK;
+    }
+  #else
+    struct stat sb;
+    if (lstat(c, &sb) == 0) {
+      b = (sb.st_mode & S_IFMT) == S_IFLNK;
+    }
+  #endif
   free(c);
   str_free(s);
   return b;

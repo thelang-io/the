@@ -91,13 +91,13 @@ bool fs_existsSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    int r = _access(c, 0);
+    bool r = _access(c, 0) == 0;
   #else
-    int r = access(c, 0);
+    bool r = access(c, 0) == 0;
   #endif
   str_free(s);
   free(c);
-  return r == 0 ? true : false;
+  return r;
 }
 
 int main () {

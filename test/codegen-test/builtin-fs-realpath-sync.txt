@@ -20,6 +20,9 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 
 struct str {
   char *d;
@@ -82,14 +85,45 @@ struct str fs_realpathSync (struct str s) {
   char *c = alloc(s.l + 1);
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
-  char *d = realpath(c, NULL);
-  if (d == NULL) {
-    fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  }
+  #ifdef THE_OS_WINDOWS
+    HANDLE h = CreateFileA(c, 0, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    if (h == INVALID_HANDLE_VALUE) {
+      fprintf(stderr, "Error: failed to create handle to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    size_t l = GetFinalPathNameByHandleA(h, NULL, 0, VOLUME_NAME_DOS);
+    if (l == 0) {
+      fprintf(stderr, "Error: failed to find size of real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    char *d = alloc(l + 1);
+    if (GetFinalPathNameByHandleA(h, d, l, VOLUME_NAME_DOS) != 0) {
+      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    if (strncmp(d, "\\\\?\\UNC\\", 8) == 0) {
+      d += 6;
+      d[0] = '\\';
+      l -= 6;
+    } else if (strncmp(d, "\\\\?\\", 4) == 0) {
+      d += 4;
+      l -= 4;
+    } else {
+      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    CloseHandle(h);
+  #else
+    char *d = realpath(c, NULL);
+    if (d == NULL) {
+      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    size_t l = strlen(d);
+  #endif
   free(c);
   str_free((struct str) s);
-  return (struct str) {d, strlen(d)};
+  return (struct str) {d, l};
 }
 
 int main () {
