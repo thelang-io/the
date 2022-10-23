@@ -15,9 +15,13 @@ main {
   #define THE_EOL "\n"
 #endif
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <unistd.h>
 #endif
@@ -56,7 +60,12 @@ void fs_linkSync (struct str s1, struct str s2) {
   char *c2 = alloc(s2.l + 1);
   memcpy(c2, s2.d, s2.l);
   c2[s2.l] = '\0';
-  if (symlink(c1, c2) != 0) {
+  #ifdef THE_OS_WINDOWS
+    bool r = CreateSymbolicLink(c2, c1, 0);
+  #else
+    bool r = symlink(c1, c2) == 0;
+  #endif
+  if (!r) {
     fprintf(stderr, "Error: failed to create symbolic link from `%s` to `%s`" THE_EOL, c1, c2);
     exit(EXIT_FAILURE);
   }

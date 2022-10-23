@@ -172,7 +172,6 @@ struct CodegenTypeInfo {
 class Codegen {
  public:
   std::map<std::string, CodegenApiItem> api = {};
-  std::map<std::string, std::string> metadata = {};
   AST *ast;
   Reader *reader;
   CodegenState state;
@@ -200,7 +199,6 @@ class Codegen {
   void _apiLoad (const std::vector<std::string> &);
   // todo add limit param
   std::string _apiEval (const std::string &, const std::optional<std::set<std::string> *> & = std::nullopt);
-  void _apiMetadata ();
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);

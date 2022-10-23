@@ -183,7 +183,7 @@ const std::vector<std::string> codegenFs = {
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{bool} r = _{CreateSymbolicLink}(c2, c1, 0);)" EOL
   R"(  #else)" EOL
-  R"(    _{bool} r = _{symlink}(c1, c2) != 0);)" EOL
+  R"(    _{bool} r = _{symlink}(c1, c2) == 0;)" EOL
   R"(  #endif)" EOL
   R"(  if (!r) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to create symbolic link from `%s` to `%s`" _{THE_EOL}, c1, c2);)" EOL

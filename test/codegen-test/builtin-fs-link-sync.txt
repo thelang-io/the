@@ -26,6 +26,9 @@ main {
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <unistd.h>
 #endif
@@ -34,6 +37,37 @@ struct str {
   char *d;
   size_t l;
 };
+#ifdef THE_OS_WINDOWS
+  struct win_reparse_data_buffer {
+    ULONG ReparseTag;
+    USHORT ReparseDataLength;
+    USHORT Reserved;
+    union {
+      struct {
+        USHORT SubstituteNameOffset;
+        USHORT SubstituteNameLength;
+        USHORT PrintNameOffset;
+        USHORT PrintNameLength;
+        ULONG Flags;
+        TCHAR PathBuffer[1];
+      } SymbolicLinkReparseBuffer;
+      struct {
+        USHORT SubstituteNameOffset;
+        USHORT SubstituteNameLength;
+        USHORT PrintNameOffset;
+        USHORT PrintNameLength;
+        TCHAR PathBuffer[1];
+      } MountPointReparseBuffer;
+      struct {
+        UCHAR DataBuffer[1];
+      } GenericReparseBuffer;
+      struct {
+        ULONG Version;
+        TCHAR StringList[1];
+      } AppExecLinkReparseBuffer;
+    };
+  };
+#endif
 
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
@@ -101,10 +135,46 @@ bool fs_isSymbolicLinkSync (struct str s) {
   c[s.l] = '\0';
   bool b = false;
   #ifdef THE_OS_WINDOWS
-    struct _stat sb;
-    if (_lstat(c, &sb) == 0) {
-      b = (sb.st_mode & _S_IFMT) == _S_IFLNK;
+    HANDLE h = CreateFile(c, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (h == INVALID_HANDLE_VALUE) {
+      free(c);
+      return b;
     }
+    char d[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
+    struct win_reparse_data_buffer *r = (struct win_reparse_data_buffer *) d;
+    DWORD y;
+    if (DeviceIoControl(h, FSCTL_GET_REPARSE_POINT, NULL, 0, &d, sizeof(d), &y, NULL)) {
+      if (r->ReparseTag == IO_REPARSE_TAG_SYMLINK) {
+        b = true;
+      } else if (r->ReparseTag == IO_REPARSE_TAG_MOUNT_POINT) {
+        char *t = r->MountPointReparseBuffer.PathBuffer + r->MountPointReparseBuffer.SubstituteNameOffset;
+        if (
+          r->MountPointReparseBuffer.SubstituteNameLength >= 6 &&
+          t[0] == '\\' && t[1] == '?' && t[2] == '?' && t[3] == '\\' &&
+          ((t[4] >= 'A' && t[4] <= 'Z') || (t[4] >= 'a' && t[4] <= 'z')) &&
+          t[5] == ':' && (r->MountPointReparseBuffer.SubstituteNameLength == 6 || t[6] == '\\')
+        ) {
+          b = true;
+        }
+      } else if (r->ReparseTag == IO_REPARSE_TAG_APPEXECLINK && r->AppExecLinkReparseBuffer.Version == 3) {
+        char *t = r->AppExecLinkReparseBuffer.StringList;
+        bool f = false;
+        for (size_t i = 0; i < 2; i++) {
+          size_t l = strlen(t);
+          if (l == 0) {
+            f = true;
+            break;
+          }
+          t += l + 1;
+        }
+        if (!f) {
+          if (strlen(t) >= 3 && ((t[0] >= 'a' && t[0] <= 'z') || (t[0] >= 'A' && t[0] <= 'Z')) && t[1] == ':' && t[2] == '\\') {
+            b = true;
+          }
+        }
+      }
+    }
+    CloseHandle(h);
   #else
     struct stat sb;
     if (lstat(c, &sb) == 0) {
@@ -122,7 +192,12 @@ void fs_linkSync (struct str s1, struct str s2) {
   char *c2 = alloc(s2.l + 1);
   memcpy(c2, s2.d, s2.l);
   c2[s2.l] = '\0';
-  if (symlink(c1, c2) != 0) {
+  #ifdef THE_OS_WINDOWS
+    bool r = CreateSymbolicLink(c2, c1, 0);
+  #else
+    bool r = symlink(c1, c2) == 0;
+  #endif
+  if (!r) {
     fprintf(stderr, "Error: failed to create symbolic link from `%s` to `%s`" THE_EOL, c1, c2);
     exit(EXIT_FAILURE);
   }

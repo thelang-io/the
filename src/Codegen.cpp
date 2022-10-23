@@ -21,6 +21,7 @@
 #include "ASTChecker.hpp"
 #include "config.hpp"
 #include "codegen/fs.hpp"
+#include "codegen/metadata.hpp"
 #include "codegen/process.hpp"
 
 const auto banner = std::string(
@@ -81,7 +82,6 @@ Codegen::Codegen (AST *a) {
 }
 
 std::tuple<std::string, std::string> Codegen::gen () {
-  this->_apiMetadata();
   this->_typeObj(this->ast->typeMap.get("fs_Stats"), true);
   this->_apiLoad(codegenFs);
   this->_apiLoad(codegenProcess);
@@ -1552,11 +1552,11 @@ std::string Codegen::_apiEval (const std::string &code, const std::optional<std:
       isName = true;
       i += 1;
     } else if (isName && ch == '}') {
-      if (this->metadata.contains(name)) {
+      if (codegenMetadata.contains(name)) {
         if (dependencies == std::nullopt) {
-          this->_activateBuiltin(this->metadata[name]);
-        } else if (!(*dependencies)->contains(this->metadata[name])) {
-          (*dependencies)->emplace(this->metadata[name]);
+          this->_activateBuiltin(codegenMetadata.at(name));
+        } else if (!(*dependencies)->contains(codegenMetadata.at(name))) {
+          (*dependencies)->emplace(codegenMetadata.at(name));
         }
       } else if (this->api.contains(name)) {
         if (dependencies == std::nullopt) {
@@ -1604,59 +1604,6 @@ std::string Codegen::_apiEval (const std::string &code, const std::optional<std:
   }
 
   return result;
-}
-
-void Codegen::_apiMetadata () {
-  auto f = std::ifstream("data/codegen-metadata.txt");
-
-  if (!f.is_open() || f.fail()) {
-    throw Error("failed to read data/codegen-metadata.txt");
-  }
-
-  auto content = std::string(std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
-  f.close();
-
-  auto lineStart = static_cast<std::size_t>(0);
-  auto lineLen = static_cast<std::size_t>(0);
-  auto lineNum = static_cast<std::size_t>(1);
-
-  for (auto i = static_cast<std::size_t>(0), size = content.size(); i < size; i++) {
-    auto ch = content[i];
-
-    if (
-      ch == '\n' ||
-      (ch == '\r' && i + 1 < content.size() && content[i + 1] == '\n') ||
-      i == size - 1
-    ) {
-      auto line = content.substr(lineStart, lineLen);
-
-      if (!line.empty() && !line.starts_with('#')) {
-        auto delimiterPos = line.find(": ");
-
-        if (delimiterPos == std::string::npos) {
-          throw Error("invalid data in data/codegen-metadata.txt on line " + std::to_string(lineNum));
-        }
-
-        auto name = line.substr(0, delimiterPos);
-
-        if (this->metadata.contains(name)) {
-          throw Error("duplicate key `" + name + "` in data/codegen-metadata.txt");
-        }
-
-        this->metadata[name] = line.substr(delimiterPos + 2);
-      }
-
-      if (ch == '\r') {
-        i++;
-      }
-
-      lineStart = i + 1;
-      lineLen = 0;
-      lineNum += 1;
-    } else {
-      lineLen += 1;
-    }
-  }
 }
 
 std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
