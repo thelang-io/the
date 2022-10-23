@@ -157,6 +157,40 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinStructDefCode += "};" EOL;
   }
 
+  if (this->builtins.typeWinReparseDataBuffer) {
+    builtinStructDefCode += "#ifdef THE_OS_WINDOWS" EOL;
+    builtinStructDefCode += "  struct win_reparse_data_buffer {" EOL;
+    builtinStructDefCode += "    ULONG ReparseTag;" EOL;
+    builtinStructDefCode += "    USHORT ReparseDataLength;" EOL;
+    builtinStructDefCode += "    USHORT Reserved;" EOL;
+    builtinStructDefCode += "    union {" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameLength;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameLength;" EOL;
+    builtinStructDefCode += "        ULONG Flags;" EOL;
+    builtinStructDefCode += "        TCHAR PathBuffer[1];" EOL;
+    builtinStructDefCode += "      } SymbolicLinkReparseBuffer;" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameLength;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameLength;" EOL;
+    builtinStructDefCode += "        TCHAR PathBuffer[1];" EOL;
+    builtinStructDefCode += "      } MountPointReparseBuffer;" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        UCHAR DataBuffer[1];" EOL;
+    builtinStructDefCode += "      } GenericReparseBuffer;" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        ULONG Version;" EOL;
+    builtinStructDefCode += "        TCHAR StringList[1];" EOL;
+    builtinStructDefCode += "      } AppExecLinkReparseBuffer;" EOL;
+    builtinStructDefCode += "    };" EOL;
+    builtinStructDefCode += "  };" EOL;
+    builtinStructDefCode += "#endif" EOL;
+  }
+
   if (this->builtins.fnAlloc) {
     builtinFnDeclCode += "void *alloc (size_t);" EOL;
     builtinFnDefCode += "void *alloc (size_t l) {" EOL;
@@ -1384,6 +1418,10 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "typeStr") {
     this->builtins.typeStr = true;
     this->_activateBuiltin("libStdlib");
+  } else if (name == "typeWinReparseDataBuffer") {
+    this->builtins.typeWinReparseDataBuffer = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libWindows");
   } else if (this->api.contains(name)) {
     this->api[name].enabled = true;
 

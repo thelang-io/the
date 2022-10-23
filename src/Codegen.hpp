@@ -128,6 +128,7 @@ struct CodegenBuiltins {
   bool typeAny = false;
   bool typeBuffer = false;
   bool typeStr = false;
+  bool typeWinReparseDataBuffer = false;
 };
 
 struct CodegenEntity {

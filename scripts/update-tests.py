@@ -4,6 +4,8 @@ import os
 import subprocess
 import sys
 
+CORE_PATH = "build\\Debug\\the.exe" if os.name == "nt" else "build/the"
+
 
 def update(directory: str, action: str):
     files = os.listdir(directory)
@@ -39,7 +41,7 @@ def update(directory: str, action: str):
         f.close()
 
         process = subprocess.Popen(
-            ["build/the", action, filepath],
+            [CORE_PATH, action, filepath],
             stderr=subprocess.PIPE,
             stdout=subprocess.PIPE,
             text=True
@@ -49,12 +51,15 @@ def update(directory: str, action: str):
         f = open(filepath, "w")
 
         if action == "codegen":
-            f.write(stdin_sep + "\n" + stdin + code_sep + "\n" + stdout[155:] + trailing_code)
+            f.write(
+                stdin_sep + os.linesep + stdin + code_sep + os.linesep + stdout[148 + 7 * len(os.linesep):] +
+                trailing_code
+            )
         elif is_error_file:
             result = "/test" + stderr[stderr.find(":", 10):]
-            f.write(stdin_sep + "\n" + stdin + stderr_sep + "\n" + result)
+            f.write(stdin_sep + os.linesep + stdin + stderr_sep + os.linesep + result)
         else:
-            f.write(stdin_sep + "\n" + stdin + stdout_sep + "\n" + stdout)
+            f.write(stdin_sep + os.linesep + stdin + stdout_sep + os.linesep + stdout)
 
         f.close()
 

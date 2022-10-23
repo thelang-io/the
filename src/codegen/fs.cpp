@@ -17,6 +17,8 @@
 #include "fs.hpp"
 #include "../config.hpp"
 
+// todo failed to create handle is when file doesn't exists
+
 const std::vector<std::string> codegenFs = {
   R"(void fs_chmodSync (_{struct str} s, _{int32_t} m) {)" EOL
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
@@ -75,7 +77,7 @@ const std::vector<std::string> codegenFs = {
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  _{bool} b = false;)" EOL
+  R"(  _{bool} b = _{false};)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{struct _stat} sb;)" EOL
   R"(    if (_{_stat}(c, &sb) == 0) {)" EOL
@@ -96,7 +98,7 @@ const std::vector<std::string> codegenFs = {
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  _{bool} b = false;)" EOL
+  R"(  _{bool} b = _{false};)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{struct _stat} sb;)" EOL
   R"(    if (_{_stat}(c, &sb) == 0) {)" EOL
@@ -117,12 +119,48 @@ const std::vector<std::string> codegenFs = {
   R"(  char *c = _{alloc}(s.l + 1);)" EOL
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
-  R"(  _{bool} b = false;)" EOL
+  R"(  _{bool} b = _{false};)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{struct _stat} sb;)" EOL
-  R"(    if (_{_lstat}(c, &sb) == 0) {)" EOL
-  R"(      b = (sb.st_mode & _{_S_IFMT}) == _{_S_IFLNK};)" EOL
+  R"(    _{HANDLE} h = _{CreateFile}(c, 0, _{FILE_SHARE_READ}, _{NULL}, _{OPEN_EXISTING}, 0, _{NULL});)" EOL
+  R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
+  R"(      free(c);)" EOL
+  R"(      return b;)" EOL
   R"(    })" EOL
+  R"(    char d[_{MAXIMUM_REPARSE_DATA_BUFFER_SIZE}];)" EOL
+  R"(    _{struct win_reparse_data_buffer} *r = (_{struct win_reparse_data_buffer} *) d;)" EOL
+  R"(    _{DWORD} y;)" EOL
+  R"(    if (_{DeviceIoControl}(h, _{FSCTL_GET_REPARSE_POINT}, _{NULL}, 0, &d, sizeof(d), &y, _{NULL})) {)" EOL
+  R"(      if (r->ReparseTag == _{IO_REPARSE_TAG_SYMLINK}) {)" EOL
+  R"(        b = _{true};)" EOL
+  R"(      } else if (r->ReparseTag == _{IO_REPARSE_TAG_MOUNT_POINT}) {)" EOL
+  R"(        char *t = r->MountPointReparseBuffer.PathBuffer + r->MountPointReparseBuffer.SubstituteNameOffset;)" EOL
+  R"(        if ()" EOL
+  R"(          r->MountPointReparseBuffer.SubstituteNameLength >= 6 &&)" EOL
+  R"(          t[0] == '\\' && t[1] == '?' && t[2] == '?' && t[3] == '\\' &&)" EOL
+  R"(          ((t[4] >= 'A' && t[4] <= 'Z') || (t[4] >= 'a' && t[4] <= 'z')) &&)" EOL
+  R"(          t[5] == ':' && (r->MountPointReparseBuffer.SubstituteNameLength == 6 || t[6] == '\\'))" EOL
+  R"(        ) {)" EOL
+  R"(          b = _{true};)" EOL
+  R"(        })" EOL
+  R"(      } else if (r->ReparseTag == _{IO_REPARSE_TAG_APPEXECLINK} && r->AppExecLinkReparseBuffer.Version == 3) {)" EOL
+  R"(        char *t = r->AppExecLinkReparseBuffer.StringList;)" EOL
+  R"(        _{bool} f = _{false};)" EOL
+  R"(        for (_{size_t} i = 0; i < 2; i++) {)" EOL
+  R"(          size_t l = _{strlen}(t);)" EOL
+  R"(          if (l == 0) {)" EOL
+  R"(            f = _{true};)" EOL
+  R"(            break;)" EOL
+  R"(          })" EOL
+  R"(          t += l + 1;)" EOL
+  R"(        })" EOL
+  R"(        if (!f) {)" EOL
+  R"(          if (_{strlen}(t) >= 3 && ((t[0] >= 'a' && t[0] <= 'z') || (t[0] >= 'A' && t[0] <= 'Z')) && t[1] == ':' && t[2] == '\\') {)" EOL
+  R"(            b = _{true};)" EOL
+  R"(          })" EOL
+  R"(        })" EOL
+  R"(      })" EOL
+  R"(    })" EOL
+  R"(    _{CloseHandle}(h);)" EOL
   R"(  #else)" EOL
   R"(    _{struct stat} sb;)" EOL
   R"(    if (_{lstat}(c, &sb) == 0) {)" EOL
@@ -134,7 +172,7 @@ const std::vector<std::string> codegenFs = {
   R"(  return b;)" EOL
   R"(})" EOL,
 
-  // todo test windows
+  // todo test link directory, file, and link
   R"(void fs_linkSync (_{struct str} s1, _{struct str} s2) {)" EOL
   R"(  char *c1 = _{alloc}(s1.l + 1);)" EOL
   R"(  _{memcpy}(c1, s1.d, s1.l);)" EOL
@@ -142,7 +180,12 @@ const std::vector<std::string> codegenFs = {
   R"(  char *c2 = _{alloc}(s2.l + 1);)" EOL
   R"(  _{memcpy}(c2, s2.d, s2.l);)" EOL
   R"(  c2[s2.l] = '\0';)" EOL
-  R"(  if (_{symlink}(c1, c2) != 0) {)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{bool} r = _{CreateSymbolicLink}(c2, c1, 0);)" EOL
+  R"(  #else)" EOL
+  R"(    _{bool} r = _{symlink}(c1, c2) != 0);)" EOL
+  R"(  #endif)" EOL
+  R"(  if (!r) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to create symbolic link from `%s` to `%s`" _{THE_EOL}, c1, c2);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -157,7 +200,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{bool} r = _{CreateDirectoryA}(c, NULL) == 0;)" EOL
+  R"(    _{bool} r = _{CreateDirectory}(c, _{NULL}) == 0;)" EOL
   R"(  #else)" EOL
   R"(    _{bool} r = _{mkdir}(c, 0777) == 0;)" EOL
   R"(  #endif)" EOL
@@ -198,18 +241,14 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{HANDLE} h = _{CreateFileA}(c, 0, 0, _{NULL}, _{OPEN_EXISTING}, _{FILE_ATTRIBUTE_NORMAL} | _{FILE_FLAG_BACKUP_SEMANTICS}, _{NULL});)" EOL
+  R"(    _{HANDLE} h = _{CreateFile}(c, _{GENERIC_READ}, _{FILE_SHARE_READ}, _{NULL}, _{OPEN_EXISTING}, _{FILE_ATTRIBUTE_NORMAL}, _{NULL});)" EOL
   R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to create handle to get real path of file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
-  R"(    _{size_t} l = _{GetFinalPathNameByHandleA}(h, _{NULL}, 0, _{VOLUME_NAME_DOS});)" EOL
+  R"(    char *d = _{alloc}(_{MAX_PATH} + 1);)" EOL
+  R"(    _{size_t} l = _{GetFinalPathNameByHandle}(h, d, _{MAX_PATH}, _{VOLUME_NAME_DOS});)" EOL
   R"(    if (l == 0) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: failed to find size of real path of file `%s`" _{THE_EOL}, c);)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
-  R"(    })" EOL
-  R"(    char *d = _{alloc}(l + 1);)" EOL
-  R"(    if (_{GetFinalPathNameByHandleA}(h, d, l, _{VOLUME_NAME_DOS}) != 0) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to get real path of file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -325,7 +364,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  _{FILE} *f = _{fopen}(c, "wb");)" EOL
-  R"(  if (f == NULL) {)" EOL
+  R"(  if (f == _{NULL}) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to open file `%s` for writing" _{THE_EOL}, c);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL

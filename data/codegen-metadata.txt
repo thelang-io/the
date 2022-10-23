@@ -88,6 +88,7 @@ u64_str: fnU64Str
 struct any: typeAny
 struct buffer: typeBuffer
 struct str: typeStr
+struct win_reparse_data_buffer: typeWinReparseDataBuffer
 
 isalpha: libCtype
 
@@ -151,7 +152,6 @@ lstat: libSysStat
 mkdir: libSysStat
 stat: libSysStat
 _S_IFDIR: libSysStat
-_S_IFLNK: libSysStat
 _S_IFMT: libSysStat
 _S_IFREG: libSysStat
 _lstat: libSysStat
@@ -171,13 +171,24 @@ _rmdir: libWinDirect
 _access: libWinIo
 _chmod: libWinIo
 
+DWORD: libWindows
 FILE_ATTRIBUTE_NORMAL: libWindows
-FILE_FLAG_BACKUP_SEMANTICS: libWindows
+FILE_SHARE_READ: libWindows
+FILE_SHARE_WRITE: libWindows
+FSCTL_GET_REPARSE_POINT: libWindows
+GENERIC_READ: libWindows
 HANDLE: libWindows
 INVALID_HANDLE_VALUE: libWindows
+IO_REPARSE_TAG_APPEXECLINK: libWindows
+IO_REPARSE_TAG_MOUNT_POINT: libWindows
+IO_REPARSE_TAG_SYMLINK: libWindows
+MAXIMUM_REPARSE_DATA_BUFFER_SIZE: libWindows
+MAX_PATH: libWindows
 OPEN_EXISTING: libWindows
 VOLUME_NAME_DOS: libWindows
 CloseHandle: libWindows
-CreateDirectoryA: libWindows
-CreateFileA: libWindows
-GetFinalPathNameByHandleA: libWindows
+CreateDirectory: libWindows
+CreateFile: libWindows
+CreateSymbolicLink: libWindows
+DeviceIoControl: libWindows
+GetFinalPathNameByHandle: libWindows

@@ -6,7 +6,7 @@ main {
   print(fs_isSymbolicLinkSync("test/fixtures"))
   print(fs_isSymbolicLinkSync("test/fixtures/test.txt"))
 
-  fs_linkSync("test/fixtures/test.txt", fileName)
+  fs_linkSync("test/fixtures/test.txt", fs_realpathSync(fileName))
   print(fs_isSymbolicLinkSync(fileName))
   fs_rmSync(fileName)
 }
@@ -30,6 +30,9 @@ main {
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <unistd.h>
 #endif
@@ -38,6 +41,37 @@ struct str {
   char *d;
   size_t l;
 };
+#ifdef THE_OS_WINDOWS
+  struct win_reparse_data_buffer {
+    ULONG ReparseTag;
+    USHORT ReparseDataLength;
+    USHORT Reserved;
+    union {
+      struct {
+        USHORT SubstituteNameOffset;
+        USHORT SubstituteNameLength;
+        USHORT PrintNameOffset;
+        USHORT PrintNameLength;
+        ULONG Flags;
+        char PathBuffer[1];
+      } SymbolicLinkReparseBuffer;
+      struct {
+        USHORT SubstituteNameOffset;
+        USHORT SubstituteNameLength;
+        USHORT PrintNameOffset;
+        USHORT PrintNameLength;
+        char PathBuffer[1];
+      } MountPointReparseBuffer;
+      struct {
+        UCHAR DataBuffer[1];
+      } GenericReparseBuffer;
+      struct {
+        ULONG Version;
+        char StringList[1];
+      } AppExecLinkReparseBuffer;
+    };
+  };
+#endif
 
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
@@ -46,6 +80,7 @@ struct str str_copy (const struct str);
 void str_free (struct str);
 bool fs_isSymbolicLinkSync (struct str);
 void fs_linkSync (struct str, struct str);
+struct str fs_realpathSync (struct str);
 void fs_rmSync (struct str);
 
 void *alloc (size_t l) {
@@ -105,10 +140,46 @@ bool fs_isSymbolicLinkSync (struct str s) {
   c[s.l] = '\0';
   bool b = false;
   #ifdef THE_OS_WINDOWS
-    struct _stat sb;
-    if (_lstat(c, &sb) == 0) {
-      b = (sb.st_mode & _S_IFMT) == _S_IFLNK;
+    HANDLE h = CreateFileA(c, 0, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+    if (h == INVALID_HANDLE_VALUE) {
+      fprintf(stderr, "Error: failed to create handle to check if file `%s` is symbolic link" THE_EOL, c);
+      exit(EXIT_FAILURE);
     }
+    char d[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
+    struct win_reparse_data_buffer *r = (struct win_reparse_data_buffer *) d;
+    DWORD y;
+    if (DeviceIoControl(h, FSCTL_GET_REPARSE_POINT, NULL, 0, &d, sizeof(d), &y, NULL)) {
+      if (r->ReparseTag == IO_REPARSE_TAG_SYMLINK) {
+        b = true;
+      } else if (r->ReparseTag == IO_REPARSE_TAG_MOUNT_POINT) {
+        char *t = r->MountPointReparseBuffer.PathBuffer + r->MountPointReparseBuffer.SubstituteNameOffset;
+        if (
+          r->MountPointReparseBuffer.SubstituteNameLength >= 6 &&
+          t[0] == '\\' && t[1] == '?' && t[2] == '?' && t[3] == '\\' &&
+          ((t[4] >= 'A' && t[4] <= 'Z') || (t[4] >= 'a' && t[4] <= 'z')) &&
+          t[5] == ':' && (r->MountPointReparseBuffer.SubstituteNameLength == 6 || t[6] == '\\')
+        ) {
+          b = true;
+        }
+      } else if (r->ReparseTag == IO_REPARSE_TAG_APPEXECLINK && r->AppExecLinkReparseBuffer.Version == 3) {
+        char *t = r->AppExecLinkReparseBuffer.StringList;
+        bool f = false;
+        for (size_t i = 0; i < 2; i++) {
+          size_t l = strlen(t);
+          if (l == 0) {
+            f = true;
+            break;
+          }
+          t += l + 1;
+        }
+        if (!f) {
+          if (strlen(t) >= 3 && ((t[0] >= 'a' && t[0] <= 'z') || (t[0] >= 'A' && t[0] <= 'Z')) && t[1] == ':' && t[2] == '\\') {
+            b = true;
+          }
+        }
+      }
+    }
+    CloseHandle(h);
   #else
     struct stat sb;
     if (lstat(c, &sb) == 0) {
@@ -126,7 +197,12 @@ void fs_linkSync (struct str s1, struct str s2) {
   char *c2 = alloc(s2.l + 1);
   memcpy(c2, s2.d, s2.l);
   c2[s2.l] = '\0';
-  if (symlink(c1, c2) != 0) {
+  #ifdef THE_OS_WINDOWS
+    bool r = CreateSymbolicLinkA(c2, c1, 0);
+  #else
+    bool r = symlink(c1, c2) != 0);
+  #endif
+  if (!r) {
     fprintf(stderr, "Error: failed to create symbolic link from `%s` to `%s`" THE_EOL, c1, c2);
     exit(EXIT_FAILURE);
   }
@@ -134,6 +210,50 @@ void fs_linkSync (struct str s1, struct str s2) {
   str_free(s2);
   free(c1);
   free(c2);
+}
+struct str fs_realpathSync (struct str s) {
+  char *c = alloc(s.l + 1);
+  memcpy(c, s.d, s.l);
+  c[s.l] = '\0';
+  #ifdef THE_OS_WINDOWS
+    HANDLE h = CreateFileA(c, 0, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    if (h == INVALID_HANDLE_VALUE) {
+      fprintf(stderr, "Error: failed to create handle to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    size_t l = GetFinalPathNameByHandleA(h, NULL, 0, VOLUME_NAME_DOS);
+    if (l == 0) {
+      fprintf(stderr, "Error: failed to find size of real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    char *d = alloc(l + 1);
+    if (GetFinalPathNameByHandleA(h, d, l, VOLUME_NAME_DOS) != 0) {
+      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    if (strncmp(d, "\\\\?\\UNC\\", 8) == 0) {
+      d += 6;
+      d[0] = '\\';
+      l -= 6;
+    } else if (strncmp(d, "\\\\?\\", 4) == 0) {
+      d += 4;
+      l -= 4;
+    } else {
+      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    CloseHandle(h);
+  #else
+    char *d = realpath(c, NULL);
+    if (d == NULL) {
+      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    size_t l = strlen(d);
+  #endif
+  free(c);
+  str_free((struct str) s);
+  return (struct str) {d, l};
 }
 void fs_rmSync (struct str s) {
   char *c = alloc(s.l + 1);
@@ -152,7 +272,7 @@ int main () {
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures")), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures/test.txt")), THE_EOL);
-  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_alloc("test/fixtures/test.txt"), fs_realpathSync(str_copy(__THE_0_fileName_0)));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   fs_rmSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName_0);
