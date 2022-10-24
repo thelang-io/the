@@ -29,6 +29,7 @@ struct str {
 
 void *alloc (size_t);
 struct str str_alloc (const char *);
+char *str_cstr (const struct str);
 void str_free (struct str);
 struct str fs_realpathSync (struct str);
 
@@ -46,45 +47,54 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
 struct str fs_realpathSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
+  char *d = NULL;
   #ifdef THE_OS_WINDOWS
-    HANDLE h = CreateFile(c, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE h = CreateFile(c, 0, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS, NULL);
     if (h == INVALID_HANDLE_VALUE) {
       fprintf(stderr, "Error: failed to create handle to get real path of file `%s`" THE_EOL, c);
       exit(EXIT_FAILURE);
     }
-    char *d = alloc(MAX_PATH + 1);
-    size_t l = GetFinalPathNameByHandle(h, d, MAX_PATH, VOLUME_NAME_DOS);
+    size_t l = GetFinalPathNameByHandle(h, NULL, 0, VOLUME_NAME_DOS);
     if (l == 0) {
-      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+      fprintf(stderr, "Error: not enough memory to get real path of file `%s`" THE_EOL, c);
       exit(EXIT_FAILURE);
     }
-    if (strncmp(d, "\\\\?\\UNC\\", 8) == 0) {
-      d += 6;
-      d[0] = '\\';
+    char *r = alloc(l + 1);
+    if (GetFinalPathNameByHandle(h, r, MAX_PATH, VOLUME_NAME_DOS) == 0) {
+      fprintf(stderr, "Error: failed to get real path by handle of file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    if (strncmp(r, "\\\\?\\UNC\\", 8) == 0) {
       l -= 6;
-    } else if (strncmp(d, "\\\\?\\", 4) == 0) {
-      d += 4;
+      d = alloc(l);
+      memcpy(d, &r[6], l);
+      d[0] = '\\';
+    } else if (strncmp(r, "\\\\?\\", 4) == 0) {
       l -= 4;
-    } else {
-      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      d = alloc(l);
+      memcpy(d, &r[4], l);
     }
+    free(r);
     CloseHandle(h);
   #else
-    char *d = realpath(c, NULL);
-    if (d == NULL) {
-      fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
-    }
-    size_t l = strlen(d);
+    d = realpath(c, NULL);
+    size_t l = d == NULL ? 0 : strlen(d);
   #endif
+  if (d == NULL) {
+    fprintf(stderr, "Error: failed to get real path of file `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
   free(c);
   str_free((struct str) s);
   return (struct str) {d, l};

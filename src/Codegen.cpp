@@ -669,6 +669,16 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnStrCstr) {
+    builtinFnDeclCode += "char *str_cstr (const struct str);" EOL;
+    builtinFnDefCode += "char *str_cstr (const struct str s) {" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l + 1);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
+    builtinFnDefCode += "  d[s.l] = '\\0';" EOL;
+    builtinFnDefCode += "  return d;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnStrEqCstr) {
     builtinFnDeclCode += "bool str_eq_cstr (struct str, const char *);" EOL;
     builtinFnDefCode += "bool str_eq_cstr (struct str s, const char *r) {" EOL;
@@ -1280,6 +1290,11 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrCopy") {
     this->builtins.fnStrCopy = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrCstr") {
+    this->builtins.fnStrCstr = true;
     this->_activateBuiltin("fnAlloc");
     this->_activateBuiltin("libString");
     this->_activateBuiltin("typeStr");
