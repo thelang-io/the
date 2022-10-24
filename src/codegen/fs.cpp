@@ -200,7 +200,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{bool} r = _{CreateDirectory}(c, _{NULL}) == 0;)" EOL
+  R"(    _{bool} r = _{CreateDirectory}(c, _{NULL});)" EOL
   R"(  #else)" EOL
   R"(    _{bool} r = _{mkdir}(c, 0777) == 0;)" EOL
   R"(  #endif)" EOL
@@ -294,7 +294,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{memcpy}(c, s.d, s.l);)" EOL
   R"(  c[s.l] = '\0';)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{bool} r = _{_rmdir}(c) == 0;)" EOL
+  R"(    _{bool} r = _{RemoveDirectory}(c);)" EOL
   R"(  #else)" EOL
   R"(    _{bool} r = _{rmdir}(c) == 0;)" EOL
   R"(  #endif)" EOL

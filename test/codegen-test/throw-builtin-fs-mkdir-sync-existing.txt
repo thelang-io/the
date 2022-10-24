@@ -56,7 +56,7 @@ void fs_mkdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    bool r = CreateDirectory(c, NULL) == 0;
+    bool r = CreateDirectory(c, NULL);
   #else
     bool r = mkdir(c, 0777) == 0;
   #endif

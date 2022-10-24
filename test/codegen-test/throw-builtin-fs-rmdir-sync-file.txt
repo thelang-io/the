@@ -20,7 +20,7 @@ main {
 #include <stdlib.h>
 #include <string.h>
 #ifdef THE_OS_WINDOWS
-  #include <direct.h>
+  #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
   #include <unistd.h>
@@ -58,7 +58,7 @@ void fs_rmdirSync (struct str s) {
   memcpy(c, s.d, s.l);
   c[s.l] = '\0';
   #ifdef THE_OS_WINDOWS
-    bool r = _rmdir(c) == 0;
+    bool r = RemoveDirectory(c);
   #else
     bool r = rmdir(c) == 0;
   #endif

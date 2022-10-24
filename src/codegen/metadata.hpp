@@ -161,7 +161,6 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"_S_IFDIR", "libSysStat"},
   std::pair<std::string, std::string>{"_S_IFMT", "libSysStat"},
   std::pair<std::string, std::string>{"_S_IFREG", "libSysStat"},
-  std::pair<std::string, std::string>{"_lstat", "libSysStat"},
   std::pair<std::string, std::string>{"_stat", "libSysStat"},
 
   std::pair<std::string, std::string>{"access", "libUnistd"},
@@ -173,7 +172,6 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"symlink", "libUnistd"},
 
   std::pair<std::string, std::string>{"_getcwd", "libWinDirect"},
-  std::pair<std::string, std::string>{"_rmdir", "libWinDirect"},
 
   std::pair<std::string, std::string>{"_access", "libWinIo"},
   std::pair<std::string, std::string>{"_chmod", "libWinIo"},
@@ -198,7 +196,8 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"CreateFile", "libWindows"},
   std::pair<std::string, std::string>{"CreateSymbolicLink", "libWindows"},
   std::pair<std::string, std::string>{"DeviceIoControl", "libWindows"},
-  std::pair<std::string, std::string>{"GetFinalPathNameByHandle", "libWindows"}
+  std::pair<std::string, std::string>{"GetFinalPathNameByHandle", "libWindows"},
+  std::pair<std::string, std::string>{"RemoveDirectory", "libWindows"}
 };
 
 #endif
