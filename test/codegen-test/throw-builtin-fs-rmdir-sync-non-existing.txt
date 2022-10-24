@@ -33,6 +33,7 @@ struct str {
 
 void *alloc (size_t);
 struct str str_alloc (const char *);
+char *str_cstr (const struct str);
 void str_free (struct str);
 void fs_rmdirSync (struct str);
 
@@ -50,13 +51,17 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
 void fs_rmdirSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
     bool r = RemoveDirectory(c);
   #else

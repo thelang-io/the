@@ -42,6 +42,7 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
+char *str_cstr (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 struct __THE_1_array_str fs_scandirSync (struct str);
@@ -116,6 +117,12 @@ struct str str_concat_str (struct str s1, struct str s2) {
   free(s2.d);
   return (struct str) {d, l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 struct str str_escape (const struct str s) {
   char *d = alloc(s.l);
   size_t l = 0;
@@ -141,9 +148,7 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct __THE_1_array_str fs_scandirSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   DIR *f = opendir(c);
   if (f == NULL) {
     fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);

@@ -77,6 +77,7 @@ void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
+char *str_cstr (const struct str);
 void str_free (struct str);
 bool fs_isSymbolicLinkSync (struct str);
 void fs_linkSync (struct str, struct str);
@@ -130,16 +131,20 @@ struct str str_copy (const struct str s) {
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
 bool fs_isSymbolicLinkSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   bool b = false;
   #ifdef THE_OS_WINDOWS
-    HANDLE h = CreateFile(c, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    HANDLE h = CreateFile(c, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
     if (h == INVALID_HANDLE_VALUE) {
       free(c);
       return b;
@@ -190,12 +195,8 @@ bool fs_isSymbolicLinkSync (struct str s) {
   return b;
 }
 void fs_linkSync (struct str s1, struct str s2) {
-  char *c1 = alloc(s1.l + 1);
-  memcpy(c1, s1.d, s1.l);
-  c1[s1.l] = '\0';
-  char *c2 = alloc(s2.l + 1);
-  memcpy(c2, s2.d, s2.l);
-  c2[s2.l] = '\0';
+  char *c1 = str_cstr(s1);
+  char *c2 = str_cstr(s2);
   #ifdef THE_OS_WINDOWS
     bool r = CreateSymbolicLink(c2, c1, 0);
   #else
@@ -211,9 +212,7 @@ void fs_linkSync (struct str s1, struct str s2) {
   free(c2);
 }
 void fs_rmSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   if (remove(c) != 0) {
     fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
     exit(EXIT_FAILURE);

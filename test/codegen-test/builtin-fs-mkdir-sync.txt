@@ -46,6 +46,7 @@ struct str os_name ();
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
+char *str_cstr (const struct str);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 bool fs_isDirectorySync (struct str);
@@ -113,6 +114,12 @@ struct str str_copy (const struct str s) {
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 bool str_eq_cstr (struct str s, const char *r) {
   bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
   free(s.d);
@@ -122,9 +129,7 @@ void str_free (struct str s) {
   free(s.d);
 }
 bool fs_isDirectorySync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   bool b = false;
   #ifdef THE_OS_WINDOWS
     struct _stat sb;
@@ -142,9 +147,7 @@ bool fs_isDirectorySync (struct str s) {
   return b;
 }
 void fs_mkdirSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
     bool r = CreateDirectory(c, NULL);
   #else
@@ -158,9 +161,7 @@ void fs_mkdirSync (struct str s) {
   str_free(s);
 }
 void fs_rmdirSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
     bool r = RemoveDirectory(c);
   #else

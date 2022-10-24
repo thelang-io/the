@@ -31,6 +31,7 @@ struct str {
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str str_alloc (const char *);
+char *str_cstr (const struct str);
 void str_free (struct str);
 struct buffer str_to_buffer (struct str);
 void fs_writeFileSync (struct str, struct buffer);
@@ -52,6 +53,12 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
@@ -59,9 +66,7 @@ struct buffer str_to_buffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 void fs_writeFileSync (struct str s, struct buffer b) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   FILE *f = fopen(c, "wb");
   if (f == NULL) {
     fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);

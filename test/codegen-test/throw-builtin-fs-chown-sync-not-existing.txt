@@ -45,6 +45,7 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_copy (const struct str);
+char *str_cstr (const struct str);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 void fs_chownSync (struct str, int32_t, int32_t);
@@ -126,6 +127,12 @@ struct str str_copy (const struct str s) {
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 bool str_eq_cstr (struct str s, const char *r) {
   bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
   free(s.d);
@@ -139,9 +146,7 @@ void fs_chownSync (struct str s, int32_t u, int32_t g) {
     str_free(s);
     return;
   #endif
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   if (chown(c, u, g) != 0) {
     fprintf(stderr, "Error: failed to change owner to %" PRId32 " and group to %" PRId32 " for file `%s`" THE_EOL, u, g, c);
     exit(EXIT_FAILURE);

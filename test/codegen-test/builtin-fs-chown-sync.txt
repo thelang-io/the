@@ -69,6 +69,7 @@ void buffer_free (struct buffer);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
+char *str_cstr (const struct str);
 void str_free (struct str);
 struct buffer str_to_buffer (struct str);
 void fs_chownSync (struct str, int32_t, int32_t);
@@ -131,6 +132,12 @@ struct str str_copy (const struct str s) {
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
@@ -142,9 +149,7 @@ void fs_chownSync (struct str s, int32_t u, int32_t g) {
     str_free(s);
     return;
   #endif
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   if (chown(c, u, g) != 0) {
     fprintf(stderr, "Error: failed to change owner to %" PRId32 " and group to %" PRId32 " for file `%s`" THE_EOL, u, g, c);
     exit(EXIT_FAILURE);
@@ -153,9 +158,7 @@ void fs_chownSync (struct str s, int32_t u, int32_t g) {
   free(c);
 }
 void fs_rmSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   if (remove(c) != 0) {
     fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
     exit(EXIT_FAILURE);
@@ -164,9 +167,7 @@ void fs_rmSync (struct str s) {
   str_free(s);
 }
 struct fs_Stats *fs_statSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   struct fs_Stats *r;
   #ifdef THE_OS_WINDOWS
     struct _stat sb;
@@ -192,9 +193,7 @@ struct fs_Stats *fs_statSync (struct str s) {
   return r;
 }
 void fs_writeFileSync (struct str s, struct buffer b) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   FILE *f = fopen(c, "wb");
   if (f == NULL) {
     fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);

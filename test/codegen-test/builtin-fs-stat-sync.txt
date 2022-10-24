@@ -59,6 +59,7 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
+char *str_cstr (const struct str);
 void str_free (struct str);
 struct str u16_str (uint16_t);
 struct str u64_str (uint64_t);
@@ -142,6 +143,12 @@ struct str str_concat_str (struct str s1, struct str s2) {
   free(s2.d);
   return (struct str) {d, l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
@@ -156,9 +163,7 @@ struct str u64_str (uint64_t d) {
   return str_alloc(buf);
 }
 struct fs_Stats *fs_statSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   struct fs_Stats *r;
   #ifdef THE_OS_WINDOWS
     struct _stat sb;

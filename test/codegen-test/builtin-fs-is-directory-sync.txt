@@ -33,6 +33,7 @@ struct str {
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+char *str_cstr (const struct str);
 void str_free (struct str);
 bool fs_isDirectorySync (struct str);
 
@@ -79,13 +80,17 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 void str_free (struct str s) {
   free(s.d);
 }
 bool fs_isDirectorySync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   bool b = false;
   #ifdef THE_OS_WINDOWS
     struct _stat sb;
