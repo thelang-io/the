@@ -137,6 +137,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"stdout", "libStdio"},
   std::pair<std::string, std::string>{"_pclose", "libStdio"},
   std::pair<std::string, std::string>{"_popen", "libStdio"},
+  std::pair<std::string, std::string>{"_snprintf", "libStdio"},
 
   std::pair<std::string, std::string>{"EXIT_SUCCESS", "libStdlib"},
   std::pair<std::string, std::string>{"EXIT_FAILURE", "libStdlib"},
@@ -178,6 +179,9 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"_chmod", "libWinIo"},
 
   std::pair<std::string, std::string>{"DWORD", "libWindows"},
+  std::pair<std::string, std::string>{"ERROR_FILE_NOT_FOUND", "libWindows"},
+  std::pair<std::string, std::string>{"ERROR_NO_MORE_FILES", "libWindows"},
+  std::pair<std::string, std::string>{"FILE_ATTRIBUTE_DIRECTORY", "libWindows"},
   std::pair<std::string, std::string>{"FILE_ATTRIBUTE_NORMAL", "libWindows"},
   std::pair<std::string, std::string>{"FILE_FLAG_BACKUP_SEMANTICS", "libWindows"},
   std::pair<std::string, std::string>{"FILE_FLAG_OPEN_REPARSE_POINT", "libWindows"},
@@ -196,12 +200,18 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"MAX_PATH", "libWindows"},
   std::pair<std::string, std::string>{"OPEN_EXISTING", "libWindows"},
   std::pair<std::string, std::string>{"VOLUME_NAME_DOS", "libWindows"},
+  std::pair<std::string, std::string>{"WIN32_FIND_DATA", "libWindows"},
   std::pair<std::string, std::string>{"CloseHandle", "libWindows"},
   std::pair<std::string, std::string>{"CreateDirectory", "libWindows"},
   std::pair<std::string, std::string>{"CreateFile", "libWindows"},
   std::pair<std::string, std::string>{"CreateSymbolicLink", "libWindows"},
   std::pair<std::string, std::string>{"DeviceIoControl", "libWindows"},
+  std::pair<std::string, std::string>{"FindClose", "libWindows"},
+  std::pair<std::string, std::string>{"FindFirstFile", "libWindows"},
+  std::pair<std::string, std::string>{"FindNextFile", "libWindows"},
+  std::pair<std::string, std::string>{"GetFileAttributes", "libWindows"},
   std::pair<std::string, std::string>{"GetFinalPathNameByHandle", "libWindows"},
+  std::pair<std::string, std::string>{"GetLastError", "libWindows"},
   std::pair<std::string, std::string>{"RemoveDirectory", "libWindows"}
 };
 

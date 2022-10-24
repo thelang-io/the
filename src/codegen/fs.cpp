@@ -220,6 +220,7 @@ const std::vector<std::string> codegenFs = {
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{HANDLE} h = _{CreateFile}(c, 0, 0, _{NULL}, _{OPEN_EXISTING}, _{FILE_ATTRIBUTE_NORMAL} | _{FILE_FLAG_BACKUP_SEMANTICS}, _{NULL});)" EOL
   R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
+  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to create handle to get real path of file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -230,6 +231,7 @@ const std::vector<std::string> codegenFs = {
   R"(    })" EOL
   R"(    char *r = _{alloc}(l + 1);)" EOL
   R"(    if (_{GetFinalPathNameByHandle}(h, r, _{MAX_PATH}, _{VOLUME_NAME_DOS}) == 0) {)" EOL
+  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to get real path by handle of file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -283,23 +285,58 @@ const std::vector<std::string> codegenFs = {
   R"(  _{str_free}(s);)" EOL
   R"(})" EOL,
 
-  // todo test windows
   R"(struct _{array_str} fs_scandirSync (_{struct str} s) {)" EOL
   R"(  char *c = _{str_cstr}(s);)" EOL
-  R"(  _{DIR} *f = _{opendir}(c);)" EOL
-  R"(  if (f == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to open directory `%s`" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
-  R"(  })" EOL
-  R"(  _{struct dirent} *a;)" EOL
   R"(  _{struct str} *r = _{NULL};)" EOL
   R"(  _{size_t} l = 0;)" EOL
-  R"(  while ((a = _{readdir}(f)) != _{NULL}) {)" EOL
-  R"(    if (_{strcmp}(a->d_name, ".") == 0 || _{strcmp}(a->d_name, "..") == 0) continue;)" EOL
-  R"(    r = _{re_alloc}(r, ++l * sizeof(_{struct str}));)" EOL
-  R"(    r[l - 1] = _{str_alloc}(a->d_name);)" EOL
-  R"(  })" EOL
-  R"(  _{closedir}(f);)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    if (!(_{GetFileAttributes}(c) & _{FILE_ATTRIBUTE_DIRECTORY})) {)" EOL
+  // todo test
+  R"(      _{fprintf}(_{stderr}, "Error: failed to scan non-directory `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");)" EOL
+  R"(    char *b = _{alloc}(s.l + 4);)" EOL
+  R"(    _{_snprintf}(b, s.l + 3, fmt, c);)" EOL
+  R"(    _{WIN32_FIND_DATA} m;)" EOL
+  R"(    _{HANDLE} h = _{FindFirstFile}(b, &m);)" EOL
+  R"(    _{free}(b);)" EOL
+  R"(    if (h == _{INVALID_HANDLE_VALUE} && _{GetLastError}() != _{ERROR_FILE_NOT_FOUND}) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to open directory `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    } else if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
+  R"(      goto fs_scandirSync_cleanup;)" EOL
+  R"(    })" EOL
+  R"(    _{WIN32_FIND_DATA} *n = &m;)" EOL
+  R"(    while (_{true}) {)" EOL
+  R"(      if (_{strcmp}(n->cFileName, ".") != 0 && _{strcmp}(n->cFileName, "..") != 0) {)" EOL
+  R"(        r = _{re_alloc}(r, ++l * sizeof(_{struct str}));)" EOL
+  R"(        r[l - 1] = _{str_alloc}(n->cFileName);)" EOL
+  R"(      })" EOL
+  R"(      _{bool} g = _{FindNextFile}(h, n);)" EOL
+  R"(      if (!g && _{GetLastError}() == _{ERROR_NO_MORE_FILES}) {)" EOL
+  R"(        break;)" EOL
+  R"(      } else if (!g) {)" EOL
+  R"(        _{fprintf}(_{stderr}, "Error: failed to scan next file of directory `%s`" _{THE_EOL}, c);)" EOL
+  R"(        _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      })" EOL
+  R"(    })" EOL
+  R"(    _{FindClose}(h);)" EOL
+  R"(  #else)" EOL
+  R"(    _{DIR} *f = _{opendir}(c);)" EOL
+  R"(    if (f == _{NULL}) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to open directory `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{struct dirent} *a;)" EOL
+  R"(    while ((a = _{readdir}(f)) != _{NULL}) {)" EOL
+  R"(      if (_{strcmp}(a->d_name, ".") == 0 || _{strcmp}(a->d_name, "..") == 0) continue;)" EOL
+  R"(      r = _{re_alloc}(r, ++l * sizeof(_{struct str}));)" EOL
+  R"(      r[l - 1] = _{str_alloc}(a->d_name);)" EOL
+  R"(    })" EOL
+  R"(    _{closedir}(f);)" EOL
+  R"(  #endif)" EOL
+  R"(fs_scandirSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  return (struct _{array_str}) {r, l};)" EOL

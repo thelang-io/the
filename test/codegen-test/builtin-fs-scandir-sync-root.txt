@@ -15,9 +15,13 @@ main {
   #define THE_EOL "\n"
 #endif
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <dirent.h>
 #endif
@@ -75,20 +79,55 @@ void str_free (struct str s) {
 }
 struct __THE_1_array_str fs_scandirSync (struct str s) {
   char *c = str_cstr(s);
-  DIR *f = opendir(c);
-  if (f == NULL) {
-    fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  }
-  struct dirent *a;
   struct str *r = NULL;
   size_t l = 0;
-  while ((a = readdir(f)) != NULL) {
-    if (strcmp(a->d_name, ".") == 0 || strcmp(a->d_name, "..") == 0) continue;
-    r = re_alloc(r, ++l * sizeof(struct str));
-    r[l - 1] = str_alloc(a->d_name);
-  }
-  closedir(f);
+  #ifdef THE_OS_WINDOWS
+    if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
+      fprintf(stderr, "Error: failed to scan non-directory `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");
+    char *b = alloc(s.l + 4);
+    _snprintf(b, s.l + 3, fmt, c);
+    WIN32_FIND_DATA m;
+    HANDLE h = FindFirstFile(b, &m);
+    free(b);
+    if (h == INVALID_HANDLE_VALUE && GetLastError() != ERROR_FILE_NOT_FOUND) {
+      fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    } else if (h == INVALID_HANDLE_VALUE) {
+      goto fs_scandirSync_cleanup;
+    }
+    WIN32_FIND_DATA *n = &m;
+    while (true) {
+      if (strcmp(n->cFileName, ".") != 0 && strcmp(n->cFileName, "..") != 0) {
+        r = re_alloc(r, ++l * sizeof(struct str));
+        r[l - 1] = str_alloc(n->cFileName);
+      }
+      bool g = FindNextFile(h, n);
+      if (!g && GetLastError() == ERROR_NO_MORE_FILES) {
+        break;
+      } else if (!g) {
+        fprintf(stderr, "Error: failed to scan next file of directory `%s`" THE_EOL, c);
+        exit(EXIT_FAILURE);
+      }
+    }
+    FindClose(h);
+  #else
+    DIR *f = opendir(c);
+    if (f == NULL) {
+      fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    struct dirent *a;
+    while ((a = readdir(f)) != NULL) {
+      if (strcmp(a->d_name, ".") == 0 || strcmp(a->d_name, "..") == 0) continue;
+      r = re_alloc(r, ++l * sizeof(struct str));
+      r[l - 1] = str_alloc(a->d_name);
+    }
+    closedir(f);
+  #endif
+fs_scandirSync_cleanup:
   free(c);
   str_free(s);
   return (struct __THE_1_array_str) {r, l};
