@@ -123,7 +123,7 @@ const std::vector<std::string> codegenFs = {
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{HANDLE} h = _{CreateFile}(c, 0, _{FILE_SHARE_READ}, _{NULL}, _{OPEN_EXISTING}, 0, _{NULL});)" EOL
   R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
-  R"(      free(c);)" EOL
+  R"(      _{free}(c);)" EOL
   R"(      return b;)" EOL
   R"(    })" EOL
   R"(    char d[_{MAXIMUM_REPARSE_DATA_BUFFER_SIZE}];)" EOL
@@ -146,7 +146,7 @@ const std::vector<std::string> codegenFs = {
   R"(        char *t = r->AppExecLinkReparseBuffer.StringList;)" EOL
   R"(        _{bool} f = _{false};)" EOL
   R"(        for (_{size_t} i = 0; i < 2; i++) {)" EOL
-  R"(          size_t l = _{strlen}(t);)" EOL
+  R"(          _{size_t} l = _{strlen}(t);)" EOL
   R"(          if (l == 0) {)" EOL
   R"(            f = _{true};)" EOL
   R"(            break;)" EOL

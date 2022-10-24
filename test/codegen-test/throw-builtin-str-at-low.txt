@@ -46,7 +46,7 @@ struct str str_alloc (const char *r) {
   return (struct str) {d, l};
 }
 char *str_at (struct str s, int64_t i) {
-  if ((i >= 0 && i >= s.l) || (i < 0 && i < -s.l)) {
+  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int64_t) s.l))) {
     fprintf(stderr, "Error: index %" PRId64 " out of string bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }

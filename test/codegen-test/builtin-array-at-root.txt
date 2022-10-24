@@ -73,7 +73,7 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   return (struct __THE_1_array_str) {d, x};
 }
 struct str *__THE_1_array_str_at (struct __THE_1_array_str n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
     fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }

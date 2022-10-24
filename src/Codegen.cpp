@@ -627,7 +627,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrAt) {
     builtinFnDeclCode += "char *str_at (struct str, int64_t);" EOL;
     builtinFnDefCode += "char *str_at (struct str s, int64_t i) {" EOL;
-    builtinFnDefCode += "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -s.l)) {" EOL;
+    builtinFnDefCode += "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int64_t) s.l))) {" EOL;
     builtinFnDefCode += R"(    fprintf(stderr, "Error: index %" PRId64 " out of string bounds" THE_EOL, i);)" EOL;
     builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
     builtinFnDefCode += "  }" EOL;
@@ -845,8 +845,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrSlice) {
     builtinFnDeclCode += "struct str str_slice (struct str, unsigned char, int64_t, unsigned char, int64_t);" EOL;
     builtinFnDefCode += "struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {" EOL;
-    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -s.l ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL;
-    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -s.l ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
+    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL;
+    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
     builtinFnDefCode += "  if (i1 >= i2 || i1 >= s.l) {" EOL;
     builtinFnDefCode += "    free(s.d);" EOL;
     builtinFnDefCode += R"(    return str_alloc("");)" EOL;
@@ -3440,7 +3440,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
 
   atFnEntity.decl += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + ", int64_t);";
   atFnEntity.def += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + " n, int64_t i) {" EOL;
-  atFnEntity.def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {" EOL;
+  atFnEntity.def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {" EOL;
   atFnEntity.def += R"(    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);)" EOL;
   atFnEntity.def += "    exit(EXIT_FAILURE);" EOL;
   atFnEntity.def += "  }" EOL;
@@ -3577,8 +3577,8 @@ std::string Codegen::_typeNameArray (const Type *type) {
 
   sliceFnEntity.decl += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + ", unsigned int, int64_t, unsigned int, int64_t);";
   sliceFnEntity.def += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + " n, unsigned int o1, int64_t n1, unsigned int o2, int64_t n2) {" EOL;
-  sliceFnEntity.def += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -n.l ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));" EOL;
-  sliceFnEntity.def += "  int64_t i2 = o2 == 0 ? n.l : (n2 < 0 ? (n2 < -n.l ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));" EOL;
+  sliceFnEntity.def += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));" EOL;
+  sliceFnEntity.def += "  int64_t i2 = o2 == 0 ? n.l : (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));" EOL;
   sliceFnEntity.def += "  if (i1 > i2 || i1 >= n.l) {" EOL;
   sliceFnEntity.def += "    " + typeName + "_free((struct " + typeName + ") n);" EOL;
   sliceFnEntity.def += "    return (struct " + typeName + ") {NULL, 0};" EOL;
