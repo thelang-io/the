@@ -87,4 +87,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to create symbolic link from `test/fixtures/test.txt` to `test/fixtures/test.txt`
+Error: failed to create symbolic link from `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}test.txt` to `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}test.txt`
