@@ -199,6 +199,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"MAXIMUM_REPARSE_DATA_BUFFER_SIZE", "libWindows"},
   std::pair<std::string, std::string>{"MAX_PATH", "libWindows"},
   std::pair<std::string, std::string>{"OPEN_EXISTING", "libWindows"},
+  std::pair<std::string, std::string>{"SYMBOLIC_LINK_FLAG_DIRECTORY", "libWindows"},
   std::pair<std::string, std::string>{"VOLUME_NAME_DOS", "libWindows"},
   std::pair<std::string, std::string>{"WIN32_FIND_DATA", "libWindows"},
   std::pair<std::string, std::string>{"CloseHandle", "libWindows"},

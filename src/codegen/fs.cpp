@@ -163,7 +163,11 @@ const std::vector<std::string> codegenFs = {
   R"(  char *c1 = _{str_cstr}(s1);)" EOL
   R"(  char *c2 = _{str_cstr}(s2);)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{bool} r = _{CreateSymbolicLink}(c2, c1, 0);)" EOL
+  R"(    for (_{size_t} i = 0; i < s1.l; i++) c1[i] = (c1[i] == '/' ? '\\' : c1[i]);)" EOL
+  R"(    for (_{size_t} i = 0; i < s2.l; i++) c2[i] = (c2[i] == '/' ? '\\' : c2[i]);)" EOL
+  R"(    _{DWORD} flags = 0;)" EOL
+  R"(    if (_{GetFileAttributes}(c1) & _{FILE_ATTRIBUTE_DIRECTORY}) flags |= _{SYMBOLIC_LINK_FLAG_DIRECTORY};)" EOL
+  R"(    _{bool} r = _{CreateSymbolicLink}(c2, c1, flags);)" EOL
   R"(  #else)" EOL
   R"(    _{bool} r = _{symlink}(c1, c2) == 0;)" EOL
   R"(  #endif)" EOL
