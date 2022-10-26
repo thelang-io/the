@@ -427,7 +427,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-empty",
-  "node-fn-decl-hoisting", // todo generates only one function struct, while should be one for i64 and one for int
+  "node-fn-decl-hoisting",
   "node-fn-decl-param-default",
   "node-fn-decl-param-default-any",
   "node-fn-decl-param-default-array",
