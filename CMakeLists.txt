@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(the VERSION 0.11.0 LANGUAGES CXX)
+project(the VERSION 0.11.0)
 
 option(BUILD_COVERAGE "Build coverage" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
@@ -120,3 +120,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     TIMEOUT 300
   )
 endif ()
+
+add_executable(the-test2134 test2134.c)
+target_compile_options(the-test2134 PRIVATE -Wall -I/usr/local/opt/openssl@3/include)
+target_link_libraries(the-test2134 -L/usr/local/opt/openssl@3/lib ssl crypto)
