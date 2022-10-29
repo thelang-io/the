@@ -77,7 +77,11 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"process_getgid", "@process_getgid", typeMap.get("process_getgid"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"process_getuid", "@process_getuid", typeMap.get("process_getuid"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"process_runSync", "@process_runSync", typeMap.get("process_runSync"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"request_close", "@request_close", typeMap.get("request_close"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"request_open", "@request_open", typeMap.get("request_open"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"request_read", "@request_read", typeMap.get("request_read"), false, true, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"sleepSync", "@sleepSync", typeMap.get("sleepSync"), false, true, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"url_parse", "@url_parse", typeMap.get("url_parse"), false, true, this->_frame}));
 }
 
 std::string VarMap::name (const std::string &name) const {

@@ -119,6 +119,15 @@ void TypeMap::init () {
   auto bufferBufferType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"fs_Stats", "@fs_Stats", TypeObj{}, {}, true}));
   auto fsStatsType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Header", "@request_Header", TypeObj{}, {}, true}));
+  auto requestHeaderType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Request", "@request_Request", TypeObj{}, {}, true}));
+  auto requestRequestType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Response", "@request_Response", TypeObj{}, {}, true}));
+  auto requestResponseType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"url_URL", "@url_URL", TypeObj{}, {}, true}));
+  auto urlUrlType = this->_items.back().get();
+
   this->_items.push_back(std::make_unique<Type>(Type{"any", "@any", TypeObj{}, {}, true}));
   auto anyType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"bool", "@bool", TypeObj{}, {}, true}));
@@ -179,6 +188,32 @@ void TypeMap::init () {
   fsStatsType->fields.push_back(TypeField{"blksize", i32Type, false, false});
   this->_items.push_back(std::make_unique<Type>(Type{"fs_Stats.str", "@fs_Stats.str", TypeFn{strType}, {}, true}));
   fsStatsType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  requestHeaderType->fields.push_back(TypeField{"name", strType, false, false});
+  requestHeaderType->fields.push_back(TypeField{"value", strType, false, false});
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Header.str", "@request_Header.str", TypeFn{strType}, {}, true}));
+  requestHeaderType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Request.str", "@request_Request.str", TypeFn{strType}, {}, true}));
+  requestRequestType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  requestResponseType->fields.push_back(TypeField{"data", bufferBufferType, false, false});
+  requestResponseType->fields.push_back(TypeField{"status", intType, false, false});
+  requestResponseType->fields.push_back(TypeField{"headers", this->arrayOf(requestHeaderType), false, false});
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Response.str", "@request_Response.str", TypeFn{strType}, {}, true}));
+  requestResponseType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  urlUrlType->fields.push_back(TypeField{"origin", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"protocol", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"host", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"hostname", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"port", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"path", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"pathname", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"search", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"hash", strType, false, false});
+  this->_items.push_back(std::make_unique<Type>(Type{"url_URL.str", "@url_URL.str", TypeFn{strType}, {}, true}));
+  urlUrlType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 
   this->_items.push_back(std::make_unique<Type>(Type{"any.str", "@any.str", TypeFn{strType}, {}, true}));
   anyType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
@@ -351,12 +386,33 @@ void TypeMap::init () {
     TypeFnParam{"to", strType, false, false, false}
   }};
 
-  auto processRunTypeFn = TypeFn{bufferBufferType, {
+  auto processRunSyncTypeFn = TypeFn{bufferBufferType, {
     TypeFnParam{"command", strType, false, true, false}
+  }};
+
+  auto requestCloseTypeFn = TypeFn{voidType, {
+    TypeFnParam{"request", requestRequestType, false, true, false}
+  }};
+
+  auto requestOpenTypeFn = TypeFn{requestRequestType, {
+    TypeFnParam{"method", strType, false, true, false},
+    TypeFnParam{"url", strType, false, true, false},
+    // todo test
+    TypeFnParam{"data", bufferBufferType, false, false, false},
+    // todo test
+    TypeFnParam{"headers", this->arrayOf(requestHeaderType), false, false, false}
+  }};
+
+  auto requestReadTypeFn = TypeFn{requestResponseType, {
+    TypeFnParam{"request", requestRequestType, false, true, false}
   }};
 
   auto sleepSyncTypeFn = TypeFn{voidType, {
     TypeFnParam{"milliseconds", u32Type, false, true, false}
+  }};
+
+  auto urlParseTypeFn = TypeFn{urlUrlType, {
+    TypeFnParam{"url", strType, false, true, false}
   }};
 
   this->_items.push_back(std::make_unique<Type>(Type{"exit", "@exit", exitTypeFn, {}, true}));
@@ -383,8 +439,12 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"process_cwd", "@process_cwd", TypeFn{strType}, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"process_getgid", "@process_getgid", TypeFn{intType}, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"process_getuid", "@process_getuid", TypeFn{intType}, {}, true}));
-  this->_items.push_back(std::make_unique<Type>(Type{"process_runSync", "@process_runSync", processRunTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"process_runSync", "@process_runSync", processRunSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"request_close", "@request_close", requestCloseTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"request_open", "@request_open", requestOpenTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"request_read", "@request_read", requestReadTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"sleepSync", "@sleepSync", sleepSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"url_parse", "@url_parse", urlParseTypeFn, {}, true}));
 }
 
 std::string TypeMap::name (const std::string &name) const {

@@ -23,6 +23,8 @@
 #include "codegen/fs.hpp"
 #include "codegen/metadata.hpp"
 #include "codegen/process.hpp"
+#include "codegen/request.hpp"
+#include "codegen/url.hpp"
 
 const auto banner = std::string(
   "/*!" EOL
@@ -83,8 +85,14 @@ Codegen::Codegen (AST *a) {
 
 std::tuple<std::string, std::string> Codegen::gen () {
   this->_typeObj(this->ast->typeMap.get("fs_Stats"), true);
+  this->_typeObj(this->ast->typeMap.get("request_Header"), true);
+  this->_typeObj(this->ast->typeMap.get("request_Request"), true);
+  this->_typeObj(this->ast->typeMap.get("request_Response"), true);
+  this->_typeObj(this->ast->typeMap.get("url_URL"), true);
   this->_apiLoad(codegenFs);
   this->_apiLoad(codegenProcess);
+  this->_apiLoad(codegenRequest);
+  this->_apiLoad(codegenURL);
 
   auto nodes = this->ast->gen();
   auto mainCode = std::string();
@@ -147,6 +155,14 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinStructDefCode += "struct buffer {" EOL;
     builtinStructDefCode += "  unsigned char *d;" EOL;
     builtinStructDefCode += "  size_t l;" EOL;
+    builtinStructDefCode += "};" EOL;
+  }
+
+  if (this->builtins.typeRequest) {
+    builtinStructDefCode += "struct request {" EOL;
+    builtinStructDefCode += "  int fd;" EOL;
+    builtinStructDefCode += "  SSL_CTX *ctx;" EOL;
+    builtinStructDefCode += "  SSL *ssl;" EOL;
     builtinStructDefCode += "};" EOL;
   }
 
@@ -982,7 +998,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
-  headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";;
+  headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";
 
   if (this->builtins.libWinDirect || this->builtins.libWinIo || this->builtins.libWindows) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
@@ -992,9 +1008,23 @@ std::tuple<std::string, std::string> Codegen::gen () {
     headers += "#endif" EOL;
   }
 
-  if (this->builtins.libDirent || this->builtins.libSysUtsname || this->builtins.libUnistd) {
+  if (
+    this->builtins.libArpaInet ||
+    this->builtins.libDirent ||
+    this->builtins.libNetdb ||
+    this->builtins.libNetinetIn ||
+    this->builtins.libOpensslSsl ||
+    this->builtins.libSysSocket ||
+    this->builtins.libSysUtsname ||
+    this->builtins.libUnistd
+  ) {
     headers += "#ifndef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libArpaInet ? "  #include <arpa/inet.h>" EOL : "";
     headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
+    headers += this->builtins.libNetdb ? "  #include <netdb.h>" EOL : "";
+    headers += this->builtins.libNetinetIn ? "  #include <netinet/in.h>" EOL : "";
+    headers += this->builtins.libOpensslSsl ? "  #include <openssl/ssl.h>" EOL : "";
+    headers += this->builtins.libSysSocket ? "  #include <sys/socket.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
     headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
     headers += "#endif" EOL;
@@ -1032,6 +1062,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
 
   if (name == "definitions") {
     this->builtins.definitions = true;
+  } else if (name == "libArpaInet") {
+    this->builtins.libArpaInet = true;
   } else if (name == "libCtype") {
     this->builtins.libCtype = true;
   } else if (name == "libDirent") {
@@ -1039,6 +1071,13 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("definitions");
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
+  } else if (name == "libNetdb") {
+    this->builtins.libNetdb = true;
+  } else if (name == "libNetinetIn") {
+    this->builtins.libNetinetIn = true;
+  } else if (name == "libOpensslSsl") {
+    this->builtins.libOpensslSsl = true;
+    // todo set ssl flags
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
@@ -1053,6 +1092,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libStdlib = true;
   } else if (name == "libString") {
     this->builtins.libString = true;
+  } else if (name == "libSysSocket") {
+    this->builtins.libSysSocket = true;
   } else if (name == "libSysStat") {
     this->builtins.libSysStat = true;
   } else if (name == "libSysUtsname") {
@@ -1430,6 +1471,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "typeBuffer") {
     this->builtins.typeBuffer = true;
     this->_activateBuiltin("libStdlib");
+  } else if (name == "typeRequest") {
+    this->builtins.typeRequest = true;
+    this->_activateBuiltin("libOpensslSsl");
   } else if (name == "typeStr") {
     this->builtins.typeStr = true;
     this->_activateBuiltin("libStdlib");
@@ -2828,11 +2872,50 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_runSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{process_runSync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_close") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("request_Request"));
+      code = this->_apiEval("_{request_close}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_open") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("str"));
+
+      auto arg3Expr = std::string("(struct buffer) {NULL, 0}");
+      auto isArg3ExprPlain = true;
+      auto arg4Expr = std::string("(struct " + Codegen::typeName("array_request_Header") + ") {NULL, 0}");
+      auto isArg4ExprPlain = true;
+
+      for (const auto &exprCallArg : exprCall.args) {
+        if (exprCallArg.id != std::nullopt && exprCallArg.id == "data") {
+          arg3Expr = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("buffer_Buffer"));
+          isArg3ExprPlain = false;
+        } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "headers") {
+          arg4Expr = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.arrayOf(this->ast->typeMap.get("request_Header")));
+          isArg4ExprPlain = false;
+        }
+      }
+
+      if (isArg3ExprPlain) {
+        this->_activateBuiltin("libStdlib");
+        this->_activateBuiltin("typeBuffer");
+      }
+
+      if (isArg4ExprPlain) {
+        auto typeName = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get("request_Header")));
+
+        this->_activateBuiltin("libStdlib");
+        this->_activateEntity(typeName);
+      }
+
+      code = this->_apiEval("_{request_open}") + "(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_read") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("request_Request"));
+      code = this->_apiEval("_{request_read}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
-
-      this->_activateBuiltin("fnSleepSync");
-      code = "sleep_sync(" + arg1Expr + ")";
+      code = this->_apiEval("_{sleep_sync}") + "(" + arg1Expr + ")";
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@url_parse") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{url_parse}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin) {
       auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
       auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
@@ -3936,10 +4019,14 @@ void Codegen::_typeObj (Type *type, bool builtin) {
     }
   }
 
-  allocFnEntity.decl += typeInfo.typeCode + typeName + "_alloc (" + allocFnParamTypes.substr(2) + ");";
-  allocFnEntity.def += typeInfo.typeCode + typeName + "_alloc (" + allocFnParams.substr(2) + ") {" EOL;
+  allocFnParamTypes = allocFnParamTypes.empty() ? allocFnParamTypes : allocFnParamTypes.substr(2);
+  allocFnParams = allocFnParams.empty() ? allocFnParams : allocFnParams.substr(2);
+  allocFnCode = allocFnCode.empty() ? allocFnCode : allocFnCode.substr(2);
+
+  allocFnEntity.decl += typeInfo.typeCode + typeName + "_alloc (" + allocFnParamTypes + ");";
+  allocFnEntity.def += typeInfo.typeCode + typeName + "_alloc (" + allocFnParams + ") {" EOL;
   allocFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
-  allocFnEntity.def += "  struct " + typeName + " s = {" + allocFnCode.substr(2) + "};" EOL;
+  allocFnEntity.def += "  struct " + typeName + " s = {" + allocFnCode + "};" EOL;
   allocFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
   allocFnEntity.def += "  return r;" EOL;
   allocFnEntity.def += "}";
@@ -3957,10 +4044,12 @@ void Codegen::_typeObj (Type *type, bool builtin) {
     }
   }
 
+  copyFnCode = copyFnCode.empty() ? copyFnCode : copyFnCode.substr(2);
+
   copyFnEntity.decl += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCodeTrimmed + ");";
   copyFnEntity.def += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + "o) {" EOL;
   copyFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
-  copyFnEntity.def += "  struct " + typeName + " s = {" + copyFnCode.substr(2) + "};" EOL;
+  copyFnEntity.def += "  struct " + typeName + " s = {" + copyFnCode + "};" EOL;
   copyFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
   copyFnEntity.def += "  return r;" EOL;
   copyFnEntity.def += "}";

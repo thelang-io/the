@@ -95,9 +95,11 @@ extern const std::map<std::string, std::string> codegenMetadata = {
 
   std::pair<std::string, std::string>{"struct any", "typeAny"},
   std::pair<std::string, std::string>{"struct buffer", "typeBuffer"},
+  std::pair<std::string, std::string>{"struct request", "typeRequest"},
   std::pair<std::string, std::string>{"struct str", "typeStr"},
   std::pair<std::string, std::string>{"struct win_reparse_data_buffer", "typeWinReparseDataBuffer"},
 
+  std::pair<std::string, std::string>{"isalnum", "libCtype"},
   std::pair<std::string, std::string>{"isalpha", "libCtype"},
 
   std::pair<std::string, std::string>{"DIR", "libDirent"},
@@ -110,6 +112,9 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"PRId16", "libInttypes"},
   std::pair<std::string, std::string>{"PRId32", "libInttypes"},
   std::pair<std::string, std::string>{"PRId64", "libInttypes"},
+
+  std::pair<std::string, std::string>{"SSL_CTX_free", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_free", "libOpensslSsl"},
 
   std::pair<std::string, std::string>{"bool", "libStdbool"},
   std::pair<std::string, std::string>{"true", "libStdbool"},
@@ -145,6 +150,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"free", "libStdlib"},
   std::pair<std::string, std::string>{"realpath", "libStdlib"},
 
+  std::pair<std::string, std::string>{"memcmp", "libString"},
   std::pair<std::string, std::string>{"memcpy", "libString"},
   std::pair<std::string, std::string>{"strcmp", "libString"},
   std::pair<std::string, std::string>{"strlen", "libString"},
@@ -165,13 +171,18 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"_S_IFREG", "libSysStat"},
   std::pair<std::string, std::string>{"_stat", "libSysStat"},
 
+  std::pair<std::string, std::string>{"connect", "libSysSocket"},
+
   std::pair<std::string, std::string>{"access", "libUnistd"},
   std::pair<std::string, std::string>{"chown", "libUnistd"},
+  std::pair<std::string, std::string>{"close", "libUnistd"},
   std::pair<std::string, std::string>{"getcwd", "libUnistd"},
   std::pair<std::string, std::string>{"getgid", "libUnistd"},
   std::pair<std::string, std::string>{"getuid", "libUnistd"},
+  std::pair<std::string, std::string>{"read", "libUnistd"},
   std::pair<std::string, std::string>{"rmdir", "libUnistd"},
   std::pair<std::string, std::string>{"symlink", "libUnistd"},
+  std::pair<std::string, std::string>{"write", "libUnistd"},
 
   std::pair<std::string, std::string>{"_getcwd", "libWinDirect"},
 

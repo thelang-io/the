@@ -110,9 +110,13 @@ struct CodegenBuiltins {
   bool fnU16Str = false;
   bool fnU32Str = false;
   bool fnU64Str = false;
+  bool libArpaInet = false;
   bool libCtype = false;
   bool libDirent = false;
   bool libInttypes = false;
+  bool libNetdb = false;
+  bool libNetinetIn = false;
+  bool libOpensslSsl = false;
   bool libStdarg = false;
   bool libStdbool = false;
   bool libStddef = false;
@@ -120,6 +124,7 @@ struct CodegenBuiltins {
   bool libStdio = false;
   bool libStdlib = false;
   bool libString = false;
+  bool libSysSocket = false;
   bool libSysStat = false;
   bool libSysUtsname = false;
   bool libUnistd = false;
@@ -128,6 +133,7 @@ struct CodegenBuiltins {
   bool libWindows = false;
   bool typeAny = false;
   bool typeBuffer = false;
+  bool typeRequest = false;
   bool typeStr = false;
   bool typeWinReparseDataBuffer = false;
 };

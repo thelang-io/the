@@ -299,7 +299,9 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-u32-str",
   "builtin-u32-str-root",
   "builtin-u64-str",
-  "builtin-u64-str-root"
+  "builtin-u64-str-root",
+  "builtin-url-parse",
+  "builtin-url-parse-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
@@ -614,5 +616,12 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
   "throw-builtin-fs-write-file-sync-directory",
   "throw-builtin-str-at-empty",
   "throw-builtin-str-at-high",
-  "throw-builtin-str-at-low"
+  "throw-builtin-str-at-low",
+  "throw-builtin-url-parse-auth",
+  "throw-builtin-url-parse-empty",
+  "throw-builtin-url-parse-empty-hostname",
+  "throw-builtin-url-parse-invalid-origin",
+  "throw-builtin-url-parse-invalid-port",
+  "throw-builtin-url-parse-invalid-protocol",
+  "throw-builtin-url-parse-string"
 ));
