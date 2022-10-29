@@ -43,6 +43,7 @@ const std::vector<std::string> codegenURL = {
   R"(  memcpy(protocol.d, s.d, protocol.l);)" EOL
   R"(  while (i < s.l && s.d[i] == '/') i++;)" EOL
   R"(  if (i == s.l - 1) {)" EOL
+  R"(    _{str_free}(s);)" EOL
   R"(    return _{url_URL_alloc}(_{str_alloc}(""), protocol, _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""));)" EOL
   R"(  })" EOL
   R"(  _{size_t} protocol_end = i;)" EOL
@@ -144,6 +145,7 @@ const std::vector<std::string> codegenURL = {
   R"(    hash.d = _{re_alloc}(hash.d, hash.l);)" EOL
   R"(    _{memcpy}(hash.d, &s.d[hash_start], hash.l);)" EOL
   R"(  })" EOL
+  R"(  _{str_free}(s);)" EOL
   R"(  return _{url_URL_alloc}(origin, protocol, host, hostname, port, path, pathname, search, hash);)" EOL
   R"(})" EOL
 };

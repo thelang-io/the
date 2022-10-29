@@ -89,10 +89,10 @@ std::tuple<std::string, std::string> Codegen::gen () {
   this->_typeObj(this->ast->typeMap.get("request_Request"), true);
   this->_typeObj(this->ast->typeMap.get("request_Response"), true);
   this->_typeObj(this->ast->typeMap.get("url_URL"), true);
+  this->_apiLoad(codegenURL);
   this->_apiLoad(codegenFs);
   this->_apiLoad(codegenProcess);
   this->_apiLoad(codegenRequest);
-  this->_apiLoad(codegenURL);
 
   auto nodes = this->ast->gen();
   auto mainCode = std::string();

@@ -55,9 +55,7 @@ const std::vector<std::string> codegenProcess = {
   R"(})" EOL,
 
   R"(_{struct buffer} process_runSync (_{struct str} s) {)" EOL
-  R"(  char *c = _{alloc}(s.l + 1);)" EOL
-  R"(  _{memcpy}(c, s.d, s.l);)" EOL
-  R"(  c[s.l] = '\0';)" EOL
+  R"(  char *c = _{str_cstr}(s);)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{FILE} *f = _{_popen}(c, "r");)" EOL
   R"(  #else)" EOL

@@ -41,6 +41,7 @@ void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
 struct str os_name ();
 struct str str_alloc (const char *);
+char *str_cstr (const struct str);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 struct buffer process_runSync (struct str);
@@ -83,6 +84,12 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
 bool str_eq_cstr (struct str s, const char *r) {
   bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
   free(s.d);
@@ -92,9 +99,7 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct buffer process_runSync (struct str s) {
-  char *c = alloc(s.l + 1);
-  memcpy(c, s.d, s.l);
-  c[s.l] = '\0';
+  char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
     FILE *f = _popen(c, "r");
   #else

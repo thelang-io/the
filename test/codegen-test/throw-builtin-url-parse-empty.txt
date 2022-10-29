@@ -97,6 +97,7 @@ struct url_URL *url_parse (struct str s) {
   memcpy(protocol.d, s.d, protocol.l);
   while (i < s.l && s.d[i] == '/') i++;
   if (i == s.l - 1) {
+    str_free(s);
     return url_URL_alloc(str_alloc(""), protocol, str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""));
   }
   size_t protocol_end = i;
@@ -198,6 +199,7 @@ struct url_URL *url_parse (struct str s) {
     hash.d = re_alloc(hash.d, hash.l);
     memcpy(hash.d, &s.d[hash_start], hash.l);
   }
+  str_free(s);
   return url_URL_alloc(origin, protocol, host, hostname, port, path, pathname, search, hash);
 }
 struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_protocol, struct str __THE_0_host, struct str __THE_0_hostname, struct str __THE_0_port, struct str __THE_0_path, struct str __THE_0_pathname, struct str __THE_0_search, struct str __THE_0_hash) {
