@@ -122,7 +122,3 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     TIMEOUT 300
   )
 endif ()
-
-add_executable(the-test2134 test2134.c)
-target_compile_options(the-test2134 PRIVATE -Wall -I/usr/local/opt/openssl@3/include)
-target_link_libraries(the-test2134 -L/usr/local/opt/openssl@3/lib ssl crypto)
