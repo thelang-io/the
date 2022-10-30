@@ -56,6 +56,7 @@ struct CodegenBuiltins {
   bool fnBufferNe = false;
   bool fnBufferRealloc = false;
   bool fnBufferStr = false;
+  bool fnBufferToStr = false;
   bool fnByteStr = false;
   bool fnCharIsAlpha = false;
   bool fnCharIsAlphaNum = false;

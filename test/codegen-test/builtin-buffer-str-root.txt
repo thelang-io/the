@@ -87,7 +87,7 @@ void *alloc (size_t);
 struct buffer buffer_copy (const struct buffer);
 void buffer_free (struct buffer);
 struct buffer buffer_realloc (struct buffer, struct buffer);
-struct str buffer_str (struct buffer);
+struct str buffer_to_str (struct buffer);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct buffer str_to_buffer (struct str);
@@ -118,14 +118,8 @@ struct buffer buffer_realloc (struct buffer o1, struct buffer o2) {
   free(o1.d);
   return o2;
 }
-struct str buffer_str (struct buffer b) {
-  size_t l = 8 + (b.l * 3);
-  char *d = alloc(l);
-  memcpy(d, "[Buffer", 7);
-  for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);
-  d[l - 1] = ']';
-  free(b.d);
-  return (struct str) {d, l};
+struct str buffer_to_str (struct buffer b) {
+  return (struct str) {(char *) b.d, b.l};
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -170,12 +164,12 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   const struct buffer **__THE_0_refTest_0 = x->__THE_0_refTest_0;
   const struct buffer *__THE_0_test_0 = x->__THE_0_test_0;
   const struct __THE_1_fn$0 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
-  str_free((struct str) buffer_str(buffer_copy(*__THE_0_test_0)));
-  str_free((struct str) buffer_str(buffer_copy((*__THE_0_test1_0)->__THE_0_b)));
-  str_free((struct str) buffer_str(buffer_copy(*__THE_0_test2_0 = buffer_realloc(*__THE_0_test2_0, (*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)))));
-  str_free((struct str) buffer_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)));
-  str_free((struct str) buffer_str(buffer_copy(*__THE_0_test_0)));
-  str_free((struct str) buffer_str(buffer_copy(**__THE_0_refTest_0)));
+  str_free((struct str) buffer_to_str(buffer_copy(*__THE_0_test_0)));
+  str_free((struct str) buffer_to_str(buffer_copy((*__THE_0_test1_0)->__THE_0_b)));
+  str_free((struct str) buffer_to_str(buffer_copy(*__THE_0_test2_0 = buffer_realloc(*__THE_0_test2_0, (*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)))));
+  str_free((struct str) buffer_to_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)));
+  str_free((struct str) buffer_to_str(buffer_copy(*__THE_0_test_0)));
+  str_free((struct str) buffer_to_str(buffer_copy(**__THE_0_refTest_0)));
 }
 
 int main () {
@@ -184,12 +178,12 @@ int main () {
   const struct buffer *__THE_0_refTest_0 = &__THE_0_test_0;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
   struct buffer __THE_0_test2_0 = __THE_0_testCall_0.f(__THE_0_testCall_0.x);
-  str_free((struct str) buffer_str(buffer_copy(__THE_0_test_0)));
-  str_free((struct str) buffer_str(buffer_copy(__THE_0_test1_0->__THE_0_b)));
-  str_free((struct str) buffer_str(buffer_copy(__THE_0_test2_0 = buffer_realloc(__THE_0_test2_0, __THE_0_testCall_0.f(__THE_0_testCall_0.x)))));
-  str_free((struct str) buffer_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x)));
-  str_free((struct str) buffer_str(buffer_copy(__THE_0_test_0)));
-  str_free((struct str) buffer_str(buffer_copy(*__THE_0_refTest_0)));
+  str_free((struct str) buffer_to_str(buffer_copy(__THE_0_test_0)));
+  str_free((struct str) buffer_to_str(buffer_copy(__THE_0_test1_0->__THE_0_b)));
+  str_free((struct str) buffer_to_str(buffer_copy(__THE_0_test2_0 = buffer_realloc(__THE_0_test2_0, __THE_0_testCall_0.f(__THE_0_testCall_0.x)))));
+  str_free((struct str) buffer_to_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x)));
+  str_free((struct str) buffer_to_str(buffer_copy(__THE_0_test_0)));
+  str_free((struct str) buffer_to_str(buffer_copy(*__THE_0_refTest_0)));
   const struct __THE_1_fn$1 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
   __THE_0_mainSDtestCtx_0.f(__THE_0_mainSDtestCtx_0.x);

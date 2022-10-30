@@ -325,6 +325,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnBufferToStr) {
+    builtinFnDeclCode += "struct str buffer_to_str (struct buffer);" EOL;
+    builtinFnDefCode += "struct str buffer_to_str (struct buffer b) {" EOL;
+    builtinFnDefCode += "  return (struct str) {(char *) b.d, b.l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnByteStr) {
     builtinFnDeclCode += "struct str byte_str (unsigned char);" EOL;
     builtinFnDefCode += "struct str byte_str (unsigned char x) {" EOL;
@@ -998,6 +1005,11 @@ std::tuple<std::string, std::string> Codegen::gen () {
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
+
+  if (this->builtins.libSysTypes && !this->builtins.libSysSocket && !this->builtins.libSysStat && !this->builtins.libSysUtsname) {
+    headers += this->builtins.libSysTypes ? "#include <sys/types.h>" EOL : "";
+  }
+
   headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";
 
   if (this->builtins.libWinDirect || this->builtins.libWinIo || this->builtins.libWindows) {
@@ -1096,6 +1108,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libSysSocket = true;
   } else if (name == "libSysStat") {
     this->builtins.libSysStat = true;
+  } else if (name == "libSysTypes") {
+    this->builtins.libSysTypes = true;
   } else if (name == "libSysUtsname") {
     this->builtins.libSysUtsname = true;
     this->_activateBuiltin("definitions");
@@ -1156,6 +1170,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("libString");
     this->_activateBuiltin("typeBuffer");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnBufferToStr") {
+    this->builtins.fnBufferToStr = true;
     this->_activateBuiltin("typeStr");
   } else if (name == "fnByteStr") {
     this->builtins.fnByteStr = true;
@@ -2873,7 +2890,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{process_runSync}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_close") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("request_Request"));
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
       code = this->_apiEval("_{request_close}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_open") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
@@ -2908,7 +2925,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       code = this->_apiEval("_{request_open}") + "(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_read") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("request_Request"));
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
       code = this->_apiEval("_{request_read}") + "(" + arg1Expr + ")";
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
@@ -2925,8 +2942,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto typeStrFn = std::string();
 
         if (exprCallCalleeTypeInfo.realType->codeName == "@buffer_Buffer.str") {
-          this->_activateBuiltin("fnBufferStr");
-          typeStrFn = "buffer_str";
+          this->_activateBuiltin("fnBufferToStr");
+          typeStrFn = "buffer_to_str";
         } else if (
           exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||

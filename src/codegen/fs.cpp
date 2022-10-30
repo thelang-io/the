@@ -220,7 +220,7 @@ const std::vector<std::string> codegenFs = {
 
   R"(_{struct str} fs_realpathSync (_{struct str} s) {)" EOL
   R"(  char *c = _{str_cstr}(s);)" EOL
-  R"(  char *d = NULL;)" EOL
+  R"(  char *d = _{NULL};)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{HANDLE} h = _{CreateFile}(c, 0, 0, _{NULL}, _{OPEN_EXISTING}, _{FILE_ATTRIBUTE_NORMAL} | _{FILE_FLAG_BACKUP_SEMANTICS}, _{NULL});)" EOL
   R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
@@ -239,12 +239,12 @@ const std::vector<std::string> codegenFs = {
   R"(      _{fprintf}(_{stderr}, "Error: failed to get real path by handle of file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
-  R"(    if (_{strncmp}(r, "\\\\?\\UNC\\", 8) == 0) {)" EOL
+  R"(    if (_{memcmp}(r, "\\\\?\\UNC\\", 8) == 0) {)" EOL
   R"(      l -= 6;)" EOL
   R"(      d = alloc(l);)" EOL
   R"(      _{memcpy}(d, &r[6], l);)" EOL
   R"(      d[0] = '\\';)" EOL
-  R"(    } else if (_{strncmp}(r, "\\\\?\\", 4) == 0) {)" EOL
+  R"(    } else if (_{memcmp}(r, "\\\\?\\", 4) == 0) {)" EOL
   R"(      l -= 4;)" EOL
   R"(      d = alloc(l);)" EOL
   R"(      _{memcpy}(d, &r[4], l);)" EOL
@@ -253,7 +253,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{CloseHandle}(h);)" EOL
   R"(  #else)" EOL
   R"(    d = _{realpath}(c, _{NULL});)" EOL
-  R"(    _{size_t} l = d == NULL ? 0 : _{strlen}(d);)" EOL
+  R"(    _{size_t} l = d == _{NULL} ? 0 : _{strlen}(d);)" EOL
   R"(  #endif)" EOL
   R"(  if (d == _{NULL}) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to get real path of file `%s`" _{THE_EOL}, c);)" EOL

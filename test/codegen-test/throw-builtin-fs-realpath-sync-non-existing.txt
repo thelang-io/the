@@ -75,12 +75,12 @@ struct str fs_realpathSync (struct str s) {
       fprintf(stderr, "Error: failed to get real path by handle of file `%s`" THE_EOL, c);
       exit(EXIT_FAILURE);
     }
-    if (strncmp(r, "\\\\?\\UNC\\", 8) == 0) {
+    if (memcmp(r, "\\\\?\\UNC\\", 8) == 0) {
       l -= 6;
       d = alloc(l);
       memcpy(d, &r[6], l);
       d[0] = '\\';
-    } else if (strncmp(r, "\\\\?\\", 4) == 0) {
+    } else if (memcmp(r, "\\\\?\\", 4) == 0) {
       l -= 4;
       d = alloc(l);
       memcpy(d, &r[4], l);

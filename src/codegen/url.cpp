@@ -40,7 +40,7 @@ const std::vector<std::string> codegenURL = {
   R"(  _{struct str} protocol;)" EOL
   R"(  protocol.l = i;)" EOL
   R"(  protocol.d = _{alloc}(protocol.l);)" EOL
-  R"(  memcpy(protocol.d, s.d, protocol.l);)" EOL
+  R"(  _{memcpy}(protocol.d, s.d, protocol.l);)" EOL
   R"(  while (i < s.l && s.d[i] == '/') i++;)" EOL
   R"(  if (i == s.l - 1) {)" EOL
   R"(    _{str_free}(s);)" EOL

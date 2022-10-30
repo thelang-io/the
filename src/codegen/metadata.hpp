@@ -101,6 +101,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
 
   std::pair<std::string, std::string>{"isalnum", "libCtype"},
   std::pair<std::string, std::string>{"isalpha", "libCtype"},
+  std::pair<std::string, std::string>{"tolower", "libCtype"},
 
   std::pair<std::string, std::string>{"DIR", "libDirent"},
   std::pair<std::string, std::string>{"struct dirent", "libDirent"},
@@ -137,6 +138,8 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"pclose", "libStdio"},
   std::pair<std::string, std::string>{"popen", "libStdio"},
   std::pair<std::string, std::string>{"remove", "libStdio"},
+  std::pair<std::string, std::string>{"snprintf", "libStdio"},
+  std::pair<std::string, std::string>{"sprintf", "libStdio"},
   std::pair<std::string, std::string>{"stderr", "libStdio"},
   std::pair<std::string, std::string>{"stdin", "libStdio"},
   std::pair<std::string, std::string>{"stdout", "libStdio"},
@@ -149,12 +152,12 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"exit", "libStdlib"},
   std::pair<std::string, std::string>{"free", "libStdlib"},
   std::pair<std::string, std::string>{"realpath", "libStdlib"},
+  std::pair<std::string, std::string>{"strtoul", "libStdlib"},
 
   std::pair<std::string, std::string>{"memcmp", "libString"},
   std::pair<std::string, std::string>{"memcpy", "libString"},
   std::pair<std::string, std::string>{"strcmp", "libString"},
   std::pair<std::string, std::string>{"strlen", "libString"},
-  std::pair<std::string, std::string>{"strncmp", "libString"},
 
   std::pair<std::string, std::string>{"struct stat", "libSysStat"},
   std::pair<std::string, std::string>{"struct _stat", "libSysStat"},
@@ -162,13 +165,13 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"S_IFLNK", "libSysStat"},
   std::pair<std::string, std::string>{"S_IFMT", "libSysStat"},
   std::pair<std::string, std::string>{"S_IFREG", "libSysStat"},
+  std::pair<std::string, std::string>{"_S_IFDIR", "libSysStat"},
+  std::pair<std::string, std::string>{"_S_IFMT", "libSysStat"},
+  std::pair<std::string, std::string>{"_S_IFREG", "libSysStat"},
   std::pair<std::string, std::string>{"chmod", "libSysStat"},
   std::pair<std::string, std::string>{"lstat", "libSysStat"},
   std::pair<std::string, std::string>{"mkdir", "libSysStat"},
   std::pair<std::string, std::string>{"stat", "libSysStat"},
-  std::pair<std::string, std::string>{"_S_IFDIR", "libSysStat"},
-  std::pair<std::string, std::string>{"_S_IFMT", "libSysStat"},
-  std::pair<std::string, std::string>{"_S_IFREG", "libSysStat"},
   std::pair<std::string, std::string>{"_stat", "libSysStat"},
 
   std::pair<std::string, std::string>{"connect", "libSysSocket"},
