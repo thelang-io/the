@@ -127,6 +127,7 @@ struct CodegenBuiltins {
   bool libString = false;
   bool libSysSocket = false;
   bool libSysStat = false;
+  bool libSysTypes = false;
   bool libSysUtsname = false;
   bool libUnistd = false;
   bool libWinDirect = false;

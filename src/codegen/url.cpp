@@ -42,7 +42,7 @@ const std::vector<std::string> codegenURL = {
   R"(  protocol.d = _{alloc}(protocol.l);)" EOL
   R"(  _{memcpy}(protocol.d, s.d, protocol.l);)" EOL
   R"(  while (i < s.l && s.d[i] == '/') i++;)" EOL
-  R"(  if (i == s.l - 1) {)" EOL
+  R"(  if (i == s.l) {)" EOL
   R"(    _{str_free}(s);)" EOL
   R"(    return _{url_URL_alloc}(_{str_alloc}(""), protocol, _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""), _{str_alloc}(""));)" EOL
   R"(  })" EOL
