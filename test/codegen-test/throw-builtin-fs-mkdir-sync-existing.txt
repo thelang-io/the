@@ -1,11 +1,12 @@
 ======= stdin =======
 main {
-  fs_mkdirSync("test/fixtures")
+  fs_mkdirSync("test" + path_SEP + "fixtures")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -13,6 +14,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdbool.h>
@@ -30,7 +32,9 @@ struct str {
 };
 
 void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
 struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
 void fs_mkdirSync (struct str);
@@ -43,10 +47,26 @@ void *alloc (size_t l) {
   }
   return r;
 }
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
   return (struct str) {d, l};
 }
 char *str_cstr (const struct str s) {
@@ -74,7 +94,7 @@ void fs_mkdirSync (struct str s) {
 }
 
 int main () {
-  fs_mkdirSync(str_alloc("test/fixtures"));
+  fs_mkdirSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"));
 }
 ======= flags =======
 ======= stderr =======

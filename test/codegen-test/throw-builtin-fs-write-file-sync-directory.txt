@@ -1,11 +1,12 @@
 ======= stdin =======
 main {
-  fs_writeFileSync("test/fixtures", "test".toBuffer())
+  fs_writeFileSync("test" + path_SEP + "fixtures", "test".toBuffer())
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -13,6 +14,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdio.h>
@@ -30,7 +32,9 @@ struct str {
 
 void *alloc (size_t);
 void buffer_free (struct buffer);
+struct str cstr_concat_str (const char *, struct str);
 struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
 struct buffer str_to_buffer (struct str);
@@ -47,10 +51,26 @@ void *alloc (size_t l) {
 void buffer_free (struct buffer o) {
   free(o.d);
 }
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
   return (struct str) {d, l};
 }
 char *str_cstr (const struct str s) {
@@ -85,7 +105,7 @@ void fs_writeFileSync (struct str s, struct buffer b) {
 }
 
 int main () {
-  fs_writeFileSync(str_alloc("test/fixtures"), str_to_buffer(str_alloc("test")));
+  fs_writeFileSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_to_buffer(str_alloc("test")));
 }
 ======= flags =======
 ======= stderr =======

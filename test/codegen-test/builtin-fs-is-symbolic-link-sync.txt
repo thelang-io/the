@@ -1,35 +1,35 @@
 ======= stdin =======
 main {
-  mut fileName := "test/fixtures/builtin-fs-is-symbolic-sync.txt"
+  mut fileName := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync.txt"
 
   print(fs_isSymbolicLinkSync(fileName))
-  print(fs_isSymbolicLinkSync("test/fixtures"))
-  print(fs_isSymbolicLinkSync("test/fixtures/test.txt"))
+  print(fs_isSymbolicLinkSync("test" + path_SEP + "fixtures"))
+  print(fs_isSymbolicLinkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt"))
 
   // file
-  fs_linkSync("./test.txt", fileName)
+  fs_linkSync("test.txt", fileName)
   print(fs_isSymbolicLinkSync(fileName))
 
   // link
-  mut fileName2 := "test/fixtures/builtin-fs-is-symbolic-sync-symlink.txt"
-  fs_linkSync("./builtin-fs-is-symbolic-sync.txt", fileName2)
+  mut fileName2 := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync-symlink.txt"
+  fs_linkSync("builtin-fs-is-symbolic-sync.txt", fileName2)
   print(fs_isSymbolicLinkSync(fileName2))
   fs_unlinkSync(fileName2)
   fs_unlinkSync(fileName)
 
   // dir empty
-  fileName = "test/fixtures/builtin-fs-is-symbolic-sync"
+  fileName = "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync"
   fs_mkdirSync(fileName)
 
-  fileName2 = "test/fixtures/builtin-fs-is-symbolic-sync-copy"
-  fs_linkSync("./builtin-fs-is-symbolic-sync", fileName2)
+  fileName2 = "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync-copy"
+  fs_linkSync("builtin-fs-is-symbolic-sync", fileName2)
   print(fs_isSymbolicLinkSync(fileName2))
   fs_unlinkSync(fileName2)
   fs_rmdirSync(fileName)
 
   // dir
-  fileName = "test/fixtures-copy"
-  fs_linkSync("./fixtures", fileName)
+  fileName = "test" + path_SEP + "fixtures-copy"
+  fs_linkSync("fixtures", fileName)
   print(fs_isSymbolicLinkSync(fileName))
   fs_unlinkSync(fileName)
 }
@@ -37,6 +37,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -44,6 +45,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -97,8 +99,11 @@ struct str {
 #endif
 
 void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
@@ -116,6 +121,14 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -150,6 +163,23 @@ struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
   return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
@@ -289,26 +319,26 @@ void fs_unlinkSync (struct str s) {
 }
 
 int main () {
-  struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-is-symbolic-sync.txt");
+  struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync.txt");
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
-  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures")), THE_EOL);
-  print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures/test.txt")), THE_EOL);
-  fs_linkSync(str_alloc("./test.txt"), str_copy(__THE_0_fileName_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures")), THE_EOL);
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")), THE_EOL);
+  fs_linkSync(str_alloc("test.txt"), str_copy(__THE_0_fileName_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
-  struct str __THE_0_fileName2_0 = str_alloc("test/fixtures/builtin-fs-is-symbolic-sync-symlink.txt");
-  fs_linkSync(str_alloc("./builtin-fs-is-symbolic-sync.txt"), str_copy(__THE_0_fileName2_0));
+  struct str __THE_0_fileName2_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-symlink.txt");
+  fs_linkSync(str_alloc("builtin-fs-is-symbolic-sync.txt"), str_copy(__THE_0_fileName2_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
   fs_unlinkSync(str_copy(__THE_0_fileName2_0));
   fs_unlinkSync(str_copy(__THE_0_fileName_0));
-  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_alloc("test/fixtures/builtin-fs-is-symbolic-sync"));
+  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync"));
   fs_mkdirSync(str_copy(__THE_0_fileName_0));
-  __THE_0_fileName2_0 = str_realloc(__THE_0_fileName2_0, str_alloc("test/fixtures/builtin-fs-is-symbolic-sync-copy"));
-  fs_linkSync(str_alloc("./builtin-fs-is-symbolic-sync"), str_copy(__THE_0_fileName2_0));
+  __THE_0_fileName2_0 = str_realloc(__THE_0_fileName2_0, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-copy"));
+  fs_linkSync(str_alloc("builtin-fs-is-symbolic-sync"), str_copy(__THE_0_fileName2_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
   fs_unlinkSync(str_copy(__THE_0_fileName2_0));
   fs_rmdirSync(str_copy(__THE_0_fileName_0));
-  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_alloc("test/fixtures-copy"));
-  fs_linkSync(str_alloc("./fixtures"), str_copy(__THE_0_fileName_0));
+  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures-copy"));
+  fs_linkSync(str_alloc("fixtures"), str_copy(__THE_0_fileName_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   fs_unlinkSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName2_0);

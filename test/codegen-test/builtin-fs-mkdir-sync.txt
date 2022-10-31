@@ -1,8 +1,6 @@
 ======= stdin =======
 main {
-  dirName := os_name() == "Windows"
-    ? "test\\fixtures\\builtin-fs-mkdir-sync"
-    : "test/fixtures/builtin-fs-mkdir-sync"
+  dirName := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-mkdir-sync"
 
   fs_mkdirSync(dirName)
   print(fs_isDirectorySync(dirName))
@@ -12,6 +10,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -19,6 +18,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -32,7 +32,6 @@ main {
   #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
-  #include <sys/utsname.h>
   #include <unistd.h>
 #endif
 
@@ -42,12 +41,13 @@ struct str {
 };
 
 void *alloc (size_t);
-struct str os_name ();
+struct str cstr_concat_str (const char *, struct str);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
-bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 bool fs_isDirectorySync (struct str);
 void fs_mkdirSync (struct str);
@@ -61,18 +61,13 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct str os_name () {
-  #ifdef THE_OS_WINDOWS
-    return str_alloc("Windows");
-  #else
-    struct utsname buf;
-    if (uname(&buf) < 0) {
-      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);
-      exit(EXIT_FAILURE);
-    }
-    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
-    return str_alloc(buf.sysname);
-  #endif
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -109,6 +104,23 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
 struct str str_copy (const struct str s) {
   char *d = alloc(s.l);
   memcpy(d, s.d, s.l);
@@ -118,11 +130,6 @@ char *str_cstr (const struct str s) {
   char *d = alloc(s.l + 1);
   memcpy(d, s.d, s.l);
   d[s.l] = '\0';
-  return d;
-}
-bool str_eq_cstr (struct str s, const char *r) {
-  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
-  free(s.d);
   return d;
 }
 void str_free (struct str s) {
@@ -176,7 +183,7 @@ void fs_rmdirSync (struct str s) {
 }
 
 int main () {
-  const struct str __THE_0_dirName_0 = str_eq_cstr(os_name(), "Windows") ? str_alloc("test\\fixtures\\builtin-fs-mkdir-sync") : str_alloc("test/fixtures/builtin-fs-mkdir-sync");
+  const struct str __THE_0_dirName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-mkdir-sync");
   fs_mkdirSync(str_copy(__THE_0_dirName_0));
   print(stdout, "tz", fs_isDirectorySync(str_copy(__THE_0_dirName_0)), THE_EOL);
   fs_rmdirSync(str_copy(__THE_0_dirName_0));

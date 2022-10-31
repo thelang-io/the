@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fileName := "test/fixtures/throw-builtin-fs-chown-sync-not-existing.txt"
+  fileName := "test" + path_SEP + "fixtures" + path_SEP + "throw-builtin-fs-chown-sync-not-existing.txt"
 
   if os_name() == "Windows" {
     print("Error: failed to change owner to 0 and group to 0 for file `" + fileName + "`", to: "stderr")
@@ -13,6 +13,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -20,6 +21,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -44,6 +46,7 @@ struct str os_name ();
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 bool str_eq_cstr (struct str, const char *);
@@ -122,6 +125,15 @@ struct str str_concat_cstr (struct str s, const char *r) {
   free(s.d);
   return (struct str) {d, l};
 }
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
 struct str str_copy (const struct str s) {
   char *d = alloc(s.l);
   memcpy(d, s.d, s.l);
@@ -156,7 +168,7 @@ void fs_chownSync (struct str s, int32_t u, int32_t g) {
 }
 
 int main () {
-  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/throw-builtin-fs-chown-sync-not-existing.txt");
+  const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "throw-builtin-fs-chown-sync-not-existing.txt");
   if (str_eq_cstr(os_name(), "Windows")) {
     print(stderr, "sz", str_concat_cstr(cstr_concat_str("Error: failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`"), THE_EOL);
     exit(1);

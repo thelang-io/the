@@ -1,11 +1,12 @@
 ======= stdin =======
 main {
-  fs_realpathSync("test/fixtures/test.txt")
+  fs_realpathSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -13,6 +14,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdio.h>
@@ -28,7 +30,10 @@ struct str {
 };
 
 void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
 struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
 struct str fs_realpathSync (struct str);
@@ -41,10 +46,35 @@ void *alloc (size_t l) {
   }
   return r;
 }
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
   return (struct str) {d, l};
 }
 char *str_cstr (const struct str s) {
@@ -101,7 +131,7 @@ struct str fs_realpathSync (struct str s) {
 }
 
 int main () {
-  str_free((struct str) fs_realpathSync(str_alloc("test/fixtures/test.txt")));
+  str_free((struct str) fs_realpathSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")));
 }
 ======= flags =======
 ======= stdout =======

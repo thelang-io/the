@@ -145,6 +145,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinDefineCode += "#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)" EOL;
     builtinDefineCode += "  #define THE_OS_WINDOWS" EOL;
     builtinDefineCode += R"(  #define THE_EOL "\r\n")" EOL;
+    builtinDefineCode += R"(  #define THE_PATH_SEP "\\")" EOL;
     builtinDefineCode += "#else" EOL;
     builtinDefineCode += "  #if defined(__APPLE__)" EOL;
     builtinDefineCode += "    #define THE_OS_MACOS" EOL;
@@ -152,6 +153,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinDefineCode += "    #define THE_OS_LINUX" EOL;
     builtinDefineCode += "  #endif" EOL;
     builtinDefineCode += R"(  #define THE_EOL "\n")" EOL;
+    builtinDefineCode += R"(  #define THE_PATH_SEP "/")" EOL;
     builtinDefineCode += "#endif" EOL;
   }
 
@@ -2452,6 +2454,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("definitions");
         this->_activateBuiltin("fnStrAlloc");
         code = "str_alloc(THE_EOL)";
+        code = !root ? code : this->_genFreeFn(objVar->type, code);
+      } else if (objVar->builtin && objVar->codeName == "@path_SEP") {
+        this->_activateBuiltin("definitions");
+        this->_activateBuiltin("fnStrAlloc");
+        code = "str_alloc(THE_PATH_SEP)";
         code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else if (objVar->builtin && objVar->codeName == "@process_args") {
         this->needMainArgs = true;

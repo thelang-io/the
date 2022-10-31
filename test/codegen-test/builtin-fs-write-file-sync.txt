@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fileName := "test/fixtures/builtin-fs-write-file-sync.txt"
+  fileName := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-write-file-sync.txt"
 
   fs_writeFileSync(fileName, "test".toBuffer())
   print(fs_readFileSync(fileName))
@@ -10,6 +10,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -17,6 +18,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -38,8 +40,11 @@ void *alloc (size_t);
 void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
 struct str buffer_str (struct buffer);
+struct str cstr_concat_str (const char *, struct str);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
@@ -76,6 +81,14 @@ struct str buffer_str (struct buffer b) {
   free(b.d);
   return (struct str) {d, l};
 }
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
@@ -109,6 +122,23 @@ struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
   return (struct str) {d, l};
 }
 struct str str_copy (const struct str s) {
@@ -178,7 +208,7 @@ void fs_writeFileSync (struct str s, struct buffer b) {
 }
 
 int main () {
-  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-write-file-sync.txt");
+  const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-write-file-sync.txt");
   fs_writeFileSync(str_copy(__THE_0_fileName_0), str_to_buffer(str_alloc("test")));
   print(stdout, "sz", buffer_str(fs_readFileSync(str_copy(__THE_0_fileName_0))), THE_EOL);
   fs_rmSync(str_copy(__THE_0_fileName_0));
