@@ -168,7 +168,7 @@ struct url_URL *url_parse (struct str s) {
   for (;; i++) {
     char ch = s.d[i];
     if (ch == ':' && i != 0) {
-      i += 1;
+      i++;
       break;
     } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
       fprintf(stderr, "Error: invalid URL protocol" THE_EOL);
@@ -369,3 +369,6 @@ url_URL{origin: "", protocol: "view-source:", host: "", hostname: "", port: "", 
 url_URL{origin: "", protocol: "test.test-test+test:", host: "", hostname: "", port: "", path: "pathname?test=value", pathname: "pathname", search: "?test=value", hash: ""}
 url_URL{origin: "", protocol: "test:", host: "test", hostname: "test", port: "", path: "?test", pathname: "", search: "?test", hash: ""}
 url_URL{origin: "https://test", protocol: "https:", host: "test", hostname: "test", port: "", path: "/?test", pathname: "/", search: "?test", hash: ""}
+url_URL{origin: "", protocol: "test:", host: "", hostname: "", port: "", path: "", pathname: "", search: "", hash: ""}
+url_URL{origin: "", protocol: "test:", host: "", hostname: "", port: "", path: "", pathname: "", search: "", hash: ""}
+url_URL{origin: "", protocol: "test:", host: "", hostname: "", port: "", path: "", pathname: "", search: "", hash: ""}

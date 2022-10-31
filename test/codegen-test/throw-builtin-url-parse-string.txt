@@ -81,7 +81,7 @@ struct url_URL *url_parse (struct str s) {
   for (;; i++) {
     char ch = s.d[i];
     if (ch == ':' && i != 0) {
-      i += 1;
+      i++;
       break;
     } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
       fprintf(stderr, "Error: invalid URL protocol" THE_EOL);
@@ -96,7 +96,7 @@ struct url_URL *url_parse (struct str s) {
   protocol.d = alloc(protocol.l);
   memcpy(protocol.d, s.d, protocol.l);
   while (i < s.l && s.d[i] == '/') i++;
-  if (i == s.l - 1) {
+  if (i == s.l) {
     str_free(s);
     return url_URL_alloc(str_alloc(""), protocol, str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""));
   }

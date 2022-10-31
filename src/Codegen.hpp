@@ -188,7 +188,7 @@ class Codegen {
   std::map<std::string, const Type *> anyTypes;
   CodegenBuiltins builtins = {};
   std::vector<CodegenEntity> entities;
-  std::vector<std::string> flags;
+  std::set<std::string> flags;
   std::size_t indent = 0;
   std::size_t lastAnyIdx = 1;
   bool needMainArgs = false;
@@ -205,9 +205,10 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
-  void _apiLoad (const std::vector<std::string> &);
-  // todo add limit param
   std::string _apiEval (const std::string &, const std::optional<std::set<std::string> *> & = std::nullopt);
+  void _apiLoad (const std::vector<std::string> &);
+  void _apiPreLoad (const std::vector<std::string> &);
+  // todo add limit param
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
@@ -257,6 +258,7 @@ class Codegen {
   std::string _typeNameFn (const Type *);
   std::string _typeNameOpt (const Type *);
   void _typeObj (Type *, bool = false);
+  void _typeObjDef (Type *, const std::map<std::string, std::string> & = {}, bool = false);
   std::string _wrapNode (const ASTNode &, const std::string &);
   std::string _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::string &);
 };

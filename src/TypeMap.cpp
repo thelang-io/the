@@ -391,20 +391,18 @@ void TypeMap::init () {
   }};
 
   auto requestCloseTypeFn = TypeFn{voidType, {
-    TypeFnParam{"request", requestRequestType, false, true, false}
+    TypeFnParam{"request", this->ref(requestRequestType), true, true, false}
   }};
 
   auto requestOpenTypeFn = TypeFn{requestRequestType, {
     TypeFnParam{"method", strType, false, true, false},
     TypeFnParam{"url", strType, false, true, false},
-    // todo test
     TypeFnParam{"data", bufferBufferType, false, false, false},
-    // todo test
     TypeFnParam{"headers", this->arrayOf(requestHeaderType), false, false, false}
   }};
 
   auto requestReadTypeFn = TypeFn{requestResponseType, {
-    TypeFnParam{"request", requestRequestType, false, true, false}
+    TypeFnParam{"request", this->ref(requestRequestType), true, true, false}
   }};
 
   auto sleepSyncTypeFn = TypeFn{voidType, {

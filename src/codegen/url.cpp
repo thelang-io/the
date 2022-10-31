@@ -27,7 +27,7 @@ const std::vector<std::string> codegenURL = {
   R"(  for (;; i++) {)" EOL
   R"(    char ch = s.d[i];)" EOL
   R"(    if (ch == ':' && i != 0) {)" EOL
-  R"(      i += 1;)" EOL
+  R"(      i++;)" EOL
   R"(      break;)" EOL
   R"(    } else if (!_{isalnum}(ch) && ch != '.' && ch != '-' && ch != '+') {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: invalid URL protocol" _{THE_EOL});)" EOL

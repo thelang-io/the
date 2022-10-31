@@ -99,6 +99,9 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"struct str", "typeStr"},
   std::pair<std::string, std::string>{"struct win_reparse_data_buffer", "typeWinReparseDataBuffer"},
 
+  std::pair<std::string, std::string>{"htons", "libArpaInet"},
+
+  std::pair<std::string, std::string>{"isdigit", "libCtype"},
   std::pair<std::string, std::string>{"isalnum", "libCtype"},
   std::pair<std::string, std::string>{"isalpha", "libCtype"},
   std::pair<std::string, std::string>{"tolower", "libCtype"},
@@ -114,12 +117,27 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"PRId32", "libInttypes"},
   std::pair<std::string, std::string>{"PRId64", "libInttypes"},
 
+  std::pair<std::string, std::string>{"struct hostent", "libNetdb"},
+  std::pair<std::string, std::string>{"gethostbyname", "libNetdb"},
+
+  std::pair<std::string, std::string>{"struct sockaddr_in", "libNetinetIn"},
+  std::pair<std::string, std::string>{"htons", "libNetinetIn"},
+
   std::pair<std::string, std::string>{"SSL_CTX_free", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_CTX_new", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_connect", "libOpensslSsl"},
   std::pair<std::string, std::string>{"SSL_free", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_library_init", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_new", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_read", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_set_fd", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_shutdown", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"SSL_write", "libOpensslSsl"},
+  std::pair<std::string, std::string>{"TLS_client_method", "libOpensslSsl"},
 
   std::pair<std::string, std::string>{"bool", "libStdbool"},
-  std::pair<std::string, std::string>{"true", "libStdbool"},
   std::pair<std::string, std::string>{"false", "libStdbool"},
+  std::pair<std::string, std::string>{"true", "libStdbool"},
 
   std::pair<std::string, std::string>{"size_t", "libStddef"},
   std::pair<std::string, std::string>{"NULL", "libStddef"},
@@ -156,6 +174,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
 
   std::pair<std::string, std::string>{"memcmp", "libString"},
   std::pair<std::string, std::string>{"memcpy", "libString"},
+  std::pair<std::string, std::string>{"memmove", "libString"},
   std::pair<std::string, std::string>{"strcmp", "libString"},
   std::pair<std::string, std::string>{"strlen", "libString"},
 
@@ -174,7 +193,13 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"stat", "libSysStat"},
   std::pair<std::string, std::string>{"_stat", "libSysStat"},
 
+  std::pair<std::string, std::string>{"AF_INET", "libSysSocket"},
+  std::pair<std::string, std::string>{"SOCK_STREAM", "libSysSocket"},
   std::pair<std::string, std::string>{"connect", "libSysSocket"},
+  std::pair<std::string, std::string>{"shutdown", "libSysSocket"},
+  std::pair<std::string, std::string>{"socket", "libSysSocket"},
+
+  std::pair<std::string, std::string>{"ssize_t", "libSysTypes"},
 
   std::pair<std::string, std::string>{"access", "libUnistd"},
   std::pair<std::string, std::string>{"chown", "libUnistd"},

@@ -94,7 +94,7 @@ struct url_URL *url_parse (struct str s) {
   for (;; i++) {
     char ch = s.d[i];
     if (ch == ':' && i != 0) {
-      i += 1;
+      i++;
       break;
     } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
       fprintf(stderr, "Error: invalid URL protocol" THE_EOL);
