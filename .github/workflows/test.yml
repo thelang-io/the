@@ -35,6 +35,10 @@ jobs:
           ln -s /usr/local/opt/openssl@1.1/lib/libssl.dylib /usr/local/lib/
       - if: matrix.os == 'macos-12'
         run: |
+          ls /usr/local/opt/
+          ls /usr/local/opt/openssl@3/
+          ls /usr/local/opt/openssl@3/include
+          ls /usr/local/opt/openssl@3/lib
           ln -s /usr/local/opt/openssl@3/include/openssl/ /usr/local/include/
           ln -s /usr/local/opt/openssl@3/lib/libssl.dylib /usr/local/lib/
       - run: mkdir -p build
