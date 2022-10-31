@@ -1,6 +1,8 @@
 ======= stdin =======
 main {
-  fs_linkSync("./test.txt", "test/fixtures/test2.txt")
+  fileName := "test/fixtures/builtin-fs-unlink-sync.txt"
+  fs_linkSync("./test.txt", fileName)
+  fs_unlinkSync(fileName)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -33,9 +35,11 @@ struct str {
 
 void *alloc (size_t);
 struct str str_alloc (const char *);
+struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
 void fs_linkSync (struct str, struct str);
+void fs_unlinkSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -50,6 +54,11 @@ struct str str_alloc (const char *r) {
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
 }
 char *str_cstr (const struct str s) {
   char *d = alloc(s.l + 1);
@@ -81,10 +90,26 @@ void fs_linkSync (struct str s1, struct str s2) {
   free(c1);
   free(c2);
 }
+void fs_unlinkSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = _unlink(c) == 0;
+  #else
+    bool r = unlink(c) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to unlink path `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
 
 int main () {
-  fs_linkSync(str_alloc("./test.txt"), str_alloc("test/fixtures/test2.txt"));
+  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-unlink-sync.txt");
+  fs_linkSync(str_alloc("./test.txt"), str_copy(__THE_0_fileName_0));
+  fs_unlinkSync(str_copy(__THE_0_fileName_0));
+  str_free((struct str) __THE_0_fileName_0);
 }
 ======= flags =======
-======= stderr =======
-Error: failed to create symbolic link from `.{{ (\/|\\) }}test.txt` to `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}test2.txt`
+======= stdout =======

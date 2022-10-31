@@ -380,6 +380,21 @@ const std::vector<std::string> codegenFs = {
   R"(  return r;)" EOL
   R"(})" EOL,
 
+  R"(void fs_unlinkSync (_{struct str} s) {)" EOL
+  R"(  char *c = _{str_cstr}(s);)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{bool} r = _{_unlink}(c) == 0;)" EOL
+  R"(  #else)" EOL
+  R"(    _{bool} r = _{unlink}(c) == 0;)" EOL
+  R"(  #endif)" EOL
+  R"(  if (!r) {)" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: failed to unlink path `%s`" _{THE_EOL}, c);)" EOL
+  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  })" EOL
+  R"(  _{free}(c);)" EOL
+  R"(  _{str_free}(s);)" EOL
+  R"(})" EOL,
+
   R"(void fs_writeFileSync (_{struct str} s, _{struct buffer} b) {)" EOL
   R"(  char *c = _{str_cstr}(s);)" EOL
   R"(  _{FILE} *f = _{fopen}(c, "wb");)" EOL

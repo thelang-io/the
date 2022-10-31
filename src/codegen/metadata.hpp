@@ -164,6 +164,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"_pclose", "libStdio"},
   std::pair<std::string, std::string>{"_popen", "libStdio"},
   std::pair<std::string, std::string>{"_snprintf", "libStdio"},
+  std::pair<std::string, std::string>{"_unlink", "libStdio"},
 
   std::pair<std::string, std::string>{"EXIT_SUCCESS", "libStdlib"},
   std::pair<std::string, std::string>{"EXIT_FAILURE", "libStdlib"},
@@ -210,6 +211,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"read", "libUnistd"},
   std::pair<std::string, std::string>{"rmdir", "libUnistd"},
   std::pair<std::string, std::string>{"symlink", "libUnistd"},
+  std::pair<std::string, std::string>{"unlink", "libUnistd"},
   std::pair<std::string, std::string>{"write", "libUnistd"},
 
   std::pair<std::string, std::string>{"_getcwd", "libWinDirect"},

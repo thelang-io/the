@@ -366,6 +366,10 @@ void TypeMap::init () {
     TypeFnParam{"path", strType, false, true, false}
   }};
 
+  auto fsUnlinkSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
   auto fsWriteFileSyncTypeFn = TypeFn{voidType, {
     TypeFnParam{"path", strType, false, true, false},
     TypeFnParam{"data", bufferBufferType, false, true, false}
@@ -431,6 +435,7 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"fs_rmdirSync", "@fs_rmdirSync", fsRmdirSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_scandirSync", "@fs_scandirSync", fsScandirSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_statSync", "@fs_statSync", fsStatSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_unlinkSync", "@fs_unlinkSync", fsUnlinkSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"fs_writeFileSync", "@fs_writeFileSync", fsWriteFileSyncTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"os_name", "@os_name", TypeFn{strType}, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, {}, true}));

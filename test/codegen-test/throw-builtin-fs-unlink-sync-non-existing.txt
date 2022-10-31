@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  fs_linkSync("./test.txt", "test/fixtures/test2.txt")
+  fs_unlinkSync("test/fixtures/test3.txt")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -19,9 +19,6 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef THE_OS_WINDOWS
-  #include <windows.h>
-#endif
 #ifndef THE_OS_WINDOWS
   #include <unistd.h>
 #endif
@@ -35,7 +32,7 @@ void *alloc (size_t);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-void fs_linkSync (struct str, struct str);
+void fs_unlinkSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -60,31 +57,24 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-void fs_linkSync (struct str s1, struct str s2) {
-  char *c1 = str_cstr(s1);
-  char *c2 = str_cstr(s2);
+void fs_unlinkSync (struct str s) {
+  char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
-    for (size_t i = 0; i < s1.l; i++) c1[i] = (c1[i] == '/' ? '\\' : c1[i]);
-    for (size_t i = 0; i < s2.l; i++) c2[i] = (c2[i] == '/' ? '\\' : c2[i]);
-    DWORD flags = 0;
-    if (GetFileAttributes(c1) & FILE_ATTRIBUTE_DIRECTORY) flags |= SYMBOLIC_LINK_FLAG_DIRECTORY;
-    bool r = CreateSymbolicLink(c2, c1, flags);
+    bool r = _unlink(c) == 0;
   #else
-    bool r = symlink(c1, c2) == 0;
+    bool r = unlink(c) == 0;
   #endif
   if (!r) {
-    fprintf(stderr, "Error: failed to create symbolic link from `%s` to `%s`" THE_EOL, c1, c2);
+    fprintf(stderr, "Error: failed to unlink path `%s`" THE_EOL, c);
     exit(EXIT_FAILURE);
   }
-  str_free(s1);
-  str_free(s2);
-  free(c1);
-  free(c2);
+  free(c);
+  str_free(s);
 }
 
 int main () {
-  fs_linkSync(str_alloc("./test.txt"), str_alloc("test/fixtures/test2.txt"));
+  fs_unlinkSync(str_alloc("test/fixtures/test3.txt"));
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to create symbolic link from `.{{ (\/|\\) }}test.txt` to `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}test2.txt`
+Error: failed to unlink path `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}test3.txt`
