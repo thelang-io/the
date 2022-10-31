@@ -109,4 +109,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to change mode to 0 for file `test/fixtures/throw-builtin-fs-chmod-sync-not-existing.txt`
+Error: failed to change mode to 0 for file `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-chmod-sync-not-existing.txt`

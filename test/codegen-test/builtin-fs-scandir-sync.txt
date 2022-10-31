@@ -250,4 +250,4 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-["{{ test2? }}.txt", "{{ test2? }}.txt"]
+["test{{ 2? }}.txt", "test{{ 2? }}.txt"]

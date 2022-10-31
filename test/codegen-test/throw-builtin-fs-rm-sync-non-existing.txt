@@ -98,4 +98,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to remove file `test/fixtures/throw-builtin-fs-rm-sync-non-existing.txt`
+Error: failed to remove file `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-rm-sync-non-existing.txt`

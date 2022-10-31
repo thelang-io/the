@@ -127,4 +127,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to open file `test/fixtures/throw-builtin-fs-read-file-sync-non-existing.txt` for reading
+Error: failed to open file `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-read-file-sync-non-existing.txt` for reading

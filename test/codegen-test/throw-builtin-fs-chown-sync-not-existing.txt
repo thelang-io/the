@@ -179,4 +179,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to change owner to 0 and group to 0 for file `test/fixtures/throw-builtin-fs-chown-sync-not-existing.txt`
+Error: failed to change owner to 0 and group to 0 for file `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-chown-sync-not-existing.txt`

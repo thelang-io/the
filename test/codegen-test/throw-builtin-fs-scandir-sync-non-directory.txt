@@ -184,4 +184,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to scan non-directory `test/fixtures/test.txt`
+Error: failed to scan non-directory `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}test.txt`

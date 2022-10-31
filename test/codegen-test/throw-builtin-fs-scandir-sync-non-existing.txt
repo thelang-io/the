@@ -184,4 +184,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: directory `test/fixtures/throw-builtin-fs-scandir-sync-non-existing` doesn't exist
+Error: directory `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-scandir-sync-non-existing` doesn't exist

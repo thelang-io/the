@@ -88,4 +88,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to remove file `test/fixtures`
+Error: failed to remove file `test{{ (\/|\\) }}fixtures`

@@ -98,4 +98,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to create directory `test/fixtures`
+Error: failed to create directory `test{{ (\/|\\) }}fixtures`

@@ -151,4 +151,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to stat file `test/fixtures/throw-builtin-fs-stat-sync-non-existing`
+Error: failed to stat file `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-stat-sync-non-existing`

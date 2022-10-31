@@ -135,4 +135,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed {{ (to create handle )? }}to get real path of file `test/fixtures/throw-builtin-fs-realpath-sync-non-existing.txt`
+Error: failed {{ (to create handle )? }}to get real path of file `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-realpath-sync-non-existing.txt`

@@ -110,4 +110,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to remove directory `test/fixtures/throw-builtin-fs-rmdir-sync-non-existing`
+Error: failed to remove directory `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-rmdir-sync-non-existing`
