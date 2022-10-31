@@ -1596,7 +1596,11 @@ std::string Codegen::_apiEval (const std::string &code, const std::optional<std:
           (*dependencies)->emplace(name);
         }
       } else if (name.starts_with("array_")) {
-        name = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get(name.substr(6))));
+        if (name.ends_with("_free")) {
+          name = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get(name.substr(6, name.size() - 11)))) + "_free";
+        } else {
+          name = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get(name.substr(6))));
+        }
 
         if (dependencies == std::nullopt) {
           this->_activateEntity(name);

@@ -128,7 +128,9 @@ const std::vector<std::string> codegenRequest = {
   R"(    })" EOL
   R"(  })" EOL
   R"(  char *req_headers = _{request_stringifyHeaders}(headers, url, data);)" EOL
+  R"(  _{array_request_Header_free}(headers);)" EOL
   R"(  char *req_method = _{str_cstr}(method);)" EOL
+  R"(  _{str_free}(method);)" EOL
   R"(  char *req_path = _{str_cstr}(url->__THE_0_path);)" EOL
   R"(  char *fmt = "%s %s HTTP/1.1\r\n%s\r\n";)" EOL
   R"(  _{size_t} req_len = _{snprintf}(_{NULL}, 0, fmt, req_method, req_path, req_headers);)" EOL
@@ -143,6 +145,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{memcpy}(&request[req_len], "\r\n", 3);)" EOL
   R"(    req_len += 2;)" EOL
   R"(  })" EOL
+  R"(  _{buffer_free}(data);)" EOL
   R"(  _{ssize_t} y = 0;)" EOL
   R"(  while (y < req_len) {)" EOL
   R"(    _{ssize_t} z = req->ssl == _{NULL})" EOL

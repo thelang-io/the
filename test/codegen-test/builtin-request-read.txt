@@ -303,7 +303,9 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     }
   }
   char *req_headers = request_stringifyHeaders(headers, url, data);
+  __THE_1_array_request_Header_free(headers);
   char *req_method = str_cstr(method);
+  str_free(method);
   char *req_path = str_cstr(url->__THE_0_path);
   char *fmt = "%s %s HTTP/1.1\r\n%s\r\n";
   size_t req_len = snprintf(NULL, 0, fmt, req_method, req_path, req_headers);
@@ -318,6 +320,7 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     memcpy(&request[req_len], "\r\n", 3);
     req_len += 2;
   }
+  buffer_free(data);
   ssize_t y = 0;
   while (y < req_len) {
     ssize_t z = req->ssl == NULL
