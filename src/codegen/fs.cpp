@@ -291,7 +291,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{struct str} *r = _{NULL};)" EOL
   R"(  _{size_t} l = 0;)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    if (_{GetFileAttributes}(c) == _{INVALID_FILE_ATTRIBUTES})) {)" EOL
+  R"(    if (_{GetFileAttributes}(c) == _{INVALID_FILE_ATTRIBUTES}) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: directory `%s` doesn't exist" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    } else if (!(_{GetFileAttributes}(c) & _{FILE_ATTRIBUTE_DIRECTORY})) {)" EOL

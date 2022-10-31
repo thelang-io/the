@@ -83,7 +83,7 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
   struct str *r = NULL;
   size_t l = 0;
   #ifdef THE_OS_WINDOWS
-    if (GetFileAttributes(c) == INVALID_FILE_ATTRIBUTES)) {
+    if (GetFileAttributes(c) == INVALID_FILE_ATTRIBUTES) {
       fprintf(stderr, "Error: directory `%s` doesn't exist" THE_EOL, c);
       exit(EXIT_FAILURE);
     } else if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
