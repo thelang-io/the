@@ -29,6 +29,14 @@ jobs:
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
+      - if: matrix.os == 'macos-11'
+        run: |
+          ln -s /usr/local/opt/openssl@1.1/include/openssl/ /usr/local/include/
+          ln -s /usr/local/opt/openssl@1.1/lib/libssl.dylib /usr/local/lib/
+      - if: matrix.os == 'macos-12'
+        run: |
+          ln -s /usr/local/opt/openssl@3/include/openssl/ /usr/local/include/
+          ln -s /usr/local/opt/openssl@3/lib/libssl.dylib /usr/local/lib/
       - run: mkdir -p build
       - if: runner.os == 'Linux'
         run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
