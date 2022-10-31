@@ -616,6 +616,7 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
   "throw-builtin-fs-rm-sync-non-existing",
   "throw-builtin-fs-rmdir-sync-file",
   "throw-builtin-fs-rmdir-sync-non-existing",
+  "throw-builtin-fs-scandir-sync-non-directory",
   "throw-builtin-fs-scandir-sync-non-existing",
   "throw-builtin-fs-stat-sync-non-existing",
   "throw-builtin-fs-write-file-sync-directory",

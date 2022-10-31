@@ -205,10 +205,9 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
-  std::string _apiEval (const std::string &, const std::optional<std::set<std::string> *> & = std::nullopt);
+  std::string _apiEval (const std::string &, int = 0, const std::optional<std::set<std::string> *> & = std::nullopt);
   void _apiLoad (const std::vector<std::string> &);
   void _apiPreLoad (const std::vector<std::string> &);
-  // todo add limit param
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);

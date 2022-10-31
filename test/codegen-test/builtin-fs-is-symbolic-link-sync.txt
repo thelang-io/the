@@ -1,12 +1,35 @@
 ======= stdin =======
 main {
-  fileName := "test/fixtures/builtin-fs-is-symbolic-sync.txt"
+  mut fileName := "test/fixtures/builtin-fs-is-symbolic-sync.txt"
 
   print(fs_isSymbolicLinkSync(fileName))
   print(fs_isSymbolicLinkSync("test/fixtures"))
   print(fs_isSymbolicLinkSync("test/fixtures/test.txt"))
 
+  // file
   fs_linkSync("test/fixtures/test.txt", fileName)
+  print(fs_isSymbolicLinkSync(fileName))
+
+  // link
+  mut fileName2 := "test/fixtures/builtin-fs-is-symbolic-sync-symlink"
+  fs_linkSync(fileName, fileName2)
+  print(fs_isSymbolicLinkSync(fileName2))
+  fs_rmSync(fileName2)
+  fs_rmSync(fileName)
+
+  // dir empty
+  fileName = "test/fixtures/builtin-fs-is-symbolic-sync"
+  fs_mkdirSync(fileName)
+
+  fileName2 = "test/fixtures/builtin-fs-is-symbolic-sync-copy"
+  fs_linkSync("builtin-fs-is-symbolic-sync", fileName2)
+  print(fs_isSymbolicLinkSync(fileName2))
+  fs_rmSync(fileName2)
+  fs_rmdirSync(fileName)
+
+  // dir
+  fileName = "test/fixtures-copy"
+  fs_linkSync("test/fixtures", fileName)
   print(fs_isSymbolicLinkSync(fileName))
   fs_rmSync(fileName)
 }
@@ -79,9 +102,12 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
+struct str str_realloc (struct str, struct str);
 bool fs_isSymbolicLinkSync (struct str);
 void fs_linkSync (struct str, struct str);
+void fs_mkdirSync (struct str);
 void fs_rmSync (struct str);
+void fs_rmdirSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -139,6 +165,10 @@ char *str_cstr (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.d);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
 }
 bool fs_isSymbolicLinkSync (struct str s) {
   char *c = str_cstr(s);
@@ -215,6 +245,20 @@ void fs_linkSync (struct str s1, struct str s2) {
   free(c1);
   free(c2);
 }
+void fs_mkdirSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = CreateDirectory(c, NULL);
+  #else
+    bool r = mkdir(c, 0777) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to create directory `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
 void fs_rmSync (struct str s) {
   char *c = str_cstr(s);
   if (remove(c) != 0) {
@@ -224,15 +268,45 @@ void fs_rmSync (struct str s) {
   free(c);
   str_free(s);
 }
+void fs_rmdirSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = RemoveDirectory(c);
+  #else
+    bool r = rmdir(c) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to remove directory `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
 
 int main () {
-  const struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-is-symbolic-sync.txt");
+  struct str __THE_0_fileName_0 = str_alloc("test/fixtures/builtin-fs-is-symbolic-sync.txt");
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures")), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_alloc("test/fixtures/test.txt")), THE_EOL);
   fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  struct str __THE_0_fileName2_0 = str_alloc("test/fixtures/builtin-fs-is-symbolic-sync-symlink");
+  fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
+  fs_rmSync(str_copy(__THE_0_fileName2_0));
   fs_rmSync(str_copy(__THE_0_fileName_0));
+  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_alloc("test/fixtures/builtin-fs-is-symbolic-sync"));
+  fs_mkdirSync(str_copy(__THE_0_fileName_0));
+  __THE_0_fileName2_0 = str_realloc(__THE_0_fileName2_0, str_alloc("test/fixtures/builtin-fs-is-symbolic-sync-copy"));
+  fs_linkSync(str_alloc("builtin-fs-is-symbolic-sync"), str_copy(__THE_0_fileName2_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
+  fs_rmSync(str_copy(__THE_0_fileName2_0));
+  fs_rmdirSync(str_copy(__THE_0_fileName_0));
+  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_alloc("test/fixtures-copy"));
+  fs_linkSync(str_alloc("test/fixtures"), str_copy(__THE_0_fileName_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  fs_rmSync(str_copy(__THE_0_fileName_0));
+  str_free((struct str) __THE_0_fileName2_0);
   str_free((struct str) __THE_0_fileName_0);
 }
 ======= flags =======
@@ -240,4 +314,7 @@ int main () {
 false
 false
 false
+true
+true
+true
 true

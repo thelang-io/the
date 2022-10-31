@@ -158,7 +158,6 @@ const std::vector<std::string> codegenFs = {
   R"(  return b;)" EOL
   R"(})" EOL,
 
-  // todo test link directory, file, and link
   R"(void fs_linkSync (_{struct str} s1, _{struct str} s2) {)" EOL
   R"(  char *c1 = _{str_cstr}(s1);)" EOL
   R"(  char *c2 = _{str_cstr}(s2);)" EOL
@@ -224,7 +223,6 @@ const std::vector<std::string> codegenFs = {
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{HANDLE} h = _{CreateFile}(c, 0, 0, _{NULL}, _{OPEN_EXISTING}, _{FILE_ATTRIBUTE_NORMAL} | _{FILE_FLAG_BACKUP_SEMANTICS}, _{NULL});)" EOL
   R"(    if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
-  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to create handle to get real path of file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -235,7 +233,6 @@ const std::vector<std::string> codegenFs = {
   R"(    })" EOL
   R"(    char *r = _{alloc}(l + 1);)" EOL
   R"(    if (_{GetFinalPathNameByHandle}(h, r, _{MAX_PATH}, _{VOLUME_NAME_DOS}) == 0) {)" EOL
-  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to get real path by handle of file `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -294,8 +291,10 @@ const std::vector<std::string> codegenFs = {
   R"(  _{struct str} *r = _{NULL};)" EOL
   R"(  _{size_t} l = 0;)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    if (!(_{GetFileAttributes}(c) & _{FILE_ATTRIBUTE_DIRECTORY})) {)" EOL
-  // todo test
+  R"(    if (_{GetFileAttributes}(c) == _{INVALID_FILE_ATTRIBUTES})) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: directory `%s` doesn't exist" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    } else if (!(_{GetFileAttributes}(c) & _{FILE_ATTRIBUTE_DIRECTORY})) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to scan non-directory `%s`" _{THE_EOL}, c);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -327,6 +326,14 @@ const std::vector<std::string> codegenFs = {
   R"(    })" EOL
   R"(    _{FindClose}(h);)" EOL
   R"(  #else)" EOL
+  R"(    _{struct stat} sb;)" EOL
+  R"(    if (_{stat}(c, &sb) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: directory `%s` doesn't exist" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    } else if ((sb.st_mode & _{S_IFMT}) != _{S_IFDIR}) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to scan non-directory `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
   R"(    _{DIR} *f = _{opendir}(c);)" EOL
   R"(    if (f == _{NULL}) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to open directory `%s`" _{THE_EOL}, c);)" EOL

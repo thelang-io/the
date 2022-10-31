@@ -326,7 +326,7 @@ struct request_Response *request_read (struct request_Request **r) {
     i++;
   }
   struct __THE_1_array_request_Header headers = {NULL, 0};
-  while (1) {
+  while (true) {
     if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {
       i += 2;
       break;

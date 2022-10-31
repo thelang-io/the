@@ -210,7 +210,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    i++;)" EOL
   R"(  })" EOL
   R"(  struct _{array_request_Header} headers = {_{NULL}, 0};)" EOL
-  R"(  while (1) {)" EOL
+  R"(  while (_{true}) {)" EOL
   R"(    if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {)" EOL
   R"(      i += 2;)" EOL
   R"(      break;)" EOL

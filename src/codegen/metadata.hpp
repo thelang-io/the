@@ -231,6 +231,7 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"GENERIC_READ", "libWindows"},
   std::pair<std::string, std::string>{"GENERIC_WRITE", "libWindows"},
   std::pair<std::string, std::string>{"HANDLE", "libWindows"},
+  std::pair<std::string, std::string>{"INVALID_FILE_ATTRIBUTES", "libWindows"},
   std::pair<std::string, std::string>{"INVALID_HANDLE_VALUE", "libWindows"},
   std::pair<std::string, std::string>{"IO_REPARSE_TAG_APPEXECLINK", "libWindows"},
   std::pair<std::string, std::string>{"IO_REPARSE_TAG_MOUNT_POINT", "libWindows"},

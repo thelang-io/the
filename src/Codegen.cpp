@@ -1571,7 +1571,7 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-std::string Codegen::_apiEval (const std::string &code, const std::optional<std::set<std::string> *> &dependencies) {
+std::string Codegen::_apiEval (const std::string &code, int limit, const std::optional<std::set<std::string> *> &dependencies) {
   auto name = std::string();
   auto isName = false;
   auto result = std::string();
@@ -1579,7 +1579,7 @@ std::string Codegen::_apiEval (const std::string &code, const std::optional<std:
   for (auto i = static_cast<std::size_t>(0); i < code.size(); i++) {
     auto ch = code[i];
 
-    if (ch == '_' && i + 1 < code.size() && code[i + 1] == '{') {
+    if (limit != -1 && ch == '_' && i + 1 < code.size() && code[i + 1] == '{') {
       isName = true;
       i += 1;
     } else if (isName && ch == '}') {
@@ -1630,6 +1630,7 @@ std::string Codegen::_apiEval (const std::string &code, const std::optional<std:
 
       result += name;
       isName = false;
+      limit = limit == 1 ? -1 : limit == 0 ? 0 : limit - 1;
       name.clear();
     } else if (isName) {
       name += ch;
@@ -1684,7 +1685,7 @@ void Codegen::_apiLoad (const std::vector<std::string> &items) {
       }
     }
 
-    this->api[name].def = this->_apiEval(item, &this->api[name].dependencies);
+    this->api[name].def = this->_apiEval(item, 0, &this->api[name].dependencies);
   }
 }
 
@@ -1741,7 +1742,7 @@ void Codegen::_apiPreLoad (const std::vector<std::string> &items) {
       }
     }
 
-    apiItem.decl = this->_apiEval(apiItem.decl, &apiItem.dependencies) + ";" EOL;
+    apiItem.decl = this->_apiEval(apiItem.decl, 0, &apiItem.dependencies) + ";" EOL;
     this->api[apiItem.name] = apiItem;
   }
 }
@@ -2775,77 +2776,68 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
       }
 
-      this->_activateBuiltin("libStdlib");
-      code = "exit(" + arg1Expr + ")";
+      code = this->_apiEval("_{exit}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_chmodSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
-
-      code = this->_apiEval("_{fs_chmodSync}") + "(" + arg1Expr + ", " + arg2Expr + ")";
+      code = this->_apiEval("_{fs_chmodSync}(" + arg1Expr + ", " + arg2Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_chownSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
       auto arg3Expr = this->_nodeExpr(exprCall.args[2].expr, this->ast->typeMap.get("int"));
-
-      code = this->_apiEval("_{fs_chownSync}") + "(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ")";
+      code = this->_apiEval("_{fs_chownSync}(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_existsSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_existsSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_existsSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isAbsoluteSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_isAbsoluteSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_isAbsoluteSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isDirectorySync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_isDirectorySync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_isDirectorySync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isFileSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_isFileSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_isFileSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isSymbolicLinkSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_isSymbolicLinkSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_isSymbolicLinkSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_linkSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_linkSync}") + "(" + arg1Expr + ", " + arg2Expr + ")";
+      code = this->_apiEval("_{fs_linkSync}(" + arg1Expr + ", " + arg2Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_mkdirSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_mkdirSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_mkdirSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_readFileSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_readFileSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_readFileSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_realpathSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_realpathSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_realpathSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_rmSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_rmSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_rmSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_rmdirSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_rmdirSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_rmdirSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_scandirSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_scandirSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_scandirSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_statSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{fs_statSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{fs_statSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_writeFileSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("buffer_Buffer"));
-
-      code = this->_apiEval("_{fs_writeFileSync}") + "(" + arg1Expr + ", " + arg2Expr + ")";
+      code = this->_apiEval("_{fs_writeFileSync}(" + arg1Expr + ", " + arg2Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@os_name") {
-      this->_activateBuiltin("fnOSName");
-      code = "os_name()";
+      code = this->_apiEval("_{os_name}()", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@path_basename") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-
-      this->_activateBuiltin("fnPathBasename");
-      code = "path_basename(" + arg1Expr + ")";
+      code = this->_apiEval("_{path_basename}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@path_dirname") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-
-      this->_activateBuiltin("fnPathDirname");
-      code = "path_dirname(" + arg1Expr + ")";
+      code = this->_apiEval("_{path_dirname}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@print") {
       auto separator = std::string(R"(" ")");
       auto isSeparatorLit = true;
@@ -2954,10 +2946,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code = this->_apiEval("_{process_getuid}()");
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_runSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{process_runSync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{process_runSync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_close") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
-      code = this->_apiEval("_{request_close}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{request_close}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_open") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("str"));
@@ -2989,16 +2981,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateEntity(typeName);
       }
 
-      code = this->_apiEval("_{request_open}") + "(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
+      code = this->_apiEval("_{request_open}(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_read") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
-      code = this->_apiEval("_{request_read}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{request_read}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
-      code = this->_apiEval("_{sleep_sync}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{sleep_sync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@url_parse") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
-      code = this->_apiEval("_{url_parse}") + "(" + arg1Expr + ")";
+      code = this->_apiEval("_{url_parse}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin) {
       auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
       auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);

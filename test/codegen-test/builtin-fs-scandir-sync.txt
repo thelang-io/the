@@ -21,6 +21,7 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifdef THE_OS_WINDOWS
   #include <windows.h>
 #endif
@@ -156,7 +157,10 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
   struct str *r = NULL;
   size_t l = 0;
   #ifdef THE_OS_WINDOWS
-    if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
+    if (GetFileAttributes(c) == INVALID_FILE_ATTRIBUTES)) {
+      fprintf(stderr, "Error: directory `%s` doesn't exist" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    } else if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
       fprintf(stderr, "Error: failed to scan non-directory `%s`" THE_EOL, c);
       exit(EXIT_FAILURE);
     }
@@ -188,6 +192,14 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
     }
     FindClose(h);
   #else
+    struct stat sb;
+    if (stat(c, &sb) != 0) {
+      fprintf(stderr, "Error: directory `%s` doesn't exist" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    } else if ((sb.st_mode & S_IFMT) != S_IFDIR) {
+      fprintf(stderr, "Error: failed to scan non-directory `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
     DIR *f = opendir(c);
     if (f == NULL) {
       fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
