@@ -111,13 +111,22 @@ const std::vector<std::string> codegenRequest = {
   R"(  req->fd = _{socket}(addr->ai_family, addr->ai_socktype, addr->ai_protocol);)" EOL
   R"(  req->ctx = _{NULL};)" EOL
   R"(  req->ssl = _{NULL};)" EOL
-  R"(  if (req->fd == -1) {)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{bool} socket_res = req->fd != _{INVALID_SOCKET};)" EOL
+  R"(  #else)" EOL
+  R"(    _{bool} socket_res = req->fd != -1;)" EOL
+  R"(  #endif)" EOL
+  R"(  if (!socket_res) {)" EOL
   // todo test
   R"(    _{fprintf}(_{stderr}, "Error: failed to create socket" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
-  R"(  if (_{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) == -1) {)" EOL
-  // todo test
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) != _{SOCKET_ERROR};)" EOL
+  R"(  #else)" EOL
+  R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;)" EOL
+  R"(  #endif)" EOL
+  R"(  if (!connect_res) {)" EOL
   R"(    char *origin = _{str_cstr}(url->__THE_0_origin);)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to connect to `%s`" _{THE_EOL}, origin);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
@@ -158,9 +167,13 @@ const std::vector<std::string> codegenRequest = {
   R"(    req_len += 2;)" EOL
   R"(  })" EOL
   R"(  _{buffer_free}(data);)" EOL
-  R"(  _{ssize_t} y = 0;)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{SSIZE_T} y = 0, z = 0;)" EOL
+  R"(  #else)" EOL
+  R"(    _{ssize_t} y = 0, z = 0;)" EOL
+  R"(  #endif)" EOL
   R"(  while (y < req_len) {)" EOL
-  R"(    _{ssize_t} z = req->ssl == _{NULL})" EOL
+  R"(    z = req->ssl == _{NULL})" EOL
   R"(      ? _{send}(req->fd, &request[y], req_len - y, 0))" EOL
   R"(      : _{SSL_write}(req->ssl, &request[y], (int) (req_len - y));)" EOL
   R"(    if (z == -1) {)" EOL
@@ -171,7 +184,15 @@ const std::vector<std::string> codegenRequest = {
   R"(    y += z;)" EOL
   R"(  })" EOL
   R"(  _{free}(request);)" EOL
-  R"(  (req->ssl == _{NULL} ? _{shutdown}(req->fd, 1) : _{SSL_shutdown}(req->ssl));)" EOL
+  R"(  if (req->ssl == _{NULL}) {)" EOL
+  R"(    #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(      _{shutdown}(req->fd, _{SD_SEND});)" EOL
+  R"(    #else)" EOL
+  R"(      _{shutdown}(req->fd, 1);)" EOL
+  R"(    #endif)" EOL
+  R"(  } else {)" EOL
+  R"(    _{SSL_shutdown}(req->ssl);)" EOL
+  R"(  })" EOL
   R"(  _{url_URL_free}(url);)" EOL
   R"(  return (struct _{request_Request} *) req;)" EOL
   R"(})" EOL,
@@ -180,7 +201,11 @@ const std::vector<std::string> codegenRequest = {
   R"(struct _{request_Response} *request_read (struct _{request_Request} **r) {)" EOL
   R"(  _{struct request} *req = (void *) *r;)" EOL
   R"(  unsigned char b[1024];)" EOL
-  R"(  _{ssize_t} y;)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{SSIZE_T} y;)" EOL
+  R"(  #else)" EOL
+  R"(    _{ssize_t} y;)" EOL
+  R"(  #endif)" EOL
   R"(  _{struct buffer} data = {_{NULL}, 0};)" EOL
   R"(  while ((y = (req->ssl == _{NULL} ? _{recv}(req->fd, b, sizeof(b), 0) : _{SSL_read}(req->ssl, b, sizeof(b)))) > 0) {)" EOL
   R"(    data.d = _{re_alloc}(data.d, data.l + y);)" EOL

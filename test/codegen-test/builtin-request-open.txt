@@ -44,6 +44,10 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+  #include <winsock2.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <netdb.h>
   #include <netinet/in.h>
@@ -239,11 +243,21 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
   req->fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
   req->ctx = NULL;
   req->ssl = NULL;
-  if (req->fd == -1) {
+  #ifdef THE_OS_WINDOWS
+    bool socket_res = req->fd != INVALID_SOCKET;
+  #else
+    bool socket_res = req->fd != -1;
+  #endif
+  if (!socket_res) {
     fprintf(stderr, "Error: failed to create socket" THE_EOL);
     exit(EXIT_FAILURE);
   }
-  if (connect(req->fd, addr->ai_addr, addr->ai_addrlen) == -1) {
+  #ifdef THE_OS_WINDOWS
+    bool connect_res = connect(req->fd, addr->ai_addr, addr->ai_addrlen) != SOCKET_ERROR;
+  #else
+    bool connect_res = connect(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;
+  #endif
+  if (!connect_res) {
     char *origin = str_cstr(url->__THE_0_origin);
     fprintf(stderr, "Error: failed to connect to `%s`" THE_EOL, origin);
     exit(EXIT_FAILURE);
@@ -282,9 +296,13 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     req_len += 2;
   }
   buffer_free(data);
-  ssize_t y = 0;
+  #ifdef THE_OS_WINDOWS
+    SSIZE_T y = 0, z = 0;
+  #else
+    ssize_t y = 0, z = 0;
+  #endif
   while (y < req_len) {
-    ssize_t z = req->ssl == NULL
+    z = req->ssl == NULL
       ? send(req->fd, &request[y], req_len - y, 0)
       : SSL_write(req->ssl, &request[y], (int) (req_len - y));
     if (z == -1) {
@@ -294,14 +312,26 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     y += z;
   }
   free(request);
-  (req->ssl == NULL ? shutdown(req->fd, 1) : SSL_shutdown(req->ssl));
+  if (req->ssl == NULL) {
+    #ifdef THE_OS_WINDOWS
+      shutdown(req->fd, SD_SEND);
+    #else
+      shutdown(req->fd, 1);
+    #endif
+  } else {
+    SSL_shutdown(req->ssl);
+  }
   url_URL_free(url);
   return (struct request_Request *) req;
 }
 struct request_Response *request_read (struct request_Request **r) {
   struct request *req = (void *) *r;
   unsigned char b[1024];
-  ssize_t y;
+  #ifdef THE_OS_WINDOWS
+    SSIZE_T y;
+  #else
+    ssize_t y;
+  #endif
   struct buffer data = {NULL, 0};
   while ((y = (req->ssl == NULL ? recv(req->fd, b, sizeof(b), 0) : SSL_read(req->ssl, b, sizeof(b)))) > 0) {
     data.d = re_alloc(data.d, data.l + y);
