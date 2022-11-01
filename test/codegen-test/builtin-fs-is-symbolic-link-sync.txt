@@ -7,12 +7,12 @@ main {
   print(fs_isSymbolicLinkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt"))
 
   // file
-  fs_linkSync("test.txt", fileName)
+  fs_linkSync("test/fixtures/test.txt", fileName)
   print(fs_isSymbolicLinkSync(fileName))
 
   // link
   mut fileName2 := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync-symlink.txt"
-  fs_linkSync("builtin-fs-is-symbolic-sync.txt", fileName2)
+  fs_linkSync(fileName, fileName2)
   print(fs_isSymbolicLinkSync(fileName2))
   fs_unlinkSync(fileName2)
   fs_unlinkSync(fileName)
@@ -22,14 +22,14 @@ main {
   fs_mkdirSync(fileName)
 
   fileName2 = "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync-copy"
-  fs_linkSync("builtin-fs-is-symbolic-sync", fileName2)
+  fs_linkSync(fileName, fileName2)
   print(fs_isSymbolicLinkSync(fileName2))
   fs_unlinkSync(fileName2)
   fs_rmdirSync(fileName)
 
   // dir
   fileName = "test" + path_SEP + "fixtures-copy"
-  fs_linkSync("fixtures", fileName)
+  fs_linkSync("test/fixtures", fileName)
   print(fs_isSymbolicLinkSync(fileName))
   fs_unlinkSync(fileName)
 }
@@ -305,10 +305,15 @@ void fs_rmdirSync (struct str s) {
 }
 void fs_unlinkSync (struct str s) {
   char *c = str_cstr(s);
+  bool r;
   #ifdef THE_OS_WINDOWS
-    bool r = _unlink(c) == 0;
+    if (GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY) {
+      r = RemoveDirectory(c);
+    } else {
+      r = _unlink(c) == 0;
+    }
   #else
-    bool r = unlink(c) == 0;
+    r = unlink(c) == 0;
   #endif
   if (!r) {
     fprintf(stderr, "Error: failed to unlink path `%s`" THE_EOL, c);
@@ -323,22 +328,22 @@ int main () {
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures")), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")), THE_EOL);
-  fs_linkSync(str_alloc("test.txt"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   struct str __THE_0_fileName2_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-symlink.txt");
-  fs_linkSync(str_alloc("builtin-fs-is-symbolic-sync.txt"), str_copy(__THE_0_fileName2_0));
+  fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
   fs_unlinkSync(str_copy(__THE_0_fileName2_0));
   fs_unlinkSync(str_copy(__THE_0_fileName_0));
   __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync"));
   fs_mkdirSync(str_copy(__THE_0_fileName_0));
   __THE_0_fileName2_0 = str_realloc(__THE_0_fileName2_0, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-copy"));
-  fs_linkSync(str_alloc("builtin-fs-is-symbolic-sync"), str_copy(__THE_0_fileName2_0));
+  fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
   fs_unlinkSync(str_copy(__THE_0_fileName2_0));
   fs_rmdirSync(str_copy(__THE_0_fileName_0));
   __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures-copy"));
-  fs_linkSync(str_alloc("fixtures"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_alloc("test/fixtures"), str_copy(__THE_0_fileName_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   fs_unlinkSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName2_0);

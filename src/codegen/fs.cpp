@@ -382,10 +382,15 @@ const std::vector<std::string> codegenFs = {
 
   R"(void fs_unlinkSync (_{struct str} s) {)" EOL
   R"(  char *c = _{str_cstr}(s);)" EOL
+  R"(  _{bool} r;)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{bool} r = _{_unlink}(c) == 0;)" EOL
+  R"(    if (_{GetFileAttributes}(c) & _{FILE_ATTRIBUTE_DIRECTORY}) {)" EOL
+  R"(      r = _{RemoveDirectory}(c);)" EOL
+  R"(    } else {)" EOL
+  R"(      r = _{_unlink}(c) == 0;)" EOL
+  R"(    })" EOL
   R"(  #else)" EOL
-  R"(    _{bool} r = _{unlink}(c) == 0;)" EOL
+  R"(    r = _{unlink}(c) == 0;)" EOL
   R"(  #endif)" EOL
   R"(  if (!r) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to unlink path `%s`" _{THE_EOL}, c);)" EOL
