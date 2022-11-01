@@ -21,15 +21,14 @@ main {
 #endif
 
 #include <ctype.h>
+#include <openssl/ssl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef THE_OS_WINDOWS
-  #include <arpa/inet.h>
   #include <netdb.h>
   #include <netinet/in.h>
-  #include <openssl/ssl.h>
   #include <sys/socket.h>
   #include <unistd.h>
 #endif
@@ -39,7 +38,11 @@ struct buffer {
   size_t l;
 };
 struct request {
-  int fd;
+  #ifdef THE_OS_WINDOWS
+    SOCKET fd;
+  #else
+    int fd;
+  #endif
   SSL_CTX *ctx;
   SSL *ssl;
 };
@@ -147,38 +150,48 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     char *protocol = str_cstr(url->__THE_0_protocol);
     fprintf(stderr, "Error: can't perform request with protocol `%s`" THE_EOL, protocol);
     exit(EXIT_FAILURE);
+  } else if (url->__THE_0_port.l > 6) {
+    char *port = str_cstr(url->__THE_0_port);
+    fprintf(stderr, "Error: invalid port `%s`" THE_EOL, port);
+    exit(EXIT_FAILURE);
   }
-  unsigned short port = url->__THE_0_protocol.l == 6 ? 443 : 80;
+  char port[10];
+  strcpy(port, url->__THE_0_protocol.l == 6 ? "443" : "80");
   if (url->__THE_0_port.l != 0) {
-    char *p = str_cstr(url->__THE_0_port);
-    port = strtoul(p, NULL, 10);
-    free(p);
+    memcpy(port, url->__THE_0_port.d, url->__THE_0_port.l);
+    unsigned long p = strtoul(port, NULL, 10);
+    if (p > 65535) {
+      fprintf(stderr, "Error: invalid port `%s`" THE_EOL, port);
+      exit(EXIT_FAILURE);
+    }
   }
+  char *hostname = str_cstr(url->__THE_0_hostname);
+  struct addrinfo *addr = NULL;
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = IPPROTO_TCP;
+  if (getaddrinfo(hostname, port, &hints, &addr) != 0) {
+    fprintf(stderr, "Error: failed to resolve hostname address" THE_EOL);
+    exit(EXIT_FAILURE);
+  }
+  free(hostname);
   struct request *req = alloc(sizeof(struct request));
-  req->fd = socket(AF_INET, SOCK_STREAM, 0);
+  req->fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
   req->ctx = NULL;
   req->ssl = NULL;
   if (req->fd == -1) {
     fprintf(stderr, "Error: failed to create socket" THE_EOL);
     exit(EXIT_FAILURE);
   }
-  char *hostname = str_cstr(url->__THE_0_hostname);
-  struct hostent *h = gethostbyname(hostname);
-  free(hostname);
-  if (h == NULL) {
-    fprintf(stderr, "Error: failed to resolve hostname IP address" THE_EOL);
-    exit(EXIT_FAILURE);
-  }
-  struct sockaddr_in addr;
-  memcpy(&addr.sin_addr, h->h_addr_list[0], h->h_length);
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  if (connect(req->fd, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
+  if (connect(req->fd, addr->ai_addr, addr->ai_addrlen) == -1) {
     char *origin = str_cstr(url->__THE_0_origin);
     fprintf(stderr, "Error: failed to connect to `%s`" THE_EOL, origin);
     exit(EXIT_FAILURE);
   }
-  if (port == 443) {
+  freeaddrinfo(addr);
+  if (strcmp(port, "443") == 0) {
     SSL_library_init();
     req->ctx = SSL_CTX_new(TLS_client_method());
     if (req->ctx == NULL) {
@@ -214,7 +227,7 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
   ssize_t y = 0;
   while (y < req_len) {
     ssize_t z = req->ssl == NULL
-      ? write(req->fd, &request[y], req_len - y)
+      ? send(req->fd, &request[y], req_len - y, 0)
       : SSL_write(req->ssl, &request[y], (int) (req_len - y));
     if (z == -1) {
       fprintf(stderr, "Error: failed to write to socket" THE_EOL);

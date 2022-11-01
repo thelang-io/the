@@ -133,6 +133,7 @@ struct CodegenBuiltins {
   bool libWinDirect = false;
   bool libWinIo = false;
   bool libWindows = false;
+  bool libWinsock2 = false;
   bool typeAny = false;
   bool typeBuffer = false;
   bool typeRequest = false;

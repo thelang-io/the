@@ -117,11 +117,11 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"PRId32", "libInttypes"},
   std::pair<std::string, std::string>{"PRId64", "libInttypes"},
 
-  std::pair<std::string, std::string>{"struct hostent", "libNetdb"},
-  std::pair<std::string, std::string>{"gethostbyname", "libNetdb"},
+  std::pair<std::string, std::string>{"struct addrinfo", "libNetdb"},
+  std::pair<std::string, std::string>{"freeaddrinfo", "libNetdb"},
+  std::pair<std::string, std::string>{"getaddrinfo", "libNetdb"},
 
-  std::pair<std::string, std::string>{"struct sockaddr_in", "libNetinetIn"},
-  std::pair<std::string, std::string>{"htons", "libNetinetIn"},
+  std::pair<std::string, std::string>{"IPPROTO_TCP", "libNetinetIn"},
 
   std::pair<std::string, std::string>{"SSL_CTX_free", "libOpensslSsl"},
   std::pair<std::string, std::string>{"SSL_CTX_new", "libOpensslSsl"},
@@ -176,7 +176,9 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"memcmp", "libString"},
   std::pair<std::string, std::string>{"memcpy", "libString"},
   std::pair<std::string, std::string>{"memmove", "libString"},
+  std::pair<std::string, std::string>{"memset", "libString"},
   std::pair<std::string, std::string>{"strcmp", "libString"},
+  std::pair<std::string, std::string>{"strcpy", "libString"},
   std::pair<std::string, std::string>{"strlen", "libString"},
 
   std::pair<std::string, std::string>{"struct stat", "libSysStat"},
@@ -197,6 +199,8 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"AF_INET", "libSysSocket"},
   std::pair<std::string, std::string>{"SOCK_STREAM", "libSysSocket"},
   std::pair<std::string, std::string>{"connect", "libSysSocket"},
+  std::pair<std::string, std::string>{"recv", "libSysSocket"},
+  std::pair<std::string, std::string>{"send", "libSysSocket"},
   std::pair<std::string, std::string>{"shutdown", "libSysSocket"},
   std::pair<std::string, std::string>{"socket", "libSysSocket"},
 
@@ -255,7 +259,9 @@ extern const std::map<std::string, std::string> codegenMetadata = {
   std::pair<std::string, std::string>{"GetFileAttributes", "libWindows"},
   std::pair<std::string, std::string>{"GetFinalPathNameByHandle", "libWindows"},
   std::pair<std::string, std::string>{"GetLastError", "libWindows"},
-  std::pair<std::string, std::string>{"RemoveDirectory", "libWindows"}
+  std::pair<std::string, std::string>{"RemoveDirectory", "libWindows"},
+
+  std::pair<std::string, std::string>{"SOCKET", "libWinsock2"}
 };
 
 #endif

@@ -176,7 +176,11 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   if (this->builtins.typeRequest) {
     builtinStructDefCode += "struct request {" EOL;
-    builtinStructDefCode += "  int fd;" EOL;
+    builtinStructDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinStructDefCode += "    SOCKET fd;" EOL;
+    builtinStructDefCode += "  #else" EOL;
+    builtinStructDefCode += "    int fd;" EOL;
+    builtinStructDefCode += "  #endif" EOL;
     builtinStructDefCode += "  SSL_CTX *ctx;" EOL;
     builtinStructDefCode += "  SSL *ssl;" EOL;
     builtinStructDefCode += "};" EOL;
@@ -1014,6 +1018,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   auto headers = std::string(this->builtins.libCtype ? "#include <ctype.h>" EOL : "");
   headers += this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "";
+  headers += this->builtins.libOpensslSsl ? "#include <openssl/ssl.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
   headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
   headers += this->builtins.libStddef && !this->builtins.libStdlib ? "#include <stddef.h>" EOL : "";
@@ -1033,6 +1038,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
     headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
     headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
+    headers += this->builtins.libWinsock2 ? "  #include <winsock2.h>" EOL : "";
     headers += "#endif" EOL;
   }
 
@@ -1041,7 +1047,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
     this->builtins.libDirent ||
     this->builtins.libNetdb ||
     this->builtins.libNetinetIn ||
-    this->builtins.libOpensslSsl ||
     this->builtins.libSysSocket ||
     this->builtins.libSysUtsname ||
     this->builtins.libUnistd
@@ -1051,7 +1056,6 @@ std::tuple<std::string, std::string> Codegen::gen () {
     headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
     headers += this->builtins.libNetdb ? "  #include <netdb.h>" EOL : "";
     headers += this->builtins.libNetinetIn ? "  #include <netinet/in.h>" EOL : "";
-    headers += this->builtins.libOpensslSsl ? "  #include <openssl/ssl.h>" EOL : "";
     headers += this->builtins.libSysSocket ? "  #include <sys/socket.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
     headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
@@ -1140,6 +1144,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("definitions");
   } else if (name == "libWindows") {
     this->builtins.libWindows = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinsock2") {
+    this->builtins.libWinsock2 = true;
     this->_activateBuiltin("definitions");
   } else if (name == "fnAlloc") {
     this->builtins.fnAlloc = true;
@@ -1506,7 +1513,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdlib");
   } else if (name == "typeRequest") {
     this->builtins.typeRequest = true;
+    this->_activateBuiltin("definitions");
     this->_activateBuiltin("libOpensslSsl");
+    this->_activateBuiltin("libWinsock2");
   } else if (name == "typeStr") {
     this->builtins.typeStr = true;
     this->_activateBuiltin("libStdlib");
