@@ -30,13 +30,13 @@ jobs:
       - if: runner.os == 'Windows'
         run: |
           choco install openssl
-          echo "C_INCLUDE_PATH=-IC:\Program Files\OpenSSL-Win64\include" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-          echo "LIBRARY_PATH=-LC:\Program Files\OpenSSL-Win64\lib" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "INCLUDE=C:\Program Files\OpenSSL-Win64\include" >> $env:GITHUB_ENV
+          echo "LIB=C:\Program Files\OpenSSL-Win64\lib" >> $env:GITHUB_ENV
       - if: runner.os == 'macOS'
         run: |
           brew install ninja
-          echo "C_INCLUDE_PATH=-I/usr/local/opt/openssl@1.1/include" >> $GITHUB_ENV
-          echo "LIBRARY_PATH=-L/usr/local/opt/openssl@1.1/lib" >> $GITHUB_ENV
+          echo "CFLAGS=-I/usr/local/opt/openssl/include" >> $GITHUB_ENV
+          echo "LDFLAGS=-L/usr/local/opt/openssl/lib" >> $GITHUB_ENV
       - run: mkdir -p build
       - if: runner.os == 'Linux'
         run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON

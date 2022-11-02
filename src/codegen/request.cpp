@@ -196,6 +196,7 @@ const std::vector<std::string> codegenRequest = {
   R"(  return (struct _{request_Request} *) req;)" EOL
   R"(})" EOL,
 
+  // test
   // todo test with wait 1 sec
   R"(struct _{request_Response} *request_read (struct _{request_Request} **r) {)" EOL
   R"(  _{struct request} *req = (void *) *r;)" EOL
