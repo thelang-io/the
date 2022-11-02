@@ -29,6 +29,11 @@ jobs:
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'Windows'
         run: choco install openssl
+      - name: temp-test
+        if: runner.os == 'Windows'
+        run: |
+          dir "C:\Program Files"
+          dir "C:\Program Files\OpenSSL-Win64\"
       - if: runner.os == 'macOS'
         run: |
           brew install ninja
