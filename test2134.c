@@ -132,7 +132,11 @@ void request_close (struct request_Request **r) {
     SSL_CTX_free(req->ctx);
     SSL_free(req->ssl);
   } else if (req->fd != 0) {
-    closesocket(req->fd);
+    #ifdef THE_OS_WINDOWS
+      closesocket(req->fd);
+    #else
+      close(req->fd);
+    #endif
   }
   req->fd = 0;
   req->ctx = NULL;
