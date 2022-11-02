@@ -27,7 +27,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build valgrind
-          echo "OPENSSL_ROOT_DIR=/usr" >> $GITHUB_ENV
       - if: runner.os == 'Windows'
         run: |
           choco install openssl --no-progress
@@ -38,15 +37,6 @@ jobs:
           echo "OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1" >> $GITHUB_ENV
       - run: openssl version -d
       - run: mkdir -p build
-      - if: runner.os == 'Windows'
-        run: |
-          echo "OPENSSL_ROOT_DIR: $OPENSSL_ROOT_DIR"
-          echo "OPENSSL_ROOT_DIR: $env:OPENSSL_ROOT_DIR"
-          clang test2134.c -o test2134.out -L"$env:OPENSSL_ROOT_DIR/lib" -I"$env:OPENSSL_ROOT_DIR/include" -lssl
-      - if: runner.os != 'Windows'
-        run: |
-          echo "OPENSSL_ROOT_DIR: $OPENSSL_ROOT_DIR"
-          clang test2134.c -o test2134.out -L"$OPENSSL_ROOT_DIR/lib" -I"$OPENSSL_ROOT_DIR/include" -lssl
       - if: runner.os == 'Linux'
         run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
       - if: runner.os == 'Windows'

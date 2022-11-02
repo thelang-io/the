@@ -28,6 +28,7 @@ main {
 #include <string.h>
 #ifdef THE_OS_WINDOWS
   #include <winsock2.h>
+  #include <ws2tcpip.h>
   #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
@@ -139,7 +140,11 @@ void request_close (struct request_Request **r) {
     SSL_CTX_free(req->ctx);
     SSL_free(req->ssl);
   } else if (req->fd != 0) {
-    close(req->fd);
+    #ifdef THE_OS_WINDOWS
+      close(req->fd);
+    #else
+      closesocket(req->fd);
+    #endif
   }
   req->fd = 0;
   req->ctx = NULL;
@@ -160,7 +165,8 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     exit(EXIT_FAILURE);
   }
   char port[10];
-  strcpy(port, url->__THE_0_protocol.l == 6 ? "443" : "80");
+  memcpy(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);
+  port[url->__THE_0_protocol.l == 6 ? 3 : 2] = '\0';
   if (url->__THE_0_port.l != 0) {
     memcpy(port, url->__THE_0_port.d, url->__THE_0_port.l);
     unsigned long p = strtoul(port, NULL, 10);
@@ -475,5 +481,5 @@ int main () {
   request_Request_free((struct request_Request *) __THE_0_req_0);
 }
 ======= flags =======
--lssl
+A:-lssl W:-lWs2_32 W:-lopenssl
 ======= stdout =======

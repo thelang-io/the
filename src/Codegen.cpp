@@ -48,7 +48,7 @@ std::string getCompilerFromPlatform (const std::string &platform) {
 
 void Codegen::compile (
   const std::string &path,
-  const std::tuple<std::string, std::string> &result,
+  const std::tuple<std::string, std::set<std::string>> &result,
   const std::string &platform,
   bool debug
 ) {
@@ -60,7 +60,30 @@ void Codegen::compile (
   f.close();
 
   auto compiler = getCompilerFromPlatform(platform);
-  auto cmd = compiler + " build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
+  auto flagsStr = std::string();
+
+  for (const auto &flag : flags) {
+    if (
+      flag.starts_with("A:") ||
+      (flag.starts_with("L:") && THE_OS == THE_OS_LINUX) ||
+      (flag.starts_with("M:") && THE_OS == THE_OS_MACOS) ||
+      (flag.starts_with("U:") && THE_OS != THE_OS_WINDOWS) ||
+      (flag.starts_with("W:") && THE_OS == THE_OS_WINDOWS)
+    ) {
+      flagsStr += " " + flag.substr(2);
+    }
+
+    if (flag.substr(2) == "-lssl") {
+      auto opensslRootDir = Codegen::getEnvVar("OPENSSL_ROOT_DIR");
+
+      if (!opensslRootDir.empty()) {
+        flagsStr += " -I\"" + opensslRootDir + "/include\"";
+        flagsStr += " -L\"" + opensslRootDir + "/lib\"";
+      }
+    }
+  }
+
+  auto cmd = compiler + " build/output.c -w -o " + path + flagsStr + (debug ? " -g" : "");
   auto returnCode = std::system(cmd.c_str());
 
   std::filesystem::remove("build/output.c");
@@ -70,8 +93,24 @@ void Codegen::compile (
   }
 }
 
+std::string Codegen::getEnvVar (const std::string &name) {
+  const char *result = getenv(name.c_str());
+  return result == nullptr ? "" : result;
+}
+
 std::string Codegen::name (const std::string &name) {
   return "__THE_0_" + name;
+}
+
+std::string Codegen::stringifyFlags (const std::set<std::string> &flags) {
+  auto result = std::string();
+  auto idx = static_cast<std::size_t>(0);
+
+  for (const auto &flag : flags) {
+    result += (idx++ == 0 ? "" : " ") + flag;
+  }
+
+  return result;
 }
 
 std::string Codegen::typeName (const std::string &name) {
@@ -83,7 +122,7 @@ Codegen::Codegen (AST *a) {
   this->reader = this->ast->reader;
 }
 
-std::tuple<std::string, std::string> Codegen::gen () {
+std::tuple<std::string, std::set<std::string>> Codegen::gen () {
   this->_typeObj(this->ast->typeMap.get("fs_Stats"), true);
   this->_typeObj(this->ast->typeMap.get("request_Header"), true);
   this->_typeObj(this->ast->typeMap.get("request_Request"), true);
@@ -1033,11 +1072,18 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";
 
-  if (this->builtins.libWinDirect || this->builtins.libWinIo || this->builtins.libWindows || this->builtins.libWinsock2) {
+  if (
+    this->builtins.libWinDirect ||
+    this->builtins.libWinIo ||
+    this->builtins.libWinWs2tcpip ||
+    this->builtins.libWindows ||
+    this->builtins.libWinsock2
+  ) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
     headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
     headers += this->builtins.libWinsock2 ? "  #include <winsock2.h>" EOL : "";
+    headers += this->builtins.libWinWs2tcpip ? "  #include <ws2tcpip.h>" EOL : "";
     headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += "#endif" EOL;
   }
@@ -1078,7 +1124,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += mainCode;
   output += "}" EOL;
 
-  return std::make_tuple(output, this->_flags());
+  return std::make_tuple(output, this->flags);
 }
 
 void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vector<std::string> *> entityBuiltins) {
@@ -1109,7 +1155,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libNetinetIn = true;
   } else if (name == "libOpensslSsl") {
     this->builtins.libOpensslSsl = true;
-    this->flags.emplace("-lssl");
+    this->flags.emplace("A:-lssl");
+    this->flags.emplace("W:-lWs2_32");
+    this->flags.emplace("W:-lopenssl");
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
@@ -1141,6 +1189,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("definitions");
   } else if (name == "libWinIo") {
     this->builtins.libWinIo = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinWs2tcpip") {
+    this->builtins.libWinWs2tcpip = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libWindows") {
     this->builtins.libWindows = true;
@@ -1543,7 +1594,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
       }
     }
   } else {
-    throw Error("tried activating unknown builtin");
+    throw Error("tried activating unknown builtin `" + name + "`");
   }
 }
 
@@ -1578,7 +1629,7 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
     return;
   }
 
-  throw Error("tried activating unknown entity");
+  throw Error("tried activating unknown entity `" + name + "`");
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
@@ -1595,10 +1646,12 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
       i += 1;
     } else if (isName && ch == '}') {
       if (codegenMetadata.contains(name)) {
-        if (dependencies == std::nullopt) {
-          this->_activateBuiltin(codegenMetadata.at(name));
-        } else if (!(*dependencies)->contains(codegenMetadata.at(name))) {
-          (*dependencies)->emplace(codegenMetadata.at(name));
+        for (const auto &dependency : codegenMetadata.at(name)) {
+          if (dependencies == std::nullopt) {
+            this->_activateBuiltin(dependency);
+          } else if (!(*dependencies)->contains(dependency)) {
+            (*dependencies)->emplace(dependency);
+          }
         }
       } else if (this->api.contains(name)) {
         if (dependencies == std::nullopt) {
@@ -1851,17 +1904,6 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
   }
 
   return std::make_tuple(bodyTypeCasts, altTypeCasts);
-}
-
-std::string Codegen::_flags () const {
-  auto result = std::string();
-  auto idx = static_cast<std::size_t>(0);
-
-  for (const auto &flag : this->flags) {
-    result += (idx++ == 0 ? "" : " ") + flag;
-  }
-
-  return result;
 }
 
 std::string Codegen::_genCopyFn (

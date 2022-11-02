@@ -60,7 +60,11 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{SSL_CTX_free}(req->ctx);)" EOL
   R"(    _{SSL_free}(req->ssl);)" EOL
   R"(  } else if (req->fd != 0) {)" EOL
-  R"(    _{close}(req->fd);)" EOL
+  R"(    #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(      _{close}(req->fd);)" EOL
+  R"(    #else)" EOL
+  R"(      _{closesocket}(req->fd);)" EOL
+  R"(    #endif)" EOL
   R"(  })" EOL
   R"(  req->fd = 0;)" EOL
   R"(  req->ctx = _{NULL};)" EOL
@@ -84,7 +88,8 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
   R"(  char port[10];)" EOL
-  R"(  _{strcpy}(port, url->__THE_0_protocol.l == 6 ? "443" : "80");)" EOL
+  R"(  _{memcpy}(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);)" EOL
+  R"(  port[url->__THE_0_protocol.l == 6 ? 3 : 2] = '\0';)" EOL
   R"(  if (url->__THE_0_port.l != 0) {)" EOL
   R"(    _{memcpy}(port, url->__THE_0_port.d, url->__THE_0_port.l);)" EOL
   R"(    unsigned long p = _{strtoul}(port, _{NULL}, 10);)" EOL

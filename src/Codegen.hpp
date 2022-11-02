@@ -132,6 +132,7 @@ struct CodegenBuiltins {
   bool libUnistd = false;
   bool libWinDirect = false;
   bool libWinIo = false;
+  bool libWinWs2tcpip = false;
   bool libWindows = false;
   bool libWinsock2 = false;
   bool typeAny = false;
@@ -194,13 +195,17 @@ class Codegen {
   std::size_t lastAnyIdx = 1;
   bool needMainArgs = false;
 
-  static void compile (const std::string &, const std::tuple<std::string, std::string> &, const std::string &, bool = false);
+  static void compile (const std::string &, const std::tuple<std::string, std::set<std::string>> &, const std::string &, bool = false);
+  // todo test
+  static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);
+  // todo test
+  static std::string stringifyFlags (const std::set<std::string> &);
   static std::string typeName (const std::string &);
 
   explicit Codegen (AST *);
 
-  virtual std::tuple<std::string, std::string> gen ();
+  virtual std::tuple<std::string, std::set<std::string>> gen ();
 
  private:
   Codegen (const Codegen &);
@@ -213,7 +218,6 @@ class Codegen {
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
-  std::string _flags () const;
   std::string _genCopyFn (
     Type *,
     const std::string &,

@@ -64,7 +64,7 @@ TEST_P(CodegenPassTest, Passes) {
   auto expectedOutput = sections["stdout"];
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
-  ASSERT_EQ(sections["flags"], std::get<1>(result));
+  ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
 
   if (!this->testCompile_) {
     return;
@@ -121,7 +121,7 @@ TEST_P(CodegenThrowTest, Throws) {
   auto expectedStderr = sections["stderr"];
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
-  ASSERT_EQ(sections["flags"], std::get<1>(result));
+  ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
 
   if (!this->testCompile_) {
     return;
