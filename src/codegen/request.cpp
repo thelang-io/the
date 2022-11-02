@@ -177,7 +177,6 @@ const std::vector<std::string> codegenRequest = {
   R"(      ? _{send}(req->fd, &request[y], req_len - y, 0))" EOL
   R"(      : _{SSL_write}(req->ssl, &request[y], (int) (req_len - y));)" EOL
   R"(    if (z == -1) {)" EOL
-  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to write to socket" _{THE_EOL});)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
