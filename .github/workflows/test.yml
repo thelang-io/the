@@ -30,12 +30,12 @@ jobs:
       - if: runner.os == 'Windows'
         run: |
           choco install openssl
-          echo "CPPFLAGS=-LC:\Program Files\OpenSSL-Win64\include" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "CFLAGS=-LC:\Program Files\OpenSSL-Win64\include" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           echo "LDFLAGS=-LC:\Program Files\OpenSSL-Win64\lib" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
       - if: runner.os == 'macOS'
         run: |
           brew install ninja
-          echo "CPPFLAGS=-I/usr/local/opt/openssl@1.1/include" >> $GITHUB_ENV
+          echo "CFLAGS=-I/usr/local/opt/openssl@1.1/include" >> $GITHUB_ENV
           echo "LDFLAGS=-L/usr/local/opt/openssl@1.1/lib" >> $GITHUB_ENV
       - run: mkdir -p build
       - if: runner.os == 'Linux'
