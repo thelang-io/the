@@ -28,6 +28,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'Windows'
+        run: choco install openssl
+      - if: runner.os == 'Windows'
         run: |
           dir "C:\Program Files"
           dir "C:\Program Files\OpenSSL\"
