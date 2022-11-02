@@ -28,17 +28,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'Windows'
-        run: choco install openssl
-      - if: runner.os == 'Windows'
         run: |
-          dir "C:\Program Files"
-          dir "C:\Program Files\OpenSSL\"
-          dir "C:\Program Files\OpenSSL-Win64\"
+          choco install openssl
+          echo "C:\Program Files\OpenSSL-Win64\" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - if: runner.os == 'macOS'
         run: |
           brew install ninja
-          ln -s /usr/local/opt/openssl@1.1/include/openssl/ /usr/local/include/
-          ln -s /usr/local/opt/openssl@1.1/lib/libssl.dylib /usr/local/lib/
+          echo "/usr/local/opt/openssl@1.1/" >> $GITHUB_PATH
       - run: mkdir -p build
       - if: runner.os == 'Linux'
         run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
