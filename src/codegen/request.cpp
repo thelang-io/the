@@ -61,9 +61,9 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{SSL_free}(req->ssl);)" EOL
   R"(  } else if (req->fd != 0) {)" EOL
   R"(    #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(      _{close}(req->fd);)" EOL
-  R"(    #else)" EOL
   R"(      _{closesocket}(req->fd);)" EOL
+  R"(    #else)" EOL
+  R"(      _{close}(req->fd);)" EOL
   R"(    #endif)" EOL
   R"(  })" EOL
   R"(  req->fd = 0;)" EOL
