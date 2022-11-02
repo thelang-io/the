@@ -1033,12 +1033,12 @@ std::tuple<std::string, std::string> Codegen::gen () {
 
   headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";
 
-  if (this->builtins.libWinDirect || this->builtins.libWinIo || this->builtins.libWindows) {
+  if (this->builtins.libWinDirect || this->builtins.libWinIo || this->builtins.libWindows || this->builtins.libWinsock2) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
     headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
-    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += this->builtins.libWinsock2 ? "  #include <winsock2.h>" EOL : "";
+    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += "#endif" EOL;
   }
 

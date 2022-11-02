@@ -122,7 +122,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) != _{SOCKET_ERROR};)" EOL
+  R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, (int) addr->ai_addrlen) != _{SOCKET_ERROR};)" EOL
   R"(  #else)" EOL
   R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;)" EOL
   R"(  #endif)" EOL
