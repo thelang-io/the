@@ -27,8 +27,8 @@ main {
 #include <stdlib.h>
 #include <string.h>
 #ifdef THE_OS_WINDOWS
-  #include <windows.h>
   #include <winsock2.h>
+  #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
   #include <netdb.h>
@@ -195,7 +195,7 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     exit(EXIT_FAILURE);
   }
   #ifdef THE_OS_WINDOWS
-    bool connect_res = connect(req->fd, addr->ai_addr, addr->ai_addrlen) != SOCKET_ERROR;
+    bool connect_res = connect(req->fd, addr->ai_addr, (int) addr->ai_addrlen) != SOCKET_ERROR;
   #else
     bool connect_res = connect(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;
   #endif
