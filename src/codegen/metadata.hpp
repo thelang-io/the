@@ -100,6 +100,9 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"struct str", {"typeStr"}},
   std::pair<std::string, std::set<std::string>>{"struct win_reparse_data_buffer", {"typeWinReparseDataBuffer"}},
 
+  std::pair<std::string, std::set<std::string>>{"lib_openssl_init", {"varLibOpensslInit"}},
+  std::pair<std::string, std::set<std::string>>{"lib_ws2_init", {"varLibWs2Init"}},
+
   std::pair<std::string, std::set<std::string>>{"isdigit", {"libCtype"}},
   std::pair<std::string, std::set<std::string>>{"isalnum", {"libCtype"}},
   std::pair<std::string, std::set<std::string>>{"isalpha", {"libCtype"}},
@@ -121,6 +124,8 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"getaddrinfo", {"libNetdb", "libWinWs2tcpip"}},
 
   std::pair<std::string, std::set<std::string>>{"IPPROTO_TCP", {"libNetinetIn", "libWinsock2"}},
+  std::pair<std::string, std::set<std::string>>{"WSADATA", {"libNetinetIn", "libWinsock2"}},
+  std::pair<std::string, std::set<std::string>>{"WSAStartup", {"libNetinetIn", "libWinsock2"}},
 
   std::pair<std::string, std::set<std::string>>{"SSL_CTX_free", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_CTX_new", {"libOpensslSsl"}},
@@ -238,6 +243,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"IO_REPARSE_TAG_APPEXECLINK", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"IO_REPARSE_TAG_MOUNT_POINT", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"IO_REPARSE_TAG_SYMLINK", {"libWindows"}},
+  std::pair<std::string, std::set<std::string>>{"MAKEWORD", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"MAXIMUM_REPARSE_DATA_BUFFER_SIZE", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"MAX_PATH", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"OPEN_EXISTING", {"libWindows"}},

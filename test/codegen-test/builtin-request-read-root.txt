@@ -38,6 +38,9 @@ main {
   #include <unistd.h>
 #endif
 
+bool lib_openssl_init = false;
+bool lib_ws2_init = false;
+
 struct buffer {
   unsigned char *d;
   size_t l;
@@ -184,6 +187,14 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
       exit(EXIT_FAILURE);
     }
   }
+  if (!lib_ws2_init) {
+    WSADATA w;
+    if (WSAStartup(MAKEWORD(2, 2), &w) != 0) {
+      fprintf(stderr, "Error: failed to initialize use of Windows Sockets DLL" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    lib_ws2_init = true;
+  }
   char *hostname = str_cstr(url->__THE_0_hostname);
   struct addrinfo *addr = NULL;
   struct addrinfo hints;
@@ -221,14 +232,17 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
   }
   freeaddrinfo(addr);
   if (strcmp(port, "443") == 0) {
-    SSL_library_init();
+    if (!lib_openssl_init) {
+      SSL_library_init();
+      lib_openssl_init = true;
+    }
     req->ctx = SSL_CTX_new(TLS_client_method());
     if (req->ctx == NULL) {
       fprintf(stderr, "Error: failed to create SSL context" THE_EOL);
       exit(EXIT_FAILURE);
     }
     req->ssl = SSL_new(req->ctx);
-    SSL_set_fd(req->ssl, req->fd);
+    SSL_set_fd(req->ssl, (int) req->fd);
     if (SSL_connect(req->ssl) != 1) {
       fprintf(stderr, "Error: failed to connect to socket with SSL" THE_EOL);
       exit(EXIT_FAILURE);

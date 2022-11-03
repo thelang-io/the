@@ -99,6 +99,14 @@ const std::vector<std::string> codegenRequest = {
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
   R"(  })" EOL
+  R"(  if (!_{lib_ws2_init}) {)" EOL
+  R"(    _{WSADATA} w;)" EOL
+  R"(    if (_{WSAStartup}(_{MAKEWORD}(2, 2), &w) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to initialize use of Windows Sockets DLL" _{THE_EOL});)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{lib_ws2_init} = _{true};)" EOL
+  R"(  })" EOL
   R"(  char *hostname = _{str_cstr}(url->__THE_0_hostname);)" EOL
   R"(  _{struct addrinfo} *addr = _{NULL};)" EOL
   R"(  _{struct addrinfo} hints;)" EOL
@@ -138,7 +146,10 @@ const std::vector<std::string> codegenRequest = {
   R"(  })" EOL
   R"(  _{freeaddrinfo}(addr);)" EOL
   R"(  if (_{strcmp}(port, "443") == 0) {)" EOL
-  R"(    _{SSL_library_init}();)" EOL
+  R"(    if (!_{lib_openssl_init}) {)" EOL
+  R"(      _{SSL_library_init}();)" EOL
+  R"(      _{lib_openssl_init} = _{true};)" EOL
+  R"(    })" EOL
   R"(    req->ctx = _{SSL_CTX_new}(_{TLS_client_method}());)" EOL
   R"(    if (req->ctx == _{NULL}) {)" EOL
   // todo test
@@ -146,7 +157,7 @@ const std::vector<std::string> codegenRequest = {
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
   R"(    req->ssl = _{SSL_new}(req->ctx);)" EOL
-  R"(    _{SSL_set_fd}(req->ssl, req->fd);)" EOL
+  R"(    _{SSL_set_fd}(req->ssl, (int) req->fd);)" EOL
   R"(    if (_{SSL_connect}(req->ssl) != 1) {)" EOL
   // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to connect to socket with SSL" _{THE_EOL});)" EOL

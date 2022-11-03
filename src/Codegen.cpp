@@ -179,6 +179,7 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
   auto builtinFnDeclCode = std::string();
   auto builtinFnDefCode = std::string();
   auto builtinStructDefCode = std::string();
+  auto builtinVarCode = std::string();
 
   if (this->builtins.definitions) {
     builtinDefineCode += "#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)" EOL;
@@ -264,6 +265,14 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
     builtinStructDefCode += "    };" EOL;
     builtinStructDefCode += "  };" EOL;
     builtinStructDefCode += "#endif" EOL;
+  }
+
+  if (this->builtins.varLibOpensslInit) {
+    builtinVarCode += "bool lib_openssl_init = false;" EOL;
+  }
+
+  if (this->builtins.varLibWs2Init) {
+    builtinVarCode += "bool lib_ws2_init = false;" EOL;
   }
 
   if (this->builtins.fnAlloc) {
@@ -1049,6 +1058,7 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
 
   builtinDefineCode += builtinDefineCode.empty() ? "" : EOL;
   defineCode += defineCode.empty() ? "" : EOL;
+  builtinVarCode += builtinVarCode.empty() ? "" : EOL;
   builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
   structDeclCode += structDeclCode.empty() ? "" : EOL;
   structDefCode += structDefCode.empty() ? "" : EOL;
@@ -1115,6 +1125,7 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
   output += builtinDefineCode;
   output += headers;
   output += defineCode;
+  output += builtinVarCode;
   output += builtinStructDefCode;
   output += structDeclCode;
   output += structDefCode;
@@ -1574,6 +1585,12 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.typeWinReparseDataBuffer = true;
     this->_activateBuiltin("definitions");
     this->_activateBuiltin("libWindows");
+  } else if (name == "varLibOpensslInit") {
+    this->builtins.varLibOpensslInit = true;
+    this->_activateBuiltin("libStdbool");
+  } else if (name == "varLibWs2Init") {
+    this->builtins.varLibWs2Init = true;
+    this->_activateBuiltin("libStdbool");
   } else if (this->api.contains(name)) {
     this->api[name].enabled = true;
 

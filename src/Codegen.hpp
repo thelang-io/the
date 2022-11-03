@@ -140,6 +140,8 @@ struct CodegenBuiltins {
   bool typeRequest = false;
   bool typeStr = false;
   bool typeWinReparseDataBuffer = false;
+  bool varLibOpensslInit = false;
+  bool varLibWs2Init = false;
 };
 
 struct CodegenEntity {
