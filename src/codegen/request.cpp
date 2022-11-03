@@ -99,14 +99,16 @@ const std::vector<std::string> codegenRequest = {
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
   R"(  })" EOL
-  R"(  if (!_{lib_ws2_init}) {)" EOL
-  R"(    _{WSADATA} w;)" EOL
-  R"(    if (_{WSAStartup}(_{MAKEWORD}(2, 2), &w) != 0) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: failed to initialize use of Windows Sockets DLL" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    if (!_{lib_ws2_init}) {)" EOL
+  R"(      _{WSADATA} w;)" EOL
+  R"(      if (_{WSAStartup}(_{MAKEWORD}(2, 2), &w) != 0) {)" EOL
+  R"(        _{fprintf}(_{stderr}, "Error: failed to initialize use of Windows Sockets DLL" _{THE_EOL});)" EOL
+  R"(        _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      })" EOL
+  R"(      _{lib_ws2_init} = _{true};)" EOL
   R"(    })" EOL
-  R"(    _{lib_ws2_init} = _{true};)" EOL
-  R"(  })" EOL
+  R"(  #endif)" EOL
   R"(  char *hostname = _{str_cstr}(url->__THE_0_hostname);)" EOL
   R"(  _{struct addrinfo} *addr = _{NULL};)" EOL
   R"(  _{struct addrinfo} hints;)" EOL

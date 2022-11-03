@@ -177,14 +177,16 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
       exit(EXIT_FAILURE);
     }
   }
-  if (!lib_ws2_init) {
-    WSADATA w;
-    if (WSAStartup(MAKEWORD(2, 2), &w) != 0) {
-      fprintf(stderr, "Error: failed to initialize use of Windows Sockets DLL" THE_EOL);
-      exit(EXIT_FAILURE);
+  #ifdef THE_OS_WINDOWS
+    if (!lib_ws2_init) {
+      WSADATA w;
+      if (WSAStartup(MAKEWORD(2, 2), &w) != 0) {
+        fprintf(stderr, "Error: failed to initialize use of Windows Sockets DLL" THE_EOL);
+        exit(EXIT_FAILURE);
+      }
+      lib_ws2_init = true;
     }
-    lib_ws2_init = true;
-  }
+  #endif
   char *hostname = str_cstr(url->__THE_0_hostname);
   struct addrinfo *addr = NULL;
   struct addrinfo hints;
