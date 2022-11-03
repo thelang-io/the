@@ -142,6 +142,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;)" EOL
   R"(  #endif)" EOL
   R"(  if (!connect_res) {)" EOL
+  // todo test
   R"(    char *origin = _{str_cstr}(url->__THE_0_origin);)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to connect to `%s`" _{THE_EOL}, origin);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
@@ -195,6 +196,7 @@ const std::vector<std::string> codegenRequest = {
   R"(      ? _{send}(req->fd, &request[y], req_len - y, 0))" EOL
   R"(      : _{SSL_write}(req->ssl, &request[y], (int) (req_len - y));)" EOL
   R"(    if (z == -1) {)" EOL
+  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to write to socket" _{THE_EOL});)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -214,7 +216,6 @@ const std::vector<std::string> codegenRequest = {
   R"(  return (struct _{request_Request} *) req;)" EOL
   R"(})" EOL,
 
-  // todo test with wait 1 sec
   R"(struct _{request_Response} *request_read (struct _{request_Request} **r) {)" EOL
   R"(  _{struct request} *req = (void *) *r;)" EOL
   R"(  unsigned char b[1024];)" EOL

@@ -401,9 +401,7 @@ void TypeMap::init () {
   auto requestOpenTypeFn = TypeFn{requestRequestType, {
     TypeFnParam{"method", strType, false, true, false},
     TypeFnParam{"url", strType, false, true, false},
-    // todo test
     TypeFnParam{"data", bufferBufferType, false, false, false},
-    // todo test
     TypeFnParam{"headers", this->arrayOf(requestHeaderType), false, false, false}
   }};
 
