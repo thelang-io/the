@@ -141,9 +141,9 @@ void request_close (struct request_Request **r) {
     SSL_free(req->ssl);
   } else if (req->fd != 0) {
     #ifdef THE_OS_WINDOWS
-      close(req->fd);
-    #else
       closesocket(req->fd);
+    #else
+      close(req->fd);
     #endif
   }
   req->fd = 0;
