@@ -1155,9 +1155,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libNetinetIn = true;
   } else if (name == "libOpensslSsl") {
     this->builtins.libOpensslSsl = true;
-    this->flags.emplace("A:-lssl");
+    this->flags.emplace("U:-lssl");
+    this->flags.emplace("W:-llibssl");
     this->flags.emplace("W:-lWs2_32");
-    this->flags.emplace("W:-lopenssl");
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {

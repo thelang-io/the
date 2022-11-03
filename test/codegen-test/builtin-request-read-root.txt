@@ -605,5 +605,5 @@ int main () {
   request_Request_free((struct request_Request *) __THE_0_req_0);
 }
 ======= flags =======
-A:-lssl W:-lWs2_32 W:-lopenssl
+U:-lssl W:-lWs2_32 W:-llibssl
 ======= stdout =======

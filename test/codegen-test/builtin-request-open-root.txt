@@ -475,5 +475,5 @@ int main () {
   request_Request_free((struct request_Request *) request_open(str_alloc("POST"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
 }
 ======= flags =======
-A:-lssl W:-lWs2_32 W:-lopenssl
+U:-lssl W:-lWs2_32 W:-llibssl
 ======= stdout =======
