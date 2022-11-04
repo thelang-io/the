@@ -198,10 +198,8 @@ class Codegen {
   bool needMainArgs = false;
 
   static void compile (const std::string &, const std::tuple<std::string, std::set<std::string>> &, const std::string &, bool = false);
-  // todo test
   static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);
-  // todo test
   static std::string stringifyFlags (const std::set<std::string> &);
   static std::string typeName (const std::string &);
 

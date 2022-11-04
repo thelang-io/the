@@ -107,7 +107,9 @@ std::string Codegen::stringifyFlags (const std::set<std::string> &flags) {
   auto idx = static_cast<std::size_t>(0);
 
   for (const auto &flag : flags) {
-    result += (idx++ == 0 ? "" : " ") + flag;
+    if (!flag.empty()) {
+      result += (idx++ == 0 ? "" : " ") + flag;
+    }
   }
 
   return result;

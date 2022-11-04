@@ -30,6 +30,19 @@ const auto valgrindArguments = std::string(
   "--track-origins=yes"
 );
 
+TEST(CodegenTest, GetsEnvVar) {
+  EXPECT_NE(Codegen::getEnvVar("PATH"), "");
+  EXPECT_EQ(Codegen::getEnvVar("test_non_existing"), "");
+}
+
+TEST(CodegenTest, StringifyFlags) {
+  EXPECT_EQ(Codegen::stringifyFlags({}), "");
+  EXPECT_EQ(Codegen::stringifyFlags({""}), "");
+  EXPECT_EQ(Codegen::stringifyFlags({"test"}), "test");
+  EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2"}), "test1 test2");
+  EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2", "test3"}), "test1 test2 test3");
+}
+
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
   bool testCompile_ = false;
