@@ -770,55 +770,6 @@ GET https://httpbin.org/status/200 200
 GET https://httpbin.org/status/400 400
 GET https://httpbin.org/status/500 500
 
-{
-  "args": {},{{ [ ] }}
-  "data": "",{{ [ ] }}
-  "files": {},{{ [ ] }}
-  "form": {},{{ [ ] }}
-  "headers": {
-    "Content-Length": "0",{{ [ ] }}
-    "Host": "httpbin.org",{{ [ ] }}
-    "X-Amzn-Trace-Id": "{{ [^"]+ }}"
-  },{{ [ ] }}
-  "json": null,{{ [ ] }}
-  "method": "POST",{{ [ ] }}
-  "origin": "{{ [^"]+ }}",{{ [ ] }}
-  "url": "https://httpbin.org/anything"
-}
-
-{
-  "args": {},{{ [ ] }}
-  "data": "test",{{ [ ] }}
-  "files": {},{{ [ ] }}
-  "form": {},{{ [ ] }}
-  "headers": {
-    "Content-Length": "4",{{ [ ] }}
-    "Host": "httpbin.org",{{ [ ] }}
-    "X-Amzn-Trace-Id": "{{ [^"]+ }}"
-  },{{ [ ] }}
-  "json": null,{{ [ ] }}
-  "method": "POST",{{ [ ] }}
-  "origin": "{{ [^"]+ }}",{{ [ ] }}
-  "url": "https://httpbin.org/anything"
-}
-
-{
-  "args": {},{{ [ ] }}
-  "data": "",{{ [ ] }}
-  "files": {},{{ [ ] }}
-  "form": {
-    "test1": "value1",{{ [ ] }}
-    "test2": "value2"
-  },{{ [ ] }}
-  "headers": {
-    "Content-Length": "25",{{ [ ] }}
-    "Content-Type": "application/x-www-form-urlencoded",{{ [ ] }}
-    "Custom-Header": "custom-value",{{ [ ] }}
-    "Host": "httpbin.org",{{ [ ] }}
-    "X-Amzn-Trace-Id": "{{ [^"]+ }}"
-  },{{ [ ] }}
-  "json": null,{{ [ ] }}
-  "method": "POST",{{ [ ] }}
-  "origin": "{{ [^"]+ }}",{{ [ ] }}
-  "url": "https://httpbin.org/anything"
-}{{ \n }}
+{{{ \s+ }}"args": {},{{ \s+ }}"data": "",{{ \s+ }}"files": {},{{ \s+ }}"form": {},{{ \s+ }}"headers": {{{ \s+ }}"Content-Length": "0",{{ \s+ }}"Host": "httpbin.org",{{ \s+ }}"X-Amzn-Trace-Id": "{{ [^"]+ }}"{{ \s+ }}},{{ \s+ }}"json": null,{{ \s+ }}"method": "POST",{{ \s+ }}"origin": "{{ [^"]+ }}",{{ \s+ }}"url": "https://httpbin.org/anything"{{ \s+ }}}{{ \n }}
+{{{ \s+ }}"args": {},{{ \s+ }}"data": "test",{{ \s+ }}"files": {},{{ \s+ }}"form": {},{{ \s+ }}"headers": {{{ \s+ }}"Content-Length": "4",{{ \s+ }}"Host": "httpbin.org",{{ \s+ }}"X-Amzn-Trace-Id": "{{ [^"]+ }}"{{ \s+ }}},{{ \s+ }}"json": null,{{ \s+ }}"method": "POST",{{ \s+ }}"origin": "{{ [^"]+ }}",{{ \s+ }}"url": "https://httpbin.org/anything"{{ \s+ }}}{{ \n }}
+{{{ \s+ }}"args": {},{{ \s+ }}"data": "",{{ \s+ }}"files": {},{{ \s+ }}"form": {{{ \s+ }}"test1": "value1",{{ \s+ }}"test2": "value2"{{ \s+ }}},{{ \s+ }}"headers": {{{ \s+ }}"Content-Length": "25",{{ \s+ }}"Content-Type": "application/x-www-form-urlencoded",{{ \s+ }}"Custom-Header": "custom-value",{{ \s+ }}"Host": "httpbin.org",{{ \s+ }}"X-Amzn-Trace-Id": "{{ [^"]+ }}"{{ \s+ }}},{{ \s+ }}"json": null,{{ \s+ }}"method": "POST",{{ \s+ }}"origin": "{{ [^"]+ }}",{{ \s+ }}"url": "https://httpbin.org/anything"{{ \s+ }}}{{ \n }}
