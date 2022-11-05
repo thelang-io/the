@@ -171,21 +171,23 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     char *protocol = str_cstr(url->__THE_0_protocol);
     fprintf(stderr, "Error: can't perform request with protocol `%s`" THE_EOL, protocol);
     exit(EXIT_FAILURE);
-  } else if (url->__THE_0_port.l > 6) {
+  } else if (url->__THE_0_port.l >= 6) {
     char *port = str_cstr(url->__THE_0_port);
     fprintf(stderr, "Error: invalid port `%s`" THE_EOL, port);
     exit(EXIT_FAILURE);
   }
-  char port[10];
-  memcpy(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);
-  port[url->__THE_0_protocol.l == 6 ? 3 : 2] = '\0';
+  char port[6];
   if (url->__THE_0_port.l != 0) {
     memcpy(port, url->__THE_0_port.d, url->__THE_0_port.l);
+    port[url->__THE_0_port.l] = '\0';
     unsigned long p = strtoul(port, NULL, 10);
     if (p > 65535) {
       fprintf(stderr, "Error: invalid port `%s`" THE_EOL, port);
       exit(EXIT_FAILURE);
     }
+  } else {
+    memcpy(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);
+    port[url->__THE_0_protocol.l == 6 ? 3 : 2] = '\0';
   }
   #ifdef THE_OS_WINDOWS
     if (!lib_ws2_init) {
@@ -486,7 +488,7 @@ struct url_URL *url_parse (struct str s) {
     else if (ch == '/' && pathname_start == 0) pathname_start = i;
     else if (ch == '?' && search_start == 0) search_start = i;
     else if (ch == '#' && hash_start == 0) hash_start = i;
-    else if (i == s.l - 1) break;
+    if (i == s.l - 1) break;
   }
   struct str hostname = str_alloc("");
   size_t hostname_end = port_start != 0 ? port_start : pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;

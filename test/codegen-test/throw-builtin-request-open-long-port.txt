@@ -1,25 +1,6 @@
 ======= stdin =======
 main {
-  mut req := request_open("GET", "http://example.com")
-  res1 := request_read(ref req)
-  request_close(ref req)
-
-  req = request_open("POST", "http://example.com")
-  res2 := request_read(ref req)
-  request_close(ref req)
-
-  req = request_open("GET", "https://example.com")
-  res3 := request_read(ref req)
-  request_close(ref req)
-
-  req = request_open("POST", "https://example.com")
-  res4 := request_read(ref req)
-  request_close(ref req)
-
-  print("GET http://example.com:", res1.status)
-  print("POST http://example.com:", res2.status)
-  print("GET https://example.com:", res3.status)
-  print("POST https://example.com:", res4.status)
+  request_open("GET", "http://localhost:655356")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -37,9 +18,7 @@ main {
 #endif
 
 #include <ctype.h>
-#include <inttypes.h>
 #include <openssl/ssl.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,7 +59,6 @@ struct str {
 struct request_Header;
 struct request_Request;
 struct __THE_1_array_request_Header;
-struct request_Response;
 struct url_URL;
 
 struct request_Header {
@@ -92,11 +70,6 @@ struct request_Request {
 struct __THE_1_array_request_Header {
   struct request_Header **d;
   size_t l;
-};
-struct request_Response {
-  const struct buffer __THE_0_data;
-  const int32_t __THE_0_status;
-  const struct __THE_1_array_request_Header __THE_0_headers;
 };
 struct url_URL {
   const struct str __THE_0_origin;
@@ -113,22 +86,16 @@ struct url_URL {
 void *alloc (size_t);
 void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
-void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
 void request_close (struct request_Request **);
 struct request_Request *request_open (struct str, struct str, struct buffer, struct __THE_1_array_request_Header);
-struct request_Response *request_read (struct request_Request **);
 char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct url_URL *url_parse (struct str);
-struct request_Header *request_Header_alloc (struct str, struct str);
 void request_Header_free (struct request_Header *);
 void request_Request_free (struct request_Request *);
-struct request_Request *request_Request_realloc (struct request_Request *, struct request_Request *);
 void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header);
-struct request_Response *request_Response_alloc (struct buffer, int32_t, struct __THE_1_array_request_Header);
-void request_Response_free (struct request_Response *);
 struct url_URL *url_URL_alloc (struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str);
 void url_URL_free (struct url_URL *);
 
@@ -150,35 +117,6 @@ void *re_alloc (void *d, size_t l) {
 }
 void buffer_free (struct buffer o) {
   free(o.d);
-}
-void print (FILE *stream, const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  char buf[512];
-  struct str s;
-  while (*fmt) {
-    switch (*fmt++) {
-      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
-      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
-      case 'c': fputc(va_arg(args, int), stream); break;
-      case 'e':
-      case 'f':
-      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
-      case 'h':
-      case 'j':
-      case 'v':
-      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
-      case 'i':
-      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
-      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
-      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
-      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
-      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
-      case 'z': fputs(va_arg(args, char *), stream); break;
-    }
-  }
-  va_end(args);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -348,109 +286,6 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
   url_URL_free(url);
   return (struct request_Request *) req;
 }
-struct request_Response *request_read (struct request_Request **r) {
-  struct request *req = (void *) *r;
-  unsigned char b[1024];
-  #ifdef THE_OS_WINDOWS
-    SSIZE_T y;
-  #else
-    ssize_t y;
-  #endif
-  struct buffer data = {NULL, 0};
-  while ((y = (req->ssl == NULL ? recv(req->fd, b, sizeof(b), 0) : SSL_read(req->ssl, b, sizeof(b)))) > 0) {
-    data.d = re_alloc(data.d, data.l + y);
-    memcpy(&data.d[data.l], b, y);
-    data.l += y;
-  }
-  if (y < 0) {
-    fprintf(stderr, "Error: failed to read from socket" THE_EOL);
-    exit(EXIT_FAILURE);
-  }
-  size_t i;
-  if (data.l > 8 && (memcmp(data.d, "HTTP/1.0 ", 9) == 0 || memcmp(data.d, "HTTP/1.1 ", 9) == 0)) {
-    i = 9;
-  } else if (data.l > 6 && (memcmp(data.d, "HTTP/2 ", 7) == 0 || memcmp(data.d, "HTTP/3 ", 7) == 0)) {
-    i = 7;
-  } else {
-    fprintf(stderr, "Error: invalid response HTTP version" THE_EOL);
-    exit(EXIT_FAILURE);
-  }
-  size_t status_start = i;
-  while (i < data.l && isdigit(data.d[i])) i++;
-  if (status_start == i) {
-    fprintf(stderr, "Error: invalid response HTTP status code" THE_EOL);
-    exit(EXIT_FAILURE);
-  }
-  size_t status_len = i - status_start;
-  char *status = alloc(status_len + 1);
-  memcpy(status, &data.d[status_start], status_len);
-  status[status_len] = '\0';
-  int32_t status_code = (int32_t) strtoul(status, NULL, 10);
-  free(status);
-  while (i < data.l) {
-    if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {
-      i += 2;
-      break;
-    }
-    i++;
-  }
-  struct __THE_1_array_request_Header headers = {NULL, 0};
-  while (true) {
-    if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {
-      i += 2;
-      break;
-    }
-    size_t header_name_start = i;
-    size_t header_name_end = 0;
-    size_t header_value_start = 0;
-    size_t header_value_end = 0;
-    while (i < data.l) {
-      if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {
-        header_value_end = i;
-        i += 2;
-        break;
-      } else if (data.d[i] == ':' && header_name_end == 0) {
-        header_name_end = i;
-        i++;
-        while (i < data.l && data.d[i] == ' ') i++;
-        header_value_start = i;
-      }
-      i++;
-    }
-    struct str header_name;
-    header_name.l = header_name_end - header_name_start;
-    header_name.d = alloc(header_name.l);
-    memcpy(header_name.d, &data.d[header_name_start], header_name.l);
-    for (size_t j = 0; j < header_name.l; j++) header_name.d[j] = (char) tolower(header_name.d[j]);
-    struct str header_value;
-    header_value.l = header_value_end - header_value_start;
-    header_value.d = alloc(header_value.l);
-    memcpy(header_value.d, &data.d[header_value_start], header_value.l);
-    headers.d = re_alloc(headers.d, (headers.l + 1) * sizeof(struct request_Header *));
-    headers.d[headers.l] = request_Header_alloc(header_name, header_value);
-    headers.l++;
-  }
-  for (size_t j = 0; j < headers.l; j++) {
-    for (size_t k = j + 1; k < headers.l; k++) {
-      size_t count = headers.d[j]->__THE_0_name.l > headers.d[k]->__THE_0_name.l ? headers.d[k]->__THE_0_name.l : headers.d[j]->__THE_0_name.l;
-      if (memcmp(headers.d[j]->__THE_0_name.d, headers.d[k]->__THE_0_name.d, count) > 0) {
-        struct request_Header *a = headers.d[j];
-        headers.d[j] = headers.d[k];
-        headers.d[k] = a;
-      }
-    }
-  }
-  if (data.l - i > 0) {
-    data.l = data.l - i;
-    memmove(data.d, &data.d[i], data.l);
-    data.d = re_alloc(data.d, data.l);
-  } else {
-    free(data.d);
-    data.d = NULL;
-    data.l = 0;
-  }
-  return request_Response_alloc(data, status_code, headers);
-}
 char *request_stringifyHeaders (struct __THE_1_array_request_Header headers, struct url_URL *url, struct buffer data) {
   bool has_content_length = false;
   bool has_host = false;
@@ -616,12 +451,6 @@ struct url_URL *url_parse (struct str s) {
   str_free(s);
   return url_URL_alloc(origin, protocol, host, hostname, port, path, pathname, search, hash);
 }
-struct request_Header *request_Header_alloc (struct str __THE_0_name, struct str __THE_0_value) {
-  struct request_Header *r = alloc(sizeof(struct request_Header));
-  struct request_Header s = {__THE_0_name, __THE_0_value};
-  memcpy(r, &s, sizeof(struct request_Header));
-  return r;
-}
 void request_Header_free (struct request_Header *o) {
   str_free((struct str) o->__THE_0_name);
   str_free((struct str) o->__THE_0_value);
@@ -631,24 +460,9 @@ void request_Request_free (struct request_Request *o) {
   request_close(&o);
   free(o);
 }
-struct request_Request *request_Request_realloc (struct request_Request *o1, struct request_Request *o2) {
-  request_Request_free((struct request_Request *) o1);
-  return o2;
-}
 void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header n) {
   for (size_t i = 0; i < n.l; i++) request_Header_free((struct request_Header *) n.d[i]);
   free(n.d);
-}
-struct request_Response *request_Response_alloc (struct buffer __THE_0_data, int32_t __THE_0_status, struct __THE_1_array_request_Header __THE_0_headers) {
-  struct request_Response *r = alloc(sizeof(struct request_Response));
-  struct request_Response s = {__THE_0_data, __THE_0_status, __THE_0_headers};
-  memcpy(r, &s, sizeof(struct request_Response));
-  return r;
-}
-void request_Response_free (struct request_Response *o) {
-  buffer_free((struct buffer) o->__THE_0_data);
-  __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) o->__THE_0_headers);
-  free(o);
 }
 struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_protocol, struct str __THE_0_host, struct str __THE_0_hostname, struct str __THE_0_port, struct str __THE_0_path, struct str __THE_0_pathname, struct str __THE_0_search, struct str __THE_0_hash) {
   struct url_URL *r = alloc(sizeof(struct url_URL));
@@ -670,32 +484,9 @@ void url_URL_free (struct url_URL *o) {
 }
 
 int main () {
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("http://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
-  const struct request_Response *__THE_0_res1_0 = request_read(&__THE_0_req_0);
-  request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("http://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
-  const struct request_Response *__THE_0_res2_0 = request_read(&__THE_0_req_0);
-  request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
-  const struct request_Response *__THE_0_res3_0 = request_read(&__THE_0_req_0);
-  request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
-  const struct request_Response *__THE_0_res4_0 = request_read(&__THE_0_req_0);
-  request_close(&__THE_0_req_0);
-  print(stdout, "zziz", "GET http://example.com:", " ", __THE_0_res1_0->__THE_0_status, THE_EOL);
-  print(stdout, "zziz", "POST http://example.com:", " ", __THE_0_res2_0->__THE_0_status, THE_EOL);
-  print(stdout, "zziz", "GET https://example.com:", " ", __THE_0_res3_0->__THE_0_status, THE_EOL);
-  print(stdout, "zziz", "POST https://example.com:", " ", __THE_0_res4_0->__THE_0_status, THE_EOL);
-  request_Response_free((struct request_Response *) __THE_0_res4_0);
-  request_Response_free((struct request_Response *) __THE_0_res3_0);
-  request_Response_free((struct request_Response *) __THE_0_res2_0);
-  request_Response_free((struct request_Response *) __THE_0_res1_0);
-  request_Request_free((struct request_Request *) __THE_0_req_0);
+  request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("http://localhost:655356"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
 }
 ======= flags =======
 U:-lssl W:-lWs2_32 W:-llibssl
-======= stdout =======
-GET http://example.com: 200
-POST http://example.com: 200
-GET https://example.com: 200
-POST https://example.com: 200
+======= stderr =======
+Error: invalid port `655356`

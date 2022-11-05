@@ -69,7 +69,7 @@ const std::vector<std::string> codegenURL = {
   R"(    else if (ch == '/' && pathname_start == 0) pathname_start = i;)" EOL
   R"(    else if (ch == '?' && search_start == 0) search_start = i;)" EOL
   R"(    else if (ch == '#' && hash_start == 0) hash_start = i;)" EOL
-  R"(    else if (i == s.l - 1) break;)" EOL
+  R"(    if (i == s.l - 1) break;)" EOL
   R"(  })" EOL
   R"(  _{struct str} hostname = _{str_alloc}("");)" EOL
   R"(  _{size_t} hostname_end = port_start != 0 ? port_start : pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;)" EOL

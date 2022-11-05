@@ -77,27 +77,26 @@ const std::vector<std::string> codegenRequest = {
   R"(    !(url->__THE_0_protocol.l == 5 && _{memcmp}(url->__THE_0_protocol.d, "http:", 5) == 0) &&)" EOL
   R"(    !(url->__THE_0_protocol.l == 6 && _{memcmp}(url->__THE_0_protocol.d, "https:", 6) == 0))" EOL
   R"(  ) {)" EOL
-  // todo test
   R"(    char *protocol = _{str_cstr}(url->__THE_0_protocol);)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: can't perform request with protocol `%s`" _{THE_EOL}, protocol);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
-  R"(  } else if (url->__THE_0_port.l > 6) {)" EOL
-  // todo test
+  R"(  } else if (url->__THE_0_port.l >= 6) {)" EOL
   R"(    char *port = _{str_cstr}(url->__THE_0_port);)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: invalid port `%s`" _{THE_EOL}, port);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
-  R"(  char port[10];)" EOL
-  R"(  _{memcpy}(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);)" EOL
-  R"(  port[url->__THE_0_protocol.l == 6 ? 3 : 2] = '\0';)" EOL
+  R"(  char port[6];)" EOL
   R"(  if (url->__THE_0_port.l != 0) {)" EOL
   R"(    _{memcpy}(port, url->__THE_0_port.d, url->__THE_0_port.l);)" EOL
+  R"(    port[url->__THE_0_port.l] = '\0';)" EOL
   R"(    unsigned long p = _{strtoul}(port, _{NULL}, 10);)" EOL
   R"(    if (p > 65535) {)" EOL
-  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: invalid port `%s`" _{THE_EOL}, port);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
+  R"(  } else {)" EOL
+  R"(    _{memcpy}(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);)" EOL
+  R"(    port[url->__THE_0_protocol.l == 6 ? 3 : 2] = '\0';)" EOL
   R"(  })" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    if (!_{lib_ws2_init}) {)" EOL
@@ -117,7 +116,6 @@ const std::vector<std::string> codegenRequest = {
   R"(  hints.ai_socktype = _{SOCK_STREAM};)" EOL
   R"(  hints.ai_protocol = _{IPPROTO_TCP};)" EOL
   R"(  if (_{getaddrinfo}(hostname, port, &hints, &addr) != 0) {)" EOL
-  // todo test
   R"(    _{fprintf}(_{stderr}, "Error: failed to resolve hostname address" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -132,7 +130,6 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{bool} socket_res = req->fd != -1;)" EOL
   R"(  #endif)" EOL
   R"(  if (!socket_res) {)" EOL
-  // todo test
   R"(    _{fprintf}(_{stderr}, "Error: failed to create socket" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -142,7 +139,6 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;)" EOL
   R"(  #endif)" EOL
   R"(  if (!connect_res) {)" EOL
-  // todo test
   R"(    char *origin = _{str_cstr}(url->__THE_0_origin);)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to connect to `%s`" _{THE_EOL}, origin);)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
@@ -155,14 +151,12 @@ const std::vector<std::string> codegenRequest = {
   R"(    })" EOL
   R"(    req->ctx = _{SSL_CTX_new}(_{TLS_client_method}());)" EOL
   R"(    if (req->ctx == _{NULL}) {)" EOL
-  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to create SSL context" _{THE_EOL});)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
   R"(    req->ssl = _{SSL_new}(req->ctx);)" EOL
   R"(    _{SSL_set_fd}(req->ssl, (int) req->fd);)" EOL
   R"(    if (_{SSL_connect}(req->ssl) != 1) {)" EOL
-  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to connect to socket with SSL" _{THE_EOL});)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -196,7 +190,6 @@ const std::vector<std::string> codegenRequest = {
   R"(      ? _{send}(req->fd, &request[y], req_len - y, 0))" EOL
   R"(      : _{SSL_write}(req->ssl, &request[y], (int) (req_len - y));)" EOL
   R"(    if (z == -1) {)" EOL
-  // todo test
   R"(      _{fprintf}(_{stderr}, "Error: failed to write to socket" _{THE_EOL});)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
@@ -231,7 +224,6 @@ const std::vector<std::string> codegenRequest = {
   R"(    data.l += y;)" EOL
   R"(  })" EOL
   R"(  if (y < 0) {)" EOL
-  // todo test
   R"(    _{fprintf}(_{stderr}, "Error: failed to read from socket" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
@@ -241,14 +233,12 @@ const std::vector<std::string> codegenRequest = {
   R"(  } else if (data.l > 6 && (_{memcmp}(data.d, "HTTP/2 ", 7) == 0 || _{memcmp}(data.d, "HTTP/3 ", 7) == 0)) {)" EOL
   R"(    i = 7;)" EOL
   R"(  } else {)" EOL
-  // todo test
   R"(    _{fprintf}(_{stderr}, "Error: invalid response HTTP version" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
   R"(  _{size_t} status_start = i;)" EOL
   R"(  while (i < data.l && _{isdigit}(data.d[i])) i++;)" EOL
   R"(  if (status_start == i) {)" EOL
-  // todo test
   R"(    _{fprintf}(_{stderr}, "Error: invalid response HTTP status code" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL

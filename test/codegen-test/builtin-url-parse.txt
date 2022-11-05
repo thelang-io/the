@@ -1,6 +1,10 @@
 ======= stdin =======
 main {
+  print(url_parse("http://"))
   print(url_parse("http://thelang.io"))
+  print(url_parse("http://thelang.io/"))
+  print(url_parse("test://127.0.0.1:1234"))
+  print(url_parse("test://127.0.0.1:1234/"))
   print(url_parse("test://example.com:8080/pathname?search=query&query=search#hash-string"))
   print(url_parse("test:pathname"))
   print(url_parse("test://127.0.0.1/pathname?test"))
@@ -212,7 +216,7 @@ struct url_URL *url_parse (struct str s) {
     else if (ch == '/' && pathname_start == 0) pathname_start = i;
     else if (ch == '?' && search_start == 0) search_start = i;
     else if (ch == '#' && hash_start == 0) hash_start = i;
-    else if (i == s.l - 1) break;
+    if (i == s.l - 1) break;
   }
   struct str hostname = str_alloc("");
   size_t hostname_end = port_start != 0 ? port_start : pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
@@ -343,7 +347,11 @@ struct str url_URL_str (struct url_URL *o) {
 }
 
 int main () {
+  print(stdout, "sz", url_URL_str(url_parse(str_alloc("http://"))), THE_EOL);
   print(stdout, "sz", url_URL_str(url_parse(str_alloc("http://thelang.io"))), THE_EOL);
+  print(stdout, "sz", url_URL_str(url_parse(str_alloc("http://thelang.io/"))), THE_EOL);
+  print(stdout, "sz", url_URL_str(url_parse(str_alloc("test://127.0.0.1:1234"))), THE_EOL);
+  print(stdout, "sz", url_URL_str(url_parse(str_alloc("test://127.0.0.1:1234/"))), THE_EOL);
   print(stdout, "sz", url_URL_str(url_parse(str_alloc("test://example.com:8080/pathname?search=query&query=search#hash-string"))), THE_EOL);
   print(stdout, "sz", url_URL_str(url_parse(str_alloc("test:pathname"))), THE_EOL);
   print(stdout, "sz", url_URL_str(url_parse(str_alloc("test://127.0.0.1/pathname?test"))), THE_EOL);
@@ -360,7 +368,11 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
+url_URL{origin: "", protocol: "http:", host: "", hostname: "", port: "", path: "", pathname: "", search: "", hash: ""}
 url_URL{origin: "http://thelang.io", protocol: "http:", host: "thelang.io", hostname: "thelang.io", port: "", path: "/", pathname: "/", search: "", hash: ""}
+url_URL{origin: "http://thelang.io", protocol: "http:", host: "thelang.io", hostname: "thelang.io", port: "", path: "/", pathname: "/", search: "", hash: ""}
+url_URL{origin: "", protocol: "test:", host: "127.0.0.1:1234", hostname: "127.0.0.1", port: "1234", path: "", pathname: "", search: "", hash: ""}
+url_URL{origin: "", protocol: "test:", host: "127.0.0.1:1234", hostname: "127.0.0.1", port: "1234", path: "/", pathname: "/", search: "", hash: ""}
 url_URL{origin: "", protocol: "test:", host: "example.com:8080", hostname: "example.com", port: "8080", path: "/pathname?search=query&query=search", pathname: "/pathname", search: "?search=query&query=search", hash: "#hash-string"}
 url_URL{origin: "", protocol: "test:", host: "", hostname: "", port: "", path: "pathname", pathname: "pathname", search: "", hash: ""}
 url_URL{origin: "", protocol: "test:", host: "127.0.0.1", hostname: "127.0.0.1", port: "", path: "/pathname?test", pathname: "/pathname", search: "?test", hash: ""}

@@ -1,6 +1,7 @@
 ======= stdin =======
 main {
   url_parse("http://thelang.io")
+  url_parse("http://thelang.io/")
   url_parse("test://example.com:8080/pathname?search=query&query=search#hash-string")
   url_parse("test:pathname")
   url_parse("test://127.0.0.1/pathname?test")
@@ -138,7 +139,7 @@ struct url_URL *url_parse (struct str s) {
     else if (ch == '/' && pathname_start == 0) pathname_start = i;
     else if (ch == '?' && search_start == 0) search_start = i;
     else if (ch == '#' && hash_start == 0) hash_start = i;
-    else if (i == s.l - 1) break;
+    if (i == s.l - 1) break;
   }
   struct str hostname = str_alloc("");
   size_t hostname_end = port_start != 0 ? port_start : pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
@@ -238,6 +239,7 @@ void url_URL_free (struct url_URL *o) {
 
 int main () {
   url_URL_free((struct url_URL *) url_parse(str_alloc("http://thelang.io")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("http://thelang.io/")));
   url_URL_free((struct url_URL *) url_parse(str_alloc("test://example.com:8080/pathname?search=query&query=search#hash-string")));
   url_URL_free((struct url_URL *) url_parse(str_alloc("test:pathname")));
   url_URL_free((struct url_URL *) url_parse(str_alloc("test://127.0.0.1/pathname?test")));
