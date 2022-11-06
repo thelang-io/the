@@ -71,6 +71,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"str_concat_str", {"fnStrConcatStr"}},
   std::pair<std::string, std::set<std::string>>{"str_copy", {"fnStrCopy"}},
   std::pair<std::string, std::set<std::string>>{"str_cstr", {"fnStrCstr"}},
+  std::pair<std::string, std::set<std::string>>{"str_empty", {"fnStrEmpty"}},
   std::pair<std::string, std::set<std::string>>{"str_eq_cstr", {"fnStrEqCstr"}},
   std::pair<std::string, std::set<std::string>>{"str_eq_str", {"fnStrEqStr"}},
   std::pair<std::string, std::set<std::string>>{"str_escape", {"fnStrEscape"}},

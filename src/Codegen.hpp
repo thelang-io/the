@@ -89,6 +89,7 @@ struct CodegenBuiltins {
   bool fnStrConcatStr = false;
   bool fnStrCopy = false;
   bool fnStrCstr = false;
+  bool fnStrEmpty = false;
   bool fnStrEqCstr = false;
   bool fnStrEqStr = false;
   bool fnStrEscape = false;

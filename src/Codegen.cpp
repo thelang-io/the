@@ -772,6 +772,15 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnStrEmpty) {
+    builtinFnDeclCode += "bool str_empty (struct str);" EOL;
+    builtinFnDefCode += "bool str_empty (struct str s) {" EOL;
+    builtinFnDefCode += "  bool r = s.l == 0;" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnStrEqCstr) {
     builtinFnDeclCode += "bool str_eq_cstr (struct str, const char *);" EOL;
     builtinFnDefCode += "bool str_eq_cstr (struct str s, const char *r) {" EOL;
@@ -1442,6 +1451,11 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.fnStrCstr = true;
     this->_activateBuiltin("fnAlloc");
     this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrEmpty") {
+    this->builtins.fnStrEmpty = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrEqCstr") {
     this->builtins.fnStrEqCstr = true;
@@ -3107,6 +3121,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
 
         code = typeStrFn + calleeCode;
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.empty") {
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_empty");
+        code = calleeTypeInfo.realTypeName + "_empty(" + this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.get("bool")) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -3163,6 +3180,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
         this->_activateBuiltin("fnCharRepeat");
         code = "char_repeat(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.empty") {
+        this->_activateBuiltin("fnStrEmpty");
+        code = "str_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.find") {
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
         this->_activateBuiltin("fnStrFind");
@@ -3712,6 +3732,14 @@ std::string Codegen::_typeNameArray (const Type *type) {
   copyFnEntity.def += "  return (struct " + typeName + ") {d, n.l};" EOL;
   copyFnEntity.def += "}";
 
+  auto emptyFnEntity = CodegenEntity{typeName + "_empty", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
+  emptyFnEntity.decl += "bool " + typeName + "_empty (struct " + typeName + ");";
+  emptyFnEntity.def += "bool " + typeName + "_empty (struct " + typeName + " n) {" EOL;
+  emptyFnEntity.def += "  bool r = n.l == 0;" EOL;
+  emptyFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
+  emptyFnEntity.def += "  return r;" EOL;
+  emptyFnEntity.def += "}";
+
   auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
   eqFnEntity.decl += "bool " + typeName + "_eq (struct " + typeName + ", struct " + typeName + ");";
   eqFnEntity.def += "bool " + typeName + "_eq (struct " + typeName + " n1, struct " + typeName + " n2) {" EOL;
@@ -3889,6 +3917,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
   this->entities.push_back(allocFnEntity);
   this->entities.push_back(atFnEntity);
   this->entities.push_back(copyFnEntity);
+  this->entities.push_back(emptyFnEntity);
   this->entities.push_back(eqFnEntity);
   this->entities.push_back(freeFnEntity);
   this->entities.push_back(joinFnEntity);

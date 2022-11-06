@@ -1,0 +1,114 @@
+======= stdin =======
+main {
+  result1 := "".empty()
+  result2 := '\0'.repeat(1).empty()
+  result3 := "t".empty()
+  result4 := "test".empty()
+  result5 := '\0'.repeat(0xFFFFFFFF).empty()
+  print(result1, result2, result3, result4, result5)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str char_repeat (char, uint32_t);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+bool str_empty (struct str);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str char_repeat (char c, uint32_t k) {
+  if (k == 0) return str_alloc("");
+  size_t l = (size_t) k;
+  char *d = alloc(l);
+  size_t i = 0;
+  while (i < l) d[i++] = c;
+  return (struct str) {d, l};
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+bool str_empty (struct str s) {
+  bool r = s.l == 0;
+  free(s.d);
+  return r;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  const bool __THE_0_result1_0 = str_empty(str_alloc(""));
+  const bool __THE_0_result2_0 = str_empty(char_repeat('\0', 1));
+  const bool __THE_0_result3_0 = str_empty(str_alloc("t"));
+  const bool __THE_0_result4_0 = str_empty(str_alloc("test"));
+  const bool __THE_0_result5_0 = str_empty(char_repeat('\0', 0xFFFFFFFF));
+  print(stdout, "tztztztztz", __THE_0_result1_0, " ", __THE_0_result2_0, " ", __THE_0_result3_0, " ", __THE_0_result4_0, " ", __THE_0_result5_0, THE_EOL);
+}
+======= flags =======
+======= stdout =======
+true false false false false

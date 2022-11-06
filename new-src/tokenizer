@@ -48,7 +48,7 @@ fn Tokenizer_next (
 ) Token {
   if self.data.len < self.state.idx {
     return self.data[self.state.idx++]
-  } elif self.data[self.data.len - 1].type == TK_EOF {
+  } elif self.data[-1].type == TK_EOF {
     RaiseError("Tried to tokenize on eof")
   }
 
@@ -535,7 +535,7 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
     errorLinesNums.push(startLoc.line)
   }
 
-  gutterLen := errorLinesNums[errorLinesNums.len - 1].str().len + 1
+  gutterLen := errorLinesNums[-1].str().len + 1
 
   mut error := self.reader.path + ":" + startLoc.line.str() + ":" +
     startLoc.col.str() + ": SyntaxError: " + message + os_EOL

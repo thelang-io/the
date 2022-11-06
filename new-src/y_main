@@ -24,9 +24,9 @@ main {
     result.push(Token_str(tok))
   }
 
-  if tokenizer.errors.len != 0 {
+  if !tokenizer.errors.empty() {
     RaiseError(tokenizer.errors.join(os_EOL + os_EOL))
-  } else {
-    print(result.join(os_EOL))
   }
+
+  print(result.join(os_EOL))
 }

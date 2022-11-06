@@ -37,5 +37,5 @@ fn Location_locate (content: str, pos: int) Location {
     curPos += line.len
   }
 
-  return Location{line: lines.len, col: lines[lines.len - 1].len}
+  return Location{line: lines.len, col: lines[-1].len}
 }
