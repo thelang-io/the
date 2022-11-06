@@ -19,9 +19,9 @@ fn RaiseError (message: str) void {
   exit(1)
 }
 
-fn E0000 (unexpected: char, expected: char?) str {
+fn E0000 (unexpected: char, expected := '\0') str {
   return "E0000: Unexpected token `" + unexpected.str() + "`" +
-    (expected == nil ? "" : ", expected.str() `" + expected + "`")
+    (expected == '\0' ? "" : ", expected `" + expected.str() + "`")
 }
 
 fn E0001 () str {
@@ -69,5 +69,5 @@ fn E0011 () str {
 }
 
 fn E0012 (type: str) str {
-  return "E0012 - " + type.toUpperFirst() + " float literals are not allowed"
+  return "E0012 - " + type.upperFirst() + " float literals are not allowed"
 }

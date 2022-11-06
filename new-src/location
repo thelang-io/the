@@ -15,8 +15,8 @@
  */
 
 obj Location {
-  line: int
-  col: int
+  mut line: int
+  mut col: int
 }
 
 fn Location_locate (content: str, pos: int) Location {

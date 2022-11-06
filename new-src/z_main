@@ -15,16 +15,12 @@
  */
 
 main {
-  arguments := Arguments_init()
+  arguments := Arguments_init(process_args)
   mut reader := Reader_init(arguments.fileName)
   mut tokenizer := Tokenizer_init(ref reader)
   mut result: str[]
 
-  loop (
-    tok := Tokenizer_next(ref tokenizer);
-    tok.type != TK_EOF;
-    tok = Tokenizer_next(ref tokenizer)
-  ) {
+  loop tok := Tokenizer_next(ref tokenizer); tok.type != TK_EOF; tok = Tokenizer_next(ref tokenizer) {
     result.push(Token_str(tok))
   }
 
