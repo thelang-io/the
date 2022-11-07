@@ -4,7 +4,7 @@ main {
   result2 := '\0'.repeat(1).empty()
   result3 := "t".empty()
   result4 := "test".empty()
-  result5 := '\0'.repeat(0xFFFFFFFF).empty()
+  result5 := '\0'.repeat(0xFFFFFFF).empty()
   print(result1, result2, result3, result4, result5)
 }
 ======= code =======
@@ -106,7 +106,7 @@ int main () {
   const bool __THE_0_result2_0 = str_empty(char_repeat('\0', 1));
   const bool __THE_0_result3_0 = str_empty(str_alloc("t"));
   const bool __THE_0_result4_0 = str_empty(str_alloc("test"));
-  const bool __THE_0_result5_0 = str_empty(char_repeat('\0', 0xFFFFFFFF));
+  const bool __THE_0_result5_0 = str_empty(char_repeat('\0', 0xFFFFFFF));
   print(stdout, "tztztztztz", __THE_0_result1_0, " ", __THE_0_result2_0, " ", __THE_0_result3_0, " ", __THE_0_result4_0, " ", __THE_0_result5_0, THE_EOL);
 }
 ======= flags =======
