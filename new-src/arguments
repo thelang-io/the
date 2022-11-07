@@ -19,7 +19,7 @@ obj Arguments {
 }
 
 fn Arguments_init (mut args: str[]) Arguments {
-  args = args.slice(0)
+  args = args.slice(1)
 
   if args.empty() {
     RaiseError("REPL is not supported")

@@ -15,7 +15,7 @@
  */
 
 obj Tokenizer {
-  reader: ref Reader
+  mut reader: ref Reader
   mut state: TokenizerState
   mut data: Token[]
   mut errors: str[]
