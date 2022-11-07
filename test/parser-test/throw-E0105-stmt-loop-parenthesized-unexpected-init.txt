@@ -1,0 +1,6 @@
+======= stdin =======
+loop (if true {}) {}
+======= stderr =======
+/test:1:7: E0105 - Unexpected statement in loop initialization
+  1 | loop (if true {}) {}
+    |       ^~~~~~~~~~

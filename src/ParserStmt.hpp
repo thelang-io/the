@@ -95,6 +95,7 @@ struct ParserStmtLoop {
   std::optional<ParserStmtExpr> cond;
   std::optional<ParserStmtExpr> upd;
   ParserBlock body;
+  bool parenthesized;
 };
 
 struct ParserStmtMain {

@@ -48,7 +48,7 @@ fn Tokenizer_next (
 ) Token {
   if self.data.len < self.state.idx {
     return self.data[self.state.idx++]
-  } elif self.data[-1].type == TK_EOF {
+  } elif !self.data.empty() && self.data[-1].type == TK_EOF {
     RaiseError("Tried to tokenize on eof")
   }
 
