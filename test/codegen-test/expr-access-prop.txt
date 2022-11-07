@@ -35,6 +35,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -42,6 +43,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -55,6 +57,23 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_Test1_0;
+struct __THE_1_Test2_0;
+struct __THE_1_fn$0;
+
+struct __THE_1_Test1_0 {
+  const int32_t __THE_0_b;
+  const struct __THE_1_Test2_0 *__THE_0_test2;
+};
+struct __THE_1_Test2_0 {
+  const struct str __THE_0_c;
+};
+struct __THE_1_fn$0 {
+  struct str (*f) (void *);
+  void *x;
+  size_t l;
+};
+
 void *alloc (size_t);
 struct str bool_str (bool);
 struct str char_str (char);
@@ -64,6 +83,12 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 size_t str_len (struct str);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t, struct __THE_1_Test2_0 *);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct str);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+struct str __THE_1_test3_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -109,31 +134,6 @@ size_t str_len (struct str s) {
   free(s.d);
   return l;
 }
-
-struct __THE_1_Test1_0;
-struct __THE_1_Test2_0;
-struct __THE_1_fn$0;
-
-struct __THE_1_Test1_0 {
-  const int32_t __THE_0_b;
-  const struct __THE_1_Test2_0 *__THE_0_test2;
-};
-struct __THE_1_Test2_0 {
-  const struct str __THE_0_c;
-};
-struct __THE_1_fn$0 {
-  struct str (*f) (void *);
-  void *x;
-  size_t l;
-};
-
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t, struct __THE_1_Test2_0 *);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct str);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
-struct str __THE_1_test3_0 (void *);
-
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t __THE_0_b, struct __THE_1_Test2_0 *__THE_0_test2) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
   struct __THE_1_Test1_0 s = {__THE_0_b, __THE_0_test2};

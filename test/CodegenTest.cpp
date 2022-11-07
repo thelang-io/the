@@ -30,6 +30,19 @@ const auto valgrindArguments = std::string(
   "--track-origins=yes"
 );
 
+TEST(CodegenTest, GetsEnvVar) {
+  EXPECT_NE(Codegen::getEnvVar("PATH"), "");
+  EXPECT_EQ(Codegen::getEnvVar("test_non_existing"), "");
+}
+
+TEST(CodegenTest, StringifyFlags) {
+  EXPECT_EQ(Codegen::stringifyFlags({}), "");
+  EXPECT_EQ(Codegen::stringifyFlags({""}), "");
+  EXPECT_EQ(Codegen::stringifyFlags({"test"}), "test");
+  EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2"}), "test1 test2");
+  EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2", "test3"}), "test1 test2 test3");
+}
+
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
   bool testCompile_ = false;
@@ -64,7 +77,7 @@ TEST_P(CodegenPassTest, Passes) {
   auto expectedOutput = sections["stdout"];
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
-  ASSERT_EQ(sections["flags"], std::get<1>(result));
+  ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
 
   if (!this->testCompile_) {
     return;
@@ -99,12 +112,12 @@ TEST_P(CodegenPassTest, Passes) {
   EXPECT_EQ(expectedOutput, actualStdout);
 
   if (param == "builtin-exit-one") {
-    EXPECT_NE(actualReturnCode, 0);
+    EXPECT_EQ(actualReturnCode, 1);
   } else {
     EXPECT_EQ(actualReturnCode, 0);
   }
 
-  if (!this->testMemcheck_) {
+  if (!this->testMemcheck_ && !std::set<std::string>{"builtin-print-to"}.contains(param)) {
     EXPECT_EQ(actualStderr, "");
   } else if (actualReturnCode != 0) {
     std::cout << actualStderr;
@@ -118,9 +131,10 @@ TEST_P(CodegenThrowTest, Throws) {
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
+  auto expectedStderr = sections["stderr"];
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
-  ASSERT_EQ(sections["flags"], std::get<1>(result));
+  ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
 
   if (!this->testCompile_) {
     return;
@@ -134,7 +148,22 @@ TEST_P(CodegenThrowTest, Throws) {
   std::filesystem::remove(filePath);
   actualStderr.erase(actualStderr.find_last_not_of("\r\n") + 1);
 
-  EXPECT_EQ(sections["stderr"], actualStderr);
+  while (expectedStderr.find("{{ ") != std::string::npos) {
+    auto placeholderStart = expectedStderr.find("{{ ");
+    auto placeholderEnd = expectedStderr.find(" }}") + 3;
+    auto placeholderLen = placeholderEnd - placeholderStart;
+    auto placeholderRegexPattern = expectedStderr.substr(placeholderStart + 3, placeholderLen - 6);
+    auto placeholderRegex = std::regex(placeholderRegexPattern);
+
+    const auto actualStderrSlice = actualStderr.substr(placeholderStart);
+    auto match = std::smatch();
+    std::regex_search(actualStderrSlice, match, placeholderRegex);
+
+    auto placeholderValue = actualStderr.substr(placeholderStart, match[0].length());
+    expectedStderr.replace(placeholderStart, placeholderLen, placeholderValue);
+  }
+
+  EXPECT_EQ(expectedStderr, actualStderr);
   EXPECT_NE(actualReturnCode, 0);
 }
 
@@ -150,6 +179,8 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-array-alloc-root",
   "builtin-array-at",
   "builtin-array-at-root",
+  "builtin-array-empty",
+  "builtin-array-empty-root",
   "builtin-array-eq",
   "builtin-array-join",
   "builtin-array-join-root",
@@ -165,8 +196,21 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-array-str-root",
   "builtin-bool-str",
   "builtin-bool-str-root",
+  "builtin-buffer-eq",
+  "builtin-buffer-str",
+  "builtin-buffer-str-root",
   "builtin-byte-str",
   "builtin-byte-str-root",
+  "builtin-char-is-alpha",
+  "builtin-char-is-alpha-root",
+  "builtin-char-is-alpha-num",
+  "builtin-char-is-alpha-num-root",
+  "builtin-char-is-digit",
+  "builtin-char-is-digit-root",
+  "builtin-char-is-space",
+  "builtin-char-is-space-root",
+  "builtin-char-repeat",
+  "builtin-char-repeat-root",
   "builtin-char-str",
   "builtin-char-str-root",
   "builtin-exit-empty",
@@ -180,6 +224,32 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-float-str-root",
   "builtin-fn-str",
   "builtin-fn-str-root",
+  "builtin-fs-chmod-sync",
+  "builtin-fs-chown-sync",
+  "builtin-fs-exists-sync",
+  "builtin-fs-exists-sync-root",
+  "builtin-fs-is-absolute-sync",
+  "builtin-fs-is-absolute-sync-root",
+  "builtin-fs-is-directory-sync",
+  "builtin-fs-is-directory-sync-root",
+  "builtin-fs-is-file-sync",
+  "builtin-fs-is-file-sync-root",
+  "builtin-fs-is-symbolic-link-sync",
+  "builtin-fs-is-symbolic-link-sync-root",
+  "builtin-fs-link-sync",
+  "builtin-fs-mkdir-sync",
+  "builtin-fs-read-file-sync",
+  "builtin-fs-read-file-sync-root",
+  "builtin-fs-realpath-sync",
+  "builtin-fs-realpath-sync-root",
+  "builtin-fs-rm-sync",
+  "builtin-fs-rmdir-sync",
+  "builtin-fs-scandir-sync",
+  "builtin-fs-scandir-sync-root",
+  "builtin-fs-stat-sync",
+  "builtin-fs-stat-sync-root",
+  "builtin-fs-unlink-sync",
+  "builtin-fs-write-file-sync",
   "builtin-i8-str",
   "builtin-i8-str-root",
   "builtin-i16-str",
@@ -197,14 +267,56 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-opt-eq",
   "builtin-opt-str",
   "builtin-opt-str-root",
+  "builtin-os-eol",
+  "builtin-os-eol-root",
+  "builtin-os-name",
+  "builtin-os-name-root",
+  "builtin-path-basename",
+  "builtin-path-basename-root",
+  "builtin-path-dirname",
+  "builtin-path-dirname-root",
   "builtin-print",
+  "builtin-print-to",
+  "builtin-process-args",
+  "builtin-process-args-root",
+  "builtin-process-cwd",
+  "builtin-process-cwd-root",
+  "builtin-process-getgid",
+  "builtin-process-getgid-root",
+  "builtin-process-getuid",
+  "builtin-process-getuid-root",
+  "builtin-process-run-sync",
+  "builtin-process-run-sync-root",
+  "builtin-request-close",
+  "builtin-request-open",
+  "builtin-request-open-params",
+  "builtin-request-open-root",
+  "builtin-request-open-sleep",
+  "builtin-request-read",
+  "builtin-request-read-root",
   "builtin-sleep-sync",
   "builtin-str-at",
   "builtin-str-at-root",
+  "builtin-str-empty",
+  "builtin-str-empty-root",
+  "builtin-str-find",
+  "builtin-str-find-root",
   "builtin-str-len",
   "builtin-str-len-root",
+  "builtin-str-lines",
+  "builtin-str-lines-root",
+  "builtin-str-lower",
+  "builtin-str-lower-root",
+  "builtin-str-lower-first",
+  "builtin-str-lower-first-root",
   "builtin-str-slice",
   "builtin-str-slice-root",
+  "builtin-str-trim",
+  "builtin-str-trim-root",
+  "builtin-str-upper",
+  "builtin-str-upper-root",
+  "builtin-str-upper-first",
+  "builtin-str-upper-first-root",
   "builtin-u8-str",
   "builtin-u8-str-root",
   "builtin-u16-str",
@@ -212,7 +324,9 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenPassTest, testing::Values(
   "builtin-u32-str",
   "builtin-u32-str-root",
   "builtin-u64-str",
-  "builtin-u64-str-root"
+  "builtin-u64-str-root",
+  "builtin-url-parse",
+  "builtin-url-parse-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
@@ -510,7 +624,35 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
   "throw-builtin-array-at-empty",
   "throw-builtin-array-at-high",
   "throw-builtin-array-at-low",
+  "throw-builtin-fs-chmod-sync-not-existing",
+  "throw-builtin-fs-chown-sync-not-existing",
+  "throw-builtin-fs-link-sync-existing",
+  "throw-builtin-fs-link-sync-same-name",
+  "throw-builtin-fs-mkdir-sync-existing",
+  "throw-builtin-fs-read-file-sync-non-existing",
+  "throw-builtin-fs-realpath-sync-non-existing",
+  "throw-builtin-process-run-sync-exit-code",
+  "throw-builtin-fs-rm-sync-directory",
+  "throw-builtin-fs-rm-sync-non-existing",
+  "throw-builtin-fs-rmdir-sync-file",
+  "throw-builtin-fs-rmdir-sync-non-existing",
+  "throw-builtin-fs-scandir-sync-non-directory",
+  "throw-builtin-fs-scandir-sync-non-existing",
+  "throw-builtin-fs-stat-sync-non-existing",
+  "throw-builtin-fs-unlink-sync-non-existing",
+  "throw-builtin-fs-write-file-sync-directory",
+  "throw-builtin-request-open-invalid-host",
+  "throw-builtin-request-open-invalid-port",
+  "throw-builtin-request-open-invalid-protocol",
+  "throw-builtin-request-open-long-port",
   "throw-builtin-str-at-empty",
   "throw-builtin-str-at-high",
-  "throw-builtin-str-at-low"
+  "throw-builtin-str-at-low",
+  "throw-builtin-url-parse-auth",
+  "throw-builtin-url-parse-empty",
+  "throw-builtin-url-parse-empty-hostname",
+  "throw-builtin-url-parse-invalid-origin",
+  "throw-builtin-url-parse-invalid-port",
+  "throw-builtin-url-parse-invalid-protocol",
+  "throw-builtin-url-parse-string"
 ));

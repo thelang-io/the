@@ -15,6 +15,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -22,6 +23,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdbool.h>
@@ -39,9 +41,18 @@ struct any {
   void (*_free) (struct any);
 };
 
+struct any_int;
+
+struct any_int {
+  int32_t d;
+};
+
 void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
+struct any any_int_alloc (int32_t);
+struct any any_int_copy (const struct any);
+void any_int_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -57,17 +68,6 @@ struct any any_copy (const struct any n) {
 void any_free (struct any n) {
   if (n.d != NULL) n._free(n);
 }
-
-struct any_int;
-
-struct any_int {
-  int32_t d;
-};
-
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
-
 struct any any_int_alloc (int32_t d) {
   size_t l = sizeof(struct any_int);
   struct any_int *r = alloc(l);

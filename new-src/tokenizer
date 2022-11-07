@@ -16,16 +16,16 @@
 
 obj Tokenizer {
   reader: ref Reader
-  state: TokenizerState
-  data: Token[]
-  errors: str[]
+  mut state: TokenizerState
+  mut data: Token[]
+  mut errors: str[]
 }
 
 obj TokenizerState {
-  idx: int
-  pos: int
-  ch: char
-  handled: bool
+  mut idx: int
+  mut pos: int
+  mut ch: char
+  mut handled: bool
 }
 
 fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
@@ -48,7 +48,7 @@ fn Tokenizer_next (
 ) Token {
   if self.data.len < self.state.idx {
     return self.data[self.state.idx++]
-  } elif self.data[self.data.len - 1].type == TK_EOF {
+  } elif self.data[-1].type == TK_EOF {
     RaiseError("Tried to tokenize on eof")
   }
 
@@ -70,7 +70,12 @@ fn Tokenizer_next (
 
 fn _Tokenizer_getToken (mut self: ref Tokenizer) Token {
   if Reader_eof(self.reader) {
-    return Token{TK_EOF, "", self.state.pos, self.state.pos}
+    return Token{
+      type: TK_EOF,
+      val: "",
+      start: self.state.pos,
+      end: self.state.pos
+    }
   }
 
   self.state.ch = Reader_next(self.reader)
@@ -94,7 +99,7 @@ fn _Tokenizer_getToken (mut self: ref Tokenizer) Token {
   } elif (tok = _Tokenizer_maybeChar(self)) != nil {
     return tok
   } else {
-    _Tokenizer_raise(self, E0000(ch), self.state.pos)
+    _Tokenizer_raise(self, E0000(self.state.ch), self.state.pos)
     return _Tokenizer_wrapToken(self, TK_UNKNOWN)
   }
 }
@@ -227,6 +232,8 @@ fn _Tokenizer_maybeKeyword (mut self: ref Tokenizer) Token? {
     return _Tokenizer_wrapToken(self, TK_KW_NIL)
   } elif val == "obj" {
     return _Tokenizer_wrapToken(self, TK_KW_OBJ)
+  } elif val == "ref" {
+    return _Tokenizer_wrapToken(self, TK_KW_REF)
   } elif val == "return" {
     return _Tokenizer_wrapToken(self, TK_KW_RETURN)
   } elif val == "throw" {
@@ -271,7 +278,7 @@ fn _Tokenizer_maybeNumber (mut self: ref Tokenizer) Token? {
       return _Tokenizer_wrapInt(
         self,
         TK_LIT_INT_OCT,
-        E009("octal"),
+        E0009("octal"),
         Token_isIntOct
       )
     } elif ch == 'X' || ch == 'x' {
@@ -291,7 +298,7 @@ fn _Tokenizer_maybeNumber (mut self: ref Tokenizer) Token? {
   return _Tokenizer_wrapInt(
     self,
     TK_LIT_INT_DEC,
-    E009("decimal"),
+    E0009("decimal"),
     Token_isIntDec
   )
 }
@@ -508,19 +515,17 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
   errorLinesNums.push(startLoc.line - 1)
 
   if startLoc.line == endLoc.line && startLoc.col == endLoc.col {
-    errorLines.push(' '.repeat(startLoc.col - 1) + '^')
+    mut x: u32 = startLoc.col - 1
+    errorLines.push(' '.repeat(x) + "^")
   } elif startLoc.line == endLoc.line {
-    errorLines.push(
-      ' '.repeat(startLoc.col - 1) +
-      '~'.repeat(endLoc.col - startLoc.col)
-    )
+    mut x1: u32 = startLoc.col - 1
+    mut x2: u32 = endLoc.col - startLoc.col
+    errorLines.push(' '.repeat(x1) + '~'.repeat(x2))
   } else {
     errorLine := lines[startLoc.line - 1]
-
-    errorLines.push(
-      ' '.repeat(startLoc.col - 1) +
-      '~'.repeat(errorLine.len - startLoc.col)
-    )
+    mut x1: u32 = startLoc.col - 1
+    mut x2: u32 = errorLine.len - startLoc.col
+    errorLines.push(' '.repeat(x1) + '~'.repeat(x2))
   }
 
   errorLinesNums.push(startLoc.line - 1)
@@ -530,10 +535,10 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
     errorLinesNums.push(startLoc.line)
   }
 
-  gutterLen := errorLinesNums[errorLinesNums.len - 1].str().len + 1
+  gutterLen := errorLinesNums[-1].str().len + 1
 
   mut error := self.reader.path + ":" + startLoc.line.str() + ":" +
-    startLoc.col.str() + ": SyntaxError: " + message + EOL
+    startLoc.col.str() + ": SyntaxError: " + message + os_EOL
 
   mut prevLineNum := 0
 
@@ -542,10 +547,12 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
     sameLine := prevLineNum == errorLineNum
 
     if sameLine {
-      error += ' '.repeat(gutterLen)
+      mut x: u32 = gutterLen
+      error += ' '.repeat(x)
     } else {
       errorLineNumLen := errorLineNum.str().len
-      error += errorLineNum.str() + ' '.repeat(gutterLen - errorLineNumLen)
+      mut x: u32 = gutterLen - errorLineNumLen
+      error += errorLineNum.str() + ' '.repeat(x)
     }
 
     error += "| " + errorLines[i]
@@ -556,11 +563,7 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
   self.state.handled = true
 }
 
-fn _Tokenizer_wrapFloat (
-  mut self: ref Tokenizer,
-  type: TokenType,
-  errorMessage: str
-) Token {
+fn _Tokenizer_wrapFloat (mut self: ref Tokenizer, type: int, errorMessage: str) Token {
   if Reader_eof(self.reader) {
     return _Tokenizer_wrapToken(self, type)
   }
@@ -657,7 +660,7 @@ fn _Tokenizer_wrapFloat (
 
 fn _Tokenizer_wrapInt (
   mut self: ref Tokenizer,
-  type: TokenType,
+  type: int,
   errorMessage: str,
   check: fn (char) bool
 ) Token {
@@ -679,7 +682,7 @@ fn _Tokenizer_wrapInt (
   return _Tokenizer_wrapFloat(self, type, errorMessage)
 }
 
-fn _Tokenizer_wrapToken (mut self: ref Tokenizer, type: TokenType) Token {
+fn _Tokenizer_wrapToken (mut self: ref Tokenizer, type: int) Token {
   start := self.state.pos
   self.state.pos = self.reader.pos
   self.state.handled = true
@@ -692,7 +695,7 @@ fn _Tokenizer_wrapToken (mut self: ref Tokenizer, type: TokenType) Token {
   }
 }
 
-fn _Tokenizer_wrapTokenFloat (mut self: ref Tokenizer, type: TokenType) Token {
+fn _Tokenizer_wrapTokenFloat (mut self: ref Tokenizer, type: int) Token {
   if !Reader_eof(self.reader) {
     ch := Reader_next(self.reader)
 
@@ -703,16 +706,16 @@ fn _Tokenizer_wrapTokenFloat (mut self: ref Tokenizer, type: TokenType) Token {
       return _Tokenizer_wrapToken(self, TK_LIT_FLOAT)
     }
 
-    Reader_seek(self.reader, pos)
+    Reader_seek(self.reader, self.state.pos)
   }
 
   if type == TK_LIT_INT_BIN {
-    _Tokenizer_raise(self, E0014("binary"), self.state.pos)
+    _Tokenizer_raise(self, E0012("binary"), self.state.pos)
   } elif type == TK_LIT_INT_HEX {
-    _Tokenizer_raise(self, E0014("hexadecimal"), self.state.pos)
+    _Tokenizer_raise(self, E0012("hexadecimal"), self.state.pos)
   } elif type == TK_LIT_INT_OCT {
-    _Tokenizer_raise(self, E0014("octal"), self.state.pos)
+    _Tokenizer_raise(self, E0012("octal"), self.state.pos)
   }
 
-  return _Tokenizer_wrapToken(TK_LIT_FLOAT)
+  return _Tokenizer_wrapToken(self, TK_LIT_FLOAT)
 }

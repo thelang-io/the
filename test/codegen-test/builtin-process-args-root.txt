@@ -1,0 +1,73 @@
+======= stdin =======
+main {
+  process_args
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_array_str;
+
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct __THE_1_array_str process_args (int, char **);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_array_str process_args (int argc, char **argv) {
+  struct str *d = alloc(argc * sizeof(struct str));
+  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);
+  return (struct __THE_1_array_str) {d, (size_t) argc};
+}
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+
+int main (int argc, char *argv[]) {
+  __THE_1_array_str_free((struct __THE_1_array_str) process_args(argc, argv));
+}
+======= flags =======
+======= stdout =======

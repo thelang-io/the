@@ -1,0 +1,258 @@
+======= stdin =======
+main {
+  url_parse("http://thelang.io")
+  url_parse("http://thelang.io/")
+  url_parse("test://example.com:8080/pathname?search=query&query=search#hash-string")
+  url_parse("test:pathname")
+  url_parse("test://127.0.0.1/pathname?test")
+  url_parse("test://127.0.0.1:1234/pathname!")
+  url_parse("http://127.0.0.1:1234/pathname!")
+  url_parse("test:+1234567890")
+  url_parse("view-source:https://thelang.io")
+  url_parse("test.test-test+test:pathname?test=value")
+  url_parse("test://test?test")
+  url_parse("https://test?test")
+  url_parse("test:")
+  url_parse("test:/")
+  url_parse("test://")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct url_URL;
+
+struct url_URL {
+  const struct str __THE_0_origin;
+  const struct str __THE_0_protocol;
+  const struct str __THE_0_host;
+  const struct str __THE_0_hostname;
+  const struct str __THE_0_port;
+  const struct str __THE_0_path;
+  const struct str __THE_0_pathname;
+  const struct str __THE_0_search;
+  const struct str __THE_0_hash;
+};
+
+void *alloc (size_t);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct url_URL *url_parse (struct str);
+struct url_URL *url_URL_alloc (struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str);
+void url_URL_free (struct url_URL *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct url_URL *url_parse (struct str s) {
+  if (s.l == 0) {
+    fprintf(stderr, "Error: invalid URL" THE_EOL);
+    exit(EXIT_FAILURE);
+  }
+  size_t i = 0;
+  for (;; i++) {
+    char ch = s.d[i];
+    if (ch == ':' && i != 0) {
+      i++;
+      break;
+    } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
+      fprintf(stderr, "Error: invalid URL protocol" THE_EOL);
+      exit(EXIT_FAILURE);
+    } else if (i == s.l - 1) {
+      fprintf(stderr, "Error: invalid URL" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+  }
+  struct str protocol;
+  protocol.l = i;
+  protocol.d = alloc(protocol.l);
+  memcpy(protocol.d, s.d, protocol.l);
+  while (i < s.l && s.d[i] == '/') i++;
+  if (i == s.l) {
+    str_free(s);
+    return url_URL_alloc(str_alloc(""), protocol, str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""));
+  }
+  size_t protocol_end = i;
+  if ((protocol_end - protocol.l) < 2) {
+    i = protocol.l;
+    protocol_end = i;
+  }
+  size_t hostname_start = protocol.l == protocol_end ? 0 : i;
+  size_t port_start = 0;
+  size_t pathname_start = protocol.l == protocol_end ? i : 0;
+  size_t search_start = 0;
+  size_t hash_start = 0;
+  for (;; i++) {
+    char ch = s.d[i];
+    if (ch == '@' && hostname_start != 0 && pathname_start == 0) {
+      fprintf(stderr, "Error: URL auth is not supported" THE_EOL);
+      exit(EXIT_FAILURE);
+    } else if (ch == ':' && port_start != 0 && (pathname_start == 0 || search_start == 0 || hash_start == 0)) {
+      fprintf(stderr, "Error: invalid URL port" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (ch == ':' && hostname_start != 0 && pathname_start == 0) port_start = i;
+    else if (ch == '/' && pathname_start == 0) pathname_start = i;
+    else if (ch == '?' && search_start == 0) search_start = i;
+    else if (ch == '#' && hash_start == 0) hash_start = i;
+    if (i == s.l - 1) break;
+  }
+  struct str hostname = str_alloc("");
+  size_t hostname_end = port_start != 0 ? port_start : pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
+  if (hostname_start != 0 && hostname_start == hostname_end) {
+    fprintf(stderr, "Error: invalid URL hostname" THE_EOL);
+    exit(EXIT_FAILURE);
+  } else if (hostname_start != 0 && hostname_start != hostname_end) {
+    hostname.l = hostname_end - hostname_start;
+    hostname.d = re_alloc(hostname.d, hostname.l);
+    memcpy(hostname.d, &s.d[hostname_start], hostname.l);
+  }
+  struct str port = str_alloc("");
+  size_t port_end = pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
+  if (port_start != 0 && port_start + 1 != port_end) {
+    port.l = port_end - port_start - 1;
+    port.d = re_alloc(port.d, port.l);
+    memcpy(port.d, &s.d[port_start + 1], port.l);
+  }
+  struct str host = str_alloc("");
+  if (hostname.l != 0) {
+    host.l = hostname.l + (port.l == 0 ? 0 : port.l + 1);
+    host.d = re_alloc(host.d, host.l);
+    memcpy(host.d, hostname.d, hostname.l);
+    if (port.l != 0) {
+      memcpy(&host.d[hostname.l], ":", 1);
+      memcpy(&host.d[hostname.l + 1], port.d, port.l);
+    }
+  }
+  struct str origin = str_alloc("");
+  if (memcmp(protocol.d, "ftp:", 4) == 0 || memcmp(protocol.d, "http:", 5) == 0 || memcmp(protocol.d, "https:", 6) == 0 || memcmp(protocol.d, "ws:", 3) == 0 || memcmp(protocol.d, "wss:", 4) == 0) {
+    if (host.l == 0) {
+      fprintf(stderr, "Error: URL origin is not present" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    origin.l = protocol.l + 2 + host.l;
+    origin.d = re_alloc(origin.d, origin.l);
+    memcpy(origin.d, protocol.d, protocol.l);
+    memcpy(&origin.d[protocol.l], "//", 2);
+    memcpy(&origin.d[protocol.l + 2], host.d, host.l);
+  }
+  struct str pathname = str_alloc("");
+  size_t pathname_end = search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
+  if (pathname_start != 0 && pathname_start != pathname_end) {
+    pathname.l = pathname_end - pathname_start;
+    pathname.d = re_alloc(pathname.d, pathname.l);
+    memcpy(pathname.d, &s.d[pathname_start], pathname.l);
+  } else if (memcmp(protocol.d, "ftp:", 4) == 0 || memcmp(protocol.d, "http:", 5) == 0 || memcmp(protocol.d, "https:", 6) == 0 || memcmp(protocol.d, "ws:", 3) == 0 || memcmp(protocol.d, "wss:", 4) == 0) {
+    pathname.l = 1;
+    pathname.d = re_alloc(pathname.d, pathname.l);
+    memcpy(pathname.d, "/", pathname.l);
+  }
+  struct str search = str_alloc("");
+  size_t search_end = hash_start != 0 ? hash_start : s.l;
+  if (search_start != 0 && search_start != search_end) {
+    search.l = search_end - search_start;
+    search.d = re_alloc(search.d, search.l);
+    memcpy(search.d, &s.d[search_start], search.l);
+  }
+  struct str path = str_alloc("");
+  if (pathname.l != 0 || search.l != 0) {
+    path.l = pathname.l + search.l;
+    path.d = re_alloc(path.d, path.l);
+    if (pathname.l != 0) {
+      memcpy(path.d, pathname.d, pathname.l);
+      if (search.l != 0) memcpy(&path.d[pathname.l], search.d, search.l);
+    } else if (search.l != 0) {
+      memcpy(path.d, search.d, search.l);
+    }
+  }
+  struct str hash = str_alloc("");
+  if (hash_start != 0) {
+    hash.l = s.l - hash_start;
+    hash.d = re_alloc(hash.d, hash.l);
+    memcpy(hash.d, &s.d[hash_start], hash.l);
+  }
+  str_free(s);
+  return url_URL_alloc(origin, protocol, host, hostname, port, path, pathname, search, hash);
+}
+struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_protocol, struct str __THE_0_host, struct str __THE_0_hostname, struct str __THE_0_port, struct str __THE_0_path, struct str __THE_0_pathname, struct str __THE_0_search, struct str __THE_0_hash) {
+  struct url_URL *r = alloc(sizeof(struct url_URL));
+  struct url_URL s = {__THE_0_origin, __THE_0_protocol, __THE_0_host, __THE_0_hostname, __THE_0_port, __THE_0_path, __THE_0_pathname, __THE_0_search, __THE_0_hash};
+  memcpy(r, &s, sizeof(struct url_URL));
+  return r;
+}
+void url_URL_free (struct url_URL *o) {
+  str_free((struct str) o->__THE_0_origin);
+  str_free((struct str) o->__THE_0_protocol);
+  str_free((struct str) o->__THE_0_host);
+  str_free((struct str) o->__THE_0_hostname);
+  str_free((struct str) o->__THE_0_port);
+  str_free((struct str) o->__THE_0_path);
+  str_free((struct str) o->__THE_0_pathname);
+  str_free((struct str) o->__THE_0_search);
+  str_free((struct str) o->__THE_0_hash);
+  free(o);
+}
+
+int main () {
+  url_URL_free((struct url_URL *) url_parse(str_alloc("http://thelang.io")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("http://thelang.io/")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test://example.com:8080/pathname?search=query&query=search#hash-string")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test:pathname")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test://127.0.0.1/pathname?test")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test://127.0.0.1:1234/pathname!")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("http://127.0.0.1:1234/pathname!")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test:+1234567890")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("view-source:https://thelang.io")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test.test-test+test:pathname?test=value")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test://test?test")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("https://test?test")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test:")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test:/")));
+  url_URL_free((struct url_URL *) url_parse(str_alloc("test://")));
+}
+======= flags =======
+======= stdout =======

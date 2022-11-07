@@ -9,8 +9,3 @@ $ the build
 ```bash
 $ the run build/result
 ```
-
-## Building & Running
-```bash
-$ the run "$(the build)"
-```

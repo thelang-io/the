@@ -1,0 +1,69 @@
+======= stdin =======
+main {
+  'a'.repeat(0)
+  'z'.repeat(1)
+  '0'.repeat(29)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str char_repeat (char, uint32_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str char_repeat (char c, uint32_t k) {
+  if (k == 0) return str_alloc("");
+  size_t l = (size_t) k;
+  char *d = alloc(l);
+  size_t i = 0;
+  while (i < l) d[i++] = c;
+  return (struct str) {d, l};
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  str_free((struct str) char_repeat('a', 0));
+  str_free((struct str) char_repeat('z', 1));
+  str_free((struct str) char_repeat('0', 29));
+}
+======= flags =======
+======= stdout =======

@@ -15,8 +15,8 @@
  */
 
 obj Location {
-  line: int
-  col: int
+  mut line: int
+  mut col: int
 }
 
 fn Location_locate (content: str, pos: int) Location {
@@ -37,5 +37,5 @@ fn Location_locate (content: str, pos: int) Location {
     curPos += line.len
   }
 
-  return Location{line: lines.len, col: lines[lines.len - 1].len}
+  return Location{line: lines.len, col: lines[-1].len}
 }

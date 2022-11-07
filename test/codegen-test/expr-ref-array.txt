@@ -17,6 +17,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -24,6 +25,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdarg.h>
@@ -32,7 +34,19 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
+struct __THE_1_array_int;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
 void *alloc (size_t);
+void *re_alloc (void *, size_t);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+void __THE_1_array_int_push (struct __THE_1_array_int *, size_t, ...);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -42,19 +56,14 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_array_int;
-
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
-
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-void __THE_1_array_int_push (struct __THE_1_array_int *, size_t, ...);
-
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
   int32_t *d = alloc(x * sizeof(int32_t));
@@ -76,7 +85,7 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 void __THE_1_array_int_push (struct __THE_1_array_int *n, size_t x, ...) {
   if (x == 0) return;
   n->l += x;
-  n->d = realloc(n->d, n->l * sizeof(int32_t));
+  n->d = re_alloc(n->d, n->l * sizeof(int32_t));
   va_list args;
   va_start(args, x);
   for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, int32_t);

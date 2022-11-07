@@ -61,6 +61,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -68,6 +69,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdint.h>
@@ -109,8 +111,8 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {
-  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -s.l ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));
-  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -s.l ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));
+  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));
+  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));
   if (i1 >= i2 || i1 >= s.l) {
     free(s.d);
     return str_alloc("");

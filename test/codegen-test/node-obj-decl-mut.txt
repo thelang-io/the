@@ -40,6 +40,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -47,6 +48,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -60,7 +62,25 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_Animal_0;
+struct __THE_1_array_Animal;
+struct __THE_1_Human_0;
+
+struct __THE_1_Animal_0 {
+  const struct str __THE_0_name;
+  int32_t __THE_0_age;
+};
+struct __THE_1_array_Animal {
+  struct __THE_1_Animal_0 **d;
+  size_t l;
+};
+struct __THE_1_Human_0 {
+  const struct str __THE_0_name;
+  struct __THE_1_array_Animal __THE_0_pets;
+};
+
 void *alloc (size_t);
+void *re_alloc (void *, size_t);
 struct str int_str (int32_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
@@ -68,11 +88,34 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
+struct __THE_1_Animal_0 *__THE_1_Animal_0_alloc (struct str, int32_t);
+struct __THE_1_Animal_0 *__THE_1_Animal_0_copy (const struct __THE_1_Animal_0 *);
+void __THE_1_Animal_0_free (struct __THE_1_Animal_0 *);
+struct str __THE_1_Animal_0_str (struct __THE_1_Animal_0 *);
+struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t, ...);
+struct __THE_1_Animal_0 **__THE_1_array_Animal_at (struct __THE_1_array_Animal, int64_t);
+struct __THE_1_array_Animal __THE_1_array_Animal_copy (const struct __THE_1_array_Animal);
+void __THE_1_array_Animal_free (struct __THE_1_array_Animal);
+void __THE_1_array_Animal_push (struct __THE_1_array_Animal *, size_t, ...);
+struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal);
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, struct __THE_1_array_Animal);
+struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
+struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *, struct __THE_1_Human_0 *);
+struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -116,7 +159,7 @@ struct str str_escape (const struct str s) {
   for (size_t i = 0; i < s.l; i++) {
     char c = s.d[i];
     if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
-      if (l + 2 > s.l) d = realloc(d, l + 2);
+      if (l + 2 > s.l) d = re_alloc(d, l + 2);
       d[l++] = '\\';
       if (c == '\f') d[l++] = 'f';
       else if (c == '\n') d[l++] = 'n';
@@ -126,7 +169,7 @@ struct str str_escape (const struct str s) {
       else if (c == '"') d[l++] = '"';
       continue;
     }
-    if (l + 1 > s.l) d = realloc(d, l + 1);
+    if (l + 1 > s.l) d = re_alloc(d, l + 1);
     d[l++] = c;
   }
   return (struct str) {d, l};
@@ -134,40 +177,6 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_Animal_0;
-struct __THE_1_array_Animal;
-struct __THE_1_Human_0;
-
-struct __THE_1_Animal_0 {
-  const struct str __THE_0_name;
-  int32_t __THE_0_age;
-};
-struct __THE_1_array_Animal {
-  struct __THE_1_Animal_0 **d;
-  size_t l;
-};
-struct __THE_1_Human_0 {
-  const struct str __THE_0_name;
-  struct __THE_1_array_Animal __THE_0_pets;
-};
-
-struct __THE_1_Animal_0 *__THE_1_Animal_0_alloc (struct str, int32_t);
-struct __THE_1_Animal_0 *__THE_1_Animal_0_copy (const struct __THE_1_Animal_0 *);
-void __THE_1_Animal_0_free (struct __THE_1_Animal_0 *);
-struct str __THE_1_Animal_0_str (struct __THE_1_Animal_0 *);
-struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t, ...);
-struct __THE_1_Animal_0 **__THE_1_array_Animal_at (struct __THE_1_array_Animal, int64_t);
-struct __THE_1_array_Animal __THE_1_array_Animal_copy (const struct __THE_1_array_Animal);
-void __THE_1_array_Animal_free (struct __THE_1_array_Animal);
-void __THE_1_array_Animal_push (struct __THE_1_array_Animal *, size_t, ...);
-struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal);
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, struct __THE_1_array_Animal);
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *);
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *, struct __THE_1_Human_0 *);
-struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *);
-
 struct __THE_1_Animal_0 *__THE_1_Animal_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
   struct __THE_1_Animal_0 *r = alloc(sizeof(struct __THE_1_Animal_0));
   struct __THE_1_Animal_0 s = {__THE_0_name, __THE_0_age};
@@ -204,7 +213,7 @@ struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t x, ...) {
   return (struct __THE_1_array_Animal) {d, x};
 }
 struct __THE_1_Animal_0 **__THE_1_array_Animal_at (struct __THE_1_array_Animal n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
     fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
@@ -223,7 +232,7 @@ void __THE_1_array_Animal_free (struct __THE_1_array_Animal n) {
 void __THE_1_array_Animal_push (struct __THE_1_array_Animal *n, size_t x, ...) {
   if (x == 0) return;
   n->l += x;
-  n->d = realloc(n->d, n->l * sizeof(struct __THE_1_Animal_0 *));
+  n->d = re_alloc(n->d, n->l * sizeof(struct __THE_1_Animal_0 *));
   va_list args;
   va_start(args, x);
   for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, struct __THE_1_Animal_0 *);

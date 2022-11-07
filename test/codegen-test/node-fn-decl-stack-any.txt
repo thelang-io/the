@@ -12,6 +12,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -19,6 +20,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdint.h>
@@ -35,30 +37,6 @@ struct any {
   struct any (*_copy) (const struct any);
   void (*_free) (struct any);
 };
-
-void *alloc (size_t);
-struct any any_copy (const struct any);
-void any_free (struct any);
-struct any any_realloc (struct any, struct any);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct any any_copy (const struct any n) {
-  return n.d == NULL ? n : n._copy(n);
-}
-void any_free (struct any n) {
-  if (n.d != NULL) n._free(n);
-}
-struct any any_realloc (struct any n1, struct any n2) {
-  if (n1.d != NULL) n1._free(n1);
-  return n2;
-}
 
 struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
@@ -80,6 +58,10 @@ struct any_int {
   int32_t d;
 };
 
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+struct any any_realloc (struct any, struct any);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest_0X);
 void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$0P);
@@ -87,6 +69,24 @@ struct any any_int_alloc (int32_t);
 struct any any_int_copy (const struct any);
 void any_int_free (struct any);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  return n.d == NULL ? n : n._copy(n);
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct any any_realloc (struct any n1, struct any n2) {
+  if (n1.d != NULL) n1._free(n1);
+  return n2;
+}
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   free(n.x);
 }

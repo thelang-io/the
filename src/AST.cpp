@@ -46,12 +46,11 @@ void AST::populateParents (ASTBlock &nodes, ASTNode *parent) {
 AST::AST (Parser *p) {
   this->parser = p;
   this->reader = this->parser->reader;
+  this->typeMap.init();
+  this->varMap.init(this->typeMap);
 }
 
 ASTBlock AST::gen () {
-  this->typeMap.init();
-  this->varMap.init(this->typeMap);
-
   auto block = ParserBlock{};
 
   while (true) {
@@ -693,7 +692,11 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     }
 
     if (exprBinaryLeftType->isStr() || exprBinaryRightType->isStr()) {
-      return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("str"));
+      if (exprBinary.op.type == TK_OP_EQ_EQ || exprBinary.op.type == TK_OP_EXCL_EQ) {
+        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("bool"));
+      } else {
+        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("str"));
+      }
     } else if (
       exprBinary.op.type == TK_OP_EQ_EQ ||
       exprBinary.op.type == TK_OP_EXCL_EQ ||

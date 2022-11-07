@@ -35,6 +35,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -42,23 +43,13 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-void *alloc (size_t);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
 
 struct __THE_1_fn$0;
 struct __THE_1_fn$1P;
@@ -119,6 +110,7 @@ struct __THE_1_fn$5 {
   size_t l;
 };
 
+void *alloc (size_t);
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
 void __THE_1_test1_0 (void *, struct __THE_1_fn$1P);
@@ -133,6 +125,14 @@ void __THE_1_job1_0 (void *);
 int32_t __THE_1_job2_0 (void *, struct __THE_1_fn$2P);
 int32_t __THE_1_job3_0 (void *, struct __THE_1_fn$4P);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);

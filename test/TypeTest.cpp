@@ -1523,3 +1523,30 @@ TEST_F(TypeTest, MatchesNiceReference) {
   EXPECT_FALSE(type1->matchNice(this->tm_.get("str")));
   EXPECT_FALSE(this->tm_.get("str")->matchNice(type1));
 }
+
+TEST_F(TypeTest, ShouldBeFreed) {
+  EXPECT_TRUE(this->any_->shouldBeFreed());
+  EXPECT_TRUE(this->arr_->shouldBeFreed());
+  EXPECT_TRUE(this->fn_->shouldBeFreed());
+  EXPECT_TRUE(this->obj_->shouldBeFreed());
+  EXPECT_TRUE(this->opt_->shouldBeFreed());
+  EXPECT_FALSE(this->ref_->shouldBeFreed());
+
+  EXPECT_FALSE(this->tm_.get("bool")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("byte")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("char")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("f32")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("f64")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("float")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("i8")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("i16")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("i32")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("i64")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("int")->shouldBeFreed());
+  EXPECT_TRUE(this->tm_.get("str")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("u8")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("u16")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("u32")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("u64")->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("void")->shouldBeFreed());
+}

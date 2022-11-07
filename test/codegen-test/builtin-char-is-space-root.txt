@@ -1,0 +1,35 @@
+======= stdin =======
+main {
+  '\0'.isSpace()
+  '\n'.isSpace()
+  '\t'.isSpace()
+  'A'.isSpace()
+  'a'.isSpace()
+  '0'.isSpace()
+  '9'.isSpace()
+  '_'.isSpace()
+  '-'.isSpace()
+}
+======= code =======
+#include <ctype.h>
+#include <stdbool.h>
+
+bool char_is_space (char);
+
+bool char_is_space (char c) {
+  return isspace(c);
+}
+
+int main () {
+  char_is_space('\0');
+  char_is_space('\n');
+  char_is_space('\t');
+  char_is_space('A');
+  char_is_space('a');
+  char_is_space('0');
+  char_is_space('9');
+  char_is_space('_');
+  char_is_space('-');
+}
+======= flags =======
+======= stdout =======

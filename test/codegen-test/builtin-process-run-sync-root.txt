@@ -1,0 +1,113 @@
+======= stdin =======
+main {
+  process_runSync("echo \"Hello, World!\"")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void *re_alloc (void *, size_t);
+void buffer_free (struct buffer);
+struct str str_alloc (const char *);
+char *str_cstr (const struct str);
+void str_free (struct str);
+struct buffer process_runSync (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct buffer process_runSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    FILE *f = _popen(c, "r");
+  #else
+    FILE *f = popen(c, "r");
+  #endif
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to run process `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  unsigned char *d = NULL;
+  unsigned char b[4096];
+  size_t l = 0;
+  size_t y;
+  while ((y = fread(b, 1, sizeof(b), f)) > 0) {
+    d = re_alloc(d, l + y);
+    memcpy(&d[l], b, y);
+    l += y;
+  }
+  #ifdef THE_OS_WINDOWS
+    int e = _pclose(f);
+  #else
+    int e = pclose(f) / 256;
+  #endif
+  if (e != 0) {
+    fprintf(stderr, "Error: process `%s` exited with exit code %d" THE_EOL, c, e);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free((struct str) s);
+  return (struct buffer) {d, l};
+}
+
+int main () {
+  buffer_free((struct buffer) process_runSync(str_alloc("echo \"Hello, World!\"")));
+}
+======= flags =======
+======= stdout =======

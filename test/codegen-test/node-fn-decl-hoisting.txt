@@ -56,6 +56,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -63,6 +64,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -76,6 +78,32 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_factorial_0X;
+struct __THE_1_test1_0X;
+struct __THE_1_test2_0X;
+
+struct __THE_1_fn$0P {
+  int64_t n0;
+};
+struct __THE_1_fn$0 {
+  int64_t (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_factorial_0X {
+  const struct __THE_1_fn$0 *__THE_0_factorial_0;
+};
+struct __THE_1_test1_0X {
+  const struct __THE_1_fn$0 *__THE_0_test2_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0;
+};
+struct __THE_1_test2_0X {
+  const struct __THE_1_fn$0 *__THE_0_test2_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0;
+};
+
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 struct str int_str (int32_t);
@@ -83,6 +111,13 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 void str_free (struct str);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_factorial_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_factorial_0X);
+int64_t __THE_1_factorial_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test1_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test1_0X);
+int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test2_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test2_0X);
+int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$0P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -151,41 +186,6 @@ struct str str_concat_cstr (struct str s, const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_fn$0P;
-struct __THE_1_fn$0;
-struct __THE_1_factorial_0X;
-struct __THE_1_test1_0X;
-struct __THE_1_test2_0X;
-
-struct __THE_1_fn$0P {
-  int64_t n0;
-};
-struct __THE_1_fn$0 {
-  int64_t (*f) (void *, struct __THE_1_fn$0P);
-  void *x;
-  size_t l;
-};
-struct __THE_1_factorial_0X {
-  const struct __THE_1_fn$0 *__THE_0_factorial_0;
-};
-struct __THE_1_test1_0X {
-  const struct __THE_1_fn$0 *__THE_0_test2_0;
-  const struct __THE_1_fn$0 *__THE_0_test1_0;
-};
-struct __THE_1_test2_0X {
-  const struct __THE_1_fn$0 *__THE_0_test2_0;
-  const struct __THE_1_fn$0 *__THE_0_test1_0;
-};
-
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_factorial_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_factorial_0X);
-int64_t __THE_1_factorial_0 (void *, struct __THE_1_fn$0P);
-void __THE_1_test1_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test1_0X);
-int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
-void __THE_1_test2_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_test2_0X);
-int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$0P);
-
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   free(n.x);
 }

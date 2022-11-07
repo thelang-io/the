@@ -17,6 +17,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -24,6 +25,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -43,6 +45,10 @@ struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 void str_free (struct str);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+struct str __THE_1_opt_int_str (int32_t *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -83,12 +89,6 @@ struct str str_concat_str (struct str s1, struct str s2) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-int32_t *__THE_1_opt_int_alloc (int32_t);
-int32_t *__THE_1_opt_int_copy (const int32_t *);
-void __THE_1_opt_int_free (int32_t *);
-struct str __THE_1_opt_int_str (int32_t *);
-
 int32_t *__THE_1_opt_int_alloc (int32_t n) {
   int32_t *r = alloc(sizeof(int32_t));
   *r = n;

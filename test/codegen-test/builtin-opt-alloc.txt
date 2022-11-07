@@ -120,6 +120,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -127,6 +128,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdarg.h>
@@ -150,42 +152,6 @@ struct str {
   size_t l;
 };
 
-void *alloc (size_t);
-struct any any_copy (const struct any);
-void any_free (struct any);
-struct str str_alloc (const char *);
-struct str str_copy (const struct str);
-void str_free (struct str);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-struct any any_copy (const struct any n) {
-  return n.d == NULL ? n : n._copy(n);
-}
-void any_free (struct any n) {
-  if (n.d != NULL) n._free(n);
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-struct str str_copy (const struct str s) {
-  char *d = alloc(s.l);
-  memcpy(d, s.d, s.l);
-  return (struct str) {d, s.l};
-}
-void str_free (struct str s) {
-  free(s.d);
-}
-
 struct __THE_1_TestObj_0;
 struct __THE_1_fn$0;
 struct __THE_1_array_int;
@@ -207,6 +173,12 @@ struct any_int {
   int32_t d;
 };
 
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t);
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *);
 void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *);
@@ -262,6 +234,34 @@ struct any any_int_alloc (int32_t);
 struct any any_int_copy (const struct any);
 void any_int_free (struct any);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  return n.d == NULL ? n : n._copy(n);
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
 struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
   struct __THE_1_TestObj_0 s = {__THE_0_a};
@@ -323,7 +323,7 @@ struct __THE_1_array_int *__THE_1_opt_array_int_alloc (struct __THE_1_array_int 
 }
 void __THE_1_opt_array_int_free (struct __THE_1_array_int *n) {
   if (n == NULL) return;
-  __THE_1_array_int_free(*n);
+  __THE_1_array_int_free((struct __THE_1_array_int) *n);
   free(n);
 }
 bool *__THE_1_opt_bool_alloc (bool n) {
@@ -387,7 +387,7 @@ struct __THE_1_fn$0 *__THE_1_opt_fn$0_alloc (struct __THE_1_fn$0 n) {
 }
 void __THE_1_opt_fn$0_free (struct __THE_1_fn$0 *n) {
   if (n == NULL) return;
-  __THE_1_fn$0_free(*n);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) *n);
   free(n);
 }
 int8_t *__THE_1_opt_i8_alloc (int8_t n) {
@@ -442,7 +442,7 @@ struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_TestObj_0 *
 }
 void __THE_1_opt_TestObj_free (struct __THE_1_TestObj_0 **n) {
   if (n == NULL) return;
-  __THE_1_TestObj_0_free(*n);
+  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) *n);
   free(n);
 }
 int32_t **__THE_1_opt_ref_int_alloc (int32_t *n) {

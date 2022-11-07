@@ -1,0 +1,35 @@
+======= stdin =======
+main {
+  '\0'.isAlphaNum()
+  '\n'.isAlphaNum()
+  '\t'.isAlphaNum()
+  'A'.isAlphaNum()
+  'a'.isAlphaNum()
+  '0'.isAlphaNum()
+  '9'.isAlphaNum()
+  '_'.isAlphaNum()
+  '-'.isAlphaNum()
+}
+======= code =======
+#include <ctype.h>
+#include <stdbool.h>
+
+bool char_is_alpha_num (char);
+
+bool char_is_alpha_num (char c) {
+  return isalnum(c);
+}
+
+int main () {
+  char_is_alpha_num('\0');
+  char_is_alpha_num('\n');
+  char_is_alpha_num('\t');
+  char_is_alpha_num('A');
+  char_is_alpha_num('a');
+  char_is_alpha_num('0');
+  char_is_alpha_num('9');
+  char_is_alpha_num('_');
+  char_is_alpha_num('-');
+}
+======= flags =======
+======= stdout =======

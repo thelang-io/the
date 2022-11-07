@@ -32,13 +32,9 @@ Type *TypeMap::arrayOf (Type *elementType) {
     TypeFnParam{"separator", this->get("str"), false, false, false}
   }};
 
-  auto popTypeFn = TypeFn{this->get("void")};
-
   auto pushTypeFn = TypeFn{this->get("void"), {
     TypeFnParam{"element", elementType, false, false, true}
   }};
-
-  auto reverseTypeFn = TypeFn{self};
 
   auto sliceTypeFn = TypeFn{self, {
     TypeFnParam{"start", this->get("i64"), false, false, false},
@@ -49,13 +45,15 @@ Type *TypeMap::arrayOf (Type *elementType) {
 
   self->fields.push_back(TypeField{"len", this->get("int"), false, true});
 
+  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".empty", "@array.empty", TypeFn{this->get("bool")}, {}, true}));
+  self->fields.push_back(TypeField{"empty", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".join", "@array.join", joinTypeFn, {}, true}));
   self->fields.push_back(TypeField{"join", this->_items.back().get(), false, true});
-  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".pop", "@array.pop", popTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".pop", "@array.pop", TypeFn{this->get("void")}, {}, true}));
   self->fields.push_back(TypeField{"pop", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".push", "@array.push", pushTypeFn, {}, true}));
   self->fields.push_back(TypeField{"push", this->_items.back().get(), false, true});
-  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".reverse", "@array.reverse", reverseTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".reverse", "@array.reverse", TypeFn{self}, {}, true}));
   self->fields.push_back(TypeField{"reverse", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".slice", "@array.slice", sliceTypeFn, {}, true}));
   self->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true});
@@ -115,6 +113,19 @@ bool TypeMap::has (const std::string &name) {
 void TypeMap::init () {
   this->stack.reserve(std::numeric_limits<short>::max());
 
+  this->_items.push_back(std::make_unique<Type>(Type{"buffer_Buffer", "@buffer_Buffer", TypeObj{}, {}, true}));
+  auto bufferBufferType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_Stats", "@fs_Stats", TypeObj{}, {}, true}));
+  auto fsStatsType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Header", "@request_Header", TypeObj{}, {}, true}));
+  auto requestHeaderType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Request", "@request_Request", TypeObj{}, {}, true}));
+  auto requestRequestType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Response", "@request_Response", TypeObj{}, {}, true}));
+  auto requestResponseType = this->_items.back().get();
+  this->_items.push_back(std::make_unique<Type>(Type{"url_URL", "@url_URL", TypeObj{}, {}, true}));
+  auto urlUrlType = this->_items.back().get();
+
   this->_items.push_back(std::make_unique<Type>(Type{"any", "@any", TypeObj{}, {}, true}));
   auto anyType = this->_items.back().get();
   this->_items.push_back(std::make_unique<Type>(Type{"bool", "@bool", TypeObj{}, {}, true}));
@@ -152,14 +163,80 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"void", "@void", TypeObj{}, {}, true}));
   auto voidType = this->_items.back().get();
 
+  this->_items.push_back(std::make_unique<Type>(Type{"buffer_Buffer.str", "@buffer_Buffer.str", TypeFn{strType}, {}, true}));
+  bufferBufferType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  fsStatsType->fields.push_back(TypeField{"dev", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"mode", u16Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"nlink", u16Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"ino", u64Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"uid", intType, false, false});
+  fsStatsType->fields.push_back(TypeField{"gid", intType, false, false});
+  fsStatsType->fields.push_back(TypeField{"rdev", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"atime", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"atimeNs", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"mtime", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"mtimeNs", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"ctime", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"ctimeNs", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"birthtime", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"birthtimeNs", i32Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"size", i64Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"blocks", i64Type, false, false});
+  fsStatsType->fields.push_back(TypeField{"blksize", i32Type, false, false});
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_Stats.str", "@fs_Stats.str", TypeFn{strType}, {}, true}));
+  fsStatsType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  requestHeaderType->fields.push_back(TypeField{"name", strType, false, false});
+  requestHeaderType->fields.push_back(TypeField{"value", strType, false, false});
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Header.str", "@request_Header.str", TypeFn{strType}, {}, true}));
+  requestHeaderType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Request.str", "@request_Request.str", TypeFn{strType}, {}, true}));
+  requestRequestType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  requestResponseType->fields.push_back(TypeField{"data", bufferBufferType, false, false});
+  requestResponseType->fields.push_back(TypeField{"status", intType, false, false});
+  requestResponseType->fields.push_back(TypeField{"headers", this->arrayOf(requestHeaderType), false, false});
+  this->_items.push_back(std::make_unique<Type>(Type{"request_Response.str", "@request_Response.str", TypeFn{strType}, {}, true}));
+  requestResponseType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  urlUrlType->fields.push_back(TypeField{"origin", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"protocol", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"host", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"hostname", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"port", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"path", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"pathname", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"search", strType, false, false});
+  urlUrlType->fields.push_back(TypeField{"hash", strType, false, false});
+  this->_items.push_back(std::make_unique<Type>(Type{"url_URL.str", "@url_URL.str", TypeFn{strType}, {}, true}));
+  urlUrlType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
   this->_items.push_back(std::make_unique<Type>(Type{"any.str", "@any.str", TypeFn{strType}, {}, true}));
   anyType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"bool.str", "@bool.str", TypeFn{strType}, {}, true}));
   boolType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"byte.str", "@byte.str", TypeFn{strType}, {}, true}));
   byteType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
+  auto repeatCharTypeFn = TypeFn{strType, {
+    TypeFnParam{"times", u32Type, false, true, false}
+  }};
+
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isAlpha", "@char.isAlpha", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isAlpha", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isAlphaNum", "@char.isAlphaNum", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isAlphaNum", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isDigit", "@char.isDigit", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isDigit", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.isSpace", "@char.isSpace", TypeFn{boolType}, {}, true}));
+  charType->fields.push_back(TypeField{"isSpace", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"char.repeat", "@char.repeat", repeatCharTypeFn, {}, true}));
+  charType->fields.push_back(TypeField{"repeat", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"char.str", "@char.str", TypeFn{strType}, {}, true}));
   charType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
+
   this->_items.push_back(std::make_unique<Type>(Type{"f32.str", "@f32.str", TypeFn{strType}, {}, true}));
   f32Type->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"f64.str", "@f64.str", TypeFn{strType}, {}, true}));
@@ -176,15 +253,41 @@ void TypeMap::init () {
   i64Type->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"int.str", "@int.str", TypeFn{strType}, {}, true}));
   intType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
-  strType->fields.push_back(TypeField{"len", intType, false, true});
+
+  auto findStrTypeFn = TypeFn{intType, {
+    TypeFnParam{"search", strType, false, true, false}
+  }};
+
+  auto linesStrTypeFn = TypeFn{this->arrayOf(strType), {
+    TypeFnParam{"keepLineBreaks", boolType, false, false, false}
+  }};
 
   auto sliceStrTypeFn = TypeFn{strType, {
     TypeFnParam{"start", i64Type, false, false, false},
     TypeFnParam{"end", i64Type, false, false, false}
   }};
 
+  strType->fields.push_back(TypeField{"len", intType, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.empty", "@str.empty", TypeFn{boolType}, {}, true}));
+  strType->fields.push_back(TypeField{"empty", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.find", "@str.find", findStrTypeFn, {}, true}));
+  strType->fields.push_back(TypeField{"find", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.lines", "@str.lines", linesStrTypeFn, {}, true}));
+  strType->fields.push_back(TypeField{"lines", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.toLower", "@str.lower", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"lower", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.toLowerFirst", "@str.lowerFirst", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"lowerFirst", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.slice", "@str.slice", sliceStrTypeFn, {}, true}));
   strType->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.toBuffer", "@str.toBuffer", TypeFn{bufferBufferType}, {}, true}));
+  strType->fields.push_back(TypeField{"toBuffer", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.trim", "@str.trim", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"trim", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.upper", "@str.upper", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"upper", this->_items.back().get(), false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.upperFirst", "@str.upperFirst", TypeFn{strType}, {}, true}));
+  strType->fields.push_back(TypeField{"upperFirst", this->_items.back().get(), false, true});
 
   this->_items.push_back(std::make_unique<Type>(Type{"u8.str", "@u8.str", TypeFn{strType}, {}, true}));
   u8Type->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
@@ -199,21 +302,152 @@ void TypeMap::init () {
     TypeFnParam{"status", intType, false, false, false}
   }};
 
-  this->_items.push_back(std::make_unique<Type>(Type{"exit", "@exit", exitTypeFn, {}, true}));
+  auto fsChmodSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false},
+    TypeFnParam{"mode", intType, false, true, false}
+  }};
+
+  auto fsChownSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false},
+    TypeFnParam{"uid", intType, false, true, false},
+    TypeFnParam{"gid", intType, false, true, false}
+  }};
+
+  auto fsExistsSyncTypeFn = TypeFn{boolType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsIsAbsoluteSyncTypeFn = TypeFn{boolType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsIsDirectorySyncTypeFn = TypeFn{boolType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsIsFileSyncTypeFn = TypeFn{boolType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsIsSymbolicLinkSyncTypeFn = TypeFn{boolType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsLinkSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"sourcePath", strType, false, true, false},
+    TypeFnParam{"linkPath", strType, false, true, false}
+  }};
+
+  auto fsMkdirSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsReadFileSyncTypeFn = TypeFn{bufferBufferType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsRealpathSyncTypeFn = TypeFn{strType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsRmSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsRmdirSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsScandirSyncTypeFn = TypeFn{this->arrayOf(strType), {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsStatSyncTypeFn = TypeFn{fsStatsType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsUnlinkSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto fsWriteFileSyncTypeFn = TypeFn{voidType, {
+    TypeFnParam{"path", strType, false, true, false},
+    TypeFnParam{"data", bufferBufferType, false, true, false}
+  }};
+
+  auto pathBasenameTypeFn = TypeFn{strType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
+
+  auto pathDirnameTypeFn = TypeFn{strType, {
+    TypeFnParam{"path", strType, false, true, false}
+  }};
 
   auto printTypeFn = TypeFn{voidType, {
     TypeFnParam{"items", anyType, false, false, true},
     TypeFnParam{"separator", strType, false, false, false},
-    TypeFnParam{"terminator", strType, false, false, false}
+    TypeFnParam{"terminator", strType, false, false, false},
+    TypeFnParam{"to", strType, false, false, false}
   }};
 
-  this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, {}, true}));
+  auto processRunSyncTypeFn = TypeFn{bufferBufferType, {
+    TypeFnParam{"command", strType, false, true, false}
+  }};
+
+  auto requestCloseTypeFn = TypeFn{voidType, {
+    TypeFnParam{"request", this->ref(requestRequestType), true, true, false}
+  }};
+
+  auto requestOpenTypeFn = TypeFn{requestRequestType, {
+    TypeFnParam{"method", strType, false, true, false},
+    TypeFnParam{"url", strType, false, true, false},
+    TypeFnParam{"data", bufferBufferType, false, false, false},
+    TypeFnParam{"headers", this->arrayOf(requestHeaderType), false, false, false}
+  }};
+
+  auto requestReadTypeFn = TypeFn{requestResponseType, {
+    TypeFnParam{"request", this->ref(requestRequestType), true, true, false}
+  }};
 
   auto sleepSyncTypeFn = TypeFn{voidType, {
     TypeFnParam{"milliseconds", u32Type, false, true, false}
   }};
 
+  auto urlParseTypeFn = TypeFn{urlUrlType, {
+    TypeFnParam{"url", strType, false, true, false}
+  }};
+
+  this->_items.push_back(std::make_unique<Type>(Type{"exit", "@exit", exitTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_chmodSync", "@fs_chmodSync", fsChmodSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_chownSync", "@fs_chownSync", fsChownSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_existsSync", "@fs_existsSync", fsExistsSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_isAbsoluteSync", "@fs_isAbsoluteSync", fsIsAbsoluteSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_isDirectorySync", "@fs_isDirectorySync", fsIsDirectorySyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_isFileSync", "@fs_isFileSync", fsIsFileSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_isSymbolicLinkSync", "@fs_isSymbolicLinkSync", fsIsSymbolicLinkSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_linkSync", "@fs_linkSync", fsLinkSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_mkdirSync", "@fs_mkdirSync", fsMkdirSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_readFileSync", "@fs_readFileSync", fsReadFileSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_realpathSync", "@fs_realpathSync", fsRealpathSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_rmSync", "@fs_rmSync", fsRmSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_rmdirSync", "@fs_rmdirSync", fsRmdirSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_scandirSync", "@fs_scandirSync", fsScandirSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_statSync", "@fs_statSync", fsStatSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_unlinkSync", "@fs_unlinkSync", fsUnlinkSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"fs_writeFileSync", "@fs_writeFileSync", fsWriteFileSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"os_name", "@os_name", TypeFn{strType}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"print", "@print", printTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"path_basename", "@path_basename", pathBasenameTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"path_dirname", "@path_dirname", pathDirnameTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"process_cwd", "@process_cwd", TypeFn{strType}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"process_getgid", "@process_getgid", TypeFn{intType}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"process_getuid", "@process_getuid", TypeFn{intType}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"process_runSync", "@process_runSync", processRunSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"request_close", "@request_close", requestCloseTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"request_open", "@request_open", requestOpenTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"request_read", "@request_read", requestReadTypeFn, {}, true}));
   this->_items.push_back(std::make_unique<Type>(Type{"sleepSync", "@sleepSync", sleepSyncTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{"url_parse", "@url_parse", urlParseTypeFn, {}, true}));
 }
 
 std::string TypeMap::name (const std::string &name) const {

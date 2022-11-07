@@ -44,6 +44,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -51,6 +52,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -58,17 +60,6 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-void *alloc (size_t);
-
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
 
 struct __THE_1_array_int;
 struct __THE_1_fn$0P;
@@ -110,6 +101,8 @@ struct __THE_1_mainSDtest2_0X {
   const struct __THE_1_fn$0 *__THE_0_test1_0;
 };
 
+void *alloc (size_t);
+void *re_alloc (void *, size_t);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 int32_t *__THE_1_array_int_at (struct __THE_1_array_int, int64_t);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
@@ -122,6 +115,22 @@ void __THE_1_fn$1_free (struct __THE_1_fn$1);
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtest2_0X);
 void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1P);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
   int32_t *d = alloc(x * sizeof(int32_t));
@@ -132,7 +141,7 @@ struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   return (struct __THE_1_array_int) {d, x};
 }
 int32_t *__THE_1_array_int_at (struct __THE_1_array_int n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
     fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
@@ -155,7 +164,7 @@ size_t __THE_1_array_int_len (struct __THE_1_array_int n) {
 void __THE_1_array_int_push (struct __THE_1_array_int *n, size_t x, ...) {
   if (x == 0) return;
   n->l += x;
-  n->d = realloc(n->d, n->l * sizeof(int32_t));
+  n->d = re_alloc(n->d, n->l * sizeof(int32_t));
   va_list args;
   va_start(args, x);
   for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, int32_t);

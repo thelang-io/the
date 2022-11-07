@@ -29,7 +29,7 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
     #if defined(OS_WINDOWS)
       returnCode = _pclose(fd);
     #else
-      returnCode = pclose(fd);
+      returnCode = pclose(fd) / 256;
     #endif
   };
 

@@ -12,6 +12,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -19,6 +20,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -26,7 +28,17 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
+struct __THE_1_array_int;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
 void *alloc (size_t);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+int32_t *__THE_1_array_int_at (struct __THE_1_array_int, int64_t);
+void __THE_1_array_int_free (struct __THE_1_array_int);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -36,18 +48,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_array_int;
-
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
-
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-int32_t *__THE_1_array_int_at (struct __THE_1_array_int, int64_t);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
   int32_t *d = alloc(x * sizeof(int32_t));
@@ -58,7 +58,7 @@ struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   return (struct __THE_1_array_int) {d, x};
 }
 int32_t *__THE_1_array_int_at (struct __THE_1_array_int n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
     fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }

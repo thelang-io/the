@@ -46,6 +46,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -53,6 +54,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -67,6 +69,53 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_array_int;
+struct __THE_1_TestArrInt_0;
+struct __THE_1_TestBool_0;
+struct __THE_1_TestChar_0;
+struct __THE_1_TestFloat_0;
+struct __THE_1_TestInt_0;
+struct __THE_1_TestOptInt_0;
+struct __THE_1_TestOptRefInt_0;
+struct __THE_1_TestRefInt_0;
+struct __THE_1_TestRefOptInt_0;
+struct __THE_1_TestStr_0;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+struct __THE_1_TestArrInt_0 {
+  const struct __THE_1_array_int __THE_0_a;
+};
+struct __THE_1_TestBool_0 {
+  const bool __THE_0_a;
+};
+struct __THE_1_TestChar_0 {
+  const char __THE_0_a;
+};
+struct __THE_1_TestFloat_0 {
+  const double __THE_0_a;
+};
+struct __THE_1_TestInt_0 {
+  const int32_t __THE_0_a;
+};
+struct __THE_1_TestOptInt_0 {
+  const int32_t *__THE_0_a;
+};
+struct __THE_1_TestOptRefInt_0 {
+  const int32_t **__THE_0_a;
+};
+struct __THE_1_TestRefInt_0 {
+  const int32_t *__THE_0_a;
+};
+struct __THE_1_TestRefOptInt_0 {
+  const int32_t **__THE_0_a;
+};
+struct __THE_1_TestStr_0 {
+  const struct str __THE_0_a;
+};
+
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
@@ -74,6 +123,61 @@ struct str str_copy (const struct str);
 bool str_eq_str (struct str, struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+bool __THE_1_array_int_eq (struct __THE_1_array_int, struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+bool __THE_1_array_int_ne (struct __THE_1_array_int, struct __THE_1_array_int);
+struct __THE_1_TestArrInt_0 *__THE_1_TestArrInt_0_alloc (struct __THE_1_array_int);
+bool __THE_1_TestArrInt_0_eq (struct __THE_1_TestArrInt_0 *, struct __THE_1_TestArrInt_0 *);
+void __THE_1_TestArrInt_0_free (struct __THE_1_TestArrInt_0 *);
+bool __THE_1_TestArrInt_0_ne (struct __THE_1_TestArrInt_0 *, struct __THE_1_TestArrInt_0 *);
+struct __THE_1_TestBool_0 *__THE_1_TestBool_0_alloc (bool);
+bool __THE_1_TestBool_0_eq (struct __THE_1_TestBool_0 *, struct __THE_1_TestBool_0 *);
+void __THE_1_TestBool_0_free (struct __THE_1_TestBool_0 *);
+bool __THE_1_TestBool_0_ne (struct __THE_1_TestBool_0 *, struct __THE_1_TestBool_0 *);
+struct __THE_1_TestChar_0 *__THE_1_TestChar_0_alloc (char);
+bool __THE_1_TestChar_0_eq (struct __THE_1_TestChar_0 *, struct __THE_1_TestChar_0 *);
+void __THE_1_TestChar_0_free (struct __THE_1_TestChar_0 *);
+bool __THE_1_TestChar_0_ne (struct __THE_1_TestChar_0 *, struct __THE_1_TestChar_0 *);
+struct __THE_1_TestFloat_0 *__THE_1_TestFloat_0_alloc (double);
+bool __THE_1_TestFloat_0_eq (struct __THE_1_TestFloat_0 *, struct __THE_1_TestFloat_0 *);
+void __THE_1_TestFloat_0_free (struct __THE_1_TestFloat_0 *);
+bool __THE_1_TestFloat_0_ne (struct __THE_1_TestFloat_0 *, struct __THE_1_TestFloat_0 *);
+struct __THE_1_TestInt_0 *__THE_1_TestInt_0_alloc (int32_t);
+bool __THE_1_TestInt_0_eq (struct __THE_1_TestInt_0 *, struct __THE_1_TestInt_0 *);
+void __THE_1_TestInt_0_free (struct __THE_1_TestInt_0 *);
+bool __THE_1_TestInt_0_ne (struct __THE_1_TestInt_0 *, struct __THE_1_TestInt_0 *);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+bool __THE_1_opt_int_eq (int32_t *, int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+bool __THE_1_opt_int_ne (int32_t *, int32_t *);
+struct __THE_1_TestOptInt_0 *__THE_1_TestOptInt_0_alloc (int32_t *);
+bool __THE_1_TestOptInt_0_eq (struct __THE_1_TestOptInt_0 *, struct __THE_1_TestOptInt_0 *);
+void __THE_1_TestOptInt_0_free (struct __THE_1_TestOptInt_0 *);
+bool __THE_1_TestOptInt_0_ne (struct __THE_1_TestOptInt_0 *, struct __THE_1_TestOptInt_0 *);
+int32_t **__THE_1_opt_ref_int_alloc (int32_t *);
+int32_t **__THE_1_opt_ref_int_copy (const int32_t **);
+bool __THE_1_opt_ref_int_eq (int32_t **, int32_t **);
+void __THE_1_opt_ref_int_free (int32_t **);
+bool __THE_1_opt_ref_int_ne (int32_t **, int32_t **);
+struct __THE_1_TestOptRefInt_0 *__THE_1_TestOptRefInt_0_alloc (int32_t **);
+bool __THE_1_TestOptRefInt_0_eq (struct __THE_1_TestOptRefInt_0 *, struct __THE_1_TestOptRefInt_0 *);
+void __THE_1_TestOptRefInt_0_free (struct __THE_1_TestOptRefInt_0 *);
+bool __THE_1_TestOptRefInt_0_ne (struct __THE_1_TestOptRefInt_0 *, struct __THE_1_TestOptRefInt_0 *);
+struct __THE_1_TestRefInt_0 *__THE_1_TestRefInt_0_alloc (int32_t *);
+bool __THE_1_TestRefInt_0_eq (struct __THE_1_TestRefInt_0 *, struct __THE_1_TestRefInt_0 *);
+void __THE_1_TestRefInt_0_free (struct __THE_1_TestRefInt_0 *);
+bool __THE_1_TestRefInt_0_ne (struct __THE_1_TestRefInt_0 *, struct __THE_1_TestRefInt_0 *);
+struct __THE_1_TestRefOptInt_0 *__THE_1_TestRefOptInt_0_alloc (int32_t **);
+bool __THE_1_TestRefOptInt_0_eq (struct __THE_1_TestRefOptInt_0 *, struct __THE_1_TestRefOptInt_0 *);
+void __THE_1_TestRefOptInt_0_free (struct __THE_1_TestRefOptInt_0 *);
+bool __THE_1_TestRefOptInt_0_ne (struct __THE_1_TestRefOptInt_0 *, struct __THE_1_TestRefOptInt_0 *);
+struct __THE_1_TestStr_0 *__THE_1_TestStr_0_alloc (struct str);
+bool __THE_1_TestStr_0_eq (struct __THE_1_TestStr_0 *, struct __THE_1_TestStr_0 *);
+void __THE_1_TestStr_0_free (struct __THE_1_TestStr_0 *);
+bool __THE_1_TestStr_0_ne (struct __THE_1_TestStr_0 *, struct __THE_1_TestStr_0 *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -138,110 +242,6 @@ bool str_ne_str (struct str s1, struct str s2) {
   free(s2.d);
   return r;
 }
-
-struct __THE_1_array_int;
-struct __THE_1_TestArrInt_0;
-struct __THE_1_TestBool_0;
-struct __THE_1_TestChar_0;
-struct __THE_1_TestFloat_0;
-struct __THE_1_TestInt_0;
-struct __THE_1_TestOptInt_0;
-struct __THE_1_TestOptRefInt_0;
-struct __THE_1_TestRefInt_0;
-struct __THE_1_TestRefOptInt_0;
-struct __THE_1_TestStr_0;
-
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
-struct __THE_1_TestArrInt_0 {
-  const struct __THE_1_array_int __THE_0_a;
-};
-struct __THE_1_TestBool_0 {
-  const bool __THE_0_a;
-};
-struct __THE_1_TestChar_0 {
-  const char __THE_0_a;
-};
-struct __THE_1_TestFloat_0 {
-  const double __THE_0_a;
-};
-struct __THE_1_TestInt_0 {
-  const int32_t __THE_0_a;
-};
-struct __THE_1_TestOptInt_0 {
-  const int32_t *__THE_0_a;
-};
-struct __THE_1_TestOptRefInt_0 {
-  const int32_t **__THE_0_a;
-};
-struct __THE_1_TestRefInt_0 {
-  const int32_t *__THE_0_a;
-};
-struct __THE_1_TestRefOptInt_0 {
-  const int32_t **__THE_0_a;
-};
-struct __THE_1_TestStr_0 {
-  const struct str __THE_0_a;
-};
-
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-bool __THE_1_array_int_eq (struct __THE_1_array_int, struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-bool __THE_1_array_int_ne (struct __THE_1_array_int, struct __THE_1_array_int);
-struct __THE_1_TestArrInt_0 *__THE_1_TestArrInt_0_alloc (struct __THE_1_array_int);
-bool __THE_1_TestArrInt_0_eq (struct __THE_1_TestArrInt_0 *, struct __THE_1_TestArrInt_0 *);
-void __THE_1_TestArrInt_0_free (struct __THE_1_TestArrInt_0 *);
-bool __THE_1_TestArrInt_0_ne (struct __THE_1_TestArrInt_0 *, struct __THE_1_TestArrInt_0 *);
-struct __THE_1_TestBool_0 *__THE_1_TestBool_0_alloc (bool);
-bool __THE_1_TestBool_0_eq (struct __THE_1_TestBool_0 *, struct __THE_1_TestBool_0 *);
-void __THE_1_TestBool_0_free (struct __THE_1_TestBool_0 *);
-bool __THE_1_TestBool_0_ne (struct __THE_1_TestBool_0 *, struct __THE_1_TestBool_0 *);
-struct __THE_1_TestChar_0 *__THE_1_TestChar_0_alloc (char);
-bool __THE_1_TestChar_0_eq (struct __THE_1_TestChar_0 *, struct __THE_1_TestChar_0 *);
-void __THE_1_TestChar_0_free (struct __THE_1_TestChar_0 *);
-bool __THE_1_TestChar_0_ne (struct __THE_1_TestChar_0 *, struct __THE_1_TestChar_0 *);
-struct __THE_1_TestFloat_0 *__THE_1_TestFloat_0_alloc (double);
-bool __THE_1_TestFloat_0_eq (struct __THE_1_TestFloat_0 *, struct __THE_1_TestFloat_0 *);
-void __THE_1_TestFloat_0_free (struct __THE_1_TestFloat_0 *);
-bool __THE_1_TestFloat_0_ne (struct __THE_1_TestFloat_0 *, struct __THE_1_TestFloat_0 *);
-struct __THE_1_TestInt_0 *__THE_1_TestInt_0_alloc (int32_t);
-bool __THE_1_TestInt_0_eq (struct __THE_1_TestInt_0 *, struct __THE_1_TestInt_0 *);
-void __THE_1_TestInt_0_free (struct __THE_1_TestInt_0 *);
-bool __THE_1_TestInt_0_ne (struct __THE_1_TestInt_0 *, struct __THE_1_TestInt_0 *);
-int32_t *__THE_1_opt_int_alloc (int32_t);
-int32_t *__THE_1_opt_int_copy (const int32_t *);
-bool __THE_1_opt_int_eq (int32_t *, int32_t *);
-void __THE_1_opt_int_free (int32_t *);
-bool __THE_1_opt_int_ne (int32_t *, int32_t *);
-struct __THE_1_TestOptInt_0 *__THE_1_TestOptInt_0_alloc (int32_t *);
-bool __THE_1_TestOptInt_0_eq (struct __THE_1_TestOptInt_0 *, struct __THE_1_TestOptInt_0 *);
-void __THE_1_TestOptInt_0_free (struct __THE_1_TestOptInt_0 *);
-bool __THE_1_TestOptInt_0_ne (struct __THE_1_TestOptInt_0 *, struct __THE_1_TestOptInt_0 *);
-int32_t **__THE_1_opt_ref_int_alloc (int32_t *);
-int32_t **__THE_1_opt_ref_int_copy (const int32_t **);
-bool __THE_1_opt_ref_int_eq (int32_t **, int32_t **);
-void __THE_1_opt_ref_int_free (int32_t **);
-bool __THE_1_opt_ref_int_ne (int32_t **, int32_t **);
-struct __THE_1_TestOptRefInt_0 *__THE_1_TestOptRefInt_0_alloc (int32_t **);
-bool __THE_1_TestOptRefInt_0_eq (struct __THE_1_TestOptRefInt_0 *, struct __THE_1_TestOptRefInt_0 *);
-void __THE_1_TestOptRefInt_0_free (struct __THE_1_TestOptRefInt_0 *);
-bool __THE_1_TestOptRefInt_0_ne (struct __THE_1_TestOptRefInt_0 *, struct __THE_1_TestOptRefInt_0 *);
-struct __THE_1_TestRefInt_0 *__THE_1_TestRefInt_0_alloc (int32_t *);
-bool __THE_1_TestRefInt_0_eq (struct __THE_1_TestRefInt_0 *, struct __THE_1_TestRefInt_0 *);
-void __THE_1_TestRefInt_0_free (struct __THE_1_TestRefInt_0 *);
-bool __THE_1_TestRefInt_0_ne (struct __THE_1_TestRefInt_0 *, struct __THE_1_TestRefInt_0 *);
-struct __THE_1_TestRefOptInt_0 *__THE_1_TestRefOptInt_0_alloc (int32_t **);
-bool __THE_1_TestRefOptInt_0_eq (struct __THE_1_TestRefOptInt_0 *, struct __THE_1_TestRefOptInt_0 *);
-void __THE_1_TestRefOptInt_0_free (struct __THE_1_TestRefOptInt_0 *);
-bool __THE_1_TestRefOptInt_0_ne (struct __THE_1_TestRefOptInt_0 *, struct __THE_1_TestRefOptInt_0 *);
-struct __THE_1_TestStr_0 *__THE_1_TestStr_0_alloc (struct str);
-bool __THE_1_TestStr_0_eq (struct __THE_1_TestStr_0 *, struct __THE_1_TestStr_0 *);
-void __THE_1_TestStr_0_free (struct __THE_1_TestStr_0 *);
-bool __THE_1_TestStr_0_ne (struct __THE_1_TestStr_0 *, struct __THE_1_TestStr_0 *);
-
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
   int32_t *d = alloc(x * sizeof(int32_t));

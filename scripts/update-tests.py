@@ -1,8 +1,26 @@
 #!/usr/bin/env python3
 
+#
+# Copyright (c) 2018 Aaron Delasy
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 import os
 import subprocess
 import sys
+
+CORE_PATH = "build\\Debug\\the.exe" if os.name == "nt" else "build/the"
 
 
 def update(directory: str, action: str):
@@ -39,7 +57,7 @@ def update(directory: str, action: str):
         f.close()
 
         process = subprocess.Popen(
-            ["build/the", action, filepath],
+            [CORE_PATH, action, filepath],
             stderr=subprocess.PIPE,
             stdout=subprocess.PIPE,
             text=True
@@ -49,12 +67,15 @@ def update(directory: str, action: str):
         f = open(filepath, "w")
 
         if action == "codegen":
-            f.write(stdin_sep + "\n" + stdin + code_sep + "\n" + stdout[155:] + trailing_code)
+            f.write(
+                stdin_sep + os.linesep + stdin + code_sep + os.linesep + stdout[148 + 7 * len(os.linesep):] +
+                trailing_code
+            )
         elif is_error_file:
             result = "/test" + stderr[stderr.find(":", 10):]
-            f.write(stdin_sep + "\n" + stdin + stderr_sep + "\n" + result)
+            f.write(stdin_sep + os.linesep + stdin + stderr_sep + os.linesep + result)
         else:
-            f.write(stdin_sep + "\n" + stdin + stdout_sep + "\n" + stdout)
+            f.write(stdin_sep + os.linesep + stdin + stdout_sep + os.linesep + stdout)
 
         f.close()
 

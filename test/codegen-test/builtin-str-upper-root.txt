@@ -1,0 +1,71 @@
+======= stdin =======
+main {
+  "".upper()
+  "a".upper()
+  "test".upper()
+  "A".upper()
+  "TEST_TEST09$/!".upper()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct str str_upper (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_upper (struct str s) {
+  if (s.l != 0) {
+    for (size_t i = 0; i < s.l; i++) s.d[i] = toupper(s.d[i]);
+  }
+  return s;
+}
+
+int main () {
+  str_free((struct str) str_upper(str_alloc("")));
+  str_free((struct str) str_upper(str_alloc("a")));
+  str_free((struct str) str_upper(str_alloc("test")));
+  str_free((struct str) str_upper(str_alloc("A")));
+  str_free((struct str) str_upper(str_alloc("TEST_TEST09$/!")));
+}
+======= flags =======
+======= stdout =======

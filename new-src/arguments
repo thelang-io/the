@@ -18,26 +18,28 @@ obj Arguments {
   fileName: str
 }
 
-fn Arguments_init () Arguments {
-  if process.args.len == 1 {
+fn Arguments_init (mut args: str[]) Arguments {
+  args = args.slice(0)
+
+  if args.empty() {
     RaiseError("REPL is not supported")
   }
 
-  mut fileName: str?
+  mut fileName: str
 
-  loop i := 1; i < process.args.len; i++ {
-    arg := process.args[i]
+  loop i := 0; i < args.len; i++ {
+    arg := args[i]
 
     if arg[0] == '-' {
       RaiseError("Bad option " + arg)
-    } elif fileName == nil {
+    } elif fileName.empty() {
       fileName = arg
     } else {
       RaiseError("Processing multiple files is not supported")
     }
   }
 
-  if fileName == nil {
+  if fileName.empty() {
     RaiseError("File is not specified")
   }
 

@@ -17,17 +17,17 @@
 obj Reader {
   path: str
   content: str
-  pos: int
+  mut pos: int
 }
 
 fn Reader_init (p: str) Reader {
-  path := realpathSync(p)
+  path := fs_realpathSync(p)
 
-  if !isFileSync(path) {
+  if !fs_isFileSync(path) {
     RaiseError("Path \"" + path + "\" is not a file")
   }
 
-  content := readFileSync(path, "utf8")
+  content := fs_readFileSync(path).str()
   return Reader{path: path, content: content}
 }
 
@@ -43,7 +43,7 @@ fn Reader_lookahead (mut self: ref Reader, check: char) bool {
   ch := self.content[self.pos + 1]
 
   if (
-    OS == "Windows" &&
+    os_name() == "Windows" &&
     ch == '\r' &&
     self.pos + 2 < self.content.len &&
     self.content[self.pos + 2] == '\n'
@@ -68,7 +68,7 @@ fn Reader_next (mut self: ref Reader) char {
   ch1 := self.content[self.pos]
   self.pos++
 
-  if OS == "Windows" && ch1 == '\r' && !Reader_eof(self) {
+  if os_name() == "Windows" && ch1 == '\r' && !Reader_eof(self) {
     ch2 := self.content[self.pos]
 
     if ch2 == '\n' {
@@ -84,7 +84,7 @@ fn Reader_seek (mut self: ref Reader, pos: int) {
   self.pos = pos
 }
 
-fn Reader_slice (self: ref Reader, start: int?, end: int?) str {
+fn Reader_slice (self: ref Reader, start: int, end: int) str {
   return self.content.slice(start, end)
 }
 

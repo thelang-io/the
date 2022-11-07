@@ -12,6 +12,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -19,13 +20,24 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  const int32_t __THE_0_a;
+  const int32_t __THE_0_b;
+};
 
 void *alloc (size_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, int32_t);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -35,17 +47,6 @@ void *alloc (size_t l) {
   }
   return r;
 }
-
-struct __THE_1_Test_0;
-
-struct __THE_1_Test_0 {
-  const int32_t __THE_0_a;
-  const int32_t __THE_0_b;
-};
-
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, int32_t);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, int32_t __THE_0_b) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_b};

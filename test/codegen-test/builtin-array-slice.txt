@@ -61,6 +61,7 @@ main {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
   #define THE_OS_WINDOWS
   #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
 #else
   #if defined(__APPLE__)
     #define THE_OS_MACOS
@@ -68,6 +69,7 @@ main {
     #define THE_OS_LINUX
   #endif
   #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
 #endif
 
 #include <inttypes.h>
@@ -81,6 +83,13 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_array_int;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
 void *alloc (size_t);
 struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
@@ -88,6 +97,11 @@ struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 void str_free (struct str);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+struct __THE_1_array_int __THE_1_array_int_slice (struct __THE_1_array_int, unsigned int, int64_t, unsigned int, int64_t);
+struct str __THE_1_array_int_str (struct __THE_1_array_int);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -157,20 +171,6 @@ struct str str_concat_str (struct str s1, struct str s2) {
 void str_free (struct str s) {
   free(s.d);
 }
-
-struct __THE_1_array_int;
-
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
-
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-struct __THE_1_array_int __THE_1_array_int_slice (struct __THE_1_array_int, unsigned int, int64_t, unsigned int, int64_t);
-struct str __THE_1_array_int_str (struct __THE_1_array_int);
-
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
   int32_t *d = alloc(x * sizeof(int32_t));
@@ -190,8 +190,8 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
 struct __THE_1_array_int __THE_1_array_int_slice (struct __THE_1_array_int n, unsigned int o1, int64_t n1, unsigned int o2, int64_t n2) {
-  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -n.l ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));
-  int64_t i2 = o2 == 0 ? n.l : (n2 < 0 ? (n2 < -n.l ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));
+  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));
+  int64_t i2 = o2 == 0 ? n.l : (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));
   if (i1 > i2 || i1 >= n.l) {
     __THE_1_array_int_free((struct __THE_1_array_int) n);
     return (struct __THE_1_array_int) {NULL, 0};

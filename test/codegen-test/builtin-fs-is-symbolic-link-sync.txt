@@ -1,0 +1,360 @@
+======= stdin =======
+main {
+  mut fileName := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync.txt"
+
+  print(fs_isSymbolicLinkSync(fileName))
+  print(fs_isSymbolicLinkSync("test" + path_SEP + "fixtures"))
+  print(fs_isSymbolicLinkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt"))
+
+  // file
+  fs_linkSync("test/fixtures/test.txt", fileName)
+  print(fs_isSymbolicLinkSync(fileName))
+
+  // link
+  mut fileName2 := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync-symlink.txt"
+  fs_linkSync(fileName, fileName2)
+  print(fs_isSymbolicLinkSync(fileName2))
+  fs_unlinkSync(fileName2)
+  fs_unlinkSync(fileName)
+
+  // dir empty
+  fileName = "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync"
+  fs_mkdirSync(fileName)
+
+  fileName2 = "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-symbolic-sync-copy"
+  fs_linkSync(fileName, fileName2)
+  print(fs_isSymbolicLinkSync(fileName2))
+  fs_unlinkSync(fileName2)
+  fs_rmdirSync(fileName)
+
+  // dir
+  fileName = "test" + path_SEP + "fixtures-copy"
+  fs_linkSync("test/fixtures", fileName)
+  print(fs_isSymbolicLinkSync(fileName))
+  fs_unlinkSync(fileName)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <unistd.h>
+#endif
+
+struct str {
+  char *d;
+  size_t l;
+};
+#ifdef THE_OS_WINDOWS
+  struct win_reparse_data_buffer {
+    ULONG ReparseTag;
+    USHORT ReparseDataLength;
+    USHORT Reserved;
+    union {
+      struct {
+        USHORT SubstituteNameOffset;
+        USHORT SubstituteNameLength;
+        USHORT PrintNameOffset;
+        USHORT PrintNameLength;
+        ULONG Flags;
+        TCHAR PathBuffer[1];
+      } SymbolicLinkReparseBuffer;
+      struct {
+        USHORT SubstituteNameOffset;
+        USHORT SubstituteNameLength;
+        USHORT PrintNameOffset;
+        USHORT PrintNameLength;
+        TCHAR PathBuffer[1];
+      } MountPointReparseBuffer;
+      struct {
+        UCHAR DataBuffer[1];
+      } GenericReparseBuffer;
+      struct {
+        ULONG Version;
+        TCHAR StringList[1];
+      } AppExecLinkReparseBuffer;
+    };
+  };
+#endif
+
+void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+char *str_cstr (const struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+bool fs_isSymbolicLinkSync (struct str);
+void fs_linkSync (struct str, struct str);
+void fs_mkdirSync (struct str);
+void fs_rmdirSync (struct str);
+void fs_unlinkSync (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
+}
+bool fs_isSymbolicLinkSync (struct str s) {
+  char *c = str_cstr(s);
+  bool b = false;
+  #ifdef THE_OS_WINDOWS
+    HANDLE h = CreateFile(c, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
+    if (h == INVALID_HANDLE_VALUE) {
+      free(c);
+      return b;
+    }
+    char d[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
+    struct win_reparse_data_buffer *r = (struct win_reparse_data_buffer *) d;
+    DWORD y;
+    if (DeviceIoControl(h, FSCTL_GET_REPARSE_POINT, NULL, 0, &d, sizeof(d), &y, NULL)) {
+      if (r->ReparseTag == IO_REPARSE_TAG_SYMLINK) {
+        b = true;
+      } else if (r->ReparseTag == IO_REPARSE_TAG_MOUNT_POINT) {
+        char *t = r->MountPointReparseBuffer.PathBuffer + r->MountPointReparseBuffer.SubstituteNameOffset;
+        if (
+          r->MountPointReparseBuffer.SubstituteNameLength >= 6 &&
+          t[0] == '\\' && t[1] == '?' && t[2] == '?' && t[3] == '\\' &&
+          ((t[4] >= 'A' && t[4] <= 'Z') || (t[4] >= 'a' && t[4] <= 'z')) &&
+          t[5] == ':' && (r->MountPointReparseBuffer.SubstituteNameLength == 6 || t[6] == '\\')
+        ) {
+          b = true;
+        }
+      } else if (r->ReparseTag == IO_REPARSE_TAG_APPEXECLINK && r->AppExecLinkReparseBuffer.Version == 3) {
+        char *t = r->AppExecLinkReparseBuffer.StringList;
+        bool f = false;
+        for (size_t i = 0; i < 2; i++) {
+          size_t l = strlen(t);
+          if (l == 0) {
+            f = true;
+            break;
+          }
+          t += l + 1;
+        }
+        if (!f) {
+          if (strlen(t) >= 3 && ((t[0] >= 'a' && t[0] <= 'z') || (t[0] >= 'A' && t[0] <= 'Z')) && t[1] == ':' && t[2] == '\\') {
+            b = true;
+          }
+        }
+      }
+    }
+    CloseHandle(h);
+  #else
+    struct stat sb;
+    if (lstat(c, &sb) == 0) {
+      b = (sb.st_mode & S_IFMT) == S_IFLNK;
+    }
+  #endif
+  free(c);
+  str_free(s);
+  return b;
+}
+void fs_linkSync (struct str s1, struct str s2) {
+  char *c1 = str_cstr(s1);
+  char *c2 = str_cstr(s2);
+  #ifdef THE_OS_WINDOWS
+    for (size_t i = 0; i < s1.l; i++) c1[i] = (c1[i] == '/' ? '\\' : c1[i]);
+    for (size_t i = 0; i < s2.l; i++) c2[i] = (c2[i] == '/' ? '\\' : c2[i]);
+    DWORD flags = 0;
+    if (GetFileAttributes(c1) & FILE_ATTRIBUTE_DIRECTORY) flags |= SYMBOLIC_LINK_FLAG_DIRECTORY;
+    bool r = CreateSymbolicLink(c2, c1, flags);
+  #else
+    bool r = symlink(c1, c2) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to create symbolic link from `%s` to `%s`" THE_EOL, c1, c2);
+    exit(EXIT_FAILURE);
+  }
+  str_free(s1);
+  str_free(s2);
+  free(c1);
+  free(c2);
+}
+void fs_mkdirSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = CreateDirectory(c, NULL);
+  #else
+    bool r = mkdir(c, 0777) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to create directory `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
+void fs_rmdirSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = RemoveDirectory(c);
+  #else
+    bool r = rmdir(c) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to remove directory `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
+void fs_unlinkSync (struct str s) {
+  char *c = str_cstr(s);
+  bool r;
+  #ifdef THE_OS_WINDOWS
+    if (GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY) {
+      r = RemoveDirectory(c);
+    } else {
+      r = _unlink(c) == 0;
+    }
+  #else
+    r = unlink(c) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to unlink path `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
+
+int main () {
+  struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync.txt");
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures")), THE_EOL);
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")), THE_EOL);
+  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  struct str __THE_0_fileName2_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-symlink.txt");
+  fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
+  fs_unlinkSync(str_copy(__THE_0_fileName2_0));
+  fs_unlinkSync(str_copy(__THE_0_fileName_0));
+  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync"));
+  fs_mkdirSync(str_copy(__THE_0_fileName_0));
+  __THE_0_fileName2_0 = str_realloc(__THE_0_fileName2_0, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-copy"));
+  fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0)), THE_EOL);
+  fs_unlinkSync(str_copy(__THE_0_fileName2_0));
+  fs_rmdirSync(str_copy(__THE_0_fileName_0));
+  __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures-copy"));
+  fs_linkSync(str_alloc("test/fixtures"), str_copy(__THE_0_fileName_0));
+  print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
+  fs_unlinkSync(str_copy(__THE_0_fileName_0));
+  str_free((struct str) __THE_0_fileName2_0);
+  str_free((struct str) __THE_0_fileName_0);
+}
+======= flags =======
+======= stdout =======
+false
+false
+false
+true
+true
+true
+true

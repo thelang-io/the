@@ -1,0 +1,125 @@
+======= stdin =======
+main {
+  emptyArr: int[] = []
+  emptyArr.empty();
+  [1].empty();
+  ["test1", "test2"].empty();
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_array_str;
+struct __THE_1_array_int;
+
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
+bool __THE_1_array_str_empty (struct __THE_1_array_str);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+bool __THE_1_array_int_empty (struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(x * sizeof(struct str));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct str);
+  va_end(args);
+  return (struct __THE_1_array_str) {d, x};
+}
+bool __THE_1_array_str_empty (struct __THE_1_array_str n) {
+  bool r = n.l == 0;
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return r;
+}
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(x * sizeof(int32_t));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
+  va_end(args);
+  return (struct __THE_1_array_int) {d, x};
+}
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
+  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(n.l * sizeof(int32_t));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
+  return (struct __THE_1_array_int) {d, n.l};
+}
+bool __THE_1_array_int_empty (struct __THE_1_array_int n) {
+  bool r = n.l == 0;
+  __THE_1_array_int_free((struct __THE_1_array_int) n);
+  return r;
+}
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
+  free(n.d);
+}
+
+int main () {
+  const struct __THE_1_array_int __THE_0_emptyArr_0 = __THE_1_array_int_alloc(0);
+  __THE_1_array_int_empty(__THE_1_array_int_copy(__THE_0_emptyArr_0));
+  __THE_1_array_int_empty(__THE_1_array_int_alloc(1, 1));
+  __THE_1_array_str_empty(__THE_1_array_str_alloc(2, str_alloc("test1"), str_alloc("test2")));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_emptyArr_0);
+}
+======= flags =======
+======= stdout =======

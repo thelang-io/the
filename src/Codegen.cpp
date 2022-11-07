@@ -20,6 +20,11 @@
 #include <fstream>
 #include "ASTChecker.hpp"
 #include "config.hpp"
+#include "codegen/fs.hpp"
+#include "codegen/metadata.hpp"
+#include "codegen/process.hpp"
+#include "codegen/request.hpp"
+#include "codegen/url.hpp"
 
 const auto banner = std::string(
   "/*!" EOL
@@ -43,7 +48,7 @@ std::string getCompilerFromPlatform (const std::string &platform) {
 
 void Codegen::compile (
   const std::string &path,
-  const std::tuple<std::string, std::string> &result,
+  const std::tuple<std::string, std::set<std::string>> &result,
   const std::string &platform,
   bool debug
 ) {
@@ -55,19 +60,59 @@ void Codegen::compile (
   f.close();
 
   auto compiler = getCompilerFromPlatform(platform);
-  auto cmd = compiler + " build/output.c -w -o " + path + (debug ? " -g" : "") + (flags.empty() ? "" : " " + flags);
+  auto flagsStr = std::string();
+
+  for (const auto &flag : flags) {
+    if (
+      flag.starts_with("A:") ||
+      (flag.starts_with("L:") && THE_OS == THE_OS_LINUX) ||
+      (flag.starts_with("M:") && THE_OS == THE_OS_MACOS) ||
+      (flag.starts_with("U:") && THE_OS != THE_OS_WINDOWS) ||
+      (flag.starts_with("W:") && THE_OS == THE_OS_WINDOWS)
+    ) {
+      flagsStr += " " + flag.substr(2);
+    }
+
+    if (flag.substr(2) == "-lssl") {
+      auto opensslRootDir = Codegen::getEnvVar("OPENSSL_ROOT_DIR");
+
+      if (!opensslRootDir.empty()) {
+        flagsStr += " -I\"" + opensslRootDir + "/include\"";
+        flagsStr += " -L\"" + opensslRootDir + "/lib\"";
+      }
+    }
+  }
+
+  auto cmd = compiler + " build/output.c -w -o " + path + flagsStr + (debug ? " -g" : "");
   auto returnCode = std::system(cmd.c_str());
 
   std::filesystem::remove("build/output.c");
 
   if (returnCode != 0) {
-    // todo test
     throw Error("failed to compile generated code");
   }
 }
 
+std::string Codegen::getEnvVar (const std::string &name) {
+  const char *result = getenv(name.c_str());
+  return result == nullptr ? "" : result;
+}
+
 std::string Codegen::name (const std::string &name) {
   return "__THE_0_" + name;
+}
+
+std::string Codegen::stringifyFlags (const std::set<std::string> &flags) {
+  auto result = std::string();
+  auto idx = static_cast<std::size_t>(0);
+
+  for (const auto &flag : flags) {
+    if (!flag.empty()) {
+      result += (idx++ == 0 ? "" : " ") + flag;
+    }
+  }
+
+  return result;
 }
 
 std::string Codegen::typeName (const std::string &name) {
@@ -79,13 +124,36 @@ Codegen::Codegen (AST *a) {
   this->reader = this->ast->reader;
 }
 
-std::tuple<std::string, std::string> Codegen::gen () {
-  auto nodes = this->ast->gen();
+std::tuple<std::string, std::set<std::string>> Codegen::gen () {
+  this->_typeObj(this->ast->typeMap.get("fs_Stats"), true);
+  this->_typeObj(this->ast->typeMap.get("request_Header"), true);
+  this->_typeObj(this->ast->typeMap.get("request_Request"), true);
+  this->_typeObj(this->ast->typeMap.get("request_Response"), true);
+  this->_typeObj(this->ast->typeMap.get("url_URL"), true);
 
-  auto mainCode = std::string("int main () {" EOL);
+  this->_apiPreLoad(codegenFs);
+  this->_apiPreLoad(codegenProcess);
+  this->_apiPreLoad(codegenRequest);
+  this->_apiPreLoad(codegenURL);
+
+  this->_typeObjDef(this->ast->typeMap.get("fs_Stats"), {}, true);
+  this->_typeObjDef(this->ast->typeMap.get("request_Header"), {}, true);
+  this->_typeObjDef(this->ast->typeMap.get("request_Request"), {
+    std::pair<std::string, std::string>{"free", "  _{request_close}(&o);" EOL}
+  }, true);
+  this->_typeObjDef(this->ast->typeMap.get("request_Response"), {}, true);
+  this->_typeObjDef(this->ast->typeMap.get("url_URL"), {}, true);
+
+  this->_apiLoad(codegenFs);
+  this->_apiLoad(codegenProcess);
+  this->_apiLoad(codegenRequest);
+  this->_apiLoad(codegenURL);
+
+  auto nodes = this->ast->gen();
+  auto mainCode = std::string();
+
   mainCode += this->_block(nodes, false);
   mainCode += this->state.cleanUp.gen(2);
-  mainCode += "}" EOL;
 
   auto defineCode = std::string();
   auto fnDeclCode = std::string();
@@ -113,11 +181,13 @@ std::tuple<std::string, std::string> Codegen::gen () {
   auto builtinFnDeclCode = std::string();
   auto builtinFnDefCode = std::string();
   auto builtinStructDefCode = std::string();
+  auto builtinVarCode = std::string();
 
   if (this->builtins.definitions) {
     builtinDefineCode += "#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)" EOL;
     builtinDefineCode += "  #define THE_OS_WINDOWS" EOL;
     builtinDefineCode += R"(  #define THE_EOL "\r\n")" EOL;
+    builtinDefineCode += R"(  #define THE_PATH_SEP "\\")" EOL;
     builtinDefineCode += "#else" EOL;
     builtinDefineCode += "  #if defined(__APPLE__)" EOL;
     builtinDefineCode += "    #define THE_OS_MACOS" EOL;
@@ -125,6 +195,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinDefineCode += "    #define THE_OS_LINUX" EOL;
     builtinDefineCode += "  #endif" EOL;
     builtinDefineCode += R"(  #define THE_EOL "\n")" EOL;
+    builtinDefineCode += R"(  #define THE_PATH_SEP "/")" EOL;
     builtinDefineCode += "#endif" EOL;
   }
 
@@ -138,11 +209,72 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinStructDefCode += "};" EOL;
   }
 
+  if (this->builtins.typeBuffer) {
+    builtinStructDefCode += "struct buffer {" EOL;
+    builtinStructDefCode += "  unsigned char *d;" EOL;
+    builtinStructDefCode += "  size_t l;" EOL;
+    builtinStructDefCode += "};" EOL;
+  }
+
+  if (this->builtins.typeRequest) {
+    builtinStructDefCode += "struct request {" EOL;
+    builtinStructDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinStructDefCode += "    SOCKET fd;" EOL;
+    builtinStructDefCode += "  #else" EOL;
+    builtinStructDefCode += "    int fd;" EOL;
+    builtinStructDefCode += "  #endif" EOL;
+    builtinStructDefCode += "  SSL_CTX *ctx;" EOL;
+    builtinStructDefCode += "  SSL *ssl;" EOL;
+    builtinStructDefCode += "};" EOL;
+  }
+
   if (this->builtins.typeStr) {
     builtinStructDefCode += "struct str {" EOL;
     builtinStructDefCode += "  char *d;" EOL;
     builtinStructDefCode += "  size_t l;" EOL;
     builtinStructDefCode += "};" EOL;
+  }
+
+  if (this->builtins.typeWinReparseDataBuffer) {
+    builtinStructDefCode += "#ifdef THE_OS_WINDOWS" EOL;
+    builtinStructDefCode += "  struct win_reparse_data_buffer {" EOL;
+    builtinStructDefCode += "    ULONG ReparseTag;" EOL;
+    builtinStructDefCode += "    USHORT ReparseDataLength;" EOL;
+    builtinStructDefCode += "    USHORT Reserved;" EOL;
+    builtinStructDefCode += "    union {" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameLength;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameLength;" EOL;
+    builtinStructDefCode += "        ULONG Flags;" EOL;
+    builtinStructDefCode += "        TCHAR PathBuffer[1];" EOL;
+    builtinStructDefCode += "      } SymbolicLinkReparseBuffer;" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT SubstituteNameLength;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameOffset;" EOL;
+    builtinStructDefCode += "        USHORT PrintNameLength;" EOL;
+    builtinStructDefCode += "        TCHAR PathBuffer[1];" EOL;
+    builtinStructDefCode += "      } MountPointReparseBuffer;" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        UCHAR DataBuffer[1];" EOL;
+    builtinStructDefCode += "      } GenericReparseBuffer;" EOL;
+    builtinStructDefCode += "      struct {" EOL;
+    builtinStructDefCode += "        ULONG Version;" EOL;
+    builtinStructDefCode += "        TCHAR StringList[1];" EOL;
+    builtinStructDefCode += "      } AppExecLinkReparseBuffer;" EOL;
+    builtinStructDefCode += "    };" EOL;
+    builtinStructDefCode += "  };" EOL;
+    builtinStructDefCode += "#endif" EOL;
+  }
+
+  if (this->builtins.varLibOpensslInit) {
+    builtinVarCode += "bool lib_openssl_init = false;" EOL;
+  }
+
+  if (this->builtins.varLibWs2Init) {
+    builtinVarCode += "bool lib_ws2_init = false;" EOL;
   }
 
   if (this->builtins.fnAlloc) {
@@ -151,6 +283,18 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  void *r = malloc(l);" EOL;
     builtinFnDefCode += "  if (r == NULL) {" EOL;
     builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);)" EOL;
+    builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnReAlloc) {
+    builtinFnDeclCode += "void *re_alloc (void *, size_t);" EOL;
+    builtinFnDefCode += "void *re_alloc (void *d, size_t l) {" EOL;
+    builtinFnDefCode += "  void *r = realloc(d, l);" EOL;
+    builtinFnDefCode += "  if (r == NULL) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);)" EOL;
     builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  return r;" EOL;
@@ -194,12 +338,116 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnBufferCopy) {
+    builtinFnDeclCode += "struct buffer buffer_copy (const struct buffer);" EOL;
+    builtinFnDefCode += "struct buffer buffer_copy (const struct buffer o) {" EOL;
+    builtinFnDefCode += "  unsigned char *d = alloc(o.l);" EOL;
+    builtinFnDefCode += "  memcpy(d, o.d, o.l);" EOL;
+    builtinFnDefCode += "  return (struct buffer) {d, o.l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnBufferEq) {
+    builtinFnDeclCode += "bool buffer_eq (struct buffer, struct buffer);" EOL;
+    builtinFnDefCode += "bool buffer_eq (struct buffer o1, struct buffer o2) {" EOL;
+    builtinFnDefCode += "  bool r = o1.l == o2.l && memcmp(o1.d, o2.d, o1.l) == 0;" EOL;
+    builtinFnDefCode += "  free(o1.d);" EOL;
+    builtinFnDefCode += "  free(o2.d);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnBufferFree) {
+    builtinFnDeclCode += "void buffer_free (struct buffer);" EOL;
+    builtinFnDefCode += "void buffer_free (struct buffer o) {" EOL;
+    builtinFnDefCode += "  free(o.d);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnBufferNe) {
+    builtinFnDeclCode += "bool buffer_ne (struct buffer, struct buffer);" EOL;
+    builtinFnDefCode += "bool buffer_ne (struct buffer o1, struct buffer o2) {" EOL;
+    builtinFnDefCode += "  bool r = o1.l != o2.l || memcmp(o1.d, o2.d, o1.l) != 0;" EOL;
+    builtinFnDefCode += "  free(o1.d);" EOL;
+    builtinFnDefCode += "  free(o2.d);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnBufferRealloc) {
+    builtinFnDeclCode += "struct buffer buffer_realloc (struct buffer, struct buffer);" EOL;
+    builtinFnDefCode += "struct buffer buffer_realloc (struct buffer o1, struct buffer o2) {" EOL;
+    builtinFnDefCode += "  free(o1.d);" EOL;
+    builtinFnDefCode += "  return o2;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnBufferStr) {
+    builtinFnDeclCode += "struct str buffer_str (struct buffer);" EOL;
+    builtinFnDefCode += "struct str buffer_str (struct buffer b) {" EOL;
+    builtinFnDefCode += "  size_t l = 8 + (b.l * 3);" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += R"(  memcpy(d, "[Buffer", 7);)" EOL;
+    builtinFnDefCode += R"(  for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);)" EOL;
+    builtinFnDefCode += "  d[l - 1] = ']';" EOL;
+    builtinFnDefCode += "  free(b.d);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnBufferToStr) {
+    builtinFnDeclCode += "struct str buffer_to_str (struct buffer);" EOL;
+    builtinFnDefCode += "struct str buffer_to_str (struct buffer b) {" EOL;
+    builtinFnDefCode += "  return (struct str) {(char *) b.d, b.l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnByteStr) {
     builtinFnDeclCode += "struct str byte_str (unsigned char);" EOL;
     builtinFnDefCode += "struct str byte_str (unsigned char x) {" EOL;
     builtinFnDefCode += "  char buf[512];" EOL;
     builtinFnDefCode += R"(  sprintf(buf, "%u", x);)" EOL;
     builtinFnDefCode += "  return str_alloc(buf);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsAlpha) {
+    builtinFnDeclCode += "bool char_is_alpha (char);" EOL;
+    builtinFnDefCode += "bool char_is_alpha (char c) {" EOL;
+    builtinFnDefCode += "  return isalpha(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsAlphaNum) {
+    builtinFnDeclCode += "bool char_is_alpha_num (char);" EOL;
+    builtinFnDefCode += "bool char_is_alpha_num (char c) {" EOL;
+    builtinFnDefCode += "  return isalnum(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsDigit) {
+    builtinFnDeclCode += "bool char_is_digit (char);" EOL;
+    builtinFnDefCode += "bool char_is_digit (char c) {" EOL;
+    builtinFnDefCode += "  return isdigit(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsSpace) {
+    builtinFnDeclCode += "bool char_is_space (char);" EOL;
+    builtinFnDefCode += "bool char_is_space (char c) {" EOL;
+    builtinFnDefCode += "  return isspace(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharRepeat) {
+    builtinFnDeclCode += "struct str char_repeat (char, uint32_t);" EOL;
+    builtinFnDefCode += "struct str char_repeat (char c, uint32_t k) {" EOL;
+    builtinFnDefCode += R"(  if (k == 0) return str_alloc("");)" EOL;
+    builtinFnDefCode += "  size_t l = (size_t) k;" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  size_t i = 0;" EOL;
+    builtinFnDefCode += "  while (i < l) d[i++] = c;" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -329,6 +577,92 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnOSName) {
+    builtinFnDeclCode += "struct str os_name ();" EOL;
+    builtinFnDefCode += "struct str os_name () {" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += R"(    return str_alloc("Windows");)" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    struct utsname buf;" EOL;
+    builtinFnDefCode += "    if (uname(&buf) < 0) {" EOL;
+    builtinFnDefCode += R"(      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);)" EOL;
+    builtinFnDefCode += "      exit(EXIT_FAILURE);" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += R"(    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");)" EOL;
+    builtinFnDefCode += "    return str_alloc(buf.sysname);" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnPathBasename) {
+    builtinFnDeclCode += "struct str path_basename (struct str);" EOL;
+    builtinFnDefCode += "struct str path_basename (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l == 0) return s;" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += R"(    char e = '\\';)" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    char e = '/';" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  size_t a = 0;" EOL;
+    builtinFnDefCode += "  size_t b = 0;" EOL;
+    builtinFnDefCode += "  unsigned char k = 0;" EOL;
+    builtinFnDefCode += "  for (size_t i = s.l - 1;; i--) {" EOL;
+    builtinFnDefCode += "    if (k == 1 && s.d[i] == e) {" EOL;
+    builtinFnDefCode += "      a = i + 1;" EOL;
+    builtinFnDefCode += "      break;" EOL;
+    builtinFnDefCode += "    } else if (k == 0 && s.d[i] != e) {" EOL;
+    builtinFnDefCode += "      k = 1;" EOL;
+    builtinFnDefCode += "      b = i + 1;" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    if (i == 0) break;" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  if (k == 0) {" EOL;
+    builtinFnDefCode += "    str_free(s);" EOL;
+    builtinFnDefCode += R"(    return str_alloc("");)" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  size_t l = b - a;" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, &s.d[a], l);" EOL;
+    builtinFnDefCode += "  str_free(s);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnPathDirname) {
+    builtinFnDeclCode += "struct str path_dirname (struct str);" EOL;
+    builtinFnDefCode += "struct str path_dirname (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l == 0) {" EOL;
+    builtinFnDefCode += "    str_free(s);" EOL;
+    builtinFnDefCode += R"(    return str_alloc(".");)" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinFnDefCode += R"(    char e = '\\';)" EOL;
+    builtinFnDefCode += "  #else" EOL;
+    builtinFnDefCode += "    char e = '/';" EOL;
+    builtinFnDefCode += "  #endif" EOL;
+    builtinFnDefCode += "  size_t l = 0;" EOL;
+    builtinFnDefCode += "  unsigned char k = 0;" EOL;
+    builtinFnDefCode += "  for (size_t i = s.l - 1;; i--) {" EOL;
+    builtinFnDefCode += "    if (k == 1 && s.d[i] == e) {" EOL;
+    builtinFnDefCode += "      l = i;" EOL;
+    builtinFnDefCode += "      break;" EOL;
+    builtinFnDefCode += "    } else if (k == 0 && s.d[i] != e) {" EOL;
+    builtinFnDefCode += "      k = 1;" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    if (i == 0) break;" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  if (l == 0) {" EOL;
+    builtinFnDefCode += "    s.d = re_alloc(s.d, 1);" EOL;
+    builtinFnDefCode += "    if (s.d[0] != e) s.d[0] = '.';" EOL;
+    builtinFnDefCode += "    return (struct str) {s.d, 1};" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  char *d = alloc(l);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, l);" EOL;
+    builtinFnDefCode += "  str_free(s);" EOL;
+    builtinFnDefCode += "  return (struct str) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnPrint) {
     builtinFnDeclCode += "void print (FILE *, const char *, ...);" EOL;
     builtinFnDefCode += "void print (FILE *stream, const char *fmt, ...) {" EOL;
@@ -386,7 +720,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrAt) {
     builtinFnDeclCode += "char *str_at (struct str, int64_t);" EOL;
     builtinFnDefCode += "char *str_at (struct str s, int64_t i) {" EOL;
-    builtinFnDefCode += "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -s.l)) {" EOL;
+    builtinFnDefCode += "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int64_t) s.l))) {" EOL;
     builtinFnDefCode += R"(    fprintf(stderr, "Error: index %" PRId64 " out of string bounds" THE_EOL, i);)" EOL;
     builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
     builtinFnDefCode += "  }" EOL;
@@ -428,6 +762,25 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  if (this->builtins.fnStrCstr) {
+    builtinFnDeclCode += "char *str_cstr (const struct str);" EOL;
+    builtinFnDefCode += "char *str_cstr (const struct str s) {" EOL;
+    builtinFnDefCode += "  char *d = alloc(s.l + 1);" EOL;
+    builtinFnDefCode += "  memcpy(d, s.d, s.l);" EOL;
+    builtinFnDefCode += "  d[s.l] = '\\0';" EOL;
+    builtinFnDefCode += "  return d;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrEmpty) {
+    builtinFnDeclCode += "bool str_empty (struct str);" EOL;
+    builtinFnDefCode += "bool str_empty (struct str s) {" EOL;
+    builtinFnDefCode += "  bool r = s.l == 0;" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
   if (this->builtins.fnStrEqCstr) {
     builtinFnDeclCode += "bool str_eq_cstr (struct str, const char *);" EOL;
     builtinFnDefCode += "bool str_eq_cstr (struct str s, const char *r) {" EOL;
@@ -455,7 +808,7 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  for (size_t i = 0; i < s.l; i++) {" EOL;
     builtinFnDefCode += "    char c = s.d[i];" EOL;
     builtinFnDefCode += R"(    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {)" EOL;
-    builtinFnDefCode += "      if (l + 2 > s.l) d = realloc(d, l + 2);" EOL;
+    builtinFnDefCode += "      if (l + 2 > s.l) d = re_alloc(d, l + 2);" EOL;
     builtinFnDefCode += R"(      d[l++] = '\\';)" EOL;
     builtinFnDefCode += R"(      if (c == '\f') d[l++] = 'f';)" EOL;
     builtinFnDefCode += R"(      else if (c == '\n') d[l++] = 'n';)" EOL;
@@ -465,10 +818,30 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += R"(      else if (c == '"') d[l++] = '"';)" EOL;
     builtinFnDefCode += "      continue;" EOL;
     builtinFnDefCode += "    }" EOL;
-    builtinFnDefCode += "    if (l + 1 > s.l) d = realloc(d, l + 1);" EOL;
+    builtinFnDefCode += "    if (l + 1 > s.l) d = re_alloc(d, l + 1);" EOL;
     builtinFnDefCode += "    d[l++] = c;" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  return (struct str) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrFind) {
+    builtinFnDeclCode += "int32_t str_find (struct str, struct str);" EOL;
+    builtinFnDefCode += "int32_t str_find (struct str s1, struct str s2) {" EOL;
+    builtinFnDefCode += "  int32_t r = -1;" EOL;
+    builtinFnDefCode += "  if (s1.l == s2.l) {" EOL;
+    builtinFnDefCode += "    r = memcmp(s1.d, s2.d, s1.l) == 0 ? 0 : -1;" EOL;
+    builtinFnDefCode += "  } else if (s1.l > s2.l) {" EOL;
+    builtinFnDefCode += "    for (size_t i = 0; i <= s1.l - s2.l; i++) {" EOL;
+    builtinFnDefCode += "      if (memcmp(&s1.d[i], s2.d, s2.l) == 0) {" EOL;
+    builtinFnDefCode += "        r = (int32_t) i;" EOL;
+    builtinFnDefCode += "        break;" EOL;
+    builtinFnDefCode += "      }" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  free(s1.d);" EOL;
+    builtinFnDefCode += "  free(s2.d);" EOL;
+    builtinFnDefCode += "  return r;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -485,6 +858,63 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  size_t l = s.l;" EOL;
     builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return l;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrLines) {
+    builtinFnDeclCode += "struct " + Codegen::typeName("array_str") + " str_lines (struct str, unsigned char, bool);" EOL;
+    builtinFnDefCode += "struct " + Codegen::typeName("array_str") + " str_lines (struct str s, unsigned char o1, bool n1) {" EOL;
+    builtinFnDefCode += "  bool k = o1 == 0 ? false : n1;" EOL;
+    builtinFnDefCode += "  struct str *r = NULL;" EOL;
+    builtinFnDefCode += "  size_t l = 0;" EOL;
+    builtinFnDefCode += "  if (s.l != 0) {" EOL;
+    builtinFnDefCode += "    char *d = alloc(s.l);" EOL;
+    builtinFnDefCode += "    size_t i = 0;" EOL;
+    builtinFnDefCode += "    for (size_t j = 0; j < s.l; j++) {" EOL;
+    builtinFnDefCode += "      char c = s.d[j];" EOL;
+    builtinFnDefCode += R"(      if (c == '\r' || c == '\n') {)" EOL;
+    builtinFnDefCode += "        if (k) d[i++] = c;" EOL;
+    builtinFnDefCode += R"(        if (c == '\r' && j + 1 < s.l && s.d[j + 1] == '\n') {)" EOL;
+    builtinFnDefCode += "          j++;" EOL;
+    builtinFnDefCode += "          if (k) d[i++] = s.d[j];" EOL;
+    builtinFnDefCode += "        }" EOL;
+    builtinFnDefCode += "        char *a = alloc(i);" EOL;
+    builtinFnDefCode += "        memcpy(a, d, i);" EOL;
+    builtinFnDefCode += "        r = re_alloc(r, ++l * sizeof(struct str));" EOL;
+    builtinFnDefCode += "        r[l - 1] = (struct str) {a, i};" EOL;
+    builtinFnDefCode += "        i = 0;" EOL;
+    builtinFnDefCode += "      } else {" EOL;
+    builtinFnDefCode += "        d[i++] = c;" EOL;
+    builtinFnDefCode += "      }" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    if (i != 0) {" EOL;
+    builtinFnDefCode += "      char *a = alloc(i);" EOL;
+    builtinFnDefCode += "      memcpy(a, d, i);" EOL;
+    builtinFnDefCode += "      r = re_alloc(r, ++l * sizeof(struct str));" EOL;
+    builtinFnDefCode += "      r[l - 1] = (struct str) {a, i};" EOL;
+    builtinFnDefCode += "    }" EOL;
+    builtinFnDefCode += "    free(d);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
+    builtinFnDefCode += "  return (struct " + Codegen::typeName("array_str") + ") {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrLower) {
+    builtinFnDeclCode += "struct str str_lower (struct str);" EOL;
+    builtinFnDefCode += "struct str str_lower (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l != 0) {" EOL;
+    builtinFnDefCode += "    for (size_t i = 0; i < s.l; i++) s.d[i] = tolower(s.d[i]);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return s;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrLowerFirst) {
+    builtinFnDeclCode += "struct str str_lower_first (struct str);" EOL;
+    builtinFnDefCode += "struct str str_lower_first (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l != 0) s.d[0] = tolower(s.d[0]);" EOL;
+    builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -527,8 +957,8 @@ std::tuple<std::string, std::string> Codegen::gen () {
   if (this->builtins.fnStrSlice) {
     builtinFnDeclCode += "struct str str_slice (struct str, unsigned char, int64_t, unsigned char, int64_t);" EOL;
     builtinFnDefCode += "struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {" EOL;
-    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -s.l ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL;
-    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -s.l ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
+    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL;
+    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
     builtinFnDefCode += "  if (i1 >= i2 || i1 >= s.l) {" EOL;
     builtinFnDefCode += "    free(s.d);" EOL;
     builtinFnDefCode += R"(    return str_alloc("");)" EOL;
@@ -538,6 +968,54 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "  for (size_t i = 0; i1 < i2; i1++) d[i++] = s.d[i1];" EOL;
     builtinFnDefCode += "  free(s.d);" EOL;
     builtinFnDefCode += "  return (struct str) {d, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrToBuffer) {
+    builtinFnDeclCode += "struct buffer str_to_buffer (struct str);" EOL;
+    builtinFnDefCode += "struct buffer str_to_buffer (struct str s) {" EOL;
+    builtinFnDefCode += "  return (struct buffer) {(unsigned char *) s.d, s.l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrTrim) {
+    builtinFnDeclCode += "struct str str_trim (struct str);" EOL;
+    builtinFnDefCode += "struct str str_trim (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l == 0) return s;" EOL;
+    builtinFnDefCode += "  size_t i = 0;" EOL;
+    builtinFnDefCode += "  size_t j = s.l;" EOL;
+    builtinFnDefCode += "  while (i < s.l && isspace(s.d[i])) i++;" EOL;
+    builtinFnDefCode += "  while (j >= 0 && isspace(s.d[j - 1])) {" EOL;
+    builtinFnDefCode += "    j--;" EOL;
+    builtinFnDefCode += "    if (j == 0) break;" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  if (i >= j) {" EOL;
+    builtinFnDefCode += "    free(s.d);" EOL;
+    builtinFnDefCode += R"(    return str_alloc("");)" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  size_t l = j - i;" EOL;
+    builtinFnDefCode += "  char *r = alloc(l);" EOL;
+    builtinFnDefCode += "  for (size_t k = 0; k < l;) r[k++] = s.d[i++];" EOL;
+    builtinFnDefCode += "  free(s.d);" EOL;
+    builtinFnDefCode += "  return (struct str) {r, l};" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrUpper) {
+    builtinFnDeclCode += "struct str str_upper (struct str);" EOL;
+    builtinFnDefCode += "struct str str_upper (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l != 0) {" EOL;
+    builtinFnDefCode += "    for (size_t i = 0; i < s.l; i++) s.d[i] = toupper(s.d[i]);" EOL;
+    builtinFnDefCode += "  }" EOL;
+    builtinFnDefCode += "  return s;" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnStrUpperFirst) {
+    builtinFnDeclCode += "struct str str_upper_first (struct str);" EOL;
+    builtinFnDefCode += "struct str str_upper_first (struct str s) {" EOL;
+    builtinFnDefCode += "  if (s.l != 0) s.d[0] = toupper(s.d[0]);" EOL;
+    builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
@@ -577,25 +1055,80 @@ std::tuple<std::string, std::string> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
+  for (const auto &[_, item] : this->api) {
+    if (!item.enabled) {
+      continue;
+    }
+
+    builtinFnDeclCode += item.decl;
+    builtinFnDefCode += item.def;
+  }
+
+  fnDeclCode = builtinFnDeclCode + fnDeclCode;
+  fnDefCode = builtinFnDefCode + fnDefCode;
+
   builtinDefineCode += builtinDefineCode.empty() ? "" : EOL;
   defineCode += defineCode.empty() ? "" : EOL;
+  builtinVarCode += builtinVarCode.empty() ? "" : EOL;
   builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
-  builtinFnDeclCode += builtinFnDeclCode.empty() ? "" : EOL;
-  builtinFnDefCode += builtinFnDefCode.empty() ? "" : EOL;
   structDeclCode += structDeclCode.empty() ? "" : EOL;
   structDefCode += structDefCode.empty() ? "" : EOL;
   fnDeclCode += fnDeclCode.empty() ? "" : EOL;
   fnDefCode += fnDefCode.empty() ? "" : EOL;
 
-  auto headers = std::string(this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "");
+  auto headers = std::string(this->builtins.libCtype ? "#include <ctype.h>" EOL : "");
+  headers += this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "";
+  headers += this->builtins.libOpensslSsl ? "#include <openssl/ssl.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
   headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
+  headers += this->builtins.libStddef && !this->builtins.libStdlib ? "#include <stddef.h>" EOL : "";
   headers += this->builtins.libStdint && !this->builtins.libInttypes ? "#include <stdint.h>" EOL : "";
   headers += this->builtins.libStdio ? "#include <stdio.h>" EOL : "";
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
-  headers += this->builtins.libUnistd ? "#ifndef THE_OS_WINDOWS" EOL "  #include <unistd.h>" EOL "#endif" EOL : "";
-  headers += this->builtins.libWindows ? "#ifdef THE_OS_WINDOWS" EOL "  #include <windows.h>" EOL "#endif" EOL : "";
+
+  if (this->builtins.libSysTypes && !this->builtins.libSysSocket && !this->builtins.libSysStat && !this->builtins.libSysUtsname) {
+    headers += this->builtins.libSysTypes ? "#include <sys/types.h>" EOL : "";
+  }
+
+  headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";
+
+  if (
+    this->builtins.libWinDirect ||
+    this->builtins.libWinIo ||
+    this->builtins.libWinWs2tcpip ||
+    this->builtins.libWindows ||
+    this->builtins.libWinsock2
+  ) {
+    headers += "#ifdef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
+    headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
+    headers += this->builtins.libWinsock2 ? "  #include <winsock2.h>" EOL : "";
+    headers += this->builtins.libWinWs2tcpip ? "  #include <ws2tcpip.h>" EOL : "";
+    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
+    headers += "#endif" EOL;
+  }
+
+  if (
+    this->builtins.libArpaInet ||
+    this->builtins.libDirent ||
+    this->builtins.libNetdb ||
+    this->builtins.libNetinetIn ||
+    this->builtins.libSysSocket ||
+    this->builtins.libSysUtsname ||
+    this->builtins.libUnistd
+  ) {
+    headers += "#ifndef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libArpaInet ? "  #include <arpa/inet.h>" EOL : "";
+    headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
+    headers += this->builtins.libNetdb ? "  #include <netdb.h>" EOL : "";
+    headers += this->builtins.libNetinetIn ? "  #include <netinet/in.h>" EOL : "";
+    headers += this->builtins.libSysSocket ? "  #include <sys/socket.h>" EOL : "";
+    headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
+    headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
+    headers += "#endif" EOL;
+  }
+
   headers += headers.empty() ? "" : EOL;
 
   auto output = std::string();
@@ -603,16 +1136,17 @@ std::tuple<std::string, std::string> Codegen::gen () {
   output += builtinDefineCode;
   output += headers;
   output += defineCode;
+  output += builtinVarCode;
   output += builtinStructDefCode;
-  output += builtinFnDeclCode;
-  output += builtinFnDefCode;
   output += structDeclCode;
   output += structDefCode;
   output += fnDeclCode;
   output += fnDefCode;
+  output += "int main (" + std::string(this->needMainArgs ? "int argc, char *argv[]" : "") + ") {" EOL;
   output += mainCode;
+  output += "}" EOL;
 
-  return std::make_tuple(output, this->_flags());
+  return std::make_tuple(output, this->flags);
 }
 
 void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vector<std::string> *> entityBuiltins) {
@@ -628,12 +1162,30 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
 
   if (name == "definitions") {
     this->builtins.definitions = true;
+  } else if (name == "libArpaInet") {
+    this->builtins.libArpaInet = true;
+  } else if (name == "libCtype") {
+    this->builtins.libCtype = true;
+  } else if (name == "libDirent") {
+    this->builtins.libDirent = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
+  } else if (name == "libNetdb") {
+    this->builtins.libNetdb = true;
+  } else if (name == "libNetinetIn") {
+    this->builtins.libNetinetIn = true;
+  } else if (name == "libOpensslSsl") {
+    this->builtins.libOpensslSsl = true;
+    this->flags.emplace("U:-lssl");
+    this->flags.emplace("W:-llibssl");
+    this->flags.emplace("W:-lWs2_32");
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
     this->builtins.libStdbool = true;
+  } else if (name == "libStddef") {
+    this->builtins.libStddef = true;
   } else if (name == "libStdint") {
     this->builtins.libStdint = true;
   } else if (name == "libStdio") {
@@ -642,10 +1194,33 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libStdlib = true;
   } else if (name == "libString") {
     this->builtins.libString = true;
+  } else if (name == "libSysSocket") {
+    this->builtins.libSysSocket = true;
+  } else if (name == "libSysStat") {
+    this->builtins.libSysStat = true;
+  } else if (name == "libSysTypes") {
+    this->builtins.libSysTypes = true;
+  } else if (name == "libSysUtsname") {
+    this->builtins.libSysUtsname = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libUnistd") {
     this->builtins.libUnistd = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinDirect") {
+    this->builtins.libWinDirect = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinIo") {
+    this->builtins.libWinIo = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinWs2tcpip") {
+    this->builtins.libWinWs2tcpip = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libWindows") {
     this->builtins.libWindows = true;
+    this->_activateBuiltin("definitions");
+  } else if (name == "libWinsock2") {
+    this->builtins.libWinsock2 = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "fnAlloc") {
     this->builtins.fnAlloc = true;
     this->_activateBuiltin("definitions");
@@ -674,10 +1249,54 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libStdbool");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnBufferCopy") {
+    this->builtins.fnBufferCopy = true;
+  } else if (name == "fnBufferEq") {
+    this->builtins.fnBufferEq = true;
+  } else if (name == "fnBufferFree") {
+    this->builtins.fnBufferFree = true;
+  } else if (name == "fnBufferNe") {
+    this->builtins.fnBufferNe = true;
+  } else if (name == "fnBufferRealloc") {
+    this->builtins.fnBufferRealloc = true;
+  } else if (name == "fnBufferStr") {
+    this->builtins.fnBufferStr = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnBufferToStr") {
+    this->builtins.fnBufferToStr = true;
+    this->_activateBuiltin("typeStr");
   } else if (name == "fnByteStr") {
     this->builtins.fnByteStr = true;
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnCharIsAlpha") {
+    this->builtins.fnCharIsAlpha = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsAlphaNum") {
+    this->builtins.fnCharIsAlphaNum = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsDigit") {
+    this->builtins.fnCharIsDigit = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsSpace") {
+    this->builtins.fnCharIsSpace = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharRepeat") {
+    this->builtins.fnCharRepeat = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libStdint");
+    this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnCharStr") {
     this->builtins.fnCharStr = true;
@@ -754,6 +1373,34 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libInttypes");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnOSName") {
+    this->builtins.fnOSName = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("libSysUtsname");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnPathBasename") {
+    this->builtins.fnPathBasename = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("fnStrFree");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnPathDirname") {
+    this->builtins.fnPathDirname = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnReAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("fnStrFree");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
   } else if (name == "fnPrint") {
     this->builtins.fnPrint = true;
     this->_activateBuiltin("fnStrFree");
@@ -761,6 +1408,11 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdarg");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnReAlloc") {
+    this->builtins.fnReAlloc = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
   } else if (name == "fnSleepSync") {
     this->builtins.fnSleepSync = true;
     this->_activateBuiltin("definitions");
@@ -795,6 +1447,16 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("fnAlloc");
     this->_activateBuiltin("libString");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrCstr") {
+    this->builtins.fnStrCstr = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrEmpty") {
+    this->builtins.fnStrEmpty = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
   } else if (name == "fnStrEqCstr") {
     this->builtins.fnStrEqCstr = true;
     this->_activateBuiltin("libStdbool");
@@ -810,7 +1472,14 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "fnStrEscape") {
     this->builtins.fnStrEscape = true;
     this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnReAlloc");
     this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrFind") {
+    this->builtins.fnStrFind = true;
+    this->_activateBuiltin("libStdint");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrFree") {
     this->builtins.fnStrFree = true;
@@ -819,6 +1488,27 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "fnStrLen") {
     this->builtins.fnStrLen = true;
     this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrLines") {
+    this->builtins.fnStrLines = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnReAlloc");
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeStr");
+
+    auto typeInfo = this->_typeInfo(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")));
+    this->_activateEntity(typeInfo.typeName);
+  } else if (name == "fnStrLower") {
+    this->builtins.fnStrLower = true;
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrLowerFirst") {
+    this->builtins.fnStrLowerFirst = true;
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libString");
     this->_activateBuiltin("typeStr");
   } else if (name == "fnStrNeCstr") {
     this->builtins.fnStrNeCstr = true;
@@ -848,6 +1538,27 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdint");
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrToBuffer") {
+    this->builtins.fnStrToBuffer = true;
+    this->_activateBuiltin("typeBuffer");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrTrim") {
+    this->builtins.fnStrTrim = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("fnStrAlloc");
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrUpper") {
+    this->builtins.fnStrUpper = true;
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
+  } else if (name == "fnStrUpperFirst") {
+    this->builtins.fnStrUpperFirst = true;
+    this->_activateBuiltin("libCtype");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeStr");
   } else if (name == "fnU8Str") {
     this->builtins.fnU8Str = true;
     this->_activateBuiltin("fnStrAlloc");
@@ -875,11 +1586,48 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "typeAny") {
     this->builtins.typeAny = true;
     this->_activateBuiltin("libStdlib");
+  } else if (name == "typeBuffer") {
+    this->builtins.typeBuffer = true;
+    this->_activateBuiltin("libStdlib");
+  } else if (name == "typeRequest") {
+    this->builtins.typeRequest = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libOpensslSsl");
+    this->_activateBuiltin("libWinsock2");
   } else if (name == "typeStr") {
     this->builtins.typeStr = true;
     this->_activateBuiltin("libStdlib");
+  } else if (name == "typeWinReparseDataBuffer") {
+    this->builtins.typeWinReparseDataBuffer = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libWindows");
+  } else if (name == "varLibOpensslInit") {
+    this->builtins.varLibOpensslInit = true;
+    this->_activateBuiltin("libStdbool");
+  } else if (name == "varLibWs2Init") {
+    this->builtins.varLibWs2Init = true;
+    this->_activateBuiltin("libStdbool");
+  } else if (this->api.contains(name)) {
+    this->api[name].enabled = true;
+
+    for (const auto &dep : this->api[name].dependencies) {
+      auto existsInEntities = false;
+
+      for (const auto &entity : this->entities) {
+        if (entity.name == dep) {
+          existsInEntities = true;
+          break;
+        }
+      }
+
+      if (existsInEntities) {
+        this->_activateEntity(dep);
+      } else {
+        this->_activateBuiltin(dep);
+      }
+    }
   } else {
-    throw Error("tried activating unknown builtin");
+    throw Error("tried activating unknown builtin `" + name + "`");
   }
 }
 
@@ -914,7 +1662,186 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
     return;
   }
 
-  throw Error("tried activating unknown entity");
+  throw Error("tried activating unknown entity `" + name + "`");
+}
+
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+std::string Codegen::_apiEval (const std::string &code, int limit, const std::optional<std::set<std::string> *> &dependencies) {
+  auto name = std::string();
+  auto isName = false;
+  auto result = std::string();
+
+  for (auto i = static_cast<std::size_t>(0); i < code.size(); i++) {
+    auto ch = code[i];
+
+    if (limit != -1 && ch == '_' && i + 1 < code.size() && code[i + 1] == '{') {
+      isName = true;
+      i += 1;
+    } else if (isName && ch == '}') {
+      if (codegenMetadata.contains(name)) {
+        for (const auto &dependency : codegenMetadata.at(name)) {
+          if (dependencies == std::nullopt) {
+            this->_activateBuiltin(dependency);
+          } else if (!(*dependencies)->contains(dependency)) {
+            (*dependencies)->emplace(dependency);
+          }
+        }
+      } else if (this->api.contains(name)) {
+        if (dependencies == std::nullopt) {
+          this->_activateBuiltin(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
+      } else if (name.starts_with("array_")) {
+        if (name.ends_with("_free")) {
+          name = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get(name.substr(6, name.size() - 11)))) + "_free";
+        } else {
+          name = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get(name.substr(6))));
+        }
+
+        if (dependencies == std::nullopt) {
+          this->_activateEntity(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
+      } else {
+        auto existsInEntities = false;
+
+        for (const auto &entity : this->entities) {
+          if (entity.name == name) {
+            existsInEntities = true;
+            break;
+          }
+        }
+
+        if (!existsInEntities) {
+          throw Error("can't find code generator entity `" + name + "`");
+        }
+
+        if (dependencies == std::nullopt) {
+          this->_activateEntity(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
+      }
+
+      result += name;
+      isName = false;
+      limit = limit == 1 ? -1 : limit == 0 ? 0 : limit - 1;
+      name.clear();
+    } else if (isName) {
+      name += ch;
+    } else {
+      result += ch;
+    }
+  }
+
+  return result;
+}
+
+void Codegen::_apiLoad (const std::vector<std::string> &items) {
+  for (const auto &item : items) {
+    auto firstLine = std::string();
+
+    for (auto i = static_cast<std::size_t>(0); i < item.size(); i++) {
+      auto ch = item[i];
+
+      if (ch == '\n' || (ch == '\r' && i + 1 < item.size() && item[i + 1] == '\n')) {
+        break;
+      } else {
+        firstLine += ch;
+      }
+    }
+
+    firstLine.erase(firstLine.size() - 2, 2);
+
+    auto name = std::string();
+    auto isName = false;
+    auto isParamName = false;
+
+    for (auto i = firstLine.size() - 1;; i--) {
+      auto ch = firstLine[i];
+
+      if (ch == ')' || ch == ',') {
+        if (i != 0 && firstLine[i - 1] != '(') {
+          isParamName = true;
+        }
+      } else if (ch == ' ' && i + 1 < firstLine.size() && firstLine[i + 1] == '(') {
+        isParamName = false;
+        isName = true;
+      } else if (isParamName && (ch == '*' || ch == '&' || ch == ' ')) {
+        isParamName = false;
+      } else if (isName && (ch == ' ' || ch == '*' || ch == '&')) {
+        isName = false;
+      } else if (isName) {
+        name.insert(0, 1, ch);
+      }
+
+      if (i == 0) {
+        break;
+      }
+    }
+
+    this->api[name].def = this->_apiEval(item, 0, &this->api[name].dependencies);
+  }
+}
+
+void Codegen::_apiPreLoad (const std::vector<std::string> &items) {
+  for (const auto &item : items) {
+    auto firstLine = std::string();
+
+    for (auto i = static_cast<std::size_t>(0); i < item.size(); i++) {
+      auto ch = item[i];
+
+      if (ch == '\n' || (ch == '\r' && i + 1 < item.size() && item[i + 1] == '\n')) {
+        break;
+      } else {
+        firstLine += ch;
+      }
+    }
+
+    firstLine.erase(firstLine.size() - 2, 2);
+
+    auto apiItem = CodegenApiItem{};
+    auto isName = false;
+    auto isParamName = false;
+
+    for (auto i = firstLine.size() - 1;; i--) {
+      auto ch = firstLine[i];
+
+      if (ch == ')' || ch == ',') {
+        apiItem.decl.insert(0, 1, ch);
+
+        if (i != 0 && firstLine[i - 1] != '(') {
+          isParamName = true;
+        }
+      } else if (ch == ' ' && i + 1 < firstLine.size() && firstLine[i + 1] == '(') {
+        apiItem.decl.insert(0, 1, ch);
+        isParamName = false;
+        isName = true;
+      } else if (isParamName && ch == ' ') {
+        isParamName = false;
+      } else if (isParamName && (ch == '*' || ch == '&')) {
+        isParamName = false;
+        apiItem.decl.insert(0, 1, ch);
+      } else if (isName && (ch == ' ' || ch == '*' || ch == '&')) {
+        apiItem.decl.insert(0, 1, ch);
+        isName = false;
+      } else if (isName) {
+        apiItem.name.insert(0, 1, ch);
+        apiItem.decl.insert(0, 1, ch);
+      } else if (!isParamName) {
+        apiItem.decl.insert(0, 1, ch);
+      }
+
+      if (i == 0) {
+        break;
+      }
+    }
+
+    apiItem.decl = this->_apiEval(apiItem.decl, 0, &apiItem.dependencies) + ";" EOL;
+    this->api[apiItem.name] = apiItem;
+  }
 }
 
 std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
@@ -1012,21 +1939,47 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
   return std::make_tuple(bodyTypeCasts, altTypeCasts);
 }
 
-std::string Codegen::_flags () const {
-  auto result = std::string();
-  auto idx = static_cast<std::size_t>(0);
+std::string Codegen::_genCopyFn (
+  Type *type,
+  const std::string &code,
+  const std::optional<std::vector<std::string> *> &entityBuiltins,
+  const std::optional<std::vector<std::string> *> &entityEntities
+) {
+  auto initialState = this->state;
+  auto result = code;
 
-  for (const auto &flag : this->flags) {
-    result += (idx++ == 0 ? "" : " ") + flag;
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state.builtins = entityBuiltins;
+    this->state.entities = entityEntities;
+  }
+
+  if (type->isAny()) {
+    this->_activateBuiltin("fnAnyCopy");
+    result = "any_copy(" + result + ")";
+  } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
+    this->_activateBuiltin("fnBufferCopy");
+    result = "buffer_copy(" + result + ")";
+  } else if (type->isArray() || type->isFn() || type->isObj() || type->isOpt()) {
+    auto typeInfo = this->_typeInfo(type);
+
+    this->_activateEntity(typeInfo.realTypeName + "_copy");
+    result = typeInfo.realTypeName + "_copy(" + result + ")";
+  } else if (type->isStr()) {
+    this->_activateBuiltin("fnStrCopy");
+    result = "str_copy(" + result + ")";
+  }
+
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state = initialState;
   }
 
   return result;
 }
 
 std::string Codegen::_genEqFn (
-  const CodegenTypeInfo &typeInfo,
-  const std::variant<std::string, ASTNodeExpr> &exprLeft,
-  const std::variant<std::string, ASTNodeExpr> &exprRight,
+  Type *type,
+  const std::string &leftCode,
+  const std::string &rightCode,
   const std::optional<std::vector<std::string> *> &entityBuiltins,
   const std::optional<std::vector<std::string> *> &entityEntities,
   bool reverse
@@ -1043,59 +1996,25 @@ std::string Codegen::_genEqFn (
   auto eqFnNameB = Token::upperFirst(eqFnName);
   auto code = std::string();
 
-  if (std::holds_alternative<std::string>(exprLeft) && std::holds_alternative<std::string>(exprRight)) {
-    auto exprLeftCode = std::get<std::string>(exprLeft);
-    auto exprRightCode = std::get<std::string>(exprRight);
+  if (Type::real(type)->isObj() && Type::real(type)->builtin && Type::real(type)->codeName == "@buffer_Buffer") {
+    this->_activateBuiltin("fnBuffer" + eqFnNameB);
+    code = "buffer_" + eqFnName + "(";
+    code += this->_genCopyFn(Type::real(type), leftCode, entityBuiltins, entityEntities) + ", ";
+    code += this->_genCopyFn(Type::real(type), rightCode, entityBuiltins, entityEntities) + ")";
+  } else if (Type::real(type)->isArray() || Type::real(type)->isObj() || Type::real(type)->isOpt()) {
+    auto typeInfo = this->_typeInfo(type);
 
-    if (typeInfo.realType->isArray() || typeInfo.realType->isObj() || typeInfo.realType->isOpt()) {
-      this->_activateEntity(typeInfo.realTypeName + "_copy");
-      this->_activateEntity(typeInfo.realTypeName + "_" + eqFnName);
-
-      code = typeInfo.realTypeName + "_" + eqFnName + "(";
-      code += typeInfo.realTypeName + "_copy(" + exprLeftCode + "), ";
-      code += typeInfo.realTypeName + "_copy(" + exprRightCode + "))";
-    } else if (typeInfo.realType->isStr()) {
-      this->_activateBuiltin("fnStrCopy");
-      this->_activateBuiltin("fnStr" + eqFnNameB + "Str");
-      code = "str_" + eqFnName + "_str(str_copy(" + exprLeftCode + "), str_copy(" + exprRightCode + "))";
-    } else {
-      code = exprLeftCode + " " + eqFnOp + " " + exprRightCode;
-    }
+    this->_activateEntity(typeInfo.realTypeName + "_" + eqFnName);
+    code = typeInfo.realTypeName + "_" + eqFnName + "(";
+    code += this->_genCopyFn(typeInfo.realType, leftCode, entityBuiltins, entityEntities) + ", ";
+    code += this->_genCopyFn(typeInfo.realType, rightCode, entityBuiltins, entityEntities) + ")";
+  } else if (Type::real(type)->isStr()) {
+    this->_activateBuiltin("fnStr" + eqFnNameB + "Str");
+    code = "str_" + eqFnName + "_str(";
+    code += this->_genCopyFn(Type::real(type), leftCode, entityBuiltins, entityEntities) + ", ";
+    code += this->_genCopyFn(Type::real(type), rightCode, entityBuiltins, entityEntities) + ")";
   } else {
-    auto exprLeftExpr = std::get<ASTNodeExpr>(exprLeft);
-    auto exprRightExpr = std::get<ASTNodeExpr>(exprRight);
-
-    if (
-      (Type::real(exprLeftExpr.type)->isArray() && Type::real(exprRightExpr.type)->isArray()) ||
-      (Type::real(exprLeftExpr.type)->isObj() && Type::real(exprRightExpr.type)->isObj()) ||
-      (Type::real(exprLeftExpr.type)->isOpt() && Type::real(exprRightExpr.type)->isOpt())
-    ) {
-      auto nodeTypeInfo = this->_typeInfo(exprLeftExpr.type);
-      auto leftCode = this->_nodeExpr(exprLeftExpr, exprLeftExpr.type);
-      auto rightCode = this->_nodeExpr(exprRightExpr, exprRightExpr.type);
-
-      this->_activateEntity(nodeTypeInfo.realTypeName + "_" + eqFnName);
-      code = nodeTypeInfo.realTypeName + "_" + eqFnName + "(" + leftCode + ", " + rightCode + ")";
-    } else if (Type::real(exprLeftExpr.type)->isStr() && Type::real(exprRightExpr.type)->isStr()) {
-      if (exprLeftExpr.isLit() && exprRightExpr.isLit()) {
-        this->_activateBuiltin("fnCstr" + eqFnNameB + "Cstr");
-        code = "cstr_" + eqFnName + "_cstr(" + exprLeftExpr.litBody() + ", " + exprRightExpr.litBody() + ")";
-      } else if (exprLeftExpr.isLit()) {
-        auto rightCode = this->_nodeExpr(exprRightExpr, exprRightExpr.type);
-        this->_activateBuiltin("fnCstr" + eqFnNameB + "Str");
-        code = "cstr_" + eqFnName + "_str(" + exprLeftExpr.litBody() + ", " + rightCode + ")";
-      } else if (exprRightExpr.isLit()) {
-        auto leftCode = this->_nodeExpr(exprLeftExpr, exprLeftExpr.type);
-        this->_activateBuiltin("fnStr" + eqFnNameB + "Cstr");
-        code = "str_" + eqFnName + "_cstr(" + leftCode + ", " + exprRightExpr.litBody() + ")";
-      } else {
-        auto leftCode = this->_nodeExpr(exprLeftExpr, exprLeftExpr.type);
-        auto rightCode = this->_nodeExpr(exprRightExpr, exprRightExpr.type);
-
-        this->_activateBuiltin("fnStr" + eqFnNameB + "Str");
-        code = "str_" + eqFnName + "_str(" + leftCode + ", " + rightCode + ")";
-      }
-    }
+    code = leftCode + " " + eqFnOp + " " + rightCode;
   }
 
   if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
@@ -1103,6 +2022,127 @@ std::string Codegen::_genEqFn (
   }
 
   return code;
+}
+
+std::string Codegen::_genFreeFn (
+  Type *type,
+  const std::string &code,
+  const std::optional<std::vector<std::string> *> &entityBuiltins,
+  const std::optional<std::vector<std::string> *> &entityEntities
+) {
+  auto initialState = this->state;
+  auto result = code;
+
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state.builtins = entityBuiltins;
+    this->state.entities = entityEntities;
+  }
+
+  if (type->isAny()) {
+    this->_activateBuiltin("fnAnyFree");
+    result = "any_free((struct any) " + result + ")";
+  } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
+    this->_activateBuiltin("fnBufferFree");
+    result = "buffer_free((struct buffer) " + result + ")";
+  } else if (type->isArray() || type->isFn() || type->isObj() || type->isOpt()) {
+    auto typeInfo = this->_typeInfo(type);
+
+    this->_activateEntity(typeInfo.realTypeName + "_free");
+    result = typeInfo.realTypeName + "_free((" + typeInfo.realTypeCodeTrimmed + ") " + result + ")";
+  } else if (type->isStr()) {
+    this->_activateBuiltin("fnStrFree");
+    result = "str_free((struct str) " + result + ")";
+  }
+
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state = initialState;
+  }
+
+  return result;
+}
+
+std::string Codegen::_genReallocFn (
+  Type *type,
+  const std::string &leftCode,
+  const std::string &rightCode,
+  const std::optional<std::vector<std::string> *> &entityBuiltins,
+  const std::optional<std::vector<std::string> *> &entityEntities
+) {
+  auto initialState = this->state;
+  auto result = std::string();
+
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state.builtins = entityBuiltins;
+    this->state.entities = entityEntities;
+  }
+
+  if (type->isAny()) {
+    this->_activateBuiltin("fnAnyRealloc");
+    result = leftCode + " = any_realloc(" + leftCode + ", " + rightCode + ")";
+  } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
+    this->_activateBuiltin("fnBufferRealloc");
+    result = leftCode + " = buffer_realloc(" + leftCode + ", " + rightCode + ")";
+  } else if (type->isArray() || type->isFn() || type->isObj() || type->isOpt()) {
+    auto typeInfo = this->_typeInfo(type);
+
+    this->_activateEntity(typeInfo.typeName + "_realloc");
+    result = leftCode + " = " + typeInfo.typeName + "_realloc(" + leftCode + ", " + rightCode + ")";
+  } else if (type->isStr()) {
+    this->_activateBuiltin("fnStrRealloc");
+    result = leftCode + " = str_realloc(" + leftCode + ", " + rightCode + ")";
+  }
+
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state = initialState;
+  }
+
+  return result;
+}
+
+std::string Codegen::_genStrFn (
+  Type *type,
+  const std::string &code,
+  const std::optional<std::vector<std::string> *> &entityBuiltins,
+  const std::optional<std::vector<std::string> *> &entityEntities,
+  bool copy,
+  bool escape
+) {
+  auto initialState = this->state;
+  auto result = code;
+
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state.builtins = entityBuiltins;
+    this->state.entities = entityEntities;
+  }
+
+  if (type->isAny()) {
+    this->_activateBuiltin("fnAnyStr");
+    result = "any_str(" + (copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result) + ")";
+  } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
+    this->_activateBuiltin("fnBufferStr");
+    result = "buffer_str(" + (copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result) + ")";
+  } else if (type->isArray() || type->isFn() || type->isObj() || type->isOpt()) {
+    auto typeInfo = this->_typeInfo(type);
+
+    this->_activateEntity(typeInfo.realTypeName + "_str");
+    result = typeInfo.realTypeName + "_str(" + (copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result) + ")";
+  } else if (type->isStr() && escape) {
+    this->_activateBuiltin("fnStrEscape");
+    result = "str_escape(" + result + ")";
+  } else if (type->isStr()) {
+    result = copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result;
+  } else {
+    auto typeInfo = this->_typeInfo(type);
+
+    this->_activateBuiltin("fn" + Token::upperFirst(typeInfo.realTypeName) + "Str");
+    result = typeInfo.realTypeName + "_str(" + result + ")";
+  }
+
+  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
+    this->state = initialState;
+  }
+
+  return result;
 }
 
 std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) {
@@ -1218,20 +2258,8 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
           bodyCode += ";" EOL;
 
-          if (paramTypeInfo.type->isAny()) {
-            this->_activateBuiltin("fnAnyFree");
-            this->state.cleanUp.add("any_free((struct any) " + paramName + ");");
-          } else if (
-            paramTypeInfo.type->isArray() ||
-            paramTypeInfo.type->isFn() ||
-            paramTypeInfo.type->isObj() ||
-            paramTypeInfo.type->isOpt()
-          ) {
-            this->_activateEntity(paramTypeInfo.typeName + "_free");
-            this->state.cleanUp.add(paramTypeInfo.typeName + "_free((" + paramTypeInfo.typeCodeTrimmed + ") " + paramName + ");");
-          } else if (paramTypeInfo.type->isStr()) {
-            this->_activateBuiltin("fnStrFree");
-            this->state.cleanUp.add("str_free((struct str) " + paramName + ");");
+          if (paramTypeInfo.type->shouldBeFreed()) {
+            this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName) + ";");
           }
 
           paramIdx++;
@@ -1314,8 +2342,9 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
       code += "});" EOL;
 
-      this->_activateEntity(varTypeInfo.typeName + "_free");
-      this->state.cleanUp.add(varTypeInfo.typeName + "_free((" + varTypeInfo.typeCodeTrimmed + ") " + fnName + ");");
+      if (varTypeInfo.type->shouldBeFreed()) {
+        this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, fnName) + ";");
+      }
     }
 
     this->indent = saveIndent;
@@ -1427,272 +2456,9 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
-    auto typeName = Codegen::typeName(nodeObjDecl.type->codeName);
 
-    auto saveStateBuiltins = this->state.builtins;
-    auto saveStateEntities = this->state.entities;
-
-    auto objEntity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
-    objEntity.decl += "struct " + typeName + ";";
-    objEntity.def += "struct " + typeName + " {" EOL;
-
-    this->state.builtins = &objEntity.builtins;
-    this->state.entities = &objEntity.entities;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-
-      objEntity.def += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
-    }
-
-    objEntity.def += "};";
-
-    this->entities.push_back(objEntity);
-    auto typeInfo = this->_typeInfo(nodeObjDecl.type);
-    auto fieldIdx = static_cast<std::size_t>(0);
-
-    auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc" }, { typeName }};
-    auto allocFnParamTypes = std::string();
-    auto allocFnParams = std::string();
-    auto allocFnCode = std::string();
-
-    this->state.builtins = &allocFnEntity.builtins;
-    this->state.entities = &allocFnEntity.entities;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-
-      allocFnParamTypes += ", " + fieldTypeInfo.typeCodeTrimmed;
-      allocFnParams += ", " + fieldTypeInfo.typeCode + fieldName;
-      allocFnCode += ", " + fieldName;
-    }
-
-    allocFnEntity.decl += typeInfo.typeCode + typeName + "_alloc (" + allocFnParamTypes.substr(2) + ");";
-    allocFnEntity.def += typeInfo.typeCode + typeName + "_alloc (" + allocFnParams.substr(2) + ") {" EOL;
-    allocFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
-    allocFnEntity.def += "  struct " + typeName + " s = {" + allocFnCode.substr(2) + "};" EOL;
-    allocFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
-    allocFnEntity.def += "  return r;" EOL;
-    allocFnEntity.def += "}";
-
-    auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc" }, { typeName }};
-    auto copyFnCode = std::string();
-
-    this->state.builtins = &copyFnEntity.builtins;
-    this->state.entities = &copyFnEntity.entities;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-
-      if (fieldTypeInfo.type->isAny()) {
-        this->_activateBuiltin("fnAnyCopy");
-        copyFnCode += ", any_copy(o->" + fieldName + ")";
-      } else if (
-        fieldTypeInfo.type->isArray() ||
-        fieldTypeInfo.type->isFn() ||
-        fieldTypeInfo.type->isObj() ||
-        fieldTypeInfo.type->isOpt()
-      ) {
-        this->_activateEntity(fieldTypeInfo.typeName + "_copy");
-        copyFnCode += ", " + fieldTypeInfo.typeName + "_copy(o->" + fieldName + ")";
-      } else if (fieldTypeInfo.type->isStr()) {
-        this->_activateBuiltin("fnStrCopy");
-        copyFnCode += ", str_copy(o->" + fieldName + ")";
-      } else {
-        copyFnCode += ", o->" + fieldName;
-      }
-    }
-
-    copyFnEntity.decl += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + ");";
-    copyFnEntity.def += typeInfo.typeCode + typeName + "_copy (const " + typeInfo.typeCode + "o) {" EOL;
-    copyFnEntity.def += "  " + typeInfo.typeCode + "r = alloc(sizeof(struct " + typeName + "));" EOL;
-    copyFnEntity.def += "  struct " + typeName + " s = {" + copyFnCode.substr(2) + "};" EOL;
-    copyFnEntity.def += "  memcpy(r, &s, sizeof(struct " + typeName + "));" EOL;
-    copyFnEntity.def += "  return r;" EOL;
-    copyFnEntity.def += "}";
-
-    auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
-    eqFnEntity.decl += "bool " + typeName + "_eq (" + typeInfo.typeCode + ", " + typeInfo.typeCode + ");";
-    eqFnEntity.def += "bool " + typeName + "_eq (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
-    eqFnEntity.def += "  bool r = ";
-
-    fieldIdx = 0;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-
-      eqFnEntity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(fieldTypeInfo, "o1->" + fieldName, "o2->" + fieldName, &eqFnEntity.builtins, &eqFnEntity.entities);
-      fieldIdx++;
-    }
-
-    eqFnEntity.def += ";" EOL;
-    eqFnEntity.def += "  " + typeName + "_free((" + typeInfo.typeCodeTrimmed + ") o1);" EOL;
-    eqFnEntity.def += "  " + typeName + "_free((" + typeInfo.typeCodeTrimmed + ") o2);" EOL;
-    eqFnEntity.def += "  return r;" EOL;
-    eqFnEntity.def += "}";
-
-    auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName }};
-    freeFnEntity.decl += "void " + typeName + "_free (" + typeInfo.typeCode + ");";
-    freeFnEntity.def += "void " + typeName + "_free (" + typeInfo.typeCode + "o) {" EOL;
-
-    this->state.builtins = &freeFnEntity.builtins;
-    this->state.entities = &freeFnEntity.entities;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-
-      if (fieldTypeInfo.type->isAny()) {
-        this->_activateBuiltin("fnAnyFree");
-        freeFnEntity.def += "  any_free((struct any) o->" + fieldName + ");" EOL;
-      } else if (
-        fieldTypeInfo.type->isArray() ||
-        fieldTypeInfo.type->isFn() ||
-        fieldTypeInfo.type->isObj() ||
-        fieldTypeInfo.type->isOpt()
-      ) {
-        this->_activateEntity(fieldTypeInfo.typeName + "_free");
-
-        freeFnEntity.def += "  " + fieldTypeInfo.typeName + "_free((" + fieldTypeInfo.typeCodeTrimmed + ") o->" + fieldName + ");" EOL;
-      } else if (fieldTypeInfo.type->isStr()) {
-        this->_activateBuiltin("fnStrFree");
-        freeFnEntity.def += "  str_free((struct str) o->" + fieldName + ");" EOL;
-      }
-    }
-
-    freeFnEntity.def += "  free(o);" EOL;
-    freeFnEntity.def += "}";
-
-    auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
-    neFnEntity.decl += "bool " + typeName + "_ne (" + typeInfo.typeCode + ", " + typeInfo.typeCode + ");";
-    neFnEntity.def += "bool " + typeName + "_ne (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
-    neFnEntity.def += "  bool r = ";
-
-    fieldIdx = 0;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-
-      neFnEntity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(fieldTypeInfo, "o1->" + fieldName, "o2->" + fieldName, &neFnEntity.builtins, &neFnEntity.entities, true);
-      fieldIdx++;
-    }
-
-    neFnEntity.def += ";" EOL;
-    neFnEntity.def += "  " + typeName + "_free((" + typeInfo.typeCodeTrimmed + ") o1);" EOL;
-    neFnEntity.def += "  " + typeName + "_free((" + typeInfo.typeCodeTrimmed + ") o2);" EOL;
-    neFnEntity.def += "  return r;" EOL;
-    neFnEntity.def += "}";
-
-    auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN, {}, { typeName, typeName + "_free" }};
-    reallocFnEntity.decl += typeInfo.typeCode + typeName + "_realloc (" + typeInfo.typeCode + ", " + typeInfo.typeCode + ");";
-    reallocFnEntity.def += typeInfo.typeCode + typeName + "_realloc (" + typeInfo.typeCode + "o1, " + typeInfo.typeCode + "o2) {" EOL;
-    reallocFnEntity.def += "  " + typeName + "_free((" + typeInfo.typeCodeTrimmed + ") o1);" EOL;
-    reallocFnEntity.def += "  return o2;" EOL;
-    reallocFnEntity.def += "}";
-
-    auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN, {
-      "fnStrAlloc",
-      "fnStrConcatCstr",
-      "fnStrConcatStr",
-      "typeStr"
-    }, { typeName, typeName + "_free" }};
-
-    strFnEntity.decl += "struct str " + typeName + "_str (" + typeInfo.typeCode + ");";
-    strFnEntity.def += "struct str " + typeName + "_str (" + typeInfo.typeCode + "o) {" EOL;
-    strFnEntity.def += R"(  struct str r = str_alloc(")" + nodeObjDecl.type->name + R"({");)" EOL;
-
-    this->state.builtins = &strFnEntity.builtins;
-    this->state.entities = &strFnEntity.entities;
-
-    fieldIdx = 0;
-
-    for (const auto &field : nodeObjDecl.type->fields) {
-      if (field.builtin) {
-        continue;
-      }
-
-      auto fieldName = Codegen::name(field.name);
-      auto fieldTypeInfo = this->_typeInfo(field.type);
-      auto fieldRealTypeCode = std::string(fieldTypeInfo.type->isRef() ? "*" : "") + "o->" + fieldName;
-      auto strCodeDelimiter = std::string(fieldIdx == 0 ? "" : ", ");
-
-      if (fieldTypeInfo.realType->isAny()) {
-        this->_activateBuiltin("fnAnyCopy");
-        this->_activateBuiltin("fnAnyStr");
-
-        strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: ");)" EOL;
-        strFnEntity.def += "  r = str_concat_str(r, any_str(any_copy(" + fieldRealTypeCode + ")));" EOL;
-      } else if (
-        fieldTypeInfo.realType->isArray() ||
-        fieldTypeInfo.realType->isFn() ||
-        fieldTypeInfo.realType->isObj() ||
-        fieldTypeInfo.realType->isOpt()
-      ) {
-        this->_activateEntity(fieldTypeInfo.realTypeName + "_copy");
-        this->_activateEntity(fieldTypeInfo.realTypeName + "_str");
-
-        strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: ");)" EOL;
-        strFnEntity.def += "  r = str_concat_str(r, " + fieldTypeInfo.realTypeName + "_str(" + fieldTypeInfo.realTypeName + "_copy(" + fieldRealTypeCode + ")));" EOL;
-      } else if (fieldTypeInfo.realType->isStr()) {
-        this->_activateBuiltin("fnStrEscape");
-
-        strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: \"");)" EOL;
-        strFnEntity.def += "  r = str_concat_str(r, str_escape(" + fieldRealTypeCode + "));" EOL;
-        strFnEntity.def += R"(  r = str_concat_cstr(r, "\"");)" EOL;
-      } else {
-        auto fieldTypeBuiltinName = Token::upperFirst(fieldTypeInfo.realTypeName);
-        this->_activateBuiltin("fn" + fieldTypeBuiltinName + "Str");
-
-        strFnEntity.def += R"(  r = str_concat_cstr(r, ")" + strCodeDelimiter + field.name + R"(: ");)" EOL;
-        strFnEntity.def += "  r = str_concat_str(r, " + fieldTypeInfo.realTypeName + "_str(" + fieldRealTypeCode + "));" EOL;
-      }
-
-      fieldIdx++;
-    }
-
-    strFnEntity.def += "  " + typeName + "_free((" + typeInfo.typeCodeTrimmed + ") o);" EOL;
-    strFnEntity.def += R"(  return str_concat_cstr(r, "}");)" EOL;
-    strFnEntity.def += "}";
-
-    this->entities.push_back(allocFnEntity);
-    this->entities.push_back(copyFnEntity);
-    this->entities.push_back(eqFnEntity);
-    this->entities.push_back(freeFnEntity);
-    this->entities.push_back(neFnEntity);
-    this->entities.push_back(reallocFnEntity);
-    this->entities.push_back(strFnEntity);
-
-    this->state.builtins = saveStateBuiltins;
-    this->state.entities = saveStateEntities;
+    this->_typeObj(nodeObjDecl.type);
+    this->_typeObjDef(nodeObjDecl.type);
 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
@@ -1747,26 +2513,11 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
       initCode = "0";
     }
 
-    if (root) {
-      code = std::string(this->indent, ' ');
-    }
+    code = !root ? code : std::string(this->indent, ' ');
+    code += (nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst) + name + " = " + initCode + (root ? ";" EOL : "");
 
-    code += (nodeVarDecl.var->mut ? typeInfo.typeCode :typeInfo.typeCodeConst) + name + " = " + initCode + (root ? ";" EOL : "");
-
-    if (typeInfo.type->isAny()) {
-      this->_activateBuiltin("fnAnyFree");
-      this->state.cleanUp.add("any_free((struct any) " + name + ");");
-    } else if (
-      typeInfo.type->isArray() ||
-      typeInfo.type->isFn() ||
-      typeInfo.type->isObj() ||
-      typeInfo.type->isOpt()
-    ) {
-      this->_activateEntity(typeInfo.typeName + "_free");
-      this->state.cleanUp.add(typeInfo.typeName + "_free((" + typeInfo.typeCodeTrimmed + ") " + name + ");");
-    } else if (typeInfo.type->isStr()) {
-      this->_activateBuiltin("fnStrFree");
-      this->state.cleanUp.add("str_free((struct str) " + name + ");");
+    if (typeInfo.type->shouldBeFreed()) {
+      this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, name) + ";");
     }
 
     return this->_wrapNode(node, code);
@@ -1782,45 +2533,46 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.expr)) {
       auto objVar = std::get<std::shared_ptr<Var>>(exprAccess.expr);
-      auto objCode = Codegen::name(objVar->codeName);
-      auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;
 
-      code = objCode;
+      if (objVar->builtin && objVar->codeName == "@os_EOL") {
+        this->_activateBuiltin("definitions");
+        this->_activateBuiltin("fnStrAlloc");
+        code = "str_alloc(THE_EOL)";
+        code = !root ? code : this->_genFreeFn(objVar->type, code);
+      } else if (objVar->builtin && objVar->codeName == "@path_SEP") {
+        this->_activateBuiltin("definitions");
+        this->_activateBuiltin("fnStrAlloc");
+        code = "str_alloc(THE_PATH_SEP)";
+        code = !root ? code : this->_genFreeFn(objVar->type, code);
+      } else if (objVar->builtin && objVar->codeName == "@process_args") {
+        this->needMainArgs = true;
+        code = this->_apiEval("_{process_args}(argc, argv)");
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")), code);
+      } else {
+        auto objCode = Codegen::name(objVar->codeName);
+        auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;
 
-      if (objVar->type->isOpt() && !objType->isOpt()) {
-        code = "*" + code;
-      }
+        code = objCode;
 
-      if (this->state.contextVars.contains(objCode) && (nodeExpr.type->isRefExt() || !targetType->isRefExt())) {
-        code = "*" + code;
-      }
+        if (objVar->type->isOpt() && !objType->isOpt()) {
+          code = "*" + code;
+        }
 
-      if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRefExt() && targetType->isRefExt()) {
-        code = "&" + code;
-      } else if (
-        (nodeExpr.type->isRefExt() && !targetType->isAny() && !targetType->isRefExt()) ||
-        (objType->isRef() && targetType->isAny())
-      ) {
-        code = "*" + code;
-      }
+        if (this->state.contextVars.contains(objCode) && (nodeExpr.type->isRefExt() || !targetType->isRefExt())) {
+          code = "*" + code;
+        }
 
-      if (!objType->isRef() || !targetType->isRef()) {
-        auto nodeTypeInfo = this->_typeInfo(objType);
-
-        if (!root && nodeTypeInfo.realType->isAny()) {
-          this->_activateBuiltin("fnAnyCopy");
-          code = "any_copy(" + code + ")";
+        if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRefExt() && targetType->isRefExt()) {
+          code = "&" + code;
         } else if (
-          (!root && nodeTypeInfo.realType->isArray()) ||
-          (!root && nodeTypeInfo.realType->isFn()) ||
-          (!root && nodeTypeInfo.realType->isObj()) ||
-          (!root && nodeTypeInfo.realType->isOpt())
+          (nodeExpr.type->isRefExt() && !targetType->isAny() && !targetType->isRefExt()) ||
+          (objType->isRef() && targetType->isAny())
         ) {
-          this->_activateEntity(nodeTypeInfo.realTypeName + "_copy");
-          code = nodeTypeInfo.realTypeName + "_copy(" + code + ")";
-        } else if (!root && nodeTypeInfo.realType->isStr()) {
-          this->_activateBuiltin("fnStrCopy");
-          code = "str_copy(" + code + ")";
+          code = "*" + code;
+        }
+
+        if (!root && (!objType->isRef() || !targetType->isRef())) {
+          code = this->_genCopyFn(Type::real(objType), code);
         }
       }
 
@@ -1875,24 +2627,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code = "*" + code;
     }
 
-    if (!nodeExpr.type->isRef() || !targetType->isRef()) {
-      auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
-
-      if (!root && nodeTypeInfo.realType->isAny()) {
-        this->_activateBuiltin("fnAnyCopy");
-        code = "any_copy(" + code + ")";
-      } else if (
-        (!root && nodeTypeInfo.realType->isArray()) ||
-        (!root && nodeTypeInfo.realType->isFn()) ||
-        (!root && nodeTypeInfo.realType->isObj()) ||
-        (!root && nodeTypeInfo.realType->isOpt())
-      ) {
-        this->_activateEntity(nodeTypeInfo.realTypeName + "_copy");
-        code = nodeTypeInfo.realTypeName + "_copy(" + code + ")";
-      } else if (!root && nodeTypeInfo.realType->isStr()) {
-        this->_activateBuiltin("fnStrCopy");
-        code = "str_copy(" + code + ")";
-      }
+    if (!root && (!nodeExpr.type->isRef() || !targetType->isRef())) {
+      code = this->_genCopyFn(Type::real(nodeExpr.type), code);
     }
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
@@ -1909,160 +2645,216 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     }
 
     code += ")";
-
-    if (root) {
-      this->_activateEntity(nodeTypeInfo.typeName + "_free");
-      code = nodeTypeInfo.typeName + "_free((" + nodeTypeInfo.typeCodeTrimmed + ") " + code + ")";
-    }
+    code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
     auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
     auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
-    auto leftCode = this->_nodeExpr(exprAssign.left, nodeTypeInfo.type, true);
+    auto leftCode = this->_nodeExpr(exprAssign.left, nodeExpr.type, true);
+    auto code = std::string();
 
     if (exprAssign.left.type->isAny() || exprAssign.right.type->isAny()) {
-      this->_activateBuiltin("fnAnyRealloc");
-      auto code = leftCode + " = any_realloc(" + leftCode + ", " + this->_nodeExpr(exprAssign.right, nodeTypeInfo.type) + ")";
-
-      if (!root) {
-        this->_activateBuiltin("fnAnyCopy");
-        code = "any_copy(" + code + ")";
-      }
-
-      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+      code = this->_genReallocFn(this->ast->typeMap.get("any"), leftCode, this->_nodeExpr(exprAssign.right, nodeExpr.type));
+      code = root ? code : this->_genCopyFn(this->ast->typeMap.get("any"), code);
     } else if (
       exprAssign.left.type->isArray() ||
       exprAssign.left.type->isFn() ||
       exprAssign.left.type->isObj() ||
       exprAssign.left.type->isOpt()
     ) {
-      this->_activateEntity(nodeTypeInfo.typeName + "_realloc");
-      auto code = leftCode + " = " + nodeTypeInfo.typeName + "_realloc(" + leftCode + ", " + this->_nodeExpr(exprAssign.right, nodeTypeInfo.type) + ")";
-
-      if (!root) {
-        this->_activateEntity(nodeTypeInfo.typeName + "_copy");
-        code = nodeTypeInfo.typeName + "_copy(" + code + ")";
-      }
-
-      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+      code = this->_genReallocFn(exprAssign.left.type, leftCode, this->_nodeExpr(exprAssign.right, nodeExpr.type));
+      code = root ? code : this->_genCopyFn(exprAssign.left.type, code);
     } else if (exprAssign.left.type->isStr() || exprAssign.right.type->isStr()) {
       auto rightCode = std::string();
 
       if (exprAssign.op == AST_EXPR_ASSIGN_ADD) {
-        this->_activateBuiltin("fnStrCopy");
-
         if (exprAssign.right.isLit()) {
           this->_activateBuiltin("fnStrConcatCstr");
-          rightCode = "str_concat_cstr(str_copy(" + leftCode + "), " + exprAssign.right.litBody() + ")";
+          rightCode = "str_concat_cstr(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode) + ", " + exprAssign.right.litBody() + ")";
         } else {
           this->_activateBuiltin("fnStrConcatStr");
-          rightCode = "str_concat_str(str_copy(" + leftCode + "), " + this->_nodeExpr(exprAssign.right, nodeTypeInfo.type) + ")";
+          rightCode = "str_concat_str(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode) + ", " + this->_nodeExpr(exprAssign.right, nodeExpr.type) + ")";
         }
       } else {
-        rightCode = this->_nodeExpr(exprAssign.right, nodeTypeInfo.type);
+        rightCode = this->_nodeExpr(exprAssign.right, nodeExpr.type);
       }
 
-      this->_activateBuiltin("fnStrRealloc");
-      auto code = leftCode + " = str_realloc(" + leftCode + ", " + rightCode + ")";
-
-      if (!root) {
-        this->_activateBuiltin("fnStrCopy");
-        code = "str_copy(" + code + ")";
-      }
-
-      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
-    }
-
-    auto opCode = std::string(" = ");
-    auto rightCode = this->_nodeExpr(exprAssign.right, nodeTypeInfo.type);
-
-    if (exprAssign.op == AST_EXPR_ASSIGN_AND) {
-      rightCode = leftCode + " && " + rightCode;
-    } else if (exprAssign.op == AST_EXPR_ASSIGN_OR) {
-      rightCode = leftCode + " || " + rightCode;
+      code = this->_genReallocFn(this->ast->typeMap.get("str"), leftCode, rightCode);
+      code = root ? code : this->_genCopyFn(this->ast->typeMap.get("str"), code);
     } else {
-      if (exprAssign.op == AST_EXPR_ASSIGN_ADD) opCode = " += ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_AND) opCode = " &= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_OR) opCode = " |= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_XOR) opCode = " ^= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_DIV) opCode = " /= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_EQ) opCode = " = ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_LSHIFT) opCode = " <<= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_MOD) opCode = " %= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_MUL) opCode = " *= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_RSHIFT) opCode = " >>= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_SUB) opCode = " -= ";
+      auto opCode = std::string(" = ");
+      auto rightCode = this->_nodeExpr(exprAssign.right, nodeExpr.type);
+
+      if (exprAssign.op == AST_EXPR_ASSIGN_AND) {
+        rightCode = leftCode + " && " + rightCode;
+      } else if (exprAssign.op == AST_EXPR_ASSIGN_OR) {
+        rightCode = leftCode + " || " + rightCode;
+      } else {
+        if (exprAssign.op == AST_EXPR_ASSIGN_ADD) opCode = " += ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_AND) opCode = " &= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_OR) opCode = " |= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_XOR) opCode = " ^= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_DIV) opCode = " /= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_EQ) opCode = " = ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_LSHIFT) opCode = " <<= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_MOD) opCode = " %= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_MUL) opCode = " *= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_RSHIFT) opCode = " >>= ";
+        else if (exprAssign.op == AST_EXPR_ASSIGN_SUB) opCode = " -= ";
+      }
+
+      code = leftCode + opCode + rightCode;
     }
 
-    return this->_wrapNodeExpr(nodeExpr, targetType, root, leftCode + opCode + rightCode);
+    return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprBinary>(*nodeExpr.body)) {
     auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
+    auto code = std::string();
 
-    if ((exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) && (
+    if (
+      exprBinary.op == AST_EXPR_BINARY_EQ &&
+      Type::real(exprBinary.left.type)->isObj() &&
+      Type::real(exprBinary.right.type)->isObj() &&
+      Type::real(exprBinary.left.type)->builtin &&
+      Type::real(exprBinary.right.type)->builtin &&
+      Type::real(exprBinary.left.type)->codeName == "@buffer_Buffer" &&
+      Type::real(exprBinary.right.type)->codeName == "@buffer_Buffer"
+    ) {
+      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+
+      this->_activateBuiltin("fnBufferEq");
+      code = "buffer_eq(" + leftCode + ", " + rightCode + ")";
+    } else if (
+      exprBinary.op == AST_EXPR_BINARY_NE &&
+      Type::real(exprBinary.left.type)->isObj() &&
+      Type::real(exprBinary.right.type)->isObj() &&
+      Type::real(exprBinary.left.type)->builtin &&
+      Type::real(exprBinary.right.type)->builtin &&
+      Type::real(exprBinary.left.type)->codeName == "@buffer_Buffer" &&
+      Type::real(exprBinary.right.type)->codeName == "@buffer_Buffer"
+    ) {
+      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+
+      this->_activateBuiltin("fnBufferNe");
+      code = "buffer_ne(" + leftCode + ", " + rightCode + ")";
+    } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
       (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
       (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
-      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt()) ||
-      (Type::real(exprBinary.left.type)->isStr() && Type::real(exprBinary.right.type)->isStr())
+      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
     )) {
-      auto nodeTypeInfo = this->_typeInfo(exprBinary.left.type);
-      auto code = this->_genEqFn(nodeTypeInfo, exprBinary.left, exprBinary.right, std::nullopt, std::nullopt, exprBinary.op == AST_EXPR_BINARY_NE);
-      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
-    }
+      auto typeInfo = this->_typeInfo(exprBinary.left.type);
+      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
 
-    if (Type::real(exprBinary.left.type)->isStr() && Type::real(exprBinary.right.type)->isStr()) {
-      if (exprBinary.op == AST_EXPR_BINARY_ADD) {
-        auto code = std::string();
+      this->_activateEntity(typeInfo.realTypeName + "_eq");
+      code = typeInfo.realTypeName + "_eq(" + leftCode + ", " + rightCode + ")";
+    } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
+      (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
+      (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
+      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
+    )) {
+      auto typeInfo = this->_typeInfo(exprBinary.left.type);
+      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
 
-        if (root && nodeExpr.isLit()) {
-          return this->_wrapNodeExpr(nodeExpr, targetType, root, nodeExpr.litBody());
-        } else if (nodeExpr.isLit()) {
-          this->_activateBuiltin("fnStrAlloc");
-          code = "str_alloc(" + nodeExpr.litBody() + ")";
-        } else if (exprBinary.left.isLit()) {
-          this->_activateBuiltin("fnCstrConcatStr");
-          code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
-        } else if (exprBinary.right.isLit()) {
-          this->_activateBuiltin("fnStrConcatCstr");
-          code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + exprBinary.right.litBody() + ")";
-        } else {
-          this->_activateBuiltin("fnStrConcatStr");
-          code = "str_concat_str(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
-        }
+      this->_activateEntity(typeInfo.realTypeName + "_ne");
+      code = typeInfo.realTypeName + "_ne(" + leftCode + ", " + rightCode + ")";
+    } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
+      Type::real(exprBinary.left.type)->isStr() &&
+      Type::real(exprBinary.right.type)->isStr()
+    )) {
+      if (exprBinary.left.isLit() && exprBinary.right.isLit()) {
+        this->_activateBuiltin("fnCstrEqCstr");
+        code = "cstr_eq_cstr(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")";
+      } else if (exprBinary.left.isLit()) {
+        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+        this->_activateBuiltin("fnCstrEqStr");
+        code = "cstr_eq_str(" + exprBinary.left.litBody() + ", " + rightCode + ")";
+      } else if (exprBinary.right.isLit()) {
+        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+        this->_activateBuiltin("fnStrEqCstr");
+        code = "str_eq_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")";
+      } else {
+        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
 
-        if (root) {
-          this->_activateBuiltin("fnStrFree");
-          code = "str_free((struct str) " + code + ")";
-        }
-
-        return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+        this->_activateBuiltin("fnStrEqStr");
+        code = "str_eq_str(" + leftCode + ", " + rightCode + ")";
       }
+    } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
+      Type::real(exprBinary.left.type)->isStr() &&
+      Type::real(exprBinary.right.type)->isStr()
+    )) {
+      if (exprBinary.left.isLit() && exprBinary.right.isLit()) {
+        this->_activateBuiltin("fnCstrNeCstr");
+        code = "cstr_ne_cstr(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")";
+      } else if (exprBinary.left.isLit()) {
+        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+        this->_activateBuiltin("fnCstrNeStr");
+        code = "cstr_ne_str(" + exprBinary.left.litBody() + ", " + rightCode + ")";
+      } else if (exprBinary.right.isLit()) {
+        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+        this->_activateBuiltin("fnStrNeCstr");
+        code = "str_ne_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")";
+      } else {
+        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+
+        this->_activateBuiltin("fnStrNeStr");
+        code = "str_ne_str(" + leftCode + ", " + rightCode + ")";
+      }
+    } else if (exprBinary.op == AST_EXPR_BINARY_ADD && (
+      Type::real(exprBinary.left.type)->isStr() &&
+      Type::real(exprBinary.right.type)->isStr()
+    )) {
+      if (root && nodeExpr.isLit()) {
+        return this->_wrapNodeExpr(nodeExpr, targetType, root, nodeExpr.litBody());
+      } else if (nodeExpr.isLit()) {
+        this->_activateBuiltin("fnStrAlloc");
+        code = "str_alloc(" + nodeExpr.litBody() + ")";
+      } else if (exprBinary.left.isLit()) {
+        this->_activateBuiltin("fnCstrConcatStr");
+        code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
+      } else if (exprBinary.right.isLit()) {
+        this->_activateBuiltin("fnStrConcatCstr");
+        code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + exprBinary.right.litBody() + ")";
+      } else {
+        this->_activateBuiltin("fnStrConcatStr");
+        code = "str_concat_str(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
+      }
+
+      code = !root ? code : this->_genFreeFn(Type::real(exprBinary.left.type), code);
+    } else {
+      auto leftCode = this->_nodeExpr(exprBinary.left, nodeExpr.type);
+      auto rightCode = this->_nodeExpr(exprBinary.right, nodeExpr.type);
+      auto opCode = std::string();
+
+      if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
+      else if (exprBinary.op == AST_EXPR_BINARY_AND) opCode = " && ";
+      else if (exprBinary.op == AST_EXPR_BINARY_BIT_AND) opCode = " & ";
+      else if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = " | ";
+      else if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = " ^ ";
+      else if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = " / ";
+      else if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = " == ";
+      else if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = " >= ";
+      else if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = " > ";
+      else if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = " << ";
+      else if (exprBinary.op == AST_EXPR_BINARY_LE) opCode = " <= ";
+      else if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = " < ";
+      else if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = " % ";
+      else if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = " * ";
+      else if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = " != ";
+      else if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = " || ";
+      else if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = " >> ";
+      else if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = " - ";
+
+      code = leftCode + opCode + rightCode;
     }
 
-    auto leftCode = this->_nodeExpr(exprBinary.left, nodeExpr.type);
-    auto rightCode = this->_nodeExpr(exprBinary.right, nodeExpr.type);
-    auto opCode = std::string();
-
-    if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
-    else if (exprBinary.op == AST_EXPR_BINARY_AND) opCode = " && ";
-    else if (exprBinary.op == AST_EXPR_BINARY_BIT_AND) opCode = " & ";
-    else if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = " | ";
-    else if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = " ^ ";
-    else if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = " / ";
-    else if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = " == ";
-    else if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = " >= ";
-    else if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = " > ";
-    else if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = " << ";
-    else if (exprBinary.op == AST_EXPR_BINARY_LE) opCode = " <= ";
-    else if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = " < ";
-    else if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = " % ";
-    else if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = " * ";
-    else if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = " != ";
-    else if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = " || ";
-    else if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = " >> ";
-    else if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = " - ";
-
-    return this->_wrapNodeExpr(nodeExpr, targetType, root, leftCode + opCode + rightCode);
+    return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
     auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
     auto exprCallCalleeTypeInfo = this->_typeInfo(exprCall.callee.type);
@@ -2075,14 +2867,77 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
       }
 
-      this->_activateBuiltin("libStdlib");
-      code = "exit(" + arg1Expr + ")";
+      code = this->_apiEval("_{exit}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_chmodSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
+      code = this->_apiEval("_{fs_chmodSync}(" + arg1Expr + ", " + arg2Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_chownSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
+      auto arg3Expr = this->_nodeExpr(exprCall.args[2].expr, this->ast->typeMap.get("int"));
+      code = this->_apiEval("_{fs_chownSync}(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_existsSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_existsSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isAbsoluteSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isAbsoluteSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isDirectorySync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isDirectorySync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isFileSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isFileSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_isSymbolicLinkSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_isSymbolicLinkSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_linkSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_linkSync}(" + arg1Expr + ", " + arg2Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_mkdirSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_mkdirSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_readFileSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_readFileSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_realpathSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_realpathSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_rmSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_rmSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_rmdirSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_rmdirSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_scandirSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_scandirSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_statSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_statSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_unlinkSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{fs_unlinkSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@fs_writeFileSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("buffer_Buffer"));
+      code = this->_apiEval("_{fs_writeFileSync}(" + arg1Expr + ", " + arg2Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@os_name") {
+      code = this->_apiEval("_{os_name}()", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@path_basename") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{path_basename}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@path_dirname") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{path_dirname}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@print") {
       auto separator = std::string(R"(" ")");
       auto isSeparatorLit = true;
-      this->_activateBuiltin("definitions");
       auto terminator = std::string("THE_EOL");
       auto isTerminatorLit = true;
+      auto to = std::string("stdout");
 
       for (const auto &exprCallArg : exprCall.args) {
         if (exprCallArg.id != std::nullopt && exprCallArg.id == "separator") {
@@ -2099,13 +2954,21 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
             terminator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"));
             isTerminatorLit = false;
           }
+        } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "to") {
+          if (exprCallArg.expr.isLit()) {
+            to = exprCallArg.expr.litBody() == R"("stderr")" ? "stderr" : "stdout";
+          } else {
+            this->_activateBuiltin("fnCstrEqStr");
+            to = R"(cstr_eq_str("stderr", )" + this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str")) + R"() ? stderr : stdout)";
+          }
         }
       }
 
+      this->_activateBuiltin("definitions");
       this->_activateBuiltin("fnPrint");
       this->_activateBuiltin("libStdio");
 
-      code = std::string(R"(print(stdout, ")");
+      code = "print(" + to + R"(, ")";
 
       auto argsCode = std::string();
       auto argIdx = static_cast<std::size_t>(0);
@@ -2122,21 +2985,15 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
           argsCode += separator + ", ";
         }
 
-        if (argTypeInfo.type->isAny()) {
-          code += "s";
-
-          this->_activateBuiltin("fnAnyStr");
-          argsCode += "any_str(" + this->_nodeExpr(exprCallArg.expr, argTypeInfo.type) + ")";
-        } else if (
+        if (
+          argTypeInfo.type->isAny() ||
           argTypeInfo.type->isArray() ||
           argTypeInfo.type->isFn() ||
           argTypeInfo.type->isObj() ||
           argTypeInfo.type->isOpt()
         ) {
           code += "s";
-
-          this->_activateEntity(argTypeInfo.typeName + "_str");
-          argsCode += argTypeInfo.typeName + "_str(" + this->_nodeExpr(exprCallArg.expr, argTypeInfo.type) + ")";
+          argsCode += this->_genStrFn(argTypeInfo.type, this->_nodeExpr(exprCallArg.expr, argTypeInfo.type), std::nullopt, std::nullopt, false);
         } else if (argTypeInfo.type->isRef()) {
           code += "p";
           argsCode += this->_nodeExpr(exprCallArg.expr, argTypeInfo.type);
@@ -2175,17 +3032,99 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       code += ")";
-    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u64"));
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_cwd") {
+      code = this->_apiEval("_{process_cwd}()");
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_getgid") {
+      code = this->_apiEval("_{process_getgid}()");
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_getuid") {
+      code = this->_apiEval("_{process_getuid}()");
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_runSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{process_runSync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_close") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
+      code = this->_apiEval("_{request_close}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_open") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("str"));
 
-      this->_activateBuiltin("fnSleepSync");
-      code = "sleep_sync(" + arg1Expr + ")";
+      auto arg3Expr = std::string("(struct buffer) {NULL, 0}");
+      auto isArg3ExprPlain = true;
+      auto arg4Expr = std::string("(struct " + Codegen::typeName("array_request_Header") + ") {NULL, 0}");
+      auto isArg4ExprPlain = true;
+
+      for (const auto &exprCallArg : exprCall.args) {
+        if (exprCallArg.id != std::nullopt && exprCallArg.id == "data") {
+          arg3Expr = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("buffer_Buffer"));
+          isArg3ExprPlain = false;
+        } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "headers") {
+          arg4Expr = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.arrayOf(this->ast->typeMap.get("request_Header")));
+          isArg4ExprPlain = false;
+        }
+      }
+
+      if (isArg3ExprPlain) {
+        this->_activateBuiltin("libStdlib");
+        this->_activateBuiltin("typeBuffer");
+      }
+
+      if (isArg4ExprPlain) {
+        auto typeName = this->_typeNameArray(this->ast->typeMap.arrayOf(this->ast->typeMap.get("request_Header")));
+
+        this->_activateBuiltin("libStdlib");
+        this->_activateEntity(typeName);
+      }
+
+      code = this->_apiEval("_{request_open}(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_read") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
+      code = this->_apiEval("_{request_read}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
+      code = this->_apiEval("_{sleep_sync}(" + arg1Expr + ")", 1);
+    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@url_parse") {
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+      code = this->_apiEval("_{url_parse}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin) {
       auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
       auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
       auto calleeTypeInfo = this->_typeInfo(calleeNodeExpr.type);
 
-      if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
+      if (exprCallCalleeTypeInfo.realType->codeName.ends_with(".str")) {
+        auto typeStrFn = std::string();
+
+        if (exprCallCalleeTypeInfo.realType->codeName == "@buffer_Buffer.str") {
+          this->_activateBuiltin("fnBufferToStr");
+          typeStrFn = "buffer_to_str";
+        } else if (
+          exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@opt.str"
+        ) {
+          this->_activateEntity(calleeTypeInfo.realTypeName + "_str");
+          typeStrFn = calleeTypeInfo.realTypeName + "_str";
+        } else if (calleeTypeInfo.realType->isObj()) {
+          this->_activateEntity(calleeTypeInfo.realType->name + "_str");
+          typeStrFn = calleeTypeInfo.realType->name + "_str";
+        } else {
+          auto codeName = exprCallCalleeTypeInfo.realType->codeName.substr(1);
+
+          this->_activateBuiltin("fn" + Token::upperFirst(codeName.substr(0, codeName.find('.'))) + "Str");
+          typeStrFn = codeName.substr(0, codeName.find('.')) + "_str";
+        }
+
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
+
+        if (!calleeNodeExpr.parenthesized) {
+          calleeCode = "(" + calleeCode + ")";
+        }
+
+        code = typeStrFn + calleeCode;
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.empty") {
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_empty");
+        code = calleeTypeInfo.realTypeName + "_empty(" + this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.get("bool")) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
         auto arg2Expr = std::string();
@@ -2214,9 +3153,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         code += ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.reverse") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         this->_activateEntity(calleeTypeInfo.realTypeName + "_reverse");
-        code = calleeTypeInfo.realTypeName + "_reverse(" + calleeCode + ")";
+        code = calleeTypeInfo.realTypeName + "_reverse(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -2226,95 +3164,42 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
-      } else if (
-        exprCallCalleeTypeInfo.realType->codeName == "@any.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@bool.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@byte.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@char.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@f32.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@f64.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@float.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i8.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i16.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i32.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@i64.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@int.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@opt.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u8.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u16.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u32.str" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@u64.str"
-      ) {
-        auto typeStrFn = std::string();
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlpha") {
+        this->_activateBuiltin("fnCharIsAlpha");
+        code = "char_is_alpha(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlphaNum") {
+        this->_activateBuiltin("fnCharIsAlphaNum");
+        code = "char_is_alpha_num(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isDigit") {
+        this->_activateBuiltin("fnCharIsDigit");
+        code = "char_is_digit(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isSpace") {
+        this->_activateBuiltin("fnCharIsSpace");
+        code = "char_is_space(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.repeat") {
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
+        this->_activateBuiltin("fnCharRepeat");
+        code = "char_repeat(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.empty") {
+        this->_activateBuiltin("fnStrEmpty");
+        code = "str_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.find") {
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
+        this->_activateBuiltin("fnStrFind");
+        code = "str_find(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lines") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
+        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("bool"));
 
-        if (exprCallCalleeTypeInfo.realType->codeName == "@any.str") {
-          this->_activateBuiltin("fnAnyStr");
-          typeStrFn = "any_str";
-        } else if (
-          exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
-          exprCallCalleeTypeInfo.realType->codeName == "@opt.str"
-        ) {
-          this->_activateEntity(calleeTypeInfo.realTypeName + "_str");
-          typeStrFn = calleeTypeInfo.realTypeName + "_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@bool.str") {
-          this->_activateBuiltin("fnBoolStr");
-          typeStrFn = "bool_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@byte.str") {
-          this->_activateBuiltin("fnByteStr");
-          typeStrFn = "byte_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.str") {
-          this->_activateBuiltin("fnCharStr");
-          typeStrFn = "char_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@f32.str") {
-          this->_activateBuiltin("fnF32Str");
-          typeStrFn = "f32_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@f64.str") {
-          this->_activateBuiltin("fnF64Str");
-          typeStrFn = "f64_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@float.str") {
-          this->_activateBuiltin("fnFloatStr");
-          typeStrFn = "float_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i8.str") {
-          this->_activateBuiltin("fnI8Str");
-          typeStrFn = "i8_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i16.str") {
-          this->_activateBuiltin("fnI16Str");
-          typeStrFn = "i16_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i32.str") {
-          this->_activateBuiltin("fnI32Str");
-          typeStrFn = "i32_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@i64.str") {
-          this->_activateBuiltin("fnI64Str");
-          typeStrFn = "i64_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@int.str") {
-          this->_activateBuiltin("fnIntStr");
-          typeStrFn = "int_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u8.str") {
-          this->_activateBuiltin("fnU8Str");
-          typeStrFn = "u8_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u16.str") {
-          this->_activateBuiltin("fnU16Str");
-          typeStrFn = "u16_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u32.str") {
-          this->_activateBuiltin("fnU32Str");
-          typeStrFn = "u32_str";
-        } else if (exprCallCalleeTypeInfo.realType->codeName == "@u64.str") {
-          this->_activateBuiltin("fnU64Str");
-          typeStrFn = "u64_str";
-        }
-
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
-
-        if (!calleeNodeExpr.parenthesized) {
-          calleeCode = "(" + calleeCode + ")";
-        }
-
-        code = typeStrFn + calleeCode;
+        this->_activateBuiltin("fnStrLines");
+        code = "str_lines(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lower") {
+        this->_activateBuiltin("fnStrLower");
+        code = "str_lower(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lowerFirst") {
+        this->_activateBuiltin("fnStrLowerFirst");
+        code = "str_lower_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -2324,6 +3209,18 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         this->_activateBuiltin("fnStrSlice");
         code = "str_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.toBuffer") {
+        this->_activateBuiltin("fnStrToBuffer");
+        code = "str_to_buffer(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.trim") {
+        this->_activateBuiltin("fnStrTrim");
+        code = "str_trim(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upper") {
+        this->_activateBuiltin("fnStrUpper");
+        code = "str_upper(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upperFirst") {
+        this->_activateBuiltin("fnStrUpperFirst");
+        code = "str_upper_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
       }
     } else {
       auto fn = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);
@@ -2399,23 +3296,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
     }
 
-    if (root && nodeExpr.type->isAny()) {
-      this->_activateBuiltin("fnAnyFree");
-      code = "any_free((struct any) " + code + ")";
-    } else if (
-      (root && nodeExpr.type->isArray()) ||
-      (root && nodeExpr.type->isFn()) ||
-      (root && nodeExpr.type->isObj()) ||
-      (root && nodeExpr.type->isOpt())
-    ) {
-      auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
-      this->_activateEntity(nodeTypeInfo.typeName + "_free");
-      code = nodeTypeInfo.typeName + "_free((" + nodeTypeInfo.typeCodeTrimmed + ") " + code + ")";
-    } else if (root && nodeExpr.type->isStr()) {
-      this->_activateBuiltin("fnStrFree");
-      code = "str_free((struct str) " + code + ")";
-    }
-
+    code = !root ? code : this->_genFreeFn(nodeExpr.type, code);
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
     auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
@@ -2435,22 +3316,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     auto code = condCode + " ? " + bodyCode + " : " + altCode;
 
-    if (root && nodeExpr.type->isAny()) {
-      this->_activateBuiltin("fnAnyFree");
-      code = "any_free((struct any) (" + code + "))";
-    } else if (
-      (root && nodeExpr.type->isArray()) ||
-      (root && nodeExpr.type->isFn()) ||
-      (root && nodeExpr.type->isObj()) ||
-      (root && nodeExpr.type->isOpt())
-    ) {
-      auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
-
-      this->_activateEntity(nodeTypeInfo.typeName + "_free");
-      code = nodeTypeInfo.typeName + "_free((" + nodeTypeInfo.typeCodeTrimmed + ") (" + code + "))";
-    } else if (root && nodeExpr.type->isStr()) {
-      this->_activateBuiltin("fnStrFree");
-      code = "str_free((struct str) (" + code + "))";
+    if (root && nodeExpr.type->shouldBeFreed()) {
+      code = this->_genFreeFn(nodeExpr.type, "(" + code + ")");
     }
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
@@ -2523,11 +3390,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     this->_activateEntity(typeInfo.typeName + "_alloc");
     auto code = typeInfo.typeName + "_alloc(" + fieldsCode.substr(2) + ")";
-
-    if (root) {
-      this->_activateEntity(typeInfo.typeName + "_free");
-      code = typeInfo.typeName + "_free((" + typeInfo.typeCodeTrimmed + ") " + code + ")";
-    }
+    code = !root ? code : this->_genFreeFn(typeInfo.type, code);
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
@@ -2617,12 +3480,11 @@ std::string Codegen::_type (const Type *type) {
   } else if (type->isI64()) {
     this->_activateBuiltin("libStdint");
     return "int64_t ";
+  } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
+    this->_activateBuiltin("typeBuffer");
+    return "struct buffer ";
   } else if (type->isObj()) {
-    if (type->builtin) {
-      return type->name;
-    }
-
-    auto typeName = Codegen::typeName(type->codeName);
+    auto typeName = type->builtin ? type->name : Codegen::typeName(type->codeName);
     this->_activateEntity(typeName);
     return "struct " + typeName + " *";
   } else if (type->isOpt()) {
@@ -2773,23 +3635,7 @@ std::string Codegen::_typeNameAny (Type *type) {
   copyFnEntity.def += "struct any " + typeName + "_copy (const struct any n) {" EOL;
   copyFnEntity.def += "  struct " + typeName + " *o = n.d;" EOL;
   copyFnEntity.def += "  struct " + typeName + " *r = alloc(n.l);" EOL;
-  copyFnEntity.def += "  r->d = ";
-
-  if (
-    typeInfo.type->isArray() ||
-    typeInfo.type->isFn() ||
-    typeInfo.type->isObj() ||
-    typeInfo.type->isOpt()
-  ) {
-    this->_activateEntity(typeInfo.typeName + "_copy", &copyFnEntity.entities);
-    copyFnEntity.def += typeInfo.typeName + "_copy(o->d);" EOL;
-  } else if (typeInfo.type->isStr()) {
-    this->_activateBuiltin("fnStrCopy", &copyFnEntity.builtins);
-    copyFnEntity.def += "str_copy(o->d);" EOL;
-  } else {
-    copyFnEntity.def += "o->d;" EOL;
-  }
-
+  copyFnEntity.def += "  r->d = " + this->_genCopyFn(typeInfo.type, "o->d", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
   copyFnEntity.def += "  return (struct any) {n.t, r, n.l, n._copy, n._free};" EOL;
   copyFnEntity.def += "}";
 
@@ -2798,17 +3644,8 @@ std::string Codegen::_typeNameAny (Type *type) {
   freeFnEntity.def += "void " + typeName + "_free (struct any _n) {" EOL;
   freeFnEntity.def += "  struct " + typeName + " *n = _n.d;" EOL;
 
-  if (
-    typeInfo.type->isArray() ||
-    typeInfo.type->isFn() ||
-    typeInfo.type->isObj() ||
-    typeInfo.type->isOpt()
-  ) {
-    this->_activateEntity(typeInfo.typeName + "_free", &freeFnEntity.entities);
-    freeFnEntity.def += "  " + typeInfo.typeName + "_free((" + typeInfo.typeCodeTrimmed + ") n->d);" EOL;
-  } else if (typeInfo.type->isStr()) {
-    this->_activateBuiltin("fnStrFree", &freeFnEntity.builtins);
-    freeFnEntity.def += "  str_free((struct str) n->d);" EOL;
+  if (typeInfo.type->shouldBeFreed()) {
+    freeFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "n->d", &freeFnEntity.builtins, &freeFnEntity.entities) + ";" EOL;
   }
 
   freeFnEntity.def += "  free(n);" EOL;
@@ -2839,13 +3676,19 @@ std::string Codegen::_typeNameArray (const Type *type) {
     }
   }
 
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
+
+  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+
   auto elementTypeInfo = this->_typeInfo(std::get<TypeArray>(type->body).elementType);
   auto varArgTypeCode = elementTypeInfo.type->isSmallForVarArg()
     ? elementTypeInfo.type->isF32() ? "double" : "int"
     : elementTypeInfo.typeCodeTrimmed;
   auto elementRealTypeCode = std::string(elementTypeInfo.type->isRef() ? "*" : "") + "n.d[i]";
 
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
   entity.decl += "struct " + typeName + ";";
   entity.def += "struct " + typeName + " {" EOL;
   entity.def += "  " + elementTypeInfo.typeRefCode + "d;" EOL;
@@ -2873,7 +3716,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
 
   atFnEntity.decl += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + ", int64_t);";
   atFnEntity.def += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + " n, int64_t i) {" EOL;
-  atFnEntity.def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -n.l)) {" EOL;
+  atFnEntity.def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {" EOL;
   atFnEntity.def += R"(    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);)" EOL;
   atFnEntity.def += "    exit(EXIT_FAILURE);" EOL;
   atFnEntity.def += "  }" EOL;
@@ -2885,28 +3728,17 @@ std::string Codegen::_typeNameArray (const Type *type) {
   copyFnEntity.def += "struct " + typeName + " " + typeName + "_copy (const struct " + typeName + " n) {" EOL;
   copyFnEntity.def += "  if (n.l == 0) return (struct " + typeName + ") {NULL, 0};" EOL;
   copyFnEntity.def += "  " + elementTypeInfo.typeRefCode + "d = alloc(n.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  copyFnEntity.def += "  for (size_t i = 0; i < n.l; i++) d[i] = ";
-
-  if (elementTypeInfo.type->isAny()) {
-    this->_activateBuiltin("fnAnyCopy", &copyFnEntity.builtins);
-    copyFnEntity.def += "any_copy(n.d[i]);" EOL;
-  } else if (
-    elementTypeInfo.type->isArray() ||
-    elementTypeInfo.type->isFn() ||
-    elementTypeInfo.type->isObj() ||
-    elementTypeInfo.type->isOpt()
-  ) {
-    this->_activateEntity(elementTypeInfo.typeName + "_copy", &copyFnEntity.entities);
-    copyFnEntity.def += elementTypeInfo.typeName + "_copy(n.d[i]);" EOL;
-  } else if (elementTypeInfo.type->isStr()) {
-    this->_activateBuiltin("fnStrCopy", &copyFnEntity.builtins);
-    copyFnEntity.def += "str_copy(n.d[i]);" EOL;
-  } else {
-    copyFnEntity.def += "n.d[i];" EOL;
-  }
-
+  copyFnEntity.def += "  for (size_t i = 0; i < n.l; i++) d[i] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[i]", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
   copyFnEntity.def += "  return (struct " + typeName + ") {d, n.l};" EOL;
   copyFnEntity.def += "}";
+
+  auto emptyFnEntity = CodegenEntity{typeName + "_empty", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
+  emptyFnEntity.decl += "bool " + typeName + "_empty (struct " + typeName + ");";
+  emptyFnEntity.def += "bool " + typeName + "_empty (struct " + typeName + " n) {" EOL;
+  emptyFnEntity.def += "  bool r = n.l == 0;" EOL;
+  emptyFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
+  emptyFnEntity.def += "  return r;" EOL;
+  emptyFnEntity.def += "}";
 
   auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
   eqFnEntity.decl += "bool " + typeName + "_eq (struct " + typeName + ", struct " + typeName + ");";
@@ -2914,7 +3746,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
   eqFnEntity.def += "  bool r = n1.l == n2.l;" EOL;
   eqFnEntity.def += "  if (r) {" EOL;
   eqFnEntity.def += "    for (size_t i = 0; i < n1.l; i++) {" EOL;
-  eqFnEntity.def += "      if (" + this->_genEqFn(elementTypeInfo, "n1.d[i]", "n2.d[i]", &eqFnEntity.builtins, &eqFnEntity.entities, true) + ") {" EOL;
+  eqFnEntity.def += "      if (" + this->_genEqFn(elementTypeInfo.type, "n1.d[i]", "n2.d[i]", &eqFnEntity.builtins, &eqFnEntity.entities, true) + ") {" EOL;
   eqFnEntity.def += "        r = false;" EOL;
   eqFnEntity.def += "        break;" EOL;
   eqFnEntity.def += "      }" EOL;
@@ -2929,20 +3761,8 @@ std::string Codegen::_typeNameArray (const Type *type) {
   freeFnEntity.decl += "void " + typeName + "_free (struct " + typeName + ");";
   freeFnEntity.def += "void " + typeName + "_free (struct " + typeName + " n) {" EOL;
 
-  if (elementTypeInfo.type->isAny()) {
-    this->_activateBuiltin("fnAnyFree", &freeFnEntity.builtins);
-    freeFnEntity.def += "  for (size_t i = 0; i < n.l; i++) any_free((struct any) n.d[i]);" EOL;
-  } else if (
-    elementTypeInfo.type->isArray() ||
-    elementTypeInfo.type->isFn() ||
-    elementTypeInfo.type->isObj() ||
-    elementTypeInfo.type->isOpt()
-  ) {
-    this->_activateEntity(elementTypeInfo.typeName + "_free", &freeFnEntity.entities);
-    freeFnEntity.def += "  for (size_t i = 0; i < n.l; i++) " + elementTypeInfo.typeName + "_free((" + elementTypeInfo.typeCodeTrimmed + ") n.d[i]);" EOL;
-  } else if (elementTypeInfo.type->isStr()) {
-    this->_activateBuiltin("fnStrFree", &freeFnEntity.builtins);
-    freeFnEntity.def += "  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);" EOL;
+  if (elementTypeInfo.type->shouldBeFreed()) {
+    freeFnEntity.def += "  for (size_t i = 0; i < n.l; i++) " + this->_genFreeFn(elementTypeInfo.type, "n.d[i]", &freeFnEntity.builtins, &freeFnEntity.entities) + ";" EOL;
   }
 
   freeFnEntity.def += "  free(n.d);" EOL;
@@ -2962,38 +3782,14 @@ std::string Codegen::_typeNameArray (const Type *type) {
   joinFnEntity.def += R"(  struct str r = str_alloc("");)" EOL;
   joinFnEntity.def += "  for (size_t i = 0; i < n.l; i++) {" EOL;
   joinFnEntity.def += "    if (i != 0) r = str_concat_str(r, str_copy(x));" EOL;
-
-  if (elementTypeInfo.realType->isAny()) {
-    this->_activateBuiltin("fnAnyCopy", &joinFnEntity.builtins);
-    this->_activateBuiltin("fnAnyStr", &joinFnEntity.builtins);
-
-    joinFnEntity.def += "    r = str_concat_str(r, any_str(any_copy(" + elementRealTypeCode + ")));" EOL;
-  } else if (
-    elementTypeInfo.realType->isArray() ||
-    elementTypeInfo.realType->isFn() ||
-    elementTypeInfo.realType->isObj() ||
-    elementTypeInfo.realType->isOpt()
-  ) {
-    this->_activateEntity(elementTypeInfo.realTypeName + "_copy", &joinFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName + "_str", &joinFnEntity.entities);
-
-    joinFnEntity.def += "    r = str_concat_str(r, " + elementTypeInfo.realTypeName + "_str(" + elementTypeInfo.realTypeName + "_copy(" + elementRealTypeCode + ")));" EOL;
-  } else if (elementTypeInfo.realType->isStr()) {
-    joinFnEntity.def += "    r = str_concat_str(r, str_copy(" + elementRealTypeCode + "));" EOL;
-  } else {
-    auto elementTypeBuiltinName = Token::upperFirst(elementTypeInfo.realTypeName);
-    this->_activateBuiltin("fn" + elementTypeBuiltinName + "Str", &joinFnEntity.builtins);
-
-    joinFnEntity.def += "    r = str_concat_str(r, " + elementTypeInfo.realTypeName + "_str(" + elementRealTypeCode + "));" EOL;
-  }
-
+  joinFnEntity.def += "    r = str_concat_str(r, " + this->_genStrFn(elementTypeInfo.realType, elementRealTypeCode, &joinFnEntity.builtins, &joinFnEntity.entities, true, false) + ");" EOL;
   joinFnEntity.def += "  }" EOL;
   joinFnEntity.def += "  str_free((struct str) x);" EOL;
   joinFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
   joinFnEntity.def += R"(  return r;)" EOL;
   joinFnEntity.def += "}";
 
-  auto lenFnEntity = CodegenEntity{typeName + "_len", CODEGEN_ENTITY_FN, {}, { typeName, typeName + "_free" }};
+  auto lenFnEntity = CodegenEntity{typeName + "_len", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName, typeName + "_free" }};
   lenFnEntity.decl += "size_t " + typeName + "_len (struct " + typeName + ");";
   lenFnEntity.def += "size_t " + typeName + "_len (struct " + typeName + " n) {" EOL;
   lenFnEntity.def += "  size_t l = n.l;" EOL;
@@ -3008,7 +3804,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
   neFnEntity.def += "  if (!r) {" EOL;
   neFnEntity.def += "    r = false;" EOL;
   neFnEntity.def += "    for (size_t i = 0; i < n1.l; i++) {" EOL;
-  neFnEntity.def += "      if (" + this->_genEqFn(elementTypeInfo, "n1.d[i]", "n2.d[i]", &neFnEntity.builtins, &neFnEntity.entities, true) + ") {" EOL;
+  neFnEntity.def += "      if (" + this->_genEqFn(elementTypeInfo.type, "n1.d[i]", "n2.d[i]", &neFnEntity.builtins, &neFnEntity.entities, true) + ") {" EOL;
   neFnEntity.def += "        r = true;" EOL;
   neFnEntity.def += "        break;" EOL;
   neFnEntity.def += "      }" EOL;
@@ -3026,12 +3822,12 @@ std::string Codegen::_typeNameArray (const Type *type) {
   popFnEntity.def += "  return n->d[n->l];" EOL;
   popFnEntity.def += "}";
 
-  auto pushFnEntity = CodegenEntity{typeName + "_push", CODEGEN_ENTITY_FN, { "libStdarg", "libStdlib" }, { typeName }};
+  auto pushFnEntity = CodegenEntity{typeName + "_push", CODEGEN_ENTITY_FN, { "fnReAlloc", "libStdarg", "libStdlib" }, { typeName }};
   pushFnEntity.decl += "void " + typeName + "_push (struct " + typeName + " *, size_t, ...);";
   pushFnEntity.def += "void " + typeName + "_push (struct " + typeName + " *n, size_t x, ...) {" EOL;
   pushFnEntity.def += "  if (x == 0) return;" EOL;
   pushFnEntity.def += "  n->l += x;" EOL;
-  pushFnEntity.def += "  n->d = realloc(n->d, n->l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+  pushFnEntity.def += "  n->d = re_alloc(n->d, n->l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
   pushFnEntity.def += "  va_list args;" EOL;
   pushFnEntity.def += "  va_start(args, x);" EOL;
   pushFnEntity.def += "  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, " + varArgTypeCode + ");" EOL;
@@ -3045,7 +3841,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
   reallocFnEntity.def += "  return n2;" EOL;
   reallocFnEntity.def += "}";
 
-  auto reverseFnEntity = CodegenEntity{typeName + "_reverse", CODEGEN_ENTITY_FN, { "fnAlloc" }, { typeName, typeName + "_free" }};
+  auto reverseFnEntity = CodegenEntity{typeName + "_reverse", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib" }, { typeName, typeName + "_free" }};
   reverseFnEntity.decl += "struct " + typeName + " " + typeName + "_reverse (struct " + typeName + ");";
   reverseFnEntity.def += "struct " + typeName + " " + typeName + "_reverse (struct " + typeName + " n) {" EOL;
   reverseFnEntity.def += "  if (n.l == 0) {" EOL;
@@ -3065,8 +3861,8 @@ std::string Codegen::_typeNameArray (const Type *type) {
 
   sliceFnEntity.decl += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + ", unsigned int, int64_t, unsigned int, int64_t);";
   sliceFnEntity.def += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + " n, unsigned int o1, int64_t n1, unsigned int o2, int64_t n2) {" EOL;
-  sliceFnEntity.def += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -n.l ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));" EOL;
-  sliceFnEntity.def += "  int64_t i2 = o2 == 0 ? n.l : (n2 < 0 ? (n2 < -n.l ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));" EOL;
+  sliceFnEntity.def += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));" EOL;
+  sliceFnEntity.def += "  int64_t i2 = o2 == 0 ? n.l : (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));" EOL;
   sliceFnEntity.def += "  if (i1 > i2 || i1 >= n.l) {" EOL;
   sliceFnEntity.def += "    " + typeName + "_free((struct " + typeName + ") n);" EOL;
   sliceFnEntity.def += "    return (struct " + typeName + ") {NULL, 0};" EOL;
@@ -3091,32 +3887,14 @@ std::string Codegen::_typeNameArray (const Type *type) {
   strFnEntity.def += "  for (size_t i = 0; i < n.l; i++) {" EOL;
   strFnEntity.def += R"(    if (i != 0) r = str_concat_cstr(r, ", ");)" EOL;
 
-  if (elementTypeInfo.realType->isAny()) {
-    this->_activateBuiltin("fnAnyCopy", &strFnEntity.builtins);
-    this->_activateBuiltin("fnAnyStr", &strFnEntity.builtins);
-
-    strFnEntity.def += "    r = str_concat_str(r, any_str(any_copy(" + elementRealTypeCode + ")));" EOL;
-  } else if (
-    elementTypeInfo.realType->isArray() ||
-    elementTypeInfo.realType->isFn() ||
-    elementTypeInfo.realType->isObj() ||
-    elementTypeInfo.realType->isOpt()
-  ) {
-    this->_activateEntity(elementTypeInfo.realTypeName + "_copy", &strFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName + "_str", &strFnEntity.entities);
-
-    strFnEntity.def += "    r = str_concat_str(r, " + elementTypeInfo.realTypeName + "_str(" + elementTypeInfo.realTypeName + "_copy(" + elementRealTypeCode + ")));" EOL;
-  } else if (elementTypeInfo.realType->isStr()) {
-    this->_activateBuiltin("fnStrEscape", &strFnEntity.builtins);
-
+  if (elementTypeInfo.realType->isStr()) {
     strFnEntity.def += R"(    r = str_concat_cstr(r, "\"");)" EOL;
-    strFnEntity.def += "    r = str_concat_str(r, str_escape(" + elementRealTypeCode + "));" EOL;
-    strFnEntity.def += R"(    r = str_concat_cstr(r, "\"");)" EOL;
-  } else {
-    auto elementTypeBuiltinName = Token::upperFirst(elementTypeInfo.realTypeName);
-    this->_activateBuiltin("fn" + elementTypeBuiltinName + "Str", &strFnEntity.builtins);
+  }
 
-    strFnEntity.def += "    r = str_concat_str(r, " + elementTypeInfo.realTypeName + "_str(" + elementRealTypeCode + "));" EOL;
+  strFnEntity.def += "    r = str_concat_str(r, " + this->_genStrFn(elementTypeInfo.realType, elementRealTypeCode, &strFnEntity.builtins, &strFnEntity.entities) + ");" EOL;
+
+  if (elementTypeInfo.realType->isStr()) {
+    strFnEntity.def += R"(    r = str_concat_cstr(r, "\"");)" EOL;
   }
 
   strFnEntity.def += "  }" EOL;
@@ -3139,6 +3917,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
   this->entities.push_back(allocFnEntity);
   this->entities.push_back(atFnEntity);
   this->entities.push_back(copyFnEntity);
+  this->entities.push_back(emptyFnEntity);
   this->entities.push_back(eqFnEntity);
   this->entities.push_back(freeFnEntity);
   this->entities.push_back(joinFnEntity);
@@ -3150,6 +3929,9 @@ std::string Codegen::_typeNameArray (const Type *type) {
   this->entities.push_back(reverseFnEntity);
   this->entities.push_back(sliceFnEntity);
   this->entities.push_back(strFnEntity);
+
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
 
   return typeName;
 }
@@ -3163,13 +3945,22 @@ std::string Codegen::_typeNameFn (const Type *type) {
     }
   }
 
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
+
   auto fn = std::get<TypeFn>(type->body);
   auto paramsName = Codegen::typeName(type->name + "P");
-  auto returnTypeInfo = this->_typeInfo(fn.returnType);
   auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+
+  auto returnTypeInfo = this->_typeInfo(fn.returnType);
 
   if (!fn.params.empty()) {
     auto paramsEntity = CodegenEntity{paramsName, CODEGEN_ENTITY_OBJ};
+    this->state.builtins = &paramsEntity.builtins;
+    this->state.entities = &paramsEntity.entities;
+
     auto paramIdx = static_cast<std::size_t>(0);
 
     paramsEntity.decl += "struct " + paramsName + ";";
@@ -3191,6 +3982,9 @@ std::string Codegen::_typeNameFn (const Type *type) {
     this->entities.push_back(paramsEntity);
     this->_activateEntity(paramsName, &entity.entities);
   }
+
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
 
   entity.decl += "struct " + typeName + ";";
   entity.def += "struct " + typeName + " {" EOL;
@@ -3234,6 +4028,9 @@ std::string Codegen::_typeNameFn (const Type *type) {
   this->entities.push_back(reallocFnEntity);
   this->entities.push_back(strFnEntity);
 
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
+
   return typeName;
 }
 
@@ -3246,12 +4043,17 @@ std::string Codegen::_typeNameOpt (const Type *type) {
     }
   }
 
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
+
+  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, {}};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+
   auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
   auto underlyingRealTypeCode = std::string(underlyingTypeInfo.type->isRef() ? "*" : "") + "*n";
 
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, {}};
-
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib" }, {}};
+  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc" }, {}};
   allocFnEntity.decl += underlyingTypeInfo.typeRefCode + typeName + "_alloc (" + underlyingTypeInfo.typeCodeTrimmed + ");";
   allocFnEntity.def += underlyingTypeInfo.typeRefCode + typeName + "_alloc (" + underlyingTypeInfo.typeCode + "n) {" EOL;
   allocFnEntity.def += "  " + underlyingTypeInfo.typeRefCode + "r = alloc(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
@@ -3264,26 +4066,7 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   copyFnEntity.def += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + "n) {" EOL;
   copyFnEntity.def += "  if (n == NULL) return NULL;" EOL;
   copyFnEntity.def += "  " + underlyingTypeInfo.typeRefCode + "r = alloc(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
-  copyFnEntity.def += "  *r = ";
-
-  if (underlyingTypeInfo.type->isAny()) {
-    this->_activateBuiltin("fnAnyCopy", &copyFnEntity.builtins);
-    copyFnEntity.def += "any_copy(*n);" EOL;
-  } else if (
-    underlyingTypeInfo.type->isArray() ||
-    underlyingTypeInfo.type->isFn() ||
-    underlyingTypeInfo.type->isObj() ||
-    underlyingTypeInfo.type->isOpt()
-  ) {
-    this->_activateEntity(underlyingTypeInfo.typeName + "_copy", &copyFnEntity.entities);
-    copyFnEntity.def += underlyingTypeInfo.typeName + "_copy(*n);" EOL;
-  } else if (underlyingTypeInfo.type->isStr()) {
-    this->_activateBuiltin("fnStrCopy", &copyFnEntity.builtins);
-    copyFnEntity.def += "str_copy(*n);" EOL;
-  } else {
-    copyFnEntity.def += "*n;" EOL;
-  }
-
+  copyFnEntity.def += "  *r = " + this->_genCopyFn(underlyingTypeInfo.type, "*n", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
   copyFnEntity.def += "  return r;" EOL;
   copyFnEntity.def += "}";
 
@@ -3291,7 +4074,7 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   eqFnEntity.decl += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
   eqFnEntity.def += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
   eqFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : ";
-  eqFnEntity.def += this->_genEqFn(underlyingTypeInfo, "*n1", "*n2", &eqFnEntity.builtins, &eqFnEntity.entities) + ";" EOL;
+  eqFnEntity.def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", &eqFnEntity.builtins, &eqFnEntity.entities) + ";" EOL;
   eqFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n1);" EOL;
   eqFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n2);" EOL;
   eqFnEntity.def += "  return r;" EOL;
@@ -3302,20 +4085,8 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   freeFnEntity.def += "void " + typeName + "_free (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
   freeFnEntity.def += "  if (n == NULL) return;" EOL;
 
-  if (underlyingTypeInfo.type->isAny()) {
-    this->_activateBuiltin("fnAnyFree", &freeFnEntity.builtins);
-    freeFnEntity.def += "  any_free((struct any) *n);" EOL;
-  } else if (
-    underlyingTypeInfo.type->isArray() ||
-    underlyingTypeInfo.type->isFn() ||
-    underlyingTypeInfo.type->isObj() ||
-    underlyingTypeInfo.type->isOpt()
-  ) {
-    this->_activateEntity(underlyingTypeInfo.typeName + "_free", &freeFnEntity.entities);
-    freeFnEntity.def += "  " + underlyingTypeInfo.typeName + "_free(*n);" EOL;
-  } else if (underlyingTypeInfo.type->isStr()) {
-    this->_activateBuiltin("fnStrFree", &freeFnEntity.builtins);
-    freeFnEntity.def += "  str_free((struct str) *n);" EOL;
+  if (underlyingTypeInfo.type->shouldBeFreed()) {
+    freeFnEntity.def += "  " + this->_genFreeFn(underlyingTypeInfo.type, "*n", &freeFnEntity.builtins, &freeFnEntity.entities) + ";" EOL;
   }
 
   freeFnEntity.def += "  free(n);" EOL;
@@ -3325,7 +4096,7 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   neFnEntity.decl += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
   neFnEntity.def += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
   neFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : ";
-  neFnEntity.def += this->_genEqFn(underlyingTypeInfo, "*n1", "*n2", &neFnEntity.builtins, &neFnEntity.entities, true) + ";" EOL;
+  neFnEntity.def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", &neFnEntity.builtins, &neFnEntity.entities, true) + ";" EOL;
   neFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n1);" EOL;
   neFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n2);" EOL;
   neFnEntity.def += "  return r;" EOL;
@@ -3350,31 +4121,12 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   strFnEntity.def += "struct str " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
   strFnEntity.def += R"(  if (n == NULL) return str_alloc("nil");)" EOL;
 
-  if (underlyingTypeInfo.realType->isAny()) {
-    this->_activateBuiltin("fnAnyCopy", &strFnEntity.builtins);
-    this->_activateBuiltin("fnAnyStr", &strFnEntity.builtins);
-
-    strFnEntity.def += "  struct str r = any_str(any_copy(" + underlyingRealTypeCode + "));" EOL;
-  } else if (
-    underlyingTypeInfo.realType->isArray() ||
-    underlyingTypeInfo.realType->isFn() ||
-    underlyingTypeInfo.realType->isObj() ||
-    underlyingTypeInfo.realType->isOpt()
-  ) {
-    this->_activateEntity(underlyingTypeInfo.realTypeName + "_copy", &strFnEntity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName + "_str", &strFnEntity.entities);
-
-    strFnEntity.def += "  struct str r = " + underlyingTypeInfo.realTypeName + "_str(" + underlyingTypeInfo.realTypeName + "_copy(" + underlyingRealTypeCode + "));" EOL;
-  } else if (underlyingTypeInfo.realType->isStr()) {
-    this->_activateBuiltin("fnStrEscape", &strFnEntity.builtins);
-
+  if (underlyingTypeInfo.realType->isStr()) {
     strFnEntity.def += R"(  struct str r = str_alloc("\"");)" EOL;
-    strFnEntity.def += "  r = str_concat_str(r, str_escape(" + underlyingRealTypeCode + "));" EOL;
+    strFnEntity.def += "  r = str_concat_str(r, " + this->_genStrFn(underlyingTypeInfo.realType, underlyingRealTypeCode, &strFnEntity.builtins, &strFnEntity.entities) + ");" EOL;
     strFnEntity.def += R"(  r = str_concat_cstr(r, "\"");)" EOL;
   } else {
-    auto elementTypeBuiltinName = Token::upperFirst(underlyingTypeInfo.realTypeName);
-    this->_activateBuiltin("fn" + elementTypeBuiltinName + "Str", &strFnEntity.builtins);
-    strFnEntity.def += "  struct str r = " + underlyingTypeInfo.realTypeName + "_str(" + underlyingRealTypeCode + ");" EOL;
+    strFnEntity.def += "  struct str r = " + this->_genStrFn(underlyingTypeInfo.realType, underlyingRealTypeCode, &strFnEntity.builtins, &strFnEntity.entities) + ";" EOL;
   }
 
   strFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n);" EOL;
@@ -3401,7 +4153,262 @@ std::string Codegen::_typeNameOpt (const Type *type) {
   this->entities.push_back(reallocFnEntity);
   this->entities.push_back(strFnEntity);
 
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
+
   return typeName;
+}
+
+void Codegen::_typeObj (Type *type, bool builtin) {
+  auto saveStateBuiltins = this->state.builtins;
+  auto saveStateEntities = this->state.entities;
+
+  auto typeName = builtin ? type->name : Codegen::typeName(type->codeName);
+  auto objEntity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
+
+  this->state.builtins = &objEntity.builtins;
+  this->state.entities = &objEntity.entities;
+
+  objEntity.decl += "struct " + typeName + ";";
+  objEntity.def += "struct " + typeName + " {" EOL;
+
+  for (const auto &field : type->fields) {
+    if (field.builtin) {
+      continue;
+    }
+
+    auto fieldName = Codegen::name(field.name);
+    auto fieldTypeInfo = this->_typeInfo(field.type);
+
+    objEntity.def += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
+  }
+
+  objEntity.def += "};";
+  this->entities.push_back(objEntity);
+
+  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN};
+  this->state.builtins = &allocFnEntity.builtins;
+  this->state.entities = &allocFnEntity.entities;
+
+  auto allocFnParamTypes = std::string();
+
+  for (const auto &field : type->fields) {
+    if (!field.builtin) {
+      auto fieldTypeInfo = this->_typeInfo(field.type);
+      allocFnParamTypes += ", " + fieldTypeInfo.typeCodeTrimmed;
+    }
+  }
+
+  allocFnParamTypes = allocFnParamTypes.empty() ? allocFnParamTypes : allocFnParamTypes.substr(2);
+  allocFnEntity.decl += this->_apiEval("struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParamTypes + ");");
+  this->entities.push_back(allocFnEntity);
+
+  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
+  this->state.builtins = &copyFnEntity.builtins;
+  this->state.entities = &copyFnEntity.entities;
+  copyFnEntity.decl += this->_apiEval("struct _{" + typeName + "} *" + typeName + "_copy (const struct _{" + typeName + "} *);");
+  this->entities.push_back(copyFnEntity);
+
+  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN};
+  this->state.builtins = &eqFnEntity.builtins;
+  this->state.entities = &eqFnEntity.entities;
+  eqFnEntity.decl += this->_apiEval("_{bool} " + typeName + "_eq (struct _{" + typeName + "} *, struct _{" + typeName + "} *);");
+  this->entities.push_back(eqFnEntity);
+
+  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN};
+  this->state.builtins = &freeFnEntity.builtins;
+  this->state.entities = &freeFnEntity.entities;
+  freeFnEntity.decl += this->_apiEval("void " + typeName + "_free (struct _{" + typeName + "} *);");
+  this->entities.push_back(freeFnEntity);
+
+  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN};
+  this->state.builtins = &neFnEntity.builtins;
+  this->state.entities = &neFnEntity.entities;
+  neFnEntity.decl += this->_apiEval("_{bool} " + typeName + "_ne (struct _{" + typeName + "} *, struct _{" + typeName + "} *);");
+  this->entities.push_back(neFnEntity);
+
+  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN};
+  this->state.builtins = &reallocFnEntity.builtins;
+  this->state.entities = &reallocFnEntity.entities;
+  reallocFnEntity.decl += this->_apiEval("struct _{" + typeName + "} *" + typeName + "_realloc (struct _{" + typeName + "} *, struct _{" + typeName + "} *);");
+  this->entities.push_back(reallocFnEntity);
+
+  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN};
+  this->state.builtins = &strFnEntity.builtins;
+  this->state.entities = &strFnEntity.entities;
+  strFnEntity.decl += this->_apiEval("_{struct str} " + typeName + "_str (struct _{" + typeName + "} *);");
+  this->entities.push_back(strFnEntity);
+
+  this->state.builtins = saveStateBuiltins;
+  this->state.entities = saveStateEntities;
+}
+
+void Codegen::_typeObjDef (Type *type, const std::map<std::string, std::string> &extra, bool builtin) {
+  auto saveStateBuiltins = this->state.builtins;
+  auto saveStateEntities = this->state.entities;
+
+  auto typeName = builtin ? type->name : Codegen::typeName(type->codeName);
+  auto fieldIdx = static_cast<std::size_t>(0);
+
+  for (auto &entity : this->entities) {
+    if (entity.name == typeName + "_alloc") {
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+
+      auto allocFnParams = std::string();
+      auto allocFnCode = std::string();
+
+      for (const auto &field : type->fields) {
+        if (!field.builtin) {
+          auto fieldName = Codegen::name(field.name);
+          auto fieldTypeInfo = this->_typeInfo(field.type);
+
+          allocFnParams += ", " + fieldTypeInfo.typeCode + fieldName;
+          allocFnCode += ", " + fieldName;
+        }
+      }
+
+      allocFnParams = allocFnParams.empty() ? allocFnParams : allocFnParams.substr(2);
+      allocFnCode = allocFnCode.empty() ? allocFnCode : allocFnCode.substr(2);
+
+      entity.def += "struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParams + ") {" EOL;
+      entity.def += "  struct _{" + typeName + "} *" + "r = _{alloc}(sizeof(struct _{" + typeName + "}));" EOL;
+      entity.def += "  struct _{" + typeName + "} s = {" + allocFnCode + "};" EOL;
+      entity.def += "  _{memcpy}(r, &s, sizeof(struct _{" + typeName + "}));" EOL;
+      entity.def += extra.contains("alloc") ? extra.at("alloc") : "";
+      entity.def += "  return r;" EOL;
+      entity.def += "}";
+      entity.def = this->_apiEval(entity.def);
+    } else if (entity.name == typeName + "_copy") {
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+      fieldIdx = 0;
+
+      entity.def += "struct _{" + typeName + "} *" + typeName + "_copy (const struct _{" + typeName + "} *o) {" EOL;
+      entity.def += "  struct _{" + typeName + "} *r = _{alloc}(sizeof(struct _{" + typeName + "}));" EOL;
+      entity.def += "  struct _{" + typeName + "} s = {";
+
+      for (const auto &field : type->fields) {
+        if (!field.builtin) {
+          auto fieldName = Codegen::name(field.name);
+          entity.def += (fieldIdx == 0 ? "" : ", ") + this->_genCopyFn(field.type, "o->" + fieldName);
+          fieldIdx++;
+        }
+      }
+
+      entity.def += "};" EOL;
+      entity.def += "  _{memcpy}(r, &s, sizeof(struct _{" + typeName + "}));" EOL;
+      entity.def += extra.contains("copy") ? extra.at("copy") : "";
+      entity.def += "  return r;" EOL;
+      entity.def += "}";
+      entity.def = this->_apiEval(entity.def);
+    } else if (entity.name == typeName + "_eq") {
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+      fieldIdx = 0;
+
+      entity.def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} *o1, struct _{" + typeName + "} *o2) {" EOL;
+      entity.def += "  _{bool} r = ";
+
+      for (const auto &field : type->fields) {
+        if (!field.builtin) {
+          auto fieldName = Codegen::name(field.name);
+          entity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName);
+          fieldIdx++;
+        }
+      }
+
+      entity.def += ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "o1") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "o2") + ";" EOL;
+      entity.def += "  return r;" EOL;
+      entity.def += "}";
+      entity.def = this->_apiEval(entity.def);
+    } else if (entity.name == typeName + "_free") {
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+
+      entity.def += "void " + typeName + "_free (struct _{" + typeName + "} *o) {" EOL;
+
+      for (const auto &field : type->fields) {
+        if (!field.builtin && field.type->shouldBeFreed()) {
+          auto fieldName = Codegen::name(field.name);
+          entity.def += "  " + this->_genFreeFn(field.type, "o->" + fieldName) + ";" EOL;
+        }
+      }
+
+      entity.def += extra.contains("free") ? extra.at("free") : "";
+      entity.def += "  _{free}(o);" EOL;
+      entity.def += "}";
+      entity.def = this->_apiEval(entity.def);
+    } else if (entity.name == typeName + "_ne") {
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+      fieldIdx = 0;
+
+      entity.def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} *o1, struct _{" + typeName + "} *o2) {" EOL;
+      entity.def += "  _{bool} r = ";
+
+      for (const auto &field : type->fields) {
+        if (!field.builtin) {
+          auto fieldName = Codegen::name(field.name);
+          entity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName, std::nullopt, std::nullopt, true);
+          fieldIdx++;
+        }
+      }
+
+      entity.def += ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "o1") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "o2") + ";" EOL;
+      entity.def += "  return r;" EOL;
+      entity.def += "}";
+      entity.def = this->_apiEval(entity.def);
+    } else if (entity.name == typeName + "_realloc") {
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+
+      entity.def += "struct _{" + typeName + "} *" + typeName + "_realloc (struct _{" + typeName + "} *o1, struct _{" + typeName + "} *o2) {" EOL;
+      entity.def += extra.contains("realloc") ? extra.at("realloc") : "";
+      entity.def += "  " + this->_genFreeFn(type, "o1") + ";" EOL;
+      entity.def += "  return o2;" EOL;
+      entity.def += "}";
+      entity.def = this->_apiEval(entity.def);
+    } else if (entity.name == typeName + "_str") {
+      this->state.builtins = &entity.builtins;
+      this->state.entities = &entity.entities;
+      fieldIdx = 0;
+
+      entity.def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} *o) {" EOL;
+      entity.def += R"(  _{struct str} r = _{str_alloc}(")" + type->name + R"({");)" EOL;
+
+      for (const auto &field : type->fields) {
+        if (!field.builtin) {
+          auto fieldName = Codegen::name(field.name);
+          auto fieldCode = std::string(field.type->isRef() ? "*" : "") + "o->" + fieldName;
+          auto strCodeDelimiter = std::string(fieldIdx == 0 ? "" : ", ");
+
+          if (field.type->isStr()) {
+            entity.def += R"(  r = _{str_concat_cstr}(r, ")" + strCodeDelimiter + field.name + R"(: \"");)" EOL;
+            entity.def += "  r = _{str_concat_str}(r, " + this->_genStrFn(field.type, fieldCode) + ");" EOL;
+            entity.def += R"(  r = _{str_concat_cstr}(r, "\"");)" EOL;
+          } else {
+            entity.def += R"(  r = _{str_concat_cstr}(r, ")" + strCodeDelimiter + field.name + R"(: ");)" EOL;
+            entity.def += "  r = _{str_concat_str}(r, " + this->_genStrFn(field.type, fieldCode) + ");" EOL;
+          }
+
+          fieldIdx++;
+        }
+      }
+
+      entity.def += "  " + this->_genFreeFn(type, "o") + ";" EOL;
+      entity.def += R"(  return _{str_concat_cstr}(r, "}");)" EOL;
+      entity.def += "}";
+      entity.def = this->_apiEval(entity.def);
+    }
+  }
+
+  this->state.builtins = saveStateBuiltins;
+  this->state.entities = saveStateEntities;
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
