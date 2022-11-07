@@ -1,0 +1,502 @@
+======= stdin =======
+main {
+  mut a := 0
+
+  loop (a < 10) {
+    a++
+  }
+
+  mut b := 0
+  loop (;;) {
+    b++
+    if b == 10 {
+      break
+    }
+  }
+
+  loop (c := 0;;) {
+    c++
+    if c == 10 {
+      break
+    }
+  }
+
+  mut d := 0
+  loop (; d < 10;) {
+    d++
+  }
+
+  mut e := 0
+  loop (;; e++) {
+    if e == 10 {
+      break
+    }
+  }
+
+  loop (f := 0; f < 10;) {
+    f++
+  }
+
+  loop (g := 0;; g++) {
+    if g < 10 {
+      break
+    }
+  }
+
+  mut h := 0
+  loop (; h < 10; h++) {
+    if h < 10 {
+      break
+    }
+  }
+
+  loop (i := 0; i < 10; i++) {
+    print(i)
+  }
+}
+======= stdout =======
+<StmtMain start="1:1" end="55:2">
+  <StmtVarDecl start="2:3" end="2:13" mut>
+    <StmtVarDeclId>
+      <Token type="ID" val="a" start="2:7" end="2:8" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprLit start="2:12" end="2:13">
+        <Token type="LIT_INT_DEC" val="0" start="2:12" end="2:13" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+  <StmtLoop start="4:3" end="6:4" parenthesized>
+    <StmtLoopCond>
+      <ExprBinary start="4:9" end="4:15">
+        <ExprBinaryLeft>
+          <ExprAccess start="4:9" end="4:10">
+            <Token type="ID" val="a" start="4:9" end="4:10" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_LT" val="<" start="4:11" end="4:12" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprLit start="4:13" end="4:15">
+            <Token type="LIT_INT_DEC" val="10" start="4:13" end="4:15" />
+          </ExprLit>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtLoopCond>
+    <StmtLoopBody>
+      <ExprUnary start="5:5" end="5:8">
+        <ExprUnaryArg>
+          <ExprAccess start="5:5" end="5:6">
+            <Token type="ID" val="a" start="5:5" end="5:6" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="5:6" end="5:8" />
+        </ExprUnaryOp>
+      </ExprUnary>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtVarDecl start="8:3" end="8:13" mut>
+    <StmtVarDeclId>
+      <Token type="ID" val="b" start="8:7" end="8:8" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprLit start="8:12" end="8:13">
+        <Token type="LIT_INT_DEC" val="0" start="8:12" end="8:13" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+  <StmtLoop start="9:3" end="14:4" parenthesized>
+    <StmtLoopBody>
+      <ExprUnary start="10:5" end="10:8">
+        <ExprUnaryArg>
+          <ExprAccess start="10:5" end="10:6">
+            <Token type="ID" val="b" start="10:5" end="10:6" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="10:6" end="10:8" />
+        </ExprUnaryOp>
+      </ExprUnary>
+      <StmtIf start="11:5" end="13:6">
+        <StmtIfCond>
+          <ExprBinary start="11:8" end="11:15">
+            <ExprBinaryLeft>
+              <ExprAccess start="11:8" end="11:9">
+                <Token type="ID" val="b" start="11:8" end="11:9" />
+              </ExprAccess>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_EQ_EQ" val="==" start="11:10" end="11:12" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprLit start="11:13" end="11:15">
+                <Token type="LIT_INT_DEC" val="10" start="11:13" end="11:15" />
+              </ExprLit>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtIfCond>
+        <StmtIfBody>
+          <StmtBreak start="12:7" end="12:12" />
+        </StmtIfBody>
+      </StmtIf>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtLoop start="16:3" end="21:4" parenthesized>
+    <StmtLoopInit>
+      <StmtVarDecl start="16:9" end="16:15">
+        <StmtVarDeclId>
+          <Token type="ID" val="c" start="16:9" end="16:10" />
+        </StmtVarDeclId>
+        <StmtVarDeclInit>
+          <ExprLit start="16:14" end="16:15">
+            <Token type="LIT_INT_DEC" val="0" start="16:14" end="16:15" />
+          </ExprLit>
+        </StmtVarDeclInit>
+      </StmtVarDecl>
+    </StmtLoopInit>
+    <StmtLoopBody>
+      <ExprUnary start="17:5" end="17:8">
+        <ExprUnaryArg>
+          <ExprAccess start="17:5" end="17:6">
+            <Token type="ID" val="c" start="17:5" end="17:6" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="17:6" end="17:8" />
+        </ExprUnaryOp>
+      </ExprUnary>
+      <StmtIf start="18:5" end="20:6">
+        <StmtIfCond>
+          <ExprBinary start="18:8" end="18:15">
+            <ExprBinaryLeft>
+              <ExprAccess start="18:8" end="18:9">
+                <Token type="ID" val="c" start="18:8" end="18:9" />
+              </ExprAccess>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_EQ_EQ" val="==" start="18:10" end="18:12" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprLit start="18:13" end="18:15">
+                <Token type="LIT_INT_DEC" val="10" start="18:13" end="18:15" />
+              </ExprLit>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtIfCond>
+        <StmtIfBody>
+          <StmtBreak start="19:7" end="19:12" />
+        </StmtIfBody>
+      </StmtIf>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtVarDecl start="23:3" end="23:13" mut>
+    <StmtVarDeclId>
+      <Token type="ID" val="d" start="23:7" end="23:8" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprLit start="23:12" end="23:13">
+        <Token type="LIT_INT_DEC" val="0" start="23:12" end="23:13" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+  <StmtLoop start="24:3" end="26:4" parenthesized>
+    <StmtLoopCond>
+      <ExprBinary start="24:11" end="24:17">
+        <ExprBinaryLeft>
+          <ExprAccess start="24:11" end="24:12">
+            <Token type="ID" val="d" start="24:11" end="24:12" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_LT" val="<" start="24:13" end="24:14" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprLit start="24:15" end="24:17">
+            <Token type="LIT_INT_DEC" val="10" start="24:15" end="24:17" />
+          </ExprLit>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtLoopCond>
+    <StmtLoopBody>
+      <ExprUnary start="25:5" end="25:8">
+        <ExprUnaryArg>
+          <ExprAccess start="25:5" end="25:6">
+            <Token type="ID" val="d" start="25:5" end="25:6" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="25:6" end="25:8" />
+        </ExprUnaryOp>
+      </ExprUnary>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtVarDecl start="28:3" end="28:13" mut>
+    <StmtVarDeclId>
+      <Token type="ID" val="e" start="28:7" end="28:8" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprLit start="28:12" end="28:13">
+        <Token type="LIT_INT_DEC" val="0" start="28:12" end="28:13" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+  <StmtLoop start="29:3" end="33:4" parenthesized>
+    <StmtLoopUpd>
+      <ExprUnary start="29:12" end="29:15">
+        <ExprUnaryArg>
+          <ExprAccess start="29:12" end="29:13">
+            <Token type="ID" val="e" start="29:12" end="29:13" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="29:13" end="29:15" />
+        </ExprUnaryOp>
+      </ExprUnary>
+    </StmtLoopUpd>
+    <StmtLoopBody>
+      <StmtIf start="30:5" end="32:6">
+        <StmtIfCond>
+          <ExprBinary start="30:8" end="30:15">
+            <ExprBinaryLeft>
+              <ExprAccess start="30:8" end="30:9">
+                <Token type="ID" val="e" start="30:8" end="30:9" />
+              </ExprAccess>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_EQ_EQ" val="==" start="30:10" end="30:12" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprLit start="30:13" end="30:15">
+                <Token type="LIT_INT_DEC" val="10" start="30:13" end="30:15" />
+              </ExprLit>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtIfCond>
+        <StmtIfBody>
+          <StmtBreak start="31:7" end="31:12" />
+        </StmtIfBody>
+      </StmtIf>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtLoop start="35:3" end="37:4" parenthesized>
+    <StmtLoopInit>
+      <StmtVarDecl start="35:9" end="35:15">
+        <StmtVarDeclId>
+          <Token type="ID" val="f" start="35:9" end="35:10" />
+        </StmtVarDeclId>
+        <StmtVarDeclInit>
+          <ExprLit start="35:14" end="35:15">
+            <Token type="LIT_INT_DEC" val="0" start="35:14" end="35:15" />
+          </ExprLit>
+        </StmtVarDeclInit>
+      </StmtVarDecl>
+    </StmtLoopInit>
+    <StmtLoopCond>
+      <ExprBinary start="35:17" end="35:23">
+        <ExprBinaryLeft>
+          <ExprAccess start="35:17" end="35:18">
+            <Token type="ID" val="f" start="35:17" end="35:18" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_LT" val="<" start="35:19" end="35:20" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprLit start="35:21" end="35:23">
+            <Token type="LIT_INT_DEC" val="10" start="35:21" end="35:23" />
+          </ExprLit>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtLoopCond>
+    <StmtLoopBody>
+      <ExprUnary start="36:5" end="36:8">
+        <ExprUnaryArg>
+          <ExprAccess start="36:5" end="36:6">
+            <Token type="ID" val="f" start="36:5" end="36:6" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="36:6" end="36:8" />
+        </ExprUnaryOp>
+      </ExprUnary>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtLoop start="39:3" end="43:4" parenthesized>
+    <StmtLoopInit>
+      <StmtVarDecl start="39:9" end="39:15">
+        <StmtVarDeclId>
+          <Token type="ID" val="g" start="39:9" end="39:10" />
+        </StmtVarDeclId>
+        <StmtVarDeclInit>
+          <ExprLit start="39:14" end="39:15">
+            <Token type="LIT_INT_DEC" val="0" start="39:14" end="39:15" />
+          </ExprLit>
+        </StmtVarDeclInit>
+      </StmtVarDecl>
+    </StmtLoopInit>
+    <StmtLoopUpd>
+      <ExprUnary start="39:18" end="39:21">
+        <ExprUnaryArg>
+          <ExprAccess start="39:18" end="39:19">
+            <Token type="ID" val="g" start="39:18" end="39:19" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="39:19" end="39:21" />
+        </ExprUnaryOp>
+      </ExprUnary>
+    </StmtLoopUpd>
+    <StmtLoopBody>
+      <StmtIf start="40:5" end="42:6">
+        <StmtIfCond>
+          <ExprBinary start="40:8" end="40:14">
+            <ExprBinaryLeft>
+              <ExprAccess start="40:8" end="40:9">
+                <Token type="ID" val="g" start="40:8" end="40:9" />
+              </ExprAccess>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_LT" val="<" start="40:10" end="40:11" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprLit start="40:12" end="40:14">
+                <Token type="LIT_INT_DEC" val="10" start="40:12" end="40:14" />
+              </ExprLit>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtIfCond>
+        <StmtIfBody>
+          <StmtBreak start="41:7" end="41:12" />
+        </StmtIfBody>
+      </StmtIf>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtVarDecl start="45:3" end="45:13" mut>
+    <StmtVarDeclId>
+      <Token type="ID" val="h" start="45:7" end="45:8" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprLit start="45:12" end="45:13">
+        <Token type="LIT_INT_DEC" val="0" start="45:12" end="45:13" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+  <StmtLoop start="46:3" end="50:4" parenthesized>
+    <StmtLoopCond>
+      <ExprBinary start="46:11" end="46:17">
+        <ExprBinaryLeft>
+          <ExprAccess start="46:11" end="46:12">
+            <Token type="ID" val="h" start="46:11" end="46:12" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_LT" val="<" start="46:13" end="46:14" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprLit start="46:15" end="46:17">
+            <Token type="LIT_INT_DEC" val="10" start="46:15" end="46:17" />
+          </ExprLit>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtLoopCond>
+    <StmtLoopUpd>
+      <ExprUnary start="46:19" end="46:22">
+        <ExprUnaryArg>
+          <ExprAccess start="46:19" end="46:20">
+            <Token type="ID" val="h" start="46:19" end="46:20" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="46:20" end="46:22" />
+        </ExprUnaryOp>
+      </ExprUnary>
+    </StmtLoopUpd>
+    <StmtLoopBody>
+      <StmtIf start="47:5" end="49:6">
+        <StmtIfCond>
+          <ExprBinary start="47:8" end="47:14">
+            <ExprBinaryLeft>
+              <ExprAccess start="47:8" end="47:9">
+                <Token type="ID" val="h" start="47:8" end="47:9" />
+              </ExprAccess>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_LT" val="<" start="47:10" end="47:11" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprLit start="47:12" end="47:14">
+                <Token type="LIT_INT_DEC" val="10" start="47:12" end="47:14" />
+              </ExprLit>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtIfCond>
+        <StmtIfBody>
+          <StmtBreak start="48:7" end="48:12" />
+        </StmtIfBody>
+      </StmtIf>
+    </StmtLoopBody>
+  </StmtLoop>
+  <StmtLoop start="52:3" end="54:4" parenthesized>
+    <StmtLoopInit>
+      <StmtVarDecl start="52:9" end="52:15">
+        <StmtVarDeclId>
+          <Token type="ID" val="i" start="52:9" end="52:10" />
+        </StmtVarDeclId>
+        <StmtVarDeclInit>
+          <ExprLit start="52:14" end="52:15">
+            <Token type="LIT_INT_DEC" val="0" start="52:14" end="52:15" />
+          </ExprLit>
+        </StmtVarDeclInit>
+      </StmtVarDecl>
+    </StmtLoopInit>
+    <StmtLoopCond>
+      <ExprBinary start="52:17" end="52:23">
+        <ExprBinaryLeft>
+          <ExprAccess start="52:17" end="52:18">
+            <Token type="ID" val="i" start="52:17" end="52:18" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_LT" val="<" start="52:19" end="52:20" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprLit start="52:21" end="52:23">
+            <Token type="LIT_INT_DEC" val="10" start="52:21" end="52:23" />
+          </ExprLit>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtLoopCond>
+    <StmtLoopUpd>
+      <ExprUnary start="52:25" end="52:28">
+        <ExprUnaryArg>
+          <ExprAccess start="52:25" end="52:26">
+            <Token type="ID" val="i" start="52:25" end="52:26" />
+          </ExprAccess>
+        </ExprUnaryArg>
+        <ExprUnaryOp>
+          <Token type="OP_PLUS_PLUS" val="++" start="52:26" end="52:28" />
+        </ExprUnaryOp>
+      </ExprUnary>
+    </StmtLoopUpd>
+    <StmtLoopBody>
+      <ExprCall start="53:5" end="53:13">
+        <ExprCallCallee>
+          <ExprAccess start="53:5" end="53:10">
+            <Token type="ID" val="print" start="53:5" end="53:10" />
+          </ExprAccess>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <ExprCallArgExpr>
+              <ExprAccess start="53:11" end="53:12">
+                <Token type="ID" val="i" start="53:11" end="53:12" />
+              </ExprAccess>
+            </ExprCallArgExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </StmtLoopBody>
+  </StmtLoop>
+</StmtMain>

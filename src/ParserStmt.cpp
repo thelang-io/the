@@ -132,7 +132,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
     result += std::string(indent, ' ') + "</StmtIf>";
   } else if (std::holds_alternative<ParserStmtLoop>(*this->body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(*this->body);
-    result += std::string(indent, ' ') + "<StmtLoop" + attrs + ">" EOL;
+    result += std::string(indent, ' ') + "<StmtLoop" + attrs + (stmtLoop.parenthesized ? " parenthesized" : "") + ">" EOL;
 
     if (stmtLoop.init != std::nullopt) {
       auto stmtLoopInit = *stmtLoop.init;

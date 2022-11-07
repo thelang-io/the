@@ -493,6 +493,7 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
   "node-loop",
   "node-loop-empty",
   "node-loop-while",
+  "node-loop-parenthesized",
   "node-loop-array",
   "node-loop-str",
   "node-loop-obj",

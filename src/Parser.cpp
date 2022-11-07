@@ -158,15 +158,80 @@ ParserStmt Parser::next (bool allowSemi) {
   }
 
   if (tok0.type == TK_KW_LOOP) {
-    auto [loc1, tok1] = this->lexer->next();
     auto loopInit = std::optional<ParserStmt>{};
+    auto loopCond = std::optional<ParserStmtExpr>{};
+    auto loopUpd = std::optional<ParserStmtExpr>{};
+    auto parenthesized = false;
+    auto [loc1, tok1] = this->lexer->next();
 
     if (tok1.type == TK_OP_LBRACE) {
       this->lexer->seek(loc1);
-      auto loopBody = this->_block();
+    } else if (tok1.type == TK_OP_LPAR) {
+      parenthesized = true;
+      auto [loc2, tok2] = this->lexer->next();
 
-      return this->_wrapStmt(allowSemi, ParserStmtLoop{std::nullopt, std::nullopt, std::nullopt, loopBody}, tok0.start);
-    } else if (tok1.type != TK_OP_SEMI) {
+      if (tok2.type == TK_OP_SEMI) {
+        loopCond = this->_stmtExpr();
+        auto [_3, tok3] = this->lexer->next();
+
+        if (tok3.type != TK_OP_SEMI) {
+          throw Error(this->reader, tok3.start, E0108);
+        }
+
+        loopUpd = this->_stmtExpr();
+      } else {
+        this->lexer->seek(loc2);
+        loopInit = this->next(false);
+
+        if (!std::holds_alternative<ParserStmtExpr>(*loopInit->body) && !std::holds_alternative<ParserStmtVarDecl>(*loopInit->body)) {
+          throw Error(this->reader, tok2.start, E0105);
+        } else if (std::holds_alternative<ParserStmtVarDecl>(*loopInit->body) && std::get<ParserStmtVarDecl>(*loopInit->body).mut) {
+          throw Error(this->reader, tok2.start, E0144);
+        }
+
+        auto [loc3, tok3] = this->lexer->next();
+
+        if (std::holds_alternative<ParserStmtExpr>(*loopInit->body) && tok3.type == TK_OP_RPAR) {
+          this->lexer->seek(loc3);
+          loopCond = std::get<ParserStmtExpr>(*loopInit->body);
+          loopInit = std::nullopt;
+        } else if (tok3.type == TK_OP_SEMI) {
+          loopCond = this->_stmtExpr();
+          auto [_4, tok4] = this->lexer->next();
+
+          if (tok4.type != TK_OP_SEMI) {
+            throw Error(this->reader, tok4.start, E0108);
+          }
+
+          loopUpd = this->_stmtExpr();
+        } else {
+          throw Error(this->reader, tok3.start, E0106);
+        }
+      }
+
+      auto [_5, tok5] = this->lexer->next();
+
+      if (tok5.type != TK_OP_RPAR) {
+        throw Error(this->reader, tok5.start, E0109);
+      }
+
+      auto [loc6, tok6] = this->lexer->next();
+
+      if (tok6.type != TK_OP_LBRACE) {
+        throw Error(this->reader, tok6.start, E0103);
+      } else {
+        this->lexer->seek(loc6);
+      }
+    } else if (tok1.type == TK_OP_SEMI) {
+      loopCond = this->_stmtExpr();
+      auto [_2, tok2] = this->lexer->next();
+
+      if (tok2.type != TK_OP_SEMI) {
+        throw Error(this->reader, tok2.start, E0108);
+      }
+
+      loopUpd = this->_stmtExpr();
+    } else {
       this->lexer->seek(loc1);
       loopInit = this->next(false);
 
@@ -180,27 +245,24 @@ ParserStmt Parser::next (bool allowSemi) {
 
       if (std::holds_alternative<ParserStmtExpr>(*loopInit->body) && tok2.type == TK_OP_LBRACE) {
         this->lexer->seek(loc2);
+        loopCond = std::get<ParserStmtExpr>(*loopInit->body);
+        loopInit = std::nullopt;
+      } else if (tok2.type == TK_OP_SEMI) {
+        loopCond = this->_stmtExpr();
+        auto [_3, tok3] = this->lexer->next();
 
-        auto loopCond = std::get<ParserStmtExpr>(*loopInit->body);
-        auto loopBody = this->_block();
+        if (tok3.type != TK_OP_SEMI) {
+          throw Error(this->reader, tok3.start, E0108);
+        }
 
-        return this->_wrapStmt(allowSemi, ParserStmtLoop{std::nullopt, loopCond, std::nullopt, loopBody}, tok0.start);
-      } else if (tok2.type != TK_OP_SEMI) {
+        loopUpd = this->_stmtExpr();
+      } else {
         throw Error(this->reader, tok2.start, E0106);
       }
     }
 
-    auto loopCond = this->_stmtExpr();
-    auto [_3, tok3] = this->lexer->next();
-
-    if (tok3.type != TK_OP_SEMI) {
-      throw Error(this->reader, tok3.start, E0108);
-    }
-
-    auto loopUpd = this->_stmtExpr();
     auto loopBody = this->_block();
-
-    return this->_wrapStmt(allowSemi, ParserStmtLoop{loopInit, loopCond, loopUpd, loopBody}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtLoop{loopInit, loopCond, loopUpd, loopBody, parenthesized}, tok0.start);
   }
 
   if (tok0.type == TK_KW_MUT) {

@@ -1,0 +1,6 @@
+======= stdin =======
+loop (true) print()
+======= stderr =======
+/test:1:13: E0103 - Expected left brace
+  1 | loop (true) print()
+    |             ^~~~~

@@ -84,6 +84,7 @@ INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserPassTest, testing::Values(
   "stmt-loop-empty-init-update",
   "stmt-loop-empty-update",
   "stmt-loop-empty-body",
+  "stmt-loop-parenthesized",
   "stmt-loop-nested",
   "stmt-loop-while-empty",
   "stmt-loop-while",
@@ -195,9 +196,17 @@ INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
+  "throw-E0103-stmt-loop-parenthesized-missing-lbrace",
+  "throw-E0105-stmt-loop-parenthesized-unexpected-init",
   "throw-E0105-stmt-loop-unexpected-init",
+  "throw-E0106-stmt-loop-parenthesized-semi-after-init",
   "throw-E0106-stmt-loop-semi-after-init",
+  "throw-E0108-stmt-loop-parenthesized-semi-after-condition",
+  "throw-E0108-stmt-loop-parenthesized-semi-after-empty-init-condition",
   "throw-E0108-stmt-loop-semi-after-condition",
+  "throw-E0108-stmt-loop-semi-after-empty-init-condition",
+  "throw-E0109-stmt-loop-parenthesized-missing-rpar",
+  "throw-E0144-stmt-loop-parenthesized-unexpected-mut",
   "throw-E0144-stmt-loop-unexpected-mut"
 ));
 

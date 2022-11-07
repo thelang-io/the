@@ -1,0 +1,8 @@
+======= stdin =======
+loop (;; {
+  print()
+}
+======= stderr =======
+/test:1:10: E0109 - Expected right parentheses
+  1 | loop (;; {
+    |          ^

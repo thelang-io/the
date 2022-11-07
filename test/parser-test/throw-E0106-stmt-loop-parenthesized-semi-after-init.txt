@@ -1,0 +1,6 @@
+======= stdin =======
+loop (i := 0 , i < 2 , i++) {}
+======= stderr =======
+/test:1:14: E0106 - Expected semicolon after loop initialization
+  1 | loop (i := 0 , i < 2 , i++) {}
+    |              ^
