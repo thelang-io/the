@@ -3869,7 +3869,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
   sliceFnEntity.def += "  }" EOL;
   sliceFnEntity.def += "  size_t l = i2 - i1;" EOL;
   sliceFnEntity.def += "  " + elementTypeInfo.typeRefCode + "d = alloc(l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  sliceFnEntity.def += "  for (size_t i = 0; i1 < i2; i1++) d[i++] = n.d[i1];" EOL;
+  sliceFnEntity.def += "  for (size_t i = 0; i1 < i2; i1++) d[i++] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[i1]", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
   sliceFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
   sliceFnEntity.def += "  return (struct " + typeName + ") {d, l};" EOL;
   sliceFnEntity.def += "}";
