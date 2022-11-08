@@ -206,6 +206,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinArray, CodegenPassTest, testing::Values(
   "builtin-array-len-root",
   "builtin-array-pop",
   "builtin-array-pop-ref",
+  "builtin-array-pop-root",
   "builtin-array-push",
   "builtin-array-push-ref",
   "builtin-array-reverse",
