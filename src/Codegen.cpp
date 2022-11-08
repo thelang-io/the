@@ -1251,14 +1251,29 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("typeStr");
   } else if (name == "fnBufferCopy") {
     this->builtins.fnBufferCopy = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferEq") {
     this->builtins.fnBufferEq = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferFree") {
     this->builtins.fnBufferFree = true;
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferNe") {
     this->builtins.fnBufferNe = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferRealloc") {
     this->builtins.fnBufferRealloc = true;
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferStr") {
     this->builtins.fnBufferStr = true;
     this->_activateBuiltin("fnAlloc");
