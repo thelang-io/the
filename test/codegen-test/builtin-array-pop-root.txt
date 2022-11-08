@@ -5,23 +5,23 @@ main {
   mut test3 := ["1", "2", "3"]
 
   print(test1)
-  print("popped:", test1.pop())
+  test1.pop()
   test1.push("0")
-  print("popped:", test1.pop())
+  test1.pop()
   print(test1)
 
   print(test2)
-  print("popped:", test2.pop())
+  test2.pop()
   print(test2)
-  print("popped:", test2.pop())
+  test2.pop()
   print(test2)
 
   print(test3)
-  print("popped:", test3.pop())
+  test3.pop()
   print(test3)
-  print("popped:", test3.pop())
+  test3.pop()
   print(test3)
-  print("popped:", test3.pop())
+  test3.pop()
   print(test3)
 }
 ======= code =======
@@ -219,21 +219,21 @@ int main () {
   struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
   struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test1_0), THE_EOL);
+  str_free((struct str) __THE_1_array_str_pop(&__THE_0_test1_0));
   __THE_1_array_str_push(&__THE_0_test1_0, 1, str_alloc("0"));
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test1_0), THE_EOL);
+  str_free((struct str) __THE_1_array_str_pop(&__THE_0_test1_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test2_0), THE_EOL);
+  str_free((struct str) __THE_1_array_str_pop(&__THE_0_test2_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test2_0), THE_EOL);
+  str_free((struct str) __THE_1_array_str_pop(&__THE_0_test2_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test3_0), THE_EOL);
+  str_free((struct str) __THE_1_array_str_pop(&__THE_0_test3_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test3_0), THE_EOL);
+  str_free((struct str) __THE_1_array_str_pop(&__THE_0_test3_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test3_0), THE_EOL);
+  str_free((struct str) __THE_1_array_str_pop(&__THE_0_test3_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
@@ -242,18 +242,11 @@ int main () {
 ======= flags =======
 ======= stdout =======
 ["1"]
-popped: 1
-popped: 0
 []
 ["1", "2"]
-popped: 2
 ["1"]
-popped: 1
 []
 ["1", "2", "3"]
-popped: 3
 ["1", "2"]
-popped: 2
 ["1"]
-popped: 1
 []

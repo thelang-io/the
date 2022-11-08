@@ -1,0 +1,100 @@
+======= stdin =======
+main {
+  "".toBuffer() == "".toBuffer()
+  "".toBuffer() != "".toBuffer()
+  "\t".toBuffer() == "".toBuffer()
+  "\t".toBuffer() != "".toBuffer()
+  "".toBuffer() == "\t".toBuffer()
+  "".toBuffer() != "\t".toBuffer()
+  "\t".toBuffer() == "\t".toBuffer()
+  "\t".toBuffer() != "\t".toBuffer()
+  "\t".toBuffer() == "\n".toBuffer()
+  "\t".toBuffer() != "\n".toBuffer()
+  "Aaron".toBuffer() == "Aaron".toBuffer()
+  "Aaron".toBuffer() != "Aaron".toBuffer()
+  "Aaron".toBuffer() == "Delasy".toBuffer()
+  "Aaron".toBuffer() != "Delasy".toBuffer()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+bool buffer_eq (struct buffer, struct buffer);
+bool buffer_ne (struct buffer, struct buffer);
+struct str str_alloc (const char *);
+struct buffer str_to_buffer (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+bool buffer_eq (struct buffer o1, struct buffer o2) {
+  bool r = o1.l == o2.l && memcmp(o1.d, o2.d, o1.l) == 0;
+  free(o1.d);
+  free(o2.d);
+  return r;
+}
+bool buffer_ne (struct buffer o1, struct buffer o2) {
+  bool r = o1.l != o2.l || memcmp(o1.d, o2.d, o1.l) != 0;
+  free(o1.d);
+  free(o2.d);
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct buffer str_to_buffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
+}
+
+int main () {
+  buffer_eq(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("")));
+  buffer_ne(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("")));
+  buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("")));
+  buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("")));
+  buffer_eq(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("\t")));
+  buffer_ne(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("\t")));
+  buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\t")));
+  buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\t")));
+  buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\n")));
+  buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\n")));
+  buffer_eq(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Aaron")));
+  buffer_ne(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Aaron")));
+  buffer_eq(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Delasy")));
+  buffer_ne(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Delasy")));
+}
+======= flags =======
+======= stdout =======

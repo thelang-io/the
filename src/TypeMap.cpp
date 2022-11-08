@@ -41,15 +41,12 @@ Type *TypeMap::arrayOf (Type *elementType) {
     TypeFnParam{"end", this->get("i64"), false, false, false}
   }};
 
-  auto strTypeFn = TypeFn{this->get("str")};
-
   self->fields.push_back(TypeField{"len", this->get("int"), false, true});
-
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".empty", "@array.empty", TypeFn{this->get("bool")}, {}, true}));
   self->fields.push_back(TypeField{"empty", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".join", "@array.join", joinTypeFn, {}, true}));
   self->fields.push_back(TypeField{"join", this->_items.back().get(), false, true});
-  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".pop", "@array.pop", TypeFn{this->get("void")}, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".pop", "@array.pop", TypeFn{elementType}, {}, true}));
   self->fields.push_back(TypeField{"pop", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".push", "@array.push", pushTypeFn, {}, true}));
   self->fields.push_back(TypeField{"push", this->_items.back().get(), false, true});
@@ -57,7 +54,7 @@ Type *TypeMap::arrayOf (Type *elementType) {
   self->fields.push_back(TypeField{"reverse", this->_items.back().get(), false, true});
   this->_items.push_back(std::make_unique<Type>(Type{self->name + ".slice", "@array.slice", sliceTypeFn, {}, true}));
   self->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true});
-  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".str", "@array.str", strTypeFn, {}, true}));
+  this->_items.push_back(std::make_unique<Type>(Type{self->name + ".str", "@array.str", TypeFn{this->get("str")}, {}, true}));
   self->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 
   return self;

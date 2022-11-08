@@ -1,28 +1,11 @@
 ======= stdin =======
 main {
-  mut test1 := ["1"]
-  mut test2 := ["1", "2"]
-  mut test3 := ["1", "2", "3"]
+  emptyArr: str[]
+  arr: str[][] = [["1"], ["2", "3"], ["6", "7", "8"]]
 
-  print(test1)
-  print("popped:", test1.pop())
-  test1.push("0")
-  print("popped:", test1.pop())
-  print(test1)
-
-  print(test2)
-  print("popped:", test2.pop())
-  print(test2)
-  print("popped:", test2.pop())
-  print(test2)
-
-  print(test3)
-  print("popped:", test3.pop())
-  print(test3)
-  print("popped:", test3.pop())
-  print(test3)
-  print("popped:", test3.pop())
-  print(test3)
+  loop i := 0; i < arr.len; i++ {
+    print(arr[i].reverse())
+  }
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -51,9 +34,14 @@ struct str {
 };
 
 struct __THE_1_array_str;
+struct __THE_1_array_array_str;
 
 struct __THE_1_array_str {
   struct str *d;
+  size_t l;
+};
+struct __THE_1_array_array_str {
+  struct __THE_1_array_str *d;
   size_t l;
 };
 
@@ -69,9 +57,13 @@ void str_free (struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
-struct str __THE_1_array_str_pop (struct __THE_1_array_str *);
-void __THE_1_array_str_push (struct __THE_1_array_str *, size_t, ...);
+struct __THE_1_array_str __THE_1_array_str_reverse (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
+struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t, ...);
+struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str, int64_t);
+struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_1_array_array_str);
+void __THE_1_array_array_str_free (struct __THE_1_array_array_str);
+size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -189,18 +181,15 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
-struct str __THE_1_array_str_pop (struct __THE_1_array_str *n) {
-  n->l--;
-  return n->d[n->l];
-}
-void __THE_1_array_str_push (struct __THE_1_array_str *n, size_t x, ...) {
-  if (x == 0) return;
-  n->l += x;
-  n->d = re_alloc(n->d, n->l * sizeof(struct str));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, struct str);
-  va_end(args);
+struct __THE_1_array_str __THE_1_array_str_reverse (struct __THE_1_array_str n) {
+  if (n.l == 0) {
+    __THE_1_array_str_free((struct __THE_1_array_str) n);
+    return (struct __THE_1_array_str) {NULL, 0};
+  }
+  struct str *d = alloc(n.l * sizeof(struct str));
+  for (size_t i = 0; i < n.l; i++) d[i] = str_copy(n.d[n.l - i - 1]);
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return (struct __THE_1_array_str) {d, n.l};
 }
 struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   struct str r = str_alloc("[");
@@ -213,47 +202,49 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return str_concat_cstr(r, "]");
 }
+struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_array_str) {NULL, 0};
+  struct __THE_1_array_str *d = alloc(x * sizeof(struct __THE_1_array_str));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_array_str);
+  va_end(args);
+  return (struct __THE_1_array_array_str) {d, x};
+}
+struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str n, int64_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+    exit(EXIT_FAILURE);
+  }
+  return i < 0 ? &n.d[n.l + i] : &n.d[i];
+}
+struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_1_array_array_str n) {
+  if (n.l == 0) return (struct __THE_1_array_array_str) {NULL, 0};
+  struct __THE_1_array_str *d = alloc(n.l * sizeof(struct __THE_1_array_str));
+  for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_array_str_copy(n.d[i]);
+  return (struct __THE_1_array_array_str) {d, n.l};
+}
+void __THE_1_array_array_str_free (struct __THE_1_array_array_str n) {
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_str_free((struct __THE_1_array_str) n.d[i]);
+  free(n.d);
+}
+size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str n) {
+  size_t l = n.l;
+  __THE_1_array_array_str_free((struct __THE_1_array_array_str) n);
+  return l;
+}
 
 int main () {
-  struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
-  struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
-  struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test1_0), THE_EOL);
-  __THE_1_array_str_push(&__THE_0_test1_0, 1, str_alloc("0"));
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test1_0), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test2_0), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test2_0), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test3_0), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test3_0), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
-  print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test3_0), THE_EOL);
-  print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
+  const struct __THE_1_array_str __THE_0_emptyArr_0 = __THE_1_array_str_alloc(0);
+  const struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(3, __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("6"), str_alloc("7"), str_alloc("8")));
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_reverse(__THE_1_array_str_copy(*__THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0)))), THE_EOL);
+  }
+  __THE_1_array_array_str_free((struct __THE_1_array_array_str) __THE_0_arr_0);
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_emptyArr_0);
 }
 ======= flags =======
 ======= stdout =======
 ["1"]
-popped: 1
-popped: 0
-[]
-["1", "2"]
-popped: 2
-["1"]
-popped: 1
-[]
-["1", "2", "3"]
-popped: 3
-["1", "2"]
-popped: 2
-["1"]
-popped: 1
-[]
+["3", "2"]
+["8", "7", "6"]

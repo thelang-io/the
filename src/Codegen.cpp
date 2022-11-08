@@ -1251,14 +1251,29 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("typeStr");
   } else if (name == "fnBufferCopy") {
     this->builtins.fnBufferCopy = true;
+    this->_activateBuiltin("fnAlloc");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferEq") {
     this->builtins.fnBufferEq = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferFree") {
     this->builtins.fnBufferFree = true;
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferNe") {
     this->builtins.fnBufferNe = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("libString");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferRealloc") {
     this->builtins.fnBufferRealloc = true;
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeBuffer");
   } else if (name == "fnBufferStr") {
     this->builtins.fnBufferStr = true;
     this->_activateBuiltin("fnAlloc");
@@ -2721,8 +2736,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       Type::real(exprBinary.left.type)->codeName == "@buffer_Buffer" &&
       Type::real(exprBinary.right.type)->codeName == "@buffer_Buffer"
     ) {
-      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
-      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+      auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type));
+      auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type));
 
       this->_activateBuiltin("fnBufferEq");
       code = "buffer_eq(" + leftCode + ", " + rightCode + ")";
@@ -2735,8 +2750,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       Type::real(exprBinary.left.type)->codeName == "@buffer_Buffer" &&
       Type::real(exprBinary.right.type)->codeName == "@buffer_Buffer"
     ) {
-      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
-      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+      auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type));
+      auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type));
 
       this->_activateBuiltin("fnBufferNe");
       code = "buffer_ne(" + leftCode + ", " + rightCode + ")";
@@ -2746,8 +2761,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
     )) {
       auto typeInfo = this->_typeInfo(exprBinary.left.type);
-      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
-      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+      auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
+      auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType);
 
       this->_activateEntity(typeInfo.realTypeName + "_eq");
       code = typeInfo.realTypeName + "_eq(" + leftCode + ", " + rightCode + ")";
@@ -2757,8 +2772,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
     )) {
       auto typeInfo = this->_typeInfo(exprBinary.left.type);
-      auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
-      auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+      auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
+      auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType);
 
       this->_activateEntity(typeInfo.realTypeName + "_ne");
       code = typeInfo.realTypeName + "_ne(" + leftCode + ", " + rightCode + ")";
@@ -2770,16 +2785,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("fnCstrEqCstr");
         code = "cstr_eq_cstr(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")";
       } else if (exprBinary.left.isLit()) {
-        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+        auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"));
         this->_activateBuiltin("fnCstrEqStr");
         code = "cstr_eq_str(" + exprBinary.left.litBody() + ", " + rightCode + ")";
       } else if (exprBinary.right.isLit()) {
-        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+        auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"));
         this->_activateBuiltin("fnStrEqCstr");
         code = "str_eq_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")";
       } else {
-        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
-        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+        auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"));
+        auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"));
 
         this->_activateBuiltin("fnStrEqStr");
         code = "str_eq_str(" + leftCode + ", " + rightCode + ")";
@@ -2792,16 +2807,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("fnCstrNeCstr");
         code = "cstr_ne_cstr(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")";
       } else if (exprBinary.left.isLit()) {
-        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+        auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"));
         this->_activateBuiltin("fnCstrNeStr");
         code = "cstr_ne_str(" + exprBinary.left.litBody() + ", " + rightCode + ")";
       } else if (exprBinary.right.isLit()) {
-        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
+        auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"));
         this->_activateBuiltin("fnStrNeCstr");
         code = "str_ne_cstr(" + leftCode + ", " + exprBinary.right.litBody() + ")";
       } else {
-        auto leftCode = this->_nodeExpr(exprBinary.left, exprBinary.left.type);
-        auto rightCode = this->_nodeExpr(exprBinary.right, exprBinary.right.type);
+        auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"));
+        auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"));
 
         this->_activateBuiltin("fnStrNeStr");
         code = "str_ne_str(" + leftCode + ", " + rightCode + ")";
@@ -2817,19 +2832,19 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "str_alloc(" + nodeExpr.litBody() + ")";
       } else if (exprBinary.left.isLit()) {
         this->_activateBuiltin("fnCstrConcatStr");
-        code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
+        code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str")) + ")";
       } else if (exprBinary.right.isLit()) {
         this->_activateBuiltin("fnStrConcatCstr");
-        code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + exprBinary.right.litBody() + ")";
+        code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str")) + ", " + exprBinary.right.litBody() + ")";
       } else {
         this->_activateBuiltin("fnStrConcatStr");
-        code = "str_concat_str(" + this->_nodeExpr(exprBinary.left, nodeExpr.type) + ", " + this->_nodeExpr(exprBinary.right, nodeExpr.type) + ")";
+        code = "str_concat_str(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str")) + ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str")) + ")";
       }
 
       code = !root ? code : this->_genFreeFn(Type::real(exprBinary.left.type), code);
     } else {
-      auto leftCode = this->_nodeExpr(exprBinary.left, nodeExpr.type);
-      auto rightCode = this->_nodeExpr(exprBinary.right, nodeExpr.type);
+      auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(nodeExpr.type));
+      auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(nodeExpr.type));
       auto opCode = std::string();
 
       if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
@@ -3123,9 +3138,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = typeStrFn + calleeCode;
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.empty") {
         this->_activateEntity(calleeTypeInfo.realTypeName + "_empty");
-        code = calleeTypeInfo.realTypeName + "_empty(" + this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.get("bool")) + ")";
+        code = calleeTypeInfo.realTypeName + "_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
         auto arg2Expr = std::string();
 
@@ -3154,9 +3169,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code += ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.reverse") {
         this->_activateEntity(calleeTypeInfo.realTypeName + "_reverse");
-        code = calleeTypeInfo.realTypeName + "_reverse(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = calleeTypeInfo.realTypeName + "_reverse(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.slice") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
         auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
         auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
@@ -3166,29 +3181,29 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlpha") {
         this->_activateBuiltin("fnCharIsAlpha");
-        code = "char_is_alpha(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "char_is_alpha(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlphaNum") {
         this->_activateBuiltin("fnCharIsAlphaNum");
-        code = "char_is_alpha_num(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "char_is_alpha_num(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isDigit") {
         this->_activateBuiltin("fnCharIsDigit");
-        code = "char_is_digit(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "char_is_digit(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isSpace") {
         this->_activateBuiltin("fnCharIsSpace");
-        code = "char_is_space(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "char_is_space(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.repeat") {
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
         this->_activateBuiltin("fnCharRepeat");
-        code = "char_repeat(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ", " + arg1Expr + ")";
+        code = "char_repeat(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ", " + arg1Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.empty") {
         this->_activateBuiltin("fnStrEmpty");
-        code = "str_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "str_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.find") {
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
         this->_activateBuiltin("fnStrFind");
-        code = "str_find(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ", " + arg1Expr + ")";
+        code = "str_find(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ", " + arg1Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lines") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
         auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("bool"));
 
@@ -3196,12 +3211,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "str_lines(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lower") {
         this->_activateBuiltin("fnStrLower");
-        code = "str_lower(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "str_lower(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lowerFirst") {
         this->_activateBuiltin("fnStrLowerFirst");
-        code = "str_lower_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "str_lower_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
         auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
         auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
@@ -3211,16 +3226,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "str_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.toBuffer") {
         this->_activateBuiltin("fnStrToBuffer");
-        code = "str_to_buffer(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "str_to_buffer(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.trim") {
         this->_activateBuiltin("fnStrTrim");
-        code = "str_trim(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "str_trim(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upper") {
         this->_activateBuiltin("fnStrUpper");
-        code = "str_upper(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "str_upper(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upperFirst") {
         this->_activateBuiltin("fnStrUpperFirst");
-        code = "str_upper_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.type) + ")";
+        code = "str_upper_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       }
     } else {
       auto fn = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);
@@ -3849,7 +3864,7 @@ std::string Codegen::_typeNameArray (const Type *type) {
   reverseFnEntity.def += "    return (struct " + typeName + ") {NULL, 0};" EOL;
   reverseFnEntity.def += "  }" EOL;
   reverseFnEntity.def += "  " + elementTypeInfo.typeRefCode + "d = alloc(n.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  reverseFnEntity.def += "  for (size_t i = 0; i < n.l; i++) d[i] = n.d[n.l - i - 1];" EOL;
+  reverseFnEntity.def += "  for (size_t i = 0; i < n.l; i++) d[i] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[n.l - i - 1]", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
   reverseFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
   reverseFnEntity.def += "  return (struct " + typeName + ") {d, n.l};" EOL;
   reverseFnEntity.def += "}";
