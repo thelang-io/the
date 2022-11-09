@@ -3162,8 +3162,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateEntity(calleeTypeInfo.realTypeName + "_push");
         code = calleeTypeInfo.realTypeName + "_push(" + calleeCode + ", " + std::to_string(exprCall.args.size());
 
-        for (const auto &arg : exprCall.args) {
-          code += ", " + this->_nodeExpr(arg.expr, arg.expr.type);
+        if (!exprCall.args.empty()) {
+          auto elementTypeInfo = std::get<TypeArray>(calleeTypeInfo.type->body).elementType;
+
+          for (const auto &arg : exprCall.args) {
+            code += ", " + this->_nodeExpr(arg.expr, elementTypeInfo);
+          }
         }
 
         code += ")";

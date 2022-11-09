@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-// enum TokenAssociativity
+// enumeration TokenAssociativity
 TK_ASSOC_NONE := 0
 TK_ASSOC_LEFT := 1
 TK_ASSOC_RIGHT := 2
 
-// enum TokenType
+// enumeration TokenType
 TK_UNKNOWN := 0
 TK_EOF := 1
 TK_ID := 2
