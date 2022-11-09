@@ -14,7 +14,7 @@ main {
   refInt3 := ref int3
 
   testEmptyArrayInt: int[][]
-  testEmptyFn: (fn () void)[]
+  testEmptyFn: (() -> void)[]
   testEmptyObj: TestObj[]
   testEmptyStr: str[]
   testEmptyRefInt: (ref int)[]

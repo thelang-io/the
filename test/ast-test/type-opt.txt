@@ -22,8 +22,8 @@ main {
   u: u16?
   v: u32?
   w: u64?
-  x: fn () void?
-  y: (fn () void)?
+  x: () -> void?
+  y: (() -> void)?
 }
 ======= stdout =======
 <NodeObjDecl>

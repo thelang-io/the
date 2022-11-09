@@ -2,17 +2,17 @@
 obj Test { a: int }
 
 main {
-  a01: fn () void
-  a02: fn (int) void
-  a03: fn (a: int) void
-  a04: fn (mut a: int) void
-  a05: fn ((int)) void
-  a06: fn (int, float) void
-  a07: fn (a: int, mut b: float) void
-  a08: fn ((int), (float)) void
-  a09: fn (int, float, Test) void
-  a10: fn (a: int, mut b: float, c: Test) void
-  a11: fn ((int), (float), (Test)) void
+  a01: () -> void
+  a02: (int) -> void
+  a03: (a: int) -> void
+  a04: (mut a: int) -> void
+  a05: ((int)) -> void
+  a06: (int, float) -> void
+  a07: (a: int, mut b: float) -> void
+  a08: ((int), (float)) -> void
+  a09: (int, float, Test) -> void
+  a10: (a: int, mut b: float, c: Test) -> void
+  a11: ((int), (float), (Test)) -> void
 }
 ======= stdout =======
 <NodeObjDecl>

@@ -2,7 +2,7 @@
 fn test () {}
 
 main {
-  a: fn () void = test
+  a: () -> void = test
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

@@ -1,6 +1,6 @@
 ======= stdin =======
 obj Test {
-  a: fn () void
+  a: () -> void
 }
 
 fn job1 () {}

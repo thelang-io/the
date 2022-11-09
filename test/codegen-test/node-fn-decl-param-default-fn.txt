@@ -15,7 +15,7 @@ fn jobC () str {
   return "c"
 }
 
-fn test1 (a: fn () str, b := jobB, c := jobC) fn () str {
+fn test1 (a: () -> str, b := jobB, c := jobC) () -> str {
   fn jobTmp () str {
     return a() + b() + c()
   }
@@ -34,7 +34,7 @@ main{
 
   mut a := jobA
 
-  fn test2 (a2: fn () str, b := jobB, c := jobC) {
+  fn test2 (a2: () -> str, b := jobB, c := jobC) {
     a = test1(a2, b, c)
   }
 

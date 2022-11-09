@@ -12,7 +12,7 @@ main {
   b: i32 = 2
   c: str
   d := test1
-  mut e: fn (int...) void
+  mut e: (int...) -> void
   mut f := 5
   mut g: f32 = 3.14
   mut h: str

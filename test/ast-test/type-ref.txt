@@ -9,7 +9,7 @@ fn job1 (a: ref int) ref int {
 fn job2 (a: ref int, b: ref int) ref Test {
 }
 
-fn job3 (a: ref int, b: ref (fn (ref int) ref int)) ref int {
+fn job3 (a: ref int, b: ref ((ref int) -> ref int)) ref int {
 }
 
 main {
@@ -17,9 +17,9 @@ main {
   b := 4
   test := Test{a: a}
 
-  mut c: fn (ref int) ref int
-  mut d: fn (ref int, ref int) ref Test
-  mut e: fn (ref int, ref (fn (ref int) ref int)) ref int
+  mut c: (ref int) -> ref int
+  mut d: (ref int, ref int) -> ref Test
+  mut e: (ref int, ref ((ref int) -> ref int)) -> ref int
 
   c = job1
   d = job2

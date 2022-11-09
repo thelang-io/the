@@ -1,11 +1,11 @@
 ======= stdin =======
 fn job1 () int { return 1 }
 fn job2 () int { return 2 }
-fn test1 (mut a: fn () int) int {
+fn test1 (mut a: () -> int) int {
   a = job2
   return a()
 }
-fn test2 (mut a: fn () int, mut b := job2) int {
+fn test2 (mut a: () -> int, mut b := job2) int {
   b = a
   return a() + b()
 }

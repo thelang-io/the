@@ -52,7 +52,6 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
   else if (ch0 == '[') return {startLoc, this->_tok(TK_OP_LBRACK)};
   else if (ch0 == '(') return {startLoc, this->_tok(TK_OP_LPAR)};
   else if (ch0 == '<') return {startLoc, this->_opEq2('<', TK_OP_LT, TK_OP_LT_EQ, TK_OP_LSHIFT, TK_OP_LSHIFT_EQ)};
-  else if (ch0 == '-') return {startLoc, this->_opEq2('-', TK_OP_MINUS, TK_OP_MINUS_EQ, TK_OP_MINUS_MINUS)};
   else if (ch0 == '|') return {startLoc, this->_opEq2('|', TK_OP_PIPE, TK_OP_PIPE_EQ, TK_OP_PIPE_PIPE, TK_OP_PIPE_PIPE_EQ)};
   else if (ch0 == '%') return {startLoc, this->_opEq(TK_OP_PERCENT, TK_OP_PERCENT_EQ)};
   else if (ch0 == '+') return {startLoc, this->_opEq2('+', TK_OP_PLUS, TK_OP_PLUS_EQ, TK_OP_PLUS_PLUS)};
@@ -64,6 +63,28 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
   else if (ch0 == '/') return {startLoc, this->_opEq(TK_OP_SLASH, TK_OP_SLASH_EQ)};
   else if (ch0 == '*') return {startLoc, this->_opEq(TK_OP_STAR, TK_OP_STAR_EQ)};
   else if (ch0 == '~') return {startLoc, this->_tok(TK_OP_TILDE)};
+
+  if (ch0 == '-') {
+    if (this->reader->eof()) {
+      return {startLoc, this->_tok(TK_OP_MINUS)};
+    }
+
+    auto [loc1, ch1] = this->reader->next();
+
+    if (ch1 == '>') {
+      this->val += ch1;
+      return {startLoc, this->_tok(TK_OP_ARROW)};
+    } else if (ch1 == '=') {
+      this->val += ch1;
+      return {startLoc, this->_tok(TK_OP_MINUS_EQ)};
+    } else if (ch1 == '-') {
+      this->val += ch1;
+      return {startLoc, this->_tok(TK_OP_MINUS_MINUS)};
+    } else {
+      this->reader->seek(loc1);
+      return {startLoc, this->_tok(TK_OP_MINUS)};
+    }
+  }
 
   if (ch0 == '.') {
     if (this->reader->eof()) {

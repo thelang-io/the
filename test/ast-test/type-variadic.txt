@@ -2,12 +2,12 @@
 obj Test { a: int }
 
 main {
-  a1: fn (int...) int
-  a2: fn ((int)...) int
-  a3: fn (int, int...) Test
-  a4: fn (int, (int)...) Test
-  a5: fn (int, (fn (int...) int)...) int
-  a6: fn (int, (fn (int, (int)...) int)...) int
+  a1: (int...) -> int
+  a2: ((int)...) -> int
+  a3: (int, int...) -> Test
+  a4: (int, (int)...) -> Test
+  a5: (int, ((int...) -> int)...) -> int
+  a6: (int, ((int, (int)...) -> int)...) -> int
 }
 ======= stdout =======
 <NodeObjDecl>

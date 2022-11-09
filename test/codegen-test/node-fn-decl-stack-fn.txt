@@ -3,9 +3,9 @@ fn job1 () {}
 fn job2 () {}
 
 main {
-  mut a: fn () void = job1
+  mut a: () -> void = job1
 
-  fn test (newA: fn () void) {
+  fn test (newA: () -> void) {
     a = newA
   }
 

@@ -186,9 +186,9 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0118-stmt-fn-decl-missing-param-parenthesized-type",
   "throw-E0118-stmt-fn-decl-missing-type-param-parenthesized-type",
   "throw-E0120-stmt-fn-decl-missing-type-parenthesized-return-type",
-  "throw-E0129-stmt-fn-decl-missing-type-lpar",
   "throw-E0130-stmt-fn-decl-missing-param-init",
-  "throw-E0130-stmt-fn-decl-missing-param-init-after-type"
+  "throw-E0130-stmt-fn-decl-missing-param-init-after-type",
+  "throw-E0153-stmt-fn-decl-missing-arrow"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(

@@ -2,10 +2,10 @@
 fn testFn () {}
 
 obj Test1 {
-  f: fn () void
+  f: () -> void
 }
 
-fn testCall () fn () void {
+fn testCall () () -> void {
   return testFn
 }
 

@@ -1,6 +1,6 @@
 ======= stdin =======
-a: fn (a: int, mut: float) void
+a: (a: int, mut: float) -> void
 ======= stderr =======
-/test:1:19: E0145 - Expected parameter name after `mut` keyword in function type
-  1 | a: fn (a: int, mut: float) void
-    |                   ^
+/test:1:16: E0145 - Expected parameter name after `mut` keyword in function type
+  1 | a: (a: int, mut: float) -> void
+    |                ^

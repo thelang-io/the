@@ -1,10 +1,10 @@
 ======= stdin =======
 obj Test1 {
-  a: fn () void
+  a: () -> void
 }
 
 obj Test2 {
-  b: fn (int, int...) int
+  b: (int, int...) -> int
 }
 
 fn t1 () {
@@ -62,15 +62,15 @@ main {
           <TypeFnParams>
             <TypeFnParam>
               <TypeFnParamType>
-                <TypeId start="6:10" end="6:13">
-                  <Token type="ID" val="int" start="6:10" end="6:13" />
+                <TypeId start="6:7" end="6:10">
+                  <Token type="ID" val="int" start="6:7" end="6:10" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
             <TypeFnParam variadic>
               <TypeFnParamType>
-                <TypeId start="6:15" end="6:18">
-                  <Token type="ID" val="int" start="6:15" end="6:18" />
+                <TypeId start="6:12" end="6:15">
+                  <Token type="ID" val="int" start="6:12" end="6:15" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>

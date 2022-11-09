@@ -88,7 +88,7 @@ fn Reader_slice (self: ref Reader, start: int, end: int) str {
   return self.content.slice(start, end)
 }
 
-fn Reader_walk (mut self: ref Reader, match: fn (char) bool) {
+fn Reader_walk (mut self: ref Reader, match: (char) -> bool) {
   loop !Reader_eof(self) {
     pos := self.pos
     ch := Reader_next(self)
