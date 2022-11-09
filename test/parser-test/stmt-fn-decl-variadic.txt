@@ -7,13 +7,13 @@ fn test3 (a: int, b: int...) void {
 }
 fn test4 (x: int, y: int..., z: str) void {
 }
-fn test5 (b: fn (int...) void) void {
+fn test5 (b: (int...) -> void) void {
 }
-fn test6 (b: fn ((int)...) void) void {
+fn test6 (b: ((int)...) -> void) void {
 }
-fn test7 (b: fn (int, (int)...) void) void {
+fn test7 (b: (int, (int)...) -> void) void {
 }
-fn test8 (b: fn (int, (int)..., str) void) void {
+fn test8 (b: (int, (int)..., str) -> void) void {
 }
 ======= stdout =======
 <StmtFnDecl start="1:1" end="2:2">
@@ -138,8 +138,8 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <TypeFnParams>
             <TypeFnParam variadic>
               <TypeFnParamType>
-                <TypeId start="9:18" end="9:21">
-                  <Token type="ID" val="int" start="9:18" end="9:21" />
+                <TypeId start="9:15" end="9:18">
+                  <Token type="ID" val="int" start="9:15" end="9:18" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
@@ -173,8 +173,8 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <TypeFnParams>
             <TypeFnParam variadic>
               <TypeFnParamType>
-                <TypeId parenthesized start="11:18" end="11:23">
-                  <Token type="ID" val="int" start="11:19" end="11:22" />
+                <TypeId parenthesized start="11:15" end="11:20">
+                  <Token type="ID" val="int" start="11:16" end="11:19" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
@@ -208,15 +208,15 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <TypeFnParams>
             <TypeFnParam>
               <TypeFnParamType>
-                <TypeId start="13:18" end="13:21">
-                  <Token type="ID" val="int" start="13:18" end="13:21" />
+                <TypeId start="13:15" end="13:18">
+                  <Token type="ID" val="int" start="13:15" end="13:18" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
             <TypeFnParam variadic>
               <TypeFnParamType>
-                <TypeId parenthesized start="13:23" end="13:28">
-                  <Token type="ID" val="int" start="13:24" end="13:27" />
+                <TypeId parenthesized start="13:20" end="13:25">
+                  <Token type="ID" val="int" start="13:21" end="13:24" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
@@ -250,22 +250,22 @@ fn test8 (b: fn (int, (int)..., str) void) void {
           <TypeFnParams>
             <TypeFnParam>
               <TypeFnParamType>
-                <TypeId start="15:18" end="15:21">
-                  <Token type="ID" val="int" start="15:18" end="15:21" />
+                <TypeId start="15:15" end="15:18">
+                  <Token type="ID" val="int" start="15:15" end="15:18" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
             <TypeFnParam variadic>
               <TypeFnParamType>
-                <TypeId parenthesized start="15:23" end="15:28">
-                  <Token type="ID" val="int" start="15:24" end="15:27" />
+                <TypeId parenthesized start="15:20" end="15:25">
+                  <Token type="ID" val="int" start="15:21" end="15:24" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
             <TypeFnParam>
               <TypeFnParamType>
-                <TypeId start="15:33" end="15:36">
-                  <Token type="ID" val="str" start="15:33" end="15:36" />
+                <TypeId start="15:30" end="15:33">
+                  <Token type="ID" val="str" start="15:30" end="15:33" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>

@@ -7,9 +7,9 @@ main {
   a5: (int[]?)
   a6: int?[]
   a7: (int?)[]
-  a8: (fn () void)?
-  a9: fn () int?
-  a10: fn () (int?)
+  a8: (() -> void)?
+  a9: () -> int?
+  a10: () -> (int?)
 }
 ======= stdout =======
 <StmtMain start="1:1" end="12:2">

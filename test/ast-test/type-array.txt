@@ -12,7 +12,7 @@ main {
   a08: (ref int)[][][][][][][]
   a09: ref Test[][][][][][][]
   a10: (ref Test)[][][][][][][]
-  a11: (fn (int, int) void)[]
+  a11: ((int, int) -> void)[]
 }
 ======= stdout =======
 <NodeObjDecl>

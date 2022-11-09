@@ -42,10 +42,7 @@ fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
   }
 }
 
-fn Tokenizer_next (
-  mut self: ref Tokenizer,
-  withIgnored := false
-) Token {
+fn Tokenizer_next (mut self: ref Tokenizer, withIgnored := false) Token {
   if self.data.len < self.state.idx {
     return self.data[self.state.idx++]
   } elif !self.data.empty() && self.data[-1].type == TK_EOF {
@@ -399,6 +396,8 @@ fn _Tokenizer_maybeOp (mut self: ref Tokenizer) Token? {
       return _Tokenizer_wrapToken(self, TK_OP_MINUS_MINUS)
     } elif Reader_lookahead(self.reader, '=') {
       return _Tokenizer_wrapToken(self, TK_OP_MINUS_EQ)
+    } elif Reader_lookahead(self.reader, '>') {
+      return _Tokenizer_wrapToken(self, TK_OP_ARROW)
     } else {
       return _Tokenizer_wrapToken(self, TK_OP_MINUS)
     }
@@ -563,7 +562,11 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
   self.state.handled = true
 }
 
-fn _Tokenizer_wrapFloat (mut self: ref Tokenizer, type: int, errorMessage: str) Token {
+fn _Tokenizer_wrapFloat (
+  mut self: ref Tokenizer,
+  type: int,
+  errorMessage: str
+) Token {
   if Reader_eof(self.reader) {
     return _Tokenizer_wrapToken(self, type)
   }
@@ -662,7 +665,7 @@ fn _Tokenizer_wrapInt (
   mut self: ref Tokenizer,
   type: int,
   errorMessage: str,
-  check: fn (char) bool
+  check: (char) -> bool
 ) Token {
   if Reader_eof(self.reader) {
     _Tokenizer_raise(self, errorMessage, self.state.pos)

@@ -65,7 +65,7 @@
 #define E0126 "E0126 - Empty object declarations are not allowed"
 #define E0127 "E0127 - Expected right parenthesis"
 #define E0128 "E0128 - Variadic function parameters can't have default values"
-#define E0129 "E0129 - Expected left parentheses after fn keyword"
+// #define E0129 "E0129 - Expected left parentheses after fn keyword"
 #define E0130 "E0130 - Expected function param initializer"
 #define E0131 "E0131 - Expected variable initializer"
 #define E0132 "E0132 - Expected unary expression argument"
@@ -88,6 +88,7 @@
 #define E0150 "E0150 - Expected expression after left bracket"
 #define E0151 "E0151 - Expected right bracket"
 #define E0152 "E0152 - Expected array expression element"
+#define E0153 "E0153 - Expected function type arrow after arguments list"
 
 #define E1001 "E1001 - Tried accessing non existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

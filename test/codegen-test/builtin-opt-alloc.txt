@@ -35,7 +35,7 @@ main {
   optF32: f32?
   optF64: f64?
   optFloat: float?
-  optFn: (fn () void)?
+  optFn: (() -> void)?
   optI8: i8?
   optI16: i16?
   optI32: i32?
@@ -57,7 +57,7 @@ main {
   optF32NilInit: f32? = nil
   optF64NilInit: f64? = nil
   optFloatNilInit: float? = nil
-  optFnNilInit: (fn () void)? = nil
+  optFnNilInit: (() -> void)? = nil
   optI8NilInit: i8? = nil
   optI16NilInit: i16? = nil
   optI32NilInit: i32? = nil
@@ -101,7 +101,7 @@ main {
   optF32ValCopy: f32? = testF32
   optF64ValCopy: f64? = testF64
   optFloatValCopy: float? = testFloat
-  optFnValCopy: (fn () void)? = testFn
+  optFnValCopy: (() -> void)? = testFn
   optI8ValCopy: i8? = testI8
   optI16ValCopy: i16? = testI16
   optI32ValCopy: i32? = testI32

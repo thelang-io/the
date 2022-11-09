@@ -1,9 +1,9 @@
 ======= stdin =======
-fn test1 (mut a: fn () int) int {
+fn test1 (mut a: () -> int) int {
   a = job2
   return a() + 1
 }
-fn test2 (mut a: fn () int, mut b := job2) int {
+fn test2 (mut a: () -> int, mut b := job2) int {
   a = job2
   return a() + b()
 }

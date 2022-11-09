@@ -55,6 +55,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_OP_AMP_EQ: return "OP_AMP_EQ";
     case TK_OP_AMP_AMP: return "OP_AMP_AMP";
     case TK_OP_AMP_AMP_EQ: return "OP_AMP_AMP_EQ";
+    case TK_OP_ARROW: return "OP_ARROW";
     case TK_OP_AT: return "OP_AT";
     case TK_OP_BACKSLASH: return "OP_BACKSLASH";
     case TK_OP_BACKTICK: return "OP_BACKTICK";
@@ -193,7 +194,8 @@ TokenAssociativity Token::associativity (bool unary) const {
   if (
     this->type == TK_KW_REF ||
     this->type == TK_OP_LPAR || this->type == TK_OP_RPAR ||
-    this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS
+    this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS ||
+    this->type == TK_OP_ARROW
   ) {
     return TK_ASSOC_NONE;
   } else if (
@@ -276,7 +278,8 @@ int Token::precedence (bool isUnary) const {
     this->type == TK_OP_RSHIFT_EQ ||
     this->type == TK_OP_SLASH_EQ ||
     this->type == TK_OP_STAR_EQ ||
-    this->type == TK_OP_COLON || this->type == TK_OP_QN
+    this->type == TK_OP_COLON || this->type == TK_OP_QN ||
+    this->type == TK_OP_ARROW
   ) {
     return 2;
   } else if (this->type == TK_OP_COMMA) {

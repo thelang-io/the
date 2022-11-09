@@ -64,6 +64,7 @@ enum TokenType {
   TK_OP_AMP_EQ,
   TK_OP_AMP_AMP,
   TK_OP_AMP_AMP_EQ,
+  TK_OP_ARROW,
   TK_OP_AT,
   TK_OP_BACKSLASH,
   TK_OP_BACKTICK,

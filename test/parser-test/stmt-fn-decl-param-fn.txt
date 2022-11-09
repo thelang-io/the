@@ -1,5 +1,5 @@
 ======= stdin =======
-fn test1 (a: fn () void) {
+fn test1 (a: () -> void) {
   a()
 }
 
@@ -11,7 +11,7 @@ fn test3 () void {
   print("Hello, World!")
 }
 
-fn test4 (d: fn (fn () void) void, e: fn (int, int) int) {
+fn test4 (d: (() -> void) -> void, e: (int, int) -> int) {
   d(test3)
   print("1 + 2 =", e(1, 2))
 }
@@ -143,10 +143,10 @@ main {
           <TypeFnParams>
             <TypeFnParam>
               <TypeFnParamType>
-                <TypeFn start="13:18" end="13:28">
+                <TypeFn start="13:15" end="13:25">
                   <TypeFnReturnType>
-                    <TypeId start="13:24" end="13:28">
-                      <Token type="ID" val="void" start="13:24" end="13:28" />
+                    <TypeId start="13:21" end="13:25">
+                      <Token type="ID" val="void" start="13:21" end="13:25" />
                     </TypeId>
                   </TypeFnReturnType>
                 </TypeFn>
@@ -170,15 +170,15 @@ main {
           <TypeFnParams>
             <TypeFnParam>
               <TypeFnParamType>
-                <TypeId start="13:43" end="13:46">
-                  <Token type="ID" val="int" start="13:43" end="13:46" />
+                <TypeId start="13:40" end="13:43">
+                  <Token type="ID" val="int" start="13:40" end="13:43" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>
             <TypeFnParam>
               <TypeFnParamType>
-                <TypeId start="13:48" end="13:51">
-                  <Token type="ID" val="int" start="13:48" end="13:51" />
+                <TypeId start="13:45" end="13:48">
+                  <Token type="ID" val="int" start="13:45" end="13:48" />
                 </TypeId>
               </TypeFnParamType>
             </TypeFnParam>

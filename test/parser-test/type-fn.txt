@@ -1,16 +1,16 @@
 ======= stdin =======
 main {
-  a01: fn () void
-  a02: fn (int) void
-  a03: fn (a: int) void
-  a04: fn (mut a: int) void
-  a05: fn ((int)) void
-  a06: fn (int, float) void
-  a07: fn (a: int, mut b: float) void
-  a08: fn ((int), (float)) void
-  a09: fn (int, float, Test) void
-  a10: fn (a: int, mut b: float, c: Test) void
-  a11: fn ((int), (float), (Test)) void
+  a01: () -> void
+  a02: (int) -> void
+  a03: (a: int) -> void
+  a04: (mut a: int) -> void
+  a05: ((int)) -> void
+  a06: (int, float) -> void
+  a07: (a: int, mut b: float) -> void
+  a08: ((int), (float)) -> void
+  a09: (int, float, Test) -> void
+  a10: (a: int, mut b: float, c: Test) -> void
+  a11: ((int), (float), (Test)) -> void
 }
 ======= stdout =======
 <StmtMain start="1:1" end="13:2">
@@ -37,8 +37,8 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="3:12" end="3:15">
-                <Token type="ID" val="int" start="3:12" end="3:15" />
+              <TypeId start="3:9" end="3:12">
+                <Token type="ID" val="int" start="3:9" end="3:12" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -60,11 +60,11 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamId>
-              <Token type="ID" val="a" start="4:12" end="4:13" />
+              <Token type="ID" val="a" start="4:9" end="4:10" />
             </TypeFnParamId>
             <TypeFnParamType>
-              <TypeId start="4:15" end="4:18">
-                <Token type="ID" val="int" start="4:15" end="4:18" />
+              <TypeId start="4:12" end="4:15">
+                <Token type="ID" val="int" start="4:12" end="4:15" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -86,11 +86,11 @@ main {
         <TypeFnParams>
           <TypeFnParam mut>
             <TypeFnParamId>
-              <Token type="ID" val="a" start="5:16" end="5:17" />
+              <Token type="ID" val="a" start="5:13" end="5:14" />
             </TypeFnParamId>
             <TypeFnParamType>
-              <TypeId start="5:19" end="5:22">
-                <Token type="ID" val="int" start="5:19" end="5:22" />
+              <TypeId start="5:16" end="5:19">
+                <Token type="ID" val="int" start="5:16" end="5:19" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -112,8 +112,8 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId parenthesized start="6:12" end="6:17">
-                <Token type="ID" val="int" start="6:13" end="6:16" />
+              <TypeId parenthesized start="6:9" end="6:14">
+                <Token type="ID" val="int" start="6:10" end="6:13" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -135,15 +135,15 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="7:12" end="7:15">
-                <Token type="ID" val="int" start="7:12" end="7:15" />
+              <TypeId start="7:9" end="7:12">
+                <Token type="ID" val="int" start="7:9" end="7:12" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="7:17" end="7:22">
-                <Token type="ID" val="float" start="7:17" end="7:22" />
+              <TypeId start="7:14" end="7:19">
+                <Token type="ID" val="float" start="7:14" end="7:19" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -165,21 +165,21 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamId>
-              <Token type="ID" val="a" start="8:12" end="8:13" />
+              <Token type="ID" val="a" start="8:9" end="8:10" />
             </TypeFnParamId>
             <TypeFnParamType>
-              <TypeId start="8:15" end="8:18">
-                <Token type="ID" val="int" start="8:15" end="8:18" />
+              <TypeId start="8:12" end="8:15">
+                <Token type="ID" val="int" start="8:12" end="8:15" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam mut>
             <TypeFnParamId>
-              <Token type="ID" val="b" start="8:24" end="8:25" />
+              <Token type="ID" val="b" start="8:21" end="8:22" />
             </TypeFnParamId>
             <TypeFnParamType>
-              <TypeId start="8:27" end="8:32">
-                <Token type="ID" val="float" start="8:27" end="8:32" />
+              <TypeId start="8:24" end="8:29">
+                <Token type="ID" val="float" start="8:24" end="8:29" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -201,15 +201,15 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId parenthesized start="9:12" end="9:17">
-                <Token type="ID" val="int" start="9:13" end="9:16" />
+              <TypeId parenthesized start="9:9" end="9:14">
+                <Token type="ID" val="int" start="9:10" end="9:13" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId parenthesized start="9:19" end="9:26">
-                <Token type="ID" val="float" start="9:20" end="9:25" />
+              <TypeId parenthesized start="9:16" end="9:23">
+                <Token type="ID" val="float" start="9:17" end="9:22" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -231,22 +231,22 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="10:12" end="10:15">
-                <Token type="ID" val="int" start="10:12" end="10:15" />
+              <TypeId start="10:9" end="10:12">
+                <Token type="ID" val="int" start="10:9" end="10:12" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="10:17" end="10:22">
-                <Token type="ID" val="float" start="10:17" end="10:22" />
+              <TypeId start="10:14" end="10:19">
+                <Token type="ID" val="float" start="10:14" end="10:19" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="10:24" end="10:28">
-                <Token type="ID" val="Test" start="10:24" end="10:28" />
+              <TypeId start="10:21" end="10:25">
+                <Token type="ID" val="Test" start="10:21" end="10:25" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -268,31 +268,31 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamId>
-              <Token type="ID" val="a" start="11:12" end="11:13" />
+              <Token type="ID" val="a" start="11:9" end="11:10" />
             </TypeFnParamId>
             <TypeFnParamType>
-              <TypeId start="11:15" end="11:18">
-                <Token type="ID" val="int" start="11:15" end="11:18" />
+              <TypeId start="11:12" end="11:15">
+                <Token type="ID" val="int" start="11:12" end="11:15" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam mut>
             <TypeFnParamId>
-              <Token type="ID" val="b" start="11:24" end="11:25" />
+              <Token type="ID" val="b" start="11:21" end="11:22" />
             </TypeFnParamId>
             <TypeFnParamType>
-              <TypeId start="11:27" end="11:32">
-                <Token type="ID" val="float" start="11:27" end="11:32" />
+              <TypeId start="11:24" end="11:29">
+                <Token type="ID" val="float" start="11:24" end="11:29" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamId>
-              <Token type="ID" val="c" start="11:34" end="11:35" />
+              <Token type="ID" val="c" start="11:31" end="11:32" />
             </TypeFnParamId>
             <TypeFnParamType>
-              <TypeId start="11:37" end="11:41">
-                <Token type="ID" val="Test" start="11:37" end="11:41" />
+              <TypeId start="11:34" end="11:38">
+                <Token type="ID" val="Test" start="11:34" end="11:38" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
@@ -314,22 +314,22 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId parenthesized start="12:12" end="12:17">
-                <Token type="ID" val="int" start="12:13" end="12:16" />
+              <TypeId parenthesized start="12:9" end="12:14">
+                <Token type="ID" val="int" start="12:10" end="12:13" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId parenthesized start="12:19" end="12:26">
-                <Token type="ID" val="float" start="12:20" end="12:25" />
+              <TypeId parenthesized start="12:16" end="12:23">
+                <Token type="ID" val="float" start="12:17" end="12:22" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId parenthesized start="12:28" end="12:34">
-                <Token type="ID" val="Test" start="12:29" end="12:33" />
+              <TypeId parenthesized start="12:25" end="12:31">
+                <Token type="ID" val="Test" start="12:26" end="12:30" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>

@@ -1,17 +1,17 @@
 ======= stdin =======
-fn test1 (job: fn () void) {
+fn test1 (job: () -> void) {
   job()
 }
 
-fn test2 (job: fn (int) int) int {
+fn test2 (job: (int) -> int) int {
   return job(1)
 }
 
-fn test3 (job: fn (int, int) int) int {
+fn test3 (job: (int, int) -> int) int {
   return job(2, 3)
 }
 
-fn test4 (job: fn (mut a: int, mut b: int) int) int {
+fn test4 (job: (mut a: int, mut b: int) -> int) int {
   return job(b: 2, a: 3)
 }
 

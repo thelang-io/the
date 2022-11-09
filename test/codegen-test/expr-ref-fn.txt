@@ -10,10 +10,10 @@ fn job2 (mut a: ref int) int {
 
 fn job3 (
   mut a: ref int,
-  fn1: fn (mut a: ref int) ref int,
-  fn2: fn (mut a: ref int) int,
-  fn3: ref (fn (mut a: ref int) ref int),
-  fn4: ref (fn (mut a: ref int) int)
+  fn1: (mut a: ref int) -> ref int,
+  fn2: (mut a: ref int) -> int,
+  fn3: ref ((mut a: ref int) -> ref int),
+  fn4: ref ((mut a: ref int) -> int)
 ) {
   v1 := fn1(a) + fn2(a)
   v2 := fn3(a) > fn4(a)

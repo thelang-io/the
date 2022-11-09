@@ -9,7 +9,7 @@ fn test2 (p2: str = "Hello, World!", args: str...) {
   print(args)
 }
 
-fn test3 (sum: fn ((int), (int)...) int) int {
+fn test3 (sum: ((int), (int)...) -> int) int {
   return sum(1) + sum(2, 3) + sum(4, 5)
 }
 

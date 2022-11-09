@@ -2,12 +2,12 @@
 main {
   a1: int[]
   a2: (bool[])
-  a3: fn (ref byte[], float[]) ref str[]
-  a4: fn ((ref int[])[], (int[][][])) (Test[][][][])[][][]
-  a5: (fn () int[])[]
-  a6: fn () int[][]
-  a7: fn () (ref int)[][]
-  a8: fn () ref int[][]
+  a3: (ref byte[], float[]) -> ref str[]
+  a4: ((ref int[])[], (int[][][])) -> (Test[][][][])[][][]
+  a5: (() -> int[])[]
+  a6: () -> int[][]
+  a7: () -> (ref int)[][]
+  a8: () -> ref int[][]
   a9: ref int[]
   a10: (ref int[])[]
   a11: ref int[][]
@@ -47,10 +47,10 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeRef start="4:11" end="4:21">
-                <TypeArray start="4:15" end="4:21">
-                  <TypeId start="4:15" end="4:19">
-                    <Token type="ID" val="byte" start="4:15" end="4:19" />
+              <TypeRef start="4:8" end="4:18">
+                <TypeArray start="4:12" end="4:18">
+                  <TypeId start="4:12" end="4:16">
+                    <Token type="ID" val="byte" start="4:12" end="4:16" />
                   </TypeId>
                 </TypeArray>
               </TypeRef>
@@ -58,9 +58,9 @@ main {
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeArray start="4:23" end="4:30">
-                <TypeId start="4:23" end="4:28">
-                  <Token type="ID" val="float" start="4:23" end="4:28" />
+              <TypeArray start="4:20" end="4:27">
+                <TypeId start="4:20" end="4:25">
+                  <Token type="ID" val="float" start="4:20" end="4:25" />
                 </TypeId>
               </TypeArray>
             </TypeFnParamType>
@@ -87,11 +87,11 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeArray start="5:11" end="5:24">
-                <TypeRef parenthesized start="5:11" end="5:22">
-                  <TypeArray start="5:16" end="5:21">
-                    <TypeId start="5:16" end="5:19">
-                      <Token type="ID" val="int" start="5:16" end="5:19" />
+              <TypeArray start="5:8" end="5:21">
+                <TypeRef parenthesized start="5:8" end="5:19">
+                  <TypeArray start="5:13" end="5:18">
+                    <TypeId start="5:13" end="5:16">
+                      <Token type="ID" val="int" start="5:13" end="5:16" />
                     </TypeId>
                   </TypeArray>
                 </TypeRef>
@@ -100,11 +100,11 @@ main {
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeArray parenthesized start="5:26" end="5:37">
-                <TypeArray start="5:27" end="5:34">
-                  <TypeArray start="5:27" end="5:32">
-                    <TypeId start="5:27" end="5:30">
-                      <Token type="ID" val="int" start="5:27" end="5:30" />
+              <TypeArray parenthesized start="5:23" end="5:34">
+                <TypeArray start="5:24" end="5:31">
+                  <TypeArray start="5:24" end="5:29">
+                    <TypeId start="5:24" end="5:27">
+                      <Token type="ID" val="int" start="5:24" end="5:27" />
                     </TypeId>
                   </TypeArray>
                 </TypeArray>

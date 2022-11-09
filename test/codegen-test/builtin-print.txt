@@ -20,7 +20,7 @@ obj Test1 {
   u3: u32
   u4: u64
   v1: Test2
-  v2: fn () void
+  v2: () -> void
 }
 
 obj Test2 {
@@ -47,7 +47,7 @@ obj Test2 {
 
 fn test () {}
 
-fn testAnon () fn () void { return test }
+fn testAnon () () -> void { return test }
 
 main {
   mut a := 1

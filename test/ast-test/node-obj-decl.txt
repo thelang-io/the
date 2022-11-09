@@ -5,7 +5,7 @@ obj Animal {
 }
 
 obj Test {
-  sum: fn (int, int...) int
+  sum: (int, int...) -> int
 }
 
 fn testSum (a: int, b: int...) int {
@@ -14,10 +14,10 @@ fn testSum (a: int, b: int...) int {
 }
 
 obj Callback {
-  logic: fn (fn () any) void
+  logic: (() -> any) -> void
 }
 
-fn callbackLogic (cb: fn () any) {
+fn callbackLogic (cb: () -> any) {
   cb()
 }
 

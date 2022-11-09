@@ -1,10 +1,10 @@
 ======= stdin =======
 obj A {
-  b: fn () void
+  b: () -> void
 }
 
 obj Test {
-  game: fn (int) void
+  game: (int) -> void
 }
 
 obj Test1 {
@@ -12,7 +12,7 @@ obj Test1 {
 }
 
 obj Test2 {
-  test3: fn (int, int) void
+  test3: (int, int) -> void
 }
 
 obj B {
@@ -28,7 +28,7 @@ obj D {
 }
 
 obj E {
-  f: fn (int, int, int) void
+  f: (int, int, int) -> void
 }
 
 fn job1 () {}

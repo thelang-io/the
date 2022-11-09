@@ -23,7 +23,7 @@ fn test1 (
   u3: u32,
   u4: u64,
   v1: Test,
-  v2: fn () void
+  v2: () -> void
 ) {}
 
 fn test2 (

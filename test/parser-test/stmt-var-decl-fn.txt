@@ -13,9 +13,9 @@ fn t3 (a: int, b: int...) int {
 }
 
 main {
-  mut a: fn () void
+  mut a: () -> void
   a = t1
-  b: fn (int, int) int = t2
+  b: (int, int) -> int = t2
   c := t3
 
   a()
@@ -194,15 +194,15 @@ main {
         <TypeFnParams>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="17:10" end="17:13">
-                <Token type="ID" val="int" start="17:10" end="17:13" />
+              <TypeId start="17:7" end="17:10">
+                <Token type="ID" val="int" start="17:7" end="17:10" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>
           <TypeFnParam>
             <TypeFnParamType>
-              <TypeId start="17:15" end="17:18">
-                <Token type="ID" val="int" start="17:15" end="17:18" />
+              <TypeId start="17:12" end="17:15">
+                <Token type="ID" val="int" start="17:12" end="17:15" />
               </TypeId>
             </TypeFnParamType>
           </TypeFnParam>

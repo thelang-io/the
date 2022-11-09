@@ -572,88 +572,84 @@ std::optional<ParserType> Parser::_type () {
   auto [loc1, tok1] = this->lexer->next();
 
   if (tok1.type == TK_OP_LPAR) {
-    auto type = this->_type();
-
-    if (type == std::nullopt) {
-      this->lexer->seek(loc1);
-      return std::nullopt;
-    }
-
-    auto [loc2, tok2] = this->lexer->next();
-
-    if (tok2.type != TK_OP_RPAR) {
-      this->lexer->seek(loc2);
-      throw Error(this->reader, this->lexer->loc, E0127);
-    }
-
-    return this->_wrapType(ParserType{type->body, true, tok1.start, this->lexer->loc});
-  } else if (tok1.type == TK_ID) {
-    auto typeId = ParserTypeId{tok1};
-    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc});
-  } else if (tok1.type == TK_KW_FN) {
-    auto [loc2, tok2] = this->lexer->next();
-
-    if (tok2.type != TK_OP_LPAR) {
-      throw Error(this->reader, tok2.start, E0129);
-    }
-
-    auto [loc3, tok3] = this->lexer->next();
+    auto isArgList = false;
+    auto lastType = std::optional<ParserType>{};
     auto fnParams = std::vector<ParserTypeFnParam>{};
+    auto [loc2, tok2] = this->lexer->next();
 
-    while (tok3.type != TK_OP_RPAR) {
-      this->lexer->seek(loc3);
-
-      auto [loc4, tok4] = this->lexer->next();
+    while (tok2.type != TK_OP_RPAR) {
       auto fnParamId = std::optional<Token>{};
-      auto fnParamMut = tok4.type == TK_KW_MUT;
+      auto fnParamMut = tok2.type == TK_KW_MUT;
 
-      if (tok4.type == TK_KW_MUT) {
-        std::tie(loc4, tok4) = this->lexer->next();
+      if (tok2.type == TK_KW_MUT) {
+        auto [_3, tok3] = this->lexer->next();
 
-        if (tok4.type != TK_ID) {
-          throw Error(this->reader, tok4.start, E0145);
+        if (tok3.type != TK_ID) {
+          throw Error(this->reader, tok3.start, E0145);
         }
 
-        auto [_5, tok5] = this->lexer->next();
+        auto [_4, tok4] = this->lexer->next();
 
-        if (tok5.type != TK_OP_COLON) {
-          throw Error(this->reader, tok5.start, E0146);
+        if (tok4.type != TK_OP_COLON) {
+          throw Error(this->reader, tok4.start, E0146);
         }
 
-        fnParamId = tok4;
-      } else if (tok4.type == TK_ID) {
-        auto [_5, tok5] = this->lexer->next();
+        fnParamId = tok3;
+        isArgList = true;
+      } else if (tok2.type == TK_ID) {
+        auto [_3, tok3] = this->lexer->next();
 
-        if (tok5.type == TK_OP_COLON) {
-          fnParamId = tok4;
+        if (tok3.type == TK_OP_COLON) {
+          fnParamId = tok2;
+          isArgList = true;
         } else {
-          this->lexer->seek(loc4);
+          this->lexer->seek(loc2);
         }
       } else {
-        this->lexer->seek(loc4);
+        this->lexer->seek(loc2);
       }
 
-      auto fnParamType = this->_type();
-      auto fnParamVariadic = false;
+      lastType = this->_type();
 
-      if (fnParamType == std::nullopt) {
+      if (lastType == std::nullopt && !isArgList && fnParams.empty()) {
+        break;
+      } else if (lastType == std::nullopt && !isArgList && !fnParams.empty()) {
+        throw Error(this->reader, this->lexer->loc, E0127);
+      } else if (lastType == std::nullopt) {
         throw Error(this->reader, this->lexer->loc, E0118);
       }
 
-      auto [loc6, tok6] = this->lexer->next();
+      auto fnParamVariadic = false;
+      auto [loc5, tok5] = this->lexer->next();
 
-      if (tok6.type == TK_OP_DOT_DOT_DOT) {
+      if (tok5.type == TK_OP_DOT_DOT_DOT) {
         fnParamVariadic = true;
       } else {
-        this->lexer->seek(loc6);
+        this->lexer->seek(loc5);
       }
 
-      fnParams.push_back(ParserTypeFnParam{fnParamId, *fnParamType, fnParamMut, fnParamVariadic});
-      std::tie(loc3, tok3) = this->lexer->next();
+      fnParams.push_back(ParserTypeFnParam{fnParamId, *lastType, fnParamMut, fnParamVariadic});
+      std::tie(loc2, tok2) = this->lexer->next();
 
-      if (tok3.type == TK_OP_COMMA) {
-        std::tie(loc3, tok3) = this->lexer->next();
+      if (tok2.type == TK_OP_COMMA) {
+        std::tie(loc2, tok2) = this->lexer->next();
+        isArgList = true;
       }
+    }
+
+    auto [loc6, tok6] = this->lexer->next();
+
+    if (tok6.type != TK_OP_ARROW && !isArgList) {
+      if (lastType == std::nullopt) {
+        this->lexer->seek(loc1);
+        return std::nullopt;
+      }
+
+      this->lexer->seek(loc6);
+      return this->_wrapType(ParserType{lastType->body, true, tok1.start, this->lexer->loc});
+    } else if (tok6.type != TK_OP_ARROW) {
+      this->lexer->seek(loc6);
+      throw Error(this->reader, this->lexer->loc, E0153);
     }
 
     auto fnReturnType = this->_type();
@@ -664,6 +660,9 @@ std::optional<ParserType> Parser::_type () {
 
     auto typeFn = ParserTypeFn{fnParams, *fnReturnType};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc});
+  } else if (tok1.type == TK_ID) {
+    auto typeId = ParserTypeId{tok1};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_KW_REF) {
     auto type = this->_type();
 

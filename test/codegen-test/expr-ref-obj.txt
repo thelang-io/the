@@ -6,10 +6,10 @@ obj Test1 {
   mut refA: ref int
   mut refB: ref str
 
-  fn1: fn (ref int) ref int
-  refFn1: ref (fn (ref int) ref int)
-  fn2: fn () int
-  refFn2: ref (fn () int)
+  fn1: (ref int) -> ref int
+  refFn1: ref ((ref int) -> ref int)
+  fn2: () -> int
+  refFn2: ref (() -> int)
 }
 
 obj Test2 {

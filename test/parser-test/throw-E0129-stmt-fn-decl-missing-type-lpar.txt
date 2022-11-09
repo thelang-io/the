@@ -1,7 +1,0 @@
-======= stdin =======
-fn test (a: fn ) void {
-}
-======= stderr =======
-/test:1:16: E0129 - Expected left parentheses after fn keyword
-  1 | fn test (a: fn ) void {
-    |                ^
