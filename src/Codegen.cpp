@@ -3163,7 +3163,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = calleeTypeInfo.realTypeName + "_push(" + calleeCode + ", " + std::to_string(exprCall.args.size());
 
         if (!exprCall.args.empty()) {
-          auto elementTypeInfo = std::get<TypeArray>(calleeTypeInfo.type->body).elementType;
+          auto elementTypeInfo = std::get<TypeArray>(calleeTypeInfo.realType->body).elementType;
 
           for (const auto &arg : exprCall.args) {
             code += ", " + this->_nodeExpr(arg.expr, elementTypeInfo);

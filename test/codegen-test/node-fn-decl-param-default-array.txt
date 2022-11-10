@@ -181,13 +181,13 @@ struct __THE_1_array_int __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
   const struct __THE_1_array_int __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_array_int_alloc(3, 1, 2, 3);
   struct __THE_1_array_int __THE_0_d_0 = __THE_1_array_int_alloc(0);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)); __THE_0_i_0++) {
-    __THE_1_array_int_push(&__THE_0_d_0, 1, __THE_1_array_int_at(__THE_0_a_0, __THE_0_i_0));
+    __THE_1_array_int_push(&__THE_0_d_0, 1, *__THE_1_array_int_at(__THE_0_a_0, __THE_0_i_0));
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)); __THE_0_i_0++) {
-    __THE_1_array_int_push(&__THE_0_d_0, 1, __THE_1_array_int_at(__THE_0_b_0, __THE_0_i_0));
+    __THE_1_array_int_push(&__THE_0_d_0, 1, *__THE_1_array_int_at(__THE_0_b_0, __THE_0_i_0));
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0)); __THE_0_i_0++) {
-    __THE_1_array_int_push(&__THE_0_d_0, 1, __THE_1_array_int_at(__THE_0_c_0, __THE_0_i_0));
+    __THE_1_array_int_push(&__THE_0_d_0, 1, *__THE_1_array_int_at(__THE_0_c_0, __THE_0_i_0));
   }
   v = __THE_1_array_int_copy(__THE_0_d_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_d_0);

@@ -350,6 +350,15 @@ const std::vector<std::string> codegenFs = {
   R"(fs_scandirSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
+  R"(  for (_{size_t} j = 0; j < l; j++) {)" EOL
+  R"(    for (_{size_t} k = j + 1; k < l; k++) {)" EOL
+  R"(      if (_{memcmp}(r[j].d, r[k].d, r[j].l > r[k].l ? r[k].l : r[j].l) > 0) {)" EOL
+  R"(        _{struct str} a = r[j];)" EOL
+  R"(        r[j] = r[k];)" EOL
+  R"(        r[k] = a;)" EOL
+  R"(      })" EOL
+  R"(    })" EOL
+  R"(  })" EOL
   R"(  return (struct _{array_str}) {r, l};)" EOL
   R"(})" EOL,
 

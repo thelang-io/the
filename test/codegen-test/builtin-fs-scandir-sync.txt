@@ -227,6 +227,15 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
 fs_scandirSync_cleanup:
   free(c);
   str_free(s);
+  for (size_t j = 0; j < l; j++) {
+    for (size_t k = j + 1; k < l; k++) {
+      if (memcmp(r[j].d, r[k].d, r[j].l > r[k].l ? r[k].l : r[j].l) > 0) {
+        struct str a = r[j];
+        r[j] = r[k];
+        r[k] = a;
+      }
+    }
+  }
   return (struct __THE_1_array_str) {r, l};
 }
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
