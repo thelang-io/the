@@ -17,6 +17,18 @@
 #include "Parser.hpp"
 #include "config.hpp"
 
+ParserStmtExpr &stmtExprLastChild (ParserStmtExpr &stmtExpr) {
+  if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
+    return stmtExprLastChild(std::get<ParserExprAssign>(*stmtExpr.body).right);
+  } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body)) {
+    return stmtExprLastChild(std::get<ParserExprBinary>(*stmtExpr.body).right);
+  } else if (std::holds_alternative<ParserExprCond>(*stmtExpr.body)) {
+    return stmtExprLastChild(std::get<ParserExprCond>(*stmtExpr.body).alt);
+  }
+
+  return stmtExpr;
+}
+
 Parser::Parser (Lexer *l) {
   this->lexer = l;
   this->reader = this->lexer->reader;
@@ -38,17 +50,38 @@ ParserStmt Parser::next (bool allowSemi) {
       throw Error(this->reader, this->lexer->loc, E0143);
     }
 
-    auto ifBody = this->_block();
-    auto ifAlt = std::optional<std::variant<ParserBlock, ParserStmt>>{};
-    auto [loc1, tok1] = this->lexer->next();
+    auto loc1 = this->lexer->loc;
+    auto ifBody = std::vector<ParserStmt>{};
 
-    if (tok1.type == TK_KW_ELIF) {
-      this->lexer->seek(loc1);
+    try {
+      ifBody = this->_block();
+    } catch (const Error &) {
+      auto &ifCondLastChild = stmtExprLastChild(*ifCond);
+
+      if (!std::holds_alternative<ParserExprObj>(*ifCondLastChild.body)) {
+        this->lexer->seek(loc1);
+        throw Error(this->reader, this->lexer->loc, E0103);
+      } else {
+        auto exprObj = std::get<ParserExprObj>(*ifCondLastChild.body);
+        auto exprAccess = ParserExprAccess{exprObj.id, std::nullopt, std::nullopt};
+
+        ifCondLastChild = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, exprObj.id.start, exprObj.id.end};
+        this->lexer->seek(exprObj.id.end);
+
+        ifBody = this->_block();
+      }
+    }
+
+    auto ifAlt = std::optional<std::variant<ParserBlock, ParserStmt>>{};
+    auto [loc2, tok2] = this->lexer->next();
+
+    if (tok2.type == TK_KW_ELIF) {
+      this->lexer->seek(loc2);
       ifAlt = this->next();
-    } else if (tok1.type == TK_KW_ELSE) {
+    } else if (tok2.type == TK_KW_ELSE) {
       ifAlt = this->_block();
     } else {
-      this->lexer->seek(loc1);
+      this->lexer->seek(loc2);
     }
 
     return this->_wrapStmt(allowSemi, ParserStmtIf{*ifCond, ifBody, ifAlt}, tok0.start);
@@ -902,51 +935,63 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
-  auto [_2, tok2] = this->lexer->next();
-  auto exprObjProps = std::vector<ParserExprObjProp>{};
-
-  while (tok2.type != TK_OP_RBRACE) {
-    if (tok2.type != TK_ID && exprObjProps.empty()) {
-      this->lexer->seek(loc);
-      return std::make_tuple(stmtExpr, false);
-    } else if (tok2.type != TK_ID) {
-      throw Error(this->reader, tok2.start, E0112);
-    }
-
-    auto [_3, tok3] = this->lexer->next();
-
-    if (tok3.type != TK_OP_COLON && exprObjProps.empty()) {
-      this->lexer->seek(loc);
-      return std::make_tuple(stmtExpr, false);
-    } else if (tok3.type != TK_OP_COLON) {
-      throw Error(this->reader, tok3.start, E0113);
-    }
-
-    auto exprObjPropInit = this->_stmtExpr();
-
-    if (exprObjPropInit == std::nullopt) {
-      throw Error(this->reader, this->lexer->loc, E0134);
-    }
-
-    exprObjProps.push_back(ParserExprObjProp{tok2, *exprObjPropInit});
-    std::tie(_2, tok2) = this->lexer->next();
-
-    if (tok2.type == TK_OP_COMMA) {
-      std::tie(_2, tok2) = this->lexer->next();
-    }
-  }
-
-  if (exprObjProps.empty()) {
+  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     this->lexer->seek(loc);
     return std::make_tuple(stmtExpr, false);
-  } else if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
-    throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0114);
   }
 
   auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
 
   if (!std::holds_alternative<Token>(exprAccess.expr)) {
-    throw Error(this->reader, stmtExpr.start, stmtExpr.end, E0114);
+    this->lexer->seek(loc);
+    return std::make_tuple(stmtExpr, false);
+  }
+
+  auto exprObjProps = std::vector<ParserExprObjProp>{};
+  auto [_2, tok2] = this->lexer->next();
+
+  while (tok2.type != TK_OP_RBRACE) {
+    if (tok2.type != TK_ID && !exprObjProps.empty()) {
+      throw Error(this->reader, tok2.start, E0112);
+    } else if (tok2.type != TK_ID) {
+      this->lexer->seek(loc);
+      return std::make_tuple(stmtExpr, false);
+    }
+
+    auto [_3, tok3] = this->lexer->next();
+
+    if (tok3.type != TK_OP_COLON && !exprObjProps.empty()) {
+      throw Error(this->reader, tok3.start, E0113);
+    } else if (tok3.type != TK_OP_COLON) {
+      this->lexer->seek(loc);
+      return std::make_tuple(stmtExpr, false);
+    }
+
+    auto loc4 = this->lexer->loc;
+    auto exprObjPropInit = std::optional<ParserStmtExpr>{};
+
+    try {
+      exprObjPropInit = this->_stmtExpr();
+    } catch (const Error &) {
+      this->lexer->seek(loc4);
+    }
+
+    if (exprObjPropInit == std::nullopt && !exprObjProps.empty()) {
+      throw Error(this->reader, this->lexer->loc, E0134);
+    } else if (exprObjPropInit == std::nullopt) {
+      this->lexer->seek(loc);
+      return std::make_tuple(stmtExpr, false);
+    }
+
+    exprObjProps.push_back(ParserExprObjProp{tok2, *exprObjPropInit});
+    std::tie(_2, tok2) = this->lexer->next();
+
+    if (tok2.type != TK_OP_COMMA && tok2.type != TK_OP_RBRACE) {
+      this->lexer->seek(loc);
+      return std::make_tuple(stmtExpr, false);
+    } else if (tok2.type == TK_OP_COMMA) {
+      std::tie(_2, tok2) = this->lexer->next();
+    }
   }
 
   auto exprObj = ParserExprObj{std::get<Token>(exprAccess.expr), exprObjProps};

@@ -1,0 +1,6 @@
+======= stdin =======
+if test }
+======= stderr =======
+/test:1:8: E0103 - Expected left brace
+  1 | if test }
+    |        ^
