@@ -30,6 +30,7 @@ main {
   test1(job1)
   test2(job2)
   test3(job3)
+  test4(job3)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -209,6 +210,7 @@ int main () {
   __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1P) {__THE_1_fn$0_copy(__THE_0_job1_0)});
   __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$3P) {__THE_1_fn$2_copy(__THE_0_job2_0)});
   __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$5P) {__THE_1_fn$4_copy(__THE_0_job3_0)});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$5P) {__THE_1_fn$4_copy(__THE_0_job3_0)});
 }
 ======= flags =======
 ======= stdout =======

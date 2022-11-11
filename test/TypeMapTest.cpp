@@ -95,30 +95,7 @@ TEST_F(TypeMapTest, FunctionInserts) {
   EXPECT_TRUE(fn3Body.params[1].variadic);
 }
 
-TEST_F(TypeMapTest, FunctionInsertsSimilar) {
-  auto type1 = this->tm_.fn("test1_0", {
-    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"));
-
-  auto type2 = this->tm_.fn("test2_0", {
-    TypeFnParam{"b", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"));
-
-  auto type3 = this->tm_.fn("test3_0", {
-    TypeFnParam{"a", this->tm_.get("str"), true, true, false}
-  }, this->tm_.get("int"));
-
-  auto type4 = this->tm_.fn("test4_0", {
-    TypeFnParam{"a", this->tm_.get("str"), false, true, false}
-  }, this->tm_.get("i8"));
-
-  EXPECT_EQ(type1->name, "fn$0");
-  EXPECT_EQ(type1->name, type2->name);
-  EXPECT_EQ(type3->name, "fn$1");
-  EXPECT_EQ(type3->name, type4->name);
-}
-
-TEST_F(TypeMapTest, FunctionDoesNotInsertExact) {
+TEST_F(TypeMapTest, FunctionDoesNotInsert) {
   auto type1 = this->tm_.fn("test1_0", {
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
