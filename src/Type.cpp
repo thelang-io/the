@@ -396,16 +396,7 @@ bool Type::matchExact (const Type *type) const {
 }
 
 bool Type::matchNice (const Type *type) const {
-  if (this->isRef() || type->isRef()) {
-    if (!this->isRef() || !type->isRef()) {
-      return false;
-    }
-
-    auto lhsRef = std::get<TypeRef>(this->body);
-    auto rhsRef = std::get<TypeRef>(type->body);
-
-    return lhsRef.refType->matchNice(rhsRef.refType);
-  } else if (this->isArray() || type->isArray()) {
+  if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
     }
@@ -414,17 +405,8 @@ bool Type::matchNice (const Type *type) const {
     auto rhsArray = std::get<TypeArray>(type->body);
 
     return lhsArray.elementType->matchNice(rhsArray.elementType);
-  } else if (this->isOpt() || type->isOpt()) {
-    if (!this->isOpt() || !type->isOpt()) {
-      return false;
-    }
-
-    auto lhsOptional = std::get<TypeOptional>(this->body);
-    auto rhsOptional = std::get<TypeOptional>(type->body);
-
-    return lhsOptional.type->matchExact(rhsOptional.type);
-  } else if (this->isFn()) {
-    if (!type->isFn()) {
+  } else if (this->isFn() || type->isFn()) {
+    if (!this->isFn() || !type->isFn()) {
       return false;
     }
 
@@ -440,7 +422,9 @@ bool Type::matchNice (const Type *type) const {
       auto rhsFnParam = rhsFn.params[i];
 
       if (
+        (lhsFnParam.name != std::nullopt && rhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
         !lhsFnParam.type->matchNice(rhsFnParam.type) ||
+        (lhsFnParam.mut && lhsFnParam.mut != rhsFnParam.mut) ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic
       ) {
@@ -449,18 +433,27 @@ bool Type::matchNice (const Type *type) const {
     }
 
     return true;
-  } else if (this->isObj()) {
-    return type->isObj() && this->name == type->name;
+  } else if (this->isOpt() || type->isOpt()) {
+    if (!this->isOpt() || !type->isOpt()) {
+      return false;
+    }
+
+    auto lhsOptional = std::get<TypeOptional>(this->body);
+    auto rhsOptional = std::get<TypeOptional>(type->body);
+
+    return lhsOptional.type->matchNice(rhsOptional.type);
+  } else if (this->isRef() || type->isRef()) {
+    if (!this->isRef() || !type->isRef()) {
+      return false;
+    }
+
+    auto lhsRef = std::get<TypeRef>(this->body);
+    auto rhsRef = std::get<TypeRef>(type->body);
+
+    return lhsRef.refType->matchNice(rhsRef.refType);
   }
 
-  return (this->name == "any" && type->name == "any") ||
-    (this->name == "bool" && type->name == "bool") ||
-    (this->name == "byte" && (type->name == "byte" || type->isIntNumber())) ||
-    (type->name == "byte" && (this->name == "byte" || this->isIntNumber())) ||
-    (this->name == "char" && type->name == "char") ||
-    (this->name == "str" && type->name == "str") ||
-    (this->name == "void" && type->name == "void") ||
-    numberTypeMatch(this->name, type->name);
+  return this->name == type->name;
 }
 
 bool Type::shouldBeFreed () const {
