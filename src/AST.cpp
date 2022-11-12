@@ -403,7 +403,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
     try {
       exprBinaryOperandsType = this->_nodeExprType(parserExprBinary.left, nullptr);
-    } catch (const Error &err) {
+    } catch (const Error &) {
       exprBinaryOperandsType = this->_nodeExprType(parserExprBinary.right, nullptr);
     }
 
@@ -517,7 +517,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
     try {
       exprCondOperandsType = this->_nodeExprType(parserExprCond.body, targetType);
-    } catch (const Error &err) {
+    } catch (const Error &) {
       exprCondOperandsType = this->_nodeExprType(parserExprCond.alt, targetType);
     }
 
@@ -676,10 +676,10 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
 
     try {
       exprBinaryLeftType = this->_nodeExprType(exprBinary.left, nullptr);
-    } catch (const Error &err1) {
+    } catch (const Error &) {
       try {
         exprBinaryRightType = this->_nodeExprType(exprBinary.right, nullptr);
-      } catch (const Error &err2) {
+      } catch (const Error &) {
       }
     }
 
@@ -724,10 +724,10 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
 
     try {
       exprCondBodyType = this->_nodeExprType(exprCond.body, targetType);
-    } catch (const Error &err1) {
+    } catch (const Error &) {
       try {
         exprCondAltType = this->_nodeExprType(exprCond.alt, targetType);
-      } catch (const Error &err2) {
+      } catch (const Error &) {
       }
     }
 

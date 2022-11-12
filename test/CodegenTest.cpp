@@ -528,6 +528,7 @@ INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(ExprObj, CodegenPassTest, testing::Values(
   "expr-obj",
+  "expr-obj-empty",
   "expr-obj-nested"
 ));
 

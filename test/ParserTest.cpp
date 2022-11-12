@@ -73,7 +73,8 @@ INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
   "stmt-if-single-elif",
   "stmt-if-else",
   "stmt-if-multi-elif",
-  "stmt-if-nested"
+  "stmt-if-nested",
+  "stmt-if-complex"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserPassTest, testing::Values(
@@ -146,6 +147,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-lit-esc",
   "expr-lit-nil",
   "expr-obj",
+  "expr-obj-empty",
   "expr-obj-nested",
   "expr-obj-precedence",
   "expr-ref",
@@ -192,6 +194,7 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
+  "throw-E0103-stmt-if-missing-lbrace",
   "throw-E0143-stmt-if-expected-expr"
 ));
 
@@ -242,14 +245,6 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0111-expr-cond-missing-colon",
   "throw-E0112-expr-obj-missing-prop-name",
   "throw-E0113-expr-obj-missing-colon",
-  "throw-E0114-expr-obj-member-id",
-  "throw-E0114-expr-obj-name-assign",
-  "throw-E0114-expr-obj-name-binary",
-  "throw-E0114-expr-obj-name-call",
-  "throw-E0114-expr-obj-name-cond",
-  "throw-E0114-expr-obj-name-lit",
-  "throw-E0114-expr-obj-name-obj",
-  "throw-E0114-expr-obj-name-unary",
   "throw-E0132-expr-unary-missing-arg",
   "throw-E0133-expr-assign-missing-value",
   "throw-E0134-expr-obj-missing-prop-init",

@@ -50,7 +50,7 @@
 #define E0111 "E0111 - Expected colon after ternary expression"
 #define E0112 "E0112 - Expected property name in object expression"
 #define E0113 "E0113 - Expected colon after property name in object expression"
-#define E0114 "E0114 - Only identifiers accepted as object expression names"
+// #define E0114 "E0114 - Only identifiers accepted as object expression names"
 #define E0115 "E0115 - Expected function identifier after fn keyword"
 #define E0116 "E0116 - Expected left parentheses after function identifier"
 #define E0117 "E0117 - Expected identifier as function parameter name"

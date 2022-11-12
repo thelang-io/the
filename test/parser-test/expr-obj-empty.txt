@@ -1,0 +1,71 @@
+======= stdin =======
+main {
+  b := Test{}
+
+  if Test{} == Test{} {
+  }
+
+  loop Test{} == Test{} {
+  }
+}
+======= stdout =======
+<StmtMain start="1:1" end="9:2">
+  <StmtVarDecl start="2:3" end="2:14">
+    <StmtVarDeclId>
+      <Token type="ID" val="b" start="2:3" end="2:4" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprObj start="2:8" end="2:14">
+        <ExprObjId>
+          <Token type="ID" val="Test" start="2:8" end="2:12" />
+        </ExprObjId>
+      </ExprObj>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+  <StmtIf start="4:3" end="5:4">
+    <StmtIfCond>
+      <ExprBinary start="4:6" end="4:22">
+        <ExprBinaryLeft>
+          <ExprObj start="4:6" end="4:12">
+            <ExprObjId>
+              <Token type="ID" val="Test" start="4:6" end="4:10" />
+            </ExprObjId>
+          </ExprObj>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_EQ_EQ" val="==" start="4:13" end="4:15" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprObj start="4:16" end="4:22">
+            <ExprObjId>
+              <Token type="ID" val="Test" start="4:16" end="4:20" />
+            </ExprObjId>
+          </ExprObj>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtIfCond>
+  </StmtIf>
+  <StmtLoop start="7:3" end="8:4">
+    <StmtLoopCond>
+      <ExprBinary start="7:8" end="7:24">
+        <ExprBinaryLeft>
+          <ExprObj start="7:8" end="7:14">
+            <ExprObjId>
+              <Token type="ID" val="Test" start="7:8" end="7:12" />
+            </ExprObjId>
+          </ExprObj>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_EQ_EQ" val="==" start="7:15" end="7:17" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprObj start="7:18" end="7:24">
+            <ExprObjId>
+              <Token type="ID" val="Test" start="7:18" end="7:22" />
+            </ExprObjId>
+          </ExprObj>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtLoopCond>
+  </StmtLoop>
+</StmtMain>
