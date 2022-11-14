@@ -1699,6 +1699,7 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
   auto name = std::string();
   auto isName = false;
   auto result = std::string();
+  result.reserve(code.size());
 
   for (auto i = static_cast<std::size_t>(0); i < code.size(); i++) {
     auto ch = code[i];
@@ -1947,13 +1948,30 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
       ) {
         auto exprBinaryLeft = std::holds_alternative<ASTExprAccess>(*exprBinary.left.body) ? exprBinary.left : exprBinary.right;
         auto exprBinaryRight = std::holds_alternative<ASTExprLit>(*exprBinary.right.body) ? exprBinary.right : exprBinary.left;
-
-        auto exprBinaryLeftAccess = std::get<ASTExprAccess>(*exprBinaryLeft.body);
         auto exprBinaryRightLit = std::get<ASTExprLit>(*exprBinaryRight.body);
 
         if (exprBinaryLeft.type->isOpt() && exprBinaryRightLit.type == AST_EXPR_LIT_NIL) {
           auto exprBinaryLeftAccessCode = this->_nodeExpr(exprBinaryLeft, exprBinaryLeft.type, true);
           auto exprBinaryLeftAccessTypeOpt = std::get<TypeOptional>(exprBinaryLeft.type->body);
+
+          if (exprBinary.op == AST_EXPR_BINARY_EQ) {
+            altTypeCasts[exprBinaryLeftAccessCode] = exprBinaryLeftAccessTypeOpt.type;
+          } else {
+            bodyTypeCasts[exprBinaryLeftAccessCode] = exprBinaryLeftAccessTypeOpt.type;
+          }
+        }
+      } else if (
+        (std::holds_alternative<ASTExprAssign>(*exprBinary.left.body) && std::holds_alternative<ASTExprLit>(*exprBinary.right.body)) ||
+        (std::holds_alternative<ASTExprAssign>(*exprBinary.right.body) && std::holds_alternative<ASTExprLit>(*exprBinary.left.body))
+      ) {
+        auto exprBinaryLeft = std::holds_alternative<ASTExprAssign>(*exprBinary.left.body) ? exprBinary.left : exprBinary.right;
+        auto exprBinaryLeftAssign = std::get<ASTExprAssign>(*exprBinaryLeft.body);
+        auto exprBinaryRight = std::holds_alternative<ASTExprLit>(*exprBinary.right.body) ? exprBinary.right : exprBinary.left;
+        auto exprBinaryRightLit = std::get<ASTExprLit>(*exprBinaryRight.body);
+
+        if (exprBinaryLeft.type->isOpt() && exprBinaryRightLit.type == AST_EXPR_LIT_NIL) {
+          auto exprBinaryLeftAccessCode = this->_nodeExpr(exprBinaryLeftAssign.left, exprBinaryLeftAssign.left.type, true);
+          auto exprBinaryLeftAccessTypeOpt = std::get<TypeOptional>(exprBinaryLeftAssign.left.type->body);
 
           if (exprBinary.op == AST_EXPR_BINARY_EQ) {
             altTypeCasts[exprBinaryLeftAccessCode] = exprBinaryLeftAccessTypeOpt.type;
@@ -2610,6 +2628,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
     auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
+    auto originalObjMemberType = nodeExpr.type;
 
     if (exprAccess.prop == "len" && objTypeInfo.realType->isArray()) {
       auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
@@ -2637,6 +2656,13 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       code = objCode + "->" + Codegen::name(*exprAccess.prop);
+
+      for (const auto &field : objTypeInfo.realType->fields) {
+        if (field.name == *exprAccess.prop) {
+          originalObjMemberType = field.type;
+          break;
+        }
+      }
     } else if (exprAccess.elem != std::nullopt) {
       auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
       auto objElemCode = this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type);
@@ -2648,6 +2674,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("fnStrAt");
         code = "str_at(" + objCode + ", " + objElemCode + ")";
       }
+    }
+
+    auto objMemberType = this->state.typeCasts.contains(code) ? this->state.typeCasts[code] : originalObjMemberType;
+
+    if (originalObjMemberType->isOpt() && !objMemberType->isOpt()) {
+      code = "*" + code;
     }
 
     if (!nodeExpr.type->isRef() && targetType->isRef()) {
@@ -3333,9 +3365,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
     auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
+    auto initialStateTypeCasts = this->state.typeCasts;
+    auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(exprCond.cond);
     auto condCode = this->_nodeExpr(exprCond.cond, this->ast->typeMap.get("bool"));
+
+    this->state.typeCasts.merge(bodyTypeCasts);
     auto bodyCode = this->_nodeExpr(exprCond.body, nodeExpr.type);
+    this->state.typeCasts = initialStateTypeCasts;
+    this->state.typeCasts.merge(altTypeCasts);
     auto altCode = this->_nodeExpr(exprCond.alt, nodeExpr.type);
+    this->state.typeCasts = initialStateTypeCasts;
 
     if (
       std::holds_alternative<ASTExprAssign>(*exprCond.alt.body) &&

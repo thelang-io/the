@@ -115,5 +115,95 @@ TK_OP_STAR := 251
 TK_OP_STAR_EQ := 252
 TK_OP_TILDE := 253
 
-// todo remove when CLI gets merged
-fn tk_test_fn () {}
+fn tkToStr (tk: int) str {
+  if tk == TK_EOF { return "TK_EOF" }
+  elif tk == TK_ID { return "TK_ID" }
+  elif tk == TK_WHITESPACE { return "TK_WHITESPACE" }
+  elif tk == TK_COMMENT_BLOCK { return "TK_COMMENT_BLOCK" }
+  elif tk == TK_COMMENT_LINE { return "TK_COMMENT_LINE" }
+  elif tk == TK_LIT_CHAR { return "TK_LIT_CHAR" }
+  elif tk == TK_LIT_FLOAT { return "TK_LIT_FLOAT" }
+  elif tk == TK_LIT_INT_BIN { return "TK_LIT_INT_BIN" }
+  elif tk == TK_LIT_INT_DEC { return "TK_LIT_INT_DEC" }
+  elif tk == TK_LIT_INT_HEX { return "TK_LIT_INT_HEX" }
+  elif tk == TK_LIT_INT_OCT { return "TK_LIT_INT_OCT" }
+  elif tk == TK_LIT_STR { return "TK_LIT_STR" }
+  elif tk == TK_KW_BREAK { return "TK_KW_BREAK" }
+  elif tk == TK_KW_CATCH { return "TK_KW_CATCH" }
+  elif tk == TK_KW_CONTINUE { return "TK_KW_CONTINUE" }
+  elif tk == TK_KW_ELIF { return "TK_KW_ELIF" }
+  elif tk == TK_KW_ELSE { return "TK_KW_ELSE" }
+  elif tk == TK_KW_ENUM { return "TK_KW_ENUM" }
+  elif tk == TK_KW_EXPORT { return "TK_KW_EXPORT" }
+  elif tk == TK_KW_FALSE { return "TK_KW_FALSE" }
+  elif tk == TK_KW_FN { return "TK_KW_FN" }
+  elif tk == TK_KW_IF { return "TK_KW_IF" }
+  elif tk == TK_KW_IMPORT { return "TK_KW_IMPORT" }
+  elif tk == TK_KW_IS { return "TK_KW_IS" }
+  elif tk == TK_KW_LOOP { return "TK_KW_LOOP" }
+  elif tk == TK_KW_MAIN { return "TK_KW_MAIN" }
+  elif tk == TK_KW_MUT { return "TK_KW_MUT" }
+  elif tk == TK_KW_NIL { return "TK_KW_NIL" }
+  elif tk == TK_KW_OBJ { return "TK_KW_OBJ" }
+  elif tk == TK_KW_REF { return "TK_KW_REF" }
+  elif tk == TK_KW_RETURN { return "TK_KW_RETURN" }
+  elif tk == TK_KW_THROW { return "TK_KW_THROW" }
+  elif tk == TK_KW_TRUE { return "TK_KW_TRUE" }
+  elif tk == TK_KW_TRY { return "TK_KW_TRY" }
+  elif tk == TK_KW_UNION { return "TK_KW_UNION" }
+  elif tk == TK_OP_AMP { return "TK_OP_AMP" }
+  elif tk == TK_OP_AMP_EQ { return "TK_OP_AMP_EQ" }
+  elif tk == TK_OP_AMP_AMP { return "TK_OP_AMP_AMP" }
+  elif tk == TK_OP_AMP_AMP_EQ { return "TK_OP_AMP_AMP_EQ" }
+  elif tk == TK_OP_ARROW { return "TK_OP_ARROW" }
+  elif tk == TK_OP_AT { return "TK_OP_AT" }
+  elif tk == TK_OP_BACKTICK { return "TK_OP_BACKTICK" }
+  elif tk == TK_OP_BACKSLASH { return "TK_OP_BACKSLASH" }
+  elif tk == TK_OP_CARET { return "TK_OP_CARET" }
+  elif tk == TK_OP_CARET_EQ { return "TK_OP_CARET_EQ" }
+  elif tk == TK_OP_COLON { return "TK_OP_COLON" }
+  elif tk == TK_OP_COLON_EQ { return "TK_OP_COLON_EQ" }
+  elif tk == TK_OP_COMMA { return "TK_OP_COMMA" }
+  elif tk == TK_OP_DOT { return "TK_OP_DOT" }
+  elif tk == TK_OP_DOLLAR { return "TK_OP_DOLLAR" }
+  elif tk == TK_OP_ELLIPSIS { return "TK_OP_ELLIPSIS" }
+  elif tk == TK_OP_EQ { return "TK_OP_EQ" }
+  elif tk == TK_OP_EQ_EQ { return "TK_OP_EQ_EQ" }
+  elif tk == TK_OP_EXCL { return "TK_OP_EXCL" }
+  elif tk == TK_OP_EXCL_EQ { return "TK_OP_EXCL_EQ" }
+  elif tk == TK_OP_GT { return "TK_OP_GT" }
+  elif tk == TK_OP_GT_EQ { return "TK_OP_GT_EQ" }
+  elif tk == TK_OP_HASH { return "TK_OP_HASH" }
+  elif tk == TK_OP_LBRACE { return "TK_OP_LBRACE" }
+  elif tk == TK_OP_LBRACK { return "TK_OP_LBRACK" }
+  elif tk == TK_OP_LPAR { return "TK_OP_LPAR" }
+  elif tk == TK_OP_LSHIFT { return "TK_OP_LSHIFT" }
+  elif tk == TK_OP_LSHIFT_EQ { return "TK_OP_LSHIFT_EQ" }
+  elif tk == TK_OP_LT { return "TK_OP_LT" }
+  elif tk == TK_OP_LT_EQ { return "TK_OP_LT_EQ" }
+  elif tk == TK_OP_MINUS { return "TK_OP_MINUS" }
+  elif tk == TK_OP_MINUS_EQ { return "TK_OP_MINUS_EQ" }
+  elif tk == TK_OP_MINUS_MINUS { return "TK_OP_MINUS_MINUS" }
+  elif tk == TK_OP_PIPE { return "TK_OP_PIPE" }
+  elif tk == TK_OP_PIPE_EQ { return "TK_OP_PIPE_EQ" }
+  elif tk == TK_OP_PIPE_PIPE { return "TK_OP_PIPE_PIPE" }
+  elif tk == TK_OP_PIPE_PIPE_EQ { return "TK_OP_PIPE_PIPE_EQ" }
+  elif tk == TK_OP_PERCENT { return "TK_OP_PERCENT" }
+  elif tk == TK_OP_PERCENT_EQ { return "TK_OP_PERCENT_EQ" }
+  elif tk == TK_OP_PLUS { return "TK_OP_PLUS" }
+  elif tk == TK_OP_PLUS_EQ { return "TK_OP_PLUS_EQ" }
+  elif tk == TK_OP_PLUS_PLUS { return "TK_OP_PLUS_PLUS" }
+  elif tk == TK_OP_QN { return "TK_OP_QN" }
+  elif tk == TK_OP_RBRACE { return "TK_OP_RBRACE" }
+  elif tk == TK_OP_RBRACK { return "TK_OP_RBRACK" }
+  elif tk == TK_OP_RPAR { return "TK_OP_RPAR" }
+  elif tk == TK_OP_RSHIFT { return "TK_OP_RSHIFT" }
+  elif tk == TK_OP_RSHIFT_EQ { return "TK_OP_RSHIFT_EQ" }
+  elif tk == TK_OP_SEMI { return "TK_OP_SEMI" }
+  elif tk == TK_OP_SLASH { return "TK_OP_SLASH" }
+  elif tk == TK_OP_SLASH_EQ { return "TK_OP_SLASH_EQ" }
+  elif tk == TK_OP_STAR { return "TK_OP_STAR" }
+  elif tk == TK_OP_STAR_EQ { return "TK_OP_STAR_EQ" }
+  elif tk == TK_OP_TILDE { return "TK_OP_TILDE" }
+  else { return "TK_UNKNOWN" }
+}

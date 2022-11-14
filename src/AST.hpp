@@ -17,6 +17,7 @@
 #ifndef SRC_AST_HPP
 #define SRC_AST_HPP
 
+#include <map>
 #include "ASTNode.hpp"
 #include "Parser.hpp"
 
@@ -32,6 +33,7 @@ class AST {
   TypeMap typeMap;
   VarMap varMap;
   ASTState state;
+  std::map<std::string, Type *> typeCasts = {};
 
   static void populateParents (ASTBlock &, ASTNode * = nullptr);
 
@@ -45,6 +47,7 @@ class AST {
   AST &operator= (const AST &);
 
   ASTBlock _block (const ParserBlock &, VarStack &);
+  std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ParserStmtExpr &);
   void _forwardNode (const ParserBlock &);
   ASTNode _node (const ParserStmt &, VarStack &);
   ASTNodeExpr _nodeExpr (const ParserStmtExpr &, Type *, VarStack &);

@@ -1,0 +1,141 @@
+======= stdin =======
+obj Test {
+  mut a: int?
+}
+
+main {
+  mut test: int?
+
+  a := test == nil ? 1 : test
+  b := test != nil ? test : 2
+  c := nil == test ? 3 : test
+  d := nil != test ? test : 4
+
+  e := (test = 5) == nil ? 5 : test
+  f := (test = nil) != nil ? test : 6
+  e := nil == (test = nil) ? 7 : test
+  f := nil != (test = 8) ? test : 8
+
+  mut test2 := Test{}
+
+  a2 := test2.a == nil ? 1 : test2.a
+  b2 := test2.a != nil ? test2.a : 2
+  c2 := nil == test2.a ? 3 : test2.a
+  d2 := nil != test2.a ? test2.a : 4
+
+  e2 := (test2.a = 5) == nil ? 5 : test2.a
+  f2 := (test2.a = nil) != nil ? test2.a : 6
+  e2 := nil == (test2.a = nil) ? 7 : test2.a
+  f2 := nil != (test2.a = 8) ? test2.a : 8
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  int32_t *__THE_0_a;
+};
+
+void *alloc (size_t);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+bool __THE_1_opt_int_eq (int32_t *, int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+bool __THE_1_opt_int_ne (int32_t *, int32_t *);
+int32_t *__THE_1_opt_int_realloc (int32_t *, int32_t *);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t *);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+int32_t *__THE_1_opt_int_alloc (int32_t n) {
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = n;
+  return r;
+}
+int32_t *__THE_1_opt_int_copy (const int32_t *n) {
+  if (n == NULL) return NULL;
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = *n;
+  return r;
+}
+bool __THE_1_opt_int_eq (int32_t *n1, int32_t *n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : *n1 == *n2;
+  __THE_1_opt_int_free((int32_t *) n1);
+  __THE_1_opt_int_free((int32_t *) n2);
+  return r;
+}
+void __THE_1_opt_int_free (int32_t *n) {
+  if (n == NULL) return;
+  free(n);
+}
+bool __THE_1_opt_int_ne (int32_t *n1, int32_t *n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : *n1 != *n2;
+  __THE_1_opt_int_free((int32_t *) n1);
+  __THE_1_opt_int_free((int32_t *) n2);
+  return r;
+}
+int32_t *__THE_1_opt_int_realloc (int32_t *n1, int32_t *n2) {
+  __THE_1_opt_int_free((int32_t *) n1);
+  return n2;
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t *__THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  __THE_1_opt_int_free((int32_t *) o->__THE_0_a);
+  free(o);
+}
+
+int main () {
+  int32_t *__THE_0_test_0 = NULL;
+  const int32_t __THE_0_a_0 = __THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_test_0), NULL) ? 1 : *__THE_0_test_0;
+  const int32_t __THE_0_b_0 = __THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_test_0), NULL) ? *__THE_0_test_0 : 2;
+  const int32_t __THE_0_c_0 = __THE_1_opt_int_eq(NULL, __THE_1_opt_int_copy(__THE_0_test_0)) ? 3 : *__THE_0_test_0;
+  const int32_t __THE_0_d_0 = __THE_1_opt_int_ne(NULL, __THE_1_opt_int_copy(__THE_0_test_0)) ? *__THE_0_test_0 : 4;
+  const int32_t __THE_0_e_0 = __THE_1_opt_int_eq((__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, __THE_1_opt_int_alloc(5)))), NULL) ? 5 : *__THE_0_test_0;
+  const int32_t __THE_0_f_0 = __THE_1_opt_int_ne((__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, NULL))), NULL) ? *__THE_0_test_0 : 6;
+  const int32_t __THE_0_e_1 = __THE_1_opt_int_eq(NULL, (__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, NULL)))) ? 7 : *__THE_0_test_0;
+  const int32_t __THE_0_f_1 = __THE_1_opt_int_ne(NULL, (__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, __THE_1_opt_int_alloc(8))))) ? *__THE_0_test_0 : 8;
+  struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_alloc(NULL);
+  const int32_t __THE_0_a2_0 = __THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a), NULL) ? 1 : *__THE_0_test2_0->__THE_0_a;
+  const int32_t __THE_0_b2_0 = __THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a), NULL) ? *__THE_0_test2_0->__THE_0_a : 2;
+  const int32_t __THE_0_c2_0 = __THE_1_opt_int_eq(NULL, __THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a)) ? 3 : *__THE_0_test2_0->__THE_0_a;
+  const int32_t __THE_0_d2_0 = __THE_1_opt_int_ne(NULL, __THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a)) ? *__THE_0_test2_0->__THE_0_a : 4;
+  const int32_t __THE_0_e2_0 = __THE_1_opt_int_eq((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(5)))), NULL) ? 5 : *__THE_0_test2_0->__THE_0_a;
+  const int32_t __THE_0_f2_0 = __THE_1_opt_int_ne((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL))), NULL) ? *__THE_0_test2_0->__THE_0_a : 6;
+  const int32_t __THE_0_e2_1 = __THE_1_opt_int_eq(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL)))) ? 7 : *__THE_0_test2_0->__THE_0_a;
+  const int32_t __THE_0_f2_1 = __THE_1_opt_int_ne(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(8))))) ? *__THE_0_test2_0->__THE_0_a : 8;
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_test_0);
+}
+======= flags =======
+======= stdout =======

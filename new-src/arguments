@@ -19,7 +19,7 @@ obj Arguments {
 }
 
 fn Arguments_init () Arguments {
-  args = process_args.slice(1)
+  args := process_args.slice(1)
 
   if args.empty() {
     RaiseError("REPL is not supported")
