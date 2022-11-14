@@ -21,6 +21,9 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
+int argc = 0;
+char **argv = (void *) 0;
+
 struct str {
   char *d;
   size_t l;
@@ -66,7 +69,9 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
   free(n.d);
 }
 
-int main (int argc, char *argv[]) {
+int main (int __argc, char **__argv) {
+  argc = __argc;
+  argv = __argv;
   __THE_1_array_str_free((struct __THE_1_array_str) process_args(argc, argv));
 }
 ======= flags =======

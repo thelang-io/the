@@ -15,7 +15,7 @@
  */
 
 main {
-  arguments := Arguments_init(process_args)
+  arguments := Arguments_init()
   mut reader := Reader_init(arguments.fileName)
   mut tokenizer := Tokenizer_init(ref reader)
   mut result: str[]

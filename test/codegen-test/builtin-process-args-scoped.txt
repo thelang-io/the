@@ -1,7 +1,10 @@
 ======= stdin =======
-main {
+fn test () {
   print(process_args)
   print(process_args.len)
+}
+main {
+  test()
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -33,9 +36,15 @@ struct str {
 };
 
 struct __THE_1_array_str;
+struct __THE_1_fn$0;
 
 struct __THE_1_array_str {
   struct str *d;
+  size_t l;
+};
+struct __THE_1_fn$0 {
+  void (*f) (void *);
+  void *x;
   size_t l;
 };
 
@@ -51,6 +60,7 @@ struct __THE_1_array_str process_args (int, char **);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
+void __THE_1_test_0 (void *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -169,14 +179,18 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return str_concat_cstr(r, "]");
 }
+void __THE_1_test_0 (void *px) {
+  print(stdout, "sz", __THE_1_array_str_str(process_args(argc, argv)), THE_EOL);
+  print(stdout, "iz", __THE_1_array_str_len(process_args(argc, argv)), THE_EOL);
+}
 
 int main (int __argc, char **__argv) {
   argc = __argc;
   argv = __argv;
-  print(stdout, "sz", __THE_1_array_str_str(process_args(argc, argv)), THE_EOL);
-  print(stdout, "iz", __THE_1_array_str_len(process_args(argc, argv)), THE_EOL);
+  const struct __THE_1_fn$0 __THE_0_test_0 = (struct __THE_1_fn$0) {&__THE_1_test_0, NULL, 0};
+  __THE_0_test_0.f(__THE_0_test_0.x);
 }
 ======= flags =======
 ======= stdout =======
-["build{{ [/\\] }}builtin-process-args.{{ (out|exe) }}"]
+["build{{ [/\\] }}builtin-process-args-scoped.{{ (out|exe) }}"]
 1

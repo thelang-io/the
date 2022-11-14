@@ -382,6 +382,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinPath, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
   "builtin-process-args",
   "builtin-process-args-root",
+  "builtin-process-args-scoped",
   "builtin-process-cwd",
   "builtin-process-cwd-root",
   "builtin-process-getgid",

@@ -269,6 +269,11 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
     builtinStructDefCode += "#endif" EOL;
   }
 
+  if (this->needMainArgs) {
+    builtinVarCode += "int argc = 0;" EOL;
+    builtinVarCode += "char **argv = (void *) 0;" EOL;
+  }
+
   if (this->builtins.varLibOpensslInit) {
     builtinVarCode += "bool lib_openssl_init = false;" EOL;
   }
@@ -1142,9 +1147,18 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
   output += structDefCode;
   output += fnDeclCode;
   output += fnDefCode;
-  output += "int main (" + std::string(this->needMainArgs ? "int argc, char *argv[]" : "") + ") {" EOL;
-  output += mainCode;
-  output += "}" EOL;
+
+  if (this->needMainArgs) {
+    output += "int main (int __argc, char **__argv) {" EOL;
+    output += "  argc = __argc;" EOL;
+    output += "  argv = __argv;" EOL;
+    output += mainCode;
+    output += "}" EOL;
+  } else {
+    output += "int main () {" EOL;
+    output += mainCode;
+    output += "}" EOL;
+  }
 
   return std::make_tuple(output, this->flags);
 }
