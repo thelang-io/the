@@ -170,9 +170,9 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   return str_concat_cstr(r, "]");
 }
 
-int main (int __argc, char **__argv) {
-  argc = __argc;
-  argv = __argv;
+int main (int _argc_, char *_argv_[]) {
+  argc = _argc_;
+  argv = _argv_;
   print(stdout, "sz", __THE_1_array_str_str(process_args(argc, argv)), THE_EOL);
   print(stdout, "iz", __THE_1_array_str_len(process_args(argc, argv)), THE_EOL);
 }

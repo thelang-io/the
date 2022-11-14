@@ -1149,9 +1149,9 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
   output += fnDefCode;
 
   if (this->needMainArgs) {
-    output += "int main (int __argc, char **__argv) {" EOL;
-    output += "  argc = __argc;" EOL;
-    output += "  argv = __argv;" EOL;
+    output += "int main (int _argc_, char *_argv_[]) {" EOL;
+    output += "  argc = _argc_;" EOL;
+    output += "  argv = _argv_;" EOL;
     output += mainCode;
     output += "}" EOL;
   } else {

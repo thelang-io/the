@@ -69,9 +69,9 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
   free(n.d);
 }
 
-int main (int __argc, char **__argv) {
-  argc = __argc;
-  argv = __argv;
+int main (int _argc_, char *_argv_[]) {
+  argc = _argc_;
+  argv = _argv_;
   __THE_1_array_str_free((struct __THE_1_array_str) process_args(argc, argv));
 }
 ======= flags =======
