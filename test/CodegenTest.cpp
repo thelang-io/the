@@ -508,7 +508,8 @@ INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
   "expr-cond-array",
   "expr-cond-opt",
   "expr-cond-str",
-  "expr-cond-operands"
+  "expr-cond-operands",
+  "expr-cond-type-casts"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenPassTest, testing::Values(
@@ -624,7 +625,8 @@ INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if",
   "node-if-cmp-num",
   "node-if-cmp-opt",
-  "node-if-cmp-str"
+  "node-if-cmp-str",
+  "node-if-type-casts"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(

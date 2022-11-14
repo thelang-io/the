@@ -95,7 +95,7 @@ fn Token_str (self: Token) str {
   val := _Token_valEscaped(self)
 
   return
-    self.type.str().slice(3) +
+    tkToStr(self.type).slice(3) +
     "(" + self.start.str() + "-" + self.end.str() + ")" +
     (val == "" ? "" : ": " + val)
 }
@@ -103,7 +103,7 @@ fn Token_str (self: Token) str {
 fn Token_xml (self: Token) str {
   return
     "<Token" +
-    " type=\"" + self.type.str().slice(3) + "\"" +
+    " type=\"" + tkToStr(self.type).slice(3) + "\"" +
     " val=\"" + _Token_valEscaped(self, true) + "\"" +
     " start=\"" + self.start.str() + "\"" +
     " end=\"" + self.end.str() + "\"" +
