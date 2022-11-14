@@ -42,15 +42,11 @@ systems:
 | Operating System | Version           | Architecture      | Support          |
 |:---------------- | ----------------- | ----------------- | ---------------- |
 |                  |                   |                   |                  |
-| macOS            | 12                | Intel x86-64      | Official         |
-|                  |                   |                   |                  |
-| macOS            | 11                | Intel x86-64      | Official         |
+| macOS            | 11 - 13           | Intel x86-64      | Official         |
 |                  |                   |                   |                  |
 |                  |                   | Apple Silicon     | Not tested       |
 |                  |                   |                   |                  |
-| Linux            | 22.04             | Intel x86-64      | Official         |
-|                  |                   |                   |                  |
-| Linux            | 20.04             | Intel x86-64      | Official         |
+| Linux Ubuntu     | 20.04 - 22.04     | Intel x86-64      | Official         |
 |                  |                   |                   |                  |
 | Windows          | 10                | Intel x86-64      | Official         |
 |                  |                   |                   |                  |
