@@ -79,7 +79,7 @@ fn Token_isNotNewLine (ch: char) bool {
 }
 
 fn Token_isStrEsc (ch: char) bool {
-  return Token_isCharEsc(ch)
+  return Token_isCharEsc(ch) || ch == '{'
 }
 
 fn Token_isWhitespace (ch: char) bool {
@@ -93,11 +93,9 @@ fn Token_isWhitespace (ch: char) bool {
 
 fn Token_str (self: Token) str {
   val := _Token_valEscaped(self)
+  loc := "(" + self.start.str() + "-" + self.end.str() + ")"
 
-  return
-    tkToStr(self.type).slice(3) +
-    "(" + self.start.str() + "-" + self.end.str() + ")" +
-    (val == "" ? "" : ": " + val)
+  return tkToStr(self.type).slice(3) + loc + (val == "" ? "" : ": " + val)
 }
 
 fn Token_xml (self: Token) str {

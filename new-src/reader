@@ -36,24 +36,18 @@ fn Reader_eof (self: ref Reader) bool {
 }
 
 fn Reader_lookahead (mut self: ref Reader, check: char) bool {
-  if self.pos + 1 >= self.content.len {
-    return false
-  }
-
-  ch := self.content[self.pos + 1]
-
   if (
+    check == '\n' &&
     os_name() == "Windows" &&
-    ch == '\r' &&
-    self.pos + 2 < self.content.len &&
-    self.content[self.pos + 2] == '\n'
+    self.content.slice(self.pos, self.pos + 2) == "\r\n"
   ) {
-    if check == '\n' {
-      self.pos += 2
-      return true
-    }
-  } elif check == ch {
-    self.pos++
+    self.pos += 2
+    return true
+  } elif (
+    self.pos < self.content.len &&
+    self.content[self.pos] == check
+  ) {
+    self.pos += 1
     return true
   }
 
@@ -63,21 +57,14 @@ fn Reader_lookahead (mut self: ref Reader, check: char) bool {
 fn Reader_next (mut self: ref Reader) char {
   if Reader_eof(self) {
     RaiseError("Tried to read on eof")
+  } elif (
+    os_name() == "Windows" &&
+    self.content.slice(self.pos, self.pos + 2) == "\r\n"
+  ) {
+    self.pos++
   }
 
-  ch1 := self.content[self.pos]
-  self.pos++
-
-  if os_name() == "Windows" && ch1 == '\r' && !Reader_eof(self) {
-    ch2 := self.content[self.pos]
-
-    if ch2 == '\n' {
-      self.pos++
-      return ch2
-    }
-  }
-
-  return ch1
+  return self.content[self.pos++]
 }
 
 fn Reader_seek (mut self: ref Reader, pos: int) {

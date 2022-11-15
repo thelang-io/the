@@ -29,7 +29,7 @@ main {
   }
 
   if !tokenizer.errors.empty() {
-    RaiseError(tokenizer.errors.join(os_EOL + os_EOL))
+    RaiseError(tokenizer.errors.join(os_EOL))
   }
 
   print(result.join(os_EOL))

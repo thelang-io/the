@@ -507,11 +507,11 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
 
   if startLoc.line != 1 {
     errorLines.push(lines[startLoc.line - 2])
-    errorLinesNums.push(startLoc.line - 2)
+    errorLinesNums.push(startLoc.line - 1)
   }
 
   errorLines.push(lines[startLoc.line - 1])
-  errorLinesNums.push(startLoc.line - 1)
+  errorLinesNums.push(startLoc.line)
 
   if startLoc.line == endLoc.line && startLoc.col == endLoc.col {
     mut x: u32 = startLoc.col - 1
@@ -527,11 +527,11 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
     errorLines.push(' '.repeat(x1) + '~'.repeat(x2))
   }
 
-  errorLinesNums.push(startLoc.line - 1)
+  errorLinesNums.push(startLoc.line)
 
-  if startLoc.line != lines.len {
+  if startLoc.line != lines.len && !lines[startLoc.line].empty() {
     errorLines.push(lines[startLoc.line])
-    errorLinesNums.push(startLoc.line)
+    errorLinesNums.push(startLoc.line + 1)
   }
 
   gutterLen := errorLinesNums[-1].str().len + 1
@@ -554,7 +554,7 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
       error += errorLineNum.str() + ' '.repeat(x)
     }
 
-    error += "| " + errorLines[i]
+    error += "| " + errorLines[i] + os_EOL
     prevLineNum = errorLineNum
   }
 

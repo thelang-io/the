@@ -24,7 +24,7 @@ fn Location_locate (content: str, pos: int) Location {
     return Location{line: 1, col: 1}
   }
 
-  lines := content.lines()
+  lines := content.lines(keepLineBreaks: true)
   mut curPos := 0
 
   loop i := 0; i < lines.len; i++ {
