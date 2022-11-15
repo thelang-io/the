@@ -543,9 +543,8 @@ fn _Tokenizer_raise (mut self: ref Tokenizer, message: str, start: int) {
 
   loop i := 0; i < errorLinesNums.len; i++ {
     errorLineNum := errorLinesNums[i]
-    sameLine := prevLineNum == errorLineNum
 
-    if sameLine {
+    if prevLineNum == errorLineNum {
       mut x: u32 = gutterLen
       error += ' '.repeat(x)
     } else {
@@ -620,7 +619,7 @@ fn _Tokenizer_wrapFloat (
 
       return _Tokenizer_wrapToken(self, TK_LIT_FLOAT)
     } elif ch3 != 'E' && ch3 != 'e' {
-      Reader_seek(self.reader, pos2)
+      Reader_seek(self.reader, pos3)
       return _Tokenizer_wrapTokenFloat(self, type)
     }
 
@@ -667,21 +666,24 @@ fn _Tokenizer_wrapInt (
   errorMessage: str,
   check: (char) -> bool
 ) Token {
-  if Reader_eof(self.reader) {
-    _Tokenizer_raise(self, errorMessage, self.state.pos)
-    return _Tokenizer_wrapToken(self, type)
+  if type != TK_LIT_INT_DEC {
+    if Reader_eof(self.reader) {
+      _Tokenizer_raise(self, errorMessage, self.state.pos)
+      return _Tokenizer_wrapToken(self, type)
+    }
+
+    ch := Reader_next(self.reader)
+
+    if type != TK_LIT_INT_DEC && !check(ch) {
+      Reader_walk(self.reader, Token_isId)
+      _Tokenizer_raise(self, errorMessage, self.state.pos)
+
+      return _Tokenizer_wrapToken(self, type)
+    }
+
+    Reader_walk(self.reader, check)
   }
 
-  ch := Reader_next(self.reader)
-
-  if !check(ch) {
-    Reader_walk(self.reader, Token_isId)
-    _Tokenizer_raise(self, errorMessage, self.state.pos)
-
-    return _Tokenizer_wrapToken(self, type)
-  }
-
-  Reader_walk(self.reader, check)
   return _Tokenizer_wrapFloat(self, type, errorMessage)
 }
 
@@ -700,6 +702,7 @@ fn _Tokenizer_wrapToken (mut self: ref Tokenizer, type: int) Token {
 
 fn _Tokenizer_wrapTokenFloat (mut self: ref Tokenizer, type: int) Token {
   if !Reader_eof(self.reader) {
+    pos := self.reader.pos
     ch := Reader_next(self.reader)
 
     if Token_isId(ch) {
@@ -709,7 +712,7 @@ fn _Tokenizer_wrapTokenFloat (mut self: ref Tokenizer, type: int) Token {
       return _Tokenizer_wrapToken(self, TK_LIT_FLOAT)
     }
 
-    Reader_seek(self.reader, self.state.pos)
+    Reader_seek(self.reader, pos)
   }
 
   if type == TK_LIT_INT_BIN {
