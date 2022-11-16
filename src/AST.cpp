@@ -371,10 +371,84 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         throw Error(this->reader, stmtObjDeclField.type.start, stmtObjDeclField.type.end, E1022);
       }
 
-      type->fields.push_back(TypeField{stmtObjDeclField.id.val, fieldType, stmtObjDeclField.mut, false});
+      type->fields.push_back(TypeField{stmtObjDeclField.id.val, fieldType, stmtObjDeclField.mut, false, false});
     }
 
-    auto nodeObjDecl = ASTNodeObjDecl{type};
+    auto initialTypeMapSelf = this->typeMap.self;
+    auto nodeObjDeclMethods = std::vector<ASTNodeObjDeclMethod>{};
+
+    this->typeMap.stack.emplace_back(type->name);
+    this->typeMap.self = type;
+
+    for (const auto &stmtObjDeclMethod : stmtObjDecl.methods) {
+      auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmtObjDeclMethod.body);
+      auto initialState = this->state;
+
+      auto nodeObjDeclMethodName = stmtFnDecl.id.val;
+      auto nodeObjDeclMethodParams = std::vector<ASTNodeObjDeclMethodParam>{};
+      auto nodeObjDeclMethodTypeParams = std::vector<TypeFnParam>{};
+      auto nodeObjDeclMethodVarStack = this->varMap.varStack();
+
+      this->varMap.save();
+
+      for (auto i = static_cast<std::size_t>(0); i < stmtFnDecl.params.size(); i++) {
+        auto &stmtFnDeclParam = stmtFnDecl.params[i];
+        auto paramName = stmtFnDeclParam.id.val;
+        auto paramType = stmtFnDeclParam.type != std::nullopt
+          ? this->_type(*stmtFnDeclParam.type)
+          : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
+
+        if (paramType->isVoid() && stmtFnDeclParam.type == std::nullopt) {
+          throw Error(this->reader, stmtFnDeclParam.init->start, stmtFnDeclParam.init->end, E1022);
+        } else if (paramType->isVoid()) {
+          throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
+        }
+
+        auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
+
+        if (i == 0 && this->typeMap.isSelf(paramType)) {
+          continue;
+        }
+
+        auto paramInit = std::optional<ASTNodeExpr>{};
+        auto paramVariadic = stmtFnDeclParam.variadic;
+        auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
+
+        if (stmtFnDeclParam.init != std::nullopt) {
+          paramInit = this->_nodeExpr(*stmtFnDeclParam.init, paramType, nodeObjDeclMethodVarStack);
+        }
+
+        nodeObjDeclMethodParams.push_back(ASTNodeObjDeclMethodParam{paramVar, paramInit});
+        nodeObjDeclMethodTypeParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
+      }
+
+      auto nodeObjDeclMethodCodeName = this->typeMap.name(nodeObjDeclMethodName);
+      auto nodeObjDeclMethodTypeReturnType = stmtFnDecl.returnType == std::nullopt
+        ? this->typeMap.get("void")
+        : this->_type(*stmtFnDecl.returnType);
+
+      auto nodeObjDeclMethodType = this->typeMap.fn(nodeObjDeclMethodCodeName, nodeObjDeclMethodTypeParams, nodeObjDeclMethodTypeReturnType);
+      type->fields.push_back(TypeField{nodeObjDeclMethodName, nodeObjDeclMethodType, false, true, false});
+
+      this->typeMap.stack.emplace_back(nodeObjDeclMethodName);
+      this->state.returnType = nodeObjDeclMethodTypeReturnType;
+      auto nodeFnDeclBody = this->_block(stmtFnDecl.body, nodeObjDeclMethodVarStack);
+      this->varMap.restore();
+      this->typeMap.stack.pop_back();
+
+      auto nodeFnDeclStack = nodeObjDeclMethodVarStack.snapshot();
+      varStack.mark(nodeFnDeclStack);
+
+      auto nodeObjDeclMethod = ASTNodeObjDeclMethod{nodeObjDeclMethodType, nodeFnDeclStack, nodeObjDeclMethodParams, nodeFnDeclBody};
+      nodeObjDeclMethods.emplace_back(nodeObjDeclMethod);
+
+      this->state = initialState;
+    }
+
+    this->typeMap.self = initialTypeMapSelf;
+    this->typeMap.stack.pop_back();
+
+    auto nodeObjDecl = ASTNodeObjDecl{type, nodeObjDeclMethods};
     return this->_wrapNode(stmt, nodeObjDecl);
   } else if (std::holds_alternative<ParserStmtReturn>(*stmt.body)) {
     auto stmtReturn = std::get<ParserStmtReturn>(*stmt.body);

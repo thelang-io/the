@@ -29,6 +29,7 @@ struct TypeField {
   std::string name;
   Type *type;
   bool mut;
+  bool method;
   bool builtin;
 };
 
@@ -104,7 +105,7 @@ struct Type {
   bool matchExact (const Type *) const;
   bool matchNice (const Type *) const;
   bool shouldBeFreed () const;
-  std::string xml (std::size_t = 0) const;
+  std::string xml (std::size_t = 0, bool = true) const;
 };
 
 #endif

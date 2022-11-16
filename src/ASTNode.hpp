@@ -86,8 +86,21 @@ struct ASTNodeMain {
   ASTBlock body;
 };
 
+struct ASTNodeObjDeclMethodParam {
+  std::shared_ptr<Var> var;
+  std::optional<ASTNodeExpr> init;
+};
+
+struct ASTNodeObjDeclMethod {
+  Type *type;
+  std::vector<std::shared_ptr<Var>> stack;
+  std::vector<ASTNodeObjDeclMethodParam> params;
+  ASTBlock body;
+};
+
 struct ASTNodeObjDecl {
   Type *type;
+  std::vector<ASTNodeObjDeclMethod> methods;
 };
 
 struct ASTNodeReturn {

@@ -352,48 +352,55 @@ ParserStmt Parser::next (bool allowSemi) {
       throw Error(this->reader, tok2.start, E0122);
     }
 
-    auto [_3, tok3] = this->lexer->next();
+    auto [loc3, tok3] = this->lexer->next();
     auto objDeclFields = std::vector<ParserStmtObjDeclField>{};
+    auto objDeclMethods = std::vector<ParserStmt>{};
 
     while (tok3.type != TK_OP_RBRACE) {
-      auto fieldId = tok3;
-      auto fieldMut = false;
+      if (tok3.type == TK_ID || tok3.type == TK_KW_MUT) {
+        auto fieldId = tok3;
+        auto fieldMut = tok3.type == TK_KW_MUT;
 
-      if (tok3.type == TK_KW_MUT) {
-        fieldMut = true;
+        if (tok3.type == TK_KW_MUT) {
+          auto [_4, tok4] = this->lexer->next();
 
-        auto [_4, tok4] = this->lexer->next();
+          if (tok4.type != TK_ID) {
+            throw Error(this->reader, tok4.start, E0123);
+          }
 
-        if (tok4.type != TK_ID) {
-          throw Error(this->reader, tok4.start, E0123);
+          fieldId = tok4;
         }
 
-        fieldId = tok4;
-      } else if (tok3.type != TK_ID) {
+        auto [_5, tok5] = this->lexer->next();
+
+        if (tok5.type != TK_OP_COLON) {
+          throw Error(this->reader, tok5.start, E0124);
+        }
+
+        auto objDeclFieldType = this->_type();
+
+        if (objDeclFieldType == std::nullopt) {
+          throw Error(this->reader, this->lexer->loc, E0125);
+        }
+
+        objDeclFields.push_back(ParserStmtObjDeclField{fieldId, *objDeclFieldType, fieldMut});
+      } else if (tok3.type == TK_KW_FN) {
+        this->lexer->seek(loc3);
+
+        auto objDeclMethod = this->next();
+        objDeclMethods.push_back(objDeclMethod);
+      } else {
         throw Error(this->reader, tok3.start, E0123);
       }
 
-      auto [_5, tok5] = this->lexer->next();
-
-      if (tok5.type != TK_OP_COLON) {
-        throw Error(this->reader, tok5.start, E0124);
-      }
-
-      auto objDeclFieldType = this->_type();
-
-      if (objDeclFieldType == std::nullopt) {
-        throw Error(this->reader, this->lexer->loc, E0125);
-      }
-
-      objDeclFields.push_back(ParserStmtObjDeclField{fieldId, *objDeclFieldType, fieldMut});
-      std::tie(_3, tok3) = this->lexer->next();
+      std::tie(loc3, tok3) = this->lexer->next();
     }
 
-    if (objDeclFields.empty()) {
+    if (objDeclFields.empty() && objDeclMethods.empty()) {
       throw Error(this->reader, tok0.start, E0126);
     }
 
-    return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclFields}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclFields, objDeclMethods}, tok0.start);
   }
 
   if (tok0.type == TK_ID) {

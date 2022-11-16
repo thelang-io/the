@@ -460,7 +460,7 @@ bool Type::shouldBeFreed () const {
   return this->isAny() || this->isArray() || this->isFn() || this->isObj() || this->isOpt() || this->isStr();
 }
 
-std::string Type::xml (std::size_t indent) const {
+std::string Type::xml (std::size_t indent, bool topLevel) const {
   if (this->builtin) {
     return std::string(indent, ' ') + R"(<BuiltinType name=")" + this->name + R"(" />)";
   }
@@ -483,11 +483,16 @@ std::string Type::xml (std::size_t indent) const {
 
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
+
+  if (this->isObj() && !topLevel) {
+    return result + " />";
+  }
+
   result += ">" EOL;
 
   if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
-    result += typeArray.elementType->xml(indent + 2) + EOL;
+    result += typeArray.elementType->xml(indent + 2, topLevel) + EOL;
   } else if (this->isFn()) {
     auto typeFn = std::get<TypeFn>(this->body);
 
@@ -502,7 +507,7 @@ std::string Type::xml (std::size_t indent) const {
         paramAttrs += typeFnParam.variadic ? " variadic" : "";
 
         result += std::string(indent + 4, ' ') + "<TypeFnParam" + paramAttrs + ">" EOL;
-        result += typeFnParam.type->xml(indent + 6) + EOL;
+        result += typeFnParam.type->xml(indent + 6, topLevel) + EOL;
         result += std::string(indent + 4, ' ') + "</TypeFnParam>" EOL;
       }
 
@@ -510,9 +515,9 @@ std::string Type::xml (std::size_t indent) const {
     }
 
     result += std::string(indent + 2, ' ') + "<TypeFnReturnType>" EOL;
-    result += typeFn.returnType->xml(indent + 4) + EOL;
+    result += typeFn.returnType->xml(indent + 4, topLevel) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeFnReturnType>" EOL;
-  } else if (this->isObj()) {
+  } else if (this->isObj() && topLevel) {
     for (const auto &typeField : this->fields) {
       if (typeField.builtin) {
         continue;
@@ -524,15 +529,15 @@ std::string Type::xml (std::size_t indent) const {
       fieldAttrs += R"( name=")" + typeField.name + R"(")";
 
       result += std::string(indent + 2, ' ') + "<TypeField" + fieldAttrs + ">" EOL;
-      result += typeField.type->xml(indent + 4) + EOL;
+      result += typeField.type->xml(indent + 4, false) + EOL;
       result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
     }
   } else if (this->isOpt()) {
     auto typeOptional = std::get<TypeOptional>(this->body);
-    result += typeOptional.type->xml(indent + 2) + EOL;
+    result += typeOptional.type->xml(indent + 2, topLevel) + EOL;
   } else if (this->isRef()) {
     auto typeRef = std::get<TypeRef>(this->body);
-    result += typeRef.refType->xml(indent + 2) + EOL;
+    result += typeRef.refType->xml(indent + 2, topLevel) + EOL;
   }
 
   return result + std::string(indent, ' ') + "</" + typeName + ">";
