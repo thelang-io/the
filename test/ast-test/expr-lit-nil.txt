@@ -50,17 +50,17 @@ main {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="a" codeName="a_0" frame="2">
           <TypeOptional name="opt_int">
             <BuiltinType name="int" />
           </TypeOptional>
         </Var>
-      </NodeFnDeclParamVar>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeReturn>
       <NodeExpr>

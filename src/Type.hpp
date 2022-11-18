@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <optional>
+#include <set>
 #include <string>
 #include <variant>
 #include <vector>
@@ -117,7 +118,7 @@ struct Type {
   bool matchExact (const Type *) const;
   bool matchNice (const Type *) const;
   bool shouldBeFreed () const;
-  std::string xml (std::size_t = 0, bool = true) const;
+  std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
 };
 
 #endif
