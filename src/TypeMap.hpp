@@ -25,7 +25,13 @@ class TypeMap {
   std::vector<std::string> stack;
 
   Type *arrayOf (Type *);
-  Type *fn (const std::optional<std::string> &, const std::vector<TypeFnParam> &, Type *);
+  // todo test methodInfo
+  Type *fn (
+    const std::optional<std::string> &,
+    const std::vector<TypeFnParam> &,
+    Type *,
+    const std::optional<TypeFnMethodInfo> & = std::nullopt
+  );
   Type *get (const std::string &);
   bool has (const std::string &);
   void init ();

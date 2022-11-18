@@ -60,8 +60,20 @@ Type *TypeMap::arrayOf (Type *elementType) {
   return selfType;
 }
 
-Type *TypeMap::fn (const std::optional<std::string> &codeName, const std::vector<TypeFnParam> &params, Type *returnType) {
-  auto newType = Type{"", codeName == std::nullopt ? "@" : *codeName, TypeFn{returnType, params}};
+Type *TypeMap::fn (
+  const std::optional<std::string> &codeName,
+  const std::vector<TypeFnParam> &params,
+  Type *returnType,
+  const std::optional<TypeFnMethodInfo> &methodInfo
+) {
+  auto typeBody = TypeFn{
+    returnType,
+    params,
+    methodInfo != std::nullopt,
+    methodInfo == std::nullopt ? TypeFnMethodInfo{} : *methodInfo
+  };
+
+  auto newType = Type{"", codeName == std::nullopt ? "@" : *codeName, typeBody};
 
   for (auto &item : this->_items) {
     if (!item->builtin && item->isFn() && item->codeName == newType.codeName && item->matchExact(&newType)) {
@@ -454,7 +466,7 @@ void TypeMap::init () {
 }
 
 bool TypeMap::isSelf (Type *type) {
-  return this->self != std::nullopt && Type::real(type) == *this->self;
+  return this->self != std::nullopt && Type::real(type)->codeName == (*this->self)->codeName;
 }
 
 std::string TypeMap::name (const std::string &name) const {

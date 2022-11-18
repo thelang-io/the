@@ -56,24 +56,24 @@ std::string ASTNode::xml (std::size_t indent) const {
     }
 
     if (!nodeFnDecl.params.empty()) {
-      result += std::string(indent + 2, ' ') + "<NodeFnDeclParams>" EOL;
+      result += std::string(indent + 2, ' ') + "<FnDeclParams>" EOL;
 
       for (const auto &nodeFnDeclParam : nodeFnDecl.params) {
-        result += std::string(indent + 4, ' ') + "<NodeFnDeclParam>" EOL;
-        result += std::string(indent + 6, ' ') + "<NodeFnDeclParamVar>" EOL;
+        result += std::string(indent + 4, ' ') + "<FnDeclParam>" EOL;
+        result += std::string(indent + 6, ' ') + "<FnDeclParamVar>" EOL;
         result += nodeFnDeclParam.var->xml(indent + 8) + EOL;
-        result += std::string(indent + 6, ' ') + "</NodeFnDeclParamVar>" EOL;
+        result += std::string(indent + 6, ' ') + "</FnDeclParamVar>" EOL;
 
         if (nodeFnDeclParam.init != std::nullopt) {
-          result += std::string(indent + 6, ' ') + "<NodeFnDeclParamInit>" EOL;
+          result += std::string(indent + 6, ' ') + "<FnDeclParamInit>" EOL;
           result += nodeFnDeclParam.init->xml(indent + 8) + EOL;
-          result += std::string(indent + 6, ' ') + "</NodeFnDeclParamInit>" EOL;
+          result += std::string(indent + 6, ' ') + "</FnDeclParamInit>" EOL;
         }
 
-        result += std::string(indent + 4, ' ') + "</NodeFnDeclParam>" EOL;
+        result += std::string(indent + 4, ' ') + "</FnDeclParam>" EOL;
       }
 
-      result += std::string(indent + 2, ' ') + "</NodeFnDeclParams>" EOL;
+      result += std::string(indent + 2, ' ') + "</FnDeclParams>" EOL;
     }
 
     if (!nodeFnDecl.body.empty()) {

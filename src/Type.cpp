@@ -186,6 +186,10 @@ bool Type::isIntNumber () const {
   );
 }
 
+bool Type::isMethod () const {
+  return std::holds_alternative<TypeFn>(this->body) && std::get<TypeFn>(this->body).isMethod;
+}
+
 bool Type::isNumber () const {
   return this->isIntNumber() || this->isFloatNumber();
 }
@@ -291,7 +295,15 @@ bool Type::match (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    if (!lhsFn.returnType->match(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+    // todo test
+    if (
+      !lhsFn.returnType->match(rhsFn.returnType) ||
+      lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.isMethod != rhsFn.isMethod ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->match(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfType->isRef() && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+    ) {
       return false;
     }
 
@@ -352,7 +364,16 @@ bool Type::matchExact (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    if (!lhsFn.returnType->matchExact(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+    // todo test
+    if (
+      !lhsFn.returnType->matchExact(rhsFn.returnType) ||
+      lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.isMethod != rhsFn.isMethod ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchExact(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+    ) {
       return false;
     }
 
@@ -413,7 +434,16 @@ bool Type::matchNice (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    if (!lhsFn.returnType->matchNice(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+    // todo test
+    if (
+      !lhsFn.returnType->matchNice(rhsFn.returnType) ||
+      lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.isMethod != rhsFn.isMethod ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchNice(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+    ) {
       return false;
     }
 

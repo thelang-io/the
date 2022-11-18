@@ -198,7 +198,12 @@ class Codegen {
   std::size_t lastAnyIdx = 1;
   bool needMainArgs = false;
 
-  static void compile (const std::string &, const std::tuple<std::string, std::set<std::string>> &, const std::string &, bool = false);
+  static void compile (
+    const std::string &,
+    const std::tuple<std::string, std::set<std::string>> &,
+    const std::string &,
+    bool = false
+  );
   static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);
   static std::string stringifyFlags (const std::set<std::string> &);
@@ -219,6 +224,14 @@ class Codegen {
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
+  std::string _fnDecl (
+    Type *,
+    const std::string &,
+    const std::vector<std::shared_ptr<Var>> &,
+    const std::vector<ASTFnDeclParam> &,
+    const ASTBlock &,
+    CodegenPhase
+  );
   std::string _genCopyFn (
     Type *,
     const std::string &,
@@ -254,7 +267,7 @@ class Codegen {
     bool = true,
     bool = true
   );
-  std::string _node (const ASTNode &, bool = true, CodegenPhase phase = CODEGEN_PHASE_FULL);
+  std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _type (const Type *);
   CodegenTypeInfo _typeInfo (Type *);

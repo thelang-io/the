@@ -29,6 +29,7 @@ struct TypeField {
   std::string name;
   Type *type;
   bool mut;
+  // todo print
   bool method;
   bool builtin;
 };
@@ -45,9 +46,18 @@ struct TypeFnParam {
   bool variadic;
 };
 
+struct TypeFnMethodInfo {
+  bool isSelfFirst = false;
+  std::string selfCodeName = "";
+  Type *selfType = nullptr;
+  bool isSelfMut = false;
+};
+
 struct TypeFn {
   Type *returnType;
   std::vector<TypeFnParam> params = {};
+  bool isMethod = false;
+  TypeFnMethodInfo methodInfo = {};
 };
 
 struct TypeObj {
@@ -89,6 +99,8 @@ struct Type {
   bool isI64 () const;
   bool isInt () const;
   bool isIntNumber () const;
+  // todo test
+  bool isMethod () const;
   bool isNumber () const;
   bool isObj () const;
   bool isOpt () const;
