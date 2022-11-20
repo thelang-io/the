@@ -25,7 +25,6 @@ class TypeMap {
   std::vector<std::string> stack;
 
   Type *arrayOf (Type *);
-  // todo test methodInfo
   Type *fn (
     const std::optional<std::string> &,
     const std::vector<TypeFnParam> &,
@@ -35,7 +34,6 @@ class TypeMap {
   Type *get (const std::string &);
   bool has (const std::string &);
   void init ();
-  // todo test
   bool isSelf (Type *);
   std::string name (const std::string &) const;
   Type *obj (const std::string &, const std::string &, const std::vector<TypeField> & = {});

@@ -27,6 +27,33 @@ std::string blockToXml (const ASTBlock &block, std::size_t indent) {
   return result;
 }
 
+std::string fnDeclParamsToXml (const std::vector<ASTFnDeclParam> &params, std::size_t indent) {
+  auto result = std::string();
+
+  if (!params.empty()) {
+    result += std::string(indent, ' ') + "<FnDeclParams>" EOL;
+
+    for (const auto &param : params) {
+      result += std::string(indent + 2, ' ') + "<FnDeclParam>" EOL;
+      result += std::string(indent + 4, ' ') + "<FnDeclParamVar>" EOL;
+      result += param.var->xml(indent + 6) + EOL;
+      result += std::string(indent + 4, ' ') + "</FnDeclParamVar>" EOL;
+
+      if (param.init != std::nullopt) {
+        result += std::string(indent + 4, ' ') + "<FnDeclParamInit>" EOL;
+        result += param.init->xml(indent + 6) + EOL;
+        result += std::string(indent + 4, ' ') + "</FnDeclParamInit>" EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</FnDeclParam>" EOL;
+    }
+
+    result += std::string(indent, ' ') + "</FnDeclParams>" EOL;
+  }
+
+  return result;
+}
+
 std::string ASTNode::xml (std::size_t indent) const {
   auto result = std::string();
 
@@ -55,26 +82,7 @@ std::string ASTNode::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "</NodeFnDeclCtx>" EOL;
     }
 
-    if (!nodeFnDecl.params.empty()) {
-      result += std::string(indent + 2, ' ') + "<FnDeclParams>" EOL;
-
-      for (const auto &nodeFnDeclParam : nodeFnDecl.params) {
-        result += std::string(indent + 4, ' ') + "<FnDeclParam>" EOL;
-        result += std::string(indent + 6, ' ') + "<FnDeclParamVar>" EOL;
-        result += nodeFnDeclParam.var->xml(indent + 8) + EOL;
-        result += std::string(indent + 6, ' ') + "</FnDeclParamVar>" EOL;
-
-        if (nodeFnDeclParam.init != std::nullopt) {
-          result += std::string(indent + 6, ' ') + "<FnDeclParamInit>" EOL;
-          result += nodeFnDeclParam.init->xml(indent + 8) + EOL;
-          result += std::string(indent + 6, ' ') + "</FnDeclParamInit>" EOL;
-        }
-
-        result += std::string(indent + 4, ' ') + "</FnDeclParam>" EOL;
-      }
-
-      result += std::string(indent + 2, ' ') + "</FnDeclParams>" EOL;
-    }
+    result += fnDeclParamsToXml(nodeFnDecl.params, indent + 2);
 
     if (!nodeFnDecl.body.empty()) {
       result += std::string(indent + 2, ' ') + "<NodeFnDeclBody>" EOL;
@@ -156,9 +164,46 @@ std::string ASTNode::xml (std::size_t indent) const {
     result += std::string(indent, ' ') + "</NodeMain>";
   } else if (std::holds_alternative<ASTNodeObjDecl>(*this->body)) {
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(*this->body);
-
     result += std::string(indent, ' ') + "<NodeObjDecl>" EOL;
-    result += nodeObjDecl.type->xml(indent + 2) + EOL;
+
+    if (nodeObjDecl.methods.empty()) {
+      result += nodeObjDecl.type->xml(indent + 2) + EOL;
+    } else {
+      result += std::string(indent + 2, ' ') + "<NodeObjDeclType>" EOL;
+      result += nodeObjDecl.type->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</NodeObjDeclType>" EOL;
+      result += std::string(indent + 2, ' ') + "<NodeObjDeclMethods>" EOL;
+
+      for (const auto &method : nodeObjDecl.methods) {
+        result += std::string(indent + 4, ' ') + "<NodeObjDeclMethod>" EOL;
+        result += std::string(indent + 6, ' ') + "<NodeObjDeclMethodType>" EOL;
+        result += method.type->xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</NodeObjDeclMethodType>" EOL;
+
+        if (!method.stack.empty()) {
+          result += std::string(indent + 6, ' ') + "<NodeObjDeclMethodCtx>" EOL;
+
+          for (const auto &var : method.stack) {
+            result += var->xml(indent + 8) + EOL;
+          }
+
+          result += std::string(indent + 6, ' ') + "</NodeObjDeclMethodCtx>" EOL;
+        }
+
+        result += fnDeclParamsToXml(method.params, indent + 6);
+
+        if (!method.body.empty()) {
+          result += std::string(indent + 6, ' ') + "<NodeObjDeclMethodBody>" EOL;
+          result += blockToXml(method.body, indent + 8);
+          result += std::string(indent + 6, ' ') + "</NodeObjDeclMethodBody>" EOL;
+        }
+
+        result += std::string(indent + 4, ' ') + "</NodeObjDeclMethod>" EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</NodeObjDeclMethods>" EOL;
+    }
+
     result += std::string(indent, ' ') + "</NodeObjDecl>";
   } else if (std::holds_alternative<ASTNodeReturn>(*this->body)) {
     auto nodeReturn = std::get<ASTNodeReturn>(*this->body);

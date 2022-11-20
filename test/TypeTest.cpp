@@ -38,8 +38,11 @@ class TypeTest : public testing::Test {
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
     }, this->tm_.get("int"));
 
+    auto objMethod = this->tm_.fn("Test_0.m_0", {}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
+
     this->obj_ = this->tm_.obj("Test", "Test_0", {
-      TypeField{"a", this->tm_.get("int"), false, false}
+      TypeField{"a", this->tm_.get("int"), false, false, false},
+      TypeField{"m", objMethod, false, true, false}
     });
 
     this->opt_ = this->tm_.opt(this->tm_.get("int"));
@@ -484,6 +487,37 @@ TEST_F(TypeTest, CheckIfNotIntNumber) {
   EXPECT_FALSE(this->tm_.get("void")->isIntNumber());
 }
 
+TEST_F(TypeTest, CheckIfMethod) {
+  EXPECT_TRUE(this->tm_.get("Test")->getProp("m")->isMethod());
+}
+
+TEST_F(TypeTest, CheckIfNotMethod) {
+  EXPECT_FALSE(this->any_->isMethod());
+  EXPECT_FALSE(this->arr_->isMethod());
+  EXPECT_FALSE(this->fn_->isMethod());
+  EXPECT_FALSE(this->obj_->isMethod());
+  EXPECT_FALSE(this->ref_->isMethod());
+
+  EXPECT_FALSE(this->tm_.get("i8")->isMethod());
+  EXPECT_FALSE(this->tm_.get("i16")->isMethod());
+  EXPECT_FALSE(this->tm_.get("i32")->isMethod());
+  EXPECT_FALSE(this->tm_.get("int")->isMethod());
+  EXPECT_FALSE(this->tm_.get("i64")->isMethod());
+  EXPECT_FALSE(this->tm_.get("f32")->isMethod());
+  EXPECT_FALSE(this->tm_.get("f64")->isMethod());
+  EXPECT_FALSE(this->tm_.get("float")->isMethod());
+  EXPECT_FALSE(this->tm_.get("any")->isMethod());
+  EXPECT_FALSE(this->tm_.get("bool")->isMethod());
+  EXPECT_FALSE(this->tm_.get("byte")->isMethod());
+  EXPECT_FALSE(this->tm_.get("char")->isMethod());
+  EXPECT_FALSE(this->tm_.get("str")->isMethod());
+  EXPECT_FALSE(this->tm_.get("u8")->isMethod());
+  EXPECT_FALSE(this->tm_.get("u16")->isMethod());
+  EXPECT_FALSE(this->tm_.get("u32")->isMethod());
+  EXPECT_FALSE(this->tm_.get("u64")->isMethod());
+  EXPECT_FALSE(this->tm_.get("void")->isMethod());
+}
+
 TEST_F(TypeTest, CheckIfNumber) {
   EXPECT_TRUE(this->tm_.get("f32")->isNumber());
   EXPECT_TRUE(this->tm_.get("f64")->isNumber());
@@ -518,12 +552,12 @@ TEST_F(TypeTest, CheckIfObj) {
   auto type1 = this->tm_.obj("Test1", "Test1_0");
 
   auto type2 = this->tm_.obj("Test2", "Test2_0", {
-    TypeField{"a", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false}
   });
 
   auto type3 = this->tm_.obj("Test3", "Test3_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("str"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("str"), false, false, false}
   });
 
   EXPECT_TRUE(this->obj_->isObj());
@@ -990,24 +1024,24 @@ TEST_F(TypeTest, MatchesFunction) {
 
 TEST_F(TypeTest, MatchesObject) {
   auto type1 = this->tm_.obj("Test1", "Test1_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("int"), false, false, false}
   });
 
   auto type2 = this->tm_.obj("Test2", "Test2_0");
 
   auto type3 = this->tm_.obj("Test3", "Test3_0", {
-    TypeField{"a", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false}
   });
 
   auto type4 = this->tm_.obj("Test4", "Test4_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("int"), false, false, false}
   });
 
   auto type5 = this->tm_.obj("Test5", "Test5_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("str"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("str"), false, false, false}
   });
 
   EXPECT_TRUE(type1->match(type1));
@@ -1157,24 +1191,24 @@ TEST_F(TypeTest, MatchesExactFunction) {
 
 TEST_F(TypeTest, MatchesExactObject) {
   auto type1 = this->tm_.obj("Test1", "Test1_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("int"), false, false, false}
   });
 
   auto type2 = this->tm_.obj("Test2", "Test2_0");
 
   auto type3 = this->tm_.obj("Test3", "Test3_0", {
-    TypeField{"a", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false}
   });
 
   auto type4 = this->tm_.obj("Test4", "Test4_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("int"), false, false, false}
   });
 
   auto type5 = this->tm_.obj("Test5", "Test5_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("str"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("str"), false, false, false}
   });
 
   EXPECT_TRUE(type1->matchExact(type1));
@@ -1324,24 +1358,24 @@ TEST_F(TypeTest, MatchesNiceFunction) {
 
 TEST_F(TypeTest, MatchesNiceObject) {
   auto type1 = this->tm_.obj("Test1", "Test1_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("int"), false, false, false}
   });
 
   auto type2 = this->tm_.obj("Test2", "Test2_0");
 
   auto type3 = this->tm_.obj("Test3", "Test3_0", {
-    TypeField{"a", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false}
   });
 
   auto type4 = this->tm_.obj("Test4", "Test4_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("int"), false, false, false}
   });
 
   auto type5 = this->tm_.obj("Test5", "Test5_0", {
-    TypeField{"a", this->tm_.get("int"), false, false},
-    TypeField{"b", this->tm_.get("str"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false},
+    TypeField{"b", this->tm_.get("str"), false, false, false}
   });
 
   EXPECT_TRUE(type1->matchNice(type1));

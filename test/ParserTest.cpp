@@ -102,7 +102,8 @@ INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserPassTest, testing::Values(
   "stmt-obj-decl-recursive",
   "stmt-obj-decl-scoped",
   "stmt-obj-decl-field-fn",
-  "stmt-obj-decl-mut-field"
+  "stmt-obj-decl-mut-field",
+  "stmt-obj-decl-method"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(

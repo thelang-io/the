@@ -1,0 +1,474 @@
+======= stdin =======
+obj StaticTest {
+  fn staticMethod () {
+    print("Static method")
+  }
+}
+
+fn sub (i: int, amount := 1) int {
+  return i - amount
+}
+
+obj Counter {
+  mut _i: int
+
+  fn get (self: Self) int {
+    return self._i
+  }
+
+  fn decrease (mut self: ref Self, by := 1) ref Self {
+    self._i = sub(self._i, by)
+    return self
+  }
+
+  fn increase (mut self: ref Self, by := 1) ref Self {
+    self._i = add(self._i, by)
+    return self
+  }
+
+  fn ridiculousStuff (mut self: ref Self) {
+    mut self2 := self
+    print("For testing:", self2.get())
+
+    obj Counter2 {
+      mut _i: int
+
+      fn decrease (mut self: ref Self) {
+        self2._i = self._i = sub(self._i)
+        print("Parent scope:", self2.get())
+        print("Current scope:", self.get())
+      }
+
+      fn increase (mut self: ref Self) {
+        self2._i = self._i = add(self._i)
+        print("Parent scope:", self2.get())
+        print("Current scope", self.get())
+      }
+
+      fn get (self: ref Self) int {
+        return self._i
+      }
+    }
+
+    mut counter := Counter2{}
+    print("Counter2:", counter.get(), self.get())
+    counter.increase()
+    print("Counter2:", counter.get(), self.get())
+    counter.increase()
+    print("Counter2:", counter.get(), self.get())
+    counter.decrease()
+    print("Counter2:", counter.get(), self.get())
+  }
+}
+
+fn add (i: int, amount := 1) int {
+  return i + amount
+}
+
+main {
+  staticTest := StaticTest{}
+  staticTest.staticMethod()
+
+  mut counter := Counter{}
+  print("Counter:", counter.get())
+  counter.increase()
+  print("Counter:", counter.get())
+  counter.increase().increase().increase().increase()
+  print("Counter:", counter.get())
+  counter.decrease().decrease()
+  print("Counter:", counter.get())
+
+  counter.ridiculousStuff()
+
+  print("Counter Again:", counter.get())
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_StaticTest_0;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1P;
+struct __THE_1_fn$1;
+struct __THE_1_Counter_0;
+struct __THE_1_fn$2;
+struct __THE_1_fn$3P;
+struct __THE_1_fn$3;
+struct __THE_1_fn$4;
+struct __THE_1_CounterSDdecrease_0X;
+struct __THE_1_CounterSDincrease_0X;
+struct __THE_1_CounterSDridiculousStuff_0X;
+struct __THE_1_CounterSDridiculousStuffSDCounter2_0;
+struct __THE_1_fn$5;
+struct __THE_1_fn$6;
+struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X;
+struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X;
+
+struct __THE_1_StaticTest_0 {
+};
+struct __THE_1_fn$0 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1P {
+  int32_t n0;
+  unsigned char o1;
+  int32_t n1;
+};
+struct __THE_1_fn$1 {
+  int32_t (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_Counter_0 {
+  int32_t __THE_0__i;
+};
+struct __THE_1_fn$2 {
+  int32_t (*f) (void *, const struct __THE_1_Counter_0 *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$3P {
+  unsigned char o0;
+  int32_t n0;
+};
+struct __THE_1_fn$3 {
+  struct __THE_1_Counter_0 **(*f) (void *, struct __THE_1_Counter_0 **, struct __THE_1_fn$3P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$4 {
+  void (*f) (void *, struct __THE_1_Counter_0 **);
+  void *x;
+  size_t l;
+};
+struct __THE_1_CounterSDdecrease_0X {
+  const struct __THE_1_fn$1 *__THE_0_sub_0;
+};
+struct __THE_1_CounterSDincrease_0X {
+  const struct __THE_1_fn$1 *__THE_0_add_0;
+};
+struct __THE_1_CounterSDridiculousStuff_0X {
+  const struct __THE_1_fn$1 *__THE_0_add_0;
+  const struct __THE_1_fn$2 *__THE_0_CounterSDget_0;
+  const struct __THE_1_fn$1 *__THE_0_sub_0;
+};
+struct __THE_1_CounterSDridiculousStuffSDCounter2_0 {
+  int32_t __THE_0__i;
+};
+struct __THE_1_fn$5 {
+  void (*f) (void *, struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$6 {
+  int32_t (*f) (void *, const struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **);
+  void *x;
+  size_t l;
+};
+struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X {
+  struct __THE_1_Counter_0 ***__THE_0_self2_0;
+  const struct __THE_1_fn$6 *__THE_0_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn$2 *__THE_0_CounterSDget_0;
+  const struct __THE_1_fn$1 *__THE_0_sub_0;
+};
+struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X {
+  struct __THE_1_Counter_0 ***__THE_0_self2_0;
+  const struct __THE_1_fn$6 *__THE_0_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn$1 *__THE_0_add_0;
+  const struct __THE_1_fn$2 *__THE_0_CounterSDget_0;
+};
+
+void *alloc (size_t);
+void print (FILE *, const char *, ...);
+void str_free (struct str);
+struct __THE_1_StaticTest_0 *__THE_1_StaticTest_0_alloc ();
+void __THE_1_StaticTest_0_free (struct __THE_1_StaticTest_0 *);
+void __THE_1_StaticTestSDstaticMethod_0 (void *);
+int32_t __THE_1_sub_0 (void *, struct __THE_1_fn$1P);
+struct __THE_1_Counter_0 *__THE_1_Counter_0_alloc (int32_t);
+void __THE_1_Counter_0_free (struct __THE_1_Counter_0 *);
+void __THE_1_fn$3_free (struct __THE_1_fn$3);
+void __THE_1_fn$4_free (struct __THE_1_fn$4);
+int32_t __THE_1_CounterSDget_0 (void *, const struct __THE_1_Counter_0 *);
+void __THE_1_CounterSDdecrease_0_alloc (struct __THE_1_fn$3 *, struct __THE_1_CounterSDdecrease_0X);
+struct __THE_1_Counter_0 **__THE_1_CounterSDdecrease_0 (void *, struct __THE_1_Counter_0 **, struct __THE_1_fn$3P);
+void __THE_1_CounterSDincrease_0_alloc (struct __THE_1_fn$3 *, struct __THE_1_CounterSDincrease_0X);
+struct __THE_1_Counter_0 **__THE_1_CounterSDincrease_0 (void *, struct __THE_1_Counter_0 **, struct __THE_1_fn$3P);
+void __THE_1_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn$4 *, struct __THE_1_CounterSDridiculousStuff_0X);
+struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *__THE_1_CounterSDridiculousStuffSDCounter2_0_alloc (int32_t);
+void __THE_1_CounterSDridiculousStuffSDCounter2_0_free (struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *);
+void __THE_1_fn$5_free (struct __THE_1_fn$5);
+void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn$5 *, struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X);
+void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0 (void *, struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **);
+void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn$5 *, struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X);
+void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0 (void *, struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **);
+int32_t __THE_1_CounterSDridiculousStuffSDCounter2SDget_0 (void *, const struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **);
+void __THE_1_CounterSDridiculousStuff_0 (void *, struct __THE_1_Counter_0 **);
+int32_t __THE_1_add_0 (void *, struct __THE_1_fn$1P);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_StaticTest_0 *__THE_1_StaticTest_0_alloc () {
+  struct __THE_1_StaticTest_0 *r = alloc(sizeof(struct __THE_1_StaticTest_0));
+  struct __THE_1_StaticTest_0 s = {};
+  memcpy(r, &s, sizeof(struct __THE_1_StaticTest_0));
+  return r;
+}
+void __THE_1_StaticTest_0_free (struct __THE_1_StaticTest_0 *o) {
+  free(o);
+}
+void __THE_1_StaticTestSDstaticMethod_0 (void *px) {
+  print(stdout, "zz", "Static method", THE_EOL);
+}
+int32_t __THE_1_sub_0 (void *px, struct __THE_1_fn$1P p) {
+  const int32_t __THE_0_i_0 = p.n0;
+  const int32_t __THE_0_amount_0 = p.o1 == 1 ? p.n1 : 1;
+  return __THE_0_i_0 - __THE_0_amount_0;
+}
+struct __THE_1_Counter_0 *__THE_1_Counter_0_alloc (int32_t __THE_0__i) {
+  struct __THE_1_Counter_0 *r = alloc(sizeof(struct __THE_1_Counter_0));
+  struct __THE_1_Counter_0 s = {__THE_0__i};
+  memcpy(r, &s, sizeof(struct __THE_1_Counter_0));
+  return r;
+}
+void __THE_1_Counter_0_free (struct __THE_1_Counter_0 *o) {
+  free(o);
+}
+void __THE_1_fn$3_free (struct __THE_1_fn$3 n) {
+  free(n.x);
+}
+void __THE_1_fn$4_free (struct __THE_1_fn$4 n) {
+  free(n.x);
+}
+int32_t __THE_1_CounterSDget_0 (void *px, const struct __THE_1_Counter_0 *__THE_0_self_0) {
+  return __THE_0_self_0->__THE_0__i;
+}
+void __THE_1_CounterSDdecrease_0_alloc (struct __THE_1_fn$3 *n, struct __THE_1_CounterSDdecrease_0X x) {
+  size_t l = sizeof(struct __THE_1_CounterSDdecrease_0X);
+  struct __THE_1_CounterSDdecrease_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_CounterSDdecrease_0;
+  n->x = r;
+  n->l = l;
+}
+struct __THE_1_Counter_0 **__THE_1_CounterSDdecrease_0 (void *px, struct __THE_1_Counter_0 **__THE_0_self_0, struct __THE_1_fn$3P p) {
+  struct __THE_1_CounterSDdecrease_0X *x = px;
+  const struct __THE_1_fn$1 *__THE_0_sub_0 = x->__THE_0_sub_0;
+  const int32_t __THE_0_by_0 = p.o0 == 1 ? p.n0 : 1;
+  (*__THE_0_self_0)->__THE_0__i = (*__THE_0_sub_0).f((*__THE_0_sub_0).x, (struct __THE_1_fn$1P) {(*__THE_0_self_0)->__THE_0__i, 1, __THE_0_by_0});
+  return __THE_0_self_0;
+}
+void __THE_1_CounterSDincrease_0_alloc (struct __THE_1_fn$3 *n, struct __THE_1_CounterSDincrease_0X x) {
+  size_t l = sizeof(struct __THE_1_CounterSDincrease_0X);
+  struct __THE_1_CounterSDincrease_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_CounterSDincrease_0;
+  n->x = r;
+  n->l = l;
+}
+struct __THE_1_Counter_0 **__THE_1_CounterSDincrease_0 (void *px, struct __THE_1_Counter_0 **__THE_0_self_0, struct __THE_1_fn$3P p) {
+  struct __THE_1_CounterSDincrease_0X *x = px;
+  const struct __THE_1_fn$1 *__THE_0_add_0 = x->__THE_0_add_0;
+  const int32_t __THE_0_by_0 = p.o0 == 1 ? p.n0 : 1;
+  (*__THE_0_self_0)->__THE_0__i = (*__THE_0_add_0).f((*__THE_0_add_0).x, (struct __THE_1_fn$1P) {(*__THE_0_self_0)->__THE_0__i, 1, __THE_0_by_0});
+  return __THE_0_self_0;
+}
+void __THE_1_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn$4 *n, struct __THE_1_CounterSDridiculousStuff_0X x) {
+  size_t l = sizeof(struct __THE_1_CounterSDridiculousStuff_0X);
+  struct __THE_1_CounterSDridiculousStuff_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_CounterSDridiculousStuff_0;
+  n->x = r;
+  n->l = l;
+}
+struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *__THE_1_CounterSDridiculousStuffSDCounter2_0_alloc (int32_t __THE_0__i) {
+  struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *r = alloc(sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2_0));
+  struct __THE_1_CounterSDridiculousStuffSDCounter2_0 s = {__THE_0__i};
+  memcpy(r, &s, sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2_0));
+  return r;
+}
+void __THE_1_CounterSDridiculousStuffSDCounter2_0_free (struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *o) {
+  free(o);
+}
+void __THE_1_fn$5_free (struct __THE_1_fn$5 n) {
+  free(n.x);
+}
+void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn$5 *n, struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X x) {
+  size_t l = sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X);
+  struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0;
+  n->x = r;
+  n->l = l;
+}
+void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0 (void *px, struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1) {
+  struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X *x = px;
+  struct __THE_1_Counter_0 ***__THE_0_self2_0 = x->__THE_0_self2_0;
+  const struct __THE_1_fn$6 *__THE_0_CounterSDridiculousStuffSDCounter2SDget_0 = x->__THE_0_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn$2 *__THE_0_CounterSDget_0 = x->__THE_0_CounterSDget_0;
+  const struct __THE_1_fn$1 *__THE_0_sub_0 = x->__THE_0_sub_0;
+  (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_sub_0).f((*__THE_0_sub_0).x, (struct __THE_1_fn$1P) {(*__THE_0_self_1)->__THE_0__i, 0, 0});
+  print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, **__THE_0_self2_0), THE_EOL);
+  print(stdout, "zziz", "Current scope:", " ", (*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).x, __THE_0_self_1), THE_EOL);
+}
+void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn$5 *n, struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X x) {
+  size_t l = sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X);
+  struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0;
+  n->x = r;
+  n->l = l;
+}
+void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0 (void *px, struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1) {
+  struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X *x = px;
+  struct __THE_1_Counter_0 ***__THE_0_self2_0 = x->__THE_0_self2_0;
+  const struct __THE_1_fn$6 *__THE_0_CounterSDridiculousStuffSDCounter2SDget_0 = x->__THE_0_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn$1 *__THE_0_add_0 = x->__THE_0_add_0;
+  const struct __THE_1_fn$2 *__THE_0_CounterSDget_0 = x->__THE_0_CounterSDget_0;
+  (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_add_0).f((*__THE_0_add_0).x, (struct __THE_1_fn$1P) {(*__THE_0_self_1)->__THE_0__i, 0, 0});
+  print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, **__THE_0_self2_0), THE_EOL);
+  print(stdout, "zziz", "Current scope", " ", (*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).x, __THE_0_self_1), THE_EOL);
+}
+int32_t __THE_1_CounterSDridiculousStuffSDCounter2SDget_0 (void *px, const struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1) {
+  return (*__THE_0_self_1)->__THE_0__i;
+}
+void __THE_1_CounterSDridiculousStuff_0 (void *px, struct __THE_1_Counter_0 **__THE_0_self_0) {
+  struct __THE_1_CounterSDridiculousStuff_0X *x = px;
+  const struct __THE_1_fn$1 *__THE_0_add_0 = x->__THE_0_add_0;
+  const struct __THE_1_fn$2 *__THE_0_CounterSDget_0 = x->__THE_0_CounterSDget_0;
+  const struct __THE_1_fn$1 *__THE_0_sub_0 = x->__THE_0_sub_0;
+  struct __THE_1_Counter_0 **__THE_0_self2_0 = __THE_0_self_0;
+  print(stdout, "zziz", "For testing:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, *__THE_0_self2_0), THE_EOL);
+  const struct __THE_1_fn$5 __THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0;
+  const struct __THE_1_fn$5 __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0;
+  const struct __THE_1_fn$6 __THE_0_CounterSDridiculousStuffSDCounter2SDget_0 = (struct __THE_1_fn$6) {&__THE_1_CounterSDridiculousStuffSDCounter2SDget_0, NULL, 0};
+  __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc((struct __THE_1_fn$5 *) &__THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0, (struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X) {&__THE_0_self2_0, &__THE_0_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_CounterSDget_0, __THE_0_sub_0});
+  __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc((struct __THE_1_fn$5 *) &__THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0, (struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X) {&__THE_0_self2_0, &__THE_0_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_add_0, __THE_0_CounterSDget_0});
+  struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *__THE_0_counter_0 = __THE_1_CounterSDridiculousStuffSDCounter2_0_alloc(0);
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, *__THE_0_self_0), THE_EOL);
+  __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.x, &__THE_0_counter_0);
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, *__THE_0_self_0), THE_EOL);
+  __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.x, &__THE_0_counter_0);
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, *__THE_0_self_0), THE_EOL);
+  __THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0.x, &__THE_0_counter_0);
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, *__THE_0_self_0), THE_EOL);
+  __THE_1_CounterSDridiculousStuffSDCounter2_0_free((struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *) __THE_0_counter_0);
+  __THE_1_fn$5_free((struct __THE_1_fn$5) __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0);
+  __THE_1_fn$5_free((struct __THE_1_fn$5) __THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0);
+}
+int32_t __THE_1_add_0 (void *px, struct __THE_1_fn$1P p) {
+  const int32_t __THE_0_i_0 = p.n0;
+  const int32_t __THE_0_amount_0 = p.o1 == 1 ? p.n1 : 1;
+  return __THE_0_i_0 + __THE_0_amount_0;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_StaticTestSDstaticMethod_0 = (struct __THE_1_fn$0) {&__THE_1_StaticTestSDstaticMethod_0, NULL, 0};
+  const struct __THE_1_fn$1 __THE_0_sub_0 = (struct __THE_1_fn$1) {&__THE_1_sub_0, NULL, 0};
+  const struct __THE_1_fn$2 __THE_0_CounterSDget_0 = (struct __THE_1_fn$2) {&__THE_1_CounterSDget_0, NULL, 0};
+  const struct __THE_1_fn$3 __THE_0_CounterSDdecrease_0;
+  const struct __THE_1_fn$3 __THE_0_CounterSDincrease_0;
+  const struct __THE_1_fn$4 __THE_0_CounterSDridiculousStuff_0;
+  const struct __THE_1_fn$1 __THE_0_add_0 = (struct __THE_1_fn$1) {&__THE_1_add_0, NULL, 0};
+  __THE_1_CounterSDdecrease_0_alloc((struct __THE_1_fn$3 *) &__THE_0_CounterSDdecrease_0, (struct __THE_1_CounterSDdecrease_0X) {&__THE_0_sub_0});
+  __THE_1_CounterSDincrease_0_alloc((struct __THE_1_fn$3 *) &__THE_0_CounterSDincrease_0, (struct __THE_1_CounterSDincrease_0X) {&__THE_0_add_0});
+  __THE_1_CounterSDridiculousStuff_0_alloc((struct __THE_1_fn$4 *) &__THE_0_CounterSDridiculousStuff_0, (struct __THE_1_CounterSDridiculousStuff_0X) {&__THE_0_add_0, &__THE_0_CounterSDget_0, &__THE_0_sub_0});
+  const struct __THE_1_StaticTest_0 *__THE_0_staticTest_0 = __THE_1_StaticTest_0_alloc();
+  __THE_0_StaticTestSDstaticMethod_0.f(__THE_0_StaticTestSDstaticMethod_0.x);
+  struct __THE_1_Counter_0 *__THE_0_counter_0 = __THE_1_Counter_0_alloc(0);
+  print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_0_counter_0), THE_EOL);
+  __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, &__THE_0_counter_0, (struct __THE_1_fn$3P) {0, 0});
+  print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_0_counter_0), THE_EOL);
+  __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, &__THE_0_counter_0, (struct __THE_1_fn$3P) {0, 0}), (struct __THE_1_fn$3P) {0, 0}), (struct __THE_1_fn$3P) {0, 0}), (struct __THE_1_fn$3P) {0, 0});
+  print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_0_counter_0), THE_EOL);
+  __THE_0_CounterSDdecrease_0.f(__THE_0_CounterSDdecrease_0.x, __THE_0_CounterSDdecrease_0.f(__THE_0_CounterSDdecrease_0.x, &__THE_0_counter_0, (struct __THE_1_fn$3P) {0, 0}), (struct __THE_1_fn$3P) {0, 0});
+  print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_0_counter_0), THE_EOL);
+  __THE_0_CounterSDridiculousStuff_0.f(__THE_0_CounterSDridiculousStuff_0.x, &__THE_0_counter_0);
+  print(stdout, "zziz", "Counter Again:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_0_counter_0), THE_EOL);
+  __THE_1_Counter_0_free((struct __THE_1_Counter_0 *) __THE_0_counter_0);
+  __THE_1_StaticTest_0_free((struct __THE_1_StaticTest_0 *) __THE_0_staticTest_0);
+  __THE_1_fn$4_free((struct __THE_1_fn$4) __THE_0_CounterSDridiculousStuff_0);
+  __THE_1_fn$3_free((struct __THE_1_fn$3) __THE_0_CounterSDincrease_0);
+  __THE_1_fn$3_free((struct __THE_1_fn$3) __THE_0_CounterSDdecrease_0);
+}
+======= flags =======
+======= stdout =======
+Static method
+Counter: 0
+Counter: 1
+Counter: 5
+Counter: 3
+For testing: 3
+Counter2: 0 3
+Parent scope: 1
+Current scope 1
+Counter2: 1 1
+Parent scope: 2
+Current scope 2
+Counter2: 2 2
+Parent scope: 1
+Current scope: 1
+Counter2: 1 1
+Counter Again: 1

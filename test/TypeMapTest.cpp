@@ -95,6 +95,60 @@ TEST_F(TypeMapTest, FunctionInserts) {
   EXPECT_TRUE(fn3Body.params[1].variadic);
 }
 
+TEST_F(TypeMapTest, FunctionInsertsMethod) {
+  auto obj = this->tm_.obj("Test", "Test_0");
+
+  auto type1MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
+  auto type1 = this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"), type1MethodInfo);
+
+  auto type2MethodInfo = TypeFnMethodInfo{true, "self_0", obj, false};
+
+  auto type2 = this->tm_.fn("Test_0.test2_0", {
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
+  }, this->tm_.get("void"), type2MethodInfo);
+
+  auto type3MethodInfo = TypeFnMethodInfo{true, "self2_0", this->tm_.ref(obj), true};
+
+  auto type3 = this->tm_.fn("Test_0.test3_0", {
+    TypeFnParam{"a", this->tm_.get("int"), false, false, false},
+    TypeFnParam{"b", this->tm_.get("str"), false, false, true}
+  }, this->tm_.get("str"), type3MethodInfo);
+
+  EXPECT_NO_THROW(this->tm_.get("fn$0"));
+  EXPECT_NO_THROW(this->tm_.get("fn$1"));
+  EXPECT_NO_THROW(this->tm_.get("fn$2"));
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeFn>(type1->body));
+
+  auto fn1Body = std::get<TypeFn>(type1->body);
+  auto fn2Body = std::get<TypeFn>(type2->body);
+  auto fn3Body = std::get<TypeFn>(type3->body);
+
+  EXPECT_TRUE(fn1Body.isMethod);
+  EXPECT_FALSE(fn1Body.methodInfo.isSelfFirst);
+  EXPECT_EQ(fn1Body.methodInfo.selfCodeName, "");
+  EXPECT_EQ(fn1Body.methodInfo.selfType, nullptr);
+  EXPECT_FALSE(fn1Body.methodInfo.isSelfMut);
+  EXPECT_TRUE(fn2Body.isMethod);
+  EXPECT_TRUE(fn2Body.methodInfo.isSelfFirst);
+  EXPECT_EQ(fn2Body.methodInfo.selfCodeName, "self_0");
+  EXPECT_TRUE(fn2Body.methodInfo.selfType->matchExact(obj));
+  EXPECT_FALSE(fn2Body.methodInfo.isSelfMut);
+  EXPECT_TRUE(fn3Body.isMethod);
+  EXPECT_TRUE(fn3Body.methodInfo.isSelfFirst);
+  EXPECT_EQ(fn3Body.methodInfo.selfCodeName, "self2_0");
+  EXPECT_TRUE(fn3Body.methodInfo.selfType->matchExact(this->tm_.ref(obj)));
+  EXPECT_TRUE(fn3Body.methodInfo.isSelfMut);
+}
+
+TEST_F(TypeMapTest, FunctionInsertsBetweenFunctionAndMethod) {
+  auto type1 = this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
+  auto type2 = this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"));
+
+  EXPECT_NO_THROW(this->tm_.get("fn$0"));
+  EXPECT_NO_THROW(this->tm_.get("fn$1"));
+}
+
 TEST_F(TypeMapTest, FunctionDoesNotInsert) {
   auto type1 = this->tm_.fn("test1_0", {
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
@@ -111,6 +165,31 @@ TEST_F(TypeMapTest, FunctionDoesNotInsert) {
   auto type4 = this->tm_.fn(std::nullopt, {
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
+
+  EXPECT_EQ(type1->name, "fn$0");
+  EXPECT_EQ(type1->name, type2->name);
+  EXPECT_EQ(type3->name, "fn$0");
+  EXPECT_EQ(type3, type4);
+}
+
+TEST_F(TypeMapTest, FunctionDoesNotInsertMethod) {
+  auto typeMethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
+
+  auto type1 = this->tm_.fn("test1_0", {
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
+  }, this->tm_.get("void"), typeMethodInfo);
+
+  auto type2 = this->tm_.fn("test2_0", {
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
+  }, this->tm_.get("void"), typeMethodInfo);
+
+  auto type3 = this->tm_.fn(std::nullopt, {
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
+  }, this->tm_.get("void"), typeMethodInfo);
+
+  auto type4 = this->tm_.fn(std::nullopt, {
+    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
+  }, this->tm_.get("void"), typeMethodInfo);
 
   EXPECT_EQ(type1->name, "fn$0");
   EXPECT_EQ(type1->name, type2->name);
@@ -142,6 +221,15 @@ TEST_F(TypeMapTest, HasNotExisting) {
   EXPECT_FALSE(this->tm_.has("test"));
 }
 
+TEST_F(TypeMapTest, IsSelf) {
+  auto type = this->tm_.obj("Test", "Test");
+
+  EXPECT_FALSE(this->tm_.isSelf(this->tm_.get("int")));
+  this->tm_.self = type;
+  EXPECT_TRUE(this->tm_.isSelf(type));
+  EXPECT_TRUE(this->tm_.isSelf(this->tm_.ref(type)));
+}
+
 TEST_F(TypeMapTest, NameGeneratesValid) {
   EXPECT_EQ(this->tm_.name("test"), "test_0");
   this->tm_.obj("test", "test_0");
@@ -170,12 +258,12 @@ TEST_F(TypeMapTest, ObjectInserts) {
   auto type1 = this->tm_.obj("Test1", "Test1_0");
 
   auto type2 = this->tm_.obj("Test2", "Test2_0", {
-    TypeField{"a", this->tm_.get("int"), false, false}
+    TypeField{"a", this->tm_.get("int"), false, false, false}
   });
 
   auto type3 = this->tm_.obj("Test3", "Test3_0", {
-    TypeField{"b", this->tm_.get("any"), false, false},
-    TypeField{"c", this->tm_.get("str"), false, false}
+    TypeField{"b", this->tm_.get("any"), false, false, false},
+    TypeField{"c", this->tm_.get("str"), false, false, false}
   });
 
   EXPECT_NO_THROW(this->tm_.get("Test1"));

@@ -30,7 +30,6 @@ struct TypeField {
   std::string name;
   Type *type;
   bool mut;
-  // todo print
   bool method;
   bool builtin;
 };
@@ -100,7 +99,6 @@ struct Type {
   bool isI64 () const;
   bool isInt () const;
   bool isIntNumber () const;
-  // todo test
   bool isMethod () const;
   bool isNumber () const;
   bool isObj () const;

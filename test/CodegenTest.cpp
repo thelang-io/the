@@ -376,7 +376,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinPath, CodegenPassTest, testing::Values(
   "builtin-path-basename",
   "builtin-path-basename-root",
   "builtin-path-dirname",
-  "builtin-path-dirname-root"
+  "builtin-path-dirname-root",
+  "builtin-path-sep",
+  "builtin-path-sep-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
@@ -655,7 +657,8 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-field-opt",
   "node-obj-decl-field-str",
   "node-obj-decl-forward-decl",
-  "node-obj-decl-mut"
+  "node-obj-decl-mut",
+  "node-obj-decl-method"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(

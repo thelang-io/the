@@ -87,7 +87,6 @@ struct ASTNodeMain {
   ASTBlock body;
 };
 
-// todo print
 struct ASTNodeObjDeclMethod {
   Type *type;
   std::vector<std::shared_ptr<Var>> stack;
@@ -95,7 +94,6 @@ struct ASTNodeObjDeclMethod {
   ASTBlock body;
 };
 
-// todo update print
 struct ASTNodeObjDecl {
   Type *type;
   std::vector<ASTNodeObjDeclMethod> methods;
