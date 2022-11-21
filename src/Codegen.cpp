@@ -4327,12 +4327,10 @@ void Codegen::_typeObj (Type *type, bool builtin) {
 
   auto typeName = builtin ? type->name : Codegen::typeName(type->codeName);
   auto objEntity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
+  auto objFields = std::string();
 
   this->state.builtins = &objEntity.builtins;
   this->state.entities = &objEntity.entities;
-
-  objEntity.decl += "struct " + typeName + ";";
-  objEntity.def += "struct " + typeName + " {" EOL;
 
   for (const auto &field : type->fields) {
     if (field.builtin || field.method) {
@@ -4342,10 +4340,11 @@ void Codegen::_typeObj (Type *type, bool builtin) {
     auto fieldName = Codegen::name(field.name);
     auto fieldTypeInfo = this->_typeInfo(field.type);
 
-    objEntity.def += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
+    objFields += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
   }
 
-  objEntity.def += "};";
+  objEntity.decl += "struct " + typeName + ";";
+  objEntity.def += "struct " + typeName + " {" EOL + (objFields.empty() ? "  void *_;" EOL : objFields) + "};";
   this->entities.push_back(objEntity);
 
   auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN};
@@ -4431,7 +4430,7 @@ void Codegen::_typeObjDef (Type *type, const std::map<std::string, std::string> 
       }
 
       allocFnParams = allocFnParams.empty() ? allocFnParams : allocFnParams.substr(2);
-      allocFnCode = allocFnCode.empty() ? allocFnCode : allocFnCode.substr(2);
+      allocFnCode = allocFnCode.empty() ? "(void *) 0" : allocFnCode.substr(2);
 
       entity.def += "struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParams + ") {" EOL;
       entity.def += "  struct _{" + typeName + "} *" + "r = _{alloc}(sizeof(struct _{" + typeName + "}));" EOL;
@@ -4544,7 +4543,7 @@ void Codegen::_typeObjDef (Type *type, const std::map<std::string, std::string> 
       entity.def += R"(  _{struct str} r = _{str_alloc}(")" + type->name + R"({");)" EOL;
 
       for (const auto &field : type->fields) {
-        if (!field.builtin) {
+        if (!field.builtin && !field.method) {
           auto fieldName = Codegen::name(field.name);
           auto fieldCode = std::string(field.type->isRef() ? "*" : "") + "o->" + fieldName;
           auto strCodeDelimiter = std::string(fieldIdx == 0 ? "" : ", ");

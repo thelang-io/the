@@ -82,6 +82,7 @@ struct request_Header {
   const struct str __THE_0_value;
 };
 struct request_Request {
+  void *_;
 };
 struct __THE_1_array_request_Header {
   struct request_Header **d;
