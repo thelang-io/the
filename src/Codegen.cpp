@@ -2088,6 +2088,10 @@ std::string Codegen::_fnDecl (
       this->_activateEntity(paramsName, &entity.entities);
     }
 
+    if (fn.isMethod && fn.methodInfo.isSelfFirst && fn.methodInfo.selfType->shouldBeFreed()) {
+      this->state.cleanUp.add(this->_genFreeFn(fn.methodInfo.selfType, Codegen::name(fn.methodInfo.selfCodeName)) + ";");
+    }
+
     auto returnTypeInfo = this->_typeInfo(fn.returnType);
 
     this->indent = 0;
@@ -2573,7 +2577,10 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
         code += this->_nodeExpr(*nodeReturn.body, this->state.returnType) + ";" EOL;
       }
 
-      if (!ASTChecker(node.parent).is<ASTNodeFnDecl>() || !ASTChecker(node).isLast()) {
+      if (
+        !(ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>()) ||
+        !ASTChecker(node).isLast()
+      ) {
         code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
       }
     } else if (nodeReturn.body != std::nullopt) {
@@ -3420,7 +3427,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
         auto nodeExprAccess = std::get<ASTNodeExpr>(exprAccess.expr);
 
-        code += ", " + this->_nodeExpr(nodeExprAccess, fn.methodInfo.selfType, true);
+        code += ", " + this->_genCopyFn(fn.methodInfo.selfType, this->_nodeExpr(nodeExprAccess, fn.methodInfo.selfType, true));
       }
 
       if (!bodyCode.empty()) {

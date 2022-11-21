@@ -74,6 +74,12 @@ void AST::populateParents (ASTBlock &nodes, ASTNode *parent) {
     } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
       auto &nodeMain = std::get<ASTNodeMain>(*node.body);
       AST::populateParents(nodeMain.body, &node);
+    } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+      auto &nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+
+      for (auto &method : nodeObjDecl.methods) {
+        AST::populateParents(method.body, &node);
+      }
     }
   }
 }
