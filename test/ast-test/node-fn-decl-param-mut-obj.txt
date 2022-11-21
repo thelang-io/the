@@ -46,9 +46,9 @@ main {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="a" codeName="a_0" mut frame="2">
           <TypeObj codeName="Test_0" name="Test">
             <TypeField name="v">
@@ -56,9 +56,9 @@ main {
             </TypeField>
           </TypeObj>
         </Var>
-      </NodeFnDeclParamVar>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>
@@ -164,9 +164,9 @@ main {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="a" codeName="a_0" mut frame="2">
           <TypeObj codeName="Test_0" name="Test">
             <TypeField name="v">
@@ -174,10 +174,10 @@ main {
             </TypeField>
           </TypeObj>
         </Var>
-      </NodeFnDeclParamVar>
-    </NodeFnDeclParam>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+      </FnDeclParamVar>
+    </FnDeclParam>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="b" codeName="b_0" mut frame="2">
           <TypeObj codeName="Test_0" name="Test">
             <TypeField name="v">
@@ -185,8 +185,8 @@ main {
             </TypeField>
           </TypeObj>
         </Var>
-      </NodeFnDeclParamVar>
-      <NodeFnDeclParamInit>
+      </FnDeclParamVar>
+      <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
             <TypeObj codeName="Test_0" name="Test">
@@ -219,9 +219,9 @@ main {
             </ExprObj>
           </NodeExprBody>
         </NodeExpr>
-      </NodeFnDeclParamInit>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamInit>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>

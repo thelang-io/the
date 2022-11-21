@@ -85,17 +85,17 @@ main {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="a" codeName="a_0" mut frame="2">
           <TypeRef name="ref_int">
             <BuiltinType name="int" />
           </TypeRef>
         </Var>
-      </NodeFnDeclParamVar>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>
@@ -157,9 +157,9 @@ main {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="test" codeName="test_0" mut frame="2">
           <TypeRef name="ref_Test">
             <TypeObj codeName="Test_0" name="Test">
@@ -169,9 +169,9 @@ main {
             </TypeObj>
           </TypeRef>
         </Var>
-      </NodeFnDeclParamVar>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>
@@ -246,17 +246,17 @@ main {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="b" codeName="b_0" mut frame="2">
           <TypeRef name="ref_str">
             <BuiltinType name="str" />
           </TypeRef>
         </Var>
-      </NodeFnDeclParamVar>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>

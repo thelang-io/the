@@ -194,6 +194,16 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "</StmtObjDeclFields>" EOL;
     }
 
+    if (!stmtObjDecl.methods.empty()) {
+      result += std::string(indent + 2, ' ') + "<StmtObjDeclMethod>" EOL;
+
+      for (const auto &stmtObjDeclMethod : stmtObjDecl.methods) {
+        result += stmtObjDeclMethod.xml(indent + 4) + EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</StmtObjDeclMethod>" EOL;
+    }
+
     result += std::string(indent, ' ') + "</StmtObjDecl>";
   } else if (std::holds_alternative<ParserStmtReturn>(*this->body)) {
     auto stmtReturn = std::get<ParserStmtReturn>(*this->body);

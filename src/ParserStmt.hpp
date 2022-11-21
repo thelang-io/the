@@ -111,6 +111,7 @@ struct ParserStmtObjDeclField {
 struct ParserStmtObjDecl {
   Token id;
   std::vector<ParserStmtObjDeclField> fields;
+  std::vector<ParserStmt> methods;
 };
 
 struct ParserStmtReturn {

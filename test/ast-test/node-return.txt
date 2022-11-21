@@ -22,15 +22,15 @@ fn test (a: int) any {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="a" codeName="a_0" frame="2">
           <BuiltinType name="int" />
         </Var>
-      </NodeFnDeclParamVar>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeIf>
       <NodeIfCond>

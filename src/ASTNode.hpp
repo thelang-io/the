@@ -19,6 +19,7 @@
 
 #include "ASTExpr.hpp"
 
+struct ASTFnDeclParam;
 struct ASTNodeBreak;
 struct ASTNodeContinue;
 struct ASTNodeFnDecl;
@@ -42,6 +43,11 @@ using ASTNodeBody = std::variant<
   ASTNodeVarDecl
 >;
 
+struct ASTFnDeclParam {
+  std::shared_ptr<Var> var;
+  std::optional<ASTNodeExpr> init;
+};
+
 struct ASTNode {
   std::shared_ptr<ASTNodeBody> body;
   ASTNode *parent;
@@ -57,15 +63,10 @@ struct ASTNodeBreak {
 struct ASTNodeContinue {
 };
 
-struct ASTNodeFnDeclParam {
-  std::shared_ptr<Var> var;
-  std::optional<ASTNodeExpr> init;
-};
-
 struct ASTNodeFnDecl {
   std::shared_ptr<Var> var;
   std::vector<std::shared_ptr<Var>> stack;
-  std::vector<ASTNodeFnDeclParam> params;
+  std::vector<ASTFnDeclParam> params;
   ASTBlock body;
 };
 
@@ -86,8 +87,16 @@ struct ASTNodeMain {
   ASTBlock body;
 };
 
+struct ASTNodeObjDeclMethod {
+  Type *type;
+  std::vector<std::shared_ptr<Var>> stack;
+  std::vector<ASTFnDeclParam> params;
+  ASTBlock body;
+};
+
 struct ASTNodeObjDecl {
   Type *type;
+  std::vector<ASTNodeObjDeclMethod> methods;
 };
 
 struct ASTNodeReturn {

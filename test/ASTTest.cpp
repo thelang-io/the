@@ -63,6 +63,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-obj-decl",
   "node-obj-decl-field-mut",
   "node-obj-decl-forward-decl",
+  "node-obj-decl-method",
   "node-return",
   "node-var-decl",
   "node-var-decl-type-only"
@@ -138,6 +139,8 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1021-node-fn-decl-main",
   "throw-E1022-node-fn-decl-void-param-type",
   "throw-E1022-node-fn-decl-void-param-init",
+  "throw-E1022-node-obj-decl-method-void-param-init",
+  "throw-E1022-node-obj-decl-method-void-param-type",
   "throw-E1022-node-obj-decl-void-field-type",
   "throw-E1022-node-var-decl-void-type",
   "throw-E1022-node-var-decl-void-init"

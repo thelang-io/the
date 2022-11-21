@@ -186,6 +186,10 @@ bool Type::isIntNumber () const {
   );
 }
 
+bool Type::isMethod () const {
+  return std::holds_alternative<TypeFn>(this->body) && std::get<TypeFn>(this->body).isMethod;
+}
+
 bool Type::isNumber () const {
   return this->isIntNumber() || this->isFloatNumber();
 }
@@ -291,7 +295,14 @@ bool Type::match (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    if (!lhsFn.returnType->match(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+    if (
+      !lhsFn.returnType->match(rhsFn.returnType) ||
+      lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.isMethod != rhsFn.isMethod ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->match(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfType->isRef() && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+    ) {
       return false;
     }
 
@@ -352,7 +363,15 @@ bool Type::matchExact (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    if (!lhsFn.returnType->matchExact(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+    if (
+      !lhsFn.returnType->matchExact(rhsFn.returnType) ||
+      lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.isMethod != rhsFn.isMethod ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchExact(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+    ) {
       return false;
     }
 
@@ -413,7 +432,15 @@ bool Type::matchNice (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    if (!lhsFn.returnType->matchNice(rhsFn.returnType) || lhsFn.params.size() != rhsFn.params.size()) {
+    if (
+      !lhsFn.returnType->matchNice(rhsFn.returnType) ||
+      lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.isMethod != rhsFn.isMethod ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchNice(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+    ) {
       return false;
     }
 
@@ -460,7 +487,7 @@ bool Type::shouldBeFreed () const {
   return this->isAny() || this->isArray() || this->isFn() || this->isObj() || this->isOpt() || this->isStr();
 }
 
-std::string Type::xml (std::size_t indent) const {
+std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) const {
   if (this->builtin) {
     return std::string(indent, ' ') + R"(<BuiltinType name=")" + this->name + R"(" />)";
   }
@@ -483,13 +510,34 @@ std::string Type::xml (std::size_t indent) const {
 
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
+
+  if (this->isObj() && parentTypes.contains(this->codeName)) {
+    return result + " />";
+  }
+
   result += ">" EOL;
 
   if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
-    result += typeArray.elementType->xml(indent + 2) + EOL;
+    result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isFn()) {
     auto typeFn = std::get<TypeFn>(this->body);
+
+    if (typeFn.isMethod) {
+      auto methodAttrs = std::string();
+
+      methodAttrs += typeFn.methodInfo.isSelfFirst ? R"( selfCodeName=")" + typeFn.methodInfo.selfCodeName + R"(")" : "";
+      methodAttrs += typeFn.methodInfo.isSelfFirst ? " selfFirst" : "";
+      methodAttrs += typeFn.methodInfo.isSelfMut ? " selfMut" : "";
+
+      if (typeFn.methodInfo.isSelfFirst) {
+        result += std::string(indent + 2, ' ') + "<TypeFnMethodInfo" + methodAttrs + ">" EOL;
+        result += typeFn.methodInfo.selfType->xml(indent + 4, parentTypes) + EOL;
+        result += std::string(indent + 2, ' ') + "</TypeFnMethodInfo>" EOL;
+      } else {
+        result += std::string(indent + 2, ' ') + "<TypeFnMethodInfo" + methodAttrs + " />" EOL;
+      }
+    }
 
     if (!typeFn.params.empty()) {
       result += std::string(indent + 2, ' ') + "<TypeFnParams>" EOL;
@@ -502,7 +550,7 @@ std::string Type::xml (std::size_t indent) const {
         paramAttrs += typeFnParam.variadic ? " variadic" : "";
 
         result += std::string(indent + 4, ' ') + "<TypeFnParam" + paramAttrs + ">" EOL;
-        result += typeFnParam.type->xml(indent + 6) + EOL;
+        result += typeFnParam.type->xml(indent + 6, parentTypes) + EOL;
         result += std::string(indent + 4, ' ') + "</TypeFnParam>" EOL;
       }
 
@@ -510,29 +558,32 @@ std::string Type::xml (std::size_t indent) const {
     }
 
     result += std::string(indent + 2, ' ') + "<TypeFnReturnType>" EOL;
-    result += typeFn.returnType->xml(indent + 4) + EOL;
+    result += typeFn.returnType->xml(indent + 4, parentTypes) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeFnReturnType>" EOL;
   } else if (this->isObj()) {
-    for (const auto &typeField : this->fields) {
-      if (typeField.builtin) {
+    parentTypes.insert(this->codeName);
+
+    for (const auto &field : this->fields) {
+      if (field.builtin) {
         continue;
       }
 
+      auto tagName = std::string(field.method ? "TypeMethod" : "TypeField");
       auto fieldAttrs = std::string();
 
-      fieldAttrs += typeField.mut ? " mut" : "";
-      fieldAttrs += R"( name=")" + typeField.name + R"(")";
+      fieldAttrs += field.mut ? " mut" : "";
+      fieldAttrs += R"( name=")" + field.name + R"(")";
 
-      result += std::string(indent + 2, ' ') + "<TypeField" + fieldAttrs + ">" EOL;
-      result += typeField.type->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
+      result += std::string(indent + 2, ' ') + "<" + tagName + fieldAttrs + ">" EOL;
+      result += field.type->xml(indent + 4, parentTypes) + EOL;
+      result += std::string(indent + 2, ' ') + "</" + tagName + ">" EOL;
     }
   } else if (this->isOpt()) {
     auto typeOptional = std::get<TypeOptional>(this->body);
-    result += typeOptional.type->xml(indent + 2) + EOL;
+    result += typeOptional.type->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isRef()) {
     auto typeRef = std::get<TypeRef>(this->body);
-    result += typeRef.refType->xml(indent + 2) + EOL;
+    result += typeRef.refType->xml(indent + 2, parentTypes) + EOL;
   }
 
   return result + std::string(indent, ' ') + "</" + typeName + ">";

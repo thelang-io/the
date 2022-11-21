@@ -22,14 +22,14 @@ fn test1 (p1 := "1", p2 := p1) {
       </TypeFn>
     </Var>
   </NodeFnDeclVar>
-  <NodeFnDeclParams>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="p1" codeName="p1_0" frame="2">
           <BuiltinType name="str" />
         </Var>
-      </NodeFnDeclParamVar>
-      <NodeFnDeclParamInit>
+      </FnDeclParamVar>
+      <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
             <BuiltinType name="str" />
@@ -38,15 +38,15 @@ fn test1 (p1 := "1", p2 := p1) {
             <ExprLit type="STR" value="\"1\"" />
           </NodeExprBody>
         </NodeExpr>
-      </NodeFnDeclParamInit>
-    </NodeFnDeclParam>
-    <NodeFnDeclParam>
-      <NodeFnDeclParamVar>
+      </FnDeclParamInit>
+    </FnDeclParam>
+    <FnDeclParam>
+      <FnDeclParamVar>
         <Var name="p2" codeName="p2_0" frame="2">
           <BuiltinType name="str" />
         </Var>
-      </NodeFnDeclParamVar>
-      <NodeFnDeclParamInit>
+      </FnDeclParamVar>
+      <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
             <BuiltinType name="str" />
@@ -59,9 +59,9 @@ fn test1 (p1 := "1", p2 := p1) {
             </ExprAccess>
           </NodeExprBody>
         </NodeExpr>
-      </NodeFnDeclParamInit>
-    </NodeFnDeclParam>
-  </NodeFnDeclParams>
+      </FnDeclParamInit>
+    </FnDeclParam>
+  </FnDeclParams>
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>

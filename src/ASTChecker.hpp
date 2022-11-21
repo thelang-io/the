@@ -124,6 +124,12 @@ class ASTChecker {
         if (this->_hasNode<T>(nodeMain.body)) {
           return true;
         }
+      } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+        auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+
+        return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
+          return this->_hasNode<T>(it.body);
+        });
       }
     }
 
@@ -141,6 +147,7 @@ class ASTChecker {
     });
   }
 
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   bool _isLastNode (const std::vector<ASTNode> &nodes) const {
     if (nodes.size() != 1) {
       throw Error("tried isLast on many nodes");
@@ -163,6 +170,12 @@ class ASTChecker {
     } else if (std::holds_alternative<ASTNodeMain>(*parent.body)) {
       auto nodeMain = std::get<ASTNodeMain>(*parent.body);
       return nodeMain.body.back().body == node.body;
+    } else if (std::holds_alternative<ASTNodeObjDecl>(*parent.body)) {
+      auto nodeObjDecl = std::get<ASTNodeObjDecl>(*parent.body);
+
+      return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
+        return it.body.back().body == node.body;
+      });
     }
 
     throw Error("tried isLast on unknown node");

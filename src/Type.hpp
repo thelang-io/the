@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <optional>
+#include <set>
 #include <string>
 #include <variant>
 #include <vector>
@@ -29,6 +30,7 @@ struct TypeField {
   std::string name;
   Type *type;
   bool mut;
+  bool method;
   bool builtin;
 };
 
@@ -44,9 +46,18 @@ struct TypeFnParam {
   bool variadic;
 };
 
+struct TypeFnMethodInfo {
+  bool isSelfFirst = false;
+  std::string selfCodeName = "";
+  Type *selfType = nullptr;
+  bool isSelfMut = false;
+};
+
 struct TypeFn {
   Type *returnType;
   std::vector<TypeFnParam> params = {};
+  bool isMethod = false;
+  TypeFnMethodInfo methodInfo = {};
 };
 
 struct TypeObj {
@@ -88,6 +99,7 @@ struct Type {
   bool isI64 () const;
   bool isInt () const;
   bool isIntNumber () const;
+  bool isMethod () const;
   bool isNumber () const;
   bool isObj () const;
   bool isOpt () const;
@@ -104,7 +116,7 @@ struct Type {
   bool matchExact (const Type *) const;
   bool matchNice (const Type *) const;
   bool shouldBeFreed () const;
-  std::string xml (std::size_t = 0) const;
+  std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
 };
 
 #endif

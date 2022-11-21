@@ -21,13 +21,20 @@
 
 class TypeMap {
  public:
+  std::optional<Type *> self;
   std::vector<std::string> stack;
 
   Type *arrayOf (Type *);
-  Type *fn (const std::optional<std::string> &, const std::vector<TypeFnParam> &, Type *);
+  Type *fn (
+    const std::optional<std::string> &,
+    const std::vector<TypeFnParam> &,
+    Type *,
+    const std::optional<TypeFnMethodInfo> & = std::nullopt
+  );
   Type *get (const std::string &);
   bool has (const std::string &);
   void init ();
+  bool isSelf (Type *);
   std::string name (const std::string &) const;
   Type *obj (const std::string &, const std::string &, const std::vector<TypeField> & = {});
   Type *opt (Type *);

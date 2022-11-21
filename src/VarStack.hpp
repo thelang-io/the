@@ -23,6 +23,7 @@ class VarStack {
  public:
   explicit VarStack (const std::vector<std::shared_ptr<Var>> &);
 
+  void mark (const std::string &);
   void mark (const std::shared_ptr<Var> &);
   void mark (const std::vector<std::shared_ptr<Var>> &);
   std::vector<std::shared_ptr<Var>> snapshot () const;

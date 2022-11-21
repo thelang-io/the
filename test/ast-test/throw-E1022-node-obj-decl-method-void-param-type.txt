@@ -1,0 +1,9 @@
+======= stdin =======
+obj Test {
+  fn test (a: void) {
+  }
+}
+======= stderr =======
+/test:2:15: E1022 - Void type can only be used as function return type
+  2 |   fn test (a: void) {
+    |               ^~~~
