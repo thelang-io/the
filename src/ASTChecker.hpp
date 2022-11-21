@@ -125,7 +125,6 @@ class ASTChecker {
           return true;
         }
       } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-        // todo test
         auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
         return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
@@ -148,6 +147,7 @@ class ASTChecker {
     });
   }
 
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   bool _isLastNode (const std::vector<ASTNode> &nodes) const {
     if (nodes.size() != 1) {
       throw Error("tried isLast on many nodes");
@@ -171,7 +171,6 @@ class ASTChecker {
       auto nodeMain = std::get<ASTNodeMain>(*parent.body);
       return nodeMain.body.back().body == node.body;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*parent.body)) {
-      // todo test
       auto nodeObjDecl = std::get<ASTNodeObjDecl>(*parent.body);
 
       return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {

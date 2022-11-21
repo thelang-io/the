@@ -1052,6 +1052,35 @@ TEST_F(TypeTest, MatchesObject) {
   EXPECT_FALSE(type1->match(this->tm_.get("int")));
 }
 
+TEST_F(TypeTest, MatchesObjectMethod) {
+  auto type1 = this->tm_.fn("test1", {}, this->tm_.get("void"));
+  auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
+  auto type2 = this->tm_.fn("test2", {}, this->tm_.get("void"), type2MethodInfo);
+  auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
+  auto type3 = this->tm_.fn("test3", {}, this->tm_.get("void"), type3MethodInfo);
+  auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
+  auto type4 = this->tm_.fn("test4", {}, this->tm_.get("void"), type4MethodInfo);
+  auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
+  auto type5 = this->tm_.fn("test5", {}, this->tm_.get("void"), type5MethodInfo);
+
+  EXPECT_TRUE(type2->match(type2));
+  EXPECT_FALSE(type1->match(type2));
+
+  EXPECT_TRUE(type3->match(type3));
+  EXPECT_FALSE(type2->match(type3));
+  EXPECT_FALSE(type3->match(type2));
+
+  EXPECT_TRUE(type4->match(type4));
+  EXPECT_TRUE(type3->match(type4));
+  EXPECT_TRUE(type4->match(type3));
+
+  EXPECT_TRUE(type5->match(type5));
+  EXPECT_TRUE(type3->match(type5));
+  EXPECT_TRUE(type4->match(type5));
+  EXPECT_FALSE(type5->match(type3));
+  EXPECT_TRUE(type5->match(type4));
+}
+
 TEST_F(TypeTest, MatchesOptional) {
   auto type1 = this->tm_.opt(this->tm_.get("int"));
   auto type2 = this->tm_.opt(this->tm_.get("str"));
@@ -1219,6 +1248,35 @@ TEST_F(TypeTest, MatchesExactObject) {
   EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
 }
 
+TEST_F(TypeTest, MatchesExactObjectMethod) {
+  auto type1 = this->tm_.fn("test1", {}, this->tm_.get("void"));
+  auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
+  auto type2 = this->tm_.fn("test2", {}, this->tm_.get("void"), type2MethodInfo);
+  auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
+  auto type3 = this->tm_.fn("test3", {}, this->tm_.get("void"), type3MethodInfo);
+  auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
+  auto type4 = this->tm_.fn("test4", {}, this->tm_.get("void"), type4MethodInfo);
+  auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
+  auto type5 = this->tm_.fn("test5", {}, this->tm_.get("void"), type5MethodInfo);
+
+  EXPECT_TRUE(type2->matchExact(type2));
+  EXPECT_FALSE(type1->matchExact(type2));
+
+  EXPECT_TRUE(type3->matchExact(type3));
+  EXPECT_FALSE(type2->matchExact(type3));
+  EXPECT_FALSE(type3->matchExact(type2));
+
+  EXPECT_TRUE(type4->matchExact(type4));
+  EXPECT_FALSE(type3->matchExact(type4));
+  EXPECT_FALSE(type4->matchExact(type3));
+
+  EXPECT_TRUE(type5->matchExact(type5));
+  EXPECT_FALSE(type3->matchExact(type5));
+  EXPECT_FALSE(type4->matchExact(type5));
+  EXPECT_FALSE(type5->matchExact(type3));
+  EXPECT_FALSE(type5->matchExact(type4));
+}
+
 TEST_F(TypeTest, MatchesExactOptional) {
   auto type1 = this->tm_.opt(this->tm_.get("int"));
   auto type2 = this->tm_.opt(this->tm_.get("str"));
@@ -1384,6 +1442,35 @@ TEST_F(TypeTest, MatchesNiceObject) {
   EXPECT_FALSE(type1->matchNice(type4));
   EXPECT_FALSE(type1->matchNice(type5));
   EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
+}
+
+TEST_F(TypeTest, MatchesNiceObjectMethod) {
+  auto type1 = this->tm_.fn("test1", {}, this->tm_.get("void"));
+  auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
+  auto type2 = this->tm_.fn("test2", {}, this->tm_.get("void"), type2MethodInfo);
+  auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
+  auto type3 = this->tm_.fn("test3", {}, this->tm_.get("void"), type3MethodInfo);
+  auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
+  auto type4 = this->tm_.fn("test4", {}, this->tm_.get("void"), type4MethodInfo);
+  auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
+  auto type5 = this->tm_.fn("test5", {}, this->tm_.get("void"), type5MethodInfo);
+
+  EXPECT_TRUE(type2->matchNice(type2));
+  EXPECT_FALSE(type1->matchNice(type2));
+
+  EXPECT_TRUE(type3->matchNice(type3));
+  EXPECT_FALSE(type2->matchNice(type3));
+  EXPECT_FALSE(type3->matchNice(type2));
+
+  EXPECT_TRUE(type4->matchNice(type4));
+  EXPECT_FALSE(type3->matchNice(type4));
+  EXPECT_FALSE(type4->matchNice(type3));
+
+  EXPECT_TRUE(type5->matchNice(type5));
+  EXPECT_FALSE(type3->matchNice(type5));
+  EXPECT_FALSE(type4->matchNice(type5));
+  EXPECT_FALSE(type5->matchNice(type3));
+  EXPECT_FALSE(type5->matchNice(type4));
 }
 
 TEST_F(TypeTest, MatchesNiceOptional) {

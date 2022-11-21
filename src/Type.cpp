@@ -295,7 +295,6 @@ bool Type::match (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    // todo test
     if (
       !lhsFn.returnType->match(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
@@ -364,7 +363,6 @@ bool Type::matchExact (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    // todo test
     if (
       !lhsFn.returnType->matchExact(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
@@ -434,7 +432,6 @@ bool Type::matchNice (const Type *type) const {
     auto lhsFn = std::get<TypeFn>(this->body);
     auto rhsFn = std::get<TypeFn>(type->body);
 
-    // todo test
     if (
       !lhsFn.returnType->matchNice(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||

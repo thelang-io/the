@@ -190,6 +190,24 @@ TEST(ASTCheckerTest, HasReturn) {
     "  return" EOL
     "}" EOL
   ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(astCheckerTestGen(
+    "obj Test {" EOL
+    "  fn test () {" EOL
+    "    return 1;" EOL
+    "  }" EOL
+    "}" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(astCheckerTestGen(
+    "obj Test {" EOL
+    "  fn test1 () {" EOL
+    "  }" EOL
+    "  fn test2 () {" EOL
+    "    return 1" EOL
+    "  }" EOL
+    "}" EOL
+  ).has<ASTNodeReturn>());
 }
 
 TEST(ASTCheckerTest, IsFnDecl) {
@@ -279,6 +297,36 @@ TEST(ASTCheckerTest, IsLastOnMain) {
   EXPECT_FALSE(ASTChecker(node.body[0]).isLast());
   EXPECT_FALSE(ASTChecker(node.body[1]).isLast());
   EXPECT_TRUE(ASTChecker(node.body[2]).isLast());
+}
+
+TEST(ASTCheckerTest, IsLastOnObjDecl) {
+  auto ast = testing::NiceMock<MockAST>(
+    "obj Test {" EOL
+    "  fn test1 () {" EOL
+    "    a := 1" EOL
+    "    if 1 > 2 {" EOL
+    "      return" EOL
+    "    }" EOL
+    "    return" EOL
+    "  }" EOL
+    "  fn test2 () {" EOL
+    "    a := 1" EOL
+    "    if 1 > 2 {" EOL
+    "      return" EOL
+    "    }" EOL
+    "    return" EOL
+    "  }" EOL
+    "}" EOL
+  );
+
+  auto nodes = ast.gen();
+  auto node = std::get<ASTNodeObjDecl>(*nodes[0].body);
+
+  for (const auto &method : node.methods) {
+    EXPECT_FALSE(ASTChecker(method.body[0]).isLast());
+    EXPECT_FALSE(ASTChecker(method.body[1]).isLast());
+    EXPECT_TRUE(ASTChecker(method.body[2]).isLast());
+  }
 }
 
 TEST(ASTCheckerTest, ThrowsOnManyIsLast) {
