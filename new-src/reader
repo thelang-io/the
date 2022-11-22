@@ -18,6 +18,62 @@ obj Reader {
   path: str
   content: str
   mut pos: int
+
+  fn eof (self: ref Self) bool {
+    return self.pos >= self.content.len
+  }
+
+  fn lookahead (mut self: ref Self, check: char) bool {
+    if (
+      check == '\n' &&
+      os_name() == "Windows" &&
+      self.content.slice(self.pos, self.pos + 2) == "\r\n"
+    ) {
+      self.pos += 2
+      return true
+    } elif (
+      self.pos < self.content.len &&
+      self.content[self.pos] == check
+    ) {
+      self.pos += 1
+      return true
+    }
+
+    return false
+  }
+
+  fn next (mut self: ref Self) char {
+    if self.eof() {
+      RaiseError("Tried to read on eof")
+    } elif (
+      os_name() == "Windows" &&
+      self.content.slice(self.pos, self.pos + 2) == "\r\n"
+    ) {
+      self.pos++
+    }
+
+    return self.content[self.pos++]
+  }
+
+  fn seek (mut self: ref Self, pos: int) {
+    self.pos = pos
+  }
+
+  fn slice (self: ref Self, start: int, end: int) str {
+    return self.content.slice(start, end)
+  }
+
+  fn walk (mut self: ref Self, match: (char) -> bool) {
+    loop !self.eof() {
+      pos := self.pos
+      ch := self.next()
+
+      if !match(ch) {
+        Reader_seek(self, pos)
+        break
+      }
+    }
+  }
 }
 
 fn Reader_init (p: str) Reader {
@@ -29,60 +85,4 @@ fn Reader_init (p: str) Reader {
 
   content := fs_readFileSync(path).str()
   return Reader{path: path, content: content}
-}
-
-fn Reader_eof (self: ref Reader) bool {
-  return self.pos >= self.content.len
-}
-
-fn Reader_lookahead (mut self: ref Reader, check: char) bool {
-  if (
-    check == '\n' &&
-    os_name() == "Windows" &&
-    self.content.slice(self.pos, self.pos + 2) == "\r\n"
-  ) {
-    self.pos += 2
-    return true
-  } elif (
-    self.pos < self.content.len &&
-    self.content[self.pos] == check
-  ) {
-    self.pos += 1
-    return true
-  }
-
-  return false
-}
-
-fn Reader_next (mut self: ref Reader) char {
-  if Reader_eof(self) {
-    RaiseError("Tried to read on eof")
-  } elif (
-    os_name() == "Windows" &&
-    self.content.slice(self.pos, self.pos + 2) == "\r\n"
-  ) {
-    self.pos++
-  }
-
-  return self.content[self.pos++]
-}
-
-fn Reader_seek (mut self: ref Reader, pos: int) {
-  self.pos = pos
-}
-
-fn Reader_slice (self: ref Reader, start: int, end: int) str {
-  return self.content.slice(start, end)
-}
-
-fn Reader_walk (mut self: ref Reader, match: (char) -> bool) {
-  loop !Reader_eof(self) {
-    pos := self.pos
-    ch := Reader_next(self)
-
-    if !match(ch) {
-      Reader_seek(self, pos)
-      break
-    }
-  }
 }

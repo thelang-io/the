@@ -19,6 +19,49 @@ obj Token {
   val: str
   start: int
   end: int
+
+  fn Token_str (self: Self) str {
+    val := self._valEscaped()
+    loc := "(" + self.start.str() + "-" + self.end.str() + ")"
+
+    return tkToStr(self.type).slice(3) + loc + (val == "" ? "" : ": " + val)
+  }
+
+  fn Token_xml (self: Self) str {
+    return
+      "<Token" +
+      " type=\"" + tkToStr(self.type).slice(3) + "\"" +
+      " val=\"" + self._valEscaped(true) + "\"" +
+      " start=\"" + self.start.str() + "\"" +
+      " end=\"" + self.end.str() + "\"" +
+      " />"
+  }
+
+  fn _valEscaped (self: Self, xml := false) str {
+    mut result := ""
+
+    loop i := 0; i < self.val.len; i++ {
+      ch := self.val[i]
+
+      if ch == '\f' {
+        result += "\\f"
+      } elif ch == '\n' {
+        result += "\\n"
+      } elif ch == '\r' {
+        result += "\\r"
+      } elif ch == '\t' {
+        result += "\\t"
+      } elif ch == '\v' {
+        result += "\\v"
+      } elif ch == '"' && xml {
+        result += "\\\""
+      } else {
+        result += ch.str()
+      }
+    }
+
+    return result
+  }
 }
 
 fn Token_isCharEsc (ch: char) bool {
@@ -89,47 +132,4 @@ fn Token_isWhitespace (ch: char) bool {
     ch == '\r' ||
     ch == '\t' ||
     ch == '\v'
-}
-
-fn Token_str (self: Token) str {
-  val := _Token_valEscaped(self)
-  loc := "(" + self.start.str() + "-" + self.end.str() + ")"
-
-  return tkToStr(self.type).slice(3) + loc + (val == "" ? "" : ": " + val)
-}
-
-fn Token_xml (self: Token) str {
-  return
-    "<Token" +
-    " type=\"" + tkToStr(self.type).slice(3) + "\"" +
-    " val=\"" + _Token_valEscaped(self, true) + "\"" +
-    " start=\"" + self.start.str() + "\"" +
-    " end=\"" + self.end.str() + "\"" +
-    " />"
-}
-
-fn _Token_valEscaped (self: Token, xml := false) str {
-  mut result := ""
-
-  loop i := 0; i < self.val.len; i++ {
-    ch := self.val[i]
-
-    if ch == '\f' {
-      result += "\\f"
-    } elif ch == '\n' {
-      result += "\\n"
-    } elif ch == '\r' {
-      result += "\\r"
-    } elif ch == '\t' {
-      result += "\\t"
-    } elif ch == '\v' {
-      result += "\\v"
-    } elif ch == '"' && xml {
-      result += "\\\""
-    } else {
-      result += ch.str()
-    }
-  }
-
-  return result
 }

@@ -20,12 +20,8 @@ main {
   mut tokenizer := Tokenizer_init(ref reader)
   mut result: str[]
 
-  loop (
-    tok := Tokenizer_next(ref tokenizer);
-    tok.type != TK_EOF;
-    tok = Tokenizer_next(ref tokenizer)
-  ) {
-    result.push(Token_str(tok))
+  loop tok := tokenizer.next(); tok.type != TK_EOF; tok = tokenizer.next() {
+    result.push(tok.string())
   }
 
   if !tokenizer.errors.empty() {
