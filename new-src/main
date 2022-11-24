@@ -21,7 +21,7 @@ main {
   mut result: str[]
 
   loop tok := tokenizer.next(); tok.type != TK_EOF; tok = tokenizer.next() {
-    result.push(tok.string())
+    result.push(tok.toStr())
   }
 
   if !tokenizer.errors.empty() {

@@ -21,6 +21,12 @@
 #include "ASTNode.hpp"
 #include "Parser.hpp"
 
+enum ASTPhase {
+  AST_PHASE_ALLOC,
+  AST_PHASE_INIT,
+  AST_PHASE_FULL
+};
+
 struct ASTState {
   bool insideLoopInit = false;
   Type *returnType = nullptr;
@@ -48,7 +54,7 @@ class AST {
 
   ASTBlock _block (const ParserBlock &, VarStack &);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ParserStmtExpr &);
-  void _forwardNode (const ParserBlock &);
+  void _forwardNode (const ParserBlock &, ASTPhase);
   ASTNode _node (const ParserStmt &, VarStack &);
   ASTNodeExpr _nodeExpr (const ParserStmtExpr &, Type *, VarStack &);
   Type *_nodeExprType (const ParserStmtExpr &, Type *);

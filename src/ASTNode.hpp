@@ -89,9 +89,9 @@ struct ASTNodeMain {
 
 struct ASTNodeObjDeclMethod {
   Type *type;
-  std::vector<std::shared_ptr<Var>> stack;
-  std::vector<ASTFnDeclParam> params;
-  ASTBlock body;
+  std::vector<std::shared_ptr<Var>> stack = {};
+  std::vector<ASTFnDeclParam> params = {};
+  ASTBlock body = {};
 };
 
 struct ASTNodeObjDecl {

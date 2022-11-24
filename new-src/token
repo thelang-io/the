@@ -20,14 +20,14 @@ obj Token {
   start: int
   end: int
 
-  fn Token_str (self: Self) str {
+  fn toStr (self: Self) str {
     val := self._valEscaped()
     loc := "(" + self.start.str() + "-" + self.end.str() + ")"
 
     return tkToStr(self.type).slice(3) + loc + (val == "" ? "" : ": " + val)
   }
 
-  fn Token_xml (self: Self) str {
+  fn toXml (self: Self) str {
     return
       "<Token" +
       " type=\"" + tkToStr(self.type).slice(3) + "\"" +

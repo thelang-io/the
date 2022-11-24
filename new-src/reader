@@ -69,7 +69,7 @@ obj Reader {
       ch := self.next()
 
       if !match(ch) {
-        Reader_seek(self, pos)
+        self.seek(pos)
         break
       }
     }
