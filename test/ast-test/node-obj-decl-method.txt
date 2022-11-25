@@ -87,7 +87,7 @@ main {
   <NodeObjDeclType>
     <TypeObj codeName="StaticTest_0" name="StaticTest">
       <TypeMethod name="staticMethod">
-        <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+        <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
           <TypeFnMethodInfo />
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -99,7 +99,7 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+        <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
           <TypeFnMethodInfo />
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -147,7 +147,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="sub" codeName="sub_0" frame="1">
-      <TypeFn codeName="sub_0" name="fn$1">
+      <TypeFn codeName="sub_0" name="fn$0">
         <TypeFnParams>
           <TypeFnParam name="i" required>
             <BuiltinType name="int" />
@@ -233,6 +233,9 @@ main {
 <NodeObjDecl>
   <NodeObjDeclType>
     <TypeObj codeName="Counter_0" name="Counter">
+      <TypeField mut name="_i">
+        <BuiltinType name="int" />
+      </TypeField>
       <TypeMethod name="get">
         <TypeFn codeName="CounterSDget_0" name="fn$2">
           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -293,9 +296,6 @@ main {
           </TypeFnReturnType>
         </TypeFn>
       </TypeMethod>
-      <TypeField mut name="_i">
-        <BuiltinType name="int" />
-      </TypeField>
     </TypeObj>
   </NodeObjDeclType>
   <NodeObjDeclMethods>
@@ -304,6 +304,9 @@ main {
         <TypeFn codeName="CounterSDget_0" name="fn$2">
           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
             <TypeObj codeName="Counter_0" name="Counter">
+              <TypeField mut name="_i">
+                <BuiltinType name="int" />
+              </TypeField>
               <TypeMethod name="get">
                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -364,9 +367,6 @@ main {
                   </TypeFnReturnType>
                 </TypeFn>
               </TypeMethod>
-              <TypeField mut name="_i">
-                <BuiltinType name="int" />
-              </TypeField>
             </TypeObj>
           </TypeFnMethodInfo>
           <TypeFnReturnType>
@@ -385,6 +385,9 @@ main {
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -445,15 +448,15 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="self" codeName="self_0" frame="2">
                         <TypeObj codeName="Counter_0" name="Counter">
+                          <TypeField mut name="_i">
+                            <BuiltinType name="int" />
+                          </TypeField>
                           <TypeMethod name="get">
                             <TypeFn codeName="CounterSDget_0" name="fn$2">
                               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -514,9 +517,6 @@ main {
                               </TypeFnReturnType>
                             </TypeFn>
                           </TypeMethod>
-                          <TypeField mut name="_i">
-                            <BuiltinType name="int" />
-                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -534,6 +534,9 @@ main {
           <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Counter">
               <TypeObj codeName="Counter_0" name="Counter">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
                 <TypeMethod name="get">
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -594,9 +597,6 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
               </TypeObj>
             </TypeRef>
           </TypeFnMethodInfo>
@@ -608,6 +608,9 @@ main {
           <TypeFnReturnType>
             <TypeRef name="ref_Counter">
               <TypeObj codeName="Counter_0" name="Counter">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
                 <TypeMethod name="get">
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -668,9 +671,6 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
               </TypeObj>
             </TypeRef>
           </TypeFnReturnType>
@@ -678,7 +678,7 @@ main {
       </NodeObjDeclMethodType>
       <NodeObjDeclMethodCtx>
         <Var name="sub" codeName="sub_0" frame="1">
-          <TypeFn codeName="sub_0" name="fn$1">
+          <TypeFn codeName="sub_0" name="fn$0">
             <TypeFnParams>
               <TypeFnParam name="i" required>
                 <BuiltinType name="int" />
@@ -730,6 +730,9 @@ main {
                         <NodeExprType>
                           <TypeRef name="ref_Counter">
                             <TypeObj codeName="Counter_0" name="Counter">
+                              <TypeField mut name="_i">
+                                <BuiltinType name="int" />
+                              </TypeField>
                               <TypeMethod name="get">
                                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -790,9 +793,6 @@ main {
                                   </TypeFnReturnType>
                                 </TypeFn>
                               </TypeMethod>
-                              <TypeField mut name="_i">
-                                <BuiltinType name="int" />
-                              </TypeField>
                             </TypeObj>
                           </TypeRef>
                         </NodeExprType>
@@ -801,6 +801,9 @@ main {
                             <Var name="self" codeName="self_0" mut frame="2">
                               <TypeRef name="ref_Counter">
                                 <TypeObj codeName="Counter_0" name="Counter">
+                                  <TypeField mut name="_i">
+                                    <BuiltinType name="int" />
+                                  </TypeField>
                                   <TypeMethod name="get">
                                     <TypeFn codeName="CounterSDget_0" name="fn$2">
                                       <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -861,9 +864,6 @@ main {
                                       </TypeFnReturnType>
                                     </TypeFn>
                                   </TypeMethod>
-                                  <TypeField mut name="_i">
-                                    <BuiltinType name="int" />
-                                  </TypeField>
                                 </TypeObj>
                               </TypeRef>
                             </Var>
@@ -884,7 +884,7 @@ main {
                       <ExprCallCallee>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn codeName="sub_0" name="fn$1">
+                            <TypeFn codeName="sub_0" name="fn$0">
                               <TypeFnParams>
                                 <TypeFnParam name="i" required>
                                   <BuiltinType name="int" />
@@ -901,7 +901,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="sub" codeName="sub_0" frame="1">
-                                <TypeFn codeName="sub_0" name="fn$1">
+                                <TypeFn codeName="sub_0" name="fn$0">
                                   <TypeFnParams>
                                     <TypeFnParam name="i" required>
                                       <BuiltinType name="int" />
@@ -931,6 +931,9 @@ main {
                                   <NodeExprType>
                                     <TypeRef name="ref_Counter">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -991,9 +994,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </TypeRef>
                                   </NodeExprType>
@@ -1002,6 +1002,9 @@ main {
                                       <Var name="self" codeName="self_0" mut frame="2">
                                         <TypeRef name="ref_Counter">
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1062,9 +1065,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeRef>
                                       </Var>
@@ -1102,6 +1102,9 @@ main {
             <NodeExprType>
               <TypeRef name="ref_Counter">
                 <TypeObj codeName="Counter_0" name="Counter">
+                  <TypeField mut name="_i">
+                    <BuiltinType name="int" />
+                  </TypeField>
                   <TypeMethod name="get">
                     <TypeFn codeName="CounterSDget_0" name="fn$2">
                       <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1162,9 +1165,6 @@ main {
                       </TypeFnReturnType>
                     </TypeFn>
                   </TypeMethod>
-                  <TypeField mut name="_i">
-                    <BuiltinType name="int" />
-                  </TypeField>
                 </TypeObj>
               </TypeRef>
             </NodeExprType>
@@ -1173,6 +1173,9 @@ main {
                 <Var name="self" codeName="self_0" mut frame="2">
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1233,9 +1236,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </Var>
@@ -1251,6 +1251,9 @@ main {
           <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Counter">
               <TypeObj codeName="Counter_0" name="Counter">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
                 <TypeMethod name="get">
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1311,9 +1314,6 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
               </TypeObj>
             </TypeRef>
           </TypeFnMethodInfo>
@@ -1325,6 +1325,9 @@ main {
           <TypeFnReturnType>
             <TypeRef name="ref_Counter">
               <TypeObj codeName="Counter_0" name="Counter">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
                 <TypeMethod name="get">
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1385,9 +1388,6 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
               </TypeObj>
             </TypeRef>
           </TypeFnReturnType>
@@ -1395,7 +1395,7 @@ main {
       </NodeObjDeclMethodType>
       <NodeObjDeclMethodCtx>
         <Var name="add" codeName="add_0" frame="1">
-          <TypeFn codeName="add_0" name="fn$1">
+          <TypeFn codeName="add_0" name="fn$0">
             <TypeFnParams>
               <TypeFnParam name="i" required>
                 <BuiltinType name="int" />
@@ -1447,6 +1447,9 @@ main {
                         <NodeExprType>
                           <TypeRef name="ref_Counter">
                             <TypeObj codeName="Counter_0" name="Counter">
+                              <TypeField mut name="_i">
+                                <BuiltinType name="int" />
+                              </TypeField>
                               <TypeMethod name="get">
                                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1507,9 +1510,6 @@ main {
                                   </TypeFnReturnType>
                                 </TypeFn>
                               </TypeMethod>
-                              <TypeField mut name="_i">
-                                <BuiltinType name="int" />
-                              </TypeField>
                             </TypeObj>
                           </TypeRef>
                         </NodeExprType>
@@ -1518,6 +1518,9 @@ main {
                             <Var name="self" codeName="self_0" mut frame="2">
                               <TypeRef name="ref_Counter">
                                 <TypeObj codeName="Counter_0" name="Counter">
+                                  <TypeField mut name="_i">
+                                    <BuiltinType name="int" />
+                                  </TypeField>
                                   <TypeMethod name="get">
                                     <TypeFn codeName="CounterSDget_0" name="fn$2">
                                       <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1578,9 +1581,6 @@ main {
                                       </TypeFnReturnType>
                                     </TypeFn>
                                   </TypeMethod>
-                                  <TypeField mut name="_i">
-                                    <BuiltinType name="int" />
-                                  </TypeField>
                                 </TypeObj>
                               </TypeRef>
                             </Var>
@@ -1601,7 +1601,7 @@ main {
                       <ExprCallCallee>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn codeName="add_0" name="fn$1">
+                            <TypeFn codeName="add_0" name="fn$0">
                               <TypeFnParams>
                                 <TypeFnParam name="i" required>
                                   <BuiltinType name="int" />
@@ -1618,7 +1618,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="add" codeName="add_0" frame="1">
-                                <TypeFn codeName="add_0" name="fn$1">
+                                <TypeFn codeName="add_0" name="fn$0">
                                   <TypeFnParams>
                                     <TypeFnParam name="i" required>
                                       <BuiltinType name="int" />
@@ -1648,6 +1648,9 @@ main {
                                   <NodeExprType>
                                     <TypeRef name="ref_Counter">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1708,9 +1711,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </TypeRef>
                                   </NodeExprType>
@@ -1719,6 +1719,9 @@ main {
                                       <Var name="self" codeName="self_0" mut frame="2">
                                         <TypeRef name="ref_Counter">
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1779,9 +1782,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeRef>
                                       </Var>
@@ -1819,6 +1819,9 @@ main {
             <NodeExprType>
               <TypeRef name="ref_Counter">
                 <TypeObj codeName="Counter_0" name="Counter">
+                  <TypeField mut name="_i">
+                    <BuiltinType name="int" />
+                  </TypeField>
                   <TypeMethod name="get">
                     <TypeFn codeName="CounterSDget_0" name="fn$2">
                       <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1879,9 +1882,6 @@ main {
                       </TypeFnReturnType>
                     </TypeFn>
                   </TypeMethod>
-                  <TypeField mut name="_i">
-                    <BuiltinType name="int" />
-                  </TypeField>
                 </TypeObj>
               </TypeRef>
             </NodeExprType>
@@ -1890,6 +1890,9 @@ main {
                 <Var name="self" codeName="self_0" mut frame="2">
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -1950,9 +1953,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </Var>
@@ -1968,6 +1968,9 @@ main {
           <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Counter">
               <TypeObj codeName="Counter_0" name="Counter">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
                 <TypeMethod name="get">
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2028,9 +2031,6 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
               </TypeObj>
             </TypeRef>
           </TypeFnMethodInfo>
@@ -2040,8 +2040,82 @@ main {
         </TypeFn>
       </NodeObjDeclMethodType>
       <NodeObjDeclMethodCtx>
+        <Var name="Counter.get" codeName="CounterSDget_0" frame="1">
+          <TypeFn codeName="CounterSDget_0" name="fn$2">
+            <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
+              <TypeObj codeName="Counter_0" name="Counter">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
+                <TypeMethod name="get">
+                  <TypeFn codeName="CounterSDget_0" name="fn$2">
+                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
+                      <TypeObj codeName="Counter_0" name="Counter" />
+                    </TypeFnMethodInfo>
+                    <TypeFnReturnType>
+                      <BuiltinType name="int" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeMethod>
+                <TypeMethod name="decrease">
+                  <TypeFn codeName="CounterSDdecrease_0" name="fn$3">
+                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
+                      <TypeRef name="ref_Counter">
+                        <TypeObj codeName="Counter_0" name="Counter" />
+                      </TypeRef>
+                    </TypeFnMethodInfo>
+                    <TypeFnParams>
+                      <TypeFnParam name="by">
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef name="ref_Counter">
+                        <TypeObj codeName="Counter_0" name="Counter" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeMethod>
+                <TypeMethod name="increase">
+                  <TypeFn codeName="CounterSDincrease_0" name="fn$3">
+                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
+                      <TypeRef name="ref_Counter">
+                        <TypeObj codeName="Counter_0" name="Counter" />
+                      </TypeRef>
+                    </TypeFnMethodInfo>
+                    <TypeFnParams>
+                      <TypeFnParam name="by">
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <TypeRef name="ref_Counter">
+                        <TypeObj codeName="Counter_0" name="Counter" />
+                      </TypeRef>
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeMethod>
+                <TypeMethod name="ridiculousStuff">
+                  <TypeFn codeName="CounterSDridiculousStuff_0" name="fn$4">
+                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
+                      <TypeRef name="ref_Counter">
+                        <TypeObj codeName="Counter_0" name="Counter" />
+                      </TypeRef>
+                    </TypeFnMethodInfo>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeMethod>
+              </TypeObj>
+            </TypeFnMethodInfo>
+            <TypeFnReturnType>
+              <BuiltinType name="int" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </Var>
         <Var name="add" codeName="add_0" frame="1">
-          <TypeFn codeName="add_0" name="fn$1">
+          <TypeFn codeName="add_0" name="fn$0">
             <TypeFnParams>
               <TypeFnParam name="i" required>
                 <BuiltinType name="int" />
@@ -2055,82 +2129,8 @@ main {
             </TypeFnReturnType>
           </TypeFn>
         </Var>
-        <Var name="Counter.get" codeName="CounterSDget_0" frame="1">
-          <TypeFn codeName="CounterSDget_0" name="fn$2">
-            <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
-              <TypeObj codeName="Counter_0" name="Counter">
-                <TypeMethod name="get">
-                  <TypeFn codeName="CounterSDget_0" name="fn$2">
-                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
-                      <TypeObj codeName="Counter_0" name="Counter" />
-                    </TypeFnMethodInfo>
-                    <TypeFnReturnType>
-                      <BuiltinType name="int" />
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeMethod>
-                <TypeMethod name="decrease">
-                  <TypeFn codeName="CounterSDdecrease_0" name="fn$3">
-                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
-                      <TypeRef name="ref_Counter">
-                        <TypeObj codeName="Counter_0" name="Counter" />
-                      </TypeRef>
-                    </TypeFnMethodInfo>
-                    <TypeFnParams>
-                      <TypeFnParam name="by">
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                    </TypeFnParams>
-                    <TypeFnReturnType>
-                      <TypeRef name="ref_Counter">
-                        <TypeObj codeName="Counter_0" name="Counter" />
-                      </TypeRef>
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeMethod>
-                <TypeMethod name="increase">
-                  <TypeFn codeName="CounterSDincrease_0" name="fn$3">
-                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
-                      <TypeRef name="ref_Counter">
-                        <TypeObj codeName="Counter_0" name="Counter" />
-                      </TypeRef>
-                    </TypeFnMethodInfo>
-                    <TypeFnParams>
-                      <TypeFnParam name="by">
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                    </TypeFnParams>
-                    <TypeFnReturnType>
-                      <TypeRef name="ref_Counter">
-                        <TypeObj codeName="Counter_0" name="Counter" />
-                      </TypeRef>
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeMethod>
-                <TypeMethod name="ridiculousStuff">
-                  <TypeFn codeName="CounterSDridiculousStuff_0" name="fn$4">
-                    <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
-                      <TypeRef name="ref_Counter">
-                        <TypeObj codeName="Counter_0" name="Counter" />
-                      </TypeRef>
-                    </TypeFnMethodInfo>
-                    <TypeFnReturnType>
-                      <BuiltinType name="void" />
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
-              </TypeObj>
-            </TypeFnMethodInfo>
-            <TypeFnReturnType>
-              <BuiltinType name="int" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </Var>
         <Var name="sub" codeName="sub_0" frame="1">
-          <TypeFn codeName="sub_0" name="fn$1">
+          <TypeFn codeName="sub_0" name="fn$0">
             <TypeFnParams>
               <TypeFnParam name="i" required>
                 <BuiltinType name="int" />
@@ -2151,6 +2151,9 @@ main {
             <Var name="self2" codeName="self2_0" mut frame="2">
               <TypeRef name="ref_Counter">
                 <TypeObj codeName="Counter_0" name="Counter">
+                  <TypeField mut name="_i">
+                    <BuiltinType name="int" />
+                  </TypeField>
                   <TypeMethod name="get">
                     <TypeFn codeName="CounterSDget_0" name="fn$2">
                       <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2211,9 +2214,6 @@ main {
                       </TypeFnReturnType>
                     </TypeFn>
                   </TypeMethod>
-                  <TypeField mut name="_i">
-                    <BuiltinType name="int" />
-                  </TypeField>
                 </TypeObj>
               </TypeRef>
             </Var>
@@ -2223,6 +2223,9 @@ main {
               <NodeExprType>
                 <TypeRef name="ref_Counter">
                   <TypeObj codeName="Counter_0" name="Counter">
+                    <TypeField mut name="_i">
+                      <BuiltinType name="int" />
+                    </TypeField>
                     <TypeMethod name="get">
                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2283,9 +2286,6 @@ main {
                         </TypeFnReturnType>
                       </TypeFn>
                     </TypeMethod>
-                    <TypeField mut name="_i">
-                      <BuiltinType name="int" />
-                    </TypeField>
                   </TypeObj>
                 </TypeRef>
               </NodeExprType>
@@ -2294,6 +2294,9 @@ main {
                   <Var name="self" codeName="self_0" mut frame="2">
                     <TypeRef name="ref_Counter">
                       <TypeObj codeName="Counter_0" name="Counter">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="get">
                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2354,9 +2357,6 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </Var>
@@ -2407,6 +2407,9 @@ main {
                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2467,9 +2470,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeFnMethodInfo>
                                 <TypeFnReturnType>
@@ -2483,6 +2483,9 @@ main {
                                   <NodeExprType>
                                     <TypeRef name="ref_Counter">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2543,9 +2546,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </TypeRef>
                                   </NodeExprType>
@@ -2554,6 +2554,9 @@ main {
                                       <Var name="self2" codeName="self2_0" mut frame="2">
                                         <TypeRef name="ref_Counter">
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2614,9 +2617,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeRef>
                                       </Var>
@@ -2638,6 +2638,9 @@ main {
         <NodeObjDecl>
           <NodeObjDeclType>
             <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+              <TypeField mut name="_i">
+                <BuiltinType name="int" />
+              </TypeField>
               <TypeMethod name="decrease">
                 <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -2674,9 +2677,6 @@ main {
                   </TypeFnReturnType>
                 </TypeFn>
               </TypeMethod>
-              <TypeField mut name="_i">
-                <BuiltinType name="int" />
-              </TypeField>
             </TypeObj>
           </NodeObjDeclType>
           <NodeObjDeclMethods>
@@ -2686,6 +2686,9 @@ main {
                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
                     <TypeRef name="ref_Counter2">
                       <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="decrease">
                           <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                             <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -2722,9 +2725,6 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </TypeFnMethodInfo>
@@ -2737,6 +2737,9 @@ main {
                 <Var name="self2" codeName="self2_0" mut frame="2">
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2797,9 +2800,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </Var>
@@ -2808,6 +2808,9 @@ main {
                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                       <TypeRef name="ref_Counter2">
                         <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                          <TypeField mut name="_i">
+                            <BuiltinType name="int" />
+                          </TypeField>
                           <TypeMethod name="decrease">
                             <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                               <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -2844,9 +2847,6 @@ main {
                               </TypeFnReturnType>
                             </TypeFn>
                           </TypeMethod>
-                          <TypeField mut name="_i">
-                            <BuiltinType name="int" />
-                          </TypeField>
                         </TypeObj>
                       </TypeRef>
                     </TypeFnMethodInfo>
@@ -2859,6 +2859,9 @@ main {
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                       <TypeObj codeName="Counter_0" name="Counter">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="get">
                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -2919,9 +2922,6 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeFnMethodInfo>
                     <TypeFnReturnType>
@@ -2930,7 +2930,7 @@ main {
                   </TypeFn>
                 </Var>
                 <Var name="sub" codeName="sub_0" frame="1">
-                  <TypeFn codeName="sub_0" name="fn$1">
+                  <TypeFn codeName="sub_0" name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="i" required>
                         <BuiltinType name="int" />
@@ -2963,6 +2963,9 @@ main {
                                 <NodeExprType>
                                   <TypeRef name="ref_Counter">
                                     <TypeObj codeName="Counter_0" name="Counter">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="get">
                                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -3023,9 +3026,6 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </TypeRef>
                                 </NodeExprType>
@@ -3034,6 +3034,9 @@ main {
                                     <Var name="self2" codeName="self2_0" mut frame="2">
                                       <TypeRef name="ref_Counter">
                                         <TypeObj codeName="Counter_0" name="Counter">
+                                          <TypeField mut name="_i">
+                                            <BuiltinType name="int" />
+                                          </TypeField>
                                           <TypeMethod name="get">
                                             <TypeFn codeName="CounterSDget_0" name="fn$2">
                                               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -3094,9 +3097,6 @@ main {
                                               </TypeFnReturnType>
                                             </TypeFn>
                                           </TypeMethod>
-                                          <TypeField mut name="_i">
-                                            <BuiltinType name="int" />
-                                          </TypeField>
                                         </TypeObj>
                                       </TypeRef>
                                     </Var>
@@ -3125,6 +3125,9 @@ main {
                                         <NodeExprType>
                                           <TypeRef name="ref_Counter2">
                                             <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                              <TypeField mut name="_i">
+                                                <BuiltinType name="int" />
+                                              </TypeField>
                                               <TypeMethod name="decrease">
                                                 <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3161,9 +3164,6 @@ main {
                                                   </TypeFnReturnType>
                                                 </TypeFn>
                                               </TypeMethod>
-                                              <TypeField mut name="_i">
-                                                <BuiltinType name="int" />
-                                              </TypeField>
                                             </TypeObj>
                                           </TypeRef>
                                         </NodeExprType>
@@ -3172,6 +3172,9 @@ main {
                                             <Var name="self" codeName="self_1" mut frame="3">
                                               <TypeRef name="ref_Counter2">
                                                 <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                  <TypeField mut name="_i">
+                                                    <BuiltinType name="int" />
+                                                  </TypeField>
                                                   <TypeMethod name="decrease">
                                                     <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                       <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3208,9 +3211,6 @@ main {
                                                       </TypeFnReturnType>
                                                     </TypeFn>
                                                   </TypeMethod>
-                                                  <TypeField mut name="_i">
-                                                    <BuiltinType name="int" />
-                                                  </TypeField>
                                                 </TypeObj>
                                               </TypeRef>
                                             </Var>
@@ -3231,7 +3231,7 @@ main {
                                       <ExprCallCallee>
                                         <NodeExpr>
                                           <NodeExprType>
-                                            <TypeFn codeName="sub_0" name="fn$1">
+                                            <TypeFn codeName="sub_0" name="fn$0">
                                               <TypeFnParams>
                                                 <TypeFnParam name="i" required>
                                                   <BuiltinType name="int" />
@@ -3248,7 +3248,7 @@ main {
                                           <NodeExprBody>
                                             <ExprAccess>
                                               <Var name="sub" codeName="sub_0" frame="1">
-                                                <TypeFn codeName="sub_0" name="fn$1">
+                                                <TypeFn codeName="sub_0" name="fn$0">
                                                   <TypeFnParams>
                                                     <TypeFnParam name="i" required>
                                                       <BuiltinType name="int" />
@@ -3278,6 +3278,9 @@ main {
                                                   <NodeExprType>
                                                     <TypeRef name="ref_Counter2">
                                                       <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                        <TypeField mut name="_i">
+                                                          <BuiltinType name="int" />
+                                                        </TypeField>
                                                         <TypeMethod name="decrease">
                                                           <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                             <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3314,9 +3317,6 @@ main {
                                                             </TypeFnReturnType>
                                                           </TypeFn>
                                                         </TypeMethod>
-                                                        <TypeField mut name="_i">
-                                                          <BuiltinType name="int" />
-                                                        </TypeField>
                                                       </TypeObj>
                                                     </TypeRef>
                                                   </NodeExprType>
@@ -3325,6 +3325,9 @@ main {
                                                       <Var name="self" codeName="self_1" mut frame="3">
                                                         <TypeRef name="ref_Counter2">
                                                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                            <TypeField mut name="_i">
+                                                              <BuiltinType name="int" />
+                                                            </TypeField>
                                                             <TypeMethod name="decrease">
                                                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3361,9 +3364,6 @@ main {
                                                                 </TypeFnReturnType>
                                                               </TypeFn>
                                                             </TypeMethod>
-                                                            <TypeField mut name="_i">
-                                                              <BuiltinType name="int" />
-                                                            </TypeField>
                                                           </TypeObj>
                                                         </TypeRef>
                                                       </Var>
@@ -3428,6 +3428,9 @@ main {
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -3488,9 +3491,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeFnMethodInfo>
                                         <TypeFnReturnType>
@@ -3504,6 +3504,9 @@ main {
                                           <NodeExprType>
                                             <TypeRef name="ref_Counter">
                                               <TypeObj codeName="Counter_0" name="Counter">
+                                                <TypeField mut name="_i">
+                                                  <BuiltinType name="int" />
+                                                </TypeField>
                                                 <TypeMethod name="get">
                                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -3564,9 +3567,6 @@ main {
                                                     </TypeFnReturnType>
                                                   </TypeFn>
                                                 </TypeMethod>
-                                                <TypeField mut name="_i">
-                                                  <BuiltinType name="int" />
-                                                </TypeField>
                                               </TypeObj>
                                             </TypeRef>
                                           </NodeExprType>
@@ -3575,6 +3575,9 @@ main {
                                               <Var name="self2" codeName="self2_0" mut frame="2">
                                                 <TypeRef name="ref_Counter">
                                                   <TypeObj codeName="Counter_0" name="Counter">
+                                                    <TypeField mut name="_i">
+                                                      <BuiltinType name="int" />
+                                                    </TypeField>
                                                     <TypeMethod name="get">
                                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -3635,9 +3638,6 @@ main {
                                                         </TypeFnReturnType>
                                                       </TypeFn>
                                                     </TypeMethod>
-                                                    <TypeField mut name="_i">
-                                                      <BuiltinType name="int" />
-                                                    </TypeField>
                                                   </TypeObj>
                                                 </TypeRef>
                                               </Var>
@@ -3699,6 +3699,9 @@ main {
                                         <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                                           <TypeRef name="ref_Counter2">
                                             <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                              <TypeField mut name="_i">
+                                                <BuiltinType name="int" />
+                                              </TypeField>
                                               <TypeMethod name="decrease">
                                                 <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3735,9 +3738,6 @@ main {
                                                   </TypeFnReturnType>
                                                 </TypeFn>
                                               </TypeMethod>
-                                              <TypeField mut name="_i">
-                                                <BuiltinType name="int" />
-                                              </TypeField>
                                             </TypeObj>
                                           </TypeRef>
                                         </TypeFnMethodInfo>
@@ -3752,6 +3752,9 @@ main {
                                           <NodeExprType>
                                             <TypeRef name="ref_Counter2">
                                               <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                <TypeField mut name="_i">
+                                                  <BuiltinType name="int" />
+                                                </TypeField>
                                                 <TypeMethod name="decrease">
                                                   <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3788,9 +3791,6 @@ main {
                                                     </TypeFnReturnType>
                                                   </TypeFn>
                                                 </TypeMethod>
-                                                <TypeField mut name="_i">
-                                                  <BuiltinType name="int" />
-                                                </TypeField>
                                               </TypeObj>
                                             </TypeRef>
                                           </NodeExprType>
@@ -3799,6 +3799,9 @@ main {
                                               <Var name="self" codeName="self_1" mut frame="3">
                                                 <TypeRef name="ref_Counter2">
                                                   <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                    <TypeField mut name="_i">
+                                                      <BuiltinType name="int" />
+                                                    </TypeField>
                                                     <TypeMethod name="decrease">
                                                       <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                         <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3835,9 +3838,6 @@ main {
                                                         </TypeFnReturnType>
                                                       </TypeFn>
                                                     </TypeMethod>
-                                                    <TypeField mut name="_i">
-                                                      <BuiltinType name="int" />
-                                                    </TypeField>
                                                   </TypeObj>
                                                 </TypeRef>
                                               </Var>
@@ -3864,6 +3864,9 @@ main {
                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
                     <TypeRef name="ref_Counter2">
                       <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="decrease">
                           <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                             <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -3900,9 +3903,6 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </TypeFnMethodInfo>
@@ -3915,6 +3915,9 @@ main {
                 <Var name="self2" codeName="self2_0" mut frame="2">
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -3975,9 +3978,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </Var>
@@ -3986,6 +3986,9 @@ main {
                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                       <TypeRef name="ref_Counter2">
                         <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                          <TypeField mut name="_i">
+                            <BuiltinType name="int" />
+                          </TypeField>
                           <TypeMethod name="decrease">
                             <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                               <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -4022,27 +4025,9 @@ main {
                               </TypeFnReturnType>
                             </TypeFn>
                           </TypeMethod>
-                          <TypeField mut name="_i">
-                            <BuiltinType name="int" />
-                          </TypeField>
                         </TypeObj>
                       </TypeRef>
                     </TypeFnMethodInfo>
-                    <TypeFnReturnType>
-                      <BuiltinType name="int" />
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </Var>
-                <Var name="add" codeName="add_0" frame="1">
-                  <TypeFn codeName="add_0" name="fn$1">
-                    <TypeFnParams>
-                      <TypeFnParam name="i" required>
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                      <TypeFnParam name="amount">
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                    </TypeFnParams>
                     <TypeFnReturnType>
                       <BuiltinType name="int" />
                     </TypeFnReturnType>
@@ -4052,6 +4037,9 @@ main {
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                       <TypeObj codeName="Counter_0" name="Counter">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="get">
                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -4112,11 +4100,23 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeFnMethodInfo>
+                    <TypeFnReturnType>
+                      <BuiltinType name="int" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+                <Var name="add" codeName="add_0" frame="1">
+                  <TypeFn codeName="add_0" name="fn$0">
+                    <TypeFnParams>
+                      <TypeFnParam name="i" required>
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                      <TypeFnParam name="amount">
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                    </TypeFnParams>
                     <TypeFnReturnType>
                       <BuiltinType name="int" />
                     </TypeFnReturnType>
@@ -4141,6 +4141,9 @@ main {
                                 <NodeExprType>
                                   <TypeRef name="ref_Counter">
                                     <TypeObj codeName="Counter_0" name="Counter">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="get">
                                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -4201,9 +4204,6 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </TypeRef>
                                 </NodeExprType>
@@ -4212,6 +4212,9 @@ main {
                                     <Var name="self2" codeName="self2_0" mut frame="2">
                                       <TypeRef name="ref_Counter">
                                         <TypeObj codeName="Counter_0" name="Counter">
+                                          <TypeField mut name="_i">
+                                            <BuiltinType name="int" />
+                                          </TypeField>
                                           <TypeMethod name="get">
                                             <TypeFn codeName="CounterSDget_0" name="fn$2">
                                               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -4272,9 +4275,6 @@ main {
                                               </TypeFnReturnType>
                                             </TypeFn>
                                           </TypeMethod>
-                                          <TypeField mut name="_i">
-                                            <BuiltinType name="int" />
-                                          </TypeField>
                                         </TypeObj>
                                       </TypeRef>
                                     </Var>
@@ -4303,6 +4303,9 @@ main {
                                         <NodeExprType>
                                           <TypeRef name="ref_Counter2">
                                             <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                              <TypeField mut name="_i">
+                                                <BuiltinType name="int" />
+                                              </TypeField>
                                               <TypeMethod name="decrease">
                                                 <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -4339,9 +4342,6 @@ main {
                                                   </TypeFnReturnType>
                                                 </TypeFn>
                                               </TypeMethod>
-                                              <TypeField mut name="_i">
-                                                <BuiltinType name="int" />
-                                              </TypeField>
                                             </TypeObj>
                                           </TypeRef>
                                         </NodeExprType>
@@ -4350,6 +4350,9 @@ main {
                                             <Var name="self" codeName="self_1" mut frame="3">
                                               <TypeRef name="ref_Counter2">
                                                 <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                  <TypeField mut name="_i">
+                                                    <BuiltinType name="int" />
+                                                  </TypeField>
                                                   <TypeMethod name="decrease">
                                                     <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                       <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -4386,9 +4389,6 @@ main {
                                                       </TypeFnReturnType>
                                                     </TypeFn>
                                                   </TypeMethod>
-                                                  <TypeField mut name="_i">
-                                                    <BuiltinType name="int" />
-                                                  </TypeField>
                                                 </TypeObj>
                                               </TypeRef>
                                             </Var>
@@ -4409,7 +4409,7 @@ main {
                                       <ExprCallCallee>
                                         <NodeExpr>
                                           <NodeExprType>
-                                            <TypeFn codeName="add_0" name="fn$1">
+                                            <TypeFn codeName="add_0" name="fn$0">
                                               <TypeFnParams>
                                                 <TypeFnParam name="i" required>
                                                   <BuiltinType name="int" />
@@ -4426,7 +4426,7 @@ main {
                                           <NodeExprBody>
                                             <ExprAccess>
                                               <Var name="add" codeName="add_0" frame="1">
-                                                <TypeFn codeName="add_0" name="fn$1">
+                                                <TypeFn codeName="add_0" name="fn$0">
                                                   <TypeFnParams>
                                                     <TypeFnParam name="i" required>
                                                       <BuiltinType name="int" />
@@ -4456,6 +4456,9 @@ main {
                                                   <NodeExprType>
                                                     <TypeRef name="ref_Counter2">
                                                       <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                        <TypeField mut name="_i">
+                                                          <BuiltinType name="int" />
+                                                        </TypeField>
                                                         <TypeMethod name="decrease">
                                                           <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                             <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -4492,9 +4495,6 @@ main {
                                                             </TypeFnReturnType>
                                                           </TypeFn>
                                                         </TypeMethod>
-                                                        <TypeField mut name="_i">
-                                                          <BuiltinType name="int" />
-                                                        </TypeField>
                                                       </TypeObj>
                                                     </TypeRef>
                                                   </NodeExprType>
@@ -4503,6 +4503,9 @@ main {
                                                       <Var name="self" codeName="self_1" mut frame="3">
                                                         <TypeRef name="ref_Counter2">
                                                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                            <TypeField mut name="_i">
+                                                              <BuiltinType name="int" />
+                                                            </TypeField>
                                                             <TypeMethod name="decrease">
                                                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -4539,9 +4542,6 @@ main {
                                                                 </TypeFnReturnType>
                                                               </TypeFn>
                                                             </TypeMethod>
-                                                            <TypeField mut name="_i">
-                                                              <BuiltinType name="int" />
-                                                            </TypeField>
                                                           </TypeObj>
                                                         </TypeRef>
                                                       </Var>
@@ -4606,6 +4606,9 @@ main {
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -4666,9 +4669,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeFnMethodInfo>
                                         <TypeFnReturnType>
@@ -4682,6 +4682,9 @@ main {
                                           <NodeExprType>
                                             <TypeRef name="ref_Counter">
                                               <TypeObj codeName="Counter_0" name="Counter">
+                                                <TypeField mut name="_i">
+                                                  <BuiltinType name="int" />
+                                                </TypeField>
                                                 <TypeMethod name="get">
                                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -4742,9 +4745,6 @@ main {
                                                     </TypeFnReturnType>
                                                   </TypeFn>
                                                 </TypeMethod>
-                                                <TypeField mut name="_i">
-                                                  <BuiltinType name="int" />
-                                                </TypeField>
                                               </TypeObj>
                                             </TypeRef>
                                           </NodeExprType>
@@ -4753,6 +4753,9 @@ main {
                                               <Var name="self2" codeName="self2_0" mut frame="2">
                                                 <TypeRef name="ref_Counter">
                                                   <TypeObj codeName="Counter_0" name="Counter">
+                                                    <TypeField mut name="_i">
+                                                      <BuiltinType name="int" />
+                                                    </TypeField>
                                                     <TypeMethod name="get">
                                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -4813,9 +4816,6 @@ main {
                                                         </TypeFnReturnType>
                                                       </TypeFn>
                                                     </TypeMethod>
-                                                    <TypeField mut name="_i">
-                                                      <BuiltinType name="int" />
-                                                    </TypeField>
                                                   </TypeObj>
                                                 </TypeRef>
                                               </Var>
@@ -4877,6 +4877,9 @@ main {
                                         <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                                           <TypeRef name="ref_Counter2">
                                             <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                              <TypeField mut name="_i">
+                                                <BuiltinType name="int" />
+                                              </TypeField>
                                               <TypeMethod name="decrease">
                                                 <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -4913,9 +4916,6 @@ main {
                                                   </TypeFnReturnType>
                                                 </TypeFn>
                                               </TypeMethod>
-                                              <TypeField mut name="_i">
-                                                <BuiltinType name="int" />
-                                              </TypeField>
                                             </TypeObj>
                                           </TypeRef>
                                         </TypeFnMethodInfo>
@@ -4930,6 +4930,9 @@ main {
                                           <NodeExprType>
                                             <TypeRef name="ref_Counter2">
                                               <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                <TypeField mut name="_i">
+                                                  <BuiltinType name="int" />
+                                                </TypeField>
                                                 <TypeMethod name="decrease">
                                                   <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -4966,9 +4969,6 @@ main {
                                                     </TypeFnReturnType>
                                                   </TypeFn>
                                                 </TypeMethod>
-                                                <TypeField mut name="_i">
-                                                  <BuiltinType name="int" />
-                                                </TypeField>
                                               </TypeObj>
                                             </TypeRef>
                                           </NodeExprType>
@@ -4977,6 +4977,9 @@ main {
                                               <Var name="self" codeName="self_1" mut frame="3">
                                                 <TypeRef name="ref_Counter2">
                                                   <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                                    <TypeField mut name="_i">
+                                                      <BuiltinType name="int" />
+                                                    </TypeField>
                                                     <TypeMethod name="decrease">
                                                       <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                                         <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5013,9 +5016,6 @@ main {
                                                         </TypeFnReturnType>
                                                       </TypeFn>
                                                     </TypeMethod>
-                                                    <TypeField mut name="_i">
-                                                      <BuiltinType name="int" />
-                                                    </TypeField>
                                                   </TypeObj>
                                                 </TypeRef>
                                               </Var>
@@ -5042,6 +5042,9 @@ main {
                   <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                     <TypeRef name="ref_Counter2">
                       <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="decrease">
                           <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                             <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5078,9 +5081,6 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </TypeFnMethodInfo>
@@ -5101,6 +5101,9 @@ main {
                           <NodeExprType>
                             <TypeRef name="ref_Counter2">
                               <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="decrease">
                                   <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5137,9 +5140,6 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </TypeRef>
                           </NodeExprType>
@@ -5148,6 +5148,9 @@ main {
                               <Var name="self" codeName="self_1" frame="3">
                                 <TypeRef name="ref_Counter2">
                                   <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="decrease">
                                       <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                         <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5184,9 +5187,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeRef>
                               </Var>
@@ -5205,6 +5205,9 @@ main {
           <NodeVarDeclVar>
             <Var name="counter" codeName="counter_0" mut frame="2">
               <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
                 <TypeMethod name="decrease">
                   <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5241,9 +5244,6 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
               </TypeObj>
             </Var>
           </NodeVarDeclVar>
@@ -5251,6 +5251,9 @@ main {
             <NodeExpr>
               <NodeExprType>
                 <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                  <TypeField mut name="_i">
+                    <BuiltinType name="int" />
+                  </TypeField>
                   <TypeMethod name="decrease">
                     <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                       <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5287,15 +5290,15 @@ main {
                       </TypeFnReturnType>
                     </TypeFn>
                   </TypeMethod>
-                  <TypeField mut name="_i">
-                    <BuiltinType name="int" />
-                  </TypeField>
                 </TypeObj>
               </NodeExprType>
               <NodeExprBody>
                 <ExprObj>
                   <ExprObjType>
                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="decrease">
                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5332,9 +5335,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </ExprObjType>
                 </ExprObj>
@@ -5385,6 +5385,9 @@ main {
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                                   <TypeRef name="ref_Counter2">
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5421,9 +5424,6 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </TypeRef>
                                 </TypeFnMethodInfo>
@@ -5437,6 +5437,9 @@ main {
                                 <NodeExpr>
                                   <NodeExprType>
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5473,15 +5476,15 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </NodeExprType>
                                   <NodeExprBody>
                                     <ExprAccess>
                                       <Var name="counter" codeName="counter_0" mut frame="2">
                                         <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                          <TypeField mut name="_i">
+                                            <BuiltinType name="int" />
+                                          </TypeField>
                                           <TypeMethod name="decrease">
                                             <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                               <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5518,9 +5521,6 @@ main {
                                               </TypeFnReturnType>
                                             </TypeFn>
                                           </TypeMethod>
-                                          <TypeField mut name="_i">
-                                            <BuiltinType name="int" />
-                                          </TypeField>
                                         </TypeObj>
                                       </Var>
                                     </ExprAccess>
@@ -5547,6 +5547,9 @@ main {
                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -5607,9 +5610,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeFnMethodInfo>
                                 <TypeFnReturnType>
@@ -5623,6 +5623,9 @@ main {
                                   <NodeExprType>
                                     <TypeRef name="ref_Counter">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -5683,9 +5686,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </TypeRef>
                                   </NodeExprType>
@@ -5694,6 +5694,9 @@ main {
                                       <Var name="self" codeName="self_0" mut frame="2">
                                         <TypeRef name="ref_Counter">
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -5754,9 +5757,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeRef>
                                       </Var>
@@ -5788,6 +5788,9 @@ main {
                       <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
                         <TypeRef name="ref_Counter2">
                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                            <TypeField mut name="_i">
+                              <BuiltinType name="int" />
+                            </TypeField>
                             <TypeMethod name="decrease">
                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5824,9 +5827,6 @@ main {
                                 </TypeFnReturnType>
                               </TypeFn>
                             </TypeMethod>
-                            <TypeField mut name="_i">
-                              <BuiltinType name="int" />
-                            </TypeField>
                           </TypeObj>
                         </TypeRef>
                       </TypeFnMethodInfo>
@@ -5840,6 +5840,9 @@ main {
                       <NodeExpr>
                         <NodeExprType>
                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                            <TypeField mut name="_i">
+                              <BuiltinType name="int" />
+                            </TypeField>
                             <TypeMethod name="decrease">
                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5876,15 +5879,15 @@ main {
                                 </TypeFnReturnType>
                               </TypeFn>
                             </TypeMethod>
-                            <TypeField mut name="_i">
-                              <BuiltinType name="int" />
-                            </TypeField>
                           </TypeObj>
                         </NodeExprType>
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="counter" codeName="counter_0" mut frame="2">
                               <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="decrease">
                                   <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -5921,9 +5924,6 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </Var>
                           </ExprAccess>
@@ -5979,6 +5979,9 @@ main {
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                                   <TypeRef name="ref_Counter2">
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6015,9 +6018,6 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </TypeRef>
                                 </TypeFnMethodInfo>
@@ -6031,6 +6031,9 @@ main {
                                 <NodeExpr>
                                   <NodeExprType>
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6067,15 +6070,15 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </NodeExprType>
                                   <NodeExprBody>
                                     <ExprAccess>
                                       <Var name="counter" codeName="counter_0" mut frame="2">
                                         <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                          <TypeField mut name="_i">
+                                            <BuiltinType name="int" />
+                                          </TypeField>
                                           <TypeMethod name="decrease">
                                             <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                               <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6112,9 +6115,6 @@ main {
                                               </TypeFnReturnType>
                                             </TypeFn>
                                           </TypeMethod>
-                                          <TypeField mut name="_i">
-                                            <BuiltinType name="int" />
-                                          </TypeField>
                                         </TypeObj>
                                       </Var>
                                     </ExprAccess>
@@ -6141,6 +6141,9 @@ main {
                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -6201,9 +6204,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeFnMethodInfo>
                                 <TypeFnReturnType>
@@ -6217,6 +6217,9 @@ main {
                                   <NodeExprType>
                                     <TypeRef name="ref_Counter">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -6277,9 +6280,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </TypeRef>
                                   </NodeExprType>
@@ -6288,6 +6288,9 @@ main {
                                       <Var name="self" codeName="self_0" mut frame="2">
                                         <TypeRef name="ref_Counter">
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -6348,9 +6351,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeRef>
                                       </Var>
@@ -6382,6 +6382,9 @@ main {
                       <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
                         <TypeRef name="ref_Counter2">
                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                            <TypeField mut name="_i">
+                              <BuiltinType name="int" />
+                            </TypeField>
                             <TypeMethod name="decrease">
                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6418,9 +6421,6 @@ main {
                                 </TypeFnReturnType>
                               </TypeFn>
                             </TypeMethod>
-                            <TypeField mut name="_i">
-                              <BuiltinType name="int" />
-                            </TypeField>
                           </TypeObj>
                         </TypeRef>
                       </TypeFnMethodInfo>
@@ -6434,6 +6434,9 @@ main {
                       <NodeExpr>
                         <NodeExprType>
                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                            <TypeField mut name="_i">
+                              <BuiltinType name="int" />
+                            </TypeField>
                             <TypeMethod name="decrease">
                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6470,15 +6473,15 @@ main {
                                 </TypeFnReturnType>
                               </TypeFn>
                             </TypeMethod>
-                            <TypeField mut name="_i">
-                              <BuiltinType name="int" />
-                            </TypeField>
                           </TypeObj>
                         </NodeExprType>
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="counter" codeName="counter_0" mut frame="2">
                               <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="decrease">
                                   <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6515,9 +6518,6 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </Var>
                           </ExprAccess>
@@ -6573,6 +6573,9 @@ main {
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                                   <TypeRef name="ref_Counter2">
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6609,9 +6612,6 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </TypeRef>
                                 </TypeFnMethodInfo>
@@ -6625,6 +6625,9 @@ main {
                                 <NodeExpr>
                                   <NodeExprType>
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6661,15 +6664,15 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </NodeExprType>
                                   <NodeExprBody>
                                     <ExprAccess>
                                       <Var name="counter" codeName="counter_0" mut frame="2">
                                         <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                          <TypeField mut name="_i">
+                                            <BuiltinType name="int" />
+                                          </TypeField>
                                           <TypeMethod name="decrease">
                                             <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                               <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -6706,9 +6709,6 @@ main {
                                               </TypeFnReturnType>
                                             </TypeFn>
                                           </TypeMethod>
-                                          <TypeField mut name="_i">
-                                            <BuiltinType name="int" />
-                                          </TypeField>
                                         </TypeObj>
                                       </Var>
                                     </ExprAccess>
@@ -6735,6 +6735,9 @@ main {
                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -6795,9 +6798,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeFnMethodInfo>
                                 <TypeFnReturnType>
@@ -6811,6 +6811,9 @@ main {
                                   <NodeExprType>
                                     <TypeRef name="ref_Counter">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -6871,9 +6874,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </TypeRef>
                                   </NodeExprType>
@@ -6882,6 +6882,9 @@ main {
                                       <Var name="self" codeName="self_0" mut frame="2">
                                         <TypeRef name="ref_Counter">
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -6942,9 +6945,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeRef>
                                       </Var>
@@ -6976,6 +6976,9 @@ main {
                       <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
                         <TypeRef name="ref_Counter2">
                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                            <TypeField mut name="_i">
+                              <BuiltinType name="int" />
+                            </TypeField>
                             <TypeMethod name="decrease">
                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -7012,9 +7015,6 @@ main {
                                 </TypeFnReturnType>
                               </TypeFn>
                             </TypeMethod>
-                            <TypeField mut name="_i">
-                              <BuiltinType name="int" />
-                            </TypeField>
                           </TypeObj>
                         </TypeRef>
                       </TypeFnMethodInfo>
@@ -7028,6 +7028,9 @@ main {
                       <NodeExpr>
                         <NodeExprType>
                           <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                            <TypeField mut name="_i">
+                              <BuiltinType name="int" />
+                            </TypeField>
                             <TypeMethod name="decrease">
                               <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -7064,15 +7067,15 @@ main {
                                 </TypeFnReturnType>
                               </TypeFn>
                             </TypeMethod>
-                            <TypeField mut name="_i">
-                              <BuiltinType name="int" />
-                            </TypeField>
                           </TypeObj>
                         </NodeExprType>
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="counter" codeName="counter_0" mut frame="2">
                               <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="decrease">
                                   <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                     <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -7109,9 +7112,6 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </Var>
                           </ExprAccess>
@@ -7167,6 +7167,9 @@ main {
                                 <TypeFnMethodInfo selfCodeName="self_1" selfFirst>
                                   <TypeRef name="ref_Counter2">
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -7203,9 +7206,6 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </TypeRef>
                                 </TypeFnMethodInfo>
@@ -7219,6 +7219,9 @@ main {
                                 <NodeExpr>
                                   <NodeExprType>
                                     <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="decrease">
                                         <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                           <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -7255,15 +7258,15 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </NodeExprType>
                                   <NodeExprBody>
                                     <ExprAccess>
                                       <Var name="counter" codeName="counter_0" mut frame="2">
                                         <TypeObj codeName="CounterSDridiculousStuffSDCounter2_0" name="Counter2">
+                                          <TypeField mut name="_i">
+                                            <BuiltinType name="int" />
+                                          </TypeField>
                                           <TypeMethod name="decrease">
                                             <TypeFn codeName="CounterSDridiculousStuffSDCounter2SDdecrease_0" name="fn$5">
                                               <TypeFnMethodInfo selfCodeName="self_1" selfFirst selfMut>
@@ -7300,9 +7303,6 @@ main {
                                               </TypeFnReturnType>
                                             </TypeFn>
                                           </TypeMethod>
-                                          <TypeField mut name="_i">
-                                            <BuiltinType name="int" />
-                                          </TypeField>
                                         </TypeObj>
                                       </Var>
                                     </ExprAccess>
@@ -7329,6 +7329,9 @@ main {
                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -7389,9 +7392,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeFnMethodInfo>
                                 <TypeFnReturnType>
@@ -7405,6 +7405,9 @@ main {
                                   <NodeExprType>
                                     <TypeRef name="ref_Counter">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -7465,9 +7468,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </TypeRef>
                                   </NodeExprType>
@@ -7476,6 +7476,9 @@ main {
                                       <Var name="self" codeName="self_0" mut frame="2">
                                         <TypeRef name="ref_Counter">
                                           <TypeObj codeName="Counter_0" name="Counter">
+                                            <TypeField mut name="_i">
+                                              <BuiltinType name="int" />
+                                            </TypeField>
                                             <TypeMethod name="get">
                                               <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -7536,9 +7539,6 @@ main {
                                                 </TypeFnReturnType>
                                               </TypeFn>
                                             </TypeMethod>
-                                            <TypeField mut name="_i">
-                                              <BuiltinType name="int" />
-                                            </TypeField>
                                           </TypeObj>
                                         </TypeRef>
                                       </Var>
@@ -7564,7 +7564,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="add" codeName="add_0" frame="1">
-      <TypeFn codeName="add_0" name="fn$1">
+      <TypeFn codeName="add_0" name="fn$0">
         <TypeFnParams>
           <TypeFnParam name="i" required>
             <BuiltinType name="int" />
@@ -7653,7 +7653,7 @@ main {
       <Var name="staticTest" codeName="staticTest_0" frame="2">
         <TypeObj codeName="StaticTest_0" name="StaticTest">
           <TypeMethod name="staticMethod">
-            <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+            <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
               <TypeFnMethodInfo />
               <TypeFnReturnType>
                 <BuiltinType name="void" />
@@ -7668,7 +7668,7 @@ main {
         <NodeExprType>
           <TypeObj codeName="StaticTest_0" name="StaticTest">
             <TypeMethod name="staticMethod">
-              <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+              <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
                 <TypeFnMethodInfo />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -7682,7 +7682,7 @@ main {
             <ExprObjType>
               <TypeObj codeName="StaticTest_0" name="StaticTest">
                 <TypeMethod name="staticMethod">
-                  <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+                  <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
                     <TypeFnMethodInfo />
                     <TypeFnReturnType>
                       <BuiltinType name="void" />
@@ -7705,7 +7705,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+              <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
                 <TypeFnMethodInfo />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -7718,7 +7718,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="StaticTest_0" name="StaticTest">
                       <TypeMethod name="staticMethod">
-                        <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+                        <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
                           <TypeFnMethodInfo />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -7732,7 +7732,7 @@ main {
                       <Var name="staticTest" codeName="staticTest_0" frame="2">
                         <TypeObj codeName="StaticTest_0" name="StaticTest">
                           <TypeMethod name="staticMethod">
-                            <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$0">
+                            <TypeFn codeName="StaticTestSDstaticMethod_0" name="fn$1">
                               <TypeFnMethodInfo />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
@@ -7755,6 +7755,9 @@ main {
     <NodeVarDeclVar>
       <Var name="counter" codeName="counter_0" mut frame="2">
         <TypeObj codeName="Counter_0" name="Counter">
+          <TypeField mut name="_i">
+            <BuiltinType name="int" />
+          </TypeField>
           <TypeMethod name="get">
             <TypeFn codeName="CounterSDget_0" name="fn$2">
               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -7815,9 +7818,6 @@ main {
               </TypeFnReturnType>
             </TypeFn>
           </TypeMethod>
-          <TypeField mut name="_i">
-            <BuiltinType name="int" />
-          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -7825,6 +7825,9 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Counter_0" name="Counter">
+            <TypeField mut name="_i">
+              <BuiltinType name="int" />
+            </TypeField>
             <TypeMethod name="get">
               <TypeFn codeName="CounterSDget_0" name="fn$2">
                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -7885,15 +7888,15 @@ main {
                 </TypeFnReturnType>
               </TypeFn>
             </TypeMethod>
-            <TypeField mut name="_i">
-              <BuiltinType name="int" />
-            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Counter_0" name="Counter">
+                <TypeField mut name="_i">
+                  <BuiltinType name="int" />
+                </TypeField>
                 <TypeMethod name="get">
                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -7954,9 +7957,6 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </TypeMethod>
-                <TypeField mut name="_i">
-                  <BuiltinType name="int" />
-                </TypeField>
               </TypeObj>
             </ExprObjType>
           </ExprObj>
@@ -8006,6 +8006,9 @@ main {
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                             <TypeObj codeName="Counter_0" name="Counter">
+                              <TypeField mut name="_i">
+                                <BuiltinType name="int" />
+                              </TypeField>
                               <TypeMethod name="get">
                                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8066,9 +8069,6 @@ main {
                                   </TypeFnReturnType>
                                 </TypeFn>
                               </TypeMethod>
-                              <TypeField mut name="_i">
-                                <BuiltinType name="int" />
-                              </TypeField>
                             </TypeObj>
                           </TypeFnMethodInfo>
                           <TypeFnReturnType>
@@ -8081,6 +8081,9 @@ main {
                           <NodeExpr>
                             <NodeExprType>
                               <TypeObj codeName="Counter_0" name="Counter">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="get">
                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8141,15 +8144,15 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </NodeExprType>
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="counter" codeName="counter_0" mut frame="2">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8210,9 +8213,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </Var>
                               </ExprAccess>
@@ -8234,6 +8234,9 @@ main {
     <NodeExprType>
       <TypeRef name="ref_Counter">
         <TypeObj codeName="Counter_0" name="Counter">
+          <TypeField mut name="_i">
+            <BuiltinType name="int" />
+          </TypeField>
           <TypeMethod name="get">
             <TypeFn codeName="CounterSDget_0" name="fn$2">
               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8294,9 +8297,6 @@ main {
               </TypeFnReturnType>
             </TypeFn>
           </TypeMethod>
-          <TypeField mut name="_i">
-            <BuiltinType name="int" />
-          </TypeField>
         </TypeObj>
       </TypeRef>
     </NodeExprType>
@@ -8309,6 +8309,9 @@ main {
                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8369,9 +8372,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnMethodInfo>
@@ -8383,6 +8383,9 @@ main {
                 <TypeFnReturnType>
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8443,9 +8446,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnReturnType>
@@ -8456,6 +8456,9 @@ main {
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8516,15 +8519,15 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="counter" codeName="counter_0" mut frame="2">
                         <TypeObj codeName="Counter_0" name="Counter">
+                          <TypeField mut name="_i">
+                            <BuiltinType name="int" />
+                          </TypeField>
                           <TypeMethod name="get">
                             <TypeFn codeName="CounterSDget_0" name="fn$2">
                               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8585,9 +8588,6 @@ main {
                               </TypeFnReturnType>
                             </TypeFn>
                           </TypeMethod>
-                          <TypeField mut name="_i">
-                            <BuiltinType name="int" />
-                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -8642,6 +8642,9 @@ main {
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                             <TypeObj codeName="Counter_0" name="Counter">
+                              <TypeField mut name="_i">
+                                <BuiltinType name="int" />
+                              </TypeField>
                               <TypeMethod name="get">
                                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8702,9 +8705,6 @@ main {
                                   </TypeFnReturnType>
                                 </TypeFn>
                               </TypeMethod>
-                              <TypeField mut name="_i">
-                                <BuiltinType name="int" />
-                              </TypeField>
                             </TypeObj>
                           </TypeFnMethodInfo>
                           <TypeFnReturnType>
@@ -8717,6 +8717,9 @@ main {
                           <NodeExpr>
                             <NodeExprType>
                               <TypeObj codeName="Counter_0" name="Counter">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="get">
                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8777,15 +8780,15 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </NodeExprType>
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="counter" codeName="counter_0" mut frame="2">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8846,9 +8849,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </Var>
                               </ExprAccess>
@@ -8870,6 +8870,9 @@ main {
     <NodeExprType>
       <TypeRef name="ref_Counter">
         <TypeObj codeName="Counter_0" name="Counter">
+          <TypeField mut name="_i">
+            <BuiltinType name="int" />
+          </TypeField>
           <TypeMethod name="get">
             <TypeFn codeName="CounterSDget_0" name="fn$2">
               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -8930,9 +8933,6 @@ main {
               </TypeFnReturnType>
             </TypeFn>
           </TypeMethod>
-          <TypeField mut name="_i">
-            <BuiltinType name="int" />
-          </TypeField>
         </TypeObj>
       </TypeRef>
     </NodeExprType>
@@ -8945,6 +8945,9 @@ main {
                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9005,9 +9008,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnMethodInfo>
@@ -9019,6 +9019,9 @@ main {
                 <TypeFnReturnType>
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9079,9 +9082,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnReturnType>
@@ -9093,6 +9093,9 @@ main {
                   <NodeExprType>
                     <TypeRef name="ref_Counter">
                       <TypeObj codeName="Counter_0" name="Counter">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="get">
                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9153,9 +9156,6 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </NodeExprType>
@@ -9168,6 +9168,9 @@ main {
                               <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Counter">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9228,9 +9231,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeRef>
                               </TypeFnMethodInfo>
@@ -9242,6 +9242,9 @@ main {
                               <TypeFnReturnType>
                                 <TypeRef name="ref_Counter">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9302,9 +9305,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeRef>
                               </TypeFnReturnType>
@@ -9316,6 +9316,9 @@ main {
                                 <NodeExprType>
                                   <TypeRef name="ref_Counter">
                                     <TypeObj codeName="Counter_0" name="Counter">
+                                      <TypeField mut name="_i">
+                                        <BuiltinType name="int" />
+                                      </TypeField>
                                       <TypeMethod name="get">
                                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9376,9 +9379,6 @@ main {
                                           </TypeFnReturnType>
                                         </TypeFn>
                                       </TypeMethod>
-                                      <TypeField mut name="_i">
-                                        <BuiltinType name="int" />
-                                      </TypeField>
                                     </TypeObj>
                                   </TypeRef>
                                 </NodeExprType>
@@ -9391,6 +9391,9 @@ main {
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                                               <TypeRef name="ref_Counter">
                                                 <TypeObj codeName="Counter_0" name="Counter">
+                                                  <TypeField mut name="_i">
+                                                    <BuiltinType name="int" />
+                                                  </TypeField>
                                                   <TypeMethod name="get">
                                                     <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                       <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9451,9 +9454,6 @@ main {
                                                       </TypeFnReturnType>
                                                     </TypeFn>
                                                   </TypeMethod>
-                                                  <TypeField mut name="_i">
-                                                    <BuiltinType name="int" />
-                                                  </TypeField>
                                                 </TypeObj>
                                               </TypeRef>
                                             </TypeFnMethodInfo>
@@ -9465,6 +9465,9 @@ main {
                                             <TypeFnReturnType>
                                               <TypeRef name="ref_Counter">
                                                 <TypeObj codeName="Counter_0" name="Counter">
+                                                  <TypeField mut name="_i">
+                                                    <BuiltinType name="int" />
+                                                  </TypeField>
                                                   <TypeMethod name="get">
                                                     <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                       <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9525,9 +9528,6 @@ main {
                                                       </TypeFnReturnType>
                                                     </TypeFn>
                                                   </TypeMethod>
-                                                  <TypeField mut name="_i">
-                                                    <BuiltinType name="int" />
-                                                  </TypeField>
                                                 </TypeObj>
                                               </TypeRef>
                                             </TypeFnReturnType>
@@ -9539,6 +9539,9 @@ main {
                                               <NodeExprType>
                                                 <TypeRef name="ref_Counter">
                                                   <TypeObj codeName="Counter_0" name="Counter">
+                                                    <TypeField mut name="_i">
+                                                      <BuiltinType name="int" />
+                                                    </TypeField>
                                                     <TypeMethod name="get">
                                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9599,9 +9602,6 @@ main {
                                                         </TypeFnReturnType>
                                                       </TypeFn>
                                                     </TypeMethod>
-                                                    <TypeField mut name="_i">
-                                                      <BuiltinType name="int" />
-                                                    </TypeField>
                                                   </TypeObj>
                                                 </TypeRef>
                                               </NodeExprType>
@@ -9614,6 +9614,9 @@ main {
                                                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                                                             <TypeRef name="ref_Counter">
                                                               <TypeObj codeName="Counter_0" name="Counter">
+                                                                <TypeField mut name="_i">
+                                                                  <BuiltinType name="int" />
+                                                                </TypeField>
                                                                 <TypeMethod name="get">
                                                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9674,9 +9677,6 @@ main {
                                                                     </TypeFnReturnType>
                                                                   </TypeFn>
                                                                 </TypeMethod>
-                                                                <TypeField mut name="_i">
-                                                                  <BuiltinType name="int" />
-                                                                </TypeField>
                                                               </TypeObj>
                                                             </TypeRef>
                                                           </TypeFnMethodInfo>
@@ -9688,6 +9688,9 @@ main {
                                                           <TypeFnReturnType>
                                                             <TypeRef name="ref_Counter">
                                                               <TypeObj codeName="Counter_0" name="Counter">
+                                                                <TypeField mut name="_i">
+                                                                  <BuiltinType name="int" />
+                                                                </TypeField>
                                                                 <TypeMethod name="get">
                                                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9748,9 +9751,6 @@ main {
                                                                     </TypeFnReturnType>
                                                                   </TypeFn>
                                                                 </TypeMethod>
-                                                                <TypeField mut name="_i">
-                                                                  <BuiltinType name="int" />
-                                                                </TypeField>
                                                               </TypeObj>
                                                             </TypeRef>
                                                           </TypeFnReturnType>
@@ -9761,6 +9761,9 @@ main {
                                                           <NodeExpr>
                                                             <NodeExprType>
                                                               <TypeObj codeName="Counter_0" name="Counter">
+                                                                <TypeField mut name="_i">
+                                                                  <BuiltinType name="int" />
+                                                                </TypeField>
                                                                 <TypeMethod name="get">
                                                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9821,15 +9824,15 @@ main {
                                                                     </TypeFnReturnType>
                                                                   </TypeFn>
                                                                 </TypeMethod>
-                                                                <TypeField mut name="_i">
-                                                                  <BuiltinType name="int" />
-                                                                </TypeField>
                                                               </TypeObj>
                                                             </NodeExprType>
                                                             <NodeExprBody>
                                                               <ExprAccess>
                                                                 <Var name="counter" codeName="counter_0" mut frame="2">
                                                                   <TypeObj codeName="Counter_0" name="Counter">
+                                                                    <TypeField mut name="_i">
+                                                                      <BuiltinType name="int" />
+                                                                    </TypeField>
                                                                     <TypeMethod name="get">
                                                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -9890,9 +9893,6 @@ main {
                                                                         </TypeFnReturnType>
                                                                       </TypeFn>
                                                                     </TypeMethod>
-                                                                    <TypeField mut name="_i">
-                                                                      <BuiltinType name="int" />
-                                                                    </TypeField>
                                                                   </TypeObj>
                                                                 </Var>
                                                               </ExprAccess>
@@ -9968,6 +9968,9 @@ main {
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                             <TypeObj codeName="Counter_0" name="Counter">
+                              <TypeField mut name="_i">
+                                <BuiltinType name="int" />
+                              </TypeField>
                               <TypeMethod name="get">
                                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10028,9 +10031,6 @@ main {
                                   </TypeFnReturnType>
                                 </TypeFn>
                               </TypeMethod>
-                              <TypeField mut name="_i">
-                                <BuiltinType name="int" />
-                              </TypeField>
                             </TypeObj>
                           </TypeFnMethodInfo>
                           <TypeFnReturnType>
@@ -10043,6 +10043,9 @@ main {
                           <NodeExpr>
                             <NodeExprType>
                               <TypeObj codeName="Counter_0" name="Counter">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="get">
                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10103,15 +10106,15 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </NodeExprType>
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="counter" codeName="counter_0" mut frame="2">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10172,9 +10175,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </Var>
                               </ExprAccess>
@@ -10196,6 +10196,9 @@ main {
     <NodeExprType>
       <TypeRef name="ref_Counter">
         <TypeObj codeName="Counter_0" name="Counter">
+          <TypeField mut name="_i">
+            <BuiltinType name="int" />
+          </TypeField>
           <TypeMethod name="get">
             <TypeFn codeName="CounterSDget_0" name="fn$2">
               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10256,9 +10259,6 @@ main {
               </TypeFnReturnType>
             </TypeFn>
           </TypeMethod>
-          <TypeField mut name="_i">
-            <BuiltinType name="int" />
-          </TypeField>
         </TypeObj>
       </TypeRef>
     </NodeExprType>
@@ -10271,6 +10271,9 @@ main {
                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10331,9 +10334,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnMethodInfo>
@@ -10345,6 +10345,9 @@ main {
                 <TypeFnReturnType>
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10405,9 +10408,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnReturnType>
@@ -10419,6 +10419,9 @@ main {
                   <NodeExprType>
                     <TypeRef name="ref_Counter">
                       <TypeObj codeName="Counter_0" name="Counter">
+                        <TypeField mut name="_i">
+                          <BuiltinType name="int" />
+                        </TypeField>
                         <TypeMethod name="get">
                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10479,9 +10482,6 @@ main {
                             </TypeFnReturnType>
                           </TypeFn>
                         </TypeMethod>
-                        <TypeField mut name="_i">
-                          <BuiltinType name="int" />
-                        </TypeField>
                       </TypeObj>
                     </TypeRef>
                   </NodeExprType>
@@ -10494,6 +10494,9 @@ main {
                               <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Counter">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10554,9 +10557,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeRef>
                               </TypeFnMethodInfo>
@@ -10568,6 +10568,9 @@ main {
                               <TypeFnReturnType>
                                 <TypeRef name="ref_Counter">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10628,9 +10631,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </TypeRef>
                               </TypeFnReturnType>
@@ -10641,6 +10641,9 @@ main {
                               <NodeExpr>
                                 <NodeExprType>
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10701,15 +10704,15 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </NodeExprType>
                                 <NodeExprBody>
                                   <ExprAccess>
                                     <Var name="counter" codeName="counter_0" mut frame="2">
                                       <TypeObj codeName="Counter_0" name="Counter">
+                                        <TypeField mut name="_i">
+                                          <BuiltinType name="int" />
+                                        </TypeField>
                                         <TypeMethod name="get">
                                           <TypeFn codeName="CounterSDget_0" name="fn$2">
                                             <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10770,9 +10773,6 @@ main {
                                             </TypeFnReturnType>
                                           </TypeFn>
                                         </TypeMethod>
-                                        <TypeField mut name="_i">
-                                          <BuiltinType name="int" />
-                                        </TypeField>
                                       </TypeObj>
                                     </Var>
                                   </ExprAccess>
@@ -10834,6 +10834,9 @@ main {
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                             <TypeObj codeName="Counter_0" name="Counter">
+                              <TypeField mut name="_i">
+                                <BuiltinType name="int" />
+                              </TypeField>
                               <TypeMethod name="get">
                                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10894,9 +10897,6 @@ main {
                                   </TypeFnReturnType>
                                 </TypeFn>
                               </TypeMethod>
-                              <TypeField mut name="_i">
-                                <BuiltinType name="int" />
-                              </TypeField>
                             </TypeObj>
                           </TypeFnMethodInfo>
                           <TypeFnReturnType>
@@ -10909,6 +10909,9 @@ main {
                           <NodeExpr>
                             <NodeExprType>
                               <TypeObj codeName="Counter_0" name="Counter">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="get">
                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -10969,15 +10972,15 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </NodeExprType>
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="counter" codeName="counter_0" mut frame="2">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -11038,9 +11041,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </Var>
                               </ExprAccess>
@@ -11071,6 +11071,9 @@ main {
                 <TypeFnMethodInfo selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Counter">
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -11131,9 +11134,6 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </TypeRef>
                 </TypeFnMethodInfo>
@@ -11147,6 +11147,9 @@ main {
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Counter_0" name="Counter">
+                      <TypeField mut name="_i">
+                        <BuiltinType name="int" />
+                      </TypeField>
                       <TypeMethod name="get">
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -11207,15 +11210,15 @@ main {
                           </TypeFnReturnType>
                         </TypeFn>
                       </TypeMethod>
-                      <TypeField mut name="_i">
-                        <BuiltinType name="int" />
-                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="counter" codeName="counter_0" mut frame="2">
                         <TypeObj codeName="Counter_0" name="Counter">
+                          <TypeField mut name="_i">
+                            <BuiltinType name="int" />
+                          </TypeField>
                           <TypeMethod name="get">
                             <TypeFn codeName="CounterSDget_0" name="fn$2">
                               <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -11276,9 +11279,6 @@ main {
                               </TypeFnReturnType>
                             </TypeFn>
                           </TypeMethod>
-                          <TypeField mut name="_i">
-                            <BuiltinType name="int" />
-                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -11333,6 +11333,9 @@ main {
                         <TypeFn codeName="CounterSDget_0" name="fn$2">
                           <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
                             <TypeObj codeName="Counter_0" name="Counter">
+                              <TypeField mut name="_i">
+                                <BuiltinType name="int" />
+                              </TypeField>
                               <TypeMethod name="get">
                                 <TypeFn codeName="CounterSDget_0" name="fn$2">
                                   <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -11393,9 +11396,6 @@ main {
                                   </TypeFnReturnType>
                                 </TypeFn>
                               </TypeMethod>
-                              <TypeField mut name="_i">
-                                <BuiltinType name="int" />
-                              </TypeField>
                             </TypeObj>
                           </TypeFnMethodInfo>
                           <TypeFnReturnType>
@@ -11408,6 +11408,9 @@ main {
                           <NodeExpr>
                             <NodeExprType>
                               <TypeObj codeName="Counter_0" name="Counter">
+                                <TypeField mut name="_i">
+                                  <BuiltinType name="int" />
+                                </TypeField>
                                 <TypeMethod name="get">
                                   <TypeFn codeName="CounterSDget_0" name="fn$2">
                                     <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -11468,15 +11471,15 @@ main {
                                     </TypeFnReturnType>
                                   </TypeFn>
                                 </TypeMethod>
-                                <TypeField mut name="_i">
-                                  <BuiltinType name="int" />
-                                </TypeField>
                               </TypeObj>
                             </NodeExprType>
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="counter" codeName="counter_0" mut frame="2">
                                   <TypeObj codeName="Counter_0" name="Counter">
+                                    <TypeField mut name="_i">
+                                      <BuiltinType name="int" />
+                                    </TypeField>
                                     <TypeMethod name="get">
                                       <TypeFn codeName="CounterSDget_0" name="fn$2">
                                         <TypeFnMethodInfo selfCodeName="self_0" selfFirst>
@@ -11537,9 +11540,6 @@ main {
                                         </TypeFnReturnType>
                                       </TypeFn>
                                     </TypeMethod>
-                                    <TypeField mut name="_i">
-                                      <BuiltinType name="int" />
-                                    </TypeField>
                                   </TypeObj>
                                 </Var>
                               </ExprAccess>

@@ -56,7 +56,7 @@ struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
-struct __THE_1_array_str process_args (int, char **);
+struct __THE_1_array_str process_args ();
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
@@ -154,7 +154,7 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_array_str process_args (int argc, char **argv) {
+struct __THE_1_array_str process_args () {
   struct str *d = alloc(argc * sizeof(struct str));
   for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);
   return (struct __THE_1_array_str) {d, (size_t) argc};
@@ -180,8 +180,8 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   return str_concat_cstr(r, "]");
 }
 void __THE_1_test_0 (void *px) {
-  print(stdout, "sz", __THE_1_array_str_str(process_args(argc, argv)), THE_EOL);
-  print(stdout, "iz", __THE_1_array_str_len(process_args(argc, argv)), THE_EOL);
+  print(stdout, "sz", __THE_1_array_str_str(process_args()), THE_EOL);
+  print(stdout, "iz", __THE_1_array_str_len(process_args()), THE_EOL);
 }
 
 int main (int _argc_, char *_argv_[]) {

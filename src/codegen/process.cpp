@@ -18,7 +18,7 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenProcess = {
-  R"(struct _{array_str} process_args (int argc, char **argv) {)" EOL
+  R"(struct _{array_str} process_args () {)" EOL
   R"(  _{struct str} *d = _{alloc}(argc * sizeof(_{struct str}));)" EOL
   R"(  for (int i = 0; i < argc; i++) d[i] = _{str_alloc}(argv[i]);)" EOL
   R"(  return (struct _{array_str}) {d, (_{size_t}) argc};)" EOL

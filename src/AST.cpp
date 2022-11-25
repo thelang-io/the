@@ -467,7 +467,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
           : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
         auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
 
-        if (i != 0 || !this->typeMap.isSelf(paramType)) {
+        if (i == 0 && this->typeMap.isSelf(paramType)) {
           continue;
         }
 

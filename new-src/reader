@@ -19,7 +19,7 @@ obj Reader {
   content: str
   mut pos: int
 
-  fn eof (self: ref Self) bool {
+  fn eof (self: Self) bool {
     return self.pos >= self.content.len
   }
 
@@ -59,7 +59,7 @@ obj Reader {
     self.pos = pos
   }
 
-  fn slice (self: ref Self, start: int, end: int) str {
+  fn slice (self: Self, start: int, end: int) str {
     return self.content.slice(start, end)
   }
 

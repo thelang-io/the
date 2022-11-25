@@ -966,8 +966,8 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
   if (this->builtins.fnStrSlice) {
     builtinFnDeclCode += "struct str str_slice (struct str, unsigned char, int64_t, unsigned char, int64_t);" EOL;
     builtinFnDefCode += "struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {" EOL;
-    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL;
-    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? s.l : (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
+    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL;
+    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? (int64_t) s.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
     builtinFnDefCode += "  if (i1 >= i2 || i1 >= s.l) {" EOL;
     builtinFnDefCode += "    free(s.d);" EOL;
     builtinFnDefCode += R"(    return str_alloc("");)" EOL;
@@ -1014,7 +1014,7 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
     builtinFnDeclCode += "struct str str_upper (struct str);" EOL;
     builtinFnDefCode += "struct str str_upper (struct str s) {" EOL;
     builtinFnDefCode += "  if (s.l != 0) {" EOL;
-    builtinFnDefCode += "    for (size_t i = 0; i < s.l; i++) s.d[i] = toupper(s.d[i]);" EOL;
+    builtinFnDefCode += "    for (size_t i = 0; i < s.l; i++) s.d[i] = (char) toupper(s.d[i]);" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
@@ -1023,7 +1023,7 @@ std::tuple<std::string, std::set<std::string>> Codegen::gen () {
   if (this->builtins.fnStrUpperFirst) {
     builtinFnDeclCode += "struct str str_upper_first (struct str);" EOL;
     builtinFnDefCode += "struct str str_upper_first (struct str s) {" EOL;
-    builtinFnDefCode += "  if (s.l != 0) s.d[0] = toupper(s.d[0]);" EOL;
+    builtinFnDefCode += "  if (s.l != 0) s.d[0] = (char) toupper(s.d[0]);" EOL;
     builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -2110,7 +2110,7 @@ std::string Codegen::_fnDecl (
     }
 
     if (this->state.cleanUp.returnVarUsed) {
-      bodyCode.insert(0, std::string(this->indent, ' ') + "unsigned char r = 0;" EOL);
+      bodyCode.insert(0, std::string(this->indent, ' ') + "unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
     }
 
     entity.decl += returnTypeInfo.typeCode + typeName + " (void *";
@@ -2552,15 +2552,28 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
       this->_typeObjDef(nodeObjDecl.type);
     }
 
-    for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
-      code += this->_fnDecl(
-        nodeObjDeclMethod.type,
-        nodeObjDeclMethod.type->codeName,
-        nodeObjDeclMethod.stack,
-        nodeObjDeclMethod.params,
-        nodeObjDeclMethod.body,
-        phase
-      );
+    if (phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) {
+      for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
+        code += this->_fnDecl(
+          nodeObjDeclMethod.type,
+          nodeObjDeclMethod.type->codeName,
+          nodeObjDeclMethod.stack,
+          nodeObjDeclMethod.params,
+          nodeObjDeclMethod.body,
+          CODEGEN_PHASE_ALLOC
+        );
+      }
+
+      for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
+        code += this->_fnDecl(
+          nodeObjDeclMethod.type,
+          nodeObjDeclMethod.type->codeName,
+          nodeObjDeclMethod.stack,
+          nodeObjDeclMethod.params,
+          nodeObjDeclMethod.body,
+          CODEGEN_PHASE_INIT
+        );
+      }
     }
 
     return this->_wrapNode(node, code);
@@ -2568,7 +2581,11 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
 
     if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) || this->state.cleanUp.returnVarUsed) {
-      if (this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
+      if (
+        this->state.cleanUp.parent != nullptr &&
+        this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT &&
+        this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)
+      ) {
         code += std::string(this->indent, ' ') + this->state.cleanUp.currentReturnVar() + " = 1;" EOL;
       }
 
@@ -2652,7 +2669,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else if (objVar->builtin && objVar->codeName == "@process_args") {
         this->needMainArgs = true;
-        code = this->_apiEval("_{process_args}(argc, argv)");
+        code = this->_apiEval("_{process_args}()");
         code = !root ? code : this->_genFreeFn(this->ast->typeMap.arrayOf(this->ast->typeMap.get("str")), code);
       } else {
         auto objCode = Codegen::name(objVar->codeName);
@@ -4013,8 +4030,8 @@ std::string Codegen::_typeNameArray (const Type *type) {
 
   sliceFnEntity.decl += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + ", unsigned int, int64_t, unsigned int, int64_t);";
   sliceFnEntity.def += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + " n, unsigned int o1, int64_t n1, unsigned int o2, int64_t n2) {" EOL;
-  sliceFnEntity.def += "  int64_t i1 = o1 == 0 ? 0 : (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));" EOL;
-  sliceFnEntity.def += "  int64_t i2 = o2 == 0 ? n.l : (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));" EOL;
+  sliceFnEntity.def += "  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));" EOL;
+  sliceFnEntity.def += "  int64_t i2 = o2 == 0 ? (int64_t) n.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));" EOL;
   sliceFnEntity.def += "  if (i1 > i2 || i1 >= n.l) {" EOL;
   sliceFnEntity.def += "    " + typeName + "_free((struct " + typeName + ") n);" EOL;
   sliceFnEntity.def += "    return (struct " + typeName + ") {NULL, 0};" EOL;
