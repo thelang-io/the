@@ -294,6 +294,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             }
 
             auto paramVariadic = stmtFnDeclParam.variadic;
+            // todo test variadic
             auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
 
             methodDeclTypeParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
@@ -471,6 +472,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
           continue;
         }
 
+        // todo test optional
         auto paramInit = stmtFnDeclParam.init == std::nullopt
           ? std::optional<ASTNodeExpr>{}
           : this->_nodeExpr(*stmtFnDeclParam.init, paramType, methodDeclVarStack);

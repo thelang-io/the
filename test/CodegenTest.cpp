@@ -658,7 +658,8 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-field-str",
   "node-obj-decl-forward-decl",
   "node-obj-decl-mut",
-  "node-obj-decl-method"
+  "node-obj-decl-method",
+  "node-obj-decl-method-forward-decl"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
