@@ -223,6 +223,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
           this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
 
+          // todo test variadic
           auto paramVariadic = stmtFnDeclParam.variadic;
           auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
 
@@ -286,15 +287,17 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             }
 
             auto paramName = stmtFnDeclParam.id.val;
-            auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
+            auto paramCodeName = this->varMap.name(paramName);
+
+            this->varMap.add(paramName, paramCodeName, paramType, stmtFnDeclParam.mut);
 
             if (i == 0 && this->typeMap.isSelf(paramType)) {
-              methodDeclInfo = TypeFnMethodInfo{true, paramVar->codeName, paramType, stmtFnDeclParam.mut};
+              methodDeclInfo = TypeFnMethodInfo{true, paramCodeName, paramType, stmtFnDeclParam.mut};
               continue;
             }
 
-            auto paramVariadic = stmtFnDeclParam.variadic;
             // todo test variadic
+            auto paramVariadic = stmtFnDeclParam.variadic;
             auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
 
             methodDeclTypeParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
