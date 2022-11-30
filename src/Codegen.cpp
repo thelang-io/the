@@ -3375,18 +3375,21 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         for (auto i = static_cast<std::size_t>(0); i < fn.params.size(); i++) {
           auto param = fn.params[i];
-          auto paramTypeInfo = this->_typeInfo(param.variadic ? this->ast->typeMap.arrayOf(param.type) : param.type);
+          auto paramTypeInfo = this->_typeInfo(param.type);
           auto foundArg = std::optional<ASTExprCallArg>{};
+          auto foundArgIdx = static_cast<std::size_t>(0);
 
           if (param.name != std::nullopt) {
-            for (const auto &exprCallArg : exprCall.args) {
-              if (exprCallArg.id == param.name) {
-                foundArg = exprCallArg;
+            for (auto j = static_cast<std::size_t>(0); j < exprCall.args.size(); j++) {
+              if (exprCall.args[j].id == param.name) {
+                foundArgIdx = j;
+                foundArg = exprCall.args[foundArgIdx];
                 break;
               }
             }
           } else if (i < exprCall.args.size()) {
-            foundArg = exprCall.args[i];
+            foundArgIdx = i;
+            foundArg = exprCall.args[foundArgIdx];
           }
 
           if (!param.required && !param.variadic) {
@@ -3395,7 +3398,32 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
           bodyCode += i == 0 && (param.required || param.variadic) ? "" : ", ";
 
-          if (foundArg != std::nullopt) {
+          if (param.variadic) {
+            auto paramTypeElementType = std::get<TypeArray>(param.type->body).elementType;
+            auto variadicArgs = std::vector<ASTExprCallArg>{};
+
+            if (foundArg != std::nullopt) {
+              variadicArgs.push_back(*foundArg);
+
+              for (auto j = foundArgIdx + 1; j < exprCall.args.size(); j++) {
+                auto exprCallArg = exprCall.args[j];
+
+                if (exprCallArg.id != std::nullopt && *exprCallArg.id != param.name) {
+                  break;
+                }
+
+                variadicArgs.push_back(exprCallArg);
+              }
+            }
+
+            bodyCode += this->_apiEval("_{" + paramTypeInfo.typeName + "_alloc}(") + std::to_string(variadicArgs.size());
+
+            for (const auto &variadicArg : variadicArgs) {
+              bodyCode += ", " + this->_nodeExpr(variadicArg.expr, paramTypeElementType);
+            }
+
+            bodyCode += ")";
+          } else if (foundArg != std::nullopt) {
             bodyCode += this->_nodeExpr(foundArg->expr, paramTypeInfo.type);
           } else if (paramTypeInfo.type->isAny()) {
             this->_activateBuiltin("typeAny");
@@ -4136,7 +4164,7 @@ std::string Codegen::_typeNameFn (const Type *type) {
     paramsEntity.def += "struct " + paramsName + " {" EOL;
 
     for (const auto &param : fn.params) {
-      auto paramTypeInfo = this->_typeInfo(param.variadic ? this->ast->typeMap.arrayOf(param.type) : param.type);
+      auto paramTypeInfo = this->_typeInfo(param.type);
       auto paramIdxStr = std::to_string(paramIdx);
 
       if (!param.required && !param.variadic) {

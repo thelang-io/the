@@ -221,12 +221,15 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
           }
 
-          this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
-
           // todo test variadic
           auto paramVariadic = stmtFnDeclParam.variadic;
           auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
 
+          if (paramVariadic) {
+            paramType = this->typeMap.arrayOf(paramType);
+          }
+
+          this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
           nodeFnDeclVarParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
         }
 
@@ -288,19 +291,21 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
             auto paramName = stmtFnDeclParam.id.val;
             auto paramCodeName = this->varMap.name(paramName);
+            // todo test variadic
+            auto paramVariadic = stmtFnDeclParam.variadic;
+            auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
+
+            if (paramVariadic) {
+              paramType = this->typeMap.arrayOf(paramType);
+            }
 
             this->varMap.add(paramName, paramCodeName, paramType, stmtFnDeclParam.mut);
 
             if (i == 0 && this->typeMap.isSelf(paramType)) {
               methodDeclInfo = TypeFnMethodInfo{true, paramCodeName, paramType, stmtFnDeclParam.mut};
-              continue;
+            } else {
+              methodDeclTypeParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
             }
-
-            // todo test variadic
-            auto paramVariadic = stmtFnDeclParam.variadic;
-            auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
-
-            methodDeclTypeParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
           }
 
           auto methodDeclCodeName = this->typeMap.name(methodDeclName);
@@ -344,19 +349,21 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     this->varMap.save();
 
+    // todo test variadic
     for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
       auto paramName = stmtFnDeclParam.id.val;
       auto paramType = stmtFnDeclParam.type != std::nullopt
         ? this->_type(*stmtFnDeclParam.type)
         : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
+      auto paramInit = stmtFnDeclParam.init == std::nullopt
+        ? std::optional<ASTNodeExpr>{}
+        : this->_nodeExpr(*stmtFnDeclParam.init, paramType, nodeFnDeclVarStack);
 
-      auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
-      auto paramInit = std::optional<ASTNodeExpr>{};
-
-      if (stmtFnDeclParam.init != std::nullopt) {
-        paramInit = this->_nodeExpr(*stmtFnDeclParam.init, paramType, nodeFnDeclVarStack);
+      if (stmtFnDeclParam.variadic) {
+        paramType = this->typeMap.arrayOf(paramType);
       }
 
+      auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
       nodeFnDeclParams.push_back(ASTFnDeclParam{paramVar, paramInit});
     }
 
@@ -469,18 +476,20 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         auto paramType = stmtFnDeclParam.type != std::nullopt
           ? this->_type(*stmtFnDeclParam.type)
           : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
-        auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
-
-        if (i == 0 && this->typeMap.isSelf(paramType)) {
-          continue;
-        }
-
-        // todo test optional
+        // todo test optional and variadic
         auto paramInit = stmtFnDeclParam.init == std::nullopt
           ? std::optional<ASTNodeExpr>{}
           : this->_nodeExpr(*stmtFnDeclParam.init, paramType, methodDeclVarStack);
 
-        methodDeclParams.push_back(ASTFnDeclParam{paramVar, paramInit});
+        if (stmtFnDeclParam.variadic) {
+          paramType = this->typeMap.arrayOf(paramType);
+        }
+
+        auto paramVar = this->varMap.add(paramName, this->varMap.name(paramName), paramType, stmtFnDeclParam.mut);
+
+        if (i != 0 || !this->typeMap.isSelf(paramType)) {
+          methodDeclParams.push_back(ASTFnDeclParam{paramVar, paramInit});
+        }
       }
 
       this->typeMap.stack.emplace_back(methodDeclName);
@@ -722,15 +731,17 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
         variadicArgType = foundParam;
       }
 
-      auto exprCallArgExpr = this->_nodeExpr(parserExprCallArg.expr, foundParam->type, varStack);
+      // todo test variadic
+      auto foundParamType = foundParam->variadic ? std::get<TypeArray>(foundParam->type->body).elementType : foundParam->type;
+      auto exprCallArgExpr = this->_nodeExpr(parserExprCallArg.expr, foundParamType, varStack);
 
-      if (!foundParam->type->match(exprCallArgExpr.type)) {
+      if (!foundParamType->match(exprCallArgExpr.type)) {
         if (
           exprCallArgExpr.type->isIntNumber() &&
           std::holds_alternative<ParserExprLit>(*parserExprCallArg.expr.body) &&
-          (foundParam->type->isByte() || foundParam->type->isIntNumber())
+          (foundParamType->isByte() || foundParamType->isIntNumber())
         ) {
-          exprCallArgExpr.type = foundParam->type;
+          exprCallArgExpr.type = foundParamType;
         } else {
           throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1008);
         }
@@ -1098,6 +1109,7 @@ Type *AST::_type (const ParserType &type) {
     auto fnReturnType = this->_type(typeFn.returnType);
     auto fnParams = std::vector<TypeFnParam>{};
 
+    // todo test variadic
     for (const auto &typeFnParam : typeFn.params) {
       auto paramName = typeFnParam.id == std::nullopt ? std::optional<std::string>{} : typeFnParam.id->val;
       auto paramType = this->_type(typeFnParam.type);
