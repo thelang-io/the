@@ -613,6 +613,7 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-param-mut-obj",
   "node-fn-decl-param-mut-opt",
   "node-fn-decl-param-mut-str",
+  "node-fn-decl-param-variadic",
   "node-fn-decl-scope",
   "node-fn-decl-stack",
   "node-fn-decl-stack-any",
@@ -656,10 +657,12 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-field-obj",
   "node-obj-decl-field-opt",
   "node-obj-decl-field-str",
+  "node-obj-decl-field-variadic",
   "node-obj-decl-forward-decl",
   "node-obj-decl-mut",
   "node-obj-decl-method",
-  "node-obj-decl-method-forward-decl"
+  "node-obj-decl-method-forward-decl",
+  "node-obj-decl-method-variadic"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(

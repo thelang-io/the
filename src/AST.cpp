@@ -221,7 +221,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
           }
 
-          // todo test variadic
           auto paramVariadic = stmtFnDeclParam.variadic;
           auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
 
@@ -291,7 +290,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
             auto paramName = stmtFnDeclParam.id.val;
             auto paramCodeName = this->varMap.name(paramName);
-            // todo test variadic
             auto paramVariadic = stmtFnDeclParam.variadic;
             auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
 
@@ -349,7 +347,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     this->varMap.save();
 
-    // todo test variadic
     for (const auto &stmtFnDeclParam : stmtFnDecl.params) {
       auto paramName = stmtFnDeclParam.id.val;
       auto paramType = stmtFnDeclParam.type != std::nullopt
@@ -476,7 +473,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         auto paramType = stmtFnDeclParam.type != std::nullopt
           ? this->_type(*stmtFnDeclParam.type)
           : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
-        // todo test optional and variadic
         auto paramInit = stmtFnDeclParam.init == std::nullopt
           ? std::optional<ASTNodeExpr>{}
           : this->_nodeExpr(*stmtFnDeclParam.init, paramType, methodDeclVarStack);
@@ -731,7 +727,6 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
         variadicArgType = foundParam;
       }
 
-      // todo test variadic
       auto foundParamType = foundParam->variadic ? std::get<TypeArray>(foundParam->type->body).elementType : foundParam->type;
       auto exprCallArgExpr = this->_nodeExpr(parserExprCallArg.expr, foundParamType, varStack);
 
@@ -1109,10 +1104,13 @@ Type *AST::_type (const ParserType &type) {
     auto fnReturnType = this->_type(typeFn.returnType);
     auto fnParams = std::vector<TypeFnParam>{};
 
-    // todo test variadic
     for (const auto &typeFnParam : typeFn.params) {
       auto paramName = typeFnParam.id == std::nullopt ? std::optional<std::string>{} : typeFnParam.id->val;
       auto paramType = this->_type(typeFnParam.type);
+
+      if (typeFnParam.variadic) {
+        paramType = this->typeMap.arrayOf(paramType);
+      }
 
       fnParams.push_back(TypeFnParam{paramName, paramType, typeFnParam.mut, !typeFnParam.variadic, typeFnParam.variadic});
     }

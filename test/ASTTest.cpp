@@ -55,6 +55,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-fn-decl-param-mut",
   "node-fn-decl-param-mut-fn",
   "node-fn-decl-param-mut-obj",
+  "node-fn-decl-param-variadic",
   "node-fn-decl-stack",
   "node-if",
   "node-if-type-casts",
@@ -62,8 +63,10 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-main",
   "node-obj-decl",
   "node-obj-decl-field-mut",
+  "node-obj-decl-field-variadic",
   "node-obj-decl-forward-decl",
   "node-obj-decl-method",
+  "node-obj-decl-method-variadic",
   "node-return",
   "node-var-decl",
   "node-var-decl-type-only"

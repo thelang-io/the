@@ -64,7 +64,9 @@ main {
             <BuiltinType name="int" />
           </TypeFnParam>
           <TypeFnParam variadic>
-            <BuiltinType name="int" />
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
@@ -83,7 +85,9 @@ main {
             <BuiltinType name="int" />
           </TypeFnParam>
           <TypeFnParam name="b" variadic>
-            <BuiltinType name="int" />
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
@@ -103,7 +107,9 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="b" codeName="b_0" frame="2">
-          <BuiltinType name="int" />
+          <TypeArray name="array_int">
+            <BuiltinType name="int" />
+          </TypeArray>
         </Var>
       </FnDeclParamVar>
     </FnDeclParam>
@@ -131,12 +137,16 @@ main {
             <ExprCallArg id="items">
               <NodeExpr>
                 <NodeExprType>
-                  <BuiltinType name="int" />
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="b" codeName="b_0" frame="2">
-                      <BuiltinType name="int" />
+                      <TypeArray name="array_int">
+                        <BuiltinType name="int" />
+                      </TypeArray>
                     </Var>
                   </ExprAccess>
                 </NodeExprBody>
@@ -588,7 +598,9 @@ main {
                   <BuiltinType name="int" />
                 </TypeFnParam>
                 <TypeFnParam variadic>
-                  <BuiltinType name="int" />
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
                 </TypeFnParam>
               </TypeFnParams>
               <TypeFnReturnType>
@@ -610,7 +622,9 @@ main {
                     <BuiltinType name="int" />
                   </TypeFnParam>
                   <TypeFnParam variadic>
-                    <BuiltinType name="int" />
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
@@ -631,7 +645,9 @@ main {
                         <BuiltinType name="int" />
                       </TypeFnParam>
                       <TypeFnParam variadic>
-                        <BuiltinType name="int" />
+                        <TypeArray name="array_int">
+                          <BuiltinType name="int" />
+                        </TypeArray>
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
@@ -651,7 +667,9 @@ main {
                           <BuiltinType name="int" />
                         </TypeFnParam>
                         <TypeFnParam name="b" variadic>
-                          <BuiltinType name="int" />
+                          <TypeArray name="array_int">
+                            <BuiltinType name="int" />
+                          </TypeArray>
                         </TypeFnParam>
                       </TypeFnParams>
                       <TypeFnReturnType>
@@ -668,7 +686,9 @@ main {
                               <BuiltinType name="int" />
                             </TypeFnParam>
                             <TypeFnParam name="b" variadic>
-                              <BuiltinType name="int" />
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
                             </TypeFnParam>
                           </TypeFnParams>
                           <TypeFnReturnType>
@@ -731,7 +751,9 @@ main {
                               <BuiltinType name="int" />
                             </TypeFnParam>
                             <TypeFnParam variadic>
-                              <BuiltinType name="int" />
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
                             </TypeFnParam>
                           </TypeFnParams>
                           <TypeFnReturnType>
@@ -751,7 +773,9 @@ main {
                                         <BuiltinType name="int" />
                                       </TypeFnParam>
                                       <TypeFnParam variadic>
-                                        <BuiltinType name="int" />
+                                        <TypeArray name="array_int">
+                                          <BuiltinType name="int" />
+                                        </TypeArray>
                                       </TypeFnParam>
                                     </TypeFnParams>
                                     <TypeFnReturnType>
@@ -772,7 +796,9 @@ main {
                                             <BuiltinType name="int" />
                                           </TypeFnParam>
                                           <TypeFnParam variadic>
-                                            <BuiltinType name="int" />
+                                            <TypeArray name="array_int">
+                                              <BuiltinType name="int" />
+                                            </TypeArray>
                                           </TypeFnParam>
                                         </TypeFnParams>
                                         <TypeFnReturnType>
