@@ -33,7 +33,7 @@ Type *TypeMap::arrayOf (Type *elementType) {
   }};
 
   auto pushTypeFn = TypeFn{this->get("void"), {
-    TypeFnParam{"element", elementType, false, false, true}
+    TypeFnParam{"element", this->arrayOf(elementType), false, false, true}
   }};
 
   auto sliceTypeFn = TypeFn{selfType, {
@@ -399,7 +399,7 @@ void TypeMap::init () {
   }};
 
   auto printTypeFn = TypeFn{voidType, {
-    TypeFnParam{"items", anyType, false, false, true},
+    TypeFnParam{"items", this->arrayOf(anyType), false, false, true},
     TypeFnParam{"separator", strType, false, false, false},
     TypeFnParam{"terminator", strType, false, false, false},
     TypeFnParam{"to", strType, false, false, false}

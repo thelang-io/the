@@ -1,0 +1,1178 @@
+======= stdin =======
+obj Test {
+  fieldTest1: (int...) -> void
+  fieldTest2: (int, int...) -> void
+}
+fn test1 (a: int...) {
+  print(a)
+}
+fn test2 (a: int, b: int...) {
+  print(a, b)
+}
+main {
+  test := Test{
+    fieldTest1: test1,
+    fieldTest2: test2
+  }
+
+  test.fieldTest1()
+  test.fieldTest1(1)
+  test.fieldTest1(1, 2)
+  test.fieldTest2(0)
+  test.fieldTest2(1, 2)
+  test.fieldTest2(2, 3, 4)
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeField name="fieldTest1">
+      <TypeFn name="fn$0">
+        <TypeFnParams>
+          <TypeFnParam variadic>
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </TypeField>
+    <TypeField name="fieldTest2">
+      <TypeFn name="fn$1">
+        <TypeFnParams>
+          <TypeFnParam required>
+            <BuiltinType name="int" />
+          </TypeFnParam>
+          <TypeFnParam variadic>
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test1" codeName="test1_0" frame="1">
+      <TypeFn codeName="test1_0" name="fn$0">
+        <TypeFnParams>
+          <TypeFnParam name="a" variadic>
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <TypeArray name="array_int">
+            <BuiltinType name="int" />
+          </TypeArray>
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+  <NodeFnDeclBody>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="a" codeName="a_0" frame="2">
+                      <TypeArray name="array_int">
+                        <BuiltinType name="int" />
+                      </TypeArray>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test2" codeName="test2_0" frame="1">
+      <TypeFn codeName="test2_0" name="fn$1">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
+            <BuiltinType name="int" />
+          </TypeFnParam>
+          <TypeFnParam name="b" variadic>
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <BuiltinType name="int" />
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="b" codeName="b_0" frame="2">
+          <TypeArray name="array_int">
+            <BuiltinType name="int" />
+          </TypeArray>
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+  <NodeFnDeclBody>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="a" codeName="a_0" frame="2">
+                      <BuiltinType name="int" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="b" codeName="b_0" frame="2">
+                      <TypeArray name="array_int">
+                        <BuiltinType name="int" />
+                      </TypeArray>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test" codeName="test_0" frame="2">
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeField name="fieldTest1">
+            <TypeFn name="fn$0">
+              <TypeFnParams>
+                <TypeFnParam variadic>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </TypeFnParam>
+              </TypeFnParams>
+              <TypeFnReturnType>
+                <BuiltinType name="void" />
+              </TypeFnReturnType>
+            </TypeFn>
+          </TypeField>
+          <TypeField name="fieldTest2">
+            <TypeFn name="fn$1">
+              <TypeFnParams>
+                <TypeFnParam required>
+                  <BuiltinType name="int" />
+                </TypeFnParam>
+                <TypeFnParam variadic>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </TypeFnParam>
+              </TypeFnParams>
+              <TypeFnReturnType>
+                <BuiltinType name="void" />
+              </TypeFnReturnType>
+            </TypeFn>
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Test_0" name="Test">
+            <TypeField name="fieldTest1">
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </TypeField>
+            <TypeField name="fieldTest2">
+              <TypeFn name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjType>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeField name="fieldTest1">
+                  <TypeFn name="fn$0">
+                    <TypeFnParams>
+                      <TypeFnParam variadic>
+                        <TypeArray name="array_int">
+                          <BuiltinType name="int" />
+                        </TypeArray>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeField>
+                <TypeField name="fieldTest2">
+                  <TypeFn name="fn$1">
+                    <TypeFnParams>
+                      <TypeFnParam required>
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                      <TypeFnParam variadic>
+                        <TypeArray name="array_int">
+                          <BuiltinType name="int" />
+                        </TypeArray>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </TypeField>
+              </TypeObj>
+            </ExprObjType>
+            <ExprObjProps>
+              <ExprObjProp id="fieldTest1">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeFn codeName="test1_0" name="fn$0">
+                      <TypeFnParams>
+                        <TypeFnParam name="a" variadic>
+                          <TypeArray name="array_int">
+                            <BuiltinType name="int" />
+                          </TypeArray>
+                        </TypeFnParam>
+                      </TypeFnParams>
+                      <TypeFnReturnType>
+                        <BuiltinType name="void" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test1" codeName="test1_0" frame="1">
+                        <TypeFn codeName="test1_0" name="fn$0">
+                          <TypeFnParams>
+                            <TypeFnParam name="a" variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+              <ExprObjProp id="fieldTest2">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeFn codeName="test2_0" name="fn$1">
+                      <TypeFnParams>
+                        <TypeFnParam name="a" required>
+                          <BuiltinType name="int" />
+                        </TypeFnParam>
+                        <TypeFnParam name="b" variadic>
+                          <TypeArray name="array_int">
+                            <BuiltinType name="int" />
+                          </TypeArray>
+                        </TypeFnParam>
+                      </TypeFnParams>
+                      <TypeFnReturnType>
+                        <BuiltinType name="void" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test2" codeName="test2_0" frame="1">
+                        <TypeFn codeName="test2_0" name="fn$1">
+                          <TypeFnParams>
+                            <TypeFnParam name="a" required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam name="b" variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+            </ExprObjProps>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="fieldTest1">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeField name="fieldTest1">
+                        <TypeFn name="fn$0">
+                          <TypeFnParams>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                      <TypeField name="fieldTest2">
+                        <TypeFn name="fn$1">
+                          <TypeFnParams>
+                            <TypeFnParam required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                    </TypeObj>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="fieldTest1">
+                            <TypeFn name="fn$0">
+                              <TypeFnParams>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                          <TypeField name="fieldTest2">
+                            <TypeFn name="fn$1">
+                              <TypeFnParams>
+                                <TypeFnParam required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="fieldTest1">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeField name="fieldTest1">
+                        <TypeFn name="fn$0">
+                          <TypeFnParams>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                      <TypeField name="fieldTest2">
+                        <TypeFn name="fn$1">
+                          <TypeFnParams>
+                            <TypeFnParam required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                    </TypeObj>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="fieldTest1">
+                            <TypeFn name="fn$0">
+                              <TypeFnParams>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                          <TypeField name="fieldTest2">
+                            <TypeFn name="fn$1">
+                              <TypeFnParams>
+                                <TypeFnParam required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="1" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$0">
+                <TypeFnParams>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="fieldTest1">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeField name="fieldTest1">
+                        <TypeFn name="fn$0">
+                          <TypeFnParams>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                      <TypeField name="fieldTest2">
+                        <TypeFn name="fn$1">
+                          <TypeFnParams>
+                            <TypeFnParam required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                    </TypeObj>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="fieldTest1">
+                            <TypeFn name="fn$0">
+                              <TypeFnParams>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                          <TypeField name="fieldTest2">
+                            <TypeFn name="fn$1">
+                              <TypeFnParams>
+                                <TypeFnParam required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="1" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="2" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="fieldTest2">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeField name="fieldTest1">
+                        <TypeFn name="fn$0">
+                          <TypeFnParams>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                      <TypeField name="fieldTest2">
+                        <TypeFn name="fn$1">
+                          <TypeFnParams>
+                            <TypeFnParam required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                    </TypeObj>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="fieldTest1">
+                            <TypeFn name="fn$0">
+                              <TypeFnParams>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                          <TypeField name="fieldTest2">
+                            <TypeFn name="fn$1">
+                              <TypeFnParams>
+                                <TypeFnParam required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="0" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="fieldTest2">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeField name="fieldTest1">
+                        <TypeFn name="fn$0">
+                          <TypeFnParams>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                      <TypeField name="fieldTest2">
+                        <TypeFn name="fn$1">
+                          <TypeFnParams>
+                            <TypeFnParam required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                    </TypeObj>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="fieldTest1">
+                            <TypeFn name="fn$0">
+                              <TypeFnParams>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                          <TypeField name="fieldTest2">
+                            <TypeFn name="fn$1">
+                              <TypeFnParams>
+                                <TypeFnParam required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="1" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="2" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                  <TypeFnParam variadic>
+                    <TypeArray name="array_int">
+                      <BuiltinType name="int" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="fieldTest2">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeObj codeName="Test_0" name="Test">
+                      <TypeField name="fieldTest1">
+                        <TypeFn name="fn$0">
+                          <TypeFnParams>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                      <TypeField name="fieldTest2">
+                        <TypeFn name="fn$1">
+                          <TypeFnParams>
+                            <TypeFnParam required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam variadic>
+                              <TypeArray name="array_int">
+                                <BuiltinType name="int" />
+                              </TypeArray>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeField>
+                    </TypeObj>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeObj codeName="Test_0" name="Test">
+                          <TypeField name="fieldTest1">
+                            <TypeFn name="fn$0">
+                              <TypeFnParams>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                          <TypeField name="fieldTest2">
+                            <TypeFn name="fn$1">
+                              <TypeFnParams>
+                                <TypeFnParam required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam variadic>
+                                  <TypeArray name="array_int">
+                                    <BuiltinType name="int" />
+                                  </TypeArray>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeField>
+                        </TypeObj>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="2" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="3" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="INT_DEC" value="4" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>
