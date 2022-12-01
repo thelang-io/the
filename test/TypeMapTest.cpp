@@ -205,6 +205,12 @@ TEST_F(TypeMapTest, GetReturnsItem) {
   EXPECT_NO_THROW(this->tm_.get("Test"));
 }
 
+TEST_F(TypeMapTest, GetReturnsSelf) {
+  EXPECT_EQ(this->tm_.get("Self"), nullptr);
+  this->tm_.self = this->tm_.obj("Test", "Test");;
+  EXPECT_EQ(this->tm_.get("Self"), this->tm_.self);
+}
+
 TEST_F(TypeMapTest, GetReturnsNull) {
   EXPECT_EQ(this->tm_.get("test"), nullptr);
 }
@@ -215,6 +221,12 @@ TEST_F(TypeMapTest, HasExisting) {
 
   EXPECT_TRUE(this->tm_.has("fn$0"));
   EXPECT_TRUE(this->tm_.has("Test"));
+}
+
+TEST_F(TypeMapTest, HasSelf) {
+  EXPECT_FALSE(this->tm_.has("Self"));
+  this->tm_.self = this->tm_.obj("Test", "Test");;
+  EXPECT_TRUE(this->tm_.has("Self"));
 }
 
 TEST_F(TypeMapTest, HasNotExisting) {

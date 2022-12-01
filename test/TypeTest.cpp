@@ -1394,6 +1394,11 @@ TEST_F(TypeTest, MatchesNiceFunction) {
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
+  auto type12 = this->tm_.fn("test12_0", {
+    TypeFnParam{"a", this->tm_.get("int"), true, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), true, false, true}
+  }, this->tm_.get("int"));
+
   EXPECT_FALSE(type1->matchNice(this->tm_.get("any")));
   EXPECT_TRUE(type1->matchNice(type1));
   EXPECT_TRUE(type1->matchNice(type2));
@@ -1403,15 +1408,18 @@ TEST_F(TypeTest, MatchesNiceFunction) {
   EXPECT_FALSE(type1->matchNice(type6));
   EXPECT_FALSE(type1->matchNice(type7));
   EXPECT_TRUE(type1->matchNice(type8));
-  EXPECT_TRUE(type8->matchNice(type1));
   EXPECT_FALSE(type1->matchNice(type9));
-  EXPECT_FALSE(type9->matchNice(type1));
   EXPECT_FALSE(type1->matchNice(type10));
-  EXPECT_FALSE(type10->matchNice(type1));
   EXPECT_FALSE(type1->matchNice(type11));
+  EXPECT_TRUE(type1->matchNice(type12));
+
+  EXPECT_TRUE(type8->matchNice(type1));
+  EXPECT_FALSE(type9->matchNice(type1));
+  EXPECT_FALSE(type10->matchNice(type1));
   EXPECT_FALSE(type11->matchNice(type1));
   EXPECT_FALSE(type10->matchNice(type11));
   EXPECT_FALSE(type11->matchNice(type10));
+  EXPECT_FALSE(type12->matchNice(type1));
 }
 
 TEST_F(TypeTest, MatchesNiceObject) {
