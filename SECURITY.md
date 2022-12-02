@@ -5,8 +5,8 @@ We support only past two minor releases:
 
 | Version | Supported          |
 |:------- | ------------------ |
-| 0.11.x  | :white_check_mark: |
-| < 0.11  | :x:                |
+| 0.12.x  | :white_check_mark: |
+| < 0.12  | :x:                |
 
 ## Reporting a Vulnerability
 If you believe you have found a security vulnerability, we encourage you to let
