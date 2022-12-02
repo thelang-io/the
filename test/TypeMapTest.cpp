@@ -207,7 +207,7 @@ TEST_F(TypeMapTest, GetReturnsItem) {
 
 TEST_F(TypeMapTest, GetReturnsSelf) {
   EXPECT_EQ(this->tm_.get("Self"), nullptr);
-  this->tm_.self = this->tm_.obj("Test", "Test");;
+  this->tm_.self = this->tm_.obj("Test", "Test");
   EXPECT_EQ(this->tm_.get("Self"), this->tm_.self);
 }
 
@@ -225,7 +225,7 @@ TEST_F(TypeMapTest, HasExisting) {
 
 TEST_F(TypeMapTest, HasSelf) {
   EXPECT_FALSE(this->tm_.has("Self"));
-  this->tm_.self = this->tm_.obj("Test", "Test");;
+  this->tm_.self = this->tm_.obj("Test", "Test");
   EXPECT_TRUE(this->tm_.has("Self"));
 }
 

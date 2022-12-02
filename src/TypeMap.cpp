@@ -103,7 +103,7 @@ Type *TypeMap::fn (
 
 Type *TypeMap::get (const std::string &name) {
   if (name == "Self") {
-    return *this->self;
+    return this->self == std::nullopt ? nullptr : *this->self;
   }
 
   for (const auto &item : this->_items) {
