@@ -694,7 +694,7 @@ int main () {
   request_Request_free((struct request_Request *) __THE_0_req_0);
 }
 ======= flags =======
-U:-lssl W:-lWs2_32 W:-llibssl
+A:-lcrypto A:-lssl W:-ladvapi32 W:-lcrypt32 W:-lgdi32 W:-luser32 W:-lws2_32
 ======= stdout =======
 GET http://example.com: 200
 POST http://example.com: 200

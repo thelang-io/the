@@ -25,18 +25,25 @@ jobs:
         os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2022]
     steps:
       - uses: actions/checkout@v2
+
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install ninja-build valgrind
+      - if: runner.os == 'macOS'
+        run: brew install ninja
+
       - if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build valgrind
+          curl -fsSL https://cdn.thelang.io/packages.tgz | sudo tar -xzf - -C /usr/local
+          echo "PACKAGES_DIR=/usr/local/the/linux" >> $GITHUB_ENV
       - if: runner.os == 'Windows'
         run: |
-          choco install openssl --no-progress
-          echo "OPENSSL_ROOT_DIR=C:/Program Files/OpenSSL-Win64" >> $env:GITHUB_ENV
+          curl -fsSL https://cdn.thelang.io/packages.tgz | tar -xzf - -C "C:/Program Files"
+          echo "PACKAGES_DIR=C:/Program Files/the/windows" >> $env:GITHUB_ENV
       - if: runner.os == 'macOS'
         run: |
-          brew install ninja
-          echo "OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1" >> $GITHUB_ENV
+          curl -fsSL https://cdn.thelang.io/packages.tgz | tar -xzf - -C /usr/local
+          echo "PACKAGES_DIR=/usr/local/the/macos" >> $GITHUB_ENV
+
       - run: mkdir -p build
       - if: runner.os == 'Linux'
         run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON

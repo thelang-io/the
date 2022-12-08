@@ -76,15 +76,13 @@ void Codegen::compile (
     ) {
       flagsStr += " " + flag.substr(2);
     }
+  }
 
-    if (flag.substr(2) == "-lssl") {
-      auto opensslRootDir = Codegen::getEnvVar("OPENSSL_ROOT_DIR");
+  auto packagesDir = Codegen::getEnvVar("PACKAGES_DIR");
 
-      if (!opensslRootDir.empty()) {
-        flagsStr += " -I\"" + opensslRootDir + "/include\"";
-        flagsStr += " -L\"" + opensslRootDir + "/lib\"";
-      }
-    }
+  if (!packagesDir.empty()) {
+    flagsStr += " -I\"" + packagesDir + "/include\"";
+    flagsStr += " -L\"" + packagesDir + "/lib\"";
   }
 
   auto cmd = compiler + " build/output.c -w -o " + path + flagsStr + (debug ? " -g" : "");
@@ -1195,9 +1193,13 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libNetinetIn = true;
   } else if (name == "libOpensslSsl") {
     this->builtins.libOpensslSsl = true;
-    this->flags.emplace("U:-lssl");
-    this->flags.emplace("W:-llibssl");
-    this->flags.emplace("W:-lWs2_32");
+    this->flags.emplace("A:-lssl");
+    this->flags.emplace("A:-lcrypto");
+    this->flags.emplace("W:-lws2_32");
+    this->flags.emplace("W:-lgdi32");
+    this->flags.emplace("W:-ladvapi32");
+    this->flags.emplace("W:-lcrypt32");
+    this->flags.emplace("W:-luser32");
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {

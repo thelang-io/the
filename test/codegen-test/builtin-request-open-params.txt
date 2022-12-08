@@ -767,7 +767,7 @@ int main () {
   str_free((struct str) __THE_0_url_0);
 }
 ======= flags =======
-U:-lssl W:-lWs2_32 W:-llibssl
+A:-lcrypto A:-lssl W:-ladvapi32 W:-lcrypt32 W:-lgdi32 W:-luser32 W:-lws2_32
 ======= stdout =======
 GET https://httpbin.org/status/200 200
 GET https://httpbin.org/status/400 400
