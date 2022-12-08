@@ -33,16 +33,16 @@ jobs:
 
       - if: runner.os == 'Linux'
         run: |
-          curl -fsSL https://cdn.thelang.io/packages.tgz | sudo tar -xzf - -C /usr/local
-          echo "PACKAGES_DIR=/usr/local/the/linux" >> $GITHUB_ENV
+          curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xzf
+          echo "PACKAGES_DIR=$PWD/the/linux" >> $GITHUB_ENV
       - if: runner.os == 'Windows'
         run: |
-          curl -fsSL https://cdn.thelang.io/packages.tgz | tar -xzf - -C "C:/Program Files"
+          curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xzf - -C "C:/Program Files"
           echo "PACKAGES_DIR=C:/Program Files/the/windows" >> $env:GITHUB_ENV
       - if: runner.os == 'macOS'
         run: |
-          curl -fsSL https://cdn.thelang.io/packages.tgz | tar -xzf - -C /usr/local
-          echo "PACKAGES_DIR=/usr/local/the/macos" >> $GITHUB_ENV
+          curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xzf
+          echo "PACKAGES_DIR=$PWD/the/macos" >> $GITHUB_ENV
 
       - run: mkdir -p build
       - if: runner.os == 'Linux'
