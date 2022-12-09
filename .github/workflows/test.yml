@@ -18,38 +18,44 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.data.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2022]
+        data:
+          - os: macos-11
+            platform: macos
+            generator: Ninja
+            memcheck: false
+          - os: macos-12
+            platform: macos
+            generator: Ninja
+            memcheck: false
+          - os: ubuntu-20.04
+            platform: linux
+            generator: Ninja
+            memcheck: true
+          - os: ubuntu-22.04
+            platform: linux
+            generator: Ninja
+            memcheck: true
+          - os: windows-2022
+            platform: windows
+            generator: Visual Studio 17 2022
+            memcheck: false
     steps:
       - uses: actions/checkout@v2
-
       - if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
-
-      - if: runner.os == 'Linux'
-        run: |
-          curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz
-          echo "PACKAGES_DIR=$PWD/the/linux" >> $GITHUB_ENV
-      - if: runner.os == 'Windows'
-        run: |
-          curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz
-          echo "PACKAGES_DIR=$PWD/the/windows" >> $env:GITHUB_ENV
-      - if: runner.os == 'macOS'
-        run: |
-          curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz
-          echo "PACKAGES_DIR=$PWD/the/macos" >> $GITHUB_ENV
-
+      - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz the/{{ matrix.data.platform }}
+      - run: echo "LIBRARY_PATH=$PWD/the/{{ matrix.data.platform }}:$LIBRARY_PATH" >> $GITHUB_ENV
+      - run: echo "PACKAGES_DIR=$PWD/the/{{ matrix.data.platform }}" >> $GITHUB_ENV
       - run: mkdir -p build
-      - if: runner.os == 'Linux'
-        run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
-      - if: runner.os == 'Windows'
-        run: cmake . -B ./build -G "Visual Studio 17 2022" -D BUILD_TESTS=ON
-      - if: runner.os == 'macOS'
-        run: cmake . -B ./build -G "Ninja" -D BUILD_TESTS=ON
+      - if: matrix.data.memcheck == 'true'
+        run: cmake . -B ./build -G "{{ matrix.data.generator }}" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
+      - if: matrix.data.memcheck == 'false'
+        run: cmake . -B ./build -G "{{ matrix.data.generator }}" -D BUILD_TESTS=ON
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
