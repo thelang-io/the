@@ -29,6 +29,7 @@ WORKDIR /app
 COPY . .
 RUN cmake . -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
 RUN cmake --build .
+
 # TODO download packages
 
 ENTRYPOINT ["ctest", "--output-on-failure"]
