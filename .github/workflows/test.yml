@@ -49,13 +49,13 @@ jobs:
         run: sudo apt-get update && sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
-      - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz the/{{ matrix.data.platform }}
-      - run: echo "LIBRARY_PATH=$PWD/the/{{ matrix.data.platform }}:$LIBRARY_PATH" >> $GITHUB_ENV
-      - run: echo "PACKAGES_DIR=$PWD/the/{{ matrix.data.platform }}" >> $GITHUB_ENV
+      - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz the/${{ matrix.data.platform }}
+      - run: echo "LIBRARY_PATH=$PWD/the/${{ matrix.data.platform }}:$LIBRARY_PATH" >> $GITHUB_ENV
+      - run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.data.platform }}" >> $GITHUB_ENV
       - run: mkdir -p build
       - if: matrix.data.memcheck == 'true'
-        run: cmake . -B ./build -G "{{ matrix.data.generator }}" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
+        run: cmake . -B ./build -G "${{ matrix.data.generator }}" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
       - if: matrix.data.memcheck == 'false'
-        run: cmake . -B ./build -G "{{ matrix.data.generator }}" -D BUILD_TESTS=ON
+        run: cmake . -B ./build -G "${{ matrix.data.generator }}" -D BUILD_TESTS=ON
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
