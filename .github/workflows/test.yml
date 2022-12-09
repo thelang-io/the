@@ -3,14 +3,14 @@ name: Test
 on:
   push:
     branches:
-      - "main"
+      - 'main'
     paths-ignore:
-      - "**.md"
-      - "**.yml"
+      - '**.md'
+      - '**.yml'
   pull_request:
     paths-ignore:
-      - "**.md"
-      - "**.yml"
+      - '**.md'
+      - '**.yml'
 
 concurrency:
   cancel-in-progress: true
@@ -18,11 +18,11 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ${{ matrix.data.os }}
+    runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
-        data:
+        config:
           - os: macos-11
             platform: macos
             generator: Ninja
@@ -50,13 +50,10 @@ jobs:
       - if: runner.os == 'macOS'
         run: brew install ninja
       - run: curl -OfsSL https://cdn.thelang.io/packages.tar.gz
-      - run: tar -xzf packages.tar.gz the/${{ matrix.data.platform }}
-      - run: echo "LIBRARY_PATH=$PWD/the/${{ matrix.data.platform }}:$LIBRARY_PATH" >> $GITHUB_ENV
-      - run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.data.platform }}" >> $GITHUB_ENV
+      - run: tar -xzf packages.tar.gz the/${{ matrix.config.platform }}
+      - run: echo "LIBRARY_PATH=$PWD/the/${{ matrix.config.platform }}:$LIBRARY_PATH" >> $GITHUB_ENV
+      - run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" >> $GITHUB_ENV
       - run: mkdir -p build
-      - if: ${{ matrix.data.memcheck == 'true' }}
-        run: cmake . -B ./build -G "${{ matrix.data.generator }}" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
-      - if: ${{ matrix.data.memcheck == 'false' }}
-        run: cmake . -B ./build -G "${{ matrix.data.generator }}" -D BUILD_TESTS=ON
+      - run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON ${{ matrix.config.memcheck && '-D TEST_CODEGEN_MEMCHECK=ON' }}
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
