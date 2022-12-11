@@ -26,7 +26,7 @@ RUN apt-get update && \
     rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
 RUN curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz the/linux
-ENV PACKAGES_DIR=$PWD/the/linux
+ENV PACKAGES_DIR="$PWD/the/linux"
 
 WORKDIR /app
 COPY . .

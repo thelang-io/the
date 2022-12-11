@@ -193,25 +193,25 @@ class Codegen {
   std::map<std::string, const Type *> anyTypes;
   CodegenBuiltins builtins = {};
   std::vector<CodegenEntity> entities;
-  std::set<std::string> flags;
+  std::vector<std::string> flags;
   std::size_t indent = 0;
   std::size_t lastAnyIdx = 1;
   bool needMainArgs = false;
 
   static void compile (
     const std::string &,
-    const std::tuple<std::string, std::set<std::string>> &,
+    const std::tuple<std::string, std::vector<std::string>> &,
     const std::string &,
     bool = false
   );
   static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);
-  static std::string stringifyFlags (const std::set<std::string> &);
+  static std::string stringifyFlags (const std::vector<std::string> &);
   static std::string typeName (const std::string &);
 
   explicit Codegen (AST *);
 
-  virtual std::tuple<std::string, std::set<std::string>> gen ();
+  virtual std::tuple<std::string, std::vector<std::string>> gen ();
 
  private:
   Codegen (const Codegen &);

@@ -52,7 +52,7 @@ std::string getCompilerFromPlatform (const std::string &platform) {
 
 void Codegen::compile (
   const std::string &path,
-  const std::tuple<std::string, std::set<std::string>> &result,
+  const std::tuple<std::string, std::vector<std::string>> &result,
   const std::string &platform,
   bool debug
 ) {
@@ -104,7 +104,7 @@ std::string Codegen::name (const std::string &name) {
   return "__THE_0_" + name;
 }
 
-std::string Codegen::stringifyFlags (const std::set<std::string> &flags) {
+std::string Codegen::stringifyFlags (const std::vector<std::string> &flags) {
   auto result = std::string();
   auto idx = static_cast<std::size_t>(0);
 
@@ -126,7 +126,7 @@ Codegen::Codegen (AST *a) {
   this->reader = this->ast->reader;
 }
 
-std::tuple<std::string, std::set<std::string>> Codegen::gen () {
+std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeObj(this->ast->typeMap.get("fs_Stats"), true);
   this->_typeObj(this->ast->typeMap.get("request_Header"), true);
   this->_typeObj(this->ast->typeMap.get("request_Request"), true);
@@ -1193,13 +1193,16 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libNetinetIn = true;
   } else if (name == "libOpensslSsl") {
     this->builtins.libOpensslSsl = true;
-    this->flags.emplace("A:-lssl");
-    this->flags.emplace("A:-lcrypto");
-    this->flags.emplace("W:-lws2_32");
-    this->flags.emplace("W:-lgdi32");
-    this->flags.emplace("W:-ladvapi32");
-    this->flags.emplace("W:-lcrypt32");
-    this->flags.emplace("W:-luser32");
+
+    if (std::find(this->flags.begin(), this->flags.end(), "A:-lssl") == this->flags.end()) {
+      this->flags.emplace_back("A:-lssl");
+      this->flags.emplace_back("A:-lcrypto");
+      this->flags.emplace_back("W:-lws2_32");
+      this->flags.emplace_back("W:-lgdi32");
+      this->flags.emplace_back("W:-ladvapi32");
+      this->flags.emplace_back("W:-lcrypt32");
+      this->flags.emplace_back("W:-luser32");
+    }
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {

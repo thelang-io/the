@@ -26,23 +26,20 @@ jobs:
           - os: macos-11
             platform: macos
             generator: Ninja
-            memcheck: false
           - os: macos-12
             platform: macos
             generator: Ninja
-            memcheck: false
           - os: ubuntu-20.04
             platform: linux
             generator: Ninja
-            memcheck: true
+            cmake_flags: "-D TEST_CODEGEN_MEMCHECK=ON"
           - os: ubuntu-22.04
             platform: linux
             generator: Ninja
-            memcheck: true
+            cmake_flags: "-D TEST_CODEGEN_MEMCHECK=ON"
           - os: windows-2022
             platform: windows
             generator: Visual Studio 17 2022
-            memcheck: false
     steps:
       - uses: actions/checkout@v2
       - if: runner.os == 'Linux'
@@ -52,14 +49,9 @@ jobs:
       - run: curl -OfsSL https://cdn.thelang.io/packages.tar.gz
       - run: tar -xzf packages.tar.gz the/${{ matrix.config.platform }}
       - if: runner.os == 'Windows'
-        run: echo "LIBRARY_PATH=$PWD/the/${{ matrix.config.platform }}:$LIBRARY_PATH" | Out-File -FilePath $env:GITHUB_ENV -Append
-      - if: runner.os != 'Windows'
-        run: echo "LIBRARY_PATH=$PWD/the/${{ matrix.config.platform }}:$LIBRARY_PATH" >> $GITHUB_ENV
-      - if: runner.os == 'Windows'
         run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
       - if: runner.os != 'Windows'
         run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" >> $GITHUB_ENV
-      - run: mkdir -p build
-      - run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON ${{ matrix.config.memcheck && '-D TEST_CODEGEN_MEMCHECK=ON' }}
+      - run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON ${{ matrix.config.cmake_flags }}
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
