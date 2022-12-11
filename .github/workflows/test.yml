@@ -52,9 +52,9 @@ jobs:
         run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
       - if: runner.os != 'Windows'
         run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" >> $GITHUB_ENV
-      - if: matrix.config.memcheck
+      - if: matrix.config.memcheck == 'true'
         run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
-      - if: !matrix.config.memcheck
+      - if: matrix.config.memcheck != 'true'
         run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
