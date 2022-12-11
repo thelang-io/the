@@ -1195,6 +1195,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libOpensslSsl = true;
 
     if (std::find(this->flags.begin(), this->flags.end(), "A:-lssl") == this->flags.end()) {
+      this->flags.emplace_back("U:-ldl");
+      this->flags.emplace_back("U:-lpthread");
       this->flags.emplace_back("A:-lssl");
       this->flags.emplace_back("A:-lcrypto");
       this->flags.emplace_back("W:-lws2_32");
