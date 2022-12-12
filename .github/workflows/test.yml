@@ -32,11 +32,11 @@ jobs:
           - os: ubuntu-20.04
             platform: linux
             generator: Ninja
-            memcheck: true
+            memcheck: memcheck
           - os: ubuntu-22.04
             platform: linux
             generator: Ninja
-            memcheck: true
+            memcheck: memcheck
           - os: windows-2022
             platform: windows
             generator: Visual Studio 17 2022
@@ -46,15 +46,15 @@ jobs:
         run: sudo apt-get update && sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
-      - run: curl -OfsSL https://cdn.thelang.io/packages.tar.gz
+      - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz -o packages.tar.gz
       - run: tar -xzf packages.tar.gz the/${{ matrix.config.platform }}
-      - if: runner.os == 'Windows'
-        run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
       - if: runner.os != 'Windows'
         run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" >> $GITHUB_ENV
-      - if: matrix.config.memcheck == 'true'
-        run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
-      - if: matrix.config.memcheck != 'true'
+      - if: runner.os == 'Windows'
+        run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - if: matrix.config.memcheck != 'memcheck'
         run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON
+      - if: matrix.config.memcheck == 'memcheck'
+        run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
