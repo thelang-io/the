@@ -68,8 +68,21 @@ std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const
 }
 
 std::optional<std::string> getEnvVar (const std::string &name) {
-  const char *result = getenv(name.c_str());
-  return result == nullptr ? std::optional<std::string>{} : std::string(result);
+  #if defined(OS_WINDOWS)
+    auto buf = static_cast<char *>(nullptr);
+    auto size = static_cast<std::size_t>(0);
+
+    if (_dupenv_s(&buf, &size, name.c_str()) != 0 || buf == nullptr) {
+      return std::nullopt;
+    }
+
+    auto result = std::string(buf);
+    free(buf);
+    return result;
+  #else
+    const char *result = getenv(name.c_str());
+    return result == nullptr ? std::optional<std::string>{} : std::string(result);
+  #endif
 }
 
 std::map<std::string, std::string> readTestFile (

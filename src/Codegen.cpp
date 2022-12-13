@@ -96,8 +96,21 @@ void Codegen::compile (
 }
 
 std::string Codegen::getEnvVar (const std::string &name) {
-  const char *result = getenv(name.c_str());
-  return result == nullptr ? "" : result;
+  #if defined(OS_WINDOWS)
+    auto buf = static_cast<char *>(nullptr);
+    auto size = static_cast<std::size_t>(0);
+
+    if (_dupenv_s(&buf, &size, name.c_str()) != 0 || buf == nullptr) {
+      return "";
+    }
+
+    auto result = std::string(buf);
+    free(buf);
+    return result;
+  #else
+    const char *result = getenv(name.c_str());
+    return result == nullptr ? "" : result;
+  #endif
 }
 
 std::string Codegen::name (const std::string &name) {
