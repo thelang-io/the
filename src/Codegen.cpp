@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include "ASTChecker.hpp"
 #include "config.hpp"
 #include "codegen/fs.hpp"
@@ -63,11 +64,21 @@ void Codegen::compile (
   f << code;
   f.close();
 
+  auto packagesDir = Codegen::getEnvVar("PACKAGES_DIR");
   auto compiler = getCompilerFromPlatform(platform);
   auto flagsStr = std::string();
+  auto libraries = std::string();
+
+  if (!packagesDir.empty()) {
+    flagsStr += " -I\"" + packagesDir + "/include\"";
+  }
 
   for (const auto &flag : flags) {
-    if (
+    if (flag == "A:-lcrypto" && !packagesDir.empty()) {
+      libraries += "\"" + packagesDir + "/lib/libcrypto.a\" ";
+    } else if (flag == "A:-lssl" && !packagesDir.empty()) {
+      libraries += R"(")" + packagesDir + R"(/lib/libssl.a" )";
+    } else if (
       flag.starts_with("A:") ||
       (flag.starts_with("L:") && THE_OS == THE_OS_LINUX) ||
       (flag.starts_with("M:") && THE_OS == THE_OS_MACOS) ||
@@ -78,14 +89,7 @@ void Codegen::compile (
     }
   }
 
-  auto packagesDir = Codegen::getEnvVar("PACKAGES_DIR");
-
-  if (!packagesDir.empty()) {
-    flagsStr += " -I\"" + packagesDir + "/include\"";
-    flagsStr += " -L\"" + packagesDir + "/lib\"";
-  }
-
-  auto cmd = compiler + " build/output.c -w -o " + path + flagsStr + (debug ? " -g" : "");
+  auto cmd = compiler + " build/output.c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g" : "");
   auto returnCode = std::system(cmd.c_str());
 
   std::filesystem::remove("build/output.c");
