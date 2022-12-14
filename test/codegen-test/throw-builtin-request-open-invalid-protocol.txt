@@ -488,6 +488,6 @@ int main () {
   request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("file:///Desktop/the/LICENSE"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
 }
 ======= flags =======
-U:-ldl U:-lpthread A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
+A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stderr =======
 Error: can't perform request with protocol `file:`
