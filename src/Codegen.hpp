@@ -30,6 +30,7 @@ enum CodegenEntityType {
 
 enum CodegenPhase {
   CODEGEN_PHASE_ALLOC,
+  CODEGEN_PHASE_ALLOC_METHOD,
   CODEGEN_PHASE_INIT,
   CODEGEN_PHASE_FULL
 };

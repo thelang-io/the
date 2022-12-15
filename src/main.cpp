@@ -18,7 +18,7 @@
 
 #include <iostream>
 #include "Codegen.hpp"
-// push
+
 int main (int argc, char *argv[]) {
   try {
     if (argc == 1) {

@@ -1919,6 +1919,10 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
         code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC);
       }
 
+      for (auto j = i; j < nodes.size() && isNodeFnDeclOrObjDecl(nodes[j]); j++) {
+        code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC_METHOD);
+      }
+
       for (; i < nodes.size() && isNodeFnDeclOrObjDecl(nodes[i]); i++) {
         code += this->_node(nodes[i], true, CODEGEN_PHASE_INIT);
       }
@@ -1932,6 +1936,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       this->indent = saveIndent;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
+      code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
       code += this->_node(node, true, CODEGEN_PHASE_INIT);
     } else {
       code += this->_node(node);
@@ -2574,7 +2579,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
       this->_typeObjDef(nodeObjDecl.type);
     }
 
-    if (phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) {
+    if (phase == CODEGEN_PHASE_ALLOC_METHOD || phase == CODEGEN_PHASE_FULL) {
       for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
         code += this->_fnDecl(
           nodeObjDeclMethod.type,
@@ -2585,7 +2590,9 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
           CODEGEN_PHASE_ALLOC
         );
       }
+    }
 
+    if (phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) {
       for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
         code += this->_fnDecl(
           nodeObjDeclMethod.type,
@@ -2593,7 +2600,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
           nodeObjDeclMethod.stack,
           nodeObjDeclMethod.params,
           nodeObjDeclMethod.body,
-          CODEGEN_PHASE_INIT
+          phase
         );
       }
     }
