@@ -651,6 +651,7 @@ INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl",
   "node-obj-decl-default",
+  "node-obj-decl-default-obj",
   "node-obj-decl-field-any",
   "node-obj-decl-field-array",
   "node-obj-decl-field-fn",

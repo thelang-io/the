@@ -2018,6 +2018,44 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
   return std::make_tuple(bodyTypeCasts, altTypeCasts);
 }
 
+std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
+  if (typeInfo.type->isAny()) {
+    this->_activateBuiltin("libStdlib");
+    this->_activateBuiltin("typeAny");
+    return "(struct any) {0, NULL, 0, NULL, NULL}";
+  } else if (typeInfo.type->isArray()) {
+    this->_activateEntity(typeInfo.typeName + "_alloc");
+    return typeInfo.typeName + "_alloc(0)";
+  } else if (typeInfo.type->isBool()) {
+    this->_activateBuiltin("libStdbool");
+    return "false";
+  } else if (typeInfo.type->isChar()) {
+    return R"('\0')";
+  } else if (typeInfo.type->isFn() || typeInfo.type->isOpt() || typeInfo.type->isRef()) {
+    this->_activateBuiltin("libStdlib");
+    return "NULL";
+  } else if (typeInfo.type->isObj()) {
+    auto fieldsCode = std::string();
+
+    for (const auto &typeField : typeInfo.type->fields) {
+      if (typeField.builtin || typeField.method) {
+        continue;
+      }
+
+      auto fieldTypeInfo = this->_typeInfo(typeField.type);
+      fieldsCode += ", " + this->_exprObjDefaultField(fieldTypeInfo);
+    }
+
+    this->_activateEntity(typeInfo.typeName + "_alloc");
+    return typeInfo.typeName + "_alloc(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")";
+  } else if (typeInfo.type->isStr()) {
+    this->_activateBuiltin("fnStrAlloc");
+    return R"(str_alloc(""))";
+  } else {
+    return "0";
+  }
+}
+
 std::string Codegen::_fnDecl (
   Type *type,
   const std::string &codeName,
@@ -3591,26 +3629,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       if (exprObjProp != exprObj.props.end()) {
         fieldsCode += this->_nodeExpr(exprObjProp->init, typeField.type);
-      } else if (typeField.type->isAny()) {
-        this->_activateBuiltin("libStdlib");
-        this->_activateBuiltin("typeAny");
-        fieldsCode += "(struct any) {0, NULL, 0, NULL, NULL}";
-      } else if (typeField.type->isArray()) {
-        this->_activateEntity(fieldTypeInfo.typeName + "_alloc");
-        fieldsCode += fieldTypeInfo.typeName + "_alloc(0)";
-      } else if (typeField.type->isBool()) {
-        this->_activateBuiltin("libStdbool");
-        fieldsCode += "false";
-      } else if (typeField.type->isChar()) {
-        fieldsCode += R"('\0')";
-      } else if (typeField.type->isOpt()) {
-        this->_activateBuiltin("libStdlib");
-        fieldsCode += "NULL";
-      } else if (typeField.type->isStr()) {
-        this->_activateBuiltin("fnStrAlloc");
-        fieldsCode += R"(str_alloc(""))";
-      } else if (!typeField.type->isFn() && !typeField.type->isObj() && !typeField.type->isRef()) {
-        fieldsCode += "0";
+      } else {
+        fieldsCode += this->_exprObjDefaultField(fieldTypeInfo);
       }
     }
 

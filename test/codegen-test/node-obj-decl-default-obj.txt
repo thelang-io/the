@@ -1,0 +1,82 @@
+======= stdin =======
+obj Item {
+  a: int
+}
+
+obj Items {
+  d: Item
+}
+
+main {
+  items := Items{}
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct __THE_1_Item_0;
+struct __THE_1_Items_0;
+
+struct __THE_1_Item_0 {
+  const int32_t __THE_0_a;
+};
+struct __THE_1_Items_0 {
+  const struct __THE_1_Item_0 *__THE_0_d;
+};
+
+void *alloc (size_t);
+struct __THE_1_Item_0 *__THE_1_Item_0_alloc (int32_t);
+void __THE_1_Item_0_free (struct __THE_1_Item_0 *);
+struct __THE_1_Items_0 *__THE_1_Items_0_alloc (struct __THE_1_Item_0 *);
+void __THE_1_Items_0_free (struct __THE_1_Items_0 *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct __THE_1_Item_0 *__THE_1_Item_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_Item_0 *r = alloc(sizeof(struct __THE_1_Item_0));
+  struct __THE_1_Item_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Item_0));
+  return r;
+}
+void __THE_1_Item_0_free (struct __THE_1_Item_0 *o) {
+  free(o);
+}
+struct __THE_1_Items_0 *__THE_1_Items_0_alloc (struct __THE_1_Item_0 *__THE_0_d) {
+  struct __THE_1_Items_0 *r = alloc(sizeof(struct __THE_1_Items_0));
+  struct __THE_1_Items_0 s = {__THE_0_d};
+  memcpy(r, &s, sizeof(struct __THE_1_Items_0));
+  return r;
+}
+void __THE_1_Items_0_free (struct __THE_1_Items_0 *o) {
+  __THE_1_Item_0_free((struct __THE_1_Item_0 *) o->__THE_0_d);
+  free(o);
+}
+
+int main () {
+  const struct __THE_1_Items_0 *__THE_0_items_0 = __THE_1_Items_0_alloc(__THE_1_Item_0_alloc(0));
+  __THE_1_Items_0_free((struct __THE_1_Items_0 *) __THE_0_items_0);
+}
+======= flags =======
+======= stdout =======
