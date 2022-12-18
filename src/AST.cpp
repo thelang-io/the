@@ -56,30 +56,40 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
 
 void AST::populateParents (ASTBlock &nodes, ASTNode *parent) {
   for (auto &node : nodes) {
-    node.parent = parent;
+    AST::populateParent(node, parent);
+  }
+}
 
-    if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-      auto &nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
-      AST::populateParents(nodeFnDecl.body, &node);
-    } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
-      auto &nodeIf = std::get<ASTNodeIf>(*node.body);
-      AST::populateParents(nodeIf.body, &node);
-    } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
-      auto &nodeLoop = std::get<ASTNodeLoop>(*node.body);
-      AST::populateParents(nodeLoop.body, &node);
+void AST::populateParent (ASTNode &node, ASTNode *parent) {
+  node.parent = parent;
 
-      if (nodeLoop.init != std::nullopt) {
-        nodeLoop.init->parent = &node;
-      }
-    } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
-      auto &nodeMain = std::get<ASTNodeMain>(*node.body);
-      AST::populateParents(nodeMain.body, &node);
-    } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      auto &nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+  if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+    auto &nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
+    AST::populateParents(nodeFnDecl.body, &node);
+  } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
+    auto &nodeIf = std::get<ASTNodeIf>(*node.body);
+    AST::populateParents(nodeIf.body, &node);
 
-      for (auto &method : nodeObjDecl.methods) {
-        AST::populateParents(method.body, &node);
-      }
+    if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTNode>(*nodeIf.alt)) {
+      AST::populateParent(std::get<ASTNode>(*nodeIf.alt), &node);
+    } else if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
+      AST::populateParents(std::get<ASTBlock>(*nodeIf.alt), &node);
+    }
+  } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
+    auto &nodeLoop = std::get<ASTNodeLoop>(*node.body);
+    AST::populateParents(nodeLoop.body, &node);
+
+    if (nodeLoop.init != std::nullopt) {
+      nodeLoop.init->parent = &node;
+    }
+  } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
+    auto &nodeMain = std::get<ASTNodeMain>(*node.body);
+    AST::populateParents(nodeMain.body, &node);
+  } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+    auto &nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+
+    for (auto &method : nodeObjDecl.methods) {
+      AST::populateParents(method.body, &node);
     }
   }
 }

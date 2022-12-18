@@ -18,7 +18,6 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include "ASTChecker.hpp"
 #include "config.hpp"
 #include "codegen/fs.hpp"
@@ -1955,7 +1954,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += std::string(this->indent, ' ') + "if (" + initialCleanUp.currentBreakVar() + " == 1) break;" EOL;
     }
 
-    if (!ASTChecker(nodes).endsWith<ASTNodeReturn>() && this->state.cleanUp.returnVarUsed) {
+    if (!this->state.cleanUp.empty() && this->state.cleanUp.returnVarUsed) {
       code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
     }
 
@@ -2648,11 +2647,9 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
 
     if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) || this->state.cleanUp.returnVarUsed) {
-      if (
-        this->state.cleanUp.parent != nullptr &&
-        this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT &&
-        this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)
-      ) {
+      auto parentNotRoot = this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT;
+
+      if (parentNotRoot && this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
         code += std::string(this->indent, ' ') + this->state.cleanUp.currentReturnVar() + " = 1;" EOL;
       }
 
@@ -2661,10 +2658,10 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
         code += this->_nodeExpr(*nodeReturn.body, this->state.returnType) + ";" EOL;
       }
 
-      if (
-        !(ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>()) ||
-        !ASTChecker(node).isLast()
-      ) {
+      auto nodeParentFnOrObj = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
+      auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast();
+
+      if ((!nodeParentFnOrObj && this->state.cleanUp.empty()) || !nodeIsLast) {
         code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
       }
     } else if (nodeReturn.body != std::nullopt) {

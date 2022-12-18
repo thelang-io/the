@@ -1,0 +1,501 @@
+======= stdin =======
+fn test1 (items: str[]) {
+  print("test1: ", terminator: "")
+
+  if items.len > 1 {
+    name := items.slice(2)
+    print("return 1")
+    return
+  } elif items.len > 0 {
+    name := items.slice(1)
+    print("return 2")
+    return
+  }
+
+  print("return 3")
+}
+
+fn test2 (items: str[]) {
+  print("test2: ", terminator: "")
+
+  loop i := 1; i < items.len; i++ {
+    item := items[i]
+    print("loop" + i.str() + ": ", terminator: "")
+
+    if item.len > 1 {
+      name := item.slice(2)
+      print("return 1")
+      return
+    } elif item.len > 0 {
+      name := item.slice(1)
+      print("return 2")
+      return
+    }
+
+    value := ""
+    print("continue, ", terminator: "")
+  }
+
+  print("return 3")
+}
+
+fn test3 (items: str[]) {
+  print("test3: ", terminator: "")
+
+  if items.len > 1 {
+    name := items.slice(2)
+    print("return 1")
+    return;
+    print("return 5")
+  } elif items.len > 0 {
+    name := items.slice(1)
+    print("return 2")
+    return;
+    print("return 6")
+  }
+
+  print("return 4")
+  return;
+  print("return 3")
+}
+
+fn test4 (items: str[]) {
+  print("test4: ", terminator: "")
+
+  loop i := 1; i < items.len; i++ {
+    item := items[i]
+    print("loop" + i.str() + ": ", terminator: "")
+
+    if item.len > 1 {
+      name := item.slice(2)
+      print("return 1")
+      return;
+      print("return 5")
+    } elif item.len > 0 {
+      name := item.slice(1)
+      print("return 2")
+      return;
+      print("return 6")
+    }
+
+    value := ""
+    print("continue, ", terminator: "")
+  }
+
+  print("return 4")
+  return;
+  print("return 3")
+}
+
+main {
+  test1([])
+  test1(["1"])
+  test1(["10"])
+  test1(["1", "2"])
+  test1(["10", "20"])
+  test1(["1", "2", "3"])
+  test1(["10", "20", "30"])
+
+  test2([])
+  test2(["1"])
+  test2(["10"])
+  test2(["1", "2"])
+  test2(["10", "20"])
+  test2(["1", "2", "3"])
+  test2(["10", "20", "30"])
+
+  test3([])
+  test3(["1"])
+  test3(["10"])
+  test3(["1", "2"])
+  test3(["10", "20"])
+  test3(["1", "2", "3"])
+  test3(["10", "20", "30"])
+
+  test4([])
+  test4(["1"])
+  test4(["10"])
+  test4(["1", "2"])
+  test4(["10", "20"])
+  test4(["1", "2", "3"])
+  test4(["10", "20", "30"])
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_array_str;
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
+struct __THE_1_fn$0P {
+  struct __THE_1_array_str n0;
+};
+struct __THE_1_fn$0 {
+  void (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
+struct str int_str (int32_t);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+size_t str_len (struct str);
+struct str str_slice (struct str, unsigned char, int64_t, unsigned char, int64_t);
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
+struct str *__THE_1_array_str_at (struct __THE_1_array_str, int64_t);
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+size_t __THE_1_array_str_len (struct __THE_1_array_str);
+struct __THE_1_array_str __THE_1_array_str_slice (struct __THE_1_array_str, unsigned int, int64_t, unsigned int, int64_t);
+void __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test2_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test3_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_test4_0 (void *, struct __THE_1_fn$0P);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+size_t str_len (struct str s) {
+  size_t l = s.l;
+  free(s.d);
+  return l;
+}
+struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {
+  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));
+  int64_t i2 = o2 == 0 ? (int64_t) s.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));
+  if (i1 >= i2 || i1 >= s.l) {
+    free(s.d);
+    return str_alloc("");
+  }
+  size_t l = i2 - i1;
+  char *d = alloc(l);
+  for (size_t i = 0; i1 < i2; i1++) d[i++] = s.d[i1];
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(x * sizeof(struct str));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct str);
+  va_end(args);
+  return (struct __THE_1_array_str) {d, x};
+}
+struct str *__THE_1_array_str_at (struct __THE_1_array_str n, int64_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+    exit(EXIT_FAILURE);
+  }
+  return i < 0 ? &n.d[n.l + i] : &n.d[i];
+}
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str n) {
+  if (n.l == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(n.l * sizeof(struct str));
+  for (size_t i = 0; i < n.l; i++) d[i] = str_copy(n.d[i]);
+  return (struct __THE_1_array_str) {d, n.l};
+}
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
+  size_t l = n.l;
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return l;
+}
+struct __THE_1_array_str __THE_1_array_str_slice (struct __THE_1_array_str n, unsigned int o1, int64_t n1, unsigned int o2, int64_t n2) {
+  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));
+  int64_t i2 = o2 == 0 ? (int64_t) n.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));
+  if (i1 > i2 || i1 >= n.l) {
+    __THE_1_array_str_free((struct __THE_1_array_str) n);
+    return (struct __THE_1_array_str) {NULL, 0};
+  }
+  size_t l = i2 - i1;
+  struct str *d = alloc(l * sizeof(struct str));
+  for (size_t i = 0; i1 < i2; i1++) d[i++] = str_copy(n.d[i1]);
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return (struct __THE_1_array_str) {d, l};
+}
+void __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
+  unsigned char r = 0;
+  const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  print(stdout, "z", "test1: ");
+  if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 1) {
+    const struct __THE_1_array_str __THE_0_name_0 = __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 2, 0, 0);
+    print(stdout, "zz", "return 1", THE_EOL);
+    r = 1;
+    __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
+    if (r == 1) goto L0;
+  } else if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 0) {
+    const struct __THE_1_array_str __THE_0_name_0 = __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 1, 0, 0);
+    print(stdout, "zz", "return 2", THE_EOL);
+    r = 1;
+    __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
+    if (r == 1) goto L0;
+  }
+  print(stdout, "zz", "return 3", THE_EOL);
+L0:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
+}
+void __THE_1_test2_0 (void *px, struct __THE_1_fn$0P p) {
+  unsigned char r = 0;
+  const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  print(stdout, "z", "test2: ");
+  for (int32_t __THE_0_i_0 = 1; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)); __THE_0_i_0++) {
+    const struct str *__THE_0_item_0 = __THE_1_array_str_at(__THE_0_items_0, __THE_0_i_0);
+    print(stdout, "s", str_concat_cstr(cstr_concat_str("loop", int_str(__THE_0_i_0)), ": "));
+    if (str_len(str_copy(*__THE_0_item_0)) > 1) {
+      const struct str __THE_0_name_0 = str_slice(str_copy(*__THE_0_item_0), 1, 2, 0, 0);
+      print(stdout, "zz", "return 1", THE_EOL);
+      r = 1;
+      str_free((struct str) __THE_0_name_0);
+      if (r == 1) goto L3;
+    } else if (str_len(str_copy(*__THE_0_item_0)) > 0) {
+      const struct str __THE_0_name_0 = str_slice(str_copy(*__THE_0_item_0), 1, 1, 0, 0);
+      print(stdout, "zz", "return 2", THE_EOL);
+      r = 1;
+      str_free((struct str) __THE_0_name_0);
+      if (r == 1) goto L3;
+    }
+    const struct str __THE_0_value_0 = str_alloc("");
+    print(stdout, "z", "continue, ");
+    str_free((struct str) __THE_0_value_0);
+    if (r == 1) goto L3;
+  }
+  print(stdout, "zz", "return 3", THE_EOL);
+L3:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
+}
+void __THE_1_test3_0 (void *px, struct __THE_1_fn$0P p) {
+  unsigned char r = 0;
+  const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  print(stdout, "z", "test3: ");
+  if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 1) {
+    const struct __THE_1_array_str __THE_0_name_0 = __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 2, 0, 0);
+    print(stdout, "zz", "return 1", THE_EOL);
+    r = 1;
+    goto L8;
+    print(stdout, "zz", "return 5", THE_EOL);
+L8:
+    __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
+    if (r == 1) goto L7;
+  } else if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 0) {
+    const struct __THE_1_array_str __THE_0_name_0 = __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 1, 0, 0);
+    print(stdout, "zz", "return 2", THE_EOL);
+    r = 1;
+    goto L9;
+    print(stdout, "zz", "return 6", THE_EOL);
+L9:
+    __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
+    if (r == 1) goto L7;
+  }
+  print(stdout, "zz", "return 4", THE_EOL);
+  goto L7;
+  print(stdout, "zz", "return 3", THE_EOL);
+L7:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
+}
+void __THE_1_test4_0 (void *px, struct __THE_1_fn$0P p) {
+  unsigned char r = 0;
+  const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  print(stdout, "z", "test4: ");
+  for (int32_t __THE_0_i_0 = 1; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)); __THE_0_i_0++) {
+    const struct str *__THE_0_item_0 = __THE_1_array_str_at(__THE_0_items_0, __THE_0_i_0);
+    print(stdout, "s", str_concat_cstr(cstr_concat_str("loop", int_str(__THE_0_i_0)), ": "));
+    if (str_len(str_copy(*__THE_0_item_0)) > 1) {
+      const struct str __THE_0_name_0 = str_slice(str_copy(*__THE_0_item_0), 1, 2, 0, 0);
+      print(stdout, "zz", "return 1", THE_EOL);
+      r = 1;
+      goto L11;
+      print(stdout, "zz", "return 5", THE_EOL);
+L11:
+      str_free((struct str) __THE_0_name_0);
+      if (r == 1) goto L10;
+    } else if (str_len(str_copy(*__THE_0_item_0)) > 0) {
+      const struct str __THE_0_name_0 = str_slice(str_copy(*__THE_0_item_0), 1, 1, 0, 0);
+      print(stdout, "zz", "return 2", THE_EOL);
+      r = 1;
+      goto L12;
+      print(stdout, "zz", "return 6", THE_EOL);
+L12:
+      str_free((struct str) __THE_0_name_0);
+      if (r == 1) goto L10;
+    }
+    const struct str __THE_0_value_0 = str_alloc("");
+    print(stdout, "z", "continue, ");
+    str_free((struct str) __THE_0_value_0);
+    if (r == 1) goto L10;
+  }
+  print(stdout, "zz", "return 4", THE_EOL);
+  goto L10;
+  print(stdout, "zz", "return 3", THE_EOL);
+L10:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$0 __THE_0_test2_0 = (struct __THE_1_fn$0) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$0 __THE_0_test3_0 = (struct __THE_1_fn$0) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn$0 __THE_0_test4_0 = (struct __THE_1_fn$0) {&__THE_1_test4_0, NULL, 0};
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(0)});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(0)});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(0)});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(0)});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$0P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
+}
+======= flags =======
+======= stdout =======
+test1: return 3
+test1: return 2
+test1: return 2
+test1: return 1
+test1: return 1
+test1: return 1
+test1: return 1
+test2: return 3
+test2: return 3
+test2: return 3
+test2: loop1: return 2
+test2: loop1: return 1
+test2: loop1: return 2
+test2: loop1: return 1
+test3: return 4
+test3: return 2
+test3: return 2
+test3: return 1
+test3: return 1
+test3: return 1
+test3: return 1
+test4: return 4
+test4: return 4
+test4: return 4
+test4: loop1: return 2
+test4: loop1: return 1
+test4: loop1: return 2
+test4: loop1: return 1

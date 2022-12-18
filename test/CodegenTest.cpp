@@ -645,7 +645,8 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
-  "node-return"
+  "node-return",
+  "node-return-scope-cleanup"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
