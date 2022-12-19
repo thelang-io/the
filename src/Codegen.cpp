@@ -70,14 +70,11 @@ void Codegen::compile (
 
   if (!packagesDir.empty()) {
     flagsStr += " -I\"" + packagesDir + "/include\"";
+    flagsStr += " -L\"" + packagesDir + "/lib\"";
   }
 
   for (const auto &flag : flags) {
-    if (flag == "A:-lcrypto" && !packagesDir.empty()) {
-      libraries += "\"" + packagesDir + "/lib/libcrypto.a\" ";
-    } else if (flag == "A:-lssl" && !packagesDir.empty()) {
-      libraries += R"(")" + packagesDir + R"(/lib/libssl.a" )";
-    } else if (
+    if (
       flag.starts_with("A:") ||
       (flag.starts_with("L:") && THE_OS == THE_OS_LINUX) ||
       (flag.starts_with("M:") && THE_OS == THE_OS_MACOS) ||
