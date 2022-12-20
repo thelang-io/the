@@ -41,7 +41,7 @@ jobs:
             platform: windows
             generator: Visual Studio 17 2022
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
@@ -49,9 +49,9 @@ jobs:
       - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz -o packages.tar.gz
       - run: tar -xzf packages.tar.gz the/${{ matrix.config.platform }}
       - if: runner.os != 'Windows'
-        run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" >> $GITHUB_ENV
+        run: echo "PACKAGES_DIR=$PWD/the/native/${{ matrix.config.platform }}" >> $GITHUB_ENV
       - if: runner.os == 'Windows'
-        run: echo "PACKAGES_DIR=$PWD/the/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+        run: echo "PACKAGES_DIR=$PWD/the/native/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
       - if: matrix.config.memcheck != 'memcheck'
         run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON
       - if: matrix.config.memcheck == 'memcheck'
