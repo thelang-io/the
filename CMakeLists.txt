@@ -21,6 +21,7 @@ option(BUILD_COVERAGE "Build coverage" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
 option(TEST_CODEGEN_COMPILE "Whether codegen tests binary should be compiled" ON)
 option(TEST_CODEGEN_MEMCHECK "Whether codegen tests binary should be memory checked" OFF)
+option(TEST_CODEGEN_PLATFORM "Codegen tests binary platform" "default")
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Build type - Debug")
@@ -135,6 +136,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     PROPERTIES
     ENVIRONMENT "TEST_CODEGEN_COMPILE=${TEST_CODEGEN_COMPILE}"
     ENVIRONMENT "TEST_CODEGEN_MEMCHECK=${TEST_CODEGEN_MEMCHECK}"
+    ENVIRONMENT "TEST_CODEGEN_PLATFORM=${TEST_CODEGEN_PLATFORM}"
     TIMEOUT 600
   )
 endif ()

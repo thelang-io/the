@@ -45,25 +45,42 @@ TEST(CodegenTest, StringifyFlags) {
 
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
+  bool isPlatformDefault_ = true;
   bool testCompile_ = false;
   bool testMemcheck_ = false;
+  std::string testPlatform_ = "default";
 
   void SetUp () override {
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
     auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
+    auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
 
     this->testCompile_ = testCompile != std::nullopt && testCompile == "ON";
     this->testMemcheck_ = testMemcheck != std::nullopt && testMemcheck == "ON";
+
+    if (testPlatform != std::nullopt) {
+      this->testPlatform_ = *testPlatform;
+      this->isPlatformDefault_ = false;
+    }
   }
 };
 
 class CodegenThrowTest : public testing::TestWithParam<const char *> {
  protected:
+  bool isPlatformDefault_ = true;
   bool testCompile_ = false;
+  std::string testPlatform_ = "default";
 
   void SetUp () override {
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
+    auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
+
     this->testCompile_ = testCompile != std::nullopt && testCompile == "ON";
+
+    if (testPlatform != std::nullopt) {
+      this->testPlatform_ = *testPlatform;
+      this->isPlatformDefault_ = false;
+    }
   }
 };
 
@@ -85,13 +102,14 @@ TEST_P(CodegenPassTest, Passes) {
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
-  Codegen::compile(filePath, result, "default", true);
+  Codegen::compile(filePath, result, this->testPlatform_, true);
 
-  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(
-    (this->testMemcheck_ ? "valgrind " + valgrindArguments + " " : "") + filePath,
-    fileName
-  );
+  if (!this->isPlatformDefault_) {
+    return;
+  }
 
+  auto cmd = (this->testMemcheck_ ? "valgrind " + valgrindArguments + " " : "") + filePath;
+  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(cmd, fileName);
   std::filesystem::remove(filePath);
 
   while (expectedOutput.find("{{ ") != std::string::npos) {
@@ -142,8 +160,12 @@ TEST_P(CodegenThrowTest, Throws) {
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
+  Codegen::compile(filePath, result, this->testPlatform_, true);
 
-  Codegen::compile(filePath, result, "default", true);
+  if (!this->isPlatformDefault_) {
+    return;
+  }
+
   auto [actualStdout, actualStderr, actualReturnCode] = execCmd(filePath, fileName);
   std::filesystem::remove(filePath);
   actualStderr.erase(actualStderr.find_last_not_of("\r\n") + 1);
