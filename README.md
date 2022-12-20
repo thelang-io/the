@@ -32,7 +32,7 @@ helpful to start contributing.
 In order to use The Programming Language please refer to
 [CLI](https://github.com/thelang-io/cli).
 
-## File Extension
+## Files Extension
 The Programming Language files have no file extension.
 
 ## Supported Operating Systems

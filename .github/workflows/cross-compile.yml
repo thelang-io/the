@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: sudo apt-get update
-      - run: sudo apt-get install mingw-w64 ninja-build
+      - run: sudo apt-get install libxml2-dev llvm-dev lzma-dev mingw-w64 ninja-build
       - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz -o packages.tar.gz
       - run: tar -xzf packages.tar.gz the/osxcross the/cross-compile/${{ matrix.config.platform }}
       - run: echo "PACKAGES_DIR=$PWD/the/cross-compile/${{ matrix.config.platform }}" >> $GITHUB_ENV
