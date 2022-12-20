@@ -38,11 +38,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install ninja-build valgrind
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
       - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz -o packages.tar.gz
-      - run: tar -xzf packages.tar.gz the/${{ matrix.config.platform }}
+      - run: tar -xzf packages.tar.gz the/native/${{ matrix.config.platform }}
       - if: runner.os != 'Windows'
         run: echo "PACKAGES_DIR=$PWD/the/native/${{ matrix.config.platform }}" >> $GITHUB_ENV
       - if: runner.os == 'Windows'
