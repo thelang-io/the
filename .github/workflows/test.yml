@@ -2,15 +2,12 @@ name: Test
 
 on:
   push:
-    branches:
-      - 'main'
-    paths-ignore:
-      - '**.md'
-      - '**.yml'
+    branches: [main]
+    paths: ['.github/workflows/test.yml']
+    paths-ignore: ['**.md', '**.yml']
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.yml'
+    paths: ['.github/workflows/test.yml']
+    paths-ignore: ['**.md', '**.yml']
 
 concurrency:
   cancel-in-progress: true
