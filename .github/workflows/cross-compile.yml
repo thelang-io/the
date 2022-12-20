@@ -9,7 +9,7 @@ on:
 
 concurrency:
   cancel-in-progress: true
-  group: test-${{ github.event.pull_request.number || github.sha }}
+  group: cross-compile-${{ github.event.pull_request.number || github.sha }}
 
 jobs:
   cross-compile:
@@ -26,7 +26,7 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install mingw-w64 ninja-build
       - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz -o packages.tar.gz
-      - run: tar -xzf packages.tar.gz the/cross-compile/${{ matrix.config.platform }}
+      - run: tar -xzf packages.tar.gz the/osxcross the/cross-compile/${{ matrix.config.platform }}
       - run: echo "PACKAGES_DIR=$PWD/the/cross-compile/${{ matrix.config.platform }}" >> $GITHUB_ENV
       - run: echo "$PWD/the/osxcross/bin" >> $GITHUB_PATH
       - run: cmake . -B ./build -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_PLATFORM=${{ matrix.config.platform }}
