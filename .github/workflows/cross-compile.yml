@@ -26,9 +26,11 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install libxml2-dev llvm-dev lzma-dev mingw-w64 ninja-build
       - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz -o packages.tar.gz
-      - run: tar -xzf packages.tar.gz the/osxcross the/cross-compile/${{ matrix.config.platform }}
-      - run: echo "PACKAGES_DIR=$PWD/the/cross-compile/${{ matrix.config.platform }}" >> $GITHUB_ENV
-      - run: echo "$PWD/the/osxcross/bin" >> $GITHUB_PATH
+      - run: sudo mkdir -p /usr/local/the
+      - run: sudo chown -R $USER /usr/local/the
+      - run: tar -xzf packages.tar.gz -C /usr/local/the --strip-components=1
+      - run: echo "PACKAGES_DIR=/usr/local/the/cross-compile/${{ matrix.config.platform }}" >> $GITHUB_ENV
+      - run: echo "/usr/local/the/osxcross/bin" >> $GITHUB_PATH
       - run: cmake . -B ./build -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_PLATFORM=${{ matrix.config.platform }}
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build
