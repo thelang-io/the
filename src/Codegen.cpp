@@ -50,6 +50,22 @@ std::string getCompilerFromPlatform (const std::string &platform) {
   return "clang";
 }
 
+std::string getOSFromPlatform (const std::string &platform) {
+  if (platform != "default") {
+    return platform;
+  }
+
+  #if defined(OS_WINDOWS)
+    return "windows";
+  #elif defined (OS_MACOS)
+    return "macos";
+  #elif defined (OS_LINUX)
+    return "linux";
+  #else
+    return "unknown";
+  #endif
+}
+
 void Codegen::compile (
   const std::string &path,
   const std::tuple<std::string, std::vector<std::string>> &result,
@@ -73,13 +89,15 @@ void Codegen::compile (
     flagsStr += " -L\"" + packagesDir + "/lib\"";
   }
 
+  auto targetOS = getOSFromPlatform(platform);
+
   for (const auto &flag : flags) {
     if (
       flag.starts_with("A:") ||
-      (flag.starts_with("L:") && THE_OS == THE_OS_LINUX) ||
-      (flag.starts_with("M:") && THE_OS == THE_OS_MACOS) ||
-      (flag.starts_with("U:") && THE_OS != THE_OS_WINDOWS) ||
-      (flag.starts_with("W:") && THE_OS == THE_OS_WINDOWS)
+      (flag.starts_with("L:") && targetOS == "linux") ||
+      (flag.starts_with("M:") && targetOS == "macos") ||
+      (flag.starts_with("U:") && targetOS != "windows") ||
+      (flag.starts_with("W:") && targetOS == "windows")
     ) {
       flagsStr += " " + flag.substr(2);
     }

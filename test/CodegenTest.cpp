@@ -30,6 +30,14 @@ const auto valgrindArguments = std::string(
   "--track-origins=yes"
 );
 
+const auto passExitTests = std::set<std::string>{
+  "builtin-exit-one"
+};
+
+const auto passStderrTests = std::set<std::string>{
+  "builtin-print-to"
+};
+
 TEST(CodegenTest, GetsEnvVar) {
   EXPECT_NE(Codegen::getEnvVar("PATH"), "");
   EXPECT_EQ(Codegen::getEnvVar("test_non_existing"), "");
@@ -105,6 +113,7 @@ TEST_P(CodegenPassTest, Passes) {
   Codegen::compile(filePath, result, this->testPlatform_, true);
 
   if (!this->isPlatformDefault_) {
+    std::filesystem::remove(filePath);
     return;
   }
 
@@ -129,13 +138,11 @@ TEST_P(CodegenPassTest, Passes) {
 
   EXPECT_EQ(expectedOutput, actualStdout);
 
-  if (param == "builtin-exit-one") {
-    EXPECT_EQ(actualReturnCode, 1);
-  } else {
+  if (!passExitTests.contains(param)) {
     EXPECT_EQ(actualReturnCode, 0);
   }
 
-  if (!this->testMemcheck_ && !std::set<std::string>{"builtin-print-to"}.contains(param)) {
+  if (!this->testMemcheck_ && !passStderrTests.contains(param)) {
     EXPECT_EQ(actualStderr, "");
   } else if (actualReturnCode != 0) {
     std::cout << actualStderr;
@@ -163,6 +170,7 @@ TEST_P(CodegenThrowTest, Throws) {
   Codegen::compile(filePath, result, this->testPlatform_, true);
 
   if (!this->isPlatformDefault_) {
+    std::filesystem::remove(filePath);
     return;
   }
 
