@@ -37,10 +37,6 @@ jobs:
             generator: Visual Studio 17 2022
     steps:
       - uses: actions/checkout@v3
-      - if: matrix.config.platform == 'windows'
-        run: |
-          clang test2134.c -g -w -o test2134.exe
-          ./test2134.exe
       - if: runner.os == 'Linux'
         run: |
           sudo apt-get update

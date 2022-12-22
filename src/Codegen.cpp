@@ -104,7 +104,8 @@ void Codegen::compile (
   }
 
   auto cmd = compiler + " build/output.c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g" : "");
-  printf("%s: %s: %s" EOL, platform.c_str(), targetOS.c_str(), cmd.c_str());
+  fprintf(stdout, "%s: %s: %s" EOL, platform.c_str(), targetOS.c_str(), cmd.c_str());
+  fprintf(stderr, "%s: %s: %s" EOL, platform.c_str(), targetOS.c_str(), cmd.c_str());
   auto returnCode = std::system(cmd.c_str());
 
   std::filesystem::remove("build/output.c");
