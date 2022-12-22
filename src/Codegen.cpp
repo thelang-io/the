@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include "ASTChecker.hpp"
 #include "config.hpp"
 #include "codegen/fs.hpp"
@@ -104,8 +105,8 @@ void Codegen::compile (
   }
 
   auto cmd = compiler + " build/output.c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g" : "");
-  fprintf(stdout, "%s: %s: %s" EOL, platform.c_str(), targetOS.c_str(), cmd.c_str());
-  fprintf(stderr, "%s: %s: %s" EOL, platform.c_str(), targetOS.c_str(), cmd.c_str());
+  std::cout << platform << ":" << targetOS << ":" << cmd << std::endl;
+  std::cerr << platform << ":" << targetOS << ":" << cmd << std::endl;
   auto returnCode = std::system(cmd.c_str());
 
   std::filesystem::remove("build/output.c");

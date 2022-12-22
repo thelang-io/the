@@ -21,7 +21,7 @@ option(BUILD_COVERAGE "Build coverage" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
 option(TEST_CODEGEN_COMPILE "Whether codegen tests binary should be compiled" ON)
 option(TEST_CODEGEN_MEMCHECK "Whether codegen tests binary should be memory checked" OFF)
-option(TEST_CODEGEN_PLATFORM "Codegen tests binary platform" "default")
+set(TEST_CODEGEN_PLATFORM "default" CACHE STRING "Codegen tests binary platform")
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Build type - Debug")
