@@ -68,7 +68,7 @@ class CodegenPassTest : public testing::TestWithParam<const char *> {
 
     if (testPlatform != std::nullopt) {
       this->testPlatform_ = *testPlatform;
-      this->isPlatformDefault_ = false;
+      this->isPlatformDefault_ = this->testPlatform_ == "default";
     }
   }
 };
@@ -87,7 +87,7 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
 
     if (testPlatform != std::nullopt) {
       this->testPlatform_ = *testPlatform;
-      this->isPlatformDefault_ = false;
+      this->isPlatformDefault_ = this->testPlatform_ == "default";
     }
   }
 };
