@@ -4,7 +4,7 @@
 We support only past two minor releases:
 
 | Version | Supported          |
-|:------- | ------------------ |
+|:--------|--------------------|
 | 0.12.x  | :white_check_mark: |
 | < 0.12  | :x:                |
 
