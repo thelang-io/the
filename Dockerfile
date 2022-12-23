@@ -25,12 +25,12 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
-RUN curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz the/linux
-ENV PACKAGES_DIR="$PWD/the/linux"
+RUN curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz
+ENV PACKAGES_DIR="$PWD/the/native/linux"
 
 WORKDIR /app
 COPY . .
-RUN cmake . -G "Ninja" -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
+RUN cmake . -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
 RUN cmake --build .
 
 ENTRYPOINT ["ctest", "--output-on-failure"]
