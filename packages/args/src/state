@@ -1,0 +1,13 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+obj ArgsState {
+  mut hasCommands: bool
+  mut hasOptions: bool
+  mut leftColMaxLen: u32
+  mut nextArgIsValue: bool
+  mut nextArgValueFor: str
+  mut nextArgValueForType: int
+}

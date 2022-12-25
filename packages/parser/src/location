@@ -1,0 +1,30 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+obj Location {
+  mut line: int
+  mut col: int
+}
+
+fn Location_locate (content: str, pos: int) Location {
+  if pos == 0 {
+    return Location{line: 1, col: 1}
+  }
+
+  lines := content.lines(keepLineBreaks: true)
+  mut curPos := 0
+
+  loop i := 0; i < lines.len; i++ {
+    line := lines[i]
+
+    if curPos + line.len > pos {
+      return Location{line: i + 1, col: pos - curPos + 1}
+    }
+
+    curPos += line.len
+  }
+
+  return Location{line: lines.len, col: lines[-1].len}
+}

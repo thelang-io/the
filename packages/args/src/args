@@ -1,0 +1,320 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+ArgType_Command := 0
+ArgType_Option := 1
+
+obj Args {
+  mut data: Arg[]
+  mut lineLength: int
+  mut _config: ArgsConfigItem[]
+  mut _examples: str[]
+  mut _state: ArgsState
+  mut _usage: str[]
+
+  fn command (
+    mut self: ref Self,
+    name: str,
+    description: str,
+    alias := "",
+    default := "",
+    hasValue := true
+  ) ref Self {
+    self._config.push(ArgsConfigItem{
+      type: ArgType_Command,
+      name: name,
+      description: description,
+      alias: alias,
+      default: default,
+      hasValue: hasValue
+    })
+
+    return self
+  }
+
+  fn example (mut self: ref Self, text: str) ref Self {
+    self._examples.push(text)
+    return self
+  }
+
+  fn help (mut self: ref Self) str {
+    self._state = ArgsState{}
+    self._helpInit()
+
+    mut message: str
+
+    if self._usage.len > 0 {
+      message += message.empty() ? os_EOL : ""
+      message += "  Usage:" + os_EOL
+      message += os_EOL
+
+      loop i := 0; i < self._usage.len; i++ {
+        message += "    $ " + self._usage[i] + os_EOL
+      }
+
+      message += os_EOL
+    }
+
+    if self._state.hasCommands {
+      message += message.empty() ? os_EOL : ""
+      message += "  Commands:" + os_EOL
+      message += os_EOL
+
+      loop i := 0; i < self._config.len; i++ {
+        item := self._config[i]
+
+        if item.type != ArgType_Command {
+          continue
+        }
+
+        message += item.text(self.lineLength, self._state.leftColMaxLen)
+      }
+
+      message += os_EOL
+    }
+
+    if self._state.hasOptions {
+      message += message.empty() ? os_EOL : ""
+      message += "  Options:" + os_EOL
+      message += os_EOL
+
+      loop i := 0; i < self._config.len; i++ {
+        item := self._config[i]
+
+        if item.type != ArgType_Option {
+          continue
+        }
+
+        message += item.text(self.lineLength, self._state.leftColMaxLen)
+      }
+
+      message += os_EOL
+    }
+
+    if self._examples.len > 0 {
+      message += message.empty() ? os_EOL : ""
+      message += "  Examples:" + os_EOL
+      message += os_EOL
+
+      loop i := 0; i < self._examples.len; i++ {
+        message += "    $ " + self._examples[i] + os_EOL
+      }
+
+      message += os_EOL
+    }
+
+    return message
+  }
+
+  fn option (
+    mut self: ref Self,
+    name: str,
+    description: str,
+    alias := "",
+    default := "",
+    hasValue := true
+  ) ref Self {
+    self._config.push(ArgsConfigItem{
+      type: ArgType_Option,
+      name: name,
+      description: description,
+      alias: alias,
+      default: default,
+      hasValue: hasValue
+    })
+
+    return self
+  }
+
+  fn parse (mut self: ref Self, args: str[]) ref Self {
+    self._state = ArgsState{}
+
+    loop i := 1; i < args.len; i++ {
+      arg := args[i]
+
+      if self._state.nextArgIsValue && arg.slice(0, 1) == "-" {
+        self._state.nextArgIsValue = false
+      } elif self._state.nextArgIsValue {
+        self._setDataValue(
+          self._state.nextArgValueForType,
+          self._state.nextArgValueFor,
+          arg
+        )
+
+        self._state.nextArgIsValue = false
+        continue
+      }
+
+      self._parseArg(arg)
+    }
+
+    loop i := 1; i < self._config.len; i++ {
+      item := self._config[i]
+
+      if item.default.empty() || self._existsDataValue(item.type, item.name) {
+        continue
+      }
+
+      self._setDataValue(item.type, item.name, item.default)
+    }
+
+    return self
+  }
+
+  fn usage (mut self: ref Self, text: str) ref Self {
+    self._usage.push(text)
+    return self
+  }
+
+  fn _existsDataValue (mut self: ref Self, type: int, name: str) bool {
+    loop i := 0; i < self.data.len; i++ {
+      item := self.data[i]
+
+      if (
+        (type == ArgType_Command && item.command == name) ||
+        (type == ArgType_Option && item.option == name)
+      ) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn _helpInit (mut self: ref Self) {
+    loop i := 0; i < self._config.len; i++ {
+      item := self._config[i]
+
+      if item.type == ArgType_Command {
+        self._state.hasCommands = true
+      } elif item.type == ArgType_Option {
+        self._state.hasOptions = true
+      }
+
+      leftColLen := item.leftCol().len + 4
+
+      if leftColLen > self._state.leftColMaxLen {
+        self._state.leftColMaxLen = leftColLen
+      }
+    }
+
+    leftColActualMaxLen: u32 = self.lineLength * 0.4
+
+    if self._state.leftColMaxLen > leftColActualMaxLen {
+      self._state.leftColMaxLen = leftColActualMaxLen
+    }
+  }
+
+  fn _parseArg (mut self: ref Self, arg: str) {
+    if arg.slice(0, 1) != "-" {
+      self._parseArgCommand(arg)
+      return
+    }
+
+    eqPos := arg.find("=")
+
+    if arg.len >= 3 && arg.slice(0, 2) == "--" && arg[2].isAlphaNum() {
+      name := eqPos > 0 ? arg.slice(2, eqPos) : arg.slice(2)
+      value := eqPos < 0 ? "" : arg.slice(eqPos + 1)
+
+      self._parseArgOption(arg, name, value)
+      return
+    } elif arg.len >= 2 && arg[1].isAlphaNum() && eqPos > 0 {
+      name := eqPos > 0 ? arg.slice(1, eqPos) : arg.slice(1)
+      value := eqPos < 0 ? "" : arg.slice(eqPos + 1)
+
+      self._parseArgOption(arg, name, value)
+      return
+    } elif arg.len >= 2 && arg[1].isAlphaNum() {
+      noValueOptions := str_split(arg.slice(1))
+
+      loop i := 0; i < noValueOptions.len; i++ {
+        noValueOption := noValueOptions[i]
+        self._parseArgOption("-" + noValueOption, noValueOption)
+      }
+
+      return
+    }
+
+    RaiseError("Unexpected argument `" + arg + "`")
+  }
+
+  fn _parseArgCommand (mut self: ref Self, name: str) {
+    loop i := 0; i < self._config.len; i++ {
+      item := self._config[i]
+
+      if (
+        item.type != ArgType_Command ||
+        (item.name != name && item.alias != name)
+      ) {
+        continue
+      }
+
+      self._setDataValue(ArgType_Command, item.name, item.default)
+
+      if item.hasValue {
+        self._state.nextArgIsValue = true
+        self._state.nextArgValueFor = item.name
+        self._state.nextArgValueForType = ArgType_Command
+      }
+
+      return
+    }
+
+    RaiseError("Unexpected argument `" + name + "`")
+  }
+
+  fn _parseArgOption (
+    mut self: ref Self,
+    arg: str,
+    name: str,
+    mut value := ""
+  ) {
+    loop i := 0; i < self._config.len; i++ {
+      item := self._config[i]
+
+      if (
+        item.type != ArgType_Option ||
+        (item.name != name && item.alias != name)
+      ) {
+        continue
+      }
+
+      if !item.hasValue && !value.empty() {
+        value = ""
+      } elif item.hasValue && value.empty() {
+        self._state.nextArgIsValue = true
+        self._state.nextArgValueFor = item.name
+        self._state.nextArgValueForType = ArgType_Option
+        value = item.default
+      }
+
+      self._setDataValue(ArgType_Option, item.name, value)
+      return
+    }
+
+    RaiseError("Unexpected argument `" + arg + "`")
+  }
+
+  fn _setDataValue (mut self: ref Self, type: int, name: str, value: str) {
+    loop i := 0; i < self.data.len; i++ {
+      mut item := self.data[i]
+
+      if (
+        (type == ArgType_Command && item.command == name) ||
+        (type == ArgType_Option && item.option == name)
+      ) {
+        item.value = value
+        return
+      }
+    }
+
+    if type == ArgType_Command {
+      self.data.push(Arg{command: name, value: value})
+    } elif type == ArgType_Option {
+      self.data.push(Arg{option: name, value: value})
+    }
+  }
+}

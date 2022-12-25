@@ -1,0 +1,73 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+obj ArgsConfigItem {
+  type: int
+  name: str
+  description: str
+  alias: str
+  default: str
+  hasValue: bool
+
+  fn leftCol (self: ref Self) str {
+    if self.type == ArgType_Command {
+      return self.name + " "
+    }
+
+    mut result := ""
+
+    if self.alias.len > 0 {
+      result += self.alias.len == 1 ? "-" : "--"
+      result += self.alias
+    }
+
+    if self.name.len > 0 {
+      result += result.len == 0 ? "" : ", "
+      result += self.name.len == 1 ? "-" : "--"
+      result += self.name
+      result += self.hasValue ? "=..." : ""
+    }
+
+    return result + (result.len == 0 ? "" : " ")
+  }
+
+  fn rightCol (self: ref Self, maxLineLen: int, leftColMaxLen: u32) str {
+    descrSplit := str_split(self.description, " ")
+
+    mut result := ""
+    mut lineLen := 0
+
+    loop i := 0; i < descrSplit.len; i++ {
+      item := descrSplit[i]
+
+      if leftColMaxLen + lineLen + item.len > maxLineLen {
+        result += os_EOL + ' '.repeat(leftColMaxLen) + item
+        lineLen = item.len
+      } else {
+        lineLen += (result.len == 0 ? 0 : 1) + item.len
+        result += (result.len == 0 ? "" : " ") + item
+      }
+    }
+
+    return result
+  }
+
+  fn text (self: ref Self, maxLineLen: int, leftColMaxLen: u32) str {
+    leftCol := self.leftCol()
+    mut result := ""
+
+    if 4 + leftCol.len > leftColMaxLen {
+      result += "    " + leftCol + os_EOL + ' '.repeat(leftColMaxLen)
+      result += self.rightCol(maxLineLen, leftColMaxLen) + os_EOL
+    } else {
+      offset: u32 = leftColMaxLen - leftCol.len - 4
+
+      result += "    " + leftCol + ' '.repeat(offset)
+      result += self.rightCol(maxLineLen, leftColMaxLen) + os_EOL
+    }
+
+    return result
+  }
+}
