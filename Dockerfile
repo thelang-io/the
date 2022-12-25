@@ -25,8 +25,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
-RUN curl -fsSL https://cdn.thelang.io/packages.tar.gz | tar -xz
-ENV PACKAGES_DIR="$PWD/the/native/linux"
+RUN curl -fsSL https://cdn.thelang.io/deps.tar.gz | tar -xz
+ENV DEPS_DIR="$PWD/the/native/linux"
 
 WORKDIR /app
 COPY . .

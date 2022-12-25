@@ -9,10 +9,8 @@ high-level programming language.
   that comparable with writing applications in The C Programming Language
 - **Helpful:** The Programming Language takes care of everything for you, so
   that you can focus on writing code
-- **Independent:** To compile your code The Programming Language doesn't use
-  any 3rd party dependencies
 - **Portable:** The Programming Language works on
-  [many](#supported-operating-systems) operating systems
+  [all popular](#supported-operating-systems) operating systems
 - **Cloud-Based:** The Programming Language runs in cloud which allows to
   reduce time spent on installing and compiling
 

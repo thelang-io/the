@@ -79,14 +79,14 @@ void Codegen::compile (
   f << code;
   f.close();
 
-  auto packagesDir = Codegen::getEnvVar("PACKAGES_DIR");
+  auto depsDir = Codegen::getEnvVar("DEPS_DIR");
   auto compiler = getCompilerFromPlatform(platform);
   auto flagsStr = std::string();
   auto libraries = std::string();
 
-  if (!packagesDir.empty()) {
-    flagsStr += " -I\"" + packagesDir + "/include\"";
-    flagsStr += " -L\"" + packagesDir + "/lib\"";
+  if (!depsDir.empty()) {
+    flagsStr += " -I\"" + depsDir + "/include\"";
+    flagsStr += " -L\"" + depsDir + "/lib\"";
   }
 
   auto targetOS = getOSFromPlatform(platform);

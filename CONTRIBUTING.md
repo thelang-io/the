@@ -22,7 +22,7 @@ By participating in this project you agree to abide by its terms.
 
 ## Testing
 
-```sh
+```bash
 $ cmake . -D BUILD_TESTS=ON
 $ cmake --build .
 $ ctest --output-on-failure
@@ -30,7 +30,7 @@ $ ctest --output-on-failure
 
 ## Memory Checking
 
-```sh
+```bash
 $ cmake . -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
 $ cmake --build .
 $ ctest --output-on-failure
@@ -38,7 +38,7 @@ $ ctest --output-on-failure
 
 ## Coverage
 
-```sh
+```bash
 $ cmake . -D BUILD_COVERAGE=ON -D BUILD_TESTS=ON
 $ cmake --build .
 $ gcov src/*

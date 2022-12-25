@@ -43,12 +43,12 @@ jobs:
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
-      - run: curl -fsSL https://cdn.thelang.io/packages.tar.gz -o packages.tar.gz
-      - run: tar -xzf packages.tar.gz the/native/${{ matrix.config.platform }}
+      - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
+      - run: tar -xzf deps.tar.gz the/native/${{ matrix.config.platform }}
       - if: runner.os != 'Windows'
-        run: echo "PACKAGES_DIR=$PWD/the/native/${{ matrix.config.platform }}" >> $GITHUB_ENV
+        run: echo "DEPS_DIR=$PWD/the/native/${{ matrix.config.platform }}" >> $GITHUB_ENV
       - if: runner.os == 'Windows'
-        run: echo "PACKAGES_DIR=$PWD/the/native/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+        run: echo "DEPS_DIR=$PWD/the/native/${{ matrix.config.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Append
       - if: matrix.config.memcheck != 'memcheck'
         run: cmake . -B ./build -G "${{ matrix.config.generator }}" -D BUILD_TESTS=ON
       - if: matrix.config.memcheck == 'memcheck'
