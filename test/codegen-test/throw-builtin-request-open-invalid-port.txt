@@ -198,7 +198,6 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     fprintf(stderr, "Error: failed to resolve hostname address" THE_EOL);
     exit(EXIT_FAILURE);
   }
-  free(hostname);
   struct request *req = alloc(sizeof(struct request));
   req->fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
   req->ctx = NULL;
@@ -235,11 +234,13 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     }
     req->ssl = SSL_new(req->ctx);
     SSL_set_fd(req->ssl, (int) req->fd);
+    SSL_set_tlsext_host_name(req->ssl, hostname);
     if (SSL_connect(req->ssl) != 1) {
       fprintf(stderr, "Error: failed to connect to socket with SSL" THE_EOL);
       exit(EXIT_FAILURE);
     }
   }
+  free(hostname);
   char *req_headers = request_stringifyHeaders(headers, url, data);
   __THE_1_array_request_Header_free(headers);
   char *req_method = str_cstr(method);

@@ -119,7 +119,6 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{fprintf}(_{stderr}, "Error: failed to resolve hostname address" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
-  R"(  _{free}(hostname);)" EOL
   R"(  _{struct request} *req = _{alloc}(sizeof(_{struct request}));)" EOL
   R"(  req->fd = _{socket}(addr->ai_family, addr->ai_socktype, addr->ai_protocol);)" EOL
   R"(  req->ctx = _{NULL};)" EOL
@@ -156,11 +155,13 @@ const std::vector<std::string> codegenRequest = {
   R"(    })" EOL
   R"(    req->ssl = _{SSL_new}(req->ctx);)" EOL
   R"(    _{SSL_set_fd}(req->ssl, (int) req->fd);)" EOL
+  R"(    _{SSL_set_tlsext_host_name}(req->ssl, hostname);)" EOL
   R"(    if (_{SSL_connect}(req->ssl) != 1) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to connect to socket with SSL" _{THE_EOL});)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
   R"(  })" EOL
+  R"(  _{free}(hostname);)" EOL
   R"(  char *req_headers = _{request_stringifyHeaders}(headers, url, data);)" EOL
   R"(  _{array_request_Header_free}(headers);)" EOL
   R"(  char *req_method = _{str_cstr}(method);)" EOL

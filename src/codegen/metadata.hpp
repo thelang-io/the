@@ -136,6 +136,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"SSL_new", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_read", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_set_fd", {"libOpensslSsl"}},
+  std::pair<std::string, std::set<std::string>>{"SSL_set_tlsext_host_name", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_shutdown", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_write", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"TLS_client_method", {"libOpensslSsl"}},
