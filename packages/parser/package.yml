@@ -1,6 +1,7 @@
 name: parser
 version: 0.1.0
 description: The Programming Language parser
+main: src/parser
 
 scripts:
   test: the build && the run build/result

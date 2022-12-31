@@ -1,0 +1,92 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+mut testFailed := false
+
+fn matcherIntToInt (val1: int, val2: int) {
+  if val1 != val2 {
+    print("Expected equality of these values:") // "
+    print("  ", val1.str())
+    print("  ", val2.str())
+    testFailed = true
+  }
+}
+
+fn matcherTypeMismatch (val1: any, val2: any) {
+  print("Expected variables be of the same type:")
+  print("  ", val1.str())
+  print("  ", val2.str())
+  testFailed = true
+}
+
+obj expect {
+  data: any
+
+  fn toEqual (mut self: ref Self, val: any) ref Self {
+    if self.data is int && val is int { matcherIntToInt(self.data, val) }
+    elif self.data is int { matcherTypeMismatch(self.data, val) }
+
+    return self
+  }
+}
+
+obj Test {
+  name: str
+  body: () -> void
+}
+
+obj Tests {
+  _tests: Test[]
+
+  fn register (mut self: ref Self, name: str, body: () -> void) ref Self {
+    self._tests.push(Test{name: name, body: body})
+    return self
+  }
+
+  fn run (mut self: ref Self. args: str[]) ref Self {
+    mut totalTime := 0
+    mut failedTests: str[]
+
+    print("[==========] Running", self._tests.len, "tests")
+
+    loop i := 0; i < self._tests.len; i++ {
+      test := self._tests[i]
+
+      print("[ RUN      ]", test.name)
+      timeStart := time_now()
+      test.body()
+      timeDelta := time_now() - timeStart
+      testStatus := testFailed ? "[  FAILED  ]" : "[       OK ]"
+      print(testStatus, test.name, "(" + timeDelta + " ms)")
+
+      if testFailed {
+        failedTests.push(test.name)
+      }
+
+      testFailed = false
+      totalTime += timeDelta
+    }
+
+    print(
+      "[==========]",
+      self._tests.len,
+      "tests ran (" + totalTime + " ms total)"
+    )
+
+    print("[  PASSED  ]", self._tests.len - failedTests.len, "tests")
+
+    if !failedTests.empty() {
+      print("[  FAILED  ]", failedTests.len, "tests, listed below:")
+
+      loop i := 0; i < failedTests.len; i++ {
+        failedTest: str = failedTests[i]
+        print("[  FAILED  ]", failedTest)
+      }
+
+      print()
+      print(" " + failedTests.len + " FAILED TESTS")
+    }
+  }
+}

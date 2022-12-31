@@ -1,6 +1,7 @@
 name: args
 version: 0.1.0
 description: Command line arguments parser and tools
+main: src/args
 
 scripts:
   test: the build && the run build/result
