@@ -1,0 +1,7 @@
+name: error
+version: 1.0.0
+description: The Programming Language error
+main: src/error
+
+scripts:
+  test: the build && the run build/result
