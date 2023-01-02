@@ -33,7 +33,7 @@ obj Reader {
 
   fn next (mut self: ref Self) char {
     if self.eof() {
-      RaiseError("Tried to read on eof")
+      RaiseError("tried to reader.next on eof")
     } elif (
       os_name() == "Windows" &&
       self.content.slice(self.pos, self.pos + 2) == "\r\n"
@@ -65,13 +65,13 @@ obj Reader {
   }
 }
 
-fn Reader_init (p: str) Reader {
-  path := fs_realpathSync(p)
+fn Reader_init (path: str) Reader {
+  p := fs_realpathSync(path)
 
-  if !fs_isFileSync(path) {
-    RaiseError("Path \"" + path + "\" is not a file")
+  if !fs_isFileSync(p) {
+    RaiseError("path \"" + p + "\" is not a file")
   }
 
-  content := fs_readFileSync(path).str()
-  return Reader{path: path, content: content}
+  content := fs_readFileSync(p).str()
+  return Reader{path: p, content: content}
 }

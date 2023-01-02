@@ -1,0 +1,8 @@
+name: the/yaml
+version: 0.1.0
+description: YAML parser
+license: MIT
+main: src/yaml
+
+scripts:
+  test: the build && the run build/result

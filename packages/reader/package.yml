@@ -1,8 +1,8 @@
-name: the/args
-version: 0.1.0
-description: Command line arguments parser and tools
+name: the/reader
+version: 1.0.0
+description: The Programming Language reader
 license: MIT
-main: src/args
+main: src/reader
 
 packages:
   - the/error: 1.0.0
