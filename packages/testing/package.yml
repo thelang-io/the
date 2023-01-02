@@ -1,6 +1,6 @@
 name: testing
 version: 0.1.0
-description: The Programming Language testing utilities
+description: The Programming Language test framework
 main: src/testing
 
 scripts:

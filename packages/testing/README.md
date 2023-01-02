@@ -1,2 +1,2 @@
 # testing
-The Programming Language testing utilities
+The Programming Language test framework
