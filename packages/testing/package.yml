@@ -1,0 +1,8 @@
+name: testing
+version: 0.1.0
+description: The Programming Language test framework
+license: MIT
+main: src/testing
+
+scripts:
+  test: the build && the run build/result
