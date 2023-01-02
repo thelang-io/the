@@ -3,6 +3,6 @@
  * Licensed under the MIT License
  */
 
-obj YAML {
+obj JSON {
   // todo
 }

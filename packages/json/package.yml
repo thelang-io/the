@@ -1,0 +1,8 @@
+name: the/json
+version: 0.1.0
+description: JSON parser
+license: MIT
+main: src/json
+
+scripts:
+  test: the build && the run build/result
