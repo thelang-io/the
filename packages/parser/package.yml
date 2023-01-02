@@ -1,6 +1,7 @@
 name: parser
 version: 0.1.0
 description: The Programming Language parser
+license: MIT
 main: src/parser
 
 scripts:
