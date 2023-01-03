@@ -425,7 +425,7 @@ void TypeMap::init () {
   }};
 
   auto sleepSyncTypeFn = TypeFn{voidType, {
-    TypeFnParam{"milliseconds", u32Type, false, true, false}
+    TypeFnParam{"milliseconds", intType, false, true, false}
   }};
 
   auto urlParseTypeFn = TypeFn{urlUrlType, {

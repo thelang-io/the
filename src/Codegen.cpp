@@ -735,8 +735,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.fnSleepSync) {
-    builtinFnDeclCode += "void sleep_sync (uint32_t);" EOL;
-    builtinFnDefCode += "void sleep_sync (uint32_t i) {" EOL;
+    builtinFnDeclCode += "void sleep_sync (int32_t);" EOL;
+    builtinFnDefCode += "void sleep_sync (int32_t i) {" EOL;
     builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
     builtinFnDefCode += "    Sleep((unsigned int) i);" EOL;
     builtinFnDefCode += "  #else" EOL;
@@ -3296,7 +3296,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
       code = this->_apiEval("_{request_read}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
       code = this->_apiEval("_{sleep_sync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@url_parse") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
