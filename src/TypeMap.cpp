@@ -236,7 +236,7 @@ void TypeMap::init () {
   byteType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
 
   auto repeatCharTypeFn = TypeFn{strType, {
-    TypeFnParam{"times", u32Type, false, true, false}
+    TypeFnParam{"times", intType, false, true, false}
   }};
 
   this->_items.push_back(std::make_unique<Type>(Type{"char.isAlpha", "@char.isAlpha", TypeFn{boolType}, {}, true}));
