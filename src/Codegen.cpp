@@ -478,9 +478,9 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.fnCharRepeat) {
-    builtinFnDeclCode += "struct str char_repeat (char, uint32_t);" EOL;
-    builtinFnDefCode += "struct str char_repeat (char c, uint32_t k) {" EOL;
-    builtinFnDefCode += R"(  if (k == 0) return str_alloc("");)" EOL;
+    builtinFnDeclCode += "struct str char_repeat (char, int32_t);" EOL;
+    builtinFnDefCode += "struct str char_repeat (char c, int32_t k) {" EOL;
+    builtinFnDefCode += R"(  if (k <= 0) return str_alloc("");)" EOL;
     builtinFnDefCode += "  size_t l = (size_t) k;" EOL;
     builtinFnDefCode += "  char *d = alloc(l);" EOL;
     builtinFnDefCode += "  size_t i = 0;" EOL;
@@ -735,8 +735,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.fnSleepSync) {
-    builtinFnDeclCode += "void sleep_sync (uint32_t);" EOL;
-    builtinFnDefCode += "void sleep_sync (uint32_t i) {" EOL;
+    builtinFnDeclCode += "void sleep_sync (int32_t);" EOL;
+    builtinFnDefCode += "void sleep_sync (int32_t i) {" EOL;
     builtinFnDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
     builtinFnDefCode += "    Sleep((unsigned int) i);" EOL;
     builtinFnDefCode += "  #else" EOL;
@@ -3296,7 +3296,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.ref(this->ast->typeMap.get("request_Request")));
       code = this->_apiEval("_{request_read}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
+      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
       code = this->_apiEval("_{sleep_sync}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@url_parse") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
@@ -3397,7 +3397,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("fnCharIsSpace");
         code = "char_is_space(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.repeat") {
-        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("u32"));
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
         this->_activateBuiltin("fnCharRepeat");
         code = "char_repeat(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ", " + arg1Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.empty") {

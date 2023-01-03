@@ -49,7 +49,7 @@ struct buffer buffer_copy (const struct buffer);
 bool buffer_eq (struct buffer, struct buffer);
 void buffer_free (struct buffer);
 bool buffer_ne (struct buffer, struct buffer);
-struct str char_repeat (char, uint32_t);
+struct str char_repeat (char, int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -88,8 +88,8 @@ bool buffer_ne (struct buffer o1, struct buffer o2) {
   free(o2.d);
   return r;
 }
-struct str char_repeat (char c, uint32_t k) {
-  if (k == 0) return str_alloc("");
+struct str char_repeat (char c, int32_t k) {
+  if (k <= 0) return str_alloc("");
   size_t l = (size_t) k;
   char *d = alloc(l);
   size_t i = 0;

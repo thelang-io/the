@@ -32,24 +32,24 @@ struct str {
 struct fs_Stats;
 
 struct fs_Stats {
-  const int32_t __THE_0_dev;
-  const uint16_t __THE_0_mode;
-  const uint16_t __THE_0_nlink;
+  const uint64_t __THE_0_dev;
+  const uint32_t __THE_0_mode;
+  const int64_t __THE_0_nlink;
   const uint64_t __THE_0_ino;
   const int32_t __THE_0_uid;
   const int32_t __THE_0_gid;
-  const int32_t __THE_0_rdev;
-  const int32_t __THE_0_atime;
-  const int32_t __THE_0_atimeNs;
-  const int32_t __THE_0_mtime;
-  const int32_t __THE_0_mtimeNs;
-  const int32_t __THE_0_ctime;
-  const int32_t __THE_0_ctimeNs;
-  const int32_t __THE_0_birthtime;
-  const int32_t __THE_0_birthtimeNs;
+  const uint64_t __THE_0_rdev;
+  const int64_t __THE_0_atime;
+  const int64_t __THE_0_atimeNs;
+  const int64_t __THE_0_mtime;
+  const int64_t __THE_0_mtimeNs;
+  const int64_t __THE_0_ctime;
+  const int64_t __THE_0_ctimeNs;
+  const int64_t __THE_0_btime;
+  const int64_t __THE_0_btimeNs;
   const int64_t __THE_0_size;
   const int64_t __THE_0_blocks;
-  const int32_t __THE_0_blksize;
+  const int64_t __THE_0_blockSize;
 };
 
 void *alloc (size_t);
@@ -60,7 +60,7 @@ struct str str_concat_str (struct str, struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
 struct fs_Stats *fs_statSync (struct str);
-struct fs_Stats *fs_Stats_alloc (int32_t, uint16_t, uint16_t, uint64_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int64_t, int64_t, int32_t);
+struct fs_Stats *fs_Stats_alloc (uint64_t, uint32_t, int64_t, uint64_t, int32_t, int32_t, uint64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t);
 void fs_Stats_free (struct fs_Stats *);
 
 void *alloc (size_t l) {
@@ -137,9 +137,9 @@ struct fs_Stats *fs_statSync (struct str s) {
   str_free(s);
   return r;
 }
-struct fs_Stats *fs_Stats_alloc (int32_t __THE_0_dev, uint16_t __THE_0_mode, uint16_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, int32_t __THE_0_rdev, int32_t __THE_0_atime, int32_t __THE_0_atimeNs, int32_t __THE_0_mtime, int32_t __THE_0_mtimeNs, int32_t __THE_0_ctime, int32_t __THE_0_ctimeNs, int32_t __THE_0_birthtime, int32_t __THE_0_birthtimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int32_t __THE_0_blksize) {
+struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, int64_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, uint64_t __THE_0_rdev, int64_t __THE_0_atime, int64_t __THE_0_atimeNs, int64_t __THE_0_mtime, int64_t __THE_0_mtimeNs, int64_t __THE_0_ctime, int64_t __THE_0_ctimeNs, int64_t __THE_0_btime, int64_t __THE_0_btimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int64_t __THE_0_blockSize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
-  struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_birthtime, __THE_0_birthtimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blksize};
+  struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_btime, __THE_0_btimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blockSize};
   memcpy(r, &s, sizeof(struct fs_Stats));
   return r;
 }
