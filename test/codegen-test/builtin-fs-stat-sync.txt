@@ -33,41 +33,40 @@ struct str {
 struct fs_Stats;
 
 struct fs_Stats {
-  const int32_t __THE_0_dev;
-  const uint16_t __THE_0_mode;
-  const uint16_t __THE_0_nlink;
+  const uint64_t __THE_0_dev;
+  const uint32_t __THE_0_mode;
+  const int64_t __THE_0_nlink;
   const uint64_t __THE_0_ino;
   const int32_t __THE_0_uid;
   const int32_t __THE_0_gid;
-  const int32_t __THE_0_rdev;
-  const int32_t __THE_0_atime;
-  const int32_t __THE_0_atimeNs;
-  const int32_t __THE_0_mtime;
-  const int32_t __THE_0_mtimeNs;
-  const int32_t __THE_0_ctime;
-  const int32_t __THE_0_ctimeNs;
-  const int32_t __THE_0_birthtime;
-  const int32_t __THE_0_birthtimeNs;
+  const uint64_t __THE_0_rdev;
+  const int64_t __THE_0_atime;
+  const int64_t __THE_0_atimeNs;
+  const int64_t __THE_0_mtime;
+  const int64_t __THE_0_mtimeNs;
+  const int64_t __THE_0_ctime;
+  const int64_t __THE_0_ctimeNs;
+  const int64_t __THE_0_btime;
+  const int64_t __THE_0_btimeNs;
   const int64_t __THE_0_size;
   const int64_t __THE_0_blocks;
-  const int32_t __THE_0_blksize;
+  const int64_t __THE_0_blockSize;
 };
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 struct str i32_str (int32_t);
 struct str i64_str (int64_t);
-struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct str u16_str (uint16_t);
+struct str u32_str (uint32_t);
 struct str u64_str (uint64_t);
 struct fs_Stats *fs_statSync (struct str);
-struct fs_Stats *fs_Stats_alloc (int32_t, uint16_t, uint16_t, uint64_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int64_t, int64_t, int32_t);
+struct fs_Stats *fs_Stats_alloc (uint64_t, uint32_t, int64_t, uint64_t, int32_t, int32_t, uint64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t);
 void fs_Stats_free (struct fs_Stats *);
 struct str fs_Stats_str (struct fs_Stats *);
 
@@ -95,11 +94,6 @@ struct str i32_str (int32_t d) {
 struct str i64_str (int64_t d) {
   char buf[512];
   sprintf(buf, "%" PRId64, d);
-  return str_alloc(buf);
-}
-struct str int_str (int32_t d) {
-  char buf[512];
-  sprintf(buf, "%" PRId32, d);
   return str_alloc(buf);
 }
 void print (FILE *stream, const char *fmt, ...) {
@@ -163,9 +157,9 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str u16_str (uint16_t d) {
+struct str u32_str (uint32_t d) {
   char buf[512];
-  sprintf(buf, "%" PRIu16, d);
+  sprintf(buf, "%" PRIu32, d);
   return str_alloc(buf);
 }
 struct str u64_str (uint64_t d) {
@@ -199,9 +193,9 @@ struct fs_Stats *fs_statSync (struct str s) {
   str_free(s);
   return r;
 }
-struct fs_Stats *fs_Stats_alloc (int32_t __THE_0_dev, uint16_t __THE_0_mode, uint16_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, int32_t __THE_0_rdev, int32_t __THE_0_atime, int32_t __THE_0_atimeNs, int32_t __THE_0_mtime, int32_t __THE_0_mtimeNs, int32_t __THE_0_ctime, int32_t __THE_0_ctimeNs, int32_t __THE_0_birthtime, int32_t __THE_0_birthtimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int32_t __THE_0_blksize) {
+struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, int64_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, uint64_t __THE_0_rdev, int64_t __THE_0_atime, int64_t __THE_0_atimeNs, int64_t __THE_0_mtime, int64_t __THE_0_mtimeNs, int64_t __THE_0_ctime, int64_t __THE_0_ctimeNs, int64_t __THE_0_btime, int64_t __THE_0_btimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int64_t __THE_0_blockSize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
-  struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_birthtime, __THE_0_birthtimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blksize};
+  struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_btime, __THE_0_btimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blockSize};
   memcpy(r, &s, sizeof(struct fs_Stats));
   return r;
 }
@@ -211,41 +205,41 @@ void fs_Stats_free (struct fs_Stats *o) {
 struct str fs_Stats_str (struct fs_Stats *o) {
   struct str r = str_alloc("fs_Stats{");
   r = str_concat_cstr(r, "dev: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_dev));
+  r = str_concat_str(r, u64_str(o->__THE_0_dev));
   r = str_concat_cstr(r, ", mode: ");
-  r = str_concat_str(r, u16_str(o->__THE_0_mode));
+  r = str_concat_str(r, u32_str(o->__THE_0_mode));
   r = str_concat_cstr(r, ", nlink: ");
-  r = str_concat_str(r, u16_str(o->__THE_0_nlink));
+  r = str_concat_str(r, i64_str(o->__THE_0_nlink));
   r = str_concat_cstr(r, ", ino: ");
   r = str_concat_str(r, u64_str(o->__THE_0_ino));
   r = str_concat_cstr(r, ", uid: ");
-  r = str_concat_str(r, int_str(o->__THE_0_uid));
+  r = str_concat_str(r, i32_str(o->__THE_0_uid));
   r = str_concat_cstr(r, ", gid: ");
-  r = str_concat_str(r, int_str(o->__THE_0_gid));
+  r = str_concat_str(r, i32_str(o->__THE_0_gid));
   r = str_concat_cstr(r, ", rdev: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_rdev));
+  r = str_concat_str(r, u64_str(o->__THE_0_rdev));
   r = str_concat_cstr(r, ", atime: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_atime));
+  r = str_concat_str(r, i64_str(o->__THE_0_atime));
   r = str_concat_cstr(r, ", atimeNs: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_atimeNs));
+  r = str_concat_str(r, i64_str(o->__THE_0_atimeNs));
   r = str_concat_cstr(r, ", mtime: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_mtime));
+  r = str_concat_str(r, i64_str(o->__THE_0_mtime));
   r = str_concat_cstr(r, ", mtimeNs: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_mtimeNs));
+  r = str_concat_str(r, i64_str(o->__THE_0_mtimeNs));
   r = str_concat_cstr(r, ", ctime: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_ctime));
+  r = str_concat_str(r, i64_str(o->__THE_0_ctime));
   r = str_concat_cstr(r, ", ctimeNs: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_ctimeNs));
-  r = str_concat_cstr(r, ", birthtime: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_birthtime));
-  r = str_concat_cstr(r, ", birthtimeNs: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_birthtimeNs));
+  r = str_concat_str(r, i64_str(o->__THE_0_ctimeNs));
+  r = str_concat_cstr(r, ", btime: ");
+  r = str_concat_str(r, i64_str(o->__THE_0_btime));
+  r = str_concat_cstr(r, ", btimeNs: ");
+  r = str_concat_str(r, i64_str(o->__THE_0_btimeNs));
   r = str_concat_cstr(r, ", size: ");
   r = str_concat_str(r, i64_str(o->__THE_0_size));
   r = str_concat_cstr(r, ", blocks: ");
   r = str_concat_str(r, i64_str(o->__THE_0_blocks));
-  r = str_concat_cstr(r, ", blksize: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_blksize));
+  r = str_concat_cstr(r, ", blockSize: ");
+  r = str_concat_str(r, i64_str(o->__THE_0_blockSize));
   fs_Stats_free((struct fs_Stats *) o);
   return str_concat_cstr(r, "}");
 }
@@ -256,5 +250,5 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-fs_Stats{dev: {{ \d+ }}, mode: {{ \d+ }}, nlink: {{ \d+ }}, ino: {{ \d+ }}, uid: {{ \d+ }}, gid: {{ \d+ }}, rdev: {{ \d+ }}, atime: {{ \d+ }}, atimeNs: {{ \d+ }}, mtime: {{ \d+ }}, mtimeNs: {{ \d+ }}, ctime: {{ \d+ }}, ctimeNs: {{ \d+ }}, birthtime: {{ \d+ }}, birthtimeNs: {{ \d+ }}, size: {{ \d+ }}, blocks: {{ \d+ }}, blksize: {{ \d+ }}}
-fs_Stats{dev: {{ \d+ }}, mode: {{ \d+ }}, nlink: {{ \d+ }}, ino: {{ \d+ }}, uid: {{ \d+ }}, gid: {{ \d+ }}, rdev: {{ \d+ }}, atime: {{ \d+ }}, atimeNs: {{ \d+ }}, mtime: {{ \d+ }}, mtimeNs: {{ \d+ }}, ctime: {{ \d+ }}, ctimeNs: {{ \d+ }}, birthtime: {{ \d+ }}, birthtimeNs: {{ \d+ }}, size: {{ \d+ }}, blocks: {{ \d+ }}, blksize: {{ \d+ }}}
+fs_Stats{dev: {{ \d+ }}, mode: {{ \d+ }}, nlink: {{ \d+ }}, ino: {{ \d+ }}, uid: {{ \d+ }}, gid: {{ \d+ }}, rdev: {{ \d+ }}, atime: {{ \d+ }}, atimeNs: {{ \d+ }}, mtime: {{ \d+ }}, mtimeNs: {{ \d+ }}, ctime: {{ \d+ }}, ctimeNs: {{ \d+ }}, btime: {{ \d+ }}, btimeNs: {{ \d+ }}, size: {{ \d+ }}, blocks: {{ \d+ }}, blockSize: {{ \d+ }}}
+fs_Stats{dev: {{ \d+ }}, mode: {{ \d+ }}, nlink: {{ \d+ }}, ino: {{ \d+ }}, uid: {{ \d+ }}, gid: {{ \d+ }}, rdev: {{ \d+ }}, atime: {{ \d+ }}, atimeNs: {{ \d+ }}, mtime: {{ \d+ }}, mtimeNs: {{ \d+ }}, ctime: {{ \d+ }}, ctimeNs: {{ \d+ }}, btime: {{ \d+ }}, btimeNs: {{ \d+ }}, size: {{ \d+ }}, blocks: {{ \d+ }}, blockSize: {{ \d+ }}}
