@@ -273,51 +273,38 @@ struct request_Request *request_open (struct str method, struct str u, struct bu
     req_len += 2;
   }
   buffer_free(data);
-  #ifdef THE_OS_WINDOWS
-    SSIZE_T y = 0, z = 0;
-  #else
-    ssize_t y = 0, z = 0;
-  #endif
+  size_t y = 0;
   while (y < req_len) {
-    z = req->ssl == NULL
-      ? send(req->fd, &request[y], req_len - y, 0)
-      : SSL_write(req->ssl, &request[y], (int) (req_len - y));
-    if (z == -1) {
+    int z = req->ssl == NULL ? (int) send(req->fd, &request[y], req_len - y, 0) : SSL_write(req->ssl, &request[y], (int) (req_len - y));
+    if (z < 0) {
       fprintf(stderr, "Error: failed to write to socket" THE_EOL);
       exit(EXIT_FAILURE);
     }
-    y += z;
+    y += (size_t) z;
   }
   free(request);
-  if (req->ssl == NULL) {
-    #ifdef THE_OS_WINDOWS
-      shutdown(req->fd, SD_SEND);
-    #else
-      shutdown(req->fd, 1);
-    #endif
-  } else {
-    SSL_shutdown(req->ssl);
-  }
   url_URL_free(url);
   return (struct request_Request *) req;
 }
 struct request_Response *request_read (struct request_Request **r) {
   struct request *req = (void *) *r;
   unsigned char b[1024];
-  #ifdef THE_OS_WINDOWS
-    SSIZE_T y;
-  #else
-    ssize_t y;
-  #endif
   struct buffer data = {NULL, 0};
-  while ((y = (req->ssl == NULL ? recv(req->fd, b, sizeof(b), 0) : SSL_read(req->ssl, b, sizeof(b)))) > 0) {
+  while (1) {
+    int y = req->ssl == NULL ? (int) recv(req->fd, b, sizeof(b), 0) : SSL_read(req->ssl, b, sizeof(b));
+    if (y < 0) {
+      fprintf(stderr, "Error: failed to read from socket" THE_EOL);
+      exit(EXIT_FAILURE);
+    } else if (y == 0 && data.l != 0) {
+      break;
+    } else if (y == 0) {
+      continue;
+    } else if (data.l == 0) {
+      (req->ssl == NULL ? shutdown(req->fd, 1) : SSL_shutdown(req->ssl));
+    }
     data.d = re_alloc(data.d, data.l + y);
     memcpy(&data.d[data.l], b, y);
     data.l += y;
-  }
-  if (y < 0) {
-    fprintf(stderr, "Error: failed to read from socket" THE_EOL);
-    exit(EXIT_FAILURE);
   }
   size_t i;
   if (data.l > 8 && (memcmp(data.d, "HTTP/1.0 ", 9) == 0 || memcmp(data.d, "HTTP/1.1 ", 9) == 0)) {

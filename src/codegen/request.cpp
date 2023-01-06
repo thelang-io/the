@@ -181,31 +181,16 @@ const std::vector<std::string> codegenRequest = {
   R"(    req_len += 2;)" EOL
   R"(  })" EOL
   R"(  _{buffer_free}(data);)" EOL
-  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{SSIZE_T} y = 0, z = 0;)" EOL
-  R"(  #else)" EOL
-  R"(    _{ssize_t} y = 0, z = 0;)" EOL
-  R"(  #endif)" EOL
+  R"(  _{size_t} y = 0;)" EOL
   R"(  while (y < req_len) {)" EOL
-  R"(    z = req->ssl == _{NULL})" EOL
-  R"(      ? _{send}(req->fd, &request[y], req_len - y, 0))" EOL
-  R"(      : _{SSL_write}(req->ssl, &request[y], (int) (req_len - y));)" EOL
-  R"(    if (z == -1) {)" EOL
+  R"(    int z = req->ssl == _{NULL} ? (int) _{send}(req->fd, &request[y], req_len - y, 0) : _{SSL_write}(req->ssl, &request[y], (int) (req_len - y));)" EOL
+  R"(    if (z < 0) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to write to socket" _{THE_EOL});)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
-  R"(    y += z;)" EOL
+  R"(    y += (_{size_t}) z;)" EOL
   R"(  })" EOL
   R"(  _{free}(request);)" EOL
-  R"(  if (req->ssl == _{NULL}) {)" EOL
-  R"(    #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(      _{shutdown}(req->fd, _{SD_SEND});)" EOL
-  R"(    #else)" EOL
-  R"(      _{shutdown}(req->fd, 1);)" EOL
-  R"(    #endif)" EOL
-  R"(  } else {)" EOL
-  R"(    _{SSL_shutdown}(req->ssl);)" EOL
-  R"(  })" EOL
   R"(  _{url_URL_free}(url);)" EOL
   R"(  return (struct _{request_Request} *) req;)" EOL
   R"(})" EOL,
@@ -213,20 +198,22 @@ const std::vector<std::string> codegenRequest = {
   R"(struct _{request_Response} *request_read (struct _{request_Request} **r) {)" EOL
   R"(  _{struct request} *req = (void *) *r;)" EOL
   R"(  unsigned char b[1024];)" EOL
-  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{SSIZE_T} y;)" EOL
-  R"(  #else)" EOL
-  R"(    _{ssize_t} y;)" EOL
-  R"(  #endif)" EOL
   R"(  _{struct buffer} data = {_{NULL}, 0};)" EOL
-  R"(  while ((y = (req->ssl == _{NULL} ? _{recv}(req->fd, b, sizeof(b), 0) : _{SSL_read}(req->ssl, b, sizeof(b)))) > 0) {)" EOL
+  R"(  while (1) {)" EOL
+  R"(    int y = req->ssl == _{NULL} ? (int) _{recv}(req->fd, b, sizeof(b), 0) : _{SSL_read}(req->ssl, b, sizeof(b));)" EOL
+  R"(    if (y < 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to read from socket" _{THE_EOL});)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    } else if (y == 0 && data.l != 0) {)" EOL
+  R"(      break;)" EOL
+  R"(    } else if (y == 0) {)" EOL
+  R"(      continue;)" EOL
+  R"(    } else if (data.l == 0) {)" EOL
+  R"(      (req->ssl == _{NULL} ? _{shutdown}(req->fd, 1) : _{SSL_shutdown}(req->ssl));)" EOL
+  R"(    })" EOL
   R"(    data.d = _{re_alloc}(data.d, data.l + y);)" EOL
   R"(    _{memcpy}(&data.d[data.l], b, y);)" EOL
   R"(    data.l += y;)" EOL
-  R"(  })" EOL
-  R"(  if (y < 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to read from socket" _{THE_EOL});)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
   R"(  _{size_t} i;)" EOL
   R"(  if (data.l > 8 && (_{memcmp}(data.d, "HTTP/1.0 ", 9) == 0 || _{memcmp}(data.d, "HTTP/1.1 ", 9) == 0)) {)" EOL
