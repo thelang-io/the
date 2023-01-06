@@ -27,9 +27,9 @@ main {
   #include <unistd.h>
 #endif
 
-void sleep_sync (uint32_t);
+void sleep_sync (int32_t);
 
-void sleep_sync (uint32_t i) {
+void sleep_sync (int32_t i) {
   #ifdef THE_OS_WINDOWS
     Sleep((unsigned int) i);
   #else

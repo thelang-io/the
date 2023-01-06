@@ -33,7 +33,7 @@ struct str {
 };
 
 void *alloc (size_t);
-struct str char_repeat (char, uint32_t);
+struct str char_repeat (char, int32_t);
 struct str str_alloc (const char *);
 bool str_empty (struct str);
 
@@ -45,8 +45,8 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct str char_repeat (char c, uint32_t k) {
-  if (k == 0) return str_alloc("");
+struct str char_repeat (char c, int32_t k) {
+  if (k <= 0) return str_alloc("");
   size_t l = (size_t) k;
   char *d = alloc(l);
   size_t i = 0;
