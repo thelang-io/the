@@ -136,6 +136,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"SSL_new", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_read", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_set_fd", {"libOpensslSsl"}},
+  std::pair<std::string, std::set<std::string>>{"SSL_set_tlsext_host_name", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_shutdown", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_write", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"TLS_client_method", {"libOpensslSsl"}},
@@ -248,7 +249,6 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"MAXIMUM_REPARSE_DATA_BUFFER_SIZE", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"MAX_PATH", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"OPEN_EXISTING", {"libWindows"}},
-  std::pair<std::string, std::set<std::string>>{"SSIZE_T", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"SYMBOLIC_LINK_FLAG_DIRECTORY", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"VOLUME_NAME_DOS", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"WIN32_FIND_DATA", {"libWindows"}},
@@ -266,7 +266,6 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"RemoveDirectory", {"libWindows"}},
 
   std::pair<std::string, std::set<std::string>>{"INVALID_SOCKET", {"libWinsock2"}},
-  std::pair<std::string, std::set<std::string>>{"SD_SEND", {"libWinsock2"}},
   std::pair<std::string, std::set<std::string>>{"SOCKET", {"libWinsock2"}},
   std::pair<std::string, std::set<std::string>>{"SOCKET_ERROR", {"libWinsock2"}},
   std::pair<std::string, std::set<std::string>>{"closesocket", {"libWinsock2"}}
