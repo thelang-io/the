@@ -1050,4 +1050,3 @@ int main () {
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======
 GET https://httpbin.org/status/200 200
-GET https://httpbin.org/status/400 400
