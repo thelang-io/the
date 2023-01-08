@@ -1,19 +1,19 @@
 ======= stdin =======
 main {
-  mut req := request_open("GET", "https://httpbin.org/status/200")
+  mut req := request_open("GET", "https://ci.thelang.io/echo?sleep=0&status=200")
   mut res := request_read(ref req)
   request_close(ref req)
-  print("GET", "https://httpstat.us/200?sleep=0", res.status)
+  print("GET", "https://ci.thelang.io/echo?sleep=0&status=200", res.status)
 
-  req = request_open("GET", "https://httpstat.us/400?sleep=1000")
+  req = request_open("GET", "https://ci.thelang.io/echo?sleep=1000&status=400")
   res = request_read(ref req)
   request_close(ref req)
-  print("GET", "https://httpstat.us/400?sleep=1000", res.status)
+  print("GET", "https://ci.thelang.io/echo?sleep=1000&status=400", res.status)
 
-  req = request_open("GET", "https://httpstat.us/500?sleep=2000")
+  req = request_open("GET", "https://ci.thelang.io/echo?sleep=5000&status=500")
   res = request_read(ref req)
   request_close(ref req)
-  print("GET", "https://httpstat.us/500?sleep=2000", res.status)
+  print("GET", "https://ci.thelang.io/echo?sleep=5000&status=500", res.status)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -658,24 +658,24 @@ void url_URL_free (struct url_URL *o) {
 }
 
 int main () {
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("https://httpbin.org/status/200"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
+  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?sleep=0&status=200"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
   struct request_Response *__THE_0_res_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  print(stdout, "zzzziz", "GET", " ", "https://httpstat.us/200?sleep=0", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://httpstat.us/400?sleep=1000"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?sleep=0&status=200", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?sleep=1000&status=400"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
   __THE_0_res_0 = request_Response_realloc(__THE_0_res_0, request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  print(stdout, "zzzziz", "GET", " ", "https://httpstat.us/400?sleep=1000", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://httpstat.us/500?sleep=2000"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?sleep=1000&status=400", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?sleep=5000&status=500"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
   __THE_0_res_0 = request_Response_realloc(__THE_0_res_0, request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  print(stdout, "zzzziz", "GET", " ", "https://httpstat.us/500?sleep=2000", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
+  print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?sleep=5000&status=500", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
   request_Response_free((struct request_Response *) __THE_0_res_0);
   request_Request_free((struct request_Request *) __THE_0_req_0);
 }
 ======= flags =======
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======
-GET https://httpstat.us/200?sleep=0 200
-GET https://httpstat.us/400?sleep=1000 400
-GET https://httpstat.us/500?sleep=2000 500
+GET https://ci.thelang.io/echo?sleep=0&status=200 200
+GET https://ci.thelang.io/echo?sleep=1000&status=400 400
+GET https://ci.thelang.io/echo?sleep=5000&status=500 500

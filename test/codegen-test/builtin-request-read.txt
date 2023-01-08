@@ -1,10 +1,10 @@
 ======= stdin =======
 main {
-  mut req := request_open("GET", "https://icanhazip.com")
+  mut req := request_open("GET", "https://ci.thelang.io/echo?ip")
   res := request_read(ref req)
   request_close(ref req)
 
-  print("GET", "https://icanhazip.com", res.status)
+  print("GET", "https://ci.thelang.io/echo?ip", res.status)
   print()
 
   loop i := 0; i < res.headers.len; i++ {
@@ -744,10 +744,10 @@ void url_URL_free (struct url_URL *o) {
 }
 
 int main () {
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("https://icanhazip.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
+  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
   const struct request_Response *__THE_0_res_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  print(stdout, "zzzziz", "GET", " ", "https://icanhazip.com", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
+  print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?ip", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
   print(stdout, "z", THE_EOL);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
     print(stdout, "sz", request_Header_str(request_Header_copy(*__THE_1_array_request_Header_at(__THE_0_res_0->__THE_0_headers, __THE_0_i_0))), THE_EOL);
@@ -760,7 +760,7 @@ int main () {
 ======= flags =======
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======
-GET https://icanhazip.com 200
+GET https://ci.thelang.io/echo?ip 200
 
 request_Header{name: "access-control-allow-methods", value: "GET"}
 request_Header{name: "access-control-allow-origin", value: "*"}

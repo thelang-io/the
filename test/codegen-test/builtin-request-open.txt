@@ -1,25 +1,25 @@
 ======= stdin =======
 main {
-  mut req := request_open("GET", "http://example.com")
+  mut req := request_open("GET", "http://ci.thelang.io/echo?example")
   res1 := request_read(ref req)
   request_close(ref req)
 
-  req = request_open("POST", "http://example.com")
+  req = request_open("POST", "http://ci.thelang.io/echo?example")
   res2 := request_read(ref req)
   request_close(ref req)
 
-  req = request_open("GET", "https://example.com")
+  req = request_open("GET", "https://ci.thelang.io/echo?example")
   res3 := request_read(ref req)
   request_close(ref req)
 
-  req = request_open("POST", "https://example.com")
+  req = request_open("POST", "https://ci.thelang.io/echo?example")
   res4 := request_read(ref req)
   request_close(ref req)
 
-  print("GET http://example.com:", res1.status)
-  print("POST http://example.com:", res2.status)
-  print("GET https://example.com:", res3.status)
-  print("POST https://example.com:", res4.status)
+  print("GET http://ci.thelang.io/echo?example:", res1.status)
+  print("POST http://ci.thelang.io/echo?example:", res2.status)
+  print("GET https://ci.thelang.io/echo?example:", res3.status)
+  print("POST https://ci.thelang.io/echo?example:", res4.status)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -659,22 +659,22 @@ void url_URL_free (struct url_URL *o) {
 }
 
 int main () {
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("http://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
+  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
   const struct request_Response *__THE_0_res1_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("http://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("http://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
   const struct request_Response *__THE_0_res2_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
   const struct request_Response *__THE_0_res3_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("https://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
   const struct request_Response *__THE_0_res4_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  print(stdout, "zziz", "GET http://example.com:", " ", __THE_0_res1_0->__THE_0_status, THE_EOL);
-  print(stdout, "zziz", "POST http://example.com:", " ", __THE_0_res2_0->__THE_0_status, THE_EOL);
-  print(stdout, "zziz", "GET https://example.com:", " ", __THE_0_res3_0->__THE_0_status, THE_EOL);
-  print(stdout, "zziz", "POST https://example.com:", " ", __THE_0_res4_0->__THE_0_status, THE_EOL);
+  print(stdout, "zziz", "GET http://ci.thelang.io/echo?example:", " ", __THE_0_res1_0->__THE_0_status, THE_EOL);
+  print(stdout, "zziz", "POST http://ci.thelang.io/echo?example:", " ", __THE_0_res2_0->__THE_0_status, THE_EOL);
+  print(stdout, "zziz", "GET https://ci.thelang.io/echo?example:", " ", __THE_0_res3_0->__THE_0_status, THE_EOL);
+  print(stdout, "zziz", "POST https://ci.thelang.io/echo?example:", " ", __THE_0_res4_0->__THE_0_status, THE_EOL);
   request_Response_free((struct request_Response *) __THE_0_res4_0);
   request_Response_free((struct request_Response *) __THE_0_res3_0);
   request_Response_free((struct request_Response *) __THE_0_res2_0);
@@ -684,7 +684,7 @@ int main () {
 ======= flags =======
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======
-GET http://example.com: 200
-POST http://example.com: 200
-GET https://example.com: 200
-POST https://example.com: 200
+GET http://ci.thelang.io/echo?example: 200
+POST http://ci.thelang.io/echo?example: 200
+GET https://ci.thelang.io/echo?example: 200
+POST https://ci.thelang.io/echo?example: 200

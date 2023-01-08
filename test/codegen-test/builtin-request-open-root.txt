@@ -1,9 +1,9 @@
 ======= stdin =======
 main {
-  request_open("GET", "http://example.com")
-  request_open("POST", "http://example.com")
-  request_open("GET", "https://example.com")
-  request_open("POST", "https://example.com")
+  request_open("GET", "http://ci.thelang.io/echo?example")
+  request_open("POST", "http://ci.thelang.io/echo?example")
+  request_open("GET", "https://ci.thelang.io/echo?example")
+  request_open("POST", "https://ci.thelang.io/echo?example")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -474,10 +474,10 @@ void url_URL_free (struct url_URL *o) {
 }
 
 int main () {
-  request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("http://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
-  request_Request_free((struct request_Request *) request_open(str_alloc("POST"), str_alloc("http://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
-  request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
-  request_Request_free((struct request_Request *) request_open(str_alloc("POST"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  request_Request_free((struct request_Request *) request_open(str_alloc("POST"), str_alloc("http://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  request_Request_free((struct request_Request *) request_open(str_alloc("POST"), str_alloc("https://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
 }
 ======= flags =======
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32

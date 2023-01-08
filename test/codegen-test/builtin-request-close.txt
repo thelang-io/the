@@ -1,8 +1,8 @@
 ======= stdin =======
 main {
-  mut req := request_open("GET", "http://example.com")
+  mut req := request_open("GET", "http://ci.thelang.io/echo?example")
   request_close(ref req)
-  req = request_open("GET", "https://example.com")
+  req = request_open("GET", "https://ci.thelang.io/echo?example")
   request_close(ref req)
 }
 ======= code =======
@@ -479,9 +479,9 @@ void url_URL_free (struct url_URL *o) {
 }
 
 int main () {
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("http://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
+  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
   request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://example.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
   request_close(&__THE_0_req_0);
   request_Request_free((struct request_Request *) __THE_0_req_0);
 }
