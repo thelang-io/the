@@ -89,6 +89,11 @@
 #define E0151 "E0151 - Expected right bracket"
 #define E0152 "E0152 - Expected array expression element"
 #define E0153 "E0153 - Expected function type arrow after arguments list"
+#define E0154 "E0154 - Expected enumeration identifier after enum keyword"
+#define E0155 "E0155 - Expected left brace after enumeration identifier"
+#define E0156 "E0156 - Expected enumeration member name"
+#define E0157 "E0157 - Expected enumeration member initializer"
+#define E0158 "E0158 - Enumerations should have at least one member"
 
 #define E1001 "E1001 - Tried accessing non existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

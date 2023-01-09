@@ -97,6 +97,57 @@ ParserStmt Parser::next (bool allowSemi) {
     return this->_wrapStmt(false, ParserStmtEmpty{}, tok0.start);
   }
 
+  if (tok0.type == TK_KW_ENUM) {
+    auto [_1, tok1] = this->lexer->next();
+
+    if (tok1.type != TK_ID) {
+      throw Error(this->reader, tok1.start, E0154);
+    }
+
+    auto [_2, tok2] = this->lexer->next();
+
+    if (tok2.type != TK_OP_LBRACE) {
+      throw Error(this->reader, tok2.start, E0155);
+    }
+
+    auto [_3, tok3] = this->lexer->next();
+    auto enumDeclMembers = std::vector<ParserStmtEnumDeclMember>{};
+
+    while (tok3.type != TK_OP_RBRACE) {
+      if (tok3.type == TK_ID) {
+        auto fieldId = tok3;
+        auto enumDeclMemberInit = std::optional<ParserStmtExpr>{};
+        auto [loc4, tok4] = this->lexer->next();
+
+        if (tok4.type == TK_OP_EQ) {
+          enumDeclMemberInit = this->_stmtExpr();
+
+          if (enumDeclMemberInit == std::nullopt) {
+            throw Error(this->reader, this->lexer->loc, E0157);
+          }
+        } else {
+          this->reader->seek(loc4);
+        }
+
+        enumDeclMembers.push_back(ParserStmtEnumDeclMember{fieldId, enumDeclMemberInit});
+      } else {
+        throw Error(this->reader, tok3.start, E0156);
+      }
+
+      std::tie(_3, tok3) = this->lexer->next();
+
+      if (tok3.type == TK_OP_COMMA) {
+        std::tie(_3, tok3) = this->lexer->next();
+      }
+    }
+
+    if (enumDeclMembers.empty()) {
+      throw Error(this->reader, tok0.start, E0158);
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtEnumDecl{tok1, enumDeclMembers}, tok0.start);
+  }
+
   if (tok0.type == TK_KW_FN) {
     auto [_1, tok1] = this->lexer->next();
 

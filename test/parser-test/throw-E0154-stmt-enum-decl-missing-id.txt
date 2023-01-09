@@ -1,0 +1,6 @@
+======= stdin =======
+enum {}
+======= stderr =======
+/test:1:6: E0154 - Expected enumeration identifier after enum keyword
+  1 | enum {}
+    |      ^

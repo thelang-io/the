@@ -23,6 +23,7 @@
 struct ParserStmtBreak;
 struct ParserStmtContinue;
 struct ParserStmtEmpty;
+struct ParserStmtEnumDecl;
 struct ParserStmtEof;
 struct ParserStmtFnDecl;
 struct ParserStmtIf;
@@ -36,6 +37,7 @@ using ParserStmtBody = std::variant<
   ParserStmtBreak,
   ParserStmtContinue,
   ParserStmtEmpty,
+  ParserStmtEnumDecl,
   ParserStmtEof,
   ParserStmtExpr,
   ParserStmtFnDecl,
@@ -64,6 +66,16 @@ struct ParserStmtContinue {
 };
 
 struct ParserStmtEmpty {
+};
+
+struct ParserStmtEnumDeclMember {
+  Token id;
+  std::optional<ParserStmtExpr> init;
+};
+
+struct ParserStmtEnumDecl {
+  Token id;
+  std::vector<ParserStmtEnumDeclMember> members;
 };
 
 struct ParserStmtEof {

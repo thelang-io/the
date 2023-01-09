@@ -1,0 +1,6 @@
+======= stdin =======
+enum Test { 1 }
+======= stderr =======
+/test:1:13: E0156 - Expected enumeration member name
+  1 | enum Test { 1 }
+    |             ^

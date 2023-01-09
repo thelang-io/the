@@ -52,6 +52,10 @@ INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
   "stmt-continue"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserPassTest, testing::Values(
+  "stmt-enum-decl"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-empty",
   "stmt-fn-decl",
@@ -173,6 +177,14 @@ INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
   "throw-E0103-missing-lbrace",
   "throw-E0104-missing-rbrace",
   "throw-E0136-stmt-expr-missing-expr"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserThrowTest, testing::Values(
+  "throw-E0154-stmt-enum-decl-missing-id",
+  "throw-E0155-stmt-enum-decl-missing-lbrace",
+  "throw-E0156-stmt-enum-decl-missing-member-name",
+  "throw-E0157-stmt-enum-decl-missing-member-init",
+  "throw-E0158-stmt-enum-decl-empty"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(

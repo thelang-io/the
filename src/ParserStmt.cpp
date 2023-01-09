@@ -40,6 +40,36 @@ std::string ParserStmt::xml (std::size_t indent) const {
     result += std::string(indent, ' ') + "<StmtContinue" + attrs + " />";
   } else if (std::holds_alternative<ParserStmtEmpty>(*this->body)) {
     result += std::string(indent, ' ') + "<StmtEmpty" + attrs + " />";
+  } else if (std::holds_alternative<ParserStmtEnumDecl>(*this->body)) {
+    auto stmtEnumDecl = std::get<ParserStmtEnumDecl>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtEnumDecl" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtEnumDeclId>" EOL;
+    result += stmtEnumDecl.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtEnumDeclId>" EOL;
+
+    if (!stmtEnumDecl.members.empty()) {
+      result += std::string(indent + 2, ' ') + "<StmtEnumDeclMembers>" EOL;
+
+      for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
+        result += std::string(indent + 4, ' ') + "<StmtEnumDeclMember>" EOL;
+        result += std::string(indent + 6, ' ') + "<StmtEnumDeclMemberId>" EOL;
+        result += stmtEnumDeclMember.id.xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</StmtEnumDeclMemberId>" EOL;
+
+        if (stmtEnumDeclMember.init != std::nullopt) {
+          result += std::string(indent + 6, ' ') + "<StmtEnumDeclMemberInit>" EOL;
+          result += stmtEnumDeclMember.init->xml(indent + 8) + EOL;
+          result += std::string(indent + 6, ' ') + "</StmtEnumDeclMemberInit>" EOL;
+        }
+
+        result += std::string(indent + 4, ' ') + "</StmtEnumDeclMember>" EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</StmtEnumDeclMembers>" EOL;
+    }
+
+    result += std::string(indent, ' ') + "</StmtEnumDecl>";
   } else if (std::holds_alternative<ParserStmtExpr>(*this->body)) {
     auto stmtExpr = std::get<ParserStmtExpr>(*this->body);
     result += stmtExpr.xml(indent);

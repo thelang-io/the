@@ -1,0 +1,6 @@
+======= stdin =======
+enum Test }
+======= stderr =======
+/test:1:11: E0155 - Expected left brace after enumeration identifier
+  1 | enum Test }
+    |           ^

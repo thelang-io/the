@@ -1,0 +1,6 @@
+======= stdin =======
+enum Test {}
+======= stderr =======
+/test:1:1: E0158 - Enumerations should have at least one member
+  1 | enum Test {}
+    | ^~~~~~~~~~~~

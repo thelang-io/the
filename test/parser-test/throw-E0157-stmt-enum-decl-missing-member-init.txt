@@ -1,0 +1,6 @@
+======= stdin =======
+enum Test { val = }
+======= stderr =======
+/test:1:18: E0157 - Expected enumeration member initializer
+  1 | enum Test { val = }
+    |                  ^
