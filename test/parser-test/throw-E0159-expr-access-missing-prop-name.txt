@@ -1,0 +1,6 @@
+======= stdin =======
+.;
+======= stderr =======
+/test:1:2: E0159 - Expected property name after dot
+  1 | .;
+    |  ^

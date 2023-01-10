@@ -1,0 +1,14 @@
+======= stdin =======
+.t;
+.west;
+======= stdout =======
+<ExprAccess start="1:1" end="1:3">
+  <ExprAccessProp>
+    <Token type="ID" val="t" start="1:2" end="1:3" />
+  </ExprAccessProp>
+</ExprAccess>
+<ExprAccess start="2:1" end="2:6">
+  <ExprAccessProp>
+    <Token type="ID" val="west" start="2:2" end="2:6" />
+  </ExprAccessProp>
+</ExprAccess>

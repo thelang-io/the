@@ -94,6 +94,7 @@
 #define E0156 "E0156 - Expected enumeration member name"
 #define E0157 "E0157 - Expected enumeration member initializer"
 #define E0158 "E0158 - Enumerations should have at least one member"
+#define E0159 "E0159 - Expected property name after dot"
 
 #define E1001 "E1001 - Tried accessing non existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

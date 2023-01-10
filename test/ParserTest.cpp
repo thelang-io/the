@@ -129,6 +129,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
+  "expr-access-member",
   "expr-access-associativity",
   "expr-array",
   "expr-assign",
@@ -286,7 +287,8 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0150-expr-access-elem-missing-expr",
   "throw-E0151-expr-access-missing-rbrack",
   "throw-E0151-type-array-missing-rbrack",
-  "throw-E0152-expr-array-missing-element"
+  "throw-E0152-expr-array-missing-element",
+  "throw-E0159-expr-access-missing-prop-name"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(

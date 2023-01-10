@@ -28,25 +28,25 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     auto exprAccess = std::get<ParserExprAccess>(*this->body);
     result += std::string(indent, ' ') + "<ExprAccess" + attrs + ">" EOL;
 
-    if (std::holds_alternative<Token>(exprAccess.expr)) {
-      auto tok = std::get<Token>(exprAccess.expr);
+    if (exprAccess.expr != std::nullopt && std::holds_alternative<Token>(*exprAccess.expr)) {
+      auto tok = std::get<Token>(*exprAccess.expr);
       result += tok.xml(indent + 2) + EOL;
-    } else {
-      auto stmtExpr = std::get<ParserStmtExpr>(exprAccess.expr);
+    } else if (exprAccess.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*exprAccess.expr)) {
+      auto stmtExpr = std::get<ParserStmtExpr>(*exprAccess.expr);
 
       result += std::string(indent + 2, ' ') + "<ExprAccessExpr>" EOL;
       result += stmtExpr.xml(indent + 4) + EOL;
       result += std::string(indent + 2, ' ') + "</ExprAccessExpr>" EOL;
+    }
 
-      if (exprAccess.elem != std::nullopt) {
-        result += std::string(indent + 2, ' ') + "<ExprAccessElem>" EOL;
-        result += exprAccess.elem->xml(indent + 4) + EOL;
-        result += std::string(indent + 2, ' ') + "</ExprAccessElem>" EOL;
-      } else if (exprAccess.prop != std::nullopt) {
-        result += std::string(indent + 2, ' ') + "<ExprAccessProp>" EOL;
-        result += exprAccess.prop->xml(indent + 4) + EOL;
-        result += std::string(indent + 2, ' ') + "</ExprAccessProp>" EOL;
-      }
+    if (exprAccess.elem != std::nullopt) {
+      result += std::string(indent + 2, ' ') + "<ExprAccessElem>" EOL;
+      result += exprAccess.elem->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</ExprAccessElem>" EOL;
+    } else if (exprAccess.prop != std::nullopt) {
+      result += std::string(indent + 2, ' ') + "<ExprAccessProp>" EOL;
+      result += exprAccess.prop->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</ExprAccessProp>" EOL;
     }
 
     result += std::string(indent, ' ') + "</ExprAccess>";

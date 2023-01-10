@@ -23,12 +23,12 @@ bool isExprAccessLvalue (const ParserStmtExpr &stmtExpr) {
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
 
-    if (std::holds_alternative<Token>(exprAccess.expr)) {
+    if (exprAccess.expr != std::nullopt && std::holds_alternative<Token>(*exprAccess.expr)) {
       return true;
+    } else if (exprAccess.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*exprAccess.expr)) {
+      auto exprAccessExpr = std::get<ParserStmtExpr>(*exprAccess.expr);
+      return exprAccess.prop != std::nullopt && isExprAccessLvalue(exprAccessExpr);
     }
-
-    auto exprAccessExpr = std::get<ParserStmtExpr>(exprAccess.expr);
-    return exprAccess.prop != std::nullopt && isExprAccessLvalue(exprAccessExpr);
   }
 
   return false;
@@ -38,16 +38,16 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
 
-    if (std::holds_alternative<Token>(exprAccess.expr)) {
-      auto tok = std::get<Token>(exprAccess.expr);
+    if (exprAccess.expr != std::nullopt && std::holds_alternative<Token>(*exprAccess.expr)) {
+      auto tok = std::get<Token>(*exprAccess.expr);
       return tok.val;
-    }
+    } else if (exprAccess.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*exprAccess.expr)) {
+      auto exprAccessExpr = std::get<ParserStmtExpr>(*exprAccess.expr);
+      auto objCode = stringifyExprAccess(exprAccessExpr);
 
-    auto exprAccessExpr = std::get<ParserStmtExpr>(exprAccess.expr);
-    auto objCode = stringifyExprAccess(exprAccessExpr);
-
-    if (exprAccess.prop != std::nullopt) {
-      return objCode + "." + exprAccess.prop->val;
+      if (exprAccess.prop != std::nullopt) {
+        return objCode + "." + exprAccess.prop->val;
+      }
     }
   }
 
@@ -563,8 +563,8 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     auto parserExprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
 
-    if (std::holds_alternative<Token>(parserExprAccess.expr)) {
-      auto tok = std::get<Token>(parserExprAccess.expr);
+    if (parserExprAccess.expr != std::nullopt && std::holds_alternative<Token>(*parserExprAccess.expr)) {
+      auto tok = std::get<Token>(*parserExprAccess.expr);
       auto var = this->varMap.get(tok.val);
 
       if (var == nullptr) {
@@ -573,35 +573,35 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
       varStack.mark(var);
       return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{var, std::nullopt, std::nullopt});
-    }
+    } else if (parserExprAccess.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*parserExprAccess.expr)) {
+      auto exprAccessStmtExpr = std::get<ParserStmtExpr>(*parserExprAccess.expr);
+      auto exprAccessExpr = ASTNodeExpr{};
+      auto initializedExprAccessExpr = false;
 
-    auto exprAccessStmtExpr = std::get<ParserStmtExpr>(parserExprAccess.expr);
-    auto exprAccessExpr = ASTNodeExpr{};
-    auto initializedExprAccessExpr = false;
+      if (parserExprAccess.prop != std::nullopt) {
+        auto exprAccessVarStack = VarStack({});
+        exprAccessExpr = this->_nodeExpr(exprAccessStmtExpr, nullptr, exprAccessVarStack);
 
-    if (parserExprAccess.prop != std::nullopt) {
-      auto exprAccessVarStack = VarStack({});
-      exprAccessExpr = this->_nodeExpr(exprAccessStmtExpr, nullptr, exprAccessVarStack);
-
-      if (
-        exprAccessExpr.type->hasProp(parserExprAccess.prop->val) &&
-        exprAccessExpr.type->getProp(parserExprAccess.prop->val)->isMethod()
-      ) {
-        auto propType = exprAccessExpr.type->getProp(parserExprAccess.prop->val);
-        varStack.mark(propType->codeName);
-        initializedExprAccessExpr = true;
+        if (
+          exprAccessExpr.type->hasProp(parserExprAccess.prop->val) &&
+            exprAccessExpr.type->getProp(parserExprAccess.prop->val)->isMethod()
+          ) {
+          auto propType = exprAccessExpr.type->getProp(parserExprAccess.prop->val);
+          varStack.mark(propType->codeName);
+          initializedExprAccessExpr = true;
+        }
       }
-    }
 
-    if (!initializedExprAccessExpr) {
-      exprAccessExpr = this->_nodeExpr(exprAccessStmtExpr, nullptr, varStack);
-    }
+      if (!initializedExprAccessExpr) {
+        exprAccessExpr = this->_nodeExpr(exprAccessStmtExpr, nullptr, varStack);
+      }
 
-    if (parserExprAccess.prop != std::nullopt) {
-      return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{exprAccessExpr, std::nullopt, parserExprAccess.prop->val});
-    } else if (parserExprAccess.elem != std::nullopt) {
-      auto exprAccessElem = this->_nodeExpr(*parserExprAccess.elem, nullptr, varStack);
-      return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{exprAccessExpr, exprAccessElem, std::nullopt});
+      if (parserExprAccess.prop != std::nullopt) {
+        return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{exprAccessExpr, std::nullopt, parserExprAccess.prop->val});
+      } else if (parserExprAccess.elem != std::nullopt) {
+        auto exprAccessElem = this->_nodeExpr(*parserExprAccess.elem, nullptr, varStack);
+        return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{exprAccessExpr, exprAccessElem, std::nullopt});
+      }
     }
   } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
     auto parserExprArray = std::get<ParserExprArray>(*stmtExpr.body);
@@ -857,8 +857,8 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
 
-    if (std::holds_alternative<Token>(exprAccess.expr)) {
-      auto tok = std::get<Token>(exprAccess.expr);
+    if (exprAccess.expr != std::nullopt && std::holds_alternative<Token>(*exprAccess.expr)) {
+      auto tok = std::get<Token>(*exprAccess.expr);
 
       if (!this->varMap.has(tok.val)) {
         throw Error(this->reader, tok.start, tok.end, E1011);
@@ -875,44 +875,44 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       }
 
       return this->_wrapNodeExprType(stmtExpr, targetType, type);
-    }
+    } else if (exprAccess.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*exprAccess.expr)) {
+      auto exprAccessStmtExpr = std::get<ParserStmtExpr>(*exprAccess.expr);
+      auto objType = this->_nodeExprType(exprAccessStmtExpr, nullptr);
+      auto objRealType = Type::real(objType);
 
-    auto exprAccessStmtExpr = std::get<ParserStmtExpr>(exprAccess.expr);
-    auto objType = this->_nodeExprType(exprAccessStmtExpr, nullptr);
-    auto objRealType = Type::real(objType);
-
-    if (exprAccess.prop != std::nullopt) {
-      if (!objType->hasProp(exprAccess.prop->val)) {
-        throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1001);
-      }
-
-      auto type = objType->getProp(exprAccess.prop->val);
-
-      if (isExprAccessLvalue(stmtExpr)) {
-        auto lvalueCode = stringifyExprAccess(stmtExpr);
-
-        if (this->typeCasts.contains(lvalueCode)) {
-          type = this->typeCasts[lvalueCode];
+      if (exprAccess.prop != std::nullopt) {
+        if (!objType->hasProp(exprAccess.prop->val)) {
+          throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1001);
         }
+
+        auto type = objType->getProp(exprAccess.prop->val);
+
+        if (isExprAccessLvalue(stmtExpr)) {
+          auto lvalueCode = stringifyExprAccess(stmtExpr);
+
+          if (this->typeCasts.contains(lvalueCode)) {
+            type = this->typeCasts[lvalueCode];
+          }
+        }
+
+        return this->_wrapNodeExprType(stmtExpr, targetType, type);
       }
 
-      return this->_wrapNodeExprType(stmtExpr, targetType, type);
+      auto exprAccessElemType = this->_nodeExprType(*exprAccess.elem, nullptr);
+
+      if (!exprAccessElemType->isIntNumber()) {
+        throw Error(this->reader, exprAccess.elem->start, exprAccess.elem->end, E1012);
+      }
+
+      if (objRealType->isArray()) {
+        auto typeArray = std::get<TypeArray>(objRealType->body);
+        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(typeArray.elementType));
+      } else if (objRealType->isStr()) {
+        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(this->typeMap.get("char")));
+      }
+
+      throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1013);
     }
-
-    auto exprAccessElemType = this->_nodeExprType(*exprAccess.elem, nullptr);
-
-    if (!exprAccessElemType->isIntNumber()) {
-      throw Error(this->reader, exprAccess.elem->start, exprAccess.elem->end, E1012);
-    }
-
-    if (objRealType->isArray()) {
-      auto typeArray = std::get<TypeArray>(objRealType->body);
-      return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(typeArray.elementType));
-    } else if (objRealType->isStr()) {
-      return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(this->typeMap.get("char")));
-    }
-
-    throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1013);
   } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
     auto realTargetType = static_cast<Type *>(nullptr);
 
