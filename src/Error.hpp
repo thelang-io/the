@@ -118,6 +118,10 @@
 #define E1020 "E1020 - Unable to deduce types for expression"
 #define E1021 "E1021 - Function declaration with name `main` is not allowed"
 #define E1022 "E1022 - Void type can only be used as function return type"
+// todo test
+#define E1023 "E1023 - Unable to deduce enumeration member type"
+// todo test
+#define E1024 "E1024 - Tried accessing non existing enumeration member"
 
 class Error : public std::exception {
  public:

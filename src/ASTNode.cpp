@@ -64,6 +64,29 @@ std::string ASTNode::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ASTNodeExpr>(*this->body)) {
     auto nodeExpr = std::get<ASTNodeExpr>(*this->body);
     result += nodeExpr.xml(indent);
+  } else if (std::holds_alternative<ASTNodeEnumDecl>(*this->body)) {
+    auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*this->body);
+
+    result += std::string(indent, ' ') + "<NodeEnumDecl>" EOL;
+    result += std::string(indent + 2, ' ') + "<NodeEnumDeclType>" EOL;
+    result += nodeEnumDecl.type->xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</NodeEnumDeclType>" EOL;
+    result += std::string(indent + 2, ' ') + "<NodeEnumDeclMembers>" EOL;
+
+    for (const auto &member : nodeEnumDecl.members) {
+      auto attrs = R"( id=")" + member.id + R"(")";
+
+      if (member.init == std::nullopt) {
+        result += std::string(indent + 4, ' ') + "<NodeEnumDeclMember" + attrs + " />" EOL;
+      } else {
+        result += std::string(indent + 4, ' ') + "<NodeEnumDeclMember" + attrs + ">" EOL;
+        result += member.init->xml(indent + 6) + EOL;
+        result += std::string(indent + 4, ' ') + "</NodeEnumDeclMember>" EOL;
+      }
+    }
+
+    result += std::string(indent + 2, ' ') + "</NodeEnumDeclMembers>" EOL;
+    result += std::string(indent, ' ') + "</NodeEnumDecl>";
   } else if (std::holds_alternative<ASTNodeFnDecl>(*this->body)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*this->body);
 

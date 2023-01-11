@@ -25,6 +25,7 @@ class TypeMap {
   std::vector<std::string> stack;
 
   Type *arrayOf (Type *);
+  Type *enumeration (const std::string &, const std::string &, const std::vector<TypeEnumMember> &);
   Type *fn (
     const std::optional<std::string> &,
     const std::vector<TypeFnParam> &,

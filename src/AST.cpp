@@ -48,6 +48,8 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
       if (exprAccess.prop != std::nullopt) {
         return objCode + "." + exprAccess.prop->val;
       }
+    } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
+      return "." + exprAccess.prop->val;
     }
   }
 
@@ -165,7 +167,6 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
         auto exprBinaryLeft = std::holds_alternative<ParserExprAccess>(*exprBinary.left.body) ? exprBinary.left : exprBinary.right;
         auto exprBinaryLeftType = this->_nodeExprType(exprBinaryLeft, nullptr);
         auto exprBinaryRight = std::holds_alternative<ParserExprLit>(*exprBinary.right.body) ? exprBinary.right : exprBinary.left;
-        auto exprBinaryLeftAccess = std::get<ParserExprAccess>(*exprBinaryLeft.body);
         auto exprBinaryRightLit = std::get<ParserExprLit>(*exprBinaryRight.body);
 
         if (isExprAccessLvalue(exprBinaryLeft) && exprBinaryLeftType->isOpt() && exprBinaryRightLit.body.type == TK_KW_NIL) {
@@ -207,7 +208,25 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
 
 void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
   for (const auto &stmt : block) {
-    if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
+    if (std::holds_alternative<ParserStmtEnumDecl>(*stmt.body)) {
+      auto stmtEnumDecl = std::get<ParserStmtEnumDecl>(*stmt.body);
+      auto enumName = stmtEnumDecl.id.val;
+
+      if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
+        auto nodeEnumDeclMembers = std::vector<TypeEnumMember>{};
+
+        for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
+          nodeEnumDeclMembers.push_back(TypeEnumMember{stmtEnumDeclMember.id.val});
+        }
+
+        auto enumCodeName = this->typeMap.name(enumName);
+
+        this->varMap.restore();
+        auto nodeEnumDeclVarType = this->typeMap.enumeration(enumName, enumCodeName, nodeEnumDeclMembers);
+
+        this->varMap.add(enumName, enumCodeName, nodeEnumDeclVarType, false);
+      }
+    } else if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
       auto nodeFnDeclName = stmtFnDecl.id.val;
 
@@ -341,6 +360,8 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
   } else if (std::holds_alternative<ParserStmtContinue>(*stmt.body)) {
     auto nodeContinue = ASTNodeContinue{};
     return this->_wrapNode(stmt, nodeContinue);
+  } else if (std::holds_alternative<ParserStmtEnumDecl>(*stmt.body)) {
+    // todo
   } else if (std::holds_alternative<ParserStmtExpr>(*stmt.body)) {
     auto stmtExpr = std::get<ParserStmtExpr>(*stmt.body);
     auto nodeExpr = this->_nodeExpr(stmtExpr, nullptr, varStack);
@@ -602,6 +623,8 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
         auto exprAccessElem = this->_nodeExpr(*parserExprAccess.elem, nullptr, varStack);
         return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{exprAccessExpr, exprAccessElem, std::nullopt});
       }
+    } else if (parserExprAccess.expr == std::nullopt && parserExprAccess.prop != std::nullopt) {
+      return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{std::nullopt, std::nullopt, parserExprAccess.prop->val});
     }
   } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
     auto parserExprArray = std::get<ParserExprArray>(*stmtExpr.body);
@@ -896,22 +919,30 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
         }
 
         return this->_wrapNodeExprType(stmtExpr, targetType, type);
+      } else {
+        auto exprAccessElemType = this->_nodeExprType(*exprAccess.elem, nullptr);
+
+        if (!exprAccessElemType->isIntNumber()) {
+          throw Error(this->reader, exprAccess.elem->start, exprAccess.elem->end, E1012);
+        }
+
+        if (objRealType->isArray()) {
+          auto typeArray = std::get<TypeArray>(objRealType->body);
+          return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(typeArray.elementType));
+        } else if (objRealType->isStr()) {
+          return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(this->typeMap.get("char")));
+        }
+
+        throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1013);
+      }
+    } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
+      if (targetType == nullptr || !targetType->isEnum()) {
+        throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1023);
+      } else if (!targetType->hasMember(exprAccess.prop->val)) {
+        throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1024);
       }
 
-      auto exprAccessElemType = this->_nodeExprType(*exprAccess.elem, nullptr);
-
-      if (!exprAccessElemType->isIntNumber()) {
-        throw Error(this->reader, exprAccess.elem->start, exprAccess.elem->end, E1012);
-      }
-
-      if (objRealType->isArray()) {
-        auto typeArray = std::get<TypeArray>(objRealType->body);
-        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(typeArray.elementType));
-      } else if (objRealType->isStr()) {
-        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(this->typeMap.get("char")));
-      }
-
-      throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1013);
+      return this->_wrapNodeExprType(stmtExpr, targetType, targetType);
     }
   } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
     auto realTargetType = static_cast<Type *>(nullptr);

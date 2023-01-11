@@ -2733,8 +2733,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
     auto code = std::string();
 
-    if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.expr)) {
-      auto objVar = std::get<std::shared_ptr<Var>>(exprAccess.expr);
+    if (exprAccess.expr != std::nullopt && std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
+      auto objVar = std::get<std::shared_ptr<Var>>(*exprAccess.expr);
 
       if (objVar->builtin && objVar->codeName == "@os_EOL") {
         this->_activateBuiltin("definitions");
@@ -2779,75 +2779,75 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
-    }
+    } else if (exprAccess.expr != std::nullopt && std::holds_alternative<ASTNodeExpr>(*exprAccess.expr)) {
+      auto objNodeExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
+      auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
+      auto originalObjMemberType = nodeExpr.type;
 
-    auto objNodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
-    auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
-    auto originalObjMemberType = nodeExpr.type;
+      if (exprAccess.prop == "len" && objTypeInfo.realType->isArray()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
 
-    if (exprAccess.prop == "len" && objTypeInfo.realType->isArray()) {
-      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        if (!objNodeExpr.parenthesized) {
+          objCode = "(" + objCode + ")";
+        }
 
-      if (!objNodeExpr.parenthesized) {
-        objCode = "(" + objCode + ")";
-      }
+        this->_activateEntity(objTypeInfo.realTypeName + "_len");
+        code = objTypeInfo.realTypeName + "_len" + objCode;
+      } else if (exprAccess.prop == "len" && objTypeInfo.realType->isStr()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        this->_activateBuiltin("fnStrLen");
 
-      this->_activateEntity(objTypeInfo.realTypeName + "_len");
-      code = objTypeInfo.realTypeName + "_len" + objCode;
-    } else if (exprAccess.prop == "len" && objTypeInfo.realType->isStr()) {
-      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-      this->_activateBuiltin("fnStrLen");
+        if (objNodeExpr.parenthesized) {
+          code = "str_len" + objCode;
+        } else {
+          code = "str_len(" + objCode + ")";
+        }
+      } else if (exprAccess.prop != std::nullopt) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
 
-      if (objNodeExpr.parenthesized) {
-        code = "str_len" + objCode;
-      } else {
-        code = "str_len(" + objCode + ")";
-      }
-    } else if (exprAccess.prop != std::nullopt) {
-      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
+        if (objCode.starts_with("*")) {
+          objCode = "(" + objCode + ")";
+        }
 
-      if (objCode.starts_with("*")) {
-        objCode = "(" + objCode + ")";
-      }
+        code = objCode + "->" + Codegen::name(*exprAccess.prop);
 
-      code = objCode + "->" + Codegen::name(*exprAccess.prop);
+        for (const auto &field : objTypeInfo.realType->fields) {
+          if (field.name == *exprAccess.prop) {
+            originalObjMemberType = field.type;
+            break;
+          }
+        }
+      } else if (exprAccess.elem != std::nullopt) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
+        auto objElemCode = this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type);
 
-      for (const auto &field : objTypeInfo.realType->fields) {
-        if (field.name == *exprAccess.prop) {
-          originalObjMemberType = field.type;
-          break;
+        if (objTypeInfo.realType->isArray()) {
+          this->_activateEntity(objTypeInfo.realTypeName + "_at");
+          code = objTypeInfo.realTypeName + "_at(" + objCode + ", " + objElemCode + ")";
+        } else if (objTypeInfo.realType->isStr()) {
+          this->_activateBuiltin("fnStrAt");
+          code = "str_at(" + objCode + ", " + objElemCode + ")";
         }
       }
-    } else if (exprAccess.elem != std::nullopt) {
-      auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
-      auto objElemCode = this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type);
 
-      if (objTypeInfo.realType->isArray()) {
-        this->_activateEntity(objTypeInfo.realTypeName + "_at");
-        code = objTypeInfo.realTypeName + "_at(" + objCode + ", " + objElemCode + ")";
-      } else if (objTypeInfo.realType->isStr()) {
-        this->_activateBuiltin("fnStrAt");
-        code = "str_at(" + objCode + ", " + objElemCode + ")";
+      auto objMemberType = this->state.typeCasts.contains(code) ? this->state.typeCasts[code] : originalObjMemberType;
+
+      if (originalObjMemberType->isOpt() && !objMemberType->isOpt()) {
+        code = "*" + code;
       }
+
+      if (!nodeExpr.type->isRef() && targetType->isRef()) {
+        code = "&" + code;
+      } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
+        code = "*" + code;
+      }
+
+      if (!root && (!nodeExpr.type->isRef() || !targetType->isRef())) {
+        code = this->_genCopyFn(Type::real(nodeExpr.type), code);
+      }
+
+      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
     }
-
-    auto objMemberType = this->state.typeCasts.contains(code) ? this->state.typeCasts[code] : originalObjMemberType;
-
-    if (originalObjMemberType->isOpt() && !objMemberType->isOpt()) {
-      code = "*" + code;
-    }
-
-    if (!nodeExpr.type->isRef() && targetType->isRef()) {
-      code = "&" + code;
-    } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
-      code = "*" + code;
-    }
-
-    if (!root && (!nodeExpr.type->isRef() || !targetType->isRef())) {
-      code = this->_genCopyFn(Type::real(nodeExpr.type), code);
-    }
-
-    return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
     auto exprArray = std::get<ASTExprArray>(*nodeExpr.body);
     auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
@@ -3303,7 +3303,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code = this->_apiEval("_{url_parse}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin) {
       auto calleeExprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
-      auto calleeNodeExpr = std::get<ASTNodeExpr>(calleeExprAccess.expr);
+      auto calleeNodeExpr = std::get<ASTNodeExpr>(*calleeExprAccess.expr);
       auto calleeTypeInfo = this->_typeInfo(calleeNodeExpr.type);
 
       if (exprCallCalleeTypeInfo.realType->codeName.ends_with(".str")) {
@@ -3549,7 +3549,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       if (fn.isMethod && fn.methodInfo.isSelfFirst) {
         auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
-        auto nodeExprAccess = std::get<ASTNodeExpr>(exprAccess.expr);
+        auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
 
         code += ", " + this->_genCopyFn(fn.methodInfo.selfType, this->_nodeExpr(nodeExprAccess, fn.methodInfo.selfType, true));
       }

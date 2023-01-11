@@ -60,6 +60,25 @@ Type *TypeMap::arrayOf (Type *elementType) {
   return selfType;
 }
 
+Type *TypeMap::enumeration (const std::string &name, const std::string &codeName, const std::vector<TypeEnumMember> &members) {
+  auto typeBody = TypeEnum{members};
+  auto newType = Type{name, codeName, typeBody};
+
+  for (auto &item : this->_items) {
+    if (!item->builtin && item->codeName == newType.codeName) {
+      return item.get();
+    }
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  auto selfType = this->_items.back().get();
+
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@enum.str", TypeFn{this->get("str")}, {}, true}));
+  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
+
+  return selfType;
+}
+
 Type *TypeMap::fn (
   const std::optional<std::string> &codeName,
   const std::vector<TypeFnParam> &params,

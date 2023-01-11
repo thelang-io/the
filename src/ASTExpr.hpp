@@ -112,7 +112,7 @@ struct ASTNodeExpr {
 };
 
 struct ASTExprAccess {
-  std::variant<std::shared_ptr<Var>, ASTNodeExpr> expr;
+  std::optional<std::variant<std::shared_ptr<Var>, ASTNodeExpr>> expr;
   std::optional<ASTNodeExpr> elem;
   std::optional<std::string> prop;
 };

@@ -107,6 +107,20 @@ Type *Type::getProp (const std::string &propName) const {
   return typeField->type;
 }
 
+bool Type::hasMember (const std::string &memberName) const {
+  if (!this->isEnum()) {
+    return false;
+  }
+
+  auto typeEnum = std::get<TypeEnum>(this->body);
+
+  auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
+    return it.name == memberName;
+  });
+
+  return typeMember != typeEnum.members.end();
+}
+
 bool Type::hasProp (const std::string &propName) const {
   if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->hasProp(propName);
@@ -137,6 +151,10 @@ bool Type::isByte () const {
 
 bool Type::isChar () const {
   return this->name == "char";
+}
+
+bool Type::isEnum () const {
+  return std::holds_alternative<TypeEnum>(this->body);
 }
 
 bool Type::isF32 () const {
@@ -201,6 +219,7 @@ bool Type::isObj () const {
     !this->isBool() &&
     !this->isByte() &&
     !this->isChar() &&
+    !this->isEnum() &&
     !this->isNumber() &&
     !this->isFn() &&
     !this->isOpt() &&
@@ -262,6 +281,7 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
+// todo enum
 bool Type::match (const Type *type) const {
   if (this->name == "any") {
     return true;
@@ -345,6 +365,7 @@ bool Type::match (const Type *type) const {
     numberTypeMatch(this->name, type->name);
 }
 
+// todo enum
 bool Type::matchExact (const Type *type) const {
   if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
@@ -414,6 +435,7 @@ bool Type::matchExact (const Type *type) const {
   return this->name == type->name;
 }
 
+// todo enum
 bool Type::matchNice (const Type *type) const {
   if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
@@ -496,6 +518,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   if (this->isArray()) {
     typeName += "Array";
+  } else if (this->isEnum()) {
+    typeName += "Enum";
   } else if (this->isFn()) {
     typeName += "Fn";
   } else if (this->isObj()) {
@@ -520,6 +544,12 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
     result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
+  } else if (this->isEnum()) {
+    auto typeEnum = std::get<TypeEnum>(this->body);
+
+    for (const auto &member : typeEnum.members) {
+      result += std::string(indent + 2, ' ') + R"(<TypeEnumMember name=")" + member.name + R"(" />)" EOL;
+    }
   } else if (this->isFn()) {
     auto typeFn = std::get<TypeFn>(this->body);
 
