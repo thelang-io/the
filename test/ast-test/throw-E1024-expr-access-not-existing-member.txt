@@ -1,0 +1,13 @@
+======= stdin =======
+enum Color {
+  Red,
+  Brown
+}
+
+main {
+  test: Color = .Green
+}
+======= stderr =======
+/test:7:17: E1024 - Tried accessing non-existing enumeration member
+  7 |   test: Color = .Green
+    |                 ^~~~~~

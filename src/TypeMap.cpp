@@ -73,6 +73,7 @@ Type *TypeMap::enumeration (const std::string &name, const std::string &codeName
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
 
+  selfType->fields.push_back(TypeField{"rawValue", this->get("str"), false, false, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@enum.str", TypeFn{this->get("str")}, {}, true}));
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
 

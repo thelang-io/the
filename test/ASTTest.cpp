@@ -49,6 +49,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-break",
   "node-continue",
   "node-empty",
+  "node-enum-decl",
   "node-expr",
   "node-fn-decl",
   "node-fn-decl-param-init",
@@ -76,6 +77,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
+  "expr-access-member",
   "expr-array",
   "expr-array-root",
   "expr-assign",
@@ -146,5 +148,8 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1022-node-obj-decl-method-void-param-type",
   "throw-E1022-node-obj-decl-void-field-type",
   "throw-E1022-node-var-decl-void-type",
-  "throw-E1022-node-var-decl-void-init"
+  "throw-E1022-node-var-decl-void-init",
+  "throw-E1023-node-var-decl-unknown-member-type",
+  "throw-E1024-expr-access-not-existing-member",
+  "throw-E1024-expr-access-enum-not-existing-member"
 ));

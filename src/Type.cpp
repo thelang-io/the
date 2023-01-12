@@ -91,6 +91,24 @@ Type *Type::largest (Type *a, Type *b) {
   ) ? a : b;
 }
 
+TypeEnumMember Type::getEnumMember (const std::string &memberName) const {
+  if (!this->isEnum()) {
+    throw Error("tried to get a member of non-enum");
+  }
+
+  auto typeEnum = std::get<TypeEnum>(this->body);
+
+  auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
+    return it.name == memberName;
+  });
+
+  if (typeMember == typeEnum.members.end()) {
+    throw Error("tried to get non-existing enum member");
+  }
+
+  return *typeMember;
+}
+
 Type *Type::getProp (const std::string &propName) const {
   if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->getProp(propName);
@@ -107,7 +125,7 @@ Type *Type::getProp (const std::string &propName) const {
   return typeField->type;
 }
 
-bool Type::hasMember (const std::string &memberName) const {
+bool Type::hasEnumMember (const std::string &memberName) const {
   if (!this->isEnum()) {
     return false;
   }
@@ -281,7 +299,6 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
-// todo enum
 bool Type::match (const Type *type) const {
   if (this->name == "any") {
     return true;
@@ -307,6 +324,12 @@ bool Type::match (const Type *type) const {
     auto rhsArray = std::get<TypeArray>(type->body);
 
     return lhsArray.elementType->match(rhsArray.elementType);
+  } else if (this->isEnum() || type->isEnum()) {
+    if (this->isEnum() && type->isEnum()) {
+      return type->name == this->name;
+    }
+
+    return this->isInt() || type->isInt();
   } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -365,7 +388,6 @@ bool Type::match (const Type *type) const {
     numberTypeMatch(this->name, type->name);
 }
 
-// todo enum
 bool Type::matchExact (const Type *type) const {
   if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
@@ -435,7 +457,6 @@ bool Type::matchExact (const Type *type) const {
   return this->name == type->name;
 }
 
-// todo enum
 bool Type::matchNice (const Type *type) const {
   if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
@@ -548,7 +569,10 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     auto typeEnum = std::get<TypeEnum>(this->body);
 
     for (const auto &member : typeEnum.members) {
-      result += std::string(indent + 2, ' ') + R"(<TypeEnumMember name=")" + member.name + R"(" />)" EOL;
+      auto attrs = R"( codeName=")" + member.codeName + R"(")";
+      attrs += R"( name=")" + member.name + R"(")";
+
+      result += std::string(indent + 2, ' ') + "<TypeEnumMember" + attrs + " />" EOL;
     }
   } else if (this->isFn()) {
     auto typeFn = std::get<TypeFn>(this->body);

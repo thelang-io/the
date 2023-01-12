@@ -40,6 +40,7 @@ struct TypeArray {
 
 struct TypeEnumMember {
   std::string name;
+  std::string codeName;
 };
 
 struct TypeEnum {
@@ -89,9 +90,10 @@ struct Type {
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
-  bool hasMember (const std::string &) const;
-  bool hasProp (const std::string &) const;
+  TypeEnumMember getEnumMember (const std::string &) const;
   Type *getProp (const std::string &) const;
+  bool hasEnumMember (const std::string &) const;
+  bool hasProp (const std::string &) const;
   bool isAny () const;
   bool isArray () const;
   bool isBool () const;

@@ -48,8 +48,6 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
       if (exprAccess.prop != std::nullopt) {
         return objCode + "." + exprAccess.prop->val;
       }
-    } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
-      return "." + exprAccess.prop->val;
     }
   }
 
@@ -213,18 +211,21 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto enumName = stmtEnumDecl.id.val;
 
       if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
-        auto nodeEnumDeclMembers = std::vector<TypeEnumMember>{};
+        auto enumMembers = std::vector<TypeEnumMember>{};
+        this->typeMap.stack.emplace_back(enumName);
 
         for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
-          nodeEnumDeclMembers.push_back(TypeEnumMember{stmtEnumDeclMember.id.val});
+          auto enumMemberName = stmtEnumDeclMember.id.val;
+          auto enumMemberCodeName = this->typeMap.name(enumMemberName);
+
+          enumMembers.push_back(TypeEnumMember{enumMemberName, enumMemberCodeName});
         }
 
+        this->typeMap.stack.pop_back();
         auto enumCodeName = this->typeMap.name(enumName);
+        auto enumType = this->typeMap.enumeration(enumName, enumCodeName, enumMembers);
 
-        this->varMap.restore();
-        auto nodeEnumDeclVarType = this->typeMap.enumeration(enumName, enumCodeName, nodeEnumDeclMembers);
-
-        this->varMap.add(enumName, enumCodeName, nodeEnumDeclVarType, false);
+        this->varMap.add(enumName, enumCodeName, enumType, false);
       }
     } else if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
@@ -361,7 +362,22 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto nodeContinue = ASTNodeContinue{};
     return this->_wrapNode(stmt, nodeContinue);
   } else if (std::holds_alternative<ParserStmtEnumDecl>(*stmt.body)) {
-    // todo
+    auto stmtEnumDecl = std::get<ParserStmtEnumDecl>(*stmt.body);
+    auto type = this->typeMap.get(stmtEnumDecl.id.val);
+    auto nodeEnumDeclMembers = std::vector<ASTNodeEnumDeclMember>{};
+
+    for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
+      auto memberInit = std::optional<ASTNodeExpr>{};
+
+      if (stmtEnumDeclMember.init != std::nullopt) {
+        memberInit = this->_nodeExpr(*stmtEnumDeclMember.init, this->typeMap.get("int"), varStack);
+      }
+
+      nodeEnumDeclMembers.push_back(ASTNodeEnumDeclMember{stmtEnumDeclMember.id.val, memberInit});
+    }
+
+    auto nodeEnumDecl = ASTNodeEnumDecl{type, nodeEnumDeclMembers};
+    return this->_wrapNode(stmt, nodeEnumDecl);
   } else if (std::holds_alternative<ParserStmtExpr>(*stmt.body)) {
     auto stmtExpr = std::get<ParserStmtExpr>(*stmt.body);
     auto nodeExpr = this->_nodeExpr(stmtExpr, nullptr, varStack);
@@ -904,11 +920,21 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       auto objRealType = Type::real(objType);
 
       if (exprAccess.prop != std::nullopt) {
-        if (!objType->hasProp(exprAccess.prop->val)) {
-          throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1001);
-        }
+        auto type = static_cast<Type *>(nullptr);
 
-        auto type = objType->getProp(exprAccess.prop->val);
+        if (objType->isEnum()) {
+          if (objType->hasEnumMember(exprAccess.prop->val)) {
+            type = objType;
+          } else if (objType->hasProp(exprAccess.prop->val)) {
+            type = objType->getProp(exprAccess.prop->val);
+          } else {
+            throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1024);
+          }
+        } else if (!objType->hasProp(exprAccess.prop->val)) {
+          throw Error(this->reader, exprAccess.prop->start, exprAccess.prop->end, E1001);
+        } else {
+          type = objType->getProp(exprAccess.prop->val);
+        }
 
         if (isExprAccessLvalue(stmtExpr)) {
           auto lvalueCode = stringifyExprAccess(stmtExpr);
@@ -938,7 +964,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
       if (targetType == nullptr || !targetType->isEnum()) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1023);
-      } else if (!targetType->hasMember(exprAccess.prop->val)) {
+      } else if (!targetType->hasEnumMember(exprAccess.prop->val)) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1024);
       }
 
