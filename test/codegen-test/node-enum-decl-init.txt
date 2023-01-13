@@ -1,0 +1,19 @@
+======= stdin =======
+enum RGB {
+  Red = 1,
+  Green = 1 << 2,
+  Blue = "you".len
+}
+
+main {
+  red := RGB.Red
+  green: RGB = .Green
+  blue: RGB = RGB.Blue
+
+  print(red, red.str(), red.rawValue)
+  print(green, green.str(), green.rawValue)
+  print(blue, blue.str(), blue.rawValue)
+}
+======= code =======
+======= flags =======
+======= stdout =======

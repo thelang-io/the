@@ -1,0 +1,21 @@
+======= stdin =======
+enum RGB {
+  Red,
+  Green,
+  Blue
+}
+
+main {
+  mut color := RGB.Red
+  green: RGB = .Green
+  blue := RGB.Blue
+
+  color = .Green
+  color = RGB.Green
+
+  print(color, color.str(), color.rawValue)
+  print(RGB.Red, RGB.Red.str(), RGB.Red.rawValue)
+}
+======= code =======
+======= flags =======
+======= stdout =======
