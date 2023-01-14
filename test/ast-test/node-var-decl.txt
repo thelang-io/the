@@ -174,7 +174,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <BuiltinType name="int" />
+          <BuiltinType name="i32" />
         </NodeExprType>
         <NodeExprBody>
           <ExprLit type="INT_DEC" value="2" />
@@ -266,7 +266,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <BuiltinType name="float" />
+          <BuiltinType name="f32" />
         </NodeExprType>
         <NodeExprBody>
           <ExprLit type="FLOAT" value="3.14" />
@@ -438,7 +438,7 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <BuiltinType name="float" />
+              <BuiltinType name="f32" />
             </NodeExprType>
             <NodeExprBody>
               <ExprLit type="FLOAT" value="2.16" />

@@ -71,6 +71,7 @@ struct CodegenBuiltins {
   bool fnCstrEqStr = false;
   bool fnCstrNeCstr = false;
   bool fnCstrNeStr = false;
+  bool fnEnumStr = false;
   bool fnF32Str = false;
   bool fnF64Str = false;
   bool fnFloatStr = false;

@@ -91,7 +91,7 @@ Type *Type::largest (Type *a, Type *b) {
   ) ? a : b;
 }
 
-TypeEnumMember Type::getEnumMember (const std::string &memberName) const {
+Type *Type::getEnumerator (const std::string &memberName) const {
   if (!this->isEnum()) {
     throw Error("tried to get a member of non-enum");
   }
@@ -99,7 +99,7 @@ TypeEnumMember Type::getEnumMember (const std::string &memberName) const {
   auto typeEnum = std::get<TypeEnum>(this->body);
 
   auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
-    return it.name == memberName;
+    return it->name == memberName;
   });
 
   if (typeMember == typeEnum.members.end()) {
@@ -125,7 +125,7 @@ Type *Type::getProp (const std::string &propName) const {
   return typeField->type;
 }
 
-bool Type::hasEnumMember (const std::string &memberName) const {
+bool Type::hasEnumerator (const std::string &memberName) const {
   if (!this->isEnum()) {
     return false;
   }
@@ -133,7 +133,7 @@ bool Type::hasEnumMember (const std::string &memberName) const {
   auto typeEnum = std::get<TypeEnum>(this->body);
 
   auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
-    return it.name == memberName;
+    return it->name == memberName;
   });
 
   return typeMember != typeEnum.members.end();
@@ -173,6 +173,10 @@ bool Type::isChar () const {
 
 bool Type::isEnum () const {
   return std::holds_alternative<TypeEnum>(this->body);
+}
+
+bool Type::isEnumerator () const {
+  return std::holds_alternative<TypeEnumerator>(this->body);
 }
 
 bool Type::isF32 () const {
@@ -541,6 +545,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     typeName += "Array";
   } else if (this->isEnum()) {
     typeName += "Enum";
+  } else if (this->isEnumerator()) {
+    typeName += "Enum";
   } else if (this->isFn()) {
     typeName += "Fn";
   } else if (this->isObj()) {
@@ -556,7 +562,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
 
-  if (this->isObj() && parentTypes.contains(this->codeName)) {
+  if (this->isEnumerator() || (this->isObj() && parentTypes.contains(this->codeName))) {
     return result + " />";
   }
 
@@ -569,10 +575,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     auto typeEnum = std::get<TypeEnum>(this->body);
 
     for (const auto &member : typeEnum.members) {
-      auto attrs = R"( codeName=")" + member.codeName + R"(")";
-      attrs += R"( name=")" + member.name + R"(")";
-
-      result += std::string(indent + 2, ' ') + "<TypeEnumMember" + attrs + " />" EOL;
+      result += member->xml(indent + 2, parentTypes) + EOL;
     }
   } else if (this->isFn()) {
     auto typeFn = std::get<TypeFn>(this->body);

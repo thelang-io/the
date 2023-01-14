@@ -1,20 +1,16 @@
 ======= stdin =======
-enum RGB {
+enum Color {
   Red,
   Green,
   Blue
 }
 
 main {
-  mut color := RGB.Red
-  green: RGB = .Green
-  blue := RGB.Blue
+  arr: Color[] = [.Red, .Green, .Blue]
 
-  color = .Green
-  color = RGB.Green
-
-  print(color, color.str(), color.rawValue)
-  print(RGB.Red, RGB.Red.str(), RGB.Red.rawValue)
+  loop i := 0; i < arr.len; i++ {
+    print(arr[i].str())
+  }
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -37,14 +33,21 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_RGB_0 {
-  __THE_0_RGBSDRed_0,
-  __THE_0_RGBSDGreen_0,
-  __THE_0_RGBSDBlue_0
+enum __THE_1_Color_0 {
+  __THE_0_ColorSDRed_0,
+  __THE_0_ColorSDGreen_0,
+  __THE_0_ColorSDBlue_0
 };
 
 struct str {
   char *d;
+  size_t l;
+};
+
+struct __THE_1_array_Color;
+
+struct __THE_1_array_Color {
+  enum __THE_1_Color_0 *d;
   size_t l;
 };
 
@@ -53,7 +56,11 @@ struct str enum_str (int);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct str __THE_1_RGB_0_rawValue (enum __THE_1_RGB_0);
+struct __THE_1_array_Color __THE_1_array_Color_alloc (size_t, ...);
+enum __THE_1_Color_0 *__THE_1_array_Color_at (struct __THE_1_array_Color, int64_t);
+struct __THE_1_array_Color __THE_1_array_Color_copy (const struct __THE_1_array_Color);
+void __THE_1_array_Color_free (struct __THE_1_array_Color);
+size_t __THE_1_array_Color_len (struct __THE_1_array_Color);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -106,22 +113,46 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str __THE_1_RGB_0_rawValue (enum __THE_1_RGB_0 n) {
-  if (n == __THE_0_RGBSDRed_0) return str_alloc("Red");
-  if (n == __THE_0_RGBSDGreen_0) return str_alloc("Green");
-  if (n == __THE_0_RGBSDBlue_0) return str_alloc("Blue");
+struct __THE_1_array_Color __THE_1_array_Color_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_Color) {NULL, 0};
+  enum __THE_1_Color_0 *d = alloc(x * sizeof(enum __THE_1_Color_0));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, enum __THE_1_Color_0);
+  va_end(args);
+  return (struct __THE_1_array_Color) {d, x};
+}
+enum __THE_1_Color_0 *__THE_1_array_Color_at (struct __THE_1_array_Color n, int64_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+    exit(EXIT_FAILURE);
+  }
+  return i < 0 ? &n.d[n.l + i] : &n.d[i];
+}
+struct __THE_1_array_Color __THE_1_array_Color_copy (const struct __THE_1_array_Color n) {
+  if (n.l == 0) return (struct __THE_1_array_Color) {NULL, 0};
+  enum __THE_1_Color_0 *d = alloc(n.l * sizeof(enum __THE_1_Color_0));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
+  return (struct __THE_1_array_Color) {d, n.l};
+}
+void __THE_1_array_Color_free (struct __THE_1_array_Color n) {
+  free(n.d);
+}
+size_t __THE_1_array_Color_len (struct __THE_1_array_Color n) {
+  size_t l = n.l;
+  __THE_1_array_Color_free((struct __THE_1_array_Color) n);
+  return l;
 }
 
 int main () {
-  enum __THE_1_RGB_0 __THE_0_color_0 = __THE_0_RGBSDRed_0;
-  const enum __THE_1_RGB_0 __THE_0_green_0 = __THE_0_RGBSDGreen_0;
-  const enum __THE_1_RGB_0 __THE_0_blue_0 = __THE_0_RGBSDBlue_0;
-  __THE_0_color_0 = __THE_0_RGBSDGreen_0;
-  __THE_0_color_0 = __THE_0_RGBSDGreen_0;
-  print(stdout, "szszsz", enum_str((int) __THE_0_color_0), " ", enum_str((int) __THE_0_color_0), " ", __THE_1_RGB_0_rawValue(__THE_0_color_0), THE_EOL);
-  print(stdout, "szszsz", enum_str((int) __THE_0_RGBSDRed_0), " ", enum_str((int) __THE_0_RGBSDRed_0), " ", __THE_1_RGB_0_rawValue(__THE_0_RGBSDRed_0), THE_EOL);
+  const struct __THE_1_array_Color __THE_0_arr_0 = __THE_1_array_Color_alloc(3, __THE_0_ColorSDRed_0, __THE_0_ColorSDGreen_0, __THE_0_ColorSDBlue_0);
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_Color_len(__THE_1_array_Color_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+    print(stdout, "sz", enum_str((int) *__THE_1_array_Color_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
+  }
+  __THE_1_array_Color_free((struct __THE_1_array_Color) __THE_0_arr_0);
 }
 ======= flags =======
 ======= stdout =======
-1 1 Green
-0 0 Red
+Red
+Green
+Blue

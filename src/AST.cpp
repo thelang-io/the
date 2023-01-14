@@ -211,14 +211,11 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto enumName = stmtEnumDecl.id.val;
 
       if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
-        auto enumMembers = std::vector<TypeEnumMember>{};
+        auto enumMembers = std::vector<Type *>{};
         this->typeMap.stack.emplace_back(enumName);
 
         for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
-          auto enumMemberName = stmtEnumDeclMember.id.val;
-          auto enumMemberCodeName = this->typeMap.name(enumMemberName);
-
-          enumMembers.push_back(TypeEnumMember{enumMemberName, enumMemberCodeName});
+          enumMembers.push_back(this->typeMap.enumerator(stmtEnumDeclMember.id.val));
         }
 
         this->typeMap.stack.pop_back();
@@ -780,15 +777,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       auto exprCallArgExpr = this->_nodeExpr(parserExprCallArg.expr, foundParamType, varStack);
 
       if (!foundParamType->match(exprCallArgExpr.type)) {
-        if (
-          exprCallArgExpr.type->isIntNumber() &&
-          std::holds_alternative<ParserExprLit>(*parserExprCallArg.expr.body) &&
-          (foundParamType->isByte() || foundParamType->isIntNumber())
-        ) {
-          exprCallArgExpr.type = foundParamType;
-        } else {
-          throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1008);
-        }
+        throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1008);
       }
 
       exprCallArgs.push_back(ASTExprCallArg{foundParam->name, exprCallArgExpr});
@@ -923,7 +912,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
         auto type = static_cast<Type *>(nullptr);
 
         if (objType->isEnum()) {
-          if (objType->hasEnumMember(exprAccess.prop->val)) {
+          if (objType->hasEnumerator(exprAccess.prop->val)) {
             type = objType;
           } else if (objType->hasProp(exprAccess.prop->val)) {
             type = objType->getProp(exprAccess.prop->val);
@@ -964,7 +953,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
       if (targetType == nullptr || !targetType->isEnum()) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1023);
-      } else if (!targetType->hasEnumMember(exprAccess.prop->val)) {
+      } else if (!targetType->hasEnumerator(exprAccess.prop->val)) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1024);
       }
 
@@ -989,7 +978,9 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       return this->_wrapNodeExprType(stmtExpr, targetType, realTargetType);
     }
 
-    auto elementsType = static_cast<Type *>(nullptr);
+    auto elementsType = realTargetType == nullptr
+      ? static_cast<Type *>(nullptr)
+      : std::get<TypeArray>(realTargetType->body).elementType;
 
     for (const auto &element : exprArray.elements) {
       auto elementExprType = this->_nodeExprType(element, elementsType);
@@ -1127,14 +1118,22 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     } else if (exprLit.body.type == TK_LIT_CHAR) {
       return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("char"));
     } else if (exprLit.body.type == TK_LIT_FLOAT) {
-      return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("float"));
+      if (targetType == nullptr || !this->typeMap.get("f64")->match(targetType)) {
+        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("float"));
+      } else {
+        return this->_wrapNodeExprType(stmtExpr, targetType, targetType);
+      }
     } else if (
       exprLit.body.type == TK_LIT_INT_BIN ||
       exprLit.body.type == TK_LIT_INT_DEC ||
       exprLit.body.type == TK_LIT_INT_HEX ||
       exprLit.body.type == TK_LIT_INT_OCT
     ) {
-      return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("int"));
+      if (targetType == nullptr || (!this->typeMap.get("i64")->match(targetType) && !this->typeMap.get("u64")->match(targetType))) {
+        return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("int"));
+      } else {
+        return this->_wrapNodeExprType(stmtExpr, targetType, targetType);
+      }
     } else if (exprLit.body.type == TK_LIT_STR) {
       return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("str"));
     }

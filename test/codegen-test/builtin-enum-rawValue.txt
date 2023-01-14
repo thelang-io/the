@@ -1,0 +1,240 @@
+======= stdin =======
+enum Color {
+  Red,
+  Green,
+  Blue
+}
+
+obj Test1 {
+  test2: Test2
+}
+
+obj Test2 {
+  e: Color
+}
+
+fn testCall () Color {
+  return .Red
+}
+
+main {
+  mut test := Color.Green
+  mut refTest := ref test
+  mut test2 := Test2{e: .Blue}
+  mut test1 := Test1{test2: test2}
+
+  a01 := Color.Red.rawValue
+  a05 := (test = .Green).rawValue
+  a06 := test.rawValue
+  a07 := test2.e.rawValue
+  a08 := test1.test2.e.rawValue
+  a09 := testCall().rawValue
+  a10 := (ref test).rawValue
+  a11 := refTest.rawValue
+
+  fn testCtx () {
+    b01 := Color.Red.rawValue
+    b05 := (test = .Green).rawValue
+    b06 := test.rawValue
+    b07 := test2.e.rawValue
+    b08 := test1.test2.e.rawValue
+    b09 := testCall().rawValue
+    b10 := (ref test).rawValue
+    b11 := refTest.rawValue
+  }
+
+  testCtx()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+enum __THE_1_Color_0 {
+  __THE_0_ColorSDRed_0,
+  __THE_0_ColorSDGreen_0,
+  __THE_0_ColorSDBlue_0
+};
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_Test1_0;
+struct __THE_1_Test2_0;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1;
+struct __THE_1_mainSDtestCtx_0X;
+
+struct __THE_1_Test1_0 {
+  const struct __THE_1_Test2_0 *__THE_0_test2;
+};
+struct __THE_1_Test2_0 {
+  const enum __THE_1_Color_0 __THE_0_e;
+};
+struct __THE_1_fn$0 {
+  enum __THE_1_Color_0 (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDtestCtx_0X {
+  struct __THE_1_Test1_0 **__THE_0_test1_0;
+  struct __THE_1_Test2_0 **__THE_0_test2_0;
+  enum __THE_1_Color_0 **__THE_0_refTest_0;
+  enum __THE_1_Color_0 *__THE_0_test_0;
+  const struct __THE_1_fn$0 *__THE_0_testCall_0;
+  const enum __THE_1_Color_0 *__THE_0_Color_0;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (enum __THE_1_Color_0);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+enum __THE_1_Color_0 __THE_1_testCall_0 (void *);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
+void __THE_1_mainSDtestCtx_0 (void *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0 n) {
+  if (n == __THE_0_ColorSDRed_0) return str_alloc("Red");
+  if (n == __THE_0_ColorSDGreen_0) return str_alloc("Green");
+  if (n == __THE_0_ColorSDBlue_0) return str_alloc("Blue");
+}
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_test2) {
+  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
+  struct __THE_1_Test1_0 s = {__THE_0_test2};
+  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
+  return r;
+}
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o->__THE_0_test2);
+  free(o);
+}
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (enum __THE_1_Color_0 __THE_0_e) {
+  struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
+  struct __THE_1_Test2_0 s = {__THE_0_e};
+  memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
+  return r;
+}
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *o) {
+  struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
+  struct __THE_1_Test2_0 s = {o->__THE_0_e};
+  memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
+  return r;
+}
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
+  free(o);
+}
+enum __THE_1_Color_0 __THE_1_testCall_0 (void *px) {
+  return __THE_0_ColorSDRed_0;
+}
+void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+  free(n.x);
+}
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
+  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtestCtx_0;
+  n->x = r;
+  n->l = l;
+}
+void __THE_1_mainSDtestCtx_0 (void *px) {
+  struct __THE_1_mainSDtestCtx_0X *x = px;
+  struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
+  struct __THE_1_Test2_0 **__THE_0_test2_0 = x->__THE_0_test2_0;
+  enum __THE_1_Color_0 **__THE_0_refTest_0 = x->__THE_0_refTest_0;
+  enum __THE_1_Color_0 *__THE_0_test_0 = x->__THE_0_test_0;
+  const struct __THE_1_fn$0 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
+  const enum __THE_1_Color_0 *__THE_0_Color_0 = x->__THE_0_Color_0;
+  const struct str __THE_0_b01_0 = __THE_1_Color_0_rawValue(__THE_0_ColorSDRed_0);
+  const struct str __THE_0_b05_0 = __THE_1_Color_0_rawValue(*__THE_0_test_0 = __THE_0_ColorSDGreen_0);
+  const struct str __THE_0_b06_0 = __THE_1_Color_0_rawValue(*__THE_0_test_0);
+  const struct str __THE_0_b07_0 = __THE_1_Color_0_rawValue((*__THE_0_test2_0)->__THE_0_e);
+  const struct str __THE_0_b08_0 = __THE_1_Color_0_rawValue((*__THE_0_test1_0)->__THE_0_test2->__THE_0_e);
+  const struct str __THE_0_b09_0 = __THE_1_Color_0_rawValue((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
+  const struct str __THE_0_b10_0 = __THE_1_Color_0_rawValue(*__THE_0_test_0);
+  const struct str __THE_0_b11_0 = __THE_1_Color_0_rawValue(**__THE_0_refTest_0);
+  str_free((struct str) __THE_0_b11_0);
+  str_free((struct str) __THE_0_b10_0);
+  str_free((struct str) __THE_0_b09_0);
+  str_free((struct str) __THE_0_b08_0);
+  str_free((struct str) __THE_0_b07_0);
+  str_free((struct str) __THE_0_b06_0);
+  str_free((struct str) __THE_0_b05_0);
+  str_free((struct str) __THE_0_b01_0);
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_testCall_0 = (struct __THE_1_fn$0) {&__THE_1_testCall_0, NULL, 0};
+  enum __THE_1_Color_0 __THE_0_test_0 = __THE_0_ColorSDGreen_0;
+  enum __THE_1_Color_0 *__THE_0_refTest_0 = &__THE_0_test_0;
+  struct __THE_1_Test2_0 *__THE_0_test2_0 = __THE_1_Test2_0_alloc(__THE_0_ColorSDBlue_0);
+  struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_1_Test2_0_copy(__THE_0_test2_0));
+  const struct str __THE_0_a01_0 = __THE_1_Color_0_rawValue(__THE_0_ColorSDRed_0);
+  const struct str __THE_0_a05_0 = __THE_1_Color_0_rawValue(__THE_0_test_0 = __THE_0_ColorSDGreen_0);
+  const struct str __THE_0_a06_0 = __THE_1_Color_0_rawValue(__THE_0_test_0);
+  const struct str __THE_0_a07_0 = __THE_1_Color_0_rawValue(__THE_0_test2_0->__THE_0_e);
+  const struct str __THE_0_a08_0 = __THE_1_Color_0_rawValue(__THE_0_test1_0->__THE_0_test2->__THE_0_e);
+  const struct str __THE_0_a09_0 = __THE_1_Color_0_rawValue(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
+  const struct str __THE_0_a10_0 = __THE_1_Color_0_rawValue(__THE_0_test_0);
+  const struct str __THE_0_a11_0 = __THE_1_Color_0_rawValue(*__THE_0_refTest_0);
+  const struct __THE_1_fn$1 __THE_0_mainSDtestCtx_0;
+  __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test1_0, &__THE_0_test2_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0, &__THE_0_Color_0});
+  __THE_0_mainSDtestCtx_0.f(__THE_0_mainSDtestCtx_0.x);
+  __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_mainSDtestCtx_0);
+  str_free((struct str) __THE_0_a11_0);
+  str_free((struct str) __THE_0_a10_0);
+  str_free((struct str) __THE_0_a09_0);
+  str_free((struct str) __THE_0_a08_0);
+  str_free((struct str) __THE_0_a07_0);
+  str_free((struct str) __THE_0_a06_0);
+  str_free((struct str) __THE_0_a05_0);
+  str_free((struct str) __THE_0_a01_0);
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) __THE_0_test2_0);
+}
+======= flags =======
+======= stdout =======

@@ -582,6 +582,13 @@ INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenPassTest, testing::Values(
   "expr-unary-str"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeEnumDecl, CodegenPassTest, testing::Values(
+  "node-enum-decl",
+  "node-enum-decl-init",
+  "node-enum-decl-scoped",
+  "node-enum-decl-hoisting"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-access",
   "node-expr-access-any",
@@ -725,6 +732,10 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
   "node-var-decl-char-mut",
   "node-var-decl-char-mut-init",
   "node-var-decl-char-mut-short",
+  "node-var-decl-enum-init",
+  "node-var-decl-enum-short",
+  "node-var-decl-enum-mut-init",
+  "node-var-decl-enum-mut-short",
   "node-var-decl-f32",
   "node-var-decl-f32-init",
   "node-var-decl-f32-mut",
@@ -765,8 +776,10 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
   "node-var-decl-int-mut",
   "node-var-decl-int-mut-init",
   "node-var-decl-int-mut-short",
+  "node-var-decl-obj",
   "node-var-decl-obj-init",
   "node-var-decl-obj-short",
+  "node-var-decl-obj-mut",
   "node-var-decl-obj-mut-init",
   "node-var-decl-obj-mut-short",
   "node-var-decl-opt",

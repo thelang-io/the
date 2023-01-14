@@ -38,13 +38,11 @@ struct TypeArray {
   Type *elementType;
 };
 
-struct TypeEnumMember {
-  std::string name;
-  std::string codeName;
+struct TypeEnum {
+  std::vector<Type *> members;
 };
 
-struct TypeEnum {
-  std::vector<TypeEnumMember> members;
+struct TypeEnumerator {
 };
 
 struct TypeFnParam {
@@ -83,16 +81,18 @@ struct TypeRef {
 struct Type {
   std::string name;
   std::string codeName;
-  std::variant<TypeArray, TypeEnum, TypeFn, TypeObj, TypeOptional, TypeRef> body;
+  std::variant<TypeArray, TypeEnum, TypeEnumerator, TypeFn, TypeObj, TypeOptional, TypeRef> body;
   std::vector<TypeField> fields = {};
   bool builtin = false;
 
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
-  TypeEnumMember getEnumMember (const std::string &) const;
+  // todo re-test
+  Type *getEnumerator (const std::string &) const;
   Type *getProp (const std::string &) const;
-  bool hasEnumMember (const std::string &) const;
+  // todo re-test
+  bool hasEnumerator (const std::string &) const;
   bool hasProp (const std::string &) const;
   bool isAny () const;
   bool isArray () const;
@@ -100,6 +100,8 @@ struct Type {
   bool isByte () const;
   bool isChar () const;
   bool isEnum () const;
+  // todo test
+  bool isEnumerator () const;
   bool isF32 () const;
   bool isF64 () const;
   bool isFloat () const;

@@ -51,6 +51,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-empty",
   "node-enum-decl",
   "node-expr",
+  "node-expr-lit",
   "node-fn-decl",
   "node-fn-decl-param-init",
   "node-fn-decl-param-mut",

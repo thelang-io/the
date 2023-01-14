@@ -33,9 +33,7 @@ std::shared_ptr<Var> VarMap::get (const std::string &name) {
 
     if (item->name == name) {
       return item;
-    }
-
-    if (idx == 0) {
+    } else if (idx == 0) {
       break;
     }
   }
