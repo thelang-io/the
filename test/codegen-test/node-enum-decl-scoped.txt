@@ -1,5 +1,12 @@
 ======= stdin =======
 main {
+  if true {
+    enum Weekday { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+    print(Weekday.Monday)
+  } else {
+    enum Weekday { Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+    print(Weekday.Monday)
+  }
 }
 ======= code =======
 ======= flags =======

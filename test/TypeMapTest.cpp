@@ -54,14 +54,18 @@ TEST_F(TypeMapTest, ArrayDoesNotInsertExact) {
 }
 
 TEST_F(TypeMapTest, EnumerationInserts) {
+  this->tm_.stack.emplace_back("Test");
   auto type1 = this->tm_.enumeration("Test", this->tm_.name("Test"), {
-    TypeEnumMember{"Brown", "TestSDBrown_0"}
+    this->tm_.enumerator("Brown")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test1");
   auto type2 = this->tm_.enumeration("Test1", this->tm_.name("Test1"), {
-    TypeEnumMember{"Red", "Test1SDRed_0"},
-    TypeEnumMember{"Green", "Test1SDGreen_0"}
+    this->tm_.enumerator("Red"),
+    this->tm_.enumerator("Green")
   });
+  this->tm_.stack.pop_back();
 
   EXPECT_NE(this->tm_.get("Test"), nullptr);
   EXPECT_NE(this->tm_.get("Test1"), nullptr);
@@ -80,13 +84,17 @@ TEST_F(TypeMapTest, EnumerationInserts) {
 TEST_F(TypeMapTest, EnumerationDoesNotInsertExact) {
   auto codeName = this->tm_.name("Test");
 
+  this->tm_.stack.emplace_back("Test");
   auto type1 = this->tm_.enumeration("Test", codeName, {
-    TypeEnumMember{"Brown", "TestSDBrown_0"}
+    this->tm_.enumerator("Brown")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test");
   auto type2 = this->tm_.enumeration("Test", codeName, {
-    TypeEnumMember{"Brown", "TestSDBrown_0"}
+    this->tm_.enumerator("Brown")
   });
+  this->tm_.stack.pop_back();
 
   EXPECT_EQ(type1->name, "Test");
   EXPECT_EQ(type1->name, type2->name);

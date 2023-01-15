@@ -546,7 +546,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   } else if (this->isEnum()) {
     typeName += "Enum";
   } else if (this->isEnumerator()) {
-    typeName += "Enum";
+    typeName += "Enumerator";
   } else if (this->isFn()) {
     typeName += "Fn";
   } else if (this->isObj()) {

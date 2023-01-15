@@ -34,10 +34,12 @@ class TypeTest : public testing::Test {
     this->any_ = this->tm_.get("any");
     this->arr_ = this->tm_.arrayOf(this->tm_.get("int"));
 
+    this->tm_.stack.emplace_back("TestEnum");
     this->enum_ = this->tm_.enumeration("TestEnum", "TestEnum_0", {
-      TypeEnumMember{"Red", "TestEnumSDRed_0"},
-      TypeEnumMember{"Brown", "TestEnumSDBrown_0"}
+      this->tm_.enumerator("Red"),
+      this->tm_.enumerator("Brown")
     });
+    this->tm_.stack.pop_back();
 
     this->fn_ = this->tm_.fn("test_0", {
       TypeFnParam{"a", this->tm_.get("int"), false, true, false},
@@ -231,8 +233,8 @@ TEST_F(TypeTest, RealOnRef) {
   EXPECT_EQ(Type::real(this->ref_), this->tm_.get("int"));
 }
 
-TEST_F(TypeTest, GetsEnumMember) {
-  EXPECT_EQ(this->enum_->getEnumMember("Red").codeName, "TestEnumSDRed_0");
+TEST_F(TypeTest, GetsEnumerator) {
+  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
 }
 
 TEST_F(TypeTest, GetsProp) {
@@ -246,13 +248,13 @@ TEST_F(TypeTest, GetsProp) {
   EXPECT_EQ(this->tm_.get("str")->getProp("len"), this->tm_.get("int"));
 }
 
-TEST_F(TypeTest, GetsNonExistingEnumMember) {
+TEST_F(TypeTest, GetsNonExistingEnumerator) {
   EXPECT_THROW_WITH_MESSAGE({
-    this->any_->getEnumMember("a");
+    this->any_->getEnumerator("a");
   }, "tried to get a member of non-enum");
 
   EXPECT_THROW_WITH_MESSAGE({
-    this->enum_->getEnumMember("White");
+    this->enum_->getEnumerator("White");
   }, "tried to get non-existing enum member");
 }
 
@@ -294,8 +296,8 @@ TEST_F(TypeTest, GetsNonExistingProp) {
   }, "tried to get non-existing prop type");
 }
 
-TEST_F(TypeTest, HasEnumMember) {
-  EXPECT_TRUE(this->enum_->hasEnumMember("Red"));
+TEST_F(TypeTest, HasEnumerator) {
+  EXPECT_TRUE(this->enum_->hasEnumerator("Red"));
 }
 
 TEST_F(TypeTest, HasProp) {
@@ -309,9 +311,9 @@ TEST_F(TypeTest, HasProp) {
   EXPECT_TRUE(this->tm_.get("str")->hasProp("len"));
 }
 
-TEST_F(TypeTest, HasNonExistingEnumMember) {
-  EXPECT_FALSE(this->any_->hasEnumMember("White"));
-  EXPECT_FALSE(this->enum_->hasEnumMember("White"));
+TEST_F(TypeTest, HasNonExistingEnumerator) {
+  EXPECT_FALSE(this->any_->hasEnumerator("White"));
+  EXPECT_FALSE(this->enum_->hasEnumerator("White"));
 }
 
 TEST_F(TypeTest, HasNonExistingProp) {
@@ -379,9 +381,11 @@ TEST_F(TypeTest, CheckIfChar) {
 TEST_F(TypeTest, CheckIfEnum) {
   EXPECT_TRUE(this->enum_->isEnum());
 
+  this->tm_.stack.emplace_back("Test2");
   EXPECT_TRUE(this->tm_.enumeration("Test2", this->tm_.name("Test2"), {
-    TypeEnumMember{"Red", "Test2SDRed_0"}
+    this->tm_.enumerator("Red")
   })->isEnum());
+  this->tm_.stack.pop_back();
 }
 
 TEST_F(TypeTest, CheckIfNotEnum) {
@@ -1047,19 +1051,25 @@ TEST_F(TypeTest, MatchesArray) {
 }
 
 TEST_F(TypeTest, MatchesEnum) {
+  this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-    TypeEnumMember{"Brown", "Test2SDBrown_0"}
+    this->tm_.enumerator("Brown")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-    TypeEnumMember{"Brown", "Test2SDBrown_0"},
-    TypeEnumMember{"Red", "Test2SDRed_0"}
+    this->tm_.enumerator("Brown"),
+    this->tm_.enumerator("Red")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-    TypeEnumMember{"Brown", "Test3SDBrown_0"},
-    TypeEnumMember{"Red", "Test3SDRed_0"}
+    this->tm_.enumerator("Brown"),
+    this->tm_.enumerator("Red")
   });
+  this->tm_.stack.pop_back();
 
   EXPECT_TRUE(type1->match(type1));
   EXPECT_TRUE(type1->match(type2));
@@ -1269,19 +1279,25 @@ TEST_F(TypeTest, MatchesExactArray) {
 }
 
 TEST_F(TypeTest, MatchesExactEnum) {
+  this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-    TypeEnumMember{"Brown", "Test2SDBrown_0"}
+    this->tm_.enumerator("Brown")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-    TypeEnumMember{"Brown", "Test2SDBrown_0"},
-    TypeEnumMember{"Red", "Test2SDRed_0"}
+    this->tm_.enumerator("Brown"),
+    this->tm_.enumerator("Red")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-    TypeEnumMember{"Brown", "Test3SDBrown_0"},
-    TypeEnumMember{"Red", "Test3SDRed_0"}
+    this->tm_.enumerator("Brown"),
+    this->tm_.enumerator("Red")
   });
+  this->tm_.stack.pop_back();
 
   EXPECT_TRUE(type1->matchExact(type1));
   EXPECT_TRUE(type1->matchExact(type2));
@@ -1491,19 +1507,25 @@ TEST_F(TypeTest, MatchesNiceArray) {
 }
 
 TEST_F(TypeTest, MatchesNiceEnum) {
+  this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-    TypeEnumMember{"Brown", "Test2SDBrown_0"}
+    this->tm_.enumerator("Brown")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-    TypeEnumMember{"Brown", "Test2SDBrown_0"},
-    TypeEnumMember{"Red", "Test2SDRed_0"}
+    this->tm_.enumerator("Brown"),
+    this->tm_.enumerator("Red")
   });
+  this->tm_.stack.pop_back();
 
+  this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-    TypeEnumMember{"Brown", "Test3SDBrown_0"},
-    TypeEnumMember{"Red", "Test3SDRed_0"}
+    this->tm_.enumerator("Brown"),
+    this->tm_.enumerator("Red")
   });
+  this->tm_.stack.pop_back();
 
   EXPECT_TRUE(type1->matchNice(type1));
   EXPECT_TRUE(type1->matchNice(type2));
