@@ -1,0 +1,85 @@
+======= stdin =======
+obj Test {
+  a: int
+  b: int
+}
+main {
+  [Test{}, Test{a: 1}, Test{a: 2, b: 3}];
+  [Test{}, Test{a: 1}, Test{a: 2, b: 3}]
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct __THE_1_Test_0;
+struct __THE_1_array_Test;
+
+struct __THE_1_Test_0 {
+  const int32_t __THE_0_a;
+  const int32_t __THE_0_b;
+};
+struct __THE_1_array_Test {
+  struct __THE_1_Test_0 **d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, int32_t);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t, ...);
+void __THE_1_array_Test_free (struct __THE_1_array_Test);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, int32_t __THE_0_b) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  free(o);
+}
+struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_Test) {NULL, 0};
+  struct __THE_1_Test_0 **d = alloc(x * sizeof(struct __THE_1_Test_0 *));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_Test_0 *);
+  va_end(args);
+  return (struct __THE_1_array_Test) {d, x};
+}
+void __THE_1_array_Test_free (struct __THE_1_array_Test n) {
+  for (size_t i = 0; i < n.l; i++) __THE_1_Test_0_free((struct __THE_1_Test_0 *) n.d[i]);
+  free(n.d);
+}
+
+int main () {
+  __THE_1_array_Test_free((struct __THE_1_array_Test) __THE_1_array_Test_alloc(3, __THE_1_Test_0_alloc(0, 0), __THE_1_Test_0_alloc(1, 0), __THE_1_Test_0_alloc(2, 3)));
+  __THE_1_array_Test_free((struct __THE_1_array_Test) __THE_1_array_Test_alloc(3, __THE_1_Test_0_alloc(0, 0), __THE_1_Test_0_alloc(1, 0), __THE_1_Test_0_alloc(2, 3)));
+}
+======= flags =======
+======= stdout =======

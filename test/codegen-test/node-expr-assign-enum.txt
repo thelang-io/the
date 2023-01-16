@@ -1,0 +1,36 @@
+======= stdin =======
+enum Test1 {
+  Red,
+  Green
+}
+
+enum Test2 {
+  Success,
+  Failure
+}
+
+main {
+  mut e1: Test1 = .Red
+  e1 = .Green
+
+  mut e2 := Test2.Success
+  e2 = Test2.Failure
+}
+======= code =======
+enum __THE_1_Test1_0 {
+  __THE_0_Test1SDRed_0,
+  __THE_0_Test1SDGreen_0
+};
+enum __THE_1_Test2_0 {
+  __THE_0_Test2SDSuccess_0,
+  __THE_0_Test2SDFailure_0
+};
+
+int main () {
+  enum __THE_1_Test1_0 __THE_0_e1_0 = __THE_0_Test1SDRed_0;
+  __THE_0_e1_0 = __THE_0_Test1SDGreen_0;
+  enum __THE_1_Test2_0 __THE_0_e2_0 = __THE_0_Test2SDSuccess_0;
+  __THE_0_e2_0 = __THE_0_Test2SDFailure_0;
+}
+======= flags =======
+======= stdout =======

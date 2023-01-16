@@ -1,0 +1,37 @@
+======= stdin =======
+enum Test {
+  Red,
+  Green,
+  Blue
+}
+
+enum Test2 {
+  Success,
+  Failure
+}
+
+main {
+  e1 := Test.Red
+  e1
+  e2: Test2 = .Success
+  e2
+}
+======= code =======
+enum __THE_1_Test_0 {
+  __THE_0_TestSDRed_0,
+  __THE_0_TestSDGreen_0,
+  __THE_0_TestSDBlue_0
+};
+enum __THE_1_Test2_0 {
+  __THE_0_Test2SDSuccess_0,
+  __THE_0_Test2SDFailure_0
+};
+
+int main () {
+  const enum __THE_1_Test_0 __THE_0_e1_0 = __THE_0_TestSDRed_0;
+  __THE_0_e1_0;
+  const enum __THE_1_Test2_0 __THE_0_e2_0 = __THE_0_Test2SDSuccess_0;
+  __THE_0_e2_0;
+}
+======= flags =======
+======= stdout =======

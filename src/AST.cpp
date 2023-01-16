@@ -647,7 +647,12 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       : std::get<TypeArray>(targetType->body).elementType;
 
     for (const auto &element : parserExprArray.elements) {
-      exprArrayElements.push_back(this->_nodeExpr(element, elementsType, varStack));
+      auto elementNode = this->_nodeExpr(element, elementsType, varStack);
+      exprArrayElements.push_back(elementNode);
+
+      if (elementsType == nullptr) {
+        elementsType = elementNode.type;
+      }
     }
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprArray{exprArrayElements});

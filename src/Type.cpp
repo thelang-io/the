@@ -304,7 +304,7 @@ bool Type::isVoid () const {
 }
 
 bool Type::match (const Type *type) const {
-  if (this->name == "any") {
+  if (this->isAny()) {
     return true;
   } else if (this->isRef() || type->isRef()) {
     if (this->isRef() && type->isRef()) {

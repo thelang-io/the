@@ -520,6 +520,17 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access-str"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprArray, CodegenPassTest, testing::Values(
+  "expr-array",
+  "expr-array-any",
+  "expr-array-array",
+  "expr-array-enum",
+  "expr-array-fn",
+  "expr-array-obj",
+  "expr-array-opt",
+  "expr-array-str"
+));
+
 INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign",
   "expr-assign-op",
@@ -527,14 +538,16 @@ INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign-any",
   "expr-assign-array",
   "expr-assign-enum",
+  "expr-assign-obj",
   "expr-assign-opt",
   "expr-assign-str"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
   "expr-binary",
-  // todo others?
+  "expr-binary-array",
   "expr-binary-enum",
+  "expr-binary-obj",
   "expr-binary-opt",
   "expr-binary-str",
   "expr-binary-nested"
@@ -613,6 +626,14 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-access-obj",
   "node-expr-access-opt",
   "node-expr-access-str",
+  "node-expr-array",
+  "node-expr-array-any",
+  "node-expr-array-array",
+  "node-expr-array-enum",
+  "node-expr-array-fn",
+  "node-expr-array-obj",
+  "node-expr-array-opt",
+  "node-expr-array-str",
   "node-expr-assign",
   "node-expr-assign-any",
   "node-expr-assign-array",
@@ -622,6 +643,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-assign-opt",
   "node-expr-assign-str",
   "node-expr-binary",
+  "node-expr-binary-array",
   "node-expr-binary-enum",
   "node-expr-binary-obj",
   "node-expr-binary-opt",
@@ -644,9 +666,16 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-obj-obj",
   "node-expr-obj-opt",
   "node-expr-obj-str",
+  "node-expr-ref",
+  "node-expr-ref-any",
+  "node-expr-ref-array",
+  "node-expr-ref-enum",
+  "node-expr-ref-fn",
+  "node-expr-ref-obj",
+  "node-expr-ref-opt",
+  "node-expr-ref-str",
   "node-expr-unary",
   "node-expr-unary-context",
-  "node-expr-unary-enum",
   "node-expr-unary-obj",
   "node-expr-unary-str"
 ));
