@@ -1,0 +1,43 @@
+======= stdin =======
+enum Test { Red, Green, Blue }
+
+fn inc (mut test: ref Test) Test {
+  if test == .Red { test = .Green }
+  if test == .Green { test = .Blue }
+  if test == .Blue { test = .Red }
+}
+main {
+  loop i := Test.Red; i != .Blue; inc(ref i) {
+  }
+
+  mut a := Test.Red
+  loop ; a != .Blue; inc(ref a) {
+  }
+
+  mut b := Test.Red
+  loop ; b != .Blue; {
+    inc(ref b)
+  }
+
+  mut c := Test.Red
+  loop {
+    if c == .Blue {
+      break
+    }
+
+    inc(ref c)
+  }
+
+  loop d := Test.Red; d.a != .Blue; {
+    inc(d)
+  }
+
+  loop e := Test.Red;; inc(e) {
+    if e == .Blue {
+      break
+    }
+  }
+}
+======= code =======
+======= flags =======
+======= stdout =======

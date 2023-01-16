@@ -1,0 +1,21 @@
+======= stdin =======
+enum Test {
+  Red,
+  Green,
+  Blue
+}
+fn test1 (mut a: Test) Test {
+  return a
+}
+fn test2 (mut a: Test, mut b := Test.Red) Test {
+  b = a
+  return a == b ? a : b
+}
+main {
+  test1(.Green)
+  test2(.Blue)
+  test2(.Blue, .Green)
+}
+======= code =======
+======= flags =======
+======= stdout =======

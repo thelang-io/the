@@ -717,7 +717,9 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if",
   "node-if-cmp-num",
+  "node-if-cmp-array",
   "node-if-cmp-enum",
+  "node-if-cmp-obj",
   "node-if-cmp-opt",
   "node-if-cmp-str",
   "node-if-type-casts"

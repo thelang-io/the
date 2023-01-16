@@ -1,0 +1,37 @@
+======= stdin =======
+enum Test {
+  Red,
+  Green,
+  Blue
+}
+
+fn test1 (a: Test, b := Test.Red, c := Test.Blue) Test {
+  return a == b ? c == Test.Red ? c : b : a
+}
+
+main {
+  test1(Test.Red)
+  test1(Test.Red, Test.Green)
+  test1(Test.Red, Test.Green, Test.Blue)
+  test1(Test.Red, b: Test.Green)
+  test1(Test.Red, c: Test.Blue)
+  test1(Test.Red, b: Test.Green, c: Test.Blue)
+  test1(Test.Red, c: Test.Blue, b: Test.Green)
+
+  mut a := Test.Red
+
+  fn test2 (a2: Test, b := Test.Red, c := Test.Green) {
+    a = test1(a2, b, c)
+  }
+
+  test2(Test.Red)
+  test2(Test.Red, Test.Green)
+  test2(Test.Red, Test.Green, Test.Blue)
+  test2(Test.Red, b: Test.Green)
+  test2(Test.Red, c: Test.Blue)
+  test2(Test.Red, b: Test.Green, c: Test.Blue)
+  test2(Test.Red, c: Test.Blue, b: Test.Green)
+}
+======= code =======
+======= flags =======
+======= stdout =======

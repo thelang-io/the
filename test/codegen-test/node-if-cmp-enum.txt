@@ -1,0 +1,39 @@
+======= stdin =======
+enum Test { Red, Green, Blue }
+main {
+  a := Test.Red
+  b := Test.Green
+
+  if a == .Red {
+  }
+
+  if a != .Red {
+  }
+
+  if b == Test.Green {
+  }
+
+  if b != Test.Green {
+  }
+}
+======= code =======
+enum __THE_1_Test_0 {
+  __THE_0_TestSDRed_0,
+  __THE_0_TestSDGreen_0,
+  __THE_0_TestSDBlue_0
+};
+
+int main () {
+  const enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
+  const enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_TestSDGreen_0;
+  if (__THE_0_a_0 == __THE_0_TestSDRed_0) {
+  }
+  if (__THE_0_a_0 != __THE_0_TestSDRed_0) {
+  }
+  if (__THE_0_b_0 == __THE_0_TestSDGreen_0) {
+  }
+  if (__THE_0_b_0 != __THE_0_TestSDGreen_0) {
+  }
+}
+======= flags =======
+======= stdout =======
