@@ -14,6 +14,7 @@ main {
   d = c = b = a
   d = true ? Test{b: 2} : a
   d = true ? b = Test{a: 1} : Test{}
+  d = true ? Test{} : b = Test{a: 1}
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -87,6 +88,7 @@ int main () {
   __THE_0_d_0 = __THE_1_Test_0_realloc(__THE_0_d_0, __THE_1_Test_0_copy(__THE_0_c_0 = __THE_1_Test_0_realloc(__THE_0_c_0, __THE_1_Test_0_copy(__THE_0_b_0 = __THE_1_Test_0_realloc(__THE_0_b_0, __THE_1_Test_0_copy(__THE_0_a_0))))));
   __THE_0_d_0 = __THE_1_Test_0_realloc(__THE_0_d_0, true ? __THE_1_Test_0_alloc(0, 2) : __THE_1_Test_0_copy(__THE_0_a_0));
   __THE_0_d_0 = __THE_1_Test_0_realloc(__THE_0_d_0, true ? __THE_1_Test_0_copy(__THE_0_b_0 = __THE_1_Test_0_realloc(__THE_0_b_0, __THE_1_Test_0_alloc(1, 0))) : __THE_1_Test_0_alloc(0, 0));
+  __THE_0_d_0 = __THE_1_Test_0_realloc(__THE_0_d_0, true ? __THE_1_Test_0_alloc(0, 0) : __THE_1_Test_0_copy(__THE_0_b_0 = __THE_1_Test_0_realloc(__THE_0_b_0, __THE_1_Test_0_alloc(1, 0))));
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_d_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_c_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);

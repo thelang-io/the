@@ -125,7 +125,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="Color" codeName="Color_0" frame="1">
+                  <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
                     <TypeEnum codeName="Color_0" name="Color">
                       <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
                       <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
@@ -171,7 +171,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="Color" codeName="Color_0" frame="1">
+                  <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
                     <TypeEnum codeName="Color_0" name="Color">
                       <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
                       <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
@@ -264,7 +264,7 @@ main {
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
-                      <Var name="Color" codeName="Color_0" frame="1">
+                      <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
                         <TypeEnum codeName="Color_0" name="Color">
                           <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
                           <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
@@ -465,7 +465,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="Color" codeName="Color_0" frame="1">
+                              <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
                                 <TypeEnum codeName="Color_0" name="Color">
                                   <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
                                   <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />

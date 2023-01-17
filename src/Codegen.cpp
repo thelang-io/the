@@ -2085,6 +2085,7 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
     }
 
     this->_activateEntity(typeInfo.typeName + "_alloc");
+    // todo test
     return typeInfo.typeName + "_alloc(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")";
   } else if (typeInfo.type->isStr()) {
     this->_activateBuiltin("fnStrAlloc");
@@ -2811,6 +2812,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
         }
       }
 
+      // todo test
       auto allocCode = fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2);
       initCode = this->_apiEval("_{" + typeInfo.typeName + "_alloc}(" + allocCode + ")", 1);
     } else if (typeInfo.type->isOpt()) {
@@ -3729,9 +3731,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       std::holds_alternative<ASTExprAssign>(*exprCond.alt.body) &&
       !exprCond.alt.parenthesized &&
       !exprCond.alt.type->isAny() &&
-      !exprCond.alt.type->isArray() && // todo test
-      !exprCond.alt.type->isOpt() && // todo test
-      !exprCond.alt.type->isRef() &&
+      !exprCond.alt.type->isArray() &&
+      !exprCond.alt.type->isObj() &&
+      !exprCond.alt.type->isOpt() &&
       !exprCond.alt.type->isStr()
     ) {
       altCode = "(" + altCode + ")";

@@ -25,6 +25,7 @@ struct Var {
   Type *type;
   bool mut;
   bool builtin;
+  bool ctxIgnored;
   std::size_t frame;
 
   std::string xml (std::size_t = 0) const;

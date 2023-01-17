@@ -22,7 +22,7 @@
 
 class VarMap {
  public:
-  std::shared_ptr<Var> add (const std::string &, const std::string &, Type *, bool = false);
+  std::shared_ptr<Var> add (const std::string &, const std::string &, Type *, bool = false, bool = false);
   std::shared_ptr<Var> get (const std::string &);
   bool has (const std::string &) const;
   void init (TypeMap &);

@@ -153,6 +153,6 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-Red
-Green
-Blue
+0
+1
+2

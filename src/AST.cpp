@@ -222,7 +222,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         auto enumCodeName = this->typeMap.name(enumName);
         auto enumType = this->typeMap.enumeration(enumName, enumCodeName, enumMembers);
 
-        this->varMap.add(enumName, enumCodeName, enumType, false);
+        this->varMap.add(enumName, enumCodeName, enumType, false, true);
       }
     } else if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
@@ -603,9 +603,10 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
       if (var == nullptr) {
         throw Error(this->reader, tok.start, tok.end, E1011);
+      } else if (!var->ctxIgnored) {
+        varStack.mark(var);
       }
 
-      varStack.mark(var);
       return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{var, std::nullopt, std::nullopt});
     } else if (parserExprAccess.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*parserExprAccess.expr)) {
       auto exprAccessStmtExpr = std::get<ParserStmtExpr>(*parserExprAccess.expr);
@@ -618,8 +619,8 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
         if (
           exprAccessExpr.type->hasProp(parserExprAccess.prop->val) &&
-            exprAccessExpr.type->getProp(parserExprAccess.prop->val)->isMethod()
-          ) {
+          exprAccessExpr.type->getProp(parserExprAccess.prop->val)->isMethod()
+        ) {
           auto propType = exprAccessExpr.type->getProp(parserExprAccess.prop->val);
           varStack.mark(propType->codeName);
           initializedExprAccessExpr = true;
@@ -956,13 +957,15 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1013);
       }
     } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
-      if (targetType == nullptr || !targetType->isEnum()) {
+      auto realTargetType = targetType == nullptr ? targetType : Type::real(targetType);
+
+      if (realTargetType == nullptr || !realTargetType->isEnum()) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1023);
-      } else if (!targetType->hasEnumerator(exprAccess.prop->val)) {
+      } else if (!realTargetType->hasEnumerator(exprAccess.prop->val)) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1024);
       }
 
-      return this->_wrapNodeExprType(stmtExpr, targetType, targetType);
+      return this->_wrapNodeExprType(stmtExpr, targetType, realTargetType);
     }
   } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
     auto realTargetType = static_cast<Type *>(nullptr);

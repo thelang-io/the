@@ -1,0 +1,41 @@
+======= stdin =======
+main {
+  var1 := 1
+  var2 := 2
+  var3 := 3
+  a := ref var1
+  mut b := a
+  b = a
+  mut c := ref var2
+  c = b = a
+  mut d := ref var3
+  d = c = b = a
+  d = true ? b : a
+  d = true ? b = c : a
+  d = true ? b = ref var1 : a
+  d = true ? c : b = a
+  d = true ? c : b = ref var2
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_var1_0 = 1;
+  const int32_t __THE_0_var2_0 = 2;
+  const int32_t __THE_0_var3_0 = 3;
+  const int32_t *__THE_0_a_0 = &__THE_0_var1_0;
+  int32_t *__THE_0_b_0 = __THE_0_a_0;
+  __THE_0_b_0 = __THE_0_a_0;
+  int32_t *__THE_0_c_0 = &__THE_0_var2_0;
+  __THE_0_c_0 = __THE_0_b_0 = __THE_0_a_0;
+  int32_t *__THE_0_d_0 = &__THE_0_var3_0;
+  __THE_0_d_0 = __THE_0_c_0 = __THE_0_b_0 = __THE_0_a_0;
+  __THE_0_d_0 = true ? __THE_0_b_0 : __THE_0_a_0;
+  __THE_0_d_0 = true ? __THE_0_b_0 = __THE_0_c_0 : __THE_0_a_0;
+  __THE_0_d_0 = true ? __THE_0_b_0 = &__THE_0_var1_0 : __THE_0_a_0;
+  __THE_0_d_0 = true ? __THE_0_c_0 : (__THE_0_b_0 = __THE_0_a_0);
+  __THE_0_d_0 = true ? __THE_0_c_0 : (__THE_0_b_0 = &__THE_0_var2_0);
+}
+======= flags =======
+======= stdout =======

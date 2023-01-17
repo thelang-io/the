@@ -540,6 +540,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign-enum",
   "expr-assign-obj",
   "expr-assign-opt",
+  "expr-assign-ref",
   "expr-assign-str"
 ));
 
@@ -641,6 +642,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-assign-fn",
   "node-expr-assign-obj",
   "node-expr-assign-opt",
+  "node-expr-assign-ref",
   "node-expr-assign-str",
   "node-expr-binary",
   "node-expr-binary-array",
