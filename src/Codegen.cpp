@@ -2910,6 +2910,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         this->_activateEntity(objTypeInfo.realTypeName + "_rawValue");
         code = objTypeInfo.realTypeName + "_rawValue" + objCode;
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
       } else if (exprAccess.prop == "len" && objTypeInfo.realType->isStr()) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
         this->_activateBuiltin("fnStrLen");
