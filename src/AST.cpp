@@ -603,10 +603,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
       if (var == nullptr) {
         throw Error(this->reader, tok.start, tok.end, E1011);
-      } else if (!var->ctxIgnored) {
-        varStack.mark(var);
       }
 
+      varStack.mark(var);
       return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAccess{var, std::nullopt, std::nullopt});
     } else if (parserExprAccess.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*parserExprAccess.expr)) {
       auto exprAccessStmtExpr = std::get<ParserStmtExpr>(*parserExprAccess.expr);

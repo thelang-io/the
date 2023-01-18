@@ -133,7 +133,8 @@ VarStack VarMap::varStack () const {
   for (auto idx = this->_items.size() - 1;; idx--) {
     auto item = this->_items[idx];
 
-    if (!item->builtin) {
+    // todo test item->ctxIgnored
+    if (!item->builtin && !item->ctxIgnored) {
       auto stackVar = std::find_if(result.begin(), result.end(), [&item] (const auto &it2) -> bool {
         return it2->name == item->name;
       });
