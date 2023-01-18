@@ -36,8 +36,8 @@ class TypeTest : public testing::Test {
 
     this->tm_.stack.emplace_back("TestEnum");
     this->enum_ = this->tm_.enumeration("TestEnum", "TestEnum_0", {
-      this->tm_.enumerator("Red"),
-      this->tm_.enumerator("Brown")
+      this->tm_.enumerator("Red", this->tm_.name("Red")),
+      this->tm_.enumerator("Brown", this->tm_.name("Brown"))
     });
     this->tm_.stack.pop_back();
 
@@ -383,7 +383,7 @@ TEST_F(TypeTest, CheckIfEnum) {
 
   this->tm_.stack.emplace_back("Test2");
   EXPECT_TRUE(this->tm_.enumeration("Test2", this->tm_.name("Test2"), {
-    this->tm_.enumerator("Red")
+    this->tm_.enumerator("Red", this->tm_.name("Red"))
   })->isEnum());
   this->tm_.stack.pop_back();
 }
@@ -414,6 +414,39 @@ TEST_F(TypeTest, CheckIfNotEnum) {
   EXPECT_FALSE(this->tm_.get("u32")->isEnum());
   EXPECT_FALSE(this->tm_.get("u64")->isEnum());
   EXPECT_FALSE(this->tm_.get("void")->isEnum());
+}
+
+TEST_F(TypeTest, CheckIfEnumerator) {
+  EXPECT_TRUE(this->tm_.enumerator("Brown", this->tm_.name("Brown"))->isEnumerator());
+}
+
+TEST_F(TypeTest, CheckIfNotEnumerator) {
+  EXPECT_FALSE(this->any_->isEnumerator());
+  EXPECT_FALSE(this->arr_->isEnumerator());
+  EXPECT_FALSE(this->enum_->isEnumerator());
+  EXPECT_FALSE(this->fn_->isEnumerator());
+  EXPECT_FALSE(this->obj_->isEnumerator());
+  EXPECT_FALSE(this->opt_->isEnumerator());
+  EXPECT_FALSE(this->ref_->isEnumerator());
+
+  EXPECT_FALSE(this->tm_.get("any")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("bool")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("byte")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("char")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("f32")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("f64")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("float")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("i8")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("i16")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("i32")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("i64")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("int")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("str")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("u8")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("u16")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("u32")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("u64")->isEnumerator());
+  EXPECT_FALSE(this->tm_.get("void")->isEnumerator());
 }
 
 TEST_F(TypeTest, CheckIfF32) {
@@ -1053,21 +1086,21 @@ TEST_F(TypeTest, MatchesArray) {
 TEST_F(TypeTest, MatchesEnum) {
   this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown"),
-    this->tm_.enumerator("Red")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.enumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-    this->tm_.enumerator("Brown"),
-    this->tm_.enumerator("Red")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.enumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
@@ -1281,21 +1314,21 @@ TEST_F(TypeTest, MatchesExactArray) {
 TEST_F(TypeTest, MatchesExactEnum) {
   this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown"),
-    this->tm_.enumerator("Red")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.enumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-    this->tm_.enumerator("Brown"),
-    this->tm_.enumerator("Red")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.enumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
@@ -1509,21 +1542,21 @@ TEST_F(TypeTest, MatchesNiceArray) {
 TEST_F(TypeTest, MatchesNiceEnum) {
   this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown"),
-    this->tm_.enumerator("Red")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.enumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-    this->tm_.enumerator("Brown"),
-    this->tm_.enumerator("Red")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.enumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 

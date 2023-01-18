@@ -53,17 +53,39 @@ TEST_F(TypeMapTest, ArrayDoesNotInsertExact) {
   EXPECT_EQ(type1, type2);
 }
 
+TEST_F(TypeMapTest, EnumeratorInserts) {
+  auto type1 = this->tm_.enumerator("Brown", this->tm_.name("Brown"));
+  auto type2 = this->tm_.enumerator("Red", this->tm_.name("Red"));
+
+  EXPECT_NE(this->tm_.get("Brown"), nullptr);
+  EXPECT_NE(this->tm_.get("Red"), nullptr);
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeEnumerator>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeEnumerator>(type2->body));
+}
+
+TEST_F(TypeMapTest, EnumeratorDoesNotInsertExact) {
+  auto codeName = this->tm_.name("Brown");
+  auto type1 = this->tm_.enumerator("Brown", codeName);
+  auto type2 = this->tm_.enumerator("Brown", codeName);
+
+  EXPECT_EQ(type1->name, "Brown");
+  EXPECT_EQ(type1->name, type2->name);
+  EXPECT_EQ(type1, type2);
+}
+
 TEST_F(TypeMapTest, EnumerationInserts) {
   this->tm_.stack.emplace_back("Test");
   auto type1 = this->tm_.enumeration("Test", this->tm_.name("Test"), {
-    this->tm_.enumerator("Brown")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test1");
   auto type2 = this->tm_.enumeration("Test1", this->tm_.name("Test1"), {
-    this->tm_.enumerator("Red"),
-    this->tm_.enumerator("Green")
+    this->tm_.enumerator("Red", this->tm_.name("Red")),
+    this->tm_.enumerator("Green", this->tm_.name("Green"))
   });
   this->tm_.stack.pop_back();
 
@@ -86,13 +108,13 @@ TEST_F(TypeMapTest, EnumerationDoesNotInsertExact) {
 
   this->tm_.stack.emplace_back("Test");
   auto type1 = this->tm_.enumeration("Test", codeName, {
-    this->tm_.enumerator("Brown")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test");
   auto type2 = this->tm_.enumeration("Test", codeName, {
-    this->tm_.enumerator("Brown")
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 

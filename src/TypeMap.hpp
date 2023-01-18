@@ -26,8 +26,7 @@ class TypeMap {
 
   Type *arrayOf (Type *);
   Type *enumeration (const std::string &, const std::string &, const std::vector<Type *> &);
-  // todo test
-  Type *enumerator (const std::string &);
+  Type *enumerator (const std::string &, const std::string &);
   Type *fn (
     const std::optional<std::string> &,
     const std::vector<TypeFnParam> &,

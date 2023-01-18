@@ -80,9 +80,8 @@ Type *TypeMap::enumeration (const std::string &name, const std::string &codeName
   return selfType;
 }
 
-Type *TypeMap::enumerator (const std::string &enumeratorName) {
-  auto codeName = this->name(enumeratorName);
-  auto newType = Type{enumeratorName, codeName, TypeEnumerator{}};
+Type *TypeMap::enumerator (const std::string &enumeratorName, const std::string &enumeratorCodeName) {
+  auto newType = Type{enumeratorName, enumeratorCodeName, TypeEnumerator{}};
 
   for (auto &item : this->_items) {
     if (!item->builtin && item->codeName == newType.codeName) {

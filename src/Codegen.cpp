@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// todo test expr access with only member
-
 #include "Codegen.hpp"
 #include <algorithm>
 #include <filesystem>
@@ -2085,7 +2083,6 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
     }
 
     this->_activateEntity(typeInfo.typeName + "_alloc");
-    // todo test
     return typeInfo.typeName + "_alloc(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")";
   } else if (typeInfo.type->isStr()) {
     this->_activateBuiltin("fnStrAlloc");
@@ -2812,7 +2809,6 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
         }
       }
 
-      // todo test
       auto allocCode = fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2);
       initCode = this->_apiEval("_{" + typeInfo.typeName + "_alloc}(" + allocCode + ")", 1);
     } else if (typeInfo.type->isOpt()) {

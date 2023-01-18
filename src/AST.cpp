@@ -215,7 +215,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         this->typeMap.stack.emplace_back(enumName);
 
         for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
-          enumMembers.push_back(this->typeMap.enumerator(stmtEnumDeclMember.id.val));
+          enumMembers.push_back(this->typeMap.enumerator(stmtEnumDeclMember.id.val, this->typeMap.name(stmtEnumDeclMember.id.val)));
         }
 
         this->typeMap.stack.pop_back();

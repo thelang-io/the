@@ -88,10 +88,8 @@ struct Type {
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
-  // todo re-test
   Type *getEnumerator (const std::string &) const;
   Type *getProp (const std::string &) const;
-  // todo re-test
   bool hasEnumerator (const std::string &) const;
   bool hasProp (const std::string &) const;
   bool isAny () const;
@@ -100,7 +98,6 @@ struct Type {
   bool isByte () const;
   bool isChar () const;
   bool isEnum () const;
-  // todo test
   bool isEnumerator () const;
   bool isF32 () const;
   bool isF64 () const;
