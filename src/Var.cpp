@@ -26,6 +26,7 @@ std::string Var::xml (std::size_t indent) const {
 
   attrs += R"( codeName=")" + this->codeName + R"(")";
   attrs += this->mut ? " mut" : "";
+  attrs += this->ctxIgnored ? " ctxIgnored" : "";
   attrs += R"( frame=")" + std::to_string(this->frame) + R"(")";
 
   auto result = std::string(indent, ' ') + "<Var" + attrs + ">" EOL;

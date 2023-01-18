@@ -1,0 +1,772 @@
+======= stdin =======
+enum AnimalType {
+  Cat,
+  Dog
+}
+
+obj Animal {
+  type: AnimalType
+  name: str
+}
+
+main {
+  cat := Animal{type: .Cat, name: "Sam"}
+  dog := Animal{type: AnimalType.Dog, name: "Sam"}
+
+  enum Color {
+    Brown = 1,
+    Black = 1 << 1,
+    Green = 1 + (1 << 1),
+  }
+
+  color1 := Color.Green
+  color2: Color = Color.Black
+  mut color3: Color = .Brown
+
+  color3 = Color.Green
+  color3 = .Black
+
+  colorName := color1.rawValue
+  colorNameId := color1.str()
+  colorBlackName := Color.Black.rawValue
+  colorBlackNameId := Color.Black.str()
+}
+======= stdout =======
+<NodeEnumDecl>
+  <NodeEnumDeclType>
+    <TypeEnum codeName="AnimalType_0" name="AnimalType">
+      <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+      <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+    </TypeEnum>
+  </NodeEnumDeclType>
+  <NodeEnumDeclMembers>
+    <NodeEnumDeclMember id="Cat" />
+    <NodeEnumDeclMember id="Dog" />
+  </NodeEnumDeclMembers>
+</NodeEnumDecl>
+<NodeObjDecl>
+  <TypeObj codeName="Animal_0" name="Animal">
+    <TypeField name="type">
+      <TypeEnum codeName="AnimalType_0" name="AnimalType">
+        <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+        <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+      </TypeEnum>
+    </TypeField>
+    <TypeField name="name">
+      <BuiltinType name="str" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="cat" codeName="cat_0" frame="2">
+        <TypeObj codeName="Animal_0" name="Animal">
+          <TypeField name="type">
+            <TypeEnum codeName="AnimalType_0" name="AnimalType">
+              <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+              <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+            </TypeEnum>
+          </TypeField>
+          <TypeField name="name">
+            <BuiltinType name="str" />
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Animal_0" name="Animal">
+            <TypeField name="type">
+              <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+              </TypeEnum>
+            </TypeField>
+            <TypeField name="name">
+              <BuiltinType name="str" />
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjType>
+              <TypeObj codeName="Animal_0" name="Animal">
+                <TypeField name="type">
+                  <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                    <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                    <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                  </TypeEnum>
+                </TypeField>
+                <TypeField name="name">
+                  <BuiltinType name="str" />
+                </TypeField>
+              </TypeObj>
+            </ExprObjType>
+            <ExprObjProps>
+              <ExprObjProp id="type">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                      <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                      <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                    </TypeEnum>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess prop="Cat" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+              <ExprObjProp id="name">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"Sam\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+            </ExprObjProps>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="dog" codeName="dog_0" frame="2">
+        <TypeObj codeName="Animal_0" name="Animal">
+          <TypeField name="type">
+            <TypeEnum codeName="AnimalType_0" name="AnimalType">
+              <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+              <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+            </TypeEnum>
+          </TypeField>
+          <TypeField name="name">
+            <BuiltinType name="str" />
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Animal_0" name="Animal">
+            <TypeField name="type">
+              <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+              </TypeEnum>
+            </TypeField>
+            <TypeField name="name">
+              <BuiltinType name="str" />
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjType>
+              <TypeObj codeName="Animal_0" name="Animal">
+                <TypeField name="type">
+                  <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                    <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                    <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                  </TypeEnum>
+                </TypeField>
+                <TypeField name="name">
+                  <BuiltinType name="str" />
+                </TypeField>
+              </TypeObj>
+            </ExprObjType>
+            <ExprObjProps>
+              <ExprObjProp id="type">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                      <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                      <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                    </TypeEnum>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess prop="Dog">
+                      <NodeExpr>
+                        <NodeExprType>
+                          <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                            <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                            <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                          </TypeEnum>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <Var name="AnimalType" codeName="AnimalType_0" ctxIgnored frame="1">
+                              <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                                <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                                <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                              </TypeEnum>
+                            </Var>
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+              <ExprObjProp id="name">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"Sam\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+            </ExprObjProps>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeEnumDecl>
+    <NodeEnumDeclType>
+      <TypeEnum codeName="mainSDColor_0" name="Color">
+        <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+        <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+        <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+      </TypeEnum>
+    </NodeEnumDeclType>
+    <NodeEnumDeclMembers>
+      <NodeEnumDeclMember id="Brown">
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="int" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprLit type="INT_DEC" value="1" />
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeEnumDeclMember>
+      <NodeEnumDeclMember id="Black">
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="int" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprBinary op="LSHIFT">
+              <ExprBinaryLeft>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="INT_DEC" value="1" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryLeft>
+              <ExprBinaryRight>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="INT_DEC" value="1" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryRight>
+            </ExprBinary>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeEnumDeclMember>
+      <NodeEnumDeclMember id="Green">
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="int" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprBinary op="ADD">
+              <ExprBinaryLeft>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="INT_DEC" value="1" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryLeft>
+              <ExprBinaryRight>
+                <NodeExpr parenthesized>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprBinary op="LSHIFT">
+                      <ExprBinaryLeft>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprLit type="INT_DEC" value="1" />
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprBinaryLeft>
+                      <ExprBinaryRight>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprLit type="INT_DEC" value="1" />
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprBinaryRight>
+                    </ExprBinary>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryRight>
+            </ExprBinary>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeEnumDeclMember>
+    </NodeEnumDeclMembers>
+  </NodeEnumDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="color1" codeName="color1_0" frame="2">
+        <TypeEnum codeName="mainSDColor_0" name="Color">
+          <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+          <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+          <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+        </TypeEnum>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeEnum codeName="mainSDColor_0" name="Color">
+            <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+            <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+            <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+          </TypeEnum>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess prop="Green">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeEnum codeName="mainSDColor_0" name="Color">
+                  <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                  <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                  <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                </TypeEnum>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="Color" codeName="mainSDColor_0" ctxIgnored frame="2">
+                    <TypeEnum codeName="mainSDColor_0" name="Color">
+                      <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                      <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                      <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                    </TypeEnum>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="color2" codeName="color2_0" frame="2">
+        <TypeEnum codeName="mainSDColor_0" name="Color">
+          <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+          <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+          <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+        </TypeEnum>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeEnum codeName="mainSDColor_0" name="Color">
+            <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+            <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+            <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+          </TypeEnum>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess prop="Black">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeEnum codeName="mainSDColor_0" name="Color">
+                  <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                  <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                  <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                </TypeEnum>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="Color" codeName="mainSDColor_0" ctxIgnored frame="2">
+                    <TypeEnum codeName="mainSDColor_0" name="Color">
+                      <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                      <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                      <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                    </TypeEnum>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="color3" codeName="color3_0" mut frame="2">
+        <TypeEnum codeName="mainSDColor_0" name="Color">
+          <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+          <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+          <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+        </TypeEnum>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeEnum codeName="mainSDColor_0" name="Color">
+            <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+            <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+            <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+          </TypeEnum>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess prop="Brown" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeEnum codeName="mainSDColor_0" name="Color">
+        <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+        <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+        <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+      </TypeEnum>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAssign op="EQ">
+        <ExprAssignLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeEnum codeName="mainSDColor_0" name="Color">
+                <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+              </TypeEnum>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="color3" codeName="color3_0" mut frame="2">
+                  <TypeEnum codeName="mainSDColor_0" name="Color">
+                    <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                    <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                    <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                  </TypeEnum>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignLeft>
+        <ExprAssignRight>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeEnum codeName="mainSDColor_0" name="Color">
+                <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+              </TypeEnum>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="Green">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeEnum codeName="mainSDColor_0" name="Color">
+                      <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                      <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                      <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                    </TypeEnum>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="Color" codeName="mainSDColor_0" ctxIgnored frame="2">
+                        <TypeEnum codeName="mainSDColor_0" name="Color">
+                          <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                          <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                          <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                        </TypeEnum>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignRight>
+      </ExprAssign>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeEnum codeName="mainSDColor_0" name="Color">
+        <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+        <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+        <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+      </TypeEnum>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAssign op="EQ">
+        <ExprAssignLeft>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeEnum codeName="mainSDColor_0" name="Color">
+                <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+              </TypeEnum>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="color3" codeName="color3_0" mut frame="2">
+                  <TypeEnum codeName="mainSDColor_0" name="Color">
+                    <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                    <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                    <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                  </TypeEnum>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignLeft>
+        <ExprAssignRight>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeEnum codeName="mainSDColor_0" name="Color">
+                <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+              </TypeEnum>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess prop="Black" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprAssignRight>
+      </ExprAssign>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="colorName" codeName="colorName_0" frame="2">
+        <BuiltinType name="str" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="str" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess prop="rawValue">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeEnum codeName="mainSDColor_0" name="Color">
+                  <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                  <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                  <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                </TypeEnum>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="color1" codeName="color1_0" frame="2">
+                    <TypeEnum codeName="mainSDColor_0" name="Color">
+                      <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                      <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                      <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                    </TypeEnum>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="colorNameId" codeName="colorNameId_0" frame="2">
+        <BuiltinType name="str" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="str" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="Color.str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess prop="str">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeEnum codeName="mainSDColor_0" name="Color">
+                          <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                          <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                          <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                        </TypeEnum>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="color1" codeName="color1_0" frame="2">
+                            <TypeEnum codeName="mainSDColor_0" name="Color">
+                              <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                              <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                              <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                            </TypeEnum>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="colorBlackName" codeName="colorBlackName_0" frame="2">
+        <BuiltinType name="str" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="str" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess prop="rawValue">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeEnum codeName="mainSDColor_0" name="Color">
+                  <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                  <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                  <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                </TypeEnum>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess prop="Black">
+                  <NodeExpr>
+                    <NodeExprType>
+                      <TypeEnum codeName="mainSDColor_0" name="Color">
+                        <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                        <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                        <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                      </TypeEnum>
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="Color" codeName="mainSDColor_0" ctxIgnored frame="2">
+                          <TypeEnum codeName="mainSDColor_0" name="Color">
+                            <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                            <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                            <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                          </TypeEnum>
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="colorBlackNameId" codeName="colorBlackNameId_0" frame="2">
+        <BuiltinType name="str" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="str" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="Color.str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess prop="str">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeEnum codeName="mainSDColor_0" name="Color">
+                          <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                          <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                          <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                        </TypeEnum>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess prop="Black">
+                          <NodeExpr>
+                            <NodeExprType>
+                              <TypeEnum codeName="mainSDColor_0" name="Color">
+                                <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                                <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                                <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                              </TypeEnum>
+                            </NodeExprType>
+                            <NodeExprBody>
+                              <ExprAccess>
+                                <Var name="Color" codeName="mainSDColor_0" ctxIgnored frame="2">
+                                  <TypeEnum codeName="mainSDColor_0" name="Color">
+                                    <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+                                    <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+                                    <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+                                  </TypeEnum>
+                                </Var>
+                              </ExprAccess>
+                            </NodeExprBody>
+                          </NodeExpr>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>

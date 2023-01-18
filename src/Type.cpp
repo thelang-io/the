@@ -91,6 +91,24 @@ Type *Type::largest (Type *a, Type *b) {
   ) ? a : b;
 }
 
+Type *Type::getEnumerator (const std::string &memberName) const {
+  if (!this->isEnum()) {
+    throw Error("tried to get a member of non-enum");
+  }
+
+  auto typeEnum = std::get<TypeEnum>(this->body);
+
+  auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
+    return it->name == memberName;
+  });
+
+  if (typeMember == typeEnum.members.end()) {
+    throw Error("tried to get non-existing enum member");
+  }
+
+  return *typeMember;
+}
+
 Type *Type::getProp (const std::string &propName) const {
   if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->getProp(propName);
@@ -105,6 +123,20 @@ Type *Type::getProp (const std::string &propName) const {
   }
 
   return typeField->type;
+}
+
+bool Type::hasEnumerator (const std::string &memberName) const {
+  if (!this->isEnum()) {
+    return false;
+  }
+
+  auto typeEnum = std::get<TypeEnum>(this->body);
+
+  auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
+    return it->name == memberName;
+  });
+
+  return typeMember != typeEnum.members.end();
 }
 
 bool Type::hasProp (const std::string &propName) const {
@@ -137,6 +169,14 @@ bool Type::isByte () const {
 
 bool Type::isChar () const {
   return this->name == "char";
+}
+
+bool Type::isEnum () const {
+  return std::holds_alternative<TypeEnum>(this->body);
+}
+
+bool Type::isEnumerator () const {
+  return std::holds_alternative<TypeEnumerator>(this->body);
 }
 
 bool Type::isF32 () const {
@@ -201,6 +241,7 @@ bool Type::isObj () const {
     !this->isBool() &&
     !this->isByte() &&
     !this->isChar() &&
+    !this->isEnum() &&
     !this->isNumber() &&
     !this->isFn() &&
     !this->isOpt() &&
@@ -263,7 +304,7 @@ bool Type::isVoid () const {
 }
 
 bool Type::match (const Type *type) const {
-  if (this->name == "any") {
+  if (this->isAny()) {
     return true;
   } else if (this->isRef() || type->isRef()) {
     if (this->isRef() && type->isRef()) {
@@ -287,6 +328,12 @@ bool Type::match (const Type *type) const {
     auto rhsArray = std::get<TypeArray>(type->body);
 
     return lhsArray.elementType->match(rhsArray.elementType);
+  } else if (this->isEnum() || type->isEnum()) {
+    if (this->isEnum() && type->isEnum()) {
+      return type->name == this->name;
+    }
+
+    return this->isInt() || type->isInt();
   } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -496,6 +543,10 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   if (this->isArray()) {
     typeName += "Array";
+  } else if (this->isEnum()) {
+    typeName += "Enum";
+  } else if (this->isEnumerator()) {
+    typeName += "Enumerator";
   } else if (this->isFn()) {
     typeName += "Fn";
   } else if (this->isObj()) {
@@ -511,7 +562,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
 
-  if (this->isObj() && parentTypes.contains(this->codeName)) {
+  if (this->isEnumerator() || (this->isObj() && parentTypes.contains(this->codeName))) {
     return result + " />";
   }
 
@@ -520,6 +571,12 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
     result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
+  } else if (this->isEnum()) {
+    auto typeEnum = std::get<TypeEnum>(this->body);
+
+    for (const auto &member : typeEnum.members) {
+      result += member->xml(indent + 2, parentTypes) + EOL;
+    }
   } else if (this->isFn()) {
     auto typeFn = std::get<TypeFn>(this->body);
 

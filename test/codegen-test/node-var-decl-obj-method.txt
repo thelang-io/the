@@ -1,0 +1,71 @@
+======= stdin =======
+obj Test {
+  fn test () {}
+}
+
+main {
+  a: Test
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct __THE_1_Test_0;
+struct __THE_1_fn$0;
+
+struct __THE_1_Test_0 {
+  void *_;
+};
+struct __THE_1_fn$0 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc ();
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+void __THE_1_TestSDtest_0 (void *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc () {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {(void *) 0};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  free(o);
+}
+void __THE_1_TestSDtest_0 (void *px) {
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_TestSDtest_0 = (struct __THE_1_fn$0) {&__THE_1_TestSDtest_0, NULL, 0};
+  const struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc();
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

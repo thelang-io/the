@@ -1,0 +1,108 @@
+======= stdin =======
+enum Test { Red, Green, Blue }
+
+fn inc (mut test: ref Test) Test {
+  if test == .Red {
+    test = .Green
+  } elif test == .Green {
+    test = .Blue
+  } else {
+    test = .Red
+  }
+}
+
+main {
+  loop i := Test.Red; i != .Blue; inc(ref i) {
+  }
+
+  mut a := Test.Red
+  loop ; a != .Blue; inc(ref a) {
+  }
+
+  mut b := Test.Red
+  loop ; b != .Blue; {
+    inc(ref b)
+  }
+
+  mut c := Test.Red
+  loop {
+    if c == .Blue {
+      break
+    }
+
+    inc(ref c)
+  }
+
+  loop d := Test.Red; d != .Blue; {
+    inc(ref d)
+  }
+
+  loop e := Test.Red;; inc(ref e) {
+    if e == .Blue {
+      break
+    }
+  }
+}
+======= code =======
+#include <stdlib.h>
+
+enum __THE_1_Test_0 {
+  __THE_0_TestSDRed_0,
+  __THE_0_TestSDGreen_0,
+  __THE_0_TestSDBlue_0
+};
+
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+
+struct __THE_1_fn$0P {
+  enum __THE_1_Test_0 *n0;
+};
+struct __THE_1_fn$0 {
+  enum __THE_1_Test_0 (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+
+enum __THE_1_Test_0 __THE_1_inc_0 (void *, struct __THE_1_fn$0P);
+
+enum __THE_1_Test_0 __THE_1_inc_0 (void *px, struct __THE_1_fn$0P p) {
+  enum __THE_1_Test_0 *__THE_0_test_0 = p.n0;
+  if (*__THE_0_test_0 == __THE_0_TestSDRed_0) {
+    *__THE_0_test_0 = __THE_0_TestSDGreen_0;
+  } else if (*__THE_0_test_0 == __THE_0_TestSDGreen_0) {
+    *__THE_0_test_0 = __THE_0_TestSDBlue_0;
+  } else {
+    *__THE_0_test_0 = __THE_0_TestSDRed_0;
+  }
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_inc_0 = (struct __THE_1_fn$0) {&__THE_1_inc_0, NULL, 0};
+  for (enum __THE_1_Test_0 __THE_0_i_0 = __THE_0_TestSDRed_0; __THE_0_i_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$0P) {&__THE_0_i_0})) {
+  }
+  enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
+  for (; __THE_0_a_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$0P) {&__THE_0_a_0})) {
+  }
+  enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_TestSDRed_0;
+  while (__THE_0_b_0 != __THE_0_TestSDBlue_0) {
+    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$0P) {&__THE_0_b_0});
+  }
+  enum __THE_1_Test_0 __THE_0_c_0 = __THE_0_TestSDRed_0;
+  while (1) {
+    if (__THE_0_c_0 == __THE_0_TestSDBlue_0) {
+      break;
+    }
+    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$0P) {&__THE_0_c_0});
+  }
+  for (enum __THE_1_Test_0 __THE_0_d_0 = __THE_0_TestSDRed_0; __THE_0_d_0 != __THE_0_TestSDBlue_0;) {
+    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$0P) {&__THE_0_d_0});
+  }
+  for (enum __THE_1_Test_0 __THE_0_e_0 = __THE_0_TestSDRed_0;; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$0P) {&__THE_0_e_0})) {
+    if (__THE_0_e_0 == __THE_0_TestSDBlue_0) {
+      break;
+    }
+  }
+}
+======= flags =======
+======= stdout =======

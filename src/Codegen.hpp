@@ -24,6 +24,7 @@
 
 enum CodegenEntityType {
   CODEGEN_ENTITY_DEF,
+  CODEGEN_ENTITY_ENUM,
   CODEGEN_ENTITY_FN,
   CODEGEN_ENTITY_OBJ
 };
@@ -70,6 +71,7 @@ struct CodegenBuiltins {
   bool fnCstrEqStr = false;
   bool fnCstrNeCstr = false;
   bool fnCstrNeStr = false;
+  bool fnEnumStr = false;
   bool fnF32Str = false;
   bool fnF64Str = false;
   bool fnFloatStr = false;

@@ -4,6 +4,6 @@ main {
   test := Test{b: 2}
 }
 ======= stderr =======
-/test:3:16: E1015 - Tried setting non existing object property
+/test:3:16: E1015 - Tried setting non-existing object property
   3 |   test := Test{b: 2}
     |                ^~~~

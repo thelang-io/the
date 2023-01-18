@@ -96,7 +96,7 @@
 #define E0158 "E0158 - Enumerations should have at least one member"
 #define E0159 "E0159 - Expected property name after dot"
 
-#define E1001 "E1001 - Tried accessing non existing object property"
+#define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
 #define E1003 "E1003 - Binary operator cannot be applied to these operands"
 #define E1004 "E1004 - Incompatible operand types"
@@ -110,7 +110,7 @@
 #define E1012 "E1012 - Index type expected to be integer"
 #define E1013 "E1013 - Indexing allowed only on arrays and strings"
 #define E1014 "E1014 - Called object expected to be a function"
-#define E1015 "E1015 - Tried setting non existing object property"
+#define E1015 "E1015 - Tried setting non-existing object property"
 #define E1016 "E1016 - Unable to deduce array literal type"
 #define E1017 "E1017 - Incompatible array literal element types"
 #define E1018 "E1018 - Unable to deduce optional type"
@@ -118,6 +118,8 @@
 #define E1020 "E1020 - Unable to deduce types for expression"
 #define E1021 "E1021 - Function declaration with name `main` is not allowed"
 #define E1022 "E1022 - Void type can only be used as function return type"
+#define E1023 "E1023 - Unable to deduce enumeration member type"
+#define E1024 "E1024 - Tried accessing non-existing enumeration member"
 
 class Error : public std::exception {
  public:

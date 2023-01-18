@@ -1,0 +1,41 @@
+======= stdin =======
+enum Test {
+  Red,
+  Blue,
+  Green
+}
+
+main {
+  a := Test.Red
+  b := Test.Green
+
+  c := true ? Test.Red : .Green
+  d := true ? .Red : Test.Green
+  e := false ? a : .Red
+  f := false ? a : Test.Green
+  g := true ? .Blue : b
+  h := true ? Test.Blue : b
+  m := false ? a : b
+}
+======= code =======
+#include <stdbool.h>
+
+enum __THE_1_Test_0 {
+  __THE_0_TestSDRed_0,
+  __THE_0_TestSDBlue_0,
+  __THE_0_TestSDGreen_0
+};
+
+int main () {
+  const enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
+  const enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_TestSDGreen_0;
+  const enum __THE_1_Test_0 __THE_0_c_0 = true ? __THE_0_TestSDRed_0 : __THE_0_TestSDGreen_0;
+  const enum __THE_1_Test_0 __THE_0_d_0 = true ? __THE_0_TestSDRed_0 : __THE_0_TestSDGreen_0;
+  const enum __THE_1_Test_0 __THE_0_e_0 = false ? __THE_0_a_0 : __THE_0_TestSDRed_0;
+  const enum __THE_1_Test_0 __THE_0_f_0 = false ? __THE_0_a_0 : __THE_0_TestSDGreen_0;
+  const enum __THE_1_Test_0 __THE_0_g_0 = true ? __THE_0_TestSDBlue_0 : __THE_0_b_0;
+  const enum __THE_1_Test_0 __THE_0_h_0 = true ? __THE_0_TestSDBlue_0 : __THE_0_b_0;
+  const enum __THE_1_Test_0 __THE_0_m_0 = false ? __THE_0_a_0 : __THE_0_b_0;
+}
+======= flags =======
+======= stdout =======

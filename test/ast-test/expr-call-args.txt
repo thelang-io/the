@@ -411,7 +411,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="byte" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="1" />
@@ -496,7 +496,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="i8" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="5" />
@@ -513,7 +513,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="i16" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="6" />
@@ -530,7 +530,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="i32" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="7" />
@@ -547,7 +547,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="i64" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="8" />
@@ -598,7 +598,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="u8" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="10" />
@@ -615,7 +615,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="u16" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="11" />
@@ -632,7 +632,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="u32" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="12" />
@@ -649,7 +649,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <BuiltinType name="int" />
+            <BuiltinType name="u64" />
           </NodeExprType>
           <NodeExprBody>
             <ExprLit type="INT_DEC" value="13" />
@@ -908,7 +908,7 @@ main {
           <ExprCallArg id="b">
             <NodeExpr>
               <NodeExprType>
-                <BuiltinType name="int" />
+                <BuiltinType name="byte" />
               </NodeExprType>
               <NodeExprBody>
                 <ExprLit type="INT_DEC" value="1" />
@@ -978,7 +978,7 @@ main {
           <ExprCallArg id="i3">
             <NodeExpr>
               <NodeExprType>
-                <BuiltinType name="int" />
+                <BuiltinType name="i32" />
               </NodeExprType>
               <NodeExprBody>
                 <ExprLit type="INT_DEC" value="7" />
@@ -988,7 +988,7 @@ main {
           <ExprCallArg id="i4">
             <NodeExpr>
               <NodeExprType>
-                <BuiltinType name="int" />
+                <BuiltinType name="i64" />
               </NodeExprType>
               <NodeExprBody>
                 <ExprLit type="INT_DEC" value="8" />

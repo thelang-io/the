@@ -1,6 +1,7 @@
 ======= stdin =======
 .t;
 .west;
+test = test2 == .Value;
 ======= stdout =======
 <ExprAccess start="1:1" end="1:3">
   <ExprAccessProp>
@@ -12,3 +13,32 @@
     <Token type="ID" val="west" start="2:2" end="2:6" />
   </ExprAccessProp>
 </ExprAccess>
+<ExprAssign start="3:1" end="3:23">
+  <ExprAssignLeft>
+    <ExprAccess start="3:1" end="3:5">
+      <Token type="ID" val="test" start="3:1" end="3:5" />
+    </ExprAccess>
+  </ExprAssignLeft>
+  <ExprAssignOp>
+    <Token type="OP_EQ" val="=" start="3:6" end="3:7" />
+  </ExprAssignOp>
+  <ExprAssignRight>
+    <ExprBinary start="3:8" end="3:23">
+      <ExprBinaryLeft>
+        <ExprAccess start="3:8" end="3:13">
+          <Token type="ID" val="test2" start="3:8" end="3:13" />
+        </ExprAccess>
+      </ExprBinaryLeft>
+      <ExprBinaryOp>
+        <Token type="OP_EQ_EQ" val="==" start="3:14" end="3:16" />
+      </ExprBinaryOp>
+      <ExprBinaryRight>
+        <ExprAccess start="3:17" end="3:23">
+          <ExprAccessProp>
+            <Token type="ID" val="Value" start="3:18" end="3:23" />
+          </ExprAccessProp>
+        </ExprAccess>
+      </ExprBinaryRight>
+    </ExprBinary>
+  </ExprAssignRight>
+</ExprAssign>

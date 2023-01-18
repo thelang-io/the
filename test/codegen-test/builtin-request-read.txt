@@ -762,15 +762,9 @@ A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======
 GET https://ci.thelang.io/echo?ip 200
 
-request_Header{name: "access-control-allow-methods", value: "GET"}
-request_Header{name: "access-control-allow-origin", value: "*"}
-request_Header{name: "alt-svc", value: {{ [^\}]+ }}}
-request_Header{name: "cf-ray", value: {{ [^\}]+ }}}
 request_Header{name: "connection", value: "keep-alive"}
 request_Header{name: "content-length", value: "{{ \d+ }}"}
-request_Header{name: "content-type", value: "text/plain"}
-request_Header{name: "date", value: {{ [^\}]+ }}}
-request_Header{name: "server", value: "cloudflare"}
-request_Header{name: "set-cookie", value: {{ [^\}]+ }}}
+request_Header{name: "date", value: "{{ [^"]+ }}"}
+request_Header{name: "server", value: "nginx"}
 
-{{ \d{1,3} }}.{{ \d{1,3} }}.{{ \d{1,3} }}.{{ \d{1,3} }}{{ \n }}
+{{ \d{1,3} }}.{{ \d{1,3} }}.{{ \d{1,3} }}.{{ \d{1,3} }}

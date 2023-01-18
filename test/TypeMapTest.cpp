@@ -30,8 +30,8 @@ TEST_F(TypeMapTest, ArrayInserts) {
   auto type1 = this->tm_.arrayOf(this->tm_.get("int"));
   auto type2 = this->tm_.arrayOf(this->tm_.get("str"));
 
-  EXPECT_NO_THROW(this->tm_.get("array_int"));
-  EXPECT_NO_THROW(this->tm_.get("array_str"));
+  EXPECT_NE(this->tm_.get("array_int"), nullptr);
+  EXPECT_NE(this->tm_.get("array_str"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_FALSE(type2->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeArray>(type1->body));
@@ -53,6 +53,76 @@ TEST_F(TypeMapTest, ArrayDoesNotInsertExact) {
   EXPECT_EQ(type1, type2);
 }
 
+TEST_F(TypeMapTest, EnumeratorInserts) {
+  auto type1 = this->tm_.enumerator("Brown", this->tm_.name("Brown"));
+  auto type2 = this->tm_.enumerator("Red", this->tm_.name("Red"));
+
+  EXPECT_NE(this->tm_.get("Brown"), nullptr);
+  EXPECT_NE(this->tm_.get("Red"), nullptr);
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeEnumerator>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeEnumerator>(type2->body));
+}
+
+TEST_F(TypeMapTest, EnumeratorDoesNotInsertExact) {
+  auto codeName = this->tm_.name("Brown");
+  auto type1 = this->tm_.enumerator("Brown", codeName);
+  auto type2 = this->tm_.enumerator("Brown", codeName);
+
+  EXPECT_EQ(type1->name, "Brown");
+  EXPECT_EQ(type1->name, type2->name);
+  EXPECT_EQ(type1, type2);
+}
+
+TEST_F(TypeMapTest, EnumerationInserts) {
+  this->tm_.stack.emplace_back("Test");
+  auto type1 = this->tm_.enumeration("Test", this->tm_.name("Test"), {
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+  });
+  this->tm_.stack.pop_back();
+
+  this->tm_.stack.emplace_back("Test1");
+  auto type2 = this->tm_.enumeration("Test1", this->tm_.name("Test1"), {
+    this->tm_.enumerator("Red", this->tm_.name("Red")),
+    this->tm_.enumerator("Green", this->tm_.name("Green"))
+  });
+  this->tm_.stack.pop_back();
+
+  EXPECT_NE(this->tm_.get("Test"), nullptr);
+  EXPECT_NE(this->tm_.get("Test1"), nullptr);
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeEnum>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeEnum>(type2->body));
+
+  auto enum1Body = std::get<TypeEnum>(type1->body);
+  auto enum2Body = std::get<TypeEnum>(type2->body);
+
+  EXPECT_EQ(enum1Body.members.size(), 1);
+  EXPECT_EQ(enum2Body.members.size(), 2);
+}
+
+TEST_F(TypeMapTest, EnumerationDoesNotInsertExact) {
+  auto codeName = this->tm_.name("Test");
+
+  this->tm_.stack.emplace_back("Test");
+  auto type1 = this->tm_.enumeration("Test", codeName, {
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+  });
+  this->tm_.stack.pop_back();
+
+  this->tm_.stack.emplace_back("Test");
+  auto type2 = this->tm_.enumeration("Test", codeName, {
+    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+  });
+  this->tm_.stack.pop_back();
+
+  EXPECT_EQ(type1->name, "Test");
+  EXPECT_EQ(type1->name, type2->name);
+  EXPECT_EQ(type1, type2);
+}
+
 TEST_F(TypeMapTest, FunctionInserts) {
   auto type1 = this->tm_.fn("test1_0", {}, this->tm_.get("void"));
 
@@ -65,9 +135,9 @@ TEST_F(TypeMapTest, FunctionInserts) {
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("str"));
 
-  EXPECT_NO_THROW(this->tm_.get("fn$0"));
-  EXPECT_NO_THROW(this->tm_.get("fn$1"));
-  EXPECT_NO_THROW(this->tm_.get("fn$2"));
+  EXPECT_NE(this->tm_.get("fn$0"), nullptr);
+  EXPECT_NE(this->tm_.get("fn$1"), nullptr);
+  EXPECT_NE(this->tm_.get("fn$2"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeFn>(type1->body));
 
@@ -114,9 +184,9 @@ TEST_F(TypeMapTest, FunctionInsertsMethod) {
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("str"), type3MethodInfo);
 
-  EXPECT_NO_THROW(this->tm_.get("fn$0"));
-  EXPECT_NO_THROW(this->tm_.get("fn$1"));
-  EXPECT_NO_THROW(this->tm_.get("fn$2"));
+  EXPECT_NE(this->tm_.get("fn$0"), nullptr);
+  EXPECT_NE(this->tm_.get("fn$1"), nullptr);
+  EXPECT_NE(this->tm_.get("fn$2"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeFn>(type1->body));
 
@@ -142,11 +212,11 @@ TEST_F(TypeMapTest, FunctionInsertsMethod) {
 }
 
 TEST_F(TypeMapTest, FunctionInsertsBetweenFunctionAndMethod) {
-  auto type1 = this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
-  auto type2 = this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"));
+  this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
+  this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"));
 
-  EXPECT_NO_THROW(this->tm_.get("fn$0"));
-  EXPECT_NO_THROW(this->tm_.get("fn$1"));
+  EXPECT_NE(this->tm_.get("fn$0"), nullptr);
+  EXPECT_NE(this->tm_.get("fn$1"), nullptr);
 }
 
 TEST_F(TypeMapTest, FunctionDoesNotInsert) {
@@ -201,8 +271,8 @@ TEST_F(TypeMapTest, GetReturnsItem) {
   this->tm_.fn("test", {}, this->tm_.get("void"));
   this->tm_.obj("Test", "Test");
 
-  EXPECT_NO_THROW(this->tm_.get("fn$0"));
-  EXPECT_NO_THROW(this->tm_.get("Test"));
+  EXPECT_NE(this->tm_.get("fn$0"), nullptr);
+  EXPECT_NE(this->tm_.get("Test"), nullptr);
 }
 
 TEST_F(TypeMapTest, GetReturnsSelf) {
@@ -278,9 +348,9 @@ TEST_F(TypeMapTest, ObjectInserts) {
     TypeField{"c", this->tm_.get("str"), false, false, false}
   });
 
-  EXPECT_NO_THROW(this->tm_.get("Test1"));
-  EXPECT_NO_THROW(this->tm_.get("Test2"));
-  EXPECT_NO_THROW(this->tm_.get("Test3"));
+  EXPECT_NE(this->tm_.get("Test1"), nullptr);
+  EXPECT_NE(this->tm_.get("Test2"), nullptr);
+  EXPECT_NE(this->tm_.get("Test3"), nullptr);
   EXPECT_EQ(type1->name, "Test1");
   EXPECT_EQ(type2->name, "Test2");
   EXPECT_EQ(type3->name, "Test3");
@@ -305,8 +375,8 @@ TEST_F(TypeMapTest, OptionalInserts) {
   auto type1 = this->tm_.opt(this->tm_.get("int"));
   auto type2 = this->tm_.opt(this->tm_.get("str"));
 
-  EXPECT_NO_THROW(this->tm_.get("opt_int"));
-  EXPECT_NO_THROW(this->tm_.get("opt_str"));
+  EXPECT_NE(this->tm_.get("opt_int"), nullptr);
+  EXPECT_NE(this->tm_.get("opt_str"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_FALSE(type2->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeOptional>(type1->body));

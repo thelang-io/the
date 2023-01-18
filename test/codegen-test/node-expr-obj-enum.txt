@@ -1,0 +1,76 @@
+======= stdin =======
+obj Test1 {
+  a: Test2
+  b: Test2
+}
+
+enum Test2 {
+  Red,
+  Green,
+  Blue
+}
+
+main {
+  Test1{a: Test2.Green}
+  Test1{a: .Blue, b: .Green}
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+enum __THE_1_Test2_0 {
+  __THE_0_Test2SDRed_0,
+  __THE_0_Test2SDGreen_0,
+  __THE_0_Test2SDBlue_0
+};
+
+struct __THE_1_Test1_0;
+
+struct __THE_1_Test1_0 {
+  const enum __THE_1_Test2_0 __THE_0_a;
+  const enum __THE_1_Test2_0 __THE_0_b;
+};
+
+void *alloc (size_t);
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (enum __THE_1_Test2_0, enum __THE_1_Test2_0);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (enum __THE_1_Test2_0 __THE_0_a, enum __THE_1_Test2_0 __THE_0_b) {
+  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
+  struct __THE_1_Test1_0 s = {__THE_0_a, __THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
+  return r;
+}
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
+  free(o);
+}
+
+int main () {
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_1_Test1_0_alloc(__THE_0_Test2SDGreen_0, 0));
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_1_Test1_0_alloc(__THE_0_Test2SDBlue_0, __THE_0_Test2SDGreen_0));
+}
+======= flags =======
+======= stdout =======

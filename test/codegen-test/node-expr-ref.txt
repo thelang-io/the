@@ -1,0 +1,30 @@
+======= stdin =======
+main {
+  mut a := 1
+  mut b := 2;
+
+  ref a;
+  ref b;
+  (ref a) + (ref b);
+  true ? a : ref a;
+  false ? ref b : b;
+  false ? ref a : ref b;
+  !(ref a);
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  int32_t __THE_0_a_0 = 1;
+  int32_t __THE_0_b_0 = 2;
+  &__THE_0_a_0;
+  &__THE_0_b_0;
+  (__THE_0_a_0) + (__THE_0_b_0);
+  true ? __THE_0_a_0 : __THE_0_a_0;
+  false ? __THE_0_b_0 : __THE_0_b_0;
+  false ? &__THE_0_a_0 : &__THE_0_b_0;
+  !(__THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

@@ -1,5 +1,5 @@
 ======= stdin =======
-IGNORED_HEADERS := ["date", "connection", "keep-alive", "content-length"]
+IGNORED_HEADERS := ["date", "connection", "keep-alive", "content-length", "server"]
 
 fn ignoredHeadersIncludes (it: str) bool {
   loop i := 0; i < IGNORED_HEADERS.len; i++ {
@@ -1026,7 +1026,7 @@ void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1P p) {
 }
 
 int main () {
-  const struct __THE_1_array_str __THE_0_IGNORED_HEADERS_0 = __THE_1_array_str_alloc(4, str_alloc("date"), str_alloc("connection"), str_alloc("keep-alive"), str_alloc("content-length"));
+  const struct __THE_1_array_str __THE_0_IGNORED_HEADERS_0 = __THE_1_array_str_alloc(5, str_alloc("date"), str_alloc("connection"), str_alloc("keep-alive"), str_alloc("content-length"), str_alloc("server"));
   const struct __THE_1_fn$0 __THE_0_ignoredHeadersIncludes_0;
   const struct __THE_1_fn$1 __THE_0_requestWithPrint_0;
   __THE_1_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn$0 *) &__THE_0_ignoredHeadersIncludes_0, (struct __THE_1_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
@@ -1049,4 +1049,23 @@ int main () {
 ======= flags =======
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======
-GET https://httpbin.org/status/200 200
+GET https://ci.thelang.io/echo?status=200
+status: 200
+
+GET https://ci.thelang.io/echo?status=400
+status: 400
+
+GET https://ci.thelang.io/echo?status=500
+status: 500
+
+POST https://ci.thelang.io/echo
+status: 200
+
+POST https://ci.thelang.io/echo
+status: 200
+data: test
+
+POST https://ci.thelang.io/echo
+status: 200
+headers: [request_Header{name: "custom-header", value: "custom-value"}]
+data: test1=value1&test2=value2

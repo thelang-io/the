@@ -60,6 +60,39 @@ Type *TypeMap::arrayOf (Type *elementType) {
   return selfType;
 }
 
+Type *TypeMap::enumeration (const std::string &name, const std::string &codeName, const std::vector<Type *> &members) {
+  auto typeBody = TypeEnum{members};
+  auto newType = Type{name, codeName, typeBody};
+
+  for (auto &item : this->_items) {
+    if (!item->builtin && item->codeName == newType.codeName) {
+      return item.get();
+    }
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  auto selfType = this->_items.back().get();
+
+  selfType->fields.push_back(TypeField{"rawValue", this->get("str"), false, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@enum.str", TypeFn{this->get("str")}, {}, true}));
+  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
+
+  return selfType;
+}
+
+Type *TypeMap::enumerator (const std::string &enumeratorName, const std::string &enumeratorCodeName) {
+  auto newType = Type{enumeratorName, enumeratorCodeName, TypeEnumerator{}};
+
+  for (auto &item : this->_items) {
+    if (!item->builtin && item->codeName == newType.codeName) {
+      return item.get();
+    }
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  return this->_items.back().get();
+}
+
 Type *TypeMap::fn (
   const std::optional<std::string> &codeName,
   const std::vector<TypeFnParam> &params,
@@ -106,9 +139,11 @@ Type *TypeMap::get (const std::string &name) {
     return this->self == std::nullopt ? nullptr : *this->self;
   }
 
-  for (const auto &item : this->_items) {
-    if (item->name == name) {
-      return item.get();
+  for (auto idx = this->_items.size() - 1;; idx--) {
+    if (this->_items[idx]->name == name) {
+      return this->_items[idx].get();
+    } else if (idx == 0) {
+      break;
     }
   }
 

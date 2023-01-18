@@ -1,0 +1,155 @@
+======= stdin =======
+main {
+  if true {
+    enum Weekday { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+    print(Weekday.Monday)
+  } else {
+    enum Weekday { Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+    print(Weekday.Monday)
+  }
+  if false {
+    enum Weekday { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+    print(Weekday.Monday)
+  } else {
+    enum Weekday { Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+    print(Weekday.Monday)
+  }
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+enum __THE_1_mainSDWeekday_0 {
+  __THE_0_mainSDWeekdaySDMonday_0,
+  __THE_0_mainSDWeekdaySDTuesday_0,
+  __THE_0_mainSDWeekdaySDWednesday_0,
+  __THE_0_mainSDWeekdaySDThursday_0,
+  __THE_0_mainSDWeekdaySDFriday_0,
+  __THE_0_mainSDWeekdaySDSaturday_0,
+  __THE_0_mainSDWeekdaySDSunday_0
+};
+enum __THE_1_mainSDWeekday_1 {
+  __THE_0_mainSDWeekdaySDMonday_1 = 1,
+  __THE_0_mainSDWeekdaySDTuesday_1,
+  __THE_0_mainSDWeekdaySDWednesday_1,
+  __THE_0_mainSDWeekdaySDThursday_1,
+  __THE_0_mainSDWeekdaySDFriday_1,
+  __THE_0_mainSDWeekdaySDSaturday_1,
+  __THE_0_mainSDWeekdaySDSunday_1
+};
+enum __THE_1_mainSDWeekday_2 {
+  __THE_0_mainSDWeekdaySDMonday_2,
+  __THE_0_mainSDWeekdaySDTuesday_2,
+  __THE_0_mainSDWeekdaySDWednesday_2,
+  __THE_0_mainSDWeekdaySDThursday_2,
+  __THE_0_mainSDWeekdaySDFriday_2,
+  __THE_0_mainSDWeekdaySDSaturday_2,
+  __THE_0_mainSDWeekdaySDSunday_2
+};
+enum __THE_1_mainSDWeekday_3 {
+  __THE_0_mainSDWeekdaySDMonday_3 = 1,
+  __THE_0_mainSDWeekdaySDTuesday_3,
+  __THE_0_mainSDWeekdaySDWednesday_3,
+  __THE_0_mainSDWeekdaySDThursday_3,
+  __THE_0_mainSDWeekdaySDFriday_3,
+  __THE_0_mainSDWeekdaySDSaturday_3,
+  __THE_0_mainSDWeekdaySDSunday_3
+};
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str enum_str (int);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str enum_str (int d) {
+  char buf[512];
+  sprintf(buf, "%d", d);
+  return str_alloc(buf);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  if (true) {
+    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_0), THE_EOL);
+  } else {
+    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_1), THE_EOL);
+  }
+  if (false) {
+    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_2), THE_EOL);
+  } else {
+    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_3), THE_EOL);
+  }
+}
+======= flags =======
+======= stdout =======
+0
+1

@@ -126,27 +126,33 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
 
   if (std::holds_alternative<ASTExprAccess>(*this->body)) {
     auto exprAccess = std::get<ASTExprAccess>(*this->body);
-    result += std::string(indent, ' ') + "<ExprAccess" + (exprAccess.prop == std::nullopt ? "" : R"( prop=")" + *exprAccess.prop + R"(")") + ">" EOL;
+    auto attrs = std::string(exprAccess.prop == std::nullopt ? "" : R"( prop=")" + *exprAccess.prop + R"(")");
 
-    if (std::holds_alternative<std::shared_ptr<Var>>(exprAccess.expr)) {
-      auto var = std::get<std::shared_ptr<Var>>(exprAccess.expr);
-      result += var->xml(indent + 2) + EOL;
-    } else if (std::holds_alternative<ASTNodeExpr>(exprAccess.expr)) {
-      auto nodeExpr = std::get<ASTNodeExpr>(exprAccess.expr);
+    if (exprAccess.expr == std::nullopt) {
+      result += std::string(indent, ' ') + "<ExprAccess" + attrs + " />" EOL;
+    } else {
+      result += std::string(indent, ' ') + "<ExprAccess" + attrs + ">" EOL;
 
-      if (exprAccess.elem != std::nullopt) {
-        result += std::string(indent + 2, ' ') + "<ExprAccessExpr>" EOL;
-        result += nodeExpr.xml(indent + 4) + EOL;
-        result += std::string(indent + 2, ' ') + "</ExprAccessExpr>" EOL;
-        result += std::string(indent + 2, ' ') + "<ExprAccessElem>" EOL;
-        result += exprAccess.elem->xml(indent + 4) + EOL;
-        result += std::string(indent + 2, ' ') + "</ExprAccessElem>" EOL;
-      } else {
-        result += nodeExpr.xml(indent + 2) + EOL;
+      if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
+        auto var = std::get<std::shared_ptr<Var>>(*exprAccess.expr);
+        result += var->xml(indent + 2) + EOL;
+      } else if (std::holds_alternative<ASTNodeExpr>(*exprAccess.expr)) {
+        auto nodeExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
+
+        if (exprAccess.elem != std::nullopt) {
+          result += std::string(indent + 2, ' ') + "<ExprAccessExpr>" EOL;
+          result += nodeExpr.xml(indent + 4) + EOL;
+          result += std::string(indent + 2, ' ') + "</ExprAccessExpr>" EOL;
+          result += std::string(indent + 2, ' ') + "<ExprAccessElem>" EOL;
+          result += exprAccess.elem->xml(indent + 4) + EOL;
+          result += std::string(indent + 2, ' ') + "</ExprAccessElem>" EOL;
+        } else {
+          result += nodeExpr.xml(indent + 2) + EOL;
+        }
       }
-    }
 
-    result += std::string(indent, ' ') + "</ExprAccess>" EOL;
+      result += std::string(indent, ' ') + "</ExprAccess>" EOL;
+    }
   } else if (std::holds_alternative<ASTExprArray>(*this->body)) {
     auto exprArray = std::get<ASTExprArray>(*this->body);
 

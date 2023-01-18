@@ -1,0 +1,24 @@
+======= stdin =======
+enum Color {
+  Red,
+  Green,
+  Blue
+}
+
+main {
+  mut a := Color.Red
+  mut b := Color.Green
+}
+======= code =======
+enum __THE_1_Color_0 {
+  __THE_0_ColorSDRed_0,
+  __THE_0_ColorSDGreen_0,
+  __THE_0_ColorSDBlue_0
+};
+
+int main () {
+  enum __THE_1_Color_0 __THE_0_a_0 = __THE_0_ColorSDRed_0;
+  enum __THE_1_Color_0 __THE_0_b_0 = __THE_0_ColorSDGreen_0;
+}
+======= flags =======
+======= stdout =======

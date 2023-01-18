@@ -1,0 +1,158 @@
+======= stdin =======
+enum Test {
+  Red,
+  Green,
+  Blue
+}
+
+fn test1 (a: Test, b := Test.Red, c := Test.Blue) Test {
+  return a == b ? c == Test.Red ? c : b : a
+}
+
+main {
+  test1(Test.Red)
+  test1(Test.Red, Test.Green)
+  test1(Test.Red, Test.Green, Test.Blue)
+  test1(Test.Red, b: Test.Green)
+  test1(Test.Red, c: Test.Blue)
+  test1(Test.Red, b: Test.Green, c: Test.Blue)
+  test1(Test.Red, c: Test.Blue, b: Test.Green)
+
+  mut a := Test.Red
+
+  fn test2 (a2: Test, b := Test.Red, c := Test.Green) {
+    a = test1(a2, b, c)
+  }
+
+  test2(Test.Red)
+  test2(Test.Red, Test.Green)
+  test2(Test.Red, Test.Green, Test.Blue)
+  test2(Test.Red, b: Test.Green)
+  test2(Test.Red, c: Test.Blue)
+  test2(Test.Red, b: Test.Green, c: Test.Blue)
+  test2(Test.Red, c: Test.Blue, b: Test.Green)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+enum __THE_1_Test_0 {
+  __THE_0_TestSDRed_0,
+  __THE_0_TestSDGreen_0,
+  __THE_0_TestSDBlue_0
+};
+
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1P;
+struct __THE_1_fn$1;
+struct __THE_1_mainSDtest2_0X;
+
+struct __THE_1_fn$0P {
+  enum __THE_1_Test_0 n0;
+  unsigned char o1;
+  enum __THE_1_Test_0 n1;
+  unsigned char o2;
+  enum __THE_1_Test_0 n2;
+};
+struct __THE_1_fn$0 {
+  enum __THE_1_Test_0 (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1P {
+  enum __THE_1_Test_0 n0;
+  unsigned char o1;
+  enum __THE_1_Test_0 n1;
+  unsigned char o2;
+  enum __THE_1_Test_0 n2;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDtest2_0X {
+  enum __THE_1_Test_0 *__THE_0_a_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0;
+};
+
+void *alloc (size_t);
+enum __THE_1_Test_0 __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtest2_0X);
+void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1P);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+enum __THE_1_Test_0 __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
+  const enum __THE_1_Test_0 __THE_0_a_0 = p.n0;
+  const enum __THE_1_Test_0 __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_0_TestSDRed_0;
+  const enum __THE_1_Test_0 __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_0_TestSDBlue_0;
+  return __THE_0_a_0 == __THE_0_b_0 ? __THE_0_c_0 == __THE_0_TestSDRed_0 ? __THE_0_c_0 : __THE_0_b_0 : __THE_0_a_0;
+}
+void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+  free(n.x);
+}
+void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtest2_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
+  struct __THE_1_mainSDtest2_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtest2_0;
+  n->x = r;
+  n->l = l;
+}
+void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1P p) {
+  struct __THE_1_mainSDtest2_0X *x = px;
+  enum __THE_1_Test_0 *__THE_0_a_0 = x->__THE_0_a_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const enum __THE_1_Test_0 __THE_0_a2_0 = p.n0;
+  const enum __THE_1_Test_0 __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_0_TestSDRed_0;
+  const enum __THE_1_Test_0 __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_0_TestSDGreen_0;
+  *__THE_0_a_0 = (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$0P) {__THE_0_a2_0, 1, __THE_0_b_0, 1, __THE_0_c_0});
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_0_TestSDRed_0, 0, 0, 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 1, __THE_0_TestSDBlue_0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_0_TestSDRed_0, 0, 0, 1, __THE_0_TestSDBlue_0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 1, __THE_0_TestSDBlue_0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 1, __THE_0_TestSDBlue_0});
+  enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
+  const struct __THE_1_fn$1 __THE_0_mainSDtest2_0;
+  __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_0_TestSDRed_0, 0, 0, 0, 0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 0, 0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 1, __THE_0_TestSDBlue_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 0, 0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_0_TestSDRed_0, 0, 0, 1, __THE_0_TestSDBlue_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 1, __THE_0_TestSDBlue_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_0_TestSDRed_0, 1, __THE_0_TestSDGreen_0, 1, __THE_0_TestSDBlue_0});
+  __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_mainSDtest2_0);
+}
+======= flags =======
+======= stdout =======

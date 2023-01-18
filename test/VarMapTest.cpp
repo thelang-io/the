@@ -161,4 +161,12 @@ TEST_F(VarMapTest, VarStackGeneratesValid) {
   this->vm_.restore();
   auto s4 = this->vm_.varStack().snapshot();
   EXPECT_EQ(s4.size(), 0);
+
+  this->vm_.add("test5", this->vm_.name("test5"), this->tm_.get("str"), false, true);
+
+  auto varStack5 = this->vm_.varStack();
+  varStack5.mark(this->vm_.get("test5"));
+
+  auto s5 = varStack5.snapshot();
+  EXPECT_EQ(s5.size(), 0);
 }

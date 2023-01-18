@@ -1,0 +1,40 @@
+======= stdin =======
+enum Test {
+  Red,
+  Green,
+  Blue
+}
+
+main {
+  a := Test.Red
+  mut b := a
+  b = a
+  mut c := Test.Green
+  c = b = a
+  mut d := Test.Blue
+  d = c = b = a
+  d = true ? .Red : a
+  d = true ? b = .Green : .Blue
+}
+======= code =======
+#include <stdbool.h>
+
+enum __THE_1_Test_0 {
+  __THE_0_TestSDRed_0,
+  __THE_0_TestSDGreen_0,
+  __THE_0_TestSDBlue_0
+};
+
+int main () {
+  const enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
+  enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_a_0;
+  __THE_0_b_0 = __THE_0_a_0;
+  enum __THE_1_Test_0 __THE_0_c_0 = __THE_0_TestSDGreen_0;
+  __THE_0_c_0 = __THE_0_b_0 = __THE_0_a_0;
+  enum __THE_1_Test_0 __THE_0_d_0 = __THE_0_TestSDBlue_0;
+  __THE_0_d_0 = __THE_0_c_0 = __THE_0_b_0 = __THE_0_a_0;
+  __THE_0_d_0 = true ? __THE_0_TestSDRed_0 : __THE_0_a_0;
+  __THE_0_d_0 = true ? __THE_0_b_0 = __THE_0_TestSDGreen_0 : __THE_0_TestSDBlue_0;
+}
+======= flags =======
+======= stdout =======

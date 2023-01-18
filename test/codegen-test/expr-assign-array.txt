@@ -9,6 +9,7 @@ main {
   d = c = b = a
   d = true ? [1, 2] : a
   d = true ? b = [5, 6] : [7, 8]
+  d = true ? [5, 6] : b = [7, 8]
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -85,6 +86,7 @@ int main () {
   __THE_0_d_0 = __THE_1_array_int_realloc(__THE_0_d_0, __THE_1_array_int_copy(__THE_0_c_0 = __THE_1_array_int_realloc(__THE_0_c_0, __THE_1_array_int_copy(__THE_0_b_0 = __THE_1_array_int_realloc(__THE_0_b_0, __THE_1_array_int_copy(__THE_0_a_0))))));
   __THE_0_d_0 = __THE_1_array_int_realloc(__THE_0_d_0, true ? __THE_1_array_int_alloc(2, 1, 2) : __THE_1_array_int_copy(__THE_0_a_0));
   __THE_0_d_0 = __THE_1_array_int_realloc(__THE_0_d_0, true ? __THE_1_array_int_copy(__THE_0_b_0 = __THE_1_array_int_realloc(__THE_0_b_0, __THE_1_array_int_alloc(2, 5, 6))) : __THE_1_array_int_alloc(2, 7, 8));
+  __THE_0_d_0 = __THE_1_array_int_realloc(__THE_0_d_0, true ? __THE_1_array_int_alloc(2, 5, 6) : __THE_1_array_int_copy(__THE_0_b_0 = __THE_1_array_int_realloc(__THE_0_b_0, __THE_1_array_int_alloc(2, 7, 8))));
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_d_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_c_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);

@@ -9,6 +9,7 @@ main {
   d = c = b = a
   d = true ? b : a
   d = true ? b = c : a
+  d = true ? a : b = c
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -146,6 +147,7 @@ int main () {
   __THE_0_d_0 = any_realloc(__THE_0_d_0, any_copy(__THE_0_c_0 = any_realloc(__THE_0_c_0, any_copy(__THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_a_0))))));
   __THE_0_d_0 = any_realloc(__THE_0_d_0, true ? any_copy(__THE_0_b_0) : any_copy(__THE_0_a_0));
   __THE_0_d_0 = any_realloc(__THE_0_d_0, true ? any_copy(__THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_c_0))) : any_copy(__THE_0_a_0));
+  __THE_0_d_0 = any_realloc(__THE_0_d_0, true ? any_copy(__THE_0_a_0) : any_copy(__THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_c_0))));
   any_free((struct any) __THE_0_d_0);
   any_free((struct any) __THE_0_c_0);
   any_free((struct any) __THE_0_b_0);
