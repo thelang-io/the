@@ -511,6 +511,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
+  "expr-access-member",
   "expr-access-any",
   "expr-access-array",
   "expr-access-enum",
