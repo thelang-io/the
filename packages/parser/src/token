@@ -3,198 +3,107 @@
  * Licensed under the MIT License
  */
 
-// enumeration TokenAssociativity
-TK_ASSOC_NONE := 0
-TK_ASSOC_LEFT := 1
-TK_ASSOC_RIGHT := 2
+enum TokenAssociativity {
+  None,
+  Left,
+  Right,
+}
 
-// enumeration TokenType
-TK_UNKNOWN := 0
-TK_EOF := 1
-TK_ID := 2
-TK_WHITESPACE := 3
+enum TokenType {
+  Unknown,
+  Eof,
+  Id,
+  Whitespace,
+  CommentBlock,
+  CommentLine,
 
-TK_COMMENT_BLOCK := 4
-TK_COMMENT_LINE := 5
+  LitChar,
+  LitFloat,
+  LitIntBin,
+  LitIntDec,
+  LitIntHex,
+  LitIntDec,
+  LitStr,
 
-TK_LIT_CHAR := 50
-TK_LIT_FLOAT := 51
-TK_LIT_INT_BIN := 52
-TK_LIT_INT_DEC := 53
-TK_LIT_INT_HEX := 54
-TK_LIT_INT_OCT := 55
-TK_LIT_STR := 56
+  KwBreak,
+  KwCatch,
+  KwConst,
+  KwContinue,
+  KwElif,
+  KwElse,
+  KwEnum,
+  KwExport,
+  KwFalse,
+  KwFn,
+  KwIf,
+  KwImport,
+  KwIs,
+  KwLoop,
+  KwMain,
+  KwMut,
+  KwNil,
+  KwObj,
+  KwRef,
+  KwReturn,
+  KwThrow,
+  KwTrue,
+  KwTry,
+  KwUnion,
 
-TK_KW_BREAK := 100
-TK_KW_CATCH := 101
-TK_KW_CONTINUE := 102
-TK_KW_ELIF := 103
-TK_KW_ELSE := 104
-TK_KW_ENUM := 105
-TK_KW_EXPORT := 106
-TK_KW_FALSE := 107
-TK_KW_FN := 108
-TK_KW_IF := 109
-TK_KW_IMPORT := 110
-TK_KW_IS := 111
-TK_KW_LOOP := 112
-TK_KW_MAIN := 113
-TK_KW_MUT := 114
-TK_KW_NIL := 115
-TK_KW_OBJ := 116
-TK_KW_REF := 117
-TK_KW_RETURN := 118
-TK_KW_THROW := 119
-TK_KW_TRUE := 120
-TK_KW_TRY := 121
-TK_KW_UNION := 122
-
-TK_OP_AMP := 200
-TK_OP_AMP_EQ := 201
-TK_OP_AMP_AMP := 202
-TK_OP_AMP_AMP_EQ := 203
-TK_OP_ARROW := 204
-TK_OP_AT := 205
-TK_OP_BACKTICK := 206
-TK_OP_BACKSLASH := 207
-TK_OP_CARET := 208
-TK_OP_CARET_EQ := 209
-TK_OP_COLON := 210
-TK_OP_COLON_EQ := 211
-TK_OP_COMMA := 212
-TK_OP_DOT := 213
-TK_OP_DOLLAR := 214
-TK_OP_ELLIPSIS := 215
-TK_OP_EQ := 216
-TK_OP_EQ_EQ := 217
-TK_OP_EXCL := 218
-TK_OP_EXCL_EQ := 219
-TK_OP_GT := 220
-TK_OP_GT_EQ := 221
-TK_OP_HASH := 222
-TK_OP_LBRACE := 223
-TK_OP_LBRACK := 224
-TK_OP_LPAR := 225
-TK_OP_LSHIFT := 226
-TK_OP_LSHIFT_EQ := 227
-TK_OP_LT := 228
-TK_OP_LT_EQ := 229
-TK_OP_MINUS := 230
-TK_OP_MINUS_EQ := 231
-TK_OP_MINUS_MINUS := 232
-TK_OP_PIPE := 233
-TK_OP_PIPE_EQ := 234
-TK_OP_PIPE_PIPE := 235
-TK_OP_PIPE_PIPE_EQ := 236
-TK_OP_PERCENT := 237
-TK_OP_PERCENT_EQ := 238
-TK_OP_PLUS := 239
-TK_OP_PLUS_EQ := 240
-TK_OP_PLUS_PLUS := 241
-TK_OP_QN := 242
-TK_OP_RBRACE := 243
-TK_OP_RBRACK := 244
-TK_OP_RPAR := 245
-TK_OP_RSHIFT := 246
-TK_OP_RSHIFT_EQ := 247
-TK_OP_SEMI := 248
-TK_OP_SLASH := 249
-TK_OP_SLASH_EQ := 250
-TK_OP_STAR := 251
-TK_OP_STAR_EQ := 252
-TK_OP_TILDE := 253
-
-fn tkToStr (tk: int) str {
-  if tk == TK_EOF { return "TK_EOF" }
-  if tk == TK_ID { return "TK_ID" }
-  if tk == TK_WHITESPACE { return "TK_WHITESPACE" }
-  if tk == TK_COMMENT_BLOCK { return "TK_COMMENT_BLOCK" }
-  if tk == TK_COMMENT_LINE { return "TK_COMMENT_LINE" }
-  if tk == TK_LIT_CHAR { return "TK_LIT_CHAR" }
-  if tk == TK_LIT_FLOAT { return "TK_LIT_FLOAT" }
-  if tk == TK_LIT_INT_BIN { return "TK_LIT_INT_BIN" }
-  if tk == TK_LIT_INT_DEC { return "TK_LIT_INT_DEC" }
-  if tk == TK_LIT_INT_HEX { return "TK_LIT_INT_HEX" }
-  if tk == TK_LIT_INT_OCT { return "TK_LIT_INT_OCT" }
-  if tk == TK_LIT_STR { return "TK_LIT_STR" }
-  if tk == TK_KW_BREAK { return "TK_KW_BREAK" }
-  if tk == TK_KW_CATCH { return "TK_KW_CATCH" }
-  if tk == TK_KW_CONTINUE { return "TK_KW_CONTINUE" }
-  if tk == TK_KW_ELIF { return "TK_KW_ELIF" }
-  if tk == TK_KW_ELSE { return "TK_KW_ELSE" }
-  if tk == TK_KW_ENUM { return "TK_KW_ENUM" }
-  if tk == TK_KW_EXPORT { return "TK_KW_EXPORT" }
-  if tk == TK_KW_FALSE { return "TK_KW_FALSE" }
-  if tk == TK_KW_FN { return "TK_KW_FN" }
-  if tk == TK_KW_IF { return "TK_KW_IF" }
-  if tk == TK_KW_IMPORT { return "TK_KW_IMPORT" }
-  if tk == TK_KW_IS { return "TK_KW_IS" }
-  if tk == TK_KW_LOOP { return "TK_KW_LOOP" }
-  if tk == TK_KW_MAIN { return "TK_KW_MAIN" }
-  if tk == TK_KW_MUT { return "TK_KW_MUT" }
-  if tk == TK_KW_NIL { return "TK_KW_NIL" }
-  if tk == TK_KW_OBJ { return "TK_KW_OBJ" }
-  if tk == TK_KW_REF { return "TK_KW_REF" }
-  if tk == TK_KW_RETURN { return "TK_KW_RETURN" }
-  if tk == TK_KW_THROW { return "TK_KW_THROW" }
-  if tk == TK_KW_TRUE { return "TK_KW_TRUE" }
-  if tk == TK_KW_TRY { return "TK_KW_TRY" }
-  if tk == TK_KW_UNION { return "TK_KW_UNION" }
-  if tk == TK_OP_AMP { return "TK_OP_AMP" }
-  if tk == TK_OP_AMP_EQ { return "TK_OP_AMP_EQ" }
-  if tk == TK_OP_AMP_AMP { return "TK_OP_AMP_AMP" }
-  if tk == TK_OP_AMP_AMP_EQ { return "TK_OP_AMP_AMP_EQ" }
-  if tk == TK_OP_ARROW { return "TK_OP_ARROW" }
-  if tk == TK_OP_AT { return "TK_OP_AT" }
-  if tk == TK_OP_BACKTICK { return "TK_OP_BACKTICK" }
-  if tk == TK_OP_BACKSLASH { return "TK_OP_BACKSLASH" }
-  if tk == TK_OP_CARET { return "TK_OP_CARET" }
-  if tk == TK_OP_CARET_EQ { return "TK_OP_CARET_EQ" }
-  if tk == TK_OP_COLON { return "TK_OP_COLON" }
-  if tk == TK_OP_COLON_EQ { return "TK_OP_COLON_EQ" }
-  if tk == TK_OP_COMMA { return "TK_OP_COMMA" }
-  if tk == TK_OP_DOT { return "TK_OP_DOT" }
-  if tk == TK_OP_DOLLAR { return "TK_OP_DOLLAR" }
-  if tk == TK_OP_ELLIPSIS { return "TK_OP_ELLIPSIS" }
-  if tk == TK_OP_EQ { return "TK_OP_EQ" }
-  if tk == TK_OP_EQ_EQ { return "TK_OP_EQ_EQ" }
-  if tk == TK_OP_EXCL { return "TK_OP_EXCL" }
-  if tk == TK_OP_EXCL_EQ { return "TK_OP_EXCL_EQ" }
-  if tk == TK_OP_GT { return "TK_OP_GT" }
-  if tk == TK_OP_GT_EQ { return "TK_OP_GT_EQ" }
-  if tk == TK_OP_HASH { return "TK_OP_HASH" }
-  if tk == TK_OP_LBRACE { return "TK_OP_LBRACE" }
-  if tk == TK_OP_LBRACK { return "TK_OP_LBRACK" }
-  if tk == TK_OP_LPAR { return "TK_OP_LPAR" }
-  if tk == TK_OP_LSHIFT { return "TK_OP_LSHIFT" }
-  if tk == TK_OP_LSHIFT_EQ { return "TK_OP_LSHIFT_EQ" }
-  if tk == TK_OP_LT { return "TK_OP_LT" }
-  if tk == TK_OP_LT_EQ { return "TK_OP_LT_EQ" }
-  if tk == TK_OP_MINUS { return "TK_OP_MINUS" }
-  if tk == TK_OP_MINUS_EQ { return "TK_OP_MINUS_EQ" }
-  if tk == TK_OP_MINUS_MINUS { return "TK_OP_MINUS_MINUS" }
-  if tk == TK_OP_PIPE { return "TK_OP_PIPE" }
-  if tk == TK_OP_PIPE_EQ { return "TK_OP_PIPE_EQ" }
-  if tk == TK_OP_PIPE_PIPE { return "TK_OP_PIPE_PIPE" }
-  if tk == TK_OP_PIPE_PIPE_EQ { return "TK_OP_PIPE_PIPE_EQ" }
-  if tk == TK_OP_PERCENT { return "TK_OP_PERCENT" }
-  if tk == TK_OP_PERCENT_EQ { return "TK_OP_PERCENT_EQ" }
-  if tk == TK_OP_PLUS { return "TK_OP_PLUS" }
-  if tk == TK_OP_PLUS_EQ { return "TK_OP_PLUS_EQ" }
-  if tk == TK_OP_PLUS_PLUS { return "TK_OP_PLUS_PLUS" }
-  if tk == TK_OP_QN { return "TK_OP_QN" }
-  if tk == TK_OP_RBRACE { return "TK_OP_RBRACE" }
-  if tk == TK_OP_RBRACK { return "TK_OP_RBRACK" }
-  if tk == TK_OP_RPAR { return "TK_OP_RPAR" }
-  if tk == TK_OP_RSHIFT { return "TK_OP_RSHIFT" }
-  if tk == TK_OP_RSHIFT_EQ { return "TK_OP_RSHIFT_EQ" }
-  if tk == TK_OP_SEMI { return "TK_OP_SEMI" }
-  if tk == TK_OP_SLASH { return "TK_OP_SLASH" }
-  if tk == TK_OP_SLASH_EQ { return "TK_OP_SLASH_EQ" }
-  if tk == TK_OP_STAR { return "TK_OP_STAR" }
-  if tk == TK_OP_STAR_EQ { return "TK_OP_STAR_EQ" }
-  if tk == TK_OP_TILDE { return "TK_OP_TILDE" }
-  return "TK_UNKNOWN"
+  OpAmp,
+  OpAmpEq,
+  OpAmpAmp,
+  OpAmpAmpEq,
+  OpArrow,
+  OpAt,
+  OpBacktick,
+  OpBackSlash,
+  OpCaret,
+  OpCaretEq,
+  OpColon,
+  OpColonEq,
+  OpComma,
+  OpDot,
+  OpDollar,
+  OpEllipsis,
+  OpEq,
+  OpEqEq,
+  OpExcl,
+  OpExclEq,
+  OpGt,
+  OpGtEq,
+  OpHash,
+  OpLBrace,
+  OpLBrack,
+  OpLPar,
+  OpLShift,
+  OpLShiftEq,
+  OpLt,
+  OpLtEq,
+  OpMinus,
+  OpMinusEq,
+  OpMinusMinus,
+  OpPipe,
+  OpPipeEq,
+  OpPipePipe,
+  OpPipePipeEq,
+  OpPercent,
+  OpPercentEq,
+  OpPlus,
+  OpPlusEq,
+  OpPlusPlus,
+  OpQn,
+  OpRBrace,
+  OpRBrack,
+  OpRPar,
+  OpRShift,
+  OpRShiftEq,
+  OpSemi,
+  OpSlash,
+  OpSlashEq,
+  OpStar,
+  OpStarEq,
+  OpTilde,
 }
 
 obj Token {
@@ -207,13 +116,13 @@ obj Token {
     val := self._valEscaped()
     loc := "(" + self.start.str() + "-" + self.end.str() + ")"
 
-    return tkToStr(self.type).slice(3) + loc + (val == "" ? "" : ": " + val)
+    return self.type.rawValue.slice(3) + loc + (val == "" ? "" : ": " + val)
   }
 
   fn toXml (self: Self) str {
     return
       "<Token" +
-      " type=\"" + tkToStr(self.type).slice(3) + "\"" +
+      " type=\"" + self.type.rawValue.slice(3) + "\"" +
       " val=\"" + self._valEscaped(true) + "\"" +
       " start=\"" + self.start.str() + "\"" +
       " end=\"" + self.end.str() + "\"" +
