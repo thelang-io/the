@@ -30,6 +30,8 @@ std::string ParserType::xml (std::size_t indent) const {
     typeName += "Optional";
   } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
     typeName += "Ref";
+  } else if (std::holds_alternative<ParserTypeUnion>(*this->body)) {
+    typeName += "Union";
   }
 
   auto attrs = std::string(this->parenthesized ? " parenthesized" : "");
@@ -83,6 +85,12 @@ std::string ParserType::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
     auto typeRef = std::get<ParserTypeRef>(*this->body);
     result += typeRef.refType.xml(indent + 2) + EOL;
+  } else if (std::holds_alternative<ParserTypeUnion>(*this->body)) {
+    auto typeUnion = std::get<ParserTypeUnion>(*this->body);
+
+    for (const auto &subType : typeUnion.subTypes) {
+      result += subType.xml(indent + 2) + EOL;
+    }
   }
 
   return result + std::string(indent, ' ') + "</" + typeName + ">";

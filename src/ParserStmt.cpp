@@ -245,6 +245,22 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += stmtReturn.body->xml(indent + 2) + EOL;
       result += std::string(indent, ' ') + "</StmtReturn>";
     }
+  } else if (std::holds_alternative<ParserStmtUnionDecl>(*this->body)) {
+    auto stmtUnionDecl = std::get<ParserStmtUnionDecl>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtUnionDecl" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtUnionDeclId>" EOL;
+    result += stmtUnionDecl.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtUnionDeclId>" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtUnionDeclSubTypes>" EOL;
+
+    for (const auto &subType : stmtUnionDecl.subTypes) {
+      result += subType.xml(indent + 4) + EOL;
+    }
+
+    result += std::string(indent + 2, ' ') + "</StmtUnionDeclSubTypes>" EOL;
+
+    result += std::string(indent, ' ') + "</StmtUnionDecl>";
   } else if (std::holds_alternative<ParserStmtVarDecl>(*this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*this->body);
 

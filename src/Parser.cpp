@@ -454,6 +454,40 @@ ParserStmt Parser::next (bool allowSemi) {
     return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclFields, objDeclMethods}, tok0.start);
   }
 
+  if (tok0.type == TK_KW_UNION) {
+    auto [_1, tok1] = this->lexer->next();
+
+    if (tok1.type != TK_ID) {
+      throw Error(this->reader, tok1.start, E0160);
+    }
+
+    auto [_2, tok2] = this->lexer->next();
+
+    if (tok2.type != TK_OP_EQ) {
+      throw Error(this->reader, tok2.start, E0161);
+    }
+
+    auto unionDeclSubTypes = std::vector<ParserType>{};
+
+    while (true) {
+      auto unionDeclSubType = this->_type();
+
+      if (unionDeclSubType == std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0162);
+      }
+
+      unionDeclSubTypes.push_back(*unionDeclSubType);
+      auto [loc3, tok3] = this->lexer->next();
+
+      if (tok3.type != TK_OP_PIPE) {
+        this->lexer->seek(loc3);
+        break;
+      }
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtUnionDecl{tok1, unionDeclSubTypes}, tok0.start);
+  }
+
   if (tok0.type == TK_ID) {
     auto [loc1, tok1] = this->lexer->next();
 
@@ -1195,6 +1229,15 @@ ParserType Parser::_wrapType (const ParserType &type) {
 
     auto typeArray = ParserTypeArray{type};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeArray), false, type.start, this->lexer->loc});
+  } else if (tok1.type == TK_OP_PIPE) {
+    auto subType = this->_type();
+
+    if (subType == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0162);
+    }
+
+    auto typeUnion = ParserTypeUnion{{type, *subType}};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeUnion), false, type.start, this->lexer->loc});
   } else if (tok1.type == TK_OP_QN) {
     auto typeOptional = ParserTypeOptional{type};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeOptional), false, type.start, this->lexer->loc});
