@@ -18,7 +18,6 @@
 #define SRC_PARSER_STMT_HPP
 
 #include "ParserExpr.hpp"
-#include "ParserType.hpp"
 
 struct ParserStmtBreak;
 struct ParserStmtContinue;
@@ -134,7 +133,7 @@ struct ParserStmtReturn {
 
 struct ParserStmtUnionDecl {
   Token id;
-  std::vector<ParserType> subTypes;
+  ParserType type;
 };
 
 struct ParserStmtVarDecl {

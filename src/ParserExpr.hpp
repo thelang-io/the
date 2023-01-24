@@ -21,6 +21,7 @@
 #include <variant>
 #include <vector>
 #include "Lexer.hpp"
+#include "ParserType.hpp"
 
 struct ParserExprAccess;
 struct ParserExprArray;
@@ -28,6 +29,7 @@ struct ParserExprAssign;
 struct ParserExprBinary;
 struct ParserExprCall;
 struct ParserExprCond;
+struct ParserExprIs;
 struct ParserExprLit;
 struct ParserExprObj;
 struct ParserExprRef;
@@ -40,6 +42,7 @@ using ParserExpr = std::variant<
   ParserExprBinary,
   ParserExprCall,
   ParserExprCond,
+  ParserExprIs,
   ParserExprLit,
   ParserExprObj,
   ParserExprRef,
@@ -91,6 +94,11 @@ struct ParserExprCond {
   ParserStmtExpr cond;
   ParserStmtExpr body;
   ParserStmtExpr alt;
+};
+
+struct ParserExprIs {
+  ParserStmtExpr left;
+  ParserType right;
 };
 
 struct ParserExprLit {

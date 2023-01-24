@@ -115,6 +115,10 @@ INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return-no-arg"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtUnionDecl, ParserPassTest, testing::Values(
+  "stmt-union-decl"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
   "stmt-var-decl",
   "stmt-var-decl-mut",
@@ -168,8 +172,9 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type-array",
   "type-fn",
   "type-optional",
-  "type-variadic",
-  "type-ref"
+  "type-ref",
+  "type-union",
+  "type-variadic"
 ));
 
 INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(

@@ -467,25 +467,13 @@ ParserStmt Parser::next (bool allowSemi) {
       throw Error(this->reader, tok2.start, E0161);
     }
 
-    auto unionDeclSubTypes = std::vector<ParserType>{};
+    auto unionDeclType = this->_type();
 
-    while (true) {
-      auto unionDeclSubType = this->_type();
-
-      if (unionDeclSubType == std::nullopt) {
-        throw Error(this->reader, this->lexer->loc, E0162);
-      }
-
-      unionDeclSubTypes.push_back(*unionDeclSubType);
-      auto [loc3, tok3] = this->lexer->next();
-
-      if (tok3.type != TK_OP_PIPE) {
-        this->lexer->seek(loc3);
-        break;
-      }
+    if (unionDeclType == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0162);
     }
 
-    return this->_wrapStmt(allowSemi, ParserStmtUnionDecl{tok1, unionDeclSubTypes}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtUnionDecl{tok1, *unionDeclType}, tok0.start);
   }
 
   if (tok0.type == TK_ID) {
@@ -855,11 +843,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto tkQn = Token{TK_OP_QN};
 
-    auto shouldWrapExpr = tkQn.precedence() == precedence
-      ? tkQn.associativity() == TK_ASSOC_RIGHT
-      : tkQn.precedence() < precedence;
-
-    if (shouldWrapExpr) {
+    if (tkQn.precedence() <= precedence) {
       auto [newStmtExpr, shouldWrap] = this->_wrapExpr(exprCond.alt, loc, tok, precedence, wrap);
       auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
       auto newExpr = std::make_shared<ParserExpr>(newExprCond);
@@ -1039,6 +1023,21 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprCond), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprIs (
+  const ParserStmtExpr &stmtExpr,
+  [[maybe_unused]] ReaderLocation loc,
+  [[maybe_unused]] const Token &tok
+) {
+  auto exprIsRight = this->_type();
+
+  if (exprIsRight == std::nullopt) {
+    throw Error(this->reader, this->lexer->loc, E0163);
+  }
+
+  auto exprIs = ParserExprIs{stmtExpr, *exprIsRight};
+  return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprIs), false, stmtExpr.start, this->lexer->loc}, true);
+}
+
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
   if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     this->lexer->seek(loc);
@@ -1133,7 +1132,13 @@ ParserStmt Parser::_wrapStmt (bool allowSemi, const ParserStmtBody &body, Reader
 ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
   auto [loc, tok] = this->lexer->next();
 
-  if (
+  if (tok.type == TK_KW_IS) {
+    auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
+      return this->_wrapExprIs(_1, _2, _3);
+    });
+
+    return this->_wrapStmtExpr(newStmtExpr);
+  } else if (
     tok.type == TK_OP_AMP ||
     tok.type == TK_OP_AMP_AMP ||
     tok.type == TK_OP_CARET ||
@@ -1233,10 +1238,22 @@ ParserType Parser::_wrapType (const ParserType &type) {
     auto subType = this->_type();
 
     if (subType == std::nullopt) {
-      throw Error(this->reader, this->lexer->loc, E0162);
+      throw Error(this->reader, this->lexer->loc, E0164);
     }
 
-    auto typeUnion = ParserTypeUnion{{type, *subType}};
+    auto typeUnionSubTypes = std::vector<ParserType>{type};
+
+    if (std::holds_alternative<ParserTypeUnion>(*subType->body) && !subType->parenthesized) {
+      auto subTypeUnionBody = std::get<ParserTypeUnion>(*subType->body);
+
+      for (const auto &unionType : subTypeUnionBody.subTypes) {
+        typeUnionSubTypes.push_back(unionType);
+      }
+    } else {
+      typeUnionSubTypes.push_back(*subType);
+    }
+
+    auto typeUnion = ParserTypeUnion{typeUnionSubTypes};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeUnion), false, type.start, this->lexer->loc});
   } else if (tok1.type == TK_OP_QN) {
     auto typeOptional = ParserTypeOptional{type};

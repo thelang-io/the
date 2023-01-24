@@ -136,6 +136,17 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     result += exprCond.alt.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</ExprCondAlt>" EOL;
     result += std::string(indent, ' ') + "</ExprCond>";
+  } else if (std::holds_alternative<ParserExprIs>(*this->body)) {
+    auto exprIs = std::get<ParserExprIs>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprIs" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprIsLeft>" EOL;
+    result += exprIs.left.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprIsLeft>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprIsRight>" EOL;
+    result += exprIs.right.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprIsRight>" EOL;
+    result += std::string(indent, ' ') + "</ExprIs>";
   } else if (std::holds_alternative<ParserExprLit>(*this->body)) {
     auto exprLit = std::get<ParserExprLit>(*this->body);
 
