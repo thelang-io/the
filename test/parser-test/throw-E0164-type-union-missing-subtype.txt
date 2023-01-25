@@ -1,0 +1,6 @@
+======= stdin =======
+a: int | 1
+======= stderr =======
+/test:1:9: E0164 - Expected union subtype
+  1 | a: int | 1
+    |         ^

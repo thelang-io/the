@@ -1,0 +1,6 @@
+======= stdin =======
+union = int
+======= stderr =======
+/test:1:7: E0160 - Expected union identifier after union keyword
+  1 | union = int
+    |       ^

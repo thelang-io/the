@@ -1,0 +1,6 @@
+======= stdin =======
+union Test = 1
+======= stderr =======
+/test:1:13: E0162 - Expected union type
+  1 | union Test = 1
+    |             ^
