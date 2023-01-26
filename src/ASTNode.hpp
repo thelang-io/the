@@ -29,6 +29,7 @@ struct ASTNodeLoop;
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
 struct ASTNodeReturn;
+struct ASTNodeUnionDecl;
 struct ASTNodeVarDecl;
 
 using ASTNodeBody = std::variant<
@@ -42,6 +43,7 @@ using ASTNodeBody = std::variant<
   ASTNodeMain,
   ASTNodeObjDecl,
   ASTNodeReturn,
+  ASTNodeUnionDecl,
   ASTNodeVarDecl
 >;
 
@@ -113,6 +115,10 @@ struct ASTNodeObjDecl {
 
 struct ASTNodeReturn {
   std::optional<ASTNodeExpr> body;
+};
+
+struct ASTNodeUnionDecl {
+  Type *type;
 };
 
 struct ASTNodeVarDecl {

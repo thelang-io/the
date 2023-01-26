@@ -566,3 +566,42 @@ Type *TypeMap::ref (Type *refType) {
   this->_items.push_back(std::make_unique<Type>(Type{"ref_" + refType->name, "@ref_" + refType->name, TypeRef{refType}}));
   return this->_items.back().get();
 }
+
+// todo test
+Type *TypeMap::un (
+  const std::optional<std::string> &name,
+  const std::optional<std::string> &codeName,
+  const std::vector<Type *> &subTypes
+) {
+  auto newType = Type{name == std::nullopt ? "" : *name, codeName == std::nullopt ? "@" : *codeName, TypeUnion{subTypes}};
+
+  if (newType.name.empty()) {
+    newType.name += "union";
+
+    for (const auto &subType : subTypes) {
+      newType.name += "_" + subType->name;
+    }
+  }
+
+  if (newType.codeName == "@") {
+    newType.codeName += "union";
+
+    for (const auto &subType : subTypes) {
+      newType.codeName += "_" + subType->name;
+    }
+  }
+
+  for (auto &item : this->_items) {
+    if (!item->builtin && item->isUnion() && item->codeName == newType.codeName && item->matchExact(&newType)) {
+      return item.get();
+    }
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  auto selfType = this->_items.back().get();
+
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@union.str", TypeFn{this->get("str")}, {}, true}));
+  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
+
+  return selfType;
+}

@@ -41,6 +41,7 @@ class TypeMap {
   Type *obj (const std::string &, const std::string &, const std::vector<TypeField> & = {});
   Type *opt (Type *);
   Type *ref (Type *);
+  Type *un (const std::optional<std::string> &, const std::optional<std::string> &, const std::vector<Type *> &);
 
  private:
   std::size_t _fnIdx = 0;

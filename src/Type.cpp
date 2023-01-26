@@ -151,6 +151,23 @@ bool Type::hasProp (const std::string &propName) const {
   return typeField != this->fields.end();
 }
 
+// todo test
+bool Type::hasSubType (const Type *subType) const {
+  if (this->isRef()) {
+    return std::get<TypeRef>(this->body).refType->hasSubType(subType);
+  } else if (this->isUnion()) {
+    auto typeUnion = std::get<TypeUnion>(this->body);
+
+    for (const auto &thisSubType : typeUnion.subTypes) {
+      if (thisSubType == subType) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 bool Type::isAny () const {
   return this->name == "any";
 }
@@ -247,6 +264,7 @@ bool Type::isObj () const {
     !this->isOpt() &&
     !this->isRef() &&
     !this->isStr() &&
+    !this->isUnion() &&
     !this->isVoid()
   );
 }
@@ -297,6 +315,11 @@ bool Type::isU32 () const {
 
 bool Type::isU64 () const {
   return this->name == "u64";
+}
+
+// todo test
+bool Type::isUnion () const {
+  return std::holds_alternative<TypeUnion>(this->body);
 }
 
 bool Type::isVoid () const {
@@ -381,6 +404,8 @@ bool Type::match (const Type *type) const {
     auto rhsOptional = std::get<TypeOptional>(type->body);
 
     return lhsOptional.type->match(rhsOptional.type);
+  } else if (this->isUnion()) {
+    // todo
   }
 
   return (this->name == "bool" && type->name == "bool") ||
@@ -456,6 +481,8 @@ bool Type::matchExact (const Type *type) const {
     auto rhsRef = std::get<TypeRef>(type->body);
 
     return lhsRef.refType->matchExact(rhsRef.refType);
+  } else if (this->isUnion() || type->isUnion()) {
+    // todo
   }
 
   return this->name == type->name;
@@ -525,13 +552,21 @@ bool Type::matchNice (const Type *type) const {
     auto rhsRef = std::get<TypeRef>(type->body);
 
     return lhsRef.refType->matchNice(rhsRef.refType);
+  } else if (this->isUnion() || type->isUnion()) {
+    // todo
   }
 
   return this->name == type->name;
 }
 
 bool Type::shouldBeFreed () const {
-  return this->isAny() || this->isArray() || this->isFn() || this->isObj() || this->isOpt() || this->isStr();
+  return this->isAny() ||
+    this->isArray() ||
+    this->isFn() ||
+    this->isObj() ||
+    this->isOpt() ||
+    this->isStr() ||
+    this->isUnion();
 }
 
 std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) const {
@@ -555,6 +590,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     typeName += "Optional";
   } else if (this->isRef()) {
     typeName += "Ref";
+  } else if (this->isUnion()) {
+    typeName += "Union";
   }
 
   auto result = std::string(indent, ' ') + "<" + typeName;
@@ -641,6 +678,12 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   } else if (this->isRef()) {
     auto typeRef = std::get<TypeRef>(this->body);
     result += typeRef.refType->xml(indent + 2, parentTypes) + EOL;
+  } else if (this->isUnion()) {
+    auto typeUnion = std::get<TypeUnion>(this->body);
+
+    for (const auto &subType : typeUnion.subTypes) {
+      result += subType->xml(indent + 2, parentTypes) + EOL;
+    }
   }
 
   return result + std::string(indent, ' ') + "</" + typeName + ">";

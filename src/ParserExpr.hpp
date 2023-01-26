@@ -97,8 +97,8 @@ struct ParserExprCond {
 };
 
 struct ParserExprIs {
-  ParserStmtExpr left;
-  ParserType right;
+  ParserStmtExpr expr;
+  ParserType type;
 };
 
 struct ParserExprLit {

@@ -150,6 +150,7 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
   return result;
 }
 
+// todo type cast in ExprIs
 std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_evalTypeCasts (const ParserStmtExpr &stmtExpr) {
   auto bodyTypeCasts = std::map<std::string, Type *>{};
   auto altTypeCasts = std::map<std::string, Type *>{};
@@ -346,6 +347,25 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
         this->typeMap.self = initialTypeMapSelf;
         this->typeMap.stack.pop_back();
+      }
+    } else if (std::holds_alternative<ParserStmtUnionDecl>(*stmt.body)) {
+      auto stmtUnionDecl = std::get<ParserStmtUnionDecl>(*stmt.body);
+      auto unionName = stmtUnionDecl.id.val;
+
+      if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
+        auto unionSubTypes = std::vector<Type *>{};
+
+        if (std::holds_alternative<ParserTypeUnion>(*stmtUnionDecl.type.body)) {
+          auto parserTypeUnion = std::get<ParserTypeUnion>(*stmtUnionDecl.type.body);
+
+          for (const auto &subType : parserTypeUnion.subTypes) {
+            unionSubTypes.push_back(this->_type(subType));
+          }
+        } else {
+          unionSubTypes.push_back(this->_type(stmtUnionDecl.type));
+        }
+
+        this->typeMap.un(unionName, this->typeMap.name(unionName), unionSubTypes);
       }
     }
   }
@@ -564,6 +584,12 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     auto nodeReturn = ASTNodeReturn{nodeReturnBody};
     return this->_wrapNode(stmt, nodeReturn);
+  } else if (std::holds_alternative<ParserStmtUnionDecl>(*stmt.body)) {
+    auto stmtUnionDecl = std::get<ParserStmtUnionDecl>(*stmt.body);
+    auto type = this->typeMap.get(stmtUnionDecl.id.val);
+    auto nodeUnionDecl = ASTNodeUnionDecl{type};
+
+    return this->_wrapNode(stmt, nodeUnionDecl);
   } else if (std::holds_alternative<ParserStmtVarDecl>(*stmt.body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*stmt.body);
     auto nodeVarDeclName = stmtVarDecl.id.val;
@@ -824,6 +850,12 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     }
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprCond{exprCondCond, exprCondBody, exprCondAlt});
+  } else if (std::holds_alternative<ParserExprIs>(*stmtExpr.body)) {
+    auto parserExprIs = std::get<ParserExprIs>(*stmtExpr.body);
+    auto exprIsType = this->_type(parserExprIs.type);
+    auto exprIsExpr = this->_nodeExpr(parserExprIs.expr, exprIsType, varStack);
+
+    return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprIs{exprIsExpr, exprIsType});
   } else if (std::holds_alternative<ParserExprLit>(*stmtExpr.body)) {
     auto parserExprLit = std::get<ParserExprLit>(*stmtExpr.body);
     auto exprLitType = ASTExprLitType{};
@@ -1105,6 +1137,8 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     }
 
     return this->_wrapNodeExprType(stmtExpr, targetType, exprCondBodyType);
+  } else if (std::holds_alternative<ParserExprIs>(*stmtExpr.body)) {
+    return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("bool"));
   } else if (std::holds_alternative<ParserExprLit>(*stmtExpr.body)) {
     auto exprLit = std::get<ParserExprLit>(*stmtExpr.body);
 
@@ -1226,6 +1260,15 @@ Type *AST::_type (const ParserType &type) {
     auto refType = this->_type(typeRef.refType);
 
     return this->typeMap.ref(refType);
+  } else if (std::holds_alternative<ParserTypeUnion>(*type.body)) {
+    auto typeUnion = std::get<ParserTypeUnion>(*type.body);
+    auto subTypes = std::vector<Type *>{};
+
+    for (const auto &subType : typeUnion.subTypes) {
+      subTypes.push_back(this->_type(subType));
+    }
+
+    return this->typeMap.un(std::nullopt, std::nullopt, subTypes);
   }
 
   throw Error("tried to analyze unknown type");
