@@ -405,7 +405,20 @@ bool Type::match (const Type *type) const {
 
     return lhsOptional.type->match(rhsOptional.type);
   } else if (this->isUnion()) {
-    // todo
+    if (!type->isUnion()) {
+      return this->hasSubType(type);
+    }
+
+    auto lhsUnion = std::get<TypeUnion>(this->body);
+    auto rhsUnion = std::get<TypeUnion>(type->body);
+
+    if (lhsUnion.subTypes.size() != rhsUnion.subTypes.size()) {
+      return false;
+    }
+
+    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&type] (const auto &it) -> bool {
+      return type->hasSubType(it);
+    });
   }
 
   return (this->name == "bool" && type->name == "bool") ||
@@ -481,8 +494,6 @@ bool Type::matchExact (const Type *type) const {
     auto rhsRef = std::get<TypeRef>(type->body);
 
     return lhsRef.refType->matchExact(rhsRef.refType);
-  } else if (this->isUnion() || type->isUnion()) {
-    // todo
   }
 
   return this->name == type->name;
@@ -552,8 +563,6 @@ bool Type::matchNice (const Type *type) const {
     auto rhsRef = std::get<TypeRef>(type->body);
 
     return lhsRef.refType->matchNice(rhsRef.refType);
-  } else if (this->isUnion() || type->isUnion()) {
-    // todo
   }
 
   return this->name == type->name;

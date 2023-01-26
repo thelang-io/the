@@ -575,26 +575,14 @@ Type *TypeMap::un (
 ) {
   auto newType = Type{name == std::nullopt ? "" : *name, codeName == std::nullopt ? "@" : *codeName, TypeUnion{subTypes}};
 
-  if (newType.name.empty()) {
-    newType.name += "union";
-
-    for (const auto &subType : subTypes) {
-      newType.name += "_" + subType->name;
-    }
-  }
-
-  if (newType.codeName == "@") {
-    newType.codeName += "union";
-
-    for (const auto &subType : subTypes) {
-      newType.codeName += "_" + subType->name;
-    }
-  }
-
   for (auto &item : this->_items) {
     if (!item->builtin && item->isUnion() && item->codeName == newType.codeName && item->matchExact(&newType)) {
       return item.get();
     }
+  }
+
+  if (newType.name.empty()) {
+    newType.name = "un$" + std::to_string(this->_unIdx++);
   }
 
   this->_items.push_back(std::make_unique<Type>(newType));
@@ -604,4 +592,18 @@ Type *TypeMap::un (
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
 
   return selfType;
+}
+
+// todo test
+Type *TypeMap::unionFrom (const Type *type, const Type *exceptType) {
+  auto subTypes = std::get<TypeUnion>(type->body).subTypes;
+  auto newSubTypes = std::vector<Type *>{};
+
+  for (const auto &subType : subTypes) {
+    if (!subType->matchExact(exceptType)) {
+      newSubTypes.push_back(subType);
+    }
+  }
+
+  return this->un(std::nullopt, std::nullopt, newSubTypes);
 }

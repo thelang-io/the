@@ -598,7 +598,7 @@ main {
               </NodeExpr>
             </ExprIsExpr>
             <ExprIsType>
-              <TypeUnion name="union_int_str">
+              <TypeUnion name="un$0">
                 <BuiltinType name="int" />
                 <BuiltinType name="str" />
               </TypeUnion>

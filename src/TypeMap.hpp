@@ -42,10 +42,12 @@ class TypeMap {
   Type *opt (Type *);
   Type *ref (Type *);
   Type *un (const std::optional<std::string> &, const std::optional<std::string> &, const std::vector<Type *> &);
+  Type *unionFrom (const Type *, const Type *);
 
  private:
   std::size_t _fnIdx = 0;
   std::vector<std::unique_ptr<Type>> _items;
+  std::size_t _unIdx = 0;
 };
 
 #endif

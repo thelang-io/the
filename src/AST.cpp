@@ -150,7 +150,6 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
   return result;
 }
 
-// todo type cast in ExprIs
 std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_evalTypeCasts (const ParserStmtExpr &stmtExpr) {
   auto bodyTypeCasts = std::map<std::string, Type *>{};
   auto altTypeCasts = std::map<std::string, Type *>{};
@@ -197,6 +196,41 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
           } else {
             bodyTypeCasts[exprBinaryLeftAccessCode] = exprBinaryLeftAccessTypeOpt.type;
           }
+        }
+      }
+    }
+  } else if (std::holds_alternative<ParserExprIs>(*stmtExpr.body)) {
+    // todo test
+    auto exprIs = std::get<ParserExprIs>(*stmtExpr.body);
+    auto exprIsType = this->_type(exprIs.type);
+
+    if (
+      std::holds_alternative<ParserExprAccess>(*exprIs.expr.body) &&
+      isExprAccessLvalue(exprIs.expr)
+    ) {
+      auto exprAccessType = this->_nodeExprType(exprIs.expr, nullptr);
+
+      if (exprAccessType->isAny() || exprAccessType->isOpt() || exprAccessType->isUnion()) {
+        auto exprAccessCode = stringifyExprAccess(exprIs.expr);
+        bodyTypeCasts[exprAccessCode] = exprIsType;
+
+        if (exprAccessType->isUnion()) {
+          altTypeCasts[exprAccessCode] = this->typeMap.unionFrom(exprAccessType, exprIsType);
+        }
+      }
+    } else if (
+      std::holds_alternative<ParserExprAssign>(*exprIs.expr.body) &&
+      isExprAccessLvalue(std::get<ParserExprAssign>(*exprIs.expr.body).left)
+    ) {
+      auto exprAssign = std::get<ParserExprAssign>(*exprIs.expr.body);
+      auto exprAccessType = this->_nodeExprType(exprAssign.left, nullptr);
+
+      if (exprAccessType->isAny() || exprAccessType->isOpt() || exprAccessType->isUnion()) {
+        auto exprAccessCode = stringifyExprAccess(exprAssign.left);
+        bodyTypeCasts[exprAccessCode] = exprIsType;
+
+        if (exprAccessType->isUnion()) {
+          altTypeCasts[exprAccessCode] = this->typeMap.unionFrom(exprAccessType, exprIsType);
         }
       }
     }
