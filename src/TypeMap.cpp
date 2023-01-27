@@ -605,5 +605,11 @@ Type *TypeMap::unionFrom (const Type *type, const Type *exceptType) {
     }
   }
 
+  if (newSubTypes.empty()) {
+    return subTypes[0];
+  } else if (newSubTypes.size() == 1) {
+    return newSubTypes[0];
+  }
+
   return this->un(std::nullopt, std::nullopt, newSubTypes);
 }

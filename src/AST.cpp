@@ -54,6 +54,12 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
   throw Error("Tried stringify non lvalue expr access");
 }
 
+void mergeTypeCasts (std::map<std::string, Type *> &m1, const std::map<std::string, Type *> &m2) {
+  for (const auto &[key, val] : m2) {
+    m1.insert_or_assign(key, val);
+  }
+}
+
 void AST::populateParents (ASTBlock &nodes, ASTNode *parent) {
   for (auto &node : nodes) {
     AST::populateParent(node, parent);
@@ -200,7 +206,6 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
       }
     }
   } else if (std::holds_alternative<ParserExprIs>(*stmtExpr.body)) {
-    // todo test
     auto exprIs = std::get<ParserExprIs>(*stmtExpr.body);
     auto exprIsType = this->_type(exprIs.type);
 
@@ -482,14 +487,15 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto nodeLoopCond = this->_nodeExpr(stmtIf.cond, this->typeMap.get("bool"), varStack);
 
     this->varMap.save();
-    this->typeCasts.merge(bodyTypeCasts);
+
+    mergeTypeCasts(this->typeCasts, bodyTypeCasts);
     auto nodeLoopBody = this->_block(stmtIf.body, varStack);
     this->typeCasts = initialTypeCasts;
     auto nodeLoopAlt = std::optional<std::variant<ASTBlock, ASTNode>>{};
     this->varMap.restore();
 
     if (stmtIf.alt != std::nullopt) {
-      this->typeCasts.merge(altTypeCasts);
+      mergeTypeCasts(this->typeCasts, altTypeCasts);
 
       if (std::holds_alternative<ParserBlock>(*stmtIf.alt)) {
         this->varMap.save();
@@ -872,10 +878,10 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     auto exprCondCond = this->_nodeExpr(parserExprCond.cond, this->typeMap.get("bool"), varStack);
     auto exprCondOperandsType = this->_nodeExprType(stmtExpr, targetType);
 
-    this->typeCasts.merge(bodyTypeCasts);
+    mergeTypeCasts(this->typeCasts, bodyTypeCasts);
     auto exprCondBody = this->_nodeExpr(parserExprCond.body, exprCondOperandsType, varStack);
     this->typeCasts = initialTypeCasts;
-    this->typeCasts.merge(altTypeCasts);
+    mergeTypeCasts(this->typeCasts, altTypeCasts);
     auto exprCondAlt = this->_nodeExpr(parserExprCond.alt, exprCondOperandsType, varStack);
     this->typeCasts = initialTypeCasts;
 
@@ -1129,12 +1135,12 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     auto exprCondAltType = static_cast<Type *>(nullptr);
 
     try {
-      this->typeCasts.merge(bodyTypeCasts);
+      mergeTypeCasts(this->typeCasts, bodyTypeCasts);
       exprCondBodyType = this->_nodeExprType(exprCond.body, targetType);
     } catch (const Error &) {
       try {
         this->typeCasts = initialTypeCasts;
-        this->typeCasts.merge(altTypeCasts);
+        mergeTypeCasts(this->typeCasts, altTypeCasts);
         exprCondAltType = this->_nodeExprType(exprCond.alt, targetType);
       } catch (const Error &) {
       }
@@ -1145,11 +1151,11 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     if (exprCondBodyType == nullptr && exprCondAltType == nullptr) {
       throw Error(this->reader, exprCond.body.start, exprCond.alt.end, E1020);
     } else if (exprCondBodyType == nullptr) {
-      this->typeCasts.merge(bodyTypeCasts);
+      mergeTypeCasts(this->typeCasts, bodyTypeCasts);
       exprCondBodyType = this->_nodeExprType(exprCond.body, exprCondAltType);
       this->typeCasts = initialTypeCasts;
     } else if (exprCondAltType == nullptr) {
-      this->typeCasts.merge(altTypeCasts);
+      mergeTypeCasts(this->typeCasts, altTypeCasts);
       exprCondAltType = this->_nodeExprType(exprCond.alt, exprCondBodyType);
       this->typeCasts = initialTypeCasts;
     }
