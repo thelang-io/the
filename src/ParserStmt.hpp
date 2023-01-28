@@ -30,7 +30,7 @@ struct ParserStmtLoop;
 struct ParserStmtMain;
 struct ParserStmtObjDecl;
 struct ParserStmtReturn;
-struct ParserStmtUnionDecl;
+struct ParserStmtTypeDecl;
 struct ParserStmtVarDecl;
 
 using ParserStmtBody = std::variant<
@@ -46,7 +46,7 @@ using ParserStmtBody = std::variant<
   ParserStmtMain,
   ParserStmtObjDecl,
   ParserStmtReturn,
-  ParserStmtUnionDecl,
+  ParserStmtTypeDecl,
   ParserStmtVarDecl
 >;
 
@@ -131,7 +131,7 @@ struct ParserStmtReturn {
   std::optional<ParserStmtExpr> body;
 };
 
-struct ParserStmtUnionDecl {
+struct ParserStmtTypeDecl {
   Token id;
   ParserType type;
 };

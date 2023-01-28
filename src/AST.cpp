@@ -220,7 +220,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
         bodyTypeCasts[exprAccessCode] = exprIsType;
 
         if (exprAccessType->isUnion()) {
-          altTypeCasts[exprAccessCode] = this->typeMap.unionFrom(exprAccessType, exprIsType);
+          altTypeCasts[exprAccessCode] = this->typeMap.unionSub(exprAccessType, exprIsType);
         }
       }
     } else if (
@@ -235,7 +235,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
         bodyTypeCasts[exprAccessCode] = exprIsType;
 
         if (exprAccessType->isUnion()) {
-          altTypeCasts[exprAccessCode] = this->typeMap.unionFrom(exprAccessType, exprIsType);
+          altTypeCasts[exprAccessCode] = this->typeMap.unionSub(exprAccessType, exprIsType);
         }
       }
     }
@@ -299,13 +299,13 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           nodeFnDeclVarParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
         }
 
-        auto nodeFnDeclCodeName = this->typeMap.name(nodeFnDeclName);
         auto nodeFnDeclVarReturnType = stmtFnDecl.returnType == std::nullopt
           ? this->typeMap.get("void")
           : this->_type(*stmtFnDecl.returnType);
 
         this->varMap.restore();
-        auto nodeFnDeclVarType = this->typeMap.fn(nodeFnDeclCodeName, nodeFnDeclVarParams, nodeFnDeclVarReturnType);
+        auto nodeFnDeclVarType = this->typeMap.fn(nodeFnDeclVarParams, nodeFnDeclVarReturnType);
+        auto nodeFnDeclCodeName = this->varMap.name(nodeFnDeclName);
 
         this->varMap.add(nodeFnDeclName, nodeFnDeclCodeName, nodeFnDeclVarType, false);
       }
@@ -373,11 +373,11 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             }
           }
 
-          auto methodDeclCodeName = this->typeMap.name(methodDeclName);
           auto methodDeclReturnType = stmtFnDecl.returnType == std::nullopt
             ? this->typeMap.get("void")
             : this->_type(*stmtFnDecl.returnType);
-          auto methodDeclType = this->typeMap.fn(methodDeclCodeName, methodDeclTypeParams, methodDeclReturnType, methodDeclInfo);
+          auto methodDeclType = this->typeMap.fn(methodDeclTypeParams, methodDeclReturnType, methodDeclInfo);
+          auto methodDeclCodeName = this->varMap.name(methodDeclName);
 
           this->varMap.restore();
           this->varMap.add(type->name + "." + methodDeclName, methodDeclCodeName, methodDeclType, false);
@@ -387,24 +387,13 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         this->typeMap.self = initialTypeMapSelf;
         this->typeMap.stack.pop_back();
       }
-    } else if (std::holds_alternative<ParserStmtUnionDecl>(*stmt.body)) {
-      auto stmtUnionDecl = std::get<ParserStmtUnionDecl>(*stmt.body);
-      auto unionName = stmtUnionDecl.id.val;
+    } else if (std::holds_alternative<ParserStmtTypeDecl>(*stmt.body)) {
+      auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*stmt.body);
+      auto typeName = stmtTypeDecl.id.val;
 
       if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
-        auto unionSubTypes = std::vector<Type *>{};
-
-        if (std::holds_alternative<ParserTypeUnion>(*stmtUnionDecl.type.body)) {
-          auto parserTypeUnion = std::get<ParserTypeUnion>(*stmtUnionDecl.type.body);
-
-          for (const auto &subType : parserTypeUnion.subTypes) {
-            unionSubTypes.push_back(this->_type(subType));
-          }
-        } else {
-          unionSubTypes.push_back(this->_type(stmtUnionDecl.type));
-        }
-
-        this->typeMap.un(unionName, this->typeMap.name(unionName), unionSubTypes);
+        auto type = this->_type(stmtTypeDecl.type);
+        this->typeMap.alias(typeName, type);
       }
     }
   }
@@ -624,10 +613,10 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     auto nodeReturn = ASTNodeReturn{nodeReturnBody};
     return this->_wrapNode(stmt, nodeReturn);
-  } else if (std::holds_alternative<ParserStmtUnionDecl>(*stmt.body)) {
-    auto stmtUnionDecl = std::get<ParserStmtUnionDecl>(*stmt.body);
-    auto type = this->typeMap.get(stmtUnionDecl.id.val);
-    auto nodeUnionDecl = ASTNodeUnionDecl{type};
+  } else if (std::holds_alternative<ParserStmtTypeDecl>(*stmt.body)) {
+    auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*stmt.body);
+    auto type = this->typeMap.get(stmtTypeDecl.id.val);
+    auto nodeUnionDecl = ASTNodeTypeDecl{type};
 
     return this->_wrapNode(stmt, nodeUnionDecl);
   } else if (std::holds_alternative<ParserStmtVarDecl>(*stmt.body)) {
@@ -1262,7 +1251,7 @@ Type *AST::_type (const ParserType &type) {
       fnParams.push_back(TypeFnParam{paramName, paramType, typeFnParam.mut, !typeFnParam.variadic, typeFnParam.variadic});
     }
 
-    return this->typeMap.fn(std::nullopt, fnParams, fnReturnType);
+    return this->typeMap.fn(fnParams, fnReturnType);
   } else if (std::holds_alternative<ParserTypeId>(*type.body)) {
     auto typeId = std::get<ParserTypeId>(*type.body);
 
@@ -1308,7 +1297,7 @@ Type *AST::_type (const ParserType &type) {
       subTypes.push_back(this->_type(subType));
     }
 
-    return this->typeMap.un(std::nullopt, std::nullopt, subTypes);
+    return this->typeMap.unionType(subTypes);
   }
 
   throw Error("tried to analyze unknown type");

@@ -25,6 +25,7 @@
 #include <vector>
 
 struct Type;
+struct TypeAlias;
 struct TypeArray;
 struct TypeEnum;
 struct TypeEnumerator;
@@ -35,6 +36,7 @@ struct TypeRef;
 struct TypeUnion;
 
 using TypeBody = std::variant<
+  TypeAlias,
   TypeArray,
   TypeEnum,
   TypeEnumerator,
@@ -51,6 +53,10 @@ struct TypeField {
   bool mut;
   bool method;
   bool builtin;
+};
+
+struct TypeAlias {
+  Type *type;
 };
 
 struct TypeArray {
@@ -116,6 +122,7 @@ struct Type {
   bool hasEnumerator (const std::string &) const;
   bool hasProp (const std::string &) const;
   bool hasSubType (const Type *) const;
+  bool isAlias () const;
   bool isAny () const;
   bool isArray () const;
   bool isBool () const;

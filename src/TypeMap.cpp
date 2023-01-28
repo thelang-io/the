@@ -18,6 +18,12 @@
 #include <algorithm>
 #include <limits>
 
+// todo think about it if it should be TypeAlias or just copy of body
+Type *TypeMap::alias (const std::string &name, const Type *type) {
+  this->_items.push_back(std::make_unique<Type>(Type{name, this->name(name), type->body}));
+  return this->_items.back().get();
+}
+
 Type *TypeMap::arrayOf (Type *elementType) {
   for (const auto &item : this->_items) {
     if (item->isArray() && std::get<TypeArray>(item->body).elementType->matchExact(elementType)) {
@@ -94,7 +100,6 @@ Type *TypeMap::enumerator (const std::string &enumeratorName, const std::string 
 }
 
 Type *TypeMap::fn (
-  const std::optional<std::string> &codeName,
   const std::vector<TypeFnParam> &params,
   Type *returnType,
   const std::optional<TypeFnMethodInfo> &methodInfo
@@ -106,24 +111,17 @@ Type *TypeMap::fn (
     methodInfo == std::nullopt ? TypeFnMethodInfo{} : *methodInfo
   };
 
-  auto newType = Type{"", codeName == std::nullopt ? "@" : *codeName, typeBody};
+  auto newType = Type{"", "", typeBody};
 
   for (auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->codeName == newType.codeName && item->matchExact(&newType)) {
+    if (!item->builtin && item->isFn() && item->matchExact(&newType)) {
       return item.get();
     }
   }
 
-  for (auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchNice(&newType)) {
-      newType.name = item->name;
-      break;
-    }
-  }
-
-  if (newType.name.empty()) {
-    newType.name = "fn$" + std::to_string(this->_fnIdx++);
-  }
+  auto idx = std::to_string(this->_fnIdx++);
+  newType.name = "fn$" + idx;
+  newType.codeName = "@fn$" + idx;
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
@@ -568,22 +566,18 @@ Type *TypeMap::ref (Type *refType) {
 }
 
 // todo test
-Type *TypeMap::un (
-  const std::optional<std::string> &name,
-  const std::optional<std::string> &codeName,
-  const std::vector<Type *> &subTypes
-) {
-  auto newType = Type{name == std::nullopt ? "" : *name, codeName == std::nullopt ? "@" : *codeName, TypeUnion{subTypes}};
+Type *TypeMap::unionType (const std::vector<Type *> &subTypes) {
+  auto newType = Type{"", "", TypeUnion{subTypes}};
 
   for (auto &item : this->_items) {
-    if (!item->builtin && item->isUnion() && item->codeName == newType.codeName && item->matchExact(&newType)) {
+    if (!item->builtin && item->isUnion() && item->matchExact(&newType)) {
       return item.get();
     }
   }
 
-  if (newType.name.empty()) {
-    newType.name = "un$" + std::to_string(this->_unIdx++);
-  }
+  auto idx = std::to_string(this->_unIdx++);
+  newType.name = "union$" + idx;
+  newType.codeName = "@union$" + idx;
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
@@ -595,7 +589,7 @@ Type *TypeMap::un (
 }
 
 // todo test
-Type *TypeMap::unionFrom (const Type *type, const Type *exceptType) {
+Type *TypeMap::unionSub (const Type *type, const Type *exceptType) {
   auto subTypes = std::get<TypeUnion>(type->body).subTypes;
   auto newSubTypes = std::vector<Type *>{};
 
@@ -611,5 +605,5 @@ Type *TypeMap::unionFrom (const Type *type, const Type *exceptType) {
     return newSubTypes[0];
   }
 
-  return this->un(std::nullopt, std::nullopt, newSubTypes);
+  return this->unionType(newSubTypes);
 }

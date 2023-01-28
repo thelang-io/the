@@ -238,12 +238,12 @@ std::string ASTNode::xml (std::size_t indent) const {
       result += nodeReturn.body->xml(indent + 2) + EOL;
       result += std::string(indent, ' ') + "</NodeReturn>";
     }
-  } else if (std::holds_alternative<ASTNodeUnionDecl>(*this->body)) {
-    auto nodeUnionDecl = std::get<ASTNodeUnionDecl>(*this->body);
+  } else if (std::holds_alternative<ASTNodeTypeDecl>(*this->body)) {
+    auto nodeTypeDecl = std::get<ASTNodeTypeDecl>(*this->body);
 
-    result += std::string(indent, ' ') + "<NodeUnionDecl>" EOL;
-    result += nodeUnionDecl.type->xml(indent + 2) + EOL;
-    result += std::string(indent, ' ') + "</NodeUnionDecl>";
+    result += std::string(indent, ' ') + "<NodeTypeDecl>" EOL;
+    result += nodeTypeDecl.type->xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</NodeTypeDecl>";
   } else if (std::holds_alternative<ASTNodeVarDecl>(*this->body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(*this->body);
 

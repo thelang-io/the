@@ -467,13 +467,13 @@ ParserStmt Parser::next (bool allowSemi) {
       throw Error(this->reader, tok2.start, E0161);
     }
 
-    auto unionDeclType = this->_type();
+    auto type = this->_type();
 
-    if (unionDeclType == std::nullopt) {
+    if (type == std::nullopt) {
       throw Error(this->reader, this->lexer->loc, E0162);
     }
 
-    return this->_wrapStmt(allowSemi, ParserStmtUnionDecl{tok1, *unionDeclType}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtTypeDecl{tok1, *type}, tok0.start);
   }
 
   if (tok0.type == TK_ID) {
@@ -1031,7 +1031,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprIs (
   auto exprIsRight = this->_type();
 
   if (exprIsRight == std::nullopt) {
-    throw Error(this->reader, this->lexer->loc, E0163);
+    throw Error(this->reader, this->lexer->loc, E0164);
   }
 
   auto exprIs = ParserExprIs{stmtExpr, *exprIsRight};
@@ -1238,7 +1238,7 @@ ParserType Parser::_wrapType (const ParserType &type) {
     auto subType = this->_type();
 
     if (subType == std::nullopt) {
-      throw Error(this->reader, this->lexer->loc, E0164);
+      throw Error(this->reader, this->lexer->loc, E0163);
     }
 
     auto typeUnionSubTypes = std::vector<ParserType>{type};

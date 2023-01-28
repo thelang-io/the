@@ -168,6 +168,10 @@ bool Type::hasSubType (const Type *subType) const {
   return false;
 }
 
+bool Type::isAlias () const {
+  return std::holds_alternative<TypeAlias>(this->body);
+}
+
 bool Type::isAny () const {
   return this->name == "any";
 }
@@ -253,6 +257,7 @@ bool Type::isNumber () const {
 
 bool Type::isObj () const {
   return (
+    !this->isAlias() &&
     !this->isAny() &&
     !this->isArray() &&
     !this->isBool() &&
@@ -327,6 +332,7 @@ bool Type::isVoid () const {
 }
 
 bool Type::match (const Type *type) const {
+  // todo alias
   if (this->isAny()) {
     return true;
   } else if (this->isRef() || type->isRef()) {
@@ -569,7 +575,8 @@ bool Type::matchNice (const Type *type) const {
 }
 
 bool Type::shouldBeFreed () const {
-  return this->isAny() ||
+  return
+    this->isAny() ||
     this->isArray() ||
     this->isFn() ||
     this->isObj() ||
@@ -586,6 +593,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   auto typeName = std::string("Type");
 
   if (this->isArray()) {
+    typeName += "Alias";
+  } else if (this->isArray()) {
     typeName += "Array";
   } else if (this->isEnum()) {
     typeName += "Enum";
@@ -614,7 +623,10 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   result += ">" EOL;
 
-  if (this->isArray()) {
+  if (this->isAlias()) {
+    auto typeAlias = std::get<TypeAlias>(this->body);
+    result += typeAlias.type->xml(indent + 2, parentTypes) + EOL;
+  } else if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
     result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isEnum()) {
