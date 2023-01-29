@@ -124,13 +124,13 @@ TEST_F(TypeMapTest, EnumerationDoesNotInsertExact) {
 }
 
 TEST_F(TypeMapTest, FunctionInserts) {
-  auto type1 = this->tm_.fn("test1_0", {}, this->tm_.get("void"));
+  auto type1 = this->tm_.fn({}, this->tm_.get("void"));
 
-  auto type2 = this->tm_.fn("test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
-  auto type3 = this->tm_.fn("test3_0", {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, false, false},
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("str"));
@@ -169,17 +169,17 @@ TEST_F(TypeMapTest, FunctionInsertsMethod) {
   auto obj = this->tm_.obj("Test", "Test_0");
 
   auto type1MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
-  auto type1 = this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"), type1MethodInfo);
+  auto type1 = this->tm_.fn({}, this->tm_.get("void"), type1MethodInfo);
 
   auto type2MethodInfo = TypeFnMethodInfo{true, "self_0", obj, false};
 
-  auto type2 = this->tm_.fn("Test_0.test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"), type2MethodInfo);
 
   auto type3MethodInfo = TypeFnMethodInfo{true, "self2_0", this->tm_.ref(obj), true};
 
-  auto type3 = this->tm_.fn("Test_0.test3_0", {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, false, false},
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("str"), type3MethodInfo);
@@ -212,27 +212,27 @@ TEST_F(TypeMapTest, FunctionInsertsMethod) {
 }
 
 TEST_F(TypeMapTest, FunctionInsertsBetweenFunctionAndMethod) {
-  this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
-  this->tm_.fn("Test_0.test1_0", {}, this->tm_.get("void"));
+  this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
+  this->tm_.fn({}, this->tm_.get("void"));
 
   EXPECT_NE(this->tm_.get("fn$0"), nullptr);
   EXPECT_NE(this->tm_.get("fn$1"), nullptr);
 }
 
 TEST_F(TypeMapTest, FunctionDoesNotInsert) {
-  auto type1 = this->tm_.fn("test1_0", {
+  auto type1 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
-  auto type2 = this->tm_.fn("test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
-  auto type3 = this->tm_.fn(std::nullopt, {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
-  auto type4 = this->tm_.fn(std::nullopt, {
+  auto type4 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
@@ -245,19 +245,19 @@ TEST_F(TypeMapTest, FunctionDoesNotInsert) {
 TEST_F(TypeMapTest, FunctionDoesNotInsertMethod) {
   auto typeMethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
 
-  auto type1 = this->tm_.fn("test1_0", {
+  auto type1 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"), typeMethodInfo);
 
-  auto type2 = this->tm_.fn("test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"), typeMethodInfo);
 
-  auto type3 = this->tm_.fn(std::nullopt, {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"), typeMethodInfo);
 
-  auto type4 = this->tm_.fn(std::nullopt, {
+  auto type4 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"), typeMethodInfo);
 
@@ -268,7 +268,7 @@ TEST_F(TypeMapTest, FunctionDoesNotInsertMethod) {
 }
 
 TEST_F(TypeMapTest, GetReturnsItem) {
-  this->tm_.fn("test", {}, this->tm_.get("void"));
+  this->tm_.fn({}, this->tm_.get("void"));
   this->tm_.obj("Test", "Test");
 
   EXPECT_NE(this->tm_.get("fn$0"), nullptr);
@@ -286,7 +286,7 @@ TEST_F(TypeMapTest, GetReturnsNull) {
 }
 
 TEST_F(TypeMapTest, HasExisting) {
-  this->tm_.fn("test", {}, this->tm_.get("void"));
+  this->tm_.fn({}, this->tm_.get("void"));
   this->tm_.obj("Test", "Test");
 
   EXPECT_TRUE(this->tm_.has("fn$0"));

@@ -41,12 +41,12 @@ class TypeTest : public testing::Test {
     });
     this->tm_.stack.pop_back();
 
-    this->fn_ = this->tm_.fn("test_0", {
+    this->fn_ = this->tm_.fn({
       TypeFnParam{"a", this->tm_.get("int"), false, true, false},
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
     }, this->tm_.get("int"));
 
-    auto objMethod = this->tm_.fn("Test_0.m_0", {}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
+    auto objMethod = this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
 
     this->obj_ = this->tm_.obj("Test", "Test_0", {
       TypeField{"a", this->tm_.get("int"), false, false, false},
@@ -494,24 +494,24 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfFn) {
-  auto type1 = this->tm_.fn("test1_0", {}, this->tm_.get("int"));
+  auto type1 = this->tm_.fn({}, this->tm_.get("int"));
 
-  auto type2 = this->tm_.fn("test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type3 = this->tm_.fn("test3_0", {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("str"), false, false, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
 
-  auto type4 = this->tm_.fn(std::nullopt, {}, this->tm_.get("void"));
+  auto type4 = this->tm_.fn({}, this->tm_.get("void"));
 
-  auto type5 = this->tm_.fn(std::nullopt, {
+  auto type5 = this->tm_.fn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
-  auto type6 = this->tm_.fn(std::nullopt, {
+  auto type6 = this->tm_.fn({
     TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
@@ -1117,53 +1117,53 @@ TEST_F(TypeTest, MatchesFunction) {
   auto ref1 = this->tm_.ref(this->tm_.get("int"));
   auto ref2 = this->tm_.ref(this->tm_.get("str"));
 
-  auto type1 = this->tm_.fn("test1_0", {
+  auto type1 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type2 = this->tm_.fn("test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type3 = this->tm_.fn("test3_0", {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type4 = this->tm_.fn("test4_0", {
+  auto type4 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type5 = this->tm_.fn("test5_0", {
+  auto type5 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
 
-  auto type6 = this->tm_.fn("test6_0", {}, this->tm_.get("int"));
+  auto type6 = this->tm_.fn({}, this->tm_.get("int"));
 
-  auto type7 = this->tm_.fn("test7_0", {
+  auto type7 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type8 = this->tm_.fn("test8_0", {
+  auto type8 = this->tm_.fn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type9 = this->tm_.fn("test9_0", {
+  auto type9 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref1, false, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type10 = this->tm_.fn("test10_0", {
+  auto type10 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref1, true, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type11 = this->tm_.fn("test11_0", {
+  auto type11 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref2, true, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
@@ -1219,15 +1219,15 @@ TEST_F(TypeTest, MatchesObject) {
 }
 
 TEST_F(TypeTest, MatchesObjectMethod) {
-  auto type1 = this->tm_.fn("test1", {}, this->tm_.get("void"));
+  auto type1 = this->tm_.fn({}, this->tm_.get("void"));
   auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
-  auto type2 = this->tm_.fn("test2", {}, this->tm_.get("void"), type2MethodInfo);
+  auto type2 = this->tm_.fn({}, this->tm_.get("void"), type2MethodInfo);
   auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
-  auto type3 = this->tm_.fn("test3", {}, this->tm_.get("void"), type3MethodInfo);
+  auto type3 = this->tm_.fn({}, this->tm_.get("void"), type3MethodInfo);
   auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
-  auto type4 = this->tm_.fn("test4", {}, this->tm_.get("void"), type4MethodInfo);
+  auto type4 = this->tm_.fn({}, this->tm_.get("void"), type4MethodInfo);
   auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
-  auto type5 = this->tm_.fn("test5", {}, this->tm_.get("void"), type5MethodInfo);
+  auto type5 = this->tm_.fn({}, this->tm_.get("void"), type5MethodInfo);
 
   EXPECT_TRUE(type2->match(type2));
   EXPECT_FALSE(type1->match(type2));
@@ -1345,53 +1345,53 @@ TEST_F(TypeTest, MatchesExactFunction) {
   auto ref1 = this->tm_.ref(this->tm_.get("int"));
   auto ref2 = this->tm_.ref(this->tm_.get("str"));
 
-  auto type1 = this->tm_.fn("test1_0", {
+  auto type1 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type2 = this->tm_.fn("test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type3 = this->tm_.fn("test3_0", {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type4 = this->tm_.fn("test4_0", {
+  auto type4 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type5 = this->tm_.fn("test5_0", {
+  auto type5 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
 
-  auto type6 = this->tm_.fn("test6_0", {}, this->tm_.get("int"));
+  auto type6 = this->tm_.fn({}, this->tm_.get("int"));
 
-  auto type7 = this->tm_.fn("test7_0", {
+  auto type7 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type8 = this->tm_.fn("test8_0", {
+  auto type8 = this->tm_.fn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type9 = this->tm_.fn("test9_0", {
+  auto type9 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref1, false, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type10 = this->tm_.fn("test10_0", {
+  auto type10 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref1, true, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type11 = this->tm_.fn("test11_0", {
+  auto type11 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref2, true, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
@@ -1447,15 +1447,15 @@ TEST_F(TypeTest, MatchesExactObject) {
 }
 
 TEST_F(TypeTest, MatchesExactObjectMethod) {
-  auto type1 = this->tm_.fn("test1", {}, this->tm_.get("void"));
+  auto type1 = this->tm_.fn({}, this->tm_.get("void"));
   auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
-  auto type2 = this->tm_.fn("test2", {}, this->tm_.get("void"), type2MethodInfo);
+  auto type2 = this->tm_.fn({}, this->tm_.get("void"), type2MethodInfo);
   auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
-  auto type3 = this->tm_.fn("test3", {}, this->tm_.get("void"), type3MethodInfo);
+  auto type3 = this->tm_.fn({}, this->tm_.get("void"), type3MethodInfo);
   auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
-  auto type4 = this->tm_.fn("test4", {}, this->tm_.get("void"), type4MethodInfo);
+  auto type4 = this->tm_.fn({}, this->tm_.get("void"), type4MethodInfo);
   auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
-  auto type5 = this->tm_.fn("test5", {}, this->tm_.get("void"), type5MethodInfo);
+  auto type5 = this->tm_.fn({}, this->tm_.get("void"), type5MethodInfo);
 
   EXPECT_TRUE(type2->matchExact(type2));
   EXPECT_FALSE(type1->matchExact(type2));
@@ -1573,58 +1573,58 @@ TEST_F(TypeTest, MatchesNiceFunction) {
   auto ref1 = this->tm_.ref(this->tm_.get("int"));
   auto ref2 = this->tm_.ref(this->tm_.get("str"));
 
-  auto type1 = this->tm_.fn("test1_0", {
+  auto type1 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type2 = this->tm_.fn("test2_0", {
+  auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type3 = this->tm_.fn("test3_0", {
+  auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type4 = this->tm_.fn("test4_0", {
+  auto type4 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type5 = this->tm_.fn("test5_0", {
+  auto type5 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
 
-  auto type6 = this->tm_.fn("test6_0", {}, this->tm_.get("int"));
+  auto type6 = this->tm_.fn({}, this->tm_.get("int"));
 
-  auto type7 = this->tm_.fn("test7_0", {
+  auto type7 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type8 = this->tm_.fn("test8_0", {
+  auto type8 = this->tm_.fn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type9 = this->tm_.fn("test9_0", {
+  auto type9 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref1, false, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type10 = this->tm_.fn("test10_0", {
+  auto type10 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref1, true, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type11 = this->tm_.fn("test11_0", {
+  auto type11 = this->tm_.fn({
     TypeFnParam{std::nullopt, ref2, true, true, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"));
 
-  auto type12 = this->tm_.fn("test12_0", {
+  auto type12 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), true, true, false},
     TypeFnParam{"b", this->tm_.get("int"), true, false, true}
   }, this->tm_.get("int"));
@@ -1683,15 +1683,15 @@ TEST_F(TypeTest, MatchesNiceObject) {
 }
 
 TEST_F(TypeTest, MatchesNiceObjectMethod) {
-  auto type1 = this->tm_.fn("test1", {}, this->tm_.get("void"));
+  auto type1 = this->tm_.fn({}, this->tm_.get("void"));
   auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
-  auto type2 = this->tm_.fn("test2", {}, this->tm_.get("void"), type2MethodInfo);
+  auto type2 = this->tm_.fn({}, this->tm_.get("void"), type2MethodInfo);
   auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
-  auto type3 = this->tm_.fn("test3", {}, this->tm_.get("void"), type3MethodInfo);
+  auto type3 = this->tm_.fn({}, this->tm_.get("void"), type3MethodInfo);
   auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
-  auto type4 = this->tm_.fn("test4", {}, this->tm_.get("void"), type4MethodInfo);
+  auto type4 = this->tm_.fn({}, this->tm_.get("void"), type4MethodInfo);
   auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
-  auto type5 = this->tm_.fn("test5", {}, this->tm_.get("void"), type5MethodInfo);
+  auto type5 = this->tm_.fn({}, this->tm_.get("void"), type5MethodInfo);
 
   EXPECT_TRUE(type2->matchNice(type2));
   EXPECT_FALSE(type1->matchNice(type2));
