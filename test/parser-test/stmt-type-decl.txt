@@ -1,0 +1,138 @@
+======= stdin =======
+type Test1 = int
+type Test2 = int | str
+type Test3 = int | str | char
+type Test4 = int | str | char | bool
+type Test5 = Test1
+type Test6 = Test1 | Test2
+type Test7 = Test1 | Test2 | Test3
+type Test8 = Test1 | Test2 | Test3 | Test4
+======= stdout =======
+<StmtTypeDecl start="1:1" end="1:17">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test1" start="1:6" end="1:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeId start="1:14" end="1:17">
+      <Token type="ID" val="int" start="1:14" end="1:17" />
+    </TypeId>
+  </StmtTypeDeclType>
+</StmtTypeDecl>
+<StmtTypeDecl start="2:1" end="2:23">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test2" start="2:6" end="2:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeUnion start="2:14" end="2:23">
+      <TypeId start="2:14" end="2:17">
+        <Token type="ID" val="int" start="2:14" end="2:17" />
+      </TypeId>
+      <TypeId start="2:20" end="2:23">
+        <Token type="ID" val="str" start="2:20" end="2:23" />
+      </TypeId>
+    </TypeUnion>
+  </StmtTypeDeclType>
+</StmtTypeDecl>
+<StmtTypeDecl start="3:1" end="3:30">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test3" start="3:6" end="3:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeUnion start="3:14" end="3:30">
+      <TypeId start="3:14" end="3:17">
+        <Token type="ID" val="int" start="3:14" end="3:17" />
+      </TypeId>
+      <TypeId start="3:20" end="3:23">
+        <Token type="ID" val="str" start="3:20" end="3:23" />
+      </TypeId>
+      <TypeId start="3:26" end="3:30">
+        <Token type="ID" val="char" start="3:26" end="3:30" />
+      </TypeId>
+    </TypeUnion>
+  </StmtTypeDeclType>
+</StmtTypeDecl>
+<StmtTypeDecl start="4:1" end="4:37">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test4" start="4:6" end="4:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeUnion start="4:14" end="4:37">
+      <TypeId start="4:14" end="4:17">
+        <Token type="ID" val="int" start="4:14" end="4:17" />
+      </TypeId>
+      <TypeId start="4:20" end="4:23">
+        <Token type="ID" val="str" start="4:20" end="4:23" />
+      </TypeId>
+      <TypeId start="4:26" end="4:30">
+        <Token type="ID" val="char" start="4:26" end="4:30" />
+      </TypeId>
+      <TypeId start="4:33" end="4:37">
+        <Token type="ID" val="bool" start="4:33" end="4:37" />
+      </TypeId>
+    </TypeUnion>
+  </StmtTypeDeclType>
+</StmtTypeDecl>
+<StmtTypeDecl start="5:1" end="5:19">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test5" start="5:6" end="5:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeId start="5:14" end="5:19">
+      <Token type="ID" val="Test1" start="5:14" end="5:19" />
+    </TypeId>
+  </StmtTypeDeclType>
+</StmtTypeDecl>
+<StmtTypeDecl start="6:1" end="6:27">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test6" start="6:6" end="6:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeUnion start="6:14" end="6:27">
+      <TypeId start="6:14" end="6:19">
+        <Token type="ID" val="Test1" start="6:14" end="6:19" />
+      </TypeId>
+      <TypeId start="6:22" end="6:27">
+        <Token type="ID" val="Test2" start="6:22" end="6:27" />
+      </TypeId>
+    </TypeUnion>
+  </StmtTypeDeclType>
+</StmtTypeDecl>
+<StmtTypeDecl start="7:1" end="7:35">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test7" start="7:6" end="7:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeUnion start="7:14" end="7:35">
+      <TypeId start="7:14" end="7:19">
+        <Token type="ID" val="Test1" start="7:14" end="7:19" />
+      </TypeId>
+      <TypeId start="7:22" end="7:27">
+        <Token type="ID" val="Test2" start="7:22" end="7:27" />
+      </TypeId>
+      <TypeId start="7:30" end="7:35">
+        <Token type="ID" val="Test3" start="7:30" end="7:35" />
+      </TypeId>
+    </TypeUnion>
+  </StmtTypeDeclType>
+</StmtTypeDecl>
+<StmtTypeDecl start="8:1" end="8:43">
+  <StmtTypeDeclId>
+    <Token type="ID" val="Test8" start="8:6" end="8:11" />
+  </StmtTypeDeclId>
+  <StmtTypeDeclType>
+    <TypeUnion start="8:14" end="8:43">
+      <TypeId start="8:14" end="8:19">
+        <Token type="ID" val="Test1" start="8:14" end="8:19" />
+      </TypeId>
+      <TypeId start="8:22" end="8:27">
+        <Token type="ID" val="Test2" start="8:22" end="8:27" />
+      </TypeId>
+      <TypeId start="8:30" end="8:35">
+        <Token type="ID" val="Test3" start="8:30" end="8:35" />
+      </TypeId>
+      <TypeId start="8:38" end="8:43">
+        <Token type="ID" val="Test4" start="8:38" end="8:43" />
+      </TypeId>
+    </TypeUnion>
+  </StmtTypeDeclType>
+</StmtTypeDecl>

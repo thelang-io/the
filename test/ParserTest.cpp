@@ -115,8 +115,8 @@ INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return-no-arg"
 ));
 
-INSTANTIATE_TEST_SUITE_P(StmtUnionDecl, ParserPassTest, testing::Values(
-  "stmt-union-decl"
+INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserPassTest, testing::Values(
+  "stmt-type-decl"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
@@ -247,10 +247,10 @@ INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
   "throw-E0125-stmt-obj-decl-missing-field-parenthesized-type"
 ));
 
-INSTANTIATE_TEST_SUITE_P(StmtUnionDecl, ParserThrowTest, testing::Values(
-  "throw-E0160-stmt-union-decl-missing-id",
-  "throw-E0161-stmt-union-decl-missing-eq",
-  "throw-E0162-stmt-union-decl-missing-type"
+INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserThrowTest, testing::Values(
+  "throw-E0160-stmt-type-decl-missing-id",
+  "throw-E0161-stmt-type-decl-missing-eq",
+  "throw-E0162-stmt-type-decl-missing-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
@@ -301,12 +301,12 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0151-type-array-missing-rbrack",
   "throw-E0152-expr-array-missing-element",
   "throw-E0159-expr-access-missing-prop-name",
-  "throw-E0163-expr-is-missing-type"
+  "throw-E0164-expr-is-missing-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
   "throw-E0145-type-fn-param-name-after-mut",
   "throw-E0146-type-fn-missing-colon-after-param-name",
   "throw-E0149-type-ref-missing-type",
-  "throw-E0164-type-union-missing-subtype"
+  "throw-E0163-type-union-missing-subtype"
 ));

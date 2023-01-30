@@ -43,7 +43,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_THROW: return "KW_THROW";
     case TK_KW_TRUE: return "KW_TRUE";
     case TK_KW_TRY: return "KW_TRY";
-    case TK_KW_UNION: return "KW_UNION";
+    case TK_KW_TYPE: return "KW_TYPE";
     case TK_LIT_CHAR: return "LIT_CHAR";
     case TK_LIT_FLOAT: return "LIT_FLOAT";
     case TK_LIT_INT_BIN: return "LIT_INT_BIN";

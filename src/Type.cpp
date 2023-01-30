@@ -592,7 +592,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   auto typeName = std::string("Type");
 
-  if (this->isArray()) {
+  if (this->isAlias()) {
     typeName += "Alias";
   } else if (this->isArray()) {
     typeName += "Array";

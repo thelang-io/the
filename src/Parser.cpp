@@ -454,7 +454,7 @@ ParserStmt Parser::next (bool allowSemi) {
     return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclFields, objDeclMethods}, tok0.start);
   }
 
-  if (tok0.type == TK_KW_UNION) {
+  if (tok0.type == TK_KW_TYPE) {
     auto [_1, tok1] = this->lexer->next();
 
     if (tok1.type != TK_ID) {

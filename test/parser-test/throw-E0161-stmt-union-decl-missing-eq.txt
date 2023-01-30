@@ -1,6 +1,0 @@
-======= stdin =======
-union Test () -> void
-======= stderr =======
-/test:1:12: E0161 - Expected equals after union name
-  1 | union Test () -> void
-    |            ^
