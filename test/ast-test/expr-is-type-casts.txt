@@ -1,6 +1,6 @@
 ======= stdin =======
-union Test1 = str | int
-union Test2 = str | int | bool
+type Test1 = str | int
+type Test2 = str | int | bool
 
 main {
   test1: Test1
@@ -43,19 +43,19 @@ main {
   print((test2 is str) ? test2 : ((test2 is int) ? test2.str() : ((test2 is bool) ? test2.str() : test2.str())))
 }
 ======= stdout =======
-<NodeUnionDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test1_0" name="Test1">
     <BuiltinType name="str" />
     <BuiltinType name="int" />
   </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
+</NodeTypeDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test2_0" name="Test2">
     <BuiltinType name="str" />
     <BuiltinType name="int" />
     <BuiltinType name="bool" />
   </TypeUnion>
-</NodeUnionDecl>
+</NodeTypeDecl>
 <NodeMain>
   <NodeVarDecl>
     <NodeVarDeclVar>
@@ -301,7 +301,7 @@ main {
               <ExprCallArg id="items">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeUnion name="un$0">
+                    <TypeUnion name="union$2">
                       <BuiltinType name="int" />
                       <BuiltinType name="bool" />
                     </TypeUnion>
@@ -417,7 +417,7 @@ main {
                 <ExprIsExpr>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeUnion name="un$1">
+                      <TypeUnion name="union$3">
                         <BuiltinType name="int" />
                         <BuiltinType name="bool" />
                       </TypeUnion>
@@ -623,7 +623,7 @@ main {
                 <ExprIsExpr>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeUnion name="un$2">
+                      <TypeUnion name="union$4">
                         <BuiltinType name="int" />
                         <BuiltinType name="bool" />
                       </TypeUnion>
@@ -1028,13 +1028,13 @@ main {
                           <ExprCallCallee>
                             <NodeExpr>
                               <NodeExprType>
-                                <BuiltinType name="un$3.str" />
+                                <BuiltinType name="union$5.str" />
                               </NodeExprType>
                               <NodeExprBody>
                                 <ExprAccess prop="str">
                                   <NodeExpr>
                                     <NodeExprType>
-                                      <TypeUnion name="un$3">
+                                      <TypeUnion name="union$5">
                                         <BuiltinType name="int" />
                                         <BuiltinType name="bool" />
                                       </TypeUnion>
@@ -1164,7 +1164,7 @@ main {
                                   <ExprIsExpr>
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeUnion name="un$6">
+                                        <TypeUnion name="union$8">
                                           <BuiltinType name="int" />
                                           <BuiltinType name="bool" />
                                         </TypeUnion>
@@ -1374,7 +1374,7 @@ main {
                                   <ExprIsExpr>
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeUnion name="un$9">
+                                        <TypeUnion name="union$11">
                                           <BuiltinType name="int" />
                                           <BuiltinType name="bool" />
                                         </TypeUnion>

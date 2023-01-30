@@ -1,62 +1,56 @@
 ======= stdin =======
-union Test1 = int
-union Test2 = int | str
-union Test3 = int | str | char
-union Test4 = int | str | char | bool
-union Test5 = Test1
-union Test6 = Test1 | Test2
-union Test7 = Test1 | Test2 | Test3
-union Test8 = Test1 | Test2 | Test3 | Test4
+type Test1 = int
+type Test2 = int | str
+type Test3 = int | str | char
+type Test4 = int | str | char | bool
+type Test5 = Test1
+type Test6 = Test1 | Test2
+type Test7 = Test1 | Test2 | Test3
+type Test8 = Test1 | Test2 | Test3 | Test4
 ======= stdout =======
-<NodeUnionDecl>
-  <TypeUnion codeName="Test1_0" name="Test1">
-    <BuiltinType name="int" />
-  </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
+<NodeTypeDecl>
+  <TypeObj codeName="Test1_0" name="Test1">
+  </TypeObj>
+</NodeTypeDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test2_0" name="Test2">
     <BuiltinType name="int" />
     <BuiltinType name="str" />
   </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
+</NodeTypeDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test3_0" name="Test3">
     <BuiltinType name="int" />
     <BuiltinType name="str" />
     <BuiltinType name="char" />
   </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
+</NodeTypeDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test4_0" name="Test4">
     <BuiltinType name="int" />
     <BuiltinType name="str" />
     <BuiltinType name="char" />
     <BuiltinType name="bool" />
   </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
-  <TypeUnion codeName="Test5_0" name="Test5">
-    <TypeUnion codeName="Test1_0" name="Test1">
-      <BuiltinType name="int" />
-    </TypeUnion>
-  </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
+</NodeTypeDecl>
+<NodeTypeDecl>
+  <TypeObj codeName="Test5_0" name="Test5">
+  </TypeObj>
+</NodeTypeDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test6_0" name="Test6">
-    <TypeUnion codeName="Test1_0" name="Test1">
-      <BuiltinType name="int" />
-    </TypeUnion>
+    <TypeObj codeName="Test1_0" name="Test1">
+    </TypeObj>
     <TypeUnion codeName="Test2_0" name="Test2">
       <BuiltinType name="int" />
       <BuiltinType name="str" />
     </TypeUnion>
   </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
+</NodeTypeDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test7_0" name="Test7">
-    <TypeUnion codeName="Test1_0" name="Test1">
-      <BuiltinType name="int" />
-    </TypeUnion>
+    <TypeObj codeName="Test1_0" name="Test1">
+    </TypeObj>
     <TypeUnion codeName="Test2_0" name="Test2">
       <BuiltinType name="int" />
       <BuiltinType name="str" />
@@ -67,12 +61,11 @@ union Test8 = Test1 | Test2 | Test3 | Test4
       <BuiltinType name="char" />
     </TypeUnion>
   </TypeUnion>
-</NodeUnionDecl>
-<NodeUnionDecl>
+</NodeTypeDecl>
+<NodeTypeDecl>
   <TypeUnion codeName="Test8_0" name="Test8">
-    <TypeUnion codeName="Test1_0" name="Test1">
-      <BuiltinType name="int" />
-    </TypeUnion>
+    <TypeObj codeName="Test1_0" name="Test1">
+    </TypeObj>
     <TypeUnion codeName="Test2_0" name="Test2">
       <BuiltinType name="int" />
       <BuiltinType name="str" />
@@ -89,4 +82,4 @@ union Test8 = Test1 | Test2 | Test3 | Test4
       <BuiltinType name="bool" />
     </TypeUnion>
   </TypeUnion>
-</NodeUnionDecl>
+</NodeTypeDecl>

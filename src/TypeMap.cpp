@@ -26,7 +26,7 @@ Type *TypeMap::alias (const std::string &name, const Type *type) {
 
 Type *TypeMap::arrayOf (Type *elementType) {
   for (const auto &item : this->_items) {
-    if (item->isArray() && std::get<TypeArray>(item->body).elementType->matchExact(elementType)) {
+    if (item->isArray() && std::get<TypeArray>(item->body).elementType->matchStrict(elementType)) {
       return item.get();
     }
   }
@@ -114,14 +114,24 @@ Type *TypeMap::fn (
   auto newType = Type{"", "", typeBody};
 
   for (auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchExact(&newType)) {
+    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
 
-  auto idx = std::to_string(this->_fnIdx++);
-  newType.name = "fn$" + idx;
-  newType.codeName = "@fn$" + idx;
+  for (auto &item : this->_items) {
+    if (!item->builtin && item->isFn() && item->matchStrict(&newType)) {
+      newType.name = item->name;
+      newType.codeName = item->codeName;
+      break;
+    }
+  }
+
+  if (newType.name.empty()) {
+    auto idx = std::to_string(this->_fnIdx++);
+    newType.name = "fn$" + idx;
+    newType.codeName = "@fn$" + idx;
+  }
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
@@ -540,7 +550,7 @@ Type *TypeMap::obj (const std::string &name, const std::string &codeName, const 
 
 Type *TypeMap::opt (Type *type) {
   for (const auto &item : this->_items) {
-    if (item->isOpt() && std::get<TypeOptional>(item->body).type->matchExact(type)) {
+    if (!item->builtin && item->isOpt() && std::get<TypeOptional>(item->body).type->matchStrict(type)) {
       return item.get();
     }
   }
@@ -556,7 +566,7 @@ Type *TypeMap::opt (Type *type) {
 
 Type *TypeMap::ref (Type *refType) {
   for (const auto &item : this->_items) {
-    if (item->isRef() && std::get<TypeRef>(item->body).refType->matchExact(refType)) {
+    if (!item->builtin && item->isRef() && std::get<TypeRef>(item->body).refType->matchStrict(refType)) {
       return item.get();
     }
   }
@@ -570,7 +580,7 @@ Type *TypeMap::unionType (const std::vector<Type *> &subTypes) {
   auto newType = Type{"", "", TypeUnion{subTypes}};
 
   for (auto &item : this->_items) {
-    if (!item->builtin && item->isUnion() && item->matchExact(&newType)) {
+    if (!item->builtin && item->isUnion() && item->matchStrict(&newType)) {
       return item.get();
     }
   }
@@ -594,7 +604,7 @@ Type *TypeMap::unionSub (const Type *type, const Type *exceptType) {
   auto newSubTypes = std::vector<Type *>{};
 
   for (const auto &subType : subTypes) {
-    if (!subType->matchExact(exceptType)) {
+    if (!subType->matchStrict(exceptType)) {
       newSubTypes.push_back(subType);
     }
   }

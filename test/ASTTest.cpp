@@ -70,7 +70,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-obj-decl-method",
   "node-obj-decl-method-variadic",
   "node-return",
-  "node-union-decl",
+  "node-type-decl",
   "node-var-decl",
   "node-var-decl-type-only"
 ));

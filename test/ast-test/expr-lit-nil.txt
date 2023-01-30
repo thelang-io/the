@@ -34,7 +34,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="testCall" codeName="testCall_0" frame="1">
-      <TypeFn codeName="testCall_0" name="fn$0">
+      <TypeFn name="fn$0">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <TypeOptional name="opt_int">
@@ -434,7 +434,7 @@ main {
             <ExprCallCallee>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeFn codeName="testCall_0" name="fn$0">
+                  <TypeFn name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeOptional name="opt_int">
@@ -452,7 +452,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testCall" codeName="testCall_0" frame="1">
-                      <TypeFn codeName="testCall_0" name="fn$0">
+                      <TypeFn name="fn$0">
                         <TypeFnParams>
                           <TypeFnParam name="a" required>
                             <TypeOptional name="opt_int">

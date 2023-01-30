@@ -5,13 +5,13 @@ enum AnimalType {
 }
 
 obj Animal {
-  type: AnimalType
+  animalType: AnimalType
   name: str
 }
 
 main {
-  cat := Animal{type: .Cat, name: "Sam"}
-  dog := Animal{type: AnimalType.Dog, name: "Sam"}
+  cat := Animal{animalType: .Cat, name: "Sam"}
+  dog := Animal{animalType: AnimalType.Dog, name: "Sam"}
 
   enum Color {
     Brown = 1,
@@ -46,7 +46,7 @@ main {
 </NodeEnumDecl>
 <NodeObjDecl>
   <TypeObj codeName="Animal_0" name="Animal">
-    <TypeField name="type">
+    <TypeField name="animalType">
       <TypeEnum codeName="AnimalType_0" name="AnimalType">
         <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
         <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
@@ -62,7 +62,7 @@ main {
     <NodeVarDeclVar>
       <Var name="cat" codeName="cat_0" frame="2">
         <TypeObj codeName="Animal_0" name="Animal">
-          <TypeField name="type">
+          <TypeField name="animalType">
             <TypeEnum codeName="AnimalType_0" name="AnimalType">
               <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
               <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
@@ -78,7 +78,7 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Animal_0" name="Animal">
-            <TypeField name="type">
+            <TypeField name="animalType">
               <TypeEnum codeName="AnimalType_0" name="AnimalType">
                 <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
                 <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
@@ -93,7 +93,7 @@ main {
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Animal_0" name="Animal">
-                <TypeField name="type">
+                <TypeField name="animalType">
                   <TypeEnum codeName="AnimalType_0" name="AnimalType">
                     <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
                     <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
@@ -105,7 +105,7 @@ main {
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
-              <ExprObjProp id="type">
+              <ExprObjProp id="animalType">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeEnum codeName="AnimalType_0" name="AnimalType">
@@ -138,7 +138,7 @@ main {
     <NodeVarDeclVar>
       <Var name="dog" codeName="dog_0" frame="2">
         <TypeObj codeName="Animal_0" name="Animal">
-          <TypeField name="type">
+          <TypeField name="animalType">
             <TypeEnum codeName="AnimalType_0" name="AnimalType">
               <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
               <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
@@ -154,7 +154,7 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Animal_0" name="Animal">
-            <TypeField name="type">
+            <TypeField name="animalType">
               <TypeEnum codeName="AnimalType_0" name="AnimalType">
                 <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
                 <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
@@ -169,7 +169,7 @@ main {
           <ExprObj>
             <ExprObjType>
               <TypeObj codeName="Animal_0" name="Animal">
-                <TypeField name="type">
+                <TypeField name="animalType">
                   <TypeEnum codeName="AnimalType_0" name="AnimalType">
                     <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
                     <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
@@ -181,7 +181,7 @@ main {
               </TypeObj>
             </ExprObjType>
             <ExprObjProps>
-              <ExprObjProp id="type">
+              <ExprObjProp id="animalType">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeEnum codeName="AnimalType_0" name="AnimalType">

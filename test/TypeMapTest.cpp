@@ -40,8 +40,8 @@ TEST_F(TypeMapTest, ArrayInserts) {
   auto arr1Body = std::get<TypeArray>(type1->body);
   auto arr2Body = std::get<TypeArray>(type2->body);
 
-  EXPECT_TRUE(this->tm_.get("int")->matchExact(arr1Body.elementType));
-  EXPECT_TRUE(this->tm_.get("str")->matchExact(arr2Body.elementType));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(arr1Body.elementType));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(arr2Body.elementType));
 }
 
 TEST_F(TypeMapTest, ArrayDoesNotInsertExact) {
@@ -145,21 +145,21 @@ TEST_F(TypeMapTest, FunctionInserts) {
   auto fn2Body = std::get<TypeFn>(type2->body);
   auto fn3Body = std::get<TypeFn>(type3->body);
 
-  EXPECT_TRUE(this->tm_.get("void")->match(fn1Body.returnType));
-  EXPECT_TRUE(this->tm_.get("void")->match(fn2Body.returnType));
-  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.returnType));
+  EXPECT_TRUE(this->tm_.get("void")->matchStrict(fn1Body.returnType));
+  EXPECT_TRUE(this->tm_.get("void")->matchStrict(fn2Body.returnType));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(fn3Body.returnType));
   EXPECT_EQ(fn1Body.params.size(), 0);
   EXPECT_EQ(fn2Body.params.size(), 1);
   EXPECT_EQ(fn3Body.params.size(), 2);
-  EXPECT_TRUE(this->tm_.get("int")->match(fn2Body.params[0].type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(fn2Body.params[0].type));
   EXPECT_FALSE(fn2Body.params[0].mut);
   EXPECT_TRUE(fn2Body.params[0].required);
   EXPECT_FALSE(fn2Body.params[0].variadic);
-  EXPECT_TRUE(this->tm_.get("int")->match(fn3Body.params[0].type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(fn3Body.params[0].type));
   EXPECT_FALSE(fn3Body.params[0].mut);
   EXPECT_FALSE(fn3Body.params[0].required);
   EXPECT_FALSE(fn3Body.params[0].variadic);
-  EXPECT_TRUE(this->tm_.get("str")->match(fn3Body.params[1].type));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(fn3Body.params[1].type));
   EXPECT_FALSE(fn3Body.params[1].mut);
   EXPECT_FALSE(fn3Body.params[1].required);
   EXPECT_TRUE(fn3Body.params[1].variadic);
@@ -202,12 +202,12 @@ TEST_F(TypeMapTest, FunctionInsertsMethod) {
   EXPECT_TRUE(fn2Body.isMethod);
   EXPECT_TRUE(fn2Body.methodInfo.isSelfFirst);
   EXPECT_EQ(fn2Body.methodInfo.selfCodeName, "self_0");
-  EXPECT_TRUE(fn2Body.methodInfo.selfType->matchExact(obj));
+  EXPECT_TRUE(fn2Body.methodInfo.selfType->matchStrict(obj));
   EXPECT_FALSE(fn2Body.methodInfo.isSelfMut);
   EXPECT_TRUE(fn3Body.isMethod);
   EXPECT_TRUE(fn3Body.methodInfo.isSelfFirst);
   EXPECT_EQ(fn3Body.methodInfo.selfCodeName, "self2_0");
-  EXPECT_TRUE(fn3Body.methodInfo.selfType->matchExact(this->tm_.ref(obj)));
+  EXPECT_TRUE(fn3Body.methodInfo.selfType->matchStrict(this->tm_.ref(obj)));
   EXPECT_TRUE(fn3Body.methodInfo.isSelfMut);
 }
 
@@ -364,11 +364,11 @@ TEST_F(TypeMapTest, ObjectInserts) {
   EXPECT_EQ(type2->fields.size(), 2);
   EXPECT_EQ(type3->fields.size(), 3);
   EXPECT_EQ(type2->fields[0].name, "a");
-  EXPECT_TRUE(this->tm_.get("int")->matchExact(type2->fields[0].type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(type2->fields[0].type));
   EXPECT_EQ(type3->fields[0].name, "b");
-  EXPECT_TRUE(this->tm_.get("any")->matchExact(type3->fields[0].type));
+  EXPECT_TRUE(this->tm_.get("any")->matchStrict(type3->fields[0].type));
   EXPECT_EQ(type3->fields[1].name, "c");
-  EXPECT_TRUE(this->tm_.get("str")->matchExact(type3->fields[1].type));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(type3->fields[1].type));
 }
 
 TEST_F(TypeMapTest, OptionalInserts) {
@@ -381,8 +381,8 @@ TEST_F(TypeMapTest, OptionalInserts) {
   EXPECT_FALSE(type2->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeOptional>(type1->body));
   EXPECT_TRUE(std::holds_alternative<TypeOptional>(type2->body));
-  EXPECT_TRUE(this->tm_.get("int")->matchExact(std::get<TypeOptional>(type1->body).type));
-  EXPECT_TRUE(this->tm_.get("str")->matchExact(std::get<TypeOptional>(type2->body).type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(std::get<TypeOptional>(type1->body).type));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(std::get<TypeOptional>(type2->body).type));
 }
 
 TEST_F(TypeMapTest, OptionalDoesNotInsertExact) {
@@ -402,8 +402,8 @@ TEST_F(TypeMapTest, ReferenceInserts) {
   EXPECT_FALSE(type2->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeRef>(type1->body));
   EXPECT_TRUE(std::holds_alternative<TypeRef>(type2->body));
-  EXPECT_TRUE(this->tm_.get("int")->matchExact(std::get<TypeRef>(type1->body).refType));
-  EXPECT_TRUE(this->tm_.get("str")->matchExact(std::get<TypeRef>(type2->body).refType));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(std::get<TypeRef>(type1->body).refType));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(std::get<TypeRef>(type2->body).refType));
 }
 
 TEST_F(TypeMapTest, ReferenceDoesNotInsertExact) {

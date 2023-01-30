@@ -1,6 +1,6 @@
 ======= stdin =======
 type = int
 ======= stderr =======
-/test:1:6: E0160 - Expected union identifier after union keyword
+/test:1:6: E0160 - Expected type declaration name after `type` keyword
   1 | type = int
     |      ^

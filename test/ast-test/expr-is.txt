@@ -49,7 +49,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test3" codeName="test3_0" frame="1">
-      <TypeFn codeName="test3_0" name="fn$0">
+      <TypeFn name="fn$0">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -438,7 +438,7 @@ main {
                     <ExprCallCallee>
                       <NodeExpr>
                         <NodeExprType>
-                          <TypeFn codeName="test3_0" name="fn$0">
+                          <TypeFn name="fn$0">
                             <TypeFnReturnType>
                               <BuiltinType name="void" />
                             </TypeFnReturnType>
@@ -447,7 +447,7 @@ main {
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="test3" codeName="test3_0" frame="1">
-                              <TypeFn codeName="test3_0" name="fn$0">
+                              <TypeFn name="fn$0">
                                 <TypeFnReturnType>
                                   <BuiltinType name="void" />
                                 </TypeFnReturnType>
@@ -598,7 +598,7 @@ main {
               </NodeExpr>
             </ExprIsExpr>
             <ExprIsType>
-              <TypeUnion name="un$0">
+              <TypeUnion name="union$0">
                 <BuiltinType name="int" />
                 <BuiltinType name="str" />
               </TypeUnion>

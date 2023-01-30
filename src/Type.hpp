@@ -71,8 +71,10 @@ struct TypeEnumerator {
 };
 
 struct TypeFnParam {
+  // todo maybe delete?
   std::optional<std::string> name;
   Type *type;
+  // todo maybe delete?
   bool mut;
   bool required;
   bool variadic;
@@ -155,9 +157,8 @@ struct Type {
   bool isU64 () const;
   bool isUnion () const;
   bool isVoid () const;
-  bool match (const Type *) const;
-  bool matchExact (const Type *) const;
   bool matchNice (const Type *) const;
+  bool matchStrict (const Type *, bool = false) const;
   bool shouldBeFreed () const;
   std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
 };

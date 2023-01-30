@@ -20,7 +20,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn codeName="test1_0" name="fn$0">
+      <TypeFn name="fn$0">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <BuiltinType name="int" />
@@ -94,7 +94,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn codeName="test2_0" name="fn$1">
+      <TypeFn name="fn$1">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <BuiltinType name="int" />
@@ -217,7 +217,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test3" codeName="test3_0" frame="1">
-      <TypeFn codeName="test3_0" name="fn$2">
+      <TypeFn name="fn$2">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <BuiltinType name="int" />
@@ -392,7 +392,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn codeName="test1_0" name="fn$0">
+              <TypeFn name="fn$0">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <BuiltinType name="int" />
@@ -406,7 +406,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test1" codeName="test1_0" frame="1">
-                  <TypeFn codeName="test1_0" name="fn$0">
+                  <TypeFn name="fn$0">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <BuiltinType name="int" />
@@ -445,7 +445,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn codeName="test2_0" name="fn$1">
+              <TypeFn name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <BuiltinType name="int" />
@@ -462,7 +462,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn codeName="test2_0" name="fn$1">
+                  <TypeFn name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <BuiltinType name="int" />
@@ -514,7 +514,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn codeName="test3_0" name="fn$2">
+              <TypeFn name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <BuiltinType name="int" />
@@ -534,7 +534,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test3" codeName="test3_0" frame="1">
-                  <TypeFn codeName="test3_0" name="fn$2">
+                  <TypeFn name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <BuiltinType name="int" />

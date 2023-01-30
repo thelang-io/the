@@ -84,8 +84,8 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"url_parse", "@url_parse", typeMap.get("url_parse"), false, true, false, this->_frame}));
 }
 
-std::string VarMap::name (const std::string &name) const {
-  auto fullName = name + "_";
+std::string VarMap::name (const std::string &name, const std::string &prefix) const {
+  auto fullName = prefix + name + "_";
 
   for (auto idx = static_cast<std::size_t>(0);; idx++) {
     auto fullNameTest = fullName + std::to_string(idx);
@@ -102,6 +102,16 @@ std::string VarMap::name (const std::string &name) const {
       return fullNameTest;
     }
   }
+}
+
+std::string VarMap::name (const std::string &name, const std::vector<std::string> &stack) const {
+  auto stackName = std::string();
+
+  for (const auto &item : stack) {
+    stackName += item + "SD";
+  }
+
+  return this->name(name, stackName);
 }
 
 void VarMap::restore () {
