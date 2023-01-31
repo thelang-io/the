@@ -71,16 +71,15 @@ struct TypeEnumerator {
 };
 
 struct TypeFnParam {
-  // todo maybe delete?
   std::optional<std::string> name;
   Type *type;
-  // todo maybe delete?
   bool mut;
   bool required;
   bool variadic;
 };
 
 struct TypeFnMethodInfo {
+  std::string codeName;
   bool isSelfFirst = false;
   std::string selfCodeName = "";
   Type *selfType = nullptr;

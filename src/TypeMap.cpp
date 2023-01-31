@@ -18,9 +18,8 @@
 #include <algorithm>
 #include <limits>
 
-// todo think about it if it should be TypeAlias or just copy of body
-Type *TypeMap::alias (const std::string &name, const Type *type) {
-  this->_items.push_back(std::make_unique<Type>(Type{name, this->name(name), type->body}));
+Type *TypeMap::alias (const std::string &name, Type *type) {
+  this->_items.push_back(std::make_unique<Type>(Type{name, this->name(name), TypeAlias{type}}));
   return this->_items.back().get();
 }
 

@@ -548,16 +548,18 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
 
+  if (this->isAlias()) {
+    auto typeAlias = std::get<TypeAlias>(this->body);
+    result += typeAlias.type->name[0] == '@' ? "" : R"( aliasName=")" + typeAlias.type->name + R"(")";
+  }
+
   if (this->isEnumerator() || (this->isObj() && parentTypes.contains(this->codeName))) {
     return result + " />";
   }
 
   result += ">" EOL;
 
-  if (this->isAlias()) {
-    auto typeAlias = std::get<TypeAlias>(this->body);
-    result += typeAlias.type->xml(indent + 2, parentTypes) + EOL;
-  } else if (this->isArray()) {
+  if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
     result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isEnum()) {
@@ -572,6 +574,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     if (typeFn.isMethod) {
       auto methodAttrs = std::string();
 
+      methodAttrs += typeFn.methodInfo.codeName[0] != '@' ? R"( codeName=")" + typeFn.methodInfo.codeName + R"(")" : "";
       methodAttrs += typeFn.methodInfo.isSelfFirst ? R"( selfCodeName=")" + typeFn.methodInfo.selfCodeName + R"(")" : "";
       methodAttrs += typeFn.methodInfo.isSelfFirst ? " selfFirst" : "";
       methodAttrs += typeFn.methodInfo.isSelfMut ? " selfMut" : "";

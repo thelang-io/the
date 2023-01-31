@@ -46,7 +46,7 @@ class TypeTest : public testing::Test {
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
     }, this->tm_.get("int"));
 
-    auto objMethod = this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
+    auto objMethod = this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.obj("Test", "Test_0", {
       TypeField{"a", this->tm_.get("int"), false, false, false},

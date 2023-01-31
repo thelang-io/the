@@ -168,16 +168,16 @@ TEST_F(TypeMapTest, FunctionInserts) {
 TEST_F(TypeMapTest, FunctionInsertsMethod) {
   auto obj = this->tm_.obj("Test", "Test_0");
 
-  auto type1MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
+  auto type1MethodInfo = TypeFnMethodInfo{"TestSDa_0", false, "", nullptr, false};
   auto type1 = this->tm_.fn({}, this->tm_.get("void"), type1MethodInfo);
 
-  auto type2MethodInfo = TypeFnMethodInfo{true, "self_0", obj, false};
+  auto type2MethodInfo = TypeFnMethodInfo{"TestSDb_0", true, "self_0", obj, false};
 
   auto type2 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"), type2MethodInfo);
 
-  auto type3MethodInfo = TypeFnMethodInfo{true, "self2_0", this->tm_.ref(obj), true};
+  auto type3MethodInfo = TypeFnMethodInfo{"TestSDc_0", true, "self2_0", this->tm_.ref(obj), true};
 
   auto type3 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, false, false},
@@ -212,7 +212,7 @@ TEST_F(TypeMapTest, FunctionInsertsMethod) {
 }
 
 TEST_F(TypeMapTest, FunctionInsertsBetweenFunctionAndMethod) {
-  this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{false, "", nullptr, false});
+  this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDa_0", false, "", nullptr, false});
   this->tm_.fn({}, this->tm_.get("void"));
 
   EXPECT_NE(this->tm_.get("fn$0"), nullptr);
@@ -243,7 +243,7 @@ TEST_F(TypeMapTest, FunctionDoesNotInsert) {
 }
 
 TEST_F(TypeMapTest, FunctionDoesNotInsertMethod) {
-  auto typeMethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
+  auto typeMethodInfo = TypeFnMethodInfo{"TestSDa_0", false, "", nullptr, false};
 
   auto type1 = this->tm_.fn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}

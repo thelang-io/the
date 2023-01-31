@@ -24,7 +24,7 @@ class TypeMap {
   std::optional<Type *> self;
   std::vector<std::string> stack;
 
-  Type *alias (const std::string &, const Type *);
+  Type *alias (const std::string &, Type *);
   Type *arrayOf (Type *);
   Type *enumeration (const std::string &, const std::string &, const std::vector<Type *> &);
   Type *enumerator (const std::string &, const std::string &);

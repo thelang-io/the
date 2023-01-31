@@ -200,7 +200,7 @@ std::string ASTNode::xml (std::size_t indent) const {
       for (const auto &method : nodeObjDecl.methods) {
         result += std::string(indent + 4, ' ') + "<NodeObjDeclMethod>" EOL;
         result += std::string(indent + 6, ' ') + "<NodeObjDeclMethodType>" EOL;
-        result += method.type->xml(indent + 8) + EOL;
+        result += method.var->xml(indent + 8) + EOL;
         result += std::string(indent + 6, ' ') + "</NodeObjDeclMethodType>" EOL;
 
         if (!method.stack.empty()) {
