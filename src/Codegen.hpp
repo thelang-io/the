@@ -279,6 +279,7 @@ class Codegen {
   std::string _typeNameArray (const Type *);
   std::string _typeNameFn (const Type *);
   std::string _typeNameOpt (const Type *);
+  std::string _typeNameUnion (const Type *);
   void _typeObj (Type *, bool = false);
   void _typeObjDef (Type *, const std::map<std::string, std::string> & = {}, bool = false);
   std::string _wrapNode (const ASTNode &, const std::string &);
