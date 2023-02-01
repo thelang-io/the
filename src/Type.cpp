@@ -33,7 +33,13 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
 }
 
 Type *Type::real (Type *type) {
-  return type->isRef() ? std::get<TypeRef>(type->body).refType : type;
+  if (type->isAlias()) {
+    return Type::real(std::get<TypeAlias>(type->body).type);
+  } else if (type->isRef()) {
+    return Type::real(std::get<TypeRef>(type->body).refType);
+  } else {
+    return type;
+  }
 }
 
 Type *Type::largest (Type *a, Type *b) {
@@ -110,7 +116,9 @@ Type *Type::getEnumerator (const std::string &memberName) const {
 }
 
 Type *Type::getProp (const std::string &propName) const {
-  if (this->isRef()) {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->getProp(propName);
+  } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->getProp(propName);
   }
 
@@ -140,7 +148,9 @@ bool Type::hasEnumerator (const std::string &memberName) const {
 }
 
 bool Type::hasProp (const std::string &propName) const {
-  if (this->isRef()) {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->hasProp(propName);
+  } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->hasProp(propName);
   }
 
@@ -151,7 +161,6 @@ bool Type::hasProp (const std::string &propName) const {
   return typeField != this->fields.end();
 }
 
-// todo test
 bool Type::hasSubType (const Type *subType) const {
   if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->hasSubType(subType);
@@ -322,7 +331,6 @@ bool Type::isU64 () const {
   return this->name == "u64";
 }
 
-// todo test
 bool Type::isUnion () const {
   return std::holds_alternative<TypeUnion>(this->body);
 }
@@ -332,16 +340,28 @@ bool Type::isVoid () const {
 }
 
 bool Type::matchNice (const Type *type) const {
-  // todo alias
   if (this->isAny()) {
     return true;
+  } else if (this->isAlias() || type->isAlias()) {
+    if (this->isAlias() && type->isAlias()) {
+      auto lhsAlias = std::get<TypeAlias>(this->body);
+      auto rhsAlias = std::get<TypeAlias>(type->body);
+
+      return lhsAlias.type->matchNice(rhsAlias.type);
+    } else if (this->isAlias()) {
+      auto lhsAlias = std::get<TypeAlias>(this->body);
+      return lhsAlias.type->matchNice(type);
+    } else {
+      auto lhsAlias = std::get<TypeAlias>(type->body);
+      return lhsAlias.type->matchNice(this);
+    }
   } else if (this->isRef() || type->isRef()) {
     if (this->isRef() && type->isRef()) {
       auto lhsRef = std::get<TypeRef>(this->body);
       auto rhsRef = std::get<TypeRef>(type->body);
 
       return lhsRef.refType->matchNice(rhsRef.refType);
-    } else if (this->isRef() && !type->isRef()) {
+    } else if (this->isRef()) {
       auto lhsRef = std::get<TypeRef>(this->body);
       return lhsRef.refType->matchNice(type);
     } else {
@@ -458,6 +478,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
       !lhsFn.returnType->matchStrict(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
       lhsFn.isMethod != rhsFn.isMethod ||
+      (exact && lhsFn.isMethod && lhsFn.methodInfo.codeName != rhsFn.methodInfo.codeName) ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchStrict(rhsFn.methodInfo.selfType)) ||
@@ -548,18 +569,16 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
 
-  if (this->isAlias()) {
-    auto typeAlias = std::get<TypeAlias>(this->body);
-    result += typeAlias.type->name[0] == '@' ? "" : R"( aliasName=")" + typeAlias.type->name + R"(")";
-  }
-
   if (this->isEnumerator() || (this->isObj() && parentTypes.contains(this->codeName))) {
     return result + " />";
   }
 
   result += ">" EOL;
 
-  if (this->isArray()) {
+  if (this->isAlias()) {
+    auto typeAlias = std::get<TypeAlias>(this->body);
+    result += typeAlias.type->xml(indent + 2, parentTypes) + EOL;
+  } else if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
     result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isEnum()) {

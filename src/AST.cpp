@@ -169,7 +169,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
         (std::holds_alternative<ParserExprAccess>(*exprBinary.right.body) && std::holds_alternative<ParserExprLit>(*exprBinary.left.body))
       ) {
         auto exprBinaryLeft = std::holds_alternative<ParserExprAccess>(*exprBinary.left.body) ? exprBinary.left : exprBinary.right;
-        auto exprBinaryLeftType = this->_nodeExprType(exprBinaryLeft, nullptr);
+        auto exprBinaryLeftType = Type::real(this->_nodeExprType(exprBinaryLeft, nullptr));
         auto exprBinaryRight = std::holds_alternative<ParserExprLit>(*exprBinary.right.body) ? exprBinary.right : exprBinary.left;
         auto exprBinaryRightLit = std::get<ParserExprLit>(*exprBinaryRight.body);
 
@@ -189,7 +189,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
       ) {
         auto exprBinaryLeft = std::holds_alternative<ParserExprAssign>(*exprBinary.left.body) ? exprBinary.left : exprBinary.right;
         auto exprBinaryLeftAssign = std::get<ParserExprAssign>(*exprBinaryLeft.body);
-        auto exprBinaryLeftAssignType = this->_nodeExprType(exprBinaryLeftAssign.left, nullptr);
+        auto exprBinaryLeftAssignType = Type::real(this->_nodeExprType(exprBinaryLeftAssign.left, nullptr));
         auto exprBinaryRight = std::holds_alternative<ParserExprLit>(*exprBinary.right.body) ? exprBinary.right : exprBinary.left;
         auto exprBinaryRightLit = std::get<ParserExprLit>(*exprBinaryRight.body);
 
@@ -213,7 +213,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
       std::holds_alternative<ParserExprAccess>(*exprIs.expr.body) &&
       isExprAccessLvalue(exprIs.expr)
     ) {
-      auto exprAccessType = this->_nodeExprType(exprIs.expr, nullptr);
+      auto exprAccessType = Type::real(this->_nodeExprType(exprIs.expr, nullptr));
 
       if (exprAccessType->isAny() || exprAccessType->isOpt() || exprAccessType->isUnion()) {
         auto exprAccessCode = stringifyExprAccess(exprIs.expr);
@@ -228,7 +228,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
       isExprAccessLvalue(std::get<ParserExprAssign>(*exprIs.expr.body).left)
     ) {
       auto exprAssign = std::get<ParserExprAssign>(*exprIs.expr.body);
-      auto exprAccessType = this->_nodeExprType(exprAssign.left, nullptr);
+      auto exprAccessType = Type::real(this->_nodeExprType(exprAssign.left, nullptr));
 
       if (exprAccessType->isAny() || exprAccessType->isOpt() || exprAccessType->isUnion()) {
         auto exprAccessCode = stringifyExprAccess(exprAssign.left);

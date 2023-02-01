@@ -44,26 +44,32 @@ main {
 }
 ======= stdout =======
 <NodeTypeDecl>
-  <TypeUnion codeName="Test1_0" name="Test1">
-    <BuiltinType name="str" />
-    <BuiltinType name="int" />
-  </TypeUnion>
+  <TypeAlias codeName="Test1_0" name="Test1">
+    <TypeUnion name="union$0">
+      <BuiltinType name="str" />
+      <BuiltinType name="int" />
+    </TypeUnion>
+  </TypeAlias>
 </NodeTypeDecl>
 <NodeTypeDecl>
-  <TypeUnion codeName="Test2_0" name="Test2">
-    <BuiltinType name="str" />
-    <BuiltinType name="int" />
-    <BuiltinType name="bool" />
-  </TypeUnion>
+  <TypeAlias codeName="Test2_0" name="Test2">
+    <TypeUnion name="union$1">
+      <BuiltinType name="str" />
+      <BuiltinType name="int" />
+      <BuiltinType name="bool" />
+    </TypeUnion>
+  </TypeAlias>
 </NodeTypeDecl>
 <NodeMain>
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test1" codeName="test1_0" frame="2">
-        <TypeUnion codeName="Test1_0" name="Test1">
-          <BuiltinType name="str" />
-          <BuiltinType name="int" />
-        </TypeUnion>
+        <TypeAlias codeName="Test1_0" name="Test1">
+          <TypeUnion name="union$0">
+            <BuiltinType name="str" />
+            <BuiltinType name="int" />
+          </TypeUnion>
+        </TypeAlias>
       </Var>
     </NodeVarDeclVar>
   </NodeVarDecl>
@@ -78,18 +84,22 @@ main {
             <ExprIsExpr>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion codeName="Test1_0" name="Test1">
-                    <BuiltinType name="str" />
-                    <BuiltinType name="int" />
-                  </TypeUnion>
+                  <TypeAlias codeName="Test1_0" name="Test1">
+                    <TypeUnion name="union$0">
+                      <BuiltinType name="str" />
+                      <BuiltinType name="int" />
+                    </TypeUnion>
+                  </TypeAlias>
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test1" codeName="test1_0" frame="2">
-                      <TypeUnion codeName="Test1_0" name="Test1">
-                        <BuiltinType name="str" />
-                        <BuiltinType name="int" />
-                      </TypeUnion>
+                      <TypeAlias codeName="Test1_0" name="Test1">
+                        <TypeUnion name="union$0">
+                          <BuiltinType name="str" />
+                          <BuiltinType name="int" />
+                        </TypeUnion>
+                      </TypeAlias>
                     </Var>
                   </ExprAccess>
                 </NodeExprBody>
@@ -130,10 +140,12 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test1" codeName="test1_0" frame="2">
-                        <TypeUnion codeName="Test1_0" name="Test1">
-                          <BuiltinType name="str" />
-                          <BuiltinType name="int" />
-                        </TypeUnion>
+                        <TypeAlias codeName="Test1_0" name="Test1">
+                          <TypeUnion name="union$0">
+                            <BuiltinType name="str" />
+                            <BuiltinType name="int" />
+                          </TypeUnion>
+                        </TypeAlias>
                       </Var>
                     </ExprAccess>
                   </NodeExprBody>
@@ -172,10 +184,12 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test1" codeName="test1_0" frame="2">
-                        <TypeUnion codeName="Test1_0" name="Test1">
-                          <BuiltinType name="str" />
-                          <BuiltinType name="int" />
-                        </TypeUnion>
+                        <TypeAlias codeName="Test1_0" name="Test1">
+                          <TypeUnion name="union$0">
+                            <BuiltinType name="str" />
+                            <BuiltinType name="int" />
+                          </TypeUnion>
+                        </TypeAlias>
                       </Var>
                     </ExprAccess>
                   </NodeExprBody>
@@ -190,11 +204,13 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test2" codeName="test2_0" frame="2">
-        <TypeUnion codeName="Test2_0" name="Test2">
-          <BuiltinType name="str" />
-          <BuiltinType name="int" />
-          <BuiltinType name="bool" />
-        </TypeUnion>
+        <TypeAlias codeName="Test2_0" name="Test2">
+          <TypeUnion name="union$1">
+            <BuiltinType name="str" />
+            <BuiltinType name="int" />
+            <BuiltinType name="bool" />
+          </TypeUnion>
+        </TypeAlias>
       </Var>
     </NodeVarDeclVar>
   </NodeVarDecl>
@@ -209,20 +225,24 @@ main {
             <ExprIsExpr>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion codeName="Test2_0" name="Test2">
-                    <BuiltinType name="str" />
-                    <BuiltinType name="int" />
-                    <BuiltinType name="bool" />
-                  </TypeUnion>
+                  <TypeAlias codeName="Test2_0" name="Test2">
+                    <TypeUnion name="union$1">
+                      <BuiltinType name="str" />
+                      <BuiltinType name="int" />
+                      <BuiltinType name="bool" />
+                    </TypeUnion>
+                  </TypeAlias>
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test2" codeName="test2_0" frame="2">
-                      <TypeUnion codeName="Test2_0" name="Test2">
-                        <BuiltinType name="str" />
-                        <BuiltinType name="int" />
-                        <BuiltinType name="bool" />
-                      </TypeUnion>
+                      <TypeAlias codeName="Test2_0" name="Test2">
+                        <TypeUnion name="union$1">
+                          <BuiltinType name="str" />
+                          <BuiltinType name="int" />
+                          <BuiltinType name="bool" />
+                        </TypeUnion>
+                      </TypeAlias>
                     </Var>
                   </ExprAccess>
                 </NodeExprBody>
@@ -263,11 +283,13 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test2" codeName="test2_0" frame="2">
-                        <TypeUnion codeName="Test2_0" name="Test2">
-                          <BuiltinType name="str" />
-                          <BuiltinType name="int" />
-                          <BuiltinType name="bool" />
-                        </TypeUnion>
+                        <TypeAlias codeName="Test2_0" name="Test2">
+                          <TypeUnion name="union$1">
+                            <BuiltinType name="str" />
+                            <BuiltinType name="int" />
+                            <BuiltinType name="bool" />
+                          </TypeUnion>
+                        </TypeAlias>
                       </Var>
                     </ExprAccess>
                   </NodeExprBody>
@@ -309,11 +331,13 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test2" codeName="test2_0" frame="2">
-                        <TypeUnion codeName="Test2_0" name="Test2">
-                          <BuiltinType name="str" />
-                          <BuiltinType name="int" />
-                          <BuiltinType name="bool" />
-                        </TypeUnion>
+                        <TypeAlias codeName="Test2_0" name="Test2">
+                          <TypeUnion name="union$1">
+                            <BuiltinType name="str" />
+                            <BuiltinType name="int" />
+                            <BuiltinType name="bool" />
+                          </TypeUnion>
+                        </TypeAlias>
                       </Var>
                     </ExprAccess>
                   </NodeExprBody>
@@ -336,20 +360,24 @@ main {
             <ExprIsExpr>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion codeName="Test2_0" name="Test2">
-                    <BuiltinType name="str" />
-                    <BuiltinType name="int" />
-                    <BuiltinType name="bool" />
-                  </TypeUnion>
+                  <TypeAlias codeName="Test2_0" name="Test2">
+                    <TypeUnion name="union$1">
+                      <BuiltinType name="str" />
+                      <BuiltinType name="int" />
+                      <BuiltinType name="bool" />
+                    </TypeUnion>
+                  </TypeAlias>
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test2" codeName="test2_0" frame="2">
-                      <TypeUnion codeName="Test2_0" name="Test2">
-                        <BuiltinType name="str" />
-                        <BuiltinType name="int" />
-                        <BuiltinType name="bool" />
-                      </TypeUnion>
+                      <TypeAlias codeName="Test2_0" name="Test2">
+                        <TypeUnion name="union$1">
+                          <BuiltinType name="str" />
+                          <BuiltinType name="int" />
+                          <BuiltinType name="bool" />
+                        </TypeUnion>
+                      </TypeAlias>
                     </Var>
                   </ExprAccess>
                 </NodeExprBody>
@@ -390,11 +418,13 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test2" codeName="test2_0" frame="2">
-                        <TypeUnion codeName="Test2_0" name="Test2">
-                          <BuiltinType name="str" />
-                          <BuiltinType name="int" />
-                          <BuiltinType name="bool" />
-                        </TypeUnion>
+                        <TypeAlias codeName="Test2_0" name="Test2">
+                          <TypeUnion name="union$1">
+                            <BuiltinType name="str" />
+                            <BuiltinType name="int" />
+                            <BuiltinType name="bool" />
+                          </TypeUnion>
+                        </TypeAlias>
                       </Var>
                     </ExprAccess>
                   </NodeExprBody>
@@ -425,11 +455,13 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test2" codeName="test2_0" frame="2">
-                          <TypeUnion codeName="Test2_0" name="Test2">
-                            <BuiltinType name="str" />
-                            <BuiltinType name="int" />
-                            <BuiltinType name="bool" />
-                          </TypeUnion>
+                          <TypeAlias codeName="Test2_0" name="Test2">
+                            <TypeUnion name="union$1">
+                              <BuiltinType name="str" />
+                              <BuiltinType name="int" />
+                              <BuiltinType name="bool" />
+                            </TypeUnion>
+                          </TypeAlias>
                         </Var>
                       </ExprAccess>
                     </NodeExprBody>
@@ -470,11 +502,13 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="2">
-                            <TypeUnion codeName="Test2_0" name="Test2">
-                              <BuiltinType name="str" />
-                              <BuiltinType name="int" />
-                              <BuiltinType name="bool" />
-                            </TypeUnion>
+                            <TypeAlias codeName="Test2_0" name="Test2">
+                              <TypeUnion name="union$1">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                                <BuiltinType name="bool" />
+                              </TypeUnion>
+                            </TypeAlias>
                           </Var>
                         </ExprAccess>
                       </NodeExprBody>
@@ -513,11 +547,13 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="2">
-                            <TypeUnion codeName="Test2_0" name="Test2">
-                              <BuiltinType name="str" />
-                              <BuiltinType name="int" />
-                              <BuiltinType name="bool" />
-                            </TypeUnion>
+                            <TypeAlias codeName="Test2_0" name="Test2">
+                              <TypeUnion name="union$1">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                                <BuiltinType name="bool" />
+                              </TypeUnion>
+                            </TypeAlias>
                           </Var>
                         </ExprAccess>
                       </NodeExprBody>
@@ -542,20 +578,24 @@ main {
             <ExprIsExpr>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion codeName="Test2_0" name="Test2">
-                    <BuiltinType name="str" />
-                    <BuiltinType name="int" />
-                    <BuiltinType name="bool" />
-                  </TypeUnion>
+                  <TypeAlias codeName="Test2_0" name="Test2">
+                    <TypeUnion name="union$1">
+                      <BuiltinType name="str" />
+                      <BuiltinType name="int" />
+                      <BuiltinType name="bool" />
+                    </TypeUnion>
+                  </TypeAlias>
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test2" codeName="test2_0" frame="2">
-                      <TypeUnion codeName="Test2_0" name="Test2">
-                        <BuiltinType name="str" />
-                        <BuiltinType name="int" />
-                        <BuiltinType name="bool" />
-                      </TypeUnion>
+                      <TypeAlias codeName="Test2_0" name="Test2">
+                        <TypeUnion name="union$1">
+                          <BuiltinType name="str" />
+                          <BuiltinType name="int" />
+                          <BuiltinType name="bool" />
+                        </TypeUnion>
+                      </TypeAlias>
                     </Var>
                   </ExprAccess>
                 </NodeExprBody>
@@ -596,11 +636,13 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test2" codeName="test2_0" frame="2">
-                        <TypeUnion codeName="Test2_0" name="Test2">
-                          <BuiltinType name="str" />
-                          <BuiltinType name="int" />
-                          <BuiltinType name="bool" />
-                        </TypeUnion>
+                        <TypeAlias codeName="Test2_0" name="Test2">
+                          <TypeUnion name="union$1">
+                            <BuiltinType name="str" />
+                            <BuiltinType name="int" />
+                            <BuiltinType name="bool" />
+                          </TypeUnion>
+                        </TypeAlias>
                       </Var>
                     </ExprAccess>
                   </NodeExprBody>
@@ -631,11 +673,13 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test2" codeName="test2_0" frame="2">
-                          <TypeUnion codeName="Test2_0" name="Test2">
-                            <BuiltinType name="str" />
-                            <BuiltinType name="int" />
-                            <BuiltinType name="bool" />
-                          </TypeUnion>
+                          <TypeAlias codeName="Test2_0" name="Test2">
+                            <TypeUnion name="union$1">
+                              <BuiltinType name="str" />
+                              <BuiltinType name="int" />
+                              <BuiltinType name="bool" />
+                            </TypeUnion>
+                          </TypeAlias>
                         </Var>
                       </ExprAccess>
                     </NodeExprBody>
@@ -676,11 +720,13 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="2">
-                            <TypeUnion codeName="Test2_0" name="Test2">
-                              <BuiltinType name="str" />
-                              <BuiltinType name="int" />
-                              <BuiltinType name="bool" />
-                            </TypeUnion>
+                            <TypeAlias codeName="Test2_0" name="Test2">
+                              <TypeUnion name="union$1">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                                <BuiltinType name="bool" />
+                              </TypeUnion>
+                            </TypeAlias>
                           </Var>
                         </ExprAccess>
                       </NodeExprBody>
@@ -708,11 +754,13 @@ main {
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="test2" codeName="test2_0" frame="2">
-                              <TypeUnion codeName="Test2_0" name="Test2">
-                                <BuiltinType name="str" />
-                                <BuiltinType name="int" />
-                                <BuiltinType name="bool" />
-                              </TypeUnion>
+                              <TypeAlias codeName="Test2_0" name="Test2">
+                                <TypeUnion name="union$1">
+                                  <BuiltinType name="str" />
+                                  <BuiltinType name="int" />
+                                  <BuiltinType name="bool" />
+                                </TypeUnion>
+                              </TypeAlias>
                             </Var>
                           </ExprAccess>
                         </NodeExprBody>
@@ -753,11 +801,13 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test2" codeName="test2_0" frame="2">
-                                <TypeUnion codeName="Test2_0" name="Test2">
-                                  <BuiltinType name="str" />
-                                  <BuiltinType name="int" />
-                                  <BuiltinType name="bool" />
-                                </TypeUnion>
+                                <TypeAlias codeName="Test2_0" name="Test2">
+                                  <TypeUnion name="union$1">
+                                    <BuiltinType name="str" />
+                                    <BuiltinType name="int" />
+                                    <BuiltinType name="bool" />
+                                  </TypeUnion>
+                                </TypeAlias>
                               </Var>
                             </ExprAccess>
                           </NodeExprBody>
@@ -796,11 +846,13 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test2" codeName="test2_0" frame="2">
-                                <TypeUnion codeName="Test2_0" name="Test2">
-                                  <BuiltinType name="str" />
-                                  <BuiltinType name="int" />
-                                  <BuiltinType name="bool" />
-                                </TypeUnion>
+                                <TypeAlias codeName="Test2_0" name="Test2">
+                                  <TypeUnion name="union$1">
+                                    <BuiltinType name="str" />
+                                    <BuiltinType name="int" />
+                                    <BuiltinType name="bool" />
+                                  </TypeUnion>
+                                </TypeAlias>
                               </Var>
                             </ExprAccess>
                           </NodeExprBody>
@@ -852,18 +904,22 @@ main {
                           <ExprIsExpr>
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeUnion codeName="Test1_0" name="Test1">
-                                  <BuiltinType name="str" />
-                                  <BuiltinType name="int" />
-                                </TypeUnion>
+                                <TypeAlias codeName="Test1_0" name="Test1">
+                                  <TypeUnion name="union$0">
+                                    <BuiltinType name="str" />
+                                    <BuiltinType name="int" />
+                                  </TypeUnion>
+                                </TypeAlias>
                               </NodeExprType>
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test1" codeName="test1_0" frame="2">
-                                    <TypeUnion codeName="Test1_0" name="Test1">
-                                      <BuiltinType name="str" />
-                                      <BuiltinType name="int" />
-                                    </TypeUnion>
+                                    <TypeAlias codeName="Test1_0" name="Test1">
+                                      <TypeUnion name="union$0">
+                                        <BuiltinType name="str" />
+                                        <BuiltinType name="int" />
+                                      </TypeUnion>
+                                    </TypeAlias>
                                   </Var>
                                 </ExprAccess>
                               </NodeExprBody>
@@ -884,10 +940,12 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test1" codeName="test1_0" frame="2">
-                            <TypeUnion codeName="Test1_0" name="Test1">
-                              <BuiltinType name="str" />
-                              <BuiltinType name="int" />
-                            </TypeUnion>
+                            <TypeAlias codeName="Test1_0" name="Test1">
+                              <TypeUnion name="union$0">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                              </TypeUnion>
+                            </TypeAlias>
                           </Var>
                         </ExprAccess>
                       </NodeExprBody>
@@ -914,10 +972,12 @@ main {
                                     <NodeExprBody>
                                       <ExprAccess>
                                         <Var name="test1" codeName="test1_0" frame="2">
-                                          <TypeUnion codeName="Test1_0" name="Test1">
-                                            <BuiltinType name="str" />
-                                            <BuiltinType name="int" />
-                                          </TypeUnion>
+                                          <TypeAlias codeName="Test1_0" name="Test1">
+                                            <TypeUnion name="union$0">
+                                              <BuiltinType name="str" />
+                                              <BuiltinType name="int" />
+                                            </TypeUnion>
+                                          </TypeAlias>
                                         </Var>
                                       </ExprAccess>
                                     </NodeExprBody>
@@ -974,20 +1034,24 @@ main {
                           <ExprIsExpr>
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeUnion codeName="Test2_0" name="Test2">
-                                  <BuiltinType name="str" />
-                                  <BuiltinType name="int" />
-                                  <BuiltinType name="bool" />
-                                </TypeUnion>
+                                <TypeAlias codeName="Test2_0" name="Test2">
+                                  <TypeUnion name="union$1">
+                                    <BuiltinType name="str" />
+                                    <BuiltinType name="int" />
+                                    <BuiltinType name="bool" />
+                                  </TypeUnion>
+                                </TypeAlias>
                               </NodeExprType>
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test2" codeName="test2_0" frame="2">
-                                    <TypeUnion codeName="Test2_0" name="Test2">
-                                      <BuiltinType name="str" />
-                                      <BuiltinType name="int" />
-                                      <BuiltinType name="bool" />
-                                    </TypeUnion>
+                                    <TypeAlias codeName="Test2_0" name="Test2">
+                                      <TypeUnion name="union$1">
+                                        <BuiltinType name="str" />
+                                        <BuiltinType name="int" />
+                                        <BuiltinType name="bool" />
+                                      </TypeUnion>
+                                    </TypeAlias>
                                   </Var>
                                 </ExprAccess>
                               </NodeExprBody>
@@ -1008,11 +1072,13 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="2">
-                            <TypeUnion codeName="Test2_0" name="Test2">
-                              <BuiltinType name="str" />
-                              <BuiltinType name="int" />
-                              <BuiltinType name="bool" />
-                            </TypeUnion>
+                            <TypeAlias codeName="Test2_0" name="Test2">
+                              <TypeUnion name="union$1">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                                <BuiltinType name="bool" />
+                              </TypeUnion>
+                            </TypeAlias>
                           </Var>
                         </ExprAccess>
                       </NodeExprBody>
@@ -1042,11 +1108,13 @@ main {
                                     <NodeExprBody>
                                       <ExprAccess>
                                         <Var name="test2" codeName="test2_0" frame="2">
-                                          <TypeUnion codeName="Test2_0" name="Test2">
-                                            <BuiltinType name="str" />
-                                            <BuiltinType name="int" />
-                                            <BuiltinType name="bool" />
-                                          </TypeUnion>
+                                          <TypeAlias codeName="Test2_0" name="Test2">
+                                            <TypeUnion name="union$1">
+                                              <BuiltinType name="str" />
+                                              <BuiltinType name="int" />
+                                              <BuiltinType name="bool" />
+                                            </TypeUnion>
+                                          </TypeAlias>
                                         </Var>
                                       </ExprAccess>
                                     </NodeExprBody>
@@ -1103,20 +1171,24 @@ main {
                           <ExprIsExpr>
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeUnion codeName="Test2_0" name="Test2">
-                                  <BuiltinType name="str" />
-                                  <BuiltinType name="int" />
-                                  <BuiltinType name="bool" />
-                                </TypeUnion>
+                                <TypeAlias codeName="Test2_0" name="Test2">
+                                  <TypeUnion name="union$1">
+                                    <BuiltinType name="str" />
+                                    <BuiltinType name="int" />
+                                    <BuiltinType name="bool" />
+                                  </TypeUnion>
+                                </TypeAlias>
                               </NodeExprType>
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test2" codeName="test2_0" frame="2">
-                                    <TypeUnion codeName="Test2_0" name="Test2">
-                                      <BuiltinType name="str" />
-                                      <BuiltinType name="int" />
-                                      <BuiltinType name="bool" />
-                                    </TypeUnion>
+                                    <TypeAlias codeName="Test2_0" name="Test2">
+                                      <TypeUnion name="union$1">
+                                        <BuiltinType name="str" />
+                                        <BuiltinType name="int" />
+                                        <BuiltinType name="bool" />
+                                      </TypeUnion>
+                                    </TypeAlias>
                                   </Var>
                                 </ExprAccess>
                               </NodeExprBody>
@@ -1137,11 +1209,13 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="2">
-                            <TypeUnion codeName="Test2_0" name="Test2">
-                              <BuiltinType name="str" />
-                              <BuiltinType name="int" />
-                              <BuiltinType name="bool" />
-                            </TypeUnion>
+                            <TypeAlias codeName="Test2_0" name="Test2">
+                              <TypeUnion name="union$1">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                                <BuiltinType name="bool" />
+                              </TypeUnion>
+                            </TypeAlias>
                           </Var>
                         </ExprAccess>
                       </NodeExprBody>
@@ -1172,11 +1246,13 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="test2" codeName="test2_0" frame="2">
-                                            <TypeUnion codeName="Test2_0" name="Test2">
-                                              <BuiltinType name="str" />
-                                              <BuiltinType name="int" />
-                                              <BuiltinType name="bool" />
-                                            </TypeUnion>
+                                            <TypeAlias codeName="Test2_0" name="Test2">
+                                              <TypeUnion name="union$1">
+                                                <BuiltinType name="str" />
+                                                <BuiltinType name="int" />
+                                                <BuiltinType name="bool" />
+                                              </TypeUnion>
+                                            </TypeAlias>
                                           </Var>
                                         </ExprAccess>
                                       </NodeExprBody>
@@ -1210,11 +1286,13 @@ main {
                                             <NodeExprBody>
                                               <ExprAccess>
                                                 <Var name="test2" codeName="test2_0" frame="2">
-                                                  <TypeUnion codeName="Test2_0" name="Test2">
-                                                    <BuiltinType name="str" />
-                                                    <BuiltinType name="int" />
-                                                    <BuiltinType name="bool" />
-                                                  </TypeUnion>
+                                                  <TypeAlias codeName="Test2_0" name="Test2">
+                                                    <TypeUnion name="union$1">
+                                                      <BuiltinType name="str" />
+                                                      <BuiltinType name="int" />
+                                                      <BuiltinType name="bool" />
+                                                    </TypeUnion>
+                                                  </TypeAlias>
                                                 </Var>
                                               </ExprAccess>
                                             </NodeExprBody>
@@ -1248,11 +1326,13 @@ main {
                                             <NodeExprBody>
                                               <ExprAccess>
                                                 <Var name="test2" codeName="test2_0" frame="2">
-                                                  <TypeUnion codeName="Test2_0" name="Test2">
-                                                    <BuiltinType name="str" />
-                                                    <BuiltinType name="int" />
-                                                    <BuiltinType name="bool" />
-                                                  </TypeUnion>
+                                                  <TypeAlias codeName="Test2_0" name="Test2">
+                                                    <TypeUnion name="union$1">
+                                                      <BuiltinType name="str" />
+                                                      <BuiltinType name="int" />
+                                                      <BuiltinType name="bool" />
+                                                    </TypeUnion>
+                                                  </TypeAlias>
                                                 </Var>
                                               </ExprAccess>
                                             </NodeExprBody>
@@ -1313,20 +1393,24 @@ main {
                           <ExprIsExpr>
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeUnion codeName="Test2_0" name="Test2">
-                                  <BuiltinType name="str" />
-                                  <BuiltinType name="int" />
-                                  <BuiltinType name="bool" />
-                                </TypeUnion>
+                                <TypeAlias codeName="Test2_0" name="Test2">
+                                  <TypeUnion name="union$1">
+                                    <BuiltinType name="str" />
+                                    <BuiltinType name="int" />
+                                    <BuiltinType name="bool" />
+                                  </TypeUnion>
+                                </TypeAlias>
                               </NodeExprType>
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test2" codeName="test2_0" frame="2">
-                                    <TypeUnion codeName="Test2_0" name="Test2">
-                                      <BuiltinType name="str" />
-                                      <BuiltinType name="int" />
-                                      <BuiltinType name="bool" />
-                                    </TypeUnion>
+                                    <TypeAlias codeName="Test2_0" name="Test2">
+                                      <TypeUnion name="union$1">
+                                        <BuiltinType name="str" />
+                                        <BuiltinType name="int" />
+                                        <BuiltinType name="bool" />
+                                      </TypeUnion>
+                                    </TypeAlias>
                                   </Var>
                                 </ExprAccess>
                               </NodeExprBody>
@@ -1347,11 +1431,13 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="2">
-                            <TypeUnion codeName="Test2_0" name="Test2">
-                              <BuiltinType name="str" />
-                              <BuiltinType name="int" />
-                              <BuiltinType name="bool" />
-                            </TypeUnion>
+                            <TypeAlias codeName="Test2_0" name="Test2">
+                              <TypeUnion name="union$1">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                                <BuiltinType name="bool" />
+                              </TypeUnion>
+                            </TypeAlias>
                           </Var>
                         </ExprAccess>
                       </NodeExprBody>
@@ -1382,11 +1468,13 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="test2" codeName="test2_0" frame="2">
-                                            <TypeUnion codeName="Test2_0" name="Test2">
-                                              <BuiltinType name="str" />
-                                              <BuiltinType name="int" />
-                                              <BuiltinType name="bool" />
-                                            </TypeUnion>
+                                            <TypeAlias codeName="Test2_0" name="Test2">
+                                              <TypeUnion name="union$1">
+                                                <BuiltinType name="str" />
+                                                <BuiltinType name="int" />
+                                                <BuiltinType name="bool" />
+                                              </TypeUnion>
+                                            </TypeAlias>
                                           </Var>
                                         </ExprAccess>
                                       </NodeExprBody>
@@ -1420,11 +1508,13 @@ main {
                                             <NodeExprBody>
                                               <ExprAccess>
                                                 <Var name="test2" codeName="test2_0" frame="2">
-                                                  <TypeUnion codeName="Test2_0" name="Test2">
-                                                    <BuiltinType name="str" />
-                                                    <BuiltinType name="int" />
-                                                    <BuiltinType name="bool" />
-                                                  </TypeUnion>
+                                                  <TypeAlias codeName="Test2_0" name="Test2">
+                                                    <TypeUnion name="union$1">
+                                                      <BuiltinType name="str" />
+                                                      <BuiltinType name="int" />
+                                                      <BuiltinType name="bool" />
+                                                    </TypeUnion>
+                                                  </TypeAlias>
                                                 </Var>
                                               </ExprAccess>
                                             </NodeExprBody>
@@ -1459,11 +1549,13 @@ main {
                                               <NodeExprBody>
                                                 <ExprAccess>
                                                   <Var name="test2" codeName="test2_0" frame="2">
-                                                    <TypeUnion codeName="Test2_0" name="Test2">
-                                                      <BuiltinType name="str" />
-                                                      <BuiltinType name="int" />
-                                                      <BuiltinType name="bool" />
-                                                    </TypeUnion>
+                                                    <TypeAlias codeName="Test2_0" name="Test2">
+                                                      <TypeUnion name="union$1">
+                                                        <BuiltinType name="str" />
+                                                        <BuiltinType name="int" />
+                                                        <BuiltinType name="bool" />
+                                                      </TypeUnion>
+                                                    </TypeAlias>
                                                   </Var>
                                                 </ExprAccess>
                                               </NodeExprBody>
@@ -1497,11 +1589,13 @@ main {
                                                     <NodeExprBody>
                                                       <ExprAccess>
                                                         <Var name="test2" codeName="test2_0" frame="2">
-                                                          <TypeUnion codeName="Test2_0" name="Test2">
-                                                            <BuiltinType name="str" />
-                                                            <BuiltinType name="int" />
-                                                            <BuiltinType name="bool" />
-                                                          </TypeUnion>
+                                                          <TypeAlias codeName="Test2_0" name="Test2">
+                                                            <TypeUnion name="union$1">
+                                                              <BuiltinType name="str" />
+                                                              <BuiltinType name="int" />
+                                                              <BuiltinType name="bool" />
+                                                            </TypeUnion>
+                                                          </TypeAlias>
                                                         </Var>
                                                       </ExprAccess>
                                                     </NodeExprBody>
@@ -1535,11 +1629,13 @@ main {
                                                     <NodeExprBody>
                                                       <ExprAccess>
                                                         <Var name="test2" codeName="test2_0" frame="2">
-                                                          <TypeUnion codeName="Test2_0" name="Test2">
-                                                            <BuiltinType name="str" />
-                                                            <BuiltinType name="int" />
-                                                            <BuiltinType name="bool" />
-                                                          </TypeUnion>
+                                                          <TypeAlias codeName="Test2_0" name="Test2">
+                                                            <TypeUnion name="union$1">
+                                                              <BuiltinType name="str" />
+                                                              <BuiltinType name="int" />
+                                                              <BuiltinType name="bool" />
+                                                            </TypeUnion>
+                                                          </TypeAlias>
                                                         </Var>
                                                       </ExprAccess>
                                                     </NodeExprBody>

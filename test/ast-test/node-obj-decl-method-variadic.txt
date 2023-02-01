@@ -31,7 +31,7 @@ main {
     <TypeObj codeName="Test_0" name="Test">
       <TypeMethod name="test1">
         <TypeFn name="fn$0">
-          <TypeFnMethodInfo />
+          <TypeFnMethodInfo codeName="TestSDtest1_0" />
           <TypeFnParams>
             <TypeFnParam name="a" variadic>
               <TypeArray name="array_int">
@@ -46,7 +46,7 @@ main {
       </TypeMethod>
       <TypeMethod name="test2">
         <TypeFn name="fn$1">
-          <TypeFnMethodInfo />
+          <TypeFnMethodInfo codeName="TestSDtest2_0" />
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -64,7 +64,7 @@ main {
       </TypeMethod>
       <TypeMethod name="test3">
         <TypeFn name="fn$2">
-          <TypeFnMethodInfo />
+          <TypeFnMethodInfo codeName="TestSDtest3_0" />
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -88,19 +88,21 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <TypeFn name="fn$0">
-          <TypeFnMethodInfo />
-          <TypeFnParams>
-            <TypeFnParam name="a" variadic>
-              <TypeArray name="array_int">
-                <BuiltinType name="int" />
-              </TypeArray>
-            </TypeFnParam>
-          </TypeFnParams>
-          <TypeFnReturnType>
-            <BuiltinType name="void" />
-          </TypeFnReturnType>
-        </TypeFn>
+        <Var name="Test.test1" codeName="TestSDtest1_0" frame="1">
+          <TypeFn name="fn$0">
+            <TypeFnMethodInfo codeName="TestSDtest1_0" />
+            <TypeFnParams>
+              <TypeFnParam name="a" variadic>
+                <TypeArray name="array_int">
+                  <BuiltinType name="int" />
+                </TypeArray>
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <BuiltinType name="void" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </Var>
       </NodeObjDeclMethodType>
       <FnDeclParams>
         <FnDeclParam>
@@ -159,22 +161,24 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <TypeFn name="fn$1">
-          <TypeFnMethodInfo />
-          <TypeFnParams>
-            <TypeFnParam name="a" required>
-              <BuiltinType name="int" />
-            </TypeFnParam>
-            <TypeFnParam name="b" variadic>
-              <TypeArray name="array_int">
+        <Var name="Test.test2" codeName="TestSDtest2_0" frame="1">
+          <TypeFn name="fn$1">
+            <TypeFnMethodInfo codeName="TestSDtest2_0" />
+            <TypeFnParams>
+              <TypeFnParam name="a" required>
                 <BuiltinType name="int" />
-              </TypeArray>
-            </TypeFnParam>
-          </TypeFnParams>
-          <TypeFnReturnType>
-            <BuiltinType name="void" />
-          </TypeFnReturnType>
-        </TypeFn>
+              </TypeFnParam>
+              <TypeFnParam name="b" variadic>
+                <TypeArray name="array_int">
+                  <BuiltinType name="int" />
+                </TypeArray>
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <BuiltinType name="void" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </Var>
       </NodeObjDeclMethodType>
       <FnDeclParams>
         <FnDeclParam>
@@ -254,25 +258,27 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <TypeFn name="fn$2">
-          <TypeFnMethodInfo />
-          <TypeFnParams>
-            <TypeFnParam name="a" required>
-              <BuiltinType name="int" />
-            </TypeFnParam>
-            <TypeFnParam name="b" variadic>
-              <TypeArray name="array_int">
+        <Var name="Test.test3" codeName="TestSDtest3_0" frame="1">
+          <TypeFn name="fn$2">
+            <TypeFnMethodInfo codeName="TestSDtest3_0" />
+            <TypeFnParams>
+              <TypeFnParam name="a" required>
                 <BuiltinType name="int" />
-              </TypeArray>
-            </TypeFnParam>
-            <TypeFnParam name="c">
-              <BuiltinType name="int" />
-            </TypeFnParam>
-          </TypeFnParams>
-          <TypeFnReturnType>
-            <BuiltinType name="void" />
-          </TypeFnReturnType>
-        </TypeFn>
+              </TypeFnParam>
+              <TypeFnParam name="b" variadic>
+                <TypeArray name="array_int">
+                  <BuiltinType name="int" />
+                </TypeArray>
+              </TypeFnParam>
+              <TypeFnParam name="c">
+                <BuiltinType name="int" />
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <BuiltinType name="void" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </Var>
       </NodeObjDeclMethodType>
       <FnDeclParams>
         <FnDeclParam>
@@ -390,7 +396,7 @@ main {
         <TypeObj codeName="Test_0" name="Test">
           <TypeMethod name="test1">
             <TypeFn name="fn$0">
-              <TypeFnMethodInfo />
+              <TypeFnMethodInfo codeName="TestSDtest1_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" variadic>
                   <TypeArray name="array_int">
@@ -405,7 +411,7 @@ main {
           </TypeMethod>
           <TypeMethod name="test2">
             <TypeFn name="fn$1">
-              <TypeFnMethodInfo />
+              <TypeFnMethodInfo codeName="TestSDtest2_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" required>
                   <BuiltinType name="int" />
@@ -423,7 +429,7 @@ main {
           </TypeMethod>
           <TypeMethod name="test3">
             <TypeFn name="fn$2">
-              <TypeFnMethodInfo />
+              <TypeFnMethodInfo codeName="TestSDtest3_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" required>
                   <BuiltinType name="int" />
@@ -451,7 +457,7 @@ main {
           <TypeObj codeName="Test_0" name="Test">
             <TypeMethod name="test1">
               <TypeFn name="fn$0">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -466,7 +472,7 @@ main {
             </TypeMethod>
             <TypeMethod name="test2">
               <TypeFn name="fn$1">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -484,7 +490,7 @@ main {
             </TypeMethod>
             <TypeMethod name="test3">
               <TypeFn name="fn$2">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -511,7 +517,7 @@ main {
               <TypeObj codeName="Test_0" name="Test">
                 <TypeMethod name="test1">
                   <TypeFn name="fn$0">
-                    <TypeFnMethodInfo />
+                    <TypeFnMethodInfo codeName="TestSDtest1_0" />
                     <TypeFnParams>
                       <TypeFnParam name="a" variadic>
                         <TypeArray name="array_int">
@@ -526,7 +532,7 @@ main {
                 </TypeMethod>
                 <TypeMethod name="test2">
                   <TypeFn name="fn$1">
-                    <TypeFnMethodInfo />
+                    <TypeFnMethodInfo codeName="TestSDtest2_0" />
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <BuiltinType name="int" />
@@ -544,7 +550,7 @@ main {
                 </TypeMethod>
                 <TypeMethod name="test3">
                   <TypeFn name="fn$2">
-                    <TypeFnMethodInfo />
+                    <TypeFnMethodInfo codeName="TestSDtest3_0" />
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <BuiltinType name="int" />
@@ -580,7 +586,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$0">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -600,7 +606,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -615,7 +621,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -633,7 +639,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -660,7 +666,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -675,7 +681,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -693,7 +699,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -734,7 +740,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$0">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -754,7 +760,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -769,7 +775,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -787,7 +793,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -814,7 +820,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -829,7 +835,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -847,7 +853,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -900,7 +906,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$0">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -920,7 +926,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -935,7 +941,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -953,7 +959,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -980,7 +986,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -995,7 +1001,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1013,7 +1019,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1076,7 +1082,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$1">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1099,7 +1105,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1114,7 +1120,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1132,7 +1138,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1159,7 +1165,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1174,7 +1180,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1192,7 +1198,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1245,7 +1251,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$1">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1268,7 +1274,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1283,7 +1289,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1301,7 +1307,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1328,7 +1334,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1343,7 +1349,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1361,7 +1367,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1424,7 +1430,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$1">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1447,7 +1453,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1462,7 +1468,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1480,7 +1486,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1507,7 +1513,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1522,7 +1528,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1540,7 +1546,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1613,7 +1619,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$2">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1639,7 +1645,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1654,7 +1660,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1672,7 +1678,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1699,7 +1705,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1714,7 +1720,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1732,7 +1738,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1785,7 +1791,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$2">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1811,7 +1817,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1826,7 +1832,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1844,7 +1850,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1871,7 +1877,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1886,7 +1892,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1904,7 +1910,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1967,7 +1973,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$2">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1993,7 +1999,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -2008,7 +2014,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2026,7 +2032,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2053,7 +2059,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2068,7 +2074,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2086,7 +2092,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2159,7 +2165,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$2">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -2185,7 +2191,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -2200,7 +2206,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2218,7 +2224,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2245,7 +2251,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2260,7 +2266,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2278,7 +2284,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2341,7 +2347,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$2">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -2367,7 +2373,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -2382,7 +2388,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2400,7 +2406,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2427,7 +2433,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2442,7 +2448,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2460,7 +2466,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2533,7 +2539,7 @@ main {
           <NodeExpr>
             <NodeExprType>
               <TypeFn name="fn$2">
-                <TypeFnMethodInfo />
+                <TypeFnMethodInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -2559,7 +2565,7 @@ main {
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeMethod name="test1">
                         <TypeFn name="fn$0">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -2574,7 +2580,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test2">
                         <TypeFn name="fn$1">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2592,7 +2598,7 @@ main {
                       </TypeMethod>
                       <TypeMethod name="test3">
                         <TypeFn name="fn$2">
-                          <TypeFnMethodInfo />
+                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2619,7 +2625,7 @@ main {
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeMethod name="test1">
                             <TypeFn name="fn$0">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2634,7 +2640,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test2">
                             <TypeFn name="fn$1">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2652,7 +2658,7 @@ main {
                           </TypeMethod>
                           <TypeMethod name="test3">
                             <TypeFn name="fn$2">
-                              <TypeFnMethodInfo />
+                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />

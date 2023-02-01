@@ -9,77 +9,108 @@ type Test7 = Test1 | Test2 | Test3
 type Test8 = Test1 | Test2 | Test3 | Test4
 ======= stdout =======
 <NodeTypeDecl>
-  <TypeObj codeName="Test1_0" name="Test1">
-  </TypeObj>
-</NodeTypeDecl>
-<NodeTypeDecl>
-  <TypeUnion codeName="Test2_0" name="Test2">
+  <TypeAlias codeName="Test1_0" name="Test1">
     <BuiltinType name="int" />
-    <BuiltinType name="str" />
-  </TypeUnion>
+  </TypeAlias>
 </NodeTypeDecl>
 <NodeTypeDecl>
-  <TypeUnion codeName="Test3_0" name="Test3">
-    <BuiltinType name="int" />
-    <BuiltinType name="str" />
-    <BuiltinType name="char" />
-  </TypeUnion>
-</NodeTypeDecl>
-<NodeTypeDecl>
-  <TypeUnion codeName="Test4_0" name="Test4">
-    <BuiltinType name="int" />
-    <BuiltinType name="str" />
-    <BuiltinType name="char" />
-    <BuiltinType name="bool" />
-  </TypeUnion>
-</NodeTypeDecl>
-<NodeTypeDecl>
-  <TypeObj codeName="Test5_0" name="Test5">
-  </TypeObj>
-</NodeTypeDecl>
-<NodeTypeDecl>
-  <TypeUnion codeName="Test6_0" name="Test6">
-    <TypeObj codeName="Test1_0" name="Test1">
-    </TypeObj>
-    <TypeUnion codeName="Test2_0" name="Test2">
+  <TypeAlias codeName="Test2_0" name="Test2">
+    <TypeUnion name="union$0">
       <BuiltinType name="int" />
       <BuiltinType name="str" />
     </TypeUnion>
-  </TypeUnion>
+  </TypeAlias>
 </NodeTypeDecl>
 <NodeTypeDecl>
-  <TypeUnion codeName="Test7_0" name="Test7">
-    <TypeObj codeName="Test1_0" name="Test1">
-    </TypeObj>
-    <TypeUnion codeName="Test2_0" name="Test2">
-      <BuiltinType name="int" />
-      <BuiltinType name="str" />
-    </TypeUnion>
-    <TypeUnion codeName="Test3_0" name="Test3">
+  <TypeAlias codeName="Test3_0" name="Test3">
+    <TypeUnion name="union$1">
       <BuiltinType name="int" />
       <BuiltinType name="str" />
       <BuiltinType name="char" />
     </TypeUnion>
-  </TypeUnion>
+  </TypeAlias>
 </NodeTypeDecl>
 <NodeTypeDecl>
-  <TypeUnion codeName="Test8_0" name="Test8">
-    <TypeObj codeName="Test1_0" name="Test1">
-    </TypeObj>
-    <TypeUnion codeName="Test2_0" name="Test2">
-      <BuiltinType name="int" />
-      <BuiltinType name="str" />
-    </TypeUnion>
-    <TypeUnion codeName="Test3_0" name="Test3">
-      <BuiltinType name="int" />
-      <BuiltinType name="str" />
-      <BuiltinType name="char" />
-    </TypeUnion>
-    <TypeUnion codeName="Test4_0" name="Test4">
+  <TypeAlias codeName="Test4_0" name="Test4">
+    <TypeUnion name="union$2">
       <BuiltinType name="int" />
       <BuiltinType name="str" />
       <BuiltinType name="char" />
       <BuiltinType name="bool" />
     </TypeUnion>
-  </TypeUnion>
+  </TypeAlias>
+</NodeTypeDecl>
+<NodeTypeDecl>
+  <TypeAlias codeName="Test5_0" name="Test5">
+    <TypeAlias codeName="Test1_0" name="Test1">
+      <BuiltinType name="int" />
+    </TypeAlias>
+  </TypeAlias>
+</NodeTypeDecl>
+<NodeTypeDecl>
+  <TypeAlias codeName="Test6_0" name="Test6">
+    <TypeUnion name="union$3">
+      <TypeAlias codeName="Test1_0" name="Test1">
+        <BuiltinType name="int" />
+      </TypeAlias>
+      <TypeAlias codeName="Test2_0" name="Test2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="str" />
+        </TypeUnion>
+      </TypeAlias>
+    </TypeUnion>
+  </TypeAlias>
+</NodeTypeDecl>
+<NodeTypeDecl>
+  <TypeAlias codeName="Test7_0" name="Test7">
+    <TypeUnion name="union$4">
+      <TypeAlias codeName="Test1_0" name="Test1">
+        <BuiltinType name="int" />
+      </TypeAlias>
+      <TypeAlias codeName="Test2_0" name="Test2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="str" />
+        </TypeUnion>
+      </TypeAlias>
+      <TypeAlias codeName="Test3_0" name="Test3">
+        <TypeUnion name="union$1">
+          <BuiltinType name="int" />
+          <BuiltinType name="str" />
+          <BuiltinType name="char" />
+        </TypeUnion>
+      </TypeAlias>
+    </TypeUnion>
+  </TypeAlias>
+</NodeTypeDecl>
+<NodeTypeDecl>
+  <TypeAlias codeName="Test8_0" name="Test8">
+    <TypeUnion name="union$5">
+      <TypeAlias codeName="Test1_0" name="Test1">
+        <BuiltinType name="int" />
+      </TypeAlias>
+      <TypeAlias codeName="Test2_0" name="Test2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="str" />
+        </TypeUnion>
+      </TypeAlias>
+      <TypeAlias codeName="Test3_0" name="Test3">
+        <TypeUnion name="union$1">
+          <BuiltinType name="int" />
+          <BuiltinType name="str" />
+          <BuiltinType name="char" />
+        </TypeUnion>
+      </TypeAlias>
+      <TypeAlias codeName="Test4_0" name="Test4">
+        <TypeUnion name="union$2">
+          <BuiltinType name="int" />
+          <BuiltinType name="str" />
+          <BuiltinType name="char" />
+          <BuiltinType name="bool" />
+        </TypeUnion>
+      </TypeAlias>
+    </TypeUnion>
+  </TypeAlias>
 </NodeTypeDecl>
