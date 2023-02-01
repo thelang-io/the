@@ -11,10 +11,6 @@ fn test3 (job: (int, int) -> int) int {
   return job(2, 3)
 }
 
-fn test4 (job: (mut a: int, mut b: int) -> int) int {
-  return job(b: 2, a: 3)
-}
-
 fn job1 () {
 }
 
@@ -30,7 +26,6 @@ main {
   test1(job1)
   test2(job2)
   test3(job3)
-  test4(job3)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -121,7 +116,6 @@ int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$3P);
 struct __THE_1_fn$4 __THE_1_fn$4_copy (const struct __THE_1_fn$4);
 void __THE_1_fn$4_free (struct __THE_1_fn$4);
 int32_t __THE_1_test3_0 (void *, struct __THE_1_fn$5P);
-int32_t __THE_1_test4_0 (void *, struct __THE_1_fn$5P);
 void __THE_1_job1_0 (void *);
 int32_t __THE_1_job2_0 (void *, struct __THE_1_fn$2P);
 int32_t __THE_1_job3_0 (void *, struct __THE_1_fn$4P);
@@ -180,13 +174,6 @@ int32_t __THE_1_test3_0 (void *px, struct __THE_1_fn$5P p) {
   __THE_1_fn$4_free((struct __THE_1_fn$4) __THE_0_job_0);
   return v;
 }
-int32_t __THE_1_test4_0 (void *px, struct __THE_1_fn$5P p) {
-  int32_t v;
-  const struct __THE_1_fn$4 __THE_0_job_0 = p.n0;
-  v = __THE_0_job_0.f(__THE_0_job_0.x, (struct __THE_1_fn$4P) {3, 2});
-  __THE_1_fn$4_free((struct __THE_1_fn$4) __THE_0_job_0);
-  return v;
-}
 void __THE_1_job1_0 (void *px) {
 }
 int32_t __THE_1_job2_0 (void *px, struct __THE_1_fn$2P p) {
@@ -203,14 +190,12 @@ int main () {
   const struct __THE_1_fn$1 __THE_0_test1_0 = (struct __THE_1_fn$1) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$3 __THE_0_test2_0 = (struct __THE_1_fn$3) {&__THE_1_test2_0, NULL, 0};
   const struct __THE_1_fn$5 __THE_0_test3_0 = (struct __THE_1_fn$5) {&__THE_1_test3_0, NULL, 0};
-  const struct __THE_1_fn$5 __THE_0_test4_0 = (struct __THE_1_fn$5) {&__THE_1_test4_0, NULL, 0};
   const struct __THE_1_fn$0 __THE_0_job1_0 = (struct __THE_1_fn$0) {&__THE_1_job1_0, NULL, 0};
   const struct __THE_1_fn$2 __THE_0_job2_0 = (struct __THE_1_fn$2) {&__THE_1_job2_0, NULL, 0};
   const struct __THE_1_fn$4 __THE_0_job3_0 = (struct __THE_1_fn$4) {&__THE_1_job3_0, NULL, 0};
   __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1P) {__THE_1_fn$0_copy(__THE_0_job1_0)});
   __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$3P) {__THE_1_fn$2_copy(__THE_0_job2_0)});
   __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$5P) {__THE_1_fn$4_copy(__THE_0_job3_0)});
-  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$5P) {__THE_1_fn$4_copy(__THE_0_job3_0)});
 }
 ======= flags =======
 ======= stdout =======

@@ -305,9 +305,9 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
         this->varMap.restore();
         auto nodeFnDeclVarType = this->typeMap.fn(nodeFnDeclVarParams, nodeFnDeclVarReturnType);
-        auto nodeFnDeclCodeName = this->varMap.name(nodeFnDeclName, this->typeMap.stack);
+        auto nodeFnDeclVarAliasType = this->typeMap.alias(nodeFnDeclName, nodeFnDeclVarType);
 
-        this->varMap.add(nodeFnDeclName, nodeFnDeclCodeName, nodeFnDeclVarType, false);
+        this->varMap.add(nodeFnDeclName, nodeFnDeclVarAliasType->codeName, nodeFnDeclVarType, false);
       }
     } else if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
@@ -338,8 +338,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         for (const auto &stmtObjDeclMethod : stmtObjDecl.methods) {
           auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmtObjDeclMethod.body);
           auto methodDeclName = stmtFnDecl.id.val;
-          auto methodDeclCodeName = this->varMap.name(methodDeclName, this->typeMap.stack);
-          auto methodDeclInfo = TypeFnMethodInfo{methodDeclCodeName};
+          auto methodDeclInfo = TypeFnMethodInfo{this->typeMap.name(methodDeclName)};
           auto methodDeclTypeParams = std::vector<TypeFnParam>{};
 
           this->varMap.save();
@@ -381,9 +380,10 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             ? this->typeMap.get("void")
             : this->_type(*stmtFnDecl.returnType);
           auto methodDeclType = this->typeMap.fn(methodDeclTypeParams, methodDeclReturnType, methodDeclInfo);
+          auto methodDeclAliasType = this->typeMap.alias(methodDeclName, methodDeclType);
 
           this->varMap.restore();
-          this->varMap.add(type->name + "." + methodDeclName, methodDeclCodeName, methodDeclType, false);
+          this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType, false);
           type->fields.push_back(TypeField{methodDeclName, methodDeclType, false, true, false});
         }
 
@@ -679,7 +679,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
           exprAccessExpr.type->getProp(parserExprAccess.prop->val)->isMethod()
         ) {
           auto propType = exprAccessExpr.type->getProp(parserExprAccess.prop->val);
-          varStack.mark(propType->codeName);
+          auto propMethod = std::get<TypeFn>(propType->body).methodInfo;
+
+          varStack.mark(propMethod.codeName);
           initializedExprAccessExpr = true;
         }
       }
