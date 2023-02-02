@@ -209,10 +209,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
     auto exprIs = std::get<ParserExprIs>(*stmtExpr.body);
     auto exprIsType = this->_type(exprIs.type);
 
-    if (
-      std::holds_alternative<ParserExprAccess>(*exprIs.expr.body) &&
-      isExprAccessLvalue(exprIs.expr)
-    ) {
+    if (isExprAccessLvalue(exprIs.expr)) {
       auto exprAccessType = Type::real(this->_nodeExprType(exprIs.expr, nullptr));
 
       if (exprAccessType->isAny() || exprAccessType->isOpt() || exprAccessType->isUnion()) {

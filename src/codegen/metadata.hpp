@@ -141,6 +141,11 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"SSL_write", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"TLS_client_method", {"libOpensslSsl"}},
 
+  std::pair<std::string, std::set<std::string>>{"va_arg", {"libStdarg"}},
+  std::pair<std::string, std::set<std::string>>{"va_end", {"libStdarg"}},
+  std::pair<std::string, std::set<std::string>>{"va_list", {"libStdarg"}},
+  std::pair<std::string, std::set<std::string>>{"va_start", {"libStdarg"}},
+
   std::pair<std::string, std::set<std::string>>{"bool", {"libStdbool"}},
   std::pair<std::string, std::set<std::string>>{"false", {"libStdbool"}},
   std::pair<std::string, std::set<std::string>>{"true", {"libStdbool"}},

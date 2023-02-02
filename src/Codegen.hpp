@@ -186,6 +186,17 @@ struct CodegenTypeInfo {
   std::string realTypeRefCodeConst;
 };
 
+struct CodegenTypeInfoItem {
+  Type *type;
+  std::string typeName;
+  std::string typeCode;
+  std::string typeCodeConst;
+  std::string typeCodeTrimmed;
+  std::string typeCodeConstTrimmed;
+  std::string typeRefCode;
+  std::string typeRefCodeConst;
+};
+
 class Codegen {
  public:
   std::map<std::string, CodegenApiItem> api = {};
@@ -198,7 +209,7 @@ class Codegen {
   std::vector<CodegenEntity> entities;
   std::vector<std::string> flags;
   std::size_t indent = 0;
-  std::size_t lastAnyIdx = 1;
+  std::size_t lastTypeIdx = 1;
   bool needMainArgs = false;
 
   static void compile (
@@ -273,8 +284,12 @@ class Codegen {
   );
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
+  std::string _nodeVarDeclInit (const CodegenTypeInfo &);
   std::string _type (const Type *);
+  std::string _typeDef (Type *);
+  std::string _typeDefIdx (Type *);
   CodegenTypeInfo _typeInfo (Type *);
+  CodegenTypeInfoItem _typeInfoItem (Type *);
   std::string _typeNameAny (Type *);
   std::string _typeNameArray (const Type *);
   std::string _typeNameFn (const Type *);

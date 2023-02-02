@@ -162,7 +162,9 @@ bool Type::hasProp (const std::string &propName) const {
 }
 
 bool Type::hasSubType (const Type *subType) const {
-  if (this->isRef()) {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->hasSubType(subType);
+  } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->hasSubType(subType);
   } else if (this->isUnion()) {
     auto typeUnion = std::get<TypeUnion>(this->body);
@@ -300,6 +302,10 @@ bool Type::isRefExt () const {
 }
 
 bool Type::isSmallForVarArg () const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->isSmallForVarArg();
+  }
+
   return
     this->isBool() ||
     this->isByte() ||
@@ -527,6 +533,10 @@ bool Type::matchStrict (const Type *type, bool exact) const {
 }
 
 bool Type::shouldBeFreed () const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->shouldBeFreed();
+  }
+
   return
     this->isAny() ||
     this->isArray() ||
