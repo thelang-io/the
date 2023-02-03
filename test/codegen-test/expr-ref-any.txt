@@ -31,7 +31,7 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TYPE_ANY_int 1
+#define TYPE_int 1
 
 struct any {
   int t;
@@ -72,7 +72,7 @@ struct any any_int_alloc (int32_t d) {
   size_t l = sizeof(struct any_int);
   struct any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &any_int_copy, &any_int_free};
 }
 struct any any_int_copy (const struct any n) {
   struct any_int *o = n.d;

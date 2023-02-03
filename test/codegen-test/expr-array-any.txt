@@ -28,8 +28,8 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_ANY_int 1
-#define TYPE_ANY_str 2
+#define TYPE_int 1
+#define TYPE_str 2
 
 struct any {
   int t;
@@ -105,7 +105,7 @@ struct any any_int_alloc (int32_t d) {
   size_t l = sizeof(struct any_int);
   struct any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &any_int_copy, &any_int_free};
 }
 struct any any_int_copy (const struct any n) {
   struct any_int *o = n.d;
@@ -121,7 +121,7 @@ struct any any_str_alloc (struct str d) {
   size_t l = sizeof(struct any_str);
   struct any_str *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_str, r, l, &any_str_copy, &any_str_free};
+  return (struct any) {TYPE_str, r, l, &any_str_copy, &any_str_free};
 }
 struct any any_str_copy (const struct any n) {
   struct any_str *o = n.d;
