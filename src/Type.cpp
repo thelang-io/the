@@ -527,6 +527,21 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     auto rhsRef = std::get<TypeRef>(type->body);
 
     return lhsRef.refType->matchStrict(rhsRef.refType);
+  } else if (this->isUnion() || type->isUnion()) {
+    if (!this->isUnion() || !type->isUnion()) {
+      return false;
+    }
+
+    auto lhsUnion = std::get<TypeUnion>(this->body);
+    auto rhsUnion = std::get<TypeUnion>(type->body);
+
+    if (lhsUnion.subTypes.size() != rhsUnion.subTypes.size()) {
+      return false;
+    }
+
+    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&type] (const auto &it) -> bool {
+      return type->hasSubType(it);
+    });
   }
 
   return this->name == type->name;

@@ -118,7 +118,6 @@ struct Type {
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
-  // todo remove
   Type *getEnumerator (const std::string &) const;
   Type *getProp (const std::string &) const;
   bool hasEnumerator (const std::string &) const;
