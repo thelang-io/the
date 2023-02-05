@@ -447,7 +447,7 @@ main {
                 <ExprIsExpr>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeUnion name="union$3">
+                      <TypeUnion name="union$2">
                         <BuiltinType name="int" />
                         <BuiltinType name="bool" />
                       </TypeUnion>
@@ -665,7 +665,7 @@ main {
                 <ExprIsExpr>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeUnion name="union$4">
+                      <TypeUnion name="union$2">
                         <BuiltinType name="int" />
                         <BuiltinType name="bool" />
                       </TypeUnion>
@@ -1094,13 +1094,13 @@ main {
                           <ExprCallCallee>
                             <NodeExpr>
                               <NodeExprType>
-                                <BuiltinType name="union$5.str" />
+                                <BuiltinType name="union$2.str" />
                               </NodeExprType>
                               <NodeExprBody>
                                 <ExprAccess prop="str">
                                   <NodeExpr>
                                     <NodeExprType>
-                                      <TypeUnion name="union$5">
+                                      <TypeUnion name="union$2">
                                         <BuiltinType name="int" />
                                         <BuiltinType name="bool" />
                                       </TypeUnion>
@@ -1238,7 +1238,7 @@ main {
                                   <ExprIsExpr>
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeUnion name="union$8">
+                                        <TypeUnion name="union$2">
                                           <BuiltinType name="int" />
                                           <BuiltinType name="bool" />
                                         </TypeUnion>
@@ -1460,7 +1460,7 @@ main {
                                   <ExprIsExpr>
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeUnion name="union$11">
+                                        <TypeUnion name="union$2">
                                           <BuiltinType name="int" />
                                           <BuiltinType name="bool" />
                                         </TypeUnion>
