@@ -2078,6 +2078,100 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
   return std::make_tuple(bodyTypeCasts, altTypeCasts);
 }
 
+std::string Codegen::_exprCallDefaultArg (const CodegenTypeInfo &typeInfo) {
+  if (typeInfo.type->isAlias()) {
+    auto typeAlias = std::get<TypeAlias>(typeInfo.type->body);
+    auto aliasTypeInfo = this->_typeInfo(typeAlias.type);
+    return this->_exprCallDefaultArg(aliasTypeInfo);
+  } else if (typeInfo.type->isAny()) {
+    this->_activateBuiltin("typeAny");
+    return "(struct any) {}";
+  } else if (
+    typeInfo.type->isArray() ||
+    typeInfo.type->isFn() ||
+    typeInfo.type->isUnion()
+  ) {
+    this->_activateEntity(typeInfo.typeName);
+    return "(struct " + typeInfo.typeName + ") {}";
+  } else if (typeInfo.type->isBool()) {
+    this->_activateBuiltin("libStdbool");
+    return "false";
+  } else if (typeInfo.type->isChar()) {
+    return R"('\0')";
+  } else if (typeInfo.type->isObj() || typeInfo.type->isOpt()) {
+    this->_activateBuiltin("libStdlib");
+    return "NULL";
+  } else if (typeInfo.type->isStr()) {
+    this->_activateBuiltin("typeStr");
+    return "(struct str) {}";
+  } else {
+    return "0";
+  }
+}
+
+std::string Codegen::_exprCallPrintArg (const CodegenTypeInfo &typeInfo, const ASTNodeExpr &nodeExpr) {
+  if (typeInfo.type->isAlias()) {
+    auto typeAlias = std::get<TypeAlias>(typeInfo.type->body);
+    auto aliasTypeInfo = this->_typeInfo(typeAlias.type);
+    return this->_exprCallPrintArg(aliasTypeInfo, nodeExpr);
+  } else if (
+    typeInfo.type->isAny() ||
+    typeInfo.type->isArray() ||
+    typeInfo.type->isEnum() ||
+    typeInfo.type->isFn() ||
+    typeInfo.type->isObj() ||
+    typeInfo.type->isOpt() ||
+    typeInfo.type->isUnion()
+  ) {
+    return this->_genStrFn(typeInfo.type, this->_nodeExpr(nodeExpr, typeInfo.type), std::nullopt, std::nullopt, false);
+  } else if (typeInfo.type->isStr() && nodeExpr.isLit()) {
+    return nodeExpr.litBody();
+  }
+
+  return this->_nodeExpr(nodeExpr, typeInfo.type);
+}
+
+std::string Codegen::_exprCallPrintArgSign (const CodegenTypeInfo &typeInfo, const ASTNodeExpr &nodeExpr) {
+  if (typeInfo.type->isAlias()) {
+    auto typeAlias = std::get<TypeAlias>(typeInfo.type->body);
+    auto aliasTypeInfo = this->_typeInfo(typeAlias.type);
+    return this->_exprCallPrintArgSign(aliasTypeInfo, nodeExpr);
+  } else if (
+    typeInfo.type->isAny() ||
+    typeInfo.type->isArray() ||
+    typeInfo.type->isEnum() ||
+    typeInfo.type->isFn() ||
+    typeInfo.type->isObj() ||
+    typeInfo.type->isOpt() ||
+    typeInfo.type->isUnion()
+  ) {
+    return "s";
+  } else if (typeInfo.type->isRef()) {
+    return "p";
+  } else if (typeInfo.type->isStr() && nodeExpr.isLit()) {
+    return "z";
+  } else {
+    if (typeInfo.type->isBool()) return "t";
+    else if (typeInfo.type->isByte()) return "b";
+    else if (typeInfo.type->isChar()) return "c";
+    else if (typeInfo.type->isF32()) return "e";
+    else if (typeInfo.type->isF64()) return "g";
+    else if (typeInfo.type->isFloat()) return "f";
+    else if (typeInfo.type->isI8()) return "h";
+    else if (typeInfo.type->isI16()) return "j";
+    else if (typeInfo.type->isI32()) return "k";
+    else if (typeInfo.type->isI64()) return "l";
+    else if (typeInfo.type->isInt()) return "i";
+    else if (typeInfo.type->isStr()) return "s";
+    else if (typeInfo.type->isU8()) return "v";
+    else if (typeInfo.type->isU16()) return "w";
+    else if (typeInfo.type->isU32()) return "u";
+    else if (typeInfo.type->isU64()) return "y";
+  }
+
+  return "a";
+}
+
 std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAlias()) {
     auto typeAlias = std::get<TypeAlias>(typeInfo.type->body);
@@ -3394,46 +3488,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
           argsCode += separator + ", ";
         }
 
-        // todo alias
-        if (
-          argTypeInfo.type->isAny() ||
-          argTypeInfo.type->isArray() ||
-          argTypeInfo.type->isEnum() ||
-          argTypeInfo.type->isFn() ||
-          argTypeInfo.type->isObj() ||
-          argTypeInfo.type->isOpt() ||
-          argTypeInfo.type->isUnion()
-        ) {
-          code += "s";
-          argsCode += this->_genStrFn(argTypeInfo.type, this->_nodeExpr(exprCallArg.expr, argTypeInfo.type), std::nullopt, std::nullopt, false);
-        } else if (argTypeInfo.type->isRef()) {
-          code += "p";
-          argsCode += this->_nodeExpr(exprCallArg.expr, argTypeInfo.type);
-        } else if (argTypeInfo.type->isStr() && exprCallArg.expr.isLit()) {
-          code += "z";
-          argsCode += exprCallArg.expr.litBody();
-        } else {
-          if (argTypeInfo.type->isBool()) code += "t";
-          else if (argTypeInfo.type->isByte()) code += "b";
-          else if (argTypeInfo.type->isChar()) code += "c";
-          else if (argTypeInfo.type->isF32()) code += "e";
-          else if (argTypeInfo.type->isF64()) code += "g";
-          else if (argTypeInfo.type->isFloat()) code += "f";
-          else if (argTypeInfo.type->isI8()) code += "h";
-          else if (argTypeInfo.type->isI16()) code += "j";
-          else if (argTypeInfo.type->isI32()) code += "k";
-          else if (argTypeInfo.type->isI64()) code += "l";
-          else if (argTypeInfo.type->isInt()) code += "i";
-          else if (argTypeInfo.type->isStr()) code += "s";
-          else if (argTypeInfo.type->isU8()) code += "v";
-          else if (argTypeInfo.type->isU16()) code += "w";
-          else if (argTypeInfo.type->isU32()) code += "u";
-          else if (argTypeInfo.type->isU64()) code += "y";
-
-          argsCode += this->_nodeExpr(exprCallArg.expr, argTypeInfo.type);
-        }
-
-        argsCode += ", ";
+        code += this->_exprCallPrintArgSign(argTypeInfo, exprCallArg.expr);
+        argsCode += this->_exprCallPrintArg(argTypeInfo, exprCallArg.expr) + ", ";
         argIdx++;
       }
 
@@ -3676,7 +3732,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
           bodyCode += i == 0 && (param.required || param.variadic) ? "" : ", ";
 
-          // todo alias
           if (param.variadic) {
             auto paramTypeElementType = std::get<TypeArray>(param.type->body).elementType;
             auto variadicArgs = std::vector<ASTExprCallArg>{};
@@ -3704,25 +3759,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
             bodyCode += ")";
           } else if (foundArg != std::nullopt) {
             bodyCode += this->_nodeExpr(foundArg->expr, paramTypeInfo.type);
-          } else if (paramTypeInfo.type->isAny()) {
-            this->_activateBuiltin("typeAny");
-            bodyCode += "(struct any) {}";
-          } else if (paramTypeInfo.type->isArray() || paramTypeInfo.type->isFn() || paramTypeInfo.type->isUnion()) {
-            this->_activateEntity(paramTypeInfo.typeName);
-            bodyCode += "(struct " + paramTypeInfo.typeName + ") {}";
-          } else if (paramTypeInfo.type->isBool()) {
-            this->_activateBuiltin("libStdbool");
-            bodyCode += "false";
-          } else if (paramTypeInfo.type->isChar()) {
-            bodyCode += R"('\0')";
-          } else if (paramTypeInfo.type->isObj() || paramTypeInfo.type->isOpt()) {
-            this->_activateBuiltin("libStdlib");
-            bodyCode += "NULL";
-          } else if (paramTypeInfo.type->isStr()) {
-            this->_activateBuiltin("typeStr");
-            bodyCode += "(struct str) {}";
           } else {
-            bodyCode += "0";
+            bodyCode += this->_exprCallDefaultArg(paramTypeInfo);
           }
         }
 
@@ -4836,6 +4874,7 @@ std::string Codegen::_typeNameUnion (const Type *type) {
   copyFnEntity.def = this->_apiEval(copyFnEntity.def);
   this->entities.push_back(copyFnEntity);
 
+  // todo
 //  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN};
 //  this->state.builtins = &eqFnEntity.builtins;
 //  this->state.entities = &eqFnEntity.entities;
