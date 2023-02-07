@@ -32,6 +32,14 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
 }
 
+Type *Type::actual (Type *type) {
+  if (type->isAlias()) {
+    return Type::actual(std::get<TypeAlias>(type->body).type);
+  }
+
+  return type;
+}
+
 Type *Type::real (Type *type) {
   if (type->isAlias()) {
     return Type::real(std::get<TypeAlias>(type->body).type);
@@ -299,6 +307,19 @@ bool Type::isRefExt () const {
   }
 
   return std::holds_alternative<TypeRef>(this->body);
+}
+
+bool Type::isSafeForTernaryAlt () const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->isSafeForTernaryAlt();
+  }
+
+  return this->isAny() &&
+    this->isArray() &&
+    this->isObj() &&
+    this->isOpt() &&
+    this->isStr() &&
+    this->isUnion();
 }
 
 bool Type::isSmallForVarArg () const {

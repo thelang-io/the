@@ -3148,24 +3148,22 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
     auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
-    auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
     auto leftCode = this->_nodeExpr(exprAssign.left, nodeExpr.type, true);
     auto code = std::string();
 
-    // todo alias
-    if (exprAssign.left.type->isAny() || exprAssign.right.type->isAny()) {
+    if (Type::actual(exprAssign.left.type)->isAny() || Type::actual(exprAssign.right.type)->isAny()) {
       code = this->_genReallocFn(this->ast->typeMap.get("any"), leftCode, this->_nodeExpr(exprAssign.right, nodeExpr.type));
       code = root ? code : this->_genCopyFn(this->ast->typeMap.get("any"), code);
     } else if (
-      exprAssign.left.type->isArray() ||
-      exprAssign.left.type->isFn() ||
-      exprAssign.left.type->isObj() ||
-      exprAssign.left.type->isOpt() ||
-      exprAssign.left.type->isUnion()
+      Type::actual(exprAssign.left.type)->isArray() ||
+      Type::actual(exprAssign.left.type)->isFn() ||
+      Type::actual(exprAssign.left.type)->isObj() ||
+      Type::actual(exprAssign.left.type)->isOpt() ||
+      Type::actual(exprAssign.left.type)->isUnion()
     ) {
-      code = this->_genReallocFn(exprAssign.left.type, leftCode, this->_nodeExpr(exprAssign.right, nodeExpr.type));
-      code = root ? code : this->_genCopyFn(exprAssign.left.type, code);
-    } else if (exprAssign.left.type->isStr() || exprAssign.right.type->isStr()) {
+      code = this->_genReallocFn(Type::actual(exprAssign.left.type), leftCode, this->_nodeExpr(exprAssign.right, nodeExpr.type));
+      code = root ? code : this->_genCopyFn(Type::actual(exprAssign.left.type), code);
+    } else if (Type::actual(exprAssign.left.type)->isStr() || Type::actual(exprAssign.right.type)->isStr()) {
       auto rightCode = std::string();
 
       if (exprAssign.op == AST_EXPR_ASSIGN_ADD) {
@@ -3212,7 +3210,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
     auto code = std::string();
 
-    // todo alias
     if (
       exprBinary.op == AST_EXPR_BINARY_EQ &&
       Type::real(exprBinary.left.type)->isObj() &&
@@ -3821,12 +3818,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     if (
       std::holds_alternative<ASTExprAssign>(*exprCond.alt.body) &&
       !exprCond.alt.parenthesized &&
-      !exprCond.alt.type->isAny() &&
-      !exprCond.alt.type->isArray() &&
-      !exprCond.alt.type->isObj() &&
-      !exprCond.alt.type->isOpt() &&
-      !exprCond.alt.type->isStr() &&
-      !exprCond.alt.type->isUnion() // todo test
+      !exprCond.alt.type->isSafeForTernaryAlt()
     ) {
       altCode = "(" + altCode + ")";
     }
@@ -4874,32 +4866,51 @@ std::string Codegen::_typeNameUnion (const Type *type) {
   copyFnEntity.def = this->_apiEval(copyFnEntity.def);
   this->entities.push_back(copyFnEntity);
 
-  // todo
-//  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN};
-//  this->state.builtins = &eqFnEntity.builtins;
-//  this->state.entities = &eqFnEntity.entities;
-//  eqFnEntity.decl += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
-//  eqFnEntity.def += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-//  eqFnEntity.def += "}";
-//  eqFnEntity.decl = this->_apiEval(eqFnEntity.decl);
-//  eqFnEntity.def = this->_apiEval(eqFnEntity.def);
-//  this->entities.push_back(eqFnEntity);
+  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN};
+  this->state.builtins = &eqFnEntity.builtins;
+  this->state.entities = &eqFnEntity.entities;
+  eqFnEntity.decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "}, struct _{" + typeName + "});";
+  eqFnEntity.def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+  eqFnEntity.def += "  _{bool} r = _{false};" EOL;
 
-//  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN};
-//  this->state.builtins = &neFnEntity.builtins;
-//  this->state.entities = &neFnEntity.entities;
-//  neFnEntity.decl += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
-//  neFnEntity.def += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-//  neFnEntity.def += "}";
-//  neFnEntity.decl = this->_apiEval(neFnEntity.decl);
-//  neFnEntity.def = this->_apiEval(neFnEntity.def);
-//  this->entities.push_back(neFnEntity);
+  for (const auto &subType : subTypes) {
+    auto subTypeDef = this->_typeDef(subType);
+    auto subTypeProp = "v" + this->_typeDefIdx(subType);
+    eqFnEntity.def += "  if (n1.t == _{" + subTypeDef + "} && n2.t == _{" + subTypeDef + "}) ";
+    eqFnEntity.def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp) + ";" EOL;
+  }
+
+  eqFnEntity.def += "  return r;" EOL;
+  eqFnEntity.def += "}";
+  eqFnEntity.decl = this->_apiEval(eqFnEntity.decl);
+  eqFnEntity.def = this->_apiEval(eqFnEntity.def);
+  this->entities.push_back(eqFnEntity);
+
+  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN};
+  this->state.builtins = &neFnEntity.builtins;
+  this->state.entities = &neFnEntity.entities;
+  neFnEntity.decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "}, struct _{" + typeName + "});";
+  neFnEntity.def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+  neFnEntity.def += "  _{bool} r = _{false};" EOL;
+
+  for (const auto &subType : subTypes) {
+    auto subTypeDef = this->_typeDef(subType);
+    auto subTypeProp = "v" + this->_typeDefIdx(subType);
+    copyFnEntity.def += "  if (n1.t == _{" + subTypeDef + "} && n2.t == _{" + subTypeDef + "}) ";
+    copyFnEntity.def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp, std::nullopt, std::nullopt, true) + ";" EOL;
+  }
+
+  neFnEntity.def += "  return r;" EOL;
+  neFnEntity.def += "}";
+  neFnEntity.decl = this->_apiEval(neFnEntity.decl);
+  neFnEntity.def = this->_apiEval(neFnEntity.def);
+  this->entities.push_back(neFnEntity);
 
   auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN};
   this->state.builtins = &reallocFnEntity.builtins;
   this->state.entities = &reallocFnEntity.entities;
-  reallocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} *, struct _{" + typeName + "} *);";
-  reallocFnEntity.def += "struct _{" + typeName + "} " + "_realloc (struct _{" + typeName + "} *n1, struct _{" + typeName + "} *n2) {" EOL;
+  reallocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
+  reallocFnEntity.def += "struct _{" + typeName + "} " + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
   reallocFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);";
   reallocFnEntity.def += "  return n2;";
   reallocFnEntity.def += "}";
