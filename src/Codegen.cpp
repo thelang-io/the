@@ -3241,8 +3241,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
       (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
       (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
-      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt()) ||
-      (Type::real(exprBinary.left.type)->isUnion() && Type::real(exprBinary.right.type)->isUnion())
+      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
     )) {
       auto typeInfo = this->_typeInfo(exprBinary.left.type);
       auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
@@ -3253,8 +3252,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
       (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
       (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
-      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt()) ||
-      (Type::real(exprBinary.left.type)->isUnion() && Type::real(exprBinary.right.type)->isUnion())
+      (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
     )) {
       auto typeInfo = this->_typeInfo(exprBinary.left.type);
       auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
@@ -3327,6 +3325,26 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       code = !root ? code : this->_genFreeFn(Type::real(exprBinary.left.type), code);
+    } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
+      (Type::real(exprBinary.left.type)->isUnion() || Type::real(exprBinary.right.type)->isUnion())
+    )) {
+      auto unionType = Type::real(Type::real(exprBinary.left.type)->isUnion() ? exprBinary.left.type : exprBinary.right.type);
+      auto typeInfo = this->_typeInfo(unionType);
+      auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
+      auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType);
+
+      this->_activateEntity(typeInfo.realTypeName + "_eq");
+      code = typeInfo.realTypeName + "_eq(" + leftCode + ", " + rightCode + ")";
+    } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
+      (Type::real(exprBinary.left.type)->isUnion() || Type::real(exprBinary.right.type)->isUnion())
+    )) {
+      auto unionType = Type::real(Type::real(exprBinary.left.type)->isUnion() ? exprBinary.left.type : exprBinary.right.type);
+      auto typeInfo = this->_typeInfo(unionType);
+      auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
+      auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType);
+
+      this->_activateEntity(typeInfo.realTypeName + "_ne");
+      code = typeInfo.realTypeName + "_ne(" + leftCode + ", " + rightCode + ")";
     } else {
       auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(nodeExpr.type));
       auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(nodeExpr.type));
@@ -4910,9 +4928,9 @@ std::string Codegen::_typeNameUnion (const Type *type) {
   this->state.builtins = &reallocFnEntity.builtins;
   this->state.entities = &reallocFnEntity.entities;
   reallocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
-  reallocFnEntity.def += "struct _{" + typeName + "} " + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-  reallocFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);";
-  reallocFnEntity.def += "  return n2;";
+  reallocFnEntity.def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+  reallocFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);" EOL;
+  reallocFnEntity.def += "  return n2;" EOL;
   reallocFnEntity.def += "}";
   reallocFnEntity.decl = this->_apiEval(reallocFnEntity.decl);
   reallocFnEntity.def = this->_apiEval(reallocFnEntity.def);

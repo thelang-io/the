@@ -1,0 +1,56 @@
+======= stdin =======
+main {
+  testInt1 := 1
+  testInt2 := 2
+  a1 := ref testInt1
+  a2 := ref testInt2
+
+  a := a1 + a2
+  b := a1 - a2
+  c := a1 / a2
+  d := a1 * a2
+  e := a1 && a2
+  f := a1 == a2
+  g := a1 >= a2
+  h := a1 > a2
+  i := a1 <= a2
+  j := a1 < a2
+  k := a1 != a2
+  l := a1 || a2
+  m := a1 & a2
+  n := a1 | a2
+  o := a1 ^ a2
+  p := a1 >> a2
+  q := a1 << a2
+  r := a1 % a2
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_testInt1_0 = 1;
+  const int32_t __THE_0_testInt2_0 = 2;
+  const int32_t *__THE_0_a1_0 = &__THE_0_testInt1_0;
+  const int32_t *__THE_0_a2_0 = &__THE_0_testInt2_0;
+  const int32_t __THE_0_a_0 = *__THE_0_a1_0 + *__THE_0_a2_0;
+  const int32_t __THE_0_b_0 = *__THE_0_a1_0 - *__THE_0_a2_0;
+  const int32_t __THE_0_c_0 = *__THE_0_a1_0 / *__THE_0_a2_0;
+  const int32_t __THE_0_d_0 = *__THE_0_a1_0 * *__THE_0_a2_0;
+  const int32_t __THE_0_e_0 = *__THE_0_a1_0 && *__THE_0_a2_0;
+  const bool __THE_0_f_0 = *__THE_0_a1_0 == *__THE_0_a2_0;
+  const bool __THE_0_g_0 = *__THE_0_a1_0 >= *__THE_0_a2_0;
+  const bool __THE_0_h_0 = *__THE_0_a1_0 > *__THE_0_a2_0;
+  const bool __THE_0_i_0 = *__THE_0_a1_0 <= *__THE_0_a2_0;
+  const bool __THE_0_j_0 = *__THE_0_a1_0 < *__THE_0_a2_0;
+  const bool __THE_0_k_0 = *__THE_0_a1_0 != *__THE_0_a2_0;
+  const int32_t __THE_0_l_0 = *__THE_0_a1_0 || *__THE_0_a2_0;
+  const int32_t __THE_0_m_0 = *__THE_0_a1_0 & *__THE_0_a2_0;
+  const int32_t __THE_0_n_0 = *__THE_0_a1_0 | *__THE_0_a2_0;
+  const int32_t __THE_0_o_0 = *__THE_0_a1_0 ^ *__THE_0_a2_0;
+  const int32_t __THE_0_p_0 = *__THE_0_a1_0 >> *__THE_0_a2_0;
+  const int32_t __THE_0_q_0 = *__THE_0_a1_0 << *__THE_0_a2_0;
+  const int32_t __THE_0_r_0 = *__THE_0_a1_0 % *__THE_0_a2_0;
+}
+======= flags =======
+======= stdout =======

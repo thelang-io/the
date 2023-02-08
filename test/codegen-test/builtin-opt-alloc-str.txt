@@ -1,0 +1,86 @@
+======= stdin =======
+main {
+  testStr := "test"
+  optStr: str?
+  optStrNilInit: str? = nil
+  optStrValInit: str? = "test"
+  optStrValCopy: str? = testStr
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct str *__THE_1_opt_str_alloc (struct str);
+void __THE_1_opt_str_free (struct str *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str *__THE_1_opt_str_alloc (struct str n) {
+  struct str *r = alloc(sizeof(struct str));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_str_free (struct str *n) {
+  if (n == NULL) return;
+  str_free((struct str) *n);
+  free(n);
+}
+
+int main () {
+  const struct str __THE_0_testStr_0 = str_alloc("test");
+  const struct str *__THE_0_optStr_0 = NULL;
+  const struct str *__THE_0_optStrNilInit_0 = NULL;
+  const struct str *__THE_0_optStrValInit_0 = __THE_1_opt_str_alloc(str_alloc("test"));
+  const struct str *__THE_0_optStrValCopy_0 = __THE_1_opt_str_alloc(str_copy(__THE_0_testStr_0));
+  __THE_1_opt_str_free((struct str *) __THE_0_optStrValCopy_0);
+  __THE_1_opt_str_free((struct str *) __THE_0_optStrValInit_0);
+  __THE_1_opt_str_free((struct str *) __THE_0_optStrNilInit_0);
+  __THE_1_opt_str_free((struct str *) __THE_0_optStr_0);
+  str_free((struct str) __THE_0_testStr_0);
+}
+======= flags =======
+======= stdout =======

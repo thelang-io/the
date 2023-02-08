@@ -212,6 +212,16 @@ INSTANTIATE_TEST_SUITE_P(BuiltinGlobal, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
   "builtin-any-alloc",
+  "builtin-any-alloc-alias",
+  "builtin-any-alloc-any",
+  "builtin-any-alloc-array",
+  "builtin-any-alloc-enum",
+  "builtin-any-alloc-fn",
+  "builtin-any-alloc-obj",
+  "builtin-any-alloc-opt",
+  "builtin-any-alloc-ref",
+  "builtin-any-alloc-str",
+  "builtin-any-alloc-union",
   "builtin-any-str",
   "builtin-any-str-ref",
   "builtin-any-str-root"
@@ -396,6 +406,16 @@ INSTANTIATE_TEST_SUITE_P(BuiltinObj, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
   "builtin-opt-alloc",
+  "builtin-opt-alloc-alias",
+  "builtin-opt-alloc-any",
+  "builtin-opt-alloc-array",
+  "builtin-opt-alloc-enum",
+  "builtin-opt-alloc-fn",
+  "builtin-opt-alloc-obj",
+  "builtin-opt-alloc-opt",
+  "builtin-opt-alloc-ref",
+  "builtin-opt-alloc-str",
+  "builtin-opt-alloc-union",
   "builtin-opt-eq",
   "builtin-opt-eq-ref",
   "builtin-opt-eq-root",
@@ -512,46 +532,58 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access-prop",
   "expr-access-elem",
   "expr-access-member",
+  "expr-access-alias",
   "expr-access-any",
   "expr-access-array",
   "expr-access-enum",
   "expr-access-fn",
   "expr-access-obj",
   "expr-access-opt",
-  "expr-access-str"
+  "expr-access-ref",
+  "expr-access-str",
+  "expr-access-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprArray, CodegenPassTest, testing::Values(
   "expr-array",
+  "expr-array-alias",
   "expr-array-any",
   "expr-array-array",
   "expr-array-enum",
   "expr-array-fn",
   "expr-array-obj",
   "expr-array-opt",
-  "expr-array-str"
+  "expr-array-ref",
+  "expr-array-str",
+  "expr-array-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign",
   "expr-assign-op",
   "expr-assign-elem",
+  "expr-assign-alias",
   "expr-assign-any",
   "expr-assign-array",
   "expr-assign-enum",
+  "expr-assign-fn",
   "expr-assign-obj",
   "expr-assign-opt",
   "expr-assign-ref",
-  "expr-assign-str"
+  "expr-assign-str",
+  "expr-assign-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
   "expr-binary",
+  "expr-binary-alias",
   "expr-binary-array",
   "expr-binary-enum",
   "expr-binary-obj",
   "expr-binary-opt",
+  "expr-binary-ref",
   "expr-binary-str",
+  "expr-binary-union",
   "expr-binary-nested"
 ));
 
@@ -564,11 +596,16 @@ INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
   "expr-cond",
   "expr-cond-nested",
+  "expr-cond-alias",
   "expr-cond-any",
   "expr-cond-array",
   "expr-cond-enum",
+  "expr-cond-fn",
+  "expr-cond-obj",
   "expr-cond-opt",
+  "expr-cond-ref",
   "expr-cond-str",
+  "expr-cond-union",
   "expr-cond-operands",
   "expr-cond-type-casts"
 ));
@@ -597,13 +634,16 @@ INSTANTIATE_TEST_SUITE_P(ExprObj, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenPassTest, testing::Values(
   "expr-ref",
+  "expr-ref-alias",
   "expr-ref-any",
   "expr-ref-array",
   "expr-ref-enum",
   "expr-ref-fn",
   "expr-ref-obj",
   "expr-ref-opt",
-  "expr-ref-str"
+  "expr-ref-ref",
+  "expr-ref-str",
+  "expr-ref-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenPassTest, testing::Values(
@@ -621,22 +661,29 @@ INSTANTIATE_TEST_SUITE_P(NodeEnumDecl, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-access",
+  "node-expr-access-alias",
   "node-expr-access-any",
   "node-expr-access-array",
   "node-expr-access-enum",
   "node-expr-access-fn",
   "node-expr-access-obj",
   "node-expr-access-opt",
+  "node-expr-access-ref",
   "node-expr-access-str",
+  "node-expr-access-union",
   "node-expr-array",
+  "node-expr-array-alias",
   "node-expr-array-any",
   "node-expr-array-array",
   "node-expr-array-enum",
   "node-expr-array-fn",
   "node-expr-array-obj",
   "node-expr-array-opt",
+  "node-expr-array-ref",
   "node-expr-array-str",
+  "node-expr-array-union",
   "node-expr-assign",
+  "node-expr-assign-alias",
   "node-expr-assign-any",
   "node-expr-assign-array",
   "node-expr-assign-enum",
@@ -645,38 +692,51 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-assign-opt",
   "node-expr-assign-ref",
   "node-expr-assign-str",
+  "node-expr-assign-union",
   "node-expr-binary",
+  "node-expr-binary-alias",
   "node-expr-binary-array",
   "node-expr-binary-enum",
   "node-expr-binary-obj",
   "node-expr-binary-opt",
+  "node-expr-binary-ref",
   "node-expr-binary-str",
+  "node-expr-binary-union",
   "node-expr-call",
   "node-expr-cond",
+  "node-expr-cond-alias",
   "node-expr-cond-any",
   "node-expr-cond-array",
   "node-expr-cond-enum",
   "node-expr-cond-fn",
   "node-expr-cond-obj",
   "node-expr-cond-opt",
+  "node-expr-cond-ref",
   "node-expr-cond-str",
+  "node-expr-cond-union",
   "node-expr-lit",
   "node-expr-obj",
+  "node-expr-obj-alias",
   "node-expr-obj-any",
   "node-expr-obj-array",
   "node-expr-obj-enum",
   "node-expr-obj-fn",
   "node-expr-obj-obj",
   "node-expr-obj-opt",
+  "node-expr-obj-ref",
   "node-expr-obj-str",
+  "node-expr-obj-union",
   "node-expr-ref",
+  "node-expr-ref-alias",
   "node-expr-ref-any",
   "node-expr-ref-array",
   "node-expr-ref-enum",
   "node-expr-ref-fn",
   "node-expr-ref-obj",
   "node-expr-ref-opt",
+  "node-expr-ref-ref",
   "node-expr-ref-str",
+  "node-expr-ref-union",
   "node-expr-unary",
   "node-expr-unary-context",
   "node-expr-unary-obj",
@@ -687,44 +747,56 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-empty",
   "node-fn-decl-hoisting",
   "node-fn-decl-param-default",
+  "node-fn-decl-param-default-alias",
   "node-fn-decl-param-default-any",
   "node-fn-decl-param-default-array",
   "node-fn-decl-param-default-enum",
   "node-fn-decl-param-default-fn",
   "node-fn-decl-param-default-obj",
   "node-fn-decl-param-default-opt",
+  "node-fn-decl-param-default-ref",
   "node-fn-decl-param-default-str",
+  "node-fn-decl-param-default-union",
   "node-fn-decl-param-fn",
   "node-fn-decl-nested",
   "node-fn-decl-complex",
   "node-fn-decl-param-mut",
+  "node-fn-decl-param-mut-alias",
   "node-fn-decl-param-mut-any",
   "node-fn-decl-param-mut-array",
   "node-fn-decl-param-mut-enum",
   "node-fn-decl-param-mut-fn",
   "node-fn-decl-param-mut-obj",
   "node-fn-decl-param-mut-opt",
+  "node-fn-decl-param-mut-ref",
   "node-fn-decl-param-mut-str",
+  "node-fn-decl-param-mut-union",
   "node-fn-decl-param-variadic",
   "node-fn-decl-scope",
   "node-fn-decl-stack",
+  "node-fn-decl-stack-alias",
   "node-fn-decl-stack-any",
   "node-fn-decl-stack-array",
   "node-fn-decl-stack-enum",
   "node-fn-decl-stack-fn",
   "node-fn-decl-stack-obj",
   "node-fn-decl-stack-opt",
-  "node-fn-decl-stack-str"
+  "node-fn-decl-stack-ref",
+  "node-fn-decl-stack-str",
+  "node-fn-decl-stack-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if",
   "node-if-cmp-num",
+  "node-if-cmp-alias",
   "node-if-cmp-array",
   "node-if-cmp-enum",
   "node-if-cmp-obj",
   "node-if-cmp-opt",
+  "node-if-cmp-ref",
   "node-if-cmp-str",
+  "node-if-cmp-union",
   "node-if-type-casts"
 ));
 
@@ -733,11 +805,14 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
   "node-loop-empty",
   "node-loop-while",
   "node-loop-parenthesized",
+  "node-loop-alias",
   "node-loop-array",
   "node-loop-enum",
   "node-loop-obj",
   "node-loop-opt",
+  "node-loop-ref",
   "node-loop-str",
+  "node-loop-union",
   "node-loop-complex"
 ));
 
@@ -749,15 +824,24 @@ INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl",
   "node-obj-decl-default",
+  "node-obj-decl-default-alias",
+  "node-obj-decl-default-any",
+  "node-obj-decl-default-array",
+  "node-obj-decl-default-enum",
   "node-obj-decl-default-obj",
   "node-obj-decl-default-obj-member",
+  "node-obj-decl-default-opt",
+  "node-obj-decl-default-str",
+  "node-obj-decl-field-alias",
   "node-obj-decl-field-any",
   "node-obj-decl-field-array",
   "node-obj-decl-field-enum",
   "node-obj-decl-field-fn",
   "node-obj-decl-field-obj",
   "node-obj-decl-field-opt",
+  "node-obj-decl-field-ref",
   "node-obj-decl-field-str",
+  "node-obj-decl-field-union",
   "node-obj-decl-field-variadic",
   "node-obj-decl-forward-decl",
   "node-obj-decl-mut",
@@ -768,6 +852,10 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
+  "node-var-decl-alias",
+  "node-var-decl-alias-init",
+  "node-var-decl-alias-mut",
+  "node-var-decl-alias-mut-init",
   "node-var-decl-any",
   "node-var-decl-any-init",
   "node-var-decl-any-mut",
@@ -876,7 +964,9 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
   "node-var-decl-u64",
   "node-var-decl-u64-init",
   "node-var-decl-u64-mut",
-  "node-var-decl-u64-mut-init"
+  "node-var-decl-u64-mut-init",
+  "node-var-decl-union-init",
+  "node-var-decl-union-mut-init"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(

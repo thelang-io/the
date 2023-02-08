@@ -1057,7 +1057,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
 
       if (elementsType == nullptr) {
         elementsType = elementExprType;
-      } else if (!elementExprType->matchStrict(elementsType)) {
+      } else if (!elementsType->matchNice(elementExprType)) {
         throw Error(this->reader, element.start, element.end, E1017);
       }
     }

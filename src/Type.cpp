@@ -314,11 +314,11 @@ bool Type::isSafeForTernaryAlt () const {
     return std::get<TypeAlias>(this->body).type->isSafeForTernaryAlt();
   }
 
-  return this->isAny() &&
-    this->isArray() &&
-    this->isObj() &&
-    this->isOpt() &&
-    this->isStr() &&
+  return this->isAny() ||
+    this->isArray() ||
+    this->isObj() ||
+    this->isOpt() ||
+    this->isStr() ||
     this->isUnion();
 }
 
@@ -484,6 +484,12 @@ bool Type::matchNice (const Type *type) const {
 }
 
 bool Type::matchStrict (const Type *type, bool exact) const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->matchStrict(type, exact);
+  } else if (type->isAlias()) {
+    type = Type::actual(std::get<TypeAlias>(type->body).type);
+  }
+
   if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;

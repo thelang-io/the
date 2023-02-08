@@ -1,0 +1,154 @@
+======= stdin =======
+main {
+  testInt := 1
+  testRef := ref testInt
+  testOpt: int? = 1
+  testOptRef: (ref int)? = testRef
+  anyOpt: any = testOpt
+  anyOptRef: any = testOptRef
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TYPE_opt_int 1
+#define TYPE_opt_ref_int 2
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+
+struct any_opt_int;
+struct any_opt_ref_int;
+
+struct any_opt_int {
+  int32_t *d;
+};
+struct any_opt_ref_int {
+  int32_t **d;
+};
+
+void *alloc (size_t);
+void any_free (struct any);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+int32_t *__THE_1_opt_int_copy (const int32_t *);
+void __THE_1_opt_int_free (int32_t *);
+int32_t **__THE_1_opt_ref_int_alloc (int32_t *);
+int32_t **__THE_1_opt_ref_int_copy (const int32_t **);
+void __THE_1_opt_ref_int_free (int32_t **);
+struct any any_opt_int_alloc (int32_t *);
+struct any any_opt_int_copy (const struct any);
+void any_opt_int_free (struct any);
+struct any any_opt_ref_int_alloc (int32_t **);
+struct any any_opt_ref_int_copy (const struct any);
+void any_opt_ref_int_free (struct any);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+int32_t *__THE_1_opt_int_alloc (int32_t n) {
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = n;
+  return r;
+}
+int32_t *__THE_1_opt_int_copy (const int32_t *n) {
+  if (n == NULL) return NULL;
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = *n;
+  return r;
+}
+void __THE_1_opt_int_free (int32_t *n) {
+  if (n == NULL) return;
+  free(n);
+}
+int32_t **__THE_1_opt_ref_int_alloc (int32_t *n) {
+  int32_t **r = alloc(sizeof(int32_t *));
+  *r = n;
+  return r;
+}
+int32_t **__THE_1_opt_ref_int_copy (const int32_t **n) {
+  if (n == NULL) return NULL;
+  int32_t **r = alloc(sizeof(int32_t *));
+  *r = *n;
+  return r;
+}
+void __THE_1_opt_ref_int_free (int32_t **n) {
+  if (n == NULL) return;
+  free(n);
+}
+struct any any_opt_int_alloc (int32_t *d) {
+  size_t l = sizeof(struct any_opt_int);
+  struct any_opt_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_opt_int, r, l, &any_opt_int_copy, &any_opt_int_free};
+}
+struct any any_opt_int_copy (const struct any n) {
+  struct any_opt_int *o = n.d;
+  struct any_opt_int *r = alloc(n.l);
+  r->d = __THE_1_opt_int_copy(o->d);
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void any_opt_int_free (struct any _n) {
+  struct any_opt_int *n = _n.d;
+  __THE_1_opt_int_free((int32_t *) n->d);
+  free(n);
+}
+struct any any_opt_ref_int_alloc (int32_t **d) {
+  size_t l = sizeof(struct any_opt_ref_int);
+  struct any_opt_ref_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_opt_ref_int, r, l, &any_opt_ref_int_copy, &any_opt_ref_int_free};
+}
+struct any any_opt_ref_int_copy (const struct any n) {
+  struct any_opt_ref_int *o = n.d;
+  struct any_opt_ref_int *r = alloc(n.l);
+  r->d = __THE_1_opt_ref_int_copy(o->d);
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void any_opt_ref_int_free (struct any _n) {
+  struct any_opt_ref_int *n = _n.d;
+  __THE_1_opt_ref_int_free((int32_t **) n->d);
+  free(n);
+}
+
+int main () {
+  const int32_t __THE_0_testInt_0 = 1;
+  const int32_t *__THE_0_testRef_0 = &__THE_0_testInt_0;
+  const int32_t *__THE_0_testOpt_0 = __THE_1_opt_int_alloc(1);
+  const int32_t **__THE_0_testOptRef_0 = __THE_1_opt_ref_int_alloc(__THE_0_testRef_0);
+  const struct any __THE_0_anyOpt_0 = any_opt_int_alloc(__THE_1_opt_int_copy(__THE_0_testOpt_0));
+  const struct any __THE_0_anyOptRef_0 = any_opt_ref_int_alloc(__THE_1_opt_ref_int_copy(__THE_0_testOptRef_0));
+  any_free((struct any) __THE_0_anyOptRef_0);
+  any_free((struct any) __THE_0_anyOpt_0);
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_testOptRef_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_testOpt_0);
+}
+======= flags =======
+======= stdout =======

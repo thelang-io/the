@@ -1,0 +1,81 @@
+======= stdin =======
+main {
+  testInt := 1
+  testRefInt := ref testInt
+  optRefInt: (ref int)?
+  optRefIntNilInit: (ref int)? = nil
+  optIntFromRefValInit: int? = ref testInt
+  optRefIntValInit: (ref int)? = ref testInt
+  optIntFromRefValCopy: int? = testRefInt
+  optRefIntValCopy: (ref int)? = testRefInt
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void *alloc (size_t);
+int32_t **__THE_1_opt_ref_int_alloc (int32_t *);
+void __THE_1_opt_ref_int_free (int32_t **);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+void __THE_1_opt_int_free (int32_t *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+int32_t **__THE_1_opt_ref_int_alloc (int32_t *n) {
+  int32_t **r = alloc(sizeof(int32_t *));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_ref_int_free (int32_t **n) {
+  if (n == NULL) return;
+  free(n);
+}
+int32_t *__THE_1_opt_int_alloc (int32_t n) {
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_int_free (int32_t *n) {
+  if (n == NULL) return;
+  free(n);
+}
+
+int main () {
+  const int32_t __THE_0_testInt_0 = 1;
+  const int32_t *__THE_0_testRefInt_0 = &__THE_0_testInt_0;
+  const int32_t **__THE_0_optRefInt_0 = NULL;
+  const int32_t **__THE_0_optRefIntNilInit_0 = NULL;
+  const int32_t *__THE_0_optIntFromRefValInit_0 = __THE_1_opt_int_alloc(__THE_0_testInt_0);
+  const int32_t **__THE_0_optRefIntValInit_0 = __THE_1_opt_ref_int_alloc(&__THE_0_testInt_0);
+  const int32_t *__THE_0_optIntFromRefValCopy_0 = __THE_1_opt_int_alloc(*__THE_0_testRefInt_0);
+  const int32_t **__THE_0_optRefIntValCopy_0 = __THE_1_opt_ref_int_alloc(__THE_0_testRefInt_0);
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntValCopy_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_optIntFromRefValCopy_0);
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntValInit_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_optIntFromRefValInit_0);
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntNilInit_0);
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefInt_0);
+}
+======= flags =======
+======= stdout =======

@@ -1,0 +1,68 @@
+======= stdin =======
+main {
+  testInt1 := 1
+  testInt2 := 2
+  loop i := ref testInt1; i != ref testInt2; i = (ref testInt2) {
+  }
+
+  mut a := ref testInt1
+  loop ; a != ref testInt2; a = (ref testInt2) {
+  }
+
+  mut b := ref testInt1
+  loop ; b != ref testInt2; {
+    b = ref testInt2
+  }
+
+  mut c := ref testInt1
+  loop {
+    if c == (ref testInt2) {
+      break
+    }
+
+    c = ref testInt2
+  }
+
+  loop d := ref testInt1; d != ref testInt2; {
+    d = ref testInt2
+  }
+
+  loop e := ref testInt1;; e = (ref testInt2) {
+    if e == (ref testInt2) {
+      break
+    }
+  }
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_testInt1_0 = 1;
+  const int32_t __THE_0_testInt2_0 = 2;
+  for (int32_t *__THE_0_i_0 = &__THE_0_testInt1_0; *__THE_0_i_0 != __THE_0_testInt2_0; __THE_0_i_0 = (&__THE_0_testInt2_0)) {
+  }
+  int32_t *__THE_0_a_0 = &__THE_0_testInt1_0;
+  for (; *__THE_0_a_0 != __THE_0_testInt2_0; __THE_0_a_0 = (&__THE_0_testInt2_0)) {
+  }
+  int32_t *__THE_0_b_0 = &__THE_0_testInt1_0;
+  while (*__THE_0_b_0 != __THE_0_testInt2_0) {
+    __THE_0_b_0 = &__THE_0_testInt2_0;
+  }
+  int32_t *__THE_0_c_0 = &__THE_0_testInt1_0;
+  while (1) {
+    if (*__THE_0_c_0 == (__THE_0_testInt2_0)) {
+      break;
+    }
+    __THE_0_c_0 = &__THE_0_testInt2_0;
+  }
+  for (int32_t *__THE_0_d_0 = &__THE_0_testInt1_0; *__THE_0_d_0 != __THE_0_testInt2_0;) {
+    __THE_0_d_0 = &__THE_0_testInt2_0;
+  }
+  for (int32_t *__THE_0_e_0 = &__THE_0_testInt1_0;; __THE_0_e_0 = (&__THE_0_testInt2_0)) {
+    if (*__THE_0_e_0 == (__THE_0_testInt2_0)) {
+      break;
+    }
+  }
+}
+======= flags =======
+======= stdout =======

@@ -1,0 +1,27 @@
+======= stdin =======
+main {
+  v := 1
+  a: ref int = ref v
+  mut b := a
+  b = a
+  mut c: ref int = ref v
+  c = b
+  e := true ? a : b
+  f := true ? c : (b = c)
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_v_0 = 1;
+  const int32_t *__THE_0_a_0 = &__THE_0_v_0;
+  int32_t *__THE_0_b_0 = __THE_0_a_0;
+  __THE_0_b_0 = __THE_0_a_0;
+  int32_t *__THE_0_c_0 = &__THE_0_v_0;
+  __THE_0_c_0 = __THE_0_b_0;
+  const int32_t *__THE_0_e_0 = true ? __THE_0_a_0 : __THE_0_b_0;
+  const int32_t *__THE_0_f_0 = true ? __THE_0_c_0 : (__THE_0_b_0 = __THE_0_c_0);
+}
+======= flags =======
+======= stdout =======

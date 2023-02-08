@@ -24,6 +24,10 @@ Type *TypeMap::alias (const std::string &name, Type *type) {
 }
 
 Type *TypeMap::arrayOf (Type *elementType) {
+  if (elementType->isAlias()) {
+    return this->arrayOf(std::get<TypeAlias>(elementType->body).type);
+  }
+
   for (const auto &item : this->_items) {
     if (item->isArray() && std::get<TypeArray>(item->body).elementType->matchStrict(elementType)) {
       return item.get();
@@ -548,6 +552,10 @@ Type *TypeMap::obj (const std::string &name, const std::string &codeName, const 
 }
 
 Type *TypeMap::opt (Type *type) {
+  if (type->isAlias()) {
+    return this->opt(std::get<TypeAlias>(type->body).type);
+  }
+
   for (const auto &item : this->_items) {
     if (!item->builtin && item->isOpt() && std::get<TypeOptional>(item->body).type->matchStrict(type)) {
       return item.get();
@@ -564,6 +572,10 @@ Type *TypeMap::opt (Type *type) {
 }
 
 Type *TypeMap::ref (Type *refType) {
+  if (refType->isAlias()) {
+    return this->ref(std::get<TypeAlias>(refType->body).type);
+  }
+
   for (const auto &item : this->_items) {
     if (!item->builtin && item->isRef() && std::get<TypeRef>(item->body).refType->matchStrict(refType)) {
       return item.get();

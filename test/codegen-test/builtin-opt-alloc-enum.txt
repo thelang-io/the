@@ -1,0 +1,73 @@
+======= stdin =======
+enum Color {
+  Red,
+  Green,
+  Blue
+}
+
+main {
+  testEnum := Color.Red
+  optEnum: Color?
+  optEnumNilInit: Color? = nil
+  optEnumValInit: Color? = Color.Red
+  optEnumValCopy: Color? = testEnum
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+enum __THE_1_Color_0 {
+  __THE_0_ColorSDRed_0,
+  __THE_0_ColorSDGreen_0,
+  __THE_0_ColorSDBlue_0
+};
+
+void *alloc (size_t);
+enum __THE_1_Color_0 *__THE_1_opt_Color_alloc (enum __THE_1_Color_0);
+void __THE_1_opt_Color_free (enum __THE_1_Color_0 *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+enum __THE_1_Color_0 *__THE_1_opt_Color_alloc (enum __THE_1_Color_0 n) {
+  enum __THE_1_Color_0 *r = alloc(sizeof(enum __THE_1_Color_0));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_Color_free (enum __THE_1_Color_0 *n) {
+  if (n == NULL) return;
+  free(n);
+}
+
+int main () {
+  const enum __THE_1_Color_0 __THE_0_testEnum_0 = __THE_0_ColorSDRed_0;
+  const enum __THE_1_Color_0 *__THE_0_optEnum_0 = NULL;
+  const enum __THE_1_Color_0 *__THE_0_optEnumNilInit_0 = NULL;
+  const enum __THE_1_Color_0 *__THE_0_optEnumValInit_0 = __THE_1_opt_Color_alloc(__THE_0_ColorSDRed_0);
+  const enum __THE_1_Color_0 *__THE_0_optEnumValCopy_0 = __THE_1_opt_Color_alloc(__THE_0_testEnum_0);
+  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnumValCopy_0);
+  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnumValInit_0);
+  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnumNilInit_0);
+  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnum_0);
+}
+======= flags =======
+======= stdout =======
