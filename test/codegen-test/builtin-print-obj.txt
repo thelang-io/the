@@ -1,0 +1,323 @@
+======= stdin =======
+obj Test {
+  t: bool
+  b: byte
+  c: char
+  f1: f32
+  f2: f64
+  f: float
+  i1: i8
+  i2: i16
+  i3: i32
+  i4: i64
+  i: int
+  u1: u8
+  u2: u16
+  u3: u32
+  u4: u64
+}
+
+main {
+  v1: Test
+  v2 := Test{}
+
+  v3 := Test{
+    t: true,
+    b: 1,
+    c: 'c',
+    f1: 2,
+    f2: 3,
+    f: 4,
+    i1: 5,
+    i2: 6,
+    i3: 7,
+    i4: 8,
+    i: 9,
+    u1: 10,
+    u2: 11,
+    u3: 12,
+    u4: 13
+  }
+
+  print(v1, v2, v3)
+  print(v1)
+  print(v2)
+  print(v3)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  const bool __THE_0_t;
+  const unsigned char __THE_0_b;
+  const char __THE_0_c;
+  const float __THE_0_f1;
+  const double __THE_0_f2;
+  const double __THE_0_f;
+  const int8_t __THE_0_i1;
+  const int16_t __THE_0_i2;
+  const int32_t __THE_0_i3;
+  const int64_t __THE_0_i4;
+  const int32_t __THE_0_i;
+  const uint8_t __THE_0_u1;
+  const uint16_t __THE_0_u2;
+  const uint32_t __THE_0_u3;
+  const uint64_t __THE_0_u4;
+};
+
+void *alloc (size_t);
+struct str bool_str (bool);
+struct str byte_str (unsigned char);
+struct str char_str (char);
+struct str f32_str (float);
+struct str f64_str (double);
+struct str float_str (double);
+struct str i8_str (int8_t);
+struct str i16_str (int16_t);
+struct str i32_str (int32_t);
+struct str i64_str (int64_t);
+struct str int_str (int32_t);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+void str_free (struct str);
+struct str u8_str (uint8_t);
+struct str u16_str (uint16_t);
+struct str u32_str (uint32_t);
+struct str u64_str (uint64_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, uint8_t, uint16_t, uint32_t, uint64_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str bool_str (bool t) {
+  return str_alloc(t ? "true" : "false");
+}
+struct str byte_str (unsigned char x) {
+  char buf[512];
+  sprintf(buf, "%u", x);
+  return str_alloc(buf);
+}
+struct str char_str (char c) {
+  char buf[2] = {c, '\0'};
+  return str_alloc(buf);
+}
+struct str f32_str (float f) {
+  char buf[512];
+  sprintf(buf, "%f", f);
+  return str_alloc(buf);
+}
+struct str f64_str (double f) {
+  char buf[512];
+  sprintf(buf, "%f", f);
+  return str_alloc(buf);
+}
+struct str float_str (double f) {
+  char buf[512];
+  sprintf(buf, "%f", f);
+  return str_alloc(buf);
+}
+struct str i8_str (int8_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId8, d);
+  return str_alloc(buf);
+}
+struct str i16_str (int16_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId16, d);
+  return str_alloc(buf);
+}
+struct str i32_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+struct str i64_str (int64_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId64, d);
+  return str_alloc(buf);
+}
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str u8_str (uint8_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu8, d);
+  return str_alloc(buf);
+}
+struct str u16_str (uint16_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu16, d);
+  return str_alloc(buf);
+}
+struct str u32_str (uint32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu32, d);
+  return str_alloc(buf);
+}
+struct str u64_str (uint64_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu64, d);
+  return str_alloc(buf);
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (bool __THE_0_t, unsigned char __THE_0_b, char __THE_0_c, float __THE_0_f1, double __THE_0_f2, double __THE_0_f, int8_t __THE_0_i1, int16_t __THE_0_i2, int32_t __THE_0_i3, int64_t __THE_0_i4, int32_t __THE_0_i, uint8_t __THE_0_u1, uint16_t __THE_0_u2, uint32_t __THE_0_u3, uint64_t __THE_0_u4) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {__THE_0_t, __THE_0_b, __THE_0_c, __THE_0_f1, __THE_0_f2, __THE_0_f, __THE_0_i1, __THE_0_i2, __THE_0_i3, __THE_0_i4, __THE_0_i, __THE_0_u1, __THE_0_u2, __THE_0_u3, __THE_0_u4};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {o->__THE_0_t, o->__THE_0_b, o->__THE_0_c, o->__THE_0_f1, o->__THE_0_f2, o->__THE_0_f, o->__THE_0_i1, o->__THE_0_i2, o->__THE_0_i3, o->__THE_0_i4, o->__THE_0_i, o->__THE_0_u1, o->__THE_0_u2, o->__THE_0_u3, o->__THE_0_u4};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
+  free(o);
+}
+struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *o) {
+  struct str r = str_alloc("Test{");
+  r = str_concat_cstr(r, "t: ");
+  r = str_concat_str(r, bool_str(o->__THE_0_t));
+  r = str_concat_cstr(r, ", b: ");
+  r = str_concat_str(r, byte_str(o->__THE_0_b));
+  r = str_concat_cstr(r, ", c: ");
+  r = str_concat_str(r, char_str(o->__THE_0_c));
+  r = str_concat_cstr(r, ", f1: ");
+  r = str_concat_str(r, f32_str(o->__THE_0_f1));
+  r = str_concat_cstr(r, ", f2: ");
+  r = str_concat_str(r, f64_str(o->__THE_0_f2));
+  r = str_concat_cstr(r, ", f: ");
+  r = str_concat_str(r, float_str(o->__THE_0_f));
+  r = str_concat_cstr(r, ", i1: ");
+  r = str_concat_str(r, i8_str(o->__THE_0_i1));
+  r = str_concat_cstr(r, ", i2: ");
+  r = str_concat_str(r, i16_str(o->__THE_0_i2));
+  r = str_concat_cstr(r, ", i3: ");
+  r = str_concat_str(r, i32_str(o->__THE_0_i3));
+  r = str_concat_cstr(r, ", i4: ");
+  r = str_concat_str(r, i64_str(o->__THE_0_i4));
+  r = str_concat_cstr(r, ", i: ");
+  r = str_concat_str(r, int_str(o->__THE_0_i));
+  r = str_concat_cstr(r, ", u1: ");
+  r = str_concat_str(r, u8_str(o->__THE_0_u1));
+  r = str_concat_cstr(r, ", u2: ");
+  r = str_concat_str(r, u16_str(o->__THE_0_u2));
+  r = str_concat_cstr(r, ", u3: ");
+  r = str_concat_str(r, u32_str(o->__THE_0_u3));
+  r = str_concat_cstr(r, ", u4: ");
+  r = str_concat_str(r, u64_str(o->__THE_0_u4));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o);
+  return str_concat_cstr(r, "}");
+}
+
+int main () {
+  const struct __THE_1_Test_0 *__THE_0_v1_0 = __THE_1_Test_0_alloc(false, 0, '\0', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  const struct __THE_1_Test_0 *__THE_0_v2_0 = __THE_1_Test_0_alloc(false, 0, '\0', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  const struct __THE_1_Test_0 *__THE_0_v3_0 = __THE_1_Test_0_alloc(true, 1, 'c', 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+  print(stdout, "szszsz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_v1_0)), " ", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_v2_0)), " ", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_v3_0)), THE_EOL);
+  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_v1_0)), THE_EOL);
+  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_v2_0)), THE_EOL);
+  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_v3_0)), THE_EOL);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_v3_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_v2_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_v1_0);
+}
+======= flags =======
+======= stdout =======
+Test{t: false, b: 0, c: , f1: 0.000000, f2: 0.000000, f: 0.000000, i1: 0, i2: 0, i3: 0, i4: 0, i: 0, u1: 0, u2: 0, u3: 0, u4: 0} Test{t: false, b: 0, c: , f1: 0.000000, f2: 0.000000, f: 0.000000, i1: 0, i2: 0, i3: 0, i4: 0, i: 0, u1: 0, u2: 0, u3: 0, u4: 0} Test{t: true, b: 1, c: c, f1: 2.000000, f2: 3.000000, f: 4.000000, i1: 5, i2: 6, i3: 7, i4: 8, i: 9, u1: 10, u2: 11, u3: 12, u4: 13}
+Test{t: false, b: 0, c: , f1: 0.000000, f2: 0.000000, f: 0.000000, i1: 0, i2: 0, i3: 0, i4: 0, i: 0, u1: 0, u2: 0, u3: 0, u4: 0}
+Test{t: false, b: 0, c: , f1: 0.000000, f2: 0.000000, f: 0.000000, i1: 0, i2: 0, i3: 0, i4: 0, i: 0, u1: 0, u2: 0, u3: 0, u4: 0}
+Test{t: true, b: 1, c: c, f1: 2.000000, f2: 3.000000, f: 4.000000, i1: 5, i2: 6, i3: 7, i4: 8, i: 9, u1: 10, u2: 11, u3: 12, u4: 13}

@@ -206,6 +206,17 @@ INSTANTIATE_TEST_SUITE_P(BuiltinGlobal, CodegenPassTest, testing::Values(
   "builtin-exit-one",
   "builtin-exit-zero",
   "builtin-print",
+  "builtin-print-alias",
+  "builtin-print-any",
+  "builtin-print-buffer",
+  "builtin-print-enum",
+  "builtin-print-fn",
+  "builtin-print-obj",
+  "builtin-print-opt",
+  "builtin-print-ref",
+  "builtin-print-str",
+  "builtin-print-union",
+  "builtin-print-args",
   "builtin-print-to",
   "builtin-sleep-sync"
 ));

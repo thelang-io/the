@@ -1,22 +1,11 @@
 ======= stdin =======
 main {
-  t: bool = true
-  b: byte = 27
-  c: char = 'b'
-  f1: f32 = 28
-  f2: f64 = 29
-  f: float = 30
-  i1: i8 = 31
-  i2: i16 = 32
-  i3: i32 = 33
-  i4: i64 = 34
-  i: int = 35
-  u1: u8 = 36
-  u2: u16 = 37
-  u3: u32 = 38
-  u4: u64 = 39
+  buf1: buffer_Buffer = "".toBuffer()
+  buf2: buffer_Buffer = "Aaron".toBuffer()
 
-  print(t, b, c, f1, f2, f, i1, i2, i3, i4, i, u1, u2, u3, u4)
+  print(buf1, buf2)
+  print(buf1)
+  print(buf2)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -35,18 +24,53 @@ main {
 
 #include <inttypes.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
 struct str {
   char *d;
   size_t l;
 };
 
+void *alloc (size_t);
+struct buffer buffer_copy (const struct buffer);
+void buffer_free (struct buffer);
+struct str buffer_str (struct buffer);
 void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
 void str_free (struct str);
+struct buffer str_to_buffer (struct str);
 
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct buffer buffer_copy (const struct buffer o) {
+  unsigned char *d = alloc(o.l);
+  memcpy(d, o.d, o.l);
+  return (struct buffer) {d, o.l};
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
+struct str buffer_str (struct buffer b) {
+  size_t l = 8 + (b.l * 3);
+  char *d = alloc(l);
+  memcpy(d, "[Buffer", 7);
+  for (size_t i = 0; i < b.l; i++) sprintf(d + 7 + (i * 3), " %02x", b.d[i]);
+  d[l - 1] = ']';
+  free(b.d);
+  return (struct str) {d, l};
+}
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
@@ -76,28 +100,30 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
 void str_free (struct str s) {
   free(s.d);
 }
+struct buffer str_to_buffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
+}
 
 int main () {
-  const bool __THE_0_t_0 = true;
-  const unsigned char __THE_0_b_0 = 27;
-  const char __THE_0_c_0 = 'b';
-  const float __THE_0_f1_0 = 28;
-  const double __THE_0_f2_0 = 29;
-  const double __THE_0_f_0 = 30;
-  const int8_t __THE_0_i1_0 = 31;
-  const int16_t __THE_0_i2_0 = 32;
-  const int32_t __THE_0_i3_0 = 33;
-  const int64_t __THE_0_i4_0 = 34;
-  const int32_t __THE_0_i_0 = 35;
-  const uint8_t __THE_0_u1_0 = 36;
-  const uint16_t __THE_0_u2_0 = 37;
-  const uint32_t __THE_0_u3_0 = 38;
-  const uint64_t __THE_0_u4_0 = 39;
-  print(stdout, "tzbzczezgzfzhzjzkzlzizvzwzuzyz", __THE_0_t_0, " ", __THE_0_b_0, " ", __THE_0_c_0, " ", __THE_0_f1_0, " ", __THE_0_f2_0, " ", __THE_0_f_0, " ", __THE_0_i1_0, " ", __THE_0_i2_0, " ", __THE_0_i3_0, " ", __THE_0_i4_0, " ", __THE_0_i_0, " ", __THE_0_u1_0, " ", __THE_0_u2_0, " ", __THE_0_u3_0, " ", __THE_0_u4_0, THE_EOL);
+  const struct buffer __THE_0_buf1_0 = str_to_buffer(str_alloc(""));
+  const struct buffer __THE_0_buf2_0 = str_to_buffer(str_alloc("Aaron"));
+  print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_buf1_0)), " ", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL);
+  print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf1_0)), THE_EOL);
+  print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL);
+  buffer_free((struct buffer) __THE_0_buf2_0);
+  buffer_free((struct buffer) __THE_0_buf1_0);
 }
 ======= flags =======
 ======= stdout =======
-true 27 b 28.000000 29.000000 30.000000 31 32 33 34 35 36 37 38 39
+[Buffer] [Buffer 41 61 72 6f 6e]
+[Buffer]
+[Buffer 41 61 72 6f 6e]
