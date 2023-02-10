@@ -181,4 +181,6 @@ struct ASTExprUnary {
   bool prefix = false;
 };
 
+std::string exprLitTypeStr (ASTExprLitType);
+
 #endif

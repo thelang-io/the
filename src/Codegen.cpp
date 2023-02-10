@@ -2107,18 +2107,19 @@ std::string Codegen::_exprCallDefaultArg (const CodegenTypeInfo &typeInfo) {
 }
 
 std::string Codegen::_exprCallPrintArg (const CodegenTypeInfo &typeInfo, const ASTNodeExpr &nodeExpr) {
-  if (
+  if (typeInfo.type->isStr() && nodeExpr.isLit()) {
+    return nodeExpr.litBody();
+  } else if (
     typeInfo.type->isAny() ||
     typeInfo.type->isArray() ||
     typeInfo.type->isEnum() ||
     typeInfo.type->isFn() ||
     typeInfo.type->isObj() ||
     typeInfo.type->isOpt() ||
+    typeInfo.type->isStr() ||
     typeInfo.type->isUnion()
   ) {
-    return this->_genStrFn(typeInfo.type, this->_nodeExpr(nodeExpr, typeInfo.type), std::nullopt, std::nullopt, false);
-  } else if (typeInfo.type->isStr() && nodeExpr.isLit()) {
-    return nodeExpr.litBody();
+    return this->_genStrFn(typeInfo.type, this->_nodeExpr(nodeExpr, typeInfo.type), std::nullopt, std::nullopt, false, false);
   }
 
   return this->_nodeExpr(nodeExpr, typeInfo.type);
@@ -2555,10 +2556,7 @@ std::string Codegen::_genReallocFn (
     this->state.entities = entityEntities;
   }
 
-  if (type->isAlias()) {
-    // todo test
-    result = this->_genReallocFn(std::get<TypeAlias>(type->body).type, leftCode, rightCode, entityBuiltins, entityEntities);
-  } else if (type->isAny()) {
+  if (type->isAny()) {
     this->_activateBuiltin("fnAnyRealloc");
     result = leftCode + " = any_realloc(" + leftCode + ", " + rightCode + ")";
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
@@ -2629,7 +2627,6 @@ std::string Codegen::_genStrFn (
     this->_activateBuiltin("fnStrEscape");
     result = "str_escape(" + result + ")";
   } else if (type->isStr()) {
-    // todo test line
     result = copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result;
   } else {
     auto typeInfo = this->_typeInfo(type);
@@ -2932,6 +2929,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*node.body)) {
+    // todo test
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
@@ -3839,6 +3837,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {
+    // todo test
     auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
     auto exprIsExprCode = this->_nodeExpr(exprIs.expr, exprIs.expr.type, true);
     auto exprIsTypeDef = this->_typeDef(exprIs.type);
@@ -4797,7 +4796,6 @@ std::string Codegen::_typeNameUnion (const Type *type) {
 
   for (const auto &subType : subTypes) {
     auto subTypeInfo = this->_typeInfo(subType);
-    // todo test line
     auto varArgSubTypeCode = subType->isSmallForVarArg()
       ? subType->isF32() ? "double" : "int"
       : subTypeInfo.typeCodeTrimmed;

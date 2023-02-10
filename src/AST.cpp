@@ -1190,7 +1190,12 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     } else if (exprLit.body.type == TK_LIT_CHAR) {
       return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("char"));
     } else if (exprLit.body.type == TK_LIT_FLOAT) {
-      if (targetType == nullptr || !this->typeMap.get("f64")->matchNice(targetType)) {
+      if (
+        targetType == nullptr ||
+        !this->typeMap.get("f64")->matchNice(targetType) ||
+        Type::actual(targetType)->isAny() ||
+        Type::actual(targetType)->isUnion() // todo test expr-cond-union
+      ) {
         return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("float"));
       } else {
         return this->_wrapNodeExprType(stmtExpr, targetType, targetType);
@@ -1201,7 +1206,12 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       exprLit.body.type == TK_LIT_INT_HEX ||
       exprLit.body.type == TK_LIT_INT_OCT
     ) {
-      if (targetType == nullptr || (!this->typeMap.get("i64")->matchNice(targetType) && !this->typeMap.get("u64")->matchNice(targetType))) {
+      if (
+        targetType == nullptr ||
+        (!this->typeMap.get("i64")->matchNice(targetType) && !this->typeMap.get("u64")->matchNice(targetType)) ||
+        Type::actual(targetType)->isAny() ||
+        Type::actual(targetType)->isUnion() // todo test expr-cond-union
+      ) {
         return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("int"));
       } else {
         return this->_wrapNodeExprType(stmtExpr, targetType, targetType);

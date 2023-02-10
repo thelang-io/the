@@ -221,6 +221,10 @@ INSTANTIATE_TEST_SUITE_P(BuiltinGlobal, CodegenPassTest, testing::Values(
   "builtin-sleep-sync"
 ));
 
+INSTANTIATE_TEST_SUITE_P(BuiltinAlias, CodegenPassTest, testing::Values(
+  // todo
+));
+
 INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
   "builtin-any-alloc",
   "builtin-any-alloc-alias",
@@ -533,6 +537,11 @@ INSTANTIATE_TEST_SUITE_P(BuiltinU64, CodegenPassTest, testing::Values(
   "builtin-u64-str-root"
 ));
 
+INSTANTIATE_TEST_SUITE_P(BuiltinUnion, CodegenPassTest, testing::Values(
+  "builtin-union-alloc"
+  // todo
+));
+
 INSTANTIATE_TEST_SUITE_P(BuiltinURL, CodegenPassTest, testing::Values(
   "builtin-url-parse",
   "builtin-url-parse-root"
@@ -827,11 +836,6 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
   "node-loop-complex"
 ));
 
-INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
-  "node-return",
-  "node-return-scope-cleanup"
-));
-
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl",
   "node-obj-decl-default",
@@ -860,6 +864,11 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-method-forward-decl",
   "node-obj-decl-method-forward-decl-with-fn",
   "node-obj-decl-method-variadic"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
+  "node-return",
+  "node-return-scope-cleanup"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(

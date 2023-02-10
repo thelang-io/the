@@ -92,6 +92,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-cond-type-casts",
   "expr-is",
   "expr-is-type-casts",
+  "expr-is-type-casts2",
   "expr-lit",
   "expr-lit-nil",
   "expr-obj",
