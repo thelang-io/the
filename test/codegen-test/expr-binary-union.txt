@@ -2,8 +2,19 @@
 main {
   a1: int | str = 1
   a2: int | str = "test"
+
   b := a1 == a2
   c := a1 != a2
+
+  d := a1 == 1
+  e := 1 == a1
+  f := a1 == "test"
+  g := "test" == a1
+
+  m := a2 != 1
+  n := 1 != a2
+  o := a2 != "test"
+  p := "test" != a2
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -125,6 +136,14 @@ int main () {
   const struct __THE_1_union$0 __THE_0_a2_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc("test"));
   const bool __THE_0_b_0 = __THE_1_union$0_eq(__THE_1_union$0_copy(__THE_0_a1_0), __THE_1_union$0_copy(__THE_0_a2_0));
   const bool __THE_0_c_0 = __THE_1_union$0_ne(__THE_1_union$0_copy(__THE_0_a1_0), __THE_1_union$0_copy(__THE_0_a2_0));
+  const bool __THE_0_d_0 = __THE_1_union$0_eq(__THE_1_union$0_copy(__THE_0_a1_0), __THE_1_union$0_alloc(TYPE_int, 1));
+  const bool __THE_0_e_0 = __THE_1_union$0_eq(__THE_1_union$0_alloc(TYPE_int, 1), __THE_1_union$0_copy(__THE_0_a1_0));
+  const bool __THE_0_f_0 = __THE_1_union$0_eq(__THE_1_union$0_copy(__THE_0_a1_0), __THE_1_union$0_alloc(TYPE_str, str_alloc("test")));
+  const bool __THE_0_g_0 = __THE_1_union$0_eq(__THE_1_union$0_alloc(TYPE_str, str_alloc("test")), __THE_1_union$0_copy(__THE_0_a1_0));
+  const bool __THE_0_m_0 = __THE_1_union$0_ne(__THE_1_union$0_copy(__THE_0_a2_0), __THE_1_union$0_alloc(TYPE_int, 1));
+  const bool __THE_0_n_0 = __THE_1_union$0_ne(__THE_1_union$0_alloc(TYPE_int, 1), __THE_1_union$0_copy(__THE_0_a2_0));
+  const bool __THE_0_o_0 = __THE_1_union$0_ne(__THE_1_union$0_copy(__THE_0_a2_0), __THE_1_union$0_alloc(TYPE_str, str_alloc("test")));
+  const bool __THE_0_p_0 = __THE_1_union$0_ne(__THE_1_union$0_alloc(TYPE_str, str_alloc("test")), __THE_1_union$0_copy(__THE_0_a2_0));
   __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_a2_0);
   __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_a1_0);
 }

@@ -129,7 +129,7 @@ std::string Codegen::getEnvVar (const std::string &name) {
     free(buf);
     return result;
   #else
-    const char *result = getenv(name.c_str());
+    const char *result = std::getenv(name.c_str());
     return result == nullptr ? "" : result;
   #endif
 }
@@ -2051,7 +2051,6 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
       }
     }
   } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {
-    // todo test
     auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
 
     if (std::holds_alternative<ASTExprAccess>(*exprIs.expr.body)) {
@@ -2061,6 +2060,10 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
       if (exprRealType->isAny() || exprRealType->isOpt() || exprRealType->isUnion()) {
         auto exprBinaryLeftAccessCode = this->_nodeExpr(exprAccess, exprRealType, true);
         bodyTypeCasts[exprBinaryLeftAccessCode] = exprIs.type;
+
+        if (exprRealType->isUnion()) {
+          altTypeCasts[exprBinaryLeftAccessCode] = this->ast->typeMap.unionSub(exprRealType, exprIs.type);
+        }
       }
     } else if (
       std::holds_alternative<ASTExprAssign>(*exprIs.expr.body) &&
@@ -2072,6 +2075,10 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
       if (exprRealType->isAny() || exprRealType->isOpt() || exprRealType->isUnion()) {
         auto exprBinaryLeftAccessCode = this->_nodeExpr(exprAccess, exprRealType, true);
         bodyTypeCasts[exprBinaryLeftAccessCode] = exprIs.type;
+
+        if (exprRealType->isUnion()) {
+          altTypeCasts[exprBinaryLeftAccessCode] = this->ast->typeMap.unionSub(exprRealType, exprIs.type);
+        }
       }
     }
   }
@@ -2125,6 +2132,7 @@ std::string Codegen::_exprCallPrintArg (const CodegenTypeInfo &typeInfo, const A
   return this->_nodeExpr(nodeExpr, typeInfo.type);
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::string Codegen::_exprCallPrintArgSign (const CodegenTypeInfo &typeInfo, const ASTNodeExpr &nodeExpr) {
   if (
     typeInfo.type->isAny() ||
@@ -2545,16 +2553,11 @@ std::string Codegen::_genReallocFn (
   Type *type,
   const std::string &leftCode,
   const std::string &rightCode,
-  const std::optional<std::vector<std::string> *> &entityBuiltins,
-  const std::optional<std::vector<std::string> *> &entityEntities
+  [[maybe_unused]] const std::optional<std::vector<std::string> *> &entityBuiltins,
+  [[maybe_unused]] const std::optional<std::vector<std::string> *> &entityEntities
 ) {
   auto initialState = this->state;
   auto result = std::string();
-
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state.builtins = entityBuiltins;
-    this->state.entities = entityEntities;
-  }
 
   if (type->isAny()) {
     this->_activateBuiltin("fnAnyRealloc");
@@ -2576,10 +2579,6 @@ std::string Codegen::_genReallocFn (
   } else if (type->isStr()) {
     this->_activateBuiltin("fnStrRealloc");
     result = leftCode + " = str_realloc(" + leftCode + ", " + rightCode + ")";
-  }
-
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state = initialState;
   }
 
   return result;
@@ -2929,7 +2928,6 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*node.body)) {
-    // todo test
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
@@ -2985,28 +2983,28 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = objCode;
 
         if (objVar->type->isAny() && !objType->isAny()) {
-          // todo test
           auto typeName = this->_typeNameAny(objType);
           this->_activateEntity(typeName);
           code = "((struct " + typeName + " *) " + code + ".d)->d";
         } else if (objVar->type->isOpt() && !objType->isOpt()) {
           code = "*" + code;
+        } else if (objVar->type->isUnion() && (!objType->isUnion() || objVar->type->hasSubType(objType))) {
+          code = code + ".v" + this->_typeDefIdx(objType);
         }
 
-        if (this->state.contextVars.contains(objCode) && (nodeExpr.type->isRefExt() || !targetType->isRefExt())) {
+        if (this->state.contextVars.contains(objCode) && (nodeExpr.type->isRef() || !targetType->isRef())) {
           code = "*" + code;
         }
 
-        if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRefExt() && targetType->isRefExt()) {
+        if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRef() && targetType->isRef()) {
           code = "&" + code;
-        } else if (
-          (nodeExpr.type->isRefExt() && !targetType->isAny() && !targetType->isRefExt()) ||
-          (objType->isRef() && targetType->isAny())
-        ) {
+        } else if (nodeExpr.type->isRefOf(targetType) && !targetType->isRef()) {
           code = "*" + code;
         }
 
-        if (!root && (!objType->isRef() || !targetType->isRef())) {
+        auto shouldCopyVar = !objType->isRef() || (!targetType->isRef() && !targetType->hasSubType(objType));
+
+        if (!root && shouldCopyVar) {
           code = this->_genCopyFn(Type::real(objType), code);
         }
       }
@@ -3314,7 +3312,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
       (Type::real(exprBinary.left.type)->isUnion() || Type::real(exprBinary.right.type)->isUnion())
     )) {
-      // todo test line
       auto unionType = Type::real(Type::real(exprBinary.left.type)->isUnion() ? exprBinary.left.type : exprBinary.right.type);
       auto typeInfo = this->_typeInfo(unionType);
       auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
@@ -3325,7 +3322,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
       (Type::real(exprBinary.left.type)->isUnion() || Type::real(exprBinary.right.type)->isUnion())
     )) {
-      // todo test line
       auto unionType = Type::real(Type::real(exprBinary.left.type)->isUnion() ? exprBinary.left.type : exprBinary.right.type);
       auto typeInfo = this->_typeInfo(unionType);
       auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType);
@@ -3334,8 +3330,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       this->_activateEntity(typeInfo.realTypeName + "_ne");
       code = typeInfo.realTypeName + "_ne(" + leftCode + ", " + rightCode + ")";
     } else {
-      auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(nodeExpr.type));
-      auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(nodeExpr.type));
+      auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type));
+      auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type));
       auto opCode = std::string();
 
       if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
@@ -3777,7 +3773,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       if (
         fn.isMethod &&
         this->state.contextVars.contains(fnName) &&
-        (nodeExpr.type->isRefExt() || !targetType->isRefExt())
+        (nodeExpr.type->isRef() || !targetType->isRef())
       ) {
         fnName = "*" + fnName;
       }
@@ -3837,7 +3833,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {
-    // todo test
     auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
     auto exprIsExprCode = this->_nodeExpr(exprIs.expr, exprIs.expr.type, true);
     auto exprIsTypeDef = this->_typeDef(exprIs.type);
@@ -3872,10 +3867,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
     auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
-    auto typeInfo = this->_typeInfo(exprObj.type);
+    auto typeInfo = this->_typeInfo(Type::actual(exprObj.type));
     auto fieldsCode = std::string();
 
-    for (const auto &typeField : exprObj.type->fields) {
+    for (const auto &typeField : typeInfo.type->fields) {
       if (typeField.builtin || typeField.method) {
         continue;
       }
@@ -5185,27 +5180,29 @@ std::string Codegen::_wrapNode ([[maybe_unused]] const ASTNode &node, const std:
 }
 
 std::string Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const std::string &code) {
+  auto realTargetType = Type::real(targetType);
+  auto realNodeExprType = Type::real(nodeExpr.type);
   auto result = code;
 
-  if (!root && targetType->isAny() && !Type::real(nodeExpr.type)->isAny()) {
-    auto typeName = this->_typeNameAny(Type::real(nodeExpr.type));
+  if (!root && targetType->isAny() && !realNodeExprType->isAny()) {
+    auto typeName = this->_typeNameAny(nodeExpr.type);
     this->_activateEntity(typeName + "_alloc");
     result = typeName + "_alloc(" + result + ")";
-  } else if (!root && Type::real(targetType)->isOpt() && !Type::real(nodeExpr.type)->isOpt()) {
-    auto targetTypeInfo = this->_typeInfo(Type::real(targetType));
+  } else if (!root && realTargetType->isOpt() && !realNodeExprType->isOpt()) {
+    auto targetTypeInfo = this->_typeInfo(realTargetType);
     auto optionalType = std::get<TypeOptional>(targetTypeInfo.type->body);
 
-    if (Type::real(optionalType.type)->isAny() && !Type::real(nodeExpr.type)->isAny()) {
-      auto typeName = this->_typeNameAny(Type::real(nodeExpr.type));
+    if (Type::real(optionalType.type)->isAny() && !realNodeExprType->isAny()) {
+      auto typeName = this->_typeNameAny(realNodeExprType);
       this->_activateEntity(typeName + "_alloc");
       result = typeName + "_alloc(" + result + ")";
     }
 
     this->_activateEntity(targetTypeInfo.typeName + "_alloc");
     result = targetTypeInfo.typeName + "_alloc(" + result + ")";
-  } else if (!root && Type::real(targetType)->isUnion() && !Type::real(nodeExpr.type)->isUnion()) {
-    auto typeName = this->_typeNameUnion(Type::real(targetType));
-    auto defName = this->_typeDef(Type::real(nodeExpr.type));
+  } else if (!root && realTargetType->isUnion() && (!realNodeExprType->isUnion() || !realTargetType->matchStrict(realNodeExprType))) {
+    auto typeName = this->_typeNameUnion(realTargetType);
+    auto defName = this->_typeDef(nodeExpr.type);
 
     this->_activateEntity(defName);
     this->_activateEntity(typeName + "_alloc");

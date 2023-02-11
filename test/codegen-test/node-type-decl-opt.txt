@@ -1,0 +1,98 @@
+======= stdin =======
+type AliasOptInt = int?
+type AliasOptStr = str?
+
+main {
+  a: AliasOptInt
+  b: AliasOptInt = nil
+  c: AliasOptInt = 1
+  d: AliasOptStr
+  e: AliasOptStr = nil
+  f: AliasOptStr = "test"
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+int32_t *__THE_1_opt_int_alloc (int32_t);
+void __THE_1_opt_int_free (int32_t *);
+struct str *__THE_1_opt_str_alloc (struct str);
+void __THE_1_opt_str_free (struct str *);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+int32_t *__THE_1_opt_int_alloc (int32_t n) {
+  int32_t *r = alloc(sizeof(int32_t));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_int_free (int32_t *n) {
+  if (n == NULL) return;
+  free(n);
+}
+struct str *__THE_1_opt_str_alloc (struct str n) {
+  struct str *r = alloc(sizeof(struct str));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_str_free (struct str *n) {
+  if (n == NULL) return;
+  str_free((struct str) *n);
+  free(n);
+}
+
+int main () {
+  const int32_t *__THE_0_a_0 = NULL;
+  const int32_t *__THE_0_b_0 = NULL;
+  const int32_t *__THE_0_c_0 = __THE_1_opt_int_alloc(1);
+  const struct str *__THE_0_d_0 = NULL;
+  const struct str *__THE_0_e_0 = NULL;
+  const struct str *__THE_0_f_0 = __THE_1_opt_str_alloc(str_alloc("test"));
+  __THE_1_opt_str_free((struct str *) __THE_0_f_0);
+  __THE_1_opt_str_free((struct str *) __THE_0_e_0);
+  __THE_1_opt_str_free((struct str *) __THE_0_d_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_c_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_b_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

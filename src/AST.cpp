@@ -1030,12 +1030,13 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
       return this->_wrapNodeExprType(stmtExpr, targetType, realTargetType);
     }
   } else if (std::holds_alternative<ParserExprArray>(*stmtExpr.body)) {
+    auto actualTargetType = targetType == nullptr ? static_cast<Type *>(nullptr) : Type::actual(targetType);
     auto realTargetType = static_cast<Type *>(nullptr);
 
-    if (targetType != nullptr && targetType->isArray()) {
-      realTargetType = targetType;
-    } else if (targetType != nullptr && targetType->isOpt() && std::get<TypeOptional>(targetType->body).type->isArray()) {
-      realTargetType = std::get<TypeOptional>(targetType->body).type;
+    if (actualTargetType != nullptr && actualTargetType->isArray()) {
+      realTargetType = actualTargetType;
+    } else if (actualTargetType != nullptr && actualTargetType->isOpt() && std::get<TypeOptional>(actualTargetType->body).type->isArray()) {
+      realTargetType = std::get<TypeOptional>(actualTargetType->body).type;
     }
 
     auto exprArray = std::get<ParserExprArray>(*stmtExpr.body);
@@ -1194,7 +1195,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
         targetType == nullptr ||
         !this->typeMap.get("f64")->matchNice(targetType) ||
         Type::actual(targetType)->isAny() ||
-        Type::actual(targetType)->isUnion() // todo test expr-cond-union
+        Type::actual(targetType)->isUnion()
       ) {
         return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("float"));
       } else {
@@ -1210,7 +1211,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
         targetType == nullptr ||
         (!this->typeMap.get("i64")->matchNice(targetType) && !this->typeMap.get("u64")->matchNice(targetType)) ||
         Type::actual(targetType)->isAny() ||
-        Type::actual(targetType)->isUnion() // todo test expr-cond-union
+        Type::actual(targetType)->isUnion()
       ) {
         return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("int"));
       } else {

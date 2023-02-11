@@ -1,0 +1,23 @@
+======= stdin =======
+enum Color { Red, Green, Blue }
+type AliasColor = Color
+
+main {
+  a: AliasColor
+  b: AliasColor = .Red
+  c: AliasColor = .Green
+}
+======= code =======
+enum __THE_1_Color_0 {
+  __THE_0_ColorSDRed_0,
+  __THE_0_ColorSDGreen_0,
+  __THE_0_ColorSDBlue_0
+};
+
+int main () {
+  const enum __THE_1_Color_0 __THE_0_a_0 = 0;
+  const enum __THE_1_Color_0 __THE_0_b_0 = __THE_0_ColorSDRed_0;
+  const enum __THE_1_Color_0 __THE_0_c_0 = __THE_0_ColorSDGreen_0;
+}
+======= flags =======
+======= stdout =======

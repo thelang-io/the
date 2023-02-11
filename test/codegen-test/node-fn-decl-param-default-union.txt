@@ -190,19 +190,19 @@ struct __THE_1_union$0 __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
   const struct __THE_1_union$0 __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_union$0_alloc(TYPE_str, str_alloc("test4"));
   struct str __THE_0_r_0 = str_alloc("");
   if (__THE_0_a_0.t == TYPE_int) {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_a_0)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_a_0.v1)));
   } else {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), __THE_1_union$0_copy(__THE_0_a_0)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_a_0.v2)));
   }
   if (__THE_0_b_0.t == TYPE_int) {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_b_0)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_b_0.v1)));
   } else {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), __THE_1_union$0_copy(__THE_0_b_0)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_b_0.v2)));
   }
   if (__THE_0_c_0.t == TYPE_int) {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_c_0)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_c_0.v1)));
   } else {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), __THE_1_union$0_copy(__THE_0_c_0)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_c_0.v2)));
   }
   v = __THE_1_union$0_alloc(TYPE_str, str_copy(__THE_0_r_0));
   str_free((struct str) __THE_0_r_0);

@@ -28,7 +28,8 @@ main {
 #include <stdlib.h>
 
 #define TYPE_int 1
-#define TYPE_opt_int 2
+#define TYPE_ref_int 2
+#define TYPE_ref_opt_int 3
 
 struct any {
   int t;
@@ -39,13 +40,17 @@ struct any {
 };
 
 struct any_int;
-struct any_opt_int;
+struct any_ref_int;
+struct any_ref_opt_int;
 
 struct any_int {
   int32_t d;
 };
-struct any_opt_int {
+struct any_ref_int {
   int32_t *d;
+};
+struct any_ref_opt_int {
+  int32_t **d;
 };
 
 void *alloc (size_t);
@@ -56,9 +61,12 @@ void __THE_1_opt_int_free (int32_t *);
 struct any any_int_alloc (int32_t);
 struct any any_int_copy (const struct any);
 void any_int_free (struct any);
-struct any any_opt_int_alloc (int32_t *);
-struct any any_opt_int_copy (const struct any);
-void any_opt_int_free (struct any);
+struct any any_ref_int_alloc (int32_t *);
+struct any any_ref_int_copy (const struct any);
+void any_ref_int_free (struct any);
+struct any any_ref_opt_int_alloc (int32_t **);
+struct any any_ref_opt_int_copy (const struct any);
+void any_ref_opt_int_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -102,21 +110,36 @@ void any_int_free (struct any _n) {
   struct any_int *n = _n.d;
   free(n);
 }
-struct any any_opt_int_alloc (int32_t *d) {
-  size_t l = sizeof(struct any_opt_int);
-  struct any_opt_int *r = alloc(l);
+struct any any_ref_int_alloc (int32_t *d) {
+  size_t l = sizeof(struct any_ref_int);
+  struct any_ref_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_opt_int, r, l, &any_opt_int_copy, &any_opt_int_free};
+  return (struct any) {TYPE_ref_int, r, l, &any_ref_int_copy, &any_ref_int_free};
 }
-struct any any_opt_int_copy (const struct any n) {
-  struct any_opt_int *o = n.d;
-  struct any_opt_int *r = alloc(n.l);
-  r->d = __THE_1_opt_int_copy(o->d);
+struct any any_ref_int_copy (const struct any n) {
+  struct any_ref_int *o = n.d;
+  struct any_ref_int *r = alloc(n.l);
+  r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_opt_int_free (struct any _n) {
-  struct any_opt_int *n = _n.d;
-  __THE_1_opt_int_free((int32_t *) n->d);
+void any_ref_int_free (struct any _n) {
+  struct any_ref_int *n = _n.d;
+  free(n);
+}
+struct any any_ref_opt_int_alloc (int32_t **d) {
+  size_t l = sizeof(struct any_ref_opt_int);
+  struct any_ref_opt_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_ref_opt_int, r, l, &any_ref_opt_int_copy, &any_ref_opt_int_free};
+}
+struct any any_ref_opt_int_copy (const struct any n) {
+  struct any_ref_opt_int *o = n.d;
+  struct any_ref_opt_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void any_ref_opt_int_free (struct any _n) {
+  struct any_ref_opt_int *n = _n.d;
   free(n);
 }
 
@@ -126,8 +149,8 @@ int main () {
   const int32_t *__THE_0_testRef_0 = &__THE_0_testInt_0;
   const int32_t **__THE_0_testRefOpt_0 = &__THE_0_testOpt_0;
   const struct any __THE_0_anyRawRefInt_0 = any_int_alloc(__THE_0_testInt_0);
-  const struct any __THE_0_anyRef_0 = any_int_alloc(*__THE_0_testRef_0);
-  const struct any __THE_0_anyRefOpt_0 = any_opt_int_alloc(__THE_1_opt_int_copy(*__THE_0_testRefOpt_0));
+  const struct any __THE_0_anyRef_0 = any_ref_int_alloc(__THE_0_testRef_0);
+  const struct any __THE_0_anyRefOpt_0 = any_ref_opt_int_alloc(__THE_1_opt_int_copy(__THE_0_testRefOpt_0));
   any_free((struct any) __THE_0_anyRefOpt_0);
   any_free((struct any) __THE_0_anyRef_0);
   any_free((struct any) __THE_0_anyRawRefInt_0);

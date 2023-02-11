@@ -6,7 +6,6 @@ main {
   optRefIntNilInit: (ref int)? = nil
   optIntFromRefValInit: int? = ref testInt
   optRefIntValInit: (ref int)? = ref testInt
-  optIntFromRefValCopy: int? = testRefInt
   optRefIntValCopy: (ref int)? = testRefInt
 }
 ======= code =======
@@ -68,10 +67,8 @@ int main () {
   const int32_t **__THE_0_optRefIntNilInit_0 = NULL;
   const int32_t *__THE_0_optIntFromRefValInit_0 = __THE_1_opt_int_alloc(__THE_0_testInt_0);
   const int32_t **__THE_0_optRefIntValInit_0 = __THE_1_opt_ref_int_alloc(&__THE_0_testInt_0);
-  const int32_t *__THE_0_optIntFromRefValCopy_0 = __THE_1_opt_int_alloc(*__THE_0_testRefInt_0);
   const int32_t **__THE_0_optRefIntValCopy_0 = __THE_1_opt_ref_int_alloc(__THE_0_testRefInt_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntValCopy_0);
-  __THE_1_opt_int_free((int32_t *) __THE_0_optIntFromRefValCopy_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntValInit_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_optIntFromRefValInit_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntNilInit_0);

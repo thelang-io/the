@@ -309,6 +309,16 @@ bool Type::isRefExt () const {
   return std::holds_alternative<TypeRef>(this->body);
 }
 
+bool Type::isRefOf (const Type *type) const {
+  if (this->isOpt()) {
+    return std::get<TypeOptional>(this->body).type->isRefOf(type);
+  } else if (!this->isRef()) {
+    return false;
+  }
+
+  return std::get<TypeRef>(this->body).refType->matchStrict(type, true);
+}
+
 bool Type::isSafeForTernaryAlt () const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->isSafeForTernaryAlt();
@@ -577,6 +587,18 @@ bool Type::matchStrict (const Type *type, bool exact) const {
 bool Type::shouldBeFreed () const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->shouldBeFreed();
+  } else if (this->isUnion()) {
+    auto subTypes = std::get<TypeUnion>(this->body).subTypes;
+    bool result = false;
+
+    for (const auto &subType : subTypes) {
+      if (subType->shouldBeFreed()) {
+        result = true;
+        break;
+      }
+    }
+
+    return result;
   }
 
   return
@@ -585,8 +607,7 @@ bool Type::shouldBeFreed () const {
     this->isFn() ||
     this->isObj() ||
     this->isOpt() ||
-    this->isStr() ||
-    this->isUnion();
+    this->isStr();
 }
 
 std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) const {

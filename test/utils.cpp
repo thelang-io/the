@@ -80,7 +80,7 @@ std::optional<std::string> getEnvVar (const std::string &name) {
     free(buf);
     return result;
   #else
-    const char *result = getenv(name.c_str());
+    const char *result = std::getenv(name.c_str());
     return result == nullptr ? std::optional<std::string>{} : std::string(result);
   #endif
 }

@@ -1,0 +1,73 @@
+======= stdin =======
+type AliasBool = bool
+type AliasByte = byte
+type AliasChar = char
+type AliasF32 = f32
+type AliasF64 = f64
+type AliasFloat = float
+type AliasI8 = i8
+type AliasI16 = i16
+type AliasI32 = i32
+type AliasI64 = i64
+type AliasInt = int
+type AliasU8 = u8
+type AliasU16 = u16
+type AliasU32 = u32
+type AliasU64 = u64
+
+type AliasOfAliasBool = AliasBool
+type AliasOfAliasByte = AliasByte
+type AliasOfAliasChar = AliasChar
+type AliasOfAliasF32 = AliasF32
+type AliasOfAliasF64 = AliasF64
+type AliasOfAliasFloat = AliasFloat
+type AliasOfAliasI8 = AliasI8
+type AliasOfAliasI16 = AliasI16
+type AliasOfAliasI32 = AliasI32
+type AliasOfAliasI64 = AliasI64
+type AliasOfAliasInt = AliasInt
+type AliasOfAliasU8 = AliasU8
+type AliasOfAliasU16 = AliasU16
+type AliasOfAliasU32 = AliasU32
+type AliasOfAliasU64 = AliasU64
+
+main {
+  a: AliasOfAliasBool = true
+  b: AliasOfAliasByte = 0xF
+  c: AliasOfAliasChar = 'a'
+  d: AliasOfAliasF32 = 3.14
+  e: AliasOfAliasF64 = 3.15
+  f: AliasOfAliasFloat = 3.16
+  g: AliasOfAliasI8 = -1
+  h: AliasOfAliasI16 = -2
+  m: AliasOfAliasI32 = -3
+  n: AliasOfAliasI64 = -4
+  o: AliasOfAliasInt = 0
+  p: AliasOfAliasU8 = 1
+  q: AliasOfAliasU16 = 2
+  r: AliasOfAliasU32 = 3
+  s: AliasOfAliasU64 = 4
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const bool __THE_0_a_0 = true;
+  const unsigned char __THE_0_b_0 = 0xF;
+  const char __THE_0_c_0 = 'a';
+  const float __THE_0_d_0 = 3.14;
+  const double __THE_0_e_0 = 3.15;
+  const double __THE_0_f_0 = 3.16;
+  const int8_t __THE_0_g_0 = -1;
+  const int16_t __THE_0_h_0 = -2;
+  const int32_t __THE_0_m_0 = -3;
+  const int64_t __THE_0_n_0 = -4;
+  const int32_t __THE_0_o_0 = 0;
+  const uint8_t __THE_0_p_0 = 1;
+  const uint16_t __THE_0_q_0 = 2;
+  const uint32_t __THE_0_r_0 = 3;
+  const uint64_t __THE_0_s_0 = 4;
+}
+======= flags =======
+======= stdout =======

@@ -1,9 +1,4 @@
 ======= stdin =======
-type General = bool | byte | char
-type Floating = f32 | f64 | float
-type Integer = i8 | i16 | i32 | i64 | int
-type UnsignedInteger = u8 | u16 | u32 | u64
-
 main {
   testByte1: byte = 0x00
   testByte2: byte = 0xFF
@@ -18,27 +13,27 @@ main {
   testU32: u32 = 3
   testU64: u64 = 4
 
-  g1: General = true
-  g2: General = false
-  g3: General = testByte1
-  g4: General = testByte2
-  g5: General = 'a'
-  g6: General = 'z'
+  g1: bool | byte | char = true
+  g2: bool | byte | char = false
+  g3: bool | byte | char = testByte1
+  g4: bool | byte | char = testByte2
+  g5: bool | byte | char = 'a'
+  g6: bool | byte | char = 'z'
 
-  f1: Floating = 3.14
-  f2: Floating = testF32
-  f3: Floating = testF64
+  f1: f32 | f64 | float = 3.14
+  f2: f32 | f64 | float = testF32
+  f3: f32 | f64 | float = testF64
 
-  i1: Integer = 0
-  i2: Integer = testI8
-  i3: Integer = testI16
-  i4: Integer = testI32
-  i5: Integer = testI64
+  i1: i8 | i16 | i32 | i64 | int = 0
+  i2: i8 | i16 | i32 | i64 | int = testI8
+  i3: i8 | i16 | i32 | i64 | int = testI16
+  i4: i8 | i16 | i32 | i64 | int = testI32
+  i5: i8 | i16 | i32 | i64 | int = testI64
 
-  u1: UnsignedInteger = testU8
-  u2: UnsignedInteger = testU16
-  u3: UnsignedInteger = testU32
-  u4: UnsignedInteger = testU64
+  u1: u8 | u16 | u32 | u64 = testU8
+  u2: u8 | u16 | u32 | u64 = testU16
+  u3: u8 | u16 | u32 | u64 = testU32
+  u4: u8 | u16 | u32 | u64 = testU64
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -120,13 +115,9 @@ struct __THE_1_union$3 {
 
 void *alloc (size_t);
 struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-void __THE_1_union$0_free (struct __THE_1_union$0);
 struct __THE_1_union$1 __THE_1_union$1_alloc (int, ...);
-void __THE_1_union$1_free (struct __THE_1_union$1);
 struct __THE_1_union$2 __THE_1_union$2_alloc (int, ...);
-void __THE_1_union$2_free (struct __THE_1_union$2);
 struct __THE_1_union$3 __THE_1_union$3_alloc (int, ...);
-void __THE_1_union$3_free (struct __THE_1_union$3);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -146,8 +137,6 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
-}
 struct __THE_1_union$1 __THE_1_union$1_alloc (int t, ...) {
   struct __THE_1_union$1 r = {t};
   va_list args;
@@ -157,8 +146,6 @@ struct __THE_1_union$1 __THE_1_union$1_alloc (int t, ...) {
   if (t == TYPE_float) r.v6 = va_arg(args, double);
   va_end(args);
   return r;
-}
-void __THE_1_union$1_free (struct __THE_1_union$1 n) {
 }
 struct __THE_1_union$2 __THE_1_union$2_alloc (int t, ...) {
   struct __THE_1_union$2 r = {t};
@@ -172,8 +159,6 @@ struct __THE_1_union$2 __THE_1_union$2_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-void __THE_1_union$2_free (struct __THE_1_union$2 n) {
-}
 struct __THE_1_union$3 __THE_1_union$3_alloc (int t, ...) {
   struct __THE_1_union$3 r = {t};
   va_list args;
@@ -184,8 +169,6 @@ struct __THE_1_union$3 __THE_1_union$3_alloc (int t, ...) {
   if (t == TYPE_u64) r.v15 = va_arg(args, uint64_t);
   va_end(args);
   return r;
-}
-void __THE_1_union$3_free (struct __THE_1_union$3 n) {
 }
 
 int main () {
@@ -219,24 +202,6 @@ int main () {
   const struct __THE_1_union$3 __THE_0_u2_0 = __THE_1_union$3_alloc(TYPE_u16, __THE_0_testU16_0);
   const struct __THE_1_union$3 __THE_0_u3_0 = __THE_1_union$3_alloc(TYPE_u32, __THE_0_testU32_0);
   const struct __THE_1_union$3 __THE_0_u4_0 = __THE_1_union$3_alloc(TYPE_u64, __THE_0_testU64_0);
-  __THE_1_union$3_free((struct __THE_1_union$3) __THE_0_u4_0);
-  __THE_1_union$3_free((struct __THE_1_union$3) __THE_0_u3_0);
-  __THE_1_union$3_free((struct __THE_1_union$3) __THE_0_u2_0);
-  __THE_1_union$3_free((struct __THE_1_union$3) __THE_0_u1_0);
-  __THE_1_union$2_free((struct __THE_1_union$2) __THE_0_i5_0);
-  __THE_1_union$2_free((struct __THE_1_union$2) __THE_0_i4_0);
-  __THE_1_union$2_free((struct __THE_1_union$2) __THE_0_i3_0);
-  __THE_1_union$2_free((struct __THE_1_union$2) __THE_0_i2_0);
-  __THE_1_union$2_free((struct __THE_1_union$2) __THE_0_i1_0);
-  __THE_1_union$1_free((struct __THE_1_union$1) __THE_0_f3_0);
-  __THE_1_union$1_free((struct __THE_1_union$1) __THE_0_f2_0);
-  __THE_1_union$1_free((struct __THE_1_union$1) __THE_0_f1_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g6_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g5_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g4_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g3_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g2_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g1_0);
 }
 ======= flags =======
 ======= stdout =======

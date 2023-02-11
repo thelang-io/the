@@ -115,7 +115,6 @@ struct Type {
   std::vector<TypeField> fields = {};
   bool builtin = false;
 
-
   static Type *actual (Type *);
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
@@ -150,6 +149,7 @@ struct Type {
   bool isOpt () const;
   bool isRef () const;
   bool isRefExt () const;
+  bool isRefOf (const Type *) const;
   bool isSafeForTernaryAlt () const;
   bool isSmallForVarArg () const;
   bool isStr () const;

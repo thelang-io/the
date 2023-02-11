@@ -1,0 +1,197 @@
+======= stdin =======
+main {
+  testAny: any
+
+  a: any = 1
+  if a is any { print("any") }
+  else { print("any") }
+
+  b: any = testAny
+  if b is any { print("any") }
+  else { print("any") }
+
+  mut e: any = 1
+  if (e = 1) is any { print("any") }
+  else { print("any") }
+
+  mut f: any = testAny
+  if (f = testAny) is any { print("any") }
+  else { print("any") }
+
+  print((a is any) ? "any" : "any")
+  print((b is any) ? "any" : "any")
+  print(((e = 1) is any) ? "any" : "any")
+  print(((f = testAny) is any) ? "any" : "any")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_int 1
+#define TYPE_any 2
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct any_int;
+
+struct any_int {
+  int32_t d;
+};
+
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+struct any any_realloc (struct any, struct any);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct any any_int_alloc (int32_t);
+struct any any_int_copy (const struct any);
+void any_int_free (struct any);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  return n.d == NULL ? n : n._copy(n);
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct any any_realloc (struct any n1, struct any n2) {
+  if (n1.d != NULL) n1._free(n1);
+  return n2;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct any any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct any_int);
+  struct any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_int, r, l, &any_int_copy, &any_int_free};
+}
+struct any any_int_copy (const struct any n) {
+  struct any_int *o = n.d;
+  struct any_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void any_int_free (struct any _n) {
+  struct any_int *n = _n.d;
+  free(n);
+}
+
+int main () {
+  const struct any __THE_0_testAny_0 = {0, NULL, 0, NULL, NULL};
+  const struct any __THE_0_a_0 = any_int_alloc(1);
+  if (__THE_0_a_0.t == TYPE_any) {
+    print(stdout, "zz", "any", THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  const struct any __THE_0_b_0 = any_copy(__THE_0_testAny_0);
+  if (__THE_0_b_0.t == TYPE_any) {
+    print(stdout, "zz", "any", THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  struct any __THE_0_e_0 = any_int_alloc(1);
+  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, any_int_alloc(1))).t == TYPE_any) {
+    print(stdout, "zz", "any", THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  struct any __THE_0_f_0 = any_copy(__THE_0_testAny_0);
+  if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_copy(__THE_0_testAny_0))).t == TYPE_any) {
+    print(stdout, "zz", "any", THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  print(stdout, "sz", (__THE_0_a_0.t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_b_0.t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, any_int_alloc(1))).t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_copy(__THE_0_testAny_0))).t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
+  any_free((struct any) __THE_0_f_0);
+  any_free((struct any) __THE_0_e_0);
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+  any_free((struct any) __THE_0_testAny_0);
+}
+======= flags =======
+======= stdout =======
+any
+any
+any
+any
+any
+any
+any
+any

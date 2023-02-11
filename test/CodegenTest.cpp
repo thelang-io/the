@@ -221,10 +221,6 @@ INSTANTIATE_TEST_SUITE_P(BuiltinGlobal, CodegenPassTest, testing::Values(
   "builtin-sleep-sync"
 ));
 
-INSTANTIATE_TEST_SUITE_P(BuiltinAlias, CodegenPassTest, testing::Values(
-  // todo
-));
-
 INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
   "builtin-any-alloc",
   "builtin-any-alloc-alias",
@@ -538,8 +534,16 @@ INSTANTIATE_TEST_SUITE_P(BuiltinU64, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinUnion, CodegenPassTest, testing::Values(
-  "builtin-union-alloc"
-  // todo
+  "builtin-union-alloc",
+  "builtin-union-alloc-alias",
+  "builtin-union-alloc-array",
+  "builtin-union-alloc-enum",
+  "builtin-union-alloc-fn",
+  "builtin-union-alloc-obj",
+  "builtin-union-alloc-opt",
+  "builtin-union-alloc-ref",
+  "builtin-union-alloc-str",
+  "builtin-union-alloc-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinURL, CodegenPassTest, testing::Values(
@@ -628,6 +632,20 @@ INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
   "expr-cond-union",
   "expr-cond-operands",
   "expr-cond-type-casts"
+));
+
+INSTANTIATE_TEST_SUITE_P(ExprIs, CodegenPassTest, testing::Values(
+  "expr-is",
+  "expr-is-alias",
+  "expr-is-any",
+  "expr-is-array",
+  "expr-is-enum",
+  "expr-is-fn",
+  "expr-is-obj",
+  "expr-is-opt",
+  "expr-is-ref",
+  "expr-is-str",
+  "expr-is-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenPassTest, testing::Values(
@@ -869,6 +887,20 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return",
   "node-return-scope-cleanup"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeTypeDecl, CodegenPassTest, testing::Values(
+  "node-type-decl",
+  "node-type-decl-alias",
+  "node-type-decl-any",
+  "node-type-decl-array",
+  "node-type-decl-enum",
+  "node-type-decl-fn",
+  "node-type-decl-obj",
+  "node-type-decl-opt",
+  "node-type-decl-ref",
+  "node-type-decl-str",
+  "node-type-decl-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
