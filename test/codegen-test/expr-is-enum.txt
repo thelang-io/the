@@ -85,14 +85,14 @@ struct str {
   size_t l;
 };
 
-struct any_Color_0;
-struct any_float;
+struct __THE_1_any_Color_0;
+struct __THE_1_any_float;
 struct __THE_1_union$0;
 
-struct any_Color_0 {
+struct __THE_1_any_Color_0 {
   enum __THE_1_Color_0 d;
 };
-struct any_float {
+struct __THE_1_any_float {
   double d;
 };
 struct __THE_1_union$0 {
@@ -112,12 +112,12 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0);
-struct any any_Color_0_alloc (enum __THE_1_Color_0);
-struct any any_Color_0_copy (const struct any);
-void any_Color_0_free (struct any);
-struct any any_float_alloc (double);
-struct any any_float_copy (const struct any);
-void any_float_free (struct any);
+struct any __THE_1_any_Color_0_alloc (enum __THE_1_Color_0);
+struct any __THE_1_any_Color_0_copy (const struct any);
+void __THE_1_any_Color_0_free (struct any);
+struct any __THE_1_any_float_alloc (double);
+struct any __THE_1_any_float_copy (const struct any);
+void __THE_1_any_float_free (struct any);
 struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
 void __THE_1_union$0_free (struct __THE_1_union$0);
 struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0, struct __THE_1_union$0);
@@ -193,36 +193,36 @@ struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0 n) {
   if (n == __THE_0_ColorSDGreen_0) return str_alloc("Green");
   if (n == __THE_0_ColorSDBlue_0) return str_alloc("Blue");
 }
-struct any any_Color_0_alloc (enum __THE_1_Color_0 d) {
-  size_t l = sizeof(struct any_Color_0);
-  struct any_Color_0 *r = alloc(l);
+struct any __THE_1_any_Color_0_alloc (enum __THE_1_Color_0 d) {
+  size_t l = sizeof(struct __THE_1_any_Color_0);
+  struct __THE_1_any_Color_0 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_Color_0, r, l, &any_Color_0_copy, &any_Color_0_free};
+  return (struct any) {TYPE_Color_0, r, l, &__THE_1_any_Color_0_copy, &__THE_1_any_Color_0_free};
 }
-struct any any_Color_0_copy (const struct any n) {
-  struct any_Color_0 *o = n.d;
-  struct any_Color_0 *r = alloc(n.l);
+struct any __THE_1_any_Color_0_copy (const struct any n) {
+  struct __THE_1_any_Color_0 *o = n.d;
+  struct __THE_1_any_Color_0 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_Color_0_free (struct any _n) {
-  struct any_Color_0 *n = _n.d;
+void __THE_1_any_Color_0_free (struct any _n) {
+  struct __THE_1_any_Color_0 *n = _n.d;
   free(n);
 }
-struct any any_float_alloc (double d) {
-  size_t l = sizeof(struct any_float);
-  struct any_float *r = alloc(l);
+struct any __THE_1_any_float_alloc (double d) {
+  size_t l = sizeof(struct __THE_1_any_float);
+  struct __THE_1_any_float *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_float, r, l, &any_float_copy, &any_float_free};
+  return (struct any) {TYPE_float, r, l, &__THE_1_any_float_copy, &__THE_1_any_float_free};
 }
-struct any any_float_copy (const struct any n) {
-  struct any_float *o = n.d;
-  struct any_float *r = alloc(n.l);
+struct any __THE_1_any_float_copy (const struct any n) {
+  struct __THE_1_any_float *o = n.d;
+  struct __THE_1_any_float *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_float_free (struct any _n) {
-  struct any_float *n = _n.d;
+void __THE_1_any_float_free (struct any _n) {
+  struct __THE_1_any_float *n = _n.d;
   free(n);
 }
 struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
@@ -242,15 +242,15 @@ struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0 n1, struc
 }
 
 int main () {
-  const struct any __THE_0_a_0 = any_Color_0_alloc(__THE_0_ColorSDRed_0);
+  const struct any __THE_0_a_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDRed_0);
   if (__THE_0_a_0.t == TYPE_Color_0) {
-    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_a_0.d)->d)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_a_0.d)->d)), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
-  const struct any __THE_0_b_0 = any_float_alloc(3.14);
+  const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_Color_0) {
-    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_b_0.d)->d)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_b_0.d)->d)), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
@@ -266,15 +266,15 @@ int main () {
   } else {
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
   }
-  struct any __THE_0_e_0 = any_Color_0_alloc(__THE_0_ColorSDBlue_0);
-  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, any_Color_0_alloc(__THE_0_ColorSDBlue_0))).t == TYPE_Color_0) {
-    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_e_0.d)->d)), THE_EOL);
+  struct any __THE_0_e_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDBlue_0);
+  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_Color_0_alloc(__THE_0_ColorSDBlue_0))).t == TYPE_Color_0) {
+    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_e_0.d)->d)), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
-  struct any __THE_0_f_0 = any_float_alloc(3.14);
-  if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_float_alloc(3.14))).t == TYPE_Color_0) {
-    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_f_0.d)->d)), THE_EOL);
+  struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
+  if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_Color_0) {
+    print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_f_0.d)->d)), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
@@ -290,12 +290,12 @@ int main () {
   } else {
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
   }
-  print(stdout, "sz", (__THE_0_a_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_a_0.d)->d)) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", (__THE_0_b_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_b_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_a_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_a_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_b_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_b_0.d)->d)) : str_alloc("any"), THE_EOL);
   print(stdout, "sz", (__THE_0_c_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_c_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_c_0.v2)), THE_EOL);
   print(stdout, "sz", (__THE_0_d_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_d_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, any_Color_0_alloc(__THE_0_ColorSDGreen_0))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_e_0.d)->d)) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_float_alloc(3.14))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct any_Color_0 *) __THE_0_f_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_Color_0_alloc(__THE_0_ColorSDGreen_0))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_e_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_f_0.d)->d)) : str_alloc("any"), THE_EOL);
   print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union$0_realloc(__THE_0_g_0, __THE_1_union$0_alloc(TYPE_Color_0, __THE_0_ColorSDBlue_0))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_g_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_g_0.v2)), THE_EOL);
   print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union$0_realloc(__THE_0_h_0, __THE_1_union$0_alloc(TYPE_float, 3.14))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_h_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
   any_free((struct any) __THE_0_f_0);

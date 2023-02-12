@@ -66,10 +66,10 @@ struct str {
 
 struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
-struct any_int;
-struct any_bool;
-struct any_str;
-struct any_char;
+struct __THE_1_any_int;
+struct __THE_1_any_bool;
+struct __THE_1_any_str;
+struct __THE_1_any_char;
 struct __THE_1_fn$1P;
 struct __THE_1_fn$1;
 struct __THE_1_mainSDtest2_0X;
@@ -86,16 +86,16 @@ struct __THE_1_fn$0 {
   void *x;
   size_t l;
 };
-struct any_int {
+struct __THE_1_any_int {
   int32_t d;
 };
-struct any_bool {
+struct __THE_1_any_bool {
   bool d;
 };
-struct any_str {
+struct __THE_1_any_str {
   struct str d;
 };
-struct any_char {
+struct __THE_1_any_char {
   char d;
 };
 struct __THE_1_fn$1P {
@@ -122,19 +122,19 @@ struct any any_realloc (struct any, struct any);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
-struct any any_bool_alloc (bool);
-struct any any_bool_copy (const struct any);
-void any_bool_free (struct any);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
+struct any __THE_1_any_bool_alloc (bool);
+struct any __THE_1_any_bool_copy (const struct any);
+void __THE_1_any_bool_free (struct any);
 struct any __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
-struct any any_str_alloc (struct str);
-struct any any_str_copy (const struct any);
-void any_str_free (struct any);
-struct any any_char_alloc (char);
-struct any any_char_copy (const struct any);
-void any_char_free (struct any);
+struct any __THE_1_any_str_alloc (struct str);
+struct any __THE_1_any_str_copy (const struct any);
+void __THE_1_any_str_free (struct any);
+struct any __THE_1_any_char_alloc (char);
+struct any __THE_1_any_char_copy (const struct any);
+void __THE_1_any_char_free (struct any);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtest2_0X);
 void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1P);
@@ -171,80 +171,80 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct any any_int_alloc (int32_t d) {
-  size_t l = sizeof(struct any_int);
-  struct any_int *r = alloc(l);
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
 }
-struct any any_int_copy (const struct any n) {
-  struct any_int *o = n.d;
-  struct any_int *r = alloc(n.l);
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_int_free (struct any _n) {
-  struct any_int *n = _n.d;
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
   free(n);
 }
-struct any any_bool_alloc (bool d) {
-  size_t l = sizeof(struct any_bool);
-  struct any_bool *r = alloc(l);
+struct any __THE_1_any_bool_alloc (bool d) {
+  size_t l = sizeof(struct __THE_1_any_bool);
+  struct __THE_1_any_bool *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_bool, r, l, &any_bool_copy, &any_bool_free};
+  return (struct any) {TYPE_bool, r, l, &__THE_1_any_bool_copy, &__THE_1_any_bool_free};
 }
-struct any any_bool_copy (const struct any n) {
-  struct any_bool *o = n.d;
-  struct any_bool *r = alloc(n.l);
+struct any __THE_1_any_bool_copy (const struct any n) {
+  struct __THE_1_any_bool *o = n.d;
+  struct __THE_1_any_bool *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_bool_free (struct any _n) {
-  struct any_bool *n = _n.d;
+void __THE_1_any_bool_free (struct any _n) {
+  struct __THE_1_any_bool *n = _n.d;
   free(n);
 }
 struct any __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
   struct any v;
   const struct any __THE_0_a_0 = p.n0;
-  const struct any __THE_0_b_0 = p.o1 == 1 ? p.n1 : any_int_alloc(3);
-  const struct any __THE_0_c_0 = p.o2 == 1 ? p.n2 : any_bool_alloc(false);
+  const struct any __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_any_int_alloc(3);
+  const struct any __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_any_bool_alloc(false);
   v = any_copy(__THE_0_a_0);
   any_free((struct any) __THE_0_c_0);
   any_free((struct any) __THE_0_b_0);
   any_free((struct any) __THE_0_a_0);
   return v;
 }
-struct any any_str_alloc (struct str d) {
-  size_t l = sizeof(struct any_str);
-  struct any_str *r = alloc(l);
+struct any __THE_1_any_str_alloc (struct str d) {
+  size_t l = sizeof(struct __THE_1_any_str);
+  struct __THE_1_any_str *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_str, r, l, &any_str_copy, &any_str_free};
+  return (struct any) {TYPE_str, r, l, &__THE_1_any_str_copy, &__THE_1_any_str_free};
 }
-struct any any_str_copy (const struct any n) {
-  struct any_str *o = n.d;
-  struct any_str *r = alloc(n.l);
+struct any __THE_1_any_str_copy (const struct any n) {
+  struct __THE_1_any_str *o = n.d;
+  struct __THE_1_any_str *r = alloc(n.l);
   r->d = str_copy(o->d);
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_str_free (struct any _n) {
-  struct any_str *n = _n.d;
+void __THE_1_any_str_free (struct any _n) {
+  struct __THE_1_any_str *n = _n.d;
   str_free((struct str) n->d);
   free(n);
 }
-struct any any_char_alloc (char d) {
-  size_t l = sizeof(struct any_char);
-  struct any_char *r = alloc(l);
+struct any __THE_1_any_char_alloc (char d) {
+  size_t l = sizeof(struct __THE_1_any_char);
+  struct __THE_1_any_char *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_char, r, l, &any_char_copy, &any_char_free};
+  return (struct any) {TYPE_char, r, l, &__THE_1_any_char_copy, &__THE_1_any_char_free};
 }
-struct any any_char_copy (const struct any n) {
-  struct any_char *o = n.d;
-  struct any_char *r = alloc(n.l);
+struct any __THE_1_any_char_copy (const struct any n) {
+  struct __THE_1_any_char *o = n.d;
+  struct __THE_1_any_char *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_char_free (struct any _n) {
-  struct any_char *n = _n.d;
+void __THE_1_any_char_free (struct any _n) {
+  struct __THE_1_any_char *n = _n.d;
   free(n);
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
@@ -263,8 +263,8 @@ void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1P p) {
   struct any *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$0 *__THE_0_test1_0 = x->__THE_0_test1_0;
   const struct any __THE_0_a2_0 = p.n0;
-  const struct any __THE_0_b_0 = p.o1 == 1 ? p.n1 : any_str_alloc(str_alloc("test5"));
-  const struct any __THE_0_c_0 = p.o2 == 1 ? p.n2 : any_char_alloc('6');
+  const struct any __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_any_str_alloc(str_alloc("test5"));
+  const struct any __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_any_char_alloc('6');
   *__THE_0_a_0 = any_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$0P) {any_copy(__THE_0_a2_0), 1, any_copy(__THE_0_b_0), 1, any_copy(__THE_0_c_0)}));
   any_free((struct any) __THE_0_c_0);
   any_free((struct any) __THE_0_b_0);
@@ -273,23 +273,23 @@ void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1P p) {
 
 int main () {
   const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {any_int_alloc(1), 0, (struct any) {}, 0, (struct any) {}}));
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {any_int_alloc(1), 1, any_str_alloc(str_alloc("test2")), 0, (struct any) {}}));
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {any_int_alloc(1), 1, any_str_alloc(str_alloc("test2")), 1, any_char_alloc('3')}));
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {any_int_alloc(1), 1, any_str_alloc(str_alloc("test2")), 0, (struct any) {}}));
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {any_int_alloc(1), 0, (struct any) {}, 1, any_char_alloc('3')}));
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {any_int_alloc(1), 1, any_str_alloc(str_alloc("test2")), 1, any_char_alloc('3')}));
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {any_int_alloc(1), 1, any_str_alloc(str_alloc("test2")), 1, any_char_alloc('3')}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_any_int_alloc(1), 0, (struct any) {}, 0, (struct any) {}}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_any_int_alloc(1), 1, __THE_1_any_str_alloc(str_alloc("test2")), 0, (struct any) {}}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_any_int_alloc(1), 1, __THE_1_any_str_alloc(str_alloc("test2")), 1, __THE_1_any_char_alloc('3')}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_any_int_alloc(1), 1, __THE_1_any_str_alloc(str_alloc("test2")), 0, (struct any) {}}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_any_int_alloc(1), 0, (struct any) {}, 1, __THE_1_any_char_alloc('3')}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_any_int_alloc(1), 1, __THE_1_any_str_alloc(str_alloc("test2")), 1, __THE_1_any_char_alloc('3')}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_any_int_alloc(1), 1, __THE_1_any_str_alloc(str_alloc("test2")), 1, __THE_1_any_char_alloc('3')}));
   struct any __THE_0_a_0 = {0, NULL, 0, NULL, NULL};
   const struct __THE_1_fn$1 __THE_0_mainSDtest2_0;
   __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {any_int_alloc(7), 0, (struct any) {}, 0, (struct any) {}});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {any_int_alloc(7), 1, any_str_alloc(str_alloc("test8")), 0, (struct any) {}});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {any_int_alloc(7), 1, any_str_alloc(str_alloc("test8")), 1, any_char_alloc('9')});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {any_int_alloc(7), 1, any_str_alloc(str_alloc("test8")), 0, (struct any) {}});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {any_int_alloc(7), 0, (struct any) {}, 1, any_char_alloc('9')});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {any_int_alloc(7), 1, any_str_alloc(str_alloc("test8")), 1, any_char_alloc('9')});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {any_int_alloc(7), 1, any_str_alloc(str_alloc("test8")), 1, any_char_alloc('9')});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_1_any_int_alloc(7), 0, (struct any) {}, 0, (struct any) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_1_any_int_alloc(7), 1, __THE_1_any_str_alloc(str_alloc("test8")), 0, (struct any) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_1_any_int_alloc(7), 1, __THE_1_any_str_alloc(str_alloc("test8")), 1, __THE_1_any_char_alloc('9')});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_1_any_int_alloc(7), 1, __THE_1_any_str_alloc(str_alloc("test8")), 0, (struct any) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_1_any_int_alloc(7), 0, (struct any) {}, 1, __THE_1_any_char_alloc('9')});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_1_any_int_alloc(7), 1, __THE_1_any_str_alloc(str_alloc("test8")), 1, __THE_1_any_char_alloc('9')});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {__THE_1_any_int_alloc(7), 1, __THE_1_any_str_alloc(str_alloc("test8")), 1, __THE_1_any_char_alloc('9')});
   __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_mainSDtest2_0);
   any_free((struct any) __THE_0_a_0);
 }

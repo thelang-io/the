@@ -81,115 +81,115 @@ struct any {
   void (*_free) (struct any);
 };
 
-struct any_bool;
-struct any_char;
-struct any_float;
-struct any_int;
-struct any_byte;
-struct any_f32;
-struct any_f64;
-struct any_i8;
-struct any_i16;
-struct any_i32;
-struct any_i64;
-struct any_u8;
-struct any_u16;
-struct any_u32;
-struct any_u64;
+struct __THE_1_any_bool;
+struct __THE_1_any_char;
+struct __THE_1_any_float;
+struct __THE_1_any_int;
+struct __THE_1_any_byte;
+struct __THE_1_any_f32;
+struct __THE_1_any_f64;
+struct __THE_1_any_i8;
+struct __THE_1_any_i16;
+struct __THE_1_any_i32;
+struct __THE_1_any_i64;
+struct __THE_1_any_u8;
+struct __THE_1_any_u16;
+struct __THE_1_any_u32;
+struct __THE_1_any_u64;
 
-struct any_bool {
+struct __THE_1_any_bool {
   bool d;
 };
-struct any_char {
+struct __THE_1_any_char {
   char d;
 };
-struct any_float {
+struct __THE_1_any_float {
   double d;
 };
-struct any_int {
+struct __THE_1_any_int {
   int32_t d;
 };
-struct any_byte {
+struct __THE_1_any_byte {
   unsigned char d;
 };
-struct any_f32 {
+struct __THE_1_any_f32 {
   float d;
 };
-struct any_f64 {
+struct __THE_1_any_f64 {
   double d;
 };
-struct any_i8 {
+struct __THE_1_any_i8 {
   int8_t d;
 };
-struct any_i16 {
+struct __THE_1_any_i16 {
   int16_t d;
 };
-struct any_i32 {
+struct __THE_1_any_i32 {
   int32_t d;
 };
-struct any_i64 {
+struct __THE_1_any_i64 {
   int64_t d;
 };
-struct any_u8 {
+struct __THE_1_any_u8 {
   uint8_t d;
 };
-struct any_u16 {
+struct __THE_1_any_u16 {
   uint16_t d;
 };
-struct any_u32 {
+struct __THE_1_any_u32 {
   uint32_t d;
 };
-struct any_u64 {
+struct __THE_1_any_u64 {
   uint64_t d;
 };
 
 void *alloc (size_t);
 void any_free (struct any);
-struct any any_bool_alloc (bool);
-struct any any_bool_copy (const struct any);
-void any_bool_free (struct any);
-struct any any_char_alloc (char);
-struct any any_char_copy (const struct any);
-void any_char_free (struct any);
-struct any any_float_alloc (double);
-struct any any_float_copy (const struct any);
-void any_float_free (struct any);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
-struct any any_byte_alloc (unsigned char);
-struct any any_byte_copy (const struct any);
-void any_byte_free (struct any);
-struct any any_f32_alloc (float);
-struct any any_f32_copy (const struct any);
-void any_f32_free (struct any);
-struct any any_f64_alloc (double);
-struct any any_f64_copy (const struct any);
-void any_f64_free (struct any);
-struct any any_i8_alloc (int8_t);
-struct any any_i8_copy (const struct any);
-void any_i8_free (struct any);
-struct any any_i16_alloc (int16_t);
-struct any any_i16_copy (const struct any);
-void any_i16_free (struct any);
-struct any any_i32_alloc (int32_t);
-struct any any_i32_copy (const struct any);
-void any_i32_free (struct any);
-struct any any_i64_alloc (int64_t);
-struct any any_i64_copy (const struct any);
-void any_i64_free (struct any);
-struct any any_u8_alloc (uint8_t);
-struct any any_u8_copy (const struct any);
-void any_u8_free (struct any);
-struct any any_u16_alloc (uint16_t);
-struct any any_u16_copy (const struct any);
-void any_u16_free (struct any);
-struct any any_u32_alloc (uint32_t);
-struct any any_u32_copy (const struct any);
-void any_u32_free (struct any);
-struct any any_u64_alloc (uint64_t);
-struct any any_u64_copy (const struct any);
-void any_u64_free (struct any);
+struct any __THE_1_any_bool_alloc (bool);
+struct any __THE_1_any_bool_copy (const struct any);
+void __THE_1_any_bool_free (struct any);
+struct any __THE_1_any_char_alloc (char);
+struct any __THE_1_any_char_copy (const struct any);
+void __THE_1_any_char_free (struct any);
+struct any __THE_1_any_float_alloc (double);
+struct any __THE_1_any_float_copy (const struct any);
+void __THE_1_any_float_free (struct any);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
+struct any __THE_1_any_byte_alloc (unsigned char);
+struct any __THE_1_any_byte_copy (const struct any);
+void __THE_1_any_byte_free (struct any);
+struct any __THE_1_any_f32_alloc (float);
+struct any __THE_1_any_f32_copy (const struct any);
+void __THE_1_any_f32_free (struct any);
+struct any __THE_1_any_f64_alloc (double);
+struct any __THE_1_any_f64_copy (const struct any);
+void __THE_1_any_f64_free (struct any);
+struct any __THE_1_any_i8_alloc (int8_t);
+struct any __THE_1_any_i8_copy (const struct any);
+void __THE_1_any_i8_free (struct any);
+struct any __THE_1_any_i16_alloc (int16_t);
+struct any __THE_1_any_i16_copy (const struct any);
+void __THE_1_any_i16_free (struct any);
+struct any __THE_1_any_i32_alloc (int32_t);
+struct any __THE_1_any_i32_copy (const struct any);
+void __THE_1_any_i32_free (struct any);
+struct any __THE_1_any_i64_alloc (int64_t);
+struct any __THE_1_any_i64_copy (const struct any);
+void __THE_1_any_i64_free (struct any);
+struct any __THE_1_any_u8_alloc (uint8_t);
+struct any __THE_1_any_u8_copy (const struct any);
+void __THE_1_any_u8_free (struct any);
+struct any __THE_1_any_u16_alloc (uint16_t);
+struct any __THE_1_any_u16_copy (const struct any);
+void __THE_1_any_u16_free (struct any);
+struct any __THE_1_any_u32_alloc (uint32_t);
+struct any __THE_1_any_u32_copy (const struct any);
+void __THE_1_any_u32_free (struct any);
+struct any __THE_1_any_u64_alloc (uint64_t);
+struct any __THE_1_any_u64_copy (const struct any);
+void __THE_1_any_u64_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -202,244 +202,244 @@ void *alloc (size_t l) {
 void any_free (struct any n) {
   if (n.d != NULL) n._free(n);
 }
-struct any any_bool_alloc (bool d) {
-  size_t l = sizeof(struct any_bool);
-  struct any_bool *r = alloc(l);
+struct any __THE_1_any_bool_alloc (bool d) {
+  size_t l = sizeof(struct __THE_1_any_bool);
+  struct __THE_1_any_bool *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_bool, r, l, &any_bool_copy, &any_bool_free};
+  return (struct any) {TYPE_bool, r, l, &__THE_1_any_bool_copy, &__THE_1_any_bool_free};
 }
-struct any any_bool_copy (const struct any n) {
-  struct any_bool *o = n.d;
-  struct any_bool *r = alloc(n.l);
+struct any __THE_1_any_bool_copy (const struct any n) {
+  struct __THE_1_any_bool *o = n.d;
+  struct __THE_1_any_bool *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_bool_free (struct any _n) {
-  struct any_bool *n = _n.d;
+void __THE_1_any_bool_free (struct any _n) {
+  struct __THE_1_any_bool *n = _n.d;
   free(n);
 }
-struct any any_char_alloc (char d) {
-  size_t l = sizeof(struct any_char);
-  struct any_char *r = alloc(l);
+struct any __THE_1_any_char_alloc (char d) {
+  size_t l = sizeof(struct __THE_1_any_char);
+  struct __THE_1_any_char *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_char, r, l, &any_char_copy, &any_char_free};
+  return (struct any) {TYPE_char, r, l, &__THE_1_any_char_copy, &__THE_1_any_char_free};
 }
-struct any any_char_copy (const struct any n) {
-  struct any_char *o = n.d;
-  struct any_char *r = alloc(n.l);
+struct any __THE_1_any_char_copy (const struct any n) {
+  struct __THE_1_any_char *o = n.d;
+  struct __THE_1_any_char *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_char_free (struct any _n) {
-  struct any_char *n = _n.d;
+void __THE_1_any_char_free (struct any _n) {
+  struct __THE_1_any_char *n = _n.d;
   free(n);
 }
-struct any any_float_alloc (double d) {
-  size_t l = sizeof(struct any_float);
-  struct any_float *r = alloc(l);
+struct any __THE_1_any_float_alloc (double d) {
+  size_t l = sizeof(struct __THE_1_any_float);
+  struct __THE_1_any_float *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_float, r, l, &any_float_copy, &any_float_free};
+  return (struct any) {TYPE_float, r, l, &__THE_1_any_float_copy, &__THE_1_any_float_free};
 }
-struct any any_float_copy (const struct any n) {
-  struct any_float *o = n.d;
-  struct any_float *r = alloc(n.l);
+struct any __THE_1_any_float_copy (const struct any n) {
+  struct __THE_1_any_float *o = n.d;
+  struct __THE_1_any_float *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_float_free (struct any _n) {
-  struct any_float *n = _n.d;
+void __THE_1_any_float_free (struct any _n) {
+  struct __THE_1_any_float *n = _n.d;
   free(n);
 }
-struct any any_int_alloc (int32_t d) {
-  size_t l = sizeof(struct any_int);
-  struct any_int *r = alloc(l);
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
 }
-struct any any_int_copy (const struct any n) {
-  struct any_int *o = n.d;
-  struct any_int *r = alloc(n.l);
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_int_free (struct any _n) {
-  struct any_int *n = _n.d;
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
   free(n);
 }
-struct any any_byte_alloc (unsigned char d) {
-  size_t l = sizeof(struct any_byte);
-  struct any_byte *r = alloc(l);
+struct any __THE_1_any_byte_alloc (unsigned char d) {
+  size_t l = sizeof(struct __THE_1_any_byte);
+  struct __THE_1_any_byte *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_byte, r, l, &any_byte_copy, &any_byte_free};
+  return (struct any) {TYPE_byte, r, l, &__THE_1_any_byte_copy, &__THE_1_any_byte_free};
 }
-struct any any_byte_copy (const struct any n) {
-  struct any_byte *o = n.d;
-  struct any_byte *r = alloc(n.l);
+struct any __THE_1_any_byte_copy (const struct any n) {
+  struct __THE_1_any_byte *o = n.d;
+  struct __THE_1_any_byte *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_byte_free (struct any _n) {
-  struct any_byte *n = _n.d;
+void __THE_1_any_byte_free (struct any _n) {
+  struct __THE_1_any_byte *n = _n.d;
   free(n);
 }
-struct any any_f32_alloc (float d) {
-  size_t l = sizeof(struct any_f32);
-  struct any_f32 *r = alloc(l);
+struct any __THE_1_any_f32_alloc (float d) {
+  size_t l = sizeof(struct __THE_1_any_f32);
+  struct __THE_1_any_f32 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_f32, r, l, &any_f32_copy, &any_f32_free};
+  return (struct any) {TYPE_f32, r, l, &__THE_1_any_f32_copy, &__THE_1_any_f32_free};
 }
-struct any any_f32_copy (const struct any n) {
-  struct any_f32 *o = n.d;
-  struct any_f32 *r = alloc(n.l);
+struct any __THE_1_any_f32_copy (const struct any n) {
+  struct __THE_1_any_f32 *o = n.d;
+  struct __THE_1_any_f32 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_f32_free (struct any _n) {
-  struct any_f32 *n = _n.d;
+void __THE_1_any_f32_free (struct any _n) {
+  struct __THE_1_any_f32 *n = _n.d;
   free(n);
 }
-struct any any_f64_alloc (double d) {
-  size_t l = sizeof(struct any_f64);
-  struct any_f64 *r = alloc(l);
+struct any __THE_1_any_f64_alloc (double d) {
+  size_t l = sizeof(struct __THE_1_any_f64);
+  struct __THE_1_any_f64 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_f64, r, l, &any_f64_copy, &any_f64_free};
+  return (struct any) {TYPE_f64, r, l, &__THE_1_any_f64_copy, &__THE_1_any_f64_free};
 }
-struct any any_f64_copy (const struct any n) {
-  struct any_f64 *o = n.d;
-  struct any_f64 *r = alloc(n.l);
+struct any __THE_1_any_f64_copy (const struct any n) {
+  struct __THE_1_any_f64 *o = n.d;
+  struct __THE_1_any_f64 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_f64_free (struct any _n) {
-  struct any_f64 *n = _n.d;
+void __THE_1_any_f64_free (struct any _n) {
+  struct __THE_1_any_f64 *n = _n.d;
   free(n);
 }
-struct any any_i8_alloc (int8_t d) {
-  size_t l = sizeof(struct any_i8);
-  struct any_i8 *r = alloc(l);
+struct any __THE_1_any_i8_alloc (int8_t d) {
+  size_t l = sizeof(struct __THE_1_any_i8);
+  struct __THE_1_any_i8 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_i8, r, l, &any_i8_copy, &any_i8_free};
+  return (struct any) {TYPE_i8, r, l, &__THE_1_any_i8_copy, &__THE_1_any_i8_free};
 }
-struct any any_i8_copy (const struct any n) {
-  struct any_i8 *o = n.d;
-  struct any_i8 *r = alloc(n.l);
+struct any __THE_1_any_i8_copy (const struct any n) {
+  struct __THE_1_any_i8 *o = n.d;
+  struct __THE_1_any_i8 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_i8_free (struct any _n) {
-  struct any_i8 *n = _n.d;
+void __THE_1_any_i8_free (struct any _n) {
+  struct __THE_1_any_i8 *n = _n.d;
   free(n);
 }
-struct any any_i16_alloc (int16_t d) {
-  size_t l = sizeof(struct any_i16);
-  struct any_i16 *r = alloc(l);
+struct any __THE_1_any_i16_alloc (int16_t d) {
+  size_t l = sizeof(struct __THE_1_any_i16);
+  struct __THE_1_any_i16 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_i16, r, l, &any_i16_copy, &any_i16_free};
+  return (struct any) {TYPE_i16, r, l, &__THE_1_any_i16_copy, &__THE_1_any_i16_free};
 }
-struct any any_i16_copy (const struct any n) {
-  struct any_i16 *o = n.d;
-  struct any_i16 *r = alloc(n.l);
+struct any __THE_1_any_i16_copy (const struct any n) {
+  struct __THE_1_any_i16 *o = n.d;
+  struct __THE_1_any_i16 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_i16_free (struct any _n) {
-  struct any_i16 *n = _n.d;
+void __THE_1_any_i16_free (struct any _n) {
+  struct __THE_1_any_i16 *n = _n.d;
   free(n);
 }
-struct any any_i32_alloc (int32_t d) {
-  size_t l = sizeof(struct any_i32);
-  struct any_i32 *r = alloc(l);
+struct any __THE_1_any_i32_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_i32);
+  struct __THE_1_any_i32 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_i32, r, l, &any_i32_copy, &any_i32_free};
+  return (struct any) {TYPE_i32, r, l, &__THE_1_any_i32_copy, &__THE_1_any_i32_free};
 }
-struct any any_i32_copy (const struct any n) {
-  struct any_i32 *o = n.d;
-  struct any_i32 *r = alloc(n.l);
+struct any __THE_1_any_i32_copy (const struct any n) {
+  struct __THE_1_any_i32 *o = n.d;
+  struct __THE_1_any_i32 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_i32_free (struct any _n) {
-  struct any_i32 *n = _n.d;
+void __THE_1_any_i32_free (struct any _n) {
+  struct __THE_1_any_i32 *n = _n.d;
   free(n);
 }
-struct any any_i64_alloc (int64_t d) {
-  size_t l = sizeof(struct any_i64);
-  struct any_i64 *r = alloc(l);
+struct any __THE_1_any_i64_alloc (int64_t d) {
+  size_t l = sizeof(struct __THE_1_any_i64);
+  struct __THE_1_any_i64 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_i64, r, l, &any_i64_copy, &any_i64_free};
+  return (struct any) {TYPE_i64, r, l, &__THE_1_any_i64_copy, &__THE_1_any_i64_free};
 }
-struct any any_i64_copy (const struct any n) {
-  struct any_i64 *o = n.d;
-  struct any_i64 *r = alloc(n.l);
+struct any __THE_1_any_i64_copy (const struct any n) {
+  struct __THE_1_any_i64 *o = n.d;
+  struct __THE_1_any_i64 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_i64_free (struct any _n) {
-  struct any_i64 *n = _n.d;
+void __THE_1_any_i64_free (struct any _n) {
+  struct __THE_1_any_i64 *n = _n.d;
   free(n);
 }
-struct any any_u8_alloc (uint8_t d) {
-  size_t l = sizeof(struct any_u8);
-  struct any_u8 *r = alloc(l);
+struct any __THE_1_any_u8_alloc (uint8_t d) {
+  size_t l = sizeof(struct __THE_1_any_u8);
+  struct __THE_1_any_u8 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_u8, r, l, &any_u8_copy, &any_u8_free};
+  return (struct any) {TYPE_u8, r, l, &__THE_1_any_u8_copy, &__THE_1_any_u8_free};
 }
-struct any any_u8_copy (const struct any n) {
-  struct any_u8 *o = n.d;
-  struct any_u8 *r = alloc(n.l);
+struct any __THE_1_any_u8_copy (const struct any n) {
+  struct __THE_1_any_u8 *o = n.d;
+  struct __THE_1_any_u8 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_u8_free (struct any _n) {
-  struct any_u8 *n = _n.d;
+void __THE_1_any_u8_free (struct any _n) {
+  struct __THE_1_any_u8 *n = _n.d;
   free(n);
 }
-struct any any_u16_alloc (uint16_t d) {
-  size_t l = sizeof(struct any_u16);
-  struct any_u16 *r = alloc(l);
+struct any __THE_1_any_u16_alloc (uint16_t d) {
+  size_t l = sizeof(struct __THE_1_any_u16);
+  struct __THE_1_any_u16 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_u16, r, l, &any_u16_copy, &any_u16_free};
+  return (struct any) {TYPE_u16, r, l, &__THE_1_any_u16_copy, &__THE_1_any_u16_free};
 }
-struct any any_u16_copy (const struct any n) {
-  struct any_u16 *o = n.d;
-  struct any_u16 *r = alloc(n.l);
+struct any __THE_1_any_u16_copy (const struct any n) {
+  struct __THE_1_any_u16 *o = n.d;
+  struct __THE_1_any_u16 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_u16_free (struct any _n) {
-  struct any_u16 *n = _n.d;
+void __THE_1_any_u16_free (struct any _n) {
+  struct __THE_1_any_u16 *n = _n.d;
   free(n);
 }
-struct any any_u32_alloc (uint32_t d) {
-  size_t l = sizeof(struct any_u32);
-  struct any_u32 *r = alloc(l);
+struct any __THE_1_any_u32_alloc (uint32_t d) {
+  size_t l = sizeof(struct __THE_1_any_u32);
+  struct __THE_1_any_u32 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_u32, r, l, &any_u32_copy, &any_u32_free};
+  return (struct any) {TYPE_u32, r, l, &__THE_1_any_u32_copy, &__THE_1_any_u32_free};
 }
-struct any any_u32_copy (const struct any n) {
-  struct any_u32 *o = n.d;
-  struct any_u32 *r = alloc(n.l);
+struct any __THE_1_any_u32_copy (const struct any n) {
+  struct __THE_1_any_u32 *o = n.d;
+  struct __THE_1_any_u32 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_u32_free (struct any _n) {
-  struct any_u32 *n = _n.d;
+void __THE_1_any_u32_free (struct any _n) {
+  struct __THE_1_any_u32 *n = _n.d;
   free(n);
 }
-struct any any_u64_alloc (uint64_t d) {
-  size_t l = sizeof(struct any_u64);
-  struct any_u64 *r = alloc(l);
+struct any __THE_1_any_u64_alloc (uint64_t d) {
+  size_t l = sizeof(struct __THE_1_any_u64);
+  struct __THE_1_any_u64 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_u64, r, l, &any_u64_copy, &any_u64_free};
+  return (struct any) {TYPE_u64, r, l, &__THE_1_any_u64_copy, &__THE_1_any_u64_free};
 }
-struct any any_u64_copy (const struct any n) {
-  struct any_u64 *o = n.d;
-  struct any_u64 *r = alloc(n.l);
+struct any __THE_1_any_u64_copy (const struct any n) {
+  struct __THE_1_any_u64 *o = n.d;
+  struct __THE_1_any_u64 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_u64_free (struct any _n) {
-  struct any_u64 *n = _n.d;
+void __THE_1_any_u64_free (struct any _n) {
+  struct __THE_1_any_u64 *n = _n.d;
   free(n);
 }
 
@@ -459,25 +459,25 @@ int main () {
   const uint16_t __THE_0_testU16_0 = 10;
   const uint32_t __THE_0_testU32_0 = 10;
   const uint64_t __THE_0_testU64_0 = 10;
-  const struct any __THE_0_anyRawBool_0 = any_bool_alloc(true);
-  const struct any __THE_0_anyRawChar_0 = any_char_alloc('a');
-  const struct any __THE_0_anyRawFloat_0 = any_float_alloc(3.14);
-  const struct any __THE_0_anyRawInt_0 = any_int_alloc(1);
-  const struct any __THE_0_anyBool_0 = any_bool_alloc(__THE_0_testBool_0);
-  const struct any __THE_0_anyByte_0 = any_byte_alloc(__THE_0_testByte_0);
-  const struct any __THE_0_anyChar_0 = any_char_alloc(__THE_0_testChar_0);
-  const struct any __THE_0_anyF32_0 = any_f32_alloc(__THE_0_testF32_0);
-  const struct any __THE_0_anyF64_0 = any_f64_alloc(__THE_0_testF64_0);
-  const struct any __THE_0_anyFloat_0 = any_float_alloc(__THE_0_testFloat_0);
-  const struct any __THE_0_anyI8_0 = any_i8_alloc(__THE_0_testI8_0);
-  const struct any __THE_0_anyI16_0 = any_i16_alloc(__THE_0_testI16_0);
-  const struct any __THE_0_anyI32_0 = any_i32_alloc(__THE_0_testI32_0);
-  const struct any __THE_0_anyI64_0 = any_i64_alloc(__THE_0_testI64_0);
-  const struct any __THE_0_anyInt_0 = any_int_alloc(__THE_0_testInt_0);
-  const struct any __THE_0_anyU8_0 = any_u8_alloc(__THE_0_testU8_0);
-  const struct any __THE_0_anyU16_0 = any_u16_alloc(__THE_0_testU16_0);
-  const struct any __THE_0_anyU32_0 = any_u32_alloc(__THE_0_testU32_0);
-  const struct any __THE_0_anyU64_0 = any_u64_alloc(__THE_0_testU64_0);
+  const struct any __THE_0_anyRawBool_0 = __THE_1_any_bool_alloc(true);
+  const struct any __THE_0_anyRawChar_0 = __THE_1_any_char_alloc('a');
+  const struct any __THE_0_anyRawFloat_0 = __THE_1_any_float_alloc(3.14);
+  const struct any __THE_0_anyRawInt_0 = __THE_1_any_int_alloc(1);
+  const struct any __THE_0_anyBool_0 = __THE_1_any_bool_alloc(__THE_0_testBool_0);
+  const struct any __THE_0_anyByte_0 = __THE_1_any_byte_alloc(__THE_0_testByte_0);
+  const struct any __THE_0_anyChar_0 = __THE_1_any_char_alloc(__THE_0_testChar_0);
+  const struct any __THE_0_anyF32_0 = __THE_1_any_f32_alloc(__THE_0_testF32_0);
+  const struct any __THE_0_anyF64_0 = __THE_1_any_f64_alloc(__THE_0_testF64_0);
+  const struct any __THE_0_anyFloat_0 = __THE_1_any_float_alloc(__THE_0_testFloat_0);
+  const struct any __THE_0_anyI8_0 = __THE_1_any_i8_alloc(__THE_0_testI8_0);
+  const struct any __THE_0_anyI16_0 = __THE_1_any_i16_alloc(__THE_0_testI16_0);
+  const struct any __THE_0_anyI32_0 = __THE_1_any_i32_alloc(__THE_0_testI32_0);
+  const struct any __THE_0_anyI64_0 = __THE_1_any_i64_alloc(__THE_0_testI64_0);
+  const struct any __THE_0_anyInt_0 = __THE_1_any_int_alloc(__THE_0_testInt_0);
+  const struct any __THE_0_anyU8_0 = __THE_1_any_u8_alloc(__THE_0_testU8_0);
+  const struct any __THE_0_anyU16_0 = __THE_1_any_u16_alloc(__THE_0_testU16_0);
+  const struct any __THE_0_anyU32_0 = __THE_1_any_u32_alloc(__THE_0_testU32_0);
+  const struct any __THE_0_anyU64_0 = __THE_1_any_u64_alloc(__THE_0_testU64_0);
   any_free((struct any) __THE_0_anyU64_0);
   any_free((struct any) __THE_0_anyU32_0);
   any_free((struct any) __THE_0_anyU16_0);

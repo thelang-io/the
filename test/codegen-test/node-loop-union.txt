@@ -78,9 +78,9 @@ bool str_eq_str (struct str, struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
 struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-void __THE_1_union$0_free (struct __THE_1_union$0);
 struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0);
 bool __THE_1_union$0_eq (struct __THE_1_union$0, struct __THE_1_union$0);
+void __THE_1_union$0_free (struct __THE_1_union$0);
 bool __THE_1_union$0_ne (struct __THE_1_union$0, struct __THE_1_union$0);
 struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0, struct __THE_1_union$0);
 
@@ -127,9 +127,6 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
-  if (n.t == TYPE_str) str_free((struct str) n.v2);
-}
 struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0 n) {
   struct __THE_1_union$0 r = {n.t};
   if (n.t == TYPE_int) r.v1 = n.v1;
@@ -143,6 +140,9 @@ bool __THE_1_union$0_eq (struct __THE_1_union$0 n1, struct __THE_1_union$0 n2) {
   __THE_1_union$0_free((struct __THE_1_union$0) n1);
   __THE_1_union$0_free((struct __THE_1_union$0) n2);
   return r;
+}
+void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+  if (n.t == TYPE_str) str_free((struct str) n.v2);
 }
 bool __THE_1_union$0_ne (struct __THE_1_union$0 n1, struct __THE_1_union$0 n2) {
   bool r = false;

@@ -121,6 +121,7 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   return (struct __THE_1_fn$0) {n.f, x, n.l};
 }
 struct str __THE_1_fn$0_str (struct __THE_1_fn$0 n) {
+  if (n.x != NULL) free(n.x);
   return str_alloc("[Function]");
 }
 void __THE_1_test_0 (void *px) {
@@ -135,6 +136,7 @@ void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
   free(n.x);
 }
 struct str __THE_1_fn$1_str (struct __THE_1_fn$1 n) {
+  if (n.x != NULL) free(n.x);
   return str_alloc("[Function]");
 }
 void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_testAnon_0X x) {

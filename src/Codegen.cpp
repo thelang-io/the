@@ -2996,13 +2996,22 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
           code = "*" + code;
         }
 
-        if (!this->state.contextVars.contains(objCode) && !nodeExpr.type->isRef() && targetType->isRef()) {
+        if (
+          !this->state.contextVars.contains(objCode) &&
+          ((!nodeExpr.type->isRef() && targetType->isRef()) || targetType->isRefOf(nodeExpr.type))
+        ) {
           code = "&" + code;
-        } else if (nodeExpr.type->isRefOf(targetType) && !targetType->isRef()) {
-          code = "*" + code;
+        } else if (nodeExpr.type->isRefOf(targetType)) {
+          auto refNodeExprType = Type::actual(nodeExpr.type);
+
+          while (refNodeExprType->isRefOf(targetType)) {
+            code = "*" + code;
+            refNodeExprType = Type::actual(std::get<TypeRef>(refNodeExprType->body).refType);
+          }
         }
 
-        auto shouldCopyVar = !objType->isRef() || (!targetType->isRef() && !targetType->hasSubType(objType));
+        auto nodeExprTypeRefAny = targetType->isAny() && !nodeExpr.type->isRefOf(targetType);
+        auto shouldCopyVar = !objType->isRef() || (!targetType->isRef() && !targetType->hasSubType(objType) && !nodeExprTypeRefAny);
 
         if (!root && shouldCopyVar) {
           code = this->_genCopyFn(Type::real(objType), code);
@@ -4122,7 +4131,7 @@ CodegenTypeInfo Codegen::_typeInfo (Type *type) {
     };
   }
 
-  auto realType = std::get<TypeRef>(type->body).refType;
+  auto realType = Type::real(type);
   auto realTypeInfoItem = this->_typeInfoItem(realType);
 
   return CodegenTypeInfo{
@@ -4181,8 +4190,14 @@ CodegenTypeInfoItem Codegen::_typeInfoItem (Type *type) {
 }
 
 std::string Codegen::_typeNameAny (Type *type) {
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
+
   auto typeInfo = this->_typeInfo(type);
-  auto typeName = "any_" + std::string(typeInfo.typeName.starts_with("__THE_1_") ? typeInfo.typeName.substr(8) : typeInfo.typeName);
+  auto typeName = Codegen::typeName("any_" + std::string(typeInfo.typeName.starts_with("__THE_1_") ? typeInfo.typeName.substr(8) : typeInfo.typeName));
+
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
 
   for (const auto &entity : this->entities) {
     if (entity.name == typeName) {
@@ -4190,60 +4205,68 @@ std::string Codegen::_typeNameAny (Type *type) {
     }
   }
 
-  auto defName = this->_typeDef(typeInfo.type);
   auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+  auto entityTypeInfo = this->_typeInfo(type);
   entity.decl += "struct " + typeName + ";";
   entity.def += "struct " + typeName + " {" EOL;
-  entity.def += "  " + typeInfo.typeCode + "d;" EOL;
+  entity.def += "  " + entityTypeInfo.typeCode + "d;" EOL;
   entity.def += "};";
-
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib", "typeAny" }, {
-    defName,
-    typeName,
-    typeName + "_copy",
-    typeName + "_free"
-  }};
-
-  allocFnEntity.decl += "struct any " + typeName + "_alloc (" + typeInfo.typeCodeTrimmed + ");";
-  allocFnEntity.def += "struct any " + typeName + "_alloc (" + typeInfo.typeCode + "d) {" EOL;
-  allocFnEntity.def += "  size_t l = sizeof(struct " + typeName + ");" EOL;
-  allocFnEntity.def += "  struct " + typeName + " *r = alloc(l);" EOL;
-  allocFnEntity.def += "  r->d = d;" EOL;
-  allocFnEntity.def += "  return (struct any) {" + defName + ", r, l, &" + typeName + "_copy, &" + typeName + "_free};" EOL;
-  allocFnEntity.def += "}";
-
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc", "typeAny" }, { typeName }};
-  copyFnEntity.decl += "struct any " + typeName + "_copy (const struct any);";
-  copyFnEntity.def += "struct any " + typeName + "_copy (const struct any n) {" EOL;
-  copyFnEntity.def += "  struct " + typeName + " *o = n.d;" EOL;
-  copyFnEntity.def += "  struct " + typeName + " *r = alloc(n.l);" EOL;
-  copyFnEntity.def += "  r->d = " + this->_genCopyFn(typeInfo.type, "o->d", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
-  copyFnEntity.def += "  return (struct any) {n.t, r, n.l, n._copy, n._free};" EOL;
-  copyFnEntity.def += "}";
-
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { "libStdlib", "typeAny" }, { typeName }};
-  freeFnEntity.decl += "void " + typeName + "_free (struct any);";
-  freeFnEntity.def += "void " + typeName + "_free (struct any _n) {" EOL;
-  freeFnEntity.def += "  struct " + typeName + " *n = _n.d;" EOL;
-
-  if (typeInfo.type->shouldBeFreed()) {
-    freeFnEntity.def += "  " + this->_genFreeFn(typeInfo.type, "n->d", &freeFnEntity.builtins, &freeFnEntity.entities) + ";" EOL;
-  }
-
-  freeFnEntity.def += "  free(n);" EOL;
-  freeFnEntity.def += "}";
-
-  if (!typeInfo.type->builtin && !typeInfo.type->isRef()) {
-    this->_activateEntity(typeInfo.typeName, &entity.entities);
-    this->_activateEntity(typeInfo.typeName, &allocFnEntity.entities);
-    this->_activateEntity(typeInfo.typeName, &copyFnEntity.entities);
-    this->_activateEntity(typeInfo.typeName, &freeFnEntity.entities);
-  }
-
+  entity.decl = this->_apiEval(entity.decl);
+  entity.def = this->_apiEval(entity.def);
   this->entities.push_back(entity);
-  this->entities.push_back(allocFnEntity);
+
+  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
+  this->state.builtins = &copyFnEntity.builtins;
+  this->state.entities = &copyFnEntity.entities;
+  auto copyTypeInfo = this->_typeInfo(type);
+  copyFnEntity.decl += "_{struct any} " + typeName + "_copy (const _{struct any});";
+  copyFnEntity.def += "_{struct any} " + typeName + "_copy (const _{struct any} n) {" EOL;
+  copyFnEntity.def += "  struct _{" + typeName + "} *o = n.d;" EOL;
+  copyFnEntity.def += "  struct _{" + typeName + "} *r = _{alloc}(n.l);" EOL;
+  copyFnEntity.def += "  r->d = " + this->_genCopyFn(copyTypeInfo.type, "o->d") + ";" EOL;
+  copyFnEntity.def += "  return (_{struct any}) {n.t, r, n.l, n._copy, n._free};" EOL;
+  copyFnEntity.def += "}";
+  copyFnEntity.decl = this->_apiEval(copyFnEntity.decl);
+  copyFnEntity.def = this->_apiEval(copyFnEntity.def);
   this->entities.push_back(copyFnEntity);
+
+  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN};
+  this->state.builtins = &freeFnEntity.builtins;
+  this->state.entities = &freeFnEntity.entities;
+  auto freeTypeInfo = this->_typeInfo(type);
+  freeFnEntity.decl += "void " + typeName + "_free (_{struct any});";
+  freeFnEntity.def += "void " + typeName + "_free (_{struct any} _n) {" EOL;
+  freeFnEntity.def += "  struct _{" + typeName + "} *n = _n.d;" EOL;
+
+  if (freeTypeInfo.type->shouldBeFreed()) {
+    freeFnEntity.def += "  " + this->_genFreeFn(freeTypeInfo.type, "n->d") + ";" EOL;
+  }
+
+  freeFnEntity.def += "  _{free}(n);" EOL;
+  freeFnEntity.def += "}";
+  freeFnEntity.decl = this->_apiEval(freeFnEntity.decl);
+  freeFnEntity.def = this->_apiEval(freeFnEntity.def);
   this->entities.push_back(freeFnEntity);
+
+  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN};
+  this->state.builtins = &allocFnEntity.builtins;
+  this->state.entities = &allocFnEntity.entities;
+  auto allocTypeInfo = this->_typeInfo(type);
+  allocFnEntity.decl += "_{struct any} " + typeName + "_alloc (" + allocTypeInfo.typeCodeTrimmed + ");";
+  allocFnEntity.def += "_{struct any} " + typeName + "_alloc (" + allocTypeInfo.typeCode + "d) {" EOL;
+  allocFnEntity.def += "  _{size_t} l = sizeof(struct _{" + typeName + "});" EOL;
+  allocFnEntity.def += "  struct _{" + typeName + "} *r = _{alloc}(l);" EOL;
+  allocFnEntity.def += "  r->d = d;" EOL;
+  allocFnEntity.def += "  return (_{struct any}) {_{" + this->_typeDef(allocTypeInfo.type) + "}, r, l, &_{" + typeName + "_copy}, &_{" + typeName + "_free}};" EOL;
+  allocFnEntity.def += "}";
+  allocFnEntity.decl = this->_apiEval(allocFnEntity.decl);
+  allocFnEntity.def = this->_apiEval(allocFnEntity.def);
+  this->entities.insert(this->entities.end() - 3, allocFnEntity);
+
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
 
   return typeName;
 }
@@ -4531,21 +4554,16 @@ std::string Codegen::_typeNameFn (const Type *type) {
 
   auto fn = std::get<TypeFn>(type->body);
   auto paramsName = Codegen::typeName(type->name + "P");
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
-  this->state.builtins = &entity.builtins;
-  this->state.entities = &entity.entities;
-
-  auto returnTypeInfo = this->_typeInfo(fn.returnType);
+  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
 
   if (!fn.params.empty()) {
     auto paramsEntity = CodegenEntity{paramsName, CODEGEN_ENTITY_OBJ};
     this->state.builtins = &paramsEntity.builtins;
     this->state.entities = &paramsEntity.entities;
-
-    auto paramIdx = static_cast<std::size_t>(0);
-
     paramsEntity.decl += "struct " + paramsName + ";";
     paramsEntity.def += "struct " + paramsName + " {" EOL;
+
+    auto paramIdx = static_cast<std::size_t>(0);
 
     for (const auto &param : fn.params) {
       auto paramTypeInfo = this->_typeInfo(param.type);
@@ -4560,13 +4578,15 @@ std::string Codegen::_typeNameFn (const Type *type) {
     }
 
     paramsEntity.def += "};";
+    paramsEntity.decl = this->_apiEval(paramsEntity.decl);
+    paramsEntity.def = this->_apiEval(paramsEntity.def);
     this->entities.push_back(paramsEntity);
-    this->_activateEntity(paramsName, &entity.entities);
   }
 
   this->state.builtins = &entity.builtins;
   this->state.entities = &entity.entities;
 
+  auto returnTypeInfo = this->_typeInfo(fn.returnType);
   auto functorArgs = std::string("void *");
 
   if (fn.isMethod && fn.methodInfo.isSelfFirst) {
@@ -4575,48 +4595,66 @@ std::string Codegen::_typeNameFn (const Type *type) {
   }
 
   if (!fn.params.empty()) {
-    functorArgs += ", struct " + paramsName;
+    functorArgs += ", struct _{" + paramsName + "}";
   }
 
   entity.decl += "struct " + typeName + ";";
   entity.def += "struct " + typeName + " {" EOL;
   entity.def += "  " + returnTypeInfo.typeCode + "(*f) (" + functorArgs + ");" EOL;
   entity.def += "  void *x;" EOL;
-  entity.def += "  size_t l;" EOL;
+  entity.def += "  _{size_t} l;" EOL;
   entity.def += "};";
+  entity.decl = this->_apiEval(entity.decl);
+  entity.def = this->_apiEval(entity.def);
+  this->entities.push_back(entity);
 
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib", "libString" }, { typeName }};
-  copyFnEntity.decl += "struct " + typeName + " " + typeName + "_copy (const struct " + typeName + ");";
-  copyFnEntity.def += "struct " + typeName + " " + typeName + "_copy (const struct " + typeName + " n) {" EOL;
-  copyFnEntity.def += "  if (n.x == NULL) return n;" EOL;
-  copyFnEntity.def += "  void *x = alloc(n.l);" EOL;
-  copyFnEntity.def += "  memcpy(x, n.x, n.l);" EOL;
-  copyFnEntity.def += "  return (struct " + typeName + ") {n.f, x, n.l};" EOL;
+  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
+  this->state.builtins = &copyFnEntity.builtins;
+  this->state.entities = &copyFnEntity.entities;
+  copyFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
+  copyFnEntity.def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
+  copyFnEntity.def += "  if (n.x == _{NULL}) return n;" EOL;
+  copyFnEntity.def += "  void *x = _{alloc}(n.l);" EOL;
+  copyFnEntity.def += "  _{memcpy}(x, n.x, n.l);" EOL;
+  copyFnEntity.def += "  return (struct _{" + typeName + "}) {n.f, x, n.l};" EOL;
   copyFnEntity.def += "}";
+  copyFnEntity.decl = this->_apiEval(copyFnEntity.decl);
+  copyFnEntity.def = this->_apiEval(copyFnEntity.def);
+  this->entities.push_back(copyFnEntity);
 
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName }};
-  freeFnEntity.decl += "void " + typeName + "_free (struct " + typeName + ");";
-  freeFnEntity.def += "void " + typeName + "_free (struct " + typeName + " n) {" EOL;
-  freeFnEntity.def += "  free(n.x);" EOL;
+  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN};
+  this->state.builtins = &freeFnEntity.builtins;
+  this->state.entities = &freeFnEntity.entities;
+  freeFnEntity.decl += "void " + typeName + "_free (struct _{" + typeName + "});";
+  freeFnEntity.def += "void " + typeName + "_free (struct _{" + typeName + "} n) {" EOL;
+  freeFnEntity.def += "  _{free}(n.x);" EOL;
   freeFnEntity.def += "}";
+  freeFnEntity.decl = this->_apiEval(freeFnEntity.decl);
+  freeFnEntity.def = this->_apiEval(freeFnEntity.def);
+  this->entities.push_back(freeFnEntity);
 
-  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName }};
-  reallocFnEntity.decl += "struct " + typeName + " " + typeName + "_realloc (struct " + typeName + ", struct " + typeName + ");";
-  reallocFnEntity.def += "struct " + typeName + " " + typeName + "_realloc (struct " + typeName + " n1, struct " + typeName + " n2) {" EOL;
-  reallocFnEntity.def += "  if (n1.x != NULL) free(n1.x);" EOL;
+  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN};
+  this->state.builtins = &reallocFnEntity.builtins;
+  this->state.entities = &reallocFnEntity.entities;
+  reallocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
+  reallocFnEntity.def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+  reallocFnEntity.def += "  if (n1.x != _{NULL}) _{free}(n1.x);" EOL;
   reallocFnEntity.def += "  return n2;" EOL;
   reallocFnEntity.def += "}";
-
-  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN, { "fnStrAlloc", "typeStr" }, { typeName }};
-  strFnEntity.decl += "struct str " + typeName + "_str (struct " + typeName + ");";
-  strFnEntity.def += "struct str " + typeName + "_str (struct " + typeName + " n) {" EOL;
-  strFnEntity.def += R"(  return str_alloc("[Function]");)" EOL;
-  strFnEntity.def += "}";
-
-  this->entities.push_back(entity);
-  this->entities.push_back(copyFnEntity);
-  this->entities.push_back(freeFnEntity);
+  reallocFnEntity.decl = this->_apiEval(reallocFnEntity.decl);
+  reallocFnEntity.def = this->_apiEval(reallocFnEntity.def);
   this->entities.push_back(reallocFnEntity);
+
+  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN};
+  this->state.builtins = &strFnEntity.builtins;
+  this->state.entities = &strFnEntity.entities;
+  strFnEntity.decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
+  strFnEntity.def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
+  strFnEntity.def += "  if (n.x != _{NULL}) _{free}(n.x);" EOL;
+  strFnEntity.def += R"(  return _{str_alloc}("[Function]");)" EOL;
+  strFnEntity.def += "}";
+  strFnEntity.decl = this->_apiEval(strFnEntity.decl);
+  strFnEntity.def = this->_apiEval(strFnEntity.def);
   this->entities.push_back(strFnEntity);
 
   this->state.builtins = initialStateBuiltins;
@@ -4778,9 +4816,11 @@ std::string Codegen::_typeNameUnion (const Type *type) {
 
   entity.def += "  };" EOL;
   entity.def += "};";
+  entity.decl = this->_apiEval(entity.decl);
+  entity.def = this->_apiEval(entity.def);
   this->entities.push_back(entity);
 
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc" }};
+  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN};
   this->state.builtins = &allocFnEntity.builtins;
   this->state.entities = &allocFnEntity.entities;
   allocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_alloc (int, ...);";
@@ -4826,7 +4866,7 @@ std::string Codegen::_typeNameUnion (const Type *type) {
   freeFnEntity.def = this->_apiEval(freeFnEntity.def);
   this->entities.push_back(freeFnEntity);
 
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib" }};
+  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
   this->state.builtins = &copyFnEntity.builtins;
   this->state.entities = &copyFnEntity.entities;
   copyFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
@@ -4843,7 +4883,7 @@ std::string Codegen::_typeNameUnion (const Type *type) {
   copyFnEntity.def += "}";
   copyFnEntity.decl = this->_apiEval(copyFnEntity.decl);
   copyFnEntity.def = this->_apiEval(copyFnEntity.def);
-  this->entities.push_back(copyFnEntity);
+  this->entities.insert(this->entities.end() - 1, copyFnEntity);
 
   auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN};
   this->state.builtins = &eqFnEntity.builtins;
@@ -4865,7 +4905,7 @@ std::string Codegen::_typeNameUnion (const Type *type) {
   eqFnEntity.def += "}";
   eqFnEntity.decl = this->_apiEval(eqFnEntity.decl);
   eqFnEntity.def = this->_apiEval(eqFnEntity.def);
-  this->entities.push_back(eqFnEntity);
+  this->entities.insert(this->entities.end() - 1, eqFnEntity);
 
   auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN};
   this->state.builtins = &neFnEntity.builtins;
@@ -5192,7 +5232,7 @@ std::string Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetTyp
     auto typeName = this->_typeNameAny(nodeExpr.type);
     this->_activateEntity(typeName + "_alloc");
     result = typeName + "_alloc(" + result + ")";
-  } else if (!root && realTargetType->isOpt() && !realNodeExprType->isOpt()) {
+  } else if (!root && realTargetType->isOpt() && (!realNodeExprType->isOpt() || !realTargetType->matchStrict(realNodeExprType))) {
     auto targetTypeInfo = this->_typeInfo(realTargetType);
     auto optionalType = std::get<TypeOptional>(targetTypeInfo.type->body);
 

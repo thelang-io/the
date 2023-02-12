@@ -137,6 +137,7 @@ struct __THE_1_fn$0 __THE_1_fn$0_realloc (struct __THE_1_fn$0 n1, struct __THE_1
   return n2;
 }
 struct str __THE_1_fn$0_str (struct __THE_1_fn$0 n) {
+  if (n.x != NULL) free(n.x);
   return str_alloc("[Function]");
 }
 void __THE_1_testFn_0 (void *px) {

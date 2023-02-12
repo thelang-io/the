@@ -20,11 +20,11 @@ int main () {
   const int32_t __THE_0_testInt2_0 = 2;
   int32_t *__THE_0_a_0 = &__THE_0_testInt1_0;
   int32_t *__THE_0_b_0 = &__THE_0_testInt2_0;
-  __THE_0_a_0;
-  __THE_0_b_0;
+  &__THE_0_a_0;
+  &__THE_0_b_0;
   true ? __THE_0_a_0 : __THE_0_b_0;
-  false ? __THE_0_a_0 : __THE_0_b_0;
-  false ? __THE_0_a_0 : __THE_0_b_0;
+  false ? &__THE_0_a_0 : &__THE_0_b_0;
+  false ? &__THE_0_a_0 : &__THE_0_b_0;
 }
 ======= flags =======
 ======= stdout =======

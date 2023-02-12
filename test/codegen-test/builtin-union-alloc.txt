@@ -36,25 +36,9 @@ main {
   u4: u8 | u16 | u32 | u64 = testU64
 }
 ======= code =======
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
-  #define THE_OS_WINDOWS
-  #define THE_EOL "\r\n"
-  #define THE_PATH_SEP "\\"
-#else
-  #if defined(__APPLE__)
-    #define THE_OS_MACOS
-  #elif defined(__linux__)
-    #define THE_OS_LINUX
-  #endif
-  #define THE_EOL "\n"
-  #define THE_PATH_SEP "/"
-#endif
-
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define TYPE_bool 1
 #define TYPE_byte 2
@@ -113,20 +97,11 @@ struct __THE_1_union$3 {
   };
 };
 
-void *alloc (size_t);
 struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
 struct __THE_1_union$1 __THE_1_union$1_alloc (int, ...);
 struct __THE_1_union$2 __THE_1_union$2_alloc (int, ...);
 struct __THE_1_union$3 __THE_1_union$3_alloc (int, ...);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
 struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   struct __THE_1_union$0 r = {t};
   va_list args;

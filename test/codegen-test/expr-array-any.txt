@@ -43,14 +43,14 @@ struct str {
   size_t l;
 };
 
-struct any_int;
-struct any_str;
+struct __THE_1_any_int;
+struct __THE_1_any_str;
 struct __THE_1_array_any;
 
-struct any_int {
+struct __THE_1_any_int {
   int32_t d;
 };
-struct any_str {
+struct __THE_1_any_str {
   struct str d;
 };
 struct __THE_1_array_any {
@@ -64,12 +64,12 @@ void any_free (struct any);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
-struct any any_str_alloc (struct str);
-struct any any_str_copy (const struct any);
-void any_str_free (struct any);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
+struct any __THE_1_any_str_alloc (struct str);
+struct any __THE_1_any_str_copy (const struct any);
+void __THE_1_any_str_free (struct any);
 struct __THE_1_array_any __THE_1_array_any_alloc (size_t, ...);
 void __THE_1_array_any_free (struct __THE_1_array_any);
 
@@ -101,36 +101,36 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct any any_int_alloc (int32_t d) {
-  size_t l = sizeof(struct any_int);
-  struct any_int *r = alloc(l);
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
 }
-struct any any_int_copy (const struct any n) {
-  struct any_int *o = n.d;
-  struct any_int *r = alloc(n.l);
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_int_free (struct any _n) {
-  struct any_int *n = _n.d;
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
   free(n);
 }
-struct any any_str_alloc (struct str d) {
-  size_t l = sizeof(struct any_str);
-  struct any_str *r = alloc(l);
+struct any __THE_1_any_str_alloc (struct str d) {
+  size_t l = sizeof(struct __THE_1_any_str);
+  struct __THE_1_any_str *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_str, r, l, &any_str_copy, &any_str_free};
+  return (struct any) {TYPE_str, r, l, &__THE_1_any_str_copy, &__THE_1_any_str_free};
 }
-struct any any_str_copy (const struct any n) {
-  struct any_str *o = n.d;
-  struct any_str *r = alloc(n.l);
+struct any __THE_1_any_str_copy (const struct any n) {
+  struct __THE_1_any_str *o = n.d;
+  struct __THE_1_any_str *r = alloc(n.l);
   r->d = str_copy(o->d);
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_str_free (struct any _n) {
-  struct any_str *n = _n.d;
+void __THE_1_any_str_free (struct any _n) {
+  struct __THE_1_any_str *n = _n.d;
   str_free((struct str) n->d);
   free(n);
 }
@@ -150,8 +150,8 @@ void __THE_1_array_any_free (struct __THE_1_array_any n) {
 
 int main () {
   const struct any __THE_0_var1_0 = {0, NULL, 0, NULL, NULL};
-  const struct any __THE_0_var2_0 = any_int_alloc(2);
-  const struct any __THE_0_var3_0 = any_str_alloc(str_alloc("test"));
+  const struct any __THE_0_var2_0 = __THE_1_any_int_alloc(2);
+  const struct any __THE_0_var3_0 = __THE_1_any_str_alloc(str_alloc("test"));
   const struct __THE_1_array_any __THE_0_a_0 = __THE_1_array_any_alloc(3, any_copy(__THE_0_var1_0), any_copy(__THE_0_var2_0), any_copy(__THE_0_var3_0));
   const struct __THE_1_array_any __THE_0_b_0 = __THE_1_array_any_alloc(3, any_copy(__THE_0_var1_0), any_copy(__THE_0_var2_0), any_copy(__THE_0_var3_0));
   __THE_1_array_any_free((struct __THE_1_array_any) __THE_0_b_0);

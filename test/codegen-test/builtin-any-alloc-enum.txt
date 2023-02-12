@@ -44,17 +44,17 @@ struct any {
   void (*_free) (struct any);
 };
 
-struct any_Color_0;
+struct __THE_1_any_Color_0;
 
-struct any_Color_0 {
+struct __THE_1_any_Color_0 {
   enum __THE_1_Color_0 d;
 };
 
 void *alloc (size_t);
 void any_free (struct any);
-struct any any_Color_0_alloc (enum __THE_1_Color_0);
-struct any any_Color_0_copy (const struct any);
-void any_Color_0_free (struct any);
+struct any __THE_1_any_Color_0_alloc (enum __THE_1_Color_0);
+struct any __THE_1_any_Color_0_copy (const struct any);
+void __THE_1_any_Color_0_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -67,27 +67,27 @@ void *alloc (size_t l) {
 void any_free (struct any n) {
   if (n.d != NULL) n._free(n);
 }
-struct any any_Color_0_alloc (enum __THE_1_Color_0 d) {
-  size_t l = sizeof(struct any_Color_0);
-  struct any_Color_0 *r = alloc(l);
+struct any __THE_1_any_Color_0_alloc (enum __THE_1_Color_0 d) {
+  size_t l = sizeof(struct __THE_1_any_Color_0);
+  struct __THE_1_any_Color_0 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_Color_0, r, l, &any_Color_0_copy, &any_Color_0_free};
+  return (struct any) {TYPE_Color_0, r, l, &__THE_1_any_Color_0_copy, &__THE_1_any_Color_0_free};
 }
-struct any any_Color_0_copy (const struct any n) {
-  struct any_Color_0 *o = n.d;
-  struct any_Color_0 *r = alloc(n.l);
+struct any __THE_1_any_Color_0_copy (const struct any n) {
+  struct __THE_1_any_Color_0 *o = n.d;
+  struct __THE_1_any_Color_0 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_Color_0_free (struct any _n) {
-  struct any_Color_0 *n = _n.d;
+void __THE_1_any_Color_0_free (struct any _n) {
+  struct __THE_1_any_Color_0 *n = _n.d;
   free(n);
 }
 
 int main () {
   const enum __THE_1_Color_0 __THE_0_testEnum_0 = __THE_0_ColorSDGreen_0;
-  const struct any __THE_0_anyRawEnum_0 = any_Color_0_alloc(__THE_0_ColorSDRed_0);
-  const struct any __THE_0_anyEnum_0 = any_Color_0_alloc(__THE_0_testEnum_0);
+  const struct any __THE_0_anyRawEnum_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDRed_0);
+  const struct any __THE_0_anyEnum_0 = __THE_1_any_Color_0_alloc(__THE_0_testEnum_0);
   any_free((struct any) __THE_0_anyEnum_0);
   any_free((struct any) __THE_0_anyRawEnum_0);
 }

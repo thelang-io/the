@@ -15,23 +15,7 @@ main {
   g2: HairColor | EyeColor = EyeColor.Blue
 }
 ======= code =======
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
-  #define THE_OS_WINDOWS
-  #define THE_EOL "\r\n"
-  #define THE_PATH_SEP "\\"
-#else
-  #if defined(__APPLE__)
-    #define THE_OS_MACOS
-  #elif defined(__linux__)
-    #define THE_OS_LINUX
-  #endif
-  #define THE_EOL "\n"
-  #define THE_PATH_SEP "/"
-#endif
-
 #include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define TYPE_HairColor_0 1
 #define TYPE_EyeColor_0 2
@@ -57,17 +41,8 @@ struct __THE_1_union$0 {
   };
 };
 
-void *alloc (size_t);
 struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
 struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   struct __THE_1_union$0 r = {t};
   va_list args;

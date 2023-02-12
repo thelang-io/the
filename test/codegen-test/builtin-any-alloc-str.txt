@@ -37,9 +37,9 @@ struct str {
   size_t l;
 };
 
-struct any_str;
+struct __THE_1_any_str;
 
-struct any_str {
+struct __THE_1_any_str {
   struct str d;
 };
 
@@ -48,9 +48,9 @@ void any_free (struct any);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct any any_str_alloc (struct str);
-struct any any_str_copy (const struct any);
-void any_str_free (struct any);
+struct any __THE_1_any_str_alloc (struct str);
+struct any __THE_1_any_str_copy (const struct any);
+void __THE_1_any_str_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -77,28 +77,28 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct any any_str_alloc (struct str d) {
-  size_t l = sizeof(struct any_str);
-  struct any_str *r = alloc(l);
+struct any __THE_1_any_str_alloc (struct str d) {
+  size_t l = sizeof(struct __THE_1_any_str);
+  struct __THE_1_any_str *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_str, r, l, &any_str_copy, &any_str_free};
+  return (struct any) {TYPE_str, r, l, &__THE_1_any_str_copy, &__THE_1_any_str_free};
 }
-struct any any_str_copy (const struct any n) {
-  struct any_str *o = n.d;
-  struct any_str *r = alloc(n.l);
+struct any __THE_1_any_str_copy (const struct any n) {
+  struct __THE_1_any_str *o = n.d;
+  struct __THE_1_any_str *r = alloc(n.l);
   r->d = str_copy(o->d);
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_str_free (struct any _n) {
-  struct any_str *n = _n.d;
+void __THE_1_any_str_free (struct any _n) {
+  struct __THE_1_any_str *n = _n.d;
   str_free((struct str) n->d);
   free(n);
 }
 
 int main () {
   const struct str __THE_0_testStr_0 = str_alloc("test");
-  const struct any __THE_0_anyRawStr_0 = any_str_alloc(str_alloc("hello"));
-  const struct any __THE_0_anyStr_0 = any_str_alloc(str_copy(__THE_0_testStr_0));
+  const struct any __THE_0_anyRawStr_0 = __THE_1_any_str_alloc(str_alloc("hello"));
+  const struct any __THE_0_anyStr_0 = __THE_1_any_str_alloc(str_copy(__THE_0_testStr_0));
   any_free((struct any) __THE_0_anyStr_0);
   any_free((struct any) __THE_0_anyRawStr_0);
   str_free((struct str) __THE_0_testStr_0);

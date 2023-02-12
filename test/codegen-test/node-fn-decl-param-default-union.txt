@@ -113,8 +113,8 @@ struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
 struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-void __THE_1_union$0_free (struct __THE_1_union$0);
 struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0);
+void __THE_1_union$0_free (struct __THE_1_union$0);
 struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0, struct __THE_1_union$0);
 struct __THE_1_union$0 __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
@@ -170,14 +170,14 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
-  if (n.t == TYPE_str) str_free((struct str) n.v2);
-}
 struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0 n) {
   struct __THE_1_union$0 r = {n.t};
   if (n.t == TYPE_int) r.v1 = n.v1;
   if (n.t == TYPE_str) r.v2 = str_copy(n.v2);
   return r;
+}
+void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+  if (n.t == TYPE_str) str_free((struct str) n.v2);
 }
 struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0 n1, struct __THE_1_union$0 n2) {
   __THE_1_union$0_free((struct __THE_1_union$0) n1);

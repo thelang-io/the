@@ -315,7 +315,8 @@ bool Type::isRefOf (const Type *type) const {
     return false;
   }
 
-  return std::get<TypeRef>(this->body).refType->matchStrict(type, true);
+  auto refType = Type::actual(std::get<TypeRef>(this->body).refType);
+  return refType->matchStrict(type, true) || refType->isRefOf(type);
 }
 
 // todo test

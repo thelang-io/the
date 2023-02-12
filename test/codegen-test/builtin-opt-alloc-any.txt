@@ -35,9 +35,9 @@ struct any {
   void (*_free) (struct any);
 };
 
-struct any_int;
+struct __THE_1_any_int;
 
-struct any_int {
+struct __THE_1_any_int {
   int32_t d;
 };
 
@@ -46,9 +46,9 @@ struct any any_copy (const struct any);
 void any_free (struct any);
 struct any *__THE_1_opt_any_alloc (struct any);
 void __THE_1_opt_any_free (struct any *);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -74,20 +74,20 @@ void __THE_1_opt_any_free (struct any *n) {
   any_free((struct any) *n);
   free(n);
 }
-struct any any_int_alloc (int32_t d) {
-  size_t l = sizeof(struct any_int);
-  struct any_int *r = alloc(l);
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
 }
-struct any any_int_copy (const struct any n) {
-  struct any_int *o = n.d;
-  struct any_int *r = alloc(n.l);
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_int_free (struct any _n) {
-  struct any_int *n = _n.d;
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
   free(n);
 }
 
@@ -95,7 +95,7 @@ int main () {
   const struct any __THE_0_testAny_0 = {0, NULL, 0, NULL, NULL};
   const struct any *__THE_0_optAny_0 = NULL;
   const struct any *__THE_0_optAnyNilInit_0 = NULL;
-  const struct any *__THE_0_optAnyValInit_0 = __THE_1_opt_any_alloc(any_int_alloc(1));
+  const struct any *__THE_0_optAnyValInit_0 = __THE_1_opt_any_alloc(__THE_1_any_int_alloc(1));
   const struct any *__THE_0_optAnyValCopy_0 = __THE_1_opt_any_alloc(any_copy(__THE_0_testAny_0));
   __THE_1_opt_any_free((struct any *) __THE_0_optAnyValCopy_0);
   __THE_1_opt_any_free((struct any *) __THE_0_optAnyValInit_0);
