@@ -4859,6 +4859,8 @@ std::string Codegen::_typeNameUnion (const Type *type) {
     eqFnEntity.def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp) + ";" EOL;
   }
 
+  eqFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);" EOL;
+  eqFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n2);" EOL;
   eqFnEntity.def += "  return r;" EOL;
   eqFnEntity.def += "}";
   eqFnEntity.decl = this->_apiEval(eqFnEntity.decl);
@@ -4875,10 +4877,12 @@ std::string Codegen::_typeNameUnion (const Type *type) {
   for (const auto &subType : subTypes) {
     auto subTypeDef = this->_typeDef(subType);
     auto subTypeProp = "v" + this->_typeDefIdx(subType);
-    copyFnEntity.def += "  if (n1.t == _{" + subTypeDef + "} && n2.t == _{" + subTypeDef + "}) ";
-    copyFnEntity.def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp, std::nullopt, std::nullopt, true) + ";" EOL;
+    neFnEntity.def += "  if (n1.t == _{" + subTypeDef + "} && n2.t == _{" + subTypeDef + "}) ";
+    neFnEntity.def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp, std::nullopt, std::nullopt, true) + ";" EOL;
   }
 
+  neFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);" EOL;
+  neFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n2);" EOL;
   neFnEntity.def += "  return r;" EOL;
   neFnEntity.def += "}";
   neFnEntity.decl = this->_apiEval(neFnEntity.decl);

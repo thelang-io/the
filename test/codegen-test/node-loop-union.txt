@@ -140,10 +140,16 @@ bool __THE_1_union$0_eq (struct __THE_1_union$0 n1, struct __THE_1_union$0 n2) {
   bool r = false;
   if (n1.t == TYPE_int && n2.t == TYPE_int) r = n1.v1 == n2.v1;
   if (n1.t == TYPE_str && n2.t == TYPE_str) r = str_eq_str(str_copy(n1.v2), str_copy(n2.v2));
+  __THE_1_union$0_free((struct __THE_1_union$0) n1);
+  __THE_1_union$0_free((struct __THE_1_union$0) n2);
   return r;
 }
 bool __THE_1_union$0_ne (struct __THE_1_union$0 n1, struct __THE_1_union$0 n2) {
   bool r = false;
+  if (n1.t == TYPE_int && n2.t == TYPE_int) r = n1.v1 != n2.v1;
+  if (n1.t == TYPE_str && n2.t == TYPE_str) r = str_ne_str(str_copy(n1.v2), str_copy(n2.v2));
+  __THE_1_union$0_free((struct __THE_1_union$0) n1);
+  __THE_1_union$0_free((struct __THE_1_union$0) n2);
   return r;
 }
 struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0 n1, struct __THE_1_union$0 n2) {

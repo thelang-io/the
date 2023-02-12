@@ -148,7 +148,6 @@ struct Type {
   bool isObj () const;
   bool isOpt () const;
   bool isRef () const;
-  bool isRefExt () const;
   bool isRefOf (const Type *) const;
   bool isSafeForTernaryAlt () const;
   bool isSmallForVarArg () const;

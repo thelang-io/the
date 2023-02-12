@@ -780,40 +780,6 @@ TEST_F(TypeTest, CheckIfNotRef) {
   EXPECT_FALSE(this->tm_.get("void")->isRef());
 }
 
-TEST_F(TypeTest, CheckIfRefExt) {
-  auto type1 = this->tm_.opt(this->ref_);
-
-  EXPECT_TRUE(this->ref_->isRefExt());
-  EXPECT_TRUE(type1->isRefExt());
-}
-
-TEST_F(TypeTest, CheckIfNotRefExt) {
-  EXPECT_FALSE(this->any_->isRefExt());
-  EXPECT_FALSE(this->arr_->isRefExt());
-  EXPECT_FALSE(this->enum_->isRefExt());
-  EXPECT_FALSE(this->fn_->isRefExt());
-  EXPECT_FALSE(this->obj_->isRefExt());
-
-  EXPECT_FALSE(this->tm_.get("any")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("bool")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("byte")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("char")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("f32")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("f64")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("float")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("i8")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("i16")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("i32")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("i64")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("int")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("str")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("u8")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("u16")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("u32")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("u64")->isRefExt());
-  EXPECT_FALSE(this->tm_.get("void")->isRefExt());
-}
-
 TEST_F(TypeTest, CheckIfSmallForVarArg) {
   EXPECT_FALSE(this->any_->isSmallForVarArg());
   EXPECT_FALSE(this->arr_->isSmallForVarArg());
