@@ -24,7 +24,6 @@ VarStack::VarStack (const std::vector<std::shared_ptr<Var>> &items) {
   }
 }
 
-// todo test
 void VarStack::mark (const std::string &codeName) {
   for (auto &item : this->_items) {
     if (std::get<0>(item)->codeName == codeName) {

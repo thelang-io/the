@@ -590,9 +590,9 @@ bool Type::matchStrict (const Type *type, bool exact) const {
 }
 
 bool Type::shouldBeFreed () const {
-  if (this->isAlias()) {// todo test
+  if (this->isAlias()) { // todo test
     return std::get<TypeAlias>(this->body).type->shouldBeFreed();
-  } else if (this->isUnion()) {// todo test
+  } else if (this->isUnion()) { // todo test
     auto subTypes = std::get<TypeUnion>(this->body).subTypes;
     bool result = false;
 

@@ -190,7 +190,6 @@ std::string Token::upperFirst (const std::string &str) {
   return std::string(1, static_cast<char>(toupper(str[0]))) + str.substr(1);
 }
 
-// todo test KW_TYPE
 TokenAssociativity Token::associativity (bool unary) const {
   if (
     this->type == TK_KW_IS || this->type == TK_KW_REF ||
@@ -234,7 +233,6 @@ TokenAssociativity Token::associativity (bool unary) const {
   throw Error("tried associativity for unknown token");
 }
 
-// todo test KW_TYPE
 int Token::precedence (bool isUnary) const {
   if (this->type == TK_OP_LPAR || this->type == TK_OP_RPAR) {
     return 18;

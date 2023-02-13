@@ -172,6 +172,7 @@ TEST(TokenTest, AssociativityThrowsOnUnknown) {
 }
 
 TEST(TokenTest, AssociativityNone) {
+  EXPECT_EQ(Token{TK_KW_IS}.associativity(), TK_ASSOC_NONE);
   EXPECT_EQ(Token{TK_KW_REF}.associativity(), TK_ASSOC_NONE);
   EXPECT_EQ(Token{TK_OP_LPAR}.associativity(), TK_ASSOC_NONE);
   EXPECT_EQ(Token{TK_OP_RPAR}.associativity(), TK_ASSOC_NONE);
@@ -252,6 +253,7 @@ TEST(TokenTest, PrecedenceSymbols) {
 }
 
 TEST(TokenTest, PrecedenceKeywords) {
+  EXPECT_EQ(Token{TK_KW_IS}.precedence(), 9);
   EXPECT_EQ(Token{TK_KW_REF}.precedence(), 15);
 }
 
