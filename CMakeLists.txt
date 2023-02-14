@@ -121,6 +121,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/ReaderTest.cpp
     test/TokenTest.cpp
     test/TypeTest.cpp
+    test/TypeMatchTest.cpp
     test/TypeMapTest.cpp
     test/VarMapTest.cpp
     test/VarStackTest.cpp

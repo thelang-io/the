@@ -20,6 +20,7 @@
 
 class TypeTest : public testing::Test {
  protected:
+  Type *alias_;
   Type *any_;
   Type *arr_;
   Type *enum_;
@@ -28,9 +29,11 @@ class TypeTest : public testing::Test {
   Type *opt_;
   Type *ref_;
   TypeMap tm_;
+  Type *union_;
 
   void SetUp () override {
     this->tm_.init();
+    this->alias_ = this->tm_.alias("Alias", this->tm_.get("int"));
     this->any_ = this->tm_.get("any");
     this->arr_ = this->tm_.arrayOf(this->tm_.get("int"));
 
@@ -55,6 +58,7 @@ class TypeTest : public testing::Test {
 
     this->opt_ = this->tm_.opt(this->tm_.get("int"));
     this->ref_ = this->tm_.ref(this->tm_.get("int"));
+    this->union_ = this->tm_.unionType({this->tm_.get("int"), this->tm_.get("str")});
   }
 };
 
@@ -225,6 +229,18 @@ TEST_F(TypeTest, LargestNonNumbers) {
   EXPECT_THROW_WITH_MESSAGE(Type::largest(this->tm_.get("int"), this->tm_.get("void")), "tried to find largest type of non-number");
 }
 
+TEST_F(TypeTest, ActualOnAlias) {
+  EXPECT_EQ(Type::actual(this->alias_), this->tm_.get("int"));
+}
+
+TEST_F(TypeTest, ActualOnActual) {
+  EXPECT_EQ(Type::actual(this->tm_.get("int")), this->tm_.get("int"));
+}
+
+TEST_F(TypeTest, RealOnAlias) {
+  EXPECT_EQ(Type::real(this->alias_), this->tm_.get("int"));
+}
+
 TEST_F(TypeTest, RealOnReal) {
   EXPECT_EQ(Type::real(this->tm_.get("int")), this->tm_.get("int"));
 }
@@ -238,12 +254,14 @@ TEST_F(TypeTest, GetsEnumerator) {
 }
 
 TEST_F(TypeTest, GetsProp) {
+  EXPECT_NE(this->alias_->getProp("str"), nullptr);
   EXPECT_NE(this->any_->getProp("str"), nullptr);
   EXPECT_EQ(this->arr_->getProp("len"), this->tm_.get("int"));
   EXPECT_NE(this->enum_->getProp("str"), nullptr);
   EXPECT_EQ(this->obj_->getProp("a"), this->tm_.get("int"));
   EXPECT_NE(this->opt_->getProp("str"), nullptr);
   EXPECT_NE(this->ref_->getProp("str"), nullptr);
+  EXPECT_NE(this->union_->getProp("str"), nullptr);
   EXPECT_NE(this->tm_.get("int")->getProp("str"), nullptr);
   EXPECT_EQ(this->tm_.get("str")->getProp("len"), this->tm_.get("int"));
 }
@@ -259,6 +277,10 @@ TEST_F(TypeTest, GetsNonExistingEnumerator) {
 }
 
 TEST_F(TypeTest, GetsNonExistingProp) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->alias_->getProp("a");
+  }, "tried to get non-existing prop type");
+
   EXPECT_THROW_WITH_MESSAGE({
     this->any_->getProp("a");
   }, "tried to get non-existing prop type");
@@ -288,6 +310,10 @@ TEST_F(TypeTest, GetsNonExistingProp) {
   }, "tried to get non-existing prop type");
 
   EXPECT_THROW_WITH_MESSAGE({
+    this->union_->getProp("a");
+  }, "tried to get non-existing prop type");
+
+  EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("int")->getProp("a");
   }, "tried to get non-existing prop type");
 
@@ -300,23 +326,26 @@ TEST_F(TypeTest, HasEnumerator) {
   EXPECT_TRUE(this->enum_->hasEnumerator("Red"));
 }
 
+TEST_F(TypeTest, HasNonExistingEnumerator) {
+  EXPECT_FALSE(this->any_->hasEnumerator("White"));
+  EXPECT_FALSE(this->enum_->hasEnumerator("White"));
+}
+
 TEST_F(TypeTest, HasProp) {
+  EXPECT_TRUE(this->alias_->hasProp("str"));
   EXPECT_TRUE(this->any_->hasProp("str"));
   EXPECT_TRUE(this->arr_->hasProp("str"));
   EXPECT_TRUE(this->enum_->hasProp("str"));
   EXPECT_TRUE(this->obj_->hasProp("a"));
   EXPECT_TRUE(this->opt_->hasProp("str"));
   EXPECT_TRUE(this->ref_->hasProp("str"));
+  EXPECT_TRUE(this->union_->hasProp("str"));
   EXPECT_TRUE(this->tm_.get("int")->hasProp("str"));
   EXPECT_TRUE(this->tm_.get("str")->hasProp("len"));
 }
 
-TEST_F(TypeTest, HasNonExistingEnumerator) {
-  EXPECT_FALSE(this->any_->hasEnumerator("White"));
-  EXPECT_FALSE(this->enum_->hasEnumerator("White"));
-}
-
 TEST_F(TypeTest, HasNonExistingProp) {
+  EXPECT_FALSE(this->alias_->hasProp("a"));
   EXPECT_FALSE(this->any_->hasProp("a"));
   EXPECT_FALSE(this->arr_->hasProp("a"));
   EXPECT_FALSE(this->enum_->hasProp("a"));
@@ -324,8 +353,75 @@ TEST_F(TypeTest, HasNonExistingProp) {
   EXPECT_FALSE(this->obj_->hasProp("b"));
   EXPECT_FALSE(this->opt_->hasProp("b"));
   EXPECT_FALSE(this->ref_->hasProp("a"));
+  EXPECT_FALSE(this->union_->hasProp("a"));
   EXPECT_FALSE(this->tm_.get("int")->hasProp("a"));
   EXPECT_FALSE(this->tm_.get("str")->hasProp("a"));
+}
+
+TEST_F(TypeTest, HasSubType) {
+  EXPECT_TRUE(this->union_->hasSubType(this->tm_.get("int")));
+  EXPECT_TRUE(this->union_->hasSubType(this->tm_.get("str")));
+}
+
+TEST_F(TypeTest, HasSubTypeOnAlias) {
+  auto type = this->tm_.alias("Alias2", this->union_);
+  EXPECT_TRUE(type->hasSubType(this->tm_.get("int")));
+  EXPECT_TRUE(type->hasSubType(this->tm_.get("str")));
+}
+
+TEST_F(TypeTest, HasSubTypeOnRef) {
+  auto type = this->tm_.ref(this->union_);
+  EXPECT_TRUE(type->hasSubType(this->tm_.get("int")));
+  EXPECT_TRUE(type->hasSubType(this->tm_.get("str")));
+}
+
+TEST_F(TypeTest, HasNonExistingSubType) {
+  EXPECT_FALSE(this->alias_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->any_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->arr_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->enum_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->fn_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->obj_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->opt_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->ref_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->union_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("int")->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("str")->hasSubType(this->tm_.get("float")));
+}
+
+TEST_F(TypeTest, CheckIfAlias) {
+  EXPECT_TRUE(this->alias_->isAlias());
+  EXPECT_TRUE(this->tm_.alias("Alias2", this->tm_.get("int"))->isAlias());
+}
+
+TEST_F(TypeTest, CheckIfNotAlias) {
+  EXPECT_FALSE(this->arr_->isAlias());
+  EXPECT_FALSE(this->any_->isAlias());
+  EXPECT_FALSE(this->enum_->isAlias());
+  EXPECT_FALSE(this->fn_->isAlias());
+  EXPECT_FALSE(this->obj_->isAlias());
+  EXPECT_FALSE(this->opt_->isAlias());
+  EXPECT_FALSE(this->ref_->isAlias());
+  EXPECT_FALSE(this->union_->isAlias());
+
+  EXPECT_FALSE(this->tm_.get("any")->isAlias());
+  EXPECT_FALSE(this->tm_.get("bool")->isAlias());
+  EXPECT_FALSE(this->tm_.get("byte")->isAlias());
+  EXPECT_FALSE(this->tm_.get("char")->isAlias());
+  EXPECT_FALSE(this->tm_.get("f32")->isAlias());
+  EXPECT_FALSE(this->tm_.get("f64")->isAlias());
+  EXPECT_FALSE(this->tm_.get("float")->isAlias());
+  EXPECT_FALSE(this->tm_.get("i8")->isAlias());
+  EXPECT_FALSE(this->tm_.get("i16")->isAlias());
+  EXPECT_FALSE(this->tm_.get("i32")->isAlias());
+  EXPECT_FALSE(this->tm_.get("i64")->isAlias());
+  EXPECT_FALSE(this->tm_.get("int")->isAlias());
+  EXPECT_FALSE(this->tm_.get("str")->isAlias());
+  EXPECT_FALSE(this->tm_.get("u8")->isAlias());
+  EXPECT_FALSE(this->tm_.get("u16")->isAlias());
+  EXPECT_FALSE(this->tm_.get("u32")->isAlias());
+  EXPECT_FALSE(this->tm_.get("u64")->isAlias());
+  EXPECT_FALSE(this->tm_.get("void")->isAlias());
 }
 
 TEST_F(TypeTest, CheckIfAny) {
@@ -339,12 +435,14 @@ TEST_F(TypeTest, CheckIfArray) {
 }
 
 TEST_F(TypeTest, CheckIfNotArray) {
+  EXPECT_FALSE(this->alias_->isArray());
   EXPECT_FALSE(this->any_->isArray());
   EXPECT_FALSE(this->enum_->isArray());
   EXPECT_FALSE(this->fn_->isArray());
   EXPECT_FALSE(this->obj_->isArray());
   EXPECT_FALSE(this->opt_->isArray());
   EXPECT_FALSE(this->ref_->isArray());
+  EXPECT_FALSE(this->union_->isArray());
 
   EXPECT_FALSE(this->tm_.get("any")->isArray());
   EXPECT_FALSE(this->tm_.get("bool")->isArray());
@@ -389,12 +487,14 @@ TEST_F(TypeTest, CheckIfEnum) {
 }
 
 TEST_F(TypeTest, CheckIfNotEnum) {
+  EXPECT_FALSE(this->alias_->isEnum());
   EXPECT_FALSE(this->any_->isEnum());
   EXPECT_FALSE(this->arr_->isEnum());
   EXPECT_FALSE(this->fn_->isEnum());
   EXPECT_FALSE(this->obj_->isEnum());
   EXPECT_FALSE(this->opt_->isEnum());
   EXPECT_FALSE(this->ref_->isEnum());
+  EXPECT_FALSE(this->union_->isEnum());
 
   EXPECT_FALSE(this->tm_.get("any")->isEnum());
   EXPECT_FALSE(this->tm_.get("bool")->isEnum());
@@ -421,6 +521,7 @@ TEST_F(TypeTest, CheckIfEnumerator) {
 }
 
 TEST_F(TypeTest, CheckIfNotEnumerator) {
+  EXPECT_FALSE(this->alias_->isEnumerator());
   EXPECT_FALSE(this->any_->isEnumerator());
   EXPECT_FALSE(this->arr_->isEnumerator());
   EXPECT_FALSE(this->enum_->isEnumerator());
@@ -428,6 +529,7 @@ TEST_F(TypeTest, CheckIfNotEnumerator) {
   EXPECT_FALSE(this->obj_->isEnumerator());
   EXPECT_FALSE(this->opt_->isEnumerator());
   EXPECT_FALSE(this->ref_->isEnumerator());
+  EXPECT_FALSE(this->union_->isEnumerator());
 
   EXPECT_FALSE(this->tm_.get("any")->isEnumerator());
   EXPECT_FALSE(this->tm_.get("bool")->isEnumerator());
@@ -468,6 +570,7 @@ TEST_F(TypeTest, CheckIfFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfNotFloatNumber) {
+  EXPECT_FALSE(this->alias_->isFloatNumber());
   EXPECT_FALSE(this->any_->isFloatNumber());
   EXPECT_FALSE(this->arr_->isFloatNumber());
   EXPECT_FALSE(this->enum_->isFloatNumber());
@@ -475,6 +578,7 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
   EXPECT_FALSE(this->obj_->isFloatNumber());
   EXPECT_FALSE(this->opt_->isFloatNumber());
   EXPECT_FALSE(this->ref_->isFloatNumber());
+  EXPECT_FALSE(this->union_->isFloatNumber());
 
   EXPECT_FALSE(this->tm_.get("i8")->isFloatNumber());
   EXPECT_FALSE(this->tm_.get("i16")->isFloatNumber());
@@ -526,12 +630,14 @@ TEST_F(TypeTest, CheckIfFn) {
 }
 
 TEST_F(TypeTest, CheckIfNotFn) {
+  EXPECT_FALSE(this->alias_->isFn());
   EXPECT_FALSE(this->any_->isFn());
   EXPECT_FALSE(this->arr_->isFn());
   EXPECT_FALSE(this->enum_->isFn());
   EXPECT_FALSE(this->obj_->isFn());
   EXPECT_FALSE(this->opt_->isFn());
   EXPECT_FALSE(this->ref_->isFn());
+  EXPECT_FALSE(this->union_->isFn());
 
   EXPECT_FALSE(this->tm_.get("any")->isFn());
   EXPECT_FALSE(this->tm_.get("bool")->isFn());
@@ -586,6 +692,7 @@ TEST_F(TypeTest, CheckIfIntNumber) {
 }
 
 TEST_F(TypeTest, CheckIfNotIntNumber) {
+  EXPECT_FALSE(this->alias_->isIntNumber());
   EXPECT_FALSE(this->any_->isIntNumber());
   EXPECT_FALSE(this->arr_->isIntNumber());
   EXPECT_FALSE(this->enum_->isIntNumber());
@@ -593,6 +700,7 @@ TEST_F(TypeTest, CheckIfNotIntNumber) {
   EXPECT_FALSE(this->obj_->isIntNumber());
   EXPECT_FALSE(this->opt_->isIntNumber());
   EXPECT_FALSE(this->ref_->isIntNumber());
+  EXPECT_FALSE(this->union_->isIntNumber());
 
   EXPECT_FALSE(this->tm_.get("f32")->isIntNumber());
   EXPECT_FALSE(this->tm_.get("f64")->isIntNumber());
@@ -610,6 +718,7 @@ TEST_F(TypeTest, CheckIfMethod) {
 }
 
 TEST_F(TypeTest, CheckIfNotMethod) {
+  EXPECT_FALSE(this->alias_->isMethod());
   EXPECT_FALSE(this->any_->isMethod());
   EXPECT_FALSE(this->arr_->isMethod());
   EXPECT_FALSE(this->enum_->isMethod());
@@ -617,6 +726,7 @@ TEST_F(TypeTest, CheckIfNotMethod) {
   EXPECT_FALSE(this->obj_->isMethod());
   EXPECT_FALSE(this->opt_->isMethod());
   EXPECT_FALSE(this->ref_->isMethod());
+  EXPECT_FALSE(this->union_->isMethod());
 
   EXPECT_FALSE(this->tm_.get("i8")->isMethod());
   EXPECT_FALSE(this->tm_.get("i16")->isMethod());
@@ -654,6 +764,7 @@ TEST_F(TypeTest, CheckIfNumber) {
 }
 
 TEST_F(TypeTest, CheckIfNotNumber) {
+  EXPECT_FALSE(this->alias_->isNumber());
   EXPECT_FALSE(this->any_->isNumber());
   EXPECT_FALSE(this->arr_->isNumber());
   EXPECT_FALSE(this->enum_->isNumber());
@@ -661,6 +772,7 @@ TEST_F(TypeTest, CheckIfNotNumber) {
   EXPECT_FALSE(this->obj_->isNumber());
   EXPECT_FALSE(this->opt_->isNumber());
   EXPECT_FALSE(this->ref_->isNumber());
+  EXPECT_FALSE(this->union_->isNumber());
 
   EXPECT_FALSE(this->tm_.get("any")->isNumber());
   EXPECT_FALSE(this->tm_.get("bool")->isNumber());
@@ -689,12 +801,14 @@ TEST_F(TypeTest, CheckIfObj) {
 }
 
 TEST_F(TypeTest, CheckIfNotObj) {
+  EXPECT_FALSE(this->alias_->isObj());
   EXPECT_FALSE(this->any_->isObj());
   EXPECT_FALSE(this->arr_->isObj());
   EXPECT_FALSE(this->enum_->isObj());
   EXPECT_FALSE(this->fn_->isObj());
   EXPECT_FALSE(this->opt_->isObj());
   EXPECT_FALSE(this->ref_->isObj());
+  EXPECT_FALSE(this->union_->isObj());
 
   EXPECT_FALSE(this->tm_.get("any")->isObj());
   EXPECT_FALSE(this->tm_.get("bool")->isObj());
@@ -721,12 +835,14 @@ TEST_F(TypeTest, CheckIfOptional) {
 }
 
 TEST_F(TypeTest, CheckIfNotOptional) {
+  EXPECT_FALSE(this->alias_->isOpt());
   EXPECT_FALSE(this->any_->isOpt());
   EXPECT_FALSE(this->arr_->isOpt());
   EXPECT_FALSE(this->enum_->isOpt());
   EXPECT_FALSE(this->fn_->isOpt());
   EXPECT_FALSE(this->obj_->isOpt());
   EXPECT_FALSE(this->ref_->isOpt());
+  EXPECT_FALSE(this->union_->isOpt());
 
   EXPECT_FALSE(this->tm_.get("any")->isOpt());
   EXPECT_FALSE(this->tm_.get("bool")->isOpt());
@@ -750,15 +866,18 @@ TEST_F(TypeTest, CheckIfNotOptional) {
 
 TEST_F(TypeTest, CheckIfRef) {
   EXPECT_TRUE(this->ref_->isRef());
+  EXPECT_TRUE(this->tm_.ref(this->tm_.get("u64"))->isRef());
 }
 
 TEST_F(TypeTest, CheckIfNotRef) {
+  EXPECT_FALSE(this->alias_->isRef());
   EXPECT_FALSE(this->any_->isRef());
   EXPECT_FALSE(this->arr_->isRef());
   EXPECT_FALSE(this->enum_->isRef());
   EXPECT_FALSE(this->fn_->isRef());
   EXPECT_FALSE(this->obj_->isRef());
   EXPECT_FALSE(this->opt_->isRef());
+  EXPECT_FALSE(this->union_->isRef());
 
   EXPECT_FALSE(this->tm_.get("any")->isRef());
   EXPECT_FALSE(this->tm_.get("bool")->isRef());
@@ -780,7 +899,77 @@ TEST_F(TypeTest, CheckIfNotRef) {
   EXPECT_FALSE(this->tm_.get("void")->isRef());
 }
 
+TEST_F(TypeTest, CheckIfRefOf) {
+  EXPECT_TRUE(this->ref_->isRefOf(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.ref(this->tm_.get("u64"))->isRefOf(this->tm_.get("u64")));
+}
+
+TEST_F(TypeTest, CheckIfNotRefOf) {
+  EXPECT_FALSE(this->alias_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->any_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->arr_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->enum_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->fn_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->obj_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->opt_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->ref_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->union_->isRefOf(this->tm_.get("float")));
+
+  EXPECT_FALSE(this->tm_.get("any")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("bool")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("byte")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("char")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("f32")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("f64")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("float")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("i8")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("i16")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("i32")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("i64")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("int")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("str")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("u8")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("u16")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("u32")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("u64")->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->tm_.get("void")->isRefOf(this->tm_.get("float")));
+}
+
+TEST_F(TypeTest, CheckIfSafeForTernaryAlt) {
+  EXPECT_TRUE(this->tm_.alias("Alias2", this->tm_.get("str"))->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->any_->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->arr_->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->fn_->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->obj_->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->union_->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->tm_.get("str")->isSafeForTernaryAlt());
+}
+
+TEST_F(TypeTest, CheckIfNotSafeForTernaryAlt) {
+  EXPECT_FALSE(this->alias_->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->enum_->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->ref_->isSafeForTernaryAlt());
+
+  EXPECT_FALSE(this->tm_.get("bool")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("byte")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("char")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("f32")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("f64")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("float")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("i8")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("i16")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("i32")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("i64")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("int")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("u8")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("u16")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("u32")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("u64")->isSafeForTernaryAlt());
+  EXPECT_FALSE(this->tm_.get("void")->isSafeForTernaryAlt());
+}
+
 TEST_F(TypeTest, CheckIfSmallForVarArg) {
+  EXPECT_FALSE(this->alias_->isSmallForVarArg());
   EXPECT_FALSE(this->any_->isSmallForVarArg());
   EXPECT_FALSE(this->arr_->isSmallForVarArg());
   EXPECT_FALSE(this->enum_->isSmallForVarArg());
@@ -788,6 +977,7 @@ TEST_F(TypeTest, CheckIfSmallForVarArg) {
   EXPECT_FALSE(this->obj_->isSmallForVarArg());
   EXPECT_FALSE(this->opt_->isSmallForVarArg());
   EXPECT_FALSE(this->ref_->isSmallForVarArg());
+  EXPECT_FALSE(this->union_->isSmallForVarArg());
 
   EXPECT_FALSE(this->tm_.get("any")->isSmallForVarArg());
   EXPECT_TRUE(this->tm_.get("bool")->isSmallForVarArg());
@@ -829,879 +1019,48 @@ TEST_F(TypeTest, CheckIfU64) {
   EXPECT_TRUE(this->tm_.get("u64")->isU64());
 }
 
+TEST_F(TypeTest, CheckIfUnion) {
+  EXPECT_TRUE(this->union_->isUnion());
+  EXPECT_TRUE(this->tm_.unionType({this->tm_.get("f32"), this->tm_.get("f64")})->isUnion());
+}
+
+TEST_F(TypeTest, CheckIfNotUnion) {
+  EXPECT_FALSE(this->alias_->isUnion());
+  EXPECT_FALSE(this->any_->isUnion());
+  EXPECT_FALSE(this->arr_->isUnion());
+  EXPECT_FALSE(this->enum_->isUnion());
+  EXPECT_FALSE(this->fn_->isUnion());
+  EXPECT_FALSE(this->obj_->isUnion());
+  EXPECT_FALSE(this->opt_->isUnion());
+  EXPECT_FALSE(this->ref_->isUnion());
+
+  EXPECT_FALSE(this->tm_.get("any")->isUnion());
+  EXPECT_FALSE(this->tm_.get("bool")->isUnion());
+  EXPECT_FALSE(this->tm_.get("byte")->isUnion());
+  EXPECT_FALSE(this->tm_.get("char")->isUnion());
+  EXPECT_FALSE(this->tm_.get("f32")->isUnion());
+  EXPECT_FALSE(this->tm_.get("f64")->isUnion());
+  EXPECT_FALSE(this->tm_.get("float")->isUnion());
+  EXPECT_FALSE(this->tm_.get("i8")->isUnion());
+  EXPECT_FALSE(this->tm_.get("i16")->isUnion());
+  EXPECT_FALSE(this->tm_.get("i32")->isUnion());
+  EXPECT_FALSE(this->tm_.get("i64")->isUnion());
+  EXPECT_FALSE(this->tm_.get("int")->isUnion());
+  EXPECT_FALSE(this->tm_.get("str")->isUnion());
+  EXPECT_FALSE(this->tm_.get("u8")->isUnion());
+  EXPECT_FALSE(this->tm_.get("u16")->isUnion());
+  EXPECT_FALSE(this->tm_.get("u32")->isUnion());
+  EXPECT_FALSE(this->tm_.get("u64")->isUnion());
+  EXPECT_FALSE(this->tm_.get("void")->isUnion());
+}
+
 TEST_F(TypeTest, CheckIfVoid) {
   EXPECT_TRUE(this->tm_.get("void")->isVoid());
 }
 
-//TEST_F(TypeTest, Matches) {
-//  EXPECT_TRUE(this->any_->match(this->any_));
-//  EXPECT_TRUE(this->arr_->match(this->arr_));
-//  EXPECT_TRUE(this->enum_->match(this->enum_));
-//  EXPECT_TRUE(this->fn_->match(this->fn_));
-//  EXPECT_TRUE(this->obj_->match(this->obj_));
-//  EXPECT_TRUE(this->opt_->match(this->opt_));
-//  EXPECT_TRUE(this->ref_->match(this->ref_));
-//
-//  EXPECT_TRUE(this->tm_.get("bool")->match(this->tm_.get("bool")));
-//  EXPECT_TRUE(this->tm_.get("byte")->match(this->tm_.get("byte")));
-//  EXPECT_TRUE(this->tm_.get("byte")->match(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("byte")));
-//  EXPECT_TRUE(this->tm_.get("char")->match(this->tm_.get("char")));
-//  EXPECT_TRUE(this->tm_.get("str")->match(this->tm_.get("str")));
-//  EXPECT_TRUE(this->tm_.get("void")->match(this->tm_.get("void")));
-//}
-//
-//TEST_F(TypeTest, MatchesAny) {
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->any_));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->arr_));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->enum_));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->fn_));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->obj_));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->opt_));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->ref_));
-//
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("any")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("bool")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("byte")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("char")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("float")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("f32")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("f64")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("str")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("u32")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("u64")));
-//  EXPECT_TRUE(this->tm_.get("any")->match(this->tm_.get("void")));
-//}
-//
-//TEST_F(TypeTest, MatchesFloat) {
-//  EXPECT_TRUE(this->tm_.get("f32")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("f32")->match(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("f32")->match(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("f32")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("f32")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("f32")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("f32")->match(this->tm_.get("u16")));
-//  EXPECT_FALSE(this->tm_.get("f32")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("f32")->match(this->tm_.get("u64")));
-//  EXPECT_TRUE(this->tm_.get("f32")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("f32")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("f32")->match(this->tm_.get("float")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("f64")->match(this->tm_.get("u64")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("f32")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("f64")));
-//  EXPECT_TRUE(this->tm_.get("f64")->match(this->tm_.get("float")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("float")->match(this->tm_.get("u64")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("f32")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("f64")));
-//  EXPECT_TRUE(this->tm_.get("float")->match(this->tm_.get("float")));
-//}
-//
-//TEST_F(TypeTest, MatchesInteger) {
-//  EXPECT_TRUE(this->tm_.get("i8")->match(this->tm_.get("i8")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("i16")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("i32")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("i64")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("u8")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("u16")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("i8")->match(this->tm_.get("float")));
-//
-//  EXPECT_TRUE(this->tm_.get("i16")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("i16")->match(this->tm_.get("i16")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("i32")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("i16")->match(this->tm_.get("u8")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("u16")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("i16")->match(this->tm_.get("float")));
-//
-//  EXPECT_TRUE(this->tm_.get("i32")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("i32")->match(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("i32")->match(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("i32")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("i32")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("i32")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("i32")->match(this->tm_.get("u16")));
-//  EXPECT_FALSE(this->tm_.get("i32")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("i32")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("i32")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("i32")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("i32")->match(this->tm_.get("float")));
-//
-//  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(this->tm_.get("u16")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(this->tm_.get("float")));
-//
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("i64")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("i64")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("i64")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("i64")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("i64")->match(this->tm_.get("float")));
-//
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("i8")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("i16")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("i32")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("u8")->match(this->tm_.get("u8")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("u16")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("u8")->match(this->tm_.get("float")));
-//
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("i8")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("i16")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("i32")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("u16")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("u16")->match(this->tm_.get("u16")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("u16")->match(this->tm_.get("float")));
-//
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("i8")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("i16")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("i32")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("u32")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("u32")->match(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("u32")->match(this->tm_.get("u32")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("u32")->match(this->tm_.get("float")));
-//
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("i8")));
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("i16")));
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("i32")));
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("u64")->match(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("u64")->match(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("u64")->match(this->tm_.get("u32")));
-//  EXPECT_TRUE(this->tm_.get("u64")->match(this->tm_.get("u64")));
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("f32")));
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("f64")));
-//  EXPECT_FALSE(this->tm_.get("u64")->match(this->tm_.get("float")));
-//}
-//
-//TEST_F(TypeTest, MatchesArray) {
-//  auto type1 = this->tm_.arrayOf(this->tm_.get("int"));
-//  auto type2 = this->tm_.arrayOf(this->tm_.get("str"));
-//
-//  EXPECT_TRUE(type1->match(type1));
-//  EXPECT_FALSE(type1->match(type2));
-//  EXPECT_FALSE(type2->match(type1));
-//  EXPECT_FALSE(type1->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesEnum) {
-//  this->tm_.stack.emplace_back("Test2");
-//  auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  this->tm_.stack.emplace_back("Test2");
-//  auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-//    this->tm_.enumerator("Red", this->tm_.name("Red"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  this->tm_.stack.emplace_back("Test3");
-//  auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-//    this->tm_.enumerator("Red", this->tm_.name("Red"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  EXPECT_TRUE(type1->match(type1));
-//  EXPECT_TRUE(type1->match(type2));
-//  EXPECT_TRUE(type2->match(type1));
-//  EXPECT_FALSE(type1->match(type3));
-//  EXPECT_FALSE(type3->match(type1));
-//  EXPECT_TRUE(type1->match(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesFunction) {
-//  auto ref1 = this->tm_.ref(this->tm_.get("int"));
-//  auto ref2 = this->tm_.ref(this->tm_.get("str"));
-//
-//  auto type1 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type2 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type3 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, true, false}
-//  }, this->tm_.get("int"));
-//
-//  auto type4 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("str"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type5 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("str"));
-//
-//  auto type6 = this->tm_.fn({}, this->tm_.get("int"));
-//
-//  auto type7 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-//  }, this->tm_.get("int"));
-//
-//  auto type8 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type9 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref1, false, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type10 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref1, true, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type11 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref2, true, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  EXPECT_FALSE(type1->match(this->tm_.get("any")));
-//  EXPECT_TRUE(type1->match(type1));
-//  EXPECT_TRUE(type1->match(type2));
-//  EXPECT_FALSE(type1->match(type3));
-//  EXPECT_FALSE(type1->match(type4));
-//  EXPECT_FALSE(type1->match(type5));
-//  EXPECT_FALSE(type1->match(type6));
-//  EXPECT_FALSE(type1->match(type7));
-//  EXPECT_FALSE(type1->match(type8));
-//  EXPECT_TRUE(type8->match(type1));
-//  EXPECT_FALSE(type1->match(type9));
-//  EXPECT_TRUE(type9->match(type1));
-//  EXPECT_FALSE(type1->match(type10));
-//  EXPECT_FALSE(type10->match(type1));
-//  EXPECT_FALSE(type1->match(type11));
-//  EXPECT_FALSE(type11->match(type1));
-//  EXPECT_FALSE(type10->match(type11));
-//  EXPECT_FALSE(type11->match(type10));
-//}
-//
-//TEST_F(TypeTest, MatchesObject) {
-//  auto type1 = this->tm_.obj("Test1", "Test1_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type2 = this->tm_.obj("Test2", "Test2_0");
-//
-//  auto type3 = this->tm_.obj("Test3", "Test3_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type4 = this->tm_.obj("Test4", "Test4_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type5 = this->tm_.obj("Test5", "Test5_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("str"), false, false, false}
-//  });
-//
-//  EXPECT_TRUE(type1->match(type1));
-//  EXPECT_FALSE(type1->match(type2));
-//  EXPECT_FALSE(type1->match(type3));
-//  EXPECT_FALSE(type1->match(type4));
-//  EXPECT_FALSE(type1->match(type5));
-//  EXPECT_FALSE(type1->match(this->tm_.get("int")));
-//}
-//
-//TEST_F(TypeTest, MatchesObjectMethod) {
-//  auto type1 = this->tm_.fn({}, this->tm_.get("void"));
-//  auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
-//  auto type2 = this->tm_.fn({}, this->tm_.get("void"), type2MethodInfo);
-//  auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
-//  auto type3 = this->tm_.fn({}, this->tm_.get("void"), type3MethodInfo);
-//  auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
-//  auto type4 = this->tm_.fn({}, this->tm_.get("void"), type4MethodInfo);
-//  auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
-//  auto type5 = this->tm_.fn({}, this->tm_.get("void"), type5MethodInfo);
-//
-//  EXPECT_TRUE(type2->match(type2));
-//  EXPECT_FALSE(type1->match(type2));
-//
-//  EXPECT_TRUE(type3->match(type3));
-//  EXPECT_FALSE(type2->match(type3));
-//  EXPECT_FALSE(type3->match(type2));
-//
-//  EXPECT_TRUE(type4->match(type4));
-//  EXPECT_TRUE(type3->match(type4));
-//  EXPECT_TRUE(type4->match(type3));
-//
-//  EXPECT_TRUE(type5->match(type5));
-//  EXPECT_TRUE(type3->match(type5));
-//  EXPECT_TRUE(type4->match(type5));
-//  EXPECT_FALSE(type5->match(type3));
-//  EXPECT_TRUE(type5->match(type4));
-//}
-//
-//TEST_F(TypeTest, MatchesOptional) {
-//  auto type1 = this->tm_.opt(this->tm_.get("int"));
-//  auto type2 = this->tm_.opt(this->tm_.get("str"));
-//
-//  EXPECT_TRUE(type1->match(type1));
-//  EXPECT_FALSE(type1->match(type2));
-//  EXPECT_FALSE(type2->match(type1));
-//  EXPECT_TRUE(type1->match(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->match(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesReference) {
-//  auto type1 = this->tm_.ref(this->tm_.get("int"));
-//  auto type2 = this->tm_.ref(this->tm_.get("int"));
-//
-//  EXPECT_TRUE(type1->match(type1));
-//  EXPECT_TRUE(type1->match(type2));
-//  EXPECT_TRUE(type2->match(type1));
-//  EXPECT_TRUE(type1->match(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("int")->match(type1));
-//  EXPECT_FALSE(type1->match(this->tm_.get("str")));
-//  EXPECT_FALSE(this->tm_.get("str")->match(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesExact) {
-//  EXPECT_TRUE(this->any_->matchExact(this->any_));
-//  EXPECT_TRUE(this->arr_->matchExact(this->arr_));
-//  EXPECT_TRUE(this->enum_->matchExact(this->enum_));
-//  EXPECT_TRUE(this->fn_->matchExact(this->fn_));
-//  EXPECT_TRUE(this->obj_->matchExact(this->obj_));
-//  EXPECT_TRUE(this->opt_->matchExact(this->opt_));
-//  EXPECT_TRUE(this->ref_->matchExact(this->ref_));
-//
-//  EXPECT_TRUE(this->tm_.get("any")->matchExact(this->tm_.get("any")));
-//  EXPECT_TRUE(this->tm_.get("bool")->matchExact(this->tm_.get("bool")));
-//  EXPECT_TRUE(this->tm_.get("byte")->matchExact(this->tm_.get("byte")));
-//  EXPECT_TRUE(this->tm_.get("char")->matchExact(this->tm_.get("char")));
-//  EXPECT_TRUE(this->tm_.get("float")->matchExact(this->tm_.get("float")));
-//  EXPECT_TRUE(this->tm_.get("f32")->matchExact(this->tm_.get("f32")));
-//  EXPECT_TRUE(this->tm_.get("f64")->matchExact(this->tm_.get("f64")));
-//  EXPECT_TRUE(this->tm_.get("int")->matchExact(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("i8")->matchExact(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("i16")->matchExact(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("i32")->matchExact(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("i64")->matchExact(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("str")->matchExact(this->tm_.get("str")));
-//  EXPECT_TRUE(this->tm_.get("u8")->matchExact(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("u16")->matchExact(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("u32")->matchExact(this->tm_.get("u32")));
-//  EXPECT_TRUE(this->tm_.get("u64")->matchExact(this->tm_.get("u64")));
-//  EXPECT_TRUE(this->tm_.get("void")->matchExact(this->tm_.get("void")));
-//}
-//
-//TEST_F(TypeTest, MatchesExactArray) {
-//  auto type1 = this->tm_.arrayOf(this->tm_.get("int"));
-//  auto type2 = this->tm_.arrayOf(this->tm_.get("str"));
-//
-//  EXPECT_TRUE(type1->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(type2));
-//  EXPECT_FALSE(type2->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchExact(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesExactEnum) {
-//  this->tm_.stack.emplace_back("Test2");
-//  auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  this->tm_.stack.emplace_back("Test2");
-//  auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-//    this->tm_.enumerator("Red", this->tm_.name("Red"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  this->tm_.stack.emplace_back("Test3");
-//  auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-//    this->tm_.enumerator("Red", this->tm_.name("Red"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  EXPECT_TRUE(type1->matchExact(type1));
-//  EXPECT_TRUE(type1->matchExact(type2));
-//  EXPECT_TRUE(type2->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(type3));
-//  EXPECT_FALSE(type3->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchExact(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesExactFunction) {
-//  auto ref1 = this->tm_.ref(this->tm_.get("int"));
-//  auto ref2 = this->tm_.ref(this->tm_.get("str"));
-//
-//  auto type1 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type2 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type3 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, true, false}
-//  }, this->tm_.get("int"));
-//
-//  auto type4 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("str"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type5 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("str"));
-//
-//  auto type6 = this->tm_.fn({}, this->tm_.get("int"));
-//
-//  auto type7 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-//  }, this->tm_.get("int"));
-//
-//  auto type8 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type9 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref1, false, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type10 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref1, true, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type11 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref2, true, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  EXPECT_FALSE(type1->matchExact(this->tm_.get("any")));
-//  EXPECT_TRUE(type1->matchExact(type1));
-//  EXPECT_TRUE(type1->matchExact(type2));
-//  EXPECT_FALSE(type1->matchExact(type3));
-//  EXPECT_FALSE(type1->matchExact(type4));
-//  EXPECT_FALSE(type1->matchExact(type5));
-//  EXPECT_FALSE(type1->matchExact(type6));
-//  EXPECT_FALSE(type1->matchExact(type7));
-//  EXPECT_FALSE(type1->matchExact(type8));
-//  EXPECT_FALSE(type8->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(type9));
-//  EXPECT_FALSE(type9->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(type10));
-//  EXPECT_FALSE(type10->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(type11));
-//  EXPECT_FALSE(type11->matchExact(type1));
-//  EXPECT_FALSE(type10->matchExact(type11));
-//  EXPECT_FALSE(type11->matchExact(type10));
-//}
-//
-//TEST_F(TypeTest, MatchesExactObject) {
-//  auto type1 = this->tm_.obj("Test1", "Test1_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type2 = this->tm_.obj("Test2", "Test2_0");
-//
-//  auto type3 = this->tm_.obj("Test3", "Test3_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type4 = this->tm_.obj("Test4", "Test4_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type5 = this->tm_.obj("Test5", "Test5_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("str"), false, false, false}
-//  });
-//
-//  EXPECT_TRUE(type1->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(type2));
-//  EXPECT_FALSE(type1->matchExact(type3));
-//  EXPECT_FALSE(type1->matchExact(type4));
-//  EXPECT_FALSE(type1->matchExact(type5));
-//  EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
-//}
-//
-//TEST_F(TypeTest, MatchesExactObjectMethod) {
-//  auto type1 = this->tm_.fn({}, this->tm_.get("void"));
-//  auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
-//  auto type2 = this->tm_.fn({}, this->tm_.get("void"), type2MethodInfo);
-//  auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
-//  auto type3 = this->tm_.fn({}, this->tm_.get("void"), type3MethodInfo);
-//  auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
-//  auto type4 = this->tm_.fn({}, this->tm_.get("void"), type4MethodInfo);
-//  auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
-//  auto type5 = this->tm_.fn({}, this->tm_.get("void"), type5MethodInfo);
-//
-//  EXPECT_TRUE(type2->matchExact(type2));
-//  EXPECT_FALSE(type1->matchExact(type2));
-//
-//  EXPECT_TRUE(type3->matchExact(type3));
-//  EXPECT_FALSE(type2->matchExact(type3));
-//  EXPECT_FALSE(type3->matchExact(type2));
-//
-//  EXPECT_TRUE(type4->matchExact(type4));
-//  EXPECT_FALSE(type3->matchExact(type4));
-//  EXPECT_FALSE(type4->matchExact(type3));
-//
-//  EXPECT_TRUE(type5->matchExact(type5));
-//  EXPECT_FALSE(type3->matchExact(type5));
-//  EXPECT_FALSE(type4->matchExact(type5));
-//  EXPECT_FALSE(type5->matchExact(type3));
-//  EXPECT_FALSE(type5->matchExact(type4));
-//}
-//
-//TEST_F(TypeTest, MatchesExactOptional) {
-//  auto type1 = this->tm_.opt(this->tm_.get("int"));
-//  auto type2 = this->tm_.opt(this->tm_.get("str"));
-//
-//  EXPECT_TRUE(type1->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(type2));
-//  EXPECT_FALSE(type2->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchExact(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesExactReference) {
-//  auto type1 = this->tm_.ref(this->tm_.get("int"));
-//  auto type2 = this->tm_.ref(this->tm_.get("int"));
-//
-//  EXPECT_TRUE(type1->matchExact(type1));
-//  EXPECT_TRUE(type1->matchExact(type2));
-//  EXPECT_TRUE(type2->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchExact(type1));
-//  EXPECT_FALSE(type1->matchExact(this->tm_.get("str")));
-//  EXPECT_FALSE(this->tm_.get("str")->matchExact(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesNice) {
-//  EXPECT_TRUE(this->any_->matchNice(this->any_));
-//  EXPECT_TRUE(this->arr_->matchNice(this->arr_));
-//  EXPECT_TRUE(this->enum_->matchNice(this->enum_));
-//  EXPECT_TRUE(this->fn_->matchNice(this->fn_));
-//  EXPECT_TRUE(this->obj_->matchNice(this->obj_));
-//  EXPECT_TRUE(this->opt_->matchNice(this->opt_));
-//  EXPECT_TRUE(this->ref_->matchNice(this->ref_));
-//
-//  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->tm_.get("any")));
-//  EXPECT_TRUE(this->tm_.get("bool")->matchNice(this->tm_.get("bool")));
-//  EXPECT_TRUE(this->tm_.get("byte")->matchNice(this->tm_.get("byte")));
-//  EXPECT_TRUE(this->tm_.get("char")->matchNice(this->tm_.get("char")));
-//  EXPECT_TRUE(this->tm_.get("float")->matchNice(this->tm_.get("float")));
-//  EXPECT_TRUE(this->tm_.get("f32")->matchNice(this->tm_.get("f32")));
-//  EXPECT_TRUE(this->tm_.get("f64")->matchNice(this->tm_.get("f64")));
-//  EXPECT_TRUE(this->tm_.get("int")->matchNice(this->tm_.get("int")));
-//  EXPECT_TRUE(this->tm_.get("i8")->matchNice(this->tm_.get("i8")));
-//  EXPECT_TRUE(this->tm_.get("i16")->matchNice(this->tm_.get("i16")));
-//  EXPECT_TRUE(this->tm_.get("i32")->matchNice(this->tm_.get("i32")));
-//  EXPECT_TRUE(this->tm_.get("i64")->matchNice(this->tm_.get("i64")));
-//  EXPECT_TRUE(this->tm_.get("str")->matchNice(this->tm_.get("str")));
-//  EXPECT_TRUE(this->tm_.get("u8")->matchNice(this->tm_.get("u8")));
-//  EXPECT_TRUE(this->tm_.get("u16")->matchNice(this->tm_.get("u16")));
-//  EXPECT_TRUE(this->tm_.get("u32")->matchNice(this->tm_.get("u32")));
-//  EXPECT_TRUE(this->tm_.get("u64")->matchNice(this->tm_.get("u64")));
-//  EXPECT_TRUE(this->tm_.get("void")->matchNice(this->tm_.get("void")));
-//}
-//
-//TEST_F(TypeTest, MatchesNiceArray) {
-//  auto type1 = this->tm_.arrayOf(this->tm_.get("int"));
-//  auto type2 = this->tm_.arrayOf(this->tm_.get("str"));
-//
-//  EXPECT_TRUE(type1->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(type2));
-//  EXPECT_FALSE(type2->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchNice(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesNiceEnum) {
-//  this->tm_.stack.emplace_back("Test2");
-//  auto type1 = this->tm_.enumeration("Test2", "Test2_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  this->tm_.stack.emplace_back("Test2");
-//  auto type2 = this->tm_.enumeration("Test2", "Test2_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-//    this->tm_.enumerator("Red", this->tm_.name("Red"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  this->tm_.stack.emplace_back("Test3");
-//  auto type3 = this->tm_.enumeration("Test3", "Test3_0", {
-//    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-//    this->tm_.enumerator("Red", this->tm_.name("Red"))
-//  });
-//  this->tm_.stack.pop_back();
-//
-//  EXPECT_TRUE(type1->matchNice(type1));
-//  EXPECT_TRUE(type1->matchNice(type2));
-//  EXPECT_TRUE(type2->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(type3));
-//  EXPECT_FALSE(type3->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchNice(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesNiceFunction) {
-//  auto ref1 = this->tm_.ref(this->tm_.get("int"));
-//  auto ref2 = this->tm_.ref(this->tm_.get("str"));
-//
-//  auto type1 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type2 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type3 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, true, false}
-//  }, this->tm_.get("int"));
-//
-//  auto type4 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("str"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type5 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("str"));
-//
-//  auto type6 = this->tm_.fn({}, this->tm_.get("int"));
-//
-//  auto type7 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-//  }, this->tm_.get("int"));
-//
-//  auto type8 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type9 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref1, false, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type10 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref1, true, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type11 = this->tm_.fn({
-//    TypeFnParam{std::nullopt, ref2, true, true, false},
-//    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-//  }, this->tm_.get("int"));
-//
-//  auto type12 = this->tm_.fn({
-//    TypeFnParam{"a", this->tm_.get("int"), true, true, false},
-//    TypeFnParam{"b", this->tm_.get("int"), true, false, true}
-//  }, this->tm_.get("int"));
-//
-//  EXPECT_FALSE(type1->matchNice(this->tm_.get("any")));
-//  EXPECT_TRUE(type1->matchNice(type1));
-//  EXPECT_TRUE(type1->matchNice(type2));
-//  EXPECT_FALSE(type1->matchNice(type3));
-//  EXPECT_FALSE(type1->matchNice(type4));
-//  EXPECT_FALSE(type1->matchNice(type5));
-//  EXPECT_FALSE(type1->matchNice(type6));
-//  EXPECT_FALSE(type1->matchNice(type7));
-//  EXPECT_TRUE(type1->matchNice(type8));
-//  EXPECT_FALSE(type1->matchNice(type9));
-//  EXPECT_FALSE(type1->matchNice(type10));
-//  EXPECT_FALSE(type1->matchNice(type11));
-//  EXPECT_TRUE(type1->matchNice(type12));
-//
-//  EXPECT_TRUE(type8->matchNice(type1));
-//  EXPECT_FALSE(type9->matchNice(type1));
-//  EXPECT_FALSE(type10->matchNice(type1));
-//  EXPECT_FALSE(type11->matchNice(type1));
-//  EXPECT_FALSE(type10->matchNice(type11));
-//  EXPECT_FALSE(type11->matchNice(type10));
-//  EXPECT_FALSE(type12->matchNice(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesNiceObject) {
-//  auto type1 = this->tm_.obj("Test1", "Test1_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type2 = this->tm_.obj("Test2", "Test2_0");
-//
-//  auto type3 = this->tm_.obj("Test3", "Test3_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type4 = this->tm_.obj("Test4", "Test4_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("int"), false, false, false}
-//  });
-//
-//  auto type5 = this->tm_.obj("Test5", "Test5_0", {
-//    TypeField{"a", this->tm_.get("int"), false, false, false},
-//    TypeField{"b", this->tm_.get("str"), false, false, false}
-//  });
-//
-//  EXPECT_TRUE(type1->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(type2));
-//  EXPECT_FALSE(type1->matchNice(type3));
-//  EXPECT_FALSE(type1->matchNice(type4));
-//  EXPECT_FALSE(type1->matchNice(type5));
-//  EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
-//}
-//
-//TEST_F(TypeTest, MatchesNiceObjectMethod) {
-//  auto type1 = this->tm_.fn({}, this->tm_.get("void"));
-//  auto type2MethodInfo = TypeFnMethodInfo{false, "", nullptr, false};
-//  auto type2 = this->tm_.fn({}, this->tm_.get("void"), type2MethodInfo);
-//  auto type3MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, false};
-//  auto type3 = this->tm_.fn({}, this->tm_.get("void"), type3MethodInfo);
-//  auto type4MethodInfo = TypeFnMethodInfo{true, "self1_0", this->obj_, true};
-//  auto type4 = this->tm_.fn({}, this->tm_.get("void"), type4MethodInfo);
-//  auto type5MethodInfo = TypeFnMethodInfo{true, "self1_0", this->tm_.ref(this->obj_), true};
-//  auto type5 = this->tm_.fn({}, this->tm_.get("void"), type5MethodInfo);
-//
-//  EXPECT_TRUE(type2->matchNice(type2));
-//  EXPECT_FALSE(type1->matchNice(type2));
-//
-//  EXPECT_TRUE(type3->matchNice(type3));
-//  EXPECT_FALSE(type2->matchNice(type3));
-//  EXPECT_FALSE(type3->matchNice(type2));
-//
-//  EXPECT_TRUE(type4->matchNice(type4));
-//  EXPECT_FALSE(type3->matchNice(type4));
-//  EXPECT_FALSE(type4->matchNice(type3));
-//
-//  EXPECT_TRUE(type5->matchNice(type5));
-//  EXPECT_FALSE(type3->matchNice(type5));
-//  EXPECT_FALSE(type4->matchNice(type5));
-//  EXPECT_FALSE(type5->matchNice(type3));
-//  EXPECT_FALSE(type5->matchNice(type4));
-//}
-//
-//TEST_F(TypeTest, MatchesNiceOptional) {
-//  auto type1 = this->tm_.opt(this->tm_.get("int"));
-//  auto type2 = this->tm_.opt(this->tm_.get("str"));
-//
-//  EXPECT_TRUE(type1->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(type2));
-//  EXPECT_FALSE(type2->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchNice(type1));
-//}
-//
-//TEST_F(TypeTest, MatchesNiceReference) {
-//  auto type1 = this->tm_.ref(this->tm_.get("int"));
-//  auto type2 = this->tm_.ref(this->tm_.get("int"));
-//
-//  EXPECT_TRUE(type1->matchNice(type1));
-//  EXPECT_TRUE(type1->matchNice(type2));
-//  EXPECT_TRUE(type2->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
-//  EXPECT_FALSE(this->tm_.get("int")->matchNice(type1));
-//  EXPECT_FALSE(type1->matchNice(this->tm_.get("str")));
-//  EXPECT_FALSE(this->tm_.get("str")->matchNice(type1));
-//}
-
 TEST_F(TypeTest, ShouldBeFreed) {
+  EXPECT_FALSE(this->alias_->shouldBeFreed());
+  EXPECT_TRUE(this->tm_.alias("Alias2", this->tm_.get("str"))->shouldBeFreed());
   EXPECT_TRUE(this->any_->shouldBeFreed());
   EXPECT_TRUE(this->arr_->shouldBeFreed());
   EXPECT_FALSE(this->enum_->shouldBeFreed());
@@ -1727,4 +1086,14 @@ TEST_F(TypeTest, ShouldBeFreed) {
   EXPECT_FALSE(this->tm_.get("u32")->shouldBeFreed());
   EXPECT_FALSE(this->tm_.get("u64")->shouldBeFreed());
   EXPECT_FALSE(this->tm_.get("void")->shouldBeFreed());
+}
+
+TEST_F(TypeTest, ShouldBeFreedUnion) {
+  auto type1 = this->tm_.unionType({this->tm_.get("int"), this->tm_.get("int")});
+  auto type2 = this->tm_.unionType({this->tm_.get("int"), this->tm_.get("str")});
+  auto type3 = this->tm_.unionType({this->tm_.get("str"), this->tm_.get("int")});
+
+  EXPECT_FALSE(type1->shouldBeFreed());
+  EXPECT_TRUE(type2->shouldBeFreed());
+  EXPECT_TRUE(type3->shouldBeFreed());
 }

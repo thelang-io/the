@@ -32,7 +32,6 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
 }
 
-// todo test
 Type *Type::actual (Type *type) {
   if (type->isAlias()) {
     return Type::actual(std::get<TypeAlias>(type->body).type);
@@ -43,7 +42,6 @@ Type *Type::actual (Type *type) {
 
 Type *Type::real (Type *type) {
   if (type->isAlias()) {
-    // todo test
     return Type::real(std::get<TypeAlias>(type->body).type);
   } else if (type->isRef()) {
     return Type::real(std::get<TypeRef>(type->body).refType);
@@ -127,7 +125,6 @@ Type *Type::getEnumerator (const std::string &memberName) const {
 
 Type *Type::getProp (const std::string &propName) const {
   if (this->isAlias()) {
-    // todo test
     return std::get<TypeAlias>(this->body).type->getProp(propName);
   } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->getProp(propName);
@@ -160,7 +157,6 @@ bool Type::hasEnumerator (const std::string &memberName) const {
 
 bool Type::hasProp (const std::string &propName) const {
   if (this->isAlias()) {
-    // todo test
     return std::get<TypeAlias>(this->body).type->hasProp(propName);
   } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->hasProp(propName);
@@ -173,7 +169,6 @@ bool Type::hasProp (const std::string &propName) const {
   return typeField != this->fields.end();
 }
 
-// todo test
 bool Type::hasSubType (const Type *subType) const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->hasSubType(subType);
@@ -183,7 +178,7 @@ bool Type::hasSubType (const Type *subType) const {
     auto typeUnion = std::get<TypeUnion>(this->body);
 
     for (const auto &thisSubType : typeUnion.subTypes) {
-      if (thisSubType == subType) {
+      if (thisSubType->matchStrict(subType, true)) {
         return true;
       }
     }
@@ -192,7 +187,6 @@ bool Type::hasSubType (const Type *subType) const {
   return false;
 }
 
-// todo test
 bool Type::isAlias () const {
   return std::holds_alternative<TypeAlias>(this->body);
 }
@@ -307,11 +301,8 @@ bool Type::isRef () const {
   return std::holds_alternative<TypeRef>(this->body);
 }
 
-// todo test
 bool Type::isRefOf (const Type *type) const {
-  if (this->isOpt()) {
-    return std::get<TypeOptional>(this->body).type->isRefOf(type);
-  } else if (!this->isRef()) {
+  if (!this->isRef()) {
     return false;
   }
 
@@ -319,7 +310,6 @@ bool Type::isRefOf (const Type *type) const {
   return refType->matchStrict(type, true) || refType->isRefOf(type);
 }
 
-// todo test
 bool Type::isSafeForTernaryAlt () const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->isSafeForTernaryAlt();
@@ -327,6 +317,7 @@ bool Type::isSafeForTernaryAlt () const {
 
   return this->isAny() ||
     this->isArray() ||
+    this->isFn() ||
     this->isObj() ||
     this->isOpt() ||
     this->isStr() ||
@@ -335,7 +326,6 @@ bool Type::isSafeForTernaryAlt () const {
 
 bool Type::isSmallForVarArg () const {
   if (this->isAlias()) {
-    // todo test
     return std::get<TypeAlias>(this->body).type->isSmallForVarArg();
   }
 
@@ -370,7 +360,6 @@ bool Type::isU64 () const {
   return this->name == "u64";
 }
 
-// todo test
 bool Type::isUnion () const {
   return std::holds_alternative<TypeUnion>(this->body);
 }
@@ -379,7 +368,6 @@ bool Type::isVoid () const {
   return this->name == "void";
 }
 
-// todo test
 bool Type::matchNice (const Type *type) const {
   if (this->isAny()) {
     return true;
@@ -497,7 +485,6 @@ bool Type::matchNice (const Type *type) const {
     numberTypeMatch(this->name, type->name);
 }
 
-// todo test
 bool Type::matchStrict (const Type *type, bool exact) const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->matchStrict(type, exact);
@@ -590,9 +577,9 @@ bool Type::matchStrict (const Type *type, bool exact) const {
 }
 
 bool Type::shouldBeFreed () const {
-  if (this->isAlias()) { // todo test
+  if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->shouldBeFreed();
-  } else if (this->isUnion()) { // todo test
+  } else if (this->isUnion()) {
     auto subTypes = std::get<TypeUnion>(this->body).subTypes;
     bool result = false;
 
