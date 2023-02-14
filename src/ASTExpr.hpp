@@ -83,6 +83,7 @@ struct ASTExprAssign;
 struct ASTExprBinary;
 struct ASTExprCall;
 struct ASTExprCond;
+struct ASTExprIs;
 struct ASTExprLit;
 struct ASTExprObj;
 struct ASTExprRef;
@@ -95,6 +96,7 @@ using ASTExpr = std::variant<
   ASTExprBinary,
   ASTExprCall,
   ASTExprCond,
+  ASTExprIs,
   ASTExprLit,
   ASTExprObj,
   ASTExprRef,
@@ -149,6 +151,11 @@ struct ASTExprCond {
   ASTNodeExpr alt;
 };
 
+struct ASTExprIs {
+  ASTNodeExpr expr;
+  Type *type;
+};
+
 struct ASTExprLit {
   ASTExprLitType type;
   std::string body;
@@ -173,5 +180,7 @@ struct ASTExprUnary {
   ASTExprUnaryOp op;
   bool prefix = false;
 };
+
+std::string exprLitTypeStr (ASTExprLitType);
 
 #endif

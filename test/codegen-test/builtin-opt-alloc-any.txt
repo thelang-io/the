@@ -1,0 +1,107 @@
+======= stdin =======
+main {
+  testAny: any
+  optAny: any?
+  optAnyNilInit: any? = nil
+  optAnyValInit: any? = 1
+  optAnyValCopy: any? = testAny
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TYPE_int 1
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+
+struct __THE_1_any_int;
+
+struct __THE_1_any_int {
+  int32_t d;
+};
+
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+struct any *__THE_1_opt_any_alloc (struct any);
+void __THE_1_opt_any_free (struct any *);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  return n.d == NULL ? n : n._copy(n);
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct any *__THE_1_opt_any_alloc (struct any n) {
+  struct any *r = alloc(sizeof(struct any));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_any_free (struct any *n) {
+  if (n == NULL) return;
+  any_free((struct any) *n);
+  free(n);
+}
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
+}
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
+  free(n);
+}
+
+int main () {
+  const struct any __THE_0_testAny_0 = {0, NULL, 0, NULL, NULL};
+  const struct any *__THE_0_optAny_0 = NULL;
+  const struct any *__THE_0_optAnyNilInit_0 = NULL;
+  const struct any *__THE_0_optAnyValInit_0 = __THE_1_opt_any_alloc(__THE_1_any_int_alloc(1));
+  const struct any *__THE_0_optAnyValCopy_0 = __THE_1_opt_any_alloc(any_copy(__THE_0_testAny_0));
+  __THE_1_opt_any_free((struct any *) __THE_0_optAnyValCopy_0);
+  __THE_1_opt_any_free((struct any *) __THE_0_optAnyValInit_0);
+  __THE_1_opt_any_free((struct any *) __THE_0_optAnyNilInit_0);
+  __THE_1_opt_any_free((struct any *) __THE_0_optAny_0);
+  any_free((struct any) __THE_0_testAny_0);
+}
+======= flags =======
+======= stdout =======

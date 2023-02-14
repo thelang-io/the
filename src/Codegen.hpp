@@ -186,6 +186,17 @@ struct CodegenTypeInfo {
   std::string realTypeRefCodeConst;
 };
 
+struct CodegenTypeInfoItem {
+  Type *type;
+  std::string typeName;
+  std::string typeCode;
+  std::string typeCodeConst;
+  std::string typeCodeTrimmed;
+  std::string typeCodeConstTrimmed;
+  std::string typeRefCode;
+  std::string typeRefCodeConst;
+};
+
 class Codegen {
  public:
   std::map<std::string, CodegenApiItem> api = {};
@@ -198,7 +209,7 @@ class Codegen {
   std::vector<CodegenEntity> entities;
   std::vector<std::string> flags;
   std::size_t indent = 0;
-  std::size_t lastAnyIdx = 1;
+  std::size_t lastTypeIdx = 1;
   bool needMainArgs = false;
 
   static void compile (
@@ -227,6 +238,10 @@ class Codegen {
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
+  std::string _exprAssign (const ASTExprAssign &);
+  std::string _exprCallDefaultArg (const CodegenTypeInfo &);
+  std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &);
+  std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
   std::string _exprObjDefaultField (const CodegenTypeInfo &);
   std::string _fnDecl (
     Type *,
@@ -273,12 +288,17 @@ class Codegen {
   );
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
+  std::string _nodeVarDeclInit (const CodegenTypeInfo &);
   std::string _type (const Type *);
+  std::string _typeDef (Type *);
+  std::string _typeDefIdx (Type *);
   CodegenTypeInfo _typeInfo (Type *);
+  CodegenTypeInfoItem _typeInfoItem (Type *);
   std::string _typeNameAny (Type *);
   std::string _typeNameArray (const Type *);
   std::string _typeNameFn (const Type *);
   std::string _typeNameOpt (const Type *);
+  std::string _typeNameUnion (const Type *);
   void _typeObj (Type *, bool = false);
   void _typeObjDef (Type *, const std::map<std::string, std::string> & = {}, bool = false);
   std::string _wrapNode (const ASTNode &, const std::string &);

@@ -32,8 +32,22 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
 }
 
+Type *Type::actual (Type *type) {
+  if (type->isAlias()) {
+    return Type::actual(std::get<TypeAlias>(type->body).type);
+  }
+
+  return type;
+}
+
 Type *Type::real (Type *type) {
-  return type->isRef() ? std::get<TypeRef>(type->body).refType : type;
+  if (type->isAlias()) {
+    return Type::real(std::get<TypeAlias>(type->body).type);
+  } else if (type->isRef()) {
+    return Type::real(std::get<TypeRef>(type->body).refType);
+  } else {
+    return type;
+  }
 }
 
 Type *Type::largest (Type *a, Type *b) {
@@ -110,7 +124,9 @@ Type *Type::getEnumerator (const std::string &memberName) const {
 }
 
 Type *Type::getProp (const std::string &propName) const {
-  if (this->isRef()) {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->getProp(propName);
+  } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->getProp(propName);
   }
 
@@ -140,7 +156,9 @@ bool Type::hasEnumerator (const std::string &memberName) const {
 }
 
 bool Type::hasProp (const std::string &propName) const {
-  if (this->isRef()) {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->hasProp(propName);
+  } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->hasProp(propName);
   }
 
@@ -149,6 +167,28 @@ bool Type::hasProp (const std::string &propName) const {
   });
 
   return typeField != this->fields.end();
+}
+
+bool Type::hasSubType (const Type *subType) const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->hasSubType(subType);
+  } else if (this->isRef()) {
+    return std::get<TypeRef>(this->body).refType->hasSubType(subType);
+  } else if (this->isUnion()) {
+    auto typeUnion = std::get<TypeUnion>(this->body);
+
+    for (const auto &thisSubType : typeUnion.subTypes) {
+      if (thisSubType->matchStrict(subType, true)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+bool Type::isAlias () const {
+  return std::holds_alternative<TypeAlias>(this->body);
 }
 
 bool Type::isAny () const {
@@ -236,6 +276,7 @@ bool Type::isNumber () const {
 
 bool Type::isObj () const {
   return (
+    !this->isAlias() &&
     !this->isAny() &&
     !this->isArray() &&
     !this->isBool() &&
@@ -247,6 +288,7 @@ bool Type::isObj () const {
     !this->isOpt() &&
     !this->isRef() &&
     !this->isStr() &&
+    !this->isUnion() &&
     !this->isVoid()
   );
 }
@@ -259,15 +301,34 @@ bool Type::isRef () const {
   return std::holds_alternative<TypeRef>(this->body);
 }
 
-bool Type::isRefExt () const {
-  if (this->isOpt()) {
-    return std::get<TypeOptional>(this->body).type->isRef();
+bool Type::isRefOf (const Type *type) const {
+  if (!this->isRef()) {
+    return false;
   }
 
-  return std::holds_alternative<TypeRef>(this->body);
+  auto refType = Type::actual(std::get<TypeRef>(this->body).refType);
+  return refType->matchStrict(type, true) || refType->isRefOf(type);
+}
+
+bool Type::isSafeForTernaryAlt () const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->isSafeForTernaryAlt();
+  }
+
+  return this->isAny() ||
+    this->isArray() ||
+    this->isFn() ||
+    this->isObj() ||
+    this->isOpt() ||
+    this->isStr() ||
+    this->isUnion();
 }
 
 bool Type::isSmallForVarArg () const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->isSmallForVarArg();
+  }
+
   return
     this->isBool() ||
     this->isByte() ||
@@ -299,25 +360,42 @@ bool Type::isU64 () const {
   return this->name == "u64";
 }
 
+bool Type::isUnion () const {
+  return std::holds_alternative<TypeUnion>(this->body);
+}
+
 bool Type::isVoid () const {
   return this->name == "void";
 }
 
-bool Type::match (const Type *type) const {
+bool Type::matchNice (const Type *type) const {
   if (this->isAny()) {
     return true;
+  } else if (this->isAlias() || type->isAlias()) {
+    if (this->isAlias() && type->isAlias()) {
+      auto lhsAlias = std::get<TypeAlias>(this->body);
+      auto rhsAlias = std::get<TypeAlias>(type->body);
+
+      return lhsAlias.type->matchNice(rhsAlias.type);
+    } else if (this->isAlias()) {
+      auto lhsAlias = std::get<TypeAlias>(this->body);
+      return lhsAlias.type->matchNice(type);
+    } else {
+      auto lhsAlias = std::get<TypeAlias>(type->body);
+      return lhsAlias.type->matchNice(this);
+    }
   } else if (this->isRef() || type->isRef()) {
     if (this->isRef() && type->isRef()) {
       auto lhsRef = std::get<TypeRef>(this->body);
       auto rhsRef = std::get<TypeRef>(type->body);
 
-      return lhsRef.refType->match(rhsRef.refType);
-    } else if (this->isRef() && !type->isRef()) {
+      return lhsRef.refType->matchNice(rhsRef.refType);
+    } else if (this->isRef()) {
       auto lhsRef = std::get<TypeRef>(this->body);
-      return lhsRef.refType->match(type);
+      return lhsRef.refType->matchNice(type);
     } else {
       auto lhsRef = std::get<TypeRef>(type->body);
-      return lhsRef.refType->match(this);
+      return lhsRef.refType->matchNice(this);
     }
   } else if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
@@ -327,7 +405,7 @@ bool Type::match (const Type *type) const {
     auto lhsArray = std::get<TypeArray>(this->body);
     auto rhsArray = std::get<TypeArray>(type->body);
 
-    return lhsArray.elementType->match(rhsArray.elementType);
+    return lhsArray.elementType->matchNice(rhsArray.elementType);
   } else if (this->isEnum() || type->isEnum()) {
     if (this->isEnum() && type->isEnum()) {
       return type->name == this->name;
@@ -343,11 +421,11 @@ bool Type::match (const Type *type) const {
     auto rhsFn = std::get<TypeFn>(type->body);
 
     if (
-      !lhsFn.returnType->match(rhsFn.returnType) ||
+      !lhsFn.returnType->matchNice(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
       lhsFn.isMethod != rhsFn.isMethod ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->match(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchNice(rhsFn.methodInfo.selfType)) ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfType->isRef() && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
     ) {
       return false;
@@ -359,7 +437,7 @@ bool Type::match (const Type *type) const {
 
       if (
         (lhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
-        !lhsFnParam.type->match(rhsFnParam.type) ||
+        !lhsFnParam.type->matchNice(rhsFnParam.type) ||
         (lhsFnParam.type->isRef() && lhsFnParam.mut != rhsFnParam.mut) ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic
@@ -374,13 +452,28 @@ bool Type::match (const Type *type) const {
   } else if (this->isOpt()) {
     if (!type->isOpt()) {
       auto lhsOptional = std::get<TypeOptional>(this->body);
-      return lhsOptional.type->match(type);
+      return lhsOptional.type->matchNice(type);
     }
 
     auto lhsOptional = std::get<TypeOptional>(this->body);
     auto rhsOptional = std::get<TypeOptional>(type->body);
 
-    return lhsOptional.type->match(rhsOptional.type);
+    return lhsOptional.type->matchNice(rhsOptional.type);
+  } else if (this->isUnion()) {
+    if (!type->isUnion()) {
+      return this->hasSubType(type);
+    }
+
+    auto lhsUnion = std::get<TypeUnion>(this->body);
+    auto rhsUnion = std::get<TypeUnion>(type->body);
+
+    if (lhsUnion.subTypes.size() != rhsUnion.subTypes.size()) {
+      return false;
+    }
+
+    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&type] (const auto &it) -> bool {
+      return type->hasSubType(it);
+    });
   }
 
   return (this->name == "bool" && type->name == "bool") ||
@@ -392,7 +485,13 @@ bool Type::match (const Type *type) const {
     numberTypeMatch(this->name, type->name);
 }
 
-bool Type::matchExact (const Type *type) const {
+bool Type::matchStrict (const Type *type, bool exact) const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->matchStrict(type, exact);
+  } else if (type->isAlias()) {
+    type = Type::actual(std::get<TypeAlias>(type->body).type);
+  }
+
   if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
@@ -401,7 +500,7 @@ bool Type::matchExact (const Type *type) const {
     auto lhsArray = std::get<TypeArray>(this->body);
     auto rhsArray = std::get<TypeArray>(type->body);
 
-    return lhsArray.elementType->matchExact(rhsArray.elementType);
+    return lhsArray.elementType->matchStrict(rhsArray.elementType);
   } else if (this->isFn() || type->isFn()) {
     if (!this->isFn() || !type->isFn()) {
       return false;
@@ -411,12 +510,13 @@ bool Type::matchExact (const Type *type) const {
     auto rhsFn = std::get<TypeFn>(type->body);
 
     if (
-      !lhsFn.returnType->matchExact(rhsFn.returnType) ||
+      !lhsFn.returnType->matchStrict(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
       lhsFn.isMethod != rhsFn.isMethod ||
+      (exact && lhsFn.isMethod && lhsFn.methodInfo.codeName != rhsFn.methodInfo.codeName) ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchExact(rhsFn.methodInfo.selfType)) ||
+      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchStrict(rhsFn.methodInfo.selfType)) ||
       (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
     ) {
       return false;
@@ -427,8 +527,8 @@ bool Type::matchExact (const Type *type) const {
       auto rhsFnParam = rhsFn.params[i];
 
       if (
-        lhsFnParam.name != rhsFnParam.name ||
-        !lhsFnParam.type->matchExact(rhsFnParam.type) ||
+        (exact && lhsFnParam.name != rhsFnParam.name) ||
+        !lhsFnParam.type->matchStrict(rhsFnParam.type) ||
         lhsFnParam.mut != rhsFnParam.mut ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic
@@ -446,7 +546,7 @@ bool Type::matchExact (const Type *type) const {
     auto lhsOptional = std::get<TypeOptional>(this->body);
     auto rhsOptional = std::get<TypeOptional>(type->body);
 
-    return lhsOptional.type->matchExact(rhsOptional.type);
+    return lhsOptional.type->matchStrict(rhsOptional.type);
   } else if (this->isRef() || type->isRef()) {
     if (!this->isRef() || !type->isRef()) {
       return false;
@@ -455,83 +555,51 @@ bool Type::matchExact (const Type *type) const {
     auto lhsRef = std::get<TypeRef>(this->body);
     auto rhsRef = std::get<TypeRef>(type->body);
 
-    return lhsRef.refType->matchExact(rhsRef.refType);
-  }
-
-  return this->name == type->name;
-}
-
-bool Type::matchNice (const Type *type) const {
-  if (this->isArray() || type->isArray()) {
-    if (!this->isArray() || !type->isArray()) {
+    return lhsRef.refType->matchStrict(rhsRef.refType);
+  } else if (this->isUnion() || type->isUnion()) {
+    if (!this->isUnion() || !type->isUnion()) {
       return false;
     }
 
-    auto lhsArray = std::get<TypeArray>(this->body);
-    auto rhsArray = std::get<TypeArray>(type->body);
+    auto lhsUnion = std::get<TypeUnion>(this->body);
+    auto rhsUnion = std::get<TypeUnion>(type->body);
 
-    return lhsArray.elementType->matchNice(rhsArray.elementType);
-  } else if (this->isFn() || type->isFn()) {
-    if (!this->isFn() || !type->isFn()) {
+    if (lhsUnion.subTypes.size() != rhsUnion.subTypes.size()) {
       return false;
     }
 
-    auto lhsFn = std::get<TypeFn>(this->body);
-    auto rhsFn = std::get<TypeFn>(type->body);
-
-    if (
-      !lhsFn.returnType->matchNice(rhsFn.returnType) ||
-      lhsFn.params.size() != rhsFn.params.size() ||
-      lhsFn.isMethod != rhsFn.isMethod ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchNice(rhsFn.methodInfo.selfType)) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
-    ) {
-      return false;
-    }
-
-    for (auto i = static_cast<std::size_t>(0); i < lhsFn.params.size(); i++) {
-      auto lhsFnParam = lhsFn.params[i];
-      auto rhsFnParam = rhsFn.params[i];
-
-      if (
-        (lhsFnParam.name != std::nullopt && rhsFnParam.name != std::nullopt && lhsFnParam.name != rhsFnParam.name) ||
-        !lhsFnParam.type->matchNice(rhsFnParam.type) ||
-        (lhsFnParam.mut && lhsFnParam.mut != rhsFnParam.mut) ||
-        lhsFnParam.required != rhsFnParam.required ||
-        lhsFnParam.variadic != rhsFnParam.variadic
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  } else if (this->isOpt() || type->isOpt()) {
-    if (!this->isOpt() || !type->isOpt()) {
-      return false;
-    }
-
-    auto lhsOptional = std::get<TypeOptional>(this->body);
-    auto rhsOptional = std::get<TypeOptional>(type->body);
-
-    return lhsOptional.type->matchNice(rhsOptional.type);
-  } else if (this->isRef() || type->isRef()) {
-    if (!this->isRef() || !type->isRef()) {
-      return false;
-    }
-
-    auto lhsRef = std::get<TypeRef>(this->body);
-    auto rhsRef = std::get<TypeRef>(type->body);
-
-    return lhsRef.refType->matchNice(rhsRef.refType);
+    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&type] (const auto &it) -> bool {
+      return type->hasSubType(it);
+    });
   }
 
   return this->name == type->name;
 }
 
 bool Type::shouldBeFreed () const {
-  return this->isAny() || this->isArray() || this->isFn() || this->isObj() || this->isOpt() || this->isStr();
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->shouldBeFreed();
+  } else if (this->isUnion()) {
+    auto subTypes = std::get<TypeUnion>(this->body).subTypes;
+    bool result = false;
+
+    for (const auto &subType : subTypes) {
+      if (subType->shouldBeFreed()) {
+        result = true;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  return
+    this->isAny() ||
+    this->isArray() ||
+    this->isFn() ||
+    this->isObj() ||
+    this->isOpt() ||
+    this->isStr();
 }
 
 std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) const {
@@ -541,7 +609,9 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   auto typeName = std::string("Type");
 
-  if (this->isArray()) {
+  if (this->isAlias()) {
+    typeName += "Alias";
+  } else if (this->isArray()) {
     typeName += "Array";
   } else if (this->isEnum()) {
     typeName += "Enum";
@@ -555,6 +625,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     typeName += "Optional";
   } else if (this->isRef()) {
     typeName += "Ref";
+  } else if (this->isUnion()) {
+    typeName += "Union";
   }
 
   auto result = std::string(indent, ' ') + "<" + typeName;
@@ -568,7 +640,10 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   result += ">" EOL;
 
-  if (this->isArray()) {
+  if (this->isAlias()) {
+    auto typeAlias = std::get<TypeAlias>(this->body);
+    result += typeAlias.type->xml(indent + 2, parentTypes) + EOL;
+  } else if (this->isArray()) {
     auto typeArray = std::get<TypeArray>(this->body);
     result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isEnum()) {
@@ -583,6 +658,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     if (typeFn.isMethod) {
       auto methodAttrs = std::string();
 
+      methodAttrs += typeFn.methodInfo.codeName[0] != '@' ? R"( codeName=")" + typeFn.methodInfo.codeName + R"(")" : "";
       methodAttrs += typeFn.methodInfo.isSelfFirst ? R"( selfCodeName=")" + typeFn.methodInfo.selfCodeName + R"(")" : "";
       methodAttrs += typeFn.methodInfo.isSelfFirst ? " selfFirst" : "";
       methodAttrs += typeFn.methodInfo.isSelfMut ? " selfMut" : "";
@@ -641,6 +717,12 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   } else if (this->isRef()) {
     auto typeRef = std::get<TypeRef>(this->body);
     result += typeRef.refType->xml(indent + 2, parentTypes) + EOL;
+  } else if (this->isUnion()) {
+    auto typeUnion = std::get<TypeUnion>(this->body);
+
+    for (const auto &subType : typeUnion.subTypes) {
+      result += subType->xml(indent + 2, parentTypes) + EOL;
+    }
   }
 
   return result + std::string(indent, ' ') + "</" + typeName + ">";

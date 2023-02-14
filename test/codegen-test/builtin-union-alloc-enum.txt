@@ -1,0 +1,61 @@
+======= stdin =======
+enum HairColor {
+  Black,
+  Brown,
+  Blond
+}
+enum EyeColor {
+  Blue,
+  Gray,
+  Green
+}
+
+main {
+  g1: HairColor | EyeColor = HairColor.Black
+  g2: HairColor | EyeColor = EyeColor.Blue
+}
+======= code =======
+#include <stdarg.h>
+
+#define TYPE_HairColor_0 1
+#define TYPE_EyeColor_0 2
+
+enum __THE_1_HairColor_0 {
+  __THE_0_HairColorSDBlack_0,
+  __THE_0_HairColorSDBrown_0,
+  __THE_0_HairColorSDBlond_0
+};
+enum __THE_1_EyeColor_0 {
+  __THE_0_EyeColorSDBlue_0,
+  __THE_0_EyeColorSDGray_0,
+  __THE_0_EyeColorSDGreen_0
+};
+
+struct __THE_1_union$0;
+
+struct __THE_1_union$0 {
+  int t;
+  union {
+    enum __THE_1_HairColor_0 v1;
+    enum __THE_1_EyeColor_0 v2;
+  };
+};
+
+struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
+
+struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
+  struct __THE_1_union$0 r = {t};
+  va_list args;
+  va_start(args, t);
+  if (t == TYPE_HairColor_0) r.v1 = va_arg(args, enum __THE_1_HairColor_0);
+  if (t == TYPE_EyeColor_0) r.v2 = va_arg(args, enum __THE_1_EyeColor_0);
+  va_end(args);
+  return r;
+}
+
+int main () {
+  const struct __THE_1_union$0 __THE_0_g1_0 = __THE_1_union$0_alloc(TYPE_HairColor_0, __THE_0_HairColorSDBlack_0);
+  const struct __THE_1_union$0 __THE_0_g2_0 = __THE_1_union$0_alloc(TYPE_EyeColor_0, __THE_0_EyeColorSDBlue_0);
+}
+======= flags =======
+======= stdout =======

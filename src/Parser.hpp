@@ -48,6 +48,7 @@ class Parser {
   std::tuple<ParserStmtExpr, bool> _wrapExprBinary (const ParserStmtExpr &, ReaderLocation, const Token &);
   std::tuple<ParserStmtExpr, bool> _wrapExprCall (const ParserStmtExpr &, ReaderLocation, const Token &);
   std::tuple<ParserStmtExpr, bool> _wrapExprCond (const ParserStmtExpr &, ReaderLocation, const Token &);
+  std::tuple<ParserStmtExpr, bool> _wrapExprIs (const ParserStmtExpr &, ReaderLocation, const Token &);
   std::tuple<ParserStmtExpr, bool> _wrapExprObj (const ParserStmtExpr &, ReaderLocation, const Token &);
   std::tuple<ParserStmtExpr, bool> _wrapExprUnary (const ParserStmtExpr &, ReaderLocation, const Token &);
   ParserStmt _wrapStmt (bool, const ParserStmtBody &, ReaderLocation) const;

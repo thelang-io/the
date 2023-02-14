@@ -1,0 +1,30 @@
+======= stdin =======
+main {
+  testInt1 := 1
+  testInt2 := 2
+  mut a := ref testInt1
+  mut b := ref testInt2
+
+  ref a;
+  ref b;
+  true ? a : ref b
+  false ? ref a : b
+  false ? ref a : ref b
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_testInt1_0 = 1;
+  const int32_t __THE_0_testInt2_0 = 2;
+  int32_t *__THE_0_a_0 = &__THE_0_testInt1_0;
+  int32_t *__THE_0_b_0 = &__THE_0_testInt2_0;
+  &__THE_0_a_0;
+  &__THE_0_b_0;
+  true ? __THE_0_a_0 : __THE_0_b_0;
+  false ? &__THE_0_a_0 : &__THE_0_b_0;
+  false ? &__THE_0_a_0 : &__THE_0_b_0;
+}
+======= flags =======
+======= stdout =======

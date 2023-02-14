@@ -29,6 +29,7 @@ struct ASTNodeLoop;
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
 struct ASTNodeReturn;
+struct ASTNodeTypeDecl;
 struct ASTNodeVarDecl;
 
 using ASTNodeBody = std::variant<
@@ -42,6 +43,7 @@ using ASTNodeBody = std::variant<
   ASTNodeMain,
   ASTNodeObjDecl,
   ASTNodeReturn,
+  ASTNodeTypeDecl,
   ASTNodeVarDecl
 >;
 
@@ -100,7 +102,7 @@ struct ASTNodeMain {
 };
 
 struct ASTNodeObjDeclMethod {
-  Type *type;
+  std::shared_ptr<Var> var;
   std::vector<std::shared_ptr<Var>> stack = {};
   std::vector<ASTFnDeclParam> params = {};
   ASTBlock body = {};
@@ -113,6 +115,10 @@ struct ASTNodeObjDecl {
 
 struct ASTNodeReturn {
   std::optional<ASTNodeExpr> body;
+};
+
+struct ASTNodeTypeDecl {
+  Type *type;
 };
 
 struct ASTNodeVarDecl {

@@ -62,7 +62,7 @@ main {
   <NodeFnDecl>
     <NodeFnDeclVar>
       <Var name="test1" codeName="mainSDtest1_0" frame="2">
-        <TypeFn codeName="mainSDtest1_0" name="fn$0">
+        <TypeFn name="fn$0">
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
@@ -128,7 +128,7 @@ main {
   <NodeFnDecl>
     <NodeFnDeclVar>
       <Var name="testCtx" codeName="mainSDtestCtx_0" frame="2">
-        <TypeFn codeName="mainSDtestCtx_0" name="fn$0">
+        <TypeFn name="fn$0">
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
@@ -168,7 +168,7 @@ main {
       <NodeFnDecl>
         <NodeFnDeclVar>
           <Var name="test2" codeName="mainSDtestCtxSDtest2_0" frame="3">
-            <TypeFn codeName="mainSDtestCtxSDtest2_0" name="fn$0">
+            <TypeFn name="fn$0">
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
@@ -242,7 +242,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn codeName="mainSDtestCtx_0" name="fn$0">
+              <TypeFn name="fn$0">
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
@@ -251,7 +251,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testCtx" codeName="mainSDtestCtx_0" frame="2">
-                  <TypeFn codeName="mainSDtestCtx_0" name="fn$0">
+                  <TypeFn name="fn$0">
                     <TypeFnReturnType>
                       <BuiltinType name="void" />
                     </TypeFnReturnType>

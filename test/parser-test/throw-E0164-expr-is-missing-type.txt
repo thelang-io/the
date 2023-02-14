@@ -1,0 +1,6 @@
+======= stdin =======
+test is 1
+======= stderr =======
+/test:1:8: E0164 - Expected type after `is` keyword
+  1 | test is 1
+    |        ^

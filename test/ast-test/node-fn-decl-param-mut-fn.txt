@@ -17,7 +17,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job1" codeName="job1_0" frame="1">
-      <TypeFn codeName="job1_0" name="fn$0">
+      <TypeFn name="fn$0">
         <TypeFnReturnType>
           <BuiltinType name="int" />
         </TypeFnReturnType>
@@ -40,7 +40,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job2" codeName="job2_0" frame="1">
-      <TypeFn codeName="job2_0" name="fn$0">
+      <TypeFn name="fn$0">
         <TypeFnReturnType>
           <BuiltinType name="int" />
         </TypeFnReturnType>
@@ -63,7 +63,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn codeName="test1_0" name="fn$1">
+      <TypeFn name="fn$1">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <TypeFn name="fn$0">
@@ -81,7 +81,7 @@ main {
   </NodeFnDeclVar>
   <NodeFnDeclCtx>
     <Var name="job2" codeName="job2_0" frame="1">
-      <TypeFn codeName="job2_0" name="fn$0">
+      <TypeFn name="fn$0">
         <TypeFnReturnType>
           <BuiltinType name="int" />
         </TypeFnReturnType>
@@ -137,7 +137,7 @@ main {
           <ExprAssignRight>
             <NodeExpr>
               <NodeExprType>
-                <TypeFn codeName="job2_0" name="fn$0">
+                <TypeFn name="fn$0">
                   <TypeFnReturnType>
                     <BuiltinType name="int" />
                   </TypeFnReturnType>
@@ -146,7 +146,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="job2" codeName="job2_0" frame="1">
-                    <TypeFn codeName="job2_0" name="fn$0">
+                    <TypeFn name="fn$0">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
                       </TypeFnReturnType>
@@ -197,7 +197,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn codeName="test2_0" name="fn$2">
+      <TypeFn name="fn$2">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <TypeFn name="fn$0">
@@ -207,7 +207,7 @@ main {
             </TypeFn>
           </TypeFnParam>
           <TypeFnParam name="b" mut>
-            <TypeFn codeName="job2_0" name="fn$0">
+            <TypeFn name="fn$0">
               <TypeFnReturnType>
                 <BuiltinType name="int" />
               </TypeFnReturnType>
@@ -222,7 +222,7 @@ main {
   </NodeFnDeclVar>
   <NodeFnDeclCtx>
     <Var name="job2" codeName="job2_0" frame="1">
-      <TypeFn codeName="job2_0" name="fn$0">
+      <TypeFn name="fn$0">
         <TypeFnReturnType>
           <BuiltinType name="int" />
         </TypeFnReturnType>
@@ -244,7 +244,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="b" codeName="b_0" mut frame="2">
-          <TypeFn codeName="job2_0" name="fn$0">
+          <TypeFn name="fn$0">
             <TypeFnReturnType>
               <BuiltinType name="int" />
             </TypeFnReturnType>
@@ -254,7 +254,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <TypeFn codeName="job2_0" name="fn$0">
+            <TypeFn name="fn$0">
               <TypeFnReturnType>
                 <BuiltinType name="int" />
               </TypeFnReturnType>
@@ -263,7 +263,7 @@ main {
           <NodeExprBody>
             <ExprAccess>
               <Var name="job2" codeName="job2_0" frame="1">
-                <TypeFn codeName="job2_0" name="fn$0">
+                <TypeFn name="fn$0">
                   <TypeFnReturnType>
                     <BuiltinType name="int" />
                   </TypeFnReturnType>
@@ -278,7 +278,7 @@ main {
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>
-        <TypeFn codeName="job2_0" name="fn$0">
+        <TypeFn name="fn$0">
           <TypeFnReturnType>
             <BuiltinType name="int" />
           </TypeFnReturnType>
@@ -289,7 +289,7 @@ main {
           <ExprAssignLeft>
             <NodeExpr>
               <NodeExprType>
-                <TypeFn codeName="job2_0" name="fn$0">
+                <TypeFn name="fn$0">
                   <TypeFnReturnType>
                     <BuiltinType name="int" />
                   </TypeFnReturnType>
@@ -298,7 +298,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="b" codeName="b_0" mut frame="2">
-                    <TypeFn codeName="job2_0" name="fn$0">
+                    <TypeFn name="fn$0">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
                       </TypeFnReturnType>
@@ -383,7 +383,7 @@ main {
                     <ExprCallCallee>
                       <NodeExpr>
                         <NodeExprType>
-                          <TypeFn codeName="job2_0" name="fn$0">
+                          <TypeFn name="fn$0">
                             <TypeFnReturnType>
                               <BuiltinType name="int" />
                             </TypeFnReturnType>
@@ -392,7 +392,7 @@ main {
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="b" codeName="b_0" mut frame="2">
-                              <TypeFn codeName="job2_0" name="fn$0">
+                              <TypeFn name="fn$0">
                                 <TypeFnReturnType>
                                   <BuiltinType name="int" />
                                 </TypeFnReturnType>
@@ -422,7 +422,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn codeName="test1_0" name="fn$1">
+              <TypeFn name="fn$1">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <TypeFn name="fn$0">
@@ -440,7 +440,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test1" codeName="test1_0" frame="1">
-                  <TypeFn codeName="test1_0" name="fn$1">
+                  <TypeFn name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <TypeFn name="fn$0">
@@ -463,7 +463,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeFn codeName="job1_0" name="fn$0">
+                <TypeFn name="fn$0">
                   <TypeFnReturnType>
                     <BuiltinType name="int" />
                   </TypeFnReturnType>
@@ -472,7 +472,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="job1" codeName="job1_0" frame="1">
-                    <TypeFn codeName="job1_0" name="fn$0">
+                    <TypeFn name="fn$0">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
                       </TypeFnReturnType>
@@ -495,7 +495,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn codeName="test2_0" name="fn$2">
+              <TypeFn name="fn$2">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <TypeFn name="fn$0">
@@ -505,7 +505,7 @@ main {
                     </TypeFn>
                   </TypeFnParam>
                   <TypeFnParam name="b" mut>
-                    <TypeFn codeName="job2_0" name="fn$0">
+                    <TypeFn name="fn$0">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
                       </TypeFnReturnType>
@@ -520,7 +520,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn codeName="test2_0" name="fn$2">
+                  <TypeFn name="fn$2">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <TypeFn name="fn$0">
@@ -530,7 +530,7 @@ main {
                         </TypeFn>
                       </TypeFnParam>
                       <TypeFnParam name="b" mut>
-                        <TypeFn codeName="job2_0" name="fn$0">
+                        <TypeFn name="fn$0">
                           <TypeFnReturnType>
                             <BuiltinType name="int" />
                           </TypeFnReturnType>
@@ -550,7 +550,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeFn codeName="job2_0" name="fn$0">
+                <TypeFn name="fn$0">
                   <TypeFnReturnType>
                     <BuiltinType name="int" />
                   </TypeFnReturnType>
@@ -559,7 +559,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="job2" codeName="job2_0" frame="1">
-                    <TypeFn codeName="job2_0" name="fn$0">
+                    <TypeFn name="fn$0">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
                       </TypeFnReturnType>

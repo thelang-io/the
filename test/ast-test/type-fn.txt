@@ -69,7 +69,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a04" codeName="a04_0" frame="2">
-        <TypeFn name="fn$1">
+        <TypeFn name="fn$2">
           <TypeFnParams>
             <TypeFnParam name="a" mut required>
               <BuiltinType name="int" />
@@ -101,7 +101,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a06" codeName="a06_0" frame="2">
-        <TypeFn name="fn$2">
+        <TypeFn name="fn$3">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -120,7 +120,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a07" codeName="a07_0" frame="2">
-        <TypeFn name="fn$2">
+        <TypeFn name="fn$4">
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -139,7 +139,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a08" codeName="a08_0" frame="2">
-        <TypeFn name="fn$2">
+        <TypeFn name="fn$3">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -158,7 +158,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a09" codeName="a09_0" frame="2">
-        <TypeFn name="fn$3">
+        <TypeFn name="fn$5">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -184,7 +184,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a10" codeName="a10_0" frame="2">
-        <TypeFn name="fn$3">
+        <TypeFn name="fn$6">
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -210,7 +210,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a11" codeName="a11_0" frame="2">
-        <TypeFn name="fn$3">
+        <TypeFn name="fn$5">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />

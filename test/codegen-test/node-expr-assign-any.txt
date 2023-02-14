@@ -24,7 +24,7 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TYPE_ANY_int 1
+#define TYPE_int 1
 
 struct any {
   int t;
@@ -34,18 +34,18 @@ struct any {
   void (*_free) (struct any);
 };
 
-struct any_int;
+struct __THE_1_any_int;
 
-struct any_int {
+struct __THE_1_any_int {
   int32_t d;
 };
 
 void *alloc (size_t);
 void any_free (struct any);
 struct any any_realloc (struct any, struct any);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -62,28 +62,28 @@ struct any any_realloc (struct any n1, struct any n2) {
   if (n1.d != NULL) n1._free(n1);
   return n2;
 }
-struct any any_int_alloc (int32_t d) {
-  size_t l = sizeof(struct any_int);
-  struct any_int *r = alloc(l);
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
 }
-struct any any_int_copy (const struct any n) {
-  struct any_int *o = n.d;
-  struct any_int *r = alloc(n.l);
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_int_free (struct any _n) {
-  struct any_int *n = _n.d;
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
   free(n);
 }
 
 int main () {
   struct any __THE_0_test1_0 = {0, NULL, 0, NULL, NULL};
-  __THE_0_test1_0 = any_realloc(__THE_0_test1_0, any_int_alloc(3));
-  struct any __THE_0_test2_0 = any_int_alloc(2);
-  __THE_0_test2_0 = any_realloc(__THE_0_test2_0, any_int_alloc(4));
+  __THE_0_test1_0 = any_realloc(__THE_0_test1_0, __THE_1_any_int_alloc(3));
+  struct any __THE_0_test2_0 = __THE_1_any_int_alloc(2);
+  __THE_0_test2_0 = any_realloc(__THE_0_test2_0, __THE_1_any_int_alloc(4));
   any_free((struct any) __THE_0_test2_0);
   any_free((struct any) __THE_0_test1_0);
 }

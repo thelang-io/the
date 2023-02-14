@@ -43,7 +43,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_THROW: return "KW_THROW";
     case TK_KW_TRUE: return "KW_TRUE";
     case TK_KW_TRY: return "KW_TRY";
-    case TK_KW_UNION: return "KW_UNION";
+    case TK_KW_TYPE: return "KW_TYPE";
     case TK_LIT_CHAR: return "LIT_CHAR";
     case TK_LIT_FLOAT: return "LIT_FLOAT";
     case TK_LIT_INT_BIN: return "LIT_INT_BIN";
@@ -192,7 +192,7 @@ std::string Token::upperFirst (const std::string &str) {
 
 TokenAssociativity Token::associativity (bool unary) const {
   if (
-    this->type == TK_KW_REF ||
+    this->type == TK_KW_IS || this->type == TK_KW_REF ||
     this->type == TK_OP_LPAR || this->type == TK_OP_RPAR ||
     this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS ||
     this->type == TK_OP_ARROW
@@ -250,7 +250,7 @@ int Token::precedence (bool isUnary) const {
     return 11;
   } else if (this->type == TK_OP_LSHIFT || this->type == TK_OP_RSHIFT) {
     return 10;
-  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ) {
+  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ || this->type == TK_KW_IS) {
     return 9;
   } else if (this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ) {
     return 8;

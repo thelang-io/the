@@ -70,6 +70,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-obj-decl-method",
   "node-obj-decl-method-variadic",
   "node-return",
+  "node-type-decl",
   "node-var-decl",
   "node-var-decl-type-only"
 ));
@@ -88,7 +89,11 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-cond",
   "expr-cond-any",
   "expr-cond-opt",
+  "expr-cond-union",
   "expr-cond-type-casts",
+  "expr-is",
+  "expr-is-type-casts",
+  "expr-is-type-casts2",
   "expr-lit",
   "expr-lit-nil",
   "expr-obj",
@@ -103,6 +108,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
   "type-fn",
   "type-opt",
   "type-ref",
+  "type-union",
   "type-variadic"
 ));
 

@@ -25,6 +25,27 @@
 #include <vector>
 
 struct Type;
+struct TypeAlias;
+struct TypeArray;
+struct TypeEnum;
+struct TypeEnumerator;
+struct TypeFn;
+struct TypeObj;
+struct TypeOptional;
+struct TypeRef;
+struct TypeUnion;
+
+using TypeBody = std::variant<
+  TypeAlias,
+  TypeArray,
+  TypeEnum,
+  TypeEnumerator,
+  TypeFn,
+  TypeObj,
+  TypeOptional,
+  TypeRef,
+  TypeUnion
+>;
 
 struct TypeField {
   std::string name;
@@ -32,6 +53,10 @@ struct TypeField {
   bool mut;
   bool method;
   bool builtin;
+};
+
+struct TypeAlias {
+  Type *type;
 };
 
 struct TypeArray {
@@ -54,6 +79,7 @@ struct TypeFnParam {
 };
 
 struct TypeFnMethodInfo {
+  std::string codeName;
   bool isSelfFirst = false;
   std::string selfCodeName = "";
   Type *selfType = nullptr;
@@ -78,13 +104,18 @@ struct TypeRef {
   Type *refType;
 };
 
+struct TypeUnion {
+  std::vector<Type *> subTypes;
+};
+
 struct Type {
   std::string name;
   std::string codeName;
-  std::variant<TypeArray, TypeEnum, TypeEnumerator, TypeFn, TypeObj, TypeOptional, TypeRef> body;
+  TypeBody body;
   std::vector<TypeField> fields = {};
   bool builtin = false;
 
+  static Type *actual (Type *);
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
@@ -92,6 +123,8 @@ struct Type {
   Type *getProp (const std::string &) const;
   bool hasEnumerator (const std::string &) const;
   bool hasProp (const std::string &) const;
+  bool hasSubType (const Type *) const;
+  bool isAlias () const;
   bool isAny () const;
   bool isArray () const;
   bool isBool () const;
@@ -115,17 +148,18 @@ struct Type {
   bool isObj () const;
   bool isOpt () const;
   bool isRef () const;
-  bool isRefExt () const;
+  bool isRefOf (const Type *) const;
+  bool isSafeForTernaryAlt () const;
   bool isSmallForVarArg () const;
   bool isStr () const;
   bool isU8 () const;
   bool isU16 () const;
   bool isU32 () const;
   bool isU64 () const;
+  bool isUnion () const;
   bool isVoid () const;
-  bool match (const Type *) const;
-  bool matchExact (const Type *) const;
   bool matchNice (const Type *) const;
+  bool matchStrict (const Type *, bool = false) const;
   bool shouldBeFreed () const;
   std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
 };

@@ -18,7 +18,6 @@
 #define SRC_PARSER_STMT_HPP
 
 #include "ParserExpr.hpp"
-#include "ParserType.hpp"
 
 struct ParserStmtBreak;
 struct ParserStmtContinue;
@@ -31,6 +30,7 @@ struct ParserStmtLoop;
 struct ParserStmtMain;
 struct ParserStmtObjDecl;
 struct ParserStmtReturn;
+struct ParserStmtTypeDecl;
 struct ParserStmtVarDecl;
 
 using ParserStmtBody = std::variant<
@@ -46,6 +46,7 @@ using ParserStmtBody = std::variant<
   ParserStmtMain,
   ParserStmtObjDecl,
   ParserStmtReturn,
+  ParserStmtTypeDecl,
   ParserStmtVarDecl
 >;
 
@@ -128,6 +129,11 @@ struct ParserStmtObjDecl {
 
 struct ParserStmtReturn {
   std::optional<ParserStmtExpr> body;
+};
+
+struct ParserStmtTypeDecl {
+  Token id;
+  ParserType type;
 };
 
 struct ParserStmtVarDecl {

@@ -131,7 +131,7 @@ std::tuple<ReaderLocation, Token> Lexer::next () {
     else if (this->val == "throw") return {startLoc, this->_tok(TK_KW_THROW)};
     else if (this->val == "true") return {startLoc, this->_tok(TK_KW_TRUE)};
     else if (this->val == "try") return {startLoc, this->_tok(TK_KW_TRY)};
-    else if (this->val == "union") return {startLoc, this->_tok(TK_KW_UNION)};
+    else if (this->val == "type") return {startLoc, this->_tok(TK_KW_TYPE)};
 
     return {startLoc, this->_tok(TK_ID)};
   }

@@ -1,0 +1,194 @@
+======= stdin =======
+type Alias = str
+
+fn test1 (a: Alias, b: Alias = "test3", c: Alias = "test4") Alias {
+  return a + b + c
+}
+
+main {
+  test1("test1")
+  test1("test1", "test2")
+  test1("test1", "test2", "test3")
+  test1("test1", b: "test2")
+  test1("test1", c: "test3")
+  test1("test1", b: "test2", c: "test3")
+  test1("test1", c: "test3", b: "test2")
+
+  mut a: Alias
+
+  fn test2 (a2: Alias, b: Alias = "test5", c: Alias = "test6") {
+    a = test1(a2, b, c)
+  }
+
+  test2("test7")
+  test2("test7", "test8")
+  test2("test7", "test8", "test9")
+  test2("test7", b: "test8")
+  test2("test7", c: "test9")
+  test2("test7", b: "test8", c: "test9")
+  test2("test7", c: "test9", b: "test8")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1P;
+struct __THE_1_fn$1;
+struct __THE_1_mainSDtest2_0X;
+
+struct __THE_1_fn$0P {
+  struct str n0;
+  unsigned char o1;
+  struct str n1;
+  unsigned char o2;
+  struct str n2;
+};
+struct __THE_1_fn$0 {
+  struct str (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1P {
+  struct str n0;
+  unsigned char o1;
+  struct str n1;
+  unsigned char o2;
+  struct str n2;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_mainSDtest2_0X {
+  struct str *__THE_0_a_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+struct str __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_fn$1_free (struct __THE_1_fn$1);
+void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtest2_0X);
+void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1P);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
+}
+struct str __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
+  struct str v;
+  const struct str __THE_0_a_0 = p.n0;
+  const struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("test3");
+  const struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("test4");
+  v = str_concat_str(str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0));
+  str_free((struct str) __THE_0_c_0);
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a_0);
+  return v;
+}
+void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+  free(n.x);
+}
+void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtest2_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
+  struct __THE_1_mainSDtest2_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtest2_0;
+  n->x = r;
+  n->l = l;
+}
+void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1P p) {
+  struct __THE_1_mainSDtest2_0X *x = px;
+  struct str *__THE_0_a_0 = x->__THE_0_a_0;
+  const struct __THE_1_fn$0 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct str __THE_0_a2_0 = p.n0;
+  const struct str __THE_0_b_0 = p.o1 == 1 ? p.n1 : str_alloc("test5");
+  const struct str __THE_0_c_0 = p.o2 == 1 ? p.n2 : str_alloc("test6");
+  *__THE_0_a_0 = str_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$0P) {str_copy(__THE_0_a2_0), 1, str_copy(__THE_0_b_0), 1, str_copy(__THE_0_c_0)}));
+  str_free((struct str) __THE_0_c_0);
+  str_free((struct str) __THE_0_b_0);
+  str_free((struct str) __THE_0_a2_0);
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("test1"), 0, (struct str) {}, 0, (struct str) {}}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("test1"), 1, str_alloc("test2"), 0, (struct str) {}}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("test1"), 1, str_alloc("test2"), 1, str_alloc("test3")}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("test1"), 1, str_alloc("test2"), 0, (struct str) {}}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("test1"), 0, (struct str) {}, 1, str_alloc("test3")}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("test1"), 1, str_alloc("test2"), 1, str_alloc("test3")}));
+  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {str_alloc("test1"), 1, str_alloc("test2"), 1, str_alloc("test3")}));
+  struct str __THE_0_a_0 = str_alloc("");
+  const struct __THE_1_fn$1 __THE_0_mainSDtest2_0;
+  __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {str_alloc("test7"), 0, (struct str) {}, 0, (struct str) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {str_alloc("test7"), 1, str_alloc("test8"), 0, (struct str) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {str_alloc("test7"), 1, str_alloc("test8"), 1, str_alloc("test9")});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {str_alloc("test7"), 1, str_alloc("test8"), 0, (struct str) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {str_alloc("test7"), 0, (struct str) {}, 1, str_alloc("test9")});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {str_alloc("test7"), 1, str_alloc("test8"), 1, str_alloc("test9")});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1P) {str_alloc("test7"), 1, str_alloc("test8"), 1, str_alloc("test9")});
+  __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_mainSDtest2_0);
+  str_free((struct str) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

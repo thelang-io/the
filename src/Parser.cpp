@@ -454,6 +454,28 @@ ParserStmt Parser::next (bool allowSemi) {
     return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclFields, objDeclMethods}, tok0.start);
   }
 
+  if (tok0.type == TK_KW_TYPE) {
+    auto [_1, tok1] = this->lexer->next();
+
+    if (tok1.type != TK_ID) {
+      throw Error(this->reader, tok1.start, E0160);
+    }
+
+    auto [_2, tok2] = this->lexer->next();
+
+    if (tok2.type != TK_OP_EQ) {
+      throw Error(this->reader, tok2.start, E0161);
+    }
+
+    auto type = this->_type();
+
+    if (type == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0162);
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtTypeDecl{tok1, *type}, tok0.start);
+  }
+
   if (tok0.type == TK_ID) {
     auto [loc1, tok1] = this->lexer->next();
 
@@ -821,11 +843,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
     auto exprCond = std::get<ParserExprCond>(*stmtExpr.body);
     auto tkQn = Token{TK_OP_QN};
 
-    auto shouldWrapExpr = tkQn.precedence() == precedence
-      ? tkQn.associativity() == TK_ASSOC_RIGHT
-      : tkQn.precedence() < precedence;
-
-    if (shouldWrapExpr) {
+    if (tkQn.precedence() <= precedence) {
       auto [newStmtExpr, shouldWrap] = this->_wrapExpr(exprCond.alt, loc, tok, precedence, wrap);
       auto newExprCond = ParserExprCond{exprCond.cond, exprCond.body, newStmtExpr};
       auto newExpr = std::make_shared<ParserExpr>(newExprCond);
@@ -1005,6 +1023,21 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprCond (const ParserStmtExpr &st
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprCond), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprIs (
+  const ParserStmtExpr &stmtExpr,
+  [[maybe_unused]] ReaderLocation loc,
+  [[maybe_unused]] const Token &tok
+) {
+  auto exprIsRight = this->_type();
+
+  if (exprIsRight == std::nullopt) {
+    throw Error(this->reader, this->lexer->loc, E0164);
+  }
+
+  auto exprIs = ParserExprIs{stmtExpr, *exprIsRight};
+  return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprIs), false, stmtExpr.start, this->lexer->loc}, true);
+}
+
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
   if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     this->lexer->seek(loc);
@@ -1099,7 +1132,13 @@ ParserStmt Parser::_wrapStmt (bool allowSemi, const ParserStmtBody &body, Reader
 ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
   auto [loc, tok] = this->lexer->next();
 
-  if (
+  if (tok.type == TK_KW_IS) {
+    auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
+      return this->_wrapExprIs(_1, _2, _3);
+    });
+
+    return this->_wrapStmtExpr(newStmtExpr);
+  } else if (
     tok.type == TK_OP_AMP ||
     tok.type == TK_OP_AMP_AMP ||
     tok.type == TK_OP_CARET ||
@@ -1195,6 +1234,27 @@ ParserType Parser::_wrapType (const ParserType &type) {
 
     auto typeArray = ParserTypeArray{type};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeArray), false, type.start, this->lexer->loc});
+  } else if (tok1.type == TK_OP_PIPE) {
+    auto subType = this->_type();
+
+    if (subType == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0163);
+    }
+
+    auto typeUnionSubTypes = std::vector<ParserType>{type};
+
+    if (std::holds_alternative<ParserTypeUnion>(*subType->body) && !subType->parenthesized) {
+      auto subTypeUnionBody = std::get<ParserTypeUnion>(*subType->body);
+
+      for (const auto &unionType : subTypeUnionBody.subTypes) {
+        typeUnionSubTypes.push_back(unionType);
+      }
+    } else {
+      typeUnionSubTypes.push_back(*subType);
+    }
+
+    auto typeUnion = ParserTypeUnion{typeUnionSubTypes};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeUnion), false, type.start, this->lexer->loc});
   } else if (tok1.type == TK_OP_QN) {
     auto typeOptional = ParserTypeOptional{type};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeOptional), false, type.start, this->lexer->loc});

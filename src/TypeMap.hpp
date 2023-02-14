@@ -24,11 +24,11 @@ class TypeMap {
   std::optional<Type *> self;
   std::vector<std::string> stack;
 
+  Type *alias (const std::string &, Type *);
   Type *arrayOf (Type *);
   Type *enumeration (const std::string &, const std::string &, const std::vector<Type *> &);
   Type *enumerator (const std::string &, const std::string &);
   Type *fn (
-    const std::optional<std::string> &,
     const std::vector<TypeFnParam> &,
     Type *,
     const std::optional<TypeFnMethodInfo> & = std::nullopt
@@ -41,10 +41,13 @@ class TypeMap {
   Type *obj (const std::string &, const std::string &, const std::vector<TypeField> & = {});
   Type *opt (Type *);
   Type *ref (Type *);
+  Type *unionType (const std::vector<Type *> &);
+  Type *unionSub (const Type *, const Type *);
 
  private:
   std::size_t _fnIdx = 0;
   std::vector<std::unique_ptr<Type>> _items;
+  std::size_t _unIdx = 0;
 };
 
 #endif

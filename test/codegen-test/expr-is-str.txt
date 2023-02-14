@@ -1,0 +1,321 @@
+======= stdin =======
+main {
+  a: any = "test"
+  if a is str { print("str " + a) }
+  else { print("any") }
+
+  b: any = 3.14
+  if b is str { print("str " + b) }
+  else { print("any") }
+
+  c: str | float = "test"
+  if c is str { print("str " + c) }
+  else { print("float " + c.str()) }
+
+  d: str | float = 3.14
+  if d is str { print("str " + d) }
+  else { print("float " + d.str()) }
+
+  mut e: any = "test"
+  if (e = "test") is str { print("str " + e) }
+  else { print("any") }
+
+  mut f: any = 3.14
+  if (f = 3.14) is str { print("str " + f) }
+  else { print("any") }
+
+  mut g: str | float = "test"
+  if (g = "test") is str { print("str " + g) }
+  else { print("float " + g.str()) }
+
+  mut h: str | float = 3.14
+  if (h = 3.14) is str { print("str " + h) }
+  else { print("float " + h.str()) }
+
+  print((a is str) ? "str " + a : "any")
+  print((b is str) ? "str " + b : "any")
+  print((c is str) ? "str " + c : "float " + c.str())
+  print((d is str) ? "str " + d : "float " + d.str())
+  print(((e = "test") is str) ? "str " + e : "any")
+  print(((f = 3.14) is str) ? "str " + f : "any")
+  print(((g = "test") is str) ? "str " + g : "float " + g.str())
+  print(((h = 3.14) is str) ? "str " + h : "float " + h.str())
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_str 1
+#define TYPE_float 2
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_any_str;
+struct __THE_1_any_float;
+struct __THE_1_union$0;
+
+struct __THE_1_any_str {
+  struct str d;
+};
+struct __THE_1_any_float {
+  double d;
+};
+struct __THE_1_union$0 {
+  int t;
+  union {
+    struct str v1;
+    double v2;
+  };
+};
+
+void *alloc (size_t);
+void any_free (struct any);
+struct any any_realloc (struct any, struct any);
+struct str cstr_concat_str (const char *, struct str);
+struct str float_str (double);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct any __THE_1_any_str_alloc (struct str);
+struct any __THE_1_any_str_copy (const struct any);
+void __THE_1_any_str_free (struct any);
+struct any __THE_1_any_float_alloc (double);
+struct any __THE_1_any_float_copy (const struct any);
+void __THE_1_any_float_free (struct any);
+struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
+void __THE_1_union$0_free (struct __THE_1_union$0);
+struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0, struct __THE_1_union$0);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct any any_realloc (struct any n1, struct any n2) {
+  if (n1.d != NULL) n1._free(n1);
+  return n2;
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str float_str (double f) {
+  char buf[512];
+  sprintf(buf, "%f", f);
+  return str_alloc(buf);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct any __THE_1_any_str_alloc (struct str d) {
+  size_t l = sizeof(struct __THE_1_any_str);
+  struct __THE_1_any_str *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_str, r, l, &__THE_1_any_str_copy, &__THE_1_any_str_free};
+}
+struct any __THE_1_any_str_copy (const struct any n) {
+  struct __THE_1_any_str *o = n.d;
+  struct __THE_1_any_str *r = alloc(n.l);
+  r->d = str_copy(o->d);
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_str_free (struct any _n) {
+  struct __THE_1_any_str *n = _n.d;
+  str_free((struct str) n->d);
+  free(n);
+}
+struct any __THE_1_any_float_alloc (double d) {
+  size_t l = sizeof(struct __THE_1_any_float);
+  struct __THE_1_any_float *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_float, r, l, &__THE_1_any_float_copy, &__THE_1_any_float_free};
+}
+struct any __THE_1_any_float_copy (const struct any n) {
+  struct __THE_1_any_float *o = n.d;
+  struct __THE_1_any_float *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_float_free (struct any _n) {
+  struct __THE_1_any_float *n = _n.d;
+  free(n);
+}
+struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
+  struct __THE_1_union$0 r = {t};
+  va_list args;
+  va_start(args, t);
+  if (t == TYPE_str) r.v1 = va_arg(args, struct str);
+  if (t == TYPE_float) r.v2 = va_arg(args, double);
+  va_end(args);
+  return r;
+}
+void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+  if (n.t == TYPE_str) str_free((struct str) n.v1);
+}
+struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0 n1, struct __THE_1_union$0 n2) {
+  __THE_1_union$0_free((struct __THE_1_union$0) n1);
+  return n2;
+}
+
+int main () {
+  const struct any __THE_0_a_0 = __THE_1_any_str_alloc(str_alloc("test"));
+  if (__THE_0_a_0.t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_a_0.d)->d)), THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
+  if (__THE_0_b_0.t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_b_0.d)->d)), THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  const struct __THE_1_union$0 __THE_0_c_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc("test"));
+  if (__THE_0_c_0.t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(__THE_0_c_0.v1)), THE_EOL);
+  } else {
+    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_c_0.v2)), THE_EOL);
+  }
+  const struct __THE_1_union$0 __THE_0_d_0 = __THE_1_union$0_alloc(TYPE_float, 3.14);
+  if (__THE_0_d_0.t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(__THE_0_d_0.v1)), THE_EOL);
+  } else {
+    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
+  }
+  struct any __THE_0_e_0 = __THE_1_any_str_alloc(str_alloc("test"));
+  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_str_alloc(str_alloc("test")))).t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_e_0.d)->d)), THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
+  if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_f_0.d)->d)), THE_EOL);
+  } else {
+    print(stdout, "zz", "any", THE_EOL);
+  }
+  struct __THE_1_union$0 __THE_0_g_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc("test"));
+  if ((__THE_0_g_0 = __THE_1_union$0_realloc(__THE_0_g_0, __THE_1_union$0_alloc(TYPE_str, str_alloc("test")))).t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(__THE_0_g_0.v1)), THE_EOL);
+  } else {
+    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_g_0.v2)), THE_EOL);
+  }
+  struct __THE_1_union$0 __THE_0_h_0 = __THE_1_union$0_alloc(TYPE_float, 3.14);
+  if ((__THE_0_h_0 = __THE_1_union$0_realloc(__THE_0_h_0, __THE_1_union$0_alloc(TYPE_float, 3.14))).t == TYPE_str) {
+    print(stdout, "sz", cstr_concat_str("str ", str_copy(__THE_0_h_0.v1)), THE_EOL);
+  } else {
+    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
+  }
+  print(stdout, "sz", (__THE_0_a_0.t == TYPE_str) ? cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_a_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_b_0.t == TYPE_str) ? cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_b_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_c_0.t == TYPE_str) ? cstr_concat_str("str ", str_copy(__THE_0_c_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_c_0.v2)), THE_EOL);
+  print(stdout, "sz", (__THE_0_d_0.t == TYPE_str) ? cstr_concat_str("str ", str_copy(__THE_0_d_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
+  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_str_alloc(str_alloc("test")))).t == TYPE_str) ? cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_e_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_str) ? cstr_concat_str("str ", str_copy(((struct __THE_1_any_str *) __THE_0_f_0.d)->d)) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union$0_realloc(__THE_0_g_0, __THE_1_union$0_alloc(TYPE_str, str_alloc("test")))).t == TYPE_str) ? cstr_concat_str("str ", str_copy(__THE_0_g_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_g_0.v2)), THE_EOL);
+  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union$0_realloc(__THE_0_h_0, __THE_1_union$0_alloc(TYPE_float, 3.14))).t == TYPE_str) ? cstr_concat_str("str ", str_copy(__THE_0_h_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_h_0);
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g_0);
+  any_free((struct any) __THE_0_f_0);
+  any_free((struct any) __THE_0_e_0);
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_d_0);
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_c_0);
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======
+str test
+any
+str test
+float 3.140000
+str test
+any
+str test
+float 3.140000
+str test
+any
+str test
+float 3.140000
+str test
+any
+str test
+float 3.140000

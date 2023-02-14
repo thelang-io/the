@@ -226,6 +226,17 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     result += exprCond.alt.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</ExprCondAlt>" EOL;
     result += std::string(indent, ' ') + "</ExprCond>" EOL;
+  } else if (std::holds_alternative<ASTExprIs>(*this->body)) {
+    auto exprIs = std::get<ASTExprIs>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprIs>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprIsExpr>" EOL;
+    result += exprIs.expr.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprIsExpr>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprIsType>" EOL;
+    result += exprIs.type->xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprIsType>" EOL;
+    result += std::string(indent, ' ') + "</ExprIs>" EOL;
   } else if (std::holds_alternative<ASTExprLit>(*this->body)) {
     auto exprLit = std::get<ASTExprLit>(*this->body);
 

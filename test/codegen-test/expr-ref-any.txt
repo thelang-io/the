@@ -31,7 +31,7 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TYPE_ANY_int 1
+#define TYPE_int 1
 
 struct any {
   int t;
@@ -41,18 +41,18 @@ struct any {
   void (*_free) (struct any);
 };
 
-struct any_int;
+struct __THE_1_any_int;
 
-struct any_int {
+struct __THE_1_any_int {
   int32_t d;
 };
 
 void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -68,26 +68,26 @@ struct any any_copy (const struct any n) {
 void any_free (struct any n) {
   if (n.d != NULL) n._free(n);
 }
-struct any any_int_alloc (int32_t d) {
-  size_t l = sizeof(struct any_int);
-  struct any_int *r = alloc(l);
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
 }
-struct any any_int_copy (const struct any n) {
-  struct any_int *o = n.d;
-  struct any_int *r = alloc(n.l);
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_int_free (struct any _n) {
-  struct any_int *n = _n.d;
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
   free(n);
 }
 
 int main () {
   const struct any __THE_0_a_0 = {0, NULL, 0, NULL, NULL};
-  const struct any __THE_0_b_0 = any_int_alloc(2);
+  const struct any __THE_0_b_0 = __THE_1_any_int_alloc(2);
   const struct any *__THE_0_ref1_0 = &__THE_0_a_0;
   const struct any *__THE_0_ref2_0 = &__THE_0_b_0;
   const struct any __THE_0_v4_0 = true ? any_copy(__THE_0_a_0) : any_copy(*__THE_0_ref1_0);

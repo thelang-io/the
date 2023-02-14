@@ -245,6 +245,18 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += stmtReturn.body->xml(indent + 2) + EOL;
       result += std::string(indent, ' ') + "</StmtReturn>";
     }
+  } else if (std::holds_alternative<ParserStmtTypeDecl>(*this->body)) {
+    auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtTypeDecl" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtTypeDeclId>" EOL;
+    result += stmtTypeDecl.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtTypeDeclId>" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtTypeDeclType>" EOL;
+    result += stmtTypeDecl.type.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtTypeDeclType>" EOL;
+
+    result += std::string(indent, ' ') + "</StmtTypeDecl>";
   } else if (std::holds_alternative<ParserStmtVarDecl>(*this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*this->body);
 

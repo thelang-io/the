@@ -1,0 +1,6 @@
+======= stdin =======
+type Test = 1
+======= stderr =======
+/test:1:12: E0162 - Expected type declaration type
+  1 | type Test = 1
+    |            ^

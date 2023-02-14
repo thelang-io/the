@@ -1,0 +1,113 @@
+======= stdin =======
+main {
+  mut a: int | str = 1
+  mut b: int | str = "test"
+
+  ref a;
+  ref b;
+  true ? a : ref b
+  false ? ref a : b
+  false ? ref a : ref b
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_int 1
+#define TYPE_str 2
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_union$0;
+
+struct __THE_1_union$0 {
+  int t;
+  union {
+    int32_t v1;
+    struct str v2;
+  };
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
+struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0);
+void __THE_1_union$0_free (struct __THE_1_union$0);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
+  struct __THE_1_union$0 r = {t};
+  va_list args;
+  va_start(args, t);
+  if (t == TYPE_int) r.v1 = va_arg(args, int32_t);
+  if (t == TYPE_str) r.v2 = va_arg(args, struct str);
+  va_end(args);
+  return r;
+}
+struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0 n) {
+  struct __THE_1_union$0 r = {n.t};
+  if (n.t == TYPE_int) r.v1 = n.v1;
+  if (n.t == TYPE_str) r.v2 = str_copy(n.v2);
+  return r;
+}
+void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+  if (n.t == TYPE_str) str_free((struct str) n.v2);
+}
+
+int main () {
+  struct __THE_1_union$0 __THE_0_a_0 = __THE_1_union$0_alloc(TYPE_int, 1);
+  struct __THE_1_union$0 __THE_0_b_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc("test"));
+  &__THE_0_a_0;
+  &__THE_0_b_0;
+  __THE_1_union$0_free((struct __THE_1_union$0) (true ? __THE_1_union$0_copy(__THE_0_a_0) : __THE_1_union$0_copy(__THE_0_b_0)));
+  __THE_1_union$0_free((struct __THE_1_union$0) (false ? __THE_1_union$0_copy(__THE_0_a_0) : __THE_1_union$0_copy(__THE_0_b_0)));
+  false ? &__THE_0_a_0 : &__THE_0_b_0;
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_b_0);
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

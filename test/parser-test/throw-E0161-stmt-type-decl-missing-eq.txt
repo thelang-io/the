@@ -1,0 +1,6 @@
+======= stdin =======
+type Test () -> void
+======= stderr =======
+/test:1:11: E0161 - Expected equals after type declaration name
+  1 | type Test () -> void
+    |           ^

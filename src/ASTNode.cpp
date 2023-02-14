@@ -200,7 +200,7 @@ std::string ASTNode::xml (std::size_t indent) const {
       for (const auto &method : nodeObjDecl.methods) {
         result += std::string(indent + 4, ' ') + "<NodeObjDeclMethod>" EOL;
         result += std::string(indent + 6, ' ') + "<NodeObjDeclMethodType>" EOL;
-        result += method.type->xml(indent + 8) + EOL;
+        result += method.var->xml(indent + 8) + EOL;
         result += std::string(indent + 6, ' ') + "</NodeObjDeclMethodType>" EOL;
 
         if (!method.stack.empty()) {
@@ -238,6 +238,12 @@ std::string ASTNode::xml (std::size_t indent) const {
       result += nodeReturn.body->xml(indent + 2) + EOL;
       result += std::string(indent, ' ') + "</NodeReturn>";
     }
+  } else if (std::holds_alternative<ASTNodeTypeDecl>(*this->body)) {
+    auto nodeTypeDecl = std::get<ASTNodeTypeDecl>(*this->body);
+
+    result += std::string(indent, ' ') + "<NodeTypeDecl>" EOL;
+    result += nodeTypeDecl.type->xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</NodeTypeDecl>";
   } else if (std::holds_alternative<ASTNodeVarDecl>(*this->body)) {
     auto nodeVarDecl = std::get<ASTNodeVarDecl>(*this->body);
 

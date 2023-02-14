@@ -1,0 +1,67 @@
+======= stdin =======
+type AliasRefInt = ref int
+type AliasRefStr = ref str
+
+main {
+  testInt := 1
+  testStr := "test"
+
+  a: AliasRefInt = ref testInt
+  b: AliasRefStr = ref testStr
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  const int32_t __THE_0_testInt_0 = 1;
+  const struct str __THE_0_testStr_0 = str_alloc("test");
+  const int32_t *__THE_0_a_0 = &__THE_0_testInt_0;
+  const struct str *__THE_0_b_0 = &__THE_0_testStr_0;
+  str_free((struct str) __THE_0_testStr_0);
+}
+======= flags =======
+======= stdout =======

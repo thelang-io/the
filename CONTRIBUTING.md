@@ -22,26 +22,26 @@ By participating in this project you agree to abide by its terms.
 
 ## Testing
 
-```bash
-$ cmake . -D BUILD_TESTS=ON
-$ cmake --build .
-$ ctest --output-on-failure
+```shell
+cmake . -D BUILD_TESTS=ON
+cmake --build .
+ctest --output-on-failure
 ```
 
 ## Memory Checking
 
-```bash
-$ cmake . -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
-$ cmake --build .
-$ ctest --output-on-failure
+```shell
+cmake . -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
+cmake --build .
+ctest --output-on-failure
 ```
 
 ## Coverage
 
-```bash
-$ cmake . -D BUILD_COVERAGE=ON -D BUILD_TESTS=ON
-$ cmake --build .
-$ gcov src/*
+```shell
+cmake . -D BUILD_COVERAGE=ON -D BUILD_TESTS=ON
+cmake --build .
+gcov src/*
 ```
 
 [the-discord]: https://discord.gg/CTMM583G7V

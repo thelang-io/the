@@ -1,0 +1,1732 @@
+======= stdin =======
+main {
+  testUnionInt: int | float = 1
+  testUnionFloat: int | float = 3.14
+
+  a: int | float = true ? 1 : 2
+  b: int | float = true ? 1 : testUnionInt
+  c: int | float = true ? testUnionInt : 1
+  d: int | float = true ? testUnionInt : testUnionInt
+
+  e: int | float = true ? 3.12 : 1.23
+  f: int | float = true ? 2.56 : testUnionFloat
+  g: int | float = true ? testUnionFloat : 13.14
+  h: int | float = true ? testUnionFloat : testUnionFloat
+
+  m: int | float = true ? 1 : 5.23
+  n: int | float = true ? 6.12 : 2
+  o: int | float = true ? 1 : testUnionFloat
+  p: int | float = true ? testUnionFloat : 1
+  q: int | float = true ? 45.12 : testUnionInt
+  r: int | float = true ? testUnionInt : 21.67
+  s: int | float = true ? testUnionInt : testUnionFloat
+  t: int | float = true ? testUnionFloat : testUnionInt
+
+  ;true ? 1 : testUnionInt
+  ;true ? testUnionInt : 1
+  ;true ? testUnionInt : testUnionInt
+  ;true ? 2.56 : testUnionFloat
+  ;true ? testUnionFloat : 13.14
+  ;true ? testUnionFloat : testUnionFloat
+  ;true ? 1 : testUnionFloat
+  ;true ? testUnionFloat : 1
+  ;true ? 45.12 : testUnionInt
+  ;true ? testUnionInt : 21.67
+  ;true ? testUnionInt : testUnionFloat
+  ;true ? testUnionFloat : testUnionInt
+}
+======= stdout =======
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="1" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="float" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="FLOAT" value="3.14" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="2" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="c" codeName="c_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="d" codeName="d_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="e" codeName="e_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="float" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="3.12" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="1.23" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="f" codeName="f_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="float" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="2.56" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="g" codeName="g_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="13.14" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="h" codeName="h_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="m" codeName="m_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="5.23" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="n" codeName="n_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="float" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="6.12" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="2" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="o" codeName="o_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="p" codeName="p_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="q" codeName="q_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="float" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="45.12" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="r" codeName="r_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="21.67" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="s" codeName="s_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="t" codeName="t_0" frame="2">
+        <TypeUnion name="union$0">
+          <BuiltinType name="int" />
+          <BuiltinType name="float" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeUnion name="union$0">
+            <BuiltinType name="int" />
+            <BuiltinType name="float" />
+          </TypeUnion>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                      <TypeUnion name="union$0">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="float" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="int" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="float" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="float" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="FLOAT" value="2.56" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="float" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="FLOAT" value="13.14" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="int" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="float" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="float" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="FLOAT" value="45.12" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="float" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="FLOAT" value="21.67" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeUnion name="union$0">
+        <BuiltinType name="int" />
+        <BuiltinType name="float" />
+      </TypeUnion>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="float" />
+              </TypeUnion>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
+                  <TypeUnion name="union$0">
+                    <BuiltinType name="int" />
+                    <BuiltinType name="float" />
+                  </TypeUnion>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

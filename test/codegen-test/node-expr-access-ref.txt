@@ -1,0 +1,22 @@
+======= stdin =======
+main {
+  testInt1 := 1
+  testInt2 := 2
+  test1 := ref testInt1
+  test1
+  test2 := ref testInt2
+  test2
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_testInt1_0 = 1;
+  const int32_t __THE_0_testInt2_0 = 2;
+  const int32_t *__THE_0_test1_0 = &__THE_0_testInt1_0;
+  __THE_0_test1_0;
+  const int32_t *__THE_0_test2_0 = &__THE_0_testInt2_0;
+  __THE_0_test2_0;
+}
+======= flags =======
+======= stdout =======

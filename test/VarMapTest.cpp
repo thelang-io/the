@@ -37,14 +37,14 @@ TEST_F(VarMapTest, AddInsertsVar) {
 
   EXPECT_EQ(this->vm_.get("test1")->name, "test1");
   EXPECT_EQ(this->vm_.get("test1")->codeName, "test1_0");
-  EXPECT_TRUE(this->tm_.get("int")->match(this->vm_.get("test1")->type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(this->vm_.get("test1")->type));
   EXPECT_FALSE(this->vm_.get("test1")->mut);
   EXPECT_FALSE(this->vm_.get("test1")->builtin);
   EXPECT_EQ(this->vm_.get("test1")->frame, 0);
 
   EXPECT_EQ(this->vm_.get("test2")->name, "test2");
   EXPECT_EQ(this->vm_.get("test2")->codeName, "test2_0");
-  EXPECT_TRUE(this->tm_.get("any")->match(this->vm_.get("test2")->type));
+  EXPECT_TRUE(this->tm_.get("any")->matchStrict(this->vm_.get("test2")->type));
   EXPECT_TRUE(this->vm_.get("test2")->mut);
   EXPECT_FALSE(this->vm_.get("test2")->builtin);
   EXPECT_EQ(this->vm_.get("test2")->frame, 0);
@@ -56,7 +56,7 @@ TEST_F(VarMapTest, AddInsertsVar) {
 
   EXPECT_EQ(this->vm_.get("test1")->name, "test1");
   EXPECT_EQ(this->vm_.get("test1")->codeName, "test1_1");
-  EXPECT_TRUE(this->tm_.get("str")->match(this->vm_.get("test1")->type));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(this->vm_.get("test1")->type));
   EXPECT_TRUE(this->vm_.get("test1")->mut);
   EXPECT_FALSE(this->vm_.get("test1")->builtin);
   EXPECT_EQ(this->vm_.get("test1")->frame, 1);
@@ -132,7 +132,7 @@ TEST_F(VarMapTest, VarStackGeneratesValid) {
 
   EXPECT_EQ(s1.size(), 1);
   EXPECT_EQ(s1[0]->name, "test1");
-  EXPECT_TRUE(this->tm_.get("int")->match(s1[0]->type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(s1[0]->type));
 
   this->vm_.save();
   this->vm_.add("test2", this->vm_.name("test2"), this->tm_.get("str"), false);
@@ -144,9 +144,9 @@ TEST_F(VarMapTest, VarStackGeneratesValid) {
 
   EXPECT_EQ(s2.size(), 2);
   EXPECT_EQ(s2[0]->name, "test2");
-  EXPECT_TRUE(this->tm_.get("str")->match(s2[0]->type));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(s2[0]->type));
   EXPECT_EQ(s2[1]->name, "test1");
-  EXPECT_TRUE(this->tm_.get("int")->match(s2[1]->type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(s2[1]->type));
 
   this->vm_.restore();
 
@@ -156,7 +156,7 @@ TEST_F(VarMapTest, VarStackGeneratesValid) {
 
   EXPECT_EQ(s3.size(), 1);
   EXPECT_EQ(s3[0]->name, "test1");
-  EXPECT_TRUE(this->tm_.get("int")->match(s3[0]->type));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(s3[0]->type));
 
   this->vm_.restore();
   auto s4 = this->vm_.varStack().snapshot();

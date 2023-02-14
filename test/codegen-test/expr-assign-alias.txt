@@ -1,0 +1,114 @@
+======= stdin =======
+type Alias1 = str
+type Alias2 = int
+
+main {
+  a1: Alias1 = ""
+  mut b1: Alias1 = a1
+  b1 = a1
+  mut c1: Alias1 = "test1"
+  c1 = b1 = a1
+  mut d1: Alias1 = "test2"
+  d1 = c1 = b1 = a1
+  d1 = true ? b1 : a1
+  d1 = true ? b1 = c1 : a1
+  d1 = true ? c1 : b1 = a1
+
+  a2: Alias2 = 0
+  mut b2: Alias2 = a2
+  b2 = a2
+  mut c2: Alias2 = 1
+  c2 = b2 = a2
+  mut d2: Alias2 = 2
+  d2 = c2 = b2 = a2
+  d2 = true ? b2 : a2
+  d2 = true ? b2 = c2 : a2
+  d2 = true ? c2 : b2 = a2
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
+}
+
+int main () {
+  const struct str __THE_0_a1_0 = str_alloc("");
+  struct str __THE_0_b1_0 = str_copy(__THE_0_a1_0);
+  __THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0));
+  struct str __THE_0_c1_0 = str_alloc("test1");
+  __THE_0_c1_0 = str_realloc(__THE_0_c1_0, str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0))));
+  struct str __THE_0_d1_0 = str_alloc("test2");
+  __THE_0_d1_0 = str_realloc(__THE_0_d1_0, str_copy(__THE_0_c1_0 = str_realloc(__THE_0_c1_0, str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0))))));
+  __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_b1_0) : str_copy(__THE_0_a1_0));
+  __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_c1_0))) : str_copy(__THE_0_a1_0));
+  __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_c1_0) : str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0))));
+  const int32_t __THE_0_a2_0 = 0;
+  int32_t __THE_0_b2_0 = __THE_0_a2_0;
+  __THE_0_b2_0 = __THE_0_a2_0;
+  int32_t __THE_0_c2_0 = 1;
+  __THE_0_c2_0 = __THE_0_b2_0 = __THE_0_a2_0;
+  int32_t __THE_0_d2_0 = 2;
+  __THE_0_d2_0 = __THE_0_c2_0 = __THE_0_b2_0 = __THE_0_a2_0;
+  __THE_0_d2_0 = true ? __THE_0_b2_0 : __THE_0_a2_0;
+  __THE_0_d2_0 = true ? __THE_0_b2_0 = __THE_0_c2_0 : __THE_0_a2_0;
+  __THE_0_d2_0 = true ? __THE_0_c2_0 : (__THE_0_b2_0 = __THE_0_a2_0);
+  str_free((struct str) __THE_0_d1_0);
+  str_free((struct str) __THE_0_c1_0);
+  str_free((struct str) __THE_0_b1_0);
+  str_free((struct str) __THE_0_a1_0);
+}
+======= flags =======
+======= stdout =======

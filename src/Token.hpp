@@ -50,7 +50,7 @@ enum TokenType {
   TK_KW_THROW,
   TK_KW_TRUE,
   TK_KW_TRY,
-  TK_KW_UNION,
+  TK_KW_TYPE,
 
   TK_LIT_CHAR,
   TK_LIT_FLOAT,

@@ -28,8 +28,8 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_ANY_int 1
-#define TYPE_ANY_str 2
+#define TYPE_int 1
+#define TYPE_str 2
 
 struct any {
   int t;
@@ -44,16 +44,16 @@ struct str {
 };
 
 struct __THE_1_Test_0;
-struct any_int;
-struct any_str;
+struct __THE_1_any_int;
+struct __THE_1_any_str;
 
 struct __THE_1_Test_0 {
   const struct any __THE_0_a;
 };
-struct any_int {
+struct __THE_1_any_int {
   int32_t d;
 };
-struct any_str {
+struct __THE_1_any_str {
   struct str d;
 };
 
@@ -67,12 +67,12 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any);
 struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
-struct any any_int_alloc (int32_t);
-struct any any_int_copy (const struct any);
-void any_int_free (struct any);
-struct any any_str_alloc (struct str);
-struct any any_str_copy (const struct any);
-void any_str_free (struct any);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
+struct any __THE_1_any_str_alloc (struct str);
+struct any __THE_1_any_str_copy (const struct any);
+void __THE_1_any_str_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -122,44 +122,44 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
   return o2;
 }
-struct any any_int_alloc (int32_t d) {
-  size_t l = sizeof(struct any_int);
-  struct any_int *r = alloc(l);
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_int, r, l, &any_int_copy, &any_int_free};
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
 }
-struct any any_int_copy (const struct any n) {
-  struct any_int *o = n.d;
-  struct any_int *r = alloc(n.l);
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_int_free (struct any _n) {
-  struct any_int *n = _n.d;
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
   free(n);
 }
-struct any any_str_alloc (struct str d) {
-  size_t l = sizeof(struct any_str);
-  struct any_str *r = alloc(l);
+struct any __THE_1_any_str_alloc (struct str d) {
+  size_t l = sizeof(struct __THE_1_any_str);
+  struct __THE_1_any_str *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_ANY_str, r, l, &any_str_copy, &any_str_free};
+  return (struct any) {TYPE_str, r, l, &__THE_1_any_str_copy, &__THE_1_any_str_free};
 }
-struct any any_str_copy (const struct any n) {
-  struct any_str *o = n.d;
-  struct any_str *r = alloc(n.l);
+struct any __THE_1_any_str_copy (const struct any n) {
+  struct __THE_1_any_str *o = n.d;
+  struct __THE_1_any_str *r = alloc(n.l);
   r->d = str_copy(o->d);
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void any_str_free (struct any _n) {
-  struct any_str *n = _n.d;
+void __THE_1_any_str_free (struct any _n) {
+  struct __THE_1_any_str *n = _n.d;
   str_free((struct str) n->d);
   free(n);
 }
 
 int main () {
-  const struct __THE_1_Test_0 *__THE_0_test1_0 = __THE_1_Test_0_alloc(any_int_alloc(1));
+  const struct __THE_1_Test_0 *__THE_0_test1_0 = __THE_1_Test_0_alloc(__THE_1_any_int_alloc(1));
   struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_copy(__THE_0_test1_0);
-  __THE_0_test2_0 = __THE_1_Test_0_realloc(__THE_0_test2_0, __THE_1_Test_0_alloc(any_str_alloc(str_alloc("test2"))));
+  __THE_0_test2_0 = __THE_1_Test_0_realloc(__THE_0_test2_0, __THE_1_Test_0_alloc(__THE_1_any_str_alloc(str_alloc("test2"))));
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test1_0);
 }

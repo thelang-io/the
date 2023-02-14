@@ -295,6 +295,7 @@ void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   free(n.x);
 }
 struct str __THE_1_fn$0_str (struct __THE_1_fn$0 n) {
+  if (n.x != NULL) free(n.x);
   return str_alloc("[Function]");
 }
 void __THE_1_fn1_0 (void *px) {
