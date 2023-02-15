@@ -92,7 +92,7 @@ ParserStmt Parser::next (bool allowSemi) {
       }
     }
 
-    return this->_wrapStmt(allowSemi, ParserStmtConst{tok1, constType, constInit}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtConstDecl{tok1, constType, constInit}, tok0.start);
   }
 
   if (tok0.type == TK_KW_ENUM) {

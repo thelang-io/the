@@ -36,27 +36,27 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
   if (std::holds_alternative<ParserStmtBreak>(*this->body)) {
     result += std::string(indent, ' ') + "<StmtBreak" + attrs + " />";
-  } else if (std::holds_alternative<ParserStmtConst>(*this->body)) {
-    auto stmtConst = std::get<ParserStmtConst>(*this->body);
+  } else if (std::holds_alternative<ParserStmtConstDecl>(*this->body)) {
+    auto stmtConstDecl = std::get<ParserStmtConstDecl>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtConst" + attrs + ">" EOL;
-    result += std::string(indent + 2, ' ') + "<StmtConstId>" EOL;
-    result += stmtConst.id.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</StmtConstId>" EOL;
+    result += std::string(indent, ' ') + "<StmtConstDecl" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtConstDeclId>" EOL;
+    result += stmtConstDecl.id.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtConstDeclId>" EOL;
 
-    if (stmtConst.type != std::nullopt) {
-      result += std::string(indent + 2, ' ') + "<StmtConstType>" EOL;
-      result += stmtConst.type->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</StmtConstType>" EOL;
+    if (stmtConstDecl.type != std::nullopt) {
+      result += std::string(indent + 2, ' ') + "<StmtConstDeclType>" EOL;
+      result += stmtConstDecl.type->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</StmtConstDeclType>" EOL;
     }
 
-    if (stmtConst.init != std::nullopt) {
-      result += std::string(indent + 2, ' ') + "<StmtConstInit>" EOL;
-      result += stmtConst.init->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</StmtConstInit>" EOL;
+    if (stmtConstDecl.init != std::nullopt) {
+      result += std::string(indent + 2, ' ') + "<StmtConstDeclInit>" EOL;
+      result += stmtConstDecl.init->xml(indent + 4) + EOL;
+      result += std::string(indent + 2, ' ') + "</StmtConstDeclInit>" EOL;
     }
 
-    result += std::string(indent, ' ') + "</StmtConst>";
+    result += std::string(indent, ' ') + "</StmtConstDecl>";
   } else if (std::holds_alternative<ParserStmtContinue>(*this->body)) {
     result += std::string(indent, ' ') + "<StmtContinue" + attrs + " />";
   } else if (std::holds_alternative<ParserStmtEmpty>(*this->body)) {

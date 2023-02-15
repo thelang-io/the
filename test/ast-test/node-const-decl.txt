@@ -1,0 +1,46 @@
+======= stdin =======
+const a: int
+const b: int = 1
+const c := "test"
+======= stdout =======
+<NodeConstDecl>
+  <NodeConstDeclVar>
+    <Var name="a" codeName="a_0" frame="1">
+      <BuiltinType name="int" />
+    </Var>
+  </NodeConstDeclVar>
+</NodeConstDecl>
+<NodeConstDecl>
+  <NodeConstDeclVar>
+    <Var name="b" codeName="b_0" frame="1">
+      <BuiltinType name="int" />
+    </Var>
+  </NodeConstDeclVar>
+  <NodeConstDeclInit>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="int" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprLit type="INT_DEC" value="1" />
+      </NodeExprBody>
+    </NodeExpr>
+  </NodeConstDeclInit>
+</NodeConstDecl>
+<NodeConstDecl>
+  <NodeConstDeclVar>
+    <Var name="c" codeName="c_0" frame="1">
+      <BuiltinType name="str" />
+    </Var>
+  </NodeConstDeclVar>
+  <NodeConstDeclInit>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="str" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprLit type="STR" value="\"test\"" />
+      </NodeExprBody>
+    </NodeExpr>
+  </NodeConstDeclInit>
+</NodeConstDecl>

@@ -21,6 +21,7 @@
 
 struct ASTFnDeclParam;
 struct ASTNodeBreak;
+struct ASTNodeConstDecl;
 struct ASTNodeContinue;
 struct ASTNodeEnumDecl;
 struct ASTNodeFnDecl;
@@ -34,6 +35,7 @@ struct ASTNodeVarDecl;
 
 using ASTNodeBody = std::variant<
   ASTNodeBreak,
+  ASTNodeConstDecl,
   ASTNodeContinue,
   ASTNodeEnumDecl,
   ASTNodeExpr,
@@ -62,6 +64,11 @@ struct ASTNode {
 using ASTBlock = std::vector<ASTNode>;
 
 struct ASTNodeBreak {
+};
+
+struct ASTNodeConstDecl {
+  std::shared_ptr<Var> var;
+  std::optional<ASTNodeExpr> init;
 };
 
 struct ASTNodeContinue {

@@ -399,10 +399,35 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
   }
 }
 
+// todo allow const only on global scope
+// todo disallow non-mut variable declaration on global scope
 ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
   if (std::holds_alternative<ParserStmtBreak>(*stmt.body)) {
     auto nodeBreak = ASTNodeBreak{};
     return this->_wrapNode(stmt, nodeBreak);
+  } else if (std::holds_alternative<ParserStmtConstDecl>(*stmt.body)) {
+    auto stmtConstDecl = std::get<ParserStmtConstDecl>(*stmt.body);
+    auto nodeConstDeclName = stmtConstDecl.id.val;
+    auto nodeConstDeclType = stmtConstDecl.type != std::nullopt
+      ? this->_type(*stmtConstDecl.type)
+      : this->_nodeExprType(*stmtConstDecl.init, nullptr);
+
+    if (nodeConstDeclType != nullptr && nodeConstDeclType->isVoid() && stmtConstDecl.type == std::nullopt) {
+      throw Error(this->reader, stmtConstDecl.init->start, stmtConstDecl.init->end, E1022);
+    } else if (nodeConstDeclType != nullptr && nodeConstDeclType->isVoid()) {
+      throw Error(this->reader, stmtConstDecl.type->start, stmtConstDecl.type->end, E1022);
+    }
+
+    auto nodeConstDeclInit = std::optional<ASTNodeExpr>{};
+
+    if (stmtConstDecl.init != std::nullopt) {
+      nodeConstDeclInit = this->_nodeExpr(*stmtConstDecl.init, nodeConstDeclType, varStack);
+    }
+
+    auto nodeConstDeclVar = this->varMap.add(nodeConstDeclName, this->varMap.name(nodeConstDeclName), nodeConstDeclType);
+    auto nodeConstDecl = ASTNodeConstDecl{nodeConstDeclVar, nodeConstDeclInit};
+
+    return this->_wrapNode(stmt, nodeConstDecl);
   } else if (std::holds_alternative<ParserStmtContinue>(*stmt.body)) {
     auto nodeContinue = ASTNodeContinue{};
     return this->_wrapNode(stmt, nodeContinue);

@@ -1,0 +1,6 @@
+======= stdin =======
+const test: void
+======= stderr =======
+/test:1:13: E1022 - Void type can only be used as function return type
+  1 | const test: void
+    |             ^~~~

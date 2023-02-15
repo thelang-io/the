@@ -20,7 +20,7 @@
 #include "ParserExpr.hpp"
 
 struct ParserStmtBreak;
-struct ParserStmtConst;
+struct ParserStmtConstDecl;
 struct ParserStmtContinue;
 struct ParserStmtEmpty;
 struct ParserStmtEnumDecl;
@@ -36,7 +36,7 @@ struct ParserStmtVarDecl;
 
 using ParserStmtBody = std::variant<
   ParserStmtBreak,
-  ParserStmtConst,
+  ParserStmtConstDecl,
   ParserStmtContinue,
   ParserStmtEmpty,
   ParserStmtEnumDecl,
@@ -65,7 +65,7 @@ using ParserBlock = std::vector<ParserStmt>;
 struct ParserStmtBreak {
 };
 
-struct ParserStmtConst {
+struct ParserStmtConstDecl {
   Token id;
   std::optional<ParserType> type;
   std::optional<ParserStmtExpr> init;
