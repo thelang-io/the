@@ -1,0 +1,6 @@
+======= stdin =======
+const test: = 3
+======= stderr =======
+/test:1:12: E0166 - Expected constant type after colon
+  1 | const test: = 3
+    |            ^

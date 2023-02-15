@@ -1,0 +1,40 @@
+======= stdin =======
+const a: int
+const b: int = 1
+const c := "test"
+======= stdout =======
+<StmtConst start="1:1" end="1:13">
+  <StmtConstId>
+    <Token type="ID" val="a" start="1:7" end="1:8" />
+  </StmtConstId>
+  <StmtConstType>
+    <TypeId start="1:10" end="1:13">
+      <Token type="ID" val="int" start="1:10" end="1:13" />
+    </TypeId>
+  </StmtConstType>
+</StmtConst>
+<StmtConst start="2:1" end="2:17">
+  <StmtConstId>
+    <Token type="ID" val="b" start="2:7" end="2:8" />
+  </StmtConstId>
+  <StmtConstType>
+    <TypeId start="2:10" end="2:13">
+      <Token type="ID" val="int" start="2:10" end="2:13" />
+    </TypeId>
+  </StmtConstType>
+  <StmtConstInit>
+    <ExprLit start="2:16" end="2:17">
+      <Token type="LIT_INT_DEC" val="1" start="2:16" end="2:17" />
+    </ExprLit>
+  </StmtConstInit>
+</StmtConst>
+<StmtConst start="3:1" end="3:18">
+  <StmtConstId>
+    <Token type="ID" val="c" start="3:7" end="3:8" />
+  </StmtConstId>
+  <StmtConstInit>
+    <ExprLit start="3:12" end="3:18">
+      <Token type="LIT_STR" val="\"test\"" start="3:12" end="3:18" />
+    </ExprLit>
+  </StmtConstInit>
+</StmtConst>

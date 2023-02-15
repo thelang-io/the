@@ -1,0 +1,6 @@
+======= stdin =======
+const test: int = ;
+======= stderr =======
+/test:1:18: E0167 - Expected constant initializer
+  1 | const test: int = ;
+    |                  ^

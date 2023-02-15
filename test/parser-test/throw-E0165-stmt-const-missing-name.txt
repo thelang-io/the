@@ -1,0 +1,6 @@
+======= stdin =======
+const : int
+======= stderr =======
+/test:1:7: E0165 - Expected constant name after `const` keyword
+  1 | const : int
+    |       ^
