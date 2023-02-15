@@ -14,6 +14,7 @@ enum TokenType {
   Eof,
   Id,
   Whitespace,
+
   CommentBlock,
   CommentLine,
 
@@ -48,7 +49,7 @@ enum TokenType {
   KwThrow,
   KwTrue,
   KwTry,
-  KwUnion,
+  KwType,
 
   OpAmp,
   OpAmpEq,
@@ -119,7 +120,7 @@ obj Token {
     return self.type.rawValue.slice(3) + loc + (val == "" ? "" : ": " + val)
   }
 
-  fn toXml (self: Self) str {
+  fn toXML (self: Self) str {
     return
       "<Token" +
       " type=\"" + self.type.rawValue.slice(3) + "\"" +
@@ -218,7 +219,8 @@ fn Token_isStrEsc (ch: char) bool {
 }
 
 fn Token_isWhitespace (ch: char) bool {
-  return ch == ' ' ||
+  return
+    ch == ' ' ||
     ch == '\f' ||
     ch == '\n' ||
     ch == '\r' ||

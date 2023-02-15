@@ -3,6 +3,6 @@
  * Licensed under the MIT License
  */
 
-obj Parser {
-  // todo
+obj TestState {
+  mut failed: bool
 }

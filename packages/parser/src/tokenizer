@@ -3,6 +3,8 @@
  * Licensed under the MIT License
  */
 
+type TokenizerWrapIntChecker = (char) -> bool
+
 obj TokenizerState {
   mut idx: int
   mut pos: int
@@ -19,7 +21,7 @@ obj Tokenizer {
   fn next (mut self: ref Self, withIgnored := false) Token {
     if self.data.len < self.state.idx {
       return self.data[self.state.idx++]
-    } elif !self.data.empty() && self.data[-1].type == TK_EOF {
+    } elif !self.data.empty() && self.data[-1].type == .Eof {
       RaiseError("Tried to tokenize on eof")
     }
 
@@ -30,9 +32,9 @@ obj Tokenizer {
       self.state.idx++
 
       if withIgnored || (
-        tok.type != TK_WHITESPACE &&
-        tok.type != TK_COMMENT_BLOCK &&
-        tok.type != TK_COMMENT_LINE
+        tok.type != .Whitespace &&
+        tok.type != .CommentBlock &&
+        tok.type != .CommentLine
       ) {
         return tok
       }
@@ -42,7 +44,7 @@ obj Tokenizer {
   fn _getToken (mut self: ref Self) Token {
     if self.reader.eof() {
       return Token{
-        type: TK_EOF,
+        type: .Eof,
         val: "",
         start: self.state.pos,
         end: self.state.pos
@@ -71,7 +73,7 @@ obj Tokenizer {
       return tok
     } else {
       self._raise(E0000(self.state.ch), self.state.pos)
-      return self._wrapToken(TK_UNKNOWN)
+      return self._wrapToken(.Unknown)
     }
   }
 
@@ -82,21 +84,21 @@ obj Tokenizer {
 
     if self.reader.eof() {
       self._raise(E0002(), self.state.pos)
-      return self._wrapToken(TK_LIT_CHAR)
+      return self._wrapToken(.LitChar)
     }
 
     ch1 := self.reader.next()
 
     if ch1 == '\n' {
       self._raise(E0002(), self.state.pos)
-      return self._wrapToken(TK_LIT_CHAR)
+      return self._wrapToken(.LitChar)
     } elif ch1 == '\'' {
       self._raise(E0004(), self.state.pos)
-      return self._wrapToken(TK_LIT_CHAR)
+      return self._wrapToken(.LitChar)
     } elif ch1 == '\\' {
       if self.reader.eof() {
         self._raise(E0002(), self.state.pos)
-        return self._wrapToken(TK_LIT_CHAR)
+        return self._wrapToken(.LitChar)
       }
 
       ch2 := self.reader.next()
@@ -122,13 +124,12 @@ obj Tokenizer {
         } elif ch3 == '\n' {
           self.reader.seek(pos3)
           self._raise(E0002(), self.state.pos)
-
           break
         }
       }
     }
 
-    return self._wrapToken(TK_LIT_CHAR)
+    return self._wrapToken(.LitChar)
   }
 
   fn _maybeCommentBlock (mut self: ref Self) Token? {
@@ -149,7 +150,7 @@ obj Tokenizer {
       }
     }
 
-    return self._wrapToken(TK_COMMENT_BLOCK)
+    return self._wrapToken(.CommentBlock)
   }
 
   fn _maybeCommentLine (mut self: ref Self) Token? {
@@ -158,10 +159,10 @@ obj Tokenizer {
     }
 
     self.reader.walk(Token_isNotNewLine)
-    return self._wrapToken(TK_COMMENT_LINE)
+    return self._wrapToken(.CommentLine)
   }
 
-  fn _maybeKeyword (mut self: ref Tokenizer) Token? {
+  fn _maybeKeyword (mut self: ref Self) Token? {
     if !Token_isIdStart(self.state.ch) {
       return nil
     }
@@ -170,54 +171,54 @@ obj Tokenizer {
     val := self.reader.slice(self.state.pos, self.reader.pos)
 
     if val == "break" {
-      return self._wrapToken(TK_KW_BREAK)
+      return self._wrapToken(.KwBreak)
     } elif val == "catch" {
-      return self._wrapToken(TK_KW_CATCH)
+      return self._wrapToken(.KwCatch)
     } elif val == "continue" {
-      return self._wrapToken(TK_KW_CONTINUE)
+      return self._wrapToken(.KwContinue)
     } elif val == "elif" {
-      return self._wrapToken(TK_KW_ELIF)
+      return self._wrapToken(.KwElif)
     } elif val == "else" {
-      return self._wrapToken(TK_KW_ELSE)
+      return self._wrapToken(.KwElse)
     } elif val == "enum" {
-      return self._wrapToken(TK_KW_ENUM)
+      return self._wrapToken(.KwEnum)
     } elif val == "export" {
-      return self._wrapToken(TK_KW_EXPORT)
+      return self._wrapToken(.KwExport)
     } elif val == "false" {
-      return self._wrapToken(TK_KW_FALSE)
+      return self._wrapToken(.KwFalse)
     } elif val == "fn" {
-      return self._wrapToken(TK_KW_FN)
+      return self._wrapToken(.KwFn)
     } elif val == "if" {
-      return self._wrapToken(TK_KW_IF)
+      return self._wrapToken(.KwIf)
     } elif val == "import" {
-      return self._wrapToken(TK_KW_IMPORT)
+      return self._wrapToken(.KwImport)
     } elif val == "is" {
-      return self._wrapToken(TK_KW_IS)
+      return self._wrapToken(.KwIs)
     } elif val == "loop" {
-      return self._wrapToken(TK_KW_LOOP)
+      return self._wrapToken(.KwLoop)
     } elif val == "main" {
-      return self._wrapToken(TK_KW_MAIN)
+      return self._wrapToken(.KwMain)
     } elif val == "mut" {
-      return self._wrapToken(TK_KW_MUT)
+      return self._wrapToken(.KwMut)
     } elif val == "nil" {
-      return self._wrapToken(TK_KW_NIL)
+      return self._wrapToken(.KwNil)
     } elif val == "obj" {
-      return self._wrapToken(TK_KW_OBJ)
+      return self._wrapToken(.KwObj)
     } elif val == "ref" {
-      return self._wrapToken(TK_KW_REF)
+      return self._wrapToken(.KwRef)
     } elif val == "return" {
-      return self._wrapToken(TK_KW_RETURN)
+      return self._wrapToken(.KwReturn)
     } elif val == "throw" {
-      return self._wrapToken(TK_KW_THROW)
+      return self._wrapToken(.KwThrow)
     } elif val == "true" {
-      return self._wrapToken(TK_KW_TRUE)
+      return self._wrapToken(.KwTrue)
     } elif val == "try" {
-      return self._wrapToken(TK_KW_TRY)
-    } elif val == "union" {
-      return self._wrapToken(TK_KW_UNION)
+      return self._wrapToken(.KwTry)
+    } elif val == "type" {
+      return self._wrapToken(.KwType)
     }
 
-    return self._wrapToken(TK_ID)
+    return self._wrapToken(.Id)
   }
 
   fn _maybeNumber (mut self: ref Self) Token? {
@@ -227,7 +228,7 @@ obj Tokenizer {
 
     if self.state.ch == '0' {
       if self.reader.eof() {
-        return self._wrapToken(TK_LIT_INT_DEC)
+        return self._wrapToken(.LitIntDec)
       }
 
       pos := self.reader.pos
@@ -237,13 +238,13 @@ obj Tokenizer {
         self.reader.walk(Token_isId)
         self._raise(E0008(), self.state.pos)
 
-        return self._wrapToken(TK_LIT_INT_DEC)
+        return self._wrapToken(.LitIntDec)
       } elif ch == 'B' || ch == 'b' {
-        return self._wrapInt(TK_LIT_INT_BIN, E0009("binary"), Token_isIntBin)
-      } elif ch == 'O' || ch == 'o' {
-        return self._wrapInt(TK_LIT_INT_OCT, E0009("octal"), Token_isIntOct)
+        return self._wrapInt(.LitIntBin, E0009("binary"), Token_isIntBin)
       } elif ch == 'X' || ch == 'x' {
-        return self._wrapInt(TK_LIT_INT_HEX, E0009("hexadecimal"), Token_isIntHex)
+        return self._wrapInt(.LitIntHex, E0009("hexadecimal"), Token_isIntHex)
+      } elif ch == 'O' || ch == 'o' {
+        return self._wrapInt(.LitIntOct, E0009("octal"), Token_isIntOct)
       }
 
       self.reader.seek(pos)
@@ -251,157 +252,157 @@ obj Tokenizer {
       self.reader.walk(Token_isIntDec)
     }
 
-    return self._wrapInt(TK_LIT_INT_DEC, E0009("decimal"), Token_isIntDec)
+    return self._wrapInt(.LitIntDec, E0009("decimal"), Token_isIntDec)
   }
 
   fn _maybeOp (mut self: ref Self) Token? {
     if self.state.ch == '&' {
       if self.reader.lookahead('&') {
         if self.reader.lookahead('=') {
-          return self._wrapToken(TK_OP_AMP_AMP_EQ)
+          return self._wrapToken(.OpAmpAmpEq)
         } else {
-          return self._wrapToken(TK_OP_AMP_AMP)
+          return self._wrapToken(.OpAmpAmp)
         }
       } elif self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_AMP_EQ)
+        return self._wrapToken(.OpAmpEq)
       } else {
-        return self._wrapToken(TK_OP_AMP)
+        return self._wrapToken(.OpAmp)
       }
     } elif self.state.ch == '@' {
-      return self._wrapToken(TK_OP_AT)
+      return self._wrapToken(.OpAt)
     } elif self.state.ch == '`' {
-      return self._wrapToken(TK_OP_BACKTICK)
+      return self._wrapToken(.OpBacktick)
     } elif self.state.ch == '\\' {
-      return self._wrapToken(TK_OP_BACKSLASH)
+      return self._wrapToken(.OpBackslash)
     } elif self.state.ch == '^' {
       if self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_CARET_EQ)
+        return self._wrapToken(.OpCaretEq)
       } else {
-        return self._wrapToken(TK_OP_CARET)
+        return self._wrapToken(.OpCaret)
       }
     } elif self.state.ch == ':' {
       if self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_COLON_EQ)
+        return self._wrapToken(.OpColonEq)
       } else {
-        return self._wrapToken(TK_OP_COLON)
+        return self._wrapToken(.OpColon)
       }
     } elif self.state.ch == ',' {
-      return self._wrapToken(TK_OP_COMMA)
+      return self._wrapToken(.OpComma)
     } elif self.state.ch == '.' {
       pos := self.reader.pos
 
       if self.reader.lookahead('.') && self.reader.lookahead('.') {
-        return self._wrapToken(TK_OP_ELLIPSIS)
+        return self._wrapToken(.OpEllipsis)
       }
 
       self.reader.seek(pos)
-      return self._wrapToken(TK_OP_DOT)
+      return self._wrapToken(.OpDot)
     } elif self.state.ch == '$' {
-      return self._wrapToken(TK_OP_DOLLAR)
+      return self._wrapToken(.OpDollar)
     } elif self.state.ch == '=' {
       if self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_EQ_EQ)
+        return self._wrapToken(.OpEqEq)
       } else {
-        return self._wrapToken(TK_OP_EQ)
+        return self._wrapToken(.OpEq)
       }
     } elif self.state.ch == '!' {
       if self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_EXCL_EQ)
+        return self._wrapToken(.OpExclEq)
       } else {
-        return self._wrapToken(TK_OP_EXCL)
+        return self._wrapToken(.OpExcl)
       }
     } elif self.state.ch == '>' {
       if self.reader.lookahead('>') {
         if self.reader.lookahead('=') {
-          return self._wrapToken(TK_OP_RSHIFT_EQ)
+          return self._wrapToken(.OpRShiftEq)
         } else {
-          return self._wrapToken(TK_OP_RSHIFT)
+          return self._wrapToken(.OpRShift)
         }
       } elif self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_GT_EQ)
+        return self._wrapToken(.OpGtEq)
       } else {
-        return self._wrapToken(TK_OP_GT)
+        return self._wrapToken(.OpGt)
       }
     } elif self.state.ch == '#' {
-      return self._wrapToken(TK_OP_HASH)
+      return self._wrapToken(.OpHash)
     } elif self.state.ch == '{' {
-      return self._wrapToken(TK_OP_LBRACE)
+      return self._wrapToken(.OpLBrace)
     } elif self.state.ch == '[' {
-      return self._wrapToken(TK_OP_LBRACK)
+      return self._wrapToken(.OpLBrack)
     } elif self.state.ch == '(' {
-      return self._wrapToken(TK_OP_LPAR)
+      return self._wrapToken(.OpLPar)
     } elif self.state.ch == '<' {
       if self.reader.lookahead('<') {
         if self.reader.lookahead('=') {
-          return self._wrapToken(TK_OP_LSHIFT_EQ)
+          return self._wrapToken(.OpLShiftEq)
         } else {
-          return self._wrapToken(TK_OP_LSHIFT)
+          return self._wrapToken(.OpLShift)
         }
       } elif self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_LT_EQ)
+        return self._wrapToken(.OpLtEq)
       } else {
-        return self._wrapToken(TK_OP_LT)
+        return self._wrapToken(.OpLt)
       }
     } elif self.state.ch == '-' {
       if self.reader.lookahead('-') {
-        return self._wrapToken(TK_OP_MINUS_MINUS)
+        return self._wrapToken(.OpMinusMinus)
       } elif self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_MINUS_EQ)
+        return self._wrapToken(.OpMinusEq)
       } elif self.reader.lookahead('>') {
-        return self._wrapToken(TK_OP_ARROW)
+        return self._wrapToken(.OpArrow)
       } else {
-        return self._wrapToken(TK_OP_MINUS)
+        return self._wrapToken(.OpMinus)
       }
     } elif self.state.ch == '|' {
       if self.reader.lookahead('|') {
         if self.reader.lookahead('=') {
-          return self._wrapToken(TK_OP_PIPE_PIPE_EQ)
+          return self._wrapToken(.OpPipePipeEq)
         } else {
-          return self._wrapToken(TK_OP_PIPE_PIPE)
+          return self._wrapToken(.OpPipePipe)
         }
       } elif self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_PIPE_EQ)
+        return self._wrapToken(.OpPipeEq)
       } else {
-        return self._wrapToken(TK_OP_PIPE)
+        return self._wrapToken(.OpPipe)
       }
     } elif self.state.ch == '%' {
       if self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_PERCENT_EQ)
+        return self._wrapToken(.OpPercentEq)
       } else {
-        return self._wrapToken(TK_OP_PERCENT)
+        return self._wrapToken(.OpPercent)
       }
     } elif self.state.ch == '+' {
       if self.reader.lookahead('+') {
-        return self._wrapToken(TK_OP_PLUS_PLUS)
+        return self._wrapToken(.OpPlusPlus)
       } elif self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_PLUS_EQ)
+        return self._wrapToken(.OpPlusEq)
       } else {
-        return self._wrapToken(TK_OP_PLUS)
+        return self._wrapToken(.OpPlus)
       }
     } elif self.state.ch == '?' {
-      return self._wrapToken(TK_OP_QN)
+      return self._wrapToken(.OpQn)
     } elif self.state.ch == '}' {
-      return self._wrapToken(TK_OP_RBRACE)
+      return self._wrapToken(.OpRBrace)
     } elif self.state.ch == ']' {
-      return self._wrapToken(TK_OP_RBRACK)
+      return self._wrapToken(.OpRBrack)
     } elif self.state.ch == ')' {
-      return self._wrapToken(TK_OP_RPAR)
+      return self._wrapToken(.OpRPar)
     } elif self.state.ch == ';' {
-      return self._wrapToken(TK_OP_SEMI)
+      return self._wrapToken(.OpSemi)
     } elif self.state.ch == '/' {
       if self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_SLASH_EQ)
+        return self._wrapToken(.OpSlashEq)
       } else {
-        return self._wrapToken(TK_OP_SLASH)
+        return self._wrapToken(.OpSlash)
       }
     } elif self.state.ch == '*' {
       if self.reader.lookahead('=') {
-        return self._wrapToken(TK_OP_STAR_EQ)
+        return self._wrapToken(.OpStarEq)
       } else {
-        return self._wrapToken(TK_OP_STAR)
+        return self._wrapToken(.OpStar)
       }
     } elif self.state.ch == '~' {
-      return self._wrapToken(TK_OP_TILDE)
+      return self._wrapToken(.OpTilde)
     }
 
     return nil
@@ -432,7 +433,7 @@ obj Tokenizer {
       }
     }
 
-    return self._wrapToken(TK_LIT_STR)
+    return self._wrapToken(.LitStr)
   }
 
   fn _maybeWhitespace (mut self: ref Self) Token? {
@@ -441,7 +442,7 @@ obj Tokenizer {
     }
 
     self.reader.walk(Token_isWhitespace)
-    return self._wrapToken(TK_WHITESPACE)
+    return self._wrapToken(.Whitespace)
   }
 
   fn _raise (mut self: ref Self, message: str, start: int) {
@@ -535,7 +536,7 @@ obj Tokenizer {
     if ch1 == '.' {
       if self.reader.eof() {
         self._raise(E0010(), self.state.pos)
-        return self._wrapToken(TK_LIT_FLOAT)
+        return self._wrapToken(.LitFloat)
       }
 
       pos2 := self.reader.pos
@@ -548,7 +549,7 @@ obj Tokenizer {
         self.reader.walk(Token_isId)
         self._raise(E0010(), self.state.pos)
 
-        return self._wrapToken(TK_LIT_FLOAT)
+        return self._wrapToken(.LitFloat)
       }
 
       self.reader.walk(Token_isIntDec)
@@ -564,7 +565,7 @@ obj Tokenizer {
         self.reader.walk(Token_isId)
         self._raise(E0010(), self.state.pos)
 
-        return self._wrapToken(TK_LIT_FLOAT)
+        return self._wrapToken(.LitFloat)
       } elif ch3 != 'E' && ch3 != 'e' {
         self.reader.seek(pos3)
         return self._wrapTokenFloat(type)
@@ -575,7 +576,7 @@ obj Tokenizer {
 
     if self.reader.eof() {
       self._raise(E0011(), expStartPos)
-      return self._wrapToken(TK_LIT_FLOAT)
+      return self._wrapToken(.LitFloat)
     }
 
     ch4 := self.reader.next()
@@ -584,13 +585,13 @@ obj Tokenizer {
       self.reader.walk(Token_isId)
       self._raise(E0011(), expStartPos)
 
-      return self._wrapToken(TK_LIT_FLOAT)
+      return self._wrapToken(.LitFloat)
     }
 
     if ch4 == '+' || ch4 == '-' {
       if self.reader.eof() {
         self._raise(E0011(), expStartPos)
-        return self._wrapToken(TK_LIT_FLOAT)
+        return self._wrapToken(.LitFloat)
       }
 
       ch5 := self.reader.next()
@@ -599,7 +600,7 @@ obj Tokenizer {
         self.reader.walk(Token_isId)
         self._raise(E0011(), expStartPos)
 
-        return self._wrapToken(TK_LIT_FLOAT)
+        return self._wrapToken(.LitFloat)
       }
     }
 
@@ -611,9 +612,9 @@ obj Tokenizer {
     mut self: ref Self,
     type: int,
     errorMessage: str,
-    check: (char) -> bool
+    check: TokenizerWrapIntChecker
   ) Token {
-    if type != TK_LIT_INT_DEC {
+    if type != .LitIntDec {
       if self.reader.eof() {
         self._raise(errorMessage, self.state.pos)
         return self._wrapToken(type)
@@ -621,7 +622,7 @@ obj Tokenizer {
 
       ch := self.reader.next()
 
-      if type != TK_LIT_INT_DEC && !check(ch) {
+      if type != .LitIntDec && !check(ch) {
         self.reader.walk(Token_isId)
         self._raise(errorMessage, self.state.pos)
 
@@ -656,21 +657,21 @@ obj Tokenizer {
         self.reader.walk(Token_isId)
         self._raise(E0010(), self.state.pos)
 
-        return self._wrapToken(TK_LIT_FLOAT)
+        return self._wrapToken(.LitFloat)
       }
 
       self.reader.seek(pos)
     }
 
-    if type == TK_LIT_INT_BIN {
+    if type == .LitIntBin {
       self._raise(E0012("binary"), self.state.pos)
-    } elif type == TK_LIT_INT_HEX {
+    } elif type == .LitIntHex {
       self._raise(E0012("hexadecimal"), self.state.pos)
-    } elif type == TK_LIT_INT_OCT {
+    } elif type == .LitIntOct {
       self._raise(E0012("octal"), self.state.pos)
     }
 
-    return self._wrapToken(TK_LIT_FLOAT)
+    return self._wrapToken(.LitFloat)
   }
 }
 

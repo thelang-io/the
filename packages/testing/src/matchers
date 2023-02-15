@@ -1,0 +1,20 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+fn matcherIntToInt (val1: int, val2: int) {
+  if val1 != val2 {
+    print("Expected equality of these values:")
+    print("  ", val1.str())
+    print("  ", val2.str())
+    testingState.failed = true
+  }
+}
+
+fn matcherTypeMismatch (val1: any, val2: any) {
+  print("Expected variables be of the same type:")
+  print("  ", val1.str())
+  print("  ", val2.str())
+  testingState.failed = true
+}

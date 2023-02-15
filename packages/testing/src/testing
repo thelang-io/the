@@ -3,49 +3,24 @@
  * Licensed under the MIT License
  */
 
-mut testFailed := false
+type TestBody = () -> void
 
-fn matcherIntToInt (val1: int, val2: int) {
-  if val1 != val2 {
-    print("Expected equality of these values:") // "
-    print("  ", val1.str())
-    print("  ", val2.str())
-    testFailed = true
-  }
-}
-
-fn matcherTypeMismatch (val1: any, val2: any) {
-  print("Expected variables be of the same type:")
-  print("  ", val1.str())
-  print("  ", val2.str())
-  testFailed = true
-}
-
-obj expect {
-  data: any
-
-  fn toEqual (mut self: ref Self, val: any) ref Self {
-    if self.data is int && val is int { matcherIntToInt(self.data, val) }
-    elif self.data is int { matcherTypeMismatch(self.data, val) }
-
-    return self
-  }
-}
+mut testingState: TestState
 
 obj Test {
   name: str
-  body: () -> void
+  body: TestBody
 }
 
 obj Tests {
   _tests: Test[]
 
-  fn register (mut self: ref Self, name: str, body: () -> void) ref Self {
+  fn register (mut self: ref Self, name: str, body: TestBody) ref Self {
     self._tests.push(Test{name: name, body: body})
     return self
   }
 
-  fn run (mut self: ref Self. args: str[]) ref Self {
+  fn run (mut self: ref Self, args: str[]) ref Self {
     mut totalTime := 0
     mut failedTests: str[]
 
@@ -58,15 +33,15 @@ obj Tests {
       timeStart := time_now()
       test.body()
       timeDelta := time_now() - timeStart
-      testStatus := testFailed ? "[  FAILED  ]" : "[       OK ]"
+      testStatus := testingState.failed ? "[  FAILED  ]" : "[       OK ]"
       print(testStatus, test.name, "(" + timeDelta + " ms)")
 
-      if testFailed {
+      if testingState.failed {
         failedTests.push(test.name)
       }
 
-      testFailed = false
       totalTime += timeDelta
+      testingState = TestState{}
     }
 
     print(

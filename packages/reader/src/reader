@@ -3,12 +3,14 @@
  * Licensed under the MIT License
  */
 
+type ReaderWalkMatcher = (char) -> bool
+
 obj Reader {
   path: str
   content: str
   mut pos: int
 
-  fn eof (self: Self) bool {
+  fn eof (self: ref Self) bool {
     return self.pos >= self.content.len
   }
 
@@ -20,10 +22,7 @@ obj Reader {
     ) {
       self.pos += 2
       return true
-    } elif (
-      self.pos < self.content.len &&
-      self.content[self.pos] == check
-    ) {
+    } elif self.pos < self.content.len && self.content[self.pos] == check {
       self.pos += 1
       return true
     }
@@ -48,11 +47,11 @@ obj Reader {
     self.pos = pos
   }
 
-  fn slice (self: Self, start: int, end: int) str {
+  fn slice (self: ref Self, start: int, end: int) str {
     return self.content.slice(start, end)
   }
 
-  fn walk (mut self: ref Self, match: (char) -> bool) {
+  fn walk (mut self: ref Self, match: ReaderWalkMatcher) {
     loop !self.eof() {
       pos := self.pos
       ch := self.next()
