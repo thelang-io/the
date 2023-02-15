@@ -55,6 +55,8 @@ The Programming Language was designed and developed by
 
 ## License
 The Programming Language is licensed under the
-[Apache 2.0 License][apache2-license], see the [LICENSE.txt](LICENSE.txt) file.
+[Apache 2.0 License][apache2-license], see the [LICENSE.txt](LICENSE.txt) file. \
+The Programming Language Packages each have their own license. See package's
+LICENSE file for more information.
 
 [apache2-license]: http://opensource.org/licenses/Apache-2.0
