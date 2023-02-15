@@ -26,6 +26,8 @@ enum TokenType {
   LitIntDec,
   LitStr,
 
+  KwAsync,
+  KwAwait,
   KwBreak,
   KwCatch,
   KwConst,
@@ -36,6 +38,7 @@ enum TokenType {
   KwExport,
   KwFalse,
   KwFn,
+  KwFrom,
   KwIf,
   KwImport,
   KwIs,

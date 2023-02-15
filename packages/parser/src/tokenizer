@@ -170,7 +170,11 @@ obj Tokenizer {
     self.reader.walk(Token_isId)
     val := self.reader.slice(self.state.pos, self.reader.pos)
 
-    if val == "break" {
+    if val == "async" {
+      return self._wrapToken(.KwAsync)
+    } elif val == "await" {
+      return self._wrapToken(.KwAwait)
+    } elif val == "break" {
       return self._wrapToken(.KwBreak)
     } elif val == "catch" {
       return self._wrapToken(.KwCatch)
@@ -188,6 +192,8 @@ obj Tokenizer {
       return self._wrapToken(.KwFalse)
     } elif val == "fn" {
       return self._wrapToken(.KwFn)
+    } elif val == "from" {
+      return self._wrapToken(.KwFrom)
     } elif val == "if" {
       return self._wrapToken(.KwIf)
     } elif val == "import" {
