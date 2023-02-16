@@ -7,8 +7,11 @@ obj Expect {
   data: any
 
   fn toEqual (mut self: ref Self, val: any) ref Self {
-    if self.data is int && val is int { matcherIntToInt(self.data, val) }
-    elif self.data is int { matcherTypeMismatch(self.data, val) }
+    if (self.data is int) && (val is int) {
+      matcherIntToInt(self.data, val)
+    } elif self.data is int {
+      matcherTypeMismatch(self.data, val)
+    }
 
     return self
   }

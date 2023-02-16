@@ -5,6 +5,12 @@
 
 type TokenizerWrapIntChecker = (char) -> bool
 
+const ignoredTokenTypes: TokenType[] = [
+  .CommentBlock,
+  .CommentLine,
+  .Whitespace
+]
+
 obj TokenizerState {
   mut idx: int
   mut pos: int
@@ -21,7 +27,7 @@ obj Tokenizer {
   fn next (mut self: ref Self, withIgnored := false) Token {
     if self.data.len < self.state.idx {
       return self.data[self.state.idx++]
-    } elif !self.data.empty() && self.data[-1].type == .Eof {
+    } elif !self.data.empty() && self.data[-1].t == .Eof {
       RaiseError("Tried to tokenize on eof")
     }
 
@@ -31,11 +37,7 @@ obj Tokenizer {
       self.data.push(tok)
       self.state.idx++
 
-      if withIgnored || (
-        tok.type != .Whitespace &&
-        tok.type != .CommentBlock &&
-        tok.type != .CommentLine
-      ) {
+      if withIgnored || ignoredTokenTypes.contains(tok.t) {
         return tok
       }
     }
@@ -44,7 +46,7 @@ obj Tokenizer {
   fn _getToken (mut self: ref Self) Token {
     if self.reader.eof() {
       return Token{
-        type: .Eof,
+        t: .Eof,
         val: "",
         start: self.state.pos,
         end: self.state.pos
@@ -519,9 +521,9 @@ obj Tokenizer {
     self.state.handled = true
   }
 
-  fn _wrapFloat (mut self: ref Self, type: int, errorMessage: str) Token {
+  fn _wrapFloat (mut self: ref Self, t: int, errorMessage: str) Token {
     if self.reader.eof() {
-      return self._wrapToken(type)
+      return self._wrapToken(t)
     }
 
     pos1 := self.reader.pos
@@ -531,10 +533,10 @@ obj Tokenizer {
       self.reader.walk(Token_isId)
       self._raise(errorMessage, self.state.pos)
 
-      return self._wrapToken(type)
+      return self._wrapToken(t)
     } elif ch1 != '.' && ch1 != 'E' && ch1 != 'e' {
       self.reader.seek(pos1)
-      return self._wrapToken(type)
+      return self._wrapToken(t)
     }
 
     mut expStartPos := pos1
@@ -550,7 +552,7 @@ obj Tokenizer {
 
       if ch2 == '.' {
         self.reader.seek(pos1)
-        return self._wrapToken(type)
+        return self._wrapToken(t)
       } elif !Token_isIntDec(ch2) {
         self.reader.walk(Token_isId)
         self._raise(E0010(), self.state.pos)
@@ -561,7 +563,7 @@ obj Tokenizer {
       self.reader.walk(Token_isIntDec)
 
       if self.reader.eof() {
-        return self._wrapTokenFloat(type)
+        return self._wrapTokenFloat(t)
       }
 
       pos3 := self.reader.pos
@@ -574,7 +576,7 @@ obj Tokenizer {
         return self._wrapToken(.LitFloat)
       } elif ch3 != 'E' && ch3 != 'e' {
         self.reader.seek(pos3)
-        return self._wrapTokenFloat(type)
+        return self._wrapTokenFloat(t)
       }
 
       expStartPos = pos3
@@ -611,50 +613,50 @@ obj Tokenizer {
     }
 
     self.reader.walk(Token_isIntDec)
-    return self._wrapTokenFloat(type)
+    return self._wrapTokenFloat(t)
   }
 
   fn _wrapInt (
     mut self: ref Self,
-    type: int,
+    t: int,
     errorMessage: str,
     check: TokenizerWrapIntChecker
   ) Token {
-    if type != .LitIntDec {
+    if t != .LitIntDec {
       if self.reader.eof() {
         self._raise(errorMessage, self.state.pos)
-        return self._wrapToken(type)
+        return self._wrapToken(t)
       }
 
       ch := self.reader.next()
 
-      if type != .LitIntDec && !check(ch) {
+      if t != .LitIntDec && !check(ch) {
         self.reader.walk(Token_isId)
         self._raise(errorMessage, self.state.pos)
 
-        return self._wrapToken(type)
+        return self._wrapToken(t)
       }
 
       self.reader.walk(check)
     }
 
-    return self._wrapFloat(type, errorMessage)
+    return self._wrapFloat(t, errorMessage)
   }
 
-  fn _wrapToken (mut self: ref Self, type: int) Token {
+  fn _wrapToken (mut self: ref Self, t: int) Token {
     start := self.state.pos
     self.state.pos = self.reader.pos
     self.state.handled = true
 
     return Token{
-      type: type,
+      t: t,
       val: self.reader.slice(start, self.state.pos),
       start: start,
       end: self.state.pos
     }
   }
 
-  fn _wrapTokenFloat (mut self: ref Self, type: int) Token {
+  fn _wrapTokenFloat (mut self: ref Self, t: int) Token {
     if !self.reader.eof() {
       pos := self.reader.pos
       ch := self.reader.next()
@@ -669,11 +671,11 @@ obj Tokenizer {
       self.reader.seek(pos)
     }
 
-    if type == .LitIntBin {
+    if t == .LitIntBin {
       self._raise(E0012("binary"), self.state.pos)
-    } elif type == .LitIntHex {
+    } elif t == .LitIntHex {
       self._raise(E0012("hexadecimal"), self.state.pos)
-    } elif type == .LitIntOct {
+    } elif t == .LitIntOct {
       self._raise(E0012("octal"), self.state.pos)
     }
 

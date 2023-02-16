@@ -1,5 +1,5 @@
 ======= stdin =======
-IGNORED_HEADERS := ["date", "connection", "keep-alive", "content-length", "server"]
+const IGNORED_HEADERS := ["date", "connection", "keep-alive", "content-length", "server"]
 
 fn ignoredHeadersIncludes (it: str) bool {
   loop i := 0; i < IGNORED_HEADERS.len; i++ {

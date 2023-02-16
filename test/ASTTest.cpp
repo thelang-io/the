@@ -161,5 +161,7 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1022-node-var-decl-void-init",
   "throw-E1023-node-var-decl-unknown-member-type",
   "throw-E1024-expr-access-not-existing-member",
-  "throw-E1024-expr-access-enum-not-existing-member"
+  "throw-E1024-expr-access-enum-not-existing-member",
+  "throw-E1025-node-const-decl-non-root",
+  "throw-E1026-node-var-decl-root"
 ));

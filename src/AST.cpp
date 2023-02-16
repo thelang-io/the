@@ -122,7 +122,7 @@ ASTBlock AST::gen () {
 
   this->varMap.save();
   auto mainVarStack = VarStack({});
-  auto result = this->_block(block, mainVarStack);
+  auto result = this->_block(block, mainVarStack, true);
   AST::populateParents(result);
   this->varMap.restore();
 
@@ -139,7 +139,7 @@ std::string AST::xml () {
   return result;
 }
 
-ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
+ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack, bool root) {
   this->_forwardNode(block, AST_PHASE_ALLOC);
   this->_forwardNode(block, AST_PHASE_INIT);
 
@@ -150,7 +150,15 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
       continue;
     }
 
-    result.push_back(this->_node(stmt, varStack));
+    auto node = this->_node(stmt, varStack);
+
+    if (!root && std::holds_alternative<ASTNodeConstDecl>(*node.body)) {
+      throw Error(this->reader, stmt.start, stmt.end, E1025);
+    } else if (root && std::holds_alternative<ASTNodeVarDecl>(*node.body) && !std::get<ASTNodeVarDecl>(*node.body).var->mut) {
+      throw Error(this->reader, stmt.start, stmt.end, E1026);
+    }
+
+    result.push_back(node);
   }
 
   return result;
@@ -399,8 +407,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
   }
 }
 
-// todo allow const only on global scope
-// todo disallow non-mut variable declaration on global scope
 ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
   if (std::holds_alternative<ParserStmtBreak>(*stmt.body)) {
     auto nodeBreak = ASTNodeBreak{};

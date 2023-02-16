@@ -1,0 +1,8 @@
+======= stdin =======
+main {
+  const test := 1
+}
+======= stderr =======
+/test:2:3: E1025 - Constant are allowed only on top-level scope
+  2 |   const test := 1
+    |   ^~~~~~~~~~~~~~~

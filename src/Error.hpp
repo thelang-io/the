@@ -128,6 +128,8 @@
 #define E1022 "E1022 - Void type can only be used as function return type"
 #define E1023 "E1023 - Unable to deduce enumeration member type"
 #define E1024 "E1024 - Tried accessing non-existing enumeration member"
+#define E1025 "E1025 - Constant are allowed only on top-level scope"
+#define E1026 "E1026 - Non-mutable variable declaration is now allowed on top-level scope"
 
 class Error : public std::exception {
  public:
