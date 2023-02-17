@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: bool
 main {
   mut a: bool
   a = true
@@ -7,6 +8,7 @@ main {
 #include <stdbool.h>
 
 int main () {
+  bool __THE_0_r_0 = false;
   bool __THE_0_a_0 = false;
   __THE_0_a_0 = true;
 }

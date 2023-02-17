@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r := 1
 main {
   mut a := 1
   a = 0
@@ -13,6 +14,7 @@ main {
 #include <stdint.h>
 
 int main () {
+  int32_t __THE_0_r_0 = 1;
   int32_t __THE_0_a_0 = 1;
   __THE_0_a_0 = 0;
   int32_t __THE_0_b_0 = 0xFF;

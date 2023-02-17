@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: int?
 main {
   mut a: int?
 }
@@ -14,8 +15,10 @@ void __THE_1_opt_int_free (int32_t *n) {
 }
 
 int main () {
+  int32_t *__THE_0_r_0 = NULL;
   int32_t *__THE_0_a_0 = NULL;
   __THE_1_opt_int_free((int32_t *) __THE_0_a_0);
+  __THE_1_opt_int_free((int32_t *) __THE_0_r_0);
 }
 ======= flags =======
 ======= stdout =======

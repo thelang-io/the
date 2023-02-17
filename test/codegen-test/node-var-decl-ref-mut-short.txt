@@ -1,14 +1,16 @@
 ======= stdin =======
+mut testInt := 1
+mut r := ref testInt
 main {
-  a := 1
-  mut refA := ref a
+  mut a := ref testInt
 }
 ======= code =======
 #include <stdint.h>
 
 int main () {
-  const int32_t __THE_0_a_0 = 1;
-  int32_t *__THE_0_refA_0 = &__THE_0_a_0;
+  int32_t __THE_0_testInt_0 = 1;
+  int32_t *__THE_0_r_0 = &__THE_0_testInt_0;
+  int32_t *__THE_0_a_0 = &__THE_0_testInt_0;
 }
 ======= flags =======
 ======= stdout =======

@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: int[]
 main {
   mut a: int[]
 }
@@ -55,8 +56,10 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 }
 
 int main () {
+  struct __THE_1_array_int __THE_0_r_0 = __THE_1_array_int_alloc(0);
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_r_0);
 }
 ======= flags =======
 ======= stdout =======

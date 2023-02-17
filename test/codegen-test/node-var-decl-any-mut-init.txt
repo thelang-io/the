@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: any = 1
 main {
   mut a: any = 1
 }
@@ -72,8 +73,10 @@ void __THE_1_any_int_free (struct any _n) {
 }
 
 int main () {
+  struct any __THE_0_r_0 = __THE_1_any_int_alloc(1);
   struct any __THE_0_a_0 = __THE_1_any_int_alloc(1);
   any_free((struct any) __THE_0_a_0);
+  any_free((struct any) __THE_0_r_0);
 }
 ======= flags =======
 ======= stdout =======

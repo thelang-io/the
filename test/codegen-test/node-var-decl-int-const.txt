@@ -1,0 +1,14 @@
+======= stdin =======
+const a: int
+const b: int = 2147483647
+const c := 1
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_a_0 = 0;
+  const int32_t __THE_0_b_0 = 2147483647;
+  const int32_t __THE_0_c_0 = 1;
+}
+======= flags =======
+======= stdout =======

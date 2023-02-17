@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: i64
 main {
   mut a: i64
   a = -9223372036854775808
@@ -11,6 +12,7 @@ main {
 #include <stdint.h>
 
 int main () {
+  int64_t __THE_0_r_0 = 0;
   int64_t __THE_0_a_0 = 0;
   __THE_0_a_0 = -9223372036854775808U;
   int64_t __THE_0_b_0 = 0;

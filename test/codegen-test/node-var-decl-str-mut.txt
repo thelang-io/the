@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: str
 main {
   mut a: str
   a = "test"
@@ -55,9 +56,11 @@ struct str str_realloc (struct str s1, struct str s2) {
 }
 
 int main () {
+  struct str __THE_0_r_0 = str_alloc("");
   struct str __THE_0_a_0 = str_alloc("");
   __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc("test"));
   str_free((struct str) __THE_0_a_0);
+  str_free((struct str) __THE_0_r_0);
 }
 ======= flags =======
 ======= stdout =======

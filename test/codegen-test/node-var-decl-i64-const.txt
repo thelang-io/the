@@ -1,0 +1,12 @@
+======= stdin =======
+const a: i64
+const b: i64 = 9223372036854775807
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int64_t __THE_0_a_0 = 0;
+  const int64_t __THE_0_b_0 = 9223372036854775807;
+}
+======= flags =======
+======= stdout =======

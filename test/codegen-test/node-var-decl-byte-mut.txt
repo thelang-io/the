@@ -1,10 +1,12 @@
 ======= stdin =======
+mut r: byte
 main {
   mut a: byte
   a = 0xFF
 }
 ======= code =======
 int main () {
+  unsigned char __THE_0_r_0 = 0;
   unsigned char __THE_0_a_0 = 0;
   __THE_0_a_0 = 0xFF;
 }

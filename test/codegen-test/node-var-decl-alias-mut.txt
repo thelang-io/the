@@ -1,5 +1,6 @@
 ======= stdin =======
 type Alias = str
+mut r: Alias
 main {
   mut a: Alias
 }
@@ -50,8 +51,10 @@ void str_free (struct str s) {
 }
 
 int main () {
+  struct str __THE_0_r_0 = str_alloc("");
   struct str __THE_0_a_0 = str_alloc("");
   str_free((struct str) __THE_0_a_0);
+  str_free((struct str) __THE_0_r_0);
 }
 ======= flags =======
 ======= stdout =======

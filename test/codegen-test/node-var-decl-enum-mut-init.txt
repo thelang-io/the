@@ -5,6 +5,8 @@ enum Color {
   Blue
 }
 
+mut r: Color = .Green
+
 main {
   mut a: Color = .Red
 }
@@ -16,6 +18,7 @@ enum __THE_1_Color_0 {
 };
 
 int main () {
+  enum __THE_1_Color_0 __THE_0_r_0 = __THE_0_ColorSDGreen_0;
   enum __THE_1_Color_0 __THE_0_a_0 = __THE_0_ColorSDRed_0;
 }
 ======= flags =======

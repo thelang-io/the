@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: i8
 main {
   mut a: i8
   a = 127
@@ -11,6 +12,7 @@ main {
 #include <stdint.h>
 
 int main () {
+  int8_t __THE_0_r_0 = 0;
   int8_t __THE_0_a_0 = 0;
   __THE_0_a_0 = 127;
   int8_t __THE_0_b_0 = 0;

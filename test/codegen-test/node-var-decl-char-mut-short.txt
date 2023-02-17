@@ -1,10 +1,12 @@
 ======= stdin =======
+mut r := 'a'
 main {
   mut a := 'a'
   a = '\0'
 }
 ======= code =======
 int main () {
+  char __THE_0_r_0 = 'a';
   char __THE_0_a_0 = 'a';
   __THE_0_a_0 = '\0';
 }

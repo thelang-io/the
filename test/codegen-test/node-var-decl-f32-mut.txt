@@ -1,10 +1,12 @@
 ======= stdin =======
+mut r: f32
 main {
   mut a: f32
   a = 3.14
 }
 ======= code =======
 int main () {
+  float __THE_0_r_0 = 0;
   float __THE_0_a_0 = 0;
   __THE_0_a_0 = 3.14;
 }
