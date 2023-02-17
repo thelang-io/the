@@ -3,38 +3,38 @@ const a: int
 const b: int = 1
 const c := "test"
 ======= stdout =======
-<StmtConstDecl start="1:1" end="1:13">
-  <StmtConstDeclId>
+<StmtVarDecl start="1:1" end="1:13" const>
+  <StmtVarDeclId>
     <Token type="ID" val="a" start="1:7" end="1:8" />
-  </StmtConstDeclId>
-  <StmtConstDeclType>
+  </StmtVarDeclId>
+  <StmtVarDeclType>
     <TypeId start="1:10" end="1:13">
       <Token type="ID" val="int" start="1:10" end="1:13" />
     </TypeId>
-  </StmtConstDeclType>
-</StmtConstDecl>
-<StmtConstDecl start="2:1" end="2:17">
-  <StmtConstDeclId>
+  </StmtVarDeclType>
+</StmtVarDecl>
+<StmtVarDecl start="2:1" end="2:17" const>
+  <StmtVarDeclId>
     <Token type="ID" val="b" start="2:7" end="2:8" />
-  </StmtConstDeclId>
-  <StmtConstDeclType>
+  </StmtVarDeclId>
+  <StmtVarDeclType>
     <TypeId start="2:10" end="2:13">
       <Token type="ID" val="int" start="2:10" end="2:13" />
     </TypeId>
-  </StmtConstDeclType>
-  <StmtConstDeclInit>
+  </StmtVarDeclType>
+  <StmtVarDeclInit>
     <ExprLit start="2:16" end="2:17">
       <Token type="LIT_INT_DEC" val="1" start="2:16" end="2:17" />
     </ExprLit>
-  </StmtConstDeclInit>
-</StmtConstDecl>
-<StmtConstDecl start="3:1" end="3:18">
-  <StmtConstDeclId>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="3:1" end="3:18" const>
+  <StmtVarDeclId>
     <Token type="ID" val="c" start="3:7" end="3:8" />
-  </StmtConstDeclId>
-  <StmtConstDeclInit>
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
     <ExprLit start="3:12" end="3:18">
       <Token type="LIT_STR" val="\"test\"" start="3:12" end="3:18" />
     </ExprLit>
-  </StmtConstDeclInit>
-</StmtConstDecl>
+  </StmtVarDeclInit>
+</StmtVarDecl>

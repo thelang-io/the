@@ -63,36 +63,36 @@ ParserStmt Parser::next (bool allowSemi) {
     }
 
     auto [_2, tok2] = this->lexer->next();
-    auto constType = std::optional<ParserType>{};
-    auto constInit = std::optional<ParserStmtExpr>{};
+    auto varDeclType = std::optional<ParserType>{};
+    auto varDeclInit = std::optional<ParserStmtExpr>{};
 
     if (tok2.type == TK_OP_COLON) {
-      constType = this->_type();
+      varDeclType = this->_type();
 
-      if (constType == std::nullopt) {
+      if (varDeclType == std::nullopt) {
         throw Error(this->reader, this->lexer->loc, E0166);
       }
 
       auto [loc3, tok3] = this->lexer->next();
 
       if (tok3.type == TK_OP_EQ) {
-        constInit = this->_stmtExpr();
+        varDeclInit = this->_stmtExpr();
 
-        if (constInit == std::nullopt) {
+        if (varDeclInit == std::nullopt) {
           throw Error(this->reader, this->lexer->loc, E0167);
         }
       } else {
         this->lexer->seek(loc3);
       }
     } else if (tok2.type == TK_OP_COLON_EQ) {
-      constInit = this->_stmtExpr();
+      varDeclInit = this->_stmtExpr();
 
-      if (constInit == std::nullopt) {
+      if (varDeclInit == std::nullopt) {
         throw Error(this->reader, this->lexer->loc, E0167);
       }
     }
 
-    return this->_wrapStmt(allowSemi, ParserStmtConstDecl{tok1, constType, constInit}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtVarDecl{tok1, varDeclType, varDeclInit, false, true}, tok0.start);
   }
 
   if (tok0.type == TK_KW_ENUM) {

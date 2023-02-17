@@ -36,27 +36,6 @@ std::string ParserStmt::xml (std::size_t indent) const {
 
   if (std::holds_alternative<ParserStmtBreak>(*this->body)) {
     result += std::string(indent, ' ') + "<StmtBreak" + attrs + " />";
-  } else if (std::holds_alternative<ParserStmtConstDecl>(*this->body)) {
-    auto stmtConstDecl = std::get<ParserStmtConstDecl>(*this->body);
-
-    result += std::string(indent, ' ') + "<StmtConstDecl" + attrs + ">" EOL;
-    result += std::string(indent + 2, ' ') + "<StmtConstDeclId>" EOL;
-    result += stmtConstDecl.id.xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</StmtConstDeclId>" EOL;
-
-    if (stmtConstDecl.type != std::nullopt) {
-      result += std::string(indent + 2, ' ') + "<StmtConstDeclType>" EOL;
-      result += stmtConstDecl.type->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</StmtConstDeclType>" EOL;
-    }
-
-    if (stmtConstDecl.init != std::nullopt) {
-      result += std::string(indent + 2, ' ') + "<StmtConstDeclInit>" EOL;
-      result += stmtConstDecl.init->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</StmtConstDeclInit>" EOL;
-    }
-
-    result += std::string(indent, ' ') + "</StmtConstDecl>";
   } else if (std::holds_alternative<ParserStmtContinue>(*this->body)) {
     result += std::string(indent, ' ') + "<StmtContinue" + attrs + " />";
   } else if (std::holds_alternative<ParserStmtEmpty>(*this->body)) {
@@ -281,7 +260,10 @@ std::string ParserStmt::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserStmtVarDecl>(*this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtVarDecl" + attrs + (stmtVarDecl.mut ? " mut" : "") + ">" EOL;
+    attrs += stmtVarDecl.constant ? " const" : "";
+    attrs += stmtVarDecl.mut ? " mut" : "";
+
+    result += std::string(indent, ' ') + "<StmtVarDecl" + attrs + ">" EOL;
     result += std::string(indent + 2, ' ') + "<StmtVarDeclId>" EOL;
     result += stmtVarDecl.id.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</StmtVarDeclId>" EOL;

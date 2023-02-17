@@ -59,21 +59,6 @@ std::string ASTNode::xml (std::size_t indent) const {
 
   if (std::holds_alternative<ASTNodeBreak>(*this->body)) {
     result += std::string(indent, ' ') + "<NodeBreak />";
-  } else if (std::holds_alternative<ASTNodeConstDecl>(*this->body)) {
-    auto nodeConstDecl = std::get<ASTNodeConstDecl>(*this->body);
-
-    result += std::string(indent, ' ') + "<NodeConstDecl>" EOL;
-    result += std::string(indent + 2, ' ') + "<NodeConstDeclVar>" EOL;
-    result += nodeConstDecl.var->xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</NodeConstDeclVar>" EOL;
-
-    if (nodeConstDecl.init != std::nullopt) {
-      result += std::string(indent + 2, ' ') + "<NodeConstDeclInit>" EOL;
-      result += nodeConstDecl.init->xml(indent + 4) + EOL;
-      result += std::string(indent + 2, ' ') + "</NodeConstDeclInit>" EOL;
-    }
-
-    result += std::string(indent, ' ') + "</NodeConstDecl>";
   } else if (std::holds_alternative<ASTNodeContinue>(*this->body)) {
     result += std::string(indent, ' ') + "<NodeContinue />";
   } else if (std::holds_alternative<ASTNodeExpr>(*this->body)) {

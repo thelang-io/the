@@ -25,6 +25,7 @@ std::string Var::xml (std::size_t indent) const {
   auto attrs = R"( name=")" + this->name + R"(")";
 
   attrs += R"( codeName=")" + this->codeName + R"(")";
+  attrs += this->constant ? " const" : "";
   attrs += this->mut ? " mut" : "";
   attrs += this->ctxIgnored ? " ctxIgnored" : "";
   attrs += R"( frame=")" + std::to_string(this->frame) + R"(")";

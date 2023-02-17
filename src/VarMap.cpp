@@ -18,8 +18,8 @@
 #include <algorithm>
 #include "Error.hpp"
 
-std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &codeName, Type *type, bool mut, bool ctxIgnored) {
-  this->_items.push_back(std::make_shared<Var>(Var{name, codeName, type, mut, false, ctxIgnored, this->_frame}));
+std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &codeName, Type *type, bool mut, bool constant, bool ctxIgnored) {
+  this->_items.push_back(std::make_shared<Var>(Var{name, codeName, type, mut, constant, false, ctxIgnored, this->_frame}));
   return this->_items.back();
 }
 
@@ -48,40 +48,40 @@ bool VarMap::has (const std::string &name) const {
 }
 
 void VarMap::init (TypeMap &typeMap) {
-  this->_items.push_back(std::make_shared<Var>(Var{"exit", "@exit", typeMap.get("exit"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_chmodSync", "@fs_chmodSync", typeMap.get("fs_chmodSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_chownSync", "@fs_chownSync", typeMap.get("fs_chownSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_existsSync", "@fs_existsSync", typeMap.get("fs_existsSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_isAbsoluteSync", "@fs_isAbsoluteSync", typeMap.get("fs_isAbsoluteSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_isFileSync", "@fs_isFileSync", typeMap.get("fs_isFileSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_isDirectorySync", "@fs_isDirectorySync", typeMap.get("fs_isDirectorySync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_isSymbolicLinkSync", "@fs_isSymbolicLinkSync", typeMap.get("fs_isSymbolicLinkSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_linkSync", "@fs_linkSync", typeMap.get("fs_linkSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_mkdirSync", "@fs_mkdirSync", typeMap.get("fs_mkdirSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_readFileSync", "@fs_readFileSync", typeMap.get("fs_readFileSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_realpathSync", "@fs_realpathSync", typeMap.get("fs_realpathSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_rmSync", "@fs_rmSync", typeMap.get("fs_rmSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_rmdirSync", "@fs_rmdirSync", typeMap.get("fs_rmdirSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_scandirSync", "@fs_scandirSync", typeMap.get("fs_scandirSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_statSync", "@fs_statSync", typeMap.get("fs_statSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_unlinkSync", "@fs_unlinkSync", typeMap.get("fs_unlinkSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"fs_writeFileSync", "@fs_writeFileSync", typeMap.get("fs_writeFileSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"os_EOL", "@os_EOL", typeMap.get("str"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"os_name", "@os_name", typeMap.get("os_name"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"path_SEP", "@path_SEP", typeMap.get("str"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"path_basename", "@path_basename", typeMap.get("path_basename"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"path_dirname", "@path_dirname", typeMap.get("path_dirname"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"print", "@print", typeMap.get("print"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_args", "@process_args", typeMap.arrayOf(typeMap.get("str")), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_cwd", "@process_cwd", typeMap.get("process_cwd"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_getgid", "@process_getgid", typeMap.get("process_getgid"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_getuid", "@process_getuid", typeMap.get("process_getuid"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_runSync", "@process_runSync", typeMap.get("process_runSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"request_close", "@request_close", typeMap.get("request_close"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"request_open", "@request_open", typeMap.get("request_open"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"request_read", "@request_read", typeMap.get("request_read"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"sleepSync", "@sleepSync", typeMap.get("sleepSync"), false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"url_parse", "@url_parse", typeMap.get("url_parse"), false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"exit", "@exit", typeMap.get("exit"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_chmodSync", "@fs_chmodSync", typeMap.get("fs_chmodSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_chownSync", "@fs_chownSync", typeMap.get("fs_chownSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_existsSync", "@fs_existsSync", typeMap.get("fs_existsSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_isAbsoluteSync", "@fs_isAbsoluteSync", typeMap.get("fs_isAbsoluteSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_isFileSync", "@fs_isFileSync", typeMap.get("fs_isFileSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_isDirectorySync", "@fs_isDirectorySync", typeMap.get("fs_isDirectorySync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_isSymbolicLinkSync", "@fs_isSymbolicLinkSync", typeMap.get("fs_isSymbolicLinkSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_linkSync", "@fs_linkSync", typeMap.get("fs_linkSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_mkdirSync", "@fs_mkdirSync", typeMap.get("fs_mkdirSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_readFileSync", "@fs_readFileSync", typeMap.get("fs_readFileSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_realpathSync", "@fs_realpathSync", typeMap.get("fs_realpathSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_rmSync", "@fs_rmSync", typeMap.get("fs_rmSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_rmdirSync", "@fs_rmdirSync", typeMap.get("fs_rmdirSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_scandirSync", "@fs_scandirSync", typeMap.get("fs_scandirSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_statSync", "@fs_statSync", typeMap.get("fs_statSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_unlinkSync", "@fs_unlinkSync", typeMap.get("fs_unlinkSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"fs_writeFileSync", "@fs_writeFileSync", typeMap.get("fs_writeFileSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"os_EOL", "@os_EOL", typeMap.get("str"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"os_name", "@os_name", typeMap.get("os_name"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"path_SEP", "@path_SEP", typeMap.get("str"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"path_basename", "@path_basename", typeMap.get("path_basename"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"path_dirname", "@path_dirname", typeMap.get("path_dirname"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"print", "@print", typeMap.get("print"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_args", "@process_args", typeMap.arrayOf(typeMap.get("str")), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_cwd", "@process_cwd", typeMap.get("process_cwd"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_getgid", "@process_getgid", typeMap.get("process_getgid"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_getuid", "@process_getuid", typeMap.get("process_getuid"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_runSync", "@process_runSync", typeMap.get("process_runSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"request_close", "@request_close", typeMap.get("request_close"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"request_open", "@request_open", typeMap.get("request_open"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"request_read", "@request_read", typeMap.get("request_read"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"sleepSync", "@sleepSync", typeMap.get("sleepSync"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"url_parse", "@url_parse", typeMap.get("url_parse"), false, false, true, false, this->_frame}));
 }
 
 std::string VarMap::name (const std::string &name) const {

@@ -3,20 +3,20 @@ const a: int
 const b: int = 1
 const c := "test"
 ======= stdout =======
-<NodeConstDecl>
-  <NodeConstDeclVar>
-    <Var name="a" codeName="a_0" frame="1">
+<NodeVarDecl>
+  <NodeVarDeclVar>
+    <Var name="a" codeName="a_0" const frame="1">
       <BuiltinType name="int" />
     </Var>
-  </NodeConstDeclVar>
-</NodeConstDecl>
-<NodeConstDecl>
-  <NodeConstDeclVar>
-    <Var name="b" codeName="b_0" frame="1">
+  </NodeVarDeclVar>
+</NodeVarDecl>
+<NodeVarDecl>
+  <NodeVarDeclVar>
+    <Var name="b" codeName="b_0" const frame="1">
       <BuiltinType name="int" />
     </Var>
-  </NodeConstDeclVar>
-  <NodeConstDeclInit>
+  </NodeVarDeclVar>
+  <NodeVarDeclInit>
     <NodeExpr>
       <NodeExprType>
         <BuiltinType name="int" />
@@ -25,15 +25,15 @@ const c := "test"
         <ExprLit type="INT_DEC" value="1" />
       </NodeExprBody>
     </NodeExpr>
-  </NodeConstDeclInit>
-</NodeConstDecl>
-<NodeConstDecl>
-  <NodeConstDeclVar>
-    <Var name="c" codeName="c_0" frame="1">
+  </NodeVarDeclInit>
+</NodeVarDecl>
+<NodeVarDecl>
+  <NodeVarDeclVar>
+    <Var name="c" codeName="c_0" const frame="1">
       <BuiltinType name="str" />
     </Var>
-  </NodeConstDeclVar>
-  <NodeConstDeclInit>
+  </NodeVarDeclVar>
+  <NodeVarDeclInit>
     <NodeExpr>
       <NodeExprType>
         <BuiltinType name="str" />
@@ -42,5 +42,5 @@ const c := "test"
         <ExprLit type="STR" value="\"test\"" />
       </NodeExprBody>
     </NodeExpr>
-  </NodeConstDeclInit>
-</NodeConstDecl>
+  </NodeVarDeclInit>
+</NodeVarDecl>
