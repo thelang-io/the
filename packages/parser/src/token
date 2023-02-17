@@ -111,7 +111,7 @@ enum TokenType {
 }
 
 obj Token {
-  type: int
+  t: int
   val: str
   start: int
   end: int
@@ -120,13 +120,13 @@ obj Token {
     val := self._valEscaped()
     loc := "(" + self.start.str() + "-" + self.end.str() + ")"
 
-    return self.type.rawValue.slice(3) + loc + (val == "" ? "" : ": " + val)
+    return self.t.rawValue.slice(3) + loc + (val == "" ? "" : ": " + val)
   }
 
   fn toXML (self: Self) str {
     return
       "<Token" +
-      " type=\"" + self.type.rawValue.slice(3) + "\"" +
+      " type=\"" + self.t.rawValue.slice(3) + "\"" +
       " val=\"" + self._valEscaped(true) + "\"" +
       " start=\"" + self.start.str() + "\"" +
       " end=\"" + self.end.str() + "\"" +

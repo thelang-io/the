@@ -480,14 +480,18 @@ TEST(LexerTest, LexOperationsEof) {
 }
 
 TEST(LexerTest, LexKeywords) {
+  auto r2 = testing::NiceMock<MockReader>("async");
+  auto r3 = testing::NiceMock<MockReader>("await");
   auto r4 = testing::NiceMock<MockReader>("break");
   auto r6 = testing::NiceMock<MockReader>("catch");
+  auto r7 = testing::NiceMock<MockReader>("const");
   auto r8 = testing::NiceMock<MockReader>("continue");
   auto r10 = testing::NiceMock<MockReader>("elif");
   auto r11 = testing::NiceMock<MockReader>("else");
   auto r12 = testing::NiceMock<MockReader>("enum");
   auto r15 = testing::NiceMock<MockReader>("false");
   auto r16 = testing::NiceMock<MockReader>("fn");
+  auto r17 = testing::NiceMock<MockReader>("from");
   auto r18 = testing::NiceMock<MockReader>("if");
   auto r20 = testing::NiceMock<MockReader>("is");
   auto r21 = testing::NiceMock<MockReader>("loop");
@@ -502,14 +506,18 @@ TEST(LexerTest, LexKeywords) {
   auto r31 = testing::NiceMock<MockReader>("try");
   auto r32 = testing::NiceMock<MockReader>("type");
 
+  auto l2 = Lexer(&r2);
+  auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
   auto l6 = Lexer(&r6);
+  auto l7 = Lexer(&r7);
   auto l8 = Lexer(&r8);
   auto l10 = Lexer(&r10);
   auto l11 = Lexer(&r11);
   auto l12 = Lexer(&r12);
   auto l15 = Lexer(&r15);
   auto l16 = Lexer(&r16);
+  auto l17 = Lexer(&r17);
   auto l18 = Lexer(&r18);
   auto l20 = Lexer(&r20);
   auto l21 = Lexer(&r21);
@@ -524,14 +532,18 @@ TEST(LexerTest, LexKeywords) {
   auto l31 = Lexer(&r31);
   auto l32 = Lexer(&r32);
 
+  EXPECT_EQ(std::get<1>(l2.next()).str(), "KW_ASYNC(1:1-1:6): async");
+  EXPECT_EQ(std::get<1>(l3.next()).str(), "KW_AWAIT(1:1-1:6): await");
   EXPECT_EQ(std::get<1>(l4.next()).str(), "KW_BREAK(1:1-1:6): break");
   EXPECT_EQ(std::get<1>(l6.next()).str(), "KW_CATCH(1:1-1:6): catch");
+  EXPECT_EQ(std::get<1>(l7.next()).str(), "KW_CONST(1:1-1:6): const");
   EXPECT_EQ(std::get<1>(l8.next()).str(), "KW_CONTINUE(1:1-1:9): continue");
   EXPECT_EQ(std::get<1>(l10.next()).str(), "KW_ELIF(1:1-1:5): elif");
   EXPECT_EQ(std::get<1>(l11.next()).str(), "KW_ELSE(1:1-1:5): else");
   EXPECT_EQ(std::get<1>(l12.next()).str(), "KW_ENUM(1:1-1:5): enum");
   EXPECT_EQ(std::get<1>(l15.next()).str(), "KW_FALSE(1:1-1:6): false");
   EXPECT_EQ(std::get<1>(l16.next()).str(), "KW_FN(1:1-1:3): fn");
+  EXPECT_EQ(std::get<1>(l17.next()).str(), "KW_FROM(1:1-1:5): from");
   EXPECT_EQ(std::get<1>(l18.next()).str(), "KW_IF(1:1-1:3): if");
   EXPECT_EQ(std::get<1>(l20.next()).str(), "KW_IS(1:1-1:3): is");
   EXPECT_EQ(std::get<1>(l21.next()).str(), "KW_LOOP(1:1-1:5): loop");
@@ -549,33 +561,39 @@ TEST(LexerTest, LexKeywords) {
 
 TEST(LexerTest, LexKeywordsWhitespace) {
   auto reader = testing::NiceMock<MockReader>(
-    " break catch continue elif else enum false fn if is loop main mut nil obj ref return throw true try type "
+    " as async await break catch const continue elif else enum false fn from"
+    " if is loop main mut nil obj ref return throw true try type "
   );
 
   auto lexer = Lexer(&reader);
+  lexer.next();
 
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_BREAK(1:2-1:7): break");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_CATCH(1:8-1:13): catch");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_CONTINUE(1:14-1:22): continue");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ELIF(1:23-1:27): elif");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ELSE(1:28-1:32): else");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ENUM(1:33-1:37): enum");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_FALSE(1:38-1:43): false");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_FN(1:44-1:46): fn");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_IF(1:47-1:49): if");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_IS(1:50-1:52): is");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_LOOP(1:53-1:57): loop");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_MAIN(1:58-1:62): main");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_MUT(1:63-1:66): mut");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_NIL(1:67-1:70): nil");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_OBJ(1:71-1:74): obj");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_REF(1:75-1:78): ref");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_RETURN(1:79-1:85): return");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_THROW(1:86-1:91): throw");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRUE(1:92-1:96): true");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRY(1:97-1:100): try");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TYPE(1:101-1:105): type");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:106-1:106)");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ASYNC(1:5-1:10): async");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_AWAIT(1:11-1:16): await");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_BREAK(1:17-1:22): break");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_CATCH(1:23-1:28): catch");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_CONST(1:29-1:34): const");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_CONTINUE(1:35-1:43): continue");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ELIF(1:44-1:48): elif");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ELSE(1:49-1:53): else");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ENUM(1:54-1:58): enum");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_FALSE(1:59-1:64): false");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_FN(1:65-1:67): fn");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_FROM(1:68-1:72): from");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_IF(1:73-1:75): if");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_IS(1:76-1:78): is");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_LOOP(1:79-1:83): loop");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_MAIN(1:84-1:88): main");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_MUT(1:89-1:92): mut");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_NIL(1:93-1:96): nil");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_OBJ(1:97-1:100): obj");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_REF(1:101-1:104): ref");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_RETURN(1:105-1:111): return");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_THROW(1:112-1:117): throw");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRUE(1:118-1:122): true");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRY(1:123-1:126): try");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TYPE(1:127-1:131): type");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:132-1:132)");
 }
 
 TEST(LexerTest, LexKeywordsAsIdentifiers) {
@@ -584,6 +602,7 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   auto r3 = testing::NiceMock<MockReader>("awaited");
   auto r4 = testing::NiceMock<MockReader>("breakpoint");
   auto r6 = testing::NiceMock<MockReader>("catching");
+  auto r7 = testing::NiceMock<MockReader>("constant");
   auto r8 = testing::NiceMock<MockReader>("continues");
   auto r10 = testing::NiceMock<MockReader>("elifffy");
   auto r11 = testing::NiceMock<MockReader>("elsewhere");
@@ -612,6 +631,7 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
   auto l6 = Lexer(&r6);
+  auto l7 = Lexer(&r7);
   auto l8 = Lexer(&r8);
   auto l10 = Lexer(&r10);
   auto l11 = Lexer(&r11);
@@ -640,6 +660,7 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   EXPECT_EQ(std::get<1>(l3.next()).str(), "ID(1:1-1:8): awaited");
   EXPECT_EQ(std::get<1>(l4.next()).str(), "ID(1:1-1:11): breakpoint");
   EXPECT_EQ(std::get<1>(l6.next()).str(), "ID(1:1-1:9): catching");
+  EXPECT_EQ(std::get<1>(l7.next()).str(), "ID(1:1-1:9): constant");
   EXPECT_EQ(std::get<1>(l8.next()).str(), "ID(1:1-1:10): continues");
   EXPECT_EQ(std::get<1>(l10.next()).str(), "ID(1:1-1:8): elifffy");
   EXPECT_EQ(std::get<1>(l11.next()).str(), "ID(1:1-1:10): elsewhere");

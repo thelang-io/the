@@ -1,0 +1,12 @@
+======= stdin =======
+const a: i8
+const b: i8 = 127
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int8_t __THE_0_a_0 = 0;
+  const int8_t __THE_0_b_0 = 127;
+}
+======= flags =======
+======= stdout =======

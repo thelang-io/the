@@ -1,0 +1,12 @@
+======= stdin =======
+const a: u32
+const b: u32 = 4294967295
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const uint32_t __THE_0_a_0 = 0;
+  const uint32_t __THE_0_b_0 = 4294967295;
+}
+======= flags =======
+======= stdout =======

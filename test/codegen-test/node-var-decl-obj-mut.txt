@@ -3,6 +3,8 @@ obj Test {
   a: int
 }
 
+mut r: Test
+
 main {
   mut a: Test
 }
@@ -55,8 +57,10 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
 }
 
 int main () {
+  struct __THE_1_Test_0 *__THE_0_r_0 = __THE_1_Test_0_alloc(0);
   struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc(0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_r_0);
 }
 ======= flags =======
 ======= stdout =======

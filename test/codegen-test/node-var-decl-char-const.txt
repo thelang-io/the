@@ -1,0 +1,12 @@
+======= stdin =======
+const a: char
+const b: char = '~'
+const c := '\0'
+======= code =======
+int main () {
+  const char __THE_0_a_0 = '\0';
+  const char __THE_0_b_0 = '~';
+  const char __THE_0_c_0 = '\0';
+}
+======= flags =======
+======= stdout =======

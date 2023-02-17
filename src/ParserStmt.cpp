@@ -260,7 +260,10 @@ std::string ParserStmt::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserStmtVarDecl>(*this->body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*this->body);
 
-    result += std::string(indent, ' ') + "<StmtVarDecl" + attrs + (stmtVarDecl.mut ? " mut" : "") + ">" EOL;
+    attrs += stmtVarDecl.constant ? " const" : "";
+    attrs += stmtVarDecl.mut ? " mut" : "";
+
+    result += std::string(indent, ' ') + "<StmtVarDecl" + attrs + ">" EOL;
     result += std::string(indent + 2, ' ') + "<StmtVarDeclId>" EOL;
     result += stmtVarDecl.id.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</StmtVarDeclId>" EOL;

@@ -23,7 +23,7 @@ obj Args {
     hasValue := true
   ) ref Self {
     self._config.push(ArgsConfigItem{
-      type: ArgType_Command,
+      t: ArgType_Command,
       name: name,
       description: description,
       alias: alias,
@@ -65,7 +65,7 @@ obj Args {
       loop i := 0; i < self._config.len; i++ {
         item := self._config[i]
 
-        if item.type != ArgType_Command {
+        if item.t != ArgType_Command {
           continue
         }
 
@@ -83,7 +83,7 @@ obj Args {
       loop i := 0; i < self._config.len; i++ {
         item := self._config[i]
 
-        if item.type != ArgType_Option {
+        if item.t != ArgType_Option {
           continue
         }
 
@@ -117,7 +117,7 @@ obj Args {
     hasValue := true
   ) ref Self {
     self._config.push(ArgsConfigItem{
-      type: ArgType_Option,
+      t: ArgType_Option,
       name: name,
       description: description,
       alias: alias,
@@ -153,11 +153,11 @@ obj Args {
     loop i := 1; i < self._config.len; i++ {
       item := self._config[i]
 
-      if item.default.empty() || self._existsDataValue(item.type, item.name) {
+      if item.default.empty() || self._existsDataValue(item.t, item.name) {
         continue
       }
 
-      self._setDataValue(item.type, item.name, item.default)
+      self._setDataValue(item.t, item.name, item.default)
     }
 
     return self
@@ -168,13 +168,13 @@ obj Args {
     return self
   }
 
-  fn _existsDataValue (mut self: ref Self, type: int, name: str) bool {
+  fn _existsDataValue (mut self: ref Self, t: int, name: str) bool {
     loop i := 0; i < self.data.len; i++ {
       item := self.data[i]
 
       if (
-        (type == ArgType_Command && item.command == name) ||
-        (type == ArgType_Option && item.option == name)
+        (t == ArgType_Command && item.command == name) ||
+        (t == ArgType_Option && item.option == name)
       ) {
         return true
       }
@@ -187,9 +187,9 @@ obj Args {
     loop i := 0; i < self._config.len; i++ {
       item := self._config[i]
 
-      if item.type == ArgType_Command {
+      if item.t == ArgType_Command {
         self._state.hasCommands = true
-      } elif item.type == ArgType_Option {
+      } elif item.t == ArgType_Option {
         self._state.hasOptions = true
       }
 
@@ -246,7 +246,7 @@ obj Args {
       item := self._config[i]
 
       if (
-        item.type != ArgType_Command ||
+        item.t != ArgType_Command ||
         (item.name != name && item.alias != name)
       ) {
         continue
@@ -276,7 +276,7 @@ obj Args {
       item := self._config[i]
 
       if (
-        item.type != ArgType_Option ||
+        item.t != ArgType_Option ||
         (item.name != name && item.alias != name)
       ) {
         continue
@@ -298,22 +298,22 @@ obj Args {
     RaiseError("Unexpected argument `" + arg + "`")
   }
 
-  fn _setDataValue (mut self: ref Self, type: int, name: str, value: str) {
+  fn _setDataValue (mut self: ref Self, t: int, name: str, value: str) {
     loop i := 0; i < self.data.len; i++ {
       mut item := self.data[i]
 
       if (
-        (type == ArgType_Command && item.command == name) ||
-        (type == ArgType_Option && item.option == name)
+        (t == ArgType_Command && item.command == name) ||
+        (t == ArgType_Option && item.option == name)
       ) {
         item.value = value
         return
       }
     }
 
-    if type == ArgType_Command {
+    if t == ArgType_Command {
       self.data.push(Arg{command: name, value: value})
-    } elif type == ArgType_Option {
+    } elif t == ArgType_Option {
       self.data.push(Arg{option: name, value: value})
     }
   }

@@ -47,6 +47,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "empty",
   "semi",
   "node-break",
+  "node-const-decl",
   "node-continue",
   "node-empty",
   "node-enum-decl",
@@ -149,6 +150,8 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1020-expr-binary-unknown-operand-type",
   "throw-E1020-expr-cond-unknown-operand-type",
   "throw-E1021-node-fn-decl-main",
+  "throw-E1022-node-const-decl-void-type",
+  "throw-E1022-node-const-decl-void-init",
   "throw-E1022-node-fn-decl-void-param-type",
   "throw-E1022-node-fn-decl-void-param-init",
   "throw-E1022-node-obj-decl-method-void-param-init",
@@ -158,5 +161,7 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1022-node-var-decl-void-init",
   "throw-E1023-node-var-decl-unknown-member-type",
   "throw-E1024-expr-access-not-existing-member",
-  "throw-E1024-expr-access-enum-not-existing-member"
+  "throw-E1024-expr-access-enum-not-existing-member",
+  "throw-E1025-node-const-decl-non-root",
+  "throw-E1026-node-var-decl-root"
 ));

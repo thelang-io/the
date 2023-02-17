@@ -1,4 +1,6 @@
 ======= stdin =======
+mut r1: int | str = 1
+mut r2: int | str = ""
 main {
   mut a: int | str = 1
   a = 2
@@ -86,12 +88,16 @@ struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0 n1, struc
 }
 
 int main () {
+  struct __THE_1_union$0 __THE_0_r1_0 = __THE_1_union$0_alloc(TYPE_int, 1);
+  struct __THE_1_union$0 __THE_0_r2_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc(""));
   struct __THE_1_union$0 __THE_0_a_0 = __THE_1_union$0_alloc(TYPE_int, 1);
   __THE_0_a_0 = __THE_1_union$0_realloc(__THE_0_a_0, __THE_1_union$0_alloc(TYPE_int, 2));
   struct __THE_1_union$0 __THE_0_b_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc(""));
   __THE_0_b_0 = __THE_1_union$0_realloc(__THE_0_b_0, __THE_1_union$0_alloc(TYPE_str, str_alloc("test")));
   __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_b_0);
   __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_a_0);
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_r2_0);
+  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_r1_0);
 }
 ======= flags =======
 ======= stdout =======

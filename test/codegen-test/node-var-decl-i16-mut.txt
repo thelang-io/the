@@ -1,4 +1,5 @@
 ======= stdin =======
+mut r: i16
 main {
   mut a: i16
   a = -32768
@@ -11,6 +12,7 @@ main {
 #include <stdint.h>
 
 int main () {
+  int16_t __THE_0_r_0 = 0;
   int16_t __THE_0_a_0 = 0;
   __THE_0_a_0 = -32768;
   int16_t __THE_0_b_0 = 0;

@@ -1,0 +1,6 @@
+======= stdin =======
+test := 1
+======= stderr =======
+/test:1:1: E1026 - Non-mutable variable declaration is now allowed on top-level scope
+  1 | test := 1
+    | ^~~~~~~~~

@@ -1,0 +1,12 @@
+======= stdin =======
+const a: u64
+const b: u64 = 18446744073709551615
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const uint64_t __THE_0_a_0 = 0;
+  const uint64_t __THE_0_b_0 = 18446744073709551615U;
+}
+======= flags =======
+======= stdout =======

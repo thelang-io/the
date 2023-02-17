@@ -100,6 +100,9 @@
 #define E0162 "E0162 - Expected type declaration type"
 #define E0163 "E0163 - Expected union subtype"
 #define E0164 "E0164 - Expected type after `is` keyword"
+#define E0165 "E0165 - Expected constant name after `const` keyword"
+#define E0166 "E0166 - Expected constant type after colon"
+#define E0167 "E0167 - Expected constant initializer"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
@@ -125,6 +128,8 @@
 #define E1022 "E1022 - Void type can only be used as function return type"
 #define E1023 "E1023 - Unable to deduce enumeration member type"
 #define E1024 "E1024 - Tried accessing non-existing enumeration member"
+#define E1025 "E1025 - Constant are allowed only on top-level scope"
+#define E1026 "E1026 - Non-mutable variable declaration is now allowed on top-level scope"
 
 class Error : public std::exception {
  public:

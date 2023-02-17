@@ -53,7 +53,7 @@ class AST {
   AST (const AST &);
   AST &operator= (const AST &);
 
-  ASTBlock _block (const ParserBlock &, VarStack &);
+  ASTBlock _block (const ParserBlock &, VarStack &, bool = false);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ParserStmtExpr &);
   void _forwardNode (const ParserBlock &, ASTPhase);
   ASTNode _node (const ParserStmt &, VarStack &);

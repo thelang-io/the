@@ -122,7 +122,7 @@ ASTBlock AST::gen () {
 
   this->varMap.save();
   auto mainVarStack = VarStack({});
-  auto result = this->_block(block, mainVarStack);
+  auto result = this->_block(block, mainVarStack, true);
   AST::populateParents(result);
   this->varMap.restore();
 
@@ -139,7 +139,7 @@ std::string AST::xml () {
   return result;
 }
 
-ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
+ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack, bool root) {
   this->_forwardNode(block, AST_PHASE_ALLOC);
   this->_forwardNode(block, AST_PHASE_INIT);
 
@@ -150,7 +150,20 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack) {
       continue;
     }
 
-    result.push_back(this->_node(stmt, varStack));
+    auto node = this->_node(stmt, varStack);
+
+    if (!root && std::holds_alternative<ASTNodeVarDecl>(*node.body) && std::get<ASTNodeVarDecl>(*node.body).var->constant) {
+      throw Error(this->reader, stmt.start, stmt.end, E1025);
+    } else if (
+      root &&
+      std::holds_alternative<ASTNodeVarDecl>(*node.body) &&
+      !std::get<ASTNodeVarDecl>(*node.body).var->constant &&
+      !std::get<ASTNodeVarDecl>(*node.body).var->mut
+    ) {
+      throw Error(this->reader, stmt.start, stmt.end, E1026);
+    }
+
+    result.push_back(node);
   }
 
   return result;
@@ -259,7 +272,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         auto enumCodeName = this->typeMap.name(enumName);
         auto enumType = this->typeMap.enumeration(enumName, enumCodeName, enumMembers);
 
-        this->varMap.add(enumName, enumCodeName, enumType, false, true);
+        this->varMap.add(enumName, enumCodeName, enumType, false, false, true);
       }
     } else if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
@@ -304,7 +317,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         auto nodeFnDeclVarType = this->typeMap.fn(nodeFnDeclVarParams, nodeFnDeclVarReturnType);
         auto nodeFnDeclVarAliasType = this->typeMap.alias(nodeFnDeclName, nodeFnDeclVarType);
 
-        this->varMap.add(nodeFnDeclName, nodeFnDeclVarAliasType->codeName, nodeFnDeclVarType, false);
+        this->varMap.add(nodeFnDeclName, nodeFnDeclVarAliasType->codeName, nodeFnDeclVarType);
       }
     } else if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
@@ -380,7 +393,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           auto methodDeclAliasType = this->typeMap.alias(methodDeclName, methodDeclType);
 
           this->varMap.restore();
-          this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType, false);
+          this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
           type->fields.push_back(TypeField{methodDeclName, methodDeclType, false, true, false});
         }
 
@@ -638,10 +651,15 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       nodeVarDeclInit = this->_nodeExpr(*stmtVarDecl.init, nodeVarDeclType, varStack);
     }
 
-    auto isMut = this->state.insideLoopInit || stmtVarDecl.mut;
-    auto nodeVarDeclVar = this->varMap.add(nodeVarDeclName, this->varMap.name(nodeVarDeclName), nodeVarDeclType, isMut);
-    auto nodeVarDecl = ASTNodeVarDecl{nodeVarDeclVar, nodeVarDeclInit};
+    auto nodeVarDeclVar = this->varMap.add(
+      nodeVarDeclName,
+      this->varMap.name(nodeVarDeclName),
+      nodeVarDeclType,
+      this->state.insideLoopInit || stmtVarDecl.mut,
+      stmtVarDecl.constant
+    );
 
+    auto nodeVarDecl = ASTNodeVarDecl{nodeVarDeclVar, nodeVarDeclInit};
     return this->_wrapNode(stmt, nodeVarDecl);
   }
 

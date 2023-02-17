@@ -24,6 +24,7 @@ struct Var {
   std::string codeName;
   Type *type;
   bool mut;
+  bool constant;
   bool builtin;
   bool ctxIgnored;
   std::size_t frame;

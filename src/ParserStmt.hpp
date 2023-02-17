@@ -140,7 +140,8 @@ struct ParserStmtVarDecl {
   Token id;
   std::optional<ParserType> type;
   std::optional<ParserStmtExpr> init;
-  bool mut;
+  bool mut = false;
+  bool constant = false;
 };
 
 #endif

@@ -1,6 +1,8 @@
 ======= stdin =======
 fn test () {}
 
+mut r: () -> void = test
+
 main {
   mut a: () -> void = test
 }
@@ -58,8 +60,10 @@ void __THE_1_test_0 (void *px) {
 
 int main () {
   const struct __THE_1_fn$0 __THE_0_test_0 = (struct __THE_1_fn$0) {&__THE_1_test_0, NULL, 0};
+  struct __THE_1_fn$0 __THE_0_r_0 = __THE_1_fn$0_copy(__THE_0_test_0);
   struct __THE_1_fn$0 __THE_0_a_0 = __THE_1_fn$0_copy(__THE_0_test_0);
   __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_a_0);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_r_0);
 }
 ======= flags =======
 ======= stdout =======
