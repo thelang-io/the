@@ -11,8 +11,8 @@ c := {
     <Token type="ID" val="a" start="1:1" end="1:2" />
   </StmtVarDeclId>
   <StmtVarDeclInit>
-    <ExprMap start="1:6" end="1:8">
-    </ExprMap>
+    <ExprMap start="1:6" end="1:8" />
+
   </StmtVarDeclInit>
 </StmtVarDecl>
 <StmtVarDecl start="2:1" end="2:21">

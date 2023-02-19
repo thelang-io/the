@@ -18,6 +18,79 @@
 #include <algorithm>
 #include <limits>
 
+Type *TypeMap::createMap (Type *keyType, Type *valueType) {
+  auto actualKeyType = Type::actual(keyType);
+  auto actualValueType = Type::actual(valueType);
+  auto newType = Type{"", "", TypeBodyMap{actualKeyType, actualValueType}};
+
+  for (const auto &item : this->_items) {
+    if (!item->builtin && item->isMap() && item->matchStrict(&newType)) {
+      return item.get();
+    }
+  }
+
+  newType.name = "map$" + std::to_string(this->_mapIdx++);
+  newType.codeName = "@" + newType.name;
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  auto selfType = this->_items.back().get();
+  auto refSelfType = this->ref(selfType);
+
+  auto getTypeFn = TypeFn{actualValueType, {
+    TypeFnParam{"key", actualKeyType, false, true, false}
+  }};
+
+  auto hasTypeFn = TypeFn{this->get("bool"), {
+    TypeFnParam{"key", actualKeyType, false, true, false}
+  }};
+
+  auto mergeTypeFn = TypeFn{refSelfType, {
+    TypeFnParam{"map", selfType, false, true, false}
+  }};
+
+  auto removeTypeFn = TypeFn{refSelfType, {
+    TypeFnParam{"key", actualKeyType, false, true, false}
+  }};
+
+  auto reserveTypeFn = TypeFn{refSelfType, {
+    TypeFnParam{"size", this->get("int"), false, true, false}
+  }};
+
+  auto setTypeFn = TypeFn{refSelfType, {
+    TypeFnParam{"key", actualKeyType, false, true, false},
+    TypeFnParam{"value", actualValueType, false, true, false}
+  }};
+
+  selfType->fields.push_back(TypeField{"cap", this->get("int"), false, false, true});
+  selfType->fields.push_back(TypeField{"len", this->get("int"), false, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".clear", "@map.clear", TypeFn{refSelfType}, {}, true}));
+  selfType->fields.push_back(TypeField{"clear", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".empty", "@map.empty", TypeFn{this->get("bool")}, {}, true}));
+  selfType->fields.push_back(TypeField{"empty", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".get", "@map.get", getTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"get", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".has", "@map.has", hasTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"has", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".keys", "@map.keys", TypeFn{this->arrayOf(actualKeyType)}, {}, true}));
+  selfType->fields.push_back(TypeField{"keys", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".merge", "@map.merge", mergeTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"merge", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".remove", "@map.remove", removeTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"remove", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".reserve", "@map.reserve", reserveTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"reserve", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".set", "@map.set", setTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"set", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".shrink", "@map.shrink", TypeFn{refSelfType}, {}, true}));
+  selfType->fields.push_back(TypeField{"shrink", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@map.str", TypeFn{this->get("str")}, {}, true}));
+  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".values", "@map.values", TypeFn{this->arrayOf(actualValueType)}, {}, true}));
+  selfType->fields.push_back(TypeField{"values", this->_items.back().get(), false, true, true});
+
+  return selfType;
+}
+
 Type *TypeMap::alias (const std::string &name, Type *type) {
   this->_items.push_back(std::make_unique<Type>(Type{name, this->name(name), TypeAlias{type}}));
   return this->_items.back().get();
@@ -131,9 +204,8 @@ Type *TypeMap::fn (
   }
 
   if (newType.name.empty()) {
-    auto idx = std::to_string(this->_fnIdx++);
-    newType.name = "fn$" + idx;
-    newType.codeName = "@fn$" + idx;
+    newType.name = "fn$" + std::to_string(this->_fnIdx++);
+    newType.codeName = "@" + newType.name;
   }
 
   this->_items.push_back(std::make_unique<Type>(newType));
@@ -595,9 +667,8 @@ Type *TypeMap::unionType (const std::vector<Type *> &subTypes) {
     }
   }
 
-  auto idx = std::to_string(this->_unIdx++);
-  newType.name = "union$" + idx;
-  newType.codeName = "@union$" + idx;
+  newType.name = "union$" + std::to_string(this->_unIdx++);
+  newType.codeName = "@" + newType.name;
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
@@ -606,6 +677,20 @@ Type *TypeMap::unionType (const std::vector<Type *> &subTypes) {
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
 
   return selfType;
+}
+
+Type *TypeMap::unionAdd (Type *type, Type *subType) {
+  auto subTypes = std::vector<Type *>{};
+
+  if (type->isUnion()) {
+    auto typeSubTypes = std::get<TypeUnion>(type->body).subTypes;
+    subTypes.insert(subTypes.end(), typeSubTypes.begin(), typeSubTypes.end());
+  } else {
+    subTypes.push_back(type);
+  }
+
+  subTypes.push_back(subType);
+  return this->unionType(subTypes);
 }
 
 Type *TypeMap::unionSub (const Type *type, const Type *exceptType) {

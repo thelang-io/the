@@ -3876,7 +3876,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
     auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
-    auto typeInfo = this->_typeInfo(Type::actual(exprObj.type));
+    auto typeInfo = this->_typeInfo(Type::actual(nodeExpr.type));
     auto fieldsCode = std::string();
 
     for (const auto &typeField : typeInfo.type->fields) {

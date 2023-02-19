@@ -371,46 +371,34 @@ main {
           </NodeExprType>
           <NodeExprBody>
             <ExprObj>
-              <ExprObjType>
-                <TypeObj codeName="mainSDCat_0" name="Cat">
-                  <TypeField name="breed">
+              <ExprObjProp id="breed">
+                <NodeExpr>
+                  <NodeExprType>
                     <BuiltinType name="str" />
-                  </TypeField>
-                  <TypeField name="sex">
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="breed" codeName="breed_0" frame="3">
+                        <BuiltinType name="str" />
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
+              <ExprObjProp id="sex">
+                <NodeExpr>
+                  <NodeExprType>
                     <BuiltinType name="str" />
-                  </TypeField>
-                </TypeObj>
-              </ExprObjType>
-              <ExprObjProps>
-                <ExprObjProp id="breed">
-                  <NodeExpr>
-                    <NodeExprType>
-                      <BuiltinType name="str" />
-                    </NodeExprType>
-                    <NodeExprBody>
-                      <ExprAccess>
-                        <Var name="breed" codeName="breed_0" frame="3">
-                          <BuiltinType name="str" />
-                        </Var>
-                      </ExprAccess>
-                    </NodeExprBody>
-                  </NodeExpr>
-                </ExprObjProp>
-                <ExprObjProp id="sex">
-                  <NodeExpr>
-                    <NodeExprType>
-                      <BuiltinType name="str" />
-                    </NodeExprType>
-                    <NodeExprBody>
-                      <ExprAccess>
-                        <Var name="sex" codeName="sex_0" frame="3">
-                          <BuiltinType name="str" />
-                        </Var>
-                      </ExprAccess>
-                    </NodeExprBody>
-                  </NodeExpr>
-                </ExprObjProp>
-              </ExprObjProps>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="sex" codeName="sex_0" frame="3">
+                        <BuiltinType name="str" />
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprObjProp>
             </ExprObj>
           </NodeExprBody>
         </NodeExpr>
@@ -444,38 +432,26 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Animal_0" name="Animal">
-                <TypeField name="age">
+            <ExprObjProp id="age">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="int" />
-                </TypeField>
-                <TypeField name="name">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="7" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+            <ExprObjProp id="name">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="str" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="age">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="int" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="INT_DEC" value="7" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-              <ExprObjProp id="name">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="str" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="STR" value="\"Whisky\"" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"Whisky\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>
@@ -636,15 +612,15 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test_0" name="Test">
-                <TypeField name="sum">
+            <ExprObjProp id="sum">
+              <NodeExpr>
+                <NodeExprType>
                   <TypeFn name="fn$0">
                     <TypeFnParams>
-                      <TypeFnParam required>
+                      <TypeFnParam name="a" required>
                         <BuiltinType name="int" />
                       </TypeFnParam>
-                      <TypeFnParam variadic>
+                      <TypeFnParam name="b" variadic>
                         <TypeArray name="array_int">
                           <BuiltinType name="int" />
                         </TypeArray>
@@ -654,53 +630,30 @@ main {
                       <BuiltinType name="int" />
                     </TypeFnReturnType>
                   </TypeFn>
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="sum">
-                <NodeExpr>
-                  <NodeExprType>
-                    <TypeFn name="fn$0">
-                      <TypeFnParams>
-                        <TypeFnParam name="a" required>
-                          <BuiltinType name="int" />
-                        </TypeFnParam>
-                        <TypeFnParam name="b" variadic>
-                          <TypeArray name="array_int">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testSum" codeName="testSum_0" frame="1">
+                      <TypeFn name="fn$0">
+                        <TypeFnParams>
+                          <TypeFnParam name="a" required>
                             <BuiltinType name="int" />
-                          </TypeArray>
-                        </TypeFnParam>
-                      </TypeFnParams>
-                      <TypeFnReturnType>
-                        <BuiltinType name="int" />
-                      </TypeFnReturnType>
-                    </TypeFn>
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprAccess>
-                      <Var name="testSum" codeName="testSum_0" frame="1">
-                        <TypeFn name="fn$0">
-                          <TypeFnParams>
-                            <TypeFnParam name="a" required>
+                          </TypeFnParam>
+                          <TypeFnParam name="b" variadic>
+                            <TypeArray name="array_int">
                               <BuiltinType name="int" />
-                            </TypeFnParam>
-                            <TypeFnParam name="b" variadic>
-                              <TypeArray name="array_int">
-                                <BuiltinType name="int" />
-                              </TypeArray>
-                            </TypeFnParam>
-                          </TypeFnParams>
-                          <TypeFnReturnType>
-                            <BuiltinType name="int" />
-                          </TypeFnReturnType>
-                        </TypeFn>
-                      </Var>
-                    </ExprAccess>
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                            </TypeArray>
+                          </TypeFnParam>
+                        </TypeFnParams>
+                        <TypeFnReturnType>
+                          <BuiltinType name="int" />
+                        </TypeFnReturnType>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>
@@ -892,12 +845,12 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Callback_0" name="Callback">
-                <TypeField name="logic">
+            <ExprObjProp id="logic">
+              <NodeExpr>
+                <NodeExprType>
                   <TypeFn name="fn$2">
                     <TypeFnParams>
-                      <TypeFnParam required>
+                      <TypeFnParam name="cb" required>
                         <TypeFn name="fn$1">
                           <TypeFnReturnType>
                             <BuiltinType name="any" />
@@ -909,51 +862,29 @@ main {
                       <BuiltinType name="void" />
                     </TypeFnReturnType>
                   </TypeFn>
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="logic">
-                <NodeExpr>
-                  <NodeExprType>
-                    <TypeFn name="fn$2">
-                      <TypeFnParams>
-                        <TypeFnParam name="cb" required>
-                          <TypeFn name="fn$1">
-                            <TypeFnReturnType>
-                              <BuiltinType name="any" />
-                            </TypeFnReturnType>
-                          </TypeFn>
-                        </TypeFnParam>
-                      </TypeFnParams>
-                      <TypeFnReturnType>
-                        <BuiltinType name="void" />
-                      </TypeFnReturnType>
-                    </TypeFn>
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprAccess>
-                      <Var name="callbackLogic" codeName="callbackLogic_0" frame="1">
-                        <TypeFn name="fn$2">
-                          <TypeFnParams>
-                            <TypeFnParam name="cb" required>
-                              <TypeFn name="fn$1">
-                                <TypeFnReturnType>
-                                  <BuiltinType name="any" />
-                                </TypeFnReturnType>
-                              </TypeFn>
-                            </TypeFnParam>
-                          </TypeFnParams>
-                          <TypeFnReturnType>
-                            <BuiltinType name="void" />
-                          </TypeFnReturnType>
-                        </TypeFn>
-                      </Var>
-                    </ExprAccess>
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="callbackLogic" codeName="callbackLogic_0" frame="1">
+                      <TypeFn name="fn$2">
+                        <TypeFnParams>
+                          <TypeFnParam name="cb" required>
+                            <TypeFn name="fn$1">
+                              <TypeFnReturnType>
+                                <BuiltinType name="any" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </TypeFnParam>
+                        </TypeFnParams>
+                        <TypeFnReturnType>
+                          <BuiltinType name="void" />
+                        </TypeFnReturnType>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

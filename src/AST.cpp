@@ -920,6 +920,20 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     else if (parserExprLit.body.type == TK_LIT_STR) exprLitType = AST_EXPR_LIT_STR;
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprLit{exprLitType, parserExprLit.body.val});
+  } else if (std::holds_alternative<ParserExprMap>(*stmtExpr.body)) {
+    auto parserExprMap = std::get<ParserExprMap>(*stmtExpr.body);
+    auto nodeExprType = this->_nodeExprType(stmtExpr, targetType);
+    auto valueType = std::get<TypeBodyMap>(nodeExprType->body).valueType;
+    auto exprMapProps = std::vector<ASTObjProp>{};
+
+    for (const auto &parserProp : parserExprMap.props) {
+      auto propName = std::get<ParserExprLit>(*parserProp.name.body).body.val;
+      auto propInit = this->_nodeExpr(parserProp.init, valueType, varStack);
+
+      exprMapProps.push_back(ASTObjProp{propName.substr(1, propName.size() - 2), propInit});
+    }
+
+    return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprMap{exprMapProps});
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto parserExprObj = std::get<ParserExprObj>(*stmtExpr.body);
     auto type = this->typeMap.get(parserExprObj.id.val);
@@ -928,7 +942,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       throw Error(this->reader, parserExprObj.id.start, parserExprObj.id.end, E1010);
     }
 
-    auto exprObjProps = std::vector<ASTExprObjProp>{};
+    auto exprObjProps = std::vector<ASTObjProp>{};
 
     for (const auto &parserExprObjProp : parserExprObj.props) {
       if (!type->hasProp(parserExprObjProp.id.val)) {
@@ -937,13 +951,13 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
       auto propType = type->getProp(parserExprObjProp.id.val);
 
-      exprObjProps.push_back(ASTExprObjProp{
+      exprObjProps.push_back(ASTObjProp{
         parserExprObjProp.id.val,
         this->_nodeExpr(parserExprObjProp.init, propType, varStack)
       });
     }
 
-    return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprObj{type, exprObjProps});
+    return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprObj{exprObjProps});
   } else if (std::holds_alternative<ParserExprRef>(*stmtExpr.body)) {
     auto parserExprRef = std::get<ParserExprRef>(*stmtExpr.body);
     auto exprRefExpr = this->_nodeExpr(parserExprRef.expr, nullptr, varStack);
@@ -1238,6 +1252,43 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     } else if (exprLit.body.type == TK_LIT_STR) {
       return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("str"));
     }
+  } else if (std::holds_alternative<ParserExprMap>(*stmtExpr.body)) {
+    auto actualTargetType = targetType == nullptr ? static_cast<Type *>(nullptr) : Type::actual(targetType);
+    auto realTargetType = static_cast<Type *>(nullptr);
+
+    if (actualTargetType != nullptr && actualTargetType->isMap()) {
+      realTargetType = actualTargetType;
+    } else if (actualTargetType != nullptr && actualTargetType->isOpt() && std::get<TypeOptional>(actualTargetType->body).type->isMap()) {
+      realTargetType = std::get<TypeOptional>(actualTargetType->body).type;
+    }
+
+    auto exprMap = std::get<ParserExprMap>(*stmtExpr.body);
+
+    if (exprMap.props.empty()) {
+      if (realTargetType == nullptr) {
+        throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1027);
+      }
+
+      return this->_wrapNodeExprType(stmtExpr, targetType, realTargetType);
+    }
+
+    auto keyType = this->typeMap.get("str");
+    auto valueType = realTargetType == nullptr
+      ? static_cast<Type *>(nullptr)
+      : std::get<TypeBodyMap>(realTargetType->body).valueType;
+
+    for (const auto &prop : exprMap.props) {
+      auto propInitType = this->_nodeExprType(prop.init, valueType);
+
+      if (valueType == nullptr) {
+        valueType = propInitType;
+      } else if (!valueType->matchNice(propInitType)) {
+        valueType = this->typeMap.unionAdd(valueType, propInitType);
+      }
+    }
+
+    auto wrapTargetType = realTargetType == nullptr ? this->typeMap.createMap(keyType, valueType) : realTargetType;
+    return this->_wrapNodeExprType(stmtExpr, targetType, wrapTargetType);
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto exprObj = std::get<ParserExprObj>(*stmtExpr.body);
     return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get(exprObj.id.val));
@@ -1310,6 +1361,12 @@ Type *AST::_type (const ParserType &type) {
     }
 
     throw Error(this->reader, typeId.id.start, typeId.id.end, E1010);
+  } else if (std::holds_alternative<ParserTypeMap>(*type.body)) {
+    auto typeBodyMap = std::get<ParserTypeMap>(*type.body);
+    auto keyType = this->_type(typeBodyMap.keyType);
+    auto valueType = this->_type(typeBodyMap.valueType);
+
+    return this->typeMap.createMap(keyType, valueType);
   } else if (std::holds_alternative<ParserTypeOptional>(*type.body)) {
     auto typeOptional = std::get<ParserTypeOptional>(*type.body);
     auto optionalType = this->_type(typeOptional.type);

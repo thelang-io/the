@@ -39,11 +39,13 @@
 #define E0017 "E0017 - New line is not allowed as character literal"
 
 #define E0100 "E0100 - Unexpected statement"
+// #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E0102 "E0102 - Expected variable type after colon"
 #define E0103 "E0103 - Expected left brace"
 #define E0104 "E0104 - Expected right brace"
 #define E0105 "E0105 - Unexpected statement in loop initialization"
 #define E0106 "E0106 - Expected semicolon after loop initialization"
+// #define E1007 "E1007 - Named arguments can't be followed by regular arguments"
 #define E0108 "E0108 - Expected semicolon after loop condition"
 #define E0109 "E0109 - Expected right parentheses"
 #define E0110 "E0110 - Expected property name after dot"
@@ -77,6 +79,7 @@
 #define E0138 "E0138 - Expected ternary body expression"
 #define E0139 "E0139 - Expected ternary alternative expression"
 #define E0140 "E0140 - Expected lvalue as left operand of assignment"
+// #define E0141 "E0141 - Called object expected to be a function"
 #define E0142 "E0142 - lvalue required as operand"
 #define E0143 "E0143 - Expected if condition expression"
 #define E0144 "E0144 - Loop initialization is mutable by default"
@@ -135,6 +138,7 @@
 #define E1024 "E1024 - Tried accessing non-existing enumeration member"
 #define E1025 "E1025 - Constant are allowed only on top-level scope"
 #define E1026 "E1026 - Non-mutable variable declaration is now allowed on top-level scope"
+#define E1027 "E1027 - Unable to deduce map literal value type"
 
 class Error : public std::exception {
  public:

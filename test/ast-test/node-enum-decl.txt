@@ -91,44 +91,29 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Animal_0" name="Animal">
-                <TypeField name="animalType">
+            <ExprObjProp id="animalType">
+              <NodeExpr>
+                <NodeExprType>
                   <TypeEnum codeName="AnimalType_0" name="AnimalType">
                     <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
                     <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
                   </TypeEnum>
-                </TypeField>
-                <TypeField name="name">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess prop="Cat" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+            <ExprObjProp id="name">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="str" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="animalType">
-                <NodeExpr>
-                  <NodeExprType>
-                    <TypeEnum codeName="AnimalType_0" name="AnimalType">
-                      <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
-                      <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
-                    </TypeEnum>
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprAccess prop="Cat" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-              <ExprObjProp id="name">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="str" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="STR" value="\"Sam\"" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"Sam\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>
@@ -167,63 +152,48 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Animal_0" name="Animal">
-                <TypeField name="animalType">
+            <ExprObjProp id="animalType">
+              <NodeExpr>
+                <NodeExprType>
                   <TypeEnum codeName="AnimalType_0" name="AnimalType">
                     <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
                     <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
                   </TypeEnum>
-                </TypeField>
-                <TypeField name="name">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess prop="Dog">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                          <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                          <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                        </TypeEnum>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="AnimalType" codeName="AnimalType_0" ctxIgnored frame="1">
+                            <TypeEnum codeName="AnimalType_0" name="AnimalType">
+                              <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+                              <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+                            </TypeEnum>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+            <ExprObjProp id="name">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="str" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="animalType">
-                <NodeExpr>
-                  <NodeExprType>
-                    <TypeEnum codeName="AnimalType_0" name="AnimalType">
-                      <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
-                      <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
-                    </TypeEnum>
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprAccess prop="Dog">
-                      <NodeExpr>
-                        <NodeExprType>
-                          <TypeEnum codeName="AnimalType_0" name="AnimalType">
-                            <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
-                            <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
-                          </TypeEnum>
-                        </NodeExprType>
-                        <NodeExprBody>
-                          <ExprAccess>
-                            <Var name="AnimalType" codeName="AnimalType_0" ctxIgnored frame="1">
-                              <TypeEnum codeName="AnimalType_0" name="AnimalType">
-                                <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
-                                <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
-                              </TypeEnum>
-                            </Var>
-                          </ExprAccess>
-                        </NodeExprBody>
-                      </NodeExpr>
-                    </ExprAccess>
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-              <ExprObjProp id="name">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="str" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="STR" value="\"Sam\"" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"Sam\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

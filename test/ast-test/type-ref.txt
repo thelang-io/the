@@ -247,29 +247,20 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test_0" name="Test">
-                <TypeField name="a">
+            <ExprObjProp id="a">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="int" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="a">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="int" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprAccess>
-                      <Var name="a" codeName="a_0" frame="2">
-                        <BuiltinType name="int" />
-                      </Var>
-                    </ExprAccess>
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="a" codeName="a_0" frame="2">
+                      <BuiltinType name="int" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

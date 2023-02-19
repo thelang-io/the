@@ -1,0 +1,630 @@
+======= stdin =======
+main {
+  test := { "1": "2" }
+
+  a: str[str] = true ? {} : {}
+  b: str[str] = true ? {} : test
+  c: str[str] = true ? test : {}
+  d: str[str] = true ? test : test
+
+  ;true ? {} : test
+  ;true ? test : {}
+  ;true ? test : test
+}
+======= stdout =======
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test" codeName="test_0" frame="2">
+        <TypeMap name="map$0">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$0">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprMap>
+            <ExprMapProp id="1">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"2\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+          </ExprMap>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <TypeMap name="map$0">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$0">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprMap />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprMap />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" frame="2">
+        <TypeMap name="map$0">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$0">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprMap />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test" codeName="test_0" frame="2">
+                      <TypeMap name="map$0">
+                        <TypeMapKeyType>
+                          <BuiltinType name="str" />
+                        </TypeMapKeyType>
+                        <TypeMapValueType>
+                          <BuiltinType name="str" />
+                        </TypeMapValueType>
+                      </TypeMap>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="c" codeName="c_0" frame="2">
+        <TypeMap name="map$0">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$0">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test" codeName="test_0" frame="2">
+                      <TypeMap name="map$0">
+                        <TypeMapKeyType>
+                          <BuiltinType name="str" />
+                        </TypeMapKeyType>
+                        <TypeMapValueType>
+                          <BuiltinType name="str" />
+                        </TypeMapValueType>
+                      </TypeMap>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprMap />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="d" codeName="d_0" frame="2">
+        <TypeMap name="map$0">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$0">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCond>
+            <ExprCondCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="BOOL" value="true" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondCond>
+            <ExprCondBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test" codeName="test_0" frame="2">
+                      <TypeMap name="map$0">
+                        <TypeMapKeyType>
+                          <BuiltinType name="str" />
+                        </TypeMapKeyType>
+                        <TypeMapValueType>
+                          <BuiltinType name="str" />
+                        </TypeMapValueType>
+                      </TypeMap>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondBody>
+            <ExprCondAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test" codeName="test_0" frame="2">
+                      <TypeMap name="map$0">
+                        <TypeMapKeyType>
+                          <BuiltinType name="str" />
+                        </TypeMapKeyType>
+                        <TypeMapValueType>
+                          <BuiltinType name="str" />
+                        </TypeMapValueType>
+                      </TypeMap>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCondAlt>
+          </ExprCond>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeMap name="map$0">
+        <TypeMapKeyType>
+          <BuiltinType name="str" />
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <BuiltinType name="str" />
+        </TypeMapValueType>
+      </TypeMap>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeMap name="map$0">
+                <TypeMapKeyType>
+                  <BuiltinType name="str" />
+                </TypeMapKeyType>
+                <TypeMapValueType>
+                  <BuiltinType name="str" />
+                </TypeMapValueType>
+              </TypeMap>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprMap />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeMap name="map$0">
+                <TypeMapKeyType>
+                  <BuiltinType name="str" />
+                </TypeMapKeyType>
+                <TypeMapValueType>
+                  <BuiltinType name="str" />
+                </TypeMapValueType>
+              </TypeMap>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test" codeName="test_0" frame="2">
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeMap name="map$0">
+        <TypeMapKeyType>
+          <BuiltinType name="str" />
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <BuiltinType name="str" />
+        </TypeMapValueType>
+      </TypeMap>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeMap name="map$0">
+                <TypeMapKeyType>
+                  <BuiltinType name="str" />
+                </TypeMapKeyType>
+                <TypeMapValueType>
+                  <BuiltinType name="str" />
+                </TypeMapValueType>
+              </TypeMap>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test" codeName="test_0" frame="2">
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeMap name="map$0">
+                <TypeMapKeyType>
+                  <BuiltinType name="str" />
+                </TypeMapKeyType>
+                <TypeMapValueType>
+                  <BuiltinType name="str" />
+                </TypeMapValueType>
+              </TypeMap>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprMap />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <TypeMap name="map$0">
+        <TypeMapKeyType>
+          <BuiltinType name="str" />
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <BuiltinType name="str" />
+        </TypeMapValueType>
+      </TypeMap>
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCond>
+        <ExprCondCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="BOOL" value="true" />
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondCond>
+        <ExprCondBody>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeMap name="map$0">
+                <TypeMapKeyType>
+                  <BuiltinType name="str" />
+                </TypeMapKeyType>
+                <TypeMapValueType>
+                  <BuiltinType name="str" />
+                </TypeMapValueType>
+              </TypeMap>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test" codeName="test_0" frame="2">
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondBody>
+        <ExprCondAlt>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeMap name="map$0">
+                <TypeMapKeyType>
+                  <BuiltinType name="str" />
+                </TypeMapKeyType>
+                <TypeMapValueType>
+                  <BuiltinType name="str" />
+                </TypeMapValueType>
+              </TypeMap>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test" codeName="test_0" frame="2">
+                  <TypeMap name="map$0">
+                    <TypeMapKeyType>
+                      <BuiltinType name="str" />
+                    </TypeMapKeyType>
+                    <TypeMapValueType>
+                      <BuiltinType name="str" />
+                    </TypeMapValueType>
+                  </TypeMap>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCondAlt>
+      </ExprCond>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

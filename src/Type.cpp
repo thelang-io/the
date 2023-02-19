@@ -266,6 +266,10 @@ bool Type::isIntNumber () const {
   );
 }
 
+bool Type::isMap () const {
+  return std::holds_alternative<TypeBodyMap>(this->body);
+}
+
 bool Type::isMethod () const {
   return std::holds_alternative<TypeFn>(this->body) && std::get<TypeFn>(this->body).isMethod;
 }
@@ -285,6 +289,7 @@ bool Type::isObj () const {
     !this->isEnum() &&
     !this->isNumber() &&
     !this->isFn() &&
+    !this->isMap() &&
     !this->isOpt() &&
     !this->isRef() &&
     !this->isStr() &&
@@ -318,6 +323,7 @@ bool Type::isSafeForTernaryAlt () const {
   return this->isAny() ||
     this->isArray() ||
     this->isFn() ||
+    this->isMap() ||
     this->isObj() ||
     this->isOpt() ||
     this->isStr() ||
@@ -397,7 +403,9 @@ bool Type::matchNice (const Type *type) const {
       auto lhsRef = std::get<TypeRef>(type->body);
       return lhsRef.refType->matchNice(this);
     }
-  } else if (this->isArray() || type->isArray()) {
+  }
+
+  if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
     }
@@ -412,6 +420,15 @@ bool Type::matchNice (const Type *type) const {
     }
 
     return this->isInt() || type->isInt();
+  } else if (this->isMap() || type->isMap()) {
+    if (!this->isMap() || !type->isMap()) {
+      return false;
+    }
+
+    auto lhsMap = std::get<TypeBodyMap>(this->body);
+    auto rhsMap = std::get<TypeBodyMap>(type->body);
+
+    return lhsMap.keyType->matchNice(rhsMap.keyType) && lhsMap.valueType->matchNice(rhsMap.valueType);
   } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -538,6 +555,15 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     }
 
     return true;
+  } else if (this->isMap() || type->isMap()) {
+    if (!this->isMap() || !type->isMap()) {
+      return false;
+    }
+
+    auto lhsMap = std::get<TypeBodyMap>(this->body);
+    auto rhsMap = std::get<TypeBodyMap>(type->body);
+
+    return lhsMap.keyType->matchStrict(rhsMap.keyType) && lhsMap.valueType->matchStrict(rhsMap.valueType);
   } else if (this->isOpt() || type->isOpt()) {
     if (!this->isOpt() || !type->isOpt()) {
       return false;
@@ -597,6 +623,7 @@ bool Type::shouldBeFreed () const {
     this->isAny() ||
     this->isArray() ||
     this->isFn() ||
+    this->isMap() ||
     this->isObj() ||
     this->isOpt() ||
     this->isStr();
@@ -619,6 +646,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     typeName += "Enumerator";
   } else if (this->isFn()) {
     typeName += "Fn";
+  } else if (this->isMap()) {
+    typeName += "Map";
   } else if (this->isObj()) {
     typeName += "Obj";
   } else if (this->isOpt()) {
@@ -693,6 +722,15 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     result += std::string(indent + 2, ' ') + "<TypeFnReturnType>" EOL;
     result += typeFn.returnType->xml(indent + 4, parentTypes) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeFnReturnType>" EOL;
+  } else if (this->isMap()) {
+    auto typeMap = std::get<TypeBodyMap>(this->body);
+
+    result += std::string(indent + 2, ' ') + "<TypeMapKeyType>" EOL;
+    result += typeMap.keyType->xml(indent + 4, parentTypes) + EOL;
+    result += std::string(indent + 2, ' ') + "</TypeMapKeyType>" EOL;
+    result += std::string(indent + 2, ' ') + "<TypeMapValueType>" EOL;
+    result += typeMap.valueType->xml(indent + 4, parentTypes) + EOL;
+    result += std::string(indent + 2, ' ') + "</TypeMapValueType>" EOL;
   } else if (this->isObj()) {
     parentTypes.insert(this->codeName);
 
