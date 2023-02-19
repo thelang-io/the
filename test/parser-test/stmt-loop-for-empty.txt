@@ -6,6 +6,8 @@ loop ;; {
 
   i++
 }
+loop ;; {
+}
 ======= stdout =======
 <StmtLoop start="1:1" end="7:2">
   <StmtLoopBody>
@@ -42,4 +44,6 @@ loop ;; {
       </ExprUnaryOp>
     </ExprUnary>
   </StmtLoopBody>
+</StmtLoop>
+<StmtLoop start="8:1" end="9:2">
 </StmtLoop>

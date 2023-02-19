@@ -6,6 +6,11 @@ loop i < 5 {
   i += 2
   j *= i
 }
+loop Test {
+  a: int
+}
+loop Test {
+}
 ======= stdout =======
 <StmtLoop start="1:1" end="3:2">
   <StmtLoopCond>
@@ -93,4 +98,30 @@ loop i < 5 {
       </ExprAssignRight>
     </ExprAssign>
   </StmtLoopBody>
+</StmtLoop>
+<StmtLoop start="8:1" end="10:2">
+  <StmtLoopInit>
+    <ExprAccess start="8:6" end="8:10">
+      <Token type="ID" val="Test" start="8:6" end="8:10" />
+    </ExprAccess>
+  </StmtLoopInit>
+  <StmtLoopBody>
+    <StmtVarDecl start="9:3" end="9:9">
+      <StmtVarDeclId>
+        <Token type="ID" val="a" start="9:3" end="9:4" />
+      </StmtVarDeclId>
+      <StmtVarDeclType>
+        <TypeId start="9:6" end="9:9">
+          <Token type="ID" val="int" start="9:6" end="9:9" />
+        </TypeId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+  </StmtLoopBody>
+</StmtLoop>
+<StmtLoop start="11:1" end="12:2">
+  <StmtLoopInit>
+    <ExprAccess start="11:6" end="11:10">
+      <Token type="ID" val="Test" start="11:6" end="11:10" />
+    </ExprAccess>
+  </StmtLoopInit>
 </StmtLoop>

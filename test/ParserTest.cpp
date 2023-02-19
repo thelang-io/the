@@ -233,6 +233,7 @@ INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
   "throw-E0103-stmt-loop-parenthesized-missing-lbrace",
   "throw-E0105-stmt-loop-parenthesized-unexpected-init",
   "throw-E0105-stmt-loop-unexpected-init",
+  "throw-E0105-stmt-loop-unexpected-init-stmt-loop",
   "throw-E0106-stmt-loop-parenthesized-semi-after-init",
   "throw-E0106-stmt-loop-semi-after-init",
   "throw-E0108-stmt-loop-parenthesized-semi-after-condition",

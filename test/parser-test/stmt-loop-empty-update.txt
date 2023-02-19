@@ -1,9 +1,11 @@
 ======= stdin =======
 loop i := 0; i < 10; {
+}
+loop i := 0; i < 10; {
   i++
 }
 ======= stdout =======
-<StmtLoop start="1:1" end="3:2">
+<StmtLoop start="1:1" end="2:2">
   <StmtLoopInit>
     <StmtVarDecl start="1:6" end="1:12">
       <StmtVarDeclId>
@@ -33,15 +35,46 @@ loop i := 0; i < 10; {
       </ExprBinaryRight>
     </ExprBinary>
   </StmtLoopCond>
+</StmtLoop>
+<StmtLoop start="3:1" end="5:2">
+  <StmtLoopInit>
+    <StmtVarDecl start="3:6" end="3:12">
+      <StmtVarDeclId>
+        <Token type="ID" val="i" start="3:6" end="3:7" />
+      </StmtVarDeclId>
+      <StmtVarDeclInit>
+        <ExprLit start="3:11" end="3:12">
+          <Token type="LIT_INT_DEC" val="0" start="3:11" end="3:12" />
+        </ExprLit>
+      </StmtVarDeclInit>
+    </StmtVarDecl>
+  </StmtLoopInit>
+  <StmtLoopCond>
+    <ExprBinary start="3:14" end="3:20">
+      <ExprBinaryLeft>
+        <ExprAccess start="3:14" end="3:15">
+          <Token type="ID" val="i" start="3:14" end="3:15" />
+        </ExprAccess>
+      </ExprBinaryLeft>
+      <ExprBinaryOp>
+        <Token type="OP_LT" val="<" start="3:16" end="3:17" />
+      </ExprBinaryOp>
+      <ExprBinaryRight>
+        <ExprLit start="3:18" end="3:20">
+          <Token type="LIT_INT_DEC" val="10" start="3:18" end="3:20" />
+        </ExprLit>
+      </ExprBinaryRight>
+    </ExprBinary>
+  </StmtLoopCond>
   <StmtLoopBody>
-    <ExprUnary start="2:3" end="2:6">
+    <ExprUnary start="4:3" end="4:6">
       <ExprUnaryArg>
-        <ExprAccess start="2:3" end="2:4">
-          <Token type="ID" val="i" start="2:3" end="2:4" />
+        <ExprAccess start="4:3" end="4:4">
+          <Token type="ID" val="i" start="4:3" end="4:4" />
         </ExprAccess>
       </ExprUnaryArg>
       <ExprUnaryOp>
-        <Token type="OP_PLUS_PLUS" val="++" start="2:4" end="2:6" />
+        <Token type="OP_PLUS_PLUS" val="++" start="4:4" end="4:6" />
       </ExprUnaryOp>
     </ExprUnary>
   </StmtLoopBody>
