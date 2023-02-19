@@ -1,0 +1,6 @@
+======= stdin =======
+test := { "key1": }
+======= stderr =======
+/test:1:18: E0170 - Expected map property initializer
+  1 | test := { "key1": }
+    |                  ^

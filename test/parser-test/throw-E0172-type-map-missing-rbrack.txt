@@ -1,0 +1,6 @@
+======= stdin =======
+a: int[str ;
+======= stderr =======
+/test:1:11: E0172 - Expected right bracket after map key type
+  1 | a: int[str ;
+    |           ^

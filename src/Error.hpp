@@ -103,6 +103,11 @@
 #define E0165 "E0165 - Expected constant name after `const` keyword"
 #define E0166 "E0166 - Expected constant type after colon"
 #define E0167 "E0167 - Expected constant initializer"
+#define E0168 "E0168 - Expected map property name"
+#define E0169 "E0169 - Expected colon after map property name"
+#define E0170 "E0170 - Expected map property initializer"
+#define E0171 "E0171 - Only primitive types are allowed to be used as map key type"
+#define E0172 "E0172 - Expected right bracket after map key type"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

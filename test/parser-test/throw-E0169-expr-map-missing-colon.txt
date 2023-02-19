@@ -1,0 +1,6 @@
+======= stdin =======
+test := { "key1": "value1", "key2" = "value" }
+======= stderr =======
+/test:1:36: E0169 - Expected colon after map property name
+  1 | test := { "key1": "value1", "key2" = "value" }
+    |                                    ^

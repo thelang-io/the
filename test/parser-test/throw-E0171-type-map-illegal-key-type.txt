@@ -1,0 +1,6 @@
+======= stdin =======
+a: int[ int | str ]
+======= stderr =======
+/test:1:9: E0171 - Only primitive types are allowed to be used as map key type
+  1 | a: int[ int | str ]
+    |         ^~~~~~~~~

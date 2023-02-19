@@ -585,6 +585,50 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
     return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
   }
 
+  if (tok1.type == TK_OP_LBRACE) {
+    auto exprMapProps = std::vector<ParserExprMapProp>{};
+    auto [_2, tok2] = this->lexer->next();
+
+    while (tok2.type != TK_OP_RBRACE) {
+      if (tok2.type != TK_LIT_STR && !exprMapProps.empty()) {
+        throw Error(this->reader, tok2.start, E0168);
+      } else if (tok2.type != TK_LIT_STR) {
+        this->lexer->seek(loc1);
+        return std::nullopt;
+      }
+
+      auto [_3, tok3] = this->lexer->next();
+
+      if (tok3.type != TK_OP_COLON && !exprMapProps.empty()) {
+        throw Error(this->reader, tok3.start, E0169);
+      } else if (tok3.type != TK_OP_COLON) {
+        this->lexer->seek(loc1);
+        return std::nullopt;
+      }
+
+      auto propInit = this->_stmtExpr();
+
+      if (propInit == std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0170);
+      }
+
+      auto propNameLit = ParserExprLit{tok2};
+      auto propName = ParserStmtExpr{std::make_shared<ParserExpr>(propNameLit), false, tok1.start, this->lexer->loc};
+
+      exprMapProps.push_back(ParserExprMapProp{propName, *propInit});
+      std::tie(_2, tok2) = this->lexer->next();
+
+      if (tok2.type == TK_OP_COMMA) {
+        std::tie(_2, tok2) = this->lexer->next();
+      }
+    }
+
+    auto exprMap = ParserExprMap{exprMapProps};
+    auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprMap), false, tok1.start, this->lexer->loc};
+
+    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
+  }
+
   if (tok1.type == TK_OP_LBRACK) {
     auto [loc2, tok2] = this->lexer->next();
     auto exprArrayElements = std::vector<ParserStmtExpr>{};
@@ -1274,7 +1318,23 @@ ParserType Parser::_wrapType (const ParserType &type) {
 
     if (tok2.type != TK_OP_RBRACK) {
       this->lexer->seek(loc2);
-      throw Error(this->reader, this->lexer->loc, E0151);
+      auto keyType = this->_type();
+
+      if (keyType == std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0151);
+      } else if (!std::holds_alternative<ParserTypeId>(*keyType->body)) {
+        throw Error(this->reader, keyType->start, keyType->end, E0171);
+      }
+
+      auto [loc3, tok3] = this->lexer->next();
+
+      if (tok3.type != TK_OP_RBRACK) {
+        this->lexer->seek(loc3);
+        throw Error(this->reader, this->lexer->loc, E0172);
+      }
+
+      auto typeMap = ParserTypeMap{*keyType, type};
+      return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeMap), false, type.start, this->lexer->loc});
     }
 
     auto typeArray = ParserTypeArray{type};

@@ -1,0 +1,111 @@
+======= stdin =======
+a := {
+  "t": {
+    "t1": 'z',
+    "t2": 3.14,
+    "t3": "Thing",
+    "t4": -1
+  },
+  "ta": a,
+  "tp": 2
+}
+======= stdout =======
+<StmtVarDecl start="1:1" end="10:2">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprMap start="1:6" end="10:2">
+      <ExprMapProp>
+        <ExprMapPropName>
+          <ExprLit start="1:6" end="7:4">
+            <Token type="LIT_STR" val="\"t\"" start="2:3" end="2:6" />
+          </ExprLit>
+        </ExprMapPropName>
+        <ExprMapPropInit>
+          <ExprMap start="2:8" end="7:4">
+            <ExprMapProp>
+              <ExprMapPropName>
+                <ExprLit start="2:8" end="3:14">
+                  <Token type="LIT_STR" val="\"t1\"" start="3:5" end="3:9" />
+                </ExprLit>
+              </ExprMapPropName>
+              <ExprMapPropInit>
+                <ExprLit start="3:11" end="3:14">
+                  <Token type="LIT_CHAR" val="'z'" start="3:11" end="3:14" />
+                </ExprLit>
+              </ExprMapPropInit>
+            </ExprMapProp>
+            <ExprMapProp>
+              <ExprMapPropName>
+                <ExprLit start="2:8" end="4:15">
+                  <Token type="LIT_STR" val="\"t2\"" start="4:5" end="4:9" />
+                </ExprLit>
+              </ExprMapPropName>
+              <ExprMapPropInit>
+                <ExprLit start="4:11" end="4:15">
+                  <Token type="LIT_FLOAT" val="3.14" start="4:11" end="4:15" />
+                </ExprLit>
+              </ExprMapPropInit>
+            </ExprMapProp>
+            <ExprMapProp>
+              <ExprMapPropName>
+                <ExprLit start="2:8" end="5:18">
+                  <Token type="LIT_STR" val="\"t3\"" start="5:5" end="5:9" />
+                </ExprLit>
+              </ExprMapPropName>
+              <ExprMapPropInit>
+                <ExprLit start="5:11" end="5:18">
+                  <Token type="LIT_STR" val="\"Thing\"" start="5:11" end="5:18" />
+                </ExprLit>
+              </ExprMapPropInit>
+            </ExprMapProp>
+            <ExprMapProp>
+              <ExprMapPropName>
+                <ExprLit start="2:8" end="6:13">
+                  <Token type="LIT_STR" val="\"t4\"" start="6:5" end="6:9" />
+                </ExprLit>
+              </ExprMapPropName>
+              <ExprMapPropInit>
+                <ExprUnary start="6:11" end="6:13" prefix>
+                  <ExprUnaryArg>
+                    <ExprLit start="6:12" end="6:13">
+                      <Token type="LIT_INT_DEC" val="1" start="6:12" end="6:13" />
+                    </ExprLit>
+                  </ExprUnaryArg>
+                  <ExprUnaryOp>
+                    <Token type="OP_MINUS" val="-" start="6:11" end="6:12" />
+                  </ExprUnaryOp>
+                </ExprUnary>
+              </ExprMapPropInit>
+            </ExprMapProp>
+          </ExprMap>
+        </ExprMapPropInit>
+      </ExprMapProp>
+      <ExprMapProp>
+        <ExprMapPropName>
+          <ExprLit start="1:6" end="8:10">
+            <Token type="LIT_STR" val="\"ta\"" start="8:3" end="8:7" />
+          </ExprLit>
+        </ExprMapPropName>
+        <ExprMapPropInit>
+          <ExprAccess start="8:9" end="8:10">
+            <Token type="ID" val="a" start="8:9" end="8:10" />
+          </ExprAccess>
+        </ExprMapPropInit>
+      </ExprMapProp>
+      <ExprMapProp>
+        <ExprMapPropName>
+          <ExprLit start="1:6" end="9:10">
+            <Token type="LIT_STR" val="\"tp\"" start="9:3" end="9:7" />
+          </ExprLit>
+        </ExprMapPropName>
+        <ExprMapPropInit>
+          <ExprLit start="9:9" end="9:10">
+            <Token type="LIT_INT_DEC" val="2" start="9:9" end="9:10" />
+          </ExprLit>
+        </ExprMapPropInit>
+      </ExprMapProp>
+    </ExprMap>
+  </StmtVarDeclInit>
+</StmtVarDecl>
