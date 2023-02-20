@@ -68,10 +68,10 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct str __THE_0_a, struct str __
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  str_free((struct str) o->__THE_0_a);
-  str_free((struct str) o->__THE_0_b);
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  str_free((struct str) n->__THE_0_a);
+  str_free((struct str) n->__THE_0_b);
+  free(n);
 }
 
 int main () {

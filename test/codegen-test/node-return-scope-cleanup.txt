@@ -147,20 +147,20 @@ struct str {
 };
 
 struct __THE_1_array_str;
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
 
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_fn$0P {
-  struct __THE_1_array_str n0;
-};
 struct __THE_1_fn$0 {
   void (*f) (void *, struct __THE_1_fn$0P);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$0P {
+  struct __THE_1_array_str n0;
 };
 
 void *alloc (size_t);

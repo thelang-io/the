@@ -168,9 +168,9 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_t
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
-  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o->__THE_0_test2);
-  free(o);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) n->__THE_0_test2);
+  free(n);
 }
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct str __THE_0_s) {
   struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
@@ -178,21 +178,21 @@ struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct str __THE_0_s) {
   memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
   return r;
 }
-struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *o) {
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *n) {
   struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
-  struct __THE_1_Test2_0 s = {str_copy(o->__THE_0_s)};
+  struct __THE_1_Test2_0 s = {str_copy(n->__THE_0_s)};
   memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
   return r;
 }
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
-  str_free((struct str) o->__THE_0_s);
-  free(o);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
+  str_free((struct str) n->__THE_0_s);
+  free(n);
 }
 struct str __THE_1_testCall_0 (void *px) {
   return str_alloc("call");
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);

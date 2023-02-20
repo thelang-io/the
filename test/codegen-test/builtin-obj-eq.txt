@@ -295,20 +295,20 @@ struct __THE_1_TestArrInt_0 *__THE_1_TestArrInt_0_alloc (struct __THE_1_array_in
   memcpy(r, &s, sizeof(struct __THE_1_TestArrInt_0));
   return r;
 }
-bool __THE_1_TestArrInt_0_eq (struct __THE_1_TestArrInt_0 *o1, struct __THE_1_TestArrInt_0 *o2) {
-  bool r = __THE_1_array_int_eq(__THE_1_array_int_copy(o1->__THE_0_a), __THE_1_array_int_copy(o2->__THE_0_a));
-  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) o1);
-  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) o2);
+bool __THE_1_TestArrInt_0_eq (struct __THE_1_TestArrInt_0 *n1, struct __THE_1_TestArrInt_0 *n2) {
+  bool r = __THE_1_array_int_eq(__THE_1_array_int_copy(n1->__THE_0_a), __THE_1_array_int_copy(n2->__THE_0_a));
+  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) n1);
+  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) n2);
   return r;
 }
-void __THE_1_TestArrInt_0_free (struct __THE_1_TestArrInt_0 *o) {
-  __THE_1_array_int_free((struct __THE_1_array_int) o->__THE_0_a);
-  free(o);
+void __THE_1_TestArrInt_0_free (struct __THE_1_TestArrInt_0 *n) {
+  __THE_1_array_int_free((struct __THE_1_array_int) n->__THE_0_a);
+  free(n);
 }
-bool __THE_1_TestArrInt_0_ne (struct __THE_1_TestArrInt_0 *o1, struct __THE_1_TestArrInt_0 *o2) {
-  bool r = __THE_1_array_int_ne(__THE_1_array_int_copy(o1->__THE_0_a), __THE_1_array_int_copy(o2->__THE_0_a));
-  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) o1);
-  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) o2);
+bool __THE_1_TestArrInt_0_ne (struct __THE_1_TestArrInt_0 *n1, struct __THE_1_TestArrInt_0 *n2) {
+  bool r = __THE_1_array_int_ne(__THE_1_array_int_copy(n1->__THE_0_a), __THE_1_array_int_copy(n2->__THE_0_a));
+  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) n1);
+  __THE_1_TestArrInt_0_free((struct __THE_1_TestArrInt_0 *) n2);
   return r;
 }
 struct __THE_1_TestBool_0 *__THE_1_TestBool_0_alloc (bool __THE_0_a) {
@@ -317,19 +317,19 @@ struct __THE_1_TestBool_0 *__THE_1_TestBool_0_alloc (bool __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestBool_0));
   return r;
 }
-bool __THE_1_TestBool_0_eq (struct __THE_1_TestBool_0 *o1, struct __THE_1_TestBool_0 *o2) {
-  bool r = o1->__THE_0_a == o2->__THE_0_a;
-  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) o1);
-  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) o2);
+bool __THE_1_TestBool_0_eq (struct __THE_1_TestBool_0 *n1, struct __THE_1_TestBool_0 *n2) {
+  bool r = n1->__THE_0_a == n2->__THE_0_a;
+  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) n1);
+  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) n2);
   return r;
 }
-void __THE_1_TestBool_0_free (struct __THE_1_TestBool_0 *o) {
-  free(o);
+void __THE_1_TestBool_0_free (struct __THE_1_TestBool_0 *n) {
+  free(n);
 }
-bool __THE_1_TestBool_0_ne (struct __THE_1_TestBool_0 *o1, struct __THE_1_TestBool_0 *o2) {
-  bool r = o1->__THE_0_a != o2->__THE_0_a;
-  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) o1);
-  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) o2);
+bool __THE_1_TestBool_0_ne (struct __THE_1_TestBool_0 *n1, struct __THE_1_TestBool_0 *n2) {
+  bool r = n1->__THE_0_a != n2->__THE_0_a;
+  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) n1);
+  __THE_1_TestBool_0_free((struct __THE_1_TestBool_0 *) n2);
   return r;
 }
 struct __THE_1_TestChar_0 *__THE_1_TestChar_0_alloc (char __THE_0_a) {
@@ -338,19 +338,19 @@ struct __THE_1_TestChar_0 *__THE_1_TestChar_0_alloc (char __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestChar_0));
   return r;
 }
-bool __THE_1_TestChar_0_eq (struct __THE_1_TestChar_0 *o1, struct __THE_1_TestChar_0 *o2) {
-  bool r = o1->__THE_0_a == o2->__THE_0_a;
-  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) o1);
-  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) o2);
+bool __THE_1_TestChar_0_eq (struct __THE_1_TestChar_0 *n1, struct __THE_1_TestChar_0 *n2) {
+  bool r = n1->__THE_0_a == n2->__THE_0_a;
+  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) n1);
+  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) n2);
   return r;
 }
-void __THE_1_TestChar_0_free (struct __THE_1_TestChar_0 *o) {
-  free(o);
+void __THE_1_TestChar_0_free (struct __THE_1_TestChar_0 *n) {
+  free(n);
 }
-bool __THE_1_TestChar_0_ne (struct __THE_1_TestChar_0 *o1, struct __THE_1_TestChar_0 *o2) {
-  bool r = o1->__THE_0_a != o2->__THE_0_a;
-  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) o1);
-  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) o2);
+bool __THE_1_TestChar_0_ne (struct __THE_1_TestChar_0 *n1, struct __THE_1_TestChar_0 *n2) {
+  bool r = n1->__THE_0_a != n2->__THE_0_a;
+  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) n1);
+  __THE_1_TestChar_0_free((struct __THE_1_TestChar_0 *) n2);
   return r;
 }
 struct __THE_1_TestFloat_0 *__THE_1_TestFloat_0_alloc (double __THE_0_a) {
@@ -359,19 +359,19 @@ struct __THE_1_TestFloat_0 *__THE_1_TestFloat_0_alloc (double __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestFloat_0));
   return r;
 }
-bool __THE_1_TestFloat_0_eq (struct __THE_1_TestFloat_0 *o1, struct __THE_1_TestFloat_0 *o2) {
-  bool r = o1->__THE_0_a == o2->__THE_0_a;
-  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) o1);
-  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) o2);
+bool __THE_1_TestFloat_0_eq (struct __THE_1_TestFloat_0 *n1, struct __THE_1_TestFloat_0 *n2) {
+  bool r = n1->__THE_0_a == n2->__THE_0_a;
+  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) n1);
+  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) n2);
   return r;
 }
-void __THE_1_TestFloat_0_free (struct __THE_1_TestFloat_0 *o) {
-  free(o);
+void __THE_1_TestFloat_0_free (struct __THE_1_TestFloat_0 *n) {
+  free(n);
 }
-bool __THE_1_TestFloat_0_ne (struct __THE_1_TestFloat_0 *o1, struct __THE_1_TestFloat_0 *o2) {
-  bool r = o1->__THE_0_a != o2->__THE_0_a;
-  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) o1);
-  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) o2);
+bool __THE_1_TestFloat_0_ne (struct __THE_1_TestFloat_0 *n1, struct __THE_1_TestFloat_0 *n2) {
+  bool r = n1->__THE_0_a != n2->__THE_0_a;
+  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) n1);
+  __THE_1_TestFloat_0_free((struct __THE_1_TestFloat_0 *) n2);
   return r;
 }
 struct __THE_1_TestInt_0 *__THE_1_TestInt_0_alloc (int32_t __THE_0_a) {
@@ -380,19 +380,19 @@ struct __THE_1_TestInt_0 *__THE_1_TestInt_0_alloc (int32_t __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestInt_0));
   return r;
 }
-bool __THE_1_TestInt_0_eq (struct __THE_1_TestInt_0 *o1, struct __THE_1_TestInt_0 *o2) {
-  bool r = o1->__THE_0_a == o2->__THE_0_a;
-  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) o1);
-  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) o2);
+bool __THE_1_TestInt_0_eq (struct __THE_1_TestInt_0 *n1, struct __THE_1_TestInt_0 *n2) {
+  bool r = n1->__THE_0_a == n2->__THE_0_a;
+  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) n1);
+  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) n2);
   return r;
 }
-void __THE_1_TestInt_0_free (struct __THE_1_TestInt_0 *o) {
-  free(o);
+void __THE_1_TestInt_0_free (struct __THE_1_TestInt_0 *n) {
+  free(n);
 }
-bool __THE_1_TestInt_0_ne (struct __THE_1_TestInt_0 *o1, struct __THE_1_TestInt_0 *o2) {
-  bool r = o1->__THE_0_a != o2->__THE_0_a;
-  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) o1);
-  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) o2);
+bool __THE_1_TestInt_0_ne (struct __THE_1_TestInt_0 *n1, struct __THE_1_TestInt_0 *n2) {
+  bool r = n1->__THE_0_a != n2->__THE_0_a;
+  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) n1);
+  __THE_1_TestInt_0_free((struct __THE_1_TestInt_0 *) n2);
   return r;
 }
 int32_t *__THE_1_opt_int_alloc (int32_t n) {
@@ -428,20 +428,20 @@ struct __THE_1_TestOptInt_0 *__THE_1_TestOptInt_0_alloc (int32_t *__THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestOptInt_0));
   return r;
 }
-bool __THE_1_TestOptInt_0_eq (struct __THE_1_TestOptInt_0 *o1, struct __THE_1_TestOptInt_0 *o2) {
-  bool r = __THE_1_opt_int_eq(__THE_1_opt_int_copy(o1->__THE_0_a), __THE_1_opt_int_copy(o2->__THE_0_a));
-  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) o1);
-  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) o2);
+bool __THE_1_TestOptInt_0_eq (struct __THE_1_TestOptInt_0 *n1, struct __THE_1_TestOptInt_0 *n2) {
+  bool r = __THE_1_opt_int_eq(__THE_1_opt_int_copy(n1->__THE_0_a), __THE_1_opt_int_copy(n2->__THE_0_a));
+  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) n1);
+  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) n2);
   return r;
 }
-void __THE_1_TestOptInt_0_free (struct __THE_1_TestOptInt_0 *o) {
-  __THE_1_opt_int_free((int32_t *) o->__THE_0_a);
-  free(o);
+void __THE_1_TestOptInt_0_free (struct __THE_1_TestOptInt_0 *n) {
+  __THE_1_opt_int_free((int32_t *) n->__THE_0_a);
+  free(n);
 }
-bool __THE_1_TestOptInt_0_ne (struct __THE_1_TestOptInt_0 *o1, struct __THE_1_TestOptInt_0 *o2) {
-  bool r = __THE_1_opt_int_ne(__THE_1_opt_int_copy(o1->__THE_0_a), __THE_1_opt_int_copy(o2->__THE_0_a));
-  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) o1);
-  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) o2);
+bool __THE_1_TestOptInt_0_ne (struct __THE_1_TestOptInt_0 *n1, struct __THE_1_TestOptInt_0 *n2) {
+  bool r = __THE_1_opt_int_ne(__THE_1_opt_int_copy(n1->__THE_0_a), __THE_1_opt_int_copy(n2->__THE_0_a));
+  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) n1);
+  __THE_1_TestOptInt_0_free((struct __THE_1_TestOptInt_0 *) n2);
   return r;
 }
 int32_t **__THE_1_opt_ref_int_alloc (int32_t *n) {
@@ -477,20 +477,20 @@ struct __THE_1_TestOptRefInt_0 *__THE_1_TestOptRefInt_0_alloc (int32_t **__THE_0
   memcpy(r, &s, sizeof(struct __THE_1_TestOptRefInt_0));
   return r;
 }
-bool __THE_1_TestOptRefInt_0_eq (struct __THE_1_TestOptRefInt_0 *o1, struct __THE_1_TestOptRefInt_0 *o2) {
-  bool r = __THE_1_opt_ref_int_eq(__THE_1_opt_ref_int_copy(o1->__THE_0_a), __THE_1_opt_ref_int_copy(o2->__THE_0_a));
-  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) o1);
-  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) o2);
+bool __THE_1_TestOptRefInt_0_eq (struct __THE_1_TestOptRefInt_0 *n1, struct __THE_1_TestOptRefInt_0 *n2) {
+  bool r = __THE_1_opt_ref_int_eq(__THE_1_opt_ref_int_copy(n1->__THE_0_a), __THE_1_opt_ref_int_copy(n2->__THE_0_a));
+  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) n1);
+  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) n2);
   return r;
 }
-void __THE_1_TestOptRefInt_0_free (struct __THE_1_TestOptRefInt_0 *o) {
-  __THE_1_opt_ref_int_free((int32_t **) o->__THE_0_a);
-  free(o);
+void __THE_1_TestOptRefInt_0_free (struct __THE_1_TestOptRefInt_0 *n) {
+  __THE_1_opt_ref_int_free((int32_t **) n->__THE_0_a);
+  free(n);
 }
-bool __THE_1_TestOptRefInt_0_ne (struct __THE_1_TestOptRefInt_0 *o1, struct __THE_1_TestOptRefInt_0 *o2) {
-  bool r = __THE_1_opt_ref_int_ne(__THE_1_opt_ref_int_copy(o1->__THE_0_a), __THE_1_opt_ref_int_copy(o2->__THE_0_a));
-  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) o1);
-  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) o2);
+bool __THE_1_TestOptRefInt_0_ne (struct __THE_1_TestOptRefInt_0 *n1, struct __THE_1_TestOptRefInt_0 *n2) {
+  bool r = __THE_1_opt_ref_int_ne(__THE_1_opt_ref_int_copy(n1->__THE_0_a), __THE_1_opt_ref_int_copy(n2->__THE_0_a));
+  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) n1);
+  __THE_1_TestOptRefInt_0_free((struct __THE_1_TestOptRefInt_0 *) n2);
   return r;
 }
 struct __THE_1_TestRefInt_0 *__THE_1_TestRefInt_0_alloc (int32_t *__THE_0_a) {
@@ -499,19 +499,19 @@ struct __THE_1_TestRefInt_0 *__THE_1_TestRefInt_0_alloc (int32_t *__THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestRefInt_0));
   return r;
 }
-bool __THE_1_TestRefInt_0_eq (struct __THE_1_TestRefInt_0 *o1, struct __THE_1_TestRefInt_0 *o2) {
-  bool r = o1->__THE_0_a == o2->__THE_0_a;
-  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) o1);
-  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) o2);
+bool __THE_1_TestRefInt_0_eq (struct __THE_1_TestRefInt_0 *n1, struct __THE_1_TestRefInt_0 *n2) {
+  bool r = n1->__THE_0_a == n2->__THE_0_a;
+  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) n1);
+  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) n2);
   return r;
 }
-void __THE_1_TestRefInt_0_free (struct __THE_1_TestRefInt_0 *o) {
-  free(o);
+void __THE_1_TestRefInt_0_free (struct __THE_1_TestRefInt_0 *n) {
+  free(n);
 }
-bool __THE_1_TestRefInt_0_ne (struct __THE_1_TestRefInt_0 *o1, struct __THE_1_TestRefInt_0 *o2) {
-  bool r = o1->__THE_0_a != o2->__THE_0_a;
-  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) o1);
-  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) o2);
+bool __THE_1_TestRefInt_0_ne (struct __THE_1_TestRefInt_0 *n1, struct __THE_1_TestRefInt_0 *n2) {
+  bool r = n1->__THE_0_a != n2->__THE_0_a;
+  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) n1);
+  __THE_1_TestRefInt_0_free((struct __THE_1_TestRefInt_0 *) n2);
   return r;
 }
 struct __THE_1_TestRefOptInt_0 *__THE_1_TestRefOptInt_0_alloc (int32_t **__THE_0_a) {
@@ -520,19 +520,19 @@ struct __THE_1_TestRefOptInt_0 *__THE_1_TestRefOptInt_0_alloc (int32_t **__THE_0
   memcpy(r, &s, sizeof(struct __THE_1_TestRefOptInt_0));
   return r;
 }
-bool __THE_1_TestRefOptInt_0_eq (struct __THE_1_TestRefOptInt_0 *o1, struct __THE_1_TestRefOptInt_0 *o2) {
-  bool r = __THE_1_opt_int_eq(__THE_1_opt_int_copy(o1->__THE_0_a), __THE_1_opt_int_copy(o2->__THE_0_a));
-  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) o1);
-  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) o2);
+bool __THE_1_TestRefOptInt_0_eq (struct __THE_1_TestRefOptInt_0 *n1, struct __THE_1_TestRefOptInt_0 *n2) {
+  bool r = __THE_1_opt_int_eq(__THE_1_opt_int_copy(n1->__THE_0_a), __THE_1_opt_int_copy(n2->__THE_0_a));
+  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) n1);
+  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) n2);
   return r;
 }
-void __THE_1_TestRefOptInt_0_free (struct __THE_1_TestRefOptInt_0 *o) {
-  free(o);
+void __THE_1_TestRefOptInt_0_free (struct __THE_1_TestRefOptInt_0 *n) {
+  free(n);
 }
-bool __THE_1_TestRefOptInt_0_ne (struct __THE_1_TestRefOptInt_0 *o1, struct __THE_1_TestRefOptInt_0 *o2) {
-  bool r = __THE_1_opt_int_ne(__THE_1_opt_int_copy(o1->__THE_0_a), __THE_1_opt_int_copy(o2->__THE_0_a));
-  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) o1);
-  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) o2);
+bool __THE_1_TestRefOptInt_0_ne (struct __THE_1_TestRefOptInt_0 *n1, struct __THE_1_TestRefOptInt_0 *n2) {
+  bool r = __THE_1_opt_int_ne(__THE_1_opt_int_copy(n1->__THE_0_a), __THE_1_opt_int_copy(n2->__THE_0_a));
+  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) n1);
+  __THE_1_TestRefOptInt_0_free((struct __THE_1_TestRefOptInt_0 *) n2);
   return r;
 }
 struct __THE_1_TestStr_0 *__THE_1_TestStr_0_alloc (struct str __THE_0_a) {
@@ -541,20 +541,20 @@ struct __THE_1_TestStr_0 *__THE_1_TestStr_0_alloc (struct str __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestStr_0));
   return r;
 }
-bool __THE_1_TestStr_0_eq (struct __THE_1_TestStr_0 *o1, struct __THE_1_TestStr_0 *o2) {
-  bool r = str_eq_str(str_copy(o1->__THE_0_a), str_copy(o2->__THE_0_a));
-  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) o1);
-  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) o2);
+bool __THE_1_TestStr_0_eq (struct __THE_1_TestStr_0 *n1, struct __THE_1_TestStr_0 *n2) {
+  bool r = str_eq_str(str_copy(n1->__THE_0_a), str_copy(n2->__THE_0_a));
+  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) n1);
+  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) n2);
   return r;
 }
-void __THE_1_TestStr_0_free (struct __THE_1_TestStr_0 *o) {
-  str_free((struct str) o->__THE_0_a);
-  free(o);
+void __THE_1_TestStr_0_free (struct __THE_1_TestStr_0 *n) {
+  str_free((struct str) n->__THE_0_a);
+  free(n);
 }
-bool __THE_1_TestStr_0_ne (struct __THE_1_TestStr_0 *o1, struct __THE_1_TestStr_0 *o2) {
-  bool r = str_ne_str(str_copy(o1->__THE_0_a), str_copy(o2->__THE_0_a));
-  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) o1);
-  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) o2);
+bool __THE_1_TestStr_0_ne (struct __THE_1_TestStr_0 *n1, struct __THE_1_TestStr_0 *n2) {
+  bool r = str_ne_str(str_copy(n1->__THE_0_a), str_copy(n2->__THE_0_a));
+  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) n1);
+  __THE_1_TestStr_0_free((struct __THE_1_TestStr_0 *) n2);
   return r;
 }
 

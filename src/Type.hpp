@@ -169,6 +169,8 @@ struct Type {
   bool matchNice (const Type *) const;
   bool matchStrict (const Type *, bool = false) const;
   bool shouldBeFreed () const;
+  // todo test
+  std::string vaArgCode (const std::string &) const;
   std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
 };
 

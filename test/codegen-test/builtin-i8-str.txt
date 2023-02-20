@@ -122,14 +122,14 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int8_t __THE_0_i) {
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
-  free(o);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+  free(n);
 }
 int8_t __THE_1_testCall_0 (void *px) {
   return 1;
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);

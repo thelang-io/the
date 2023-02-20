@@ -260,8 +260,8 @@ struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, in
   memcpy(r, &s, sizeof(struct fs_Stats));
   return r;
 }
-void fs_Stats_free (struct fs_Stats *o) {
-  free(o);
+void fs_Stats_free (struct fs_Stats *n) {
+  free(n);
 }
 
 int main () {

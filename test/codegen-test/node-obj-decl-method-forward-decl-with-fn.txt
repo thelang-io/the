@@ -117,7 +117,7 @@ void str_free (struct str s) {
   free(s.d);
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_testGo_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_testGo_0X x) {
   size_t l = sizeof(struct __THE_1_testGo_0X);
@@ -142,8 +142,8 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
 void __THE_1_TestSDgo_0 (void *px, struct __THE_1_Test_0 **__THE_0_self_0) {
   (*__THE_0_self_0)->__THE_0_a += 1;

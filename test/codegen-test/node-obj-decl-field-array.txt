@@ -244,28 +244,28 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_array_int __THE_0_a,
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *n) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {__THE_1_array_int_copy(o->__THE_0_a), __THE_1_array_str_copy(o->__THE_0_b)};
+  struct __THE_1_Test_0 s = {__THE_1_array_int_copy(n->__THE_0_a), __THE_1_array_str_copy(n->__THE_0_b)};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  __THE_1_array_int_free((struct __THE_1_array_int) o->__THE_0_a);
-  __THE_1_array_str_free((struct __THE_1_array_str) o->__THE_0_b);
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  __THE_1_array_int_free((struct __THE_1_array_int) n->__THE_0_a);
+  __THE_1_array_str_free((struct __THE_1_array_str) n->__THE_0_b);
+  free(n);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct __THE_1_Test_0 *o2) {
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
-  return o2;
+struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct __THE_1_Test_0 *n2) {
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) n1);
+  return n2;
 }
-struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *o) {
+struct str __THE_1_Test_0_str (struct __THE_1_Test_0 *n) {
   struct str r = str_alloc("Test{");
   r = str_concat_cstr(r, "a: ");
-  r = str_concat_str(r, __THE_1_array_int_str(__THE_1_array_int_copy(o->__THE_0_a)));
+  r = str_concat_str(r, __THE_1_array_int_str(__THE_1_array_int_copy(n->__THE_0_a)));
   r = str_concat_cstr(r, ", b: ");
-  r = str_concat_str(r, __THE_1_array_str_str(__THE_1_array_str_copy(o->__THE_0_b)));
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o);
+  r = str_concat_str(r, __THE_1_array_str_str(__THE_1_array_str_copy(n->__THE_0_b)));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) n);
   return str_concat_cstr(r, "}");
 }
 

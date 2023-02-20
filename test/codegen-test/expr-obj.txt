@@ -128,8 +128,8 @@ struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_
   memcpy(r, &s, sizeof(struct __THE_1_Point_0));
   return r;
 }
-void __THE_1_Point_0_free (struct __THE_1_Point_0 *o) {
-  free(o);
+void __THE_1_Point_0_free (struct __THE_1_Point_0 *n) {
+  free(n);
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
@@ -137,8 +137,8 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t __THE_0_age) {
   struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
@@ -146,9 +146,9 @@ struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t 
   memcpy(r, &s, sizeof(struct __THE_1_Human_0));
   return r;
 }
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
-  str_free((struct str) o->__THE_0_name);
-  free(o);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
+  str_free((struct str) n->__THE_0_name);
+  free(n);
 }
 
 int main () {

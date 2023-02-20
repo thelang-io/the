@@ -59,10 +59,10 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   return (struct __THE_1_fn$0) {n.f, x, n.l};
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 struct __THE_1_fn$0 __THE_1_fn$0_realloc (struct __THE_1_fn$0 n1, struct __THE_1_fn$0 n2) {
-  if (n1.x != NULL) free(n1.x);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) n1);
   return n2;
 }
 void __THE_1_test_0 (void *px) {

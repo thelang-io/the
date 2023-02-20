@@ -629,6 +629,10 @@ bool Type::shouldBeFreed () const {
     this->isStr();
 }
 
+std::string Type::vaArgCode (const std::string &code) const {
+  return this->isSmallForVarArg() ? this->isF32() ? "double" : "int" : code;
+}
+
 std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) const {
   if (this->builtin) {
     return std::string(indent, ' ') + R"(<BuiltinType name=")" + this->name + R"(" />)";

@@ -141,15 +141,15 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer __THE_0_b) {
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
-  buffer_free((struct buffer) o->__THE_0_b);
-  free(o);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+  buffer_free((struct buffer) n->__THE_0_b);
+  free(n);
 }
 struct buffer __THE_1_testCall_0 (void *px) {
   return str_to_buffer(str_alloc("Aaron Delasy"));
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);

@@ -199,48 +199,48 @@ struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, in
   memcpy(r, &s, sizeof(struct fs_Stats));
   return r;
 }
-void fs_Stats_free (struct fs_Stats *o) {
-  free(o);
+void fs_Stats_free (struct fs_Stats *n) {
+  free(n);
 }
-struct str fs_Stats_str (struct fs_Stats *o) {
+struct str fs_Stats_str (struct fs_Stats *n) {
   struct str r = str_alloc("fs_Stats{");
   r = str_concat_cstr(r, "dev: ");
-  r = str_concat_str(r, u64_str(o->__THE_0_dev));
+  r = str_concat_str(r, u64_str(n->__THE_0_dev));
   r = str_concat_cstr(r, ", mode: ");
-  r = str_concat_str(r, u32_str(o->__THE_0_mode));
+  r = str_concat_str(r, u32_str(n->__THE_0_mode));
   r = str_concat_cstr(r, ", nlink: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_nlink));
+  r = str_concat_str(r, i64_str(n->__THE_0_nlink));
   r = str_concat_cstr(r, ", ino: ");
-  r = str_concat_str(r, u64_str(o->__THE_0_ino));
+  r = str_concat_str(r, u64_str(n->__THE_0_ino));
   r = str_concat_cstr(r, ", uid: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_uid));
+  r = str_concat_str(r, i32_str(n->__THE_0_uid));
   r = str_concat_cstr(r, ", gid: ");
-  r = str_concat_str(r, i32_str(o->__THE_0_gid));
+  r = str_concat_str(r, i32_str(n->__THE_0_gid));
   r = str_concat_cstr(r, ", rdev: ");
-  r = str_concat_str(r, u64_str(o->__THE_0_rdev));
+  r = str_concat_str(r, u64_str(n->__THE_0_rdev));
   r = str_concat_cstr(r, ", atime: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_atime));
+  r = str_concat_str(r, i64_str(n->__THE_0_atime));
   r = str_concat_cstr(r, ", atimeNs: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_atimeNs));
+  r = str_concat_str(r, i64_str(n->__THE_0_atimeNs));
   r = str_concat_cstr(r, ", mtime: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_mtime));
+  r = str_concat_str(r, i64_str(n->__THE_0_mtime));
   r = str_concat_cstr(r, ", mtimeNs: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_mtimeNs));
+  r = str_concat_str(r, i64_str(n->__THE_0_mtimeNs));
   r = str_concat_cstr(r, ", ctime: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_ctime));
+  r = str_concat_str(r, i64_str(n->__THE_0_ctime));
   r = str_concat_cstr(r, ", ctimeNs: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_ctimeNs));
+  r = str_concat_str(r, i64_str(n->__THE_0_ctimeNs));
   r = str_concat_cstr(r, ", btime: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_btime));
+  r = str_concat_str(r, i64_str(n->__THE_0_btime));
   r = str_concat_cstr(r, ", btimeNs: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_btimeNs));
+  r = str_concat_str(r, i64_str(n->__THE_0_btimeNs));
   r = str_concat_cstr(r, ", size: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_size));
+  r = str_concat_str(r, i64_str(n->__THE_0_size));
   r = str_concat_cstr(r, ", blocks: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_blocks));
+  r = str_concat_str(r, i64_str(n->__THE_0_blocks));
   r = str_concat_cstr(r, ", blockSize: ");
-  r = str_concat_str(r, i64_str(o->__THE_0_blockSize));
-  fs_Stats_free((struct fs_Stats *) o);
+  r = str_concat_str(r, i64_str(n->__THE_0_blockSize));
+  fs_Stats_free((struct fs_Stats *) n);
   return str_concat_cstr(r, "}");
 }
 

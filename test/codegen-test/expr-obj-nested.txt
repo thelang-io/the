@@ -82,9 +82,9 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_t
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
-  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o->__THE_0_t);
-  free(o);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) n->__THE_0_t);
+  free(n);
 }
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (char __THE_0_t1, double __THE_0_t2, int32_t __THE_0_t3) {
   struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
@@ -92,18 +92,18 @@ struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (char __THE_0_t1, double __THE_0_t
   memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
   return r;
 }
-struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *o) {
+struct __THE_1_Test2_0 *__THE_1_Test2_0_copy (const struct __THE_1_Test2_0 *n) {
   struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
-  struct __THE_1_Test2_0 s = {o->__THE_0_t1, o->__THE_0_t2, o->__THE_0_t3};
+  struct __THE_1_Test2_0 s = {n->__THE_0_t1, n->__THE_0_t2, n->__THE_0_t3};
   memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
   return r;
 }
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *o) {
-  free(o);
+void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
+  free(n);
 }
-struct __THE_1_Test2_0 *__THE_1_Test2_0_realloc (struct __THE_1_Test2_0 *o1, struct __THE_1_Test2_0 *o2) {
-  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) o1);
-  return o2;
+struct __THE_1_Test2_0 *__THE_1_Test2_0_realloc (struct __THE_1_Test2_0 *n1, struct __THE_1_Test2_0 *n2) {
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) n1);
+  return n2;
 }
 
 int main () {

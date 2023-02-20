@@ -64,8 +64,8 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (enum __THE_1_Test2_0 __THE_0_a, e
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
-  free(o);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+  free(n);
 }
 
 int main () {

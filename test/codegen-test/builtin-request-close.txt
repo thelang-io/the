@@ -442,18 +442,18 @@ struct url_URL *url_parse (struct str s) {
   str_free(s);
   return url_URL_alloc(origin, protocol, host, hostname, port, path, pathname, search, hash);
 }
-void request_Header_free (struct request_Header *o) {
-  str_free((struct str) o->__THE_0_name);
-  str_free((struct str) o->__THE_0_value);
-  free(o);
+void request_Header_free (struct request_Header *n) {
+  str_free((struct str) n->__THE_0_name);
+  str_free((struct str) n->__THE_0_value);
+  free(n);
 }
-void request_Request_free (struct request_Request *o) {
-  request_close(&o);
-  free(o);
+void request_Request_free (struct request_Request *n) {
+  request_close(&n);
+  free(n);
 }
-struct request_Request *request_Request_realloc (struct request_Request *o1, struct request_Request *o2) {
-  request_Request_free((struct request_Request *) o1);
-  return o2;
+struct request_Request *request_Request_realloc (struct request_Request *n1, struct request_Request *n2) {
+  request_Request_free((struct request_Request *) n1);
+  return n2;
 }
 void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header n) {
   for (size_t i = 0; i < n.l; i++) request_Header_free((struct request_Header *) n.d[i]);
@@ -465,17 +465,17 @@ struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_pro
   memcpy(r, &s, sizeof(struct url_URL));
   return r;
 }
-void url_URL_free (struct url_URL *o) {
-  str_free((struct str) o->__THE_0_origin);
-  str_free((struct str) o->__THE_0_protocol);
-  str_free((struct str) o->__THE_0_host);
-  str_free((struct str) o->__THE_0_hostname);
-  str_free((struct str) o->__THE_0_port);
-  str_free((struct str) o->__THE_0_path);
-  str_free((struct str) o->__THE_0_pathname);
-  str_free((struct str) o->__THE_0_search);
-  str_free((struct str) o->__THE_0_hash);
-  free(o);
+void url_URL_free (struct url_URL *n) {
+  str_free((struct str) n->__THE_0_origin);
+  str_free((struct str) n->__THE_0_protocol);
+  str_free((struct str) n->__THE_0_host);
+  str_free((struct str) n->__THE_0_hostname);
+  str_free((struct str) n->__THE_0_port);
+  str_free((struct str) n->__THE_0_path);
+  str_free((struct str) n->__THE_0_pathname);
+  str_free((struct str) n->__THE_0_search);
+  str_free((struct str) n->__THE_0_hash);
+  free(n);
 }
 
 int main () {

@@ -183,24 +183,24 @@ struct __THE_1_Animal_0 *__THE_1_Animal_0_alloc (struct str __THE_0_name, int32_
   memcpy(r, &s, sizeof(struct __THE_1_Animal_0));
   return r;
 }
-struct __THE_1_Animal_0 *__THE_1_Animal_0_copy (const struct __THE_1_Animal_0 *o) {
+struct __THE_1_Animal_0 *__THE_1_Animal_0_copy (const struct __THE_1_Animal_0 *n) {
   struct __THE_1_Animal_0 *r = alloc(sizeof(struct __THE_1_Animal_0));
-  struct __THE_1_Animal_0 s = {str_copy(o->__THE_0_name), o->__THE_0_age};
+  struct __THE_1_Animal_0 s = {str_copy(n->__THE_0_name), n->__THE_0_age};
   memcpy(r, &s, sizeof(struct __THE_1_Animal_0));
   return r;
 }
-void __THE_1_Animal_0_free (struct __THE_1_Animal_0 *o) {
-  str_free((struct str) o->__THE_0_name);
-  free(o);
+void __THE_1_Animal_0_free (struct __THE_1_Animal_0 *n) {
+  str_free((struct str) n->__THE_0_name);
+  free(n);
 }
-struct str __THE_1_Animal_0_str (struct __THE_1_Animal_0 *o) {
+struct str __THE_1_Animal_0_str (struct __THE_1_Animal_0 *n) {
   struct str r = str_alloc("Animal{");
   r = str_concat_cstr(r, "name: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_str(r, str_escape(n->__THE_0_name));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", age: ");
-  r = str_concat_str(r, int_str(o->__THE_0_age));
-  __THE_1_Animal_0_free((struct __THE_1_Animal_0 *) o);
+  r = str_concat_str(r, int_str(n->__THE_0_age));
+  __THE_1_Animal_0_free((struct __THE_1_Animal_0 *) n);
   return str_concat_cstr(r, "}");
 }
 struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t x, ...) {
@@ -253,29 +253,29 @@ struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, struct _
   memcpy(r, &s, sizeof(struct __THE_1_Human_0));
   return r;
 }
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *o) {
+struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *n) {
   struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  struct __THE_1_Human_0 s = {str_copy(o->__THE_0_name), __THE_1_array_Animal_copy(o->__THE_0_pets)};
+  struct __THE_1_Human_0 s = {str_copy(n->__THE_0_name), __THE_1_array_Animal_copy(n->__THE_0_pets)};
   memcpy(r, &s, sizeof(struct __THE_1_Human_0));
   return r;
 }
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
-  str_free((struct str) o->__THE_0_name);
-  __THE_1_array_Animal_free((struct __THE_1_array_Animal) o->__THE_0_pets);
-  free(o);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
+  str_free((struct str) n->__THE_0_name);
+  __THE_1_array_Animal_free((struct __THE_1_array_Animal) n->__THE_0_pets);
+  free(n);
 }
-struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *o1, struct __THE_1_Human_0 *o2) {
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o1);
-  return o2;
+struct __THE_1_Human_0 *__THE_1_Human_0_realloc (struct __THE_1_Human_0 *n1, struct __THE_1_Human_0 *n2) {
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) n1);
+  return n2;
 }
-struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
+struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *n) {
   struct str r = str_alloc("Human{");
   r = str_concat_cstr(r, "name: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_str(r, str_escape(n->__THE_0_name));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", pets: ");
-  r = str_concat_str(r, __THE_1_array_Animal_str(__THE_1_array_Animal_copy(o->__THE_0_pets)));
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o);
+  r = str_concat_str(r, __THE_1_array_Animal_str(__THE_1_array_Animal_copy(n->__THE_0_pets)));
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) n);
   return str_concat_cstr(r, "}");
 }
 

@@ -72,10 +72,10 @@ struct __THE_1_Item_0 *__THE_1_Item_0_alloc (int32_t *__THE_0_a, int32_t **__THE
   memcpy(r, &s, sizeof(struct __THE_1_Item_0));
   return r;
 }
-void __THE_1_Item_0_free (struct __THE_1_Item_0 *o) {
-  __THE_1_opt_int_free((int32_t *) o->__THE_0_a);
-  __THE_1_opt_ref_int_free((int32_t **) o->__THE_0_b);
-  free(o);
+void __THE_1_Item_0_free (struct __THE_1_Item_0 *n) {
+  __THE_1_opt_int_free((int32_t *) n->__THE_0_a);
+  __THE_1_opt_ref_int_free((int32_t **) n->__THE_0_b);
+  free(n);
 }
 struct __THE_1_Items_0 *__THE_1_Items_0_alloc (struct __THE_1_Item_0 *__THE_0_d) {
   struct __THE_1_Items_0 *r = alloc(sizeof(struct __THE_1_Items_0));
@@ -83,9 +83,9 @@ struct __THE_1_Items_0 *__THE_1_Items_0_alloc (struct __THE_1_Item_0 *__THE_0_d)
   memcpy(r, &s, sizeof(struct __THE_1_Items_0));
   return r;
 }
-void __THE_1_Items_0_free (struct __THE_1_Items_0 *o) {
-  __THE_1_Item_0_free((struct __THE_1_Item_0 *) o->__THE_0_d);
-  free(o);
+void __THE_1_Items_0_free (struct __THE_1_Items_0 *n) {
+  __THE_1_Item_0_free((struct __THE_1_Item_0 *) n->__THE_0_d);
+  free(n);
 }
 
 int main () {

@@ -49,34 +49,34 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
 struct __THE_1_any_int;
-struct __THE_1_fn$1P;
 struct __THE_1_fn$1;
+struct __THE_1_fn$1P;
 struct __THE_1_any_char;
 struct __THE_1_any_str;
 
-struct __THE_1_fn$0P {
-  struct any n0;
-};
 struct __THE_1_fn$0 {
   struct any (*f) (void *, struct __THE_1_fn$0P);
   void *x;
   size_t l;
 };
+struct __THE_1_fn$0P {
+  struct any n0;
+};
 struct __THE_1_any_int {
   int32_t d;
-};
-struct __THE_1_fn$1P {
-  struct any n0;
-  unsigned char o1;
-  struct any n1;
 };
 struct __THE_1_fn$1 {
   struct any (*f) (void *, struct __THE_1_fn$1P);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$1P {
+  struct any n0;
+  unsigned char o1;
+  struct any n1;
 };
 struct __THE_1_any_char {
   char d;

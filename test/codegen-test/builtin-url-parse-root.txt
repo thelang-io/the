@@ -224,17 +224,17 @@ struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_pro
   memcpy(r, &s, sizeof(struct url_URL));
   return r;
 }
-void url_URL_free (struct url_URL *o) {
-  str_free((struct str) o->__THE_0_origin);
-  str_free((struct str) o->__THE_0_protocol);
-  str_free((struct str) o->__THE_0_host);
-  str_free((struct str) o->__THE_0_hostname);
-  str_free((struct str) o->__THE_0_port);
-  str_free((struct str) o->__THE_0_path);
-  str_free((struct str) o->__THE_0_pathname);
-  str_free((struct str) o->__THE_0_search);
-  str_free((struct str) o->__THE_0_hash);
-  free(o);
+void url_URL_free (struct url_URL *n) {
+  str_free((struct str) n->__THE_0_origin);
+  str_free((struct str) n->__THE_0_protocol);
+  str_free((struct str) n->__THE_0_host);
+  str_free((struct str) n->__THE_0_hostname);
+  str_free((struct str) n->__THE_0_port);
+  str_free((struct str) n->__THE_0_path);
+  str_free((struct str) n->__THE_0_pathname);
+  str_free((struct str) n->__THE_0_search);
+  str_free((struct str) n->__THE_0_hash);
+  free(n);
 }
 
 int main () {

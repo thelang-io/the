@@ -38,18 +38,18 @@ struct any {
   void (*_free) (struct any);
 };
 
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
 struct __THE_1_mainSDtest_0X;
 struct __THE_1_any_int;
 
-struct __THE_1_fn$0P {
-  struct any n0;
-};
 struct __THE_1_fn$0 {
   void (*f) (void *, struct __THE_1_fn$0P);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$0P {
+  struct any n0;
 };
 struct __THE_1_mainSDtest_0X {
   struct any *__THE_0_a_0;
@@ -88,7 +88,7 @@ struct any any_realloc (struct any n1, struct any n2) {
   return n2;
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);

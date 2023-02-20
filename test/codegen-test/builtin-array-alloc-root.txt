@@ -167,8 +167,8 @@ struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
   return r;
 }
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *o) {
-  free(o);
+void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *n) {
+  free(n);
 }
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   if (n.x == NULL) return n;
@@ -177,7 +177,7 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   return (struct __THE_1_fn$0) {n.f, x, n.l};
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_testFn_0 (void *px) {
 }

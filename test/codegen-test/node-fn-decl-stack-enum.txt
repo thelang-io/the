@@ -39,17 +39,17 @@ enum __THE_1_Test_0 {
   __THE_0_TestSDBlue_0
 };
 
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
 struct __THE_1_mainSDtest_0X;
 
-struct __THE_1_fn$0P {
-  enum __THE_1_Test_0 n0;
-};
 struct __THE_1_fn$0 {
   void (*f) (void *, struct __THE_1_fn$0P);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$0P {
+  enum __THE_1_Test_0 n0;
 };
 struct __THE_1_mainSDtest_0X {
   enum __THE_1_Test_0 *__THE_0_a_0;
@@ -69,7 +69,7 @@ void *alloc (size_t l) {
   return r;
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);

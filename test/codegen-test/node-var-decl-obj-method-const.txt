@@ -56,8 +56,8 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc () {
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
 void __THE_1_TestSDtest_0 (void *px) {
 }

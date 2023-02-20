@@ -38,8 +38,8 @@ struct str {
 };
 
 struct __THE_1_union$0;
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
 struct __THE_1_mainSDtest_0X;
 
 struct __THE_1_union$0 {
@@ -49,13 +49,13 @@ struct __THE_1_union$0 {
     struct str v2;
   };
 };
-struct __THE_1_fn$0P {
-  struct __THE_1_union$0 n0;
-};
 struct __THE_1_fn$0 {
   void (*f) (void *, struct __THE_1_fn$0P);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$0P {
+  struct __THE_1_union$0 n0;
 };
 struct __THE_1_mainSDtest_0X {
   struct __THE_1_union$0 *__THE_0_a_0;
@@ -118,7 +118,7 @@ struct __THE_1_union$0 __THE_1_union$0_realloc (struct __THE_1_union$0 n1, struc
   return n2;
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);
