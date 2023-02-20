@@ -231,7 +231,7 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
-  CodegenEntity &_apiEntity (
+  int _apiEntity (
     const std::string &,
     CodegenEntityType,
     const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt

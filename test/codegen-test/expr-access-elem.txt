@@ -53,8 +53,8 @@ struct str str_alloc (const char *);
 char *str_at (struct str, int64_t);
 void str_free (struct str);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_mainSDtest3_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest3_0X);
 void __THE_1_mainSDtest3_0 (void *);
+void __THE_1_mainSDtest3_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest3_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -95,6 +95,12 @@ void str_free (struct str s) {
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   if (n.x != NULL) free(n.x);
 }
+void __THE_1_mainSDtest3_0 (void *px) {
+  struct __THE_1_mainSDtest3_0X *x = px;
+  const struct str *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct str __THE_0_test4_0 = cstr_concat_str("string", char_str(*str_at(*__THE_0_test1_0, 6)));
+  str_free((struct str) __THE_0_test4_0);
+}
 void __THE_1_mainSDtest3_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDtest3_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest3_0X);
   struct __THE_1_mainSDtest3_0X *r = alloc(l);
@@ -102,12 +108,6 @@ void __THE_1_mainSDtest3_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDt
   n->f = &__THE_1_mainSDtest3_0;
   n->x = r;
   n->l = l;
-}
-void __THE_1_mainSDtest3_0 (void *px) {
-  struct __THE_1_mainSDtest3_0X *x = px;
-  const struct str *__THE_0_test1_0 = x->__THE_0_test1_0;
-  const struct str __THE_0_test4_0 = cstr_concat_str("string", char_str(*str_at(*__THE_0_test1_0, 6)));
-  str_free((struct str) __THE_0_test4_0);
 }
 
 int main () {

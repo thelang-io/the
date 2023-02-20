@@ -58,8 +58,8 @@ struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest_0X);
 void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_mainSDtest_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -91,6 +91,13 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   if (n.x != NULL) free(n.x);
 }
+void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$0P p) {
+  struct __THE_1_mainSDtest_0X *x = px;
+  struct __THE_1_Test_0 **__THE_0_a_0 = x->__THE_0_a_0;
+  const struct __THE_1_Test_0 *__THE_0_newA_0 = p.n0;
+  *__THE_0_a_0 = __THE_1_Test_0_realloc(*__THE_0_a_0, __THE_1_Test_0_copy(__THE_0_newA_0));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_newA_0);
+}
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);
   struct __THE_1_mainSDtest_0X *r = alloc(l);
@@ -98,13 +105,6 @@ void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_mainSDte
   n->f = &__THE_1_mainSDtest_0;
   n->x = r;
   n->l = l;
-}
-void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$0P p) {
-  struct __THE_1_mainSDtest_0X *x = px;
-  struct __THE_1_Test_0 **__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_Test_0 *__THE_0_newA_0 = p.n0;
-  *__THE_0_a_0 = __THE_1_Test_0_realloc(*__THE_0_a_0, __THE_1_Test_0_copy(__THE_0_newA_0));
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_newA_0);
 }
 
 int main () {

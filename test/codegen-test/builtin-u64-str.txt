@@ -91,8 +91,8 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (uint64_t);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 uint64_t __THE_1_testCall_0 (void *);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
 void __THE_1_mainSDtestCtx_0 (void *);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -131,14 +131,6 @@ uint64_t __THE_1_testCall_0 (void *px) {
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
-  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtestCtx_0;
-  n->x = r;
-  n->l = l;
-}
 void __THE_1_mainSDtestCtx_0 (void *px) {
   struct __THE_1_mainSDtestCtx_0X *x = px;
   uint64_t *__THE_0_test2_0 = x->__THE_0_test2_0;
@@ -158,6 +150,14 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   str_free((struct str) __THE_0_v13_0);
   str_free((struct str) __THE_0_v12_0);
   str_free((struct str) __THE_0_v11_0);
+}
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
+  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtestCtx_0;
+  n->x = r;
+  n->l = l;
 }
 
 int main () {

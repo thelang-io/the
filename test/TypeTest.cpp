@@ -1161,3 +1161,35 @@ TEST_F(TypeTest, ShouldBeFreedUnion) {
   EXPECT_TRUE(type2->shouldBeFreed());
   EXPECT_TRUE(type3->shouldBeFreed());
 }
+
+TEST_F(TypeTest, VaArgCodeGenerates) {
+  EXPECT_EQ(this->alias_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->any_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->arr_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->enum_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->fn_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->map_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->obj_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->opt_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->ref_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->union_->vaArgCode("test"), "test");
+
+  EXPECT_EQ(this->tm_.get("any")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("bool")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("byte")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("char")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("f32")->vaArgCode("test"), "double");
+  EXPECT_EQ(this->tm_.get("f64")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("float")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("i8")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("i16")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("i32")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("i64")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("int")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("str")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("u8")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("u16")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("u32")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("u64")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("void")->vaArgCode("test"), "test");
+}
