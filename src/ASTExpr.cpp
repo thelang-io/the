@@ -93,9 +93,9 @@ std::string exprUnaryOpStr (ASTExprUnaryOp op) {
   throw Error("tried stringify unknown unary expression operator");
 }
 
-std::string ASTObjProp::xml (const std::string &name, std::size_t indent) const {
-  auto tagName = "Expr" + name + "Prop";
-  auto result = std::string(indent, ' ') + "<" + tagName + R"( id=")" + this->id + R"(">)" EOL;
+std::string ASTObjProp::xml (const std::string &exprName, std::size_t indent) const {
+  auto tagName = "Expr" + exprName + "Prop";
+  auto result = std::string(indent, ' ') + "<" + tagName + R"( name=")" + this->name + R"(">)" EOL;
 
   result += this->init.xml(indent + 2) + EOL;
   result += std::string(indent, ' ') + "</" + tagName + ">";

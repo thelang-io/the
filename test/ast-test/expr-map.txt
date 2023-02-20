@@ -36,7 +36,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprMap>
-            <ExprMapProp id="x">
+            <ExprMapProp name="x">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="float" />
@@ -46,7 +46,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="y">
+            <ExprMapProp name="y">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="float" />
@@ -97,7 +97,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprMap>
-            <ExprMapProp id="x">
+            <ExprMapProp name="x">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -107,7 +107,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="y">
+            <ExprMapProp name="y">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -149,7 +149,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprMap>
-            <ExprMapProp id="x">
+            <ExprMapProp name="x">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -159,7 +159,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="y">
+            <ExprMapProp name="y">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -207,7 +207,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprMap>
-            <ExprMapProp id="x">
+            <ExprMapProp name="x">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="int" />
@@ -217,7 +217,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="y">
+            <ExprMapProp name="y">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -265,7 +265,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprMap>
-            <ExprMapProp id="x">
+            <ExprMapProp name="x">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="int" />
@@ -275,7 +275,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="y">
+            <ExprMapProp name="y">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -285,7 +285,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="z">
+            <ExprMapProp name="z">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -329,7 +329,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprMap>
-            <ExprMapProp id="x">
+            <ExprMapProp name="x">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="int" />
@@ -339,7 +339,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="y">
+            <ExprMapProp name="y">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -349,7 +349,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprMapProp>
-            <ExprMapProp id="z">
+            <ExprMapProp name="z">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />

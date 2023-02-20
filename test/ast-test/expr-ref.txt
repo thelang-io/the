@@ -336,7 +336,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="me">
+            <ExprObjProp name="me">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -380,7 +380,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="two">
+            <ExprObjProp name="two">
               <NodeExpr>
                 <NodeExprType>
                   <TypeObj codeName="Two_0" name="Two">
@@ -391,7 +391,7 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprObj>
-                    <ExprObjProp id="three">
+                    <ExprObjProp name="three">
                       <NodeExpr>
                         <NodeExprType>
                           <BuiltinType name="int" />

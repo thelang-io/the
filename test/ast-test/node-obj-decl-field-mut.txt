@@ -51,7 +51,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="age">
+            <ExprObjProp name="age">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="int" />
@@ -61,7 +61,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprObjProp>
-            <ExprObjProp id="name">
+            <ExprObjProp name="name">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />

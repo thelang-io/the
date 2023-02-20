@@ -116,7 +116,7 @@ struct ASTNodeExpr {
 };
 
 struct ASTObjProp {
-  std::string id;
+  std::string name;
   ASTNodeExpr init;
 
   std::string xml (const std::string &, std::size_t = 0) const;

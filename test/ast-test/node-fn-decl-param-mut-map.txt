@@ -247,7 +247,7 @@ main {
           </NodeExprType>
           <NodeExprBody>
             <ExprMap>
-              <ExprMapProp id="v">
+              <ExprMapProp name="v">
                 <NodeExpr>
                   <NodeExprType>
                     <BuiltinType name="str" />
@@ -653,7 +653,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprMap>
-                  <ExprMapProp id="v">
+                  <ExprMapProp name="v">
                     <NodeExpr>
                       <NodeExprType>
                         <BuiltinType name="str" />
@@ -779,7 +779,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprMap>
-                  <ExprMapProp id="v">
+                  <ExprMapProp name="v">
                     <NodeExpr>
                       <NodeExprType>
                         <BuiltinType name="str" />

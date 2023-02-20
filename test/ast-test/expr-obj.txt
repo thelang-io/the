@@ -46,7 +46,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="x">
+            <ExprObjProp name="x">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="float" />
@@ -56,7 +56,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprObjProp>
-            <ExprObjProp id="y">
+            <ExprObjProp name="y">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="float" />

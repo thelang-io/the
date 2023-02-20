@@ -371,7 +371,7 @@ main {
           </NodeExprType>
           <NodeExprBody>
             <ExprObj>
-              <ExprObjProp id="breed">
+              <ExprObjProp name="breed">
                 <NodeExpr>
                   <NodeExprType>
                     <BuiltinType name="str" />
@@ -385,7 +385,7 @@ main {
                   </NodeExprBody>
                 </NodeExpr>
               </ExprObjProp>
-              <ExprObjProp id="sex">
+              <ExprObjProp name="sex">
                 <NodeExpr>
                   <NodeExprType>
                     <BuiltinType name="str" />
@@ -432,7 +432,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="age">
+            <ExprObjProp name="age">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="int" />
@@ -442,7 +442,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprObjProp>
-            <ExprObjProp id="name">
+            <ExprObjProp name="name">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -612,7 +612,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="sum">
+            <ExprObjProp name="sum">
               <NodeExpr>
                 <NodeExprType>
                   <TypeFn name="fn$0">
@@ -845,7 +845,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="logic">
+            <ExprObjProp name="logic">
               <NodeExpr>
                 <NodeExprType>
                   <TypeFn name="fn$2">

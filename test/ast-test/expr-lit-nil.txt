@@ -319,7 +319,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="a">
+            <ExprObjProp name="a">
               <NodeExpr>
                 <NodeExprType>
                   <TypeOptional name="opt_int">

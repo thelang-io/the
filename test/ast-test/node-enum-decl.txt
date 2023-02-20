@@ -91,7 +91,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="animalType">
+            <ExprObjProp name="animalType">
               <NodeExpr>
                 <NodeExprType>
                   <TypeEnum codeName="AnimalType_0" name="AnimalType">
@@ -104,7 +104,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprObjProp>
-            <ExprObjProp id="name">
+            <ExprObjProp name="name">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />
@@ -152,7 +152,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="animalType">
+            <ExprObjProp name="animalType">
               <NodeExpr>
                 <NodeExprType>
                   <TypeEnum codeName="AnimalType_0" name="AnimalType">
@@ -184,7 +184,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprObjProp>
-            <ExprObjProp id="name">
+            <ExprObjProp name="name">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />

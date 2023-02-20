@@ -40,7 +40,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprMap>
-            <ExprMapProp id="1">
+            <ExprMapProp name="1">
               <NodeExpr>
                 <NodeExprType>
                   <BuiltinType name="str" />

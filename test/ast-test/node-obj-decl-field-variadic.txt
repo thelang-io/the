@@ -304,7 +304,7 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjProp id="fieldTest1">
+            <ExprObjProp name="fieldTest1">
               <NodeExpr>
                 <NodeExprType>
                   <TypeFn name="fn$0">
@@ -340,7 +340,7 @@ main {
                 </NodeExprBody>
               </NodeExpr>
             </ExprObjProp>
-            <ExprObjProp id="fieldTest2">
+            <ExprObjProp name="fieldTest2">
               <NodeExpr>
                 <NodeExprType>
                   <TypeFn name="fn$1">
