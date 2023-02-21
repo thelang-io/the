@@ -213,7 +213,6 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
 bool __THE_1_array_str_ne (struct __THE_1_array_str n1, struct __THE_1_array_str n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (str_ne_str(str_copy(n1.d[i]), str_copy(n2.d[i]))) {
         r = true;
@@ -302,7 +301,6 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 bool __THE_1_array_int_ne (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (n1.d[i] != n2.d[i]) {
         r = true;
@@ -344,7 +342,6 @@ void __THE_1_array_array_int_free (struct __THE_1_array_array_int n) {
 bool __THE_1_array_array_int_ne (struct __THE_1_array_array_int n1, struct __THE_1_array_array_int n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (__THE_1_array_int_ne(__THE_1_array_int_copy(n1.d[i]), __THE_1_array_int_copy(n2.d[i]))) {
         r = true;
@@ -385,7 +382,6 @@ void __THE_1_array_bool_free (struct __THE_1_array_bool n) {
 bool __THE_1_array_bool_ne (struct __THE_1_array_bool n1, struct __THE_1_array_bool n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (n1.d[i] != n2.d[i]) {
         r = true;
@@ -426,7 +422,6 @@ void __THE_1_array_char_free (struct __THE_1_array_char n) {
 bool __THE_1_array_char_ne (struct __THE_1_array_char n1, struct __THE_1_array_char n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (n1.d[i] != n2.d[i]) {
         r = true;
@@ -467,7 +462,6 @@ void __THE_1_array_float_free (struct __THE_1_array_float n) {
 bool __THE_1_array_float_ne (struct __THE_1_array_float n1, struct __THE_1_array_float n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (n1.d[i] != n2.d[i]) {
         r = true;
@@ -509,7 +503,6 @@ void __THE_1_array_TestObj_free (struct __THE_1_array_TestObj n) {
 bool __THE_1_array_TestObj_ne (struct __THE_1_array_TestObj n1, struct __THE_1_array_TestObj n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (__THE_1_TestObj_0_ne(__THE_1_TestObj_0_copy(n1.d[i]), __THE_1_TestObj_0_copy(n2.d[i]))) {
         r = true;
@@ -551,7 +544,6 @@ void __THE_1_array_opt_int_free (struct __THE_1_array_opt_int n) {
 bool __THE_1_array_opt_int_ne (struct __THE_1_array_opt_int n1, struct __THE_1_array_opt_int n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(n1.d[i]), __THE_1_opt_int_copy(n2.d[i]))) {
         r = true;
@@ -592,7 +584,6 @@ void __THE_1_array_ref_int_free (struct __THE_1_array_ref_int n) {
 bool __THE_1_array_ref_int_ne (struct __THE_1_array_ref_int n1, struct __THE_1_array_ref_int n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (n1.d[i] != n2.d[i]) {
         r = true;

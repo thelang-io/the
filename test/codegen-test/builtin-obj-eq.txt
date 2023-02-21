@@ -277,7 +277,6 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
 bool __THE_1_array_int_ne (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
   bool r = n1.l != n2.l;
   if (!r) {
-    r = false;
     for (size_t i = 0; i < n1.l; i++) {
       if (n1.d[i] != n2.d[i]) {
         r = true;

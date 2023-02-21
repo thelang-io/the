@@ -446,7 +446,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
     auto nodeFnDeclName = stmtFnDecl.id.val;
     auto nodeFnDeclVar = this->varMap.get(nodeFnDeclName);
-    auto type = std::get<TypeFn>(nodeFnDeclVar->type->body);
+    auto fnType = std::get<TypeFn>(nodeFnDeclVar->type->body);
     auto nodeFnDeclParams = std::vector<ASTFnDeclParam>{};
     auto nodeFnDeclVarStack = this->varMap.varStack();
 
@@ -470,7 +470,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     }
 
     this->typeMap.stack.emplace_back(nodeFnDeclVar->name);
-    this->state.returnType = type.returnType;
+    this->state.returnType = fnType.returnType;
     auto nodeFnDeclBody = this->_block(stmtFnDecl.body, nodeFnDeclVarStack);
     this->varMap.restore();
     this->typeMap.stack.pop_back();
@@ -804,7 +804,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       throw Error(this->reader, parserExprCall.callee.start, parserExprCall.callee.end, E1014);
     }
 
-    auto exprCallCalleeFn = std::get<TypeFn>(exprCallCalleeRealType->body);
+    auto exprCallCalleeFnType = std::get<TypeFn>(exprCallCalleeRealType->body);
     auto exprCallArgs = std::vector<ASTExprCallArg>{};
     auto exprCallArgIdx = static_cast<std::size_t>(0);
     auto passedArgs = std::vector<std::string>{};
@@ -822,7 +822,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
           throw Error(this->reader, parserExprCallArg.id->start, parserExprCallArg.expr.end, E1005);
         }
 
-        for (auto &calleeFnParam : exprCallCalleeFn.params) {
+        for (auto &calleeFnParam : exprCallCalleeFnType.params) {
           if (calleeFnParam.name != std::nullopt && calleeFnParam.name == exprCallArgName) {
             foundParam = calleeFnParam;
             break;
@@ -842,10 +842,10 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
         throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1007);
       } else if (isArgVariadic) {
         foundParam = variadicArgType;
-      } else if (exprCallArgIdx >= exprCallCalleeFn.params.size()) {
+      } else if (exprCallArgIdx >= exprCallCalleeFnType.params.size()) {
         throw Error(this->reader, parserExprCallArg.expr.start, parserExprCallArg.expr.end, E1005);
       } else {
-        foundParam = exprCallCalleeFn.params[exprCallArgIdx];
+        foundParam = exprCallCalleeFnType.params[exprCallArgIdx];
       }
 
       if (!isArgVariadic && foundParam->variadic) {
@@ -871,8 +871,8 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       }
     }
 
-    if (exprCallArgIdx < exprCallCalleeFn.params.size()) {
-      auto param = exprCallCalleeFn.params[exprCallArgIdx];
+    if (exprCallArgIdx < exprCallCalleeFnType.params.size()) {
+      auto param = exprCallCalleeFnType.params[exprCallArgIdx];
 
       if (param.required) {
         throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1009);
@@ -1042,8 +1042,8 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
         }
 
         if (objRealType->isArray()) {
-          auto typeArray = std::get<TypeArray>(objRealType->body);
-          return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(typeArray.elementType));
+          auto arrayType = std::get<TypeArray>(objRealType->body);
+          return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(arrayType.elementType));
         } else if (objRealType->isStr()) {
           return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.ref(this->typeMap.get("char")));
         }
