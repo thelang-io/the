@@ -4865,6 +4865,11 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "    if (" + this->_genEqFn(mapType.keyType, "n.d[i].f", "k") + ") {" EOL;
     def += "      " + valueTypeInfo.typeCode + "r = " + this->_genCopyFn(mapType.valueType, "n.d[i].s") + ";" EOL;
     def += "      " + this->_genFreeFn(type, "n") + ";" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
     def += "      return r;" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
@@ -4888,6 +4893,11 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "    }" EOL;
     def += "  }" EOL;
     def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
     def += "  return r;" EOL;
     def += "}";
 
@@ -4987,7 +4997,11 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "    if (" + this->_genEqFn(mapType.keyType, "n->d[i].f", "k") + ") {" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "    " + this->_genFreeFn(mapType.keyType, "n->d[i].f") + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.keyType, "n->d[i].f") + ";" EOL;
     }
 
     if (mapType.valueType->shouldBeFreed()) {
@@ -5026,6 +5040,10 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "  for (_{size_t} i = 0; i < n->l; i++) {" EOL;
     def += "    if (" + this->_genEqFn(mapType.keyType, "n->d[i].f", "k") + ") {" EOL;
 
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
     if (mapType.valueType->shouldBeFreed()) {
       def += "      " + this->_genFreeFn(mapType.valueType, "n.d[i].s") + ";" EOL;
     }
@@ -5048,7 +5066,13 @@ std::string Codegen::_typeNameMap (Type *type) {
 
     decl += "struct _{" + typeName + "} *" + typeName + "_shrink (struct _{" + typeName + "} *);";
     def += "struct _{" + typeName + "} *" + typeName + "_shrink (struct _{" + typeName + "} *n) {" EOL;
-    def += "  if (n->l != n->c) n->d = _{re_alloc}(n->d, (n->c = n->l) * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  if (n->l != n->c && n->l == 0) {" EOL;
+    def += "    _{free}(n->d);" EOL;
+    def += "    n->d = _{NULL};" EOL;
+    def += "    n->c = 0;" EOL;
+    def += "  } else if (n->l != n->c) {" EOL;
+    def += "    n->d = _{re_alloc}(n->d, (n->c = n->l) * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  }" EOL;
     def += "  return n;" EOL;
     def += "}";
 

@@ -1,7 +1,7 @@
 ======= stdin =======
 main {
   emptyMap: int[str]
-  arr := [emptyMap, { "key": "3" }, { "key1": "6", "key2": "7", "key3": "8" }]
+  arr := [emptyMap, { "key": 3 }, { "key1": 6, "key2": 7, "key3": 8 }]
 
   loop i := 0; i < arr.len; i++ {
     print(arr[i].empty())
@@ -176,7 +176,7 @@ size_t __THE_1_array_map$0_len (struct __THE_1_array_map$0 n) {
 
 int main () {
   const struct __THE_1_map$0 __THE_0_emptyMap_0 = __THE_1_map$0_alloc(0);
-  const struct __THE_1_array_map$0 __THE_0_arr_0 = __THE_1_array_map$0_alloc(3, __THE_1_map$0_copy(__THE_0_emptyMap_0), __THE_1_map$0_alloc(1, str_alloc("key"), str_alloc("3")), __THE_1_map$0_alloc(3, str_alloc("key1"), str_alloc("6"), str_alloc("key2"), str_alloc("7"), str_alloc("key3"), str_alloc("8")));
+  const struct __THE_1_array_map$0 __THE_0_arr_0 = __THE_1_array_map$0_alloc(3, __THE_1_map$0_copy(__THE_0_emptyMap_0), __THE_1_map$0_alloc(1, str_alloc("key"), 3), __THE_1_map$0_alloc(3, str_alloc("key1"), 6, str_alloc("key2"), 7, str_alloc("key3"), 8));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_map$0_len(__THE_1_array_map$0_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     print(stdout, "tz", __THE_1_map$0_empty(__THE_1_map$0_copy(*__THE_1_array_map$0_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
   }

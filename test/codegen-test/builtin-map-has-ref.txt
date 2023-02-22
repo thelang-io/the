@@ -211,6 +211,7 @@ bool __THE_1_map$0_has (struct __THE_1_map$0 n, struct str k) {
     }
   }
   __THE_1_map$0_free((struct __THE_1_map$0) n);
+  str_free((struct str) k);
   return r;
 }
 struct str __THE_1_map$0_str (struct __THE_1_map$0 n) {

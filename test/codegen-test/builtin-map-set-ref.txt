@@ -205,6 +205,7 @@ void __THE_1_map$0_free (struct __THE_1_map$0 n) {
 struct __THE_1_map$0 *__THE_1_map$0_set (struct __THE_1_map$0 *n, struct str k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (str_eq_str(str_copy(n->d[i].f), str_copy(k))) {
+      str_free((struct str) k);
       n->d[i].s = v;
       return n;
     }

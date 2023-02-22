@@ -228,7 +228,13 @@ struct __THE_1_map$0 *__THE_1_map$0_reserve (struct __THE_1_map$0 *n, int32_t c)
   return n;
 }
 struct __THE_1_map$0 *__THE_1_map$0_shrink (struct __THE_1_map$0 *n) {
-  if (n->l != n->c) n->d = re_alloc(n->d, (n->c = n->l) * sizeof(struct __THE_1_pair$0));
+  if (n->l != n->c && n->l == 0) {
+    free(n->d);
+    n->d = NULL;
+    n->c = 0;
+  } else if (n->l != n->c) {
+    n->d = re_alloc(n->d, (n->c = n->l) * sizeof(struct __THE_1_pair$0));
+  }
   return n;
 }
 struct str __THE_1_map$0_str (struct __THE_1_map$0 n) {
