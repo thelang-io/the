@@ -1,0 +1,167 @@
+======= stdin =======
+main {
+  var1: any;
+  var2: any = 2;
+  var3: any = "test";
+  { "key1": var1, "key2": var2, "key3": var3 };
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_int 1
+#define TYPE_str 2
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_any_int;
+struct __THE_1_any_str;
+struct __THE_1_pair$0;
+struct __THE_1_map$0;
+
+struct __THE_1_any_int {
+  int32_t d;
+};
+struct __THE_1_any_str {
+  struct str d;
+};
+struct __THE_1_pair$0 {
+  struct str f;
+  struct any s;
+};
+struct __THE_1_map$0 {
+  struct __THE_1_pair$0 *d;
+  size_t c;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
+struct any __THE_1_any_str_alloc (struct str);
+struct any __THE_1_any_str_copy (const struct any);
+void __THE_1_any_str_free (struct any);
+struct __THE_1_map$0 __THE_1_map$0_alloc (int, ...);
+void __THE_1_map$0_free (struct __THE_1_map$0);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  return n.d == NULL ? n : n._copy(n);
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
+}
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
+  free(n);
+}
+struct any __THE_1_any_str_alloc (struct str d) {
+  size_t l = sizeof(struct __THE_1_any_str);
+  struct __THE_1_any_str *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_str, r, l, &__THE_1_any_str_copy, &__THE_1_any_str_free};
+}
+struct any __THE_1_any_str_copy (const struct any n) {
+  struct __THE_1_any_str *o = n.d;
+  struct __THE_1_any_str *r = alloc(n.l);
+  r->d = str_copy(o->d);
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_str_free (struct any _n) {
+  struct __THE_1_any_str *n = _n.d;
+  str_free((struct str) n->d);
+  free(n);
+}
+struct __THE_1_map$0 __THE_1_map$0_alloc (int x, ...) {
+  struct __THE_1_pair$0 *d = alloc(x * sizeof(struct __THE_1_pair$0));
+  va_list args;
+  va_start(args, x);
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$0) {va_arg(args, struct str), va_arg(args, struct any)};
+  va_end(args);
+  return (struct __THE_1_map$0) {d, x, x};
+}
+void __THE_1_map$0_free (struct __THE_1_map$0 n) {
+  for (size_t i = 0; i < n.l; i++) {
+    str_free((struct str) n.d[i].f);
+    any_free((struct any) n.d[i].s);
+  }
+  free(n.d);
+}
+
+int main () {
+  const struct any __THE_0_var1_0 = {0, NULL, 0, NULL, NULL};
+  const struct any __THE_0_var2_0 = __THE_1_any_int_alloc(2);
+  const struct any __THE_0_var3_0 = __THE_1_any_str_alloc(str_alloc("test"));
+  __THE_1_map$0_free((struct __THE_1_map$0) __THE_1_map$0_alloc(3, str_alloc("key1"), any_copy(__THE_0_var1_0), str_alloc("key2"), any_copy(__THE_0_var2_0), str_alloc("key3"), any_copy(__THE_0_var3_0)));
+  any_free((struct any) __THE_0_var3_0);
+  any_free((struct any) __THE_0_var2_0);
+  any_free((struct any) __THE_0_var1_0);
+}
+======= flags =======
+======= stdout =======

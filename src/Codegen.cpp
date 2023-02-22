@@ -4924,8 +4924,22 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += "struct _{" + typeName + "} *" + typeName + "_merge (struct _{" + typeName + "} *, struct _{" + typeName + "});";
     def += "struct _{" + typeName + "} *" + typeName + "_merge (struct _{" + typeName + "} *n, struct _{" + typeName + "} m) {" EOL;
     def += "  if (n->l + m.l > n->c) n->d = _{re_alloc}(n->d, (n->c = n->l + m.l) * sizeof(struct _{" + pairTypeName + "}));" EOL;
-    def += "  for (_{size_t} i = 0; i < m.l; i++) n->d[n->l++] = (struct _{" + pairTypeName + "}) ";
+    def += "  for (_{size_t} i = 0; i < m.l; i++) {" EOL;
+    def += "    for (_{size_t} j = 0; j < n->l; j++) {" EOL;
+    def += "      if (" + this->_genEqFn(mapType.keyType, "n->d[j].f", "m.d[i].f") + ") {" EOL;
+
+    if (mapType.valueType->shouldBeFreed()) {
+      def += "        " + this->_genFreeFn(mapType.valueType, "n->d[j].s") + ";" EOL;
+    }
+
+    def += "        n->d[j].s = " + this->_genCopyFn(mapType.valueType, "m.d[i].s") + ";" EOL;
+    def += "        goto " + typeName + "_merge_next;" EOL;
+    def += "      }" EOL;
+    def += "    }" EOL;
+    def += "    n->d[n->l++] = (struct _{" + pairTypeName + "}) ";
     def += "{" + this->_genCopyFn(mapType.keyType, "m.d[i].f") + ", " + this->_genCopyFn(mapType.valueType, "m.d[i].s") + "};" EOL;
+    def += typeName + "_merge_next:;" EOL;
+    def += "  }" EOL;
     def += "  " + this->_genFreeFn(type, "m") + ";" EOL;
     def += "  return n;" EOL;
     def += "}";
@@ -5011,7 +5025,12 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += ", " + keyTypeInfo.typeCode + "k, " + valueTypeInfo.typeCode + "v) {" EOL;
     def += "  for (_{size_t} i = 0; i < n->l; i++) {" EOL;
     def += "    if (" + this->_genEqFn(mapType.keyType, "n->d[i].f", "k") + ") {" EOL;
-    def += "      n->d[i].s = " + this->_genReallocFn(mapType.valueType, "n->d[i].s", "v") + ";" EOL;
+
+    if (mapType.valueType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.valueType, "n.d[i].s") + ";" EOL;
+    }
+
+    def += "      n->d[i].s = v;" EOL;
     def += "      return n;" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
@@ -5078,7 +5097,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += valuesTypeInfo.typeCode + typeName + "_values (struct _{" + typeName + "});";
     def += valuesTypeInfo.typeCode + typeName + "_values (struct _{" + typeName + "} n) {" EOL;
     def += "  " + valueTypeInfo.typeCode + "*r = _{alloc}(n.l * sizeof(" + valueTypeInfo.typeCodeTrimmed + "));" EOL;
-    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.keyType, "n.d[i].s") + ";" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.valueType, "n.d[i].s") + ";" EOL;
     def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
     def += "  return (" + valuesTypeInfo.typeCodeTrimmed + ") {r, n.l};" EOL;
     def += "}";
