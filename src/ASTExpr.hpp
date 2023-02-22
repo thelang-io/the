@@ -85,6 +85,7 @@ struct ASTExprCall;
 struct ASTExprCond;
 struct ASTExprIs;
 struct ASTExprLit;
+struct ASTExprMap;
 struct ASTExprObj;
 struct ASTExprRef;
 struct ASTExprUnary;
@@ -98,6 +99,7 @@ using ASTExpr = std::variant<
   ASTExprCond,
   ASTExprIs,
   ASTExprLit,
+  ASTExprMap,
   ASTExprObj,
   ASTExprRef,
   ASTExprUnary
@@ -111,6 +113,13 @@ struct ASTNodeExpr {
   bool isLit () const;
   std::string litBody () const;
   std::string xml (std::size_t = 0) const;
+};
+
+struct ASTObjProp {
+  std::string name;
+  ASTNodeExpr init;
+
+  std::string xml (const std::string &, std::size_t = 0) const;
 };
 
 struct ASTExprAccess {
@@ -161,14 +170,12 @@ struct ASTExprLit {
   std::string body;
 };
 
-struct ASTExprObjProp {
-  std::string id;
-  ASTNodeExpr init;
+struct ASTExprMap {
+  std::vector<ASTObjProp> props;
 };
 
 struct ASTExprObj {
-  Type *type;
-  std::vector<ASTExprObjProp> props;
+  std::vector<ASTObjProp> props;
 };
 
 struct ASTExprRef {

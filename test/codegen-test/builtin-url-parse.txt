@@ -301,48 +301,48 @@ struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_pro
   memcpy(r, &s, sizeof(struct url_URL));
   return r;
 }
-void url_URL_free (struct url_URL *o) {
-  str_free((struct str) o->__THE_0_origin);
-  str_free((struct str) o->__THE_0_protocol);
-  str_free((struct str) o->__THE_0_host);
-  str_free((struct str) o->__THE_0_hostname);
-  str_free((struct str) o->__THE_0_port);
-  str_free((struct str) o->__THE_0_path);
-  str_free((struct str) o->__THE_0_pathname);
-  str_free((struct str) o->__THE_0_search);
-  str_free((struct str) o->__THE_0_hash);
-  free(o);
+void url_URL_free (struct url_URL *n) {
+  str_free((struct str) n->__THE_0_origin);
+  str_free((struct str) n->__THE_0_protocol);
+  str_free((struct str) n->__THE_0_host);
+  str_free((struct str) n->__THE_0_hostname);
+  str_free((struct str) n->__THE_0_port);
+  str_free((struct str) n->__THE_0_path);
+  str_free((struct str) n->__THE_0_pathname);
+  str_free((struct str) n->__THE_0_search);
+  str_free((struct str) n->__THE_0_hash);
+  free(n);
 }
-struct str url_URL_str (struct url_URL *o) {
+struct str url_URL_str (struct url_URL *n) {
   struct str r = str_alloc("url_URL{");
   r = str_concat_cstr(r, "origin: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_origin));
+  r = str_concat_str(r, str_escape(n->__THE_0_origin));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", protocol: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_protocol));
+  r = str_concat_str(r, str_escape(n->__THE_0_protocol));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", host: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_host));
+  r = str_concat_str(r, str_escape(n->__THE_0_host));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", hostname: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_hostname));
+  r = str_concat_str(r, str_escape(n->__THE_0_hostname));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", port: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_port));
+  r = str_concat_str(r, str_escape(n->__THE_0_port));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", path: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_path));
+  r = str_concat_str(r, str_escape(n->__THE_0_path));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", pathname: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_pathname));
+  r = str_concat_str(r, str_escape(n->__THE_0_pathname));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", search: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_search));
+  r = str_concat_str(r, str_escape(n->__THE_0_search));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", hash: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_hash));
+  r = str_concat_str(r, str_escape(n->__THE_0_hash));
   r = str_concat_cstr(r, "\"");
-  url_URL_free((struct url_URL *) o);
+  url_URL_free((struct url_URL *) n);
   return str_concat_cstr(r, "}");
 }
 

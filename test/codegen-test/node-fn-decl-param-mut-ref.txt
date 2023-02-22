@@ -18,27 +18,27 @@ main {
 #include <stdint.h>
 #include <stdlib.h>
 
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
-struct __THE_1_fn$1P;
+struct __THE_1_fn$0P;
 struct __THE_1_fn$1;
+struct __THE_1_fn$1P;
 
+struct __THE_1_fn$0 {
+  int32_t *(*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
 struct __THE_1_fn$0P {
   int32_t *n0;
 };
-struct __THE_1_fn$0 {
-  int32_t *(*f) (void *, struct __THE_1_fn$0P);
+struct __THE_1_fn$1 {
+  int32_t *(*f) (void *, struct __THE_1_fn$1P);
   void *x;
   size_t l;
 };
 struct __THE_1_fn$1P {
   int32_t *n0;
   int32_t *n1;
-};
-struct __THE_1_fn$1 {
-  int32_t *(*f) (void *, struct __THE_1_fn$1P);
-  void *x;
-  size_t l;
 };
 
 int32_t *__THE_1_test1_0 (void *, struct __THE_1_fn$0P);

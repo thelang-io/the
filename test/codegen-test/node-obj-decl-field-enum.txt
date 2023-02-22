@@ -59,18 +59,18 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (enum __THE_1_Color_0 __THE_0_e) {
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *n) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {o->__THE_0_e};
+  struct __THE_1_Test_0 s = {n->__THE_0_e};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct __THE_1_Test_0 *o2) {
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
-  return o2;
+struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct __THE_1_Test_0 *n2) {
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) n1);
+  return n2;
 }
 
 int main () {

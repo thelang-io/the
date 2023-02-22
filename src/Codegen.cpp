@@ -161,24 +161,24 @@ Codegen::Codegen (AST *a) {
 }
 
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
-  this->_typeObj(this->ast->typeMap.get("fs_Stats"), true);
-  this->_typeObj(this->ast->typeMap.get("request_Header"), true);
-  this->_typeObj(this->ast->typeMap.get("request_Request"), true);
-  this->_typeObj(this->ast->typeMap.get("request_Response"), true);
-  this->_typeObj(this->ast->typeMap.get("url_URL"), true);
+  this->_typeNameObj(this->ast->typeMap.get("fs_Stats"), true);
+  this->_typeNameObj(this->ast->typeMap.get("request_Header"), true);
+  this->_typeNameObj(this->ast->typeMap.get("request_Request"), true);
+  this->_typeNameObj(this->ast->typeMap.get("request_Response"), true);
+  this->_typeNameObj(this->ast->typeMap.get("url_URL"), true);
 
   this->_apiPreLoad(codegenFs);
   this->_apiPreLoad(codegenProcess);
   this->_apiPreLoad(codegenRequest);
   this->_apiPreLoad(codegenURL);
 
-  this->_typeObjDef(this->ast->typeMap.get("fs_Stats"), {}, true);
-  this->_typeObjDef(this->ast->typeMap.get("request_Header"), {}, true);
-  this->_typeObjDef(this->ast->typeMap.get("request_Request"), {
-    std::pair<std::string, std::string>{"free", "  _{request_close}(&o);" EOL}
+  this->_typeNameObjDef(this->ast->typeMap.get("fs_Stats"), {}, true);
+  this->_typeNameObjDef(this->ast->typeMap.get("request_Header"), {}, true);
+  this->_typeNameObjDef(this->ast->typeMap.get("request_Request"), {
+    std::pair<std::string, std::string>{"free", "  _{request_close}(&n);" EOL}
   }, true);
-  this->_typeObjDef(this->ast->typeMap.get("request_Response"), {}, true);
-  this->_typeObjDef(this->ast->typeMap.get("url_URL"), {}, true);
+  this->_typeNameObjDef(this->ast->typeMap.get("request_Response"), {}, true);
+  this->_typeNameObjDef(this->ast->typeMap.get("url_URL"), {}, true);
 
   this->_apiLoad(codegenFs);
   this->_apiLoad(codegenProcess);
@@ -1010,8 +1010,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   if (this->builtins.fnStrSlice) {
     builtinFnDeclCode += "struct str str_slice (struct str, unsigned char, int64_t, unsigned char, int64_t);" EOL;
     builtinFnDefCode += "struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {" EOL;
-    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL;
-    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? (int64_t) s.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
+    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) ";
+    builtinFnDefCode += ": (n1 > s.l ? s.l : n1));" EOL;
+    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? (int64_t) s.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 ";
+    builtinFnDefCode += ": n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
     builtinFnDefCode += "  if (i1 >= i2 || i1 >= s.l) {" EOL;
     builtinFnDefCode += "    free(s.d);" EOL;
     builtinFnDefCode += R"(    return str_alloc("");)" EOL;
@@ -1757,6 +1759,33 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
   throw Error("tried activating unknown entity `" + name + "`");
 }
 
+int Codegen::_apiEntity (
+  const std::string &name,
+  CodegenEntityType type,
+  const std::optional<std::function<int (std::string &, std::string &)>> &fn
+) {
+  auto initialStateBuiltins = this->state.builtins;
+  auto initialStateEntities = this->state.entities;
+
+  auto entity = CodegenEntity{name, type};
+  this->state.builtins = &entity.builtins;
+  this->state.entities = &entity.entities;
+  auto newPos = fn == std::nullopt ? 0 : (*fn)(entity.decl, entity.def);
+  entity.decl = entity.decl.empty() ? entity.decl : this->_apiEval(entity.decl);
+  entity.def = entity.def.empty() ? entity.def : this->_apiEval(entity.def);
+
+  this->state.builtins = initialStateBuiltins;
+  this->state.entities = initialStateEntities;
+
+  if (newPos == 0) {
+    this->entities.push_back(entity);
+    return static_cast<int>(this->entities.size()) - 1;
+  } else {
+    this->entities.insert(this->entities.begin() + newPos, entity);
+    return newPos;
+  }
+}
+
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::string Codegen::_apiEval (const std::string &code, int limit, const std::optional<std::set<std::string> *> &dependencies) {
   auto name = std::string();
@@ -2092,6 +2121,7 @@ std::string Codegen::_exprCallDefaultArg (const CodegenTypeInfo &typeInfo) {
     return "(struct any) {}";
   } else if (
     typeInfo.type->isArray() ||
+    typeInfo.type->isMap() ||
     typeInfo.type->isFn() ||
     typeInfo.type->isUnion()
   ) {
@@ -2121,12 +2151,13 @@ std::string Codegen::_exprCallPrintArg (const CodegenTypeInfo &typeInfo, const A
     typeInfo.type->isArray() ||
     typeInfo.type->isEnum() ||
     typeInfo.type->isFn() ||
+    typeInfo.type->isMap() ||
     typeInfo.type->isObj() ||
     typeInfo.type->isOpt() ||
     typeInfo.type->isStr() ||
     typeInfo.type->isUnion()
   ) {
-    return this->_genStrFn(typeInfo.type, this->_nodeExpr(nodeExpr, typeInfo.type), std::nullopt, std::nullopt, false, false);
+    return this->_genStrFn(typeInfo.type, this->_nodeExpr(nodeExpr, typeInfo.type), false, false);
   }
 
   return this->_nodeExpr(nodeExpr, typeInfo.type);
@@ -2139,6 +2170,7 @@ std::string Codegen::_exprCallPrintArgSign (const CodegenTypeInfo &typeInfo, con
     typeInfo.type->isArray() ||
     typeInfo.type->isEnum() ||
     typeInfo.type->isFn() ||
+    typeInfo.type->isMap() ||
     typeInfo.type->isObj() ||
     typeInfo.type->isOpt() ||
     typeInfo.type->isUnion()
@@ -2175,7 +2207,7 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
     this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeAny");
     return "(struct any) {0, NULL, 0, NULL, NULL}";
-  } else if (typeInfo.type->isArray()) {
+  } else if (typeInfo.type->isArray() || typeInfo.type->isMap()) {
     this->_activateEntity(typeInfo.typeName + "_alloc");
     return typeInfo.typeName + "_alloc(0)";
   } else if (typeInfo.type->isBool()) {
@@ -2220,145 +2252,150 @@ std::string Codegen::_fnDecl (
 ) {
   auto typeName = Codegen::typeName(codeName);
   auto varTypeInfo = this->_typeInfo(type);
-  auto fn = std::get<TypeFn>(type->body);
+  auto fnType = std::get<TypeFn>(type->body);
+  auto paramsName = varTypeInfo.typeName + "P";
   auto contextName = typeName + "X";
-
-  auto saveIndent = this->indent;
   auto code = std::string();
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
-    auto saveStateBuiltins = this->state.builtins;
-    auto saveStateEntities = this->state.entities;
+    auto initialIndent = this->indent;
     auto initialStateCleanUp = this->state.cleanUp;
-    auto saveStateContextVars = this->state.contextVars;
+    auto initialStateContextVars = this->state.contextVars;
+    auto contextEntityIdx = 0;
 
-    auto paramsName = varTypeInfo.typeName + "P";
-    auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_FN, {}, { varTypeInfo.typeName }};
-
-    this->varMap.save();
-    this->indent = 2;
-    this->state.builtins = &entity.builtins;
-    this->state.entities = &entity.entities;
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
 
-    auto bodyCode = std::string();
+    if (!stack.empty()) {
+      contextEntityIdx = this->_apiEntity(contextName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+        decl += "struct " + contextName + ";";
+        def += "struct " + contextName + " {" EOL;
+
+        for (const auto &contextVar : stack) {
+          auto contextVarName = Codegen::name(contextVar->codeName);
+          auto contextVarTypeInfo = this->_typeInfo(contextVar->type);
+          auto typeRefCode = (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst);
+
+          def += "  " + typeRefCode + contextVarName + ";" EOL;
+        }
+
+        def += "};";
+        return 0;
+      });
+    }
+
+    this->_apiEntity(typeName, CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+      this->varMap.save();
+      this->indent = 2;
+
+      auto bodyCode = std::string();
+
+      if (!stack.empty()) {
+        bodyCode += "  struct _{" + contextName + "} *x = px;" EOL;
+
+        for (const auto &contextVar : stack) {
+          auto contextVarName = Codegen::name(contextVar->codeName);
+          auto contextVarTypeInfo = this->_typeInfo(contextVar->type);
+          auto typeRefCode = (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst);
+
+          bodyCode += "  " + typeRefCode + contextVarName + " = x->" + contextVarName + ";" EOL;
+          this->state.contextVars.insert(contextVarName);
+        }
+      }
+
+      if (!params.empty()) {
+        auto paramIdx = static_cast<std::size_t>(0);
+
+        for (const auto &param : params) {
+          auto paramName = Codegen::name(param.var->codeName);
+          auto paramTypeInfo = this->_typeInfo(param.var->type);
+          auto paramIdxStr = std::to_string(paramIdx);
+
+          bodyCode += "  " + (param.var->mut ? paramTypeInfo.typeCode : paramTypeInfo.typeCodeConst) + paramName + " = ";
+
+          if (param.init == std::nullopt) {
+            bodyCode += "p.n" + paramIdxStr;
+          } else {
+            auto initCode = this->_nodeExpr(*param.init, paramTypeInfo.type);
+            bodyCode += "p.o" + paramIdxStr + " == 1 ? p.n" + paramIdxStr + " : " + initCode;
+          }
+
+          bodyCode += ";" EOL;
+
+          if (paramTypeInfo.type->shouldBeFreed()) {
+            this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName) + ";");
+          }
+
+          paramIdx++;
+        }
+      }
+
+      if (fnType.isMethod && fnType.methodInfo.isSelfFirst && fnType.methodInfo.selfType->shouldBeFreed()) {
+        this->state.cleanUp.add(this->_genFreeFn(fnType.methodInfo.selfType, Codegen::name(fnType.methodInfo.selfCodeName)) + ";");
+      }
+
+      auto returnTypeInfo = this->_typeInfo(fnType.returnType);
+
+      this->indent = 0;
+      this->state.returnType = returnTypeInfo.type;
+      bodyCode += this->_block(body, false);
+      this->indent = 2;
+      this->varMap.restore();
+
+      if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
+        bodyCode.insert(0, std::string(this->indent, ' ') + returnTypeInfo.typeCode + "v;" EOL);
+        bodyCode += this->state.cleanUp.gen(this->indent);
+        bodyCode += std::string(this->indent, ' ') + "return v;" EOL;
+      } else {
+        bodyCode += this->state.cleanUp.gen(this->indent);
+      }
+
+      if (this->state.cleanUp.returnVarUsed) {
+        bodyCode.insert(0, std::string(this->indent, ' ') + "unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
+      }
+
+      decl += returnTypeInfo.typeCode + typeName + " (void *";
+      def += returnTypeInfo.typeCode + typeName + " (void *px";
+
+      if (fnType.isMethod && fnType.methodInfo.isSelfFirst) {
+        auto selfTypeInfo = this->_typeInfo(fnType.methodInfo.selfType);
+
+        decl += ", " + (fnType.methodInfo.isSelfMut ? selfTypeInfo.typeCodeTrimmed : selfTypeInfo.typeCodeConstTrimmed);
+        def += ", " + (fnType.methodInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst) +
+          Codegen::name(fnType.methodInfo.selfCodeName);
+      }
+
+      if (!params.empty()) {
+        decl += ", struct _{" + paramsName + "}";
+        def += ", struct _{" + paramsName + "} p";
+      }
+
+      decl += ");";
+      def += ") {" EOL + bodyCode + "}";
+
+      return stack.empty() ? 0 : contextEntityIdx;
+    });
 
     if (!stack.empty()) {
-      bodyCode += "  struct " + contextName + " *x = px;" EOL;
+      this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+        decl += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + ", struct _{" + contextName + "});";
+        def += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + "n, struct _{" + contextName + "} x) {" EOL;
+        def += "  _{size_t} l = sizeof(struct _{" + contextName + "});" EOL;
+        def += "  struct _{" + contextName + "} *r = _{alloc}(l);" EOL;
+        def += "  _{memcpy}(r, &x, l);" EOL;
+        def += "  n->f = &_{" + typeName + "};" EOL;
+        def += "  n->x = r;" EOL;
+        def += "  n->l = l;" EOL;
+        def += "}";
 
-      auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libString" }, { varTypeInfo.typeName, typeName, contextName }};
-      allocFnEntity.decl += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + ", struct " + contextName + ");";
-      allocFnEntity.def += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + "n, struct " + contextName + " x) {" EOL;
-      allocFnEntity.def += "  size_t l = sizeof(struct " + contextName + ");" EOL;
-      allocFnEntity.def += "  struct " + contextName + " *r = alloc(l);" EOL;
-      allocFnEntity.def += "  memcpy(r, &x, l);" EOL;
-      allocFnEntity.def += "  n->f = &" + typeName + ";" EOL;
-      allocFnEntity.def += "  n->x = r;" EOL;
-      allocFnEntity.def += "  n->l = l;" EOL;
-      allocFnEntity.def += "}";
-
-      auto contextEntity = CodegenEntity{contextName, CODEGEN_ENTITY_OBJ};
-      contextEntity.decl += "struct " + contextName + ";";
-      contextEntity.def += "struct " + contextName + " {" EOL;
-
-      for (const auto &contextVar : stack) {
-        auto contextVarName = Codegen::name(contextVar->codeName);
-        auto contextVarTypeInfo = this->_typeInfo(contextVar->type);
-
-        contextEntity.def += "  " + (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst) + contextVarName + ";" EOL;
-        bodyCode += "  " + (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst) + contextVarName + " = x->" + contextVarName + ";" EOL;
-
-        this->state.contextVars.insert(contextVarName);
-      }
-
-      contextEntity.def += "};";
-
-      this->entities.push_back(allocFnEntity);
-      this->entities.push_back(contextEntity);
-      this->_activateEntity(contextName, &entity.entities);
+        return 0;
+      });
     }
 
-    if (!params.empty()) {
-      auto paramIdx = static_cast<std::size_t>(0);
-
-      for (const auto &param : params) {
-        auto paramName = Codegen::name(param.var->codeName);
-        auto paramTypeInfo = this->_typeInfo(param.var->type);
-        auto paramIdxStr = std::to_string(paramIdx);
-
-        bodyCode += "  " + (param.var->mut ? paramTypeInfo.typeCode : paramTypeInfo.typeCodeConst) + paramName + " = ";
-
-        if (param.init == std::nullopt) {
-          bodyCode += "p.n" + paramIdxStr;
-        } else {
-          auto initCode = this->_nodeExpr(*param.init, paramTypeInfo.type);
-          bodyCode += "p.o" + paramIdxStr + " == 1 ? p.n" + paramIdxStr + " : " + initCode;
-        }
-
-        bodyCode += ";" EOL;
-
-        if (paramTypeInfo.type->shouldBeFreed()) {
-          this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName) + ";");
-        }
-
-        paramIdx++;
-      }
-
-      this->_activateEntity(paramsName, &entity.entities);
-    }
-
-    if (fn.isMethod && fn.methodInfo.isSelfFirst && fn.methodInfo.selfType->shouldBeFreed()) {
-      this->state.cleanUp.add(this->_genFreeFn(fn.methodInfo.selfType, Codegen::name(fn.methodInfo.selfCodeName)) + ";");
-    }
-
-    auto returnTypeInfo = this->_typeInfo(fn.returnType);
-
-    this->indent = 0;
-    this->state.returnType = returnTypeInfo.type;
-    bodyCode += this->_block(body, false);
-    this->indent = 2;
-
-    this->varMap.restore();
-
-    if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
-      bodyCode.insert(0, std::string(this->indent, ' ') + returnTypeInfo.typeCode + "v;" EOL);
-      bodyCode += this->state.cleanUp.gen(this->indent);
-      bodyCode += std::string(this->indent, ' ') + "return v;" EOL;
-    } else {
-      bodyCode += this->state.cleanUp.gen(this->indent);
-    }
-
-    if (this->state.cleanUp.returnVarUsed) {
-      bodyCode.insert(0, std::string(this->indent, ' ') + "unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
-    }
-
-    entity.decl += returnTypeInfo.typeCode + typeName + " (void *";
-    entity.def += returnTypeInfo.typeCode + typeName + " (void *px";
-
-    if (fn.isMethod && fn.methodInfo.isSelfFirst) {
-      auto selfTypeInfo = this->_typeInfo(fn.methodInfo.selfType);
-
-      entity.decl += ", " + (fn.methodInfo.isSelfMut ? selfTypeInfo.typeCodeTrimmed : selfTypeInfo.typeCodeConstTrimmed);
-      entity.def += ", " + (fn.methodInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst) + Codegen::name(fn.methodInfo.selfCodeName);
-    }
-
-    if (!params.empty()) {
-      entity.decl += ", struct " + paramsName + "";
-      entity.def += ", struct " + paramsName + " p";
-    }
-
-    entity.decl += ");";
-    entity.def += ") {" EOL + bodyCode + "}";
-
-    this->entities.push_back(entity);
-
-    this->state.builtins = saveStateBuiltins;
-    this->state.entities = saveStateEntities;
+    this->indent = initialIndent;
     this->state.cleanUp = initialStateCleanUp;
-    this->state.contextVars = saveStateContextVars;
+    this->state.contextVars = initialStateContextVars;
   }
 
-  this->indent = saveIndent;
   auto fnName = Codegen::name(codeName);
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
@@ -2400,26 +2437,15 @@ std::string Codegen::_fnDecl (
     }
   }
 
-  this->indent = saveIndent;
   return code;
 }
 
-std::string Codegen::_genCopyFn (
-  Type *type,
-  const std::string &code,
-  const std::optional<std::vector<std::string> *> &entityBuiltins,
-  const std::optional<std::vector<std::string> *> &entityEntities
-) {
+std::string Codegen::_genCopyFn (Type *type, const std::string &code) {
   auto initialState = this->state;
   auto result = code;
 
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state.builtins = entityBuiltins;
-    this->state.entities = entityEntities;
-  }
-
   if (type->isAlias()) {
-    result = this->_genCopyFn(std::get<TypeAlias>(type->body).type, code, entityBuiltins, entityEntities);
+    result = this->_genCopyFn(std::get<TypeAlias>(type->body).type, code);
   } else if (type->isAny()) {
     this->_activateBuiltin("fnAnyCopy");
     result = "any_copy(" + result + ")";
@@ -2429,6 +2455,7 @@ std::string Codegen::_genCopyFn (
   } else if (
     type->isArray() ||
     type->isFn() ||
+    type->isMap() ||
     type->isObj() ||
     type->isOpt() ||
     type->isUnion()
@@ -2442,27 +2469,11 @@ std::string Codegen::_genCopyFn (
     result = "str_copy(" + result + ")";
   }
 
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state = initialState;
-  }
-
   return result;
 }
 
-std::string Codegen::_genEqFn (
-  Type *type,
-  const std::string &leftCode,
-  const std::string &rightCode,
-  const std::optional<std::vector<std::string> *> &entityBuiltins,
-  const std::optional<std::vector<std::string> *> &entityEntities,
-  bool reverse
-) {
+std::string Codegen::_genEqFn (Type *type, const std::string &leftCode, const std::string &rightCode, bool reverse) {
   auto initialState = this->state;
-
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state.builtins = entityBuiltins;
-    this->state.entities = entityEntities;
-  }
 
   auto eqFnOp = std::string(reverse ? "!=" : "==");
   auto eqFnName = std::string(reverse ? "ne" : "eq");
@@ -2470,14 +2481,15 @@ std::string Codegen::_genEqFn (
   auto code = std::string();
 
   if (type->isAlias()) {
-    code = this->_genEqFn(std::get<TypeAlias>(type->body).type, leftCode, rightCode, entityBuiltins, entityEntities, reverse);
+    code = this->_genEqFn(std::get<TypeAlias>(type->body).type, leftCode, rightCode, reverse);
   } else if (Type::real(type)->isObj() && Type::real(type)->builtin && Type::real(type)->codeName == "@buffer_Buffer") {
     this->_activateBuiltin("fnBuffer" + eqFnNameB);
     code = "buffer_" + eqFnName + "(";
-    code += this->_genCopyFn(Type::real(type), leftCode, entityBuiltins, entityEntities) + ", ";
-    code += this->_genCopyFn(Type::real(type), rightCode, entityBuiltins, entityEntities) + ")";
+    code += this->_genCopyFn(Type::real(type), leftCode) + ", ";
+    code += this->_genCopyFn(Type::real(type), rightCode) + ")";
   } else if (
     Type::real(type)->isArray() ||
+    Type::real(type)->isMap() ||
     Type::real(type)->isObj() ||
     Type::real(type)->isOpt() ||
     Type::real(type)->isUnion()
@@ -2486,40 +2498,26 @@ std::string Codegen::_genEqFn (
 
     this->_activateEntity(typeInfo.realTypeName + "_" + eqFnName);
     code = typeInfo.realTypeName + "_" + eqFnName + "(";
-    code += this->_genCopyFn(typeInfo.realType, leftCode, entityBuiltins, entityEntities) + ", ";
-    code += this->_genCopyFn(typeInfo.realType, rightCode, entityBuiltins, entityEntities) + ")";
+    code += this->_genCopyFn(typeInfo.realType, leftCode) + ", ";
+    code += this->_genCopyFn(typeInfo.realType, rightCode) + ")";
   } else if (Type::real(type)->isStr()) {
     this->_activateBuiltin("fnStr" + eqFnNameB + "Str");
     code = "str_" + eqFnName + "_str(";
-    code += this->_genCopyFn(Type::real(type), leftCode, entityBuiltins, entityEntities) + ", ";
-    code += this->_genCopyFn(Type::real(type), rightCode, entityBuiltins, entityEntities) + ")";
+    code += this->_genCopyFn(Type::real(type), leftCode) + ", ";
+    code += this->_genCopyFn(Type::real(type), rightCode) + ")";
   } else {
     code = leftCode + " " + eqFnOp + " " + rightCode;
-  }
-
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state = initialState;
   }
 
   return code;
 }
 
-std::string Codegen::_genFreeFn (
-  Type *type,
-  const std::string &code,
-  const std::optional<std::vector<std::string> *> &entityBuiltins,
-  const std::optional<std::vector<std::string> *> &entityEntities
-) {
+std::string Codegen::_genFreeFn (Type *type, const std::string &code) {
   auto initialState = this->state;
   auto result = code;
 
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state.builtins = entityBuiltins;
-    this->state.entities = entityEntities;
-  }
-
   if (type->isAlias()) {
-    result = this->_genFreeFn(std::get<TypeAlias>(type->body).type, code, entityBuiltins, entityEntities);
+    result = this->_genFreeFn(std::get<TypeAlias>(type->body).type, code);
   } else if (type->isAny()) {
     this->_activateBuiltin("fnAnyFree");
     result = "any_free((struct any) " + result + ")";
@@ -2529,6 +2527,7 @@ std::string Codegen::_genFreeFn (
   } else if (
     type->isArray() ||
     type->isFn() ||
+    type->isMap() ||
     type->isObj() ||
     type->isOpt() ||
     type->isUnion()
@@ -2542,20 +2541,10 @@ std::string Codegen::_genFreeFn (
     result = "str_free((struct str) " + result + ")";
   }
 
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state = initialState;
-  }
-
   return result;
 }
 
-std::string Codegen::_genReallocFn (
-  Type *type,
-  const std::string &leftCode,
-  const std::string &rightCode,
-  [[maybe_unused]] const std::optional<std::vector<std::string> *> &entityBuiltins,
-  [[maybe_unused]] const std::optional<std::vector<std::string> *> &entityEntities
-) {
+std::string Codegen::_genReallocFn (Type *type, const std::string &leftCode, const std::string &rightCode) {
   auto initialState = this->state;
   auto result = std::string();
 
@@ -2568,6 +2557,7 @@ std::string Codegen::_genReallocFn (
   } else if (
     type->isArray() ||
     type->isFn() ||
+    type->isMap() ||
     type->isObj() ||
     type->isOpt() ||
     type->isUnion()
@@ -2584,33 +2574,22 @@ std::string Codegen::_genReallocFn (
   return result;
 }
 
-std::string Codegen::_genStrFn (
-  Type *type,
-  const std::string &code,
-  const std::optional<std::vector<std::string> *> &entityBuiltins,
-  const std::optional<std::vector<std::string> *> &entityEntities,
-  bool copy,
-  bool escape
-) {
+std::string Codegen::_genStrFn (Type *type, const std::string &code, bool copy, bool escape) {
   auto initialState = this->state;
   auto result = code;
 
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state.builtins = entityBuiltins;
-    this->state.entities = entityEntities;
-  }
-
   if (type->isAlias()) {
-    result = this->_genStrFn(std::get<TypeAlias>(type->body).type, code, entityBuiltins, entityEntities, copy, escape);
+    result = this->_genStrFn(std::get<TypeAlias>(type->body).type, code, copy, escape);
   } else if (type->isAny()) {
     this->_activateBuiltin("fnAnyStr");
-    result = "any_str(" + (copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result) + ")";
+    result = "any_str(" + (copy ? this->_genCopyFn(type, result) : result) + ")";
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
     this->_activateBuiltin("fnBufferStr");
-    result = "buffer_str(" + (copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result) + ")";
+    result = "buffer_str(" + (copy ? this->_genCopyFn(type, result) : result) + ")";
   } else if (
     type->isArray() ||
     type->isFn() ||
+    type->isMap() ||
     type->isObj() ||
     type->isOpt() ||
     type->isUnion()
@@ -2618,7 +2597,7 @@ std::string Codegen::_genStrFn (
     auto typeInfo = this->_typeInfo(type);
 
     this->_activateEntity(typeInfo.realTypeName + "_str");
-    result = typeInfo.realTypeName + "_str(" + (copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result) + ")";
+    result = typeInfo.realTypeName + "_str(" + (copy ? this->_genCopyFn(type, result) : result) + ")";
   } else if (type->isEnum()) {
     this->_activateBuiltin("fnEnumStr");
     result = "enum_str((int) " + result + ")";
@@ -2626,16 +2605,12 @@ std::string Codegen::_genStrFn (
     this->_activateBuiltin("fnStrEscape");
     result = "str_escape(" + result + ")";
   } else if (type->isStr()) {
-    result = copy ? this->_genCopyFn(type, result, entityBuiltins, entityEntities) : result;
+    result = copy ? this->_genCopyFn(type, result) : result;
   } else {
     auto typeInfo = this->_typeInfo(type);
 
     this->_activateBuiltin("fn" + Token::upperFirst(typeInfo.realTypeName) + "Str");
     result = typeInfo.realTypeName + "_str(" + result + ")";
-  }
-
-  if (entityBuiltins != std::nullopt && entityEntities != std::nullopt) {
-    this->state = initialState;
   }
 
   return result;
@@ -2669,70 +2644,55 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
   } else if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
     auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
     auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
-    auto enumeration = std::get<TypeEnum>(nodeEnumDecl.type->body);
-
-    auto initialStateBuiltins = this->state.builtins;
-    auto initialStateEntities = this->state.entities;
+    auto enumType = std::get<TypeEnum>(nodeEnumDecl.type->body);
 
     if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
-      auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_ENUM};
-      this->state.builtins = &entity.builtins;
-      this->state.entities = &entity.entities;
+      this->_apiEntity(typeName, CODEGEN_ENTITY_ENUM, [&] (auto &decl, [[maybe_unused]] auto &def) {
+        auto membersCode = std::string();
 
-      entity.decl += "enum " + typeName + " {" EOL;
+        for (auto i = static_cast<std::size_t>(0); i < enumType.members.size(); i++) {
+          auto member = enumType.members[i];
 
-      for (auto i = static_cast<std::size_t>(0); i < enumeration.members.size(); i++) {
-        auto member = enumeration.members[i];
+          auto nodeEnumDeclMember = std::find_if(
+            nodeEnumDecl.members.begin(),
+            nodeEnumDecl.members.end(),
+            [&member] (const auto &it) -> bool {
+              return it.id == member->name;
+            }
+          );
 
-        auto nodeEnumDeclMember = std::find_if(
-          nodeEnumDecl.members.begin(),
-          nodeEnumDecl.members.end(),
-          [&member] (const auto &it) -> bool {
-            return it.id == member->name;
+          if (nodeEnumDeclMember != nodeEnumDecl.members.end()) {
+            membersCode += "  " + Codegen::name(member->codeName);
+
+            if (nodeEnumDeclMember->init != std::nullopt) {
+              membersCode += " = " + this->_nodeExpr(*nodeEnumDeclMember->init, nodeEnumDeclMember->init->type, true);
+            }
+
+            membersCode += i == enumType.members.size() - 1 ? EOL : "," EOL;
           }
-        );
-
-        if (nodeEnumDeclMember != nodeEnumDecl.members.end()) {
-          entity.decl += "  " + Codegen::name(member->codeName);
-
-          if (nodeEnumDeclMember->init != std::nullopt) {
-            entity.decl += " = " + this->_nodeExpr(*nodeEnumDeclMember->init, nodeEnumDeclMember->init->type, true);
-          }
-
-          if (i != enumeration.members.size() - 1) {
-            entity.decl += ",";
-          }
-
-          entity.decl += EOL;
         }
-      }
 
-      entity.decl += "};";
-      this->entities.push_back(entity);
+        decl += "enum " + typeName + " {" EOL;
+        decl += membersCode;
+        decl += "};";
 
-      auto typeInfo = this->_typeInfo(nodeEnumDecl.type);
+        return 0;
+      });
 
-      auto rawValueFnEntity = CodegenEntity{typeName + "_rawValue", CODEGEN_ENTITY_FN, {
-        "fnStrAlloc",
-        "typeStr"
-      }};
+      this->_apiEntity(typeName + "_rawValue", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+        auto typeInfo = this->_typeInfo(nodeEnumDecl.type);
 
-      this->state.builtins = &rawValueFnEntity.builtins;
-      this->state.entities = &rawValueFnEntity.entities;
+        decl += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCodeTrimmed + ");";
+        def += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCode + "n) {" EOL;
 
-      rawValueFnEntity.decl += "struct str " + typeName + "_rawValue (" + typeInfo.typeCodeTrimmed + ");";
-      rawValueFnEntity.def += "struct str " + typeName + "_rawValue (" + typeInfo.typeCode + "n) {" EOL;
+        for (const auto &member : enumType.members) {
+          def += "  if (n == " + Codegen::name(member->codeName) + ")" R"( return _{str_alloc}(")" + member->name + R"(");)" EOL;
+        }
 
-      for (const auto &member : enumeration.members) {
-        rawValueFnEntity.def += "  if (n == " + Codegen::name(member->codeName) + ")";
-        rawValueFnEntity.def += R"( return str_alloc(")" + member->name + R"(");)" EOL;
-      }
+        def += "}";
 
-      rawValueFnEntity.def += "}";
-      this->entities.push_back(rawValueFnEntity);
-
-      this->state.builtins = initialStateBuiltins;
-      this->state.entities = initialStateEntities;
+        return 0;
+      });
     }
 
     return this->_wrapNode(node, code);
@@ -2868,8 +2828,8 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
     if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
-      this->_typeObj(nodeObjDecl.type);
-      this->_typeObjDef(nodeObjDecl.type);
+      this->_typeNameObj(nodeObjDecl.type);
+      this->_typeNameObjDef(nodeObjDecl.type);
     }
 
     if (phase == CODEGEN_PHASE_ALLOC_METHOD || phase == CODEGEN_PHASE_FULL) {
@@ -3022,7 +2982,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
       auto originalObjMemberType = nodeExpr.type;
 
-      if (exprAccess.prop == "len" && objTypeInfo.realType->isArray()) {
+      if (exprAccess.prop == "cap" && objTypeInfo.realType->isMap()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+
+        if (!objNodeExpr.parenthesized) {
+          objCode = "(" + objCode + ")";
+        }
+
+        this->_activateEntity(objTypeInfo.realTypeName + "_cap");
+        code = objTypeInfo.realTypeName + "_cap" + objCode;
+      } else if (exprAccess.prop == "len" && (objTypeInfo.realType->isArray() || objTypeInfo.realType->isMap())) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
 
         if (!objNodeExpr.parenthesized) {
@@ -3051,9 +3020,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
           code = "str_len(" + objCode + ")";
         }
       } else if (exprAccess.prop != std::nullopt && objTypeInfo.realType->isEnum()) {
-        auto enumeration = std::get<TypeEnum>(objTypeInfo.realType->body);
+        auto enumType = std::get<TypeEnum>(objTypeInfo.realType->body);
 
-        for (const auto &member : enumeration.members) {
+        for (const auto &member : enumType.members) {
           if (member->name == *exprAccess.prop) {
             code = Codegen::name(member->codeName);
             break;
@@ -3107,17 +3076,17 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
     } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
       auto memberName = *exprAccess.prop;
-      auto enumeration = std::get<TypeEnum>(nodeExpr.type->body);
+      auto enumType = std::get<TypeEnum>(nodeExpr.type->body);
 
       auto member = std::find_if(
-        enumeration.members.begin(),
-        enumeration.members.end(),
+        enumType.members.begin(),
+        enumType.members.end(),
         [&memberName] (const auto &it) -> bool {
           return it->name == memberName;
         }
       );
 
-      if (member != enumeration.members.end()) {
+      if (member != enumType.members.end()) {
         code = Codegen::name((*member)->codeName);
       }
     }
@@ -3127,15 +3096,14 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto exprArray = std::get<ASTExprArray>(*nodeExpr.body);
     auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
     auto arrayType = std::get<TypeArray>(nodeTypeInfo.type->body);
+    auto fieldsCode = std::to_string(exprArray.elements.size());
 
-    this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
-    auto code = nodeTypeInfo.typeName + "_alloc(" + std::to_string(exprArray.elements.size());
-
-    for (auto idx = static_cast<std::size_t>(0); idx < exprArray.elements.size(); idx++) {
-      code += ", " + this->_nodeExpr(exprArray.elements[idx], arrayType.elementType);
+    for (const auto &element : exprArray.elements) {
+      fieldsCode += ", " + this->_nodeExpr(element, arrayType.elementType);
     }
 
-    code += ")";
+    this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
+    auto code = nodeTypeInfo.typeName + "_alloc(" + fieldsCode + ")";
     code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
@@ -3150,6 +3118,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (
       Type::actual(exprAssign.left.type)->isArray() ||
       Type::actual(exprAssign.left.type)->isFn() ||
+      Type::actual(exprAssign.left.type)->isMap() ||
       Type::actual(exprAssign.left.type)->isObj() ||
       Type::actual(exprAssign.left.type)->isOpt() ||
       Type::actual(exprAssign.left.type)->isUnion()
@@ -3162,10 +3131,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       if (exprAssign.op == AST_EXPR_ASSIGN_ADD) {
         if (exprAssign.right.isLit()) {
           this->_activateBuiltin("fnStrConcatCstr");
-          rightCode = "str_concat_cstr(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode) + ", " + exprAssign.right.litBody() + ")";
+          rightCode = "str_concat_cstr(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode);
+          rightCode += ", " + exprAssign.right.litBody() + ")";
         } else {
           this->_activateBuiltin("fnStrConcatStr");
-          rightCode = "str_concat_str(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode) + ", " + this->_nodeExpr(exprAssign.right, nodeExpr.type) + ")";
+          rightCode = "str_concat_str(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode);
+          rightCode += ", " + this->_nodeExpr(exprAssign.right, nodeExpr.type) + ")";
         }
       } else {
         rightCode = this->_nodeExpr(exprAssign.right, nodeExpr.type);
@@ -3233,6 +3204,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code = "buffer_ne(" + leftCode + ", " + rightCode + ")";
     } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
       (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
+      (Type::real(exprBinary.left.type)->isMap() && Type::real(exprBinary.right.type)->isMap()) ||
       (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
       (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
     )) {
@@ -3244,6 +3216,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code = typeInfo.realTypeName + "_eq(" + leftCode + ", " + rightCode + ")";
     } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
       (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
+      (Type::real(exprBinary.left.type)->isMap() && Type::real(exprBinary.right.type)->isMap()) ||
       (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
       (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
     )) {
@@ -3308,13 +3281,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "str_alloc(" + nodeExpr.litBody() + ")";
       } else if (exprBinary.left.isLit()) {
         this->_activateBuiltin("fnCstrConcatStr");
-        code = "cstr_concat_str(" + exprBinary.left.litBody() + ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str")) + ")";
+        code = "cstr_concat_str(" + exprBinary.left.litBody();
+        code += ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str")) + ")";
       } else if (exprBinary.right.isLit()) {
         this->_activateBuiltin("fnStrConcatCstr");
-        code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str")) + ", " + exprBinary.right.litBody() + ")";
+        code = "str_concat_cstr(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"));
+        code += ", " + exprBinary.right.litBody() + ")";
       } else {
         this->_activateBuiltin("fnStrConcatStr");
-        code = "str_concat_str(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str")) + ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str")) + ")";
+        code = "str_concat_str(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"));
+        code += ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str")) + ")";
       }
 
       code = !root ? code : this->_genFreeFn(Type::real(exprBinary.left.type), code);
@@ -3575,6 +3551,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         } else if (
           exprCallCalleeTypeInfo.realType->codeName == "@array.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@fn.str" ||
+          exprCallCalleeTypeInfo.realType->codeName == "@map.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@obj.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@opt.str" ||
           exprCallCalleeTypeInfo.realType->codeName == "@union.str"
@@ -3600,7 +3577,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
 
         code = typeStrFn + calleeCode;
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.empty") {
+      } else if (
+        exprCallCalleeTypeInfo.realType->codeName == "@array.empty" ||
+        exprCallCalleeTypeInfo.realType->codeName == "@map.empty"
+      ) {
         this->_activateEntity(calleeTypeInfo.realTypeName + "_empty");
         code = calleeTypeInfo.realTypeName + "_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
@@ -3646,7 +3626,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("i64"));
 
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
-        code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
+        code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr;
+        code += ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlpha") {
         this->_activateBuiltin("fnCharIsAlpha");
         code = "char_is_alpha(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
@@ -3663,6 +3644,63 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
         this->_activateBuiltin("fnCharRepeat");
         code = "char_repeat(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.clear") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_clear");
+        code = calleeTypeInfo.realTypeName + "_clear(" + calleeCode + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.get") {
+        auto mapType = std::get<TypeBodyMap>(calleeTypeInfo.realType->body);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, mapType.keyType);
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_get");
+        code = calleeTypeInfo.realTypeName + "_get(" + calleeCode + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.has") {
+        auto mapType = std::get<TypeBodyMap>(calleeTypeInfo.realType->body);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, mapType.keyType);
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_has");
+        code = calleeTypeInfo.realTypeName + "_has(" + calleeCode + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.keys") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_keys");
+        code = calleeTypeInfo.realTypeName + "_keys(" + calleeCode + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.merge") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, calleeTypeInfo.realType);
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_merge");
+        code = calleeTypeInfo.realTypeName + "_merge(" + calleeCode + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.remove") {
+        auto mapType = std::get<TypeBodyMap>(calleeTypeInfo.realType->body);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, mapType.keyType);
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_remove");
+        code = calleeTypeInfo.realTypeName + "_remove(" + calleeCode + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.reserve") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_reserve");
+        code = calleeTypeInfo.realTypeName + "_reserve(" + calleeCode + ", " + arg1Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.set") {
+        auto mapType = std::get<TypeBodyMap>(calleeTypeInfo.realType->body);
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, mapType.keyType);
+        auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, mapType.valueType);
+
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_set");
+        code = calleeTypeInfo.realTypeName + "_set(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.shrink") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.ref(calleeTypeInfo.realType), true);
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_shrink");
+        code = calleeTypeInfo.realTypeName + "_shrink(" + calleeCode + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.values") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
+        this->_activateEntity(calleeTypeInfo.realTypeName + "_values");
+        code = calleeTypeInfo.realTypeName + "_values(" + calleeCode + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.empty") {
         this->_activateBuiltin("fnStrEmpty");
         code = "str_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
@@ -3706,17 +3744,17 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "str_upper_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       }
     } else {
-      auto fn = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);
+      auto fnType = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);
       auto bodyCode = std::string();
 
-      if (!fn.params.empty()) {
+      if (!fnType.params.empty()) {
         auto paramsName = exprCallCalleeTypeInfo.realTypeName + "P";
 
         bodyCode += "(struct " + paramsName + ") {";
         this->_activateEntity(paramsName);
 
-        for (auto i = static_cast<std::size_t>(0); i < fn.params.size(); i++) {
-          auto param = fn.params[i];
+        for (auto i = static_cast<std::size_t>(0); i < fnType.params.size(); i++) {
+          auto param = fnType.params[i];
           auto paramTypeInfo = this->_typeInfo(param.type);
           auto foundArg = std::optional<ASTExprCallArg>{};
           auto foundArgIdx = static_cast<std::size_t>(0);
@@ -3775,12 +3813,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         bodyCode += "}";
       }
 
-      auto fnName = fn.isMethod
-        ? Codegen::name(fn.methodInfo.codeName)
+      auto fnName = fnType.isMethod
+        ? Codegen::name(fnType.methodInfo.codeName)
         : this->_nodeExpr(exprCall.callee, exprCallCalleeTypeInfo.realType, true);
 
       if (
-        fn.isMethod &&
+        fnType.isMethod &&
         this->state.contextVars.contains(fnName) &&
         (nodeExpr.type->isRef() || !targetType->isRef())
       ) {
@@ -3793,11 +3831,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       code = fnName + ".f(" + fnName + ".x";
 
-      if (fn.isMethod && fn.methodInfo.isSelfFirst) {
+      if (fnType.isMethod && fnType.methodInfo.isSelfFirst) {
         auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
         auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
 
-        code += ", " + this->_genCopyFn(fn.methodInfo.selfType, this->_nodeExpr(nodeExprAccess, fn.methodInfo.selfType, true));
+        code += ", " + this->_genCopyFn(fnType.methodInfo.selfType, this->_nodeExpr(nodeExprAccess, fnType.methodInfo.selfType, true));
       }
 
       if (!bodyCode.empty()) {
@@ -3874,12 +3912,28 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     }
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  } else if (std::holds_alternative<ASTExprMap>(*nodeExpr.body)) {
+    auto exprMap = std::get<ASTExprMap>(*nodeExpr.body);
+    auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
+    auto mapType = std::get<TypeBodyMap>(nodeTypeInfo.type->body);
+    auto fieldsCode = std::to_string(exprMap.props.size());
+
+    for (const auto &prop : exprMap.props) {
+      this->_activateBuiltin("fnStrAlloc");
+      fieldsCode += R"(, str_alloc(")" + prop.name + R"("), )" + this->_nodeExpr(prop.init, mapType.valueType);
+    }
+
+    this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
+    auto code = nodeTypeInfo.typeName + "_alloc(" + fieldsCode + ")";
+    code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
+
+    return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
     auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
-    auto typeInfo = this->_typeInfo(Type::actual(exprObj.type));
+    auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
     auto fieldsCode = std::string();
 
-    for (const auto &typeField : typeInfo.type->fields) {
+    for (const auto &typeField : nodeTypeInfo.type->fields) {
       if (typeField.builtin || typeField.method) {
         continue;
       }
@@ -3887,7 +3941,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto fieldTypeInfo = this->_typeInfo(typeField.type);
 
       auto exprObjProp = std::find_if(exprObj.props.begin(), exprObj.props.end(), [&typeField] (const auto &it) -> bool {
-        return it.id == typeField.name;
+        return it.name == typeField.name;
       });
 
       fieldsCode += ", ";
@@ -3899,9 +3953,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
     }
 
-    this->_activateEntity(typeInfo.typeName + "_alloc");
-    auto code = typeInfo.typeName + "_alloc(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")";
-    code = !root ? code : this->_genFreeFn(typeInfo.type, code);
+    this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
+    auto code = nodeTypeInfo.typeName + "_alloc(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")";
+    code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
@@ -3952,7 +4006,7 @@ std::string Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
     this->_activateBuiltin("libStdlib");
     return "{0, NULL, 0, NULL, NULL}";
-  } else if (typeInfo.type->isArray()) {
+  } else if (typeInfo.type->isArray() || typeInfo.type->isMap()) {
     this->_activateEntity(typeInfo.typeName + "_alloc");
     return typeInfo.typeName + "_alloc(0)";
   } else if (typeInfo.type->isBool()) {
@@ -3984,7 +4038,7 @@ std::string Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
   }
 }
 
-std::string Codegen::_type (const Type *type) {
+std::string Codegen::_type (Type *type) {
   if (type->isAny()) {
     this->_activateBuiltin("typeAny");
     return "struct any ";
@@ -4027,6 +4081,10 @@ std::string Codegen::_type (const Type *type) {
   } else if (type->isI64()) {
     this->_activateBuiltin("libStdint");
     return "int64_t ";
+  } else if (type->isMap()) {
+    auto typeName = this->_typeNameMap(type);
+    this->_activateEntity(typeName);
+    return "struct " + typeName + " ";
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
     this->_activateBuiltin("typeBuffer");
     return "struct buffer ";
@@ -4036,11 +4094,11 @@ std::string Codegen::_type (const Type *type) {
     return "struct " + typeName + " *";
   } else if (type->isOpt()) {
     this->_typeNameOpt(type);
-    auto typeOpt = std::get<TypeOptional>(type->body);
-    return this->_type(typeOpt.type) + "*";
+    auto optType = std::get<TypeOptional>(type->body);
+    return this->_type(optType.type) + "*";
   } else if (type->isRef()) {
-    auto typeRef = std::get<TypeRef>(type->body);
-    return this->_type(typeRef.refType) + "*";
+    auto refType = std::get<TypeRef>(type->body);
+    return this->_type(refType.refType) + "*";
   } else if (type->isStr()) {
     this->_activateBuiltin("typeStr");
     return "struct str ";
@@ -4082,12 +4140,9 @@ std::string Codegen::_typeDef (Type *type) {
     }
   }
 
-  this->entities.push_back(CodegenEntity{
-    typeName,
-    CODEGEN_ENTITY_DEF,
-    {},
-    {},
-    "#define " + typeName + " " + std::to_string(this->lastTypeIdx++)
+  this->_apiEntity(typeName, CODEGEN_ENTITY_DEF, [&] (auto &decl, [[maybe_unused]] auto &def) {
+    decl += "#define " + typeName + " " + std::to_string(this->lastTypeIdx++);
+    return 0;
   });
 
   return typeName;
@@ -4169,6 +4224,8 @@ CodegenTypeInfoItem Codegen::_typeInfoItem (Type *type) {
     typeName = Codegen::typeName(type->codeName);
   } else if (type->isFn() && !type->builtin) {
     typeName = this->_typeNameFn(type);
+  } else if (type->isMap() && !type->builtin) {
+    typeName = this->_typeNameMap(type);
   } else if (type->isOpt() && !type->builtin) {
     typeName = this->_typeNameOpt(type);
   } else if (type->isUnion() && !type->builtin) {
@@ -4192,12 +4249,11 @@ CodegenTypeInfoItem Codegen::_typeInfoItem (Type *type) {
 std::string Codegen::_typeNameAny (Type *type) {
   auto initialStateBuiltins = this->state.builtins;
   auto initialStateEntities = this->state.entities;
-
-  auto typeInfo = this->_typeInfo(type);
-  auto typeName = Codegen::typeName("any_" + std::string(typeInfo.typeName.starts_with("__THE_1_") ? typeInfo.typeName.substr(8) : typeInfo.typeName));
-
+  auto typeInfoTypeName = this->_typeInfo(type).typeName;
   this->state.builtins = initialStateBuiltins;
   this->state.entities = initialStateEntities;
+
+  auto typeName = Codegen::typeName("any_" + (typeInfoTypeName.starts_with("__THE_1_") ? typeInfoTypeName.substr(8) : typeInfoTypeName));
 
   for (const auto &entity : this->entities) {
     if (entity.name == typeName) {
@@ -4205,73 +4261,67 @@ std::string Codegen::_typeNameAny (Type *type) {
     }
   }
 
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
-  this->state.builtins = &entity.builtins;
-  this->state.entities = &entity.entities;
-  auto entityTypeInfo = this->_typeInfo(type);
-  entity.decl += "struct " + typeName + ";";
-  entity.def += "struct " + typeName + " {" EOL;
-  entity.def += "  " + entityTypeInfo.typeCode + "d;" EOL;
-  entity.def += "};";
-  entity.decl = this->_apiEval(entity.decl);
-  entity.def = this->_apiEval(entity.def);
-  this->entities.push_back(entity);
+  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    auto typeInfo = this->_typeInfo(type);
 
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
-  this->state.builtins = &copyFnEntity.builtins;
-  this->state.entities = &copyFnEntity.entities;
-  auto copyTypeInfo = this->_typeInfo(type);
-  copyFnEntity.decl += "_{struct any} " + typeName + "_copy (const _{struct any});";
-  copyFnEntity.def += "_{struct any} " + typeName + "_copy (const _{struct any} n) {" EOL;
-  copyFnEntity.def += "  struct _{" + typeName + "} *o = n.d;" EOL;
-  copyFnEntity.def += "  struct _{" + typeName + "} *r = _{alloc}(n.l);" EOL;
-  copyFnEntity.def += "  r->d = " + this->_genCopyFn(copyTypeInfo.type, "o->d") + ";" EOL;
-  copyFnEntity.def += "  return (_{struct any}) {n.t, r, n.l, n._copy, n._free};" EOL;
-  copyFnEntity.def += "}";
-  copyFnEntity.decl = this->_apiEval(copyFnEntity.decl);
-  copyFnEntity.def = this->_apiEval(copyFnEntity.def);
-  this->entities.push_back(copyFnEntity);
+    decl += "struct " + typeName + ";";
+    def += "struct " + typeName + " {" EOL;
+    def += "  " + typeInfo.typeCode + "d;" EOL;
+    def += "};";
 
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN};
-  this->state.builtins = &freeFnEntity.builtins;
-  this->state.entities = &freeFnEntity.entities;
-  auto freeTypeInfo = this->_typeInfo(type);
-  freeFnEntity.decl += "void " + typeName + "_free (_{struct any});";
-  freeFnEntity.def += "void " + typeName + "_free (_{struct any} _n) {" EOL;
-  freeFnEntity.def += "  struct _{" + typeName + "} *n = _n.d;" EOL;
+    return 0;
+  });
 
-  if (freeTypeInfo.type->shouldBeFreed()) {
-    freeFnEntity.def += "  " + this->_genFreeFn(freeTypeInfo.type, "n->d") + ";" EOL;
-  }
+  auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto typeInfo = this->_typeInfo(type);
 
-  freeFnEntity.def += "  _{free}(n);" EOL;
-  freeFnEntity.def += "}";
-  freeFnEntity.decl = this->_apiEval(freeFnEntity.decl);
-  freeFnEntity.def = this->_apiEval(freeFnEntity.def);
-  this->entities.push_back(freeFnEntity);
+    decl += "_{struct any} " + typeName + "_copy (const _{struct any});";
+    def += "_{struct any} " + typeName + "_copy (const _{struct any} n) {" EOL;
+    def += "  struct _{" + typeName + "} *o = n.d;" EOL;
+    def += "  struct _{" + typeName + "} *r = _{alloc}(n.l);" EOL;
+    def += "  r->d = " + this->_genCopyFn(typeInfo.type, "o->d") + ";" EOL;
+    def += "  return (_{struct any}) {n.t, r, n.l, n._copy, n._free};" EOL;
+    def += "}";
 
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN};
-  this->state.builtins = &allocFnEntity.builtins;
-  this->state.entities = &allocFnEntity.entities;
-  auto allocTypeInfo = this->_typeInfo(type);
-  allocFnEntity.decl += "_{struct any} " + typeName + "_alloc (" + allocTypeInfo.typeCodeTrimmed + ");";
-  allocFnEntity.def += "_{struct any} " + typeName + "_alloc (" + allocTypeInfo.typeCode + "d) {" EOL;
-  allocFnEntity.def += "  _{size_t} l = sizeof(struct _{" + typeName + "});" EOL;
-  allocFnEntity.def += "  struct _{" + typeName + "} *r = _{alloc}(l);" EOL;
-  allocFnEntity.def += "  r->d = d;" EOL;
-  allocFnEntity.def += "  return (_{struct any}) {_{" + this->_typeDef(allocTypeInfo.type) + "}, r, l, &_{" + typeName + "_copy}, &_{" + typeName + "_free}};" EOL;
-  allocFnEntity.def += "}";
-  allocFnEntity.decl = this->_apiEval(allocFnEntity.decl);
-  allocFnEntity.def = this->_apiEval(allocFnEntity.def);
-  this->entities.insert(this->entities.end() - 3, allocFnEntity);
+    return 0;
+  });
 
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
+  this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto typeInfo = this->_typeInfo(type);
+
+    decl += "void " + typeName + "_free (_{struct any});";
+    def += "void " + typeName + "_free (_{struct any} _n) {" EOL;
+    def += "  struct _{" + typeName + "} *n = _n.d;" EOL;
+
+    if (typeInfo.type->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(typeInfo.type, "n->d") + ";" EOL;
+    }
+
+    def += "  _{free}(n);" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto typeInfo = this->_typeInfo(type);
+
+    decl += "_{struct any} " + typeName + "_alloc (" + typeInfo.typeCodeTrimmed + ");";
+    def += "_{struct any} " + typeName + "_alloc (" + typeInfo.typeCode + "d) {" EOL;
+    def += "  _{size_t} l = sizeof(struct _{" + typeName + "});" EOL;
+    def += "  struct _{" + typeName + "} *r = _{alloc}(l);" EOL;
+    def += "  r->d = d;" EOL;
+    def += "  return (_{struct any}) {_{" + this->_typeDef(typeInfo.type) + "}, ";
+    def += "r, l, &_{" + typeName + "_copy}, &_{" + typeName + "_free}};" EOL;
+    def += "}";
+
+    return copyFnEntityIdx;
+  });
 
   return typeName;
 }
 
-std::string Codegen::_typeNameArray (const Type *type) {
+std::string Codegen::_typeNameArray (Type *type) {
   auto typeName = Codegen::typeName(type->name);
 
   for (const auto &entity : this->entities) {
@@ -4280,267 +4330,283 @@ std::string Codegen::_typeNameArray (const Type *type) {
     }
   }
 
-  auto initialStateBuiltins = this->state.builtins;
-  auto initialStateEntities = this->state.entities;
+  auto elementType = std::get<TypeArray>(type->body).elementType;
+  auto elementRealTypeCode = elementType->isRef() ? "*n.d[i]" : "n.d[i]";
 
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ, { "libStdlib" }};
-  this->state.builtins = &entity.builtins;
-  this->state.entities = &entity.entities;
+  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  auto elementTypeInfo = this->_typeInfo(std::get<TypeArray>(type->body).elementType);
-  auto varArgTypeCode = elementTypeInfo.type->isSmallForVarArg()
-    ? elementTypeInfo.type->isF32() ? "double" : "int"
-    : elementTypeInfo.typeCodeTrimmed;
-  auto elementRealTypeCode = std::string(elementTypeInfo.type->isRef() ? "*" : "") + "n.d[i]";
+    decl += "struct " + typeName + ";";
+    def += "struct " + typeName + " {" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d;" EOL;
+    def += "  _{size_t} l;" EOL;
+    def += "};";
 
-  entity.decl += "struct " + typeName + ";";
-  entity.def += "struct " + typeName + " {" EOL;
-  entity.def += "  " + elementTypeInfo.typeRefCode + "d;" EOL;
-  entity.def += "  size_t l;" EOL;
-  entity.def += "};";
+    return 0;
+  });
 
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdarg", "libStdlib" }, { typeName }};
-  allocFnEntity.decl += "struct " + typeName + " " + typeName + "_alloc (size_t, ...);";
-  allocFnEntity.def += "struct " + typeName + " " + typeName + "_alloc (size_t x, ...) {" EOL;
-  allocFnEntity.def += "  if (x == 0) return (struct " + typeName + ") {NULL, 0};" EOL;
-  allocFnEntity.def += "  " + elementTypeInfo.typeRefCode + "d = alloc(x * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  allocFnEntity.def += "  va_list args;" EOL;
-  allocFnEntity.def += "  va_start(args, x);" EOL;
-  allocFnEntity.def += "  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, " + varArgTypeCode + ");" EOL;
-  allocFnEntity.def += "  va_end(args);" EOL;
-  allocFnEntity.def += "  return (struct " + typeName + ") {d, x};" EOL;
-  allocFnEntity.def += "}";
+  this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  auto atFnEntity = CodegenEntity{typeName + "_at", CODEGEN_ENTITY_FN, {
-    "definitions",
-    "libInttypes",
-    "libStdio",
-    "libStdlib"
-  }, { typeName }};
+    decl += "struct _{" + typeName + "} " + typeName + "_alloc (_{size_t}, ...);";
+    def += "struct _{" + typeName + "} " + typeName + "_alloc (_{size_t} x, ...) {" EOL;
+    def += "  if (x == 0) return (struct _{" + typeName + "}) {_{NULL}, 0};" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(x * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  _{va_list} args;" EOL;
+    def += "  _{va_start}(args, x);" EOL;
+    def += "  for (_{size_t} i = 0; i < x; i++) ";
+    def += "d[i] = _{va_arg}(args, " + elementType->vaArgCode(elementTypeInfo.typeCodeTrimmed) + ");" EOL;
+    def += "  _{va_end}(args);" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, x};" EOL;
+    def += "}";
 
-  atFnEntity.decl += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + ", int64_t);";
-  atFnEntity.def += elementTypeInfo.typeRefCode + typeName + "_at (struct " + typeName + " n, int64_t i) {" EOL;
-  atFnEntity.def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {" EOL;
-  atFnEntity.def += R"(    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);)" EOL;
-  atFnEntity.def += "    exit(EXIT_FAILURE);" EOL;
-  atFnEntity.def += "  }" EOL;
-  atFnEntity.def += "  return i < 0 ? &n.d[n.l + i] : &n.d[i];" EOL;
-  atFnEntity.def += "}";
+    return 0;
+  });
 
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib" }, { typeName }};
-  copyFnEntity.decl += "struct " + typeName + " " + typeName + "_copy (const struct " + typeName + ");";
-  copyFnEntity.def += "struct " + typeName + " " + typeName + "_copy (const struct " + typeName + " n) {" EOL;
-  copyFnEntity.def += "  if (n.l == 0) return (struct " + typeName + ") {NULL, 0};" EOL;
-  copyFnEntity.def += "  " + elementTypeInfo.typeRefCode + "d = alloc(n.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  copyFnEntity.def += "  for (size_t i = 0; i < n.l; i++) d[i] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[i]", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
-  copyFnEntity.def += "  return (struct " + typeName + ") {d, n.l};" EOL;
-  copyFnEntity.def += "}";
+  auto freeFnEntityIdx = this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  auto emptyFnEntity = CodegenEntity{typeName + "_empty", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
-  emptyFnEntity.decl += "bool " + typeName + "_empty (struct " + typeName + ");";
-  emptyFnEntity.def += "bool " + typeName + "_empty (struct " + typeName + " n) {" EOL;
-  emptyFnEntity.def += "  bool r = n.l == 0;" EOL;
-  emptyFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  emptyFnEntity.def += "  return r;" EOL;
-  emptyFnEntity.def += "}";
+    decl += "void " + typeName + "_free (struct _{" + typeName + "});";
+    def += "void " + typeName + "_free (struct _{" + typeName + "} n) {" EOL;
 
-  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
-  eqFnEntity.decl += "bool " + typeName + "_eq (struct " + typeName + ", struct " + typeName + ");";
-  eqFnEntity.def += "bool " + typeName + "_eq (struct " + typeName + " n1, struct " + typeName + " n2) {" EOL;
-  eqFnEntity.def += "  bool r = n1.l == n2.l;" EOL;
-  eqFnEntity.def += "  if (r) {" EOL;
-  eqFnEntity.def += "    for (size_t i = 0; i < n1.l; i++) {" EOL;
-  eqFnEntity.def += "      if (" + this->_genEqFn(elementTypeInfo.type, "n1.d[i]", "n2.d[i]", &eqFnEntity.builtins, &eqFnEntity.entities, true) + ") {" EOL;
-  eqFnEntity.def += "        r = false;" EOL;
-  eqFnEntity.def += "        break;" EOL;
-  eqFnEntity.def += "      }" EOL;
-  eqFnEntity.def += "    }" EOL;
-  eqFnEntity.def += "  }" EOL;
-  eqFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n1);" EOL;
-  eqFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n2);" EOL;
-  eqFnEntity.def += "  return r;" EOL;
-  eqFnEntity.def += "}";
+    if (elementTypeInfo.type->shouldBeFreed()) {
+      def += "  for (_{size_t} i = 0; i < n.l; i++) " + this->_genFreeFn(elementTypeInfo.type, "n.d[i]") + ";" EOL;
+    }
 
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName }};
-  freeFnEntity.decl += "void " + typeName + "_free (struct " + typeName + ");";
-  freeFnEntity.def += "void " + typeName + "_free (struct " + typeName + " n) {" EOL;
+    def += "  _{free}(n.d);" EOL;
+    def += "}";
 
-  if (elementTypeInfo.type->shouldBeFreed()) {
-    freeFnEntity.def += "  for (size_t i = 0; i < n.l; i++) " + this->_genFreeFn(elementTypeInfo.type, "n.d[i]", &freeFnEntity.builtins, &freeFnEntity.entities) + ";" EOL;
-  }
+    return 0;
+  });
 
-  freeFnEntity.def += "  free(n.d);" EOL;
-  freeFnEntity.def += "}";
+  auto atFnEntityIdx = this->_apiEntity(typeName + "_at", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  auto joinFnEntity = CodegenEntity{typeName + "_join", CODEGEN_ENTITY_FN, {
-    "fnStrAlloc",
-    "fnStrConcatStr",
-    "fnStrCopy",
-    "fnStrFree",
-    "typeStr"
-  }, { typeName, typeName + "_free" }};
+    decl += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "}, _{int64_t});";
+    def += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "} n, _{int64_t} i) {" EOL;
+    def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((_{int64_t}) n.l))) {" EOL;
+    def += R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId64} " out of array bounds" _{THE_EOL}, i);)" EOL;
+    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
+    def += "  }" EOL;
+    def += "  return i < 0 ? &n.d[n.l + i] : &n.d[i];" EOL;
+    def += "}";
 
-  joinFnEntity.decl += "struct str " + typeName + "_join (struct " + typeName + ", unsigned char, struct str);";
-  joinFnEntity.def += "struct str " + typeName + "_join (struct " + typeName + " n, unsigned char o1, struct str n1) {" EOL;
-  joinFnEntity.def += R"(  struct str x = o1 == 0 ? str_alloc(",") : n1;)" EOL;
-  joinFnEntity.def += R"(  struct str r = str_alloc("");)" EOL;
-  joinFnEntity.def += "  for (size_t i = 0; i < n.l; i++) {" EOL;
-  joinFnEntity.def += "    if (i != 0) r = str_concat_str(r, str_copy(x));" EOL;
-  joinFnEntity.def += "    r = str_concat_str(r, " + this->_genStrFn(elementTypeInfo.realType, elementRealTypeCode, &joinFnEntity.builtins, &joinFnEntity.entities, true, false) + ");" EOL;
-  joinFnEntity.def += "  }" EOL;
-  joinFnEntity.def += "  str_free((struct str) x);" EOL;
-  joinFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  joinFnEntity.def += R"(  return r;)" EOL;
-  joinFnEntity.def += "}";
+    return freeFnEntityIdx;
+  });
 
-  auto lenFnEntity = CodegenEntity{typeName + "_len", CODEGEN_ENTITY_FN, { "libStdlib" }, { typeName, typeName + "_free" }};
-  lenFnEntity.decl += "size_t " + typeName + "_len (struct " + typeName + ");";
-  lenFnEntity.def += "size_t " + typeName + "_len (struct " + typeName + " n) {" EOL;
-  lenFnEntity.def += "  size_t l = n.l;" EOL;
-  lenFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  lenFnEntity.def += "  return l;" EOL;
-  lenFnEntity.def += "}";
+  auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName, typeName + "_free" }};
-  neFnEntity.decl += "bool " + typeName + "_ne (struct " + typeName + ", struct " + typeName + ");";
-  neFnEntity.def += "bool " + typeName + "_ne (struct " + typeName + " n1, struct " + typeName + " n2) {" EOL;
-  neFnEntity.def += "  bool r = n1.l != n2.l;" EOL;
-  neFnEntity.def += "  if (!r) {" EOL;
-  neFnEntity.def += "    r = false;" EOL;
-  neFnEntity.def += "    for (size_t i = 0; i < n1.l; i++) {" EOL;
-  neFnEntity.def += "      if (" + this->_genEqFn(elementTypeInfo.type, "n1.d[i]", "n2.d[i]", &neFnEntity.builtins, &neFnEntity.entities, true) + ") {" EOL;
-  neFnEntity.def += "        r = true;" EOL;
-  neFnEntity.def += "        break;" EOL;
-  neFnEntity.def += "      }" EOL;
-  neFnEntity.def += "    }" EOL;
-  neFnEntity.def += "  }" EOL;
-  neFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n1);" EOL;
-  neFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n2);" EOL;
-  neFnEntity.def += "  return r;" EOL;
-  neFnEntity.def += "}";
+    decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
+    def += "  if (n.l == 0) return (struct _{" + typeName + "}) {_{NULL}, 0};" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(n.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) d[i] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[i]") + ";" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, n.l};" EOL;
+    def += "}";
 
-  auto popFnEntity = CodegenEntity{typeName + "_pop", CODEGEN_ENTITY_FN, {}, { typeName }};
-  popFnEntity.decl += elementTypeInfo.typeCode + typeName + "_pop (struct " + typeName + " *);";
-  popFnEntity.def += elementTypeInfo.typeCode + typeName + "_pop (struct " + typeName + " *n) {" EOL;
-  popFnEntity.def += "  n->l--;" EOL;
-  popFnEntity.def += "  return n->d[n->l];" EOL;
-  popFnEntity.def += "}";
+    return atFnEntityIdx + 1;
+  });
 
-  auto pushFnEntity = CodegenEntity{typeName + "_push", CODEGEN_ENTITY_FN, { "fnReAlloc", "libStdarg", "libStdlib" }, { typeName }};
-  pushFnEntity.decl += "void " + typeName + "_push (struct " + typeName + " *, size_t, ...);";
-  pushFnEntity.def += "void " + typeName + "_push (struct " + typeName + " *n, size_t x, ...) {" EOL;
-  pushFnEntity.def += "  if (x == 0) return;" EOL;
-  pushFnEntity.def += "  n->l += x;" EOL;
-  pushFnEntity.def += "  n->d = re_alloc(n->d, n->l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  pushFnEntity.def += "  va_list args;" EOL;
-  pushFnEntity.def += "  va_start(args, x);" EOL;
-  pushFnEntity.def += "  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, " + varArgTypeCode + ");" EOL;
-  pushFnEntity.def += "  va_end(args);" EOL;
-  pushFnEntity.def += "}";
+  auto emptyFnEntityIdx = this->_apiEntity(typeName + "_empty", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{bool} " + typeName + "_empty (struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_empty (struct _{" + typeName + "} n) {" EOL;
+    def += "  _{bool} r = n.l == 0;" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
 
-  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN, {}, { typeName, typeName + "_free" }};
-  reallocFnEntity.decl += "struct " + typeName + " " + typeName + "_realloc (struct " + typeName + ", struct " + typeName + ");";
-  reallocFnEntity.def += "struct " + typeName + " " + typeName + "_realloc (struct " + typeName + " n1, struct " + typeName + " n2) {" EOL;
-  reallocFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n1);" EOL;
-  reallocFnEntity.def += "  return n2;" EOL;
-  reallocFnEntity.def += "}";
+    return copyFnEntityIdx + 1;
+  });
 
-  auto reverseFnEntity = CodegenEntity{typeName + "_reverse", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib" }, { typeName, typeName + "_free" }};
-  reverseFnEntity.decl += "struct " + typeName + " " + typeName + "_reverse (struct " + typeName + ");";
-  reverseFnEntity.def += "struct " + typeName + " " + typeName + "_reverse (struct " + typeName + " n) {" EOL;
-  reverseFnEntity.def += "  if (n.l == 0) {" EOL;
-  reverseFnEntity.def += "    " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  reverseFnEntity.def += "    return (struct " + typeName + ") {NULL, 0};" EOL;
-  reverseFnEntity.def += "  }" EOL;
-  reverseFnEntity.def += "  " + elementTypeInfo.typeRefCode + "d = alloc(n.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  reverseFnEntity.def += "  for (size_t i = 0; i < n.l; i++) d[i] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[n.l - i - 1]", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
-  reverseFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  reverseFnEntity.def += "  return (struct " + typeName + ") {d, n.l};" EOL;
-  reverseFnEntity.def += "}";
+  this->_apiEntity(typeName + "_eq", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  auto sliceFnEntity = CodegenEntity{typeName + "_slice", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdint", "libStdlib" }, {
-    typeName,
-    typeName + "_free"
-  }};
+    decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  _{bool} r = n1.l == n2.l;" EOL;
+    def += "  if (r) {" EOL;
+    def += "    for (_{size_t} i = 0; i < n1.l; i++) {" EOL;
+    def += "      if (" + this->_genEqFn(elementTypeInfo.type, "n1.d[i]", "n2.d[i]", true) + ") {" EOL;
+    def += "        r = _{false};" EOL;
+    def += "        break;" EOL;
+    def += "      }" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
 
-  sliceFnEntity.decl += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + ", unsigned int, int64_t, unsigned int, int64_t);";
-  sliceFnEntity.def += "struct " + typeName + " " + typeName + "_slice (struct " + typeName + " n, unsigned int o1, int64_t n1, unsigned int o2, int64_t n2) {" EOL;
-  sliceFnEntity.def += "  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));" EOL;
-  sliceFnEntity.def += "  int64_t i2 = o2 == 0 ? (int64_t) n.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));" EOL;
-  sliceFnEntity.def += "  if (i1 > i2 || i1 >= n.l) {" EOL;
-  sliceFnEntity.def += "    " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  sliceFnEntity.def += "    return (struct " + typeName + ") {NULL, 0};" EOL;
-  sliceFnEntity.def += "  }" EOL;
-  sliceFnEntity.def += "  size_t l = i2 - i1;" EOL;
-  sliceFnEntity.def += "  " + elementTypeInfo.typeRefCode + "d = alloc(l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
-  sliceFnEntity.def += "  for (size_t i = 0; i1 < i2; i1++) d[i++] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[i1]", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
-  sliceFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  sliceFnEntity.def += "  return (struct " + typeName + ") {d, l};" EOL;
-  sliceFnEntity.def += "}";
+    return emptyFnEntityIdx + 1;
+  });
 
-  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN, {
-    "fnStrAlloc",
-    "fnStrConcatCstr",
-    "fnStrConcatStr",
-    "typeStr"
-  }, { typeName, typeName + "_free" }};
+  this->_apiEntity(typeName + "_join", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  strFnEntity.decl += "struct str " + typeName + "_str (struct " + typeName + ");";
-  strFnEntity.def += "struct str " + typeName + "_str (struct " + typeName + " n) {" EOL;
-  strFnEntity.def += R"(  struct str r = str_alloc("[");)" EOL;
-  strFnEntity.def += "  for (size_t i = 0; i < n.l; i++) {" EOL;
-  strFnEntity.def += R"(    if (i != 0) r = str_concat_cstr(r, ", ");)" EOL;
+    decl += "_{struct str} " + typeName + "_join (struct _{" + typeName + "}, unsigned char, _{struct str});";
+    def += "_{struct str} " + typeName + "_join (struct _{" + typeName + "} n, unsigned char o1, _{struct str} n1) {" EOL;
+    def += R"(  _{struct str} x = o1 == 0 ? _{str_alloc}(",") : n1;)" EOL;
+    def += R"(  _{struct str} r = _{str_alloc}("");)" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
+    def += "    if (i != 0) r = _{str_concat_str}(r, _{str_copy}(x));" EOL;
+    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(elementTypeInfo.realType, elementRealTypeCode, true, false) + ");" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(this->ast->typeMap.get("str"), "x") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += R"(  return r;)" EOL;
+    def += "}";
 
-  if (elementTypeInfo.realType->isStr()) {
-    strFnEntity.def += R"(    r = str_concat_cstr(r, "\"");)" EOL;
-  }
+    return 0;
+  });
 
-  strFnEntity.def += "    r = str_concat_str(r, " + this->_genStrFn(elementTypeInfo.realType, elementRealTypeCode, &strFnEntity.builtins, &strFnEntity.entities) + ");" EOL;
+  this->_apiEntity(typeName + "_len", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{size_t} " + typeName + "_len (struct _{" + typeName + "});";
+    def += "_{size_t} " + typeName + "_len (struct _{" + typeName + "} n) {" EOL;
+    def += "  _{size_t} l = n.l;" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return l;" EOL;
+    def += "}";
 
-  if (elementTypeInfo.realType->isStr()) {
-    strFnEntity.def += R"(    r = str_concat_cstr(r, "\"");)" EOL;
-  }
+    return 0;
+  });
 
-  strFnEntity.def += "  }" EOL;
-  strFnEntity.def += "  " + typeName + "_free((struct " + typeName + ") n);" EOL;
-  strFnEntity.def += R"(  return str_concat_cstr(r, "]");)" EOL;
-  strFnEntity.def += "}";
+  this->_apiEntity(typeName + "_ne", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
-  if (!elementTypeInfo.realType->builtin) {
-    this->_activateEntity(elementTypeInfo.realTypeName, &entity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName, &allocFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName, &atFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName, &copyFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName, &popFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName, &pushFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName, &reverseFnEntity.entities);
-    this->_activateEntity(elementTypeInfo.realTypeName, &sliceFnEntity.entities);
-  }
+    decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  _{bool} r = n1.l != n2.l;" EOL;
+    def += "  if (!r) {" EOL;
+    def += "    for (_{size_t} i = 0; i < n1.l; i++) {" EOL;
+    def += "      if (" + this->_genEqFn(elementTypeInfo.type, "n1.d[i]", "n2.d[i]", true) + ") {" EOL;
+    def += "        r = _{true};" EOL;
+    def += "        break;" EOL;
+    def += "      }" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
 
-  this->entities.push_back(entity);
-  this->entities.push_back(allocFnEntity);
-  this->entities.push_back(atFnEntity);
-  this->entities.push_back(copyFnEntity);
-  this->entities.push_back(emptyFnEntity);
-  this->entities.push_back(eqFnEntity);
-  this->entities.push_back(freeFnEntity);
-  this->entities.push_back(joinFnEntity);
-  this->entities.push_back(lenFnEntity);
-  this->entities.push_back(neFnEntity);
-  this->entities.push_back(popFnEntity);
-  this->entities.push_back(pushFnEntity);
-  this->entities.push_back(reallocFnEntity);
-  this->entities.push_back(reverseFnEntity);
-  this->entities.push_back(sliceFnEntity);
-  this->entities.push_back(strFnEntity);
+    return 0;
+  });
 
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
+  this->_apiEntity(typeName + "_pop", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += elementTypeInfo.typeCode + typeName + "_pop (struct _{" + typeName + "} *);";
+    def += elementTypeInfo.typeCode + typeName + "_pop (struct _{" + typeName + "} *n) {" EOL;
+    def += "  n->l--;" EOL;
+    def += "  return n->d[n->l];" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_push", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "void " + typeName + "_push (struct _{" + typeName + "} *, _{size_t}, ...);";
+    def += "void " + typeName + "_push (struct _{" + typeName + "} *n, _{size_t} x, ...) {" EOL;
+    def += "  if (x == 0) return;" EOL;
+    def += "  n->l += x;" EOL;
+    def += "  n->d = _{re_alloc}(n->d, n->l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  _{va_list} args;" EOL;
+    def += "  _{va_start}(args, x);" EOL;
+    def += "  for (_{size_t} i = n->l - x; i < n->l; i++) ";
+    def += "n->d[i] = _{va_arg}(args, " + elementType->vaArgCode(elementTypeInfo.typeCodeTrimmed) + ");" EOL;
+    def += "  _{va_end}(args);" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  return n2;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_reverse", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "struct _{" + typeName + "} " + typeName + "_reverse (struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_reverse (struct _{" + typeName + "} n) {" EOL;
+    def += "  if (n.l == 0) {" EOL;
+    def += "    " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "    return (struct _{" + typeName + "}) {_{NULL}, 0};" EOL;
+    def += "  }" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(n.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) d[i] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[n.l - i - 1]") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, n.l};" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_slice", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "struct _{" + typeName + "} " + typeName + "_slice (struct _{" + typeName + "}, ";
+    decl += "unsigned int, _{int64_t}, unsigned int, _{int64_t});";
+    def += "struct _{" + typeName + "} " + typeName + "_slice (struct _{" + typeName + "} n, ";
+    def += "unsigned int o1, _{int64_t} n1, unsigned int o2, _{int64_t} n2) {" EOL;
+    def += "  _{int64_t} i1 = o1 == 0 ? 0 : (_{int64_t}) (n1 < 0 ? (n1 < -((_{int64_t}) n.l) ? 0 : n1 + n.l) ";
+    def += ": (n1 > n.l ? n.l : n1));" EOL;
+    def += "  _{int64_t} i2 = o2 == 0 ? (_{int64_t}) n.l : (_{int64_t}) (n2 < 0 ? (n2 < -((_{int64_t}) n.l) ? 0 : n2 + n.l) ";
+    def += ": (n2 > n.l ? n.l : n2));" EOL;
+    def += "  if (i1 > i2 || i1 >= n.l) {" EOL;
+    def += "    " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "    return (struct _{" + typeName + "}) {_{NULL}, 0};" EOL;
+    def += "  }" EOL;
+    def += "  _{size_t} l = i2 - i1;" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  for (_{size_t} i = 0; i1 < i2; i1++) d[i++] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[i1]") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, l};" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
+    def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
+    def += R"(  _{struct str} r = _{str_alloc}("[");)" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
+    def += R"(    if (i != 0) r = _{str_concat_cstr}(r, ", ");)" EOL;
+
+    if (elementTypeInfo.realType->isStr()) {
+      def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
+    }
+
+    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(elementTypeInfo.realType, elementRealTypeCode) + ");" EOL;
+
+    if (elementTypeInfo.realType->isStr()) {
+      def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
+    }
+
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += R"(  return _{str_concat_cstr}(r, "]");)" EOL;
+    def += "}";
+
+    return 0;
+  });
 
   return typeName;
 }
 
-std::string Codegen::_typeNameFn (const Type *type) {
+std::string Codegen::_typeNameFn (Type *type) {
   auto typeName = Codegen::typeName(type->name);
 
   for (const auto &entity : this->entities) {
@@ -4549,122 +4615,106 @@ std::string Codegen::_typeNameFn (const Type *type) {
     }
   }
 
-  auto initialStateBuiltins = this->state.builtins;
-  auto initialStateEntities = this->state.entities;
-
-  auto fn = std::get<TypeFn>(type->body);
+  auto fnType = std::get<TypeFn>(type->body);
   auto paramsName = Codegen::typeName(type->name + "P");
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
+  auto paramsEntityIdx = 0;
 
-  if (!fn.params.empty()) {
-    auto paramsEntity = CodegenEntity{paramsName, CODEGEN_ENTITY_OBJ};
-    this->state.builtins = &paramsEntity.builtins;
-    this->state.entities = &paramsEntity.entities;
-    paramsEntity.decl += "struct " + paramsName + ";";
-    paramsEntity.def += "struct " + paramsName + " {" EOL;
+  if (!fnType.params.empty()) {
+    paramsEntityIdx = this->_apiEntity(paramsName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+      auto paramsCode = std::string();
+      auto paramIdx = static_cast<std::size_t>(0);
 
-    auto paramIdx = static_cast<std::size_t>(0);
+      for (const auto &param : fnType.params) {
+        auto paramTypeInfo = this->_typeInfo(param.type);
+        auto paramIdxStr = std::to_string(paramIdx);
 
-    for (const auto &param : fn.params) {
-      auto paramTypeInfo = this->_typeInfo(param.type);
-      auto paramIdxStr = std::to_string(paramIdx);
+        if (!param.required && !param.variadic) {
+          paramsCode += "  unsigned char o" + paramIdxStr + ";" EOL;
+        }
 
-      if (!param.required && !param.variadic) {
-        paramsEntity.def += "  unsigned char o" + paramIdxStr + ";" EOL;
+        paramsCode += "  " + paramTypeInfo.typeCode + "n" + paramIdxStr + ";" EOL;
+        paramIdx++;
       }
 
-      paramsEntity.def += "  " + paramTypeInfo.typeCode + "n" + paramIdxStr + ";" EOL;
-      paramIdx++;
+      decl += "struct " + paramsName + ";";
+      def += "struct " + paramsName + " {" EOL;
+      def += paramsCode;
+      def += "};";
+
+      return 0;
+    });
+  }
+
+  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    auto returnTypeInfo = this->_typeInfo(fnType.returnType);
+    auto functorArgs = std::string("void *");
+
+    if (fnType.isMethod && fnType.methodInfo.isSelfFirst) {
+      auto selfTypeInfo = this->_typeInfo(fnType.methodInfo.selfType);
+      functorArgs += ", " + (fnType.methodInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst);
     }
 
-    paramsEntity.def += "};";
-    paramsEntity.decl = this->_apiEval(paramsEntity.decl);
-    paramsEntity.def = this->_apiEval(paramsEntity.def);
-    this->entities.push_back(paramsEntity);
-  }
+    if (!fnType.params.empty()) {
+      functorArgs += ", struct _{" + paramsName + "}";
+    }
 
-  this->state.builtins = &entity.builtins;
-  this->state.entities = &entity.entities;
+    decl += "struct " + typeName + ";";
+    def += "struct " + typeName + " {" EOL;
+    def += "  " + returnTypeInfo.typeCode + "(*f) (" + functorArgs + ");" EOL;
+    def += "  void *x;" EOL;
+    def += "  _{size_t} l;" EOL;
+    def += "};";
 
-  auto returnTypeInfo = this->_typeInfo(fn.returnType);
-  auto functorArgs = std::string("void *");
+    return fnType.params.empty() ? 0 : paramsEntityIdx;
+  });
 
-  if (fn.isMethod && fn.methodInfo.isSelfFirst) {
-    auto selfTypeInfo = this->_typeInfo(fn.methodInfo.selfType);
-    functorArgs += ", " + (fn.methodInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst);
-  }
+  this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
+    def += "  if (n.x == _{NULL}) return n;" EOL;
+    def += "  void *x = _{alloc}(n.l);" EOL;
+    def += "  _{memcpy}(x, n.x, n.l);" EOL;
+    def += "  return (struct _{" + typeName + "}) {n.f, x, n.l};" EOL;
+    def += "}";
 
-  if (!fn.params.empty()) {
-    functorArgs += ", struct _{" + paramsName + "}";
-  }
+    return 0;
+  });
 
-  entity.decl += "struct " + typeName + ";";
-  entity.def += "struct " + typeName + " {" EOL;
-  entity.def += "  " + returnTypeInfo.typeCode + "(*f) (" + functorArgs + ");" EOL;
-  entity.def += "  void *x;" EOL;
-  entity.def += "  _{size_t} l;" EOL;
-  entity.def += "};";
-  entity.decl = this->_apiEval(entity.decl);
-  entity.def = this->_apiEval(entity.def);
-  this->entities.push_back(entity);
+  this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "void " + typeName + "_free (struct _{" + typeName + "});";
+    def += "void " + typeName + "_free (struct _{" + typeName + "} n) {" EOL;
+    def += "  if (n.x != _{NULL}) _{free}(n.x);" EOL;
+    def += "}";
 
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
-  this->state.builtins = &copyFnEntity.builtins;
-  this->state.entities = &copyFnEntity.entities;
-  copyFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
-  copyFnEntity.def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
-  copyFnEntity.def += "  if (n.x == _{NULL}) return n;" EOL;
-  copyFnEntity.def += "  void *x = _{alloc}(n.l);" EOL;
-  copyFnEntity.def += "  _{memcpy}(x, n.x, n.l);" EOL;
-  copyFnEntity.def += "  return (struct _{" + typeName + "}) {n.f, x, n.l};" EOL;
-  copyFnEntity.def += "}";
-  copyFnEntity.decl = this->_apiEval(copyFnEntity.decl);
-  copyFnEntity.def = this->_apiEval(copyFnEntity.def);
-  this->entities.push_back(copyFnEntity);
+    return 0;
+  });
 
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN};
-  this->state.builtins = &freeFnEntity.builtins;
-  this->state.entities = &freeFnEntity.entities;
-  freeFnEntity.decl += "void " + typeName + "_free (struct _{" + typeName + "});";
-  freeFnEntity.def += "void " + typeName + "_free (struct _{" + typeName + "} n) {" EOL;
-  freeFnEntity.def += "  _{free}(n.x);" EOL;
-  freeFnEntity.def += "}";
-  freeFnEntity.decl = this->_apiEval(freeFnEntity.decl);
-  freeFnEntity.def = this->_apiEval(freeFnEntity.def);
-  this->entities.push_back(freeFnEntity);
+  this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  return n2;" EOL;
+    def += "}";
 
-  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN};
-  this->state.builtins = &reallocFnEntity.builtins;
-  this->state.entities = &reallocFnEntity.entities;
-  reallocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
-  reallocFnEntity.def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-  reallocFnEntity.def += "  if (n1.x != _{NULL}) _{free}(n1.x);" EOL;
-  reallocFnEntity.def += "  return n2;" EOL;
-  reallocFnEntity.def += "}";
-  reallocFnEntity.decl = this->_apiEval(reallocFnEntity.decl);
-  reallocFnEntity.def = this->_apiEval(reallocFnEntity.def);
-  this->entities.push_back(reallocFnEntity);
+    return 0;
+  });
 
-  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN};
-  this->state.builtins = &strFnEntity.builtins;
-  this->state.entities = &strFnEntity.entities;
-  strFnEntity.decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
-  strFnEntity.def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
-  strFnEntity.def += "  if (n.x != _{NULL}) _{free}(n.x);" EOL;
-  strFnEntity.def += R"(  return _{str_alloc}("[Function]");)" EOL;
-  strFnEntity.def += "}";
-  strFnEntity.decl = this->_apiEval(strFnEntity.decl);
-  strFnEntity.def = this->_apiEval(strFnEntity.def);
-  this->entities.push_back(strFnEntity);
+  this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
+    def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += R"(  return _{str_alloc}("[Function]");)" EOL;
+    def += "}";
 
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
+    return 0;
+  });
 
   return typeName;
 }
 
-std::string Codegen::_typeNameOpt (const Type *type) {
+std::string Codegen::_typeNameMap (Type *type) {
   auto typeName = Codegen::typeName(type->name);
+  auto pairTypeName = Codegen::typeName("pair" + type->name.substr(3));
 
   for (const auto &entity : this->entities) {
     if (entity.name == typeName) {
@@ -4672,396 +4722,463 @@ std::string Codegen::_typeNameOpt (const Type *type) {
     }
   }
 
-  auto initialStateBuiltins = this->state.builtins;
-  auto initialStateEntities = this->state.entities;
+  auto mapType = std::get<TypeBodyMap>(type->body);
 
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
-  this->state.builtins = &entity.builtins;
-  this->state.entities = &entity.entities;
+  this->_apiEntity(pairTypeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+    auto valueTypeInfo = this->_typeInfo(mapType.valueType);
 
-  auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
-  auto underlyingRealTypeCode = std::string(underlyingTypeInfo.type->isRef() ? "*" : "") + "*n";
+    decl += "struct " + pairTypeName + ";";
+    def += "struct " + pairTypeName + " {" EOL;
+    def += "  " + keyTypeInfo.typeCode + "f;" EOL;
+    def += "  " + valueTypeInfo.typeCode + "s;" EOL;
+    def += "};";
 
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN, { "fnAlloc" }};
-  allocFnEntity.decl += underlyingTypeInfo.typeRefCode + typeName + "_alloc (" + underlyingTypeInfo.typeCodeTrimmed + ");";
-  allocFnEntity.def += underlyingTypeInfo.typeRefCode + typeName + "_alloc (" + underlyingTypeInfo.typeCode + "n) {" EOL;
-  allocFnEntity.def += "  " + underlyingTypeInfo.typeRefCode + "r = alloc(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
-  allocFnEntity.def += "  *r = n;" EOL;
-  allocFnEntity.def += "  return r;" EOL;
-  allocFnEntity.def += "}";
+    return 0;
+  });
 
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN, { "fnAlloc", "libStdlib" }};
-  copyFnEntity.decl += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + ");";
-  copyFnEntity.def += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + "n) {" EOL;
-  copyFnEntity.def += "  if (n == NULL) return NULL;" EOL;
-  copyFnEntity.def += "  " + underlyingTypeInfo.typeRefCode + "r = alloc(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
-  copyFnEntity.def += "  *r = " + this->_genCopyFn(underlyingTypeInfo.type, "*n", &copyFnEntity.builtins, &copyFnEntity.entities) + ";" EOL;
-  copyFnEntity.def += "  return r;" EOL;
-  copyFnEntity.def += "}";
+  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    decl += "struct " + typeName + ";";
+    def += "struct " + typeName + " {" EOL;
+    def += "  struct _{" + pairTypeName + "} *d;" EOL;
+    def += "  _{size_t} c;" EOL;
+    def += "  _{size_t} l;" EOL;
+    def += "};";
 
-  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName + "_free" }};
-  eqFnEntity.decl += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
-  eqFnEntity.def += "bool " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-  eqFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : ";
-  eqFnEntity.def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", &eqFnEntity.builtins, &eqFnEntity.entities) + ";" EOL;
-  eqFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n1);" EOL;
-  eqFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n2);" EOL;
-  eqFnEntity.def += "  return r;" EOL;
-  eqFnEntity.def += "}";
+    return 0;
+  });
 
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN, { "libStdlib" }};
-  freeFnEntity.decl += "void " + typeName + "_free (" + underlyingTypeInfo.typeRefCode + ");";
-  freeFnEntity.def += "void " + typeName + "_free (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
-  freeFnEntity.def += "  if (n == NULL) return;" EOL;
+  this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+    auto valueTypeInfo = this->_typeInfo(mapType.valueType);
+    auto keyVaArgCode = keyTypeInfo.type->vaArgCode(keyTypeInfo.typeCodeTrimmed);
+    auto valueVaArgCode = valueTypeInfo.type->vaArgCode(valueTypeInfo.typeCodeTrimmed);
 
-  if (underlyingTypeInfo.type->shouldBeFreed()) {
-    freeFnEntity.def += "  " + this->_genFreeFn(underlyingTypeInfo.type, "*n", &freeFnEntity.builtins, &freeFnEntity.entities) + ";" EOL;
-  }
+    decl += "struct _{" + typeName + "} " + typeName + "_alloc (int, ...);";
+    def += "struct _{" + typeName + "} " + typeName + "_alloc (int x, ...) {" EOL;
+    def += "  struct _{" + pairTypeName + "} *d = _{alloc}(x * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  _{va_list} args;" EOL;
+    def += "  _{va_start}(args, x);" EOL;
+    def += "  for (int i = 0; i < x; i++) d[i] = (struct _{" + pairTypeName + "}) ";
+    def += "{_{va_arg}(args, " + keyVaArgCode + "), _{va_arg}(args, " + valueVaArgCode + ")};" EOL;
+    def += "  _{va_end}(args);" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, x, x};" EOL;
+    def += "}";
 
-  freeFnEntity.def += "  free(n);" EOL;
-  freeFnEntity.def += "}";
+    return 0;
+  });
 
-  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN, { "libStdbool", "libStdlib" }, { typeName + "_free" }};
-  neFnEntity.decl += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
-  neFnEntity.def += "bool " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-  neFnEntity.def += "  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : ";
-  neFnEntity.def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", &neFnEntity.builtins, &neFnEntity.entities, true) + ";" EOL;
-  neFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n1);" EOL;
-  neFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n2);" EOL;
-  neFnEntity.def += "  return r;" EOL;
-  neFnEntity.def += "}";
+  auto freeFnEntityIdx = this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "void " + typeName + "_free (struct _{" + typeName + "});";
+    def += "void " + typeName + "_free (struct _{" + typeName + "} n) {" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
 
-  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN, {}, { typeName + "_free" }};
-  reallocFnEntity.decl += underlyingTypeInfo.typeRefCode + typeName + "_realloc (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
-  reallocFnEntity.def += underlyingTypeInfo.typeRefCode + typeName + "_realloc (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-  reallocFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n1);" EOL;
-  reallocFnEntity.def += "  return n2;" EOL;
-  reallocFnEntity.def += "}";
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "    " + this->_genFreeFn(mapType.keyType, "n.d[i].f") + ";" EOL;
+    }
 
-  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN, {
-    "libStdlib",
-    "fnStrAlloc",
-    "fnStrConcatCstr",
-    "fnStrConcatStr",
-    "typeStr"
-  }, { typeName + "_free" }};
+    if (mapType.valueType->shouldBeFreed()) {
+      def += "    " + this->_genFreeFn(mapType.valueType, "n.d[i].s") + ";" EOL;
+    }
 
-  strFnEntity.decl += "struct str " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + ");";
-  strFnEntity.def += "struct str " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
-  strFnEntity.def += R"(  if (n == NULL) return str_alloc("nil");)" EOL;
+    def += "  }" EOL;
+    def += "  _{free}(n.d);" EOL;
+    def += "}";
 
-  if (underlyingTypeInfo.realType->isStr()) {
-    strFnEntity.def += R"(  struct str r = str_alloc("\"");)" EOL;
-    strFnEntity.def += "  r = str_concat_str(r, " + this->_genStrFn(underlyingTypeInfo.realType, underlyingRealTypeCode, &strFnEntity.builtins, &strFnEntity.entities) + ");" EOL;
-    strFnEntity.def += R"(  r = str_concat_cstr(r, "\"");)" EOL;
-  } else {
-    strFnEntity.def += "  struct str r = " + this->_genStrFn(underlyingTypeInfo.realType, underlyingRealTypeCode, &strFnEntity.builtins, &strFnEntity.entities) + ";" EOL;
-  }
+    return 0;
+  });
 
-  strFnEntity.def += "  " + typeName + "_free((" + underlyingTypeInfo.typeRefCode + ") n);" EOL;
-  strFnEntity.def += "  return r;" EOL;
-  strFnEntity.def += "}";
+  auto capFnEntityIdx = this->_apiEntity(typeName + "_cap", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{size_t} " + typeName + "_cap (struct _{" + typeName + "});";
+    def += "_{size_t} " + typeName + "_cap (struct _{" + typeName + "} n) {" EOL;
+    def += "  _{size_t} c = n.c;" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return c;" EOL;
+    def += "}";
 
-  if (!underlyingTypeInfo.realType->builtin) {
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &entity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &allocFnEntity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &copyFnEntity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &eqFnEntity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &freeFnEntity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &neFnEntity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &reallocFnEntity.entities);
-    this->_activateEntity(underlyingTypeInfo.realTypeName, &strFnEntity.entities);
-  }
+    return freeFnEntityIdx;
+  });
 
-  this->entities.push_back(entity);
-  this->entities.push_back(allocFnEntity);
-  this->entities.push_back(copyFnEntity);
-  this->entities.push_back(eqFnEntity);
-  this->entities.push_back(freeFnEntity);
-  this->entities.push_back(neFnEntity);
-  this->entities.push_back(reallocFnEntity);
-  this->entities.push_back(strFnEntity);
+  auto clearFnEntityIdx = this->_apiEntity(typeName + "_clear", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} *" + typeName + "_clear (struct _{" + typeName + "} *);";
+    def += "struct _{" + typeName + "} *" + typeName + "_clear (struct _{" + typeName + "} *n) {" EOL;
+    def += "  " + this->_genFreeFn(type, "*n") + ";" EOL;
+    def += "  n->d = _{NULL};" EOL;
+    def += "  n->l = 0;" EOL;
+    def += "  return n;" EOL;
+    def += "}";
 
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
+    return capFnEntityIdx + 1;
+  });
+
+  auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
+    def += "  struct _{" + pairTypeName + "} *d = _{alloc}(n.c * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) d[i] = (struct _{" + pairTypeName + "}) ";
+    def += "{" + this->_genCopyFn(mapType.keyType, "n.d[i].f") + ", " + this->_genCopyFn(mapType.valueType, "n.d[i].s") + "};" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, n.c, n.l};" EOL;
+    def += "}";
+
+    return clearFnEntityIdx + 1;
+  });
+
+  auto emptyFnEntityIdx = this->_apiEntity(typeName + "_empty", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{bool} " + typeName + "_empty (struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_empty (struct _{" + typeName + "} n) {" EOL;
+    def += "  _{bool} r = n.l == 0;" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return copyFnEntityIdx + 1;
+  });
+
+  this->_apiEntity(typeName + "_eq", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  _{bool} r = n1.l == n2.l;" EOL;
+    def += "  if (r) {" EOL;
+    def += "    for (_{size_t} i = 0; i < n1.l; i++) {" EOL;
+    def += "      if (" + this->_genEqFn(mapType.keyType, "n1.d[i].f", "n2.d[i].f", true) + " || ";
+    def += this->_genEqFn(mapType.valueType, "n1.d[i].s", "n2.d[i].s", true) + ") {" EOL;
+    def += "        r = _{false};" EOL;
+    def += "        break;" EOL;
+    def += "      }" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return emptyFnEntityIdx + 1;
+  });
+
+  this->_apiEntity(typeName + "_get", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+    auto valueTypeInfo = this->_typeInfo(mapType.valueType);
+
+    decl += valueTypeInfo.typeCode + typeName + "_get (struct _{" + typeName + "}, " + keyTypeInfo.typeCodeTrimmed + ");";
+    def += valueTypeInfo.typeCode + typeName + "_get (struct _{" + typeName + "} n, " + keyTypeInfo.typeCode + "k) {" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, "n.d[i].f", "k") + ") {" EOL;
+    def += "      " + valueTypeInfo.typeCode + "r = " + this->_genCopyFn(mapType.valueType, "n.d[i].s") + ";" EOL;
+    def += "      " + this->_genFreeFn(type, "n") + ";" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
+    def += "      return r;" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += R"(  _{fprintf}(_{stderr}, "Error: failed to get map value" _{THE_EOL});)" EOL;
+    def += "  _{exit}(_{EXIT_FAILURE});" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_has", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+
+    decl += "_{bool} " + typeName + "_has (struct _{" + typeName + "}, " + keyTypeInfo.typeCodeTrimmed + ");";
+    def += "_{bool} " + typeName + "_has (struct _{" + typeName + "} n, " + keyTypeInfo.typeCode + "k) {" EOL;
+    def += "  _{bool} r = _{false};" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, "n.d[i].f", "k") + ") {" EOL;
+    def += "      r = _{true};" EOL;
+    def += "      break;" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_keys", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+    auto keysTypeInfo = this->_typeInfo(this->ast->typeMap.arrayOf(mapType.keyType));
+
+    decl += keysTypeInfo.typeCode + typeName + "_keys (struct _{" + typeName + "});";
+    def += keysTypeInfo.typeCode + typeName + "_keys (struct _{" + typeName + "} n) {" EOL;
+    def += "  " + keyTypeInfo.typeCode + "*r = _{alloc}(n.l * sizeof(" + keyTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.keyType, "n.d[i].f") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return (" + keysTypeInfo.typeCodeTrimmed + ") {r, n.l};" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_len", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{size_t} " + typeName + "_len (struct _{" + typeName + "});";
+    def += "_{size_t} " + typeName + "_len (struct _{" + typeName + "} n) {" EOL;
+    def += "  _{size_t} l = n.l;" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return l;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_merge", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} *" + typeName + "_merge (struct _{" + typeName + "} *, struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} *" + typeName + "_merge (struct _{" + typeName + "} *n, struct _{" + typeName + "} m) {" EOL;
+    def += "  if (n->l + m.l > n->c) n->d = _{re_alloc}(n->d, (n->c = n->l + m.l) * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  for (_{size_t} i = 0; i < m.l; i++) {" EOL;
+    def += "    for (_{size_t} j = 0; j < n->l; j++) {" EOL;
+    def += "      if (" + this->_genEqFn(mapType.keyType, "n->d[j].f", "m.d[i].f") + ") {" EOL;
+
+    if (mapType.valueType->shouldBeFreed()) {
+      def += "        " + this->_genFreeFn(mapType.valueType, "n->d[j].s") + ";" EOL;
+    }
+
+    def += "        n->d[j].s = " + this->_genCopyFn(mapType.valueType, "m.d[i].s") + ";" EOL;
+    def += "        goto " + typeName + "_merge_next;" EOL;
+    def += "      }" EOL;
+    def += "    }" EOL;
+    def += "    n->d[n->l++] = (struct _{" + pairTypeName + "}) ";
+    def += "{" + this->_genCopyFn(mapType.keyType, "m.d[i].f") + ", " + this->_genCopyFn(mapType.valueType, "m.d[i].s") + "};" EOL;
+    def += typeName + "_merge_next:;" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "m") + ";" EOL;
+    def += "  return n;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_ne", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  _{bool} r = n1.l != n2.l;" EOL;
+    def += "  if (!r) {" EOL;
+    def += "    for (_{size_t} i = 0; i < n1.l; i++) {" EOL;
+    def += "      if (" + this->_genEqFn(mapType.keyType, "n1.d[i].f", "n2.d[i].f", true) + " || ";
+    def += this->_genEqFn(mapType.valueType, "n1.d[i].s", "n2.d[i].s", true) + ") {" EOL;
+    def += "        r = _{true};" EOL;
+    def += "        break;" EOL;
+    def += "      }" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  return n2;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_remove", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+
+    decl += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *, " + keyTypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *n, " + keyTypeInfo.typeCode + "k) {" EOL;
+    def += "  for (_{size_t} i = 0; i < n->l; i++) {" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, "n->d[i].f", "k") + ") {" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.keyType, "n->d[i].f") + ";" EOL;
+    }
+
+    if (mapType.valueType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.valueType, "n->d[i].s") + ";" EOL;
+    }
+
+    def += "      _{memmove}(&n->d[i], &n->d[i + 1], (--n->l - i) * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "      return n;" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += R"(  _{fprintf}(_{stderr}, "Error: failed to remove map value" _{THE_EOL});)" EOL;
+    def += "  _{exit}(_{EXIT_FAILURE});" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_reserve", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} *" + typeName + "_reserve (struct _{" + typeName + "} *, _{int32_t});";
+    def += "struct _{" + typeName + "} *" + typeName + "_reserve (struct _{" + typeName + "} *n, _{int32_t} c) {" EOL;
+    def += "  if (c > n->c) n->d = _{re_alloc}(n->d, (n->c = c) * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  return n;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_set", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+    auto valueTypeInfo = this->_typeInfo(mapType.valueType);
+
+    decl += "struct _{" + typeName + "} *" + typeName + "_set (struct _{" + typeName + "} *";
+    decl += ", " + keyTypeInfo.typeCodeTrimmed + ", " + valueTypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} *" + typeName + "_set (struct _{" + typeName + "} *n";
+    def += ", " + keyTypeInfo.typeCode + "k, " + valueTypeInfo.typeCode + "v) {" EOL;
+    def += "  for (_{size_t} i = 0; i < n->l; i++) {" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, "n->d[i].f", "k") + ") {" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
+    if (mapType.valueType->shouldBeFreed()) {
+      def += "      " + this->_genFreeFn(mapType.valueType, "n.d[i].s") + ";" EOL;
+    }
+
+    def += "      n->d[i].s = v;" EOL;
+    def += "      return n;" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  if (n->l + 1 > n->c) n->d = _{re_alloc}(n->d, (n->c = n->l + 1) * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  n->d[n->l++] = (struct _{" + pairTypeName + "}) {k, v};" EOL;
+    def += "  return n;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_shrink", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto keyTypeInfo = this->_typeInfo(mapType.keyType);
+    auto valueTypeInfo = this->_typeInfo(mapType.valueType);
+
+    decl += "struct _{" + typeName + "} *" + typeName + "_shrink (struct _{" + typeName + "} *);";
+    def += "struct _{" + typeName + "} *" + typeName + "_shrink (struct _{" + typeName + "} *n) {" EOL;
+    def += "  if (n->l != n->c && n->l == 0) {" EOL;
+    def += "    _{free}(n->d);" EOL;
+    def += "    n->d = _{NULL};" EOL;
+    def += "    n->c = 0;" EOL;
+    def += "  } else if (n->l != n->c) {" EOL;
+    def += "    n->d = _{re_alloc}(n->d, (n->c = n->l) * sizeof(struct _{" + pairTypeName + "}));" EOL;
+    def += "  }" EOL;
+    def += "  return n;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
+    def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
+    def += R"(  _{struct str} r = _{str_alloc}("{");)" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
+    def += R"(    if (i != 0) r = _{str_concat_cstr}(r, ", ");)" EOL;
+
+    if (mapType.keyType->isStr()) {
+      def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
+    }
+
+    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(mapType.keyType, "n.d[i].f") + ");" EOL;
+
+    if (mapType.keyType->isStr()) {
+      def += R"(    r = _{str_concat_cstr}(r, "\": ");)" EOL;
+    }
+
+    if (mapType.valueType->isStr()) {
+      def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
+    }
+
+    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(mapType.valueType, "n.d[i].s") + ");" EOL;
+
+    if (mapType.valueType->isStr()) {
+      def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
+    }
+
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += R"(  return _{str_concat_cstr}(r, "}");)" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_values", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto valueTypeInfo = this->_typeInfo(mapType.valueType);
+    auto valuesTypeInfo = this->_typeInfo(this->ast->typeMap.arrayOf(mapType.valueType));
+
+    decl += valuesTypeInfo.typeCode + typeName + "_values (struct _{" + typeName + "});";
+    def += valuesTypeInfo.typeCode + typeName + "_values (struct _{" + typeName + "} n) {" EOL;
+    def += "  " + valueTypeInfo.typeCode + "*r = _{alloc}(n.l * sizeof(" + valueTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.valueType, "n.d[i].s") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return (" + valuesTypeInfo.typeCodeTrimmed + ") {r, n.l};" EOL;
+    def += "}";
+
+    return 0;
+  });
 
   return typeName;
 }
 
-std::string Codegen::_typeNameUnion (const Type *type) {
-  auto typeName = Codegen::typeName(type->name);
-
-  for (const auto &entity : this->entities) {
-    if (entity.name == typeName) {
-      return typeName;
-    }
-  }
-
-  auto initialStateBuiltins = this->state.builtins;
-  auto initialStateEntities = this->state.entities;
-  auto subTypes = std::get<TypeUnion>(type->body).subTypes;
-
-  auto entity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
-  this->state.builtins = &entity.builtins;
-  this->state.entities = &entity.entities;
-  entity.decl += "struct " + typeName + ";";
-  entity.def += "struct " + typeName + " {" EOL;
-  entity.def += "  int t;" EOL;
-  entity.def += "  union {" EOL;
-
-  for (const auto &subType : subTypes) {
-    auto subTypeInfo = this->_typeInfo(subType);
-    entity.def += "    " + subTypeInfo.typeCode + "v" + this->_typeDefIdx(subType) + ";" EOL;
-  }
-
-  entity.def += "  };" EOL;
-  entity.def += "};";
-  entity.decl = this->_apiEval(entity.decl);
-  entity.def = this->_apiEval(entity.def);
-  this->entities.push_back(entity);
-
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN};
-  this->state.builtins = &allocFnEntity.builtins;
-  this->state.entities = &allocFnEntity.entities;
-  allocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_alloc (int, ...);";
-  allocFnEntity.def += "struct _{" + typeName + "} " + typeName + "_alloc (int t, ...) {" EOL;
-  allocFnEntity.def += "  struct _{" + typeName + "} r = {t};" EOL;
-  allocFnEntity.def += "  _{va_list} args;" EOL;
-  allocFnEntity.def += "  _{va_start}(args, t);" EOL;
-
-  for (const auto &subType : subTypes) {
-    auto subTypeInfo = this->_typeInfo(subType);
-    auto varArgSubTypeCode = subType->isSmallForVarArg()
-      ? subType->isF32() ? "double" : "int"
-      : subTypeInfo.typeCodeTrimmed;
-
-    allocFnEntity.def += "  if (t == _{" + this->_typeDef(subType) + "}) ";
-    allocFnEntity.def += "r.v" + this->_typeDefIdx(subType) + " = _{va_arg}(args, " + varArgSubTypeCode + ");" EOL;
-  }
-
-  allocFnEntity.def += "  _{va_end}(args);" EOL;
-  allocFnEntity.def += "  return r;" EOL;
-  allocFnEntity.def += "}";
-  allocFnEntity.decl = this->_apiEval(allocFnEntity.decl);
-  allocFnEntity.def = this->_apiEval(allocFnEntity.def);
-  this->entities.push_back(allocFnEntity);
-
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN};
-  this->state.builtins = &freeFnEntity.builtins;
-  this->state.entities = &freeFnEntity.entities;
-  freeFnEntity.decl += "void " + typeName + "_free (struct _{" + typeName + "});";
-  freeFnEntity.def += "void " + typeName + "_free (struct _{" + typeName + "} n) {" EOL;
-
-  for (const auto &subType : subTypes) {
-    if (!subType->shouldBeFreed()) {
-      continue;
-    }
-
-    freeFnEntity.def += "  if (n.t == _{" + this->_typeDef(subType) + "}) ";
-    freeFnEntity.def += this->_genFreeFn(subType, "n.v" + this->_typeDefIdx(subType)) + ";" EOL;
-  }
-
-  freeFnEntity.def += "}";
-  freeFnEntity.decl = this->_apiEval(freeFnEntity.decl);
-  freeFnEntity.def = this->_apiEval(freeFnEntity.def);
-  this->entities.push_back(freeFnEntity);
-
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
-  this->state.builtins = &copyFnEntity.builtins;
-  this->state.entities = &copyFnEntity.entities;
-  copyFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
-  copyFnEntity.def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
-  copyFnEntity.def += "  struct _{" + typeName + "} r = {n.t};" EOL;
-
-  for (const auto &subType : subTypes) {
-    auto subTypeProp = "v" + this->_typeDefIdx(subType);
-    copyFnEntity.def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r." + subTypeProp + " = ";
-    copyFnEntity.def += this->_genCopyFn(subType, "n." + subTypeProp) + ";" EOL;
-  }
-
-  copyFnEntity.def += "  return r;" EOL;
-  copyFnEntity.def += "}";
-  copyFnEntity.decl = this->_apiEval(copyFnEntity.decl);
-  copyFnEntity.def = this->_apiEval(copyFnEntity.def);
-  this->entities.insert(this->entities.end() - 1, copyFnEntity);
-
-  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN};
-  this->state.builtins = &eqFnEntity.builtins;
-  this->state.entities = &eqFnEntity.entities;
-  eqFnEntity.decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "}, struct _{" + typeName + "});";
-  eqFnEntity.def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-  eqFnEntity.def += "  _{bool} r = _{false};" EOL;
-
-  for (const auto &subType : subTypes) {
-    auto subTypeDef = this->_typeDef(subType);
-    auto subTypeProp = "v" + this->_typeDefIdx(subType);
-    eqFnEntity.def += "  if (n1.t == _{" + subTypeDef + "} && n2.t == _{" + subTypeDef + "}) ";
-    eqFnEntity.def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp) + ";" EOL;
-  }
-
-  eqFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);" EOL;
-  eqFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n2);" EOL;
-  eqFnEntity.def += "  return r;" EOL;
-  eqFnEntity.def += "}";
-  eqFnEntity.decl = this->_apiEval(eqFnEntity.decl);
-  eqFnEntity.def = this->_apiEval(eqFnEntity.def);
-  this->entities.insert(this->entities.end() - 1, eqFnEntity);
-
-  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN};
-  this->state.builtins = &neFnEntity.builtins;
-  this->state.entities = &neFnEntity.entities;
-  neFnEntity.decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "}, struct _{" + typeName + "});";
-  neFnEntity.def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-  neFnEntity.def += "  _{bool} r = _{false};" EOL;
-
-  for (const auto &subType : subTypes) {
-    auto subTypeDef = this->_typeDef(subType);
-    auto subTypeProp = "v" + this->_typeDefIdx(subType);
-    neFnEntity.def += "  if (n1.t == _{" + subTypeDef + "} && n2.t == _{" + subTypeDef + "}) ";
-    neFnEntity.def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp, std::nullopt, std::nullopt, true) + ";" EOL;
-  }
-
-  neFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);" EOL;
-  neFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n2);" EOL;
-  neFnEntity.def += "  return r;" EOL;
-  neFnEntity.def += "}";
-  neFnEntity.decl = this->_apiEval(neFnEntity.decl);
-  neFnEntity.def = this->_apiEval(neFnEntity.def);
-  this->entities.push_back(neFnEntity);
-
-  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN};
-  this->state.builtins = &reallocFnEntity.builtins;
-  this->state.entities = &reallocFnEntity.entities;
-  reallocFnEntity.decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
-  reallocFnEntity.def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-  reallocFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n1);" EOL;
-  reallocFnEntity.def += "  return n2;" EOL;
-  reallocFnEntity.def += "}";
-  reallocFnEntity.decl = this->_apiEval(reallocFnEntity.decl);
-  reallocFnEntity.def = this->_apiEval(reallocFnEntity.def);
-  this->entities.push_back(reallocFnEntity);
-
-  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN};
-  this->state.builtins = &strFnEntity.builtins;
-  this->state.entities = &strFnEntity.entities;
-  strFnEntity.decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
-  strFnEntity.def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
-  strFnEntity.def += "  _{struct str} r;" EOL;
-
-  for (const auto &subType : subTypes) {
-    auto subTypeProp = "v" + this->_typeDefIdx(subType);
-    strFnEntity.def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r = ";
-    strFnEntity.def += this->_genStrFn(subType, "n." + subTypeProp, std::nullopt, std::nullopt, true, false) + ";" EOL;
-  }
-
-  strFnEntity.def += "  _{" + typeName + "_free}((struct _{" + typeName + "}) n);" EOL;
-  strFnEntity.def += "  return r;" EOL;
-  strFnEntity.def += "}";
-  strFnEntity.decl = this->_apiEval(strFnEntity.decl);
-  strFnEntity.def = this->_apiEval(strFnEntity.def);
-  this->entities.push_back(strFnEntity);
-
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
-
-  return typeName;
-}
-
-void Codegen::_typeObj (Type *type, bool builtin) {
-  auto saveStateBuiltins = this->state.builtins;
-  auto saveStateEntities = this->state.entities;
-
+std::string Codegen::_typeNameObj (Type *type, bool builtin) {
   auto typeName = builtin ? type->name : Codegen::typeName(type->codeName);
-  auto objEntity = CodegenEntity{typeName, CODEGEN_ENTITY_OBJ};
-  auto objFields = std::string();
 
-  this->state.builtins = &objEntity.builtins;
-  this->state.entities = &objEntity.entities;
+  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    auto objFields = std::string();
 
-  for (const auto &field : type->fields) {
-    if (field.builtin || field.method) {
-      continue;
-    }
+    for (const auto &field : type->fields) {
+      if (field.builtin || field.method) {
+        continue;
+      }
 
-    auto fieldName = Codegen::name(field.name);
-    auto fieldTypeInfo = this->_typeInfo(field.type);
-
-    objFields += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
-  }
-
-  objEntity.decl += "struct " + typeName + ";";
-  objEntity.def += "struct " + typeName + " {" EOL + (objFields.empty() ? "  void *_;" EOL : objFields) + "};";
-  this->entities.push_back(objEntity);
-
-  auto allocFnEntity = CodegenEntity{typeName + "_alloc", CODEGEN_ENTITY_FN};
-  this->state.builtins = &allocFnEntity.builtins;
-  this->state.entities = &allocFnEntity.entities;
-
-  auto allocFnParamTypes = std::string();
-
-  for (const auto &field : type->fields) {
-    if (!field.builtin && !field.method) {
+      auto fieldName = Codegen::name(field.name);
       auto fieldTypeInfo = this->_typeInfo(field.type);
-      allocFnParamTypes += ", " + fieldTypeInfo.typeCodeTrimmed;
+
+      objFields += "  " + (field.mut ? fieldTypeInfo.typeCode : fieldTypeInfo.typeCodeConst) + fieldName + ";" EOL;
     }
-  }
 
-  allocFnParamTypes = allocFnParamTypes.empty() ? allocFnParamTypes : allocFnParamTypes.substr(2);
-  allocFnEntity.decl += this->_apiEval("struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParamTypes + ");");
-  this->entities.push_back(allocFnEntity);
+    decl += "struct " + typeName + ";";
+    def += "struct " + typeName + " {" EOL;
+    def += objFields.empty() ? "  void *_;" EOL : objFields;
+    def += "};";
 
-  auto copyFnEntity = CodegenEntity{typeName + "_copy", CODEGEN_ENTITY_FN};
-  this->state.builtins = &copyFnEntity.builtins;
-  this->state.entities = &copyFnEntity.entities;
-  copyFnEntity.decl += this->_apiEval("struct _{" + typeName + "} *" + typeName + "_copy (const struct _{" + typeName + "} *);");
-  this->entities.push_back(copyFnEntity);
+    return 0;
+  });
 
-  auto eqFnEntity = CodegenEntity{typeName + "_eq", CODEGEN_ENTITY_FN};
-  this->state.builtins = &eqFnEntity.builtins;
-  this->state.entities = &eqFnEntity.entities;
-  eqFnEntity.decl += this->_apiEval("_{bool} " + typeName + "_eq (struct _{" + typeName + "} *, struct _{" + typeName + "} *);");
-  this->entities.push_back(eqFnEntity);
+  this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN);
+  this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN);
+  this->_apiEntity(typeName + "_eq", CODEGEN_ENTITY_FN);
+  this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN);
+  this->_apiEntity(typeName + "_ne", CODEGEN_ENTITY_FN);
+  this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN);
+  this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN);
 
-  auto freeFnEntity = CodegenEntity{typeName + "_free", CODEGEN_ENTITY_FN};
-  this->state.builtins = &freeFnEntity.builtins;
-  this->state.entities = &freeFnEntity.entities;
-  freeFnEntity.decl += this->_apiEval("void " + typeName + "_free (struct _{" + typeName + "} *);");
-  this->entities.push_back(freeFnEntity);
-
-  auto neFnEntity = CodegenEntity{typeName + "_ne", CODEGEN_ENTITY_FN};
-  this->state.builtins = &neFnEntity.builtins;
-  this->state.entities = &neFnEntity.entities;
-  neFnEntity.decl += this->_apiEval("_{bool} " + typeName + "_ne (struct _{" + typeName + "} *, struct _{" + typeName + "} *);");
-  this->entities.push_back(neFnEntity);
-
-  auto reallocFnEntity = CodegenEntity{typeName + "_realloc", CODEGEN_ENTITY_FN};
-  this->state.builtins = &reallocFnEntity.builtins;
-  this->state.entities = &reallocFnEntity.entities;
-  reallocFnEntity.decl += this->_apiEval("struct _{" + typeName + "} *" + typeName + "_realloc (struct _{" + typeName + "} *, struct _{" + typeName + "} *);");
-  this->entities.push_back(reallocFnEntity);
-
-  auto strFnEntity = CodegenEntity{typeName + "_str", CODEGEN_ENTITY_FN};
-  this->state.builtins = &strFnEntity.builtins;
-  this->state.entities = &strFnEntity.entities;
-  strFnEntity.decl += this->_apiEval("_{struct str} " + typeName + "_str (struct _{" + typeName + "} *);");
-  this->entities.push_back(strFnEntity);
-
-  this->state.builtins = saveStateBuiltins;
-  this->state.entities = saveStateEntities;
+  return typeName;
 }
 
-void Codegen::_typeObjDef (Type *type, const std::map<std::string, std::string> &extra, bool builtin) {
+std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, std::string> &extra, bool builtin) {
   auto saveStateBuiltins = this->state.builtins;
   auto saveStateEntities = this->state.entities;
-
   auto typeName = builtin ? type->name : Codegen::typeName(type->codeName);
-  auto fieldIdx = static_cast<std::size_t>(0);
 
   for (auto &entity : this->entities) {
     if (entity.name == typeName + "_alloc") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
 
+      auto allocFnParamTypes = std::string();
       auto allocFnParams = std::string();
       auto allocFnCode = std::string();
 
@@ -5070,128 +5187,144 @@ void Codegen::_typeObjDef (Type *type, const std::map<std::string, std::string> 
           auto fieldName = Codegen::name(field.name);
           auto fieldTypeInfo = this->_typeInfo(field.type);
 
+          allocFnParamTypes += ", " + fieldTypeInfo.typeCodeTrimmed;
           allocFnParams += ", " + fieldTypeInfo.typeCode + fieldName;
           allocFnCode += ", " + fieldName;
         }
       }
 
+      allocFnParamTypes = allocFnParamTypes.empty() ? allocFnParamTypes : allocFnParamTypes.substr(2);
       allocFnParams = allocFnParams.empty() ? allocFnParams : allocFnParams.substr(2);
       allocFnCode = allocFnCode.empty() ? "(void *) 0" : allocFnCode.substr(2);
 
+      entity.decl += "struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParamTypes + ");";
       entity.def += "struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParams + ") {" EOL;
       entity.def += "  struct _{" + typeName + "} *" + "r = _{alloc}(sizeof(struct _{" + typeName + "}));" EOL;
       entity.def += "  struct _{" + typeName + "} s = {" + allocFnCode + "};" EOL;
       entity.def += "  _{memcpy}(r, &s, sizeof(struct _{" + typeName + "}));" EOL;
-      entity.def += extra.contains("alloc") ? extra.at("alloc") : "";
       entity.def += "  return r;" EOL;
       entity.def += "}";
+      entity.decl = this->_apiEval(entity.decl);
       entity.def = this->_apiEval(entity.def);
     } else if (entity.name == typeName + "_copy") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
-      fieldIdx = 0;
+      auto fieldIdx = static_cast<std::size_t>(0);
 
-      entity.def += "struct _{" + typeName + "} *" + typeName + "_copy (const struct _{" + typeName + "} *o) {" EOL;
+      entity.decl += "struct _{" + typeName + "} *" + typeName + "_copy (const struct _{" + typeName + "} *);";
+      entity.def += "struct _{" + typeName + "} *" + typeName + "_copy (const struct _{" + typeName + "} *n) {" EOL;
       entity.def += "  struct _{" + typeName + "} *r = _{alloc}(sizeof(struct _{" + typeName + "}));" EOL;
       entity.def += "  struct _{" + typeName + "} s = {";
 
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.method) {
           auto fieldName = Codegen::name(field.name);
-          entity.def += (fieldIdx == 0 ? "" : ", ") + this->_genCopyFn(field.type, "o->" + fieldName);
+
+          entity.def += (fieldIdx == 0 ? "" : ", ") + this->_genCopyFn(field.type, "n->" + fieldName);
           fieldIdx++;
         }
       }
 
       entity.def += "};" EOL;
       entity.def += "  _{memcpy}(r, &s, sizeof(struct _{" + typeName + "}));" EOL;
-      entity.def += extra.contains("copy") ? extra.at("copy") : "";
       entity.def += "  return r;" EOL;
       entity.def += "}";
+      entity.decl = this->_apiEval(entity.decl);
       entity.def = this->_apiEval(entity.def);
     } else if (entity.name == typeName + "_eq") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
-      fieldIdx = 0;
+      auto fieldIdx = static_cast<std::size_t>(0);
 
-      entity.def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} *o1, struct _{" + typeName + "} *o2) {" EOL;
+      entity.decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} *, struct _{" + typeName + "} *);";
+      entity.def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} *n1, struct _{" + typeName + "} *n2) {" EOL;
       entity.def += "  _{bool} r = ";
 
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.method) {
           auto fieldName = Codegen::name(field.name);
-          entity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName);
+
+          entity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, "n1->" + fieldName, "n2->" + fieldName);
           fieldIdx++;
         }
       }
 
       entity.def += ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "o1") + ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "o2") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
       entity.def += "  return r;" EOL;
       entity.def += "}";
+      entity.decl = this->_apiEval(entity.decl);
       entity.def = this->_apiEval(entity.def);
     } else if (entity.name == typeName + "_free") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
 
-      entity.def += "void " + typeName + "_free (struct _{" + typeName + "} *o) {" EOL;
+      entity.decl += "void " + typeName + "_free (struct _{" + typeName + "} *);";
+      entity.def += "void " + typeName + "_free (struct _{" + typeName + "} *n) {" EOL;
 
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.method && field.type->shouldBeFreed()) {
           auto fieldName = Codegen::name(field.name);
-          entity.def += "  " + this->_genFreeFn(field.type, "o->" + fieldName) + ";" EOL;
+          entity.def += "  " + this->_genFreeFn(field.type, "n->" + fieldName) + ";" EOL;
         }
       }
 
       entity.def += extra.contains("free") ? extra.at("free") : "";
-      entity.def += "  _{free}(o);" EOL;
+      entity.def += "  _{free}(n);" EOL;
       entity.def += "}";
+      entity.decl = this->_apiEval(entity.decl);
       entity.def = this->_apiEval(entity.def);
     } else if (entity.name == typeName + "_ne") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
-      fieldIdx = 0;
+      auto fieldIdx = static_cast<std::size_t>(0);
 
-      entity.def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} *o1, struct _{" + typeName + "} *o2) {" EOL;
+      entity.decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} *, struct _{" + typeName + "} *);";
+      entity.def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} *n1, struct _{" + typeName + "} *n2) {" EOL;
       entity.def += "  _{bool} r = ";
 
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.method) {
           auto fieldName = Codegen::name(field.name);
-          entity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, "o1->" + fieldName, "o2->" + fieldName, std::nullopt, std::nullopt, true);
+          entity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, "n1->" + fieldName, "n2->" + fieldName, true);
           fieldIdx++;
         }
       }
 
       entity.def += ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "o1") + ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "o2") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
       entity.def += "  return r;" EOL;
       entity.def += "}";
+      entity.decl = this->_apiEval(entity.decl);
       entity.def = this->_apiEval(entity.def);
     } else if (entity.name == typeName + "_realloc") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
 
-      entity.def += "struct _{" + typeName + "} *" + typeName + "_realloc (struct _{" + typeName + "} *o1, struct _{" + typeName + "} *o2) {" EOL;
-      entity.def += extra.contains("realloc") ? extra.at("realloc") : "";
-      entity.def += "  " + this->_genFreeFn(type, "o1") + ";" EOL;
-      entity.def += "  return o2;" EOL;
+      entity.decl += "struct _{" + typeName + "} *" + typeName + "_realloc ";
+      entity.decl += "(struct _{" + typeName + "} *, struct _{" + typeName + "} *);";
+      entity.def += "struct _{" + typeName + "} *" + typeName + "_realloc ";
+      entity.def += "(struct _{" + typeName + "} *n1, struct _{" + typeName + "} *n2) {" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+      entity.def += "  return n2;" EOL;
       entity.def += "}";
+      entity.decl = this->_apiEval(entity.decl);
       entity.def = this->_apiEval(entity.def);
     } else if (entity.name == typeName + "_str") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
-      fieldIdx = 0;
+      auto fieldIdx = static_cast<std::size_t>(0);
 
-      entity.def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} *o) {" EOL;
+      entity.decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} *);";
+      entity.def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} *n) {" EOL;
       entity.def += R"(  _{struct str} r = _{str_alloc}(")" + type->name + R"({");)" EOL;
 
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.method) {
           auto fieldName = Codegen::name(field.name);
-          auto fieldCode = std::string(field.type->isRef() ? "*" : "") + "o->" + fieldName;
+          auto fieldCode = std::string(field.type->isRef() ? "*" : "") + "n->" + fieldName;
           auto strCodeDelimiter = std::string(fieldIdx == 0 ? "" : ", ");
 
           if (field.type->isStr()) {
@@ -5207,15 +5340,302 @@ void Codegen::_typeObjDef (Type *type, const std::map<std::string, std::string> 
         }
       }
 
-      entity.def += "  " + this->_genFreeFn(type, "o") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
       entity.def += R"(  return _{str_concat_cstr}(r, "}");)" EOL;
       entity.def += "}";
+      entity.decl = this->_apiEval(entity.decl);
       entity.def = this->_apiEval(entity.def);
     }
   }
 
   this->state.builtins = saveStateBuiltins;
   this->state.entities = saveStateEntities;
+
+  return typeName;
+}
+
+std::string Codegen::_typeNameOpt (Type *type) {
+  auto typeName = Codegen::typeName(type->name);
+  auto allocTypeName = typeName + "_alloc";
+
+  for (const auto &entity : this->entities) {
+    if (entity.name == allocTypeName) {
+      return typeName;
+    }
+  }
+
+  this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+
+    decl += underlyingTypeInfo.typeRefCode + typeName + "_alloc (" + underlyingTypeInfo.typeCodeTrimmed + ");";
+    def += underlyingTypeInfo.typeRefCode + typeName + "_alloc (" + underlyingTypeInfo.typeCode + "n) {" EOL;
+    def += "  " + underlyingTypeInfo.typeRefCode + "r = _{alloc}(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  *r = n;" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  auto freeFnEntityIdx = this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+
+    decl += "void " + typeName + "_free (" + underlyingTypeInfo.typeRefCode + ");";
+    def += "void " + typeName + "_free (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
+    def += "  if (n == _{NULL}) return;" EOL;
+
+    if (underlyingTypeInfo.type->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(underlyingTypeInfo.type, "*n") + ";" EOL;
+    }
+
+    def += "  _{free}(n);" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+
+    decl += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + ");";
+    def += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + "n) {" EOL;
+    def += "  if (n == _{NULL}) return _{NULL};" EOL;
+    def += "  " + underlyingTypeInfo.typeRefCode + "r = _{alloc}(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  *r = " + this->_genCopyFn(underlyingTypeInfo.type, "*n") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return freeFnEntityIdx;
+  });
+
+  this->_apiEntity(typeName + "_eq", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+
+    decl += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
+    def += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
+    def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 == _{NULL} && n2 == _{NULL} ";
+    def += ": " + this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return copyFnEntityIdx + 1;
+  });
+
+  this->_apiEntity(typeName + "_ne", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+
+    decl += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
+    def += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
+    def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 != _{NULL} || n2 != _{NULL} : ";
+    def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", true) + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+
+    decl += underlyingTypeInfo.typeRefCode + typeName + "_realloc (" + underlyingTypeInfo.typeRefCode;
+    decl += ", " + underlyingTypeInfo.typeRefCode + ");";
+    def += underlyingTypeInfo.typeRefCode + typeName + "_realloc (" + underlyingTypeInfo.typeRefCode + "n1";
+    def += ", " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  return n2;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+
+    decl += "_{struct str} " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + ");";
+    def += "_{struct str} " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
+    def += R"(  if (n == _{NULL}) return _{str_alloc}("nil");)" EOL;
+
+    if (underlyingTypeInfo.realType->isStr()) {
+      def += R"(  _{struct str} r = _{str_alloc}("\"");)" EOL;
+      def += "  r = _{str_concat_str}(r, " + this->_genStrFn(underlyingTypeInfo.realType, "*n") + ");" EOL;
+      def += R"(  r = _{str_concat_cstr}(r, "\"");)" EOL;
+    } else {
+      def += "  _{struct str} r = " + this->_genStrFn(underlyingTypeInfo.realType, "*n") + ";" EOL;
+    }
+
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  return typeName;
+}
+
+std::string Codegen::_typeNameUnion (Type *type) {
+  auto typeName = Codegen::typeName(type->name);
+
+  for (const auto &entity : this->entities) {
+    if (entity.name == typeName) {
+      return typeName;
+    }
+  }
+
+  auto subTypes = std::get<TypeUnion>(type->body).subTypes;
+
+  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    decl += "struct " + typeName + ";";
+    def += "struct " + typeName + " {" EOL;
+    def += "  int t;" EOL;
+    def += "  union {" EOL;
+
+    for (const auto &subType : subTypes) {
+      auto subTypeInfo = this->_typeInfo(subType);
+      def += "    " + subTypeInfo.typeCode + "v" + this->_typeDefIdx(subType) + ";" EOL;
+    }
+
+    def += "  };" EOL;
+    def += "};";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_alloc (int, ...);";
+    def += "struct _{" + typeName + "} " + typeName + "_alloc (int t, ...) {" EOL;
+    def += "  struct _{" + typeName + "} r = {t};" EOL;
+    def += "  _{va_list} args;" EOL;
+    def += "  _{va_start}(args, t);" EOL;
+
+    for (const auto &subType : subTypes) {
+      auto subTypeInfo = this->_typeInfo(subType);
+
+      def += "  if (t == _{" + this->_typeDef(subType) + "}) ";
+      def += "r.v" + this->_typeDefIdx(subType) + " = _{va_arg}(args, " + subType->vaArgCode(subTypeInfo.typeCodeTrimmed) + ");" EOL;
+    }
+
+    def += "  _{va_end}(args);" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  auto freeFnEntityIdx = this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "void " + typeName + "_free (struct _{" + typeName + "});";
+    def += "void " + typeName + "_free (struct _{" + typeName + "} n) {" EOL;
+
+    for (const auto &subType : subTypes) {
+      if (!subType->shouldBeFreed()) {
+        continue;
+      }
+
+      def += "  if (n.t == _{" + this->_typeDef(subType) + "}) ";
+      def += this->_genFreeFn(subType, "n.v" + this->_typeDefIdx(subType)) + ";" EOL;
+    }
+
+    def += "}";
+
+    return 0;
+  });
+
+  auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
+    def += "  struct _{" + typeName + "} r = {n.t};" EOL;
+
+    for (const auto &subType : subTypes) {
+      auto subTypeProp = "v" + this->_typeDefIdx(subType);
+
+      def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r." + subTypeProp + " = ";
+      def += this->_genCopyFn(subType, "n." + subTypeProp) + ";" EOL;
+    }
+
+    def += "  return r;" EOL;
+    def += "}";
+
+    return freeFnEntityIdx;
+  });
+
+  this->_apiEntity(typeName + "_eq", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  _{bool} r = n1.t == n2.t;" EOL;
+    def += "  if (r) {" EOL;
+
+    for (const auto &subType : subTypes) {
+      auto subTypeProp = "v" + this->_typeDefIdx(subType);
+
+      def += "    if (n1.t == _{" + this->_typeDef(subType) + "}) ";
+      def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp) + ";" EOL;
+    }
+
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return copyFnEntityIdx + 1;
+  });
+
+  this->_apiEntity(typeName + "_ne", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  _{bool} r = n1.t != n2.t;" EOL;
+    def += "  if (!r) {" EOL;
+
+    for (const auto &subType : subTypes) {
+      auto subTypeProp = "v" + this->_typeDefIdx(subType);
+
+      def += "    if (n1.t == _{" + this->_typeDef(subType) + "}) ";
+      def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp, true) + ";" EOL;
+    }
+
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
+    def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  return n2;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
+    def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
+    def += "  _{struct str} r;" EOL;
+
+    for (const auto &subType : subTypes) {
+      auto subTypeProp = "v" + this->_typeDefIdx(subType);
+
+      def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r = ";
+      def += this->_genStrFn(subType, "n." + subTypeProp, true, false) + ";" EOL;
+    }
+
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  return typeName;
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)

@@ -1,0 +1,367 @@
+======= stdin =======
+main {
+  a := { "x": 37.7681251, "y": -122.5138329 }
+  b := { "x": "test1", "y": "test2" }
+  b2 := { "x": "test3", "y": "test4" }
+  c := { "x": 1, "y": "test2" }
+  d := { "x": 1, "y": "test2", "z": "test3" }
+  e: str[str]? = { "x": 1, "y": "test2", "z": "test3" }
+}
+======= stdout =======
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <TypeMap name="map$0">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="float" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$0">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="float" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprMap>
+            <ExprMapProp name="x">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="37.7681251" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="y">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprUnary op="MINUS" prefix>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="float" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="FLOAT" value="122.5138329" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprUnary>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+          </ExprMap>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" frame="2">
+        <TypeMap name="map$1">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$1">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprMap>
+            <ExprMapProp name="x">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test1\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="y">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test2\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+          </ExprMap>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b2" codeName="b2_0" frame="2">
+        <TypeMap name="map$1">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$1">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprMap>
+            <ExprMapProp name="x">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test3\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="y">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test4\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+          </ExprMap>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="c" codeName="c_0" frame="2">
+        <TypeMap name="map$2">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeUnion name="union$0">
+              <BuiltinType name="int" />
+              <BuiltinType name="str" />
+            </TypeUnion>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$2">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="str" />
+              </TypeUnion>
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprMap>
+            <ExprMapProp name="x">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="y">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test2\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+          </ExprMap>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="d" codeName="d_0" frame="2">
+        <TypeMap name="map$2">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeUnion name="union$0">
+              <BuiltinType name="int" />
+              <BuiltinType name="str" />
+            </TypeUnion>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$2">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeUnion name="union$0">
+                <BuiltinType name="int" />
+                <BuiltinType name="str" />
+              </TypeUnion>
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprMap>
+            <ExprMapProp name="x">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="y">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test2\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="z">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test3\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+          </ExprMap>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="e" codeName="e_0" frame="2">
+        <TypeOptional name="opt_map$1">
+          <TypeMap name="map$1">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeMap name="map$1">
+            <TypeMapKeyType>
+              <BuiltinType name="str" />
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <BuiltinType name="str" />
+            </TypeMapValueType>
+          </TypeMap>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprMap>
+            <ExprMapProp name="x">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="y">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test2\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+            <ExprMapProp name="z">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test3\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprMapProp>
+          </ExprMap>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>

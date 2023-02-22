@@ -105,8 +105,6 @@ struct str float_str (double);
 struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
-struct str str_concat_cstr (struct str, const char *);
-struct str str_concat_str (struct str, struct str);
 void str_free (struct str);
 int32_t *__THE_1_opt_int_copy (const int32_t *);
 void __THE_1_opt_int_free (int32_t *);
@@ -187,23 +185,6 @@ struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-struct str str_concat_cstr (struct str s, const char *r) {
-  size_t l = s.l + strlen(r);
-  char *d = alloc(l);
-  memcpy(d, s.d, s.l);
-  memcpy(&d[s.l], r, l - s.l);
-  free(s.d);
-  return (struct str) {d, l};
-}
-struct str str_concat_str (struct str s1, struct str s2) {
-  size_t l = s1.l + s2.l;
-  char *d = alloc(l);
-  memcpy(d, s1.d, s1.l);
-  memcpy(&d[s1.l], s2.d, s2.l);
-  free(s1.d);
-  free(s2.d);
   return (struct str) {d, l};
 }
 void str_free (struct str s) {

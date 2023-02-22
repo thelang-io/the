@@ -111,10 +111,10 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any __THE_0_a, struct any __
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  any_free((struct any) o->__THE_0_a);
-  any_free((struct any) o->__THE_0_b);
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  any_free((struct any) n->__THE_0_a);
+  any_free((struct any) n->__THE_0_b);
+  free(n);
 }
 struct any __THE_1_any_str_alloc (struct str d) {
   size_t l = sizeof(struct __THE_1_any_str);

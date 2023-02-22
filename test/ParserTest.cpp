@@ -52,10 +52,6 @@ INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
   "stmt-continue"
 ));
 
-INSTANTIATE_TEST_SUITE_P(StmtConstDecl, ParserPassTest, testing::Values(
-  "stmt-const-decl"
-));
-
 INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserPassTest, testing::Values(
   "stmt-enum-decl"
 ));
@@ -125,6 +121,7 @@ INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserPassTest, testing::Values(
   "stmt-var-decl",
+  "stmt-var-decl-const",
   "stmt-var-decl-mut",
   "stmt-var-decl-no-init",
   "stmt-var-decl-no-init-mut",
@@ -161,6 +158,9 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-lit",
   "expr-lit-esc",
   "expr-lit-nil",
+  "expr-map",
+  "expr-map-nested",
+  "expr-map-precedence",
   "expr-obj",
   "expr-obj-empty",
   "expr-obj-nested",
@@ -176,6 +176,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
+  "type-map",
   "type-optional",
   "type-ref",
   "type-union",
@@ -188,13 +189,6 @@ INSTANTIATE_TEST_SUITE_P(General, ParserThrowTest, testing::Values(
   "throw-E0103-missing-lbrace",
   "throw-E0104-missing-rbrace",
   "throw-E0136-stmt-expr-missing-expr"
-));
-
-INSTANTIATE_TEST_SUITE_P(StmtConstDecl, ParserThrowTest, testing::Values(
-  "throw-E0165-stmt-const-decl-missing-name",
-  "throw-E0166-stmt-const-decl-missing-type",
-  "throw-E0167-stmt-const-decl-missing-type-init",
-  "throw-E0167-stmt-const-decl-missing-init"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserThrowTest, testing::Values(
@@ -233,6 +227,7 @@ INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
   "throw-E0103-stmt-loop-parenthesized-missing-lbrace",
   "throw-E0105-stmt-loop-parenthesized-unexpected-init",
   "throw-E0105-stmt-loop-unexpected-init",
+  "throw-E0105-stmt-loop-unexpected-init-stmt-loop",
   "throw-E0106-stmt-loop-parenthesized-semi-after-init",
   "throw-E0106-stmt-loop-semi-after-init",
   "throw-E0108-stmt-loop-parenthesized-semi-after-condition",
@@ -270,10 +265,14 @@ INSTANTIATE_TEST_SUITE_P(StmtVarDecl, ParserThrowTest, testing::Values(
   "throw-E0127-stmt-var-decl-missing-type-rpar",
   "throw-E0102-stmt-var-decl-missing-parenthesized-type",
   "throw-E0102-stmt-var-decl-mut-missing-parenthesized-type",
-  "throw-E0131-var-decl-missing-init",
-  "throw-E0131-var-decl-missing-init-after-type",
-  "throw-E0131-var-decl-mut-missing-init",
-  "throw-E0131-var-decl-mut-missing-init-after-type"
+  "throw-E0131-stmt-var-decl-missing-init",
+  "throw-E0131-stmt-var-decl-missing-init-after-type",
+  "throw-E0131-stmt-var-decl-mut-missing-init",
+  "throw-E0131-stmt-var-decl-mut-missing-init-after-type",
+  "throw-E0165-stmt-var-decl-const-missing-name",
+  "throw-E0166-stmt-var-decl-const-missing-type",
+  "throw-E0167-stmt-var-decl-const-missing-type-init",
+  "throw-E0167-stmt-var-decl-const-missing-init"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
@@ -309,15 +308,20 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0148-expr-ref-invalid-unary-rvalue",
   "throw-E0150-expr-access-elem-missing-expr",
   "throw-E0151-expr-access-missing-rbrack",
-  "throw-E0151-type-array-missing-rbrack",
   "throw-E0152-expr-array-missing-element",
   "throw-E0159-expr-access-missing-prop-name",
-  "throw-E0164-expr-is-missing-type"
+  "throw-E0164-expr-is-missing-type",
+  "throw-E0168-expr-map-missing-name",
+  "throw-E0169-expr-map-missing-colon",
+  "throw-E0170-expr-map-missing-initializer"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
   "throw-E0145-type-fn-param-name-after-mut",
   "throw-E0146-type-fn-missing-colon-after-param-name",
   "throw-E0149-type-ref-missing-type",
-  "throw-E0163-type-union-missing-subtype"
+  "throw-E0151-type-array-missing-rbrack",
+  "throw-E0163-type-union-missing-subtype",
+  "throw-E0171-type-map-illegal-key-type",
+  "throw-E0172-type-map-missing-rbrack"
 ));

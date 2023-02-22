@@ -95,15 +95,7 @@ main {
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
-          <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test2_0" name="Test2">
-                <TypeField name="prop1">
-                  <BuiltinType name="int" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-          </ExprObj>
+          <ExprObj />
         </NodeExprBody>
       </NodeExpr>
     </NodeVarDeclInit>
@@ -777,15 +769,7 @@ main {
                   </TypeObj>
                 </NodeExprType>
                 <NodeExprBody>
-                  <ExprObj>
-                    <ExprObjType>
-                      <TypeObj codeName="Test1_0" name="Test1">
-                        <TypeField name="a">
-                          <BuiltinType name="int" />
-                        </TypeField>
-                      </TypeObj>
-                    </ExprObjType>
-                  </ExprObj>
+                  <ExprObj />
                 </NodeExprBody>
               </NodeExpr>
             </ExprIsExpr>

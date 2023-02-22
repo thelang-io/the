@@ -24,6 +24,7 @@ class TypeMatchTest : public testing::Test {
   Type *arr_;
   Type *enum_;
   Type *fn_;
+  Type *map_;
   Type *obj_;
   Type *opt_;
   Type *ref_;
@@ -48,6 +49,7 @@ class TypeMatchTest : public testing::Test {
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
     }, this->tm_.get("int"));
 
+    this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
     auto objMethod = this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.obj("Test", "Test_0", {
@@ -67,6 +69,7 @@ TEST_F(TypeMatchTest, MatchesNice) {
   EXPECT_TRUE(this->arr_->matchNice(this->arr_));
   EXPECT_TRUE(this->enum_->matchNice(this->enum_));
   EXPECT_TRUE(this->fn_->matchNice(this->fn_));
+  EXPECT_TRUE(this->map_->matchNice(this->map_));
   EXPECT_TRUE(this->obj_->matchNice(this->obj_));
   EXPECT_TRUE(this->opt_->matchNice(this->opt_));
   EXPECT_TRUE(this->ref_->matchNice(this->ref_));
@@ -101,6 +104,7 @@ TEST_F(TypeMatchTest, MatchesNiceAny) {
   EXPECT_TRUE(this->tm_.get("any")->matchNice(this->arr_));
   EXPECT_TRUE(this->tm_.get("any")->matchNice(this->enum_));
   EXPECT_TRUE(this->tm_.get("any")->matchNice(this->fn_));
+  EXPECT_TRUE(this->tm_.get("any")->matchNice(this->map_));
   EXPECT_TRUE(this->tm_.get("any")->matchNice(this->obj_));
   EXPECT_TRUE(this->tm_.get("any")->matchNice(this->opt_));
   EXPECT_TRUE(this->tm_.get("any")->matchNice(this->ref_));
@@ -400,6 +404,17 @@ TEST_F(TypeMatchTest, MatchesNiceFunction) {
   EXPECT_FALSE(type11->matchNice(type10));
 }
 
+TEST_F(TypeMatchTest, MatchesNiceMap) {
+  auto type1 = this->tm_.createMap(this->tm_.get("int"), this->tm_.get("int"));
+  auto type2 = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
+
+  EXPECT_TRUE(type1->matchNice(type1));
+  EXPECT_FALSE(type1->matchNice(type2));
+  EXPECT_FALSE(type2->matchNice(type1));
+  EXPECT_FALSE(type1->matchNice(this->tm_.get("int")));
+  EXPECT_FALSE(this->tm_.get("int")->matchNice(type1));
+}
+
 TEST_F(TypeMatchTest, MatchesNiceObject) {
   auto type1 = this->tm_.obj("Test1", "Test1_0", {
     TypeField{"a", this->tm_.get("int"), false, false, false},
@@ -503,6 +518,7 @@ TEST_F(TypeMatchTest, MatchesStrict) {
   EXPECT_TRUE(this->arr_->matchStrict(this->arr_));
   EXPECT_TRUE(this->enum_->matchStrict(this->enum_));
   EXPECT_TRUE(this->fn_->matchStrict(this->fn_));
+  EXPECT_TRUE(this->map_->matchStrict(this->map_));
   EXPECT_TRUE(this->obj_->matchStrict(this->obj_));
   EXPECT_TRUE(this->opt_->matchStrict(this->opt_));
   EXPECT_TRUE(this->ref_->matchStrict(this->ref_));
@@ -731,6 +747,17 @@ TEST_F(TypeMatchTest, MatchesStrictExactFunction) {
   EXPECT_FALSE(type11->matchStrict(type1, true));
   EXPECT_FALSE(type10->matchStrict(type11, true));
   EXPECT_FALSE(type11->matchStrict(type10, true));
+}
+
+TEST_F(TypeMatchTest, MatchesStrictMap) {
+  auto type1 = this->tm_.createMap(this->tm_.get("int"), this->tm_.get("int"));
+  auto type2 = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
+
+  EXPECT_TRUE(type1->matchStrict(type1));
+  EXPECT_FALSE(type1->matchStrict(type2));
+  EXPECT_FALSE(type2->matchStrict(type1));
+  EXPECT_FALSE(type1->matchStrict(this->tm_.get("int")));
+  EXPECT_FALSE(this->tm_.get("int")->matchStrict(type1));
 }
 
 TEST_F(TypeMatchTest, MatchesStrictObject) {

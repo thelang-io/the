@@ -79,8 +79,8 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (bool __THE_0_p01, unsigned char __T
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
 
 int main () {

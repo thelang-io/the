@@ -319,29 +319,18 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test_0" name="Test">
-                <TypeField name="a">
+            <ExprObjProp name="a">
+              <NodeExpr>
+                <NodeExprType>
                   <TypeOptional name="opt_int">
                     <BuiltinType name="int" />
                   </TypeOptional>
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="a">
-                <NodeExpr>
-                  <NodeExprType>
-                    <TypeOptional name="opt_int">
-                      <BuiltinType name="int" />
-                    </TypeOptional>
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="NIL" value="nil" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="NIL" value="nil" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

@@ -24,6 +24,7 @@ class TypeMap {
   std::optional<Type *> self;
   std::vector<std::string> stack;
 
+  Type *createMap (Type *, Type *);
   Type *alias (const std::string &, Type *);
   Type *arrayOf (Type *);
   Type *enumeration (const std::string &, const std::string &, const std::vector<Type *> &);
@@ -42,11 +43,13 @@ class TypeMap {
   Type *opt (Type *);
   Type *ref (Type *);
   Type *unionType (const std::vector<Type *> &);
+  Type *unionAdd (Type *, Type *);
   Type *unionSub (const Type *, const Type *);
 
  private:
   std::size_t _fnIdx = 0;
   std::vector<std::unique_ptr<Type>> _items;
+  std::size_t _mapIdx = 0;
   std::size_t _unIdx = 0;
 };
 

@@ -512,66 +512,7 @@ main {
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
-          <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test_0" name="Test">
-                <TypeMethod name="test1">
-                  <TypeFn name="fn$0">
-                    <TypeFnMethodInfo codeName="TestSDtest1_0" />
-                    <TypeFnParams>
-                      <TypeFnParam name="a" variadic>
-                        <TypeArray name="array_int">
-                          <BuiltinType name="int" />
-                        </TypeArray>
-                      </TypeFnParam>
-                    </TypeFnParams>
-                    <TypeFnReturnType>
-                      <BuiltinType name="void" />
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeMethod>
-                <TypeMethod name="test2">
-                  <TypeFn name="fn$1">
-                    <TypeFnMethodInfo codeName="TestSDtest2_0" />
-                    <TypeFnParams>
-                      <TypeFnParam name="a" required>
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                      <TypeFnParam name="b" variadic>
-                        <TypeArray name="array_int">
-                          <BuiltinType name="int" />
-                        </TypeArray>
-                      </TypeFnParam>
-                    </TypeFnParams>
-                    <TypeFnReturnType>
-                      <BuiltinType name="void" />
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeMethod>
-                <TypeMethod name="test3">
-                  <TypeFn name="fn$2">
-                    <TypeFnMethodInfo codeName="TestSDtest3_0" />
-                    <TypeFnParams>
-                      <TypeFnParam name="a" required>
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                      <TypeFnParam name="b" variadic>
-                        <TypeArray name="array_int">
-                          <BuiltinType name="int" />
-                        </TypeArray>
-                      </TypeFnParam>
-                      <TypeFnParam name="c">
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                    </TypeFnParams>
-                    <TypeFnReturnType>
-                      <BuiltinType name="void" />
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </TypeMethod>
-              </TypeObj>
-            </ExprObjType>
-          </ExprObj>
+          <ExprObj />
         </NodeExprBody>
       </NodeExpr>
     </NodeVarDeclInit>

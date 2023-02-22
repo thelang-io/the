@@ -53,6 +53,7 @@ class Parser {
   std::tuple<ParserStmtExpr, bool> _wrapExprUnary (const ParserStmtExpr &, ReaderLocation, const Token &);
   ParserStmt _wrapStmt (bool, const ParserStmtBody &, ReaderLocation) const;
   ParserStmtExpr _wrapStmtExpr (const ParserStmtExpr &);
+  ParserStmt _wrapStmtLoop (bool, const Token &, bool);
   ParserType _wrapType (const ParserType &);
 };
 

@@ -174,6 +174,8 @@ TEST(TokenTest, AssociativityThrowsOnUnknown) {
 TEST(TokenTest, AssociativityNone) {
   EXPECT_EQ(Token{TK_KW_IS}.associativity(), TK_ASSOC_NONE);
   EXPECT_EQ(Token{TK_KW_REF}.associativity(), TK_ASSOC_NONE);
+  EXPECT_EQ(Token{TK_OP_LBRACE}.associativity(), TK_ASSOC_NONE);
+  EXPECT_EQ(Token{TK_OP_RBRACE}.associativity(), TK_ASSOC_NONE);
   EXPECT_EQ(Token{TK_OP_LPAR}.associativity(), TK_ASSOC_NONE);
   EXPECT_EQ(Token{TK_OP_RPAR}.associativity(), TK_ASSOC_NONE);
   EXPECT_EQ(Token{TK_OP_MINUS_MINUS}.associativity(true), TK_ASSOC_NONE);
@@ -234,7 +236,9 @@ TEST(TokenTest, PrecedenceThrowsOnUnknown) {
   }, "tried precedence for unknown token");
 }
 
-TEST(TokenTest, PrecedenceParentheses) {
+TEST(TokenTest, PrecedenceBraces) {
+  EXPECT_EQ(Token{TK_OP_LBRACE}.precedence(), 18);
+  EXPECT_EQ(Token{TK_OP_RBRACE}.precedence(), 18);
   EXPECT_EQ(Token{TK_OP_LPAR}.precedence(), 18);
   EXPECT_EQ(Token{TK_OP_RPAR}.precedence(), 18);
 }

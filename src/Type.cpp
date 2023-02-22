@@ -110,13 +110,13 @@ Type *Type::getEnumerator (const std::string &memberName) const {
     throw Error("tried to get a member of non-enum");
   }
 
-  auto typeEnum = std::get<TypeEnum>(this->body);
+  auto enumType = std::get<TypeEnum>(this->body);
 
-  auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
+  auto typeMember = std::find_if(enumType.members.begin(), enumType.members.end(), [&memberName] (const auto &it) -> bool {
     return it->name == memberName;
   });
 
-  if (typeMember == typeEnum.members.end()) {
+  if (typeMember == enumType.members.end()) {
     throw Error("tried to get non-existing enum member");
   }
 
@@ -146,13 +146,13 @@ bool Type::hasEnumerator (const std::string &memberName) const {
     return false;
   }
 
-  auto typeEnum = std::get<TypeEnum>(this->body);
+  auto enumType = std::get<TypeEnum>(this->body);
 
-  auto typeMember = std::find_if(typeEnum.members.begin(), typeEnum.members.end(), [&memberName] (const auto &it) -> bool {
+  auto typeMember = std::find_if(enumType.members.begin(), enumType.members.end(), [&memberName] (const auto &it) -> bool {
     return it->name == memberName;
   });
 
-  return typeMember != typeEnum.members.end();
+  return typeMember != enumType.members.end();
 }
 
 bool Type::hasProp (const std::string &propName) const {
@@ -175,9 +175,9 @@ bool Type::hasSubType (const Type *subType) const {
   } else if (this->isRef()) {
     return std::get<TypeRef>(this->body).refType->hasSubType(subType);
   } else if (this->isUnion()) {
-    auto typeUnion = std::get<TypeUnion>(this->body);
+    auto unionType = std::get<TypeUnion>(this->body);
 
-    for (const auto &thisSubType : typeUnion.subTypes) {
+    for (const auto &thisSubType : unionType.subTypes) {
       if (thisSubType->matchStrict(subType, true)) {
         return true;
       }
@@ -266,6 +266,10 @@ bool Type::isIntNumber () const {
   );
 }
 
+bool Type::isMap () const {
+  return std::holds_alternative<TypeBodyMap>(this->body);
+}
+
 bool Type::isMethod () const {
   return std::holds_alternative<TypeFn>(this->body) && std::get<TypeFn>(this->body).isMethod;
 }
@@ -285,6 +289,7 @@ bool Type::isObj () const {
     !this->isEnum() &&
     !this->isNumber() &&
     !this->isFn() &&
+    !this->isMap() &&
     !this->isOpt() &&
     !this->isRef() &&
     !this->isStr() &&
@@ -318,6 +323,7 @@ bool Type::isSafeForTernaryAlt () const {
   return this->isAny() ||
     this->isArray() ||
     this->isFn() ||
+    this->isMap() ||
     this->isObj() ||
     this->isOpt() ||
     this->isStr() ||
@@ -397,7 +403,9 @@ bool Type::matchNice (const Type *type) const {
       auto lhsRef = std::get<TypeRef>(type->body);
       return lhsRef.refType->matchNice(this);
     }
-  } else if (this->isArray() || type->isArray()) {
+  }
+
+  if (this->isArray() || type->isArray()) {
     if (!this->isArray() || !type->isArray()) {
       return false;
     }
@@ -412,6 +420,15 @@ bool Type::matchNice (const Type *type) const {
     }
 
     return this->isInt() || type->isInt();
+  } else if (this->isMap() || type->isMap()) {
+    if (!this->isMap() || !type->isMap()) {
+      return false;
+    }
+
+    auto lhsMap = std::get<TypeBodyMap>(this->body);
+    auto rhsMap = std::get<TypeBodyMap>(type->body);
+
+    return lhsMap.keyType->matchNice(rhsMap.keyType) && lhsMap.valueType->matchNice(rhsMap.valueType);
   } else if (this->isFn()) {
     if (!type->isFn()) {
       return false;
@@ -538,6 +555,15 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     }
 
     return true;
+  } else if (this->isMap() || type->isMap()) {
+    if (!this->isMap() || !type->isMap()) {
+      return false;
+    }
+
+    auto lhsMap = std::get<TypeBodyMap>(this->body);
+    auto rhsMap = std::get<TypeBodyMap>(type->body);
+
+    return lhsMap.keyType->matchStrict(rhsMap.keyType) && lhsMap.valueType->matchStrict(rhsMap.valueType);
   } else if (this->isOpt() || type->isOpt()) {
     if (!this->isOpt() || !type->isOpt()) {
       return false;
@@ -597,9 +623,14 @@ bool Type::shouldBeFreed () const {
     this->isAny() ||
     this->isArray() ||
     this->isFn() ||
+    this->isMap() ||
     this->isObj() ||
     this->isOpt() ||
     this->isStr();
+}
+
+std::string Type::vaArgCode (const std::string &code) const {
+  return this->isSmallForVarArg() ? this->isF32() ? "double" : "int" : code;
 }
 
 std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) const {
@@ -619,6 +650,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     typeName += "Enumerator";
   } else if (this->isFn()) {
     typeName += "Fn";
+  } else if (this->isMap()) {
+    typeName += "Map";
   } else if (this->isObj()) {
     typeName += "Obj";
   } else if (this->isOpt()) {
@@ -641,41 +674,41 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   result += ">" EOL;
 
   if (this->isAlias()) {
-    auto typeAlias = std::get<TypeAlias>(this->body);
-    result += typeAlias.type->xml(indent + 2, parentTypes) + EOL;
+    auto aliasType = std::get<TypeAlias>(this->body);
+    result += aliasType.type->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isArray()) {
-    auto typeArray = std::get<TypeArray>(this->body);
-    result += typeArray.elementType->xml(indent + 2, parentTypes) + EOL;
+    auto arrayType = std::get<TypeArray>(this->body);
+    result += arrayType.elementType->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isEnum()) {
-    auto typeEnum = std::get<TypeEnum>(this->body);
+    auto enumType = std::get<TypeEnum>(this->body);
 
-    for (const auto &member : typeEnum.members) {
+    for (const auto &member : enumType.members) {
       result += member->xml(indent + 2, parentTypes) + EOL;
     }
   } else if (this->isFn()) {
-    auto typeFn = std::get<TypeFn>(this->body);
+    auto fnType = std::get<TypeFn>(this->body);
 
-    if (typeFn.isMethod) {
+    if (fnType.isMethod) {
       auto methodAttrs = std::string();
 
-      methodAttrs += typeFn.methodInfo.codeName[0] != '@' ? R"( codeName=")" + typeFn.methodInfo.codeName + R"(")" : "";
-      methodAttrs += typeFn.methodInfo.isSelfFirst ? R"( selfCodeName=")" + typeFn.methodInfo.selfCodeName + R"(")" : "";
-      methodAttrs += typeFn.methodInfo.isSelfFirst ? " selfFirst" : "";
-      methodAttrs += typeFn.methodInfo.isSelfMut ? " selfMut" : "";
+      methodAttrs += fnType.methodInfo.codeName[0] != '@' ? R"( codeName=")" + fnType.methodInfo.codeName + R"(")" : "";
+      methodAttrs += fnType.methodInfo.isSelfFirst ? R"( selfCodeName=")" + fnType.methodInfo.selfCodeName + R"(")" : "";
+      methodAttrs += fnType.methodInfo.isSelfFirst ? " selfFirst" : "";
+      methodAttrs += fnType.methodInfo.isSelfMut ? " selfMut" : "";
 
-      if (typeFn.methodInfo.isSelfFirst) {
+      if (fnType.methodInfo.isSelfFirst) {
         result += std::string(indent + 2, ' ') + "<TypeFnMethodInfo" + methodAttrs + ">" EOL;
-        result += typeFn.methodInfo.selfType->xml(indent + 4, parentTypes) + EOL;
+        result += fnType.methodInfo.selfType->xml(indent + 4, parentTypes) + EOL;
         result += std::string(indent + 2, ' ') + "</TypeFnMethodInfo>" EOL;
       } else {
         result += std::string(indent + 2, ' ') + "<TypeFnMethodInfo" + methodAttrs + " />" EOL;
       }
     }
 
-    if (!typeFn.params.empty()) {
+    if (!fnType.params.empty()) {
       result += std::string(indent + 2, ' ') + "<TypeFnParams>" EOL;
 
-      for (const auto &typeFnParam : typeFn.params) {
+      for (const auto &typeFnParam : fnType.params) {
         auto paramAttrs = typeFnParam.name == std::nullopt ? "" : R"( name=")" + *typeFnParam.name + R"(")";
 
         paramAttrs += typeFnParam.mut ? " mut" : "";
@@ -691,8 +724,17 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     }
 
     result += std::string(indent + 2, ' ') + "<TypeFnReturnType>" EOL;
-    result += typeFn.returnType->xml(indent + 4, parentTypes) + EOL;
+    result += fnType.returnType->xml(indent + 4, parentTypes) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeFnReturnType>" EOL;
+  } else if (this->isMap()) {
+    auto mapType = std::get<TypeBodyMap>(this->body);
+
+    result += std::string(indent + 2, ' ') + "<TypeMapKeyType>" EOL;
+    result += mapType.keyType->xml(indent + 4, parentTypes) + EOL;
+    result += std::string(indent + 2, ' ') + "</TypeMapKeyType>" EOL;
+    result += std::string(indent + 2, ' ') + "<TypeMapValueType>" EOL;
+    result += mapType.valueType->xml(indent + 4, parentTypes) + EOL;
+    result += std::string(indent + 2, ' ') + "</TypeMapValueType>" EOL;
   } else if (this->isObj()) {
     parentTypes.insert(this->codeName);
 
@@ -712,15 +754,15 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
       result += std::string(indent + 2, ' ') + "</" + tagName + ">" EOL;
     }
   } else if (this->isOpt()) {
-    auto typeOptional = std::get<TypeOptional>(this->body);
-    result += typeOptional.type->xml(indent + 2, parentTypes) + EOL;
+    auto optType = std::get<TypeOptional>(this->body);
+    result += optType.type->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isRef()) {
-    auto typeRef = std::get<TypeRef>(this->body);
-    result += typeRef.refType->xml(indent + 2, parentTypes) + EOL;
+    auto refType = std::get<TypeRef>(this->body);
+    result += refType.refType->xml(indent + 2, parentTypes) + EOL;
   } else if (this->isUnion()) {
-    auto typeUnion = std::get<TypeUnion>(this->body);
+    auto unionType = std::get<TypeUnion>(this->body);
 
-    for (const auto &subType : typeUnion.subTypes) {
+    for (const auto &subType : unionType.subTypes) {
       result += subType->xml(indent + 2, parentTypes) + EOL;
     }
   }

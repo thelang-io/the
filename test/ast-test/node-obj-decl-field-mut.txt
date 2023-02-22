@@ -51,38 +51,26 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Animal_0" name="Animal">
-                <TypeField mut name="age">
+            <ExprObjProp name="age">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="int" />
-                </TypeField>
-                <TypeField name="name">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="2" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+            <ExprObjProp name="name">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="str" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="age">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="int" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="INT_DEC" value="2" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-              <ExprObjProp id="name">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="str" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="STR" value="\"Sam\"" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"Sam\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

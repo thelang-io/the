@@ -26,6 +26,8 @@ std::string ParserType::xml (std::size_t indent) const {
     typeName += "Fn";
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     typeName += "Id";
+  } else if (std::holds_alternative<ParserTypeMap>(*this->body)) {
+    typeName += "Map";
   } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
     typeName += "Optional";
   } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
@@ -79,6 +81,15 @@ std::string ParserType::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     auto typeId = std::get<ParserTypeId>(*this->body);
     result += typeId.id.xml(indent + 2) + EOL;
+  } else if (std::holds_alternative<ParserTypeMap>(*this->body)) {
+    auto typeMap = std::get<ParserTypeMap>(*this->body);
+
+    result += std::string(indent + 2, ' ') + "<TypeMapKeyType>" EOL;
+    result += typeMap.keyType.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</TypeMapKeyType>" EOL;
+    result += std::string(indent + 2, ' ') + "<TypeMapValueType>" EOL;
+    result += typeMap.valueType.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</TypeMapValueType>" EOL;
   } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
     auto typeOptional = std::get<ParserTypeOptional>(*this->body);
     result += typeOptional.type.xml(indent + 2) + EOL;

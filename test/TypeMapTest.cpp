@@ -398,6 +398,49 @@ TEST_F(TypeMapTest, NameGeneratesValid) {
   EXPECT_EQ(this->tm_.name("test"), "mainSDhelloSDworldSDtest_1");
 }
 
+TEST_F(TypeMapTest, MapInserts) {
+  auto type1 = this->tm_.createMap(this->tm_.get("int"), this->tm_.get("int"));
+  auto type2 = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
+
+  EXPECT_NE(this->tm_.get("map$0"), nullptr);
+  EXPECT_NE(this->tm_.get("map$1"), nullptr);
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeBodyMap>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeBodyMap>(type2->body));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(std::get<TypeBodyMap>(type1->body).keyType));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(std::get<TypeBodyMap>(type1->body).valueType));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(std::get<TypeBodyMap>(type2->body).keyType));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(std::get<TypeBodyMap>(type2->body).valueType));
+}
+
+TEST_F(TypeMapTest, MapInsertsAlias) {
+  auto alias1 = this->tm_.alias("Alias1", this->tm_.get("int"));
+  auto alias2 = this->tm_.alias("Alias2", this->tm_.get("str"));
+  auto type1 = this->tm_.createMap(alias1, alias1);
+  auto type2 = this->tm_.createMap(alias2, alias2);
+
+  EXPECT_NE(this->tm_.get("map$0"), nullptr);
+  EXPECT_NE(this->tm_.get("map$1"), nullptr);
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeBodyMap>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeBodyMap>(type2->body));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(std::get<TypeBodyMap>(type1->body).keyType));
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(std::get<TypeBodyMap>(type1->body).valueType));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(std::get<TypeBodyMap>(type2->body).keyType));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(std::get<TypeBodyMap>(type2->body).valueType));
+}
+
+TEST_F(TypeMapTest, MapDoesNotInsertExact) {
+  auto type1 = this->tm_.createMap(this->tm_.get("int"), this->tm_.get("int"));
+  auto type2 = this->tm_.createMap(this->tm_.get("int"), this->tm_.get("int"));
+
+  EXPECT_EQ(type1->name, "map$0");
+  EXPECT_EQ(type1->name, type2->name);
+  EXPECT_EQ(type1, type2);
+}
+
 TEST_F(TypeMapTest, ObjectInserts) {
   auto type1 = this->tm_.obj("Test1", "Test1_0");
 
@@ -527,6 +570,21 @@ TEST_F(TypeMapTest, UnionDoesNotInsertExact) {
 
   EXPECT_EQ(type1->name, type2->name);
   EXPECT_EQ(type1->codeName, type2->codeName);
+}
+
+TEST_F(TypeMapTest, UnionAddAddsType) {
+  auto type1 = this->tm_.unionType({this->tm_.get("i8"), this->tm_.get("i16"), this->tm_.get("i32")});
+  auto type2 = this->tm_.unionAdd(type1, this->tm_.get("i64"));
+
+  EXPECT_TRUE(type2->isUnion());
+  EXPECT_EQ(std::get<TypeUnion>(type2->body).subTypes.size(), 4);
+}
+
+TEST_F(TypeMapTest, UnionAddCreatesUnion) {
+  auto type2 = this->tm_.unionAdd(this->tm_.get("int"), this->tm_.get("str"));
+
+  EXPECT_TRUE(type2->isUnion());
+  EXPECT_EQ(std::get<TypeUnion>(type2->body).subTypes.size(), 2);
 }
 
 TEST_F(TypeMapTest, UnionSubSubtractsType) {

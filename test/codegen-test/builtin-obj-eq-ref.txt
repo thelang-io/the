@@ -105,20 +105,20 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *n) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {o->__THE_0_a};
+  struct __THE_1_Test_0 s = {n->__THE_0_a};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-bool __THE_1_Test_0_eq (struct __THE_1_Test_0 *o1, struct __THE_1_Test_0 *o2) {
-  bool r = o1->__THE_0_a == o2->__THE_0_a;
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o2);
+bool __THE_1_Test_0_eq (struct __THE_1_Test_0 *n1, struct __THE_1_Test_0 *n2) {
+  bool r = n1->__THE_0_a == n2->__THE_0_a;
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) n1);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) n2);
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
 struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_Test) {NULL, 0};

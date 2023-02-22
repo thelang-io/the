@@ -665,31 +665,31 @@ struct request_Header *request_Header_alloc (struct str __THE_0_name, struct str
   memcpy(r, &s, sizeof(struct request_Header));
   return r;
 }
-struct request_Header *request_Header_copy (const struct request_Header *o) {
+struct request_Header *request_Header_copy (const struct request_Header *n) {
   struct request_Header *r = alloc(sizeof(struct request_Header));
-  struct request_Header s = {str_copy(o->__THE_0_name), str_copy(o->__THE_0_value)};
+  struct request_Header s = {str_copy(n->__THE_0_name), str_copy(n->__THE_0_value)};
   memcpy(r, &s, sizeof(struct request_Header));
   return r;
 }
-void request_Header_free (struct request_Header *o) {
-  str_free((struct str) o->__THE_0_name);
-  str_free((struct str) o->__THE_0_value);
-  free(o);
+void request_Header_free (struct request_Header *n) {
+  str_free((struct str) n->__THE_0_name);
+  str_free((struct str) n->__THE_0_value);
+  free(n);
 }
-struct str request_Header_str (struct request_Header *o) {
+struct str request_Header_str (struct request_Header *n) {
   struct str r = str_alloc("request_Header{");
   r = str_concat_cstr(r, "name: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_str(r, str_escape(n->__THE_0_name));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", value: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_value));
+  r = str_concat_str(r, str_escape(n->__THE_0_value));
   r = str_concat_cstr(r, "\"");
-  request_Header_free((struct request_Header *) o);
+  request_Header_free((struct request_Header *) n);
   return str_concat_cstr(r, "}");
 }
-void request_Request_free (struct request_Request *o) {
-  request_close(&o);
-  free(o);
+void request_Request_free (struct request_Request *n) {
+  request_close(&n);
+  free(n);
 }
 struct request_Header **__THE_1_array_request_Header_at (struct __THE_1_array_request_Header n, int64_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
@@ -719,10 +719,10 @@ struct request_Response *request_Response_alloc (struct buffer __THE_0_data, int
   memcpy(r, &s, sizeof(struct request_Response));
   return r;
 }
-void request_Response_free (struct request_Response *o) {
-  buffer_free((struct buffer) o->__THE_0_data);
-  __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) o->__THE_0_headers);
-  free(o);
+void request_Response_free (struct request_Response *n) {
+  buffer_free((struct buffer) n->__THE_0_data);
+  __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) n->__THE_0_headers);
+  free(n);
 }
 struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_protocol, struct str __THE_0_host, struct str __THE_0_hostname, struct str __THE_0_port, struct str __THE_0_path, struct str __THE_0_pathname, struct str __THE_0_search, struct str __THE_0_hash) {
   struct url_URL *r = alloc(sizeof(struct url_URL));
@@ -730,17 +730,17 @@ struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_pro
   memcpy(r, &s, sizeof(struct url_URL));
   return r;
 }
-void url_URL_free (struct url_URL *o) {
-  str_free((struct str) o->__THE_0_origin);
-  str_free((struct str) o->__THE_0_protocol);
-  str_free((struct str) o->__THE_0_host);
-  str_free((struct str) o->__THE_0_hostname);
-  str_free((struct str) o->__THE_0_port);
-  str_free((struct str) o->__THE_0_path);
-  str_free((struct str) o->__THE_0_pathname);
-  str_free((struct str) o->__THE_0_search);
-  str_free((struct str) o->__THE_0_hash);
-  free(o);
+void url_URL_free (struct url_URL *n) {
+  str_free((struct str) n->__THE_0_origin);
+  str_free((struct str) n->__THE_0_protocol);
+  str_free((struct str) n->__THE_0_host);
+  str_free((struct str) n->__THE_0_hostname);
+  str_free((struct str) n->__THE_0_port);
+  str_free((struct str) n->__THE_0_path);
+  str_free((struct str) n->__THE_0_pathname);
+  str_free((struct str) n->__THE_0_search);
+  str_free((struct str) n->__THE_0_hash);
+  free(n);
 }
 
 int main () {

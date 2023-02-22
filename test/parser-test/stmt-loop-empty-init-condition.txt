@@ -4,6 +4,8 @@ loop ;; i++ {
     break
   }
 }
+loop ;; Test {
+}
 ======= stdout =======
 <StmtLoop start="1:1" end="5:2">
   <StmtLoopUpd>
@@ -42,4 +44,11 @@ loop ;; i++ {
       </StmtIfBody>
     </StmtIf>
   </StmtLoopBody>
+</StmtLoop>
+<StmtLoop start="6:1" end="7:2">
+  <StmtLoopUpd>
+    <ExprAccess start="6:9" end="6:13">
+      <Token type="ID" val="Test" start="6:9" end="6:13" />
+    </ExprAccess>
+  </StmtLoopUpd>
 </StmtLoop>

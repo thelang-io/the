@@ -225,20 +225,20 @@ struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *o) {
+struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *n) {
   struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {o->__THE_0_a};
+  struct __THE_1_TestObj_0 s = {n->__THE_0_a};
   memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
   return r;
 }
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *o) {
-  free(o);
+void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *n) {
+  free(n);
 }
-struct str __THE_1_TestObj_0_str (struct __THE_1_TestObj_0 *o) {
+struct str __THE_1_TestObj_0_str (struct __THE_1_TestObj_0 *n) {
   struct str r = str_alloc("TestObj{");
   r = str_concat_cstr(r, "a: ");
-  r = str_concat_str(r, int_str(o->__THE_0_a));
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) o);
+  r = str_concat_str(r, int_str(n->__THE_0_a));
+  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n);
   return str_concat_cstr(r, "}");
 }
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
@@ -248,10 +248,10 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   return (struct __THE_1_fn$0) {n.f, x, n.l};
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 struct str __THE_1_fn$0_str (struct __THE_1_fn$0 n) {
-  if (n.x != NULL) free(n.x);
+  __THE_1_fn$0_free((struct __THE_1_fn$0) n);
   return str_alloc("[Function]");
 }
 void __THE_1_fn1_0 (void *px) {

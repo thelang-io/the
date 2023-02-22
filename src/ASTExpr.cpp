@@ -93,6 +93,15 @@ std::string exprUnaryOpStr (ASTExprUnaryOp op) {
   throw Error("tried stringify unknown unary expression operator");
 }
 
+std::string ASTObjProp::xml (const std::string &exprName, std::size_t indent) const {
+  auto tagName = "Expr" + exprName + "Prop";
+  auto result = std::string(indent, ' ') + "<" + tagName + R"( name=")" + this->name + R"(">)" EOL;
+
+  result += this->init.xml(indent + 2) + EOL;
+  result += std::string(indent, ' ') + "</" + tagName + ">";
+  return result;
+}
+
 bool ASTNodeExpr::isLit () const {
   if (std::holds_alternative<ASTExprBinary>(*this->body)) {
     auto exprBinary = std::get<ASTExprBinary>(*this->body);
@@ -244,27 +253,34 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     result += R"( type=")" + exprLitTypeStr(exprLit.type) + R"(")";
     result += R"( value=")" + Token::escape(exprLit.body, true) + R"(")";
     result += " />" EOL;
+  } else if (std::holds_alternative<ASTExprMap>(*this->body)) {
+    auto exprMap = std::get<ASTExprMap>(*this->body);
+
+    if (exprMap.props.empty()) {
+      result += std::string(indent, ' ') + "<ExprMap />" EOL;
+    } else {
+      result += std::string(indent, ' ') + "<ExprMap>" EOL;
+
+      for (const auto &exprMapProp : exprMap.props) {
+        result += exprMapProp.xml("Map", indent + 2) + EOL;
+      }
+
+      result += std::string(indent, ' ') + "</ExprMap>" EOL;
+    }
   } else if (std::holds_alternative<ASTExprObj>(*this->body)) {
     auto exprObj = std::get<ASTExprObj>(*this->body);
 
-    result += std::string(indent, ' ') + "<ExprObj>" EOL;
-    result += std::string(indent + 2, ' ') + "<ExprObjType>" EOL;
-    result += exprObj.type->xml(indent + 4) + EOL;
-    result += std::string(indent + 2, ' ') + "</ExprObjType>" EOL;
-
-    if (!exprObj.props.empty()) {
-      result += std::string(indent + 2, ' ') + "<ExprObjProps>" EOL;
+    if (exprObj.props.empty()) {
+      result += std::string(indent, ' ') + "<ExprObj />" EOL;
+    } else {
+      result += std::string(indent, ' ') + "<ExprObj>" EOL;
 
       for (const auto &exprObjProp : exprObj.props) {
-        result += std::string(indent + 4, ' ') + R"(<ExprObjProp id=")" + exprObjProp.id + R"(">)" EOL;
-        result += exprObjProp.init.xml(indent + 6) + EOL;
-        result += std::string(indent + 4, ' ') + "</ExprObjProp>" EOL;
+        result += exprObjProp.xml("Obj", indent + 2) + EOL;
       }
 
-      result += std::string(indent + 2, ' ') + "</ExprObjProps>" EOL;
+      result += std::string(indent, ' ') + "</ExprObj>" EOL;
     }
-
-    result += std::string(indent, ' ') + "</ExprObj>" EOL;
   } else if (std::holds_alternative<ASTExprRef>(*this->body)) {
     auto exprRef = std::get<ASTExprRef>(*this->body);
 

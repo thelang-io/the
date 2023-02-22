@@ -1,0 +1,380 @@
+======= stdin =======
+main {
+  a1: str[str]
+  a2: Test1[Test2]
+  a3: int[][str]
+  a4: (() -> void)[str]
+  a5: int?[str]
+  a6: (ref int)[str]
+  a7: (int | str)[str]
+
+  b1: str[str][str]
+  b2: Test1[Test2][Test3]
+  b3: int[][str][str]
+  b4: (() -> void)[str][str]
+  b5: int?[str][str]
+  b6: (ref int)[str][str]
+  b7: (int | str)[str][str]
+}
+======= stdout =======
+<StmtMain start="1:1" end="17:2">
+  <StmtVarDecl start="2:3" end="2:15">
+    <StmtVarDeclId>
+      <Token type="ID" val="a1" start="2:3" end="2:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="2:7" end="2:15">
+        <TypeMapKeyType>
+          <TypeId start="2:11" end="2:14">
+            <Token type="ID" val="str" start="2:11" end="2:14" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeId start="2:7" end="2:10">
+            <Token type="ID" val="str" start="2:7" end="2:10" />
+          </TypeId>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="3:3" end="3:19">
+    <StmtVarDeclId>
+      <Token type="ID" val="a2" start="3:3" end="3:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="3:7" end="3:19">
+        <TypeMapKeyType>
+          <TypeId start="3:13" end="3:18">
+            <Token type="ID" val="Test2" start="3:13" end="3:18" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeId start="3:7" end="3:12">
+            <Token type="ID" val="Test1" start="3:7" end="3:12" />
+          </TypeId>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="4:3" end="4:17">
+    <StmtVarDeclId>
+      <Token type="ID" val="a3" start="4:3" end="4:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="4:7" end="4:17">
+        <TypeMapKeyType>
+          <TypeId start="4:13" end="4:16">
+            <Token type="ID" val="str" start="4:13" end="4:16" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeArray start="4:7" end="4:12">
+            <TypeId start="4:7" end="4:10">
+              <Token type="ID" val="int" start="4:7" end="4:10" />
+            </TypeId>
+          </TypeArray>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="5:3" end="5:24">
+    <StmtVarDeclId>
+      <Token type="ID" val="a4" start="5:3" end="5:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="5:7" end="5:24">
+        <TypeMapKeyType>
+          <TypeId start="5:20" end="5:23">
+            <Token type="ID" val="str" start="5:20" end="5:23" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeFn parenthesized start="5:7" end="5:19">
+            <TypeFnReturnType>
+              <TypeId start="5:14" end="5:18">
+                <Token type="ID" val="void" start="5:14" end="5:18" />
+              </TypeId>
+            </TypeFnReturnType>
+          </TypeFn>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="6:3" end="6:16">
+    <StmtVarDeclId>
+      <Token type="ID" val="a5" start="6:3" end="6:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="6:7" end="6:16">
+        <TypeMapKeyType>
+          <TypeId start="6:12" end="6:15">
+            <Token type="ID" val="str" start="6:12" end="6:15" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeOptional start="6:7" end="6:11">
+            <TypeId start="6:7" end="6:10">
+              <Token type="ID" val="int" start="6:7" end="6:10" />
+            </TypeId>
+          </TypeOptional>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="7:3" end="7:21">
+    <StmtVarDeclId>
+      <Token type="ID" val="a6" start="7:3" end="7:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="7:7" end="7:21">
+        <TypeMapKeyType>
+          <TypeId start="7:17" end="7:20">
+            <Token type="ID" val="str" start="7:17" end="7:20" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeRef parenthesized start="7:7" end="7:16">
+            <TypeId start="7:12" end="7:15">
+              <Token type="ID" val="int" start="7:12" end="7:15" />
+            </TypeId>
+          </TypeRef>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="8:3" end="8:23">
+    <StmtVarDeclId>
+      <Token type="ID" val="a7" start="8:3" end="8:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="8:7" end="8:23">
+        <TypeMapKeyType>
+          <TypeId start="8:19" end="8:22">
+            <Token type="ID" val="str" start="8:19" end="8:22" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeUnion parenthesized start="8:7" end="8:18">
+            <TypeId start="8:8" end="8:11">
+              <Token type="ID" val="int" start="8:8" end="8:11" />
+            </TypeId>
+            <TypeId start="8:14" end="8:17">
+              <Token type="ID" val="str" start="8:14" end="8:17" />
+            </TypeId>
+          </TypeUnion>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="10:3" end="10:20">
+    <StmtVarDeclId>
+      <Token type="ID" val="b1" start="10:3" end="10:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="10:7" end="10:20">
+        <TypeMapKeyType>
+          <TypeId start="10:16" end="10:19">
+            <Token type="ID" val="str" start="10:16" end="10:19" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeMap start="10:7" end="10:15">
+            <TypeMapKeyType>
+              <TypeId start="10:11" end="10:14">
+                <Token type="ID" val="str" start="10:11" end="10:14" />
+              </TypeId>
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeId start="10:7" end="10:10">
+                <Token type="ID" val="str" start="10:7" end="10:10" />
+              </TypeId>
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="11:3" end="11:26">
+    <StmtVarDeclId>
+      <Token type="ID" val="b2" start="11:3" end="11:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="11:7" end="11:26">
+        <TypeMapKeyType>
+          <TypeId start="11:20" end="11:25">
+            <Token type="ID" val="Test3" start="11:20" end="11:25" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeMap start="11:7" end="11:19">
+            <TypeMapKeyType>
+              <TypeId start="11:13" end="11:18">
+                <Token type="ID" val="Test2" start="11:13" end="11:18" />
+              </TypeId>
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeId start="11:7" end="11:12">
+                <Token type="ID" val="Test1" start="11:7" end="11:12" />
+              </TypeId>
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="12:3" end="12:22">
+    <StmtVarDeclId>
+      <Token type="ID" val="b3" start="12:3" end="12:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="12:7" end="12:22">
+        <TypeMapKeyType>
+          <TypeId start="12:18" end="12:21">
+            <Token type="ID" val="str" start="12:18" end="12:21" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeMap start="12:7" end="12:17">
+            <TypeMapKeyType>
+              <TypeId start="12:13" end="12:16">
+                <Token type="ID" val="str" start="12:13" end="12:16" />
+              </TypeId>
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeArray start="12:7" end="12:12">
+                <TypeId start="12:7" end="12:10">
+                  <Token type="ID" val="int" start="12:7" end="12:10" />
+                </TypeId>
+              </TypeArray>
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="13:3" end="13:29">
+    <StmtVarDeclId>
+      <Token type="ID" val="b4" start="13:3" end="13:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="13:7" end="13:29">
+        <TypeMapKeyType>
+          <TypeId start="13:25" end="13:28">
+            <Token type="ID" val="str" start="13:25" end="13:28" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeMap start="13:7" end="13:24">
+            <TypeMapKeyType>
+              <TypeId start="13:20" end="13:23">
+                <Token type="ID" val="str" start="13:20" end="13:23" />
+              </TypeId>
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeFn parenthesized start="13:7" end="13:19">
+                <TypeFnReturnType>
+                  <TypeId start="13:14" end="13:18">
+                    <Token type="ID" val="void" start="13:14" end="13:18" />
+                  </TypeId>
+                </TypeFnReturnType>
+              </TypeFn>
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="14:3" end="14:21">
+    <StmtVarDeclId>
+      <Token type="ID" val="b5" start="14:3" end="14:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="14:7" end="14:21">
+        <TypeMapKeyType>
+          <TypeId start="14:17" end="14:20">
+            <Token type="ID" val="str" start="14:17" end="14:20" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeMap start="14:7" end="14:16">
+            <TypeMapKeyType>
+              <TypeId start="14:12" end="14:15">
+                <Token type="ID" val="str" start="14:12" end="14:15" />
+              </TypeId>
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeOptional start="14:7" end="14:11">
+                <TypeId start="14:7" end="14:10">
+                  <Token type="ID" val="int" start="14:7" end="14:10" />
+                </TypeId>
+              </TypeOptional>
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="15:3" end="15:26">
+    <StmtVarDeclId>
+      <Token type="ID" val="b6" start="15:3" end="15:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="15:7" end="15:26">
+        <TypeMapKeyType>
+          <TypeId start="15:22" end="15:25">
+            <Token type="ID" val="str" start="15:22" end="15:25" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeMap start="15:7" end="15:21">
+            <TypeMapKeyType>
+              <TypeId start="15:17" end="15:20">
+                <Token type="ID" val="str" start="15:17" end="15:20" />
+              </TypeId>
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeRef parenthesized start="15:7" end="15:16">
+                <TypeId start="15:12" end="15:15">
+                  <Token type="ID" val="int" start="15:12" end="15:15" />
+                </TypeId>
+              </TypeRef>
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+  <StmtVarDecl start="16:3" end="16:28">
+    <StmtVarDeclId>
+      <Token type="ID" val="b7" start="16:3" end="16:5" />
+    </StmtVarDeclId>
+    <StmtVarDeclType>
+      <TypeMap start="16:7" end="16:28">
+        <TypeMapKeyType>
+          <TypeId start="16:24" end="16:27">
+            <Token type="ID" val="str" start="16:24" end="16:27" />
+          </TypeId>
+        </TypeMapKeyType>
+        <TypeMapValueType>
+          <TypeMap start="16:7" end="16:23">
+            <TypeMapKeyType>
+              <TypeId start="16:19" end="16:22">
+                <Token type="ID" val="str" start="16:19" end="16:22" />
+              </TypeId>
+            </TypeMapKeyType>
+            <TypeMapValueType>
+              <TypeUnion parenthesized start="16:7" end="16:18">
+                <TypeId start="16:8" end="16:11">
+                  <Token type="ID" val="int" start="16:8" end="16:11" />
+                </TypeId>
+                <TypeId start="16:14" end="16:17">
+                  <Token type="ID" val="str" start="16:14" end="16:17" />
+                </TypeId>
+              </TypeUnion>
+            </TypeMapValueType>
+          </TypeMap>
+        </TypeMapValueType>
+      </TypeMap>
+    </StmtVarDeclType>
+  </StmtVarDecl>
+</StmtMain>

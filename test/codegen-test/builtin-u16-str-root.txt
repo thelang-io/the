@@ -93,8 +93,8 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (uint16_t);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 uint16_t __THE_1_testCall_0 (void *);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
 void __THE_1_mainSDtestCtx_0 (void *);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -124,22 +124,14 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (uint16_t __THE_0_i) {
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
-  free(o);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+  free(n);
 }
 uint16_t __THE_1_testCall_0 (void *px) {
   return 1;
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
-}
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
-  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtestCtx_0;
-  n->x = r;
-  n->l = l;
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtestCtx_0 (void *px) {
   struct __THE_1_mainSDtestCtx_0X *x = px;
@@ -154,6 +146,14 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   str_free((struct str) u16_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)));
   str_free((struct str) u16_str(*__THE_0_test_0));
   str_free((struct str) u16_str(**__THE_0_refTest_0));
+}
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
+  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtestCtx_0;
+  n->x = r;
+  n->l = l;
 }
 
 int main () {

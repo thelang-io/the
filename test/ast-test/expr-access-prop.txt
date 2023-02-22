@@ -98,25 +98,16 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test2_0" name="Test2">
-                <TypeField name="c">
+            <ExprObjProp name="c">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="str" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="c">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="str" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="STR" value="\"test\"" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"test\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>
@@ -157,54 +148,38 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test1_0" name="Test1">
-                <TypeField name="b">
+            <ExprObjProp name="b">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="int" />
-                </TypeField>
-                <TypeField name="test2">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="8" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+            <ExprObjProp name="test2">
+              <NodeExpr>
+                <NodeExprType>
                   <TypeObj codeName="Test2_0" name="Test2">
                     <TypeField name="c">
                       <BuiltinType name="str" />
                     </TypeField>
                   </TypeObj>
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="b">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="int" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="INT_DEC" value="8" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-              <ExprObjProp id="test2">
-                <NodeExpr>
-                  <NodeExprType>
-                    <TypeObj codeName="Test2_0" name="Test2">
-                      <TypeField name="c">
-                        <BuiltinType name="str" />
-                      </TypeField>
-                    </TypeObj>
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprAccess>
-                      <Var name="test2" codeName="test2_0" frame="2">
-                        <TypeObj codeName="Test2_0" name="Test2">
-                          <TypeField name="c">
-                            <BuiltinType name="str" />
-                          </TypeField>
-                        </TypeObj>
-                      </Var>
-                    </ExprAccess>
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test2" codeName="test2_0" frame="2">
+                      <TypeObj codeName="Test2_0" name="Test2">
+                        <TypeField name="c">
+                          <BuiltinType name="str" />
+                        </TypeField>
+                      </TypeObj>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

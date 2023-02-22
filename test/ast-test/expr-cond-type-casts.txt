@@ -848,17 +848,7 @@ main {
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
-          <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test_0" name="Test">
-                <TypeField mut name="a">
-                  <TypeOptional name="opt_int">
-                    <BuiltinType name="int" />
-                  </TypeOptional>
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-          </ExprObj>
+          <ExprObj />
         </NodeExprBody>
       </NodeExpr>
     </NodeVarDeclInit>

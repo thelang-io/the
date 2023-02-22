@@ -60,13 +60,14 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
 struct str __THE_1_fn$0_str (struct __THE_1_fn$0);
 void __THE_1_test_0 (void *);
 struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
 struct str __THE_1_fn$1_str (struct __THE_1_fn$1);
-void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_testAnon_0X);
 struct __THE_1_fn$0 __THE_1_testAnon_0 (void *);
+void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_testAnon_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -120,8 +121,11 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   memcpy(x, n.x, n.l);
   return (struct __THE_1_fn$0) {n.f, x, n.l};
 }
-struct str __THE_1_fn$0_str (struct __THE_1_fn$0 n) {
+void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   if (n.x != NULL) free(n.x);
+}
+struct str __THE_1_fn$0_str (struct __THE_1_fn$0 n) {
+  __THE_1_fn$0_free((struct __THE_1_fn$0) n);
   return str_alloc("[Function]");
 }
 void __THE_1_test_0 (void *px) {
@@ -133,11 +137,16 @@ struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1 n) {
   return (struct __THE_1_fn$1) {n.f, x, n.l};
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 struct str __THE_1_fn$1_str (struct __THE_1_fn$1 n) {
-  if (n.x != NULL) free(n.x);
+  __THE_1_fn$1_free((struct __THE_1_fn$1) n);
   return str_alloc("[Function]");
+}
+struct __THE_1_fn$0 __THE_1_testAnon_0 (void *px) {
+  struct __THE_1_testAnon_0X *x = px;
+  const struct __THE_1_fn$0 *__THE_0_test_0 = x->__THE_0_test_0;
+  return __THE_1_fn$0_copy(*__THE_0_test_0);
 }
 void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_testAnon_0X x) {
   size_t l = sizeof(struct __THE_1_testAnon_0X);
@@ -146,11 +155,6 @@ void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_testAnon_0
   n->f = &__THE_1_testAnon_0;
   n->x = r;
   n->l = l;
-}
-struct __THE_1_fn$0 __THE_1_testAnon_0 (void *px) {
-  struct __THE_1_testAnon_0X *x = px;
-  const struct __THE_1_fn$0 *__THE_0_test_0 = x->__THE_0_test_0;
-  return __THE_1_fn$0_copy(*__THE_0_test_0);
 }
 
 int main () {

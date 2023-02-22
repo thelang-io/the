@@ -26,6 +26,7 @@
 struct ParserTypeArray;
 struct ParserTypeFn;
 struct ParserTypeId;
+struct ParserTypeMap;
 struct ParserTypeOptional;
 struct ParserTypeRef;
 struct ParserTypeUnion;
@@ -34,6 +35,7 @@ using ParserTypeBody = std::variant<
   ParserTypeArray,
   ParserTypeFn,
   ParserTypeId,
+  ParserTypeMap,
   ParserTypeOptional,
   ParserTypeRef,
   ParserTypeUnion
@@ -66,6 +68,11 @@ struct ParserTypeFn {
 
 struct ParserTypeId {
   Token id;
+};
+
+struct ParserTypeMap {
+  ParserType keyType;
+  ParserType valueType;
 };
 
 struct ParserTypeOptional {

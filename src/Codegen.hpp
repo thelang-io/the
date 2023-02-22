@@ -231,6 +231,11 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
+  int _apiEntity (
+    const std::string &,
+    CodegenEntityType,
+    const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt
+  );
   std::string _apiEval (const std::string &, int = 0, const std::optional<std::set<std::string> *> & = std::nullopt);
   void _apiLoad (const std::vector<std::string> &);
   void _apiPreLoad (const std::vector<std::string> &);
@@ -251,56 +256,27 @@ class Codegen {
     const ASTBlock &,
     CodegenPhase
   );
-  std::string _genCopyFn (
-    Type *,
-    const std::string &,
-    const std::optional<std::vector<std::string> *> & = std::nullopt,
-    const std::optional<std::vector<std::string> *> & = std::nullopt
-  );
-  std::string _genEqFn (
-    Type *,
-    const std::string &,
-    const std::string &,
-    const std::optional<std::vector<std::string> *> & = std::nullopt,
-    const std::optional<std::vector<std::string> *> & = std::nullopt,
-    bool = false
-  );
-  std::string _genFreeFn (
-    Type *,
-    const std::string &,
-    const std::optional<std::vector<std::string> *> & = std::nullopt,
-    const std::optional<std::vector<std::string> *> & = std::nullopt
-  );
-  std::string _genReallocFn (
-    Type *,
-    const std::string &,
-    const std::string &,
-    const std::optional<std::vector<std::string> *> & = std::nullopt,
-    const std::optional<std::vector<std::string> *> & = std::nullopt
-  );
-  std::string _genStrFn (
-    Type *,
-    const std::string &,
-    const std::optional<std::vector<std::string> *> & = std::nullopt,
-    const std::optional<std::vector<std::string> *> & = std::nullopt,
-    bool = true,
-    bool = true
-  );
+  std::string _genCopyFn (Type *, const std::string &);
+  std::string _genEqFn (Type *, const std::string &, const std::string &, bool = false);
+  std::string _genFreeFn (Type *, const std::string &);
+  std::string _genReallocFn (Type *, const std::string &, const std::string &);
+  std::string _genStrFn (Type *, const std::string &, bool = true, bool = true);
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _nodeVarDeclInit (const CodegenTypeInfo &);
-  std::string _type (const Type *);
+  std::string _type (Type *);
   std::string _typeDef (Type *);
   std::string _typeDefIdx (Type *);
   CodegenTypeInfo _typeInfo (Type *);
   CodegenTypeInfoItem _typeInfoItem (Type *);
   std::string _typeNameAny (Type *);
-  std::string _typeNameArray (const Type *);
-  std::string _typeNameFn (const Type *);
-  std::string _typeNameOpt (const Type *);
-  std::string _typeNameUnion (const Type *);
-  void _typeObj (Type *, bool = false);
-  void _typeObjDef (Type *, const std::map<std::string, std::string> & = {}, bool = false);
+  std::string _typeNameArray (Type *);
+  std::string _typeNameFn (Type *);
+  std::string _typeNameMap (Type *);
+  std::string _typeNameObj (Type *, bool = false);
+  std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {}, bool = false);
+  std::string _typeNameOpt (Type *);
+  std::string _typeNameUnion (Type *);
   std::string _wrapNode (const ASTNode &, const std::string &);
   std::string _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::string &);
 };

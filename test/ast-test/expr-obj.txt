@@ -46,47 +46,35 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Point_0" name="Point">
-                <TypeField name="x">
+            <ExprObjProp name="x">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="float" />
-                </TypeField>
-                <TypeField name="y">
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="FLOAT" value="37.7681251" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+            <ExprObjProp name="y">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="float" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="x">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="float" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="FLOAT" value="37.7681251" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-              <ExprObjProp id="y">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="float" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprUnary op="MINUS" prefix>
-                      <NodeExpr>
-                        <NodeExprType>
-                          <BuiltinType name="float" />
-                        </NodeExprType>
-                        <NodeExprBody>
-                          <ExprLit type="FLOAT" value="122.5138329" />
-                        </NodeExprBody>
-                      </NodeExpr>
-                    </ExprUnary>
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprUnary op="MINUS" prefix>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="float" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="FLOAT" value="122.5138329" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprUnary>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

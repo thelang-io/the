@@ -60,8 +60,8 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, int32_t __THE_0_
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
 struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_Test) {NULL, 0};

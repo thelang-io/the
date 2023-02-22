@@ -2,6 +2,7 @@
 loop ; i < 10; i++ {
 }
 loop i := 0; i < 10; i++ {}
+loop i := 0; i < 10; Test {}
 ======= stdout =======
 <StmtLoop start="1:1" end="2:2">
   <StmtLoopCond>
@@ -75,5 +76,41 @@ loop i := 0; i < 10; i++ {}
         <Token type="OP_PLUS_PLUS" val="++" start="3:23" end="3:25" />
       </ExprUnaryOp>
     </ExprUnary>
+  </StmtLoopUpd>
+</StmtLoop>
+<StmtLoop start="4:1" end="4:29">
+  <StmtLoopInit>
+    <StmtVarDecl start="4:6" end="4:12">
+      <StmtVarDeclId>
+        <Token type="ID" val="i" start="4:6" end="4:7" />
+      </StmtVarDeclId>
+      <StmtVarDeclInit>
+        <ExprLit start="4:11" end="4:12">
+          <Token type="LIT_INT_DEC" val="0" start="4:11" end="4:12" />
+        </ExprLit>
+      </StmtVarDeclInit>
+    </StmtVarDecl>
+  </StmtLoopInit>
+  <StmtLoopCond>
+    <ExprBinary start="4:14" end="4:20">
+      <ExprBinaryLeft>
+        <ExprAccess start="4:14" end="4:15">
+          <Token type="ID" val="i" start="4:14" end="4:15" />
+        </ExprAccess>
+      </ExprBinaryLeft>
+      <ExprBinaryOp>
+        <Token type="OP_LT" val="<" start="4:16" end="4:17" />
+      </ExprBinaryOp>
+      <ExprBinaryRight>
+        <ExprLit start="4:18" end="4:20">
+          <Token type="LIT_INT_DEC" val="10" start="4:18" end="4:20" />
+        </ExprLit>
+      </ExprBinaryRight>
+    </ExprBinary>
+  </StmtLoopCond>
+  <StmtLoopUpd>
+    <ExprAccess start="4:22" end="4:26">
+      <Token type="ID" val="Test" start="4:22" end="4:26" />
+    </ExprAccess>
   </StmtLoopUpd>
 </StmtLoop>

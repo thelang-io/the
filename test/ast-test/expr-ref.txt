@@ -336,25 +336,16 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="Test_0" name="Test">
-                <TypeField name="me">
+            <ExprObjProp name="me">
+              <NodeExpr>
+                <NodeExprType>
                   <BuiltinType name="str" />
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="me">
-                <NodeExpr>
-                  <NodeExprType>
-                    <BuiltinType name="str" />
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprLit type="STR" value="\"Aaron\"" />
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"Aaron\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>
@@ -389,53 +380,31 @@ main {
         </NodeExprType>
         <NodeExprBody>
           <ExprObj>
-            <ExprObjType>
-              <TypeObj codeName="One_0" name="One">
-                <TypeField name="two">
+            <ExprObjProp name="two">
+              <NodeExpr>
+                <NodeExprType>
                   <TypeObj codeName="Two_0" name="Two">
                     <TypeField name="three">
                       <BuiltinType name="int" />
                     </TypeField>
                   </TypeObj>
-                </TypeField>
-              </TypeObj>
-            </ExprObjType>
-            <ExprObjProps>
-              <ExprObjProp id="two">
-                <NodeExpr>
-                  <NodeExprType>
-                    <TypeObj codeName="Two_0" name="Two">
-                      <TypeField name="three">
-                        <BuiltinType name="int" />
-                      </TypeField>
-                    </TypeObj>
-                  </NodeExprType>
-                  <NodeExprBody>
-                    <ExprObj>
-                      <ExprObjType>
-                        <TypeObj codeName="Two_0" name="Two">
-                          <TypeField name="three">
-                            <BuiltinType name="int" />
-                          </TypeField>
-                        </TypeObj>
-                      </ExprObjType>
-                      <ExprObjProps>
-                        <ExprObjProp id="three">
-                          <NodeExpr>
-                            <NodeExprType>
-                              <BuiltinType name="int" />
-                            </NodeExprType>
-                            <NodeExprBody>
-                              <ExprLit type="INT_DEC" value="3" />
-                            </NodeExprBody>
-                          </NodeExpr>
-                        </ExprObjProp>
-                      </ExprObjProps>
-                    </ExprObj>
-                  </NodeExprBody>
-                </NodeExpr>
-              </ExprObjProp>
-            </ExprObjProps>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprObj>
+                    <ExprObjProp name="three">
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprLit type="INT_DEC" value="3" />
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprObjProp>
+                  </ExprObj>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
           </ExprObj>
         </NodeExprBody>
       </NodeExpr>

@@ -47,7 +47,6 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "empty",
   "semi",
   "node-break",
-  "node-const-decl",
   "node-continue",
   "node-empty",
   "node-enum-decl",
@@ -57,6 +56,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-fn-decl-param-init",
   "node-fn-decl-param-mut",
   "node-fn-decl-param-mut-fn",
+  "node-fn-decl-param-mut-map",
   "node-fn-decl-param-mut-obj",
   "node-fn-decl-param-variadic",
   "node-fn-decl-stack",
@@ -73,6 +73,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-return",
   "node-type-decl",
   "node-var-decl",
+  "node-var-decl-const",
   "node-var-decl-type-only"
 ));
 
@@ -89,6 +90,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-call-args",
   "expr-cond",
   "expr-cond-any",
+  "expr-cond-map",
   "expr-cond-opt",
   "expr-cond-union",
   "expr-cond-type-casts",
@@ -97,6 +99,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-is-type-casts2",
   "expr-lit",
   "expr-lit-nil",
+  "expr-map",
   "expr-obj",
   "expr-ref",
   "expr-ref-fn",
@@ -107,6 +110,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
+  "type-map",
   "type-opt",
   "type-ref",
   "type-union",
@@ -150,8 +154,6 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1020-expr-binary-unknown-operand-type",
   "throw-E1020-expr-cond-unknown-operand-type",
   "throw-E1021-node-fn-decl-main",
-  "throw-E1022-node-const-decl-void-type",
-  "throw-E1022-node-const-decl-void-init",
   "throw-E1022-node-fn-decl-void-param-type",
   "throw-E1022-node-fn-decl-void-param-init",
   "throw-E1022-node-obj-decl-method-void-param-init",
@@ -159,9 +161,12 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1022-node-obj-decl-void-field-type",
   "throw-E1022-node-var-decl-void-type",
   "throw-E1022-node-var-decl-void-init",
+  "throw-E1022-node-var-decl-const-void-type",
+  "throw-E1022-node-var-decl-const-void-init",
   "throw-E1023-node-var-decl-unknown-member-type",
   "throw-E1024-expr-access-not-existing-member",
   "throw-E1024-expr-access-enum-not-existing-member",
-  "throw-E1025-node-const-decl-non-root",
-  "throw-E1026-node-var-decl-root"
+  "throw-E1026-node-var-decl-root",
+  "throw-E1025-node-var-decl-const-non-root",
+  "throw-E1027-expr-map-unknown-type"
 ));

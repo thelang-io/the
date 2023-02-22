@@ -64,10 +64,10 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t *__THE_0_a, int32_t *__THE_
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  __THE_1_opt_int_free((int32_t *) o->__THE_0_a);
-  __THE_1_opt_int_free((int32_t *) o->__THE_0_b);
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  __THE_1_opt_int_free((int32_t *) n->__THE_0_a);
+  __THE_1_opt_int_free((int32_t *) n->__THE_0_b);
+  free(n);
 }
 
 int main () {

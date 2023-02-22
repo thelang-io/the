@@ -153,6 +153,27 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     result += std::string(indent, ' ') + "<ExprLit" + attrs + ">" EOL;
     result += exprLit.body.xml(indent + 2) + EOL;
     result += std::string(indent, ' ') + "</ExprLit>";
+  } else if (std::holds_alternative<ParserExprMap>(*this->body)) {
+    auto exprMap = std::get<ParserExprMap>(*this->body);
+
+    if (exprMap.props.empty()) {
+      result += std::string(indent, ' ') + "<ExprMap" + attrs + " />" EOL;
+    } else {
+      result += std::string(indent, ' ') + "<ExprMap" + attrs + ">" EOL;
+
+      for (const auto &exprMapProp : exprMap.props) {
+        result += std::string(indent + 2, ' ') + "<ExprMapProp>" EOL;
+        result += std::string(indent + 4, ' ') + "<ExprMapPropName>" EOL;
+        result += exprMapProp.name.xml(indent + 6) + EOL;
+        result += std::string(indent + 4, ' ') + "</ExprMapPropName>" EOL;
+        result += std::string(indent + 4, ' ') + "<ExprMapPropInit>" EOL;
+        result += exprMapProp.init.xml(indent + 6) + EOL;
+        result += std::string(indent + 4, ' ') + "</ExprMapPropInit>" EOL;
+        result += std::string(indent + 2, ' ') + "</ExprMapProp>" EOL;
+      }
+
+      result += std::string(indent, ' ') + "</ExprMap>";
+    }
   } else if (std::holds_alternative<ParserExprObj>(*this->body)) {
     auto exprObj = std::get<ParserExprObj>(*this->body);
 

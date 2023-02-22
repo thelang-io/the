@@ -105,8 +105,8 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_TestObj_0 *);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 struct __THE_1_TestObj_0 *__THE_1_testCall_0 (void *);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
 void __THE_1_mainSDtestCtx_0 (void *);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_mainSDtestCtx_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -153,24 +153,24 @@ struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *o) {
+struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *n) {
   struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {o->__THE_0_a};
+  struct __THE_1_TestObj_0 s = {n->__THE_0_a};
   memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
   return r;
 }
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *o) {
-  free(o);
+void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *n) {
+  free(n);
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_realloc (struct __THE_1_TestObj_0 *o1, struct __THE_1_TestObj_0 *o2) {
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) o1);
-  return o2;
+struct __THE_1_TestObj_0 *__THE_1_TestObj_0_realloc (struct __THE_1_TestObj_0 *n1, struct __THE_1_TestObj_0 *n2) {
+  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n1);
+  return n2;
 }
-struct str __THE_1_TestObj_0_str (struct __THE_1_TestObj_0 *o) {
+struct str __THE_1_TestObj_0_str (struct __THE_1_TestObj_0 *n) {
   struct str r = str_alloc("TestObj{");
   r = str_concat_cstr(r, "a: ");
-  r = str_concat_str(r, int_str(o->__THE_0_a));
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) o);
+  r = str_concat_str(r, int_str(n->__THE_0_a));
+  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n);
   return str_concat_cstr(r, "}");
 }
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_TestObj_0 *__THE_0_o) {
@@ -179,23 +179,15 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_TestObj_0 *__THE_0
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *o) {
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) o->__THE_0_o);
-  free(o);
+void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n->__THE_0_o);
+  free(n);
 }
 struct __THE_1_TestObj_0 *__THE_1_testCall_0 (void *px) {
   return __THE_1_TestObj_0_alloc(1);
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
-}
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
-  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtestCtx_0;
-  n->x = r;
-  n->l = l;
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtestCtx_0 (void *px) {
   struct __THE_1_mainSDtestCtx_0X *x = px;
@@ -210,6 +202,14 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   str_free((struct str) __THE_1_TestObj_0_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)));
   str_free((struct str) __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(*__THE_0_test_0)));
   str_free((struct str) __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(**__THE_0_refTest_0)));
+}
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_mainSDtestCtx_0X x) {
+  size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
+  struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mainSDtestCtx_0;
+  n->x = r;
+  n->l = l;
 }
 
 int main () {

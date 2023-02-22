@@ -25,6 +25,7 @@ class TypeTest : public testing::Test {
   Type *arr_;
   Type *enum_;
   Type *fn_;
+  Type *map_;
   Type *obj_;
   Type *opt_;
   Type *ref_;
@@ -49,6 +50,7 @@ class TypeTest : public testing::Test {
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
     }, this->tm_.get("int"));
 
+    this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
     auto objMethod = this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.obj("Test", "Test_0", {
@@ -258,6 +260,7 @@ TEST_F(TypeTest, GetsProp) {
   EXPECT_NE(this->any_->getProp("str"), nullptr);
   EXPECT_EQ(this->arr_->getProp("len"), this->tm_.get("int"));
   EXPECT_NE(this->enum_->getProp("str"), nullptr);
+  EXPECT_NE(this->map_->getProp("str"), nullptr);
   EXPECT_EQ(this->obj_->getProp("a"), this->tm_.get("int"));
   EXPECT_NE(this->opt_->getProp("str"), nullptr);
   EXPECT_NE(this->ref_->getProp("str"), nullptr);
@@ -295,6 +298,10 @@ TEST_F(TypeTest, GetsNonExistingProp) {
 
   EXPECT_THROW_WITH_MESSAGE({
     this->fn_->getProp("a");
+  }, "tried to get non-existing prop type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->map_->getProp("b");
   }, "tried to get non-existing prop type");
 
   EXPECT_THROW_WITH_MESSAGE({
@@ -336,6 +343,7 @@ TEST_F(TypeTest, HasProp) {
   EXPECT_TRUE(this->any_->hasProp("str"));
   EXPECT_TRUE(this->arr_->hasProp("str"));
   EXPECT_TRUE(this->enum_->hasProp("str"));
+  EXPECT_TRUE(this->map_->hasProp("str"));
   EXPECT_TRUE(this->obj_->hasProp("a"));
   EXPECT_TRUE(this->opt_->hasProp("str"));
   EXPECT_TRUE(this->ref_->hasProp("str"));
@@ -350,6 +358,7 @@ TEST_F(TypeTest, HasNonExistingProp) {
   EXPECT_FALSE(this->arr_->hasProp("a"));
   EXPECT_FALSE(this->enum_->hasProp("a"));
   EXPECT_FALSE(this->fn_->hasProp("a"));
+  EXPECT_FALSE(this->map_->hasProp("b"));
   EXPECT_FALSE(this->obj_->hasProp("b"));
   EXPECT_FALSE(this->opt_->hasProp("b"));
   EXPECT_FALSE(this->ref_->hasProp("a"));
@@ -381,6 +390,7 @@ TEST_F(TypeTest, HasNonExistingSubType) {
   EXPECT_FALSE(this->arr_->hasSubType(this->tm_.get("float")));
   EXPECT_FALSE(this->enum_->hasSubType(this->tm_.get("float")));
   EXPECT_FALSE(this->fn_->hasSubType(this->tm_.get("float")));
+  EXPECT_FALSE(this->map_->hasSubType(this->tm_.get("float")));
   EXPECT_FALSE(this->obj_->hasSubType(this->tm_.get("float")));
   EXPECT_FALSE(this->opt_->hasSubType(this->tm_.get("float")));
   EXPECT_FALSE(this->ref_->hasSubType(this->tm_.get("float")));
@@ -399,6 +409,7 @@ TEST_F(TypeTest, CheckIfNotAlias) {
   EXPECT_FALSE(this->any_->isAlias());
   EXPECT_FALSE(this->enum_->isAlias());
   EXPECT_FALSE(this->fn_->isAlias());
+  EXPECT_FALSE(this->map_->isAlias());
   EXPECT_FALSE(this->obj_->isAlias());
   EXPECT_FALSE(this->opt_->isAlias());
   EXPECT_FALSE(this->ref_->isAlias());
@@ -439,6 +450,7 @@ TEST_F(TypeTest, CheckIfNotArray) {
   EXPECT_FALSE(this->any_->isArray());
   EXPECT_FALSE(this->enum_->isArray());
   EXPECT_FALSE(this->fn_->isArray());
+  EXPECT_FALSE(this->map_->isArray());
   EXPECT_FALSE(this->obj_->isArray());
   EXPECT_FALSE(this->opt_->isArray());
   EXPECT_FALSE(this->ref_->isArray());
@@ -491,6 +503,7 @@ TEST_F(TypeTest, CheckIfNotEnum) {
   EXPECT_FALSE(this->any_->isEnum());
   EXPECT_FALSE(this->arr_->isEnum());
   EXPECT_FALSE(this->fn_->isEnum());
+  EXPECT_FALSE(this->map_->isEnum());
   EXPECT_FALSE(this->obj_->isEnum());
   EXPECT_FALSE(this->opt_->isEnum());
   EXPECT_FALSE(this->ref_->isEnum());
@@ -526,6 +539,7 @@ TEST_F(TypeTest, CheckIfNotEnumerator) {
   EXPECT_FALSE(this->arr_->isEnumerator());
   EXPECT_FALSE(this->enum_->isEnumerator());
   EXPECT_FALSE(this->fn_->isEnumerator());
+  EXPECT_FALSE(this->map_->isEnumerator());
   EXPECT_FALSE(this->obj_->isEnumerator());
   EXPECT_FALSE(this->opt_->isEnumerator());
   EXPECT_FALSE(this->ref_->isEnumerator());
@@ -575,6 +589,7 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
   EXPECT_FALSE(this->arr_->isFloatNumber());
   EXPECT_FALSE(this->enum_->isFloatNumber());
   EXPECT_FALSE(this->fn_->isFloatNumber());
+  EXPECT_FALSE(this->map_->isFloatNumber());
   EXPECT_FALSE(this->obj_->isFloatNumber());
   EXPECT_FALSE(this->opt_->isFloatNumber());
   EXPECT_FALSE(this->ref_->isFloatNumber());
@@ -634,6 +649,7 @@ TEST_F(TypeTest, CheckIfNotFn) {
   EXPECT_FALSE(this->any_->isFn());
   EXPECT_FALSE(this->arr_->isFn());
   EXPECT_FALSE(this->enum_->isFn());
+  EXPECT_FALSE(this->map_->isFn());
   EXPECT_FALSE(this->obj_->isFn());
   EXPECT_FALSE(this->opt_->isFn());
   EXPECT_FALSE(this->ref_->isFn());
@@ -697,6 +713,7 @@ TEST_F(TypeTest, CheckIfNotIntNumber) {
   EXPECT_FALSE(this->arr_->isIntNumber());
   EXPECT_FALSE(this->enum_->isIntNumber());
   EXPECT_FALSE(this->fn_->isIntNumber());
+  EXPECT_FALSE(this->map_->isIntNumber());
   EXPECT_FALSE(this->obj_->isIntNumber());
   EXPECT_FALSE(this->opt_->isIntNumber());
   EXPECT_FALSE(this->ref_->isIntNumber());
@@ -713,6 +730,42 @@ TEST_F(TypeTest, CheckIfNotIntNumber) {
   EXPECT_FALSE(this->tm_.get("void")->isIntNumber());
 }
 
+TEST_F(TypeTest, CheckIfMap) {
+  EXPECT_TRUE(this->map_->isMap());
+  EXPECT_TRUE(this->tm_.createMap(this->tm_.get("int"), this->tm_.get("int")));
+}
+
+TEST_F(TypeTest, CheckIfNotMap) {
+  EXPECT_FALSE(this->alias_->isMap());
+  EXPECT_FALSE(this->any_->isMap());
+  EXPECT_FALSE(this->arr_->isMap());
+  EXPECT_FALSE(this->enum_->isMap());
+  EXPECT_FALSE(this->fn_->isMap());
+  EXPECT_FALSE(this->obj_->isMap());
+  EXPECT_FALSE(this->opt_->isMap());
+  EXPECT_FALSE(this->ref_->isMap());
+  EXPECT_FALSE(this->union_->isMap());
+
+  EXPECT_FALSE(this->tm_.get("any")->isMap());
+  EXPECT_FALSE(this->tm_.get("bool")->isMap());
+  EXPECT_FALSE(this->tm_.get("byte")->isMap());
+  EXPECT_FALSE(this->tm_.get("char")->isMap());
+  EXPECT_FALSE(this->tm_.get("f32")->isMap());
+  EXPECT_FALSE(this->tm_.get("f64")->isMap());
+  EXPECT_FALSE(this->tm_.get("float")->isMap());
+  EXPECT_FALSE(this->tm_.get("i8")->isMap());
+  EXPECT_FALSE(this->tm_.get("i16")->isMap());
+  EXPECT_FALSE(this->tm_.get("i32")->isMap());
+  EXPECT_FALSE(this->tm_.get("i64")->isMap());
+  EXPECT_FALSE(this->tm_.get("int")->isMap());
+  EXPECT_FALSE(this->tm_.get("str")->isMap());
+  EXPECT_FALSE(this->tm_.get("u8")->isMap());
+  EXPECT_FALSE(this->tm_.get("u16")->isMap());
+  EXPECT_FALSE(this->tm_.get("u32")->isMap());
+  EXPECT_FALSE(this->tm_.get("u64")->isMap());
+  EXPECT_FALSE(this->tm_.get("void")->isMap());
+}
+
 TEST_F(TypeTest, CheckIfMethod) {
   EXPECT_TRUE(this->tm_.get("Test")->getProp("m")->isMethod());
 }
@@ -723,6 +776,7 @@ TEST_F(TypeTest, CheckIfNotMethod) {
   EXPECT_FALSE(this->arr_->isMethod());
   EXPECT_FALSE(this->enum_->isMethod());
   EXPECT_FALSE(this->fn_->isMethod());
+  EXPECT_FALSE(this->map_->isMethod());
   EXPECT_FALSE(this->obj_->isMethod());
   EXPECT_FALSE(this->opt_->isMethod());
   EXPECT_FALSE(this->ref_->isMethod());
@@ -769,6 +823,7 @@ TEST_F(TypeTest, CheckIfNotNumber) {
   EXPECT_FALSE(this->arr_->isNumber());
   EXPECT_FALSE(this->enum_->isNumber());
   EXPECT_FALSE(this->fn_->isNumber());
+  EXPECT_FALSE(this->map_->isNumber());
   EXPECT_FALSE(this->obj_->isNumber());
   EXPECT_FALSE(this->opt_->isNumber());
   EXPECT_FALSE(this->ref_->isNumber());
@@ -806,6 +861,7 @@ TEST_F(TypeTest, CheckIfNotObj) {
   EXPECT_FALSE(this->arr_->isObj());
   EXPECT_FALSE(this->enum_->isObj());
   EXPECT_FALSE(this->fn_->isObj());
+  EXPECT_FALSE(this->map_->isObj());
   EXPECT_FALSE(this->opt_->isObj());
   EXPECT_FALSE(this->ref_->isObj());
   EXPECT_FALSE(this->union_->isObj());
@@ -840,6 +896,7 @@ TEST_F(TypeTest, CheckIfNotOptional) {
   EXPECT_FALSE(this->arr_->isOpt());
   EXPECT_FALSE(this->enum_->isOpt());
   EXPECT_FALSE(this->fn_->isOpt());
+  EXPECT_FALSE(this->map_->isOpt());
   EXPECT_FALSE(this->obj_->isOpt());
   EXPECT_FALSE(this->ref_->isOpt());
   EXPECT_FALSE(this->union_->isOpt());
@@ -875,6 +932,7 @@ TEST_F(TypeTest, CheckIfNotRef) {
   EXPECT_FALSE(this->arr_->isRef());
   EXPECT_FALSE(this->enum_->isRef());
   EXPECT_FALSE(this->fn_->isRef());
+  EXPECT_FALSE(this->map_->isRef());
   EXPECT_FALSE(this->obj_->isRef());
   EXPECT_FALSE(this->opt_->isRef());
   EXPECT_FALSE(this->union_->isRef());
@@ -910,6 +968,7 @@ TEST_F(TypeTest, CheckIfNotRefOf) {
   EXPECT_FALSE(this->arr_->isRefOf(this->tm_.get("float")));
   EXPECT_FALSE(this->enum_->isRefOf(this->tm_.get("float")));
   EXPECT_FALSE(this->fn_->isRefOf(this->tm_.get("float")));
+  EXPECT_FALSE(this->map_->isRefOf(this->tm_.get("float")));
   EXPECT_FALSE(this->obj_->isRefOf(this->tm_.get("float")));
   EXPECT_FALSE(this->opt_->isRefOf(this->tm_.get("float")));
   EXPECT_FALSE(this->ref_->isRefOf(this->tm_.get("float")));
@@ -940,7 +999,9 @@ TEST_F(TypeTest, CheckIfSafeForTernaryAlt) {
   EXPECT_TRUE(this->any_->isSafeForTernaryAlt());
   EXPECT_TRUE(this->arr_->isSafeForTernaryAlt());
   EXPECT_TRUE(this->fn_->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->map_->isSafeForTernaryAlt());
   EXPECT_TRUE(this->obj_->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->opt_->isSafeForTernaryAlt());
   EXPECT_TRUE(this->union_->isSafeForTernaryAlt());
   EXPECT_TRUE(this->tm_.get("str")->isSafeForTernaryAlt());
 }
@@ -974,6 +1035,7 @@ TEST_F(TypeTest, CheckIfSmallForVarArg) {
   EXPECT_FALSE(this->arr_->isSmallForVarArg());
   EXPECT_FALSE(this->enum_->isSmallForVarArg());
   EXPECT_FALSE(this->fn_->isSmallForVarArg());
+  EXPECT_FALSE(this->map_->isSmallForVarArg());
   EXPECT_FALSE(this->obj_->isSmallForVarArg());
   EXPECT_FALSE(this->opt_->isSmallForVarArg());
   EXPECT_FALSE(this->ref_->isSmallForVarArg());
@@ -1030,6 +1092,7 @@ TEST_F(TypeTest, CheckIfNotUnion) {
   EXPECT_FALSE(this->arr_->isUnion());
   EXPECT_FALSE(this->enum_->isUnion());
   EXPECT_FALSE(this->fn_->isUnion());
+  EXPECT_FALSE(this->map_->isUnion());
   EXPECT_FALSE(this->obj_->isUnion());
   EXPECT_FALSE(this->opt_->isUnion());
   EXPECT_FALSE(this->ref_->isUnion());
@@ -1065,6 +1128,7 @@ TEST_F(TypeTest, ShouldBeFreed) {
   EXPECT_TRUE(this->arr_->shouldBeFreed());
   EXPECT_FALSE(this->enum_->shouldBeFreed());
   EXPECT_TRUE(this->fn_->shouldBeFreed());
+  EXPECT_TRUE(this->map_->shouldBeFreed());
   EXPECT_TRUE(this->obj_->shouldBeFreed());
   EXPECT_TRUE(this->opt_->shouldBeFreed());
   EXPECT_FALSE(this->ref_->shouldBeFreed());
@@ -1096,4 +1160,36 @@ TEST_F(TypeTest, ShouldBeFreedUnion) {
   EXPECT_FALSE(type1->shouldBeFreed());
   EXPECT_TRUE(type2->shouldBeFreed());
   EXPECT_TRUE(type3->shouldBeFreed());
+}
+
+TEST_F(TypeTest, VaArgCodeGenerates) {
+  EXPECT_EQ(this->alias_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->any_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->arr_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->enum_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->fn_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->map_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->obj_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->opt_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->ref_->vaArgCode("test"), "test");
+  EXPECT_EQ(this->union_->vaArgCode("test"), "test");
+
+  EXPECT_EQ(this->tm_.get("any")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("bool")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("byte")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("char")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("f32")->vaArgCode("test"), "double");
+  EXPECT_EQ(this->tm_.get("f64")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("float")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("i8")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("i16")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("i32")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("i64")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("int")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("str")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("u8")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("u16")->vaArgCode("test"), "int");
+  EXPECT_EQ(this->tm_.get("u32")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("u64")->vaArgCode("test"), "test");
+  EXPECT_EQ(this->tm_.get("void")->vaArgCode("test"), "test");
 }

@@ -188,18 +188,18 @@ struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, int32_t 
   memcpy(r, &s, sizeof(struct __THE_1_Human_0));
   return r;
 }
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *o) {
-  str_free((struct str) o->__THE_0_name);
-  free(o);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
+  str_free((struct str) n->__THE_0_name);
+  free(n);
 }
-struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *o) {
+struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *n) {
   struct str r = str_alloc("Human{");
   r = str_concat_cstr(r, "name: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_str(r, str_escape(n->__THE_0_name));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", age: ");
-  r = str_concat_str(r, int_str(o->__THE_0_age));
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) o);
+  r = str_concat_str(r, int_str(n->__THE_0_age));
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) n);
   return str_concat_cstr(r, "}");
 }
 int32_t __THE_1_b_0 (void *px) {

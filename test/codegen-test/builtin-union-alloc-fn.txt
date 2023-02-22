@@ -80,7 +80,7 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
   return (struct __THE_1_fn$0) {n.f, x, n.l};
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_test1_0 (void *px) {
   return;
@@ -92,7 +92,7 @@ struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1 n) {
   return (struct __THE_1_fn$1) {n.f, x, n.l};
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
+  if (n.x != NULL) free(n.x);
 }
 int32_t __THE_1_test2_0 (void *px) {
   return 1;

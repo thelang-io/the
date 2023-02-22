@@ -43,10 +43,10 @@ struct str {
 };
 
 struct __THE_1_union$0;
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
-struct __THE_1_fn$1P;
+struct __THE_1_fn$0P;
 struct __THE_1_fn$1;
+struct __THE_1_fn$1P;
 
 struct __THE_1_union$0 {
   int t;
@@ -55,11 +55,16 @@ struct __THE_1_union$0 {
     struct str v2;
   };
 };
+struct __THE_1_fn$0 {
+  struct __THE_1_union$0 (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
 struct __THE_1_fn$0P {
   struct __THE_1_union$0 n0;
 };
-struct __THE_1_fn$0 {
-  struct __THE_1_union$0 (*f) (void *, struct __THE_1_fn$0P);
+struct __THE_1_fn$1 {
+  struct __THE_1_union$0 (*f) (void *, struct __THE_1_fn$1P);
   void *x;
   size_t l;
 };
@@ -67,11 +72,6 @@ struct __THE_1_fn$1P {
   struct __THE_1_union$0 n0;
   unsigned char o1;
   struct __THE_1_union$0 n1;
-};
-struct __THE_1_fn$1 {
-  struct __THE_1_union$0 (*f) (void *, struct __THE_1_fn$1P);
-  void *x;
-  size_t l;
 };
 
 void *alloc (size_t);

@@ -1,0 +1,309 @@
+======= stdin =======
+obj Test { a: int }
+
+main {
+  a1: str[str]
+  a2: Test[int]
+  a3: int[][str]
+  a4: (() -> void)[str]
+  a5: int?[str]
+  a6: (ref int)[str]
+  a7: (int | str)[str]
+
+  b1: str[str][str]
+  b2: Test[int][char]
+  b3: int[][str][str]
+  b4: (() -> void)[str][str]
+  b5: int?[str][str]
+  b6: (ref int)[str][str]
+  b7: (int | str)[str][str]
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeField name="a">
+      <BuiltinType name="int" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a1" codeName="a1_0" frame="2">
+        <TypeMap name="map$0">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <BuiltinType name="str" />
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a2" codeName="a2_0" frame="2">
+        <TypeMap name="map$1">
+          <TypeMapKeyType>
+            <BuiltinType name="int" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeObj codeName="Test_0" name="Test">
+              <TypeField name="a">
+                <BuiltinType name="int" />
+              </TypeField>
+            </TypeObj>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a3" codeName="a3_0" frame="2">
+        <TypeMap name="map$2">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a4" codeName="a4_0" frame="2">
+        <TypeMap name="map$3">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeFn name="fn$0">
+              <TypeFnReturnType>
+                <BuiltinType name="void" />
+              </TypeFnReturnType>
+            </TypeFn>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a5" codeName="a5_0" frame="2">
+        <TypeMap name="map$4">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeOptional name="opt_int">
+              <BuiltinType name="int" />
+            </TypeOptional>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a6" codeName="a6_0" frame="2">
+        <TypeMap name="map$5">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeRef name="ref_int">
+              <BuiltinType name="int" />
+            </TypeRef>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a7" codeName="a7_0" frame="2">
+        <TypeMap name="map$6">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeUnion name="union$0">
+              <BuiltinType name="int" />
+              <BuiltinType name="str" />
+            </TypeUnion>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b1" codeName="b1_0" frame="2">
+        <TypeMap name="map$7">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeMap name="map$0">
+              <TypeMapKeyType>
+                <BuiltinType name="str" />
+              </TypeMapKeyType>
+              <TypeMapValueType>
+                <BuiltinType name="str" />
+              </TypeMapValueType>
+            </TypeMap>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b2" codeName="b2_0" frame="2">
+        <TypeMap name="map$8">
+          <TypeMapKeyType>
+            <BuiltinType name="char" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeMap name="map$1">
+              <TypeMapKeyType>
+                <BuiltinType name="int" />
+              </TypeMapKeyType>
+              <TypeMapValueType>
+                <TypeObj codeName="Test_0" name="Test">
+                  <TypeField name="a">
+                    <BuiltinType name="int" />
+                  </TypeField>
+                </TypeObj>
+              </TypeMapValueType>
+            </TypeMap>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b3" codeName="b3_0" frame="2">
+        <TypeMap name="map$9">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeMap name="map$2">
+              <TypeMapKeyType>
+                <BuiltinType name="str" />
+              </TypeMapKeyType>
+              <TypeMapValueType>
+                <TypeArray name="array_int">
+                  <BuiltinType name="int" />
+                </TypeArray>
+              </TypeMapValueType>
+            </TypeMap>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b4" codeName="b4_0" frame="2">
+        <TypeMap name="map$10">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeMap name="map$3">
+              <TypeMapKeyType>
+                <BuiltinType name="str" />
+              </TypeMapKeyType>
+              <TypeMapValueType>
+                <TypeFn name="fn$0">
+                  <TypeFnReturnType>
+                    <BuiltinType name="void" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </TypeMapValueType>
+            </TypeMap>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b5" codeName="b5_0" frame="2">
+        <TypeMap name="map$11">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeMap name="map$4">
+              <TypeMapKeyType>
+                <BuiltinType name="str" />
+              </TypeMapKeyType>
+              <TypeMapValueType>
+                <TypeOptional name="opt_int">
+                  <BuiltinType name="int" />
+                </TypeOptional>
+              </TypeMapValueType>
+            </TypeMap>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b6" codeName="b6_0" frame="2">
+        <TypeMap name="map$12">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeMap name="map$5">
+              <TypeMapKeyType>
+                <BuiltinType name="str" />
+              </TypeMapKeyType>
+              <TypeMapValueType>
+                <TypeRef name="ref_int">
+                  <BuiltinType name="int" />
+                </TypeRef>
+              </TypeMapValueType>
+            </TypeMap>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b7" codeName="b7_0" frame="2">
+        <TypeMap name="map$13">
+          <TypeMapKeyType>
+            <BuiltinType name="str" />
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeMap name="map$6">
+              <TypeMapKeyType>
+                <BuiltinType name="str" />
+              </TypeMapKeyType>
+              <TypeMapValueType>
+                <TypeUnion name="union$0">
+                  <BuiltinType name="int" />
+                  <BuiltinType name="str" />
+                </TypeUnion>
+              </TypeMapValueType>
+            </TypeMap>
+          </TypeMapValueType>
+        </TypeMap>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+</NodeMain>

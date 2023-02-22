@@ -108,19 +108,19 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct any __THE_0_a) {
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *o) {
+struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *n) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {any_copy(o->__THE_0_a)};
+  struct __THE_1_Test_0 s = {any_copy(n->__THE_0_a)};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  any_free((struct any) o->__THE_0_a);
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  any_free((struct any) n->__THE_0_a);
+  free(n);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *o1, struct __THE_1_Test_0 *o2) {
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) o1);
-  return o2;
+struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct __THE_1_Test_0 *n2) {
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) n1);
+  return n2;
 }
 struct any __THE_1_any_int_alloc (int32_t d) {
   size_t l = sizeof(struct __THE_1_any_int);

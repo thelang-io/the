@@ -70,8 +70,8 @@ void *alloc (size_t);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_testGo_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_testGo_0X);
 void __THE_1_testGo_0 (void *);
+void __THE_1_testGo_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_testGo_0X);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 void __THE_1_TestSDgo_0 (void *, struct __THE_1_Test_0 **);
@@ -117,15 +117,7 @@ void str_free (struct str s) {
   free(s.d);
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
-}
-void __THE_1_testGo_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_testGo_0X x) {
-  size_t l = sizeof(struct __THE_1_testGo_0X);
-  struct __THE_1_testGo_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_testGo_0;
-  n->x = r;
-  n->l = l;
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_testGo_0 (void *px) {
   struct __THE_1_testGo_0X *x = px;
@@ -136,14 +128,22 @@ void __THE_1_testGo_0 (void *px) {
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
 }
+void __THE_1_testGo_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_testGo_0X x) {
+  size_t l = sizeof(struct __THE_1_testGo_0X);
+  struct __THE_1_testGo_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_testGo_0;
+  n->x = r;
+  n->l = l;
+}
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_a};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *o) {
-  free(o);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
 }
 void __THE_1_TestSDgo_0 (void *px, struct __THE_1_Test_0 **__THE_0_self_0) {
   (*__THE_0_self_0)->__THE_0_a += 1;

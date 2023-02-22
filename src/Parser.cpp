@@ -284,111 +284,14 @@ ParserStmt Parser::next (bool allowSemi) {
   }
 
   if (tok0.type == TK_KW_LOOP) {
-    auto loopInit = std::optional<ParserStmt>{};
-    auto loopCond = std::optional<ParserStmtExpr>{};
-    auto loopUpd = std::optional<ParserStmtExpr>{};
-    auto parenthesized = false;
     auto [loc1, tok1] = this->lexer->next();
 
-    if (tok1.type == TK_OP_LBRACE) {
-      this->lexer->seek(loc1);
-    } else if (tok1.type == TK_OP_LPAR) {
-      parenthesized = true;
-      auto [loc2, tok2] = this->lexer->next();
-
-      if (tok2.type == TK_OP_SEMI) {
-        loopCond = this->_stmtExpr();
-        auto [_3, tok3] = this->lexer->next();
-
-        if (tok3.type != TK_OP_SEMI) {
-          throw Error(this->reader, tok3.start, E0108);
-        }
-
-        loopUpd = this->_stmtExpr();
-      } else {
-        this->lexer->seek(loc2);
-        loopInit = this->next(false);
-
-        if (!std::holds_alternative<ParserStmtExpr>(*loopInit->body) && !std::holds_alternative<ParserStmtVarDecl>(*loopInit->body)) {
-          throw Error(this->reader, tok2.start, E0105);
-        } else if (std::holds_alternative<ParserStmtVarDecl>(*loopInit->body) && std::get<ParserStmtVarDecl>(*loopInit->body).mut) {
-          throw Error(this->reader, tok2.start, E0144);
-        }
-
-        auto [loc3, tok3] = this->lexer->next();
-
-        if (std::holds_alternative<ParserStmtExpr>(*loopInit->body) && tok3.type == TK_OP_RPAR) {
-          this->lexer->seek(loc3);
-          loopCond = std::get<ParserStmtExpr>(*loopInit->body);
-          loopInit = std::nullopt;
-        } else if (tok3.type == TK_OP_SEMI) {
-          loopCond = this->_stmtExpr();
-          auto [_4, tok4] = this->lexer->next();
-
-          if (tok4.type != TK_OP_SEMI) {
-            throw Error(this->reader, tok4.start, E0108);
-          }
-
-          loopUpd = this->_stmtExpr();
-        } else {
-          throw Error(this->reader, tok3.start, E0106);
-        }
-      }
-
-      auto [_5, tok5] = this->lexer->next();
-
-      if (tok5.type != TK_OP_RPAR) {
-        throw Error(this->reader, tok5.start, E0109);
-      }
-
-      auto [loc6, tok6] = this->lexer->next();
-
-      if (tok6.type != TK_OP_LBRACE) {
-        throw Error(this->reader, tok6.start, E0103);
-      } else {
-        this->lexer->seek(loc6);
-      }
-    } else if (tok1.type == TK_OP_SEMI) {
-      loopCond = this->_stmtExpr();
-      auto [_2, tok2] = this->lexer->next();
-
-      if (tok2.type != TK_OP_SEMI) {
-        throw Error(this->reader, tok2.start, E0108);
-      }
-
-      loopUpd = this->_stmtExpr();
-    } else {
-      this->lexer->seek(loc1);
-      loopInit = this->next(false);
-
-      if (!std::holds_alternative<ParserStmtExpr>(*loopInit->body) && !std::holds_alternative<ParserStmtVarDecl>(*loopInit->body)) {
-        throw Error(this->reader, tok1.start, E0105);
-      } else if (std::holds_alternative<ParserStmtVarDecl>(*loopInit->body) && std::get<ParserStmtVarDecl>(*loopInit->body).mut) {
-        throw Error(this->reader, tok1.start, E0144);
-      }
-
-      auto [loc2, tok2] = this->lexer->next();
-
-      if (std::holds_alternative<ParserStmtExpr>(*loopInit->body) && tok2.type == TK_OP_LBRACE) {
-        this->lexer->seek(loc2);
-        loopCond = std::get<ParserStmtExpr>(*loopInit->body);
-        loopInit = std::nullopt;
-      } else if (tok2.type == TK_OP_SEMI) {
-        loopCond = this->_stmtExpr();
-        auto [_3, tok3] = this->lexer->next();
-
-        if (tok3.type != TK_OP_SEMI) {
-          throw Error(this->reader, tok3.start, E0108);
-        }
-
-        loopUpd = this->_stmtExpr();
-      } else {
-        throw Error(this->reader, tok2.start, E0106);
-      }
+    if (tok1.type == TK_OP_LPAR) {
+      return _wrapStmtLoop(allowSemi, tok0, true);
     }
 
-    auto loopBody = this->_block();
-    return this->_wrapStmt(allowSemi, ParserStmtLoop{loopInit, loopCond, loopUpd, loopBody, parenthesized}, tok0.start);
+    this->lexer->seek(loc1);
+    return _wrapStmtLoop(allowSemi, tok0, false);
   }
 
   if (tok0.type == TK_KW_MUT) {
@@ -678,6 +581,50 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
 
     auto exprUnary = ParserExprUnary{*exprUnaryArg, tok1, true};
     auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprUnary), false, tok1.start, this->lexer->loc};
+
+    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
+  }
+
+  if (tok1.type == TK_OP_LBRACE) {
+    auto exprMapProps = std::vector<ParserExprMapProp>{};
+    auto [_2, tok2] = this->lexer->next();
+
+    while (tok2.type != TK_OP_RBRACE) {
+      if (tok2.type != TK_LIT_STR && !exprMapProps.empty()) {
+        throw Error(this->reader, tok2.start, E0168);
+      } else if (tok2.type != TK_LIT_STR) {
+        this->lexer->seek(loc1);
+        return std::nullopt;
+      }
+
+      auto [_3, tok3] = this->lexer->next();
+
+      if (tok3.type != TK_OP_COLON && !exprMapProps.empty()) {
+        throw Error(this->reader, tok3.start, E0169);
+      } else if (tok3.type != TK_OP_COLON) {
+        this->lexer->seek(loc1);
+        return std::nullopt;
+      }
+
+      auto propInit = this->_stmtExpr();
+
+      if (propInit == std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0170);
+      }
+
+      auto propNameLit = ParserExprLit{tok2};
+      auto propName = ParserStmtExpr{std::make_shared<ParserExpr>(propNameLit), false, tok1.start, this->lexer->loc};
+
+      exprMapProps.push_back(ParserExprMapProp{propName, *propInit});
+      std::tie(_2, tok2) = this->lexer->next();
+
+      if (tok2.type == TK_OP_COMMA) {
+        std::tie(_2, tok2) = this->lexer->next();
+      }
+    }
+
+    auto exprMap = ParserExprMap{exprMapProps};
+    auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprMap), false, tok1.start, this->lexer->loc};
 
     return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
   }
@@ -1114,22 +1061,22 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
     }
 
     auto loc4 = this->lexer->loc;
-    auto exprObjPropInit = std::optional<ParserStmtExpr>{};
+    auto propInit = std::optional<ParserStmtExpr>{};
 
     try {
-      exprObjPropInit = this->_stmtExpr();
+      propInit = this->_stmtExpr();
     } catch (const Error &) {
       this->lexer->seek(loc4);
     }
 
-    if (exprObjPropInit == std::nullopt && !exprObjProps.empty()) {
+    if (propInit == std::nullopt && !exprObjProps.empty()) {
       throw Error(this->reader, this->lexer->loc, E0134);
-    } else if (exprObjPropInit == std::nullopt) {
+    } else if (propInit == std::nullopt) {
       this->lexer->seek(loc);
       return std::make_tuple(stmtExpr, false);
     }
 
-    exprObjProps.push_back(ParserExprObjProp{tok2, *exprObjPropInit});
+    exprObjProps.push_back(ParserExprObjProp{tok2, *propInit});
     std::tie(_2, tok2) = this->lexer->next();
 
     if (tok2.type != TK_OP_COMMA && tok2.type != TK_OP_RBRACE) {
@@ -1232,9 +1179,9 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
 
     return this->_wrapStmtExpr(newStmtExpr);
   } else if (tok.type == TK_OP_LBRACE) {
-    auto tkLpar = Token{TK_OP_LPAR};
+    auto tkLBrace = Token{TK_OP_LBRACE};
 
-    auto [newStmtExpr, shouldWrap] = this->_wrapExpr(stmtExpr, loc, tok, tkLpar.precedence(), [&] (auto _1, auto _2, auto _3) {
+    auto [newStmtExpr, shouldWrap] = this->_wrapExpr(stmtExpr, loc, tok, tkLBrace.precedence(), [&] (auto _1, auto _2, auto _3) {
       return this->_wrapExprObj(_1, _2, _3);
     });
 
@@ -1263,6 +1210,106 @@ ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
   return stmtExpr;
 }
 
+ParserStmt Parser::_wrapStmtLoop (bool allowSemi, const Token &tok1, bool parenthesized) {
+  auto loopInit = std::optional<ParserStmt>{};
+  auto loopCond = std::optional<ParserStmtExpr>{};
+  auto loopUpd = std::optional<ParserStmtExpr>{};
+  auto [loc2, tok2] = this->lexer->next();
+
+  if (tok2.type == TK_OP_LBRACE) {
+    this->lexer->seek(loc2);
+  } else if (tok2.type == TK_OP_SEMI) {
+    loopCond = this->_stmtExpr();
+    auto [_3, tok3] = this->lexer->next();
+
+    if (tok3.type != TK_OP_SEMI) {
+      throw Error(this->reader, tok3.start, E0108);
+    }
+
+    loopUpd = this->_stmtExpr();
+  } else {
+    this->lexer->seek(loc2);
+    loopInit = this->next(false);
+
+    if (!std::holds_alternative<ParserStmtExpr>(*loopInit->body) && !std::holds_alternative<ParserStmtVarDecl>(*loopInit->body)) {
+      throw Error(this->reader, tok2.start, E0105);
+    } else if (std::holds_alternative<ParserStmtVarDecl>(*loopInit->body) && std::get<ParserStmtVarDecl>(*loopInit->body).mut) {
+      throw Error(this->reader, tok2.start, E0144);
+    }
+
+    auto [loc3, tok3] = this->lexer->next();
+
+    if (
+      std::holds_alternative<ParserStmtExpr>(*loopInit->body) &&
+      std::holds_alternative<ParserExprObj>(*std::get<ParserStmtExpr>(*loopInit->body).body)
+    ) {
+      auto exprObj = std::get<ParserExprObj>(*std::get<ParserStmtExpr>(*loopInit->body).body);
+      auto exprAccess = ParserExprAccess{exprObj.id, std::nullopt, std::nullopt};
+
+      *loopInit->body = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, exprObj.id.start, exprObj.id.end};
+      this->lexer->seek(exprObj.id.end);
+    } else if (
+      std::holds_alternative<ParserStmtExpr>(*loopInit->body) &&
+      ((parenthesized && tok3.type == TK_OP_RPAR) || (!parenthesized && tok3.type == TK_OP_LBRACE))
+    ) {
+      this->lexer->seek(loc3);
+      loopCond = std::get<ParserStmtExpr>(*loopInit->body);
+      loopInit = std::nullopt;
+    } else if (tok3.type == TK_OP_SEMI) {
+      loopCond = this->_stmtExpr();
+      auto [_4, tok4] = this->lexer->next();
+
+      if (tok4.type != TK_OP_SEMI) {
+        throw Error(this->reader, tok4.start, E0108);
+      }
+
+      loopUpd = this->_stmtExpr();
+    } else {
+      throw Error(this->reader, tok3.start, E0106);
+    }
+  }
+
+  if (parenthesized) {
+    auto [_5, tok5] = this->lexer->next();
+
+    if (tok5.type != TK_OP_RPAR) {
+      throw Error(this->reader, tok5.start, E0109);
+    }
+  }
+
+  auto loc6 = this->lexer->loc;
+  auto loopBody = std::optional<ParserBlock>{};
+
+  try {
+    loopBody = this->_block();
+  } catch (const Error &) {
+    if (loopUpd != std::nullopt || (loopInit == std::nullopt && loopUpd == std::nullopt && loopCond != std::nullopt)) {
+      auto &loopPart = loopUpd != std::nullopt ? loopUpd : loopCond;
+      auto &loopPartLastChild = stmtExprLastChild(*loopPart);
+
+      if (std::holds_alternative<ParserExprMap>(*loopPart->body) && std::get<ParserExprMap>(*loopPart->body).props.empty()) {
+        this->lexer->seek(loopPart->start);
+        loopPart = std::nullopt;
+        loopBody = this->_block();
+      } else if (std::holds_alternative<ParserExprObj>(*loopPartLastChild.body)) {
+        auto exprObj = std::get<ParserExprObj>(*loopPartLastChild.body);
+        auto exprAccess = ParserExprAccess{exprObj.id, std::nullopt, std::nullopt};
+
+        loopPartLastChild = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, exprObj.id.start, exprObj.id.end};
+        this->lexer->seek(exprObj.id.end);
+        loopBody = this->_block();
+      }
+    }
+
+    if (loopBody == std::nullopt) {
+      this->lexer->seek(loc6);
+      throw Error(this->reader, this->lexer->loc, E0103);
+    }
+  }
+
+  return this->_wrapStmt(allowSemi, ParserStmtLoop{loopInit, loopCond, loopUpd, *loopBody, parenthesized}, tok1.start);
+}
+
 ParserType Parser::_wrapType (const ParserType &type) {
   auto [loc1, tok1] = this->lexer->next();
 
@@ -1271,7 +1318,23 @@ ParserType Parser::_wrapType (const ParserType &type) {
 
     if (tok2.type != TK_OP_RBRACK) {
       this->lexer->seek(loc2);
-      throw Error(this->reader, this->lexer->loc, E0151);
+      auto keyType = this->_type();
+
+      if (keyType == std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0151);
+      } else if (!std::holds_alternative<ParserTypeId>(*keyType->body)) {
+        throw Error(this->reader, keyType->start, keyType->end, E0171);
+      }
+
+      auto [loc3, tok3] = this->lexer->next();
+
+      if (tok3.type != TK_OP_RBRACK) {
+        this->lexer->seek(loc3);
+        throw Error(this->reader, this->lexer->loc, E0172);
+      }
+
+      auto typeMap = ParserTypeMap{*keyType, type};
+      return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeMap), false, type.start, this->lexer->loc});
     }
 
     auto typeArray = ParserTypeArray{type};

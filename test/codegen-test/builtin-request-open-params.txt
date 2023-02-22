@@ -157,11 +157,11 @@ struct __THE_1_array_request_Header;
 struct request_Response;
 struct url_URL;
 struct __THE_1_array_str;
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
 struct __THE_1_ignoredHeadersIncludes_0X;
-struct __THE_1_fn$1P;
 struct __THE_1_fn$1;
+struct __THE_1_fn$1P;
 struct __THE_1_requestWithPrint_0X;
 
 struct request_Header {
@@ -195,16 +195,21 @@ struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_fn$0P {
-  struct str n0;
-};
 struct __THE_1_fn$0 {
   bool (*f) (void *, struct __THE_1_fn$0P);
   void *x;
   size_t l;
 };
+struct __THE_1_fn$0P {
+  struct str n0;
+};
 struct __THE_1_ignoredHeadersIncludes_0X {
   const struct __THE_1_array_str *__THE_0_IGNORED_HEADERS_0;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *, struct __THE_1_fn$1P);
+  void *x;
+  size_t l;
 };
 struct __THE_1_fn$1P {
   struct str n0;
@@ -212,11 +217,6 @@ struct __THE_1_fn$1P {
   struct buffer n2;
   unsigned char o3;
   struct __THE_1_array_request_Header n3;
-};
-struct __THE_1_fn$1 {
-  void (*f) (void *, struct __THE_1_fn$1P);
-  void *x;
-  size_t l;
 };
 struct __THE_1_requestWithPrint_0X {
   const struct __THE_1_fn$0 *__THE_0_ignoredHeadersIncludes_0;
@@ -265,11 +265,11 @@ struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str)
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_ignoredHeadersIncludes_0X);
 bool __THE_1_ignoredHeadersIncludes_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_ignoredHeadersIncludes_0X);
 void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_requestWithPrint_0X);
 void __THE_1_requestWithPrint_0 (void *, struct __THE_1_fn$1P);
+void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_requestWithPrint_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -814,31 +814,31 @@ struct request_Header *request_Header_alloc (struct str __THE_0_name, struct str
   memcpy(r, &s, sizeof(struct request_Header));
   return r;
 }
-struct request_Header *request_Header_copy (const struct request_Header *o) {
+struct request_Header *request_Header_copy (const struct request_Header *n) {
   struct request_Header *r = alloc(sizeof(struct request_Header));
-  struct request_Header s = {str_copy(o->__THE_0_name), str_copy(o->__THE_0_value)};
+  struct request_Header s = {str_copy(n->__THE_0_name), str_copy(n->__THE_0_value)};
   memcpy(r, &s, sizeof(struct request_Header));
   return r;
 }
-void request_Header_free (struct request_Header *o) {
-  str_free((struct str) o->__THE_0_name);
-  str_free((struct str) o->__THE_0_value);
-  free(o);
+void request_Header_free (struct request_Header *n) {
+  str_free((struct str) n->__THE_0_name);
+  str_free((struct str) n->__THE_0_value);
+  free(n);
 }
-struct str request_Header_str (struct request_Header *o) {
+struct str request_Header_str (struct request_Header *n) {
   struct str r = str_alloc("request_Header{");
   r = str_concat_cstr(r, "name: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_name));
+  r = str_concat_str(r, str_escape(n->__THE_0_name));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", value: \"");
-  r = str_concat_str(r, str_escape(o->__THE_0_value));
+  r = str_concat_str(r, str_escape(n->__THE_0_value));
   r = str_concat_cstr(r, "\"");
-  request_Header_free((struct request_Header *) o);
+  request_Header_free((struct request_Header *) n);
   return str_concat_cstr(r, "}");
 }
-void request_Request_free (struct request_Request *o) {
-  request_close(&o);
-  free(o);
+void request_Request_free (struct request_Request *n) {
+  request_close(&n);
+  free(n);
 }
 struct __THE_1_array_request_Header __THE_1_array_request_Header_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_request_Header) {NULL, 0};
@@ -895,10 +895,10 @@ struct request_Response *request_Response_alloc (struct buffer __THE_0_data, int
   memcpy(r, &s, sizeof(struct request_Response));
   return r;
 }
-void request_Response_free (struct request_Response *o) {
-  buffer_free((struct buffer) o->__THE_0_data);
-  __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) o->__THE_0_headers);
-  free(o);
+void request_Response_free (struct request_Response *n) {
+  buffer_free((struct buffer) n->__THE_0_data);
+  __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) n->__THE_0_headers);
+  free(n);
 }
 struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_protocol, struct str __THE_0_host, struct str __THE_0_hostname, struct str __THE_0_port, struct str __THE_0_path, struct str __THE_0_pathname, struct str __THE_0_search, struct str __THE_0_hash) {
   struct url_URL *r = alloc(sizeof(struct url_URL));
@@ -906,17 +906,17 @@ struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_pro
   memcpy(r, &s, sizeof(struct url_URL));
   return r;
 }
-void url_URL_free (struct url_URL *o) {
-  str_free((struct str) o->__THE_0_origin);
-  str_free((struct str) o->__THE_0_protocol);
-  str_free((struct str) o->__THE_0_host);
-  str_free((struct str) o->__THE_0_hostname);
-  str_free((struct str) o->__THE_0_port);
-  str_free((struct str) o->__THE_0_path);
-  str_free((struct str) o->__THE_0_pathname);
-  str_free((struct str) o->__THE_0_search);
-  str_free((struct str) o->__THE_0_hash);
-  free(o);
+void url_URL_free (struct url_URL *n) {
+  str_free((struct str) n->__THE_0_origin);
+  str_free((struct str) n->__THE_0_protocol);
+  str_free((struct str) n->__THE_0_host);
+  str_free((struct str) n->__THE_0_hostname);
+  str_free((struct str) n->__THE_0_port);
+  str_free((struct str) n->__THE_0_path);
+  str_free((struct str) n->__THE_0_pathname);
+  str_free((struct str) n->__THE_0_search);
+  str_free((struct str) n->__THE_0_hash);
+  free(n);
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
@@ -950,15 +950,7 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
   return l;
 }
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  free(n.x);
-}
-void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_ignoredHeadersIncludes_0X x) {
-  size_t l = sizeof(struct __THE_1_ignoredHeadersIncludes_0X);
-  struct __THE_1_ignoredHeadersIncludes_0X *r = alloc(l);
-  memcpy(r, &x, l);
-  n->f = &__THE_1_ignoredHeadersIncludes_0;
-  n->x = r;
-  n->l = l;
+  if (n.x != NULL) free(n.x);
 }
 bool __THE_1_ignoredHeadersIncludes_0 (void *px, struct __THE_1_fn$0P p) {
   unsigned char r = 0;
@@ -978,16 +970,16 @@ L1:
   str_free((struct str) __THE_0_it_0);
   return v;
 }
-void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
-  free(n.x);
-}
-void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_requestWithPrint_0X x) {
-  size_t l = sizeof(struct __THE_1_requestWithPrint_0X);
-  struct __THE_1_requestWithPrint_0X *r = alloc(l);
+void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_ignoredHeadersIncludes_0X x) {
+  size_t l = sizeof(struct __THE_1_ignoredHeadersIncludes_0X);
+  struct __THE_1_ignoredHeadersIncludes_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_requestWithPrint_0;
+  n->f = &__THE_1_ignoredHeadersIncludes_0;
   n->x = r;
   n->l = l;
+}
+void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+  if (n.x != NULL) free(n.x);
 }
 void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1P p) {
   struct __THE_1_requestWithPrint_0X *x = px;
@@ -1023,6 +1015,14 @@ void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1P p) {
   buffer_free((struct buffer) __THE_0_data_0);
   str_free((struct str) __THE_0_url_0);
   str_free((struct str) __THE_0_method_0);
+}
+void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_requestWithPrint_0X x) {
+  size_t l = sizeof(struct __THE_1_requestWithPrint_0X);
+  struct __THE_1_requestWithPrint_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_requestWithPrint_0;
+  n->x = r;
+  n->l = l;
 }
 
 int main () {
