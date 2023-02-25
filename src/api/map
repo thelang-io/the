@@ -1,0 +1,70 @@
+obj Key {}
+obj Value {}
+
+/** Allows storing a collection of multiple key-value pairs and remembers the original insertion order of the keys. */
+obj Map {
+  /** Whether map has elements. */
+  empty: bool
+  /** Number of elements map has currently a room for. */
+  cap: int
+  /** Array of keys in the order they were set. */
+  keys: Key[]
+  /** Number of elements. */
+  len: int
+  /** Array of values in the order keys were set. */
+  values: Value[]
+
+  /** Removes all elements and changes length to zero. Doesn't affect capacity. */
+  fn clear (mut self: ref Self) ref Self
+
+  /**
+   * Retrieves value by key. Throws if key doesn't exist.
+   *
+   * @param key - Key you want to get a value of.
+   */
+  fn get (self: ref Self, key: Key) Value
+
+  /**
+   * Checks whether certain key exists.
+   *
+   * @param key - Key you want to check if exists.
+   */
+  fn has (self: ref Self, key: Key) bool
+
+  /**
+   * Merges other map’s data into calling map. When iterating, if key exists, then it will get updated with a new value.
+   *
+   * @param other - Other map you want to merge.
+   *
+   * @todo Rename arg to other
+   */
+  fn merge (mut self: ref Self, other: Self) ref Self
+
+  /**
+   * Removes certain key. Throws if key doesn't exist.
+   *
+   * @param key - Key you want to remove.
+   */
+  fn remove (mut self: ref Self, key: Key) ref Self
+
+  /**
+   * Reserves a room for `size` number of key-value pairs. This method works only if `size` is greater than actual capacity.
+   *
+   * @param size - Number of elements you want to have a room for.
+   */
+  fn reserve (mut self: ref Self, size: int) ref Self
+
+  /**
+   * Sets a key, if key exists - updates its value to a new one.
+   *
+   * @param key - Key you want to set a value for.
+   * @param value - New value for that key.
+   */
+  fn set (mut self: ref Self, key: Key, value: Value) ref Self
+
+  /** Reduces capacity to a current length. */
+  fn shrink (mut self: ref Self) ref Self
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}

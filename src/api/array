@@ -1,0 +1,106 @@
+obj Element {}
+
+/** Allows storing a collection of multiple elements under a single variable. */
+obj Array {
+  /** Whether array has elements. */
+  empty: bool
+  /** Reference to first element. If empty will throw an error. */
+  first: ref Element
+  /** Reference to last element. If empty will throw an error. */
+  last: ref Element
+  /** Number of elements. */
+  len: int
+
+  /**
+   * Accesses element by index and return its reference.
+   *
+   * @name [idx: int]
+   * @return ref Element
+   */
+
+  /** Removes all elements and changes length to zero. */
+  fn clear (mut self: ref Self) ref Self
+
+  /**
+   * Checks whether certain element exists.
+   *
+   * @param search - Element to check if exists.
+   */
+  fn contains (self: ref Self, search: Element) bool
+
+  /**
+   * Calls `predicate` on every element and construct array copy out of elements that passed the test.
+   *
+   * @param predicate - Function to execute to each element in the array.
+   *   Should return a truthy value to keep the element in the resulting array.
+   */
+  fn filter (self: ref Self, predicate: (it: Element) -> bool) Self
+
+  /**
+   * Calls `str` method on every element and joins result with separator.
+   *
+   * @param separator - Elements separator. The default is comma string.
+   */
+  fn join (self: ref Self, separator := ",") str
+
+  /**
+   * Calls `transform` on every element and construct array out of return values of the `transform` function.
+   *
+   * @param transform - A function to execute for each element in the array.
+   */
+  fn map (self: ref Self, transform: (it: Element) -> any) any[]
+
+  /**
+   * Merges other array’s data into calling array.
+   *
+   * @param other - Other array you want to merge.
+   */
+  fn merge (mut self: ref Self, other: Self) ref Self
+
+  /** Removes last element and returns it. */
+  fn pop (mut self: ref Self) Element
+
+  /**
+   * Adds new elements.
+   *
+   * @param elements - New elements to add.
+   */
+  fn push (mut self: ref Self, elements: Element...) void
+
+  /**
+   * Removes elements corresponding to specific indexes from array.
+   *
+   * @param indexes - Indexes of elements to remove.
+   */
+  fn remove (mut self: ref Self, indexes: int...) ref Self
+
+  /** Returns reversed array copy. */
+  fn reverse (self: ref Self) Self
+
+  /**
+   * Extracts array slice from `start` to `end` (`end` not included).
+   *
+   * @param start - Index at which to start extraction. The default is zero.
+   *   - If value is negative then array length is added to it.
+   *   - If value is less than array length then `0` value is used.
+   *   - If value is greater than array length then nothing is extracted.
+   * @param end - Index at which to end extraction. The default is array length.
+   *   - If value is negative then array length is added to it.
+   *   - If value is less than array length then `0` value is used.
+   *   - If value is greater than array length then array length is used.
+   *   - If value positioned before or equals `start` then nothing is extracted.
+   *
+   * @todo Change start and end params to int type
+   */
+  fn slice (self: ref Self, start := 0, end := self.len) Self
+
+  /**
+   * Sorts the elements of an array in place.
+   *
+   * @param comparator - Function that defines the sort order.
+   */
+  fn sort (mut self: ref Self, comparator: (a: Element, b: Element) -> int) ref Self
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}

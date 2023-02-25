@@ -1,0 +1,27 @@
+/**
+ * URL object followed by implementing WHATWG URL Standard.
+ * ![url_URL explanation](/assets/images/url-explanation.png)
+ *
+ * @note URLs containing authorization information are not supported.
+ */
+obj url_URL {
+  origin: str
+  protocol: str
+  host: str
+  hostname: str
+  port: str
+  path: str
+  pathname: str
+  search: str
+  hash: str
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/**
+ * Parse URL string into `url_URL` object.
+ *
+ * @param url - URL string to parse.
+ */
+fn url_parse (url: str) url_URL

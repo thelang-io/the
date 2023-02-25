@@ -5045,7 +5045,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     }
 
     if (mapType.valueType->shouldBeFreed()) {
-      def += "      " + this->_genFreeFn(mapType.valueType, "n.d[i].s") + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.valueType, "n->d[i].s") + ";" EOL;
     }
 
     def += "      n->d[i].s = v;" EOL;
@@ -5094,6 +5094,8 @@ std::string Codegen::_typeNameMap (Type *type) {
 
     if (mapType.keyType->isStr()) {
       def += R"(    r = _{str_concat_cstr}(r, "\": ");)" EOL;
+    } else {
+      def += R"(    r = _{str_concat_cstr}(r, ": ");)" EOL;
     }
 
     if (mapType.valueType->isStr()) {

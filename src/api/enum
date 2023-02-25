@@ -1,0 +1,8 @@
+/** Allows storing a group of related values under a single variable. */
+obj Enumeration {
+  /** Enumerator string representation. */
+  rawValue: str
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}

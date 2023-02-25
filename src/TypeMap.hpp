@@ -27,6 +27,7 @@ class TypeMap {
   Type *createMap (Type *, Type *);
   Type *alias (const std::string &, Type *);
   Type *arrayOf (Type *);
+  Type *arrayMap (Type *, Type *);
   Type *enumeration (const std::string &, const std::string &, const std::vector<Type *> &);
   Type *enumerator (const std::string &, const std::string &);
   Type *fn (

@@ -1,0 +1,25 @@
+/**
+ * Terminates the current thread.
+ *
+ * @param status - Status code returned to the parent process. The default is zero.
+ */
+fn exit (status := 0) void
+
+/**
+ * Writes the textual representations of the given items into the given output stream.
+ *
+ * @param items - Items to print.
+ * @param separator - String separating items. The default is empty string.
+ * @param terminator - String terminating items. The default is `os_EOL`.
+ * @param to - Output where to write items. Can be `stdout` or `stderr`. The default is `stdout`.
+ *
+ * @todo Throw if to is not stdout or stderr.
+ */
+fn print (items: any..., separator := " ", terminator := os_EOL, to := "stdout") void
+
+/**
+ * Sleeps the thread for a given time interval.
+ *
+ * @param milliseconds - The duration of sleep.
+ */
+fn sleepSync (milliseconds: int) void

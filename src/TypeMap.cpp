@@ -45,7 +45,7 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   }};
 
   auto mergeTypeFn = TypeFn{refSelfType, {
-    TypeFnParam{"map", selfType, false, true, false}
+    TypeFnParam{"value", selfType, false, true, false}
   }};
 
   auto removeTypeFn = TypeFn{refSelfType, {
@@ -109,13 +109,39 @@ Type *TypeMap::arrayOf (Type *elementType) {
 
   this->_items.push_back(std::make_unique<Type>(Type{"array_" + elementType->name, "@array_" + elementType->name, TypeArray{elementType}}));
   auto selfType = this->_items.back().get();
+  auto refSelfType = this->ref(selfType);
+  auto refElementType = this->ref(elementType);
+
+  auto containsTypeFn = TypeFn{this->get("bool"), {
+    TypeFnParam{"search", elementType, false, true, false}
+  }};
+
+  auto concatTypeFn = TypeFn{selfType, {
+    TypeFnParam{"values", selfType, false, false, true}
+  }};
+
+  auto filterPredicateType = this->fn({
+    TypeFnParam{"it", elementType, false, true, false}
+  }, this->get("bool"));
+
+  auto filterTypeFn = TypeFn{selfType, {
+    TypeFnParam{"predicate", filterPredicateType, false, true, false}
+  }};
 
   auto joinTypeFn = TypeFn{this->get("str"), {
     TypeFnParam{"separator", this->get("str"), false, false, false}
   }};
 
+  auto mergeTypeFn = TypeFn{refSelfType, {
+    TypeFnParam{"value", selfType, false, true, false}
+  }};
+
   auto pushTypeFn = TypeFn{this->get("void"), {
-    TypeFnParam{"element", this->arrayOf(elementType), false, false, true}
+    TypeFnParam{"elements", selfType, false, false, true}
+  }};
+
+  auto removeTypeFn = TypeFn{refSelfType, {
+    TypeFnParam{"indexes", this->get("int"), false, false, true}
   }};
 
   auto sliceTypeFn = TypeFn{selfType, {
@@ -123,23 +149,76 @@ Type *TypeMap::arrayOf (Type *elementType) {
     TypeFnParam{"end", this->get("i64"), false, false, false}
   }};
 
+  auto sortComparatorType = this->fn({
+    TypeFnParam{"a", elementType, false, true, false},
+    TypeFnParam{"b", elementType, false, true, false}
+  }, this->get("int"));
+
+  auto sortTypeFn = TypeFn{selfType, {
+    TypeFnParam{"comparator", sortComparatorType, false, false, true}
+  }};
+
   selfType->fields.push_back(TypeField{"len", this->get("int"), false, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".clear", "@array.clear", TypeFn{refSelfType}, {}, true}));
+  selfType->fields.push_back(TypeField{"clear", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".contains", "@array.contains", containsTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"contains", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".concat", "@array.concat", concatTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"concat", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".empty", "@array.empty", TypeFn{this->get("bool")}, {}, true}));
   selfType->fields.push_back(TypeField{"empty", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".filter", "@array.filter", filterTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"filter", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".first", "@array.first", TypeFn{refElementType}, {}, true}));
+  selfType->fields.push_back(TypeField{"first", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".join", "@array.join", joinTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"join", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".last", "@array.last", TypeFn{refElementType}, {}, true}));
+  selfType->fields.push_back(TypeField{"last", this->_items.back().get(), false, true, true});
+  this->arrayMap(selfType, elementType);
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".merge", "@array.merge", mergeTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"merge", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".pop", "@array.pop", TypeFn{elementType}, {}, true}));
   selfType->fields.push_back(TypeField{"pop", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".push", "@array.push", pushTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"push", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".remove", "@array.remove", removeTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"remove", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".reverse", "@array.reverse", TypeFn{selfType}, {}, true}));
   selfType->fields.push_back(TypeField{"reverse", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".slice", "@array.slice", sliceTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true, true});
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".sort", "@array.sort", sortTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"sort", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@array.str", TypeFn{this->get("str")}, {}, true}));
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
 
   return selfType;
+}
+
+// todo test
+Type *TypeMap::arrayMap (Type *type, Type *returnType) {
+  auto actualType = Type::actual(type);
+  auto actualReturnType = Type::actual(returnType);
+
+  auto typeTransformType = this->fn({
+    TypeFnParam{"it", this->get("str"), false, false, false}
+  }, this->arrayOf(actualReturnType));
+
+  auto typeBody = TypeFn{actualReturnType, {
+    TypeFnParam{"transform", typeTransformType, false, true, false}
+  }};
+
+  auto newType = Type{actualType->name + ".map", "@array.map", typeBody};
+
+  for (const auto &item : this->_items) {
+    if (item->isFn() && item->codeName == newType.name && item->matchStrict(&newType, true)) {
+      return item.get();
+    }
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  return this->_items.back().get();
 }
 
 Type *TypeMap::enumeration (const std::string &name, const std::string &codeName, const std::vector<Type *> &members) {
@@ -357,6 +436,8 @@ void TypeMap::init () {
     TypeFnParam{"times", intType, false, true, false}
   }};
 
+  this->_items.push_back(std::make_unique<Type>(Type{"char.byte", "@char.byte", TypeFn{byteType}, {}, true}));
+  charType->fields.push_back(TypeField{"byte", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{"char.isAlpha", "@char.isAlpha", TypeFn{boolType}, {}, true}));
   charType->fields.push_back(TypeField{"isAlpha", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{"char.isAlphaNum", "@char.isAlphaNum", TypeFn{boolType}, {}, true}));
@@ -387,6 +468,10 @@ void TypeMap::init () {
   this->_items.push_back(std::make_unique<Type>(Type{"int.str", "@int.str", TypeFn{strType}, {}, true}));
   intType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
 
+  auto containsStrTypeFn = TypeFn{boolType, {
+    TypeFnParam{"search", strType, false, true, false}
+  }};
+
   auto findStrTypeFn = TypeFn{intType, {
     TypeFnParam{"search", strType, false, true, false}
   }};
@@ -395,12 +480,20 @@ void TypeMap::init () {
     TypeFnParam{"keepLineBreaks", boolType, false, false, false}
   }};
 
+  auto replaceStrTypeFn = TypeFn{strType, {
+    TypeFnParam{"search", strType, false, true, false},
+    TypeFnParam{"replacement", strType, false, true, false},
+    TypeFnParam{"all", boolType, false, false, false}
+  }};
+
   auto sliceStrTypeFn = TypeFn{strType, {
     TypeFnParam{"start", i64Type, false, false, false},
     TypeFnParam{"end", i64Type, false, false, false}
   }};
 
   strType->fields.push_back(TypeField{"len", intType, false, false, true});
+  this->_items.push_back(std::make_unique<Type>(Type{"str.contains", "@str.contains", containsStrTypeFn, {}, true}));
+  strType->fields.push_back(TypeField{"contains", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.empty", "@str.empty", TypeFn{boolType}, {}, true}));
   strType->fields.push_back(TypeField{"empty", this->_items.back().get(), false, true, true});
   this->_items.push_back(std::make_unique<Type>(Type{"str.find", "@str.find", findStrTypeFn, {}, true}));

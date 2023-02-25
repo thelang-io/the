@@ -1,0 +1,5 @@
+/** Allows storing optional value that could be `nil` or actual value. */
+obj Optional {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}

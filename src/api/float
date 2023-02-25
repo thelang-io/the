@@ -1,0 +1,17 @@
+/** Allow storing 64-bit floating point numbers. */
+obj Float {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allow storing 32-bit scientific floating point numbers. */
+obj F32 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allow storing 64-bit scientific floating point numbers. */
+obj F64 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}

@@ -1,0 +1,16 @@
+/** Platform-specific pathname components separator. `\` on Windows, `/` on POSIX. */
+const path_SEP: str
+
+/**
+ * Retrieves last portion of pathname.
+ *
+ * @param path - Pathname to retrieve last portion from.
+ */
+fn path_basename (path: str) str
+
+/**
+ * Retrieves directory name of pathname.
+ *
+ * @param path - Pathname to retrieve directory name from.
+ */
+fn path_dirname (path: str) str

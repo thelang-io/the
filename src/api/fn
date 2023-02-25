@@ -1,0 +1,9 @@
+/**
+ * Object representation of function variable.
+ *
+ * @note In v1.0 `name` property is going to be added.
+ */
+obj Function {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}

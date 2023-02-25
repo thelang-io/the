@@ -1,0 +1,49 @@
+/** Used to pass headers to request and get headers from response. */
+obj request_Header {
+  /** Header name. */
+  name: str
+  /** Header value. */
+  value: str
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/**
+ * Contains all the information about the request. Currently, has no exposed fields that you can use.
+ *
+ * @note Currently, has no exposed fields that you can use.
+ */
+obj request_Request {
+  /** Closes the request. Using request afterwards has undefined behavior. */
+  fn close (mut self: ref Self) void
+
+  /** Reads response data from the request and constructs returned `request_Response` object. */
+  fn read (mut self: ref Self) request_Response
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Contains all the information about the request’s response data. */
+obj request_Response {
+  /** Additional data returned by server. */
+  data: buffer_Buffer
+  /** Status code returned by server. */
+  status: int
+  /** Headers returned by server. */
+  headers: request_Header[]
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/**
+ * Initiates request to the given URL and constructs returned `request_Request` object.
+ *
+ * @param method - String containing an HTTP request method.
+ * @param url - String containing a valid URL.
+ * @param data - `buffer_Buffer` containing additional data. The default is empty buffer.
+ * @param headers - Array of `request_Header` objects. The default is empty array.
+ */
+fn request_open (method: str, url: str, data := buffer_Buffer{}, headers: request_Header[] = []) request_Request

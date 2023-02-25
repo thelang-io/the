@@ -1,0 +1,18 @@
+/** String array containing the command-line arguments passed when the process was launched. */
+const process_args: str[]
+
+/** Current working directory of the process. */
+const process_cwd: str
+
+/** Numeric group identity of the process. On Windows always returns `0`. */
+const process_gid: int
+
+/** Numeric user identity of the process. On Windows always returns `0`. */
+const process_uid: int
+
+/**
+ * Runs the command, waits for command to complete, then returns stdout of the completed process.
+ *
+ * @param command - Command to run.
+ */
+fn process_runSync (command: str) buffer_Buffer

@@ -1,0 +1,5 @@
+/** Operating system-specific end-of-line marker. `\r\n` on Windows, `\n` on POSIX. */
+const os_EOL: str
+
+/** Operating system name. Possible values are `Linux`, `Windows`, and `macOS`. */
+const os_name: str

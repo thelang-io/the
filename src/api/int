@@ -1,0 +1,53 @@
+/** Allows storing a number in range from `-2147483648` to `2147483647`. */
+obj Integer {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `-128` to `127`. */
+obj I8 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `-32768` to `32767`. */
+obj I16 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `-2147483648` to `2147483647`. */
+obj I32 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `-9223372036854775808` to `9223372036854775807`. */
+obj I64 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `0` to `255`. */
+obj U8 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `0` to `65535`. */
+obj U16 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `0` to `4294967295`. */
+obj U32 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/** Allows storing a scientific number in range from `0` to `18446744073709551615`. */
+obj U64 {
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}

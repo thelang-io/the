@@ -1,0 +1,168 @@
+/** Represents the status of specified path. */
+obj fs_Stats {
+  /** Identifier of the device containing this file. */
+  dev: u64
+  /** File type and file mode bits. */
+  mode: u32
+  /** Number of hard links. */
+  nlink: i64
+  /** INode number on Unix and the file index on Windows platform. */
+  ino: u64
+  /** User identifier of the file owner. */
+  uid: i32
+  /** Group identifier of the file owner. */
+  gid: i32
+  /** Type of device, if an inode device. */
+  rdev: u64
+  /** Time of the most recent access expressed in seconds. */
+  atime: i64
+  /** Time of the most recent access expressed in nanoseconds. */
+  atimeNs: i64
+  /** Time of the most recent content modification expressed in seconds. */
+  mtime: i64
+  /** Time of the most recent content modification expressed in nanoseconds. */
+  mtimeNs: i64
+  /** Time of the most recent metadata change on Unix and creation time on Windows expressed in seconds. */
+  ctime: i64
+  /** Time of the most recent metadata change on Unix and creation time on Windows expressed in nanoseconds. */
+  ctimeNs: i64
+  /** Time of file creation expressed in seconds. */
+  btime: i64
+  /** Time of file creation expressed in nanoseconds. */
+  btimeNs: i64
+  /** Size of the file in bytes. */
+  size: i64
+  /** Number of 512-byte blocks allocated for file. */
+  blocks: i64
+  /** Preferred block size for efficient file system I/O. */
+  blockSize: i64
+
+  /** Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/**
+ * Changes the mode (permissions) of path.
+ *
+ * @param path - Pathname to change permissions of.
+ * @param mode - Numeric bitmask created by ORing following octal numbers:
+ *   - 0o400 - read by owner
+ *   - 0o200 - write by owner
+ *   - 0o100 - execute/search by owner
+ *   - 0o40 - read by group
+ *   - 0o20 - write by group
+ *   - 0o10 - execute/search by group
+ *   - 0o4 - read by others
+ *   - 0o2 - write by others
+ *   - 0o1 - execute/search by others
+ */
+fn fs_chmodSync (path: str, mode: int) void
+
+/**
+ * Changes the owner and group id of path.
+ *
+ * @param path - Pathname to change owner and group id of.
+ * @param uid - New file owner user id.
+ * @param gid - New file owner group id.
+ */
+fn fs_chownSync (path: str, uid: int, gid: int) void
+
+/**
+ * Tests whether the given path exists.
+ *
+ * @param path - Pathname to test.
+ */
+fn fs_existsSync (path: str) bool
+
+/**
+ * Tests whether the given path is regular file.
+ *
+ * @param path - Pathname to test.
+ */
+fn fs_isFileSync (path: str) bool
+
+/**
+ * Tests whether the given path is directory.
+ *
+ * @param path - Pathname to test.
+ */
+fn fs_isDirectorySync (path: str) bool
+
+/**
+ * Tests whether the given path is symbolic link.
+ *
+ * @param path - Pathname to test.
+ */
+fn fs_isSymbolicLinkSync (path: str) bool
+
+/**
+ * Creates a symbolic link.
+ *
+ * @param sourcePath - Source pathname.
+ * @param linkPath - Destination pathname.
+ */
+fn fs_linkSync (sourcePath: str, linkPath: str) void
+
+/**
+ * Creates a directory.
+ *
+ * @param path - Pathname to create directory at.
+ */
+fn fs_mkdirSync (path: str) void
+
+/**
+ * Reads the entire contents of path.
+ *
+ * @param path - Pathname to read.
+ */
+fn fs_readFileSync (path: str) buffer_Buffer
+
+/**
+ * Computes canonical path of the specified path.
+ *
+ * @param path - Pathname to compute canonical path for.
+ */
+fn fs_realpathSync (path: str) str
+
+/**
+ * Removes the file at path.
+ *
+ * @param path - Pathname to remove.
+ */
+fn fs_rmSync (path: str) void
+
+/**
+ * Removes the directory at path.
+ *
+ * @param path - Pathname to remove.
+ */
+fn fs_rmdirSync (path: str) void
+
+/**
+ * Reads the contents of a directory excluding `.` and `..`.
+ *
+ * @param path - Pathname to read contents of.
+ */
+fn fs_scandirSync (path: str) str[]
+
+/**
+ * Retrieves status of the specified path.
+ *
+ * @param path - Pathname to retrieve status of.
+ */
+fn fs_statSync (path: str) fs_Stats
+
+/**
+ * Removes link without affecting the file or directory to which that link refers.
+ *
+ * @param path - Pathname to remove.
+ */
+fn fs_unlinkSync (path: str) void
+
+/**
+ * Writes data to a path, replacing the file if it already exists.
+ *
+ * @param path - Pathname to write.
+ * @param data - Data to write.
+ */
+fn fs_writeFileSync (path: str, data: buffer_Buffer) void
