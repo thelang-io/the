@@ -5,10 +5,10 @@
 
 type TokenizerWrapIntChecker = (char) -> bool
 
-const ignoredTokenTypes: TokenType[] = [
-  .CommentBlock,
-  .CommentLine,
-  .Whitespace
+const ignoredTokenTypes := [
+  TokenType.CommentBlock,
+  TokenType.CommentLine,
+  TokenType.Whitespace
 ]
 
 obj TokenizerState {
@@ -28,7 +28,7 @@ obj Tokenizer {
     if self.data.len < self.state.idx {
       return self.data[self.state.idx++]
     } elif !self.data.empty() && self.data[-1].t == .Eof {
-      RaiseError("Tried to tokenize on eof")
+      RaiseError("Tried next on Tokenizer eof")
     }
 
     loop {
@@ -172,59 +172,32 @@ obj Tokenizer {
     self.reader.walk(Token_isId)
     val := self.reader.slice(self.state.pos, self.reader.pos)
 
-    if val == "async" {
-      return self._wrapToken(.KwAsync)
-    } elif val == "await" {
-      return self._wrapToken(.KwAwait)
-    } elif val == "break" {
-      return self._wrapToken(.KwBreak)
-    } elif val == "catch" {
-      return self._wrapToken(.KwCatch)
-    } elif val == "continue" {
-      return self._wrapToken(.KwContinue)
-    } elif val == "elif" {
-      return self._wrapToken(.KwElif)
-    } elif val == "else" {
-      return self._wrapToken(.KwElse)
-    } elif val == "enum" {
-      return self._wrapToken(.KwEnum)
-    } elif val == "export" {
-      return self._wrapToken(.KwExport)
-    } elif val == "false" {
-      return self._wrapToken(.KwFalse)
-    } elif val == "fn" {
-      return self._wrapToken(.KwFn)
-    } elif val == "from" {
-      return self._wrapToken(.KwFrom)
-    } elif val == "if" {
-      return self._wrapToken(.KwIf)
-    } elif val == "import" {
-      return self._wrapToken(.KwImport)
-    } elif val == "is" {
-      return self._wrapToken(.KwIs)
-    } elif val == "loop" {
-      return self._wrapToken(.KwLoop)
-    } elif val == "main" {
-      return self._wrapToken(.KwMain)
-    } elif val == "mut" {
-      return self._wrapToken(.KwMut)
-    } elif val == "nil" {
-      return self._wrapToken(.KwNil)
-    } elif val == "obj" {
-      return self._wrapToken(.KwObj)
-    } elif val == "ref" {
-      return self._wrapToken(.KwRef)
-    } elif val == "return" {
-      return self._wrapToken(.KwReturn)
-    } elif val == "throw" {
-      return self._wrapToken(.KwThrow)
-    } elif val == "true" {
-      return self._wrapToken(.KwTrue)
-    } elif val == "try" {
-      return self._wrapToken(.KwTry)
-    } elif val == "type" {
-      return self._wrapToken(.KwType)
-    }
+    if val == "async" { return self._wrapToken(.KwAsync) }
+    if val == "await" { return self._wrapToken(.KwAwait) }
+    if val == "break" { return self._wrapToken(.KwBreak) }
+    if val == "catch" { return self._wrapToken(.KwCatch) }
+    if val == "continue" { return self._wrapToken(.KwContinue) }
+    if val == "elif" { return self._wrapToken(.KwElif) }
+    if val == "else" { return self._wrapToken(.KwElse) }
+    if val == "enum" { return self._wrapToken(.KwEnum) }
+    if val == "export" { return self._wrapToken(.KwExport) }
+    if val == "false" { return self._wrapToken(.KwFalse) }
+    if val == "fn" { return self._wrapToken(.KwFn) }
+    if val == "from" { return self._wrapToken(.KwFrom) }
+    if val == "if" { return self._wrapToken(.KwIf) }
+    if val == "import" { return self._wrapToken(.KwImport) }
+    if val == "is" { return self._wrapToken(.KwIs) }
+    if val == "loop" { return self._wrapToken(.KwLoop) }
+    if val == "main" { return self._wrapToken(.KwMain) }
+    if val == "mut" { return self._wrapToken(.KwMut) }
+    if val == "nil" { return self._wrapToken(.KwNil) }
+    if val == "obj" { return self._wrapToken(.KwObj) }
+    if val == "ref" { return self._wrapToken(.KwRef) }
+    if val == "return" { return self._wrapToken(.KwReturn) }
+    if val == "throw" { return self._wrapToken(.KwThrow) }
+    if val == "true" { return self._wrapToken(.KwTrue) }
+    if val == "try" { return self._wrapToken(.KwTry) }
+    if val == "type" { return self._wrapToken(.KwType) }
 
     return self._wrapToken(.Id)
   }
@@ -684,15 +657,5 @@ obj Tokenizer {
 }
 
 fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
-  return Tokenizer{
-    reader: reader,
-    state: TokenizerState{
-      idx: 0,
-      pos: 0,
-      ch: '\0',
-      handled: false
-    },
-    data: [],
-    errors: []
-  }
+  return Tokenizer{reader: reader}
 }

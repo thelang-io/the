@@ -32,7 +32,7 @@ obj Reader {
 
   fn next (mut self: ref Self) char {
     if self.eof() {
-      RaiseError("tried to reader.next on eof")
+      RaiseError("Tried next on Reader eof")
     } elif (
       os_name() == "Windows" &&
       self.content.slice(self.pos, self.pos + 2) == "\r\n"
@@ -68,7 +68,7 @@ fn Reader_init (path: str) Reader {
   p := fs_realpathSync(path)
 
   if !fs_isFileSync(p) {
-    RaiseError("path \"" + p + "\" is not a file")
+    RaiseError("Path `%s` is not a file", p)
   }
 
   content := fs_readFileSync(p).str()
