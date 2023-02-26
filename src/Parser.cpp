@@ -34,6 +34,7 @@ Parser::Parser (Lexer *l) {
   this->reader = this->lexer->reader;
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 ParserStmt Parser::next (bool allowSemi) {
   auto [_0, tok0] = this->lexer->next();
 
@@ -234,7 +235,14 @@ ParserStmt Parser::next (bool allowSemi) {
 
     auto typeTest2 = this->_type();
     auto fnDeclReturnType = typeTest2 == std::nullopt ? std::optional<ParserType>{} : typeTest2;
-    auto fnDeclBody = this->_block();
+    auto loc7 = this->lexer->loc;
+    auto fnDeclBody = std::optional<ParserBlock>{};
+
+    try {
+      fnDeclBody = this->_block();
+    } catch (const Error &) {
+      this->lexer->seek(loc7);
+    }
 
     return this->_wrapStmt(allowSemi, ParserStmtFnDecl{tok1, fnDeclParams, fnDeclReturnType, fnDeclBody}, tok0.start);
   }
@@ -1091,7 +1099,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprObj), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
-// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, readability-make-member-function-const)
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprUnary (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
   if (
     (tok.type == TK_OP_MINUS_MINUS || tok.type == TK_OP_PLUS_PLUS) &&

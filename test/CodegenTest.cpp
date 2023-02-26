@@ -880,6 +880,9 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-empty",
+  "node-fn-decl-body-empty",
+  "node-fn-decl-body-before",
+  "node-fn-decl-body-after",
   "node-fn-decl-hoisting",
   "node-fn-decl-param-default",
   "node-fn-decl-param-default-alias",
@@ -983,6 +986,9 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-forward-decl",
   "node-obj-decl-mut",
   "node-obj-decl-method",
+  "node-obj-decl-method-body-empty",
+  "node-obj-decl-method-body-before",
+  "node-obj-decl-method-body-after",
   "node-obj-decl-method-forward-decl",
   "node-obj-decl-method-forward-decl-with-fn",
   "node-obj-decl-method-variadic"

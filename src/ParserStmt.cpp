@@ -119,9 +119,9 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "</StmtFnDeclReturnType>" EOL;
     }
 
-    if (!stmtFnDecl.body.empty()) {
+    if (stmtFnDecl.body != std::nullopt && !stmtFnDecl.body->empty()) {
       result += std::string(indent + 2, ' ') + "<StmtFnDeclBody>" EOL;
-      result += blockToXml(stmtFnDecl.body, indent + 4);
+      result += blockToXml(*stmtFnDecl.body, indent + 4);
       result += std::string(indent + 2, ' ') + "</StmtFnDeclBody>" EOL;
     }
 

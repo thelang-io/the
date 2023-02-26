@@ -107,9 +107,9 @@ std::string ASTNode::xml (std::size_t indent) const {
 
     result += fnDeclParamsToXml(nodeFnDecl.params, indent + 2);
 
-    if (!nodeFnDecl.body.empty()) {
+    if (nodeFnDecl.body != std::nullopt && !nodeFnDecl.body->empty()) {
       result += std::string(indent + 2, ' ') + "<NodeFnDeclBody>" EOL;
-      result += blockToXml(nodeFnDecl.body, indent + 4);
+      result += blockToXml(*nodeFnDecl.body, indent + 4);
       result += std::string(indent + 2, ' ') + "</NodeFnDeclBody>" EOL;
     }
 
@@ -215,9 +215,9 @@ std::string ASTNode::xml (std::size_t indent) const {
 
         result += fnDeclParamsToXml(method.params, indent + 6);
 
-        if (!method.body.empty()) {
+        if (method.body != std::nullopt && !method.body->empty()) {
           result += std::string(indent + 6, ' ') + "<NodeObjDeclMethodBody>" EOL;
-          result += blockToXml(method.body, indent + 8);
+          result += blockToXml(*method.body, indent + 8);
           result += std::string(indent + 6, ' ') + "</NodeObjDeclMethodBody>" EOL;
         }
 

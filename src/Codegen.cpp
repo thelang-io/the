@@ -2247,9 +2247,13 @@ std::string Codegen::_fnDecl (
   const std::string &codeName,
   const std::vector<std::shared_ptr<Var>> &stack,
   const std::vector<ASTFnDeclParam> &params,
-  const ASTBlock &body,
+  const std::optional<ASTBlock> &body,
   CodegenPhase phase
 ) {
+  if (body == std::nullopt) {
+    return "";
+  }
+
   auto typeName = Codegen::typeName(codeName);
   auto varTypeInfo = this->_typeInfo(type);
   auto fnType = std::get<TypeFn>(type->body);
@@ -2337,7 +2341,7 @@ std::string Codegen::_fnDecl (
 
       this->indent = 0;
       this->state.returnType = returnTypeInfo.type;
-      bodyCode += this->_block(body, false);
+      bodyCode += this->_block(*body, false);
       this->indent = 2;
       this->varMap.restore();
 
@@ -2707,7 +2711,6 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
-    auto varTypeInfo = this->_typeInfo(nodeFnDecl.var->type);
 
     code += this->_fnDecl(
       nodeFnDecl.var->type,

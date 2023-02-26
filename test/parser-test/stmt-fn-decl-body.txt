@@ -1,0 +1,123 @@
+======= stdin =======
+fn test1 () void
+fn test2 (a: int, mut b: int) int
+
+fn test1 () void {
+  print()
+}
+fn test2 (a: int, mut b: int) int {
+  return a + b
+}
+======= stdout =======
+<StmtFnDecl start="1:1" end="1:17">
+  <StmtFnDeclId>
+    <Token type="ID" val="test1" start="1:4" end="1:9" />
+  </StmtFnDeclId>
+  <StmtFnDeclReturnType>
+    <TypeId start="1:13" end="1:17">
+      <Token type="ID" val="void" start="1:13" end="1:17" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+</StmtFnDecl>
+<StmtFnDecl start="2:1" end="2:34">
+  <StmtFnDeclId>
+    <Token type="ID" val="test2" start="2:4" end="2:9" />
+  </StmtFnDeclId>
+  <StmtFnDeclParams>
+    <StmtFnDeclParam>
+      <StmtFnDeclParamId>
+        <Token type="ID" val="a" start="2:11" end="2:12" />
+      </StmtFnDeclParamId>
+      <StmtFnDeclParamType>
+        <TypeId start="2:14" end="2:17">
+          <Token type="ID" val="int" start="2:14" end="2:17" />
+        </TypeId>
+      </StmtFnDeclParamType>
+    </StmtFnDeclParam>
+    <StmtFnDeclParam mut>
+      <StmtFnDeclParamId>
+        <Token type="ID" val="b" start="2:23" end="2:24" />
+      </StmtFnDeclParamId>
+      <StmtFnDeclParamType>
+        <TypeId start="2:26" end="2:29">
+          <Token type="ID" val="int" start="2:26" end="2:29" />
+        </TypeId>
+      </StmtFnDeclParamType>
+    </StmtFnDeclParam>
+  </StmtFnDeclParams>
+  <StmtFnDeclReturnType>
+    <TypeId start="2:31" end="2:34">
+      <Token type="ID" val="int" start="2:31" end="2:34" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+</StmtFnDecl>
+<StmtFnDecl start="4:1" end="6:2">
+  <StmtFnDeclId>
+    <Token type="ID" val="test1" start="4:4" end="4:9" />
+  </StmtFnDeclId>
+  <StmtFnDeclReturnType>
+    <TypeId start="4:13" end="4:17">
+      <Token type="ID" val="void" start="4:13" end="4:17" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+  <StmtFnDeclBody>
+    <ExprCall start="5:3" end="5:10">
+      <ExprCallCallee>
+        <ExprAccess start="5:3" end="5:8">
+          <Token type="ID" val="print" start="5:3" end="5:8" />
+        </ExprAccess>
+      </ExprCallCallee>
+    </ExprCall>
+  </StmtFnDeclBody>
+</StmtFnDecl>
+<StmtFnDecl start="7:1" end="9:2">
+  <StmtFnDeclId>
+    <Token type="ID" val="test2" start="7:4" end="7:9" />
+  </StmtFnDeclId>
+  <StmtFnDeclParams>
+    <StmtFnDeclParam>
+      <StmtFnDeclParamId>
+        <Token type="ID" val="a" start="7:11" end="7:12" />
+      </StmtFnDeclParamId>
+      <StmtFnDeclParamType>
+        <TypeId start="7:14" end="7:17">
+          <Token type="ID" val="int" start="7:14" end="7:17" />
+        </TypeId>
+      </StmtFnDeclParamType>
+    </StmtFnDeclParam>
+    <StmtFnDeclParam mut>
+      <StmtFnDeclParamId>
+        <Token type="ID" val="b" start="7:23" end="7:24" />
+      </StmtFnDeclParamId>
+      <StmtFnDeclParamType>
+        <TypeId start="7:26" end="7:29">
+          <Token type="ID" val="int" start="7:26" end="7:29" />
+        </TypeId>
+      </StmtFnDeclParamType>
+    </StmtFnDeclParam>
+  </StmtFnDeclParams>
+  <StmtFnDeclReturnType>
+    <TypeId start="7:31" end="7:34">
+      <Token type="ID" val="int" start="7:31" end="7:34" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+  <StmtFnDeclBody>
+    <StmtReturn start="8:3" end="8:15">
+      <ExprBinary start="8:10" end="8:15">
+        <ExprBinaryLeft>
+          <ExprAccess start="8:10" end="8:11">
+            <Token type="ID" val="a" start="8:10" end="8:11" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_PLUS" val="+" start="8:12" end="8:13" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprAccess start="8:14" end="8:15">
+            <Token type="ID" val="b" start="8:14" end="8:15" />
+          </ExprAccess>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtReturn>
+  </StmtFnDeclBody>
+</StmtFnDecl>

@@ -58,6 +58,7 @@ INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-empty",
+  "stmt-fn-decl-body",
   "stmt-fn-decl",
   "stmt-fn-decl-param-init",
   "stmt-fn-decl-recursive",

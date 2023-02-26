@@ -94,7 +94,7 @@ struct ParserStmtFnDecl {
   Token id;
   std::vector<ParserStmtFnDeclParam> params;
   std::optional<ParserType> returnType;
-  ParserBlock body;
+  std::optional<ParserBlock> body;
 };
 
 struct ParserStmtIf {

@@ -1,0 +1,140 @@
+======= stdin =======
+obj Human {
+  mut distance: int
+
+  fn talk () void
+  fn walk (mut self: ref Self) void
+
+  fn talk () void {
+    print("Human walks in meters")
+  }
+
+  fn walk (mut self: ref Self) void {
+    self.distance += 1
+  }
+}
+
+main {
+  mut person := Human{}
+  person.talk()
+  person.walk()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_Human_0;
+struct __THE_1_fn$0;
+struct __THE_1_fn$1;
+
+struct __THE_1_Human_0 {
+  int32_t __THE_0_distance;
+};
+struct __THE_1_fn$0 {
+  void (*f) (void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1 {
+  void (*f) (void *, struct __THE_1_Human_0 **);
+  void *x;
+  size_t l;
+};
+
+void *alloc (size_t);
+void print (FILE *, const char *, ...);
+void str_free (struct str);
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (int32_t);
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
+void __THE_1_HumanSDtalk_0 (void *);
+void __THE_1_HumanSDwalk_0 (void *, struct __THE_1_Human_0 **);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_Human_0 *__THE_1_Human_0_alloc (int32_t __THE_0_distance) {
+  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
+  struct __THE_1_Human_0 s = {__THE_0_distance};
+  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
+  return r;
+}
+void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
+  free(n);
+}
+void __THE_1_HumanSDtalk_0 (void *px) {
+  print(stdout, "zz", "Human walks in meters", THE_EOL);
+}
+void __THE_1_HumanSDwalk_0 (void *px, struct __THE_1_Human_0 **__THE_0_self_0) {
+  (*__THE_0_self_0)->__THE_0_distance += 1;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_HumanSDtalk_0 = (struct __THE_1_fn$0) {&__THE_1_HumanSDtalk_0, NULL, 0};
+  const struct __THE_1_fn$1 __THE_0_HumanSDwalk_0 = (struct __THE_1_fn$1) {&__THE_1_HumanSDwalk_0, NULL, 0};
+  struct __THE_1_Human_0 *__THE_0_person_0 = __THE_1_Human_0_alloc(0);
+  __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x);
+  __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, &__THE_0_person_0);
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person_0);
+}
+======= flags =======
+======= stdout =======
+Human walks in meters

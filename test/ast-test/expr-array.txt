@@ -808,7 +808,7 @@ main {
           </NodeExpr>
         </ExprCallCallee>
         <ExprCallArgs>
-          <ExprCallArg id="element">
+          <ExprCallArg id="elements">
             <NodeExpr>
               <NodeExprType>
                 <TypeObj codeName="Test_0" name="Test">
@@ -879,7 +879,7 @@ main {
           </NodeExpr>
         </ExprCallCallee>
         <ExprCallArgs>
-          <ExprCallArg id="element">
+          <ExprCallArg id="elements">
             <NodeExpr>
               <NodeExprType>
                 <TypeObj codeName="Test_0" name="Test">
@@ -957,7 +957,7 @@ main {
           </NodeExpr>
         </ExprCallCallee>
         <ExprCallArgs>
-          <ExprCallArg id="element">
+          <ExprCallArg id="elements">
             <NodeExpr>
               <NodeExprType>
                 <TypeArray name="array_int">
@@ -1028,7 +1028,7 @@ main {
           </NodeExpr>
         </ExprCallCallee>
         <ExprCallArgs>
-          <ExprCallArg id="element">
+          <ExprCallArg id="elements">
             <NodeExpr>
               <NodeExprType>
                 <TypeArray name="array_int">
@@ -1124,7 +1124,7 @@ main {
           </NodeExpr>
         </ExprCallCallee>
         <ExprCallArgs>
-          <ExprCallArg id="element">
+          <ExprCallArg id="elements">
             <NodeExpr>
               <NodeExprType>
                 <BuiltinType name="int" />

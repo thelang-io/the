@@ -71,7 +71,10 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
 
   if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     auto &nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
-    AST::populateParents(nodeFnDecl.body, &node);
+
+    if (nodeFnDecl.body != std::nullopt) {
+      AST::populateParents(*nodeFnDecl.body, &node);
+    }
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     auto &nodeIf = std::get<ASTNodeIf>(*node.body);
     AST::populateParents(nodeIf.body, &node);
@@ -95,7 +98,9 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
     auto &nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
     for (auto &method : nodeObjDecl.methods) {
-      AST::populateParents(method.body, &node);
+      if (method.body != std::nullopt) {
+        AST::populateParents(*method.body, &node);
+      }
     }
   }
 }
@@ -278,7 +283,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
       auto nodeFnDeclName = stmtFnDecl.id.val;
 
-      if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
+      if ((phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) && !this->varMap.has(nodeFnDeclName)) {
         if (nodeFnDeclName == "main") {
           throw Error(this->reader, stmtFnDecl.id.start, stmtFnDecl.id.end, E1021);
         }
@@ -329,7 +334,12 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
       if (phase == AST_PHASE_INIT || phase == AST_PHASE_FULL) {
         auto type = this->typeMap.get(stmtObjDecl.id.val);
+        auto initialTypeMapSelf = this->typeMap.self;
 
+        this->typeMap.stack.emplace_back(type->name);
+        this->typeMap.self = type;
+
+        // todo test usage of self in fields
         for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
           auto fieldType = this->_type(stmtObjDeclField.type);
 
@@ -340,14 +350,15 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           type->fields.push_back(TypeField{stmtObjDeclField.id.val, fieldType, stmtObjDeclField.mut, false, false});
         }
 
-        auto initialTypeMapSelf = this->typeMap.self;
-
-        this->typeMap.stack.emplace_back(type->name);
-        this->typeMap.self = type;
-
         for (const auto &stmtObjDeclMethod : stmtObjDecl.methods) {
           auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmtObjDeclMethod.body);
           auto methodDeclName = stmtFnDecl.id.val;
+          auto methodDeclVarName = type->name + "." + methodDeclName;
+
+          if (varMap.has(methodDeclVarName)) {
+            continue;
+          }
+
           auto methodDeclInfo = TypeFnMethodInfo{this->typeMap.name(methodDeclName)};
           auto methodDeclTypeParams = std::vector<TypeFnParam>{};
 
@@ -393,7 +404,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           auto methodDeclAliasType = this->typeMap.alias(methodDeclName, methodDeclType);
 
           this->varMap.restore();
-          this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
+          this->varMap.add(methodDeclVarName, methodDeclAliasType->codeName, methodDeclType);
           type->fields.push_back(TypeField{methodDeclName, methodDeclType, false, true, false});
         }
 
@@ -471,7 +482,9 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     this->typeMap.stack.emplace_back(nodeFnDeclVar->name);
     this->state.returnType = fnType.returnType;
-    auto nodeFnDeclBody = this->_block(stmtFnDecl.body, nodeFnDeclVarStack);
+    auto nodeFnDeclBody = stmtFnDecl.body == std::nullopt
+      ? std::optional<ASTBlock>{}
+      : this->_block(*stmtFnDecl.body, nodeFnDeclVarStack);
     this->varMap.restore();
     this->typeMap.stack.pop_back();
 
@@ -598,7 +611,9 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       this->state.returnType = stmtFnDecl.returnType == std::nullopt
         ? this->typeMap.get("void")
         : this->_type(*stmtFnDecl.returnType);
-      auto methodDeclBody = this->_block(stmtFnDecl.body, methodDeclVarStack);
+      auto methodDeclBody = stmtFnDecl.body == std::nullopt
+        ? std::optional<ASTBlock>{}
+        : this->_block(*stmtFnDecl.body, methodDeclVarStack);
       this->varMap.restore();
       this->typeMap.stack.pop_back();
 

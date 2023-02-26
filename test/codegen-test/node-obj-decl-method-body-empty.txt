@@ -1,0 +1,15 @@
+======= stdin =======
+obj Object1 {
+  fn staticMethod () void
+  fn nonStaticMethod (mut self: ref Self) void
+}
+
+obj Object2 {
+  fn nonStaticMethod (mut self: ref Self, a: int) int
+  fn staticMethod (b: str) str
+}
+======= code =======
+int main () {
+}
+======= flags =======
+======= stdout =======
