@@ -51,6 +51,7 @@ set(
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
+  src/ParserComment.cpp src/ParserComment.hpp
   src/ParserExpr.cpp src/ParserExpr.hpp
   src/ParserStmt.cpp src/ParserStmt.hpp
   src/ParserType.cpp src/ParserType.hpp
@@ -118,6 +119,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/MockParser.cpp test/MockParser.hpp
     test/MockReader.cpp test/MockReader.hpp
     test/ParserTest.cpp
+    test/ParserCommentTest.cpp
     test/ReaderTest.cpp
     test/TokenTest.cpp
     test/TypeTest.cpp

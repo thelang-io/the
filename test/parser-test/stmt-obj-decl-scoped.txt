@@ -16,18 +16,18 @@ if true {
       <StmtObjDeclId>
         <Token type="ID" val="Test" start="2:7" end="2:11" />
       </StmtObjDeclId>
-      <StmtObjDeclFields>
-        <StmtObjDeclField>
-          <StmtObjDeclFieldId>
+      <StmtObjDeclMembers>
+        <StmtVarDecl start="2:13" end="2:19">
+          <StmtVarDeclId>
             <Token type="ID" val="a" start="2:13" end="2:14" />
-          </StmtObjDeclFieldId>
-          <StmtObjDeclFieldType>
+          </StmtVarDeclId>
+          <StmtVarDeclType>
             <TypeId start="2:16" end="2:19">
               <Token type="ID" val="int" start="2:16" end="2:19" />
             </TypeId>
-          </StmtObjDeclFieldType>
-        </StmtObjDeclField>
-      </StmtObjDeclFields>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </StmtObjDeclMembers>
     </StmtObjDecl>
   </StmtIfBody>
   <StmtIfAlt>
@@ -35,18 +35,18 @@ if true {
       <StmtObjDeclId>
         <Token type="ID" val="Test" start="4:7" end="4:11" />
       </StmtObjDeclId>
-      <StmtObjDeclFields>
-        <StmtObjDeclField>
-          <StmtObjDeclFieldId>
+      <StmtObjDeclMembers>
+        <StmtVarDecl start="4:13" end="4:19">
+          <StmtVarDeclId>
             <Token type="ID" val="a" start="4:13" end="4:14" />
-          </StmtObjDeclFieldId>
-          <StmtObjDeclFieldType>
+          </StmtVarDeclId>
+          <StmtVarDeclType>
             <TypeId start="4:16" end="4:19">
               <Token type="ID" val="int" start="4:16" end="4:19" />
             </TypeId>
-          </StmtObjDeclFieldType>
-        </StmtObjDeclField>
-      </StmtObjDeclFields>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </StmtObjDeclMembers>
     </StmtObjDecl>
   </StmtIfAlt>
 </StmtIf>

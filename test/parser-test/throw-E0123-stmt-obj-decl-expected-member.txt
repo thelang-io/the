@@ -1,0 +1,6 @@
+======= stdin =======
+obj Test { if test {} }
+======= stderr =======
+/test:1:12: E0123 - Expected object member declaration
+  1 | obj Test { if test {} }
+    |            ^~~~~~~~~~

@@ -1,9 +1,0 @@
-======= stdin =======
-obj Test {
-  a: int
-  b: (str
-}
-======= stderr =======
-/test:3:10: E0127 - Expected right parenthesis
-  3 |   b: (str
-    |          ^

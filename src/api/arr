@@ -1,3 +1,5 @@
+// Array API
+
 obj Element {
   a: byte
 }
@@ -14,9 +16,9 @@ obj Array {
   len: int
 
   /**
-   * Accesses element by index and return its reference.
+   * Accesses element by index and returns its reference.
    *
-   * @name [idx: int]
+   * @signature [idx: int]
    * @return ref Element
    */
 
@@ -31,9 +33,9 @@ obj Array {
   fn contains (self: ref Self, search: Element) bool
 
   /**
-   * Calls `predicate` on every element and construct array copy out of elements that passed the test.
+   * Calls `predicate` on every element and constructs array copy out of elements that passed the test.
    *
-   * @param predicate - Function to execute to each element in the array.
+   * @param predicate - Function to execute on each element of the array.
    *   Should return a truthy value to keep the element in the resulting array.
    */
   fn filter (self: ref Self, predicate: (it: Element) -> bool) Self
@@ -46,14 +48,14 @@ obj Array {
   fn join (self: ref Self, separator := ",") str
 
   /**
-   * Calls `transform` on every element and construct array out of return values of the `transform` function.
+   * Calls `transform` on every element and constructs array out of return values of the `transform` function.
    *
-   * @param transform - A function to execute for each element in the array.
+   * @param transform - A function to execute for each element of the array.
    */
   fn map (self: ref Self, transform: (it: Element) -> any) any[]
 
   /**
-   * Merges other array’s data into calling array.
+   * Merges other array's data into calling array.
    *
    * @param other - Other array you want to merge.
    */
@@ -91,13 +93,11 @@ obj Array {
    *   - If value is less than array length then `0` value is used.
    *   - If value is greater than array length then array length is used.
    *   - If value positioned before or equals `start` then nothing is extracted.
-   *
-   * @todo Change start and end params to int type
    */
   fn slice (self: ref Self, start := 0, end := self.len) Self
 
   /**
-   * Sorts the elements of an array in place.
+   * Sorts the elements of the array in place.
    *
    * @param comparator - Function that defines the sort order.
    */

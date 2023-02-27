@@ -961,6 +961,7 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl",
+  "node-obj-decl-empty",
   "node-obj-decl-default",
   "node-obj-decl-default-alias",
   "node-obj-decl-default-any",

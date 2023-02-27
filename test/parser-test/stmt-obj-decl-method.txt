@@ -51,60 +51,58 @@ obj Test3_3 {
   <StmtObjDeclId>
     <Token type="ID" val="Test1" start="1:5" end="1:10" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="2:3" end="2:9">
+      <StmtVarDeclId>
         <Token type="ID" val="a" start="2:3" end="2:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="2:6" end="2:9">
           <Token type="ID" val="int" start="2:6" end="2:9" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtObjDecl start="5:1" end="7:2">
   <StmtObjDeclId>
     <Token type="ID" val="Test2" start="5:5" end="5:10" />
   </StmtObjDeclId>
-  <StmtObjDeclMethod>
+  <StmtObjDeclMembers>
     <StmtFnDecl start="6:3" end="6:13">
       <StmtFnDeclId>
         <Token type="ID" val="a" start="6:6" end="6:7" />
       </StmtFnDeclId>
     </StmtFnDecl>
-  </StmtObjDeclMethod>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtObjDecl start="9:1" end="11:2">
   <StmtObjDeclId>
     <Token type="ID" val="Test2_2" start="9:5" end="9:12" />
   </StmtObjDeclId>
-  <StmtObjDeclMethod>
+  <StmtObjDeclMembers>
     <StmtFnDecl start="10:3" end="10:14">
       <StmtFnDeclId>
         <Token type="ID" val="ab" start="10:6" end="10:8" />
       </StmtFnDeclId>
     </StmtFnDecl>
-  </StmtObjDeclMethod>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtObjDecl start="13:1" end="19:2">
   <StmtObjDeclId>
     <Token type="ID" val="Test3" start="13:5" end="13:10" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="14:3" end="14:9">
+      <StmtVarDeclId>
         <Token type="ID" val="a" start="14:3" end="14:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="14:6" end="14:9">
           <Token type="ID" val="int" start="14:6" end="14:9" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
-  <StmtObjDeclMethod>
+      </StmtVarDeclType>
+    </StmtVarDecl>
     <StmtFnDecl start="16:3" end="18:4">
       <StmtFnDeclId>
         <Token type="ID" val="b" start="16:6" end="16:7" />
@@ -117,35 +115,23 @@ obj Test3_3 {
         </StmtReturn>
       </StmtFnDeclBody>
     </StmtFnDecl>
-  </StmtObjDeclMethod>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtObjDecl start="21:1" end="33:2">
   <StmtObjDeclId>
     <Token type="ID" val="Test3_2" start="21:5" end="21:12" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="22:3" end="22:9">
+      <StmtVarDeclId>
         <Token type="ID" val="a" start="22:3" end="22:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="22:6" end="22:9">
           <Token type="ID" val="int" start="22:6" end="22:9" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
-        <Token type="ID" val="d" start="32:3" end="32:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
-        <TypeId start="32:6" end="32:9">
-          <Token type="ID" val="int" start="32:6" end="32:9" />
-        </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
-  <StmtObjDeclMethod>
+      </StmtVarDeclType>
+    </StmtVarDecl>
     <StmtFnDecl start="24:3" end="26:4">
       <StmtFnDeclId>
         <Token type="ID" val="b" start="24:6" end="24:7" />
@@ -170,35 +156,33 @@ obj Test3_3 {
         </StmtReturn>
       </StmtFnDeclBody>
     </StmtFnDecl>
-  </StmtObjDeclMethod>
+    <StmtVarDecl start="32:3" end="32:9">
+      <StmtVarDeclId>
+        <Token type="ID" val="d" start="32:3" end="32:4" />
+      </StmtVarDeclId>
+      <StmtVarDeclType>
+        <TypeId start="32:6" end="32:9">
+          <Token type="ID" val="int" start="32:6" end="32:9" />
+        </TypeId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtObjDecl start="35:1" end="47:2">
   <StmtObjDeclId>
     <Token type="ID" val="Test3_3" start="35:5" end="35:12" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="36:3" end="36:9">
+      <StmtVarDeclId>
         <Token type="ID" val="a" start="36:3" end="36:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="36:6" end="36:9">
           <Token type="ID" val="int" start="36:6" end="36:9" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
-        <Token type="ID" val="d" start="42:3" end="42:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
-        <TypeId start="42:6" end="42:9">
-          <Token type="ID" val="int" start="42:6" end="42:9" />
-        </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
-  <StmtObjDeclMethod>
+      </StmtVarDeclType>
+    </StmtVarDecl>
     <StmtFnDecl start="38:3" end="40:4">
       <StmtFnDeclId>
         <Token type="ID" val="b" start="38:6" end="38:7" />
@@ -211,6 +195,16 @@ obj Test3_3 {
         </StmtReturn>
       </StmtFnDeclBody>
     </StmtFnDecl>
+    <StmtVarDecl start="42:3" end="42:9">
+      <StmtVarDeclId>
+        <Token type="ID" val="d" start="42:3" end="42:4" />
+      </StmtVarDeclId>
+      <StmtVarDeclType>
+        <TypeId start="42:6" end="42:9">
+          <Token type="ID" val="int" start="42:6" end="42:9" />
+        </TypeId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
     <StmtFnDecl start="44:3" end="46:4">
       <StmtFnDeclId>
         <Token type="ID" val="d" start="44:6" end="44:7" />
@@ -223,5 +217,5 @@ obj Test3_3 {
         </StmtReturn>
       </StmtFnDeclBody>
     </StmtFnDecl>
-  </StmtObjDeclMethod>
+  </StmtObjDeclMembers>
 </StmtObjDecl>

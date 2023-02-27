@@ -1,3 +1,5 @@
+// Buffer API
+
 /**
  * Used to represent a fixed-length sequence of bytes.
  *

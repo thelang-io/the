@@ -26,193 +26,193 @@ obj Test2 {
   <StmtObjDeclId>
     <Token type="ID" val="Test1" start="1:5" end="1:10" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="2:3" end="2:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a0" start="2:3" end="2:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="2:7" end="2:11">
           <Token type="ID" val="bool" start="2:7" end="2:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="3:3" end="3:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a1" start="3:3" end="3:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="3:7" end="3:11">
           <Token type="ID" val="byte" start="3:7" end="3:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="4:3" end="4:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a2" start="4:3" end="4:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="4:7" end="4:11">
           <Token type="ID" val="char" start="4:7" end="4:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="5:3" end="5:12">
+      <StmtVarDeclId>
         <Token type="ID" val="a3" start="5:3" end="5:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="5:7" end="5:12">
           <Token type="ID" val="float" start="5:7" end="5:12" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="6:3" end="6:10">
+      <StmtVarDeclId>
         <Token type="ID" val="a4" start="6:3" end="6:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="6:7" end="6:10">
           <Token type="ID" val="f32" start="6:7" end="6:10" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="7:3" end="7:10">
+      <StmtVarDeclId>
         <Token type="ID" val="a5" start="7:3" end="7:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="7:7" end="7:10">
           <Token type="ID" val="f64" start="7:7" end="7:10" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="8:3" end="8:10">
+      <StmtVarDeclId>
         <Token type="ID" val="a6" start="8:3" end="8:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="8:7" end="8:10">
           <Token type="ID" val="int" start="8:7" end="8:10" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="9:3" end="9:9">
+      <StmtVarDeclId>
         <Token type="ID" val="a7" start="9:3" end="9:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="9:7" end="9:9">
           <Token type="ID" val="i8" start="9:7" end="9:9" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="10:3" end="10:10">
+      <StmtVarDeclId>
         <Token type="ID" val="a8" start="10:3" end="10:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="10:7" end="10:10">
           <Token type="ID" val="i16" start="10:7" end="10:10" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="11:3" end="11:10">
+      <StmtVarDeclId>
         <Token type="ID" val="a9" start="11:3" end="11:5" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="11:7" end="11:10">
           <Token type="ID" val="i32" start="11:7" end="11:10" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="12:3" end="12:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a10" start="12:3" end="12:6" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="12:8" end="12:11">
           <Token type="ID" val="i64" start="12:8" end="12:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="13:3" end="13:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a11" start="13:3" end="13:6" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="13:8" end="13:11">
           <Token type="ID" val="str" start="13:8" end="13:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="14:3" end="14:10">
+      <StmtVarDeclId>
         <Token type="ID" val="a12" start="14:3" end="14:6" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="14:8" end="14:10">
           <Token type="ID" val="u8" start="14:8" end="14:10" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="15:3" end="15:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a13" start="15:3" end="15:6" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="15:8" end="15:11">
           <Token type="ID" val="u16" start="15:8" end="15:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="16:3" end="16:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a14" start="16:3" end="16:6" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="16:8" end="16:11">
           <Token type="ID" val="u32" start="16:8" end="16:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="17:3" end="17:11">
+      <StmtVarDeclId>
         <Token type="ID" val="a15" start="17:3" end="17:6" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="17:8" end="17:11">
           <Token type="ID" val="u64" start="17:8" end="17:11" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtObjDecl start="19:1" end="22:2">
   <StmtObjDeclId>
     <Token type="ID" val="Test2" start="19:5" end="19:10" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="20:3" end="20:12">
+      <StmtVarDeclId>
         <Token type="ID" val="name" start="20:3" end="20:7" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId start="20:9" end="20:12">
           <Token type="ID" val="str" start="20:9" end="20:12" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+    <StmtVarDecl start="21:3" end="21:13">
+      <StmtVarDeclId>
         <Token type="ID" val="age" start="21:3" end="21:6" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeId parenthesized start="21:8" end="21:13">
           <Token type="ID" val="int" start="21:9" end="21:12" />
         </TypeId>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+  </StmtObjDeclMembers>
 </StmtObjDecl>

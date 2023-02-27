@@ -66,6 +66,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-loop",
   "node-main",
   "node-obj-decl",
+  "node-obj-decl-empty",
   "node-obj-decl-field-mut",
   "node-obj-decl-field-variadic",
   "node-obj-decl-forward-decl",

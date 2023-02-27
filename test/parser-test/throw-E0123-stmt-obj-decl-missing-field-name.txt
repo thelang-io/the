@@ -1,6 +1,0 @@
-======= stdin =======
-obj Test { : int }
-======= stderr =======
-/test:1:12: E0123 - Expected object field name
-  1 | obj Test { : int }
-    |            ^

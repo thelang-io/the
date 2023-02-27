@@ -27,6 +27,7 @@ int main (int argc, char *argv[]) {
 
     auto isAST = false;
     auto isCodegen = false;
+    auto isDoc = false;
     auto isLex = false;
     auto isParse = false;
     auto fileName = std::optional<std::string>{};
@@ -40,6 +41,8 @@ int main (int argc, char *argv[]) {
         isAST = true;
       } else if (i == 1 && arg == "codegen") {
         isCodegen = true;
+      } else if (i == 1 && arg == "doc") {
+        isDoc = true;
       } else if (i == 1 && arg == "lex") {
         isLex = true;
       } else if (i == 1 && arg == "parse") {
@@ -102,6 +105,12 @@ int main (int argc, char *argv[]) {
 
     if (isAST) {
       std::cout << ast.xml();
+      return EXIT_SUCCESS;
+    } else if (isDoc) {
+      ast.gen();
+      reader.reset();
+
+      std::cout << parser.doc();
       return EXIT_SUCCESS;
     }
 

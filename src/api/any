@@ -1,3 +1,5 @@
+// Any API
+
 /** Allows storing any variable of any type. */
 obj Any {
   /** Returns a string representation. */

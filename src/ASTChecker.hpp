@@ -128,7 +128,6 @@ class ASTChecker {
         auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
         return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
-          // todo test
           return it.body != std::nullopt && this->_hasNode<T>(*it.body);
         });
       }
@@ -161,7 +160,6 @@ class ASTChecker {
 
     if (std::holds_alternative<ASTNodeFnDecl>(*parent.body)) {
       auto nodeFnDecl = std::get<ASTNodeFnDecl>(*parent.body);
-      // todo test
       return nodeFnDecl.body != std::nullopt && nodeFnDecl.body->back().body == node.body;
     } else if (std::holds_alternative<ASTNodeIf>(*parent.body)) {
       auto nodeIf = std::get<ASTNodeIf>(*parent.body);
@@ -176,7 +174,6 @@ class ASTChecker {
       auto nodeObjDecl = std::get<ASTNodeObjDecl>(*parent.body);
 
       return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
-        // todo test
         return it.body != std::nullopt && it.body->back().body == node.body;
       });
     }

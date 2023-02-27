@@ -21,9 +21,14 @@ Lexer::Lexer (Reader *r) {
   this->reader = r;
 }
 
-std::tuple<ReaderLocation, Token> Lexer::next () {
+// NOLINTNEXTLINE(google-default-arguments)
+std::tuple<ReaderLocation, Token> Lexer::next (bool keepComments) {
   auto startLoc = this->reader->loc;
-  this->_whitespace();
+  auto tk = this->_whitespace(keepComments);
+
+  if (tk != std::nullopt) {
+    return {startLoc, *tk};
+  }
 
   this->loc = this->reader->loc;
   this->val = "";
@@ -489,16 +494,16 @@ void Lexer::_walkLitFloatExp (ReaderLocation loc0) {
   }
 }
 
-void Lexer::_whitespace () {
+std::optional<Token> Lexer::_whitespace (bool keepComments) {
   if (this->reader->eof()) {
-    return;
+    return std::nullopt;
   }
 
   auto [loc1, ch1] = this->reader->next();
 
   if (Token::isWhitespace(ch1)) {
     this->_walk(Token::isWhitespace);
-    return this->_whitespace();
+    return this->_whitespace(keepComments);
   } else if (ch1 == '/' && !this->reader->eof()) {
     auto [_2, ch2] = this->reader->next();
 
@@ -512,7 +517,13 @@ void Lexer::_whitespace () {
         }
       }
 
-      return this->_whitespace();
+      if (!keepComments) {
+        return this->_whitespace();
+      }
+
+      this->loc = loc1;
+      this->val = this->reader->content.substr(this->loc.pos, this->reader->loc.pos - this->loc.pos);
+      return this->_tok(TK_COMMENT_LINE);
     } else if (ch2 == '*') {
       if (this->reader->eof()) {
         throw Error(this->reader, this->loc, E0001);
@@ -536,9 +547,16 @@ void Lexer::_whitespace () {
         }
       }
 
-      return this->_whitespace();
+      if (!keepComments) {
+        return this->_whitespace();
+      }
+
+      this->loc = loc1;
+      this->val = this->reader->content.substr(this->loc.pos, this->reader->loc.pos - this->loc.pos);
+      return this->_tok(TK_COMMENT_BLOCK);
     }
   }
 
   this->reader->seek(loc1);
+  return std::nullopt;
 }

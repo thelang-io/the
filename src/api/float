@@ -1,3 +1,5 @@
+// Float, F32, F64 API
+
 /** Allow storing 64-bit floating point numbers. */
 obj Float {
   /** Returns a string representation. */

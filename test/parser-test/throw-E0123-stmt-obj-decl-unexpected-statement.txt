@@ -1,6 +1,6 @@
 ======= stdin =======
 obj Test { mut : int }
 ======= stderr =======
-/test:1:16: E0123 - Expected object field name
+/test:1:12: E0123 - Expected object member declaration
   1 | obj Test { mut : int }
-    |                ^
+    |            ^~~~~~~~~~~

@@ -1,3 +1,5 @@
+// String API
+
 /** Allows storing a collection of multiple characters under a single variable. */
 obj String {
   /** Whether string has characters. */
@@ -62,8 +64,6 @@ obj String {
    *   - If value is less than string length then 0 value is used.
    *   - If value is greater than string length then string length is used.
    *   - If value positioned before or equals `start` then nothing is extracted.
-   *
-   * @todo Change start and end params to int type
    */
   fn slice (self: ref Self, start := 0, end := self.len) Self
 

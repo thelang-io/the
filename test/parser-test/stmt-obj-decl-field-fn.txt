@@ -31,12 +31,12 @@ main {
   <StmtObjDeclId>
     <Token type="ID" val="Test1" start="1:5" end="1:10" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="2:3" end="2:16">
+      <StmtVarDeclId>
         <Token type="ID" val="a" start="2:3" end="2:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeFn start="2:6" end="2:16">
           <TypeFnReturnType>
             <TypeId start="2:12" end="2:16">
@@ -44,20 +44,20 @@ main {
             </TypeId>
           </TypeFnReturnType>
         </TypeFn>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtObjDecl start="5:1" end="7:2">
   <StmtObjDeclId>
     <Token type="ID" val="Test2" start="5:5" end="5:10" />
   </StmtObjDeclId>
-  <StmtObjDeclFields>
-    <StmtObjDeclField>
-      <StmtObjDeclFieldId>
+  <StmtObjDeclMembers>
+    <StmtVarDecl start="6:3" end="6:26">
+      <StmtVarDeclId>
         <Token type="ID" val="b" start="6:3" end="6:4" />
-      </StmtObjDeclFieldId>
-      <StmtObjDeclFieldType>
+      </StmtVarDeclId>
+      <StmtVarDeclType>
         <TypeFn start="6:6" end="6:26">
           <TypeFnParams>
             <TypeFnParam>
@@ -81,9 +81,9 @@ main {
             </TypeId>
           </TypeFnReturnType>
         </TypeFn>
-      </StmtObjDeclFieldType>
-    </StmtObjDeclField>
-  </StmtObjDeclFields>
+      </StmtVarDeclType>
+    </StmtVarDecl>
+  </StmtObjDeclMembers>
 </StmtObjDecl>
 <StmtFnDecl start="9:1" end="11:2">
   <StmtFnDeclId>

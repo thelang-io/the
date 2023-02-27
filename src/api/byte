@@ -1,3 +1,5 @@
+// Byte API
+
 /** Allows storing a single byte with value of `0x00` - `0xFF`. */
 obj Byte {
   /** Returns a string representation. */

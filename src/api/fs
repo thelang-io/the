@@ -1,3 +1,5 @@
+// File System API
+
 /** Represents the status of specified path. */
 obj fs_Stats {
   /** Identifier of the device containing this file. */
@@ -46,15 +48,15 @@ obj fs_Stats {
  *
  * @param path - Pathname to change permissions of.
  * @param mode - Numeric bitmask created by ORing following octal numbers:
- *   - 0o400 - read by owner
- *   - 0o200 - write by owner
- *   - 0o100 - execute/search by owner
- *   - 0o40 - read by group
- *   - 0o20 - write by group
- *   - 0o10 - execute/search by group
- *   - 0o4 - read by others
- *   - 0o2 - write by others
- *   - 0o1 - execute/search by others
+ *   - **0o400** - read by owner
+ *   - **0o200** - write by owner
+ *   - **0o100** - execute/search by owner
+ *   - **0o40** - read by group
+ *   - **0o20** - write by group
+ *   - **0o10** - execute/search by group
+ *   - **0o4** - read by others
+ *   - **0o2** - write by others
+ *   - **0o1** - execute/search by others
  */
 fn fs_chmodSync (path: str, mode: int) void
 
@@ -73,6 +75,13 @@ fn fs_chownSync (path: str, uid: int, gid: int) void
  * @param path - Pathname to test.
  */
 fn fs_existsSync (path: str) bool
+
+/**
+ * Tests whether the given path is absolute.
+ *
+ * @param path - Pathname to test.
+ */
+fn fs_isAbsoluteSync (path: str) bool
 
 /**
  * Tests whether the given path is regular file.

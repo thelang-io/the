@@ -1,6 +1,0 @@
-======= stdin =======
-obj Test { field1 int }
-======= stderr =======
-/test:1:19: E0124 - Expected colon after object field name
-  1 | obj Test { field1 int }
-    |                   ^~~

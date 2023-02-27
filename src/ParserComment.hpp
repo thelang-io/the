@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-#include "MockParser.hpp"
+#ifndef SRC_PARSER_COMMENT_HPP
+#define SRC_PARSER_COMMENT_HPP
 
-MockParser::MockParser (const std::string &content) : _l(content), Parser(&this->_l) {
-  this->reader = this->_l.reader;
+#include <map>
+#include <string>
+#include <vector>
 
-  ON_CALL(*this, doc).WillByDefault([this] () {
-    return this->Parser::doc();
-  });
+struct ParserComment {
+  std::string description = "";
+  std::string image = "";
+  std::vector<std::string> notes = {};
+  std::map<std::string, std::string> params = {};
+  std::string ret = "";
+  std::string sign = "";
+};
 
-  ON_CALL(*this, next).WillByDefault([this] (bool _1, bool _2) {
-    return this->Parser::next(_1, _2);
-  });
+ParserComment parseComment (const std::string &);
+bool operator== (const ParserComment &, const ParserComment &);
 
-  ON_CALL(*this, xml).WillByDefault([this] () {
-    return this->Parser::xml();
-  });
-}
-
-MockParser::~MockParser () {
-}
+#endif

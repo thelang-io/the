@@ -1,22 +1,21 @@
+// Char API
+
 /** Allows storing character as one byte. */
 obj Char {
   /** Byte representation of character. */
   byte: byte
-  /** Checks whether character is digit. */
+  /** Whether character is digit. */
   isDigit: bool
-  /** @todo Rename to isLetter */
-  /** Checks whether character is letter. */
-  isAlpha: bool
-  /** @todo Rename to isLetterOrDigit */
-  /** Checks whether character is letter or digit character. */
-  isAlphaNum: bool
-  /** Checks whether character is in lowercase. */
+  /** Whether character is letter. */
+  isLetter: bool
+  /** Whether character is letter or digit. */
+  isLetterOrDigit: bool
+  /** Whether character is in lowercase. */
   isLower: bool
-  /** Checks whether character is in uppercase. */
+  /** Whether character is in uppercase. */
   isUpper: bool
-  /** @todo Rename to isWhitespace */
-  /** Checks whether character is whitespace. */
-  isSpace: bool
+  /** Whether character is whitespace. */
+  isWhitespace: bool
   /** Lowercase representation of character. */
   lower: char
   /** Uppercase representation of character. */

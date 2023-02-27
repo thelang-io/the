@@ -1,3 +1,5 @@
+// Map API
+
 obj Key {
   a: byte
 }
@@ -36,11 +38,9 @@ obj Map {
   fn has (self: ref Self, key: Key) bool
 
   /**
-   * Merges other map’s data into calling map. When iterating, if key exists, then it will get updated with a new value.
+   * Merges other map's data into calling map. When iterating, if key exists, then it will get updated with a new value.
    *
    * @param other - Other map you want to merge.
-   *
-   * @todo Rename arg to other
    */
   fn merge (mut self: ref Self, other: Self) ref Self
 

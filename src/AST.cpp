@@ -283,6 +283,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
       auto nodeFnDeclName = stmtFnDecl.id.val;
 
+      // todo test decl|def of function
       if ((phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) && !this->varMap.has(nodeFnDeclName)) {
         if (nodeFnDeclName == "main") {
           throw Error(this->reader, stmtFnDecl.id.start, stmtFnDecl.id.end, E1021);
@@ -328,7 +329,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
       auto objName = stmtObjDecl.id.val;
 
-      if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
+      // todo test decl|def of obj
+      if ((phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) && !this->typeMap.has(objName)) {
         this->typeMap.obj(objName, this->typeMap.name(objName));
       }
 
@@ -339,73 +341,87 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         this->typeMap.stack.emplace_back(type->name);
         this->typeMap.self = type;
 
-        // todo test usage of self in fields
-        for (const auto &stmtObjDeclField : stmtObjDecl.fields) {
-          auto fieldType = this->_type(stmtObjDeclField.type);
+        for (const auto &member : stmtObjDecl.members) {
+          auto memberName = std::string();
 
-          if (fieldType->isVoid()) {
-            throw Error(this->reader, stmtObjDeclField.type.start, stmtObjDeclField.type.end, E1022);
+          if (std::holds_alternative<ParserStmtFnDecl>(*member.body)) {
+            memberName = std::get<ParserStmtFnDecl>(*member.body).id.val;
+          } else if (std::holds_alternative<ParserStmtVarDecl>(*member.body)) {
+            memberName = std::get<ParserStmtVarDecl>(*member.body).id.val;
           }
 
-          type->fields.push_back(TypeField{stmtObjDeclField.id.val, fieldType, stmtObjDeclField.mut, false, false});
-        }
+          // todo test decl|def of field|method
+          if (!memberName.empty()) {
+            auto it = std::find_if(type->fields.begin(), type->fields.end(), [&] (const auto &it) -> bool {
+              return it.name == memberName;
+            });
 
-        for (const auto &stmtObjDeclMethod : stmtObjDecl.methods) {
-          auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmtObjDeclMethod.body);
-          auto methodDeclName = stmtFnDecl.id.val;
-          auto methodDeclVarName = type->name + "." + methodDeclName;
-
-          if (varMap.has(methodDeclVarName)) {
-            continue;
-          }
-
-          auto methodDeclInfo = TypeFnMethodInfo{this->typeMap.name(methodDeclName)};
-          auto methodDeclTypeParams = std::vector<TypeFnParam>{};
-
-          this->varMap.save();
-
-          for (auto i = static_cast<std::size_t>(0); i < stmtFnDecl.params.size(); i++) {
-            auto stmtFnDeclParam = stmtFnDecl.params[i];
-            auto paramType = stmtFnDeclParam.type != std::nullopt
-              ? this->_type(*stmtFnDeclParam.type)
-              : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
-
-            if (paramType->isVoid() && stmtFnDeclParam.type == std::nullopt) {
-              throw Error(this->reader, stmtFnDeclParam.init->start, stmtFnDeclParam.init->end, E1022);
-            } else if (paramType->isVoid()) {
-              throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
-            }
-
-            auto paramName = stmtFnDeclParam.id.val;
-            auto paramCodeName = this->varMap.name(paramName);
-            auto paramVariadic = stmtFnDeclParam.variadic;
-            auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
-
-            if (paramVariadic) {
-              paramType = this->typeMap.arrayOf(paramType);
-            }
-
-            this->varMap.add(paramName, paramCodeName, paramType, stmtFnDeclParam.mut);
-
-            if (i == 0 && this->typeMap.isSelf(paramType)) {
-              methodDeclInfo.isSelfFirst = true;
-              methodDeclInfo.selfCodeName = paramCodeName;
-              methodDeclInfo.selfType = paramType;
-              methodDeclInfo.isSelfMut = stmtFnDeclParam.mut;
-            } else {
-              methodDeclTypeParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
+            if (it != type->fields.end()) {
+              continue;
             }
           }
 
-          auto methodDeclReturnType = stmtFnDecl.returnType == std::nullopt
-            ? this->typeMap.get("void")
-            : this->_type(*stmtFnDecl.returnType);
-          auto methodDeclType = this->typeMap.fn(methodDeclTypeParams, methodDeclReturnType, methodDeclInfo);
-          auto methodDeclAliasType = this->typeMap.alias(methodDeclName, methodDeclType);
+          if (std::holds_alternative<ParserStmtFnDecl>(*member.body)) {
+            auto stmtFnDecl = std::get<ParserStmtFnDecl>(*member.body);
+            auto methodDeclName = stmtFnDecl.id.val;
+            auto methodDeclInfo = TypeFnMethodInfo{this->typeMap.name(methodDeclName)};
+            auto methodDeclTypeParams = std::vector<TypeFnParam>{};
 
-          this->varMap.restore();
-          this->varMap.add(methodDeclVarName, methodDeclAliasType->codeName, methodDeclType);
-          type->fields.push_back(TypeField{methodDeclName, methodDeclType, false, true, false});
+            this->varMap.save();
+
+            for (auto i = static_cast<std::size_t>(0); i < stmtFnDecl.params.size(); i++) {
+              auto stmtFnDeclParam = stmtFnDecl.params[i];
+              auto paramType = stmtFnDeclParam.type != std::nullopt
+                ? this->_type(*stmtFnDeclParam.type)
+                : this->_nodeExprType(*stmtFnDeclParam.init, nullptr);
+
+              if (paramType->isVoid() && stmtFnDeclParam.type == std::nullopt) {
+                throw Error(this->reader, stmtFnDeclParam.init->start, stmtFnDeclParam.init->end, E1022);
+              } else if (paramType->isVoid()) {
+                throw Error(this->reader, stmtFnDeclParam.type->start, stmtFnDeclParam.type->end, E1022);
+              }
+
+              auto paramName = stmtFnDeclParam.id.val;
+              auto paramCodeName = this->varMap.name(paramName);
+              auto paramVariadic = stmtFnDeclParam.variadic;
+              auto paramRequired = stmtFnDeclParam.init == std::nullopt && !paramVariadic;
+
+              if (paramVariadic) {
+                paramType = this->typeMap.arrayOf(paramType);
+              }
+
+              this->varMap.add(paramName, paramCodeName, paramType, stmtFnDeclParam.mut);
+
+              if (i == 0 && this->typeMap.isSelf(paramType)) {
+                methodDeclInfo.isSelfFirst = true;
+                methodDeclInfo.selfCodeName = paramCodeName;
+                methodDeclInfo.selfType = paramType;
+                methodDeclInfo.isSelfMut = stmtFnDeclParam.mut;
+              } else {
+                methodDeclTypeParams.push_back(TypeFnParam{paramName, paramType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
+              }
+            }
+
+            auto methodDeclReturnType = stmtFnDecl.returnType == std::nullopt
+              ? this->typeMap.get("void")
+              : this->_type(*stmtFnDecl.returnType);
+            auto methodDeclType = this->typeMap.fn(methodDeclTypeParams, methodDeclReturnType, methodDeclInfo);
+            auto methodDeclAliasType = this->typeMap.alias(methodDeclName, methodDeclType);
+
+            this->varMap.restore();
+            this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
+            type->fields.push_back(TypeField{methodDeclName, methodDeclType, false, true, false});
+          } else if (std::holds_alternative<ParserStmtVarDecl>(*member.body)) {
+            // todo test usage of self in fields
+            auto stmtVarDecl = std::get<ParserStmtVarDecl>(*member.body);
+            auto fieldType = this->_type(*stmtVarDecl.type);
+
+            if (fieldType->isVoid()) {
+              throw Error(this->reader, stmtVarDecl.type->start, stmtVarDecl.type->end, E1022);
+            }
+
+            type->fields.push_back(TypeField{stmtVarDecl.id.val, fieldType, stmtVarDecl.mut, false, false});
+          }
         }
 
         this->typeMap.self = initialTypeMapSelf;
@@ -575,7 +591,11 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     this->typeMap.stack.emplace_back(type->name);
     this->typeMap.self = type;
 
-    for (const auto &stmtObjDeclMethod : stmtObjDecl.methods) {
+    for (const auto &stmtObjDeclMethod : stmtObjDecl.members) {
+      if (!std::holds_alternative<ParserStmtFnDecl>(*stmtObjDeclMethod.body)) {
+        continue;
+      }
+
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmtObjDeclMethod.body);
       auto initialState = this->state;
 

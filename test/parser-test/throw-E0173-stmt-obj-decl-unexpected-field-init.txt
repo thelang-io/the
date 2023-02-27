@@ -1,0 +1,8 @@
+======= stdin =======
+obj Test {
+  mut a: int = 10
+}
+======= stderr =======
+/test:2:3: E0173 - Object declaration field is not allowed to have initializer
+  2 |   mut a: int = 10
+    |   ^~~~~~~~~~~~~~~

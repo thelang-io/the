@@ -1,3 +1,5 @@
+// Globals API
+
 /**
  * Terminates the current thread.
  *
@@ -12,8 +14,6 @@ fn exit (status := 0) void
  * @param separator - String separating items. The default is empty string.
  * @param terminator - String terminating items. The default is `os_EOL`.
  * @param to - Output where to write items. Can be `stdout` or `stderr`. The default is `stdout`.
- *
- * @todo Throw if to is not stdout or stderr.
  */
 fn print (items: any..., separator := " ", terminator := os_EOL, to := "stdout") void
 

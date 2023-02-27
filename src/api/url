@@ -1,7 +1,9 @@
+// URL API
+
 /**
  * URL object followed by implementing WHATWG URL Standard.
- * ![url_URL explanation](/assets/images/url-explanation.png)
  *
+ * ![url_URL explanation](/assets/images/url-explanation.png)
  * @note URLs containing authorization information are not supported.
  */
 obj url_URL {

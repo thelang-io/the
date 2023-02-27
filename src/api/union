@@ -1,3 +1,5 @@
+// Union API
+
 /** Allows storing a combination of several types under a single variable. */
 obj Union {
   /** Returns a string representation. */

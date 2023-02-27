@@ -104,6 +104,7 @@ INSTANTIATE_TEST_SUITE_P(StmtMain, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserPassTest, testing::Values(
   "stmt-obj-decl",
+  "stmt-obj-decl-empty",
   "stmt-obj-decl-recursive",
   "stmt-obj-decl-scoped",
   "stmt-obj-decl-field-fn",
@@ -243,15 +244,10 @@ INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
   "throw-E0121-stmt-obj-decl-missing-id",
   "throw-E0122-stmt-obj-decl-missing-lbrace",
-  "throw-E0123-stmt-obj-decl-missing-field-name",
-  "throw-E0123-stmt-obj-decl-missing-multi-field-name",
-  "throw-E0123-stmt-obj-decl-mut-missing-field-name",
-  "throw-E0123-stmt-obj-decl-mut-missing-multi-field-name",
-  "throw-E0124-stmt-obj-decl-missing-colon-after-field-name",
-  "throw-E0125-stmt-obj-decl-missing-field-type",
-  "throw-E0126-stmt-obj-decl-empty",
-  "throw-E0127-stmt-obj-decl-missing-field-type-rpar",
-  "throw-E0125-stmt-obj-decl-missing-field-parenthesized-type"
+  "throw-E0123-stmt-obj-decl-unexpected-statement",
+  "throw-E0123-stmt-obj-decl-expected-member",
+  "throw-E0173-stmt-obj-decl-unexpected-field-init",
+  "throw-E0173-stmt-obj-decl-unexpected-field-short"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserThrowTest, testing::Values(

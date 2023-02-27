@@ -17,6 +17,50 @@
 #include "ParserType.hpp"
 #include "config.hpp"
 
+std::string ParserType::stringify () const {
+  auto code = std::string();
+
+  if (std::holds_alternative<ParserTypeArray>(*this->body)) {
+    auto typeBody = std::get<ParserTypeArray>(*this->body);
+    code = typeBody.elementType.stringify() + "[]";
+  } else if (std::holds_alternative<ParserTypeFn>(*this->body)) {
+    auto typeBody = std::get<ParserTypeFn>(*this->body);
+    code += "(";
+
+    for (auto i = static_cast<std::size_t>(0); i < typeBody.params.size(); i++) {
+      auto param = typeBody.params[i];
+
+      code += i == 0 ? "" : ", ";
+      code += param.mut ? "mut " : "";
+      code += param.id == std::nullopt ? "" : param.id->val;
+      code += ": " + param.type.stringify();
+      code += param.variadic ? "..." : "";
+    }
+
+    code += ") -> " + typeBody.returnType.stringify();
+  } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
+    auto typeBody = std::get<ParserTypeId>(*this->body);
+    code = typeBody.id.val;
+  } else if (std::holds_alternative<ParserTypeMap>(*this->body)) {
+    auto typeBody = std::get<ParserTypeMap>(*this->body);
+    code = typeBody.valueType.stringify() + "[" + typeBody.keyType.stringify() + "]";
+  } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
+    auto typeBody = std::get<ParserTypeOptional>(*this->body);
+    code = typeBody.type.stringify() + "?";
+  } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
+    auto typeBody = std::get<ParserTypeRef>(*this->body);
+    code = "ref " + typeBody.refType.stringify();
+  } else if (std::holds_alternative<ParserTypeUnion>(*this->body)) {
+    auto typeBody = std::get<ParserTypeUnion>(*this->body);
+
+    for (auto i = static_cast<std::size_t>(0); i < typeBody.subTypes.size(); i++) {
+      code += typeBody.subTypes[i].stringify();
+    }
+  }
+
+  return code;
+}
+
 std::string ParserType::xml (std::size_t indent) const {
   auto typeName = std::string("Type");
 

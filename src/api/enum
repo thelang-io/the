@@ -1,3 +1,5 @@
+// Enumeration API
+
 /** Allows storing a group of related values under a single variable. */
 obj Enumeration {
   /** Enumerator string representation. */

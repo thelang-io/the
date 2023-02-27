@@ -1,5 +1,5 @@
+// Void API
+
 /** Used when there is no data. */
 obj Void {
-  /** Returns a string representation. */
-  fn str (self: ref Self) str
 }

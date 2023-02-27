@@ -1,3 +1,5 @@
+// Request API
+
 /** Used to pass headers to request and get headers from response. */
 obj request_Header {
   /** Header name. */
@@ -10,7 +12,7 @@ obj request_Header {
 }
 
 /**
- * Contains all the information about the request. Currently, has no exposed fields that you can use.
+ * Contains all the information about the request.
  *
  * @note Currently, has no exposed fields that you can use.
  */
@@ -25,7 +27,7 @@ obj request_Request {
   fn str (self: ref Self) str
 }
 
-/** Contains all the information about the request’s response data. */
+/** Contains all the information about the request's response data. */
 obj request_Response {
   /** Additional data returned by server. */
   data: buffer_Buffer
@@ -46,4 +48,9 @@ obj request_Response {
  * @param data - `buffer_Buffer` containing additional data. The default is empty buffer.
  * @param headers - Array of `request_Header` objects. The default is empty array.
  */
-fn request_open (method: str, url: str, data := buffer_Buffer{}, headers: request_Header[] = []) request_Request
+fn request_open (
+  method: str,
+  url: str,
+  data := buffer_Buffer{},
+  headers: request_Header[] = []
+) request_Request
