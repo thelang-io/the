@@ -352,8 +352,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
           // todo test decl|def of field|method
           if (!memberName.empty()) {
-            auto it = std::find_if(type->fields.begin(), type->fields.end(), [&] (const auto &it) -> bool {
-              return it.name == memberName;
+            auto it = std::find_if(type->fields.begin(), type->fields.end(), [&] (const auto &it2) -> bool {
+              return it2.name == memberName;
             });
 
             if (it != type->fields.end()) {

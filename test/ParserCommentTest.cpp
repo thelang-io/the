@@ -33,20 +33,20 @@ TEST(ParserCommentTest, Description) {
   EXPECT_EQ(parseComment("*").description, "");
   EXPECT_EQ(parseComment("test").description, "test");
   EXPECT_EQ(parseComment("test description").description, "test description");
-  EXPECT_EQ(parseComment("test\ndescription").description, "test description");
-  EXPECT_EQ(parseComment("test\ndescription").description, "test description");
-  EXPECT_EQ(parseComment("test\n description").description, "test description");
-  EXPECT_EQ(parseComment("test\n *description").description, "test description");
-  EXPECT_EQ(parseComment("test \n * \n description").description, "test description");
-  EXPECT_EQ(parseComment("test\n * description").description, "test description");
-  EXPECT_EQ(parseComment("test \n * description\n * multiline").description, "test description multiline");
-  EXPECT_EQ(parseComment("test \n * \n description \n * \n multiline").description, "test description multiline");
+  EXPECT_EQ(parseComment("test" EOL "description").description, "test description");
+  EXPECT_EQ(parseComment("test" EOL "description").description, "test description");
+  EXPECT_EQ(parseComment("test" EOL " description").description, "test description");
+  EXPECT_EQ(parseComment("test" EOL " *description").description, "test description");
+  EXPECT_EQ(parseComment("test " EOL " * " EOL " description").description, "test description");
+  EXPECT_EQ(parseComment("test" EOL " * description").description, "test description");
+  EXPECT_EQ(parseComment("test " EOL " * description" EOL " * multiline").description, "test description multiline");
+  EXPECT_EQ(parseComment("test " EOL " * " EOL " description " EOL " * " EOL " multiline").description, "test description multiline");
 }
 
 TEST(ParserCommentTest, DescriptionMultiline) {
   EXPECT_EQ(parseComment("! description").description, "! description");
-  EXPECT_EQ(parseComment("test \n ! description").description, "test" EOL "! description");
-  EXPECT_EQ(parseComment("test \n ! description\n ! multiline").description, "test" EOL "! description" EOL "! multiline");
+  EXPECT_EQ(parseComment("test " EOL " ! description").description, "test" EOL "! description");
+  EXPECT_EQ(parseComment("test " EOL " ! description" EOL " ! multiline").description, "test" EOL "! description" EOL "! multiline");
 }
 
 TEST(ParserCommentTest, Image) {
@@ -55,10 +55,10 @@ TEST(ParserCommentTest, Image) {
   auto comment3 = ParserComment{"test", "![test](/test.svg)"};
   auto comment4 = ParserComment{"test test", "![test](/test.svg)"};
 
-  EXPECT_EQ(parseComment("test \n ![test](/test.svg)"), comment1);
+  EXPECT_EQ(parseComment("test " EOL " ![test](/test.svg)"), comment1);
   EXPECT_EQ(parseComment("![test](/test.svg)"), comment2);
-  EXPECT_EQ(parseComment("![test](/test.svg) \n test"), comment3);
-  EXPECT_EQ(parseComment("test \n ![test](/test.svg) \n test"), comment4);
+  EXPECT_EQ(parseComment("![test](/test.svg) " EOL " test"), comment3);
+  EXPECT_EQ(parseComment("test " EOL " ![test](/test.svg) " EOL " test"), comment4);
 }
 
 TEST(ParserCommentTest, Params) {
@@ -97,52 +97,52 @@ TEST(ParserCommentTest, Params) {
 
   auto comment6 = ParserComment{
     .params = {
-      {"test", "Test 1\n- Test 2"}
+      {"test", "Test 1" EOL "- Test 2"}
     }
   };
 
   auto comment7 = ParserComment{
     .params = {
-      {"test", "Test 1\n  - Test 2"}
+      {"test", "Test 1" EOL "  - Test 2"}
     }
   };
 
   EXPECT_EQ(parseComment("@param test - Test"), comment1);
   EXPECT_EQ(parseComment("@param test Test"), comment1);
   EXPECT_EQ(parseComment("@param test"), comment2);
-  EXPECT_EQ(parseComment("@param test1 - Test 1\n @param test2 - Test 2"), comment3);
-  EXPECT_EQ(parseComment("@param test1 Test 1\n @param test2 Test 2\n @param test3 Test 3"), comment4);
-  EXPECT_EQ(parseComment("@param test - Test 1\n Test 2"), comment5);
-  EXPECT_EQ(parseComment("@param test - Test 1\n *Test 2"), comment5);
-  EXPECT_EQ(parseComment("@param test - Test 1\n * Test 2"), comment5);
-  EXPECT_EQ(parseComment("@param test - Test 1\n - Test 2"), comment6);
-  EXPECT_EQ(parseComment("@param test - Test 1\n *- Test 2"), comment6);
-  EXPECT_EQ(parseComment("@param test - Test 1\n *   - Test 2"), comment7);
+  EXPECT_EQ(parseComment("@param test1 - Test 1" EOL " @param test2 - Test 2"), comment3);
+  EXPECT_EQ(parseComment("@param test1 Test 1" EOL " @param test2 Test 2" EOL " @param test3 Test 3"), comment4);
+  EXPECT_EQ(parseComment("@param test - Test 1" EOL " Test 2"), comment5);
+  EXPECT_EQ(parseComment("@param test - Test 1" EOL " *Test 2"), comment5);
+  EXPECT_EQ(parseComment("@param test - Test 1" EOL " * Test 2"), comment5);
+  EXPECT_EQ(parseComment("@param test - Test 1" EOL " - Test 2"), comment6);
+  EXPECT_EQ(parseComment("@param test - Test 1" EOL " *- Test 2"), comment6);
+  EXPECT_EQ(parseComment("@param test - Test 1" EOL " *   - Test 2"), comment7);
 }
 
 TEST(ParserCommentTest, Notes) {
   auto comment1 = ParserComment{.notes = {"test"}};
   auto comment2 = ParserComment{.notes = {"test description"}};
   auto comment3 = ParserComment{.notes = {"test description multiline"}};
-  auto comment4 = ParserComment{.notes = {"test\\\ndescription multiline"}};
-  auto comment5 = ParserComment{.notes = {"test\\\ndescription\\\nmultiline"}};
+  auto comment4 = ParserComment{.notes = {"test\\" EOL "description multiline"}};
+  auto comment5 = ParserComment{.notes = {"test\\" EOL "description\\" EOL "multiline"}};
   auto comment6 = ParserComment{.notes = {"test1", "test2"}};
 
   EXPECT_EQ(parseComment("@note test"), comment1);
   EXPECT_EQ(parseComment("@note test description"), comment2);
-  EXPECT_EQ(parseComment("@note test\ndescription"), comment2);
-  EXPECT_EQ(parseComment("@note test\ndescription"), comment2);
-  EXPECT_EQ(parseComment("@note test\n description"), comment2);
-  EXPECT_EQ(parseComment("@note test\n *description"), comment2);
-  EXPECT_EQ(parseComment("@note test \n * \n description"), comment2);
-  EXPECT_EQ(parseComment("@note test\n * description"), comment2);
-  EXPECT_EQ(parseComment("@note test \n * description\n * multiline"), comment3);
-  EXPECT_EQ(parseComment("@note test \n * \n description \n * \n multiline"), comment3);
-  EXPECT_EQ(parseComment("@note test\\\n * description\n * multiline"), comment4);
-  EXPECT_EQ(parseComment("@note test\\\n * description\\\n * multiline"), comment5);
-  EXPECT_EQ(parseComment("@note test1\n @note test2"), comment6);
-  EXPECT_EQ(parseComment("@note test1\n *@note test2"), comment6);
-  EXPECT_EQ(parseComment("@note test1\n * @note test2"), comment6);
+  EXPECT_EQ(parseComment("@note test" EOL "description"), comment2);
+  EXPECT_EQ(parseComment("@note test" EOL "description"), comment2);
+  EXPECT_EQ(parseComment("@note test" EOL " description"), comment2);
+  EXPECT_EQ(parseComment("@note test" EOL " *description"), comment2);
+  EXPECT_EQ(parseComment("@note test " EOL " * " EOL " description"), comment2);
+  EXPECT_EQ(parseComment("@note test" EOL " * description"), comment2);
+  EXPECT_EQ(parseComment("@note test " EOL " * description" EOL " * multiline"), comment3);
+  EXPECT_EQ(parseComment("@note test " EOL " * " EOL " description " EOL " * " EOL " multiline"), comment3);
+  EXPECT_EQ(parseComment("@note test\\" EOL " * description" EOL " * multiline"), comment4);
+  EXPECT_EQ(parseComment("@note test\\" EOL " * description\\" EOL " * multiline"), comment5);
+  EXPECT_EQ(parseComment("@note test1" EOL " @note test2"), comment6);
+  EXPECT_EQ(parseComment("@note test1" EOL " *@note test2"), comment6);
+  EXPECT_EQ(parseComment("@note test1" EOL " * @note test2"), comment6);
 }
 
 TEST(ParserCommentTest, Ret) {
@@ -152,11 +152,11 @@ TEST(ParserCommentTest, Ret) {
   auto comment4 = ParserComment{.description = "", .ret = "type"};
   auto comment5 = ParserComment{.description = "test", .ret = "type"};
 
-  EXPECT_EQ(parseComment("test \n @return type"), comment1);
+  EXPECT_EQ(parseComment("test " EOL " @return type"), comment1);
   EXPECT_EQ(parseComment("@return"), comment2);
   EXPECT_EQ(parseComment("@return type"), comment3);
-  EXPECT_EQ(parseComment("@return type \n test"), comment4);
-  EXPECT_EQ(parseComment("test \n @return type \n test"), comment5);
+  EXPECT_EQ(parseComment("@return type " EOL " test"), comment4);
+  EXPECT_EQ(parseComment("test " EOL " @return type " EOL " test"), comment5);
 }
 
 TEST(ParserCommentTest, Sign) {
@@ -166,9 +166,9 @@ TEST(ParserCommentTest, Sign) {
   auto comment4 = ParserComment{.description = "", .sign = "(a: int, b: int) int"};
   auto comment5 = ParserComment{.description = "test", .sign = "[idx: int]"};
 
-  EXPECT_EQ(parseComment("test \n @signature [idx: int]"), comment1);
+  EXPECT_EQ(parseComment("test " EOL " @signature [idx: int]"), comment1);
   EXPECT_EQ(parseComment("@signature"), comment2);
   EXPECT_EQ(parseComment("@signature () void"), comment3);
-  EXPECT_EQ(parseComment("@signature (a: int, b: int) int \n test"), comment4);
-  EXPECT_EQ(parseComment("test \n @signature [idx: int] \n test"), comment5);
+  EXPECT_EQ(parseComment("@signature (a: int, b: int) int " EOL " test"), comment4);
+  EXPECT_EQ(parseComment("test " EOL " @signature [idx: int] " EOL " test"), comment5);
 }
