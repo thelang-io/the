@@ -1,0 +1,220 @@
+======= stdin =======
+obj Test {
+  a: Self?
+}
+
+main {
+  test1 := Test{}
+  test2 := Test{a: test1}
+  test3 := Test{a: test2}
+  test4 := Test{a: test3}
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeField name="a">
+      <TypeOptional name="opt_Test">
+        <TypeObj codeName="Test_0" name="Test" />
+      </TypeOptional>
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test1" codeName="test1_0" frame="2">
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeField name="a">
+            <TypeOptional name="opt_Test">
+              <TypeObj codeName="Test_0" name="Test" />
+            </TypeOptional>
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Test_0" name="Test">
+            <TypeField name="a">
+              <TypeOptional name="opt_Test">
+                <TypeObj codeName="Test_0" name="Test" />
+              </TypeOptional>
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test2" codeName="test2_0" frame="2">
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeField name="a">
+            <TypeOptional name="opt_Test">
+              <TypeObj codeName="Test_0" name="Test" />
+            </TypeOptional>
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Test_0" name="Test">
+            <TypeField name="a">
+              <TypeOptional name="opt_Test">
+                <TypeObj codeName="Test_0" name="Test" />
+              </TypeOptional>
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjProp name="a">
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeField name="a">
+                      <TypeOptional name="opt_Test">
+                        <TypeObj codeName="Test_0" name="Test" />
+                      </TypeOptional>
+                    </TypeField>
+                  </TypeObj>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test1" codeName="test1_0" frame="2">
+                      <TypeObj codeName="Test_0" name="Test">
+                        <TypeField name="a">
+                          <TypeOptional name="opt_Test">
+                            <TypeObj codeName="Test_0" name="Test" />
+                          </TypeOptional>
+                        </TypeField>
+                      </TypeObj>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test3" codeName="test3_0" frame="2">
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeField name="a">
+            <TypeOptional name="opt_Test">
+              <TypeObj codeName="Test_0" name="Test" />
+            </TypeOptional>
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Test_0" name="Test">
+            <TypeField name="a">
+              <TypeOptional name="opt_Test">
+                <TypeObj codeName="Test_0" name="Test" />
+              </TypeOptional>
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjProp name="a">
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeField name="a">
+                      <TypeOptional name="opt_Test">
+                        <TypeObj codeName="Test_0" name="Test" />
+                      </TypeOptional>
+                    </TypeField>
+                  </TypeObj>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test2" codeName="test2_0" frame="2">
+                      <TypeObj codeName="Test_0" name="Test">
+                        <TypeField name="a">
+                          <TypeOptional name="opt_Test">
+                            <TypeObj codeName="Test_0" name="Test" />
+                          </TypeOptional>
+                        </TypeField>
+                      </TypeObj>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test4" codeName="test4_0" frame="2">
+        <TypeObj codeName="Test_0" name="Test">
+          <TypeField name="a">
+            <TypeOptional name="opt_Test">
+              <TypeObj codeName="Test_0" name="Test" />
+            </TypeOptional>
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="Test_0" name="Test">
+            <TypeField name="a">
+              <TypeOptional name="opt_Test">
+                <TypeObj codeName="Test_0" name="Test" />
+              </TypeOptional>
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjProp name="a">
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeObj codeName="Test_0" name="Test">
+                    <TypeField name="a">
+                      <TypeOptional name="opt_Test">
+                        <TypeObj codeName="Test_0" name="Test" />
+                      </TypeOptional>
+                    </TypeField>
+                  </TypeObj>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test3" codeName="test3_0" frame="2">
+                      <TypeObj codeName="Test_0" name="Test">
+                        <TypeField name="a">
+                          <TypeOptional name="opt_Test">
+                            <TypeObj codeName="Test_0" name="Test" />
+                          </TypeOptional>
+                        </TypeField>
+                      </TypeObj>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>

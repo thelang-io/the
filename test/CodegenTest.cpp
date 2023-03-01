@@ -981,6 +981,7 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-field-obj",
   "node-obj-decl-field-opt",
   "node-obj-decl-field-ref",
+  "node-obj-decl-field-self",
   "node-obj-decl-field-str",
   "node-obj-decl-field-union",
   "node-obj-decl-field-variadic",

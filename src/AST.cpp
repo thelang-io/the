@@ -283,7 +283,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
       auto nodeFnDeclName = stmtFnDecl.id.val;
 
-      // todo test decl|def of function
       if ((phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) && !this->varMap.has(nodeFnDeclName)) {
         if (nodeFnDeclName == "main") {
           throw Error(this->reader, stmtFnDecl.id.start, stmtFnDecl.id.end, E1021);
@@ -329,8 +328,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
       auto objName = stmtObjDecl.id.val;
 
-      // todo test decl|def of obj
-      if ((phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) && !this->typeMap.has(objName)) {
+      if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
         this->typeMap.obj(objName, this->typeMap.name(objName));
       }
 
@@ -350,7 +348,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             memberName = std::get<ParserStmtVarDecl>(*member.body).id.val;
           }
 
-          // todo test decl|def of field|method
           if (!memberName.empty()) {
             auto it = std::find_if(type->fields.begin(), type->fields.end(), [&] (const auto &it2) -> bool {
               return it2.name == memberName;
@@ -412,7 +409,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
             type->fields.push_back(TypeField{methodDeclName, methodDeclType, false, true, false});
           } else if (std::holds_alternative<ParserStmtVarDecl>(*member.body)) {
-            // todo test usage of self in fields
             auto stmtVarDecl = std::get<ParserStmtVarDecl>(*member.body);
             auto fieldType = this->_type(*stmtVarDecl.type);
 

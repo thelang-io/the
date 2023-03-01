@@ -9,7 +9,7 @@ All interactions for this project are covered by the
 By participating in this project you agree to abide by its terms.
 
 ## If you just want to ask a question
-- Ask it on our forum [forum][the-forum]
+- Ask it on our [forum][the-forum]
 - Or talk directly to founder on [Discord][the-discord] or
   [Telegram][the-telegram]
 

@@ -33,9 +33,9 @@ TEST(UtilsTest, StrLines) {
 
   EXPECT_EQ(str_lines(""), std::vector<std::string>{});
   EXPECT_EQ(str_lines("test"), std::vector<std::string>{"test"});
-  EXPECT_EQ(str_lines("\ntest"), std::vector<std::string>{"test"});
-  EXPECT_EQ(str_lines("test\n"), std::vector<std::string>{"test"});
-  EXPECT_EQ(str_lines("\ntest\n"), std::vector<std::string>{"test"});
-  EXPECT_EQ(str_lines("\ntest1\ntest2"), output1);
-  EXPECT_EQ(str_lines("\ntest1\ntest2\n"), output1);
+  EXPECT_EQ(str_lines(EOL "test"), std::vector<std::string>{"test"});
+  EXPECT_EQ(str_lines("test" EOL), std::vector<std::string>{"test"});
+  EXPECT_EQ(str_lines(EOL "test" EOL), std::vector<std::string>{"test"});
+  EXPECT_EQ(str_lines(EOL "test1" EOL "test2"), output1);
+  EXPECT_EQ(str_lines(EOL "test1" EOL "test2" EOL), output1);
 }
