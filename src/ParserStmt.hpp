@@ -59,7 +59,6 @@ struct ParserStmt {
   std::optional<ParserStmt *> nextSibling = std::nullopt;
   std::optional<ParserStmt *> prevSibling = std::nullopt;
 
-  // todo test
   std::string doc (const std::string & = "") const;
   std::string xml (std::size_t = 0) const;
 };

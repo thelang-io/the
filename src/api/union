@@ -1,7 +1,7 @@
 // Union API
 
-/** Allows storing a combination of several types under a single variable. */
+/* Allows storing a combination of several types under a single variable. */
 obj Union {
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

@@ -1,7 +1,7 @@
 // Any API
 
-/** Allows storing any variable of any type. */
+/* Allows storing any variable of any type. */
 obj Any {
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

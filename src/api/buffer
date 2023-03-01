@@ -6,6 +6,6 @@
  * @note Currently, has no exposed fields that you can use.
  */
 obj buffer_Buffer {
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

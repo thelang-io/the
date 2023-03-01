@@ -1,0 +1,377 @@
+======= stdin =======
+/** Test description. */
+obj Test1 {
+  // This is a field
+  field1: int
+  // This is another field
+  mut field2: str
+
+  /**
+   * Does something.
+   * @param test - Tests something
+   */
+  fn method1 () void
+
+  /* Does something. */
+  fn method2 (a: int) int
+
+  /*
+   * Does anything.
+   * @param self - Selfish
+   */
+  fn method3 (self: ref Self, a: int) int
+
+  /*
+   No asterisk description.
+   @param a - Parameter
+   */
+  fn method4 (mut self: ref Self, mut a: int) int
+
+  /**
+   * Does something.
+   * @param a - Tests something
+   */
+  fn method5 (a: int, b: int) int
+
+  /*
+   No asterisk description.
+   @param a - Parameter
+   @param b - Other param
+   */
+  fn method6 (self: ref Self, a: int, b: int) int
+  /*
+   * Asterisk description.
+   * @param a - Parameter
+   * @param b - Other param
+   */
+  fn method7 (mut self: ref Self, mut a: int, mut b: int) int
+
+  /*
+   * Method description.
+   * @param a - Parameter
+   */
+  fn variadic1 (a: int...) int
+  /*
+   * Method description.
+   * @param a - Parameter
+   */
+  fn variadic2 (self: ref Self, a: int...) int
+  /*
+   * Method description.
+   * @param a - Parameter
+   */
+  fn variadic3 (mut self: ref Self, mut a: int...) int
+  /*
+   * Method description.
+   * @param a - Parameter
+   * @param b - Another parameter
+   */
+  fn variadic4 (a: int..., b: int...) int
+  /*
+   * Method description.
+   * @param a - Parameter
+   * @param b - Another parameter
+   */
+  fn variadic5 (self: ref Self, a: int..., b: int...) int
+  /*
+   * Method description.
+   * @param a - Parameter
+   * @param b - Another parameter
+   * @return int
+   */
+  fn variadic6 (mut self: ref Self, mut a: int..., mut b: int...) int
+
+  /*
+   * Asterisk description.
+   * @param a - Parameter
+   */
+  fn init1 (a := 1) int
+  /*
+   * Asterisk description.
+   * @param a - Parameter
+   * @param b - Other param
+   * @param c - Another param
+   */
+  fn init2 (a := 1, b := 1) int
+  /*
+   * Asterisk description.
+   * @param a - Parameter
+   */
+  fn init3 (a: i64 = 1) int
+  /*
+   * Asterisk description.
+   * @param a - Parameter
+   * @param b - Another param
+   */
+  fn init3 (a: i64 = 1, b: i64 = 1) int
+}
+/* @note Something */
+obj TestNote {
+  /* This is a field */
+  field1: int
+  /* This is another field */
+  mut field2: str
+
+  /* Does something. */
+  fn method () void
+}
+/*
+ * @note Something else \
+ *   or not
+ * @note But anyway \
+ *   it should be multiline
+ */
+obj TestMultilineMultipleNotes {
+}
+/* ![image](/test.svg) */
+obj TestImage {
+  /* This is a field */
+  field1: int
+  /* This is another field */
+  mut field2: str
+
+  /* Does something. */
+  fn method () void
+}
+======= stdout =======
+## `Test1`
+Test description.
+
+```the
+obj Test1 {
+  field1: int
+  mut field2: str
+}
+```
+
+### Fields
+**field1** - This is a field \
+**field2** - This is another field
+
+## `Test1.method1()`
+Does something.
+
+```the
+fn Test1.method1 () void
+```
+
+## `Test1.method2()`
+Does something.
+
+```the
+fn Test1.method2 (a: int) int
+```
+
+## `Test1.method3()`
+Does anything.
+
+```the
+fn Test1.method3 (a: int) int
+```
+
+## `Test1.method4()`
+No asterisk description.
+
+```the
+fn Test1.method4 (mut a: int) int
+```
+
+### Parameters
+**a** - Parameter
+
+## `Test1.method5()`
+Does something.
+
+```the
+fn Test1.method5 (a: int, b: int) int
+```
+
+### Parameters
+**a** - Tests something
+
+## `Test1.method6()`
+No asterisk description.
+
+```the
+fn Test1.method6 (a: int, b: int) int
+```
+
+### Parameters
+**a** - Parameter \
+**b** - Other param
+
+## `Test1.method7()`
+Asterisk description.
+
+```the
+fn Test1.method7 (mut a: int, mut b: int) int
+```
+
+### Parameters
+**a** - Parameter \
+**b** - Other param
+
+## `Test1.variadic1()`
+Method description.
+
+```the
+fn Test1.variadic1 (a: int...) int
+```
+
+### Parameters
+**a** - Parameter
+
+## `Test1.variadic2()`
+Method description.
+
+```the
+fn Test1.variadic2 (a: int...) int
+```
+
+### Parameters
+**a** - Parameter
+
+## `Test1.variadic3()`
+Method description.
+
+```the
+fn Test1.variadic3 (mut a: int...) int
+```
+
+### Parameters
+**a** - Parameter
+
+## `Test1.variadic4()`
+Method description.
+
+```the
+fn Test1.variadic4 (a: int..., b: int...) int
+```
+
+### Parameters
+**a** - Parameter \
+**b** - Another parameter
+
+## `Test1.variadic5()`
+Method description.
+
+```the
+fn Test1.variadic5 (a: int..., b: int...) int
+```
+
+### Parameters
+**a** - Parameter \
+**b** - Another parameter
+
+## `Test1.variadic6()`
+Method description.
+
+```the
+fn Test1.variadic6 (mut a: int..., mut b: int...) int
+```
+
+### Parameters
+**a** - Parameter \
+**b** - Another parameter
+
+## `Test1.init1()`
+Asterisk description.
+
+```the
+fn Test1.init1 (a := 1) int
+```
+
+### Parameters
+**a** - Parameter
+
+## `Test1.init2()`
+Asterisk description.
+
+```the
+fn Test1.init2 (a := 1, b := 1) int
+```
+
+### Parameters
+**a** - Parameter \
+**b** - Other param
+
+## `Test1.init3()`
+Asterisk description.
+
+```the
+fn Test1.init3 (a: i64 = 1) int
+```
+
+### Parameters
+**a** - Parameter
+
+## `Test1.init3()`
+Asterisk description.
+
+```the
+fn Test1.init3 (a: i64 = 1, b: i64 = 1) int
+```
+
+### Parameters
+**a** - Parameter \
+**b** - Another param
+
+## `TestNote`
+
+```the
+obj TestNote {
+  field1: int
+  mut field2: str
+}
+```
+
+### Fields
+**field1** - This is a field \
+**field2** - This is another field
+
+> ### NOTE:
+  Something
+
+## `TestNote.method()`
+Does something.
+
+```the
+fn TestNote.method () void
+```
+
+## `TestMultilineMultipleNotes`
+
+```the
+obj TestMultilineMultipleNotes {
+}
+```
+
+> ### NOTE:
+  Something else \
+  or not
+
+> ### NOTE:
+  But anyway \
+  it should be multiline
+
+## `TestImage`
+
+```the
+obj TestImage {
+  field1: int
+  mut field2: str
+}
+```
+
+### Fields
+**field1** - This is a field \
+**field2** - This is another field
+
+![image](/test.svg)
+
+## `TestImage.method()`
+Does something.
+
+```the
+fn TestImage.method () void
+```

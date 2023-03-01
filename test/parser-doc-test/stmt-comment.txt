@@ -1,0 +1,55 @@
+======= stdin =======
+obj Test {
+  /**
+   * @signature [idx: int]
+   */
+
+  /**
+   * Description
+   * @signature [idx: int]
+   * @return ref int
+   */
+
+  /**
+   * @signature test (int, int)
+   */
+
+  /**
+   * Description
+   * @signature test (a: int, mut b: int)
+   * @return ref int
+   */
+}
+======= stdout =======
+## `Test`
+
+```the
+obj Test {
+}
+```
+
+## `Test.[]`
+
+```the
+Test.[idx: int] void
+```
+
+## `Test.[]`
+Description
+
+```the
+Test.[idx: int] ref int
+```
+
+## `Test.()`
+
+```the
+Test.test (int, int) void
+```
+
+## `Test.()`
+Description
+
+```the
+Test.test (a: int, mut b: int) ref int
+```

@@ -1,24 +1,24 @@
 // Char API
 
-/** Allows storing character as one byte. */
+/* Allows storing character as one byte. */
 obj Char {
-  /** Byte representation of character. */
+  /* Byte representation of character. */
   byte: byte
-  /** Whether character is digit. */
+  /* Whether character is digit. */
   isDigit: bool
-  /** Whether character is letter. */
+  /* Whether character is letter. */
   isLetter: bool
-  /** Whether character is letter or digit. */
+  /* Whether character is letter or digit. */
   isLetterOrDigit: bool
-  /** Whether character is in lowercase. */
+  /* Whether character is in lowercase. */
   isLower: bool
-  /** Whether character is in uppercase. */
+  /* Whether character is in uppercase. */
   isUpper: bool
-  /** Whether character is whitespace. */
+  /* Whether character is whitespace. */
   isWhitespace: bool
-  /** Lowercase representation of character. */
+  /* Lowercase representation of character. */
   lower: char
-  /** Uppercase representation of character. */
+  /* Uppercase representation of character. */
   upper: char
 
   /**
@@ -28,6 +28,6 @@ obj Char {
    */
   fn repeat (self: ref Self, times: int) str
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

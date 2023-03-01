@@ -4,15 +4,15 @@ obj Element {
   a: byte
 }
 
-/** Allows storing a collection of multiple elements under a single variable. */
+/* Allows storing a collection of multiple elements under a single variable. */
 obj Array {
-  /** Whether array has elements. */
+  /* Whether array has elements. */
   empty: bool
-  /** Reference to first element. If empty will throw an error. */
+  /* Reference to first element. If empty will throw an error. */
   first: ref Element
-  /** Reference to last element. If empty will throw an error. */
+  /* Reference to last element. If empty will throw an error. */
   last: ref Element
-  /** Number of elements. */
+  /* Number of elements. */
   len: int
 
   /**
@@ -22,7 +22,7 @@ obj Array {
    * @return ref Element
    */
 
-  /** Removes all elements and changes length to zero. */
+  /* Removes all elements and changes length to zero. */
   fn clear (mut self: ref Self) ref Self
 
   /**
@@ -61,7 +61,7 @@ obj Array {
    */
   fn merge (mut self: ref Self, other: Self) ref Self
 
-  /** Removes last element and returns it. */
+  /* Removes last element and returns it. */
   fn pop (mut self: ref Self) Element
 
   /**
@@ -78,7 +78,7 @@ obj Array {
    */
   fn remove (mut self: ref Self, indexes: int...) ref Self
 
-  /** Returns reversed array copy. */
+  /* Returns reversed array copy. */
   fn reverse (self: ref Self) Self
 
   /**
@@ -103,6 +103,6 @@ obj Array {
    */
   fn sort (mut self: ref Self, comparator: (a: Element, b: Element) -> int) ref Self
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

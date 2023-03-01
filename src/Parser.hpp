@@ -26,9 +26,7 @@ class Parser {
 
   explicit Parser (Lexer *);
 
-  // todo test
   virtual std::string doc ();
-  // todo test with comments
   virtual ParserStmt next (bool = true, bool = false);
   virtual std::string xml ();
 
@@ -36,7 +34,6 @@ class Parser {
   Parser (const Parser &);
   Parser &operator= (const Parser &);
 
-  // todo test with comments
   ParserBlock _block (bool = false);
   std::optional<ParserStmtExpr> _stmtExpr (bool = true);
   std::optional<ParserType> _type ();
@@ -57,7 +54,6 @@ class Parser {
   std::tuple<ParserStmtExpr, bool> _wrapExprUnary (const ParserStmtExpr &, ReaderLocation, const Token &);
   ParserStmt _wrapStmt (bool, const ParserStmtBody &, ReaderLocation) const;
   ParserStmtExpr _wrapStmtExpr (const ParserStmtExpr &);
-  // todo test with comments
   ParserStmt _wrapStmtLoop (bool, const Token &, bool, bool = false);
   ParserType _wrapType (const ParserType &);
 };

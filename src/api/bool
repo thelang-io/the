@@ -1,7 +1,7 @@
 // Bool API
 
-/** Logical data type that can have only the values `true` or `false`. */
+/* Logical data type that can have only the values `true` or `false`. */
 obj Bool {
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

@@ -63,6 +63,7 @@ set(
   src/VarMap.cpp src/VarMap.hpp
   src/VarStack.cpp src/VarStack.hpp
   src/config.hpp
+  src/utils.hpp
 )
 
 function (the_target_add_flags target)
@@ -120,6 +121,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/MockReader.cpp test/MockReader.hpp
     test/ParserTest.cpp
     test/ParserCommentTest.cpp
+    test/ParserDocTest.cpp
     test/ParserExprTest.cpp
     test/ParserTypeTest.cpp
     test/ReaderTest.cpp
@@ -127,6 +129,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/TypeTest.cpp
     test/TypeMatchTest.cpp
     test/TypeMapTest.cpp
+    test/UtilsTest.cpp
     test/VarMapTest.cpp
     test/VarStackTest.cpp
     test/utils.cpp test/utils.hpp

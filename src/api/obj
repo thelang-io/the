@@ -1,7 +1,7 @@
 // Object API
 
-/** Allows storing various keyed collections and more complex entities. */
+/* Allows storing various keyed collections and more complex entities. */
 obj Object {
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

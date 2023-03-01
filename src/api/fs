@@ -1,45 +1,45 @@
 // File System API
 
-/** Represents the status of specified path. */
+/* Represents the status of specified path. */
 obj fs_Stats {
-  /** Identifier of the device containing this file. */
+  /* Identifier of the device containing this file. */
   dev: u64
-  /** File type and file mode bits. */
+  /* File type and file mode bits. */
   mode: u32
-  /** Number of hard links. */
+  /* Number of hard links. */
   nlink: i64
-  /** INode number on Unix and the file index on Windows platform. */
+  /* INode number on Unix and the file index on Windows platform. */
   ino: u64
-  /** User identifier of the file owner. */
+  /* User identifier of the file owner. */
   uid: i32
-  /** Group identifier of the file owner. */
+  /* Group identifier of the file owner. */
   gid: i32
-  /** Type of device, if an inode device. */
+  /* Type of device, if an inode device. */
   rdev: u64
-  /** Time of the most recent access expressed in seconds. */
+  /* Time of the most recent access expressed in seconds. */
   atime: i64
-  /** Time of the most recent access expressed in nanoseconds. */
+  /* Time of the most recent access expressed in nanoseconds. */
   atimeNs: i64
-  /** Time of the most recent content modification expressed in seconds. */
+  /* Time of the most recent content modification expressed in seconds. */
   mtime: i64
-  /** Time of the most recent content modification expressed in nanoseconds. */
+  /* Time of the most recent content modification expressed in nanoseconds. */
   mtimeNs: i64
-  /** Time of the most recent metadata change on Unix and creation time on Windows expressed in seconds. */
+  /* Time of the most recent metadata change on Unix and creation time on Windows expressed in seconds. */
   ctime: i64
-  /** Time of the most recent metadata change on Unix and creation time on Windows expressed in nanoseconds. */
+  /* Time of the most recent metadata change on Unix and creation time on Windows expressed in nanoseconds. */
   ctimeNs: i64
-  /** Time of file creation expressed in seconds. */
+  /* Time of file creation expressed in seconds. */
   btime: i64
-  /** Time of file creation expressed in nanoseconds. */
+  /* Time of file creation expressed in nanoseconds. */
   btimeNs: i64
-  /** Size of the file in bytes. */
+  /* Size of the file in bytes. */
   size: i64
-  /** Number of 512-byte blocks allocated for file. */
+  /* Number of 512-byte blocks allocated for file. */
   blocks: i64
-  /** Preferred block size for efficient file system I/O. */
+  /* Preferred block size for efficient file system I/O. */
   blockSize: i64
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }
 

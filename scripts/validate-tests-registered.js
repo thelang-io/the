@@ -17,6 +17,10 @@ function validateTestsRegistered (dir) {
   const content = fs.readFileSync(testPath, 'utf8')
 
   for (const test of tests) {
+    if (test.startsWith('.')) {
+      continue
+    }
+
     const testName = '"' + test.slice(0, -4) + '"'
 
     if (!content.includes(testName)) {

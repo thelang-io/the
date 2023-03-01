@@ -7,20 +7,20 @@ obj Value {
   a: byte
 }
 
-/** Allows storing a collection of multiple key-value pairs and remembers the original insertion order of the keys. */
+/* Allows storing a collection of multiple key-value pairs and remembers the original insertion order of the keys. */
 obj Map {
-  /** Whether map has elements. */
+  /* Whether map has elements. */
   empty: bool
-  /** Number of elements map has currently a room for. */
+  /* Number of elements map has currently a room for. */
   cap: int
-  /** Array of keys in the order they were set. */
+  /* Array of keys in the order they were set. */
   keys: Key[]
-  /** Number of elements. */
+  /* Number of elements. */
   len: int
-  /** Array of values in the order keys were set. */
+  /* Array of values in the order keys were set. */
   values: Value[]
 
-  /** Removes all elements and changes length to zero. Doesn't affect capacity. */
+  /* Removes all elements and changes length to zero. Doesn't affect capacity. */
   fn clear (mut self: ref Self) ref Self
 
   /**
@@ -66,9 +66,9 @@ obj Map {
    */
   fn set (mut self: ref Self, key: Key, value: Value) ref Self
 
-  /** Reduces capacity to a current length. */
+  /* Reduces capacity to a current length. */
   fn shrink (mut self: ref Self) ref Self
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

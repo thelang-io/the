@@ -17,7 +17,7 @@ obj url_URL {
   search: str
   hash: str
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }
 

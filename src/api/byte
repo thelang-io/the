@@ -1,7 +1,7 @@
 // Byte API
 
-/** Allows storing a single byte with value of `0x00` - `0xFF`. */
+/* Allows storing a single byte with value of `0x00` - `0xFF`. */
 obj Byte {
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }

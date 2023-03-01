@@ -17,7 +17,6 @@
 #include "Parser.hpp"
 #include "config.hpp"
 
-// todo test
 void bindSiblings (ParserBlock &block) {
   for (auto i = static_cast<std::size_t>(0); i < block.size(); i++) {
     auto &it = block[i];
@@ -39,6 +38,11 @@ void bindSiblings (ParserBlock &block) {
     } else if (std::holds_alternative<ParserStmtIf>(*it.body)) {
       auto &stmtIf = std::get<ParserStmtIf>(*it.body);
       bindSiblings(stmtIf.body);
+
+      if (stmtIf.alt != std::nullopt && std::holds_alternative<ParserBlock>(*stmtIf.alt)) {
+        auto &stmtIfAlt = std::get<ParserBlock>(*stmtIf.alt);
+        bindSiblings(stmtIfAlt);
+      }
     } else if (std::holds_alternative<ParserStmtLoop>(*it.body)) {
       auto &stmtLoop = std::get<ParserStmtLoop>(*it.body);
       bindSiblings(stmtLoop.body);
@@ -95,17 +99,15 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
   if (tok0.type == TK_EOF) {
     return this->_wrapStmt(false, ParserStmtEof{}, tok0.start);
   } else if (tok0.type == TK_COMMENT_BLOCK) {
-    // todo test
     return this->_wrapStmt(false, ParserStmtComment{tok0.val.substr(2, tok0.val.size() - 4)}, tok0.start);
   } else if (tok0.type == TK_COMMENT_LINE) {
-    // todo test
     return this->_wrapStmt(false, ParserStmtComment{tok0.val.substr(2)}, tok0.start);
   } else if (tok0.type == TK_KW_BREAK) {
     return this->_wrapStmt(allowSemi, ParserStmtBreak{}, tok0.start);
   } else if (tok0.type == TK_KW_CONTINUE) {
     return this->_wrapStmt(allowSemi, ParserStmtContinue{}, tok0.start);
   } else if (tok0.type == TK_KW_MAIN) {
-    auto mainBody = this->_block();
+    auto mainBody = this->_block(keepComments);
     return this->_wrapStmt(allowSemi, ParserStmtMain{mainBody}, tok0.start);
   } else if (tok0.type == TK_KW_RETURN) {
     auto stmtExprTest = this->_stmtExpr();
@@ -416,7 +418,7 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
       throw Error(this->reader, tok2.start, E0122);
     }
 
-    auto [loc3, tok3] = this->lexer->next();
+    auto [loc3, tok3] = this->lexer->next(keepComments);
     auto objDeclMembers = ParserBlock{};
 
     while (tok3.type != TK_OP_RBRACE) {
@@ -430,7 +432,7 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
       }
 
       if (
-        !std::holds_alternative<ParserStmtComment>(*objDeclMember.body) && // todo test
+        !std::holds_alternative<ParserStmtComment>(*objDeclMember.body) &&
         !std::holds_alternative<ParserStmtFnDecl>(*objDeclMember.body) &&
         !std::holds_alternative<ParserStmtVarDecl>(*objDeclMember.body)
       ) {
@@ -443,7 +445,7 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
       }
 
       objDeclMembers.push_back(objDeclMember);
-      std::tie(loc3, tok3) = this->lexer->next();
+      std::tie(loc3, tok3) = this->lexer->next(keepComments);
     }
 
     return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclMembers}, tok0.start);

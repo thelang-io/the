@@ -1,6 +1,6 @@
 // Path API
 
-/** Platform-specific pathname components separator. `\` on Windows, `/` on POSIX. */
+/* Platform-specific pathname components separator. `\` on Windows, `/` on POSIX. */
 const path_SEP: str
 
 /**

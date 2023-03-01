@@ -16,37 +16,13 @@
 
 #include "ParserComment.hpp"
 #include <algorithm>
-#include "config.hpp"
+#include "utils.hpp"
 
-std::string trim (const std::string &str) {
-  auto result = str;
-
-  result.erase(result.begin(), std::find_if(result.begin(), result.end(), [] (auto ch) -> bool {
-    return !std::isspace(ch);
-  }));
-
-  result.erase(std::find_if(result.rbegin(), result.rend(), [] (auto ch) -> bool {
-    return !std::isspace(ch);
-  }).base(), result.end());
-
-  return result;
-}
-
-std::vector<std::string> splitByLines (const std::string &str) {
-  auto delimiter = std::string(EOL);
-  auto pos = static_cast<std::string::size_type>(0);
-  auto prev = static_cast<std::string::size_type>(0);
-  auto result = std::vector<std::string>{};
-
-  while ((pos = str.find(delimiter, prev)) != std::string::npos) {
-    result.push_back(str.substr(prev, pos - prev));
-    prev = pos + delimiter.size();
-  }
-
-  result.push_back(str.substr(prev));
+std::vector<std::string> splitContentByLines (const std::string &str) {
+  auto result = str_lines(str);
 
   for (auto &it : result) {
-    it = trim(it);
+    it = str_trim(it);
 
     if (it == "*") {
       it = "";
@@ -58,14 +34,14 @@ std::vector<std::string> splitByLines (const std::string &str) {
   }
 
   result.erase(std::remove_if(result.begin(), result.end(), [] (auto it) -> bool {
-    return trim(it).empty();
+    return str_trim(it).empty();
   }), result.end());
 
   return result;
 }
 
 ParserComment parseComment (const std::string &content) {
-  auto lines = splitByLines(content);
+  auto lines = splitContentByLines(content);
   auto description = std::string();
   auto image = std::string();
   auto notes = std::vector<std::string>{};
@@ -78,7 +54,7 @@ ParserComment parseComment (const std::string &content) {
   auto lastParamName = std::string();
 
   for (const auto &line : lines) {
-    auto lineTrimmed = trim(line);
+    auto lineTrimmed = str_trim(line);
 
     if (lineTrimmed.starts_with('@')) {
       isDescription = false;
@@ -87,7 +63,7 @@ ParserComment parseComment (const std::string &content) {
 
       if (lineTrimmed.starts_with("@note ")) {
         isNote = true;
-        notes.push_back(trim(lineTrimmed.substr(6)) + (lineTrimmed.ends_with('\\') ? EOL : ""));
+        notes.push_back(str_trim(lineTrimmed.substr(6)) + (lineTrimmed.ends_with('\\') ? EOL : ""));
       } else if (lineTrimmed.starts_with("@param ")) {
         isParam = true;
         auto paramNameLen = static_cast<std::size_t>(7);
@@ -96,16 +72,16 @@ ParserComment parseComment (const std::string &content) {
           paramNameLen++;
         }
 
-        auto paramName = trim(lineTrimmed.substr(7, paramNameLen - 7));
-        auto afterParamName = trim(lineTrimmed.substr(paramNameLen));
-        auto paramVal = trim(afterParamName.starts_with('-') ? afterParamName.substr(1) : afterParamName);
+        auto paramName = str_trim(lineTrimmed.substr(7, paramNameLen - 7));
+        auto afterParamName = str_trim(lineTrimmed.substr(paramNameLen));
+        auto paramVal = str_trim(afterParamName.starts_with('-') ? afterParamName.substr(1) : afterParamName);
 
         params.insert_or_assign(paramName, paramVal);
         lastParamName = paramName;
       } else if (lineTrimmed.starts_with("@return ")) {
-        ret = trim(lineTrimmed.substr(8));
+        ret = str_trim(lineTrimmed.substr(8));
       } else if (lineTrimmed.starts_with("@signature ")) {
-        sign = trim(lineTrimmed.substr(11));
+        sign = str_trim(lineTrimmed.substr(11));
       }
     } else if (lineTrimmed.starts_with("![")) {
       image = lineTrimmed;
@@ -123,7 +99,7 @@ ParserComment parseComment (const std::string &content) {
     }
   }
 
-  return ParserComment{trim(description), image, notes, params, trim(ret), trim(sign)};
+  return ParserComment{str_trim(description), image, notes, params, str_trim(ret), str_trim(sign)};
 }
 
 bool operator== (const ParserComment &lhs, const ParserComment &rhs) {

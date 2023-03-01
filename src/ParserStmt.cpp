@@ -17,7 +17,7 @@
 #include "ParserStmt.hpp"
 #include <sstream>
 #include "ParserComment.hpp"
-#include "config.hpp"
+#include "utils.hpp"
 
 std::string blockToXml (const ParserBlock &block, std::size_t indent) {
   auto result = std::string();
@@ -29,23 +29,8 @@ std::string blockToXml (const ParserBlock &block, std::size_t indent) {
   return result;
 }
 
-std::vector<std::string> splitNote (const std::string &str) {
-  auto delimiter = std::string(EOL);
-  auto pos = static_cast<std::string::size_type>(0);
-  auto prev = static_cast<std::string::size_type>(0);
-  auto result = std::vector<std::string>{};
-
-  while ((pos = str.find(delimiter, prev)) != std::string::npos) {
-    result.push_back(str.substr(prev, pos - prev));
-    prev = pos + delimiter.size();
-  }
-
-  result.push_back(str.substr(prev));
-  return result;
-}
-
 std::string normalizeNote (const std::string &note) {
-  auto lines = splitNote(note);
+  auto lines = str_lines(note);
   auto result = std::string();
 
   for (const auto &line : lines) {
@@ -55,8 +40,8 @@ std::string normalizeNote (const std::string &note) {
   return result;
 }
 
-bool paramIsSelf (const ParserStmtFnDeclParam &param) {
-  if (param.type == std::nullopt) {
+bool paramIsSelf (const std::string &prefix, const ParserStmtFnDeclParam &param) {
+  if (prefix.empty() || param.type == std::nullopt) {
     return false;
   }
 
@@ -65,6 +50,7 @@ bool paramIsSelf (const ParserStmtFnDeclParam &param) {
 }
 
 std::string fnDeclDocParams (
+  const std::string &prefix,
   const std::vector<ParserStmtFnDeclParam> &params,
   const std::string &trailing,
   const std::string &separator
@@ -75,7 +61,7 @@ std::string fnDeclDocParams (
   for (auto i = static_cast<std::size_t>(0); i < params.size(); i++) {
     auto param = params[i];
 
-    if (i == 0 && paramIsSelf(param)) {
+    if (i == 0 && paramIsSelf(prefix, param)) {
       continue;
     }
 
@@ -84,6 +70,7 @@ std::string fnDeclDocParams (
     code += param.mut ? "mut " : "";
     code += param.id.val;
     code += param.type == std::nullopt ? " := " : (": " + param.type->stringify());
+    code += param.variadic ? "..." : "";
     code += param.type != std::nullopt && param.init != std::nullopt ? " = " : "";
     code += param.init == std::nullopt ? "" : param.init->stringify();
     paramIdx++;
@@ -101,18 +88,18 @@ std::string ParserStmt::doc (const std::string &prefix) const {
 
   auto result = std::string();
 
-  if (std::holds_alternative<ParserStmtComment>(*this->body) && !nextSiblingCanBeDocumented) {
+  if (std::holds_alternative<ParserStmtComment>(*this->body) && !nextSiblingCanBeDocumented && !prefix.empty()) {
     auto stmtComment = std::get<ParserStmtComment>(*this->body);
     auto comment = parseComment(stmtComment.content);
 
     if (!comment.sign.empty()) {
-      auto fullName = std::string(prefix.empty() ? "" : prefix + ".") + (comment.sign.starts_with('[') ? "[]" : "()");
+      auto fullName = prefix + "." + (comment.sign.starts_with('[') ? "[]" : "()");
 
       result += "## `" + fullName + "`" EOL;
       result += comment.description.empty() ? "" : comment.description + EOL;
       result += EOL;
       result += "```the" EOL;
-      result += std::string(prefix.empty() ? "" : prefix + ".") + comment.sign + " " + (comment.ret.empty() ? "void" : comment.ret) + EOL;
+      result += prefix + "." + comment.sign + " " + (comment.ret.empty() ? "void" : comment.ret) + EOL;
       result += "```" EOL EOL;
     }
   } else if (std::holds_alternative<ParserStmtFnDecl>(*this->body) && std::get<ParserStmtFnDecl>(*this->body).body == std::nullopt) {
@@ -126,10 +113,10 @@ std::string ParserStmt::doc (const std::string &prefix) const {
     }
 
     auto returnTypeCode = stmtFnDecl.returnType->stringify();
-    auto actualFnCode = "fn " + fullName + " (" + fnDeclDocParams(stmtFnDecl.params, "", ", ") + ") " + returnTypeCode;
+    auto actualFnCode = "fn " + fullName + " (" + fnDeclDocParams(prefix, stmtFnDecl.params, "", ", ") + ") " + returnTypeCode;
 
     if (actualFnCode.size() > 80) {
-      actualFnCode = "fn " + fullName + " (" EOL + fnDeclDocParams(stmtFnDecl.params, "  ", "," EOL) + EOL ") " + returnTypeCode;
+      actualFnCode = "fn " + fullName + " (" EOL + fnDeclDocParams(prefix, stmtFnDecl.params, "  ", "," EOL) + EOL ") " + returnTypeCode;
     }
 
     result += "## `" + fullName + "()`" EOL;
@@ -146,16 +133,14 @@ std::string ParserStmt::doc (const std::string &prefix) const {
 
       for (auto i = static_cast<std::size_t>(0); i < stmtFnDecl.params.size(); i++) {
         auto param = stmtFnDecl.params[i];
+        auto paramComment = comment.params.contains(param.id.val) ? comment.params.find(param.id.val)->second : "";
 
-        if (i == 0 && paramIsSelf(param)) {
+        if ((i == 0 && paramIsSelf(prefix, param)) || paramComment.empty()) {
           continue;
         }
 
-        auto paramComment = comment.params.contains(param.id.val) ? comment.params.find(param.id.val)->second : "";
-
         actualParamsCode += paramIdx == 0 ? "" : (std::string(lastParamCommentMultiline ? EOL : " \\") + EOL);
-        actualParamsCode += "**" + param.id.val + "**";
-        actualParamsCode += paramComment.empty() ? "" : " - " + paramComment;
+        actualParamsCode += "**" + param.id.val + "** - " + paramComment;
         lastParamCommentMultiline = paramComment.find(EOL) != std::string::npos;
         paramIdx++;
       }
@@ -176,6 +161,40 @@ std::string ParserStmt::doc (const std::string &prefix) const {
         result += "> ### NOTE:" EOL;
         result += normalizeNote(note) + EOL;
       }
+    }
+  } else if (std::holds_alternative<ParserStmtFnDecl>(*this->body)) {
+    auto stmtFnDecl = std::get<ParserStmtFnDecl>(*this->body);
+
+    if (stmtFnDecl.body != std::nullopt) {
+      for (const auto &it : *stmtFnDecl.body) {
+        result += it.doc();
+      }
+    }
+  } else if (std::holds_alternative<ParserStmtIf>(*this->body)) {
+    auto stmtIf = std::get<ParserStmtIf>(*this->body);
+
+    for (const auto &it : stmtIf.body) {
+      result += it.doc();
+    }
+
+    if (stmtIf.alt != std::nullopt && std::holds_alternative<ParserBlock>(*stmtIf.alt)) {
+      auto stmtIfAlt = std::get<ParserBlock>(*stmtIf.alt);
+
+      for (const auto &it : stmtIfAlt) {
+        result += it.doc();
+      }
+    }
+  } else if (std::holds_alternative<ParserStmtLoop>(*this->body)) {
+    auto stmtLoop = std::get<ParserStmtLoop>(*this->body);
+
+    for (const auto &it : stmtLoop.body) {
+      result += it.doc();
+    }
+  } else if (std::holds_alternative<ParserStmtMain>(*this->body)) {
+    auto stmtMain = std::get<ParserStmtMain>(*this->body);
+
+    for (const auto &it : stmtMain.body) {
+      result += it.doc();
     }
   } else if (std::holds_alternative<ParserStmtObjDecl>(*this->body)) {
     auto stmtObjDecl = std::get<ParserStmtObjDecl>(*this->body);

@@ -1,13 +1,13 @@
 // Request API
 
-/** Used to pass headers to request and get headers from response. */
+/* Used to pass headers to request and get headers from response. */
 obj request_Header {
-  /** Header name. */
+  /* Header name. */
   name: str
-  /** Header value. */
+  /* Header value. */
   value: str
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }
 
@@ -17,26 +17,26 @@ obj request_Header {
  * @note Currently, has no exposed fields that you can use.
  */
 obj request_Request {
-  /** Closes the request. Using request afterwards has undefined behavior. */
+  /* Closes the request. Using request afterwards has undefined behavior. */
   fn close (mut self: ref Self) void
 
-  /** Reads response data from the request and constructs returned `request_Response` object. */
+  /* Reads response data from the request and constructs returned `request_Response` object. */
   fn read (mut self: ref Self) request_Response
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }
 
-/** Contains all the information about the request's response data. */
+/* Contains all the information about the request's response data. */
 obj request_Response {
-  /** Additional data returned by server. */
+  /* Additional data returned by server. */
   data: buffer_Buffer
-  /** Status code returned by server. */
+  /* Status code returned by server. */
   status: int
-  /** Headers returned by server. */
+  /* Headers returned by server. */
   headers: request_Header[]
 
-  /** Returns a string representation. */
+  /* Returns a string representation. */
   fn str (self: ref Self) str
 }
 

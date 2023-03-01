@@ -1,0 +1,125 @@
+======= stdin =======
+obj FieldTest {
+  field1: int
+  mut field2: str
+}
+
+obj MethodTest {
+  fn method1 () void
+  fn method2 (a: int) int
+  fn method3 (self: ref Self, a: int) int
+  fn method4 (mut self: ref Self, mut a: int) int
+  fn method5 (a: int, b: int) int
+  fn method6 (self: ref Self, a: int, b: int) int
+  fn method7 (mut self: ref Self, mut a: int, mut b: int) int
+}
+
+obj VariadicTest {
+  fn method1 (a: int...) int
+  fn method2 (self: ref Self, a: int...) int
+  fn method3 (mut self: ref Self, mut a: int...) int
+  fn method4 (a: int..., b: int...) int
+  fn method5 (self: ref Self, a: int..., b: int...) int
+  fn method6 (mut self: ref Self, mut a: int..., mut b: int...) int
+}
+======= stdout =======
+## `FieldTest`
+
+```the
+obj FieldTest {
+  field1: int
+  mut field2: str
+}
+```
+
+## `MethodTest`
+
+```the
+obj MethodTest {
+}
+```
+
+## `MethodTest.method1()`
+
+```the
+fn MethodTest.method1 () void
+```
+
+## `MethodTest.method2()`
+
+```the
+fn MethodTest.method2 (a: int) int
+```
+
+## `MethodTest.method3()`
+
+```the
+fn MethodTest.method3 (a: int) int
+```
+
+## `MethodTest.method4()`
+
+```the
+fn MethodTest.method4 (mut a: int) int
+```
+
+## `MethodTest.method5()`
+
+```the
+fn MethodTest.method5 (a: int, b: int) int
+```
+
+## `MethodTest.method6()`
+
+```the
+fn MethodTest.method6 (a: int, b: int) int
+```
+
+## `MethodTest.method7()`
+
+```the
+fn MethodTest.method7 (mut a: int, mut b: int) int
+```
+
+## `VariadicTest`
+
+```the
+obj VariadicTest {
+}
+```
+
+## `VariadicTest.method1()`
+
+```the
+fn VariadicTest.method1 (a: int...) int
+```
+
+## `VariadicTest.method2()`
+
+```the
+fn VariadicTest.method2 (a: int...) int
+```
+
+## `VariadicTest.method3()`
+
+```the
+fn VariadicTest.method3 (mut a: int...) int
+```
+
+## `VariadicTest.method4()`
+
+```the
+fn VariadicTest.method4 (a: int..., b: int...) int
+```
+
+## `VariadicTest.method5()`
+
+```the
+fn VariadicTest.method5 (a: int..., b: int...) int
+```
+
+## `VariadicTest.method6()`
+
+```the
+fn VariadicTest.method6 (mut a: int..., mut b: int...) int
+```

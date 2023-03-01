@@ -1,18 +1,18 @@
 // String API
 
-/** Allows storing a collection of multiple characters under a single variable. */
+/* Allows storing a collection of multiple characters under a single variable. */
 obj String {
-  /** Whether string has characters. */
+  /* Whether string has characters. */
   empty: bool
-  /** Number of characters. */
+  /* Number of characters. */
   len: int
-  /** Representation of string with characters lowercased. */
+  /* Representation of string with characters lowercased. */
   lower: Self
-  /** Representation of string with first character lowercased. */
+  /* Representation of string with first character lowercased. */
   lowerFirst: Self
-  /** Representation of string with characters uppercased. */
+  /* Representation of string with characters uppercased. */
   upper: Self
-  /** Representation of string with first character uppercased. */
+  /* Representation of string with first character uppercased. */
   upperFirst: Self
 
   /**
@@ -74,9 +74,9 @@ obj String {
    */
   fn split (self: ref Self, delimiter := "") Self[]
 
-  /** Converts a string to `buffer_Buffer` object. */
+  /* Converts a string to `buffer_Buffer` object. */
   fn toBuffer (self: ref Self) buffer_Buffer
 
-  /** Returns a string with whitespaces removed from both ends. */
+  /* Returns a string with whitespaces removed from both ends. */
   fn trim (self: ref Self) Self
 }

@@ -1,15 +1,15 @@
 // Process API
 
-/** String array containing the command-line arguments passed when the process was launched. */
+/* String array containing the command-line arguments passed when the process was launched. */
 const process_args: str[]
 
-/** Current working directory of the process. */
+/* Current working directory of the process. */
 const process_cwd: str
 
-/** Numeric group identity of the process. On Windows always returns `0`. */
+/* Numeric group identity of the process. On Windows always returns `0`. */
 const process_gid: int
 
-/** Numeric user identity of the process. On Windows always returns `0`. */
+/* Numeric user identity of the process. On Windows always returns `0`. */
 const process_uid: int
 
 /**

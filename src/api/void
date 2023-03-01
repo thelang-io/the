@@ -1,5 +1,5 @@
 // Void API
 
-/** Used when there is no data. */
+/* Used when there is no data. */
 obj Void {
 }
