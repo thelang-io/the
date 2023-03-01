@@ -120,6 +120,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/MockReader.cpp test/MockReader.hpp
     test/ParserTest.cpp
     test/ParserCommentTest.cpp
+    test/ParserExprTest.cpp
+    test/ParserTypeTest.cpp
     test/ReaderTest.cpp
     test/TokenTest.cpp
     test/TypeTest.cpp

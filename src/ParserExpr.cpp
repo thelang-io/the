@@ -52,7 +52,6 @@ std::string ParserStmtExpr::stringify () const {
     code += exprBody.left.stringify() + " " + exprBody.op.val + " " + exprBody.right.stringify();
   } else if (std::holds_alternative<ParserExprCall>(*this->body)) {
     auto exprBody = std::get<ParserExprCall>(*this->body);
-
     code += exprBody.callee.stringify() + "(";
 
     for (auto i = static_cast<std::size_t>(0); i < exprBody.args.size(); i++) {
@@ -85,7 +84,6 @@ std::string ParserStmtExpr::stringify () const {
     code += "}";
   } else if (std::holds_alternative<ParserExprObj>(*this->body)) {
     auto exprBody = std::get<ParserExprObj>(*this->body);
-
     code += exprBody.id.val + "{";
 
     for (auto i = static_cast<std::size_t>(0); i < exprBody.props.size(); i++) {
@@ -112,7 +110,7 @@ std::string ParserStmtExpr::stringify () const {
     }
   }
 
-  return code;
+  return this->parenthesized ? "(" + code + ")" : code;
 }
 
 std::string ParserStmtExpr::xml (std::size_t indent) const {

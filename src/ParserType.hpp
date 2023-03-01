@@ -47,7 +47,6 @@ struct ParserType {
   ReaderLocation start;
   ReaderLocation end;
 
-  // todo test
   std::string stringify () const;
   std::string xml (std::size_t = 0) const;
 };

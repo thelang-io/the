@@ -32,8 +32,8 @@ std::string ParserType::stringify () const {
 
       code += i == 0 ? "" : ", ";
       code += param.mut ? "mut " : "";
-      code += param.id == std::nullopt ? "" : param.id->val;
-      code += ": " + param.type.stringify();
+      code += param.id == std::nullopt ? "" : (param.id->val + ": ");
+      code += param.type.stringify();
       code += param.variadic ? "..." : "";
     }
 
@@ -54,11 +54,12 @@ std::string ParserType::stringify () const {
     auto typeBody = std::get<ParserTypeUnion>(*this->body);
 
     for (auto i = static_cast<std::size_t>(0); i < typeBody.subTypes.size(); i++) {
+      code += i == 0 ? "" : " | ";
       code += typeBody.subTypes[i].stringify();
     }
   }
 
-  return code;
+  return this->parenthesized ? "(" + code + ")" : code;
 }
 
 std::string ParserType::xml (std::size_t indent) const {
