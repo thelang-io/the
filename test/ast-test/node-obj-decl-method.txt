@@ -87,7 +87,7 @@ main {
   <NodeObjDeclType>
     <TypeObj codeName="StaticTest_0" name="StaticTest">
       <TypeMethod name="staticMethod">
-        <TypeFn name="fn$1">
+        <TypeFn name="fn$0">
           <TypeFnMethodInfo codeName="StaticTestSDstaticMethod_0" />
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -100,7 +100,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="StaticTest.staticMethod" codeName="StaticTestSDstaticMethod_0" frame="1">
-          <TypeFn name="fn$1">
+          <TypeFn name="fn$0">
             <TypeFnMethodInfo codeName="StaticTestSDstaticMethod_0" />
             <TypeFnReturnType>
               <BuiltinType name="void" />
@@ -149,7 +149,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="sub" codeName="sub_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1">
         <TypeFnParams>
           <TypeFnParam name="i" required>
             <BuiltinType name="int" />
@@ -684,7 +684,7 @@ main {
       </NodeObjDeclMethodType>
       <NodeObjDeclMethodCtx>
         <Var name="sub" codeName="sub_0" frame="1">
-          <TypeFn name="fn$0">
+          <TypeFn name="fn$1">
             <TypeFnParams>
               <TypeFnParam name="i" required>
                 <BuiltinType name="int" />
@@ -890,7 +890,7 @@ main {
                       <ExprCallCallee>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1">
                               <TypeFnParams>
                                 <TypeFnParam name="i" required>
                                   <BuiltinType name="int" />
@@ -907,7 +907,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="sub" codeName="sub_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1">
                                   <TypeFnParams>
                                     <TypeFnParam name="i" required>
                                       <BuiltinType name="int" />
@@ -1403,7 +1403,7 @@ main {
       </NodeObjDeclMethodType>
       <NodeObjDeclMethodCtx>
         <Var name="add" codeName="add_0" frame="1">
-          <TypeFn name="fn$0">
+          <TypeFn name="fn$1">
             <TypeFnParams>
               <TypeFnParam name="i" required>
                 <BuiltinType name="int" />
@@ -1609,7 +1609,7 @@ main {
                       <ExprCallCallee>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1">
                               <TypeFnParams>
                                 <TypeFnParam name="i" required>
                                   <BuiltinType name="int" />
@@ -1626,7 +1626,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="add" codeName="add_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1">
                                   <TypeFnParams>
                                     <TypeFnParam name="i" required>
                                       <BuiltinType name="int" />
@@ -2050,6 +2050,21 @@ main {
         </Var>
       </NodeObjDeclMethodType>
       <NodeObjDeclMethodCtx>
+        <Var name="add" codeName="add_0" frame="1">
+          <TypeFn name="fn$1">
+            <TypeFnParams>
+              <TypeFnParam name="i" required>
+                <BuiltinType name="int" />
+              </TypeFnParam>
+              <TypeFnParam name="amount">
+                <BuiltinType name="int" />
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <BuiltinType name="int" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </Var>
         <Var name="Counter.get" codeName="CounterSDget_0" frame="1">
           <TypeFn name="fn$2">
             <TypeFnMethodInfo codeName="CounterSDget_0" selfCodeName="self_0" selfFirst>
@@ -2124,23 +2139,8 @@ main {
             </TypeFnReturnType>
           </TypeFn>
         </Var>
-        <Var name="add" codeName="add_0" frame="1">
-          <TypeFn name="fn$0">
-            <TypeFnParams>
-              <TypeFnParam name="i" required>
-                <BuiltinType name="int" />
-              </TypeFnParam>
-              <TypeFnParam name="amount">
-                <BuiltinType name="int" />
-              </TypeFnParam>
-            </TypeFnParams>
-            <TypeFnReturnType>
-              <BuiltinType name="int" />
-            </TypeFnReturnType>
-          </TypeFn>
-        </Var>
         <Var name="sub" codeName="sub_0" frame="1">
-          <TypeFn name="fn$0">
+          <TypeFn name="fn$1">
             <TypeFnParams>
               <TypeFnParam name="i" required>
                 <BuiltinType name="int" />
@@ -2942,7 +2942,7 @@ main {
                   </TypeFn>
                 </Var>
                 <Var name="sub" codeName="sub_0" frame="1">
-                  <TypeFn name="fn$0">
+                  <TypeFn name="fn$1">
                     <TypeFnParams>
                       <TypeFnParam name="i" required>
                         <BuiltinType name="int" />
@@ -3243,7 +3243,7 @@ main {
                                       <ExprCallCallee>
                                         <NodeExpr>
                                           <NodeExprType>
-                                            <TypeFn name="fn$0">
+                                            <TypeFn name="fn$1">
                                               <TypeFnParams>
                                                 <TypeFnParam name="i" required>
                                                   <BuiltinType name="int" />
@@ -3260,7 +3260,7 @@ main {
                                           <NodeExprBody>
                                             <ExprAccess>
                                               <Var name="sub" codeName="sub_0" frame="1">
-                                                <TypeFn name="fn$0">
+                                                <TypeFn name="fn$1">
                                                   <TypeFnParams>
                                                     <TypeFnParam name="i" required>
                                                       <BuiltinType name="int" />
@@ -4047,6 +4047,21 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </Var>
+                <Var name="add" codeName="add_0" frame="1">
+                  <TypeFn name="fn$1">
+                    <TypeFnParams>
+                      <TypeFnParam name="i" required>
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                      <TypeFnParam name="amount">
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="int" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
                 <Var name="Counter.get" codeName="CounterSDget_0" frame="1">
                   <TypeFn name="fn$2">
                     <TypeFnMethodInfo codeName="CounterSDget_0" selfCodeName="self_0" selfFirst>
@@ -4116,21 +4131,6 @@ main {
                         </TypeMethod>
                       </TypeObj>
                     </TypeFnMethodInfo>
-                    <TypeFnReturnType>
-                      <BuiltinType name="int" />
-                    </TypeFnReturnType>
-                  </TypeFn>
-                </Var>
-                <Var name="add" codeName="add_0" frame="1">
-                  <TypeFn name="fn$0">
-                    <TypeFnParams>
-                      <TypeFnParam name="i" required>
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                      <TypeFnParam name="amount">
-                        <BuiltinType name="int" />
-                      </TypeFnParam>
-                    </TypeFnParams>
                     <TypeFnReturnType>
                       <BuiltinType name="int" />
                     </TypeFnReturnType>
@@ -4423,7 +4423,7 @@ main {
                                       <ExprCallCallee>
                                         <NodeExpr>
                                           <NodeExprType>
-                                            <TypeFn name="fn$0">
+                                            <TypeFn name="fn$1">
                                               <TypeFnParams>
                                                 <TypeFnParam name="i" required>
                                                   <BuiltinType name="int" />
@@ -4440,7 +4440,7 @@ main {
                                           <NodeExprBody>
                                             <ExprAccess>
                                               <Var name="add" codeName="add_0" frame="1">
-                                                <TypeFn name="fn$0">
+                                                <TypeFn name="fn$1">
                                                   <TypeFnParams>
                                                     <TypeFnParam name="i" required>
                                                       <BuiltinType name="int" />
@@ -7536,7 +7536,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="add" codeName="add_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1">
         <TypeFnParams>
           <TypeFnParam name="i" required>
             <BuiltinType name="int" />
@@ -7625,7 +7625,7 @@ main {
       <Var name="staticTest" codeName="staticTest_0" frame="2">
         <TypeObj codeName="StaticTest_0" name="StaticTest">
           <TypeMethod name="staticMethod">
-            <TypeFn name="fn$1">
+            <TypeFn name="fn$0">
               <TypeFnMethodInfo codeName="StaticTestSDstaticMethod_0" />
               <TypeFnReturnType>
                 <BuiltinType name="void" />
@@ -7640,7 +7640,7 @@ main {
         <NodeExprType>
           <TypeObj codeName="StaticTest_0" name="StaticTest">
             <TypeMethod name="staticMethod">
-              <TypeFn name="fn$1">
+              <TypeFn name="fn$0">
                 <TypeFnMethodInfo codeName="StaticTestSDstaticMethod_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -7664,7 +7664,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1">
+              <TypeFn name="fn$0">
                 <TypeFnMethodInfo codeName="StaticTestSDstaticMethod_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -7677,7 +7677,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="StaticTest_0" name="StaticTest">
                       <TypeMethod name="staticMethod">
-                        <TypeFn name="fn$1">
+                        <TypeFn name="fn$0">
                           <TypeFnMethodInfo codeName="StaticTestSDstaticMethod_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -7691,7 +7691,7 @@ main {
                       <Var name="staticTest" codeName="staticTest_0" frame="2">
                         <TypeObj codeName="StaticTest_0" name="StaticTest">
                           <TypeMethod name="staticMethod">
-                            <TypeFn name="fn$1">
+                            <TypeFn name="fn$0">
                               <TypeFnMethodInfo codeName="StaticTestSDstaticMethod_0" />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
