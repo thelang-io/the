@@ -1,10 +1,8 @@
 // Map API
 
 obj Key {
-  a: byte
 }
 obj Value {
-  a: byte
 }
 
 /* Allows storing a collection of multiple key-value pairs and remembers the original insertion order of the keys. */

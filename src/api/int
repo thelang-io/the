@@ -1,7 +1,7 @@
 // Int, I8, I16, I32, I64, U8, U16, U32, U64 API
 
 /* Allows storing a number in range from `-2147483648` to `2147483647`. */
-obj Integer {
+obj Int {
   /* Returns a string representation. */
   fn str (self: ref Self) str
 }

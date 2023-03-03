@@ -1,7 +1,7 @@
 // String API
 
 /* Allows storing a collection of multiple characters under a single variable. */
-obj String {
+obj Str {
   /* Whether string has characters. */
   empty: bool
   /* Number of characters. */

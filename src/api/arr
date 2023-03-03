@@ -1,7 +1,6 @@
 // Array API
 
 obj Element {
-  a: byte
 }
 
 /* Allows storing a collection of multiple elements under a single variable. */

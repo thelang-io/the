@@ -34,33 +34,33 @@ class TypeTest : public testing::Test {
 
   void SetUp () override {
     this->tm_.init();
-    this->alias_ = this->tm_.alias("Alias", this->tm_.get("int"));
+    this->alias_ = this->tm_.createAlias("Alias", this->tm_.get("int"));
     this->any_ = this->tm_.get("any");
-    this->arr_ = this->tm_.arrayOf(this->tm_.get("int"));
+    this->arr_ = this->tm_.createArr(this->tm_.get("int"));
 
     this->tm_.stack.emplace_back("TestEnum");
-    this->enum_ = this->tm_.enumeration("TestEnum", "TestEnum_0", {
+    this->enum_ = this->tm_.createEnum("TestEnum", "TestEnum_0", {
       this->tm_.enumerator("Red", this->tm_.name("Red")),
       this->tm_.enumerator("Brown", this->tm_.name("Brown"))
     });
     this->tm_.stack.pop_back();
 
-    this->fn_ = this->tm_.fn({
+    this->fn_ = this->tm_.createFn({
       TypeFnParam{"a", this->tm_.get("int"), false, true, false},
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
     }, this->tm_.get("int"));
 
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
-    auto objMethod = this->tm_.fn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDm_0", false, "", nullptr, false});
+    auto objMethod = this->tm_.createFn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDm_0", false, "", nullptr, false});
 
-    this->obj_ = this->tm_.obj("Test", "Test_0", {
+    this->obj_ = this->tm_.createObj("Test", "Test_0", {
       TypeField{"a", this->tm_.get("int"), false, false, false},
       TypeField{"m", objMethod, false, true, false}
     });
 
-    this->opt_ = this->tm_.opt(this->tm_.get("int"));
-    this->ref_ = this->tm_.ref(this->tm_.get("int"));
-    this->union_ = this->tm_.unionType({this->tm_.get("int"), this->tm_.get("str")});
+    this->opt_ = this->tm_.createOpt(this->tm_.get("int"));
+    this->ref_ = this->tm_.createRef(this->tm_.get("int"));
+    this->union_ = this->tm_.createUnion({this->tm_.get("int"), this->tm_.get("str")});
   }
 };
 
@@ -373,13 +373,13 @@ TEST_F(TypeTest, HasSubType) {
 }
 
 TEST_F(TypeTest, HasSubTypeOnAlias) {
-  auto type = this->tm_.alias("Alias2", this->union_);
+  auto type = this->tm_.createAlias("Alias2", this->union_);
   EXPECT_TRUE(type->hasSubType(this->tm_.get("int")));
   EXPECT_TRUE(type->hasSubType(this->tm_.get("str")));
 }
 
 TEST_F(TypeTest, HasSubTypeOnRef) {
-  auto type = this->tm_.ref(this->union_);
+  auto type = this->tm_.createRef(this->union_);
   EXPECT_TRUE(type->hasSubType(this->tm_.get("int")));
   EXPECT_TRUE(type->hasSubType(this->tm_.get("str")));
 }
@@ -401,7 +401,7 @@ TEST_F(TypeTest, HasNonExistingSubType) {
 
 TEST_F(TypeTest, CheckIfAlias) {
   EXPECT_TRUE(this->alias_->isAlias());
-  EXPECT_TRUE(this->tm_.alias("Alias2", this->tm_.get("int"))->isAlias());
+  EXPECT_TRUE(this->tm_.createAlias("Alias2", this->tm_.get("int"))->isAlias());
 }
 
 TEST_F(TypeTest, CheckIfNotAlias) {
@@ -442,7 +442,7 @@ TEST_F(TypeTest, CheckIfAny) {
 
 TEST_F(TypeTest, CheckIfArray) {
   EXPECT_TRUE(this->arr_->isArray());
-  EXPECT_TRUE(this->tm_.arrayOf(this->tm_.get("int"))->isArray());
+  EXPECT_TRUE(this->tm_.createArr(this->tm_.get("int"))->isArray());
 }
 
 TEST_F(TypeTest, CheckIfNotArray) {
@@ -492,7 +492,7 @@ TEST_F(TypeTest, CheckIfEnum) {
   EXPECT_TRUE(this->enum_->isEnum());
 
   this->tm_.stack.emplace_back("Test2");
-  EXPECT_TRUE(this->tm_.enumeration("Test2", this->tm_.name("Test2"), {
+  EXPECT_TRUE(this->tm_.createEnum("Test2", this->tm_.name("Test2"), {
     this->tm_.enumerator("Red", this->tm_.name("Red"))
   })->isEnum());
   this->tm_.stack.pop_back();
@@ -613,24 +613,24 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfFn) {
-  auto type1 = this->tm_.fn({}, this->tm_.get("int"));
+  auto type1 = this->tm_.createFn({}, this->tm_.get("int"));
 
-  auto type2 = this->tm_.fn({
+  auto type2 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
   }, this->tm_.get("int"));
 
-  auto type3 = this->tm_.fn({
+  auto type3 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("str"), false, false, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
 
-  auto type4 = this->tm_.fn({}, this->tm_.get("void"));
+  auto type4 = this->tm_.createFn({}, this->tm_.get("void"));
 
-  auto type5 = this->tm_.fn({
+  auto type5 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
   }, this->tm_.get("void"));
 
-  auto type6 = this->tm_.fn({
+  auto type6 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("str"));
@@ -838,13 +838,13 @@ TEST_F(TypeTest, CheckIfNotNumber) {
 }
 
 TEST_F(TypeTest, CheckIfObj) {
-  auto type1 = this->tm_.obj("Test1", "Test1_0");
+  auto type1 = this->tm_.createObj("Test1", "Test1_0");
 
-  auto type2 = this->tm_.obj("Test2", "Test2_0", {
+  auto type2 = this->tm_.createObj("Test2", "Test2_0", {
     TypeField{"a", this->tm_.get("int"), false, false, false}
   });
 
-  auto type3 = this->tm_.obj("Test3", "Test3_0", {
+  auto type3 = this->tm_.createObj("Test3", "Test3_0", {
     TypeField{"a", this->tm_.get("int"), false, false, false},
     TypeField{"b", this->tm_.get("str"), false, false, false}
   });
@@ -923,7 +923,7 @@ TEST_F(TypeTest, CheckIfNotOptional) {
 
 TEST_F(TypeTest, CheckIfRef) {
   EXPECT_TRUE(this->ref_->isRef());
-  EXPECT_TRUE(this->tm_.ref(this->tm_.get("u64"))->isRef());
+  EXPECT_TRUE(this->tm_.createRef(this->tm_.get("u64"))->isRef());
 }
 
 TEST_F(TypeTest, CheckIfNotRef) {
@@ -959,7 +959,7 @@ TEST_F(TypeTest, CheckIfNotRef) {
 
 TEST_F(TypeTest, CheckIfRefOf) {
   EXPECT_TRUE(this->ref_->isRefOf(this->tm_.get("int")));
-  EXPECT_TRUE(this->tm_.ref(this->tm_.get("u64"))->isRefOf(this->tm_.get("u64")));
+  EXPECT_TRUE(this->tm_.createRef(this->tm_.get("u64"))->isRefOf(this->tm_.get("u64")));
 }
 
 TEST_F(TypeTest, CheckIfNotRefOf) {
@@ -995,7 +995,7 @@ TEST_F(TypeTest, CheckIfNotRefOf) {
 }
 
 TEST_F(TypeTest, CheckIfSafeForTernaryAlt) {
-  EXPECT_TRUE(this->tm_.alias("Alias2", this->tm_.get("str"))->isSafeForTernaryAlt());
+  EXPECT_TRUE(this->tm_.createAlias("Alias2", this->tm_.get("str"))->isSafeForTernaryAlt());
   EXPECT_TRUE(this->any_->isSafeForTernaryAlt());
   EXPECT_TRUE(this->arr_->isSafeForTernaryAlt());
   EXPECT_TRUE(this->fn_->isSafeForTernaryAlt());
@@ -1083,7 +1083,7 @@ TEST_F(TypeTest, CheckIfU64) {
 
 TEST_F(TypeTest, CheckIfUnion) {
   EXPECT_TRUE(this->union_->isUnion());
-  EXPECT_TRUE(this->tm_.unionType({this->tm_.get("f32"), this->tm_.get("f64")})->isUnion());
+  EXPECT_TRUE(this->tm_.createUnion({this->tm_.get("f32"), this->tm_.get("f64")})->isUnion());
 }
 
 TEST_F(TypeTest, CheckIfNotUnion) {
@@ -1123,7 +1123,7 @@ TEST_F(TypeTest, CheckIfVoid) {
 
 TEST_F(TypeTest, ShouldBeFreed) {
   EXPECT_FALSE(this->alias_->shouldBeFreed());
-  EXPECT_TRUE(this->tm_.alias("Alias2", this->tm_.get("str"))->shouldBeFreed());
+  EXPECT_TRUE(this->tm_.createAlias("Alias2", this->tm_.get("str"))->shouldBeFreed());
   EXPECT_TRUE(this->any_->shouldBeFreed());
   EXPECT_TRUE(this->arr_->shouldBeFreed());
   EXPECT_FALSE(this->enum_->shouldBeFreed());
@@ -1153,9 +1153,9 @@ TEST_F(TypeTest, ShouldBeFreed) {
 }
 
 TEST_F(TypeTest, ShouldBeFreedUnion) {
-  auto type1 = this->tm_.unionType({this->tm_.get("int"), this->tm_.get("int")});
-  auto type2 = this->tm_.unionType({this->tm_.get("int"), this->tm_.get("str")});
-  auto type3 = this->tm_.unionType({this->tm_.get("str"), this->tm_.get("int")});
+  auto type1 = this->tm_.createUnion({this->tm_.get("int"), this->tm_.get("int")});
+  auto type2 = this->tm_.createUnion({this->tm_.get("int"), this->tm_.get("str")});
+  auto type3 = this->tm_.createUnion({this->tm_.get("str"), this->tm_.get("int")});
 
   EXPECT_FALSE(type1->shouldBeFreed());
   EXPECT_TRUE(type2->shouldBeFreed());

@@ -40,13 +40,14 @@ fn unescape (s: str) str {
   return result
 }
 
-type ASTType = ASTTypeArr
-  | ASTTypeFn
-  | ASTTypeId
-  | ASTTypeMap
-  | ASTTypeOpt
-  | ASTTypeRef
-  | ASTTypeUnion
+type ASTType =
+  ASTTypeArr |
+  ASTTypeFn |
+  ASTTypeId |
+  ASTTypeMap |
+  ASTTypeOpt |
+  ASTTypeRef |
+  ASTTypeUnion
 
 obj ASTTypeArr {
   elementType: ASTType
@@ -89,7 +90,7 @@ type ASTNode = ASTFnDecl | ASTObjDecl | ASTVarDecl
 
 obj ASTFnParam {
   id: str
-  t: ASTType?
+  t: ASTType
   mutable: bool
   variadic: bool
   hasInit: bool
@@ -108,7 +109,7 @@ obj ASTObjDecl {
 
 obj ASTVarDecl {
   id: str
-  t: ASTType?
+  t: ASTType
   hasInit: bool
   mutable: bool
   constant: bool
@@ -452,7 +453,7 @@ fn transformNode (node: XMLNode) ASTNode {
           itNodeIdToken := itNodeId.nodes[0]
           expectXMLNodeToken(itNodeIdToken)
 
-          mut itType: ASTType?
+          mut itType: ASTType = ASTTypeId{id: "unknown"}
 
           if it.nodes.len > 1 && it.nodes[1].id == "StmtFnDeclParamType" {
             itNodeType := it.nodes[1]
@@ -482,15 +483,19 @@ fn transformNode (node: XMLNode) ASTNode {
       returnType: returnType
     }
   } elif node.id == "StmtObjDecl" {
-    expectXMLNode(node, "StmtObjDecl", 2)
+    expectXMLNode(node, "StmtObjDecl", 1)
     nodeId := node.nodes[0]
-    nodeMembers := node.nodes[1]
     expectXMLNode(nodeId, "StmtObjDeclId", 1)
-    expectXMLNode(nodeMembers, "StmtObjDeclMembers")
     nodeIdToken := nodeId.nodes[0]
     expectXMLNodeToken(nodeIdToken)
+    mut members: ASTNode[]
 
-    members := transform(nodeMembers.nodes)
+    if node.nodes.len == 2 {
+      nodeMembers := node.nodes[1]
+      expectXMLNode(nodeMembers, "StmtObjDeclMembers")
+
+      members = transform(nodeMembers.nodes)
+    }
 
     return ASTObjDecl{
       id: nodeIdToken.getParam("val"),
@@ -606,17 +611,184 @@ fn transformNodeType (node: XMLNode) ASTType {
 }
 
 fn generate (nodes: ASTNode[]) str {
-  // todo
-  return ""
+  nodesLen := nodes.len
+  mut result := ""
+
+  loop i := 0; i < nodesLen; i++ {
+    result += generateNode(nodes[i]) + os_EOL
+  }
+
+  return result
+}
+
+fn generateNode (node: ASTNode, prefix := "") str {
+  if node is ASTFnDecl {
+    returnType := generateType(node.returnType)
+    paramsLen := node.params.len
+    mut paramsCode := ""
+    mut paramIdx := 0
+    mut selfInfo := ""
+
+    loop i := 0; i < paramsLen; i++ {
+      param := node.params[i]
+      paramType := generateType(param.t)
+      paramRequired := !param.hasInit && !param.variadic
+
+      if i == 0 && (paramType == "selfType" || paramType == "refSelfType") {
+        selfInfo = ", true, \"" + param.id + "_0\", " +
+          paramType + ", " + param.mutable.str()
+        continue
+      }
+
+      paramsCode += paramIdx == 0 ? "" : "," + os_EOL
+      paramsCode += "  TypeFnParam{\"" + param.id + "\", " +
+        paramType + ", " +
+        param.mutable.str() + ", " +
+        paramRequired.str() + ", " +
+        param.variadic.str() + "}"
+      paramIdx++
+    }
+
+    paramsCode = paramsCode.empty() ? "" : os_EOL + paramsCode + os_EOL
+    paramsCode = ", {" + paramsCode + "}"
+    typeBodyName := node.id + "TypeFn"
+
+    if prefix.empty() {
+      return "auto " + typeBodyName + " = " +
+        "TypeFn{" + returnType + paramsCode + "};" + os_EOL +
+        "this->_items.push_back(std::make_unique<Type>(" +
+        "Type{\"" + node.id + "\", \"@" + node.id + "\", " +
+        typeBodyName + ", {}, true}));"
+    }
+
+    methodInfoName := node.id + "MethodInfo"
+    methodCodeName := "\"" + prefix + "__" + node.id + "_0\""
+
+    return "auto " + methodInfoName + " = " +
+      "TypeFnMethodInfo{" + methodCodeName + selfInfo + "};" + os_EOL +
+      "auto " + typeBodyName + " = " +
+      "TypeFn{" + returnType + paramsCode +
+      ", true, " + methodInfoName + "};" + os_EOL +
+      "this->_items.push_back(std::make_unique<Type>(" +
+      "Type{selfType->name + \"." + node.id + "\", " +
+      "\"@" + prefix.lowerFirst() + "." + node.id + "\", " +
+      typeBodyName + ", {}, true}));" + os_EOL +
+      "selfType->fields.push_back(" +
+      "TypeField{\"" + node.id + "\", " +
+      "this->_items.back().get(), false, true, true});"
+  }
+
+  if node is ASTObjDecl {
+    nodeMembersLen := node.members.len
+    mut result := ""
+
+    loop i := 0; i < nodeMembersLen; i++ {
+      result += generateNode(node.members[i], node.id) + os_EOL
+    }
+
+    return result
+  }
+
+  if node is ASTVarDecl {
+    if prefix.empty() {
+      return ""
+    }
+
+    return "selfType->fields.push_back(" +
+      "TypeField{\"" + node.id + "\", " +
+      generateType(node.t) + ", " + node.mutable.str() + ", false, true});"
+  }
+
+  panic("Unknown node, got: " + node.str())
+}
+
+fn generateType (t: ASTType) str {
+  if t is ASTTypeRef {
+    r := t.refType
+
+    if r is ASTTypeId {
+      if r.id == "Self" {
+        return "refSelfType"
+      }
+    }
+  }
+
+  if t is ASTTypeId {
+    if t.id == "Self" {
+      return "selfType"
+    }
+  }
+
+  if t is ASTTypeArr {
+    return "this->createArr(" + generateType(t.elementType) + ")"
+  }
+
+  if t is ASTTypeFn {
+    paramsLen := t.params.len
+    mut paramsCode := ""
+
+    loop i := 0; i < paramsLen; i++ {
+      param := t.params[i]
+      paramName := param.id == nil ? "std::nullopt" : "\"" + param.id + "\""
+      paramRequired := !param.variadic
+
+      paramsCode += i == 0 ? "" : "," + os_EOL
+      paramsCode += "    TypeFnParam{" + paramName + ", " +
+        generateType(param.t) + ", " +
+        param.mutable.str() + ", " +
+        paramRequired.str() + ", " +
+        param.variadic.str() + "}"
+    }
+
+    paramsCode = paramsCode.empty()
+      ? "{}"
+      : "{" + os_EOL + paramsCode + os_EOL + "  }"
+
+    return "this->createFn(" + paramsCode + ", " +
+      generateType(t.returnType) + ")"
+  }
+
+  if t is ASTTypeId {
+    return "this->get(\"" + t.id + "\")"
+  }
+
+  if t is ASTTypeMap {
+    return "this->createMap(" + generateType(t.keyType) +
+      ", " + generateType(t.valueType) + ")"
+  }
+
+  if t is ASTTypeOpt {
+    return "this->createOpt(" + generateType(t.underlyingType) + ")"
+  }
+
+  if t is ASTTypeRef {
+    return "this->createRef(" + generateType(t.refType) + ")"
+  }
+
+  if t is ASTTypeUnion {
+    subTypesLen := t.subTypes.len
+    mut subTypes := ""
+
+    loop i := 0; i < subTypesLen; i++ {
+      subTypes += i == 0 ? "" : ", "
+      subTypes += generateType(t.subTypes[i])
+    }
+
+    return "this->createUnion(" + subTypes + ")"
+  }
+
+  panic("Unknown node type, got: " + t.str())
 }
 
 main {
   inputPath := getInputPath()
-  content := process_runSync("../build/the parse " + inputPath).str()
+  content := process_runSync("build/the parse " + inputPath).str()
   tokens := tokenize(content)
   nodes := parse(tokens)
   ast := transform(nodes)
-  result := generate(ast)
-  print(result.trim())
-  print(ast)
+  result := generate(ast).trim()
+
+  if !result.empty() {
+    print(result)
+  }
 }

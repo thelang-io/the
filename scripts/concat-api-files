@@ -1,0 +1,23 @@
+fn scriptPath () str {
+  args := process_args
+
+  return fs_isAbsoluteSync(args[0])
+    ? args[0]
+    : fs_realpathSync(process_cwd() + "/" + args[0])
+}
+
+main {
+  scriptDir := path_dirname(scriptPath())
+  apiDir := fs_realpathSync(scriptDir + "/../src/api")
+
+  mut result := ""
+  files := fs_scandirSync(apiDir)
+  filesLen := files.len
+
+  loop i := 0; i < filesLen; i++ {
+    content := fs_readFileSync(apiDir + "/" + files[i]).str()
+    result += content.trim() + os_EOL + os_EOL
+  }
+
+  print(result.trim())
+}
