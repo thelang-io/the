@@ -1,9 +1,9 @@
 ======= stdin =======
 main {
   emptyMap: int[str]
-  result1 := emptyMap.empty()
-  result2 := { "key": 1 }.empty()
-  result3 := { "key1": "test1", "key2": "test2" }.empty()
+  result1 := emptyMap.empty
+  result2 := { "key": 1 }.empty
+  result3 := { "key1": "test1", "key2": "test2" }.empty
 
   print(result1, result2, result3)
 }

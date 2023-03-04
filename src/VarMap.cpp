@@ -73,9 +73,9 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"path_dirname", "@path_dirname", typeMap.get("path_dirname"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"print", "@print", typeMap.get("print"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"process_args", "@process_args", typeMap.createArr(typeMap.get("str")), false, false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_cwd", "@process_cwd", typeMap.get("str"), false, false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_getgid", "@process_getgid", typeMap.get("int"), false, false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"process_getuid", "@process_getuid", typeMap.get("int"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_cwd", "@process_cwd", typeMap.get("process_cwd"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_getgid", "@process_getgid", typeMap.get("process_getgid"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"process_getuid", "@process_getuid", typeMap.get("process_getuid"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"process_runSync", "@process_runSync", typeMap.get("process_runSync"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"request_open", "@request_open", typeMap.get("request_open"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"sleepSync", "@sleepSync", typeMap.get("sleepSync"), false, false, true, false, this->_frame}));

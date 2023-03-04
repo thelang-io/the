@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  if os_name() == "Windows" {
+  if os_NAME == "Windows" {
     process_runSync("exit /b 1")
   } else {
     process_runSync("exit 1")

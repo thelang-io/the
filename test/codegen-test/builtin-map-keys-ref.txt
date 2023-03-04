@@ -4,7 +4,7 @@ main {
   arr := [emptyMap, { "key1": 1 }, { "key1": 2, "key2": 3 }, { "key1": 6, "key2": 7, "key3": 8 }]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].keys())
+    print(arr[i].keys)
     print(arr[i].str())
   }
 }

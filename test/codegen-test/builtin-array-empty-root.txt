@@ -1,9 +1,9 @@
 ======= stdin =======
 main {
   emptyArr: int[] = []
-  emptyArr.empty();
-  [1].empty();
-  ["test1", "test2"].empty();
+  emptyArr.empty;
+  [1].empty;
+  ["test1", "test2"].empty;
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

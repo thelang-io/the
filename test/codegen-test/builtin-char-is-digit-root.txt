@@ -1,35 +1,35 @@
 ======= stdin =======
 main {
-  '\0'.isDigit()
-  '\n'.isDigit()
-  '\t'.isDigit()
-  'A'.isDigit()
-  'a'.isDigit()
-  '0'.isDigit()
-  '9'.isDigit()
-  '_'.isDigit()
-  '-'.isDigit()
+  '\0'.isDigit
+  '\n'.isDigit
+  '\t'.isDigit
+  'A'.isDigit
+  'a'.isDigit
+  '0'.isDigit
+  '9'.isDigit
+  '_'.isDigit
+  '-'.isDigit
 }
 ======= code =======
 #include <ctype.h>
 #include <stdbool.h>
 
-bool char_is_digit (char);
+bool char_isDigit (char);
 
-bool char_is_digit (char c) {
+bool char_isDigit (char c) {
   return isdigit(c);
 }
 
 int main () {
-  char_is_digit('\0');
-  char_is_digit('\n');
-  char_is_digit('\t');
-  char_is_digit('A');
-  char_is_digit('a');
-  char_is_digit('0');
-  char_is_digit('9');
-  char_is_digit('_');
-  char_is_digit('-');
+  char_isDigit('\0');
+  char_isDigit('\n');
+  char_isDigit('\t');
+  char_isDigit('A');
+  char_isDigit('a');
+  char_isDigit('0');
+  char_isDigit('9');
+  char_isDigit('_');
+  char_isDigit('-');
 }
 ======= flags =======
 ======= stdout =======

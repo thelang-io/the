@@ -312,7 +312,7 @@ bool Type::isRefOf (const Type *type) const {
   }
 
   auto refType = Type::actual(std::get<TypeRef>(this->body).refType);
-  return refType->matchStrict(type, true) || refType->isRefOf(type);
+  return refType->matchStrict(type) || refType->isRefOf(type);
 }
 
 bool Type::isSafeForTernaryAlt () const {

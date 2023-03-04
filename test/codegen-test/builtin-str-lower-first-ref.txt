@@ -3,7 +3,7 @@ main {
   arr := ["", "t", "TEST"]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].lowerFirst())
+    print(arr[i].lowerFirst)
   }
 }
 ======= code =======

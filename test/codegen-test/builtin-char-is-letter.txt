@@ -1,14 +1,14 @@
 ======= stdin =======
 main {
-  print('\0'.isSpace())
-  print('\n'.isSpace())
-  print('\t'.isSpace())
-  print('A'.isSpace())
-  print('a'.isSpace())
-  print('0'.isSpace())
-  print('9'.isSpace())
-  print('_'.isSpace())
-  print('-'.isSpace())
+  print('\0'.isLetter)
+  print('\n'.isLetter)
+  print('\t'.isLetter)
+  print('A'.isLetter)
+  print('a'.isLetter)
+  print('0'.isLetter)
+  print('9'.isLetter)
+  print('_'.isLetter)
+  print('-'.isLetter)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -37,12 +37,12 @@ struct str {
   size_t l;
 };
 
-bool char_is_space (char);
+bool char_isLetter (char);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 
-bool char_is_space (char c) {
-  return isspace(c);
+bool char_isLetter (char c) {
+  return isalpha(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -78,23 +78,23 @@ void str_free (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", char_is_space('\0'), THE_EOL);
-  print(stdout, "tz", char_is_space('\n'), THE_EOL);
-  print(stdout, "tz", char_is_space('\t'), THE_EOL);
-  print(stdout, "tz", char_is_space('A'), THE_EOL);
-  print(stdout, "tz", char_is_space('a'), THE_EOL);
-  print(stdout, "tz", char_is_space('0'), THE_EOL);
-  print(stdout, "tz", char_is_space('9'), THE_EOL);
-  print(stdout, "tz", char_is_space('_'), THE_EOL);
-  print(stdout, "tz", char_is_space('-'), THE_EOL);
+  print(stdout, "tz", char_isLetter('\0'), THE_EOL);
+  print(stdout, "tz", char_isLetter('\n'), THE_EOL);
+  print(stdout, "tz", char_isLetter('\t'), THE_EOL);
+  print(stdout, "tz", char_isLetter('A'), THE_EOL);
+  print(stdout, "tz", char_isLetter('a'), THE_EOL);
+  print(stdout, "tz", char_isLetter('0'), THE_EOL);
+  print(stdout, "tz", char_isLetter('9'), THE_EOL);
+  print(stdout, "tz", char_isLetter('_'), THE_EOL);
+  print(stdout, "tz", char_isLetter('-'), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
 false
-true
-true
 false
 false
+true
+true
 false
 false
 false

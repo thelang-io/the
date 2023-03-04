@@ -455,30 +455,30 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
-  if (this->builtins.fnCharIsAlpha) {
-    builtinFnDeclCode += "bool char_is_alpha (char);" EOL;
-    builtinFnDefCode += "bool char_is_alpha (char c) {" EOL;
-    builtinFnDefCode += "  return isalpha(c);" EOL;
-    builtinFnDefCode += "}" EOL;
-  }
-
-  if (this->builtins.fnCharIsAlphaNum) {
-    builtinFnDeclCode += "bool char_is_alpha_num (char);" EOL;
-    builtinFnDefCode += "bool char_is_alpha_num (char c) {" EOL;
-    builtinFnDefCode += "  return isalnum(c);" EOL;
-    builtinFnDefCode += "}" EOL;
-  }
-
   if (this->builtins.fnCharIsDigit) {
-    builtinFnDeclCode += "bool char_is_digit (char);" EOL;
-    builtinFnDefCode += "bool char_is_digit (char c) {" EOL;
+    builtinFnDeclCode += "bool char_isDigit (char);" EOL;
+    builtinFnDefCode += "bool char_isDigit (char c) {" EOL;
     builtinFnDefCode += "  return isdigit(c);" EOL;
     builtinFnDefCode += "}" EOL;
   }
 
-  if (this->builtins.fnCharIsSpace) {
-    builtinFnDeclCode += "bool char_is_space (char);" EOL;
-    builtinFnDefCode += "bool char_is_space (char c) {" EOL;
+  if (this->builtins.fnCharIsLetter) {
+    builtinFnDeclCode += "bool char_isLetter (char);" EOL;
+    builtinFnDefCode += "bool char_isLetter (char c) {" EOL;
+    builtinFnDefCode += "  return isalpha(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsLetterOrDigit) {
+    builtinFnDeclCode += "bool char_isLetterOrDigit (char);" EOL;
+    builtinFnDefCode += "bool char_isLetterOrDigit (char c) {" EOL;
+    builtinFnDefCode += "  return isalnum(c);" EOL;
+    builtinFnDefCode += "}" EOL;
+  }
+
+  if (this->builtins.fnCharIsWhitespace) {
+    builtinFnDeclCode += "bool char_isWhitespace (char);" EOL;
+    builtinFnDefCode += "bool char_isWhitespace (char c) {" EOL;
     builtinFnDefCode += "  return isspace(c);" EOL;
     builtinFnDefCode += "}" EOL;
   }
@@ -1363,20 +1363,20 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("fnStrAlloc");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
-  } else if (name == "fnCharIsAlpha") {
-    this->builtins.fnCharIsAlpha = true;
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libCtype");
-  } else if (name == "fnCharIsAlphaNum") {
-    this->builtins.fnCharIsAlphaNum = true;
-    this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("libCtype");
   } else if (name == "fnCharIsDigit") {
     this->builtins.fnCharIsDigit = true;
     this->_activateBuiltin("libStdbool");
     this->_activateBuiltin("libCtype");
-  } else if (name == "fnCharIsSpace") {
-    this->builtins.fnCharIsSpace = true;
+  } else if (name == "fnCharIsLetter") {
+    this->builtins.fnCharIsLetter = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsLetterOrDigit") {
+    this->builtins.fnCharIsLetterOrDigit = true;
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("libCtype");
+  } else if (name == "fnCharIsWhitespace") {
+    this->builtins.fnCharIsWhitespace = true;
     this->_activateBuiltin("libStdbool");
     this->_activateBuiltin("libCtype");
   } else if (name == "fnCharRepeat") {
@@ -2930,6 +2930,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateBuiltin("fnStrAlloc");
         code = "str_alloc(THE_EOL)";
         code = !root ? code : this->_genFreeFn(objVar->type, code);
+      } else if (objVar->builtin && objVar->codeName == "@os_NAME") {
+        code = this->_apiEval("_{os_name}()");
+        code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else if (objVar->builtin && objVar->codeName == "@path_SEP") {
         this->_activateBuiltin("definitions");
         this->_activateBuiltin("fnStrAlloc");
@@ -2985,43 +2988,82 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
       auto originalObjMemberType = nodeExpr.type;
 
+      // todo get field, check if field is builtin and decide the way to build expression
       if (exprAccess.prop == "cap" && objTypeInfo.realType->isMap()) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_cap}" + code, 1);
+      } else if (exprAccess.prop == "empty" && (objTypeInfo.realType->isArray() || objTypeInfo.realType->isMap())) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_empty}" + code, 1);
+      } else if (exprAccess.prop == "empty" && objTypeInfo.realType->isStr()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{str_empty}" + code, 1);
+      } else if (exprAccess.prop == "isDigit" && objTypeInfo.realType->isChar()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{char_isDigit}" + code, 1);
+      } else if (exprAccess.prop == "isLetter" && objTypeInfo.realType->isChar()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{char_isLetter}" + code, 1);
+      } else if (exprAccess.prop == "isLetterOrDigit" && objTypeInfo.realType->isChar()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{char_isLetterOrDigit}" + code, 1);
+      } else if (exprAccess.prop == "isWhitespace" && objTypeInfo.realType->isChar()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{char_isWhitespace}" + code, 1);
+      } else if (exprAccess.prop == "keys" && objTypeInfo.realType->isMap()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        auto mapType = std::get<TypeBodyMap>(objTypeInfo.realType->body);
 
-        if (!objNodeExpr.parenthesized) {
-          objCode = "(" + objCode + ")";
-        }
-
-        this->_activateEntity(objTypeInfo.realTypeName + "_cap");
-        code = objTypeInfo.realTypeName + "_cap" + objCode;
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_keys}" + code, 1);
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.createArr(mapType.keyType), code);
       } else if (exprAccess.prop == "len" && (objTypeInfo.realType->isArray() || objTypeInfo.realType->isMap())) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-
-        if (!objNodeExpr.parenthesized) {
-          objCode = "(" + objCode + ")";
-        }
-
-        this->_activateEntity(objTypeInfo.realTypeName + "_len");
-        code = objTypeInfo.realTypeName + "_len" + objCode;
-      } else if (exprAccess.prop == "rawValue" && objTypeInfo.realType->isEnum()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-
-        if (!objNodeExpr.parenthesized) {
-          objCode = "(" + objCode + ")";
-        }
-
-        this->_activateEntity(objTypeInfo.realTypeName + "_rawValue");
-        code = objTypeInfo.realTypeName + "_rawValue" + objCode;
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_len}" + code, 1);
       } else if (exprAccess.prop == "len" && objTypeInfo.realType->isStr()) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        this->_activateBuiltin("fnStrLen");
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{str_len}" + code, 1);
+      } else if (exprAccess.prop == "lower" && objTypeInfo.realType->isStr()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{str_lower}" + code, 1);
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
+      } else if (exprAccess.prop == "lowerFirst" && objTypeInfo.realType->isStr()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{str_lower_first}" + code, 1);
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
+      } else if (exprAccess.prop == "rawValue" && objTypeInfo.realType->isEnum()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_rawValue}" + code, 1);
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
+      } else if (exprAccess.prop == "upper" && objTypeInfo.realType->isStr()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{str_upper}" + code, 1);
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
+      } else if (exprAccess.prop == "upperFirst" && objTypeInfo.realType->isStr()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{str_upper_first}" + code, 1);
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
+      } else if (exprAccess.prop == "values" && objTypeInfo.realType->isMap()) {
+        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
+        auto mapType = std::get<TypeBodyMap>(objTypeInfo.realType->body);
 
-        if (objNodeExpr.parenthesized) {
-          code = "str_len" + objCode;
-        } else {
-          code = "str_len(" + objCode + ")";
-        }
+        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_values}" + code, 1);
+        code = !root ? code : this->_genFreeFn(this->ast->typeMap.createArr(mapType.valueType), code);
       } else if (exprAccess.prop != std::nullopt && objTypeInfo.realType->isEnum()) {
         auto enumType = std::get<TypeEnum>(objTypeInfo.realType->body);
 
@@ -3051,11 +3093,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto objElemCode = this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type);
 
         if (objTypeInfo.realType->isArray()) {
-          this->_activateEntity(objTypeInfo.realTypeName + "_at");
-          code = objTypeInfo.realTypeName + "_at(" + objCode + ", " + objElemCode + ")";
+          code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_at}(" + objCode + ", " + objElemCode + ")", 1);
         } else if (objTypeInfo.realType->isStr()) {
-          this->_activateBuiltin("fnStrAt");
-          code = "str_at(" + objCode + ", " + objElemCode + ")";
+          code = this->_apiEval("_{str_at}(" + objCode + ", " + objElemCode + ")", 1);
         }
       }
 
@@ -3071,10 +3111,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         code = "*" + code;
       }
 
+      auto isExprAccessEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
       auto isExprAccessRef = nodeExpr.type->isRef() && targetType->isRef();
-      auto isExprAccessEnumRawValue = objTypeInfo.realType->isEnum() && exprAccess.prop == "rawValue";
+      auto isExprAccessMapField = objTypeInfo.realType->isMap() && exprAccess.prop != std::nullopt;
+      auto isExprAccessStrField = objTypeInfo.realType->isStr() && exprAccess.prop != std::nullopt;
 
-      if (!root && !isExprAccessRef && !isExprAccessEnumRawValue) {
+      if (!root && !isExprAccessEnumField && !isExprAccessMapField && !isExprAccessRef && !isExprAccessStrField) {
         code = this->_genCopyFn(Type::real(nodeExpr.type), code);
       }
     } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
@@ -3350,6 +3392,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto exprCallCalleeTypeInfo = this->_typeInfo(exprCall.callee.type);
     auto code = std::string();
 
+    // todo automate process of onboarding new function or method
     if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@exit") {
       auto arg1Expr = std::string("0");
 
@@ -3414,8 +3457,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("buffer_Buffer"));
       code = this->_apiEval("_{fs_writeFileSync}(" + arg1Expr + ", " + arg2Expr + ")", 1);
-    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@os_name") {
-      code = this->_apiEval("_{os_name}()", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@path_basename") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{path_basename}(" + arg1Expr + ")", 1);
@@ -3496,9 +3537,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@process_runSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       code = this->_apiEval("_{process_runSync}(" + arg1Expr + ")", 1);
-    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_close") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.createRef(this->ast->typeMap.get("request_Request")));
-      code = this->_apiEval("_{request_close}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_open") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
       auto arg2Expr = this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("str"));
@@ -3531,9 +3569,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       code = this->_apiEval("_{request_open}(" + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")", 1);
-    } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@request_read") {
-      auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.createRef(this->ast->typeMap.get("request_Request")));
-      code = this->_apiEval("_{request_read}(" + arg1Expr + ")", 1);
     } else if (exprCallCalleeTypeInfo.realType->builtin && exprCallCalleeTypeInfo.realType->codeName == "@sleepSync") {
       auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
       code = this->_apiEval("_{sleep_sync}(" + arg1Expr + ")", 1);
@@ -3580,12 +3615,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
 
         code = typeStrFn + calleeCode;
-      } else if (
-        exprCallCalleeTypeInfo.realType->codeName == "@array.empty" ||
-        exprCallCalleeTypeInfo.realType->codeName == "@map.empty"
-      ) {
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_empty");
-        code = calleeTypeInfo.realTypeName + "_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.join") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -3631,18 +3660,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr;
         code += ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlpha") {
-        this->_activateBuiltin("fnCharIsAlpha");
-        code = "char_is_alpha(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isAlphaNum") {
-        this->_activateBuiltin("fnCharIsAlphaNum");
-        code = "char_is_alpha_num(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isDigit") {
-        this->_activateBuiltin("fnCharIsDigit");
-        code = "char_is_digit(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.isSpace") {
-        this->_activateBuiltin("fnCharIsSpace");
-        code = "char_is_space(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@char.repeat") {
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
         this->_activateBuiltin("fnCharRepeat");
@@ -3665,10 +3682,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         this->_activateEntity(calleeTypeInfo.realTypeName + "_has");
         code = calleeTypeInfo.realTypeName + "_has(" + calleeCode + ", " + arg1Expr + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.keys") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_keys");
-        code = calleeTypeInfo.realTypeName + "_keys(" + calleeCode + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.merge") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.createRef(calleeTypeInfo.realType), true);
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, calleeTypeInfo.realType);
@@ -3700,13 +3713,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.createRef(calleeTypeInfo.realType), true);
         this->_activateEntity(calleeTypeInfo.realTypeName + "_shrink");
         code = calleeTypeInfo.realTypeName + "_shrink(" + calleeCode + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@map.values") {
-        auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
-        this->_activateEntity(calleeTypeInfo.realTypeName + "_values");
-        code = calleeTypeInfo.realTypeName + "_values(" + calleeCode + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.empty") {
-        this->_activateBuiltin("fnStrEmpty");
-        code = "str_empty(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@request_Request.close") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.createRef(calleeTypeInfo.realType), true);
+        code = this->_apiEval("_{request_close}(" + calleeCode + ")", 1);
+      } else if (exprCallCalleeTypeInfo.realType->codeName == "@request_Request.read") {
+        auto calleeCode = this->_nodeExpr(calleeNodeExpr, this->ast->typeMap.createRef(calleeTypeInfo.realType), true);
+        code = this->_apiEval("_{request_read}(" + calleeCode + ")", 1);
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.find") {
         auto arg1Expr = this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("str"));
         this->_activateBuiltin("fnStrFind");
@@ -3718,12 +3730,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
         this->_activateBuiltin("fnStrLines");
         code = "str_lines(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lower") {
-        this->_activateBuiltin("fnStrLower");
-        code = "str_lower(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.lowerFirst") {
-        this->_activateBuiltin("fnStrLowerFirst");
-        code = "str_lower_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
@@ -3739,12 +3745,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.trim") {
         this->_activateBuiltin("fnStrTrim");
         code = "str_trim(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upper") {
-        this->_activateBuiltin("fnStrUpper");
-        code = "str_upper(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
-      } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.upperFirst") {
-        this->_activateBuiltin("fnStrUpperFirst");
-        code = "str_upper_first(" + this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType) + ")";
       }
     } else {
       auto fnType = std::get<TypeFn>(exprCallCalleeTypeInfo.realType->body);

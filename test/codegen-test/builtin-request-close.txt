@@ -1,9 +1,9 @@
 ======= stdin =======
 main {
   mut req := request_open("GET", "http://ci.thelang.io/echo?example")
-  request_close(ref req)
+  req.close()
   req = request_open("GET", "https://ci.thelang.io/echo?example")
-  request_close(ref req)
+  req.close()
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

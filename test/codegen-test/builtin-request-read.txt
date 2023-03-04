@@ -1,8 +1,8 @@
 ======= stdin =======
 main {
   mut req := request_open("GET", "https://ci.thelang.io/echo?ip")
-  res := request_read(ref req)
-  request_close(ref req)
+  res := req.read()
+  req.close()
 
   print("GET", "https://ci.thelang.io/echo?ip", res.status)
   print()

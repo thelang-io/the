@@ -1,10 +1,10 @@
 ======= stdin =======
 main {
-  "".lowerFirst()
-  "a".lowerFirst()
-  "test".lowerFirst()
-  "A".lowerFirst()
-  "TEST_TEST09$/!".lowerFirst()
+  "".lowerFirst
+  "a".lowerFirst
+  "test".lowerFirst
+  "A".lowerFirst
+  "TEST_TEST09$/!".lowerFirst
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

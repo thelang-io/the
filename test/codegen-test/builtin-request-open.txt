@@ -1,20 +1,20 @@
 ======= stdin =======
 main {
   mut req := request_open("GET", "http://ci.thelang.io/echo?example")
-  res1 := request_read(ref req)
-  request_close(ref req)
+  res1 := req.read()
+  req.close()
 
   req = request_open("POST", "http://ci.thelang.io/echo?example")
-  res2 := request_read(ref req)
-  request_close(ref req)
+  res2 := req.read()
+  req.close()
 
   req = request_open("GET", "https://ci.thelang.io/echo?example")
-  res3 := request_read(ref req)
-  request_close(ref req)
+  res3 := req.read()
+  req.close()
 
   req = request_open("POST", "https://ci.thelang.io/echo?example")
-  res4 := request_read(ref req)
-  request_close(ref req)
+  res4 := req.read()
+  req.close()
 
   print("GET http://ci.thelang.io/echo?example:", res1.status)
   print("POST http://ci.thelang.io/echo?example:", res2.status)

@@ -3,7 +3,7 @@ main {
   arr := ['\0', '1', 'Z']
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].isAlpha())
+    print(arr[i].isLetter)
   }
 }
 ======= code =======
@@ -41,7 +41,7 @@ struct __THE_1_array_char {
 };
 
 void *alloc (size_t);
-bool char_is_alpha (char);
+bool char_isLetter (char);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 struct __THE_1_array_char __THE_1_array_char_alloc (size_t, ...);
@@ -58,7 +58,7 @@ void *alloc (size_t l) {
   }
   return r;
 }
-bool char_is_alpha (char c) {
+bool char_isLetter (char c) {
   return isalpha(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
@@ -127,7 +127,7 @@ size_t __THE_1_array_char_len (struct __THE_1_array_char n) {
 int main () {
   const struct __THE_1_array_char __THE_0_arr_0 = __THE_1_array_char_alloc(3, '\0', '1', 'Z');
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_char_len(__THE_1_array_char_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "tz", char_is_alpha(*__THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
+    print(stdout, "tz", char_isLetter(*__THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
   }
   __THE_1_array_char_free((struct __THE_1_array_char) __THE_0_arr_0);
 }

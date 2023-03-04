@@ -1,18 +1,18 @@
 ======= stdin =======
 main {
   mut req := request_open("GET", "https://ci.thelang.io/echo?sleep=0&status=200")
-  mut res := request_read(ref req)
-  request_close(ref req)
+  mut res := req.read()
+  req.close()
   print("GET", "https://ci.thelang.io/echo?sleep=0&status=200", res.status)
 
   req = request_open("GET", "https://ci.thelang.io/echo?sleep=1000&status=400")
-  res = request_read(ref req)
-  request_close(ref req)
+  res = req.read()
+  req.close()
   print("GET", "https://ci.thelang.io/echo?sleep=1000&status=400", res.status)
 
   req = request_open("GET", "https://ci.thelang.io/echo?sleep=5000&status=500")
-  res = request_read(ref req)
-  request_close(ref req)
+  res = req.read()
+  req.close()
   print("GET", "https://ci.thelang.io/echo?sleep=5000&status=500", res.status)
 }
 ======= code =======

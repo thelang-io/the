@@ -64,7 +64,7 @@ Type *TypeMap::createArr (Type *elementType) {
   }
 
   for (const auto &item : this->_items) {
-    if (item->isArray() && std::get<TypeArray>(item->body).elementType->matchStrict(elementType)) {
+    if (item->isArray() && std::get<TypeArray>(item->body).elementType->matchStrict(elementType, true)) {
       return item.get();
     }
   }
@@ -92,7 +92,7 @@ Type *TypeMap::createArr (Type *elementType) {
   auto filterTypeFn = TypeFn{selfType, {
     TypeFnParam{"predicate", this->createFn({
       TypeFnParam{"it", elementType, false, true, false}
-    }, this->get("bool")), false, true, false}
+    }, this->get("bool"), std::nullopt, true), false, true, false}
   }, true, filterMethodInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".filter", "@array.filter", filterTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"filter", this->_items.back().get(), false, true, true});
@@ -106,7 +106,7 @@ Type *TypeMap::createArr (Type *elementType) {
   auto mapTypeFn = TypeFn{this->createArr(this->get("any")), {
     TypeFnParam{"transform", this->createFn({
       TypeFnParam{"it", elementType, false, true, false}
-    }, this->get("any")), false, true, false}
+    }, this->get("any"), std::nullopt, true), false, true, false}
   }, true, mapMethodInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".map", "@array.map", mapTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"map", this->_items.back().get(), false, true, true});
@@ -122,13 +122,13 @@ Type *TypeMap::createArr (Type *elementType) {
   selfType->fields.push_back(TypeField{"pop", this->_items.back().get(), false, true, true});
   auto pushMethodInfo = TypeFnMethodInfo{selfType->name + "_push", true, "self_0", refSelfType, true};
   auto pushTypeFn = TypeFn{this->get("void"), {
-    TypeFnParam{"elements", elementType, false, false, true}
+    TypeFnParam{"elements", this->createArr(elementType), false, false, true}
   }, true, pushMethodInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".push", "@array.push", pushTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"push", this->_items.back().get(), false, true, true});
   auto removeMethodInfo = TypeFnMethodInfo{selfType->name + "_remove", true, "self_0", refSelfType, true};
   auto removeTypeFn = TypeFn{refSelfType, {
-    TypeFnParam{"indexes", this->get("int"), false, false, true}
+    TypeFnParam{"indexes", this->createArr(this->get("int")), false, false, true}
   }, true, removeMethodInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".remove", "@array.remove", removeTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"remove", this->_items.back().get(), false, true, true});
@@ -148,7 +148,7 @@ Type *TypeMap::createArr (Type *elementType) {
     TypeFnParam{"comparator", this->createFn({
       TypeFnParam{"a", elementType, false, true, false},
       TypeFnParam{"b", elementType, false, true, false}
-    }, this->get("int")), false, true, false}
+    }, this->get("int"), std::nullopt, true), false, true, false}
   }, true, sortMethodInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".sort", "@array.sort", sortTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"sort", this->_items.back().get(), false, true, true});
@@ -160,13 +160,85 @@ Type *TypeMap::createArr (Type *elementType) {
   return selfType;
 }
 
+Type *TypeMap::createEnum (const std::string &name, const std::string &codeName, const std::vector<Type *> &members) {
+  auto typeBody = TypeEnum{members};
+  auto newType = Type{name, codeName, typeBody};
+
+  for (const auto &item : this->_items) {
+    if (!item->builtin && item->codeName == newType.codeName) {
+      return item.get();
+    }
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  auto selfType = this->_items.back().get();
+  auto refSelfType = this->createRef(selfType);
+
+  selfType->fields.push_back(TypeField{"rawValue", this->get("str"), false, false, true});
+  auto strMethodInfo = TypeFnMethodInfo{selfType->name + "_str", true, "self_0", refSelfType, false};
+  auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@enum.str", strTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
+
+  return selfType;
+}
+
+Type *TypeMap::createFn (
+  const std::vector<TypeFnParam> &params,
+  Type *returnType,
+  const std::optional<TypeFnMethodInfo> &methodInfo,
+  bool builtin
+) {
+  auto typeBody = TypeFn{
+    returnType,
+    params,
+    methodInfo != std::nullopt,
+    methodInfo == std::nullopt ? TypeFnMethodInfo{} : *methodInfo
+  };
+
+  auto newType = Type{"", "", typeBody, {}, builtin};
+
+  for (const auto &item : this->_items) {
+    if (item->builtin == newType.builtin && item->isFn() && item->matchStrict(&newType, true)) {
+      return item.get();
+    }
+  }
+
+  for (const auto &item : this->_items) {
+    if (item->builtin == newType.builtin && item->isFn() && item->matchStrict(&newType)) {
+      newType.name = item->name;
+      newType.codeName = item->codeName;
+      break;
+    }
+  }
+
+  if (newType.builtin && newType.name.empty()) {
+    newType.name = "builtin_fn$" + std::to_string(this->_builtinIdx++);
+    newType.codeName = "@" + newType.name;
+  } else if (newType.name.empty()) {
+    newType.name = "fn$" + std::to_string(this->_fnIdx++);
+    newType.codeName = "@" + newType.name;
+  }
+
+  this->_items.push_back(std::make_unique<Type>(newType));
+  auto selfType = this->_items.back().get();
+  auto refSelfType = this->createRef(selfType);
+
+  auto strMethodInfo = TypeFnMethodInfo{selfType->name + "_str", true, "self_0", refSelfType, false};
+  auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@fn.str", strTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
+
+  return selfType;
+}
+
 Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   auto actualKeyType = Type::actual(keyType);
   auto actualValueType = Type::actual(valueType);
   auto newType = Type{"", "", TypeBodyMap{actualKeyType, actualValueType}};
 
   for (const auto &item : this->_items) {
-    if (!item->builtin && item->isMap() && item->matchStrict(&newType)) {
+    if (!item->builtin && item->isMap() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
@@ -236,72 +308,8 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   return selfType;
 }
 
-Type *TypeMap::createEnum (const std::string &name, const std::string &codeName, const std::vector<Type *> &members) {
-  auto typeBody = TypeEnum{members};
-  auto newType = Type{name, codeName, typeBody};
-
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->codeName == newType.codeName) {
-      return item.get();
-    }
-  }
-
-  this->_items.push_back(std::make_unique<Type>(newType));
-  auto selfType = this->_items.back().get();
-  auto refSelfType = this->createRef(selfType);
-
-  selfType->fields.push_back(TypeField{"rawValue", this->get("str"), false, false, true});
-  auto strMethodInfo = TypeFnMethodInfo{selfType->name + "_str", true, "self_0", refSelfType, false};
-  auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
-  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@enum.str", strTypeFn, {}, true}));
-  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
-
-  return selfType;
-}
-
-Type *TypeMap::createFn (const std::vector<TypeFnParam> &params, Type *returnType, const std::optional<TypeFnMethodInfo> &methodInfo) {
-  auto typeBody = TypeFn{
-    returnType,
-    params,
-    methodInfo != std::nullopt,
-    methodInfo == std::nullopt ? TypeFnMethodInfo{} : *methodInfo
-  };
-
-  auto newType = Type{"", "", typeBody};
-
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
-      return item.get();
-    }
-  }
-
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType)) {
-      newType.name = item->name;
-      newType.codeName = item->codeName;
-      break;
-    }
-  }
-
-  if (newType.name.empty()) {
-    newType.name = "fn$" + std::to_string(this->_fnIdx++);
-    newType.codeName = "@" + newType.name;
-  }
-
-  this->_items.push_back(std::make_unique<Type>(newType));
-  auto selfType = this->_items.back().get();
-  auto refSelfType = this->createRef(selfType);
-
-  auto strMethodInfo = TypeFnMethodInfo{selfType->name + "_str", true, "self_0", refSelfType, false};
-  auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
-  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@fn.str", strTypeFn, {}, true}));
-  selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
-
-  return selfType;
-}
-
-Type *TypeMap::createObj (const std::string &name, const std::string &codeName, const std::vector<TypeField> &fields) {
-  this->_items.push_back(std::make_unique<Type>(Type{name, codeName, TypeObj{}, fields}));
+Type *TypeMap::createObj (const std::string &name, const std::string &codeName, const std::vector<TypeField> &fields, bool builtin) {
+  this->_items.push_back(std::make_unique<Type>(Type{name, codeName, TypeObj{}, fields, builtin}));
   auto selfType = this->_items.back().get();
   auto refSelfType = this->createRef(selfType);
 
@@ -319,7 +327,7 @@ Type *TypeMap::createOpt (Type *type) {
   }
 
   for (const auto &item : this->_items) {
-    if (!item->builtin && item->isOpt() && std::get<TypeOptional>(item->body).type->matchStrict(type)) {
+    if (!item->builtin && item->isOpt() && std::get<TypeOptional>(item->body).type->matchStrict(type, true)) {
       return item.get();
     }
   }
@@ -342,7 +350,7 @@ Type *TypeMap::createRef (Type *refType) {
   }
 
   for (const auto &item : this->_items) {
-    if (!item->builtin && item->isRef() && std::get<TypeRef>(item->body).refType->matchStrict(refType)) {
+    if (!item->builtin && item->isRef() && std::get<TypeRef>(item->body).refType->matchStrict(refType, true)) {
       return item.get();
     }
   }
@@ -355,7 +363,7 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   auto newType = Type{"", "", TypeUnion{subTypes}};
 
   for (const auto &item : this->_items) {
-    if (!item->builtin && item->isUnion() && item->matchStrict(&newType)) {
+    if (!item->builtin && item->isUnion() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
@@ -463,7 +471,7 @@ Type *TypeMap::unionSub (const Type *type, const Type *exceptType) {
   auto newSubTypes = std::vector<Type *>{};
 
   for (const auto &subType : subTypes) {
-    if (!subType->matchStrict(exceptType)) {
+    if (!subType->matchStrict(exceptType, true)) {
       newSubTypes.push_back(subType);
     }
   }
@@ -548,14 +556,12 @@ void TypeMap::_floatType (TypeMapPhase phase) {
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@float.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("f32", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"f32_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@f32.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("f64", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"f64_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
@@ -571,56 +577,48 @@ void TypeMap::_intType (TypeMapPhase phase) {
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@int.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("i8", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"i8_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@i8.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("i16", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"i16_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@i16.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("i32", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"i32_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@i32.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("i64", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"i64_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@i64.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("u8", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"u8_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@u8.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("u16", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"u16_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@u16.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("u32", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"u32_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@u32.str", strTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
   });
-
   this->_initType("u64", phase, [&] (auto selfType, auto refSelfType) {
     auto strMethodInfo = TypeFnMethodInfo{"u64_str", true, "self_0", refSelfType, false};
     auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
@@ -644,7 +642,7 @@ void TypeMap::_strType (TypeMapPhase phase) {
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".contains", "@str.contains", containsTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"contains", this->_items.back().get(), false, true, true});
     auto findMethodInfo = TypeFnMethodInfo{"str_find", true, "self_0", refSelfType, false};
-    auto findTypeFn = TypeFn{selfType, {
+    auto findTypeFn = TypeFn{this->get("int"), {
       TypeFnParam{"search", selfType, false, true, false}
     }, true, findMethodInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".find", "@str.find", findTypeFn, {}, true}));
@@ -701,32 +699,27 @@ void TypeMap::_bufferModule (TypeMapPhase phase) {
 }
 
 void TypeMap::_fsModule (TypeMapPhase phase) {
-  this->_initType("fs_Stats", phase, [&] (auto selfType, auto refSelfType) {
-    selfType->fields.push_back(TypeField{"dev", this->get("u64"), false, false, true});
-    selfType->fields.push_back(TypeField{"mode", this->get("u32"), false, false, true});
-    selfType->fields.push_back(TypeField{"nlink", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"ino", this->get("u64"), false, false, true});
-    selfType->fields.push_back(TypeField{"uid", this->get("i32"), false, false, true});
-    selfType->fields.push_back(TypeField{"gid", this->get("i32"), false, false, true});
-    selfType->fields.push_back(TypeField{"rdev", this->get("u64"), false, false, true});
-    selfType->fields.push_back(TypeField{"atime", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"atimeNs", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"mtime", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"mtimeNs", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"ctime", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"ctimeNs", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"btime", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"btimeNs", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"size", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"blocks", this->get("i64"), false, false, true});
-    selfType->fields.push_back(TypeField{"blockSize", this->get("i64"), false, false, true});
-    auto strMethodInfo = TypeFnMethodInfo{"fs_Stats__str_0", true, "self_0", refSelfType, false};
-    auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@fs_Stats.str", strTypeFn, {}, true}));
-    selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
-  });
-
   if (phase == TYPE_MAP_DEF) {
+    this->createObj("fs_Stats", this->name("fs_Stats"), {
+      TypeField{"dev", this->get("u64"), false, false, false},
+      TypeField{"mode", this->get("u32"), false, false, false},
+      TypeField{"nlink", this->get("i64"), false, false, false},
+      TypeField{"ino", this->get("u64"), false, false, false},
+      TypeField{"uid", this->get("i32"), false, false, false},
+      TypeField{"gid", this->get("i32"), false, false, false},
+      TypeField{"rdev", this->get("u64"), false, false, false},
+      TypeField{"atime", this->get("i64"), false, false, false},
+      TypeField{"atimeNs", this->get("i64"), false, false, false},
+      TypeField{"mtime", this->get("i64"), false, false, false},
+      TypeField{"mtimeNs", this->get("i64"), false, false, false},
+      TypeField{"ctime", this->get("i64"), false, false, false},
+      TypeField{"ctimeNs", this->get("i64"), false, false, false},
+      TypeField{"btime", this->get("i64"), false, false, false},
+      TypeField{"btimeNs", this->get("i64"), false, false, false},
+      TypeField{"size", this->get("i64"), false, false, false},
+      TypeField{"blocks", this->get("i64"), false, false, false},
+      TypeField{"blockSize", this->get("i64"), false, false, false}
+    }, true);
     auto fs_chmodSyncTypeFn = TypeFn{this->get("void"), {
       TypeFnParam{"path", this->get("str"), false, true, false},
       TypeFnParam{"mode", this->get("int"), false, true, false}
@@ -810,7 +803,7 @@ void TypeMap::_globalsModule (TypeMapPhase phase) {
     }};
     this->_items.push_back(std::make_unique<Type>(Type{"exit", "@exit", exitTypeFn, {}, true}));
     auto printTypeFn = TypeFn{this->get("void"), {
-      TypeFnParam{"items", this->get("any"), false, false, true},
+      TypeFnParam{"items", this->createArr(this->get("any")), false, false, true},
       TypeFnParam{"separator", this->get("str"), false, false, false},
       TypeFnParam{"terminator", this->get("str"), false, false, false},
       TypeFnParam{"to", this->get("str"), false, false, false}
@@ -838,6 +831,12 @@ void TypeMap::_pathModule (TypeMapPhase phase) {
 
 void TypeMap::_processModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
+    auto process_cwdTypeFn = TypeFn{this->get("str"), {}};
+    this->_items.push_back(std::make_unique<Type>(Type{"process_cwd", "@process_cwd", process_cwdTypeFn, {}, true}));
+    auto process_gidTypeFn = TypeFn{this->get("int"), {}};
+    this->_items.push_back(std::make_unique<Type>(Type{"process_getgid", "@process_getgid", process_gidTypeFn, {}, true}));
+    auto process_uidTypeFn = TypeFn{this->get("int"), {}};
+    this->_items.push_back(std::make_unique<Type>(Type{"process_getuid", "@process_getuid", process_uidTypeFn, {}, true}));
     auto process_runSyncTypeFn = TypeFn{this->get("buffer_Buffer"), {
       TypeFnParam{"command", this->get("str"), false, true, false}
     }};
@@ -846,41 +845,27 @@ void TypeMap::_processModule (TypeMapPhase phase) {
 }
 
 void TypeMap::_requestModule (TypeMapPhase phase) {
-  this->_initType("request_Header", phase, [&] (auto selfType, auto refSelfType) {
-    selfType->fields.push_back(TypeField{"name", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"value", this->get("str"), false, false, true});
-    auto strMethodInfo = TypeFnMethodInfo{"request_Header__str_0", true, "self_0", refSelfType, false};
-    auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@request_Header.str", strTypeFn, {}, true}));
-    selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
-  });
-
-  this->_initType("request_Request", phase, [&] (auto selfType, auto refSelfType) {
-    auto closeMethodInfo = TypeFnMethodInfo{"request_close", true, "self_0", refSelfType, true};
-    auto closeTypeFn = TypeFn{this->get("void"), {}, true, closeMethodInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".close", "@request_Request.close", closeTypeFn, {}, true}));
-    selfType->fields.push_back(TypeField{"close", this->_items.back().get(), false, true, true});
-    auto readMethodInfo = TypeFnMethodInfo{"request_read", true, "self_0", refSelfType, true};
-    auto readTypeFn = TypeFn{this->get("request_Response"), {}, true, readMethodInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".read", "@request_Request.read", readTypeFn, {}, true}));
-    selfType->fields.push_back(TypeField{"read", this->_items.back().get(), false, true, true});
-    auto strMethodInfo = TypeFnMethodInfo{"request_Request__str_0", true, "self_0", refSelfType, false};
-    auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@request_Request.str", strTypeFn, {}, true}));
-    selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
-  });
-
-  this->_initType("request_Response", phase, [&] (auto selfType, auto refSelfType) {
-    selfType->fields.push_back(TypeField{"data", this->get("buffer_Buffer"), false, false, true});
-    selfType->fields.push_back(TypeField{"status", this->get("int"), false, false, true});
-    selfType->fields.push_back(TypeField{"headers", this->createArr(this->get("request_Header")), false, false, true});
-    auto strMethodInfo = TypeFnMethodInfo{"request_Response__str_0", true, "self_0", refSelfType, false};
-    auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@request_Response.str", strTypeFn, {}, true}));
-    selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
-  });
-
   if (phase == TYPE_MAP_DEF) {
+    this->createObj("request_Header", this->name("request_Header"), {
+      TypeField{"name", this->get("str"), false, false, false},
+      TypeField{"value", this->get("str"), false, false, false}
+    }, true);
+    this->createObj("request_Request", this->name("request_Request"), {}, true);
+    this->createObj("request_Response", this->name("request_Response"), {
+      TypeField{"data", this->get("buffer_Buffer"), false, false, false},
+      TypeField{"status", this->get("int"), false, false, false},
+      TypeField{"headers", this->createArr(this->get("request_Header")), false, false, false}
+    }, true);
+    this->_initType("request_Request", phase, [&] (auto selfType, auto refSelfType) {
+      auto closeMethodInfo = TypeFnMethodInfo{"request_close", true, "self_0", refSelfType, true};
+      auto closeTypeFn = TypeFn{this->get("void"), {}, true, closeMethodInfo};
+      this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".close", "@request_Request.close", closeTypeFn, {}, true}));
+      selfType->fields.push_back(TypeField{"close", this->_items.back().get(), false, true, true});
+      auto readMethodInfo = TypeFnMethodInfo{"request_read", true, "self_0", refSelfType, true};
+      auto readTypeFn = TypeFn{this->get("request_Response"), {}, true, readMethodInfo};
+      this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".read", "@request_Request.read", readTypeFn, {}, true}));
+      selfType->fields.push_back(TypeField{"read", this->_items.back().get(), false, true, true});
+    });
     auto request_openTypeFn = TypeFn{this->get("request_Request"), {
       TypeFnParam{"method", this->get("str"), false, true, false},
       TypeFnParam{"url", this->get("str"), false, true, false},
@@ -892,23 +877,18 @@ void TypeMap::_requestModule (TypeMapPhase phase) {
 }
 
 void TypeMap::_urlModule (TypeMapPhase phase) {
-  this->_initType("url_URL", phase, [&] (auto selfType, auto refSelfType) {
-    selfType->fields.push_back(TypeField{"origin", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"protocol", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"host", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"hostname", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"port", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"path", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"pathname", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"search", this->get("str"), false, false, true});
-    selfType->fields.push_back(TypeField{"hash", this->get("str"), false, false, true});
-    auto strMethodInfo = TypeFnMethodInfo{"url_URL__str_0", true, "self_0", refSelfType, false};
-    auto strTypeFn = TypeFn{this->get("str"), {}, true, strMethodInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@url_URL.str", strTypeFn, {}, true}));
-    selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true, true});
-  });
-
   if (phase == TYPE_MAP_DEF) {
+    this->createObj("url_URL", this->name("url_URL"), {
+      TypeField{"origin", this->get("str"), false, false, false},
+      TypeField{"protocol", this->get("str"), false, false, false},
+      TypeField{"host", this->get("str"), false, false, false},
+      TypeField{"hostname", this->get("str"), false, false, false},
+      TypeField{"port", this->get("str"), false, false, false},
+      TypeField{"path", this->get("str"), false, false, false},
+      TypeField{"pathname", this->get("str"), false, false, false},
+      TypeField{"search", this->get("str"), false, false, false},
+      TypeField{"hash", this->get("str"), false, false, false}
+    }, true);
     auto url_parseTypeFn = TypeFn{this->get("url_URL"), {
       TypeFnParam{"url", this->get("str"), false, true, false}
     }};

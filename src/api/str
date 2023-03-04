@@ -34,7 +34,7 @@ obj Str {
    *
    * @param search - Substring to search for.
    */
-  fn find (self: ref Self, search: Self) Self
+  fn find (self: ref Self, search: Self) int
 
   /**
    * Splits string by lines. Delimited by any of: `\r`, `\n`, `\r\n`.

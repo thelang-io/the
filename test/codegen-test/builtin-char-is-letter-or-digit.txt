@@ -1,14 +1,14 @@
 ======= stdin =======
 main {
-  print('\0'.isAlphaNum())
-  print('\n'.isAlphaNum())
-  print('\t'.isAlphaNum())
-  print('A'.isAlphaNum())
-  print('a'.isAlphaNum())
-  print('0'.isAlphaNum())
-  print('9'.isAlphaNum())
-  print('_'.isAlphaNum())
-  print('-'.isAlphaNum())
+  print('\0'.isLetterOrDigit)
+  print('\n'.isLetterOrDigit)
+  print('\t'.isLetterOrDigit)
+  print('A'.isLetterOrDigit)
+  print('a'.isLetterOrDigit)
+  print('0'.isLetterOrDigit)
+  print('9'.isLetterOrDigit)
+  print('_'.isLetterOrDigit)
+  print('-'.isLetterOrDigit)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -37,11 +37,11 @@ struct str {
   size_t l;
 };
 
-bool char_is_alpha_num (char);
+bool char_isLetterOrDigit (char);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 
-bool char_is_alpha_num (char c) {
+bool char_isLetterOrDigit (char c) {
   return isalnum(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
@@ -78,15 +78,15 @@ void str_free (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", char_is_alpha_num('\0'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('\n'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('\t'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('A'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('a'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('0'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('9'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('_'), THE_EOL);
-  print(stdout, "tz", char_is_alpha_num('-'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('\0'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('\n'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('\t'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('A'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('a'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('0'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('9'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('_'), THE_EOL);
+  print(stdout, "tz", char_isLetterOrDigit('-'), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

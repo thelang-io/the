@@ -2,7 +2,7 @@
 main {
   print(fs_isAbsoluteSync("test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-absolute-sync.txt"))
 
-  if os_name() == "Windows" {
+  if os_NAME == "Windows" {
     print(fs_isAbsoluteSync("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync.txt"))
   } else {
     print(fs_isAbsoluteSync("/test/fixtures/builtin-fs-is-absolute-sync.txt"))

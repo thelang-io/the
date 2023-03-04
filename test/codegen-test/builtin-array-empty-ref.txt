@@ -4,7 +4,7 @@ main {
   arr: str[][] = [emptyArr, ["3"], ["6", "7", "8"]]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].empty())
+    print(arr[i].empty)
   }
 }
 ======= code =======

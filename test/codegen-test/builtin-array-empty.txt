@@ -1,9 +1,9 @@
 ======= stdin =======
 main {
   emptyArr: int[] = []
-  result1 := emptyArr.empty()
-  result2 := [1].empty()
-  result3 := ["test1", "test2"].empty()
+  result1 := emptyArr.empty
+  result2 := [1].empty
+  result3 := ["test1", "test2"].empty
 
   print(result1, result2, result3)
 }

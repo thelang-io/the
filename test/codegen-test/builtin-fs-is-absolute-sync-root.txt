@@ -2,7 +2,7 @@
 main {
   fs_isAbsoluteSync("test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-is-absolute-sync-root.txt")
 
-  if os_name() == "Windows" {
+  if os_NAME == "Windows" {
     fs_isAbsoluteSync("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync-root.txt")
   } else {
     fs_isAbsoluteSync("/test/fixtures/builtin-fs-is-absolute-sync-root.txt")

@@ -60,10 +60,10 @@ struct CodegenBuiltins {
   bool fnBufferStr = false;
   bool fnBufferToStr = false;
   bool fnByteStr = false;
-  bool fnCharIsAlpha = false;
-  bool fnCharIsAlphaNum = false;
   bool fnCharIsDigit = false;
-  bool fnCharIsSpace = false;
+  bool fnCharIsLetter = false;
+  bool fnCharIsLetterOrDigit = false;
+  bool fnCharIsWhitespace = false;
   bool fnCharRepeat = false;
   bool fnCharStr = false;
   bool fnCstrConcatStr = false;

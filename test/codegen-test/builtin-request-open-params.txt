@@ -18,8 +18,8 @@ fn requestWithPrint (
   headers: request_Header[] = []
 ) {
   mut req := request_open(method, url, data: data, headers: headers)
-  res := request_read(ref req)
-  request_close(ref req)
+  res := req.read()
+  req.close()
 
   actualData := res.data.str()
   mut actualHeaders: request_Header[]

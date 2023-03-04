@@ -5,15 +5,15 @@ main {
   mut test3 := { "key1": 1, "key2": 2 }
 
   print(test1)
-  print(test1.keys())
+  print(test1.keys)
   print(test1)
 
   print(test2)
-  print(test2.keys())
+  print(test2.keys)
   print(test2)
 
   print(test3)
-  print(test3.keys())
+  print(test3.keys)
   print(test3)
 }
 ======= code =======

@@ -33,9 +33,9 @@ class TypeMap {
   Type *createAlias (const std::string &, Type *);
   Type *createArr (Type *);
   Type *createEnum (const std::string &, const std::string &, const std::vector<Type *> &);
-  Type *createFn (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeFnMethodInfo> & = std::nullopt);
+  Type *createFn (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeFnMethodInfo> & = std::nullopt, bool = false);
   Type *createMap (Type *, Type *);
-  Type *createObj (const std::string &, const std::string &, const std::vector<TypeField> & = {});
+  Type *createObj (const std::string &, const std::string &, const std::vector<TypeField> & = {}, bool = false);
   Type *createOpt (Type *);
   Type *createRef (Type *);
   Type *createUnion (const std::vector<Type *> &);
@@ -49,6 +49,7 @@ class TypeMap {
   Type *unionSub (const Type *, const Type *);
 
  private:
+  std::size_t _builtinIdx = 0;
   std::size_t _fnIdx = 0;
   std::vector<std::unique_ptr<Type>> _items;
   std::size_t _mapIdx = 0;

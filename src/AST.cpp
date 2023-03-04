@@ -728,7 +728,8 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
         if (
           exprAccessExpr.type->hasProp(parserExprAccess.prop->val) &&
-          exprAccessExpr.type->getProp(parserExprAccess.prop->val)->isMethod()
+          exprAccessExpr.type->getProp(parserExprAccess.prop->val)->isMethod() &&
+          !exprAccessExpr.type->getProp(parserExprAccess.prop->val)->builtin
         ) {
           auto propType = exprAccessExpr.type->getProp(parserExprAccess.prop->val);
           auto propMethod = std::get<TypeFn>(propType->body).methodInfo;

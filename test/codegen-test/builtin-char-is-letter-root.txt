@@ -1,0 +1,35 @@
+======= stdin =======
+main {
+  '\0'.isLetter
+  '\n'.isLetter
+  '\t'.isLetter
+  'A'.isLetter
+  'a'.isLetter
+  '0'.isLetter
+  '9'.isLetter
+  '_'.isLetter
+  '-'.isLetter
+}
+======= code =======
+#include <ctype.h>
+#include <stdbool.h>
+
+bool char_isLetter (char);
+
+bool char_isLetter (char c) {
+  return isalpha(c);
+}
+
+int main () {
+  char_isLetter('\0');
+  char_isLetter('\n');
+  char_isLetter('\t');
+  char_isLetter('A');
+  char_isLetter('a');
+  char_isLetter('0');
+  char_isLetter('9');
+  char_isLetter('_');
+  char_isLetter('-');
+}
+======= flags =======
+======= stdout =======

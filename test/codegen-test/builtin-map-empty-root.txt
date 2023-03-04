@@ -1,9 +1,9 @@
 ======= stdin =======
 main {
   emptyMap: int[str]
-  emptyMap.empty();
-  { "key": 1 }.empty();
-  { "key1": "test1", "key2": "test2" }.empty();
+  emptyMap.empty;
+  { "key": 1 }.empty;
+  { "key1": "test1", "key2": "test2" }.empty;
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

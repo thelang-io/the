@@ -1,14 +1,14 @@
 ======= stdin =======
 main {
-  print('\0'.isAlpha())
-  print('\n'.isAlpha())
-  print('\t'.isAlpha())
-  print('A'.isAlpha())
-  print('a'.isAlpha())
-  print('0'.isAlpha())
-  print('9'.isAlpha())
-  print('_'.isAlpha())
-  print('-'.isAlpha())
+  print('\0'.isWhitespace)
+  print('\n'.isWhitespace)
+  print('\t'.isWhitespace)
+  print('A'.isWhitespace)
+  print('a'.isWhitespace)
+  print('0'.isWhitespace)
+  print('9'.isWhitespace)
+  print('_'.isWhitespace)
+  print('-'.isWhitespace)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -37,12 +37,12 @@ struct str {
   size_t l;
 };
 
-bool char_is_alpha (char);
+bool char_isWhitespace (char);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 
-bool char_is_alpha (char c) {
-  return isalpha(c);
+bool char_isWhitespace (char c) {
+  return isspace(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -78,23 +78,23 @@ void str_free (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", char_is_alpha('\0'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('\n'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('\t'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('A'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('a'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('0'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('9'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('_'), THE_EOL);
-  print(stdout, "tz", char_is_alpha('-'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('\0'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('\n'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('\t'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('A'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('a'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('0'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('9'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('_'), THE_EOL);
+  print(stdout, "tz", char_isWhitespace('-'), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
 false
-false
-false
 true
 true
+false
+false
 false
 false
 false

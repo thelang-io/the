@@ -1,0 +1,35 @@
+======= stdin =======
+main {
+  '\0'.isLetterOrDigit
+  '\n'.isLetterOrDigit
+  '\t'.isLetterOrDigit
+  'A'.isLetterOrDigit
+  'a'.isLetterOrDigit
+  '0'.isLetterOrDigit
+  '9'.isLetterOrDigit
+  '_'.isLetterOrDigit
+  '-'.isLetterOrDigit
+}
+======= code =======
+#include <ctype.h>
+#include <stdbool.h>
+
+bool char_isLetterOrDigit (char);
+
+bool char_isLetterOrDigit (char c) {
+  return isalnum(c);
+}
+
+int main () {
+  char_isLetterOrDigit('\0');
+  char_isLetterOrDigit('\n');
+  char_isLetterOrDigit('\t');
+  char_isLetterOrDigit('A');
+  char_isLetterOrDigit('a');
+  char_isLetterOrDigit('0');
+  char_isLetterOrDigit('9');
+  char_isLetterOrDigit('_');
+  char_isLetterOrDigit('-');
+}
+======= flags =======
+======= stdout =======

@@ -3,7 +3,7 @@ main {
   arr := ["", "t", "test"]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].upper())
+    print(arr[i].upper)
   }
 }
 ======= code =======

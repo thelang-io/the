@@ -1,8 +1,8 @@
 ======= stdin =======
 main {
-  test1 := os_name()
-  test2 := os_name().len
-  test3 := "OS: " + os_name()
+  test1 := os_NAME
+  test2 := os_NAME.len
+  test3 := "OS: " + os_NAME
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

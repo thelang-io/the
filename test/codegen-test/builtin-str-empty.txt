@@ -1,10 +1,10 @@
 ======= stdin =======
 main {
-  result1 := "".empty()
-  result2 := '\0'.repeat(1).empty()
-  result3 := "t".empty()
-  result4 := "test".empty()
-  result5 := '\0'.repeat(0xFFFFFFF).empty()
+  result1 := "".empty
+  result2 := '\0'.repeat(1).empty
+  result3 := "t".empty
+  result4 := "test".empty
+  result5 := '\0'.repeat(0xFFFFFFF).empty
   print(result1, result2, result3, result4, result5)
 }
 ======= code =======

@@ -631,13 +631,17 @@ fn generateNode (node: ASTNode, prefix := "") str {
 
     loop i := 0; i < paramsLen; i++ {
       param := node.params[i]
-      paramType := generateType(param.t)
+      mut paramType := generateType(param.t)
       paramRequired := !param.hasInit && !param.variadic
 
       if i == 0 && (paramType == "selfType" || paramType == "refSelfType") {
         selfInfo = ", true, \"" + param.id + "_0\", " +
           paramType + ", " + param.mutable.str()
         continue
+      }
+
+      if param.variadic {
+        paramType = "this->createArr(" + paramType + ")"
       }
 
       paramsCode += paramIdx == 0 ? "" : "," + os_EOL
@@ -730,11 +734,16 @@ fn generateType (t: ASTType) str {
     loop i := 0; i < paramsLen; i++ {
       param := t.params[i]
       paramName := param.id == nil ? "std::nullopt" : "\"" + param.id + "\""
+      mut paramType := generateType(param.t)
       paramRequired := !param.variadic
+
+      if param.variadic {
+        paramType = "this->createArr(" + paramType + ")"
+      }
 
       paramsCode += i == 0 ? "" : "," + os_EOL
       paramsCode += "    TypeFnParam{" + paramName + ", " +
-        generateType(param.t) + ", " +
+        paramType + ", " +
         param.mutable.str() + ", " +
         paramRequired.str() + ", " +
         param.variadic.str() + "}"
