@@ -1,0 +1,4 @@
+// Date API
+
+/* Returns time of the day in milliseconds. */
+fn date_now () u64

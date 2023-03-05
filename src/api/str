@@ -77,6 +77,42 @@ obj Str {
   /* Converts a string to `buffer_Buffer` object. */
   fn toBuffer (self: ref Self) buffer_Buffer
 
+  /* Converts a string to `float` representation. */
+  fn toFloat (self: ref Self) float
+
+  /* Converts a string to `f32` representation. */
+  fn toF32 (self: ref Self) f32
+
+  /* Converts a string to `f64` representation. */
+  fn toF64 (self: ref Self) f64
+
+  /* Converts a string to `int` representation. */
+  fn toInt (self: ref Self) int
+
+  /* Converts a string to `i8` representation. */
+  fn toI8 (self: ref Self) i8
+
+  /* Converts a string to `i16` representation. */
+  fn toI16 (self: ref Self) i16
+
+  /* Converts a string to `i32` representation. */
+  fn toI32 (self: ref Self) i32
+
+  /* Converts a string to `i64` representation. */
+  fn toI64 (self: ref Self) i64
+
+  /* Converts a string to `u8` representation. */
+  fn toU8 (self: ref Self) u8
+
+  /* Converts a string to `u16` representation. */
+  fn toU16 (self: ref Self) u16
+
+  /* Converts a string to `u32` representation. */
+  fn toU32 (self: ref Self) u32
+
+  /* Converts a string to `u64` representation. */
+  fn toU64 (self: ref Self) u64
+
   /* Returns a string with whitespaces removed from both ends. */
   fn trim (self: ref Self) Self
 }

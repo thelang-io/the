@@ -102,14 +102,6 @@ Type *TypeMap::createArr (Type *elementType) {
   }, true, joinMethodInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".join", "@array.join", joinTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"join", this->_items.back().get(), false, true, true});
-  auto mapMethodInfo = TypeFnMethodInfo{selfType->name + "_map", true, "self_0", refSelfType, false};
-  auto mapTypeFn = TypeFn{this->createArr(this->get("any")), {
-    TypeFnParam{"transform", this->createFn({
-      TypeFnParam{"it", elementType, false, true, false}
-    }, this->get("any"), std::nullopt, true), false, true, false}
-  }, true, mapMethodInfo};
-  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".map", "@array.map", mapTypeFn, {}, true}));
-  selfType->fields.push_back(TypeField{"map", this->_items.back().get(), false, true, true});
   auto mergeMethodInfo = TypeFnMethodInfo{selfType->name + "_merge", true, "self_0", refSelfType, true};
   auto mergeTypeFn = TypeFn{refSelfType, {
     TypeFnParam{"other", selfType, false, true, false}

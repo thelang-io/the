@@ -44,6 +44,14 @@ obj fs_Stats {
 }
 
 /**
+ * Appends data to a path, creating the file if it doesn't exists.
+ *
+ * @param path - Pathname to append to.
+ * @param data - Data to append.
+ */
+fn fs_appendFileSync (path: str, data: buffer_Buffer) void
+
+/**
  * Changes the mode (permissions) of path.
  *
  * @param path - Pathname to change permissions of.
@@ -68,6 +76,22 @@ fn fs_chmodSync (path: str, mode: int) void
  * @param gid - New file owner group id.
  */
 fn fs_chownSync (path: str, uid: int, gid: int) void
+
+/**
+ * Copies directory from source to destination.
+ *
+ * @param source - Source path to copy from.
+ * @param destination - Destination path to copy to.
+ */
+fn fs_copyDirectorySync (source: str, destination: str) void
+
+/**
+ * Copies file from source to destination.
+ *
+ * @param source - Source path to copy from.
+ * @param destination - Destination path to copy to.
+ */
+fn fs_copyFileSync (source: str, destination: str) void
 
 /**
  * Tests whether the given path exists.
@@ -132,6 +156,14 @@ fn fs_readFileSync (path: str) buffer_Buffer
  * @param path - Pathname to compute canonical path for.
  */
 fn fs_realpathSync (path: str) str
+
+/**
+ * Renames source path to destination path.
+ *
+ * @param source - Source path to rename from.
+ * @param destination - Destination path to rename to.
+ */
+fn fs_renameSync (source: str, destination: str) void
 
 /**
  * Removes the file at path.

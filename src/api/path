@@ -16,3 +16,9 @@ fn path_basename (path: str) str
  * @param path - Pathname to retrieve directory name from.
  */
 fn path_dirname (path: str) str
+
+/* Returns temporary directory for the current user. */
+fn path_tempDirectory () str
+
+/* Returns temporary file for the current user. */
+fn path_tempFile () str

@@ -3,8 +3,21 @@
 /* String array containing the command-line arguments passed when the process was launched. */
 const process_args: str[]
 
+/* Process environment variables. */
+mut process_env: str[str]
+
+/* Home directory for the current user. */
+const process_home () str
+
 /* Returns the current working directory of the process. */
 fn process_cwd () str
+
+/**
+ * Terminates the current process.
+ *
+ * @param status - Status code returned to the parent process. The default is zero.
+ */
+fn process_exit (status := 0) void
 
 /* Returns the numeric group identity of the process. On Windows always returns `0`. */
 fn process_getgid () int

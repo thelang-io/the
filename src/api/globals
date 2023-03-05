@@ -1,13 +1,6 @@
 // Globals API
 
 /**
- * Terminates the current thread.
- *
- * @param status - Status code returned to the parent process. The default is zero.
- */
-fn exit (status := 0) void
-
-/**
  * Writes the textual representations of the given items into the given output stream.
  *
  * @param items - Items to print.
@@ -18,8 +11,8 @@ fn exit (status := 0) void
 fn print (items: any..., separator := " ", terminator := os_EOL, to := "stdout") void
 
 /**
- * Sleeps the thread for a given time interval.
+ * Returns the type of a value.
  *
- * @param milliseconds - The duration of sleep.
+ * @param value - The value for which to find the type.
  */
-fn sleepSync (milliseconds: int) void
+fn type (value: any) void
