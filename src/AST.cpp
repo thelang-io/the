@@ -270,7 +270,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         this->typeMap.stack.emplace_back(enumName);
 
         for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
-          enumMembers.push_back(this->typeMap.enumerator(stmtEnumDeclMember.id.val, this->typeMap.name(stmtEnumDeclMember.id.val)));
+          enumMembers.push_back(this->typeMap.createEnumerator(stmtEnumDeclMember.id.val, this->typeMap.name(stmtEnumDeclMember.id.val)));
         }
 
         this->typeMap.stack.pop_back();
@@ -362,7 +362,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           if (std::holds_alternative<ParserStmtFnDecl>(*member.body)) {
             auto stmtFnDecl = std::get<ParserStmtFnDecl>(*member.body);
             auto methodDeclName = stmtFnDecl.id.val;
-            auto methodDeclInfo = TypeFnMethodInfo{this->typeMap.name(methodDeclName)};
+            auto methodDeclCallInfo = TypeCallInfo{this->typeMap.name(methodDeclName)};
             auto methodDeclTypeParams = std::vector<TypeFnParam>{};
 
             this->varMap.save();
@@ -392,10 +392,10 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
               this->varMap.add(paramName, paramCodeName, actualParamType, stmtFnDeclParam.mut);
 
               if (i == 0 && this->typeMap.isSelf(actualParamType)) {
-                methodDeclInfo.isSelfFirst = true;
-                methodDeclInfo.selfCodeName = paramCodeName;
-                methodDeclInfo.selfType = actualParamType;
-                methodDeclInfo.isSelfMut = stmtFnDeclParam.mut;
+                methodDeclCallInfo.isSelfFirst = true;
+                methodDeclCallInfo.selfCodeName = paramCodeName;
+                methodDeclCallInfo.selfType = actualParamType;
+                methodDeclCallInfo.isSelfMut = stmtFnDeclParam.mut;
               } else {
                 methodDeclTypeParams.push_back(TypeFnParam{paramName, actualParamType, stmtFnDeclParam.mut, paramRequired, paramVariadic});
               }
@@ -404,12 +404,12 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto methodDeclReturnType = stmtFnDecl.returnType == std::nullopt
               ? this->typeMap.get("void")
               : this->_type(*stmtFnDecl.returnType);
-            auto methodDeclType = this->typeMap.createFn(methodDeclTypeParams, methodDeclReturnType, methodDeclInfo);
+            auto methodDeclType = this->typeMap.createMethod(methodDeclTypeParams, methodDeclReturnType, methodDeclCallInfo);
             auto methodDeclAliasType = this->typeMap.createAlias(methodDeclName, methodDeclType);
 
             this->varMap.restore();
             this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
-            type->fields.push_back(TypeField{methodDeclName, methodDeclType, false, true, false});
+            type->fields.push_back(TypeField{methodDeclName, methodDeclType, false});
           } else if (std::holds_alternative<ParserStmtVarDecl>(*member.body)) {
             auto stmtVarDecl = std::get<ParserStmtVarDecl>(*member.body);
             auto fieldType = this->_type(*stmtVarDecl.type);
@@ -418,7 +418,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
               throw Error(this->reader, stmtVarDecl.type->start, stmtVarDecl.type->end, E1022);
             }
 
-            type->fields.push_back(TypeField{stmtVarDecl.id.val, fieldType, stmtVarDecl.mut, false, false});
+            type->fields.push_back(TypeField{stmtVarDecl.id.val, fieldType, stmtVarDecl.mut});
           }
         }
 
@@ -732,9 +732,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
           !exprAccessExpr.type->getProp(parserExprAccess.prop->val)->builtin
         ) {
           auto propType = exprAccessExpr.type->getProp(parserExprAccess.prop->val);
-          auto propMethod = std::get<TypeFn>(propType->body).methodInfo;
+          auto propTypeFn = std::get<TypeFn>(propType->body);
 
-          varStack.mark(propMethod.codeName);
+          varStack.mark(propTypeFn.callInfo.codeName);
           initializedExprAccessExpr = true;
         }
       }

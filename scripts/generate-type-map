@@ -627,7 +627,7 @@ fn generateNode (node: ASTNode, prefix := "") str {
     paramsLen := node.params.len
     mut paramsCode := ""
     mut paramIdx := 0
-    mut selfInfo := ""
+    mut callInfo := ""
 
     loop i := 0; i < paramsLen; i++ {
       param := node.params[i]
@@ -635,7 +635,7 @@ fn generateNode (node: ASTNode, prefix := "") str {
       paramRequired := !param.hasInit && !param.variadic
 
       if i == 0 && (paramType == "selfType" || paramType == "refSelfType") {
-        selfInfo = ", true, \"" + param.id + "_0\", " +
+        callInfo = ", true, \"" + param.id + "_0\", " +
           paramType + ", " + param.mutable.str()
         continue
       }
@@ -655,31 +655,22 @@ fn generateNode (node: ASTNode, prefix := "") str {
 
     paramsCode = paramsCode.empty() ? "" : os_EOL + paramsCode + os_EOL
     paramsCode = ", {" + paramsCode + "}"
-    typeBodyName := node.id + "TypeFn"
+
+    callInfoName := node.id + "CallInfo"
+    typeFnName := node.id + "TypeFn"
 
     if prefix.empty() {
-      return "auto " + typeBodyName + " = " +
-        "TypeFn{" + returnType + paramsCode + "};" + os_EOL +
-        "this->_items.push_back(std::make_unique<Type>(" +
-        "Type{\"" + node.id + "\", \"@" + node.id + "\", " +
-        typeBodyName + ", {}, true}));"
+      return
+        "auto " + callInfoName + " = TypeCallInfo{\"" + node.id + "\"" + callInfo + "};" + os_EOL +
+        "auto " + typeFnName + " = TypeFn{" + returnType + paramsCode + ", false, " + callInfoName + "};" + os_EOL +
+        "this->_items.push_back(std::make_unique<Type>(Type{\"" + node.id + "\", \"@" + node.id + "\", " + typeFnName + ", {}, true}));"
+    } else {
+      return
+        "auto " + callInfoName + " = TypeCallInfo{selfType->name + \"_" + node.id + "\"" + callInfo + "};" + os_EOL +
+        "auto " + typeFnName + " = TypeFn{" + returnType + paramsCode + ", true, " + callInfoName + "};" + os_EOL +
+        "this->_items.push_back(std::make_unique<Type>(Type{selfType->name + \"." + node.id + "\", \"@" + prefix.lowerFirst() + "." + node.id + "\", " + typeFnName + ", {}, true}));" + os_EOL +
+        "selfType->fields.push_back(TypeField{\"" + node.id + "\", this->_items.back().get(), false, true});"
     }
-
-    methodInfoName := node.id + "MethodInfo"
-    methodCodeName := "\"" + prefix + "__" + node.id + "_0\""
-
-    return "auto " + methodInfoName + " = " +
-      "TypeFnMethodInfo{" + methodCodeName + selfInfo + "};" + os_EOL +
-      "auto " + typeBodyName + " = " +
-      "TypeFn{" + returnType + paramsCode +
-      ", true, " + methodInfoName + "};" + os_EOL +
-      "this->_items.push_back(std::make_unique<Type>(" +
-      "Type{selfType->name + \"." + node.id + "\", " +
-      "\"@" + prefix.lowerFirst() + "." + node.id + "\", " +
-      typeBodyName + ", {}, true}));" + os_EOL +
-      "selfType->fields.push_back(" +
-      "TypeField{\"" + node.id + "\", " +
-      "this->_items.back().get(), false, true, true});"
   }
 
   if node is ASTObjDecl {
@@ -698,9 +689,11 @@ fn generateNode (node: ASTNode, prefix := "") str {
       return ""
     }
 
-    return "selfType->fields.push_back(" +
-      "TypeField{\"" + node.id + "\", " +
-      generateType(node.t) + ", " + node.mutable.str() + ", false, true});"
+    callInfoName := node.id + "CallInfo"
+
+    return
+      "auto " + callInfoName + " = TypeCallInfo{selfType->name + \"_" + node.id + "\", true, \"self_0\", refSelfType, false};" + os_EOL +
+      "selfType->fields.push_back(TypeField{\"" + node.id + "\", " + generateType(node.t) + ", " + node.mutable.str() + ", true, " + callInfoName + "});"
   }
 
   panic("Unknown node, got: " + node.str())
@@ -754,7 +747,7 @@ fn generateType (t: ASTType) str {
       : "{" + os_EOL + paramsCode + os_EOL + "  }"
 
     return "this->createFn(" + paramsCode + ", " +
-      generateType(t.returnType) + ")"
+      generateType(t.returnType) + ", std::nullopt, true)"
   }
 
   if t is ASTTypeId {

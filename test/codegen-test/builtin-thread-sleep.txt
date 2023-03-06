@@ -1,8 +1,8 @@
 ======= stdin =======
 main {
-  sleepSync(0)
-  sleepSync(10)
-  sleepSync(999)
+  thread_sleep(0)
+  thread_sleep(10)
+  thread_sleep(999)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -27,9 +27,9 @@ main {
   #include <unistd.h>
 #endif
 
-void sleep_sync (int32_t);
+void thread_sleep (int32_t);
 
-void sleep_sync (int32_t i) {
+void thread_sleep (int32_t i) {
   #ifdef THE_OS_WINDOWS
     Sleep((unsigned int) i);
   #else
@@ -38,9 +38,9 @@ void sleep_sync (int32_t i) {
 }
 
 int main () {
-  sleep_sync(0);
-  sleep_sync(10);
-  sleep_sync(999);
+  thread_sleep(0);
+  thread_sleep(10);
+  thread_sleep(999);
 }
 ======= flags =======
 ======= stdout =======

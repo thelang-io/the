@@ -33,13 +33,14 @@ class TypeMap {
   Type *createAlias (const std::string &, Type *);
   Type *createArr (Type *);
   Type *createEnum (const std::string &, const std::string &, const std::vector<Type *> &);
-  Type *createFn (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeFnMethodInfo> & = std::nullopt, bool = false);
-  Type *createMap (Type *, Type *);
+  Type *createEnumerator (const std::string &, const std::string &);
+  Type *createFn (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt, bool = false);
+  Type *createMap (Type *, Type *, bool = false);
+  Type *createMethod (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt, bool = false);
   Type *createObj (const std::string &, const std::string &, const std::vector<TypeField> & = {}, bool = false);
   Type *createOpt (Type *);
   Type *createRef (Type *);
-  Type *createUnion (const std::vector<Type *> &);
-  Type *enumerator (const std::string &, const std::string &);
+  Type *createUnion (const std::vector<Type *> &, bool = false);
   Type *get (const std::string &);
   bool has (const std::string &);
   void init ();
@@ -65,12 +66,26 @@ class TypeMap {
   void _strType (TypeMapPhase);
   void _voidType (TypeMapPhase);
   void _bufferModule (TypeMapPhase);
+
+  void _dateModule (TypeMapPhase);
   void _fsModule (TypeMapPhase);
   void _globalsModule (TypeMapPhase);
+  void _mathModule (TypeMapPhase);
   void _pathModule (TypeMapPhase);
   void _processModule (TypeMapPhase);
+  void _randomModule (TypeMapPhase);
   void _requestModule (TypeMapPhase);
+  void _threadModule (TypeMapPhase);
   void _urlModule (TypeMapPhase);
+  void _utilsModule (TypeMapPhase);
+
+  void _arrTypeDef (Type *, Type *, Type *, Type *);
+  void _enumTypeDef (Type *, Type *);
+  void _fnTypeDef (Type *, Type *);
+  void _mapTypeDef (Type *, Type *, Type *, Type *);
+  void _objTypeDef (Type *, Type *);
+  void _optTypeDef (Type *, Type *);
+  void _unionTypeDef (Type *, Type *);
 };
 
 #endif

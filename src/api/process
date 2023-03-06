@@ -7,7 +7,7 @@ const process_args: str[]
 mut process_env: str[str]
 
 /* Home directory for the current user. */
-const process_home () str
+const process_home: str
 
 /* Returns the current working directory of the process. */
 fn process_cwd () str

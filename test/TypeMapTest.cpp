@@ -90,8 +90,8 @@ TEST_F(TypeMapTest, ArrayDoesNotInsertExact) {
 }
 
 TEST_F(TypeMapTest, EnumeratorInserts) {
-  auto type1 = this->tm_.enumerator("Brown", this->tm_.name("Brown"));
-  auto type2 = this->tm_.enumerator("Red", this->tm_.name("Red"));
+  auto type1 = this->tm_.createEnumerator("Brown", this->tm_.name("Brown"));
+  auto type2 = this->tm_.createEnumerator("Red", this->tm_.name("Red"));
 
   EXPECT_NE(this->tm_.get("Brown"), nullptr);
   EXPECT_NE(this->tm_.get("Red"), nullptr);
@@ -103,8 +103,8 @@ TEST_F(TypeMapTest, EnumeratorInserts) {
 
 TEST_F(TypeMapTest, EnumeratorDoesNotInsertExact) {
   auto codeName = this->tm_.name("Brown");
-  auto type1 = this->tm_.enumerator("Brown", codeName);
-  auto type2 = this->tm_.enumerator("Brown", codeName);
+  auto type1 = this->tm_.createEnumerator("Brown", codeName);
+  auto type2 = this->tm_.createEnumerator("Brown", codeName);
 
   EXPECT_EQ(type1->name, "Brown");
   EXPECT_EQ(type1->name, type2->name);
@@ -114,14 +114,14 @@ TEST_F(TypeMapTest, EnumeratorDoesNotInsertExact) {
 TEST_F(TypeMapTest, EnumerationInserts) {
   this->tm_.stack.emplace_back("Test");
   auto type1 = this->tm_.createEnum("Test", this->tm_.name("Test"), {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test1");
   auto type2 = this->tm_.createEnum("Test1", this->tm_.name("Test1"), {
-    this->tm_.enumerator("Red", this->tm_.name("Red")),
-    this->tm_.enumerator("Green", this->tm_.name("Green"))
+    this->tm_.createEnumerator("Red", this->tm_.name("Red")),
+    this->tm_.createEnumerator("Green", this->tm_.name("Green"))
   });
   this->tm_.stack.pop_back();
 
@@ -144,13 +144,13 @@ TEST_F(TypeMapTest, EnumerationDoesNotInsertExact) {
 
   this->tm_.stack.emplace_back("Test");
   auto type1 = this->tm_.createEnum("Test", codeName, {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test");
   auto type2 = this->tm_.createEnum("Test", codeName, {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
@@ -204,21 +204,21 @@ TEST_F(TypeMapTest, FunctionInserts) {
 TEST_F(TypeMapTest, FunctionInsertsMethod) {
   auto obj = this->tm_.createObj("Test", "Test_0");
 
-  auto type1MethodInfo = TypeFnMethodInfo{"TestSDa_0", false, "", nullptr, false};
-  auto type1 = this->tm_.createFn({}, this->tm_.get("void"), type1MethodInfo);
+  auto type1CallInfo = TypeCallInfo{"TestSDa_0", false, "", nullptr, false};
+  auto type1 = this->tm_.createMethod({}, this->tm_.get("void"), type1CallInfo);
 
-  auto type2MethodInfo = TypeFnMethodInfo{"TestSDb_0", true, "self_0", obj, false};
+  auto type2CallInfo = TypeCallInfo{"TestSDb_0", true, "self_0", obj, false};
 
-  auto type2 = this->tm_.createFn({
+  auto type2 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), type2MethodInfo);
+  }, this->tm_.get("void"), type2CallInfo);
 
-  auto type3MethodInfo = TypeFnMethodInfo{"TestSDc_0", true, "self2_0", this->tm_.createRef(obj), true};
+  auto type3CallInfo = TypeCallInfo{"TestSDc_0", true, "self2_0", this->tm_.createRef(obj), true};
 
-  auto type3 = this->tm_.createFn({
+  auto type3 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, false, false},
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
-  }, this->tm_.get("str"), type3MethodInfo);
+  }, this->tm_.get("str"), type3CallInfo);
 
   EXPECT_NE(this->tm_.get("fn$0"), nullptr);
   EXPECT_NE(this->tm_.get("fn$1"), nullptr);
@@ -231,24 +231,24 @@ TEST_F(TypeMapTest, FunctionInsertsMethod) {
   auto fn3Body = std::get<TypeFn>(type3->body);
 
   EXPECT_TRUE(fn1Body.isMethod);
-  EXPECT_FALSE(fn1Body.methodInfo.isSelfFirst);
-  EXPECT_EQ(fn1Body.methodInfo.selfCodeName, "");
-  EXPECT_EQ(fn1Body.methodInfo.selfType, nullptr);
-  EXPECT_FALSE(fn1Body.methodInfo.isSelfMut);
+  EXPECT_FALSE(fn1Body.callInfo.isSelfFirst);
+  EXPECT_EQ(fn1Body.callInfo.selfCodeName, "");
+  EXPECT_EQ(fn1Body.callInfo.selfType, nullptr);
+  EXPECT_FALSE(fn1Body.callInfo.isSelfMut);
   EXPECT_TRUE(fn2Body.isMethod);
-  EXPECT_TRUE(fn2Body.methodInfo.isSelfFirst);
-  EXPECT_EQ(fn2Body.methodInfo.selfCodeName, "self_0");
-  EXPECT_TRUE(fn2Body.methodInfo.selfType->matchStrict(obj));
-  EXPECT_FALSE(fn2Body.methodInfo.isSelfMut);
+  EXPECT_TRUE(fn2Body.callInfo.isSelfFirst);
+  EXPECT_EQ(fn2Body.callInfo.selfCodeName, "self_0");
+  EXPECT_TRUE(fn2Body.callInfo.selfType->matchStrict(obj));
+  EXPECT_FALSE(fn2Body.callInfo.isSelfMut);
   EXPECT_TRUE(fn3Body.isMethod);
-  EXPECT_TRUE(fn3Body.methodInfo.isSelfFirst);
-  EXPECT_EQ(fn3Body.methodInfo.selfCodeName, "self2_0");
-  EXPECT_TRUE(fn3Body.methodInfo.selfType->matchStrict(this->tm_.createRef(obj)));
-  EXPECT_TRUE(fn3Body.methodInfo.isSelfMut);
+  EXPECT_TRUE(fn3Body.callInfo.isSelfFirst);
+  EXPECT_EQ(fn3Body.callInfo.selfCodeName, "self2_0");
+  EXPECT_TRUE(fn3Body.callInfo.selfType->matchStrict(this->tm_.createRef(obj)));
+  EXPECT_TRUE(fn3Body.callInfo.isSelfMut);
 }
 
 TEST_F(TypeMapTest, FunctionInsertsBetweenFunctionAndMethod) {
-  this->tm_.createFn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDa_0", false, "", nullptr, false});
+  this->tm_.createMethod({}, this->tm_.get("void"), TypeCallInfo{"TestSDa_0", false, "", nullptr, false});
   this->tm_.createFn({}, this->tm_.get("void"));
 
   EXPECT_NE(this->tm_.get("fn$0"), nullptr);
@@ -292,23 +292,23 @@ TEST_F(TypeMapTest, FunctionDoesNotInsertSimilar) {
 }
 
 TEST_F(TypeMapTest, FunctionDoesNotInsertMethod) {
-  auto typeMethodInfo = TypeFnMethodInfo{"TestSDa_0", false, "", nullptr, false};
+  auto typeCallInfo = TypeCallInfo{"TestSDa_0", false, "", nullptr, false};
 
-  auto type1 = this->tm_.createFn({
+  auto type1 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), typeMethodInfo);
+  }, this->tm_.get("void"), typeCallInfo);
 
-  auto type2 = this->tm_.createFn({
+  auto type2 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), typeMethodInfo);
+  }, this->tm_.get("void"), typeCallInfo);
 
-  auto type3 = this->tm_.createFn({
+  auto type3 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), typeMethodInfo);
+  }, this->tm_.get("void"), typeCallInfo);
 
-  auto type4 = this->tm_.createFn({
+  auto type4 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), typeMethodInfo);
+  }, this->tm_.get("void"), typeCallInfo);
 
   EXPECT_EQ(type1->name, "fn$0");
   EXPECT_EQ(type1->name, type2->name);
@@ -317,13 +317,13 @@ TEST_F(TypeMapTest, FunctionDoesNotInsertMethod) {
 }
 
 TEST_F(TypeMapTest, FunctionDoesNotInsertMethodSimilar) {
-  auto type1 = this->tm_.createFn({
+  auto type1 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), TypeFnMethodInfo{"TestSDa_0", false, "", nullptr, false});
+  }, this->tm_.get("void"), TypeCallInfo{"TestSDa_0", false, "", nullptr, false});
 
-  auto type2 = this->tm_.createFn({
+  auto type2 = this->tm_.createMethod({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), TypeFnMethodInfo{"TestSDb_0", false, "", nullptr, false});
+  }, this->tm_.get("void"), TypeCallInfo{"TestSDb_0", false, "", nullptr, false});
 
   EXPECT_EQ(type1->name, type2->name);
   EXPECT_EQ(type1->codeName, type2->codeName);
@@ -445,12 +445,12 @@ TEST_F(TypeMapTest, ObjectInserts) {
   auto type1 = this->tm_.createObj("Test1", "Test1_0");
 
   auto type2 = this->tm_.createObj("Test2", "Test2_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false}
   });
 
   auto type3 = this->tm_.createObj("Test3", "Test3_0", {
-    TypeField{"b", this->tm_.get("any"), false, false, false},
-    TypeField{"c", this->tm_.get("str"), false, false, false}
+    TypeField{"b", this->tm_.get("any"), false, false},
+    TypeField{"c", this->tm_.get("str"), false, false}
   });
 
   EXPECT_NE(this->tm_.get("Test1"), nullptr);

@@ -9,10 +9,3 @@
  * @param to - Output where to write items. Can be `stdout` or `stderr`. The default is `stdout`.
  */
 fn print (items: any..., separator := " ", terminator := os_EOL, to := "stdout") void
-
-/**
- * Returns the type of a value.
- *
- * @param value - The value for which to find the type.
- */
-fn type (value: any) void

@@ -92,12 +92,10 @@ main {
             <TypeEnumerator codeName="Test2SDRed_0" name="Red" />
             <TypeEnumerator codeName="Test2SDGreen_0" name="Green" />
           </TypeEnum>
-          <TypeAlias codeName="Test3_0" name="Test3">
-            <TypeUnion name="union$0">
-              <BuiltinType name="str" />
-              <BuiltinType name="int" />
-            </TypeUnion>
-          </TypeAlias>
+          <TypeUnion name="union$0">
+            <BuiltinType name="str" />
+            <BuiltinType name="int" />
+          </TypeUnion>
         </TypeUnion>
       </Var>
     </NodeVarDeclVar>

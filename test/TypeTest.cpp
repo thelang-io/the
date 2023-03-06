@@ -40,8 +40,8 @@ class TypeTest : public testing::Test {
 
     this->tm_.stack.emplace_back("TestEnum");
     this->enum_ = this->tm_.createEnum("TestEnum", "TestEnum_0", {
-      this->tm_.enumerator("Red", this->tm_.name("Red")),
-      this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+      this->tm_.createEnumerator("Red", this->tm_.name("Red")),
+      this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
     });
     this->tm_.stack.pop_back();
 
@@ -51,11 +51,11 @@ class TypeTest : public testing::Test {
     }, this->tm_.get("int"));
 
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
-    auto objMethod = this->tm_.createFn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDm_0", false, "", nullptr, false});
+    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.createObj("Test", "Test_0", {
-      TypeField{"a", this->tm_.get("int"), false, false, false},
-      TypeField{"m", objMethod, false, true, false}
+      TypeField{"a", this->tm_.get("int"), false, false},
+      TypeField{"m", objMethod, false, false}
     });
 
     this->opt_ = this->tm_.createOpt(this->tm_.get("int"));
@@ -493,7 +493,7 @@ TEST_F(TypeTest, CheckIfEnum) {
 
   this->tm_.stack.emplace_back("Test2");
   EXPECT_TRUE(this->tm_.createEnum("Test2", this->tm_.name("Test2"), {
-    this->tm_.enumerator("Red", this->tm_.name("Red"))
+    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
   })->isEnum());
   this->tm_.stack.pop_back();
 }
@@ -530,7 +530,7 @@ TEST_F(TypeTest, CheckIfNotEnum) {
 }
 
 TEST_F(TypeTest, CheckIfEnumerator) {
-  EXPECT_TRUE(this->tm_.enumerator("Brown", this->tm_.name("Brown"))->isEnumerator());
+  EXPECT_TRUE(this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))->isEnumerator());
 }
 
 TEST_F(TypeTest, CheckIfNotEnumerator) {
@@ -841,12 +841,12 @@ TEST_F(TypeTest, CheckIfObj) {
   auto type1 = this->tm_.createObj("Test1", "Test1_0");
 
   auto type2 = this->tm_.createObj("Test2", "Test2_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false}
   });
 
   auto type3 = this->tm_.createObj("Test3", "Test3_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false},
-    TypeField{"b", this->tm_.get("str"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("str"), false, false}
   });
 
   EXPECT_TRUE(this->obj_->isObj());

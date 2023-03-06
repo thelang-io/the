@@ -108,18 +108,18 @@ fn fs_existsSync (path: str) bool
 fn fs_isAbsoluteSync (path: str) bool
 
 /**
- * Tests whether the given path is regular file.
- *
- * @param path - Pathname to test.
- */
-fn fs_isFileSync (path: str) bool
-
-/**
  * Tests whether the given path is directory.
  *
  * @param path - Pathname to test.
  */
 fn fs_isDirectorySync (path: str) bool
+
+/**
+ * Tests whether the given path is regular file.
+ *
+ * @param path - Pathname to test.
+ */
+fn fs_isFileSync (path: str) bool
 
 /**
  * Tests whether the given path is symbolic link.

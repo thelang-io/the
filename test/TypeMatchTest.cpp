@@ -39,8 +39,8 @@ class TypeMatchTest : public testing::Test {
 
     this->tm_.stack.emplace_back("TestEnum");
     this->enum_ = this->tm_.createEnum("TestEnum", "TestEnum_0", {
-      this->tm_.enumerator("Red", this->tm_.name("Red")),
-      this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+      this->tm_.createEnumerator("Red", this->tm_.name("Red")),
+      this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
     });
     this->tm_.stack.pop_back();
 
@@ -50,11 +50,11 @@ class TypeMatchTest : public testing::Test {
     }, this->tm_.get("int"));
 
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
-    auto objMethod = this->tm_.createFn({}, this->tm_.get("void"), TypeFnMethodInfo{"TestSDm_0", false, "", nullptr, false});
+    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.createObj("Test", "Test_0", {
-      TypeField{"a", this->tm_.get("int"), false, false, false},
-      TypeField{"m", objMethod, false, true, false}
+      TypeField{"a", this->tm_.get("int"), false, false},
+      TypeField{"m", objMethod, false, false}
     });
 
     this->opt_ = this->tm_.createOpt(this->tm_.get("int"));
@@ -302,21 +302,21 @@ TEST_F(TypeMatchTest, MatchesNiceArray) {
 TEST_F(TypeMatchTest, MatchesNiceEnum) {
   this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.enumerator("Red", this->tm_.name("Red"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.createEnum("Test3", "Test3_0", {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.enumerator("Red", this->tm_.name("Red"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
@@ -417,24 +417,24 @@ TEST_F(TypeMatchTest, MatchesNiceMap) {
 
 TEST_F(TypeMatchTest, MatchesNiceObject) {
   auto type1 = this->tm_.createObj("Test1", "Test1_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false},
-    TypeField{"b", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("int"), false, false}
   });
 
   auto type2 = this->tm_.createObj("Test2", "Test2_0");
 
   auto type3 = this->tm_.createObj("Test3", "Test3_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false}
   });
 
   auto type4 = this->tm_.createObj("Test4", "Test4_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false},
-    TypeField{"b", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("int"), false, false}
   });
 
   auto type5 = this->tm_.createObj("Test5", "Test5_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false},
-    TypeField{"b", this->tm_.get("str"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("str"), false, false}
   });
 
   EXPECT_TRUE(type1->matchNice(type1));
@@ -446,18 +446,18 @@ TEST_F(TypeMatchTest, MatchesNiceObject) {
 }
 
 TEST_F(TypeMatchTest, MatchesNiceObjectMethod) {
-  auto type1 = this->tm_.createFn({}, this->tm_.get("void"));
-  auto type2MethodInfo = TypeFnMethodInfo{"", false, "", nullptr, false};
-  auto type2 = this->tm_.createFn({}, this->tm_.get("void"), type2MethodInfo);
-  auto type3MethodInfo = TypeFnMethodInfo{"self1_0", true, "a", this->obj_, false};
-  auto type3 = this->tm_.createFn({}, this->tm_.get("void"), type3MethodInfo);
-  auto type4MethodInfo = TypeFnMethodInfo{"self1_0", true, "a", this->obj_, true};
-  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), type4MethodInfo);
-  auto type5MethodInfo = TypeFnMethodInfo{"self1_0", true, "b", this->tm_.createRef(this->obj_), true};
-  auto type5 = this->tm_.createFn({}, this->tm_.get("void"), type5MethodInfo);
+  auto type1 = this->tm_.createMethod({}, this->tm_.get("void"));
+  auto type2CallInfo = TypeCallInfo{"", false, "", nullptr, false};
+  auto type2 = this->tm_.createMethod({}, this->tm_.get("void"), type2CallInfo);
+  auto type3CallInfo = TypeCallInfo{"self1_0", true, "a", this->obj_, false};
+  auto type3 = this->tm_.createMethod({}, this->tm_.get("void"), type3CallInfo);
+  auto type4CallInfo = TypeCallInfo{"self1_0", true, "a", this->obj_, true};
+  auto type4 = this->tm_.createMethod({}, this->tm_.get("void"), type4CallInfo);
+  auto type5CallInfo = TypeCallInfo{"self1_0", true, "b", this->tm_.createRef(this->obj_), true};
+  auto type5 = this->tm_.createMethod({}, this->tm_.get("void"), type5CallInfo);
 
   EXPECT_TRUE(type2->matchNice(type2));
-  EXPECT_FALSE(type1->matchNice(type2));
+  EXPECT_TRUE(type1->matchNice(type2));
 
   EXPECT_TRUE(type3->matchNice(type3));
   EXPECT_FALSE(type2->matchNice(type3));
@@ -572,21 +572,21 @@ TEST_F(TypeMatchTest, MatchesStrictArray) {
 TEST_F(TypeMatchTest, MatchesStrictEnum) {
   this->tm_.stack.emplace_back("Test2");
   auto type1 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test2");
   auto type2 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.enumerator("Red", this->tm_.name("Red"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test3");
   auto type3 = this->tm_.createEnum("Test3", "Test3_0", {
-    this->tm_.enumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.enumerator("Red", this->tm_.name("Red"))
+    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
+    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
   });
   this->tm_.stack.pop_back();
 
@@ -762,24 +762,24 @@ TEST_F(TypeMatchTest, MatchesStrictMap) {
 
 TEST_F(TypeMatchTest, MatchesStrictObject) {
   auto type1 = this->tm_.createObj("Test1", "Test1_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false},
-    TypeField{"b", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("int"), false, false}
   });
 
   auto type2 = this->tm_.createObj("Test2", "Test2_0");
 
   auto type3 = this->tm_.createObj("Test3", "Test3_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false}
   });
 
   auto type4 = this->tm_.createObj("Test4", "Test4_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false},
-    TypeField{"b", this->tm_.get("int"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("int"), false, false}
   });
 
   auto type5 = this->tm_.createObj("Test5", "Test5_0", {
-    TypeField{"a", this->tm_.get("int"), false, false, false},
-    TypeField{"b", this->tm_.get("str"), false, false, false}
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("str"), false, false}
   });
 
   EXPECT_TRUE(type1->matchStrict(type1));
@@ -791,18 +791,18 @@ TEST_F(TypeMatchTest, MatchesStrictObject) {
 }
 
 TEST_F(TypeMatchTest, MatchesStrictObjectMethod) {
-  auto type1 = this->tm_.createFn({}, this->tm_.get("void"));
-  auto type2MethodInfo = TypeFnMethodInfo{"", false, "", nullptr, false};
-  auto type2 = this->tm_.createFn({}, this->tm_.get("void"), type2MethodInfo);
-  auto type3MethodInfo = TypeFnMethodInfo{"self1_0", true, "a", this->obj_, false};
-  auto type3 = this->tm_.createFn({}, this->tm_.get("void"), type3MethodInfo);
-  auto type4MethodInfo = TypeFnMethodInfo{"self1_0", true, "a", this->obj_, true};
-  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), type4MethodInfo);
-  auto type5MethodInfo = TypeFnMethodInfo{"self1_0", true, "a", this->tm_.createRef(this->obj_), true};
-  auto type5 = this->tm_.createFn({}, this->tm_.get("void"), type5MethodInfo);
+  auto type1 = this->tm_.createMethod({}, this->tm_.get("void"));
+  auto type2CallInfo = TypeCallInfo{"", false, "", nullptr, false};
+  auto type2 = this->tm_.createMethod({}, this->tm_.get("void"), type2CallInfo);
+  auto type3CallInfo = TypeCallInfo{"self1_0", true, "a", this->obj_, false};
+  auto type3 = this->tm_.createMethod({}, this->tm_.get("void"), type3CallInfo);
+  auto type4CallInfo = TypeCallInfo{"self1_0", true, "a", this->obj_, true};
+  auto type4 = this->tm_.createMethod({}, this->tm_.get("void"), type4CallInfo);
+  auto type5CallInfo = TypeCallInfo{"self1_0", true, "a", this->tm_.createRef(this->obj_), true};
+  auto type5 = this->tm_.createMethod({}, this->tm_.get("void"), type5CallInfo);
 
   EXPECT_TRUE(type2->matchStrict(type2));
-  EXPECT_FALSE(type1->matchStrict(type2));
+  EXPECT_TRUE(type1->matchStrict(type2));
 
   EXPECT_TRUE(type3->matchStrict(type3));
   EXPECT_FALSE(type2->matchStrict(type3));

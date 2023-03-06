@@ -85,7 +85,6 @@ struct CodegenBuiltins {
   bool fnPathDirname = false;
   bool fnPrint = false;
   bool fnReAlloc = false;
-  bool fnSleepSync = false;
   bool fnStrAlloc = false;
   bool fnStrAt = false;
   bool fnStrConcatCstr = false;
@@ -111,6 +110,7 @@ struct CodegenBuiltins {
   bool fnStrTrim = false;
   bool fnStrUpper = false;
   bool fnStrUpperFirst = false;
+  bool fnThreadSleep = false;
   bool fnU8Str = false;
   bool fnU16Str = false;
   bool fnU32Str = false;
@@ -273,8 +273,8 @@ class Codegen {
   std::string _typeNameArray (Type *);
   std::string _typeNameFn (Type *);
   std::string _typeNameMap (Type *);
-  std::string _typeNameObj (Type *, bool = false);
-  std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {}, bool = false);
+  std::string _typeNameObj (Type *);
+  std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {});
   std::string _typeNameOpt (Type *);
   std::string _typeNameUnion (Type *);
   std::string _wrapNode (const ASTNode &, const std::string &);

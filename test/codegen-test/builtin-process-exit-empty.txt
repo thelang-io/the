@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  exit()
+  process_exit()
 }
 ======= code =======
 #include <stdlib.h>

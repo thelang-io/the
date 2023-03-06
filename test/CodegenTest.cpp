@@ -31,7 +31,7 @@ const auto valgrindArguments = std::string(
 );
 
 const auto passExitTests = std::set<std::string>{
-  "builtin-exit-one"
+  "builtin-process-exit-one"
 };
 
 const auto passStderrTests = std::set<std::string>{
@@ -202,9 +202,6 @@ INSTANTIATE_TEST_SUITE_P(General, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinGlobal, CodegenPassTest, testing::Values(
-  "builtin-exit-empty",
-  "builtin-exit-one",
-  "builtin-exit-zero",
   "builtin-print",
   "builtin-print-alias",
   "builtin-print-any",
@@ -219,8 +216,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinGlobal, CodegenPassTest, testing::Values(
   "builtin-print-str",
   "builtin-print-union",
   "builtin-print-args",
-  "builtin-print-to",
-  "builtin-sleep-sync"
+  "builtin-print-to"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
@@ -510,6 +506,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
   "builtin-process-args-scoped",
   "builtin-process-cwd",
   "builtin-process-cwd-root",
+  "builtin-process-exit-empty",
+  "builtin-process-exit-one",
+  "builtin-process-exit-zero",
   "builtin-process-getgid",
   "builtin-process-getgid-root",
   "builtin-process-getuid",
@@ -526,6 +525,10 @@ INSTANTIATE_TEST_SUITE_P(BuiltinRequest, CodegenPassTest, testing::Values(
   "builtin-request-open-sleep",
   "builtin-request-read",
   "builtin-request-read-root"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinThread, CodegenPassTest, testing::Values(
+  "builtin-thread-sleep"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinStr, CodegenPassTest, testing::Values(

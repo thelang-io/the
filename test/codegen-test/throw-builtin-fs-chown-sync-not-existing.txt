@@ -4,7 +4,7 @@ main {
 
   if os_NAME == "Windows" {
     print("Error: failed to change owner to 0 and group to 0 for file `" + fileName + "`", to: "stderr")
-    exit(1)
+    process_exit(1)
   } else {
     fs_chownSync(fileName, 0, 0)
   }

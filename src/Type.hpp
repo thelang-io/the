@@ -49,12 +49,30 @@ using TypeBody = std::variant<
   TypeUnion
 >;
 
+struct TypeCallInfo {
+  std::string codeName;
+  bool isSelfFirst = false;
+  std::string selfCodeName = "";
+  Type *selfType = nullptr;
+  bool isSelfMut = false;
+
+  bool empty () const {
+    return this->codeName.empty() &&
+      !this->isSelfFirst &&
+      this->selfCodeName.empty() &&
+      this->selfType == nullptr &&
+      !this->isSelfMut;
+  }
+
+  std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
+};
+
 struct TypeField {
   std::string name;
   Type *type;
   bool mut;
-  bool method;
-  bool builtin;
+  bool builtin = false;
+  TypeCallInfo callInfo = {};
 };
 
 struct TypeAlias {
@@ -80,19 +98,11 @@ struct TypeFnParam {
   bool variadic;
 };
 
-struct TypeFnMethodInfo {
-  std::string codeName;
-  bool isSelfFirst = false;
-  std::string selfCodeName = "";
-  Type *selfType = nullptr;
-  bool isSelfMut = false;
-};
-
 struct TypeFn {
   Type *returnType;
   std::vector<TypeFnParam> params = {};
   bool isMethod = false;
-  TypeFnMethodInfo methodInfo = {};
+  TypeCallInfo callInfo = {};
 };
 
 struct TypeBodyMap {
