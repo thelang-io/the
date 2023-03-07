@@ -33,6 +33,14 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
 }
 
+bool TypeCallInfo::empty () const {
+  return this->codeName.empty() &&
+    !this->isSelfFirst &&
+    this->selfCodeName.empty() &&
+    this->selfType == nullptr &&
+    !this->isSelfMut;
+}
+
 std::string TypeCallInfo::xml (std::size_t indent, std::set<std::string> parentTypes) const {
   auto result = std::string(indent, ' ') + "<TypeCallInfo";
 
@@ -143,6 +151,18 @@ Type *Type::getEnumerator (const std::string &memberName) const {
   return *typeMember;
 }
 
+TypeField Type::getField (const std::string &fieldName) const {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
+    return it.name == fieldName;
+  });
+
+  if (typeField == this->fields.end()) {
+    throw Error("tried to get non-existing field");
+  }
+
+  return *typeField;
+}
+
 Type *Type::getProp (const std::string &propName) const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->getProp(propName);
@@ -173,6 +193,14 @@ bool Type::hasEnumerator (const std::string &memberName) const {
   });
 
   return typeMember != enumType.members.end();
+}
+
+bool Type::hasField (const std::string &fieldName) const {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
+    return it.name == fieldName;
+  });
+
+  return typeField != this->fields.end();
 }
 
 bool Type::hasProp (const std::string &propName) const {

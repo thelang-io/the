@@ -953,8 +953,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.fnStrLowerFirst) {
-    builtinFnDeclCode += "struct str str_lower_first (struct str);" EOL;
-    builtinFnDefCode += "struct str str_lower_first (struct str s) {" EOL;
+    builtinFnDeclCode += "struct str str_lowerFirst (struct str);" EOL;
+    builtinFnDefCode += "struct str str_lowerFirst (struct str s) {" EOL;
     builtinFnDefCode += "  if (s.l != 0) s.d[0] = tolower(s.d[0]);" EOL;
     builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
@@ -1056,8 +1056,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.fnStrUpperFirst) {
-    builtinFnDeclCode += "struct str str_upper_first (struct str);" EOL;
-    builtinFnDefCode += "struct str str_upper_first (struct str s) {" EOL;
+    builtinFnDeclCode += "struct str str_upperFirst (struct str);" EOL;
+    builtinFnDefCode += "struct str str_upperFirst (struct str s) {" EOL;
     builtinFnDefCode += "  if (s.l != 0) s.d[0] = (char) toupper(s.d[0]);" EOL;
     builtinFnDefCode += "  return s;" EOL;
     builtinFnDefCode += "}" EOL;
@@ -2987,83 +2987,25 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto objNodeExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
       auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
       auto originalObjMemberType = nodeExpr.type;
+      auto fieldTypeShouldBeFreed = false;
 
-      // todo get field, check if field is builtin and decide the way to build expression
-      if (exprAccess.prop == "cap" && objTypeInfo.realType->isMap()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_cap}" + code, 1);
-      } else if (exprAccess.prop == "empty" && (objTypeInfo.realType->isArray() || objTypeInfo.realType->isMap())) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_empty}" + code, 1);
-      } else if (exprAccess.prop == "empty" && objTypeInfo.realType->isStr()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{str_empty}" + code, 1);
-      } else if (exprAccess.prop == "isDigit" && objTypeInfo.realType->isChar()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{char_isDigit}" + code, 1);
-      } else if (exprAccess.prop == "isLetter" && objTypeInfo.realType->isChar()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{char_isLetter}" + code, 1);
-      } else if (exprAccess.prop == "isLetterOrDigit" && objTypeInfo.realType->isChar()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{char_isLetterOrDigit}" + code, 1);
-      } else if (exprAccess.prop == "isWhitespace" && objTypeInfo.realType->isChar()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{char_isWhitespace}" + code, 1);
-      } else if (exprAccess.prop == "keys" && objTypeInfo.realType->isMap()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        auto mapType = std::get<TypeBodyMap>(objTypeInfo.realType->body);
+      if (
+        exprAccess.prop != std::nullopt &&
+        objTypeInfo.realType->hasField(*exprAccess.prop) &&
+        objTypeInfo.realType->getField(*exprAccess.prop).builtin &&
+        !objTypeInfo.realType->getField(*exprAccess.prop).callInfo.empty()
+      ) {
+        auto typeField = objTypeInfo.realType->getField(*exprAccess.prop);
 
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_keys}" + code, 1);
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.createArr(mapType.keyType), code);
-      } else if (exprAccess.prop == "len" && (objTypeInfo.realType->isArray() || objTypeInfo.realType->isMap())) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_len}" + code, 1);
-      } else if (exprAccess.prop == "len" && objTypeInfo.realType->isStr()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{str_len}" + code, 1);
-      } else if (exprAccess.prop == "lower" && objTypeInfo.realType->isStr()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{str_lower}" + code, 1);
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
-      } else if (exprAccess.prop == "lowerFirst" && objTypeInfo.realType->isStr()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{str_lower_first}" + code, 1);
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
-      } else if (exprAccess.prop == "rawValue" && objTypeInfo.realType->isEnum()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_rawValue}" + code, 1);
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
-      } else if (exprAccess.prop == "upper" && objTypeInfo.realType->isStr()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{str_upper}" + code, 1);
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
-      } else if (exprAccess.prop == "upperFirst" && objTypeInfo.realType->isStr()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{str_upper_first}" + code, 1);
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.get("str"), code);
-      } else if (exprAccess.prop == "values" && objTypeInfo.realType->isMap()) {
-        auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType);
-        auto mapType = std::get<TypeBodyMap>(objTypeInfo.realType->body);
+        if (typeField.callInfo.isSelfFirst) {
+          auto objCode = this->_nodeExpr(objNodeExpr, typeField.callInfo.selfType);
+          code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
+        } else {
+          code = "()";
+        }
 
-        code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
-        code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_values}" + code, 1);
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.createArr(mapType.valueType), code);
+        code = this->_apiEval("_{" + typeField.callInfo.codeName + "}" + code, 1);
+        fieldTypeShouldBeFreed = typeField.type->shouldBeFreed();
       } else if (exprAccess.prop != std::nullopt && objTypeInfo.realType->isEnum()) {
         auto enumType = std::get<TypeEnum>(objTypeInfo.realType->body);
 
@@ -3118,6 +3060,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       if (!root && !isExprAccessEnumField && !isExprAccessMapField && !isExprAccessRef && !isExprAccessStrField) {
         code = this->_genCopyFn(Type::real(nodeExpr.type), code);
+      }
+
+      if (root && nodeExpr.type->shouldBeFreed() && (exprAccess.prop == std::nullopt || fieldTypeShouldBeFreed)) {
+        code = this->_genFreeFn(nodeExpr.type, code);
       }
     } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
       auto memberName = *exprAccess.prop;

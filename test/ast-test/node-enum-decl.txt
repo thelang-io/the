@@ -593,7 +593,7 @@ main {
             <ExprCallCallee>
               <NodeExpr>
                 <NodeExprType>
-                  <BuiltinType name="Color.str" />
+                  <BuiltinType name="mainSDColor_0.str" />
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess prop="str">
@@ -693,7 +693,7 @@ main {
             <ExprCallCallee>
               <NodeExpr>
                 <NodeExprType>
-                  <BuiltinType name="Color.str" />
+                  <BuiltinType name="mainSDColor_0.str" />
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess prop="str">

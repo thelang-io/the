@@ -37,7 +37,7 @@ void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct str str_upper_first (struct str);
+struct str str_upperFirst (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -85,17 +85,17 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str str_upper_first (struct str s) {
+struct str str_upperFirst (struct str s) {
   if (s.l != 0) s.d[0] = (char) toupper(s.d[0]);
   return s;
 }
 
 int main () {
-  print(stdout, "sz", str_upper_first(str_alloc("")), THE_EOL);
-  print(stdout, "sz", str_upper_first(str_alloc("a")), THE_EOL);
-  print(stdout, "sz", str_upper_first(str_alloc("test")), THE_EOL);
-  print(stdout, "sz", str_upper_first(str_alloc("A")), THE_EOL);
-  print(stdout, "sz", str_upper_first(str_alloc("TEST_TEST09$/!")), THE_EOL);
+  print(stdout, "sz", str_upperFirst(str_alloc("")), THE_EOL);
+  print(stdout, "sz", str_upperFirst(str_alloc("a")), THE_EOL);
+  print(stdout, "sz", str_upperFirst(str_alloc("test")), THE_EOL);
+  print(stdout, "sz", str_upperFirst(str_alloc("A")), THE_EOL);
+  print(stdout, "sz", str_upperFirst(str_alloc("TEST_TEST09$/!")), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

@@ -34,7 +34,7 @@ struct str {
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct str str_lower_first (struct str);
+struct str str_lowerFirst (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -53,17 +53,17 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str str_lower_first (struct str s) {
+struct str str_lowerFirst (struct str s) {
   if (s.l != 0) s.d[0] = tolower(s.d[0]);
   return s;
 }
 
 int main () {
-  str_free((struct str) str_lower_first(str_alloc("")));
-  str_free((struct str) str_lower_first(str_alloc("a")));
-  str_free((struct str) str_lower_first(str_alloc("test")));
-  str_free((struct str) str_lower_first(str_alloc("A")));
-  str_free((struct str) str_lower_first(str_alloc("TEST_TEST09$/!")));
+  str_free((struct str) str_lowerFirst(str_alloc("")));
+  str_free((struct str) str_lowerFirst(str_alloc("a")));
+  str_free((struct str) str_lowerFirst(str_alloc("test")));
+  str_free((struct str) str_lowerFirst(str_alloc("A")));
+  str_free((struct str) str_lowerFirst(str_alloc("TEST_TEST09$/!")));
 }
 ======= flags =======
 ======= stdout =======

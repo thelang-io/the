@@ -45,7 +45,7 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct str str_upper_first (struct str);
+struct str str_upperFirst (struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
@@ -103,7 +103,7 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str str_upper_first (struct str s) {
+struct str str_upperFirst (struct str s) {
   if (s.l != 0) s.d[0] = (char) toupper(s.d[0]);
   return s;
 }
@@ -142,7 +142,7 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
 int main () {
   const struct __THE_1_array_str __THE_0_arr_0 = __THE_1_array_str_alloc(3, str_alloc(""), str_alloc("t"), str_alloc("test"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "sz", str_upper_first(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
+    print(stdout, "sz", str_upperFirst(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
   }
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
 }

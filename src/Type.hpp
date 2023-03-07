@@ -56,14 +56,7 @@ struct TypeCallInfo {
   Type *selfType = nullptr;
   bool isSelfMut = false;
 
-  bool empty () const {
-    return this->codeName.empty() &&
-      !this->isSelfFirst &&
-      this->selfCodeName.empty() &&
-      this->selfType == nullptr &&
-      !this->isSelfMut;
-  }
-
+  bool empty () const;
   std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
 };
 
@@ -137,8 +130,10 @@ struct Type {
   static Type *largest (Type *, Type *);
 
   Type *getEnumerator (const std::string &) const;
+  TypeField getField (const std::string &) const;
   Type *getProp (const std::string &) const;
   bool hasEnumerator (const std::string &) const;
+  bool hasField (const std::string &) const;
   bool hasProp (const std::string &) const;
   bool hasSubType (const Type *) const;
   bool isAlias () const;
