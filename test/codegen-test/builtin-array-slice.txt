@@ -100,7 +100,7 @@ void str_free (struct str);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
-struct __THE_1_array_int __THE_1_array_int_slice (struct __THE_1_array_int, unsigned int, int64_t, unsigned int, int64_t);
+struct __THE_1_array_int __THE_1_array_int_slice (struct __THE_1_array_int, unsigned int, int32_t, unsigned int, int32_t);
 struct str __THE_1_array_int_str (struct __THE_1_array_int);
 
 void *alloc (size_t l) {
@@ -189,9 +189,9 @@ struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int 
 void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
-struct __THE_1_array_int __THE_1_array_int_slice (struct __THE_1_array_int n, unsigned int o1, int64_t n1, unsigned int o2, int64_t n2) {
-  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));
-  int64_t i2 = o2 == 0 ? (int64_t) n.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));
+struct __THE_1_array_int __THE_1_array_int_slice (struct __THE_1_array_int n, unsigned int o1, int32_t n1, unsigned int o2, int32_t n2) {
+  int32_t i1 = o1 == 0 ? 0 : (int32_t) (n1 < 0 ? (n1 < -((int32_t) n.l) ? 0 : n1 + n.l) : (n1 > n.l ? n.l : n1));
+  int32_t i2 = o2 == 0 ? (int32_t) n.l : (int32_t) (n2 < 0 ? (n2 < -((int32_t) n.l) ? 0 : n2 + n.l) : (n2 > n.l ? n.l : n2));
   if (i1 > i2 || i1 >= n.l) {
     __THE_1_array_int_free((struct __THE_1_array_int) n);
     return (struct __THE_1_array_int) {NULL, 0};

@@ -71,7 +71,7 @@ void __THE_1_map$0_free (struct __THE_1_map$0);
 struct __THE_1_map$0 *__THE_1_map$0_merge (struct __THE_1_map$0 *, struct __THE_1_map$0);
 struct str __THE_1_map$0_str (struct __THE_1_map$0);
 struct __THE_1_array_map$0 __THE_1_array_map$0_alloc (size_t, ...);
-struct __THE_1_map$0 *__THE_1_array_map$0_at (struct __THE_1_array_map$0, int64_t);
+struct __THE_1_map$0 *__THE_1_array_map$0_at (struct __THE_1_array_map$0, int32_t);
 struct __THE_1_array_map$0 __THE_1_array_map$0_copy (const struct __THE_1_array_map$0);
 void __THE_1_array_map$0_free (struct __THE_1_array_map$0);
 size_t __THE_1_array_map$0_len (struct __THE_1_array_map$0);
@@ -239,9 +239,9 @@ struct __THE_1_array_map$0 __THE_1_array_map$0_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_map$0) {d, x};
 }
-struct __THE_1_map$0 *__THE_1_array_map$0_at (struct __THE_1_array_map$0 n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+struct __THE_1_map$0 *__THE_1_array_map$0_at (struct __THE_1_array_map$0 n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];

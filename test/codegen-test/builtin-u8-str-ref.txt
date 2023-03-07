@@ -48,7 +48,7 @@ struct str str_alloc (const char *);
 void str_free (struct str);
 struct str u8_str (uint8_t);
 struct __THE_1_array_u8 __THE_1_array_u8_alloc (size_t, ...);
-uint8_t *__THE_1_array_u8_at (struct __THE_1_array_u8, int64_t);
+uint8_t *__THE_1_array_u8_at (struct __THE_1_array_u8, int32_t);
 struct __THE_1_array_u8 __THE_1_array_u8_copy (const struct __THE_1_array_u8);
 void __THE_1_array_u8_free (struct __THE_1_array_u8);
 size_t __THE_1_array_u8_len (struct __THE_1_array_u8);
@@ -113,9 +113,9 @@ struct __THE_1_array_u8 __THE_1_array_u8_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_u8) {d, x};
 }
-uint8_t *__THE_1_array_u8_at (struct __THE_1_array_u8 n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+uint8_t *__THE_1_array_u8_at (struct __THE_1_array_u8 n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];

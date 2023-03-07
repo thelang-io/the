@@ -30,7 +30,7 @@ struct str {
 
 void *alloc (size_t);
 struct str str_alloc (const char *);
-char *str_at (struct str, int64_t);
+char *str_at (struct str, int32_t);
 void str_free (struct str);
 
 void *alloc (size_t l) {
@@ -47,9 +47,9 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-char *str_at (struct str s, int64_t i) {
-  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int64_t) s.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of string bounds" THE_EOL, i);
+char *str_at (struct str s, int32_t i) {
+  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int32_t) s.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of string bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &s.d[s.l + i] : &s.d[i];

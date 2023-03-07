@@ -57,7 +57,7 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct __THE_1_array_Color __THE_1_array_Color_alloc (size_t, ...);
-enum __THE_1_Color_0 *__THE_1_array_Color_at (struct __THE_1_array_Color, int64_t);
+enum __THE_1_Color_0 *__THE_1_array_Color_at (struct __THE_1_array_Color, int32_t);
 struct __THE_1_array_Color __THE_1_array_Color_copy (const struct __THE_1_array_Color);
 void __THE_1_array_Color_free (struct __THE_1_array_Color);
 size_t __THE_1_array_Color_len (struct __THE_1_array_Color);
@@ -122,9 +122,9 @@ struct __THE_1_array_Color __THE_1_array_Color_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_Color) {d, x};
 }
-enum __THE_1_Color_0 *__THE_1_array_Color_at (struct __THE_1_array_Color n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+enum __THE_1_Color_0 *__THE_1_array_Color_at (struct __THE_1_array_Color n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];

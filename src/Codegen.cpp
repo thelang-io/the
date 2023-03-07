@@ -760,10 +760,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.fnStrAt) {
-    builtinFnDeclCode += "char *str_at (struct str, int64_t);" EOL;
-    builtinFnDefCode += "char *str_at (struct str s, int64_t i) {" EOL;
-    builtinFnDefCode += "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int64_t) s.l))) {" EOL;
-    builtinFnDefCode += R"(    fprintf(stderr, "Error: index %" PRId64 " out of string bounds" THE_EOL, i);)" EOL;
+    builtinFnDeclCode += "char *str_at (struct str, int32_t);" EOL;
+    builtinFnDefCode += "char *str_at (struct str s, int32_t i) {" EOL;
+    builtinFnDefCode += "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int32_t) s.l))) {" EOL;
+    builtinFnDefCode += R"(    fprintf(stderr, "Error: index %" PRId32 " out of string bounds" THE_EOL, i);)" EOL;
     builtinFnDefCode += "    exit(EXIT_FAILURE);" EOL;
     builtinFnDefCode += "  }" EOL;
     builtinFnDefCode += "  return i < 0 ? &s.d[s.l + i] : &s.d[i];" EOL;
@@ -997,11 +997,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.fnStrSlice) {
-    builtinFnDeclCode += "struct str str_slice (struct str, unsigned char, int64_t, unsigned char, int64_t);" EOL;
-    builtinFnDefCode += "struct str str_slice (struct str s, unsigned char o1, int64_t n1, unsigned char o2, int64_t n2) {" EOL;
-    builtinFnDefCode += "  int64_t i1 = o1 == 0 ? 0 : (int64_t) (n1 < 0 ? (n1 < -((int64_t) s.l) ? 0 : n1 + s.l) ";
+    builtinFnDeclCode += "struct str str_slice (struct str, unsigned char, int32_t, unsigned char, int32_t);" EOL;
+    builtinFnDefCode += "struct str str_slice (struct str s, unsigned char o1, int32_t n1, unsigned char o2, int32_t n2) {" EOL;
+    builtinFnDefCode += "  int32_t i1 = o1 == 0 ? 0 : (int32_t) (n1 < 0 ? (n1 < -((int32_t) s.l) ? 0 : n1 + s.l) ";
     builtinFnDefCode += ": (n1 > s.l ? s.l : n1));" EOL;
-    builtinFnDefCode += "  int64_t i2 = o2 == 0 ? (int64_t) s.l : (int64_t) (n2 < 0 ? (n2 < -((int64_t) s.l) ? 0 ";
+    builtinFnDefCode += "  int32_t i2 = o2 == 0 ? (int32_t) s.l : (int32_t) (n2 < 0 ? (n2 < -((int32_t) s.l) ? 0 ";
     builtinFnDefCode += ": n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL;
     builtinFnDefCode += "  if (i1 >= i2 || i1 >= s.l) {" EOL;
     builtinFnDefCode += "    free(s.d);" EOL;
@@ -3090,7 +3090,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
       } else if (exprAccess.elem != std::nullopt) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
-        auto objElemCode = this->_nodeExpr(*exprAccess.elem, exprAccess.elem->type);
+        auto objElemCode = this->_nodeExpr(*exprAccess.elem, this->ast->typeMap.get("int"));
 
         if (objTypeInfo.realType->isArray()) {
           code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_at}(" + objCode + ", " + objElemCode + ")", 1);
@@ -3647,9 +3647,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@array.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
-        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
+        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
         auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
-        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("i64"));
+        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
 
         this->_activateEntity(calleeTypeInfo.realTypeName + "_slice");
         code = calleeTypeInfo.realTypeName + "_slice(" + calleeCode + ", " + arg1Expr;
@@ -3727,9 +3727,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (exprCallCalleeTypeInfo.realType->codeName == "@str.slice") {
         auto calleeCode = this->_nodeExpr(calleeNodeExpr, calleeTypeInfo.realType);
         auto arg1Expr = std::string(exprCall.args.empty() ? "0" : "1");
-        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("i64"));
+        auto arg2Expr = exprCall.args.empty() ? "0" : this->_nodeExpr(exprCall.args[0].expr, this->ast->typeMap.get("int"));
         auto arg3Expr = std::string(exprCall.args.size() < 2 ? "0" : "1");
-        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("i64"));
+        auto arg4Expr = exprCall.args.size() < 2 ? "0" : this->_nodeExpr(exprCall.args[1].expr, this->ast->typeMap.get("int"));
 
         this->_activateBuiltin("fnStrSlice");
         code = "str_slice(" + calleeCode + ", " + arg1Expr + ", " + arg2Expr + ", " + arg3Expr + ", " + arg4Expr + ")";
@@ -4379,10 +4379,10 @@ std::string Codegen::_typeNameArray (Type *type) {
   auto atFnEntityIdx = this->_apiEntity(typeName + "_at", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
-    decl += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "}, _{int64_t});";
-    def += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "} n, _{int64_t} i) {" EOL;
-    def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((_{int64_t}) n.l))) {" EOL;
-    def += R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId64} " out of array bounds" _{THE_EOL}, i);)" EOL;
+    decl += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "}, _{int32_t});";
+    def += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "} n, _{int32_t} i) {" EOL;
+    def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((_{int32_t}) n.l))) {" EOL;
+    def += R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId32} " out of array bounds" _{THE_EOL}, i);)" EOL;
     def += "    _{exit}(_{EXIT_FAILURE});" EOL;
     def += "  }" EOL;
     def += "  return i < 0 ? &n.d[n.l + i] : &n.d[i];" EOL;
@@ -4552,12 +4552,12 @@ std::string Codegen::_typeNameArray (Type *type) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
     decl += "struct _{" + typeName + "} " + typeName + "_slice (struct _{" + typeName + "}, ";
-    decl += "unsigned int, _{int64_t}, unsigned int, _{int64_t});";
+    decl += "unsigned int, _{int32_t}, unsigned int, _{int32_t});";
     def += "struct _{" + typeName + "} " + typeName + "_slice (struct _{" + typeName + "} n, ";
-    def += "unsigned int o1, _{int64_t} n1, unsigned int o2, _{int64_t} n2) {" EOL;
-    def += "  _{int64_t} i1 = o1 == 0 ? 0 : (_{int64_t}) (n1 < 0 ? (n1 < -((_{int64_t}) n.l) ? 0 : n1 + n.l) ";
+    def += "unsigned int o1, _{int32_t} n1, unsigned int o2, _{int32_t} n2) {" EOL;
+    def += "  _{int32_t} i1 = o1 == 0 ? 0 : (_{int32_t}) (n1 < 0 ? (n1 < -((_{int32_t}) n.l) ? 0 : n1 + n.l) ";
     def += ": (n1 > n.l ? n.l : n1));" EOL;
-    def += "  _{int64_t} i2 = o2 == 0 ? (_{int64_t}) n.l : (_{int64_t}) (n2 < 0 ? (n2 < -((_{int64_t}) n.l) ? 0 : n2 + n.l) ";
+    def += "  _{int32_t} i2 = o2 == 0 ? (_{int32_t}) n.l : (_{int32_t}) (n2 < 0 ? (n2 < -((_{int32_t}) n.l) ? 0 : n2 + n.l) ";
     def += ": (n2 > n.l ? n.l : n2));" EOL;
     def += "  if (i1 > i2 || i1 >= n.l) {" EOL;
     def += "    " + this->_genFreeFn(type, "n") + ";" EOL;

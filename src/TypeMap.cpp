@@ -76,7 +76,6 @@ Type *TypeMap::createArr (Type *elementType) {
 
   auto newType = Type{"array_" + elementType->name, "@array_" + elementType->name, TypeArray{elementType}};
 
-  // todo test builtin
   for (const auto &item : this->_items) {
     if (
       item->isArray() &&
@@ -135,7 +134,6 @@ Type *TypeMap::createFn (
   auto typeBody = TypeFn{returnType, params, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
   auto newType = Type{"", "", typeBody, {}, builtin};
 
-  // todo test builtin
   for (const auto &item : this->_items) {
     if (item->builtin == newType.builtin && item->isFn() && item->matchStrict(&newType, true)) {
       return item.get();
@@ -171,7 +169,6 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType, bool builtin) {
   auto actualValueType = Type::actual(valueType);
   auto newType = Type{"", "", TypeBodyMap{actualKeyType, actualValueType}, {}, builtin};
 
-  // todo test builtin
   for (const auto &item : this->_items) {
     if (item->builtin == newType.builtin && item->isMap() && item->matchStrict(&newType, true)) {
       return item.get();
@@ -203,7 +200,6 @@ Type *TypeMap::createMethod (
   auto typeBody = TypeFn{returnType, params, true, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
   auto newType = Type{"", "", typeBody, {}, builtin};
 
-  // todo test builtin
   for (const auto &item : this->_items) {
     if (item->builtin == newType.builtin && item->isMethod() && item->matchStrict(&newType, true)) {
       return item.get();
@@ -258,7 +254,6 @@ Type *TypeMap::createOpt (Type *type) {
 
   auto newType = Type{"opt_" + type->name, "@opt_" + type->name, TypeOptional{type}};
 
-  // todo test builtin
   for (const auto &item : this->_items) {
     if (
       item->isOpt() &&
@@ -284,7 +279,6 @@ Type *TypeMap::createRef (Type *refType) {
 
   auto newType = Type{"ref_" + refType->name, "@ref_" + refType->name, TypeRef{refType}};
 
-  // todo test builtin
   for (const auto &item : this->_items) {
     if (
       item->isRef() &&
@@ -308,7 +302,6 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes, bool builtin) {
 
   auto newType = Type{"", "", TypeUnion{actualSubTypes}, {}, builtin};
 
-  // todo test builtin
   for (const auto &item : this->_items) {
     if (item->builtin == newType.builtin && item->isUnion() && item->matchStrict(&newType, true)) {
       return item.get();
@@ -613,9 +606,7 @@ void TypeMap::_strType (TypeMapPhase phase) {
     selfType->fields.push_back(TypeField{"replace", this->_items.back().get(), false, true});
     auto sliceCallInfo = TypeCallInfo{selfType->name + "_slice", true, "self_0", refSelfType, false};
     auto sliceTypeFn = TypeFn{selfType, {
-      // todo
       TypeFnParam{"start", this->get("int"), false, false, false},
-      // todo
       TypeFnParam{"end", this->get("int"), false, false, false}
     }, true, sliceCallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".slice", "@str.slice", sliceTypeFn, {}, true}));
@@ -1069,9 +1060,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   selfType->fields.push_back(TypeField{"reverse", this->_items.back().get(), false, true});
   auto sliceCallInfo = TypeCallInfo{selfType->name + "_slice", true, "self_0", refSelfType, false};
   auto sliceTypeFn = TypeFn{selfType, {
-    // todo
     TypeFnParam{"start", this->get("int"), false, false, false},
-    // todo
     TypeFnParam{"end", this->get("int"), false, false, false}
   }, true, sliceCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".slice", "@array.slice", sliceTypeFn, {}, true}));
