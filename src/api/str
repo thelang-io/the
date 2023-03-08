@@ -27,21 +27,21 @@ obj Str {
    *
    * @param search - Substring to check if exists.
    */
-  fn contains (self: ref Self, search: Self) bool
+  fn contains (self: Self, search: Self) bool
 
   /**
    * Searches for substring and returns its position, otherwise `-1` is returned.
    *
    * @param search - Substring to search for.
    */
-  fn find (self: ref Self, search: Self) int
+  fn find (self: Self, search: Self) int
 
   /**
    * Splits string by lines. Delimited by any of: `\r`, `\n`, `\r\n`.
    *
    * @param keepLineBreaks - Whether resulting array should contain line endings. The default is false.
    */
-  fn lines (self: ref Self, keepLineBreaks := false) Self[]
+  fn lines (self: Self, keepLineBreaks := false) Self[]
 
   /**
    * Returns a copy of calling string with `search` replaced with `replacement`.
@@ -50,7 +50,7 @@ obj Str {
    * @param replacement - Substring to replace with.
    * @param all - Whether should replace all occurrences of `search`.
    */
-  fn replace (self: ref Self, search: Self, replacement: Self, all := true) Self
+  fn replace (self: Self, search: Self, replacement: Self, all := true) Self
 
   /**
    * Extracts string slice from `start` to `end` (`end` not included).
@@ -65,54 +65,54 @@ obj Str {
    *   - If value is greater than string length then string length is used.
    *   - If value positioned before or equals `start` then nothing is extracted.
    */
-  fn slice (self: ref Self, start := 0, end := self.len) Self
+  fn slice (self: Self, start := 0, end := self.len) Self
 
   /**
    * Splits string into array of string delimited with `delimiter`.
    *
    * @param delimiter - Delimiter to split with.
    */
-  fn split (self: ref Self, delimiter := "") Self[]
+  fn split (self: Self, delimiter := "") Self[]
 
   /* Converts a string to `buffer_Buffer` object. */
-  fn toBuffer (self: ref Self) buffer_Buffer
+  fn toBuffer (self: Self) buffer_Buffer
 
   /* Converts a string to `float` representation. */
-  fn toFloat (self: ref Self) float
+  fn toFloat (self: Self) float
 
   /* Converts a string to `f32` representation. */
-  fn toF32 (self: ref Self) f32
+  fn toF32 (self: Self) f32
 
   /* Converts a string to `f64` representation. */
-  fn toF64 (self: ref Self) f64
+  fn toF64 (self: Self) f64
 
   /* Converts a string to `int` representation. */
-  fn toInt (self: ref Self) int
+  fn toInt (self: Self) int
 
   /* Converts a string to `i8` representation. */
-  fn toI8 (self: ref Self) i8
+  fn toI8 (self: Self) i8
 
   /* Converts a string to `i16` representation. */
-  fn toI16 (self: ref Self) i16
+  fn toI16 (self: Self) i16
 
   /* Converts a string to `i32` representation. */
-  fn toI32 (self: ref Self) i32
+  fn toI32 (self: Self) i32
 
   /* Converts a string to `i64` representation. */
-  fn toI64 (self: ref Self) i64
+  fn toI64 (self: Self) i64
 
   /* Converts a string to `u8` representation. */
-  fn toU8 (self: ref Self) u8
+  fn toU8 (self: Self) u8
 
   /* Converts a string to `u16` representation. */
-  fn toU16 (self: ref Self) u16
+  fn toU16 (self: Self) u16
 
   /* Converts a string to `u32` representation. */
-  fn toU32 (self: ref Self) u32
+  fn toU32 (self: Self) u32
 
   /* Converts a string to `u64` representation. */
-  fn toU64 (self: ref Self) u64
+  fn toU64 (self: Self) u64
 
   /* Returns a string with whitespaces removed from both ends. */
-  fn trim (self: ref Self) Self
+  fn trim (self: Self) Self
 }

@@ -26,14 +26,14 @@ obj Map {
    *
    * @param key - Key you want to get a value of.
    */
-  fn get (self: ref Self, key: Key) Value
+  fn get (self: Self, key: Key) Value
 
   /**
    * Checks whether certain key exists.
    *
    * @param key - Key you want to check if exists.
    */
-  fn has (self: ref Self, key: Key) bool
+  fn has (self: Self, key: Key) bool
 
   /**
    * Merges other map's data into calling map. When iterating, if key exists, then it will get updated with a new value.
@@ -68,5 +68,5 @@ obj Map {
   fn shrink (mut self: ref Self) ref Self
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }

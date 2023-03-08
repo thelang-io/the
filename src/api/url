@@ -18,7 +18,7 @@ obj url_URL {
   hash: str
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }
 
 /**

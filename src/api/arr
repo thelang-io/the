@@ -29,7 +29,7 @@ obj Array {
    *
    * @param search - Element to check if exists.
    */
-  fn contains (self: ref Self, search: Element) bool
+  fn contains (self: Self, search: Element) bool
 
   /**
    * Calls `predicate` on every element and constructs array copy out of elements that passed the test.
@@ -37,14 +37,14 @@ obj Array {
    * @param predicate - Function to execute on each element of the array.
    *   Should return a truthy value to keep the element in the resulting array.
    */
-  fn filter (self: ref Self, predicate: (it: Element) -> bool) Self
+  fn filter (self: Self, predicate: (it: Element) -> bool) Self
 
   /**
    * Calls `str` method on every element and joins result with separator.
    *
    * @param separator - Elements separator. The default is comma string.
    */
-  fn join (self: ref Self, separator := ",") str
+  fn join (self: Self, separator := ",") str
 
   /**
    * Merges other array's data into calling array.
@@ -71,7 +71,7 @@ obj Array {
   fn remove (mut self: ref Self, indexes: int...) ref Self
 
   /* Returns reversed array copy. */
-  fn reverse (self: ref Self) Self
+  fn reverse (self: Self) Self
 
   /**
    * Extracts array slice from `start` to `end` (`end` not included).
@@ -86,7 +86,7 @@ obj Array {
    *   - If value is greater than array length then array length is used.
    *   - If value positioned before or equals `start` then nothing is extracted.
    */
-  fn slice (self: ref Self, start := 0, end := self.len) Self
+  fn slice (self: Self, start := 0, end := self.len) Self
 
   /**
    * Sorts the elements of the array in place.
@@ -96,5 +96,5 @@ obj Array {
   fn sort (mut self: ref Self, comparator: (a: Element, b: Element) -> int) ref Self
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }

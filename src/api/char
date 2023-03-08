@@ -26,8 +26,8 @@ obj Char {
    *
    * @param times - Number of times to repeat.
    */
-  fn repeat (self: ref Self, times: int) str
+  fn repeat (self: Self, times: int) str
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }

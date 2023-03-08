@@ -40,7 +40,7 @@ obj fs_Stats {
   blockSize: i64
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }
 
 /**

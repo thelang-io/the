@@ -8,7 +8,7 @@ obj request_Header {
   value: str
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }
 
 /**
@@ -24,7 +24,7 @@ obj request_Request {
   fn read (mut self: ref Self) request_Response
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }
 
 /* Contains all the information about the request's response data. */
@@ -37,7 +37,7 @@ obj request_Response {
   headers: request_Header[]
 
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }
 
 /**

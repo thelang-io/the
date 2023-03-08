@@ -3,5 +3,5 @@
 /* Allows storing optional value that could be `nil` or actual value. */
 obj Opt {
   /* Returns a string representation. */
-  fn str (self: ref Self) str
+  fn str (self: Self) str
 }
