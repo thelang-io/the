@@ -749,13 +749,6 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinFnDefCode += "}" EOL;
   }
 
-  if (this->builtins.fnProcessExit) {
-    builtinFnDeclCode += "void process_exit (unsigned char, int32_t);" EOL;
-    builtinFnDefCode += "void process_exit (unsigned char o1, int32_t i) {" EOL;
-    builtinFnDefCode += "  exit(o1 == 1 ? EXIT_SUCCESS : i);" EOL;
-    builtinFnDefCode += "}" EOL;
-  }
-
   if (this->builtins.fnStrAlloc) {
     builtinFnDeclCode += "struct str str_alloc (const char *);" EOL;
     builtinFnDefCode += "struct str str_alloc (const char *r) {" EOL;
@@ -1509,10 +1502,6 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libStdarg");
     this->_activateBuiltin("libStdio");
     this->_activateBuiltin("typeStr");
-  } else if (name == "fnProcessExit") {
-    this->builtins.fnProcessExit = true;
-    this->_activateBuiltin("libStdint");
-    this->_activateBuiltin("libStdlib");
   } else if (name == "fnReAlloc") {
     this->builtins.fnReAlloc = true;
     this->_activateBuiltin("definitions");

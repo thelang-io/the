@@ -38,6 +38,10 @@ const std::vector<std::string> codegenProcess = {
   R"(  return _{str_alloc}(buf);)" EOL
   R"(})" EOL,
 
+  R"(void process_exit (unsigned char o1, _{int32_t} i) {)" EOL
+  R"(  _{exit}(o1 == 1 ? i : _{EXIT_SUCCESS});)" EOL
+  R"(})" EOL,
+
   R"(_{int32_t} process_getgid () {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    return 0;)" EOL

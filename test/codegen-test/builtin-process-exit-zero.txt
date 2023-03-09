@@ -9,7 +9,7 @@ main {
 void process_exit (unsigned char, int32_t);
 
 void process_exit (unsigned char o1, int32_t i) {
-  exit(o1 == 1 ? EXIT_SUCCESS : i);
+  exit(o1 == 1 ? i : EXIT_SUCCESS);
 }
 
 int main () {

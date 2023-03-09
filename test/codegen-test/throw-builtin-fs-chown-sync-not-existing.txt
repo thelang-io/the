@@ -44,7 +44,6 @@ void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 struct str os_name ();
 void print (FILE *, const char *, ...);
-void process_exit (unsigned char, int32_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -53,6 +52,7 @@ char *str_cstr (const struct str);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 void fs_chownSync (struct str, int32_t, int32_t);
+void process_exit (unsigned char, int32_t);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -112,9 +112,6 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-void process_exit (unsigned char o1, int32_t i) {
-  exit(o1 == 1 ? EXIT_SUCCESS : i);
-}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -169,6 +166,9 @@ void fs_chownSync (struct str s, int32_t u, int32_t g) {
   }
   str_free(s);
   free(c);
+}
+void process_exit (unsigned char o1, int32_t i) {
+  exit(o1 == 1 ? i : EXIT_SUCCESS);
 }
 
 int main () {

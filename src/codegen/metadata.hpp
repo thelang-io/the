@@ -65,7 +65,6 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"path_basename", {"fnPathBasename"}},
   std::pair<std::string, std::set<std::string>>{"path_dirname", {"fnPathDirname"}},
   std::pair<std::string, std::set<std::string>>{"print", {"fnPrint"}},
-  std::pair<std::string, std::set<std::string>>{"process_exit", {"fnProcessExit"}},
   std::pair<std::string, std::set<std::string>>{"re_alloc", {"fnReAlloc"}},
   std::pair<std::string, std::set<std::string>>{"str_alloc", {"fnStrAlloc"}},
   std::pair<std::string, std::set<std::string>>{"str_at", {"fnStrAt"}},
