@@ -64,7 +64,7 @@ struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
 size_t __THE_1_array_int_len (struct __THE_1_array_int);
-void __THE_1_array_int_push (struct __THE_1_array_int *, size_t, ...);
+void __THE_1_array_int_push (struct __THE_1_array_int *, struct __THE_1_array_int);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -105,47 +105,46 @@ size_t __THE_1_array_int_len (struct __THE_1_array_int n) {
   __THE_1_array_int_free((struct __THE_1_array_int) n);
   return l;
 }
-void __THE_1_array_int_push (struct __THE_1_array_int *n, size_t x, ...) {
-  if (x == 0) return;
-  n->l += x;
+void __THE_1_array_int_push (struct __THE_1_array_int *n, struct __THE_1_array_int m) {
+  if (m.l == 0) return;
+  n->l += m.l;
   n->d = re_alloc(n->d, n->l * sizeof(int32_t));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, int32_t);
-  va_end(args);
+  size_t k = 0;
+  for (size_t i = n->l - m.l; i < n->l; i++) n->d[i] = m.d[k++];
+  free(m.d);
 }
 
 int main () {
   {
     struct __THE_1_array_int __THE_0_i_0 = __THE_1_array_int_alloc(0);
-    for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_i_0)) < 3; __THE_1_array_int_push(&__THE_0_i_0, 1, 0)) {
+    for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_i_0)) < 3; __THE_1_array_int_push(&__THE_0_i_0, __THE_1_array_int_alloc(1, 0))) {
     }
     __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_i_0);
   }
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(0);
-  for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)) < 3; __THE_1_array_int_push(&__THE_0_a_0, 1, 0)) {
+  for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)) < 3; __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, 0))) {
   }
   struct __THE_1_array_int __THE_0_b_0 = __THE_1_array_int_alloc(0);
   while (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)) < 3) {
-    __THE_1_array_int_push(&__THE_0_b_0, 1, 0);
+    __THE_1_array_int_push(&__THE_0_b_0, __THE_1_array_int_alloc(1, 0));
   }
   struct __THE_1_array_int __THE_0_c_0 = __THE_1_array_int_alloc(0);
   while (1) {
     if (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0)) == 3) {
       break;
     }
-    __THE_1_array_int_push(&__THE_0_c_0, 1, 0);
+    __THE_1_array_int_push(&__THE_0_c_0, __THE_1_array_int_alloc(1, 0));
   }
   {
     struct __THE_1_array_int __THE_0_d_0 = __THE_1_array_int_alloc(0);
     for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_d_0)) < 3;) {
-      __THE_1_array_int_push(&__THE_0_d_0, 1, 0);
+      __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, 0));
     }
     __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_d_0);
   }
   {
     struct __THE_1_array_int __THE_0_e_0 = __THE_1_array_int_alloc(0);
-    for (;; __THE_1_array_int_push(&__THE_0_e_0, 1, 0)) {
+    for (;; __THE_1_array_int_push(&__THE_0_e_0, __THE_1_array_int_alloc(1, 0))) {
       if (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_e_0)) == 3) {
         break;
       }

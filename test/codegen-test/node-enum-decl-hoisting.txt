@@ -215,11 +215,11 @@ struct str __THE_1_IncomeType_0_rawValue (enum __THE_1_IncomeType_0 n) {
 }
 void __THE_1_printIncomeType_0 (void *px, struct __THE_1_fn$0P p) {
   const enum __THE_1_IncomeType_0 __THE_0_n_0 = p.n0;
-  print(stdout, "szsz", enum_str((int) __THE_0_n_0), " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0), THE_EOL);
+  print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0), THE_EOL);
 }
 void __THE_1_printColor_0 (void *px, struct __THE_1_fn$1P p) {
   const enum __THE_1_Color_0 __THE_0_n_0 = p.n0;
-  print(stdout, "szsz", enum_str((int) __THE_0_n_0), " ", __THE_1_Color_0_rawValue(__THE_0_n_0), THE_EOL);
+  print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_Color_0_rawValue(__THE_0_n_0), THE_EOL);
 }
 void __THE_1_printHuman_0 (void *px, struct __THE_1_fn$2P p) {
   const struct __THE_1_Human_0 *__THE_0_n_0 = p.n0;

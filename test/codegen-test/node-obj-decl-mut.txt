@@ -96,7 +96,7 @@ struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t, ...);
 struct __THE_1_Animal_0 **__THE_1_array_Animal_at (struct __THE_1_array_Animal, int32_t);
 struct __THE_1_array_Animal __THE_1_array_Animal_copy (const struct __THE_1_array_Animal);
 void __THE_1_array_Animal_free (struct __THE_1_array_Animal);
-void __THE_1_array_Animal_push (struct __THE_1_array_Animal *, size_t, ...);
+void __THE_1_array_Animal_push (struct __THE_1_array_Animal *, struct __THE_1_array_Animal);
 struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal);
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, struct __THE_1_array_Animal);
 struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *);
@@ -229,14 +229,13 @@ void __THE_1_array_Animal_free (struct __THE_1_array_Animal n) {
   for (size_t i = 0; i < n.l; i++) __THE_1_Animal_0_free((struct __THE_1_Animal_0 *) n.d[i]);
   free(n.d);
 }
-void __THE_1_array_Animal_push (struct __THE_1_array_Animal *n, size_t x, ...) {
-  if (x == 0) return;
-  n->l += x;
+void __THE_1_array_Animal_push (struct __THE_1_array_Animal *n, struct __THE_1_array_Animal m) {
+  if (m.l == 0) return;
+  n->l += m.l;
   n->d = re_alloc(n->d, n->l * sizeof(struct __THE_1_Animal_0 *));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, struct __THE_1_Animal_0 *);
-  va_end(args);
+  size_t k = 0;
+  for (size_t i = n->l - m.l; i < n->l; i++) n->d[i] = m.d[k++];
+  free(m.d);
 }
 struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal n) {
   struct str r = str_alloc("[");
@@ -282,10 +281,10 @@ struct str __THE_1_Human_0_str (struct __THE_1_Human_0 *n) {
 int main () {
   struct __THE_1_Human_0 *__THE_0_person1_0 = __THE_1_Human_0_alloc(str_alloc("Peter"), __THE_1_array_Animal_alloc(0));
   struct __THE_1_Human_0 *__THE_0_person2_0 = __THE_1_Human_0_alloc(str_alloc("Brian"), __THE_1_array_Animal_alloc(0));
-  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, 1, __THE_1_Animal_0_alloc(str_alloc("Cleo"), 1));
-  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, 1, __THE_1_Animal_0_alloc(str_alloc("Bella"), 1));
+  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, __THE_1_array_Animal_alloc(1, __THE_1_Animal_0_alloc(str_alloc("Cleo"), 1)));
+  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, __THE_1_array_Animal_alloc(1, __THE_1_Animal_0_alloc(str_alloc("Bella"), 1)));
   (*__THE_1_array_Animal_at(__THE_0_person1_0->__THE_0_pets, 0))->__THE_0_age++;
-  __THE_1_array_Animal_push(&__THE_0_person2_0->__THE_0_pets, 1, __THE_1_Animal_0_alloc(str_alloc("Luxor"), 10));
+  __THE_1_array_Animal_push(&__THE_0_person2_0->__THE_0_pets, __THE_1_array_Animal_alloc(1, __THE_1_Animal_0_alloc(str_alloc("Luxor"), 10)));
   const struct __THE_1_Human_0 *__THE_0_person3_0 = __THE_1_Human_0_copy(__THE_0_person1_0);
   __THE_0_person1_0 = __THE_1_Human_0_realloc(__THE_0_person1_0, __THE_1_Human_0_copy(__THE_0_person2_0));
   __THE_0_person2_0 = __THE_1_Human_0_realloc(__THE_0_person2_0, __THE_1_Human_0_copy(__THE_0_person3_0));

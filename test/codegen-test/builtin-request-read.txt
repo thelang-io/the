@@ -118,7 +118,7 @@ char *str_cstr (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 void request_close (struct request_Request **);
-struct request_Request *request_open (struct str, struct str, struct buffer, struct __THE_1_array_request_Header);
+struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
 struct request_Response *request_read (struct request_Request **);
 char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct url_URL *url_parse (struct str);
@@ -266,7 +266,7 @@ void request_close (struct request_Request **r) {
   req->ctx = NULL;
   req->ssl = NULL;
 }
-struct request_Request *request_open (struct str method, struct str u, struct buffer data, struct __THE_1_array_request_Header headers) {
+struct request_Request *request_open (struct str method, struct str u, unsigned char o1, struct buffer data, unsigned char o2, struct __THE_1_array_request_Header headers) {
   struct url_URL *url = url_parse(u);
   if (
     !(url->__THE_0_protocol.l == 5 && memcmp(url->__THE_0_protocol.d, "http:", 5) == 0) &&
@@ -744,7 +744,7 @@ void url_URL_free (struct url_URL *n) {
 }
 
 int main () {
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
+  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {});
   const struct request_Response *__THE_0_res_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
   print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?ip", " ", __THE_0_res_0->__THE_0_status, THE_EOL);

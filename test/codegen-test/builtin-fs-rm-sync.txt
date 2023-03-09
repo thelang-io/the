@@ -42,7 +42,7 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 void fs_rmSync (struct str);
 void fs_writeFileSync (struct str, struct buffer);
 
@@ -102,7 +102,7 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 void fs_rmSync (struct str s) {
@@ -135,7 +135,7 @@ void fs_writeFileSync (struct str s, struct buffer b) {
 
 int main () {
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-rm-sync.txt");
-  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_to_buffer(str_alloc("")));
+  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_toBuffer(str_alloc("")));
   fs_rmSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName_0);
 }

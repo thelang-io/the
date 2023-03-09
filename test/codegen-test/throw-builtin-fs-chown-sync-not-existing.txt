@@ -44,6 +44,7 @@ void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 struct str os_name ();
 void print (FILE *, const char *, ...);
+void process_exit (unsigned char, int32_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -111,6 +112,9 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
+void process_exit (unsigned char o1, int32_t i) {
+  exit(o1 == 1 ? EXIT_SUCCESS : i);
+}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -171,7 +175,7 @@ int main () {
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "throw-builtin-fs-chown-sync-not-existing.txt");
   if (str_eq_cstr(os_name(), "Windows")) {
     print(stderr, "sz", str_concat_cstr(cstr_concat_str("Error: failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`"), THE_EOL);
-    exit(1);
+    process_exit(1, 1);
   } else {
     fs_chownSync(str_copy(__THE_0_fileName_0), 0, 0);
   }

@@ -67,7 +67,7 @@ struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
 size_t __THE_1_array_int_len (struct __THE_1_array_int);
-void __THE_1_array_int_push (struct __THE_1_array_int *, size_t, ...);
+void __THE_1_array_int_push (struct __THE_1_array_int *, struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
 struct __THE_1_array_int __THE_1_test2_0 (void *, struct __THE_1_fn$1P);
@@ -111,14 +111,13 @@ size_t __THE_1_array_int_len (struct __THE_1_array_int n) {
   __THE_1_array_int_free((struct __THE_1_array_int) n);
   return l;
 }
-void __THE_1_array_int_push (struct __THE_1_array_int *n, size_t x, ...) {
-  if (x == 0) return;
-  n->l += x;
+void __THE_1_array_int_push (struct __THE_1_array_int *n, struct __THE_1_array_int m) {
+  if (m.l == 0) return;
+  n->l += m.l;
   n->d = re_alloc(n->d, n->l * sizeof(int32_t));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, int32_t);
-  va_end(args);
+  size_t k = 0;
+  for (size_t i = n->l - m.l; i < n->l; i++) n->d[i] = m.d[k++];
+  free(m.d);
 }
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
   __THE_1_array_int_free((struct __THE_1_array_int) n1);
@@ -127,7 +126,7 @@ struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1,
 struct __THE_1_array_int __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
   struct __THE_1_array_int v;
   struct __THE_1_array_int __THE_0_a_0 = p.n0;
-  __THE_1_array_int_push(&__THE_0_a_0, 1, 2);
+  __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, 2));
   v = __THE_1_array_int_copy(__THE_0_a_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
   return v;
@@ -137,7 +136,7 @@ struct __THE_1_array_int __THE_1_test2_0 (void *px, struct __THE_1_fn$1P p) {
   struct __THE_1_array_int __THE_0_a_0 = p.n0;
   struct __THE_1_array_int __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_array_int_alloc(3, 4, 5, 6);
   __THE_0_b_0 = __THE_1_array_int_realloc(__THE_0_b_0, __THE_1_array_int_copy(__THE_0_a_0));
-  __THE_1_array_int_push(&__THE_0_a_0, 1, __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)));
+  __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0))));
   v = __THE_1_array_int_copy(__THE_0_a_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);

@@ -237,9 +237,9 @@ bool str_eq_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 size_t str_len (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 void request_close (struct request_Request **);
-struct request_Request *request_open (struct str, struct str, struct buffer, struct __THE_1_array_request_Header);
+struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
 struct request_Response *request_read (struct request_Request **);
 char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct url_URL *url_parse (struct str);
@@ -253,7 +253,7 @@ struct request_Header **__THE_1_array_request_Header_at (struct __THE_1_array_re
 struct __THE_1_array_request_Header __THE_1_array_request_Header_copy (const struct __THE_1_array_request_Header);
 void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header);
 size_t __THE_1_array_request_Header_len (struct __THE_1_array_request_Header);
-void __THE_1_array_request_Header_push (struct __THE_1_array_request_Header *, size_t, ...);
+void __THE_1_array_request_Header_push (struct __THE_1_array_request_Header *, struct __THE_1_array_request_Header);
 struct str __THE_1_array_request_Header_str (struct __THE_1_array_request_Header);
 struct request_Response *request_Response_alloc (struct buffer, int32_t, struct __THE_1_array_request_Header);
 void request_Response_free (struct request_Response *);
@@ -396,7 +396,7 @@ size_t str_len (struct str s) {
   free(s.d);
   return l;
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 void request_close (struct request_Request **r) {
@@ -415,7 +415,7 @@ void request_close (struct request_Request **r) {
   req->ctx = NULL;
   req->ssl = NULL;
 }
-struct request_Request *request_open (struct str method, struct str u, struct buffer data, struct __THE_1_array_request_Header headers) {
+struct request_Request *request_open (struct str method, struct str u, unsigned char o1, struct buffer data, unsigned char o2, struct __THE_1_array_request_Header headers) {
   struct url_URL *url = url_parse(u);
   if (
     !(url->__THE_0_protocol.l == 5 && memcmp(url->__THE_0_protocol.d, "http:", 5) == 0) &&
@@ -871,14 +871,13 @@ size_t __THE_1_array_request_Header_len (struct __THE_1_array_request_Header n) 
   __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) n);
   return l;
 }
-void __THE_1_array_request_Header_push (struct __THE_1_array_request_Header *n, size_t x, ...) {
-  if (x == 0) return;
-  n->l += x;
+void __THE_1_array_request_Header_push (struct __THE_1_array_request_Header *n, struct __THE_1_array_request_Header m) {
+  if (m.l == 0) return;
+  n->l += m.l;
   n->d = re_alloc(n->d, n->l * sizeof(struct request_Header *));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, struct request_Header *);
-  va_end(args);
+  size_t k = 0;
+  for (size_t i = n->l - m.l; i < n->l; i++) n->d[i] = m.d[k++];
+  free(m.d);
 }
 struct str __THE_1_array_request_Header_str (struct __THE_1_array_request_Header n) {
   struct str r = str_alloc("[");
@@ -988,7 +987,7 @@ void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1P p) {
   const struct str __THE_0_url_0 = p.n1;
   const struct buffer __THE_0_data_0 = p.n2;
   const struct __THE_1_array_request_Header __THE_0_headers_0 = p.o3 == 1 ? p.n3 : __THE_1_array_request_Header_alloc(0);
-  struct request_Request *__THE_0_req_0 = request_open(str_copy(__THE_0_method_0), str_copy(__THE_0_url_0), buffer_copy(__THE_0_data_0), __THE_1_array_request_Header_copy(__THE_0_headers_0));
+  struct request_Request *__THE_0_req_0 = request_open(str_copy(__THE_0_method_0), str_copy(__THE_0_url_0), 1, buffer_copy(__THE_0_data_0), 1, __THE_1_array_request_Header_copy(__THE_0_headers_0));
   const struct request_Response *__THE_0_res_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
   const struct str __THE_0_actualData_0 = buffer_to_str(buffer_copy(__THE_0_res_0->__THE_0_data));
@@ -996,7 +995,7 @@ void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1P p) {
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
     const struct request_Header **__THE_0_header_0 = __THE_1_array_request_Header_at(__THE_0_res_0->__THE_0_headers, __THE_0_i_0);
     if (!(*__THE_0_ignoredHeadersIncludes_0).f((*__THE_0_ignoredHeadersIncludes_0).x, (struct __THE_1_fn$0P) {str_copy((*__THE_0_header_0)->__THE_0_name)})) {
-      __THE_1_array_request_Header_push(&__THE_0_actualHeaders_0, 1, request_Header_copy(*__THE_0_header_0));
+      __THE_1_array_request_Header_push(&__THE_0_actualHeaders_0, __THE_1_array_request_Header_alloc(1, request_Header_copy(*__THE_0_header_0)));
     }
   }
   print(stdout, "szsz", str_copy(__THE_0_method_0), " ", str_copy(__THE_0_url_0), THE_EOL);
@@ -1031,17 +1030,17 @@ int main () {
   const struct __THE_1_fn$1 __THE_0_requestWithPrint_0;
   __THE_1_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn$0 *) &__THE_0_ignoredHeadersIncludes_0, (struct __THE_1_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
   __THE_1_requestWithPrint_0_alloc((struct __THE_1_fn$1 *) &__THE_0_requestWithPrint_0, (struct __THE_1_requestWithPrint_0X) {&__THE_0_ignoredHeadersIncludes_0});
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_to_buffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_to_buffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_to_buffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_to_buffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_to_buffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_to_buffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))});
   __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_requestWithPrint_0);
   __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_ignoredHeadersIncludes_0);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_IGNORED_HEADERS_0);

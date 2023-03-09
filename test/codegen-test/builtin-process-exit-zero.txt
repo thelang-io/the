@@ -3,10 +3,17 @@ main {
   process_exit(0)
 }
 ======= code =======
+#include <stdint.h>
 #include <stdlib.h>
 
+void process_exit (unsigned char, int32_t);
+
+void process_exit (unsigned char o1, int32_t i) {
+  exit(o1 == 1 ? EXIT_SUCCESS : i);
+}
+
 int main () {
-  exit(0);
+  process_exit(1, 0);
 }
 ======= flags =======
 ======= stdout =======

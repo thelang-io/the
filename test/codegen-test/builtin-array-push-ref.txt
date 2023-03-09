@@ -58,7 +58,7 @@ void str_free (struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
-void __THE_1_array_str_push (struct __THE_1_array_str *, size_t, ...);
+void __THE_1_array_str_push (struct __THE_1_array_str *, struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
 struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t, ...);
 struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str, int32_t);
@@ -182,14 +182,13 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
-void __THE_1_array_str_push (struct __THE_1_array_str *n, size_t x, ...) {
-  if (x == 0) return;
-  n->l += x;
+void __THE_1_array_str_push (struct __THE_1_array_str *n, struct __THE_1_array_str m) {
+  if (m.l == 0) return;
+  n->l += m.l;
   n->d = re_alloc(n->d, n->l * sizeof(struct str));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, struct str);
-  va_end(args);
+  size_t k = 0;
+  for (size_t i = n->l - m.l; i < n->l; i++) n->d[i] = m.d[k++];
+  free(m.d);
 }
 struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   struct str r = str_alloc("[");
@@ -238,7 +237,7 @@ int main () {
   const struct __THE_1_array_str __THE_0_emptyArr_0 = __THE_1_array_str_alloc(0);
   const struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(4, __THE_1_array_str_copy(__THE_0_emptyArr_0), __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("6"), str_alloc("7"), str_alloc("8")));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    __THE_1_array_str_push(__THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0), 1, str_alloc("0"));
+    __THE_1_array_str_push(__THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0), __THE_1_array_str_alloc(1, str_alloc("0")));
     print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(*__THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
   }
   __THE_1_array_array_str_free((struct __THE_1_array_array_str) __THE_0_arr_0);

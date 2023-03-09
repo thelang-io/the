@@ -37,7 +37,7 @@ struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 void fs_writeFileSync (struct str, struct buffer);
 
 void *alloc (size_t l) {
@@ -82,7 +82,7 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 void fs_writeFileSync (struct str s, struct buffer b) {
@@ -105,7 +105,7 @@ void fs_writeFileSync (struct str s, struct buffer b) {
 }
 
 int main () {
-  fs_writeFileSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_to_buffer(str_alloc("test")));
+  fs_writeFileSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_toBuffer(str_alloc("test")));
 }
 ======= flags =======
 ======= stderr =======

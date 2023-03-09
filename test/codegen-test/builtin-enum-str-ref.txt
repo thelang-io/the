@@ -147,7 +147,7 @@ size_t __THE_1_array_Color_len (struct __THE_1_array_Color n) {
 int main () {
   const struct __THE_1_array_Color __THE_0_arr_0 = __THE_1_array_Color_alloc(3, __THE_0_ColorSDRed_0, __THE_0_ColorSDGreen_0, __THE_0_ColorSDBlue_0);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_Color_len(__THE_1_array_Color_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "sz", enum_str((int) *__THE_1_array_Color_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
+    print(stdout, "sz", enum_str(*__THE_1_array_Color_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
   }
   __THE_1_array_Color_free((struct __THE_1_array_Color) __THE_0_arr_0);
 }

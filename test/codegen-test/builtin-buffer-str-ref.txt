@@ -50,7 +50,7 @@ struct str buffer_to_str (struct buffer);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 struct __THE_1_array_buffer_Buffer __THE_1_array_buffer_Buffer_alloc (size_t, ...);
 struct buffer *__THE_1_array_buffer_Buffer_at (struct __THE_1_array_buffer_Buffer, int32_t);
 struct __THE_1_array_buffer_Buffer __THE_1_array_buffer_Buffer_copy (const struct __THE_1_array_buffer_Buffer);
@@ -114,7 +114,7 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 struct __THE_1_array_buffer_Buffer __THE_1_array_buffer_Buffer_alloc (size_t x, ...) {
@@ -150,7 +150,7 @@ size_t __THE_1_array_buffer_Buffer_len (struct __THE_1_array_buffer_Buffer n) {
 }
 
 int main () {
-  const struct __THE_1_array_buffer_Buffer __THE_0_arr_0 = __THE_1_array_buffer_Buffer_alloc(2, str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("test")));
+  const struct __THE_1_array_buffer_Buffer __THE_0_arr_0 = __THE_1_array_buffer_Buffer_alloc(2, str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("test")));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_buffer_Buffer_len(__THE_1_array_buffer_Buffer_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     print(stdout, "sz", buffer_to_str(buffer_copy(*__THE_1_array_buffer_Buffer_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
   }

@@ -92,7 +92,7 @@ struct buffer buffer_realloc (struct buffer, struct buffer);
 struct str buffer_to_str (struct buffer);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 struct buffer __THE_1_testCall_0 (void *);
@@ -132,7 +132,7 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct buffer __THE_0_b) {
@@ -146,7 +146,7 @@ void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
   free(n);
 }
 struct buffer __THE_1_testCall_0 (void *px) {
-  return str_to_buffer(str_alloc("Aaron Delasy"));
+  return str_toBuffer(str_alloc("Aaron Delasy"));
 }
 void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
   if (n.x != NULL) free(n.x);

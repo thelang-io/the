@@ -84,6 +84,7 @@ struct CodegenBuiltins {
   bool fnPathBasename = false;
   bool fnPathDirname = false;
   bool fnPrint = false;
+  bool fnProcessExit = false;
   bool fnReAlloc = false;
   bool fnStrAlloc = false;
   bool fnStrAt = false;

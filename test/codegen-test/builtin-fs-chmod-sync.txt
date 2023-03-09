@@ -85,7 +85,7 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 void fs_chmodSync (struct str, int32_t);
 void fs_rmSync (struct str);
 struct fs_Stats *fs_statSync (struct str);
@@ -178,7 +178,7 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 void fs_chmodSync (struct str s, int32_t m) {
@@ -260,7 +260,7 @@ void fs_Stats_free (struct fs_Stats *n) {
 
 int main () {
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-builtin-fs-chmod-sync.txt");
-  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_to_buffer(str_alloc("")));
+  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_toBuffer(str_alloc("")));
   fs_chmodSync(str_copy(__THE_0_fileName_0), 0000);
   const struct fs_Stats *__THE_0_stat1_0 = fs_statSync(str_copy(__THE_0_fileName_0));
   print(stdout, "uz", __THE_0_stat1_0->__THE_0_mode, THE_EOL);

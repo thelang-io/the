@@ -235,7 +235,7 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 int main () {
   const struct __THE_1_array_str __THE_0_arr_0 = __THE_1_array_str_alloc(3, str_alloc(""), str_alloc("t"), str_alloc("Test\nTest"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "sz", __THE_1_array_str_str(str_lines(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), 0, 0)), THE_EOL);
+    print(stdout, "sz", __THE_1_array_str_str(str_lines(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), 0, false)), THE_EOL);
   }
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
 }

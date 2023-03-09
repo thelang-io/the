@@ -48,7 +48,7 @@ void *alloc (size_t);
 bool buffer_eq (struct buffer, struct buffer);
 bool buffer_ne (struct buffer, struct buffer);
 struct str str_alloc (const char *);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -76,25 +76,25 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 
 int main () {
-  buffer_eq(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("")));
-  buffer_ne(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("")));
-  buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("")));
-  buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("")));
-  buffer_eq(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("\t")));
-  buffer_ne(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("\t")));
-  buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\t")));
-  buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\t")));
-  buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\n")));
-  buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\n")));
-  buffer_eq(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Aaron")));
-  buffer_ne(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Aaron")));
-  buffer_eq(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Delasy")));
-  buffer_ne(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Delasy")));
+  buffer_eq(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("")));
+  buffer_ne(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("")));
+  buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("")));
+  buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("")));
+  buffer_eq(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("\t")));
+  buffer_ne(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("\t")));
+  buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\t")));
+  buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\t")));
+  buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\n")));
+  buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\n")));
+  buffer_eq(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Aaron")));
+  buffer_ne(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Aaron")));
+  buffer_eq(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Delasy")));
+  buffer_ne(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Delasy")));
 }
 ======= flags =======
 ======= stdout =======

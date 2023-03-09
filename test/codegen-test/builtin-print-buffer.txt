@@ -44,7 +44,7 @@ struct str buffer_str (struct buffer);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -109,13 +109,13 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 
 int main () {
-  const struct buffer __THE_0_buf1_0 = str_to_buffer(str_alloc(""));
-  const struct buffer __THE_0_buf2_0 = str_to_buffer(str_alloc("Aaron"));
+  const struct buffer __THE_0_buf1_0 = str_toBuffer(str_alloc(""));
+  const struct buffer __THE_0_buf2_0 = str_toBuffer(str_alloc("Aaron"));
   print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_buf1_0)), " ", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL);
   print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf1_0)), THE_EOL);
   print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL);

@@ -52,7 +52,7 @@ bool buffer_ne (struct buffer, struct buffer);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
+struct buffer str_toBuffer (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -112,25 +112,25 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 
 int main () {
-  print(stdout, "zztz", "[Buffer] == [Buffer]:", " ", buffer_eq(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc(""))), THE_EOL);
-  print(stdout, "zztz", "[Buffer] != [Buffer]:", " ", buffer_ne(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc(""))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 09] == [Buffer]:", " ", buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc(""))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 09] != [Buffer]:", " ", buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc(""))), THE_EOL);
-  print(stdout, "zztz", "[Buffer] == [Buffer 09]:", " ", buffer_eq(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("\t"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer] != [Buffer 09]:", " ", buffer_ne(str_to_buffer(str_alloc("")), str_to_buffer(str_alloc("\t"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 09] == [Buffer 09]:", " ", buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\t"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 09] != [Buffer 09]:", " ", buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\t"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 09] == [Buffer 0a]:", " ", buffer_eq(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\n"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 09] != [Buffer 0a]:", " ", buffer_ne(str_to_buffer(str_alloc("\t")), str_to_buffer(str_alloc("\n"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] == [Buffer 41 61 72 6f 6e]:", " ", buffer_eq(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Aaron"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] != [Buffer 41 61 72 6f 6e]:", " ", buffer_ne(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Aaron"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] == [Buffer 44 65 6c 61 73 79]:", " ", buffer_eq(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Delasy"))), THE_EOL);
-  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] != [Buffer 44 65 6c 61 73 79]:", " ", buffer_ne(str_to_buffer(str_alloc("Aaron")), str_to_buffer(str_alloc("Delasy"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer] == [Buffer]:", " ", buffer_eq(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc(""))), THE_EOL);
+  print(stdout, "zztz", "[Buffer] != [Buffer]:", " ", buffer_ne(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc(""))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 09] == [Buffer]:", " ", buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc(""))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 09] != [Buffer]:", " ", buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc(""))), THE_EOL);
+  print(stdout, "zztz", "[Buffer] == [Buffer 09]:", " ", buffer_eq(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("\t"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer] != [Buffer 09]:", " ", buffer_ne(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("\t"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 09] == [Buffer 09]:", " ", buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\t"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 09] != [Buffer 09]:", " ", buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\t"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 09] == [Buffer 0a]:", " ", buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\n"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 09] != [Buffer 0a]:", " ", buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\n"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] == [Buffer 41 61 72 6f 6e]:", " ", buffer_eq(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Aaron"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] != [Buffer 41 61 72 6f 6e]:", " ", buffer_ne(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Aaron"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] == [Buffer 44 65 6c 61 73 79]:", " ", buffer_eq(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Delasy"))), THE_EOL);
+  print(stdout, "zztz", "[Buffer 41 61 72 6f 6e] != [Buffer 44 65 6c 61 73 79]:", " ", buffer_ne(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Delasy"))), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
