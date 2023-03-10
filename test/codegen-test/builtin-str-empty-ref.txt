@@ -44,8 +44,8 @@ void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
-bool str_empty (struct str);
 void str_free (struct str);
+bool str_empty (struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
@@ -100,13 +100,13 @@ struct str str_copy (const struct str s) {
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
 }
+void str_free (struct str s) {
+  free(s.d);
+}
 bool str_empty (struct str s) {
   bool r = s.l == 0;
   free(s.d);
   return r;
-}
-void str_free (struct str s) {
-  free(s.d);
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};

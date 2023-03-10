@@ -1017,7 +1017,6 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   }, true, containsCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".contains", "@array.contains", containsTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"contains", this->_items.back().get(), false, true});
-
   auto filterCallInfo = TypeCallInfo{typeName(selfType->name + "_filter"), true, "self_0", selfType, false};
   auto filterTypeFn = TypeFn{selfType, {
     TypeFnParam{"predicate", this->createFn({
@@ -1029,7 +1028,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   auto forEachCallInfo = TypeCallInfo{typeName(selfType->name + "_forEach"), true, "self_0", selfType, false};
   auto forEachTypeFn = TypeFn{this->get("void"), {
     TypeFnParam{"iterator", this->createFn({
-      TypeFnParam{"it", this->get("Element"), false, true, false}
+      TypeFnParam{"it", elementType, false, true, false}
     }, this->get("void"), std::nullopt, true), false, true, false}
   }, true, forEachCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".forEach", "@array.forEach", forEachTypeFn, {}, true}));

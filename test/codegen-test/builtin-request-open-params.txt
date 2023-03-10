@@ -236,12 +236,12 @@ char *str_cstr (const struct str);
 bool str_eq_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
-size_t str_len (struct str);
-struct buffer str_toBuffer (struct str);
 void request_close (struct request_Request **);
 struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
 struct request_Response *request_read (struct request_Request **);
 char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
+size_t str_len (struct str);
+struct buffer str_toBuffer (struct str);
 struct url_URL *url_parse (struct str);
 struct request_Header *request_Header_alloc (struct str, struct str);
 struct request_Header *request_Header_copy (const struct request_Header *);
@@ -390,14 +390,6 @@ struct str str_escape (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.d);
-}
-size_t str_len (struct str s) {
-  size_t l = s.l;
-  free(s.d);
-  return l;
-}
-struct buffer str_toBuffer (struct str s) {
-  return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 void request_close (struct request_Request **r) {
   struct request *req = (void *) *r;
@@ -677,6 +669,14 @@ char *request_stringifyHeaders (struct __THE_1_array_request_Header headers, str
     l += z;
   }
   return d;
+}
+size_t str_len (struct str s) {
+  size_t l = s.l;
+  free(s.d);
+  return l;
+}
+struct buffer str_toBuffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 struct url_URL *url_parse (struct str s) {
   if (s.l == 0) {

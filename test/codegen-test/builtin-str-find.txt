@@ -36,8 +36,8 @@ struct str {
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
-int32_t str_find (struct str, struct str);
 void str_free (struct str);
+int32_t str_find (struct str, struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -82,6 +82,9 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+void str_free (struct str s) {
+  free(s.d);
+}
 int32_t str_find (struct str s1, struct str s2) {
   int32_t r = -1;
   if (s1.l == s2.l) {
@@ -97,9 +100,6 @@ int32_t str_find (struct str s1, struct str s2) {
   free(s1.d);
   free(s2.d);
   return r;
-}
-void str_free (struct str s) {
-  free(s.d);
 }
 
 int main () {

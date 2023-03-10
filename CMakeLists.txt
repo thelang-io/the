@@ -41,6 +41,7 @@ set(
   src/codegen/fs.cpp src/codegen/fs.hpp
   src/codegen/process.cpp src/codegen/process.hpp
   src/codegen/request.cpp src/codegen/request.hpp
+  src/codegen/str.cpp src/codegen/str.hpp
   src/codegen/url.cpp src/codegen/url.hpp
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp

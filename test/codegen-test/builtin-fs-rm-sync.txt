@@ -42,9 +42,9 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct buffer str_toBuffer (struct str);
 void fs_rmSync (struct str);
 void fs_writeFileSync (struct str, struct buffer);
+struct buffer str_toBuffer (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -102,9 +102,6 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_toBuffer (struct str s) {
-  return (struct buffer) {(unsigned char *) s.d, s.l};
-}
 void fs_rmSync (struct str s) {
   char *c = str_cstr(s);
   if (remove(c) != 0) {
@@ -131,6 +128,9 @@ void fs_writeFileSync (struct str s, struct buffer b) {
   free(c);
   str_free(s);
   buffer_free(b);
+}
+struct buffer str_toBuffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 
 int main () {

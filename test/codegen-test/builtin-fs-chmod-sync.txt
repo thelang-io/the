@@ -85,11 +85,11 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct buffer str_toBuffer (struct str);
 void fs_chmodSync (struct str, int32_t);
 void fs_rmSync (struct str);
 struct fs_Stats *fs_statSync (struct str);
 void fs_writeFileSync (struct str, struct buffer);
+struct buffer str_toBuffer (struct str);
 struct fs_Stats *fs_Stats_alloc (uint64_t, uint32_t, int64_t, uint64_t, int32_t, int32_t, uint64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t);
 void fs_Stats_free (struct fs_Stats *);
 
@@ -178,9 +178,6 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_toBuffer (struct str s) {
-  return (struct buffer) {(unsigned char *) s.d, s.l};
-}
 void fs_chmodSync (struct str s, int32_t m) {
   char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
@@ -247,6 +244,9 @@ void fs_writeFileSync (struct str s, struct buffer b) {
   free(c);
   str_free(s);
   buffer_free(b);
+}
+struct buffer str_toBuffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
 }
 struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, int64_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, uint64_t __THE_0_rdev, int64_t __THE_0_atime, int64_t __THE_0_atimeNs, int64_t __THE_0_mtime, int64_t __THE_0_mtimeNs, int64_t __THE_0_ctime, int64_t __THE_0_ctimeNs, int64_t __THE_0_btime, int64_t __THE_0_btimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int64_t __THE_0_blockSize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));

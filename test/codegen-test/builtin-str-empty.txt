@@ -38,8 +38,8 @@ void *alloc (size_t);
 struct str char_repeat (char, int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
-bool str_empty (struct str);
 void str_free (struct str);
+bool str_empty (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -92,13 +92,13 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+void str_free (struct str s) {
+  free(s.d);
+}
 bool str_empty (struct str s) {
   bool r = s.l == 0;
   free(s.d);
   return r;
-}
-void str_free (struct str s) {
-  free(s.d);
 }
 
 int main () {

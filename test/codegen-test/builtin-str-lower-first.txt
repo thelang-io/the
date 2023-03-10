@@ -86,7 +86,7 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct str str_lowerFirst (struct str s) {
-  if (s.l != 0) s.d[0] = tolower(s.d[0]);
+  if (s.l != 0) s.d[0] = (char) tolower(s.d[0]);
   return s;
 }
 
