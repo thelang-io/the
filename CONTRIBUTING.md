@@ -1,17 +1,14 @@
 # Contributing
-We want to say "Welcome 👋!" if you are here at first and
-"We are glad to meet you again!" if you are already our contributor. \
+We want to say "Welcome 👋!" if you are here at first and "We are glad to meet you again!" if you are already our contributor. \
 We appreciate your help!
 
 ## Code of Conduct
-All interactions for this project are covered by the
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md). \
+All interactions for this project are covered by the [Contributor Code of Conduct](CODE_OF_CONDUCT.md). \
 By participating in this project you agree to abide by its terms.
 
 ## If you just want to ask a question
 - Ask it on our [forum][the-forum]
-- Or talk directly to founder on [Discord][the-discord] or
-  [Telegram][the-telegram]
+- Or talk directly to founder on [Discord][the-discord] or [Telegram][the-telegram]
 
 ## When opening an issue
 - [Search][the-issues] for duplicates
