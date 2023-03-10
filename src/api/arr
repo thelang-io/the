@@ -40,6 +40,13 @@ obj Array {
   fn filter (self: Self, predicate: (it: Element) -> bool) Self
 
   /**
+   * Calls `iterator` on every element.
+   *
+   * @param iterator - Function to execute on each element of the array.
+   */
+  fn forEach (self: Self, iterator: (it: Element) -> void) void
+
+  /**
    * Calls `str` method on every element and joins result with separator.
    *
    * @param separator - Elements separator. The default is comma string.
