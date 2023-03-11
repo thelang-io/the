@@ -1,201 +1,232 @@
 ======= stdin =======
+fn trimRight (s: str) str {
+  loop i := s.len - 1; i >= 0; i-- {
+    if !s[i].isWhitespace {
+      return s.slice(0, i + 1)
+    }
+  }
+
+  return ""
+}
+
 main {
   a1 := "".replace("", "")
   a2 := "".replace("", "t")
   a3 := "".replace("", "test")
   a4 := "".replace("t", "")
   a5 := "".replace("test", "")
-  a6 := "".replace("t", "test")
-  a7 := "".replace("test", "t")
-  a8 := "".replace("test", "test")
-  a9 := "t".replace("", "")
-  a10 := "t".replace("", "t")
-  a11 := "t".replace("", "test")
-  a12 := "t".replace("t", "")
-  a13 := "t".replace("test", "")
-  a14 := "t".replace("t", "test")
-  a15 := "t".replace("test", "t")
-  a16 := "t".replace("test", "test")
-  a17 := "test in test".replace("", "")
-  a18 := "test in test".replace("", "t")
-  a19 := "test in test".replace("", "test")
-  a20 := "test in test".replace("t", "")
-  a21 := "test in test".replace("test", "")
-  a22 := "test in test".replace("t", "test")
-  a23 := "test in test".replace("test", "t")
-  a24 := "test in test".replace("test", "test")
+  a6 := "".replace("t", "t")
+  a7 := "".replace("t", "test")
+  b8 := "".replace("test", "t")
+  b9 := "".replace("test", "test")
+  b1 := "t".replace("", "")
+  b2 := "t".replace("", "t")
+  b3 := "t".replace("", "test")
+  b4 := "t".replace("t", "")
+  b5 := "t".replace("test", "")
+  b6 := "t".replace("t", "t")
+  b7 := "t".replace("t", "test")
+  b8 := "t".replace("test", "t")
+  b9 := "t".replace("test", "test")
+  c1 := "test in test".replace("", "")
+  c2 := "test in test".replace("", "t")
+  c3 := "test in test".replace("", "test")
+  c4 := "test in test".replace("t", "")
+  c5 := "test in test".replace("test", "")
+  c6 := "test in test".replace("t", "t")
+  c7 := "test in test".replace("t", "test")
+  c8 := "test in test".replace("test", "t")
+  c9 := "test in test".replace("test", "test")
+  d1 := "".replace("", "", 1)
+  d2 := "".replace("", "t", 1)
+  d3 := "".replace("", "test", 1)
+  d4 := "".replace("t", "", 1)
+  d5 := "".replace("test", "", 1)
+  d6 := "".replace("t", "t", 1)
+  d7 := "".replace("t", "test", 1)
+  d8 := "".replace("test", "t", 1)
+  d9 := "".replace("test", "test", 1)
+  e1 := "t".replace("", "", 1)
+  e2 := "t".replace("", "t", 1)
+  e3 := "t".replace("", "test", 1)
+  e4 := "t".replace("t", "", 1)
+  e5 := "t".replace("test", "", 1)
+  e6 := "t".replace("t", "t", 1)
+  e7 := "t".replace("t", "test", 1)
+  e8 := "t".replace("test", "t", 1)
+  e9 := "t".replace("test", "test", 1)
+  f1 := "test in test".replace("", "", 1)
+  f2 := "test in test".replace("", "t", 1)
+  f3 := "test in test".replace("", "test", 1)
+  f4 := "test in test".replace("t", "", 1)
+  f5 := "test in test".replace("test", "", 1)
+  f6 := "test in test".replace("t", "t", 1)
+  f7 := "test in test".replace("t", "test", 1)
+  f8 := "test in test".replace("test", "t", 1)
+  f9 := "test in test".replace("test", "test", 1)
+  g1 := "".replace("", "", count: 2)
+  g2 := "".replace("", "t", count: 2)
+  g3 := "".replace("", "test", count: 2)
+  g4 := "".replace("t", "", count: 2)
+  g5 := "".replace("test", "", count: 2)
+  g6 := "".replace("t", "t", count: 2)
+  g7 := "".replace("t", "test", count: 2)
+  g8 := "".replace("test", "t", count: 2)
+  g9 := "".replace("test", "test", count: 2)
+  h1 := "t".replace("", "", count: 2)
+  h2 := "t".replace("", "t", count: 2)
+  h3 := "t".replace("", "test", count: 2)
+  h4 := "t".replace("t", "", count: 2)
+  h5 := "t".replace("test", "", count: 2)
+  h6 := "t".replace("t", "t", count: 2)
+  h7 := "t".replace("t", "test", count: 2)
+  h8 := "t".replace("test", "t", count: 2)
+  h9 := "t".replace("test", "test", count: 2)
+  m1 := "test in test".replace("", "", count: 2)
+  m2 := "test in test".replace("", "t", count: 2)
+  m3 := "test in test".replace("", "test", count: 2)
+  m4 := "test in test".replace("t", "", count: 2)
+  m5 := "test in test".replace("test", "", count: 2)
+  m6 := "test in test".replace("t", "t", count: 2)
+  m7 := "test in test".replace("t", "test", count: 2)
+  m8 := "test in test".replace("test", "t", count: 2)
+  m9 := "test in test".replace("test", "test", count: 2)
+  n1 := "".replace("", "", count: 3)
+  n2 := "".replace("", "t", count: 3)
+  n3 := "".replace("", "test", count: 3)
+  n4 := "".replace("t", "", count: 3)
+  n5 := "".replace("test", "", count: 3)
+  n6 := "".replace("t", "t", count: 3)
+  n7 := "".replace("t", "test", count: 3)
+  n8 := "".replace("test", "t", count: 3)
+  n9 := "".replace("test", "test", count: 3)
+  o1 := "t".replace("", "", count: 3)
+  o2 := "t".replace("", "t", count: 3)
+  o3 := "t".replace("", "test", count: 3)
+  o4 := "t".replace("t", "", count: 3)
+  o5 := "t".replace("test", "", count: 3)
+  o6 := "t".replace("t", "t", count: 3)
+  o7 := "t".replace("t", "test", count: 3)
+  o8 := "t".replace("test", "t", count: 3)
+  o9 := "t".replace("test", "test", count: 3)
+  p1 := "test in test".replace("", "", count: 3)
+  p2 := "test in test".replace("", "t", count: 3)
+  p3 := "test in test".replace("", "test", count: 3)
+  p4 := "test in test".replace("t", "", count: 3)
+  p5 := "test in test".replace("test", "", count: 3)
+  p6 := "test in test".replace("t", "t", count: 3)
+  p7 := "test in test".replace("t", "test", count: 3)
+  p8 := "test in test".replace("test", "t", count: 3)
+  p9 := "test in test".replace("test", "test", count: 3)
 
-  b1 := "".replace("", "", 1)
-  b2 := "".replace("", "t", 1)
-  b3 := "".replace("", "test", 1)
-  b4 := "".replace("t", "", 1)
-  b5 := "".replace("test", "", 1)
-  b6 := "".replace("t", "test", 1)
-  b7 := "".replace("test", "t", 1)
-  b8 := "".replace("test", "test", 1)
-  b9 := "t".replace("", "", 1)
-  b10 := "t".replace("", "t", 1)
-  b11 := "t".replace("", "test", 1)
-  b12 := "t".replace("t", "", 1)
-  b13 := "t".replace("test", "", 1)
-  b14 := "t".replace("t", "test", 1)
-  b15 := "t".replace("test", "t", 1)
-  b16 := "t".replace("test", "test", 1)
-  b17 := "test in test".replace("", "", 1)
-  b18 := "test in test".replace("", "t", 1)
-  b19 := "test in test".replace("", "test", 1)
-  b20 := "test in test".replace("t", "", 1)
-  b21 := "test in test".replace("test", "", 1)
-  b22 := "test in test".replace("t", "test", 1)
-  b23 := "test in test".replace("test", "t", 1)
-  b24 := "test in test".replace("test", "test", 1)
-
-  c1 := "".replace("", "", count: 2)
-  c2 := "".replace("", "t", count: 2)
-  c3 := "".replace("", "test", count: 2)
-  c4 := "".replace("t", "", count: 2)
-  c5 := "".replace("test", "", count: 2)
-  c6 := "".replace("t", "test", count: 2)
-  c7 := "".replace("test", "t", count: 2)
-  c8 := "".replace("test", "test", count: 2)
-  c9 := "t".replace("", "", count: 2)
-  c10 := "t".replace("", "t", count: 2)
-  c11 := "t".replace("", "test", count: 2)
-  c12 := "t".replace("t", "", count: 2)
-  c13 := "t".replace("test", "", count: 2)
-  c14 := "t".replace("t", "test", count: 2)
-  c15 := "t".replace("test", "t", count: 2)
-  c16 := "t".replace("test", "test", count: 2)
-  c17 := "test in test".replace("", "", count: 2)
-  c18 := "test in test".replace("", "t", count: 2)
-  c19 := "test in test".replace("", "test", count: 2)
-  c20 := "test in test".replace("t", "", count: 2)
-  c21 := "test in test".replace("test", "", count: 2)
-  c22 := "test in test".replace("t", "test", count: 2)
-  c23 := "test in test".replace("test", "t", count: 2)
-  c24 := "test in test".replace("test", "test", count: 2)
-
-  d1 := "".replace("", "", count: 3)
-  d2 := "".replace("", "t", count: 3)
-  d3 := "".replace("", "test", count: 3)
-  d4 := "".replace("t", "", count: 3)
-  d5 := "".replace("test", "", count: 3)
-  d6 := "".replace("t", "test", count: 3)
-  d7 := "".replace("test", "t", count: 3)
-  d8 := "".replace("test", "test", count: 3)
-  d9 := "t".replace("", "", count: 3)
-  d10 := "t".replace("", "t", count: 3)
-  d11 := "t".replace("", "test", count: 3)
-  d12 := "t".replace("t", "", count: 3)
-  d13 := "t".replace("test", "", count: 3)
-  d14 := "t".replace("t", "test", count: 3)
-  d15 := "t".replace("test", "t", count: 3)
-  d16 := "t".replace("test", "test", count: 3)
-  d17 := "test in test".replace("", "", count: 3)
-  d18 := "test in test".replace("", "t", count: 3)
-  d19 := "test in test".replace("", "test", count: 3)
-  d20 := "test in test".replace("t", "", count: 3)
-  d21 := "test in test".replace("test", "", count: 3)
-  d22 := "test in test".replace("t", "test", count: 3)
-  d23 := "test in test".replace("test", "t", count: 3)
-  d24 := "test in test".replace("test", "test", count: 3)
-
-  print("a1:", a1.empty ? "" : " ", a1, separator: "")
-  print("a2:", a2.empty ? "" : " ", a2, separator: "")
-  print("a3:", a3.empty ? "" : " ", a3, separator: "")
-  print("a4:", a4.empty ? "" : " ", a4, separator: "")
-  print("a5:", a5.empty ? "" : " ", a5, separator: "")
-  print("a6:", a6.empty ? "" : " ", a6, separator: "")
-  print("a7:", a7.empty ? "" : " ", a7, separator: "")
-  print("a8:", a8.empty ? "" : " ", a8, separator: "")
-  print("a9:", a9.empty ? "" : " ", a9, separator: "")
-  print("a10:", a10.empty ? "" : " ", a10, separator: "")
-  print("a11:", a11.empty ? "" : " ", a11, separator: "")
-  print("a12:", a12.empty ? "" : " ", a12, separator: "")
-  print("a13:", a13.empty ? "" : " ", a13, separator: "")
-  print("a14:", a14.empty ? "" : " ", a14, separator: "")
-  print("a15:", a15.empty ? "" : " ", a15, separator: "")
-  print("a16:", a16.empty ? "" : " ", a16, separator: "")
-  print("a17:", a17.empty ? "" : " ", a17, separator: "")
-  print("a18:", a18.empty ? "" : " ", a18, separator: "")
-  print("a19:", a19.empty ? "" : " ", a19, separator: "")
-  print("a20:", a20.empty ? "" : " ", a20, separator: "")
-  print("a21:", a21.empty ? "" : " ", a21, separator: "")
-  print("a22:", a22.empty ? "" : " ", a22, separator: "")
-  print("a23:", a23.empty ? "" : " ", a23, separator: "")
-  print("a24:", a24.empty ? "" : " ", a24, separator: "")
-  print("b1:", b1.empty ? "" : " ", b1, separator: "")
-  print("b2:", b2.empty ? "" : " ", b2, separator: "")
-  print("b3:", b3.empty ? "" : " ", b3, separator: "")
-  print("b4:", b4.empty ? "" : " ", b4, separator: "")
-  print("b5:", b5.empty ? "" : " ", b5, separator: "")
-  print("b6:", b6.empty ? "" : " ", b6, separator: "")
-  print("b7:", b7.empty ? "" : " ", b7, separator: "")
-  print("b8:", b8.empty ? "" : " ", b8, separator: "")
-  print("b9:", b9.empty ? "" : " ", b9, separator: "")
-  print("b10:", b10.empty ? "" : " ", b10, separator: "")
-  print("b11:", b11.empty ? "" : " ", b11, separator: "")
-  print("b12:", b12.empty ? "" : " ", b12, separator: "")
-  print("b13:", b13.empty ? "" : " ", b13, separator: "")
-  print("b14:", b14.empty ? "" : " ", b14, separator: "")
-  print("b15:", b15.empty ? "" : " ", b15, separator: "")
-  print("b16:", b16.empty ? "" : " ", b16, separator: "")
-  print("b17:", b17.empty ? "" : " ", b17, separator: "")
-  print("b18:", b18.empty ? "" : " ", b18, separator: "")
-  print("b19:", b19.empty ? "" : " ", b19, separator: "")
-  print("b20:", b20.empty ? "" : " ", b20, separator: "")
-  print("b21:", b21.empty ? "" : " ", b21, separator: "")
-  print("b22:", b22.empty ? "" : " ", b22, separator: "")
-  print("b23:", b23.empty ? "" : " ", b23, separator: "")
-  print("b24:", b24.empty ? "" : " ", b24, separator: "")
-  print("c1:", c1.empty ? "" : " ", c1, separator: "")
-  print("c2:", c2.empty ? "" : " ", c2, separator: "")
-  print("c3:", c3.empty ? "" : " ", c3, separator: "")
-  print("c4:", c4.empty ? "" : " ", c4, separator: "")
-  print("c5:", c5.empty ? "" : " ", c5, separator: "")
-  print("c6:", c6.empty ? "" : " ", c6, separator: "")
-  print("c7:", c7.empty ? "" : " ", c7, separator: "")
-  print("c8:", c8.empty ? "" : " ", c8, separator: "")
-  print("c9:", c9.empty ? "" : " ", c9, separator: "")
-  print("c10:", c10.empty ? "" : " ", c10, separator: "")
-  print("c11:", c11.empty ? "" : " ", c11, separator: "")
-  print("c12:", c12.empty ? "" : " ", c12, separator: "")
-  print("c13:", c13.empty ? "" : " ", c13, separator: "")
-  print("c14:", c14.empty ? "" : " ", c14, separator: "")
-  print("c15:", c15.empty ? "" : " ", c15, separator: "")
-  print("c16:", c16.empty ? "" : " ", c16, separator: "")
-  print("c17:", c17.empty ? "" : " ", c17, separator: "")
-  print("c18:", c18.empty ? "" : " ", c18, separator: "")
-  print("c19:", c19.empty ? "" : " ", c19, separator: "")
-  print("c20:", c20.empty ? "" : " ", c20, separator: "")
-  print("c21:", c21.empty ? "" : " ", c21, separator: "")
-  print("c22:", c22.empty ? "" : " ", c22, separator: "")
-  print("c23:", c23.empty ? "" : " ", c23, separator: "")
-  print("c24:", c24.empty ? "" : " ", c24, separator: "")
-  print("d1:", d1.empty ? "" : " ", d1, separator: "")
-  print("d2:", d2.empty ? "" : " ", d2, separator: "")
-  print("d3:", d3.empty ? "" : " ", d3, separator: "")
-  print("d4:", d4.empty ? "" : " ", d4, separator: "")
-  print("d5:", d5.empty ? "" : " ", d5, separator: "")
-  print("d6:", d6.empty ? "" : " ", d6, separator: "")
-  print("d7:", d7.empty ? "" : " ", d7, separator: "")
-  print("d8:", d8.empty ? "" : " ", d8, separator: "")
-  print("d9:", d9.empty ? "" : " ", d9, separator: "")
-  print("d10:", d10.empty ? "" : " ", d10, separator: "")
-  print("d11:", d11.empty ? "" : " ", d11, separator: "")
-  print("d12:", d12.empty ? "" : " ", d12, separator: "")
-  print("d13:", d13.empty ? "" : " ", d13, separator: "")
-  print("d14:", d14.empty ? "" : " ", d14, separator: "")
-  print("d15:", d15.empty ? "" : " ", d15, separator: "")
-  print("d16:", d16.empty ? "" : " ", d16, separator: "")
-  print("d17:", d17.empty ? "" : " ", d17, separator: "")
-  print("d18:", d18.empty ? "" : " ", d18, separator: "")
-  print("d19:", d19.empty ? "" : " ", d19, separator: "")
-  print("d20:", d20.empty ? "" : " ", d20, separator: "")
-  print("d21:", d21.empty ? "" : " ", d21, separator: "")
-  print("d22:", d22.empty ? "" : " ", d22, separator: "")
-  print("d23:", d23.empty ? "" : " ", d23, separator: "")
-  print("d24:", d24.empty ? "" : " ", d24, separator: "")
+  print("a1:", trimRight((a1.empty ? "" : " ") + a1), separator: "")
+  print("a2:", trimRight((a2.empty ? "" : " ") + a2), separator: "")
+  print("a3:", trimRight((a3.empty ? "" : " ") + a3), separator: "")
+  print("a4:", trimRight((a4.empty ? "" : " ") + a4), separator: "")
+  print("a5:", trimRight((a5.empty ? "" : " ") + a5), separator: "")
+  print("a6:", trimRight((a6.empty ? "" : " ") + a6), separator: "")
+  print("a7:", trimRight((a7.empty ? "" : " ") + a7), separator: "")
+  print("b8:", trimRight((b8.empty ? "" : " ") + b8), separator: "")
+  print("b9:", trimRight((b9.empty ? "" : " ") + b9), separator: "")
+  print("b1:", trimRight((b1.empty ? "" : " ") + b1), separator: "")
+  print("b2:", trimRight((b2.empty ? "" : " ") + b2), separator: "")
+  print("b3:", trimRight((b3.empty ? "" : " ") + b3), separator: "")
+  print("b4:", trimRight((b4.empty ? "" : " ") + b4), separator: "")
+  print("b5:", trimRight((b5.empty ? "" : " ") + b5), separator: "")
+  print("b6:", trimRight((b6.empty ? "" : " ") + b6), separator: "")
+  print("b7:", trimRight((b7.empty ? "" : " ") + b7), separator: "")
+  print("b8:", trimRight((b8.empty ? "" : " ") + b8), separator: "")
+  print("b9:", trimRight((b9.empty ? "" : " ") + b9), separator: "")
+  print("c1:", trimRight((c1.empty ? "" : " ") + c1), separator: "")
+  print("c2:", trimRight((c2.empty ? "" : " ") + c2), separator: "")
+  print("c3:", trimRight((c3.empty ? "" : " ") + c3), separator: "")
+  print("c4:", trimRight((c4.empty ? "" : " ") + c4), separator: "")
+  print("c5:", trimRight((c5.empty ? "" : " ") + c5), separator: "")
+  print("c6:", trimRight((c6.empty ? "" : " ") + c6), separator: "")
+  print("c7:", trimRight((c7.empty ? "" : " ") + c7), separator: "")
+  print("c8:", trimRight((c8.empty ? "" : " ") + c8), separator: "")
+  print("c9:", trimRight((c9.empty ? "" : " ") + c9), separator: "")
+  print("d1:", trimRight((d1.empty ? "" : " ") + d1), separator: "")
+  print("d2:", trimRight((d2.empty ? "" : " ") + d2), separator: "")
+  print("d3:", trimRight((d3.empty ? "" : " ") + d3), separator: "")
+  print("d4:", trimRight((d4.empty ? "" : " ") + d4), separator: "")
+  print("d5:", trimRight((d5.empty ? "" : " ") + d5), separator: "")
+  print("d6:", trimRight((d6.empty ? "" : " ") + d6), separator: "")
+  print("d7:", trimRight((d7.empty ? "" : " ") + d7), separator: "")
+  print("d8:", trimRight((d8.empty ? "" : " ") + d8), separator: "")
+  print("d9:", trimRight((d9.empty ? "" : " ") + d9), separator: "")
+  print("e1:", trimRight((e1.empty ? "" : " ") + e1), separator: "")
+  print("e2:", trimRight((e2.empty ? "" : " ") + e2), separator: "")
+  print("e3:", trimRight((e3.empty ? "" : " ") + e3), separator: "")
+  print("e4:", trimRight((e4.empty ? "" : " ") + e4), separator: "")
+  print("e5:", trimRight((e5.empty ? "" : " ") + e5), separator: "")
+  print("e6:", trimRight((e6.empty ? "" : " ") + e6), separator: "")
+  print("e7:", trimRight((e7.empty ? "" : " ") + e7), separator: "")
+  print("e8:", trimRight((e8.empty ? "" : " ") + e8), separator: "")
+  print("e9:", trimRight((e9.empty ? "" : " ") + e9), separator: "")
+  print("f1:", trimRight((f1.empty ? "" : " ") + f1), separator: "")
+  print("f2:", trimRight((f2.empty ? "" : " ") + f2), separator: "")
+  print("f3:", trimRight((f3.empty ? "" : " ") + f3), separator: "")
+  print("f4:", trimRight((f4.empty ? "" : " ") + f4), separator: "")
+  print("f5:", trimRight((f5.empty ? "" : " ") + f5), separator: "")
+  print("f6:", trimRight((f6.empty ? "" : " ") + f6), separator: "")
+  print("f7:", trimRight((f7.empty ? "" : " ") + f7), separator: "")
+  print("f8:", trimRight((f8.empty ? "" : " ") + f8), separator: "")
+  print("f9:", trimRight((f9.empty ? "" : " ") + f9), separator: "")
+  print("g1:", trimRight((g1.empty ? "" : " ") + g1), separator: "")
+  print("g2:", trimRight((g2.empty ? "" : " ") + g2), separator: "")
+  print("g3:", trimRight((g3.empty ? "" : " ") + g3), separator: "")
+  print("g4:", trimRight((g4.empty ? "" : " ") + g4), separator: "")
+  print("g5:", trimRight((g5.empty ? "" : " ") + g5), separator: "")
+  print("g6:", trimRight((g6.empty ? "" : " ") + g6), separator: "")
+  print("g7:", trimRight((g7.empty ? "" : " ") + g7), separator: "")
+  print("g8:", trimRight((g8.empty ? "" : " ") + g8), separator: "")
+  print("g9:", trimRight((g9.empty ? "" : " ") + g9), separator: "")
+  print("h1:", trimRight((h1.empty ? "" : " ") + h1), separator: "")
+  print("h2:", trimRight((h2.empty ? "" : " ") + h2), separator: "")
+  print("h3:", trimRight((h3.empty ? "" : " ") + h3), separator: "")
+  print("h4:", trimRight((h4.empty ? "" : " ") + h4), separator: "")
+  print("h5:", trimRight((h5.empty ? "" : " ") + h5), separator: "")
+  print("h6:", trimRight((h6.empty ? "" : " ") + h6), separator: "")
+  print("h7:", trimRight((h7.empty ? "" : " ") + h7), separator: "")
+  print("h8:", trimRight((h8.empty ? "" : " ") + h8), separator: "")
+  print("h9:", trimRight((h9.empty ? "" : " ") + h9), separator: "")
+  print("m1:", trimRight((m1.empty ? "" : " ") + m1), separator: "")
+  print("m2:", trimRight((m2.empty ? "" : " ") + m2), separator: "")
+  print("m3:", trimRight((m3.empty ? "" : " ") + m3), separator: "")
+  print("m4:", trimRight((m4.empty ? "" : " ") + m4), separator: "")
+  print("m5:", trimRight((m5.empty ? "" : " ") + m5), separator: "")
+  print("m6:", trimRight((m6.empty ? "" : " ") + m6), separator: "")
+  print("m7:", trimRight((m7.empty ? "" : " ") + m7), separator: "")
+  print("m8:", trimRight((m8.empty ? "" : " ") + m8), separator: "")
+  print("m9:", trimRight((m9.empty ? "" : " ") + m9), separator: "")
+  print("n1:", trimRight((n1.empty ? "" : " ") + n1), separator: "")
+  print("n2:", trimRight((n2.empty ? "" : " ") + n2), separator: "")
+  print("n3:", trimRight((n3.empty ? "" : " ") + n3), separator: "")
+  print("n4:", trimRight((n4.empty ? "" : " ") + n4), separator: "")
+  print("n5:", trimRight((n5.empty ? "" : " ") + n5), separator: "")
+  print("n6:", trimRight((n6.empty ? "" : " ") + n6), separator: "")
+  print("n7:", trimRight((n7.empty ? "" : " ") + n7), separator: "")
+  print("n8:", trimRight((n8.empty ? "" : " ") + n8), separator: "")
+  print("n9:", trimRight((n9.empty ? "" : " ") + n9), separator: "")
+  print("o1:", trimRight((o1.empty ? "" : " ") + o1), separator: "")
+  print("o2:", trimRight((o2.empty ? "" : " ") + o2), separator: "")
+  print("o3:", trimRight((o3.empty ? "" : " ") + o3), separator: "")
+  print("o4:", trimRight((o4.empty ? "" : " ") + o4), separator: "")
+  print("o5:", trimRight((o5.empty ? "" : " ") + o5), separator: "")
+  print("o6:", trimRight((o6.empty ? "" : " ") + o6), separator: "")
+  print("o7:", trimRight((o7.empty ? "" : " ") + o7), separator: "")
+  print("o8:", trimRight((o8.empty ? "" : " ") + o8), separator: "")
+  print("o9:", trimRight((o9.empty ? "" : " ") + o9), separator: "")
+  print("p1:", trimRight((p1.empty ? "" : " ") + p1), separator: "")
+  print("p2:", trimRight((p2.empty ? "" : " ") + p2), separator: "")
+  print("p3:", trimRight((p3.empty ? "" : " ") + p3), separator: "")
+  print("p4:", trimRight((p4.empty ? "" : " ") + p4), separator: "")
+  print("p5:", trimRight((p5.empty ? "" : " ") + p5), separator: "")
+  print("p6:", trimRight((p6.empty ? "" : " ") + p6), separator: "")
+  print("p7:", trimRight((p7.empty ? "" : " ") + p7), separator: "")
+  print("p8:", trimRight((p8.empty ? "" : " ") + p8), separator: "")
+  print("p9:", trimRight((p9.empty ? "" : " ") + p9), separator: "")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -212,6 +243,7 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <ctype.h>
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -224,14 +256,32 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
+
+struct __THE_1_fn$0 {
+  struct str (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$0P {
+  struct str n0;
+};
+
 void *alloc (size_t);
 void *re_alloc (void *, size_t);
+bool char_isWhitespace (char);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
+char *str_at (struct str, int32_t);
 bool str_empty (struct str);
+size_t str_len (struct str);
 struct str str_replace (struct str, struct str, struct str, unsigned char, int32_t);
+struct str str_slice (struct str, unsigned char, int32_t, unsigned char, int32_t);
+struct str __THE_1_trimRight_0 (void *, struct __THE_1_fn$0P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -248,6 +298,9 @@ void *re_alloc (void *d, size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
+}
+bool char_isWhitespace (char c) {
+  return isspace(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -284,6 +337,15 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
 struct str str_copy (const struct str s) {
   char *d = alloc(s.l);
   memcpy(d, s.d, s.l);
@@ -292,18 +354,30 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+char *str_at (struct str s, int32_t i) {
+  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int32_t) s.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of string bounds" THE_EOL, i);
+    exit(EXIT_FAILURE);
+  }
+  return i < 0 ? &s.d[s.l + i] : &s.d[i];
+}
 bool str_empty (struct str s) {
   bool r = s.l == 0;
   free(s.d);
   return r;
 }
+size_t str_len (struct str s) {
+  size_t l = s.l;
+  free(s.d);
+  return l;
+}
 struct str str_replace (struct str self, struct str n1, struct str n2, unsigned char _o3, int32_t n3) {
-  size_t l = self.l;
-  char *d = alloc(l);
+  size_t l = 0;
+  char *d = NULL;
   int32_t k = 0;
   if (n1.l == 0 && n2.l > 0) {
     l = self.l + (n3 > 0 && n3 <= self.l ? n3 : self.l + 1) * n2.l;
-    d = re_alloc(d, l);
+    d = alloc(l);
     memcpy(d, n2.d, n2.l);
     size_t j = n2.l;
     for (size_t i = 0; i < self.l; i++) {
@@ -313,21 +387,37 @@ struct str str_replace (struct str self, struct str n1, struct str n2, unsigned 
         j += n2.l;
       }
     }
-  } else if (n1.l > 0 && n2.l == 0) {
-    size_t j = 0;
+  } else if (self.l == n1.l && n1.l > 0) {
+    if (memcmp(self.d, n1.d, n1.l) != 0) {
+      l = self.l;
+      d = alloc(l);
+      memcpy(d, self.d, l);
+    } else if (n2.l > 0) {
+      l = n2.l;
+      d = alloc(l);
+      memcpy(d, n2.d, l);
+    }
+  } else if (self.l > n1.l && n1.l > 0 && n2.l == 0) {
+    d = alloc(self.l);
     for (size_t i = 0; i < self.l; i++) {
-      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
-        l -= n1.l;
+      if (i <= self.l - n1.l && memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
         i += n1.l - 1;
       } else {
-        d[j++] = self.d[i];
+        d[l++] = self.d[i];
       }
     }
-    d = re_alloc(d, l);
-  } else if (n1.l > 0) {
+    if (l == 0) {
+      free(d);
+      d = NULL;
+    } else if (l != self.l) {
+      d = re_alloc(d, l);
+    }
+  } else if (self.l > n1.l && n1.l > 0 && n2.l > 0) {
+    l = self.l;
+    d = alloc(l);
     size_t j = 0;
     for (size_t i = 0; i < self.l; i++) {
-      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+      if (i <= self.l - n1.l && memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
         if (n1.l < n2.l) {
           l += n2.l - n1.l;
           if (l > self.l) {
@@ -344,7 +434,9 @@ struct str str_replace (struct str self, struct str n1, struct str n2, unsigned 
       }
     }
     d = re_alloc(d, l);
-  } else {
+  } else if (self.l > 0) {
+    l = self.l;
+    d = alloc(l);
     memcpy(d, self.d, l);
   }
   free(n2.d);
@@ -352,215 +444,326 @@ struct str str_replace (struct str self, struct str n1, struct str n2, unsigned 
   free(self.d);
   return (struct str) {d, l};
 }
+struct str str_slice (struct str s, unsigned char o1, int32_t n1, unsigned char o2, int32_t n2) {
+  int32_t i1 = o1 == 0 ? 0 : (int32_t) (n1 < 0 ? (n1 < -((int32_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));
+  int32_t i2 = o2 == 0 ? (int32_t) s.l : (int32_t) (n2 < 0 ? (n2 < -((int32_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));
+  if (i1 >= i2 || i1 >= s.l) {
+    free(s.d);
+    return str_alloc("");
+  }
+  size_t l = i2 - i1;
+  char *d = alloc(l);
+  for (size_t i = 0; i1 < i2; i1++) d[i++] = s.d[i1];
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str __THE_1_trimRight_0 (void *px, struct __THE_1_fn$0P p) {
+  unsigned char r = 0;
+  struct str v;
+  const struct str __THE_0_s_0 = p.n0;
+  for (int32_t __THE_0_i_0 = str_len(str_copy(__THE_0_s_0)) - 1; __THE_0_i_0 >= 0; __THE_0_i_0--) {
+    if (!char_isWhitespace(*str_at(__THE_0_s_0, __THE_0_i_0))) {
+      r = 1;
+      v = str_slice(str_copy(__THE_0_s_0), 1, 0, 1, __THE_0_i_0 + 1);
+      goto L0;
+    }
+  }
+  v = str_alloc("");
+L0:
+  str_free((struct str) __THE_0_s_0);
+  return v;
+}
 
 int main () {
+  const struct __THE_1_fn$0 __THE_0_trimRight_0 = (struct __THE_1_fn$0) {&__THE_1_trimRight_0, NULL, 0};
   const struct str __THE_0_a1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 0, 0);
   const struct str __THE_0_a2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 0, 0);
   const struct str __THE_0_a3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 0, 0);
   const struct str __THE_0_a4_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 0, 0);
   const struct str __THE_0_a5_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 0, 0);
-  const struct str __THE_0_a6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 0, 0);
-  const struct str __THE_0_a7_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 0, 0);
-  const struct str __THE_0_a8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 0, 0);
-  const struct str __THE_0_a9_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 0, 0);
-  const struct str __THE_0_a10_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 0, 0);
-  const struct str __THE_0_a11_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 0, 0);
-  const struct str __THE_0_a12_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 0, 0);
-  const struct str __THE_0_a13_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 0, 0);
-  const struct str __THE_0_a14_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 0, 0);
-  const struct str __THE_0_a15_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 0, 0);
-  const struct str __THE_0_a16_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 0, 0);
-  const struct str __THE_0_a17_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 0, 0);
-  const struct str __THE_0_a18_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 0, 0);
-  const struct str __THE_0_a19_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 0, 0);
-  const struct str __THE_0_a20_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 0, 0);
-  const struct str __THE_0_a21_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 0, 0);
-  const struct str __THE_0_a22_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 0, 0);
-  const struct str __THE_0_a23_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 0, 0);
-  const struct str __THE_0_a24_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 0, 0);
-  const struct str __THE_0_b1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 1);
-  const struct str __THE_0_b2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 1);
-  const struct str __THE_0_b3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b4_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 1);
-  const struct str __THE_0_b5_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 1);
-  const struct str __THE_0_b6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b7_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 1);
-  const struct str __THE_0_b8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b9_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 1);
-  const struct str __THE_0_b10_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 1);
-  const struct str __THE_0_b11_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b12_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 1);
-  const struct str __THE_0_b13_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 1);
-  const struct str __THE_0_b14_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b15_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 1);
-  const struct str __THE_0_b16_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b17_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 1);
-  const struct str __THE_0_b18_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 1);
-  const struct str __THE_0_b19_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b20_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 1);
-  const struct str __THE_0_b21_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 1);
-  const struct str __THE_0_b22_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 1);
-  const struct str __THE_0_b23_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 1);
-  const struct str __THE_0_b24_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 1);
-  const struct str __THE_0_c1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 2);
-  const struct str __THE_0_c2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 2);
-  const struct str __THE_0_c3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c4_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 2);
-  const struct str __THE_0_c5_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 2);
-  const struct str __THE_0_c6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c7_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 2);
-  const struct str __THE_0_c8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c9_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 2);
-  const struct str __THE_0_c10_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 2);
-  const struct str __THE_0_c11_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c12_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 2);
-  const struct str __THE_0_c13_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 2);
-  const struct str __THE_0_c14_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c15_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 2);
-  const struct str __THE_0_c16_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c17_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 2);
-  const struct str __THE_0_c18_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 2);
-  const struct str __THE_0_c19_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c20_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 2);
-  const struct str __THE_0_c21_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 2);
-  const struct str __THE_0_c22_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 2);
-  const struct str __THE_0_c23_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 2);
-  const struct str __THE_0_c24_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 2);
-  const struct str __THE_0_d1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 3);
-  const struct str __THE_0_d2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 3);
-  const struct str __THE_0_d3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d4_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 3);
-  const struct str __THE_0_d5_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 3);
-  const struct str __THE_0_d6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d7_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 3);
-  const struct str __THE_0_d8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d9_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 3);
-  const struct str __THE_0_d10_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 3);
-  const struct str __THE_0_d11_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d12_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 3);
-  const struct str __THE_0_d13_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 3);
-  const struct str __THE_0_d14_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d15_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 3);
-  const struct str __THE_0_d16_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d17_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 3);
-  const struct str __THE_0_d18_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 3);
-  const struct str __THE_0_d19_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d20_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 3);
-  const struct str __THE_0_d21_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 3);
-  const struct str __THE_0_d22_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 3);
-  const struct str __THE_0_d23_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 3);
-  const struct str __THE_0_d24_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 3);
-  print(stdout, "zssz", "a1:", str_empty(str_copy(__THE_0_a1_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a1_0), THE_EOL);
-  print(stdout, "zssz", "a2:", str_empty(str_copy(__THE_0_a2_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a2_0), THE_EOL);
-  print(stdout, "zssz", "a3:", str_empty(str_copy(__THE_0_a3_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a3_0), THE_EOL);
-  print(stdout, "zssz", "a4:", str_empty(str_copy(__THE_0_a4_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a4_0), THE_EOL);
-  print(stdout, "zssz", "a5:", str_empty(str_copy(__THE_0_a5_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a5_0), THE_EOL);
-  print(stdout, "zssz", "a6:", str_empty(str_copy(__THE_0_a6_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a6_0), THE_EOL);
-  print(stdout, "zssz", "a7:", str_empty(str_copy(__THE_0_a7_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a7_0), THE_EOL);
-  print(stdout, "zssz", "a8:", str_empty(str_copy(__THE_0_a8_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a8_0), THE_EOL);
-  print(stdout, "zssz", "a9:", str_empty(str_copy(__THE_0_a9_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a9_0), THE_EOL);
-  print(stdout, "zssz", "a10:", str_empty(str_copy(__THE_0_a10_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a10_0), THE_EOL);
-  print(stdout, "zssz", "a11:", str_empty(str_copy(__THE_0_a11_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a11_0), THE_EOL);
-  print(stdout, "zssz", "a12:", str_empty(str_copy(__THE_0_a12_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a12_0), THE_EOL);
-  print(stdout, "zssz", "a13:", str_empty(str_copy(__THE_0_a13_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a13_0), THE_EOL);
-  print(stdout, "zssz", "a14:", str_empty(str_copy(__THE_0_a14_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a14_0), THE_EOL);
-  print(stdout, "zssz", "a15:", str_empty(str_copy(__THE_0_a15_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a15_0), THE_EOL);
-  print(stdout, "zssz", "a16:", str_empty(str_copy(__THE_0_a16_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a16_0), THE_EOL);
-  print(stdout, "zssz", "a17:", str_empty(str_copy(__THE_0_a17_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a17_0), THE_EOL);
-  print(stdout, "zssz", "a18:", str_empty(str_copy(__THE_0_a18_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a18_0), THE_EOL);
-  print(stdout, "zssz", "a19:", str_empty(str_copy(__THE_0_a19_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a19_0), THE_EOL);
-  print(stdout, "zssz", "a20:", str_empty(str_copy(__THE_0_a20_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a20_0), THE_EOL);
-  print(stdout, "zssz", "a21:", str_empty(str_copy(__THE_0_a21_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a21_0), THE_EOL);
-  print(stdout, "zssz", "a22:", str_empty(str_copy(__THE_0_a22_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a22_0), THE_EOL);
-  print(stdout, "zssz", "a23:", str_empty(str_copy(__THE_0_a23_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a23_0), THE_EOL);
-  print(stdout, "zssz", "a24:", str_empty(str_copy(__THE_0_a24_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_a24_0), THE_EOL);
-  print(stdout, "zssz", "b1:", str_empty(str_copy(__THE_0_b1_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b1_0), THE_EOL);
-  print(stdout, "zssz", "b2:", str_empty(str_copy(__THE_0_b2_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b2_0), THE_EOL);
-  print(stdout, "zssz", "b3:", str_empty(str_copy(__THE_0_b3_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b3_0), THE_EOL);
-  print(stdout, "zssz", "b4:", str_empty(str_copy(__THE_0_b4_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b4_0), THE_EOL);
-  print(stdout, "zssz", "b5:", str_empty(str_copy(__THE_0_b5_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b5_0), THE_EOL);
-  print(stdout, "zssz", "b6:", str_empty(str_copy(__THE_0_b6_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b6_0), THE_EOL);
-  print(stdout, "zssz", "b7:", str_empty(str_copy(__THE_0_b7_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b7_0), THE_EOL);
-  print(stdout, "zssz", "b8:", str_empty(str_copy(__THE_0_b8_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b8_0), THE_EOL);
-  print(stdout, "zssz", "b9:", str_empty(str_copy(__THE_0_b9_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b9_0), THE_EOL);
-  print(stdout, "zssz", "b10:", str_empty(str_copy(__THE_0_b10_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b10_0), THE_EOL);
-  print(stdout, "zssz", "b11:", str_empty(str_copy(__THE_0_b11_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b11_0), THE_EOL);
-  print(stdout, "zssz", "b12:", str_empty(str_copy(__THE_0_b12_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b12_0), THE_EOL);
-  print(stdout, "zssz", "b13:", str_empty(str_copy(__THE_0_b13_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b13_0), THE_EOL);
-  print(stdout, "zssz", "b14:", str_empty(str_copy(__THE_0_b14_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b14_0), THE_EOL);
-  print(stdout, "zssz", "b15:", str_empty(str_copy(__THE_0_b15_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b15_0), THE_EOL);
-  print(stdout, "zssz", "b16:", str_empty(str_copy(__THE_0_b16_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b16_0), THE_EOL);
-  print(stdout, "zssz", "b17:", str_empty(str_copy(__THE_0_b17_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b17_0), THE_EOL);
-  print(stdout, "zssz", "b18:", str_empty(str_copy(__THE_0_b18_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b18_0), THE_EOL);
-  print(stdout, "zssz", "b19:", str_empty(str_copy(__THE_0_b19_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b19_0), THE_EOL);
-  print(stdout, "zssz", "b20:", str_empty(str_copy(__THE_0_b20_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b20_0), THE_EOL);
-  print(stdout, "zssz", "b21:", str_empty(str_copy(__THE_0_b21_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b21_0), THE_EOL);
-  print(stdout, "zssz", "b22:", str_empty(str_copy(__THE_0_b22_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b22_0), THE_EOL);
-  print(stdout, "zssz", "b23:", str_empty(str_copy(__THE_0_b23_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b23_0), THE_EOL);
-  print(stdout, "zssz", "b24:", str_empty(str_copy(__THE_0_b24_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_b24_0), THE_EOL);
-  print(stdout, "zssz", "c1:", str_empty(str_copy(__THE_0_c1_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c1_0), THE_EOL);
-  print(stdout, "zssz", "c2:", str_empty(str_copy(__THE_0_c2_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c2_0), THE_EOL);
-  print(stdout, "zssz", "c3:", str_empty(str_copy(__THE_0_c3_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c3_0), THE_EOL);
-  print(stdout, "zssz", "c4:", str_empty(str_copy(__THE_0_c4_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c4_0), THE_EOL);
-  print(stdout, "zssz", "c5:", str_empty(str_copy(__THE_0_c5_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c5_0), THE_EOL);
-  print(stdout, "zssz", "c6:", str_empty(str_copy(__THE_0_c6_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c6_0), THE_EOL);
-  print(stdout, "zssz", "c7:", str_empty(str_copy(__THE_0_c7_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c7_0), THE_EOL);
-  print(stdout, "zssz", "c8:", str_empty(str_copy(__THE_0_c8_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c8_0), THE_EOL);
-  print(stdout, "zssz", "c9:", str_empty(str_copy(__THE_0_c9_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c9_0), THE_EOL);
-  print(stdout, "zssz", "c10:", str_empty(str_copy(__THE_0_c10_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c10_0), THE_EOL);
-  print(stdout, "zssz", "c11:", str_empty(str_copy(__THE_0_c11_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c11_0), THE_EOL);
-  print(stdout, "zssz", "c12:", str_empty(str_copy(__THE_0_c12_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c12_0), THE_EOL);
-  print(stdout, "zssz", "c13:", str_empty(str_copy(__THE_0_c13_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c13_0), THE_EOL);
-  print(stdout, "zssz", "c14:", str_empty(str_copy(__THE_0_c14_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c14_0), THE_EOL);
-  print(stdout, "zssz", "c15:", str_empty(str_copy(__THE_0_c15_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c15_0), THE_EOL);
-  print(stdout, "zssz", "c16:", str_empty(str_copy(__THE_0_c16_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c16_0), THE_EOL);
-  print(stdout, "zssz", "c17:", str_empty(str_copy(__THE_0_c17_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c17_0), THE_EOL);
-  print(stdout, "zssz", "c18:", str_empty(str_copy(__THE_0_c18_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c18_0), THE_EOL);
-  print(stdout, "zssz", "c19:", str_empty(str_copy(__THE_0_c19_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c19_0), THE_EOL);
-  print(stdout, "zssz", "c20:", str_empty(str_copy(__THE_0_c20_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c20_0), THE_EOL);
-  print(stdout, "zssz", "c21:", str_empty(str_copy(__THE_0_c21_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c21_0), THE_EOL);
-  print(stdout, "zssz", "c22:", str_empty(str_copy(__THE_0_c22_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c22_0), THE_EOL);
-  print(stdout, "zssz", "c23:", str_empty(str_copy(__THE_0_c23_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c23_0), THE_EOL);
-  print(stdout, "zssz", "c24:", str_empty(str_copy(__THE_0_c24_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_c24_0), THE_EOL);
-  print(stdout, "zssz", "d1:", str_empty(str_copy(__THE_0_d1_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d1_0), THE_EOL);
-  print(stdout, "zssz", "d2:", str_empty(str_copy(__THE_0_d2_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d2_0), THE_EOL);
-  print(stdout, "zssz", "d3:", str_empty(str_copy(__THE_0_d3_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d3_0), THE_EOL);
-  print(stdout, "zssz", "d4:", str_empty(str_copy(__THE_0_d4_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d4_0), THE_EOL);
-  print(stdout, "zssz", "d5:", str_empty(str_copy(__THE_0_d5_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d5_0), THE_EOL);
-  print(stdout, "zssz", "d6:", str_empty(str_copy(__THE_0_d6_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d6_0), THE_EOL);
-  print(stdout, "zssz", "d7:", str_empty(str_copy(__THE_0_d7_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d7_0), THE_EOL);
-  print(stdout, "zssz", "d8:", str_empty(str_copy(__THE_0_d8_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d8_0), THE_EOL);
-  print(stdout, "zssz", "d9:", str_empty(str_copy(__THE_0_d9_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d9_0), THE_EOL);
-  print(stdout, "zssz", "d10:", str_empty(str_copy(__THE_0_d10_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d10_0), THE_EOL);
-  print(stdout, "zssz", "d11:", str_empty(str_copy(__THE_0_d11_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d11_0), THE_EOL);
-  print(stdout, "zssz", "d12:", str_empty(str_copy(__THE_0_d12_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d12_0), THE_EOL);
-  print(stdout, "zssz", "d13:", str_empty(str_copy(__THE_0_d13_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d13_0), THE_EOL);
-  print(stdout, "zssz", "d14:", str_empty(str_copy(__THE_0_d14_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d14_0), THE_EOL);
-  print(stdout, "zssz", "d15:", str_empty(str_copy(__THE_0_d15_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d15_0), THE_EOL);
-  print(stdout, "zssz", "d16:", str_empty(str_copy(__THE_0_d16_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d16_0), THE_EOL);
-  print(stdout, "zssz", "d17:", str_empty(str_copy(__THE_0_d17_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d17_0), THE_EOL);
-  print(stdout, "zssz", "d18:", str_empty(str_copy(__THE_0_d18_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d18_0), THE_EOL);
-  print(stdout, "zssz", "d19:", str_empty(str_copy(__THE_0_d19_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d19_0), THE_EOL);
-  print(stdout, "zssz", "d20:", str_empty(str_copy(__THE_0_d20_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d20_0), THE_EOL);
-  print(stdout, "zssz", "d21:", str_empty(str_copy(__THE_0_d21_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d21_0), THE_EOL);
-  print(stdout, "zssz", "d22:", str_empty(str_copy(__THE_0_d22_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d22_0), THE_EOL);
-  print(stdout, "zssz", "d23:", str_empty(str_copy(__THE_0_d23_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d23_0), THE_EOL);
-  print(stdout, "zssz", "d24:", str_empty(str_copy(__THE_0_d24_0)) ? str_alloc("") : str_alloc(" "), str_copy(__THE_0_d24_0), THE_EOL);
-  str_free((struct str) __THE_0_d24_0);
-  str_free((struct str) __THE_0_d23_0);
-  str_free((struct str) __THE_0_d22_0);
-  str_free((struct str) __THE_0_d21_0);
-  str_free((struct str) __THE_0_d20_0);
-  str_free((struct str) __THE_0_d19_0);
-  str_free((struct str) __THE_0_d18_0);
-  str_free((struct str) __THE_0_d17_0);
-  str_free((struct str) __THE_0_d16_0);
-  str_free((struct str) __THE_0_d15_0);
-  str_free((struct str) __THE_0_d14_0);
-  str_free((struct str) __THE_0_d13_0);
-  str_free((struct str) __THE_0_d12_0);
-  str_free((struct str) __THE_0_d11_0);
-  str_free((struct str) __THE_0_d10_0);
+  const struct str __THE_0_a6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("t"), 0, 0);
+  const struct str __THE_0_a7_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 0, 0);
+  const struct str __THE_0_b8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 0, 0);
+  const struct str __THE_0_b9_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 0, 0);
+  const struct str __THE_0_b1_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 0, 0);
+  const struct str __THE_0_b2_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 0, 0);
+  const struct str __THE_0_b3_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 0, 0);
+  const struct str __THE_0_b4_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 0, 0);
+  const struct str __THE_0_b5_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 0, 0);
+  const struct str __THE_0_b6_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("t"), 0, 0);
+  const struct str __THE_0_b7_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 0, 0);
+  const struct str __THE_0_b8_1 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 0, 0);
+  const struct str __THE_0_b9_1 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 0, 0);
+  const struct str __THE_0_c1_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 0, 0);
+  const struct str __THE_0_c2_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 0, 0);
+  const struct str __THE_0_c3_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 0, 0);
+  const struct str __THE_0_c4_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 0, 0);
+  const struct str __THE_0_c5_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 0, 0);
+  const struct str __THE_0_c6_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("t"), 0, 0);
+  const struct str __THE_0_c7_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 0, 0);
+  const struct str __THE_0_c8_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 0, 0);
+  const struct str __THE_0_c9_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 0, 0);
+  const struct str __THE_0_d1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 1);
+  const struct str __THE_0_d2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 1);
+  const struct str __THE_0_d3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 1);
+  const struct str __THE_0_d4_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 1);
+  const struct str __THE_0_d5_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 1);
+  const struct str __THE_0_d6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("t"), 1, 1);
+  const struct str __THE_0_d7_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 1);
+  const struct str __THE_0_d8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 1);
+  const struct str __THE_0_d9_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 1);
+  const struct str __THE_0_e1_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 1);
+  const struct str __THE_0_e2_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 1);
+  const struct str __THE_0_e3_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 1);
+  const struct str __THE_0_e4_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 1);
+  const struct str __THE_0_e5_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 1);
+  const struct str __THE_0_e6_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("t"), 1, 1);
+  const struct str __THE_0_e7_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 1);
+  const struct str __THE_0_e8_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 1);
+  const struct str __THE_0_e9_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 1);
+  const struct str __THE_0_f1_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 1);
+  const struct str __THE_0_f2_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 1);
+  const struct str __THE_0_f3_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 1);
+  const struct str __THE_0_f4_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 1);
+  const struct str __THE_0_f5_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 1);
+  const struct str __THE_0_f6_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("t"), 1, 1);
+  const struct str __THE_0_f7_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 1);
+  const struct str __THE_0_f8_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 1);
+  const struct str __THE_0_f9_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 1);
+  const struct str __THE_0_g1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 2);
+  const struct str __THE_0_g2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 2);
+  const struct str __THE_0_g3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 2);
+  const struct str __THE_0_g4_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 2);
+  const struct str __THE_0_g5_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 2);
+  const struct str __THE_0_g6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("t"), 1, 2);
+  const struct str __THE_0_g7_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 2);
+  const struct str __THE_0_g8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 2);
+  const struct str __THE_0_g9_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 2);
+  const struct str __THE_0_h1_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 2);
+  const struct str __THE_0_h2_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 2);
+  const struct str __THE_0_h3_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 2);
+  const struct str __THE_0_h4_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 2);
+  const struct str __THE_0_h5_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 2);
+  const struct str __THE_0_h6_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("t"), 1, 2);
+  const struct str __THE_0_h7_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 2);
+  const struct str __THE_0_h8_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 2);
+  const struct str __THE_0_h9_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 2);
+  const struct str __THE_0_m1_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 2);
+  const struct str __THE_0_m2_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 2);
+  const struct str __THE_0_m3_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 2);
+  const struct str __THE_0_m4_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 2);
+  const struct str __THE_0_m5_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 2);
+  const struct str __THE_0_m6_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("t"), 1, 2);
+  const struct str __THE_0_m7_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 2);
+  const struct str __THE_0_m8_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 2);
+  const struct str __THE_0_m9_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 2);
+  const struct str __THE_0_n1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 3);
+  const struct str __THE_0_n2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 3);
+  const struct str __THE_0_n3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 3);
+  const struct str __THE_0_n4_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 3);
+  const struct str __THE_0_n5_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 3);
+  const struct str __THE_0_n6_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("t"), 1, 3);
+  const struct str __THE_0_n7_0 = str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 3);
+  const struct str __THE_0_n8_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 3);
+  const struct str __THE_0_n9_0 = str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 3);
+  const struct str __THE_0_o1_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 3);
+  const struct str __THE_0_o2_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 3);
+  const struct str __THE_0_o3_0 = str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 3);
+  const struct str __THE_0_o4_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 3);
+  const struct str __THE_0_o5_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 3);
+  const struct str __THE_0_o6_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("t"), 1, 3);
+  const struct str __THE_0_o7_0 = str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 3);
+  const struct str __THE_0_o8_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 3);
+  const struct str __THE_0_o9_0 = str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 3);
+  const struct str __THE_0_p1_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 3);
+  const struct str __THE_0_p2_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 3);
+  const struct str __THE_0_p3_0 = str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 3);
+  const struct str __THE_0_p4_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 3);
+  const struct str __THE_0_p5_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 3);
+  const struct str __THE_0_p6_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("t"), 1, 3);
+  const struct str __THE_0_p7_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 3);
+  const struct str __THE_0_p8_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 3);
+  const struct str __THE_0_p9_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 3);
+  print(stdout, "zsz", "a1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a1_0))}), THE_EOL);
+  print(stdout, "zsz", "a2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a2_0))}), THE_EOL);
+  print(stdout, "zsz", "a3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a3_0))}), THE_EOL);
+  print(stdout, "zsz", "a4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a4_0))}), THE_EOL);
+  print(stdout, "zsz", "a5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a5_0))}), THE_EOL);
+  print(stdout, "zsz", "a6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a6_0))}), THE_EOL);
+  print(stdout, "zsz", "a7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a7_0))}), THE_EOL);
+  print(stdout, "zsz", "b8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b8_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b8_1))}), THE_EOL);
+  print(stdout, "zsz", "b9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b9_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b9_1))}), THE_EOL);
+  print(stdout, "zsz", "b1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b1_0))}), THE_EOL);
+  print(stdout, "zsz", "b2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b2_0))}), THE_EOL);
+  print(stdout, "zsz", "b3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b3_0))}), THE_EOL);
+  print(stdout, "zsz", "b4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b4_0))}), THE_EOL);
+  print(stdout, "zsz", "b5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b5_0))}), THE_EOL);
+  print(stdout, "zsz", "b6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b6_0))}), THE_EOL);
+  print(stdout, "zsz", "b7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b7_0))}), THE_EOL);
+  print(stdout, "zsz", "b8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b8_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b8_1))}), THE_EOL);
+  print(stdout, "zsz", "b9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b9_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b9_1))}), THE_EOL);
+  print(stdout, "zsz", "c1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c1_0))}), THE_EOL);
+  print(stdout, "zsz", "c2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c2_0))}), THE_EOL);
+  print(stdout, "zsz", "c3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c3_0))}), THE_EOL);
+  print(stdout, "zsz", "c4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c4_0))}), THE_EOL);
+  print(stdout, "zsz", "c5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c5_0))}), THE_EOL);
+  print(stdout, "zsz", "c6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c6_0))}), THE_EOL);
+  print(stdout, "zsz", "c7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c7_0))}), THE_EOL);
+  print(stdout, "zsz", "c8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c8_0))}), THE_EOL);
+  print(stdout, "zsz", "c9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c9_0))}), THE_EOL);
+  print(stdout, "zsz", "d1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d1_0))}), THE_EOL);
+  print(stdout, "zsz", "d2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d2_0))}), THE_EOL);
+  print(stdout, "zsz", "d3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d3_0))}), THE_EOL);
+  print(stdout, "zsz", "d4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d4_0))}), THE_EOL);
+  print(stdout, "zsz", "d5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d5_0))}), THE_EOL);
+  print(stdout, "zsz", "d6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d6_0))}), THE_EOL);
+  print(stdout, "zsz", "d7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d7_0))}), THE_EOL);
+  print(stdout, "zsz", "d8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d8_0))}), THE_EOL);
+  print(stdout, "zsz", "d9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d9_0))}), THE_EOL);
+  print(stdout, "zsz", "e1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e1_0))}), THE_EOL);
+  print(stdout, "zsz", "e2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e2_0))}), THE_EOL);
+  print(stdout, "zsz", "e3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e3_0))}), THE_EOL);
+  print(stdout, "zsz", "e4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e4_0))}), THE_EOL);
+  print(stdout, "zsz", "e5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e5_0))}), THE_EOL);
+  print(stdout, "zsz", "e6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e6_0))}), THE_EOL);
+  print(stdout, "zsz", "e7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e7_0))}), THE_EOL);
+  print(stdout, "zsz", "e8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e8_0))}), THE_EOL);
+  print(stdout, "zsz", "e9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e9_0))}), THE_EOL);
+  print(stdout, "zsz", "f1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f1_0))}), THE_EOL);
+  print(stdout, "zsz", "f2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f2_0))}), THE_EOL);
+  print(stdout, "zsz", "f3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f3_0))}), THE_EOL);
+  print(stdout, "zsz", "f4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f4_0))}), THE_EOL);
+  print(stdout, "zsz", "f5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f5_0))}), THE_EOL);
+  print(stdout, "zsz", "f6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f6_0))}), THE_EOL);
+  print(stdout, "zsz", "f7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f7_0))}), THE_EOL);
+  print(stdout, "zsz", "f8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f8_0))}), THE_EOL);
+  print(stdout, "zsz", "f9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f9_0))}), THE_EOL);
+  print(stdout, "zsz", "g1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g1_0))}), THE_EOL);
+  print(stdout, "zsz", "g2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g2_0))}), THE_EOL);
+  print(stdout, "zsz", "g3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g3_0))}), THE_EOL);
+  print(stdout, "zsz", "g4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g4_0))}), THE_EOL);
+  print(stdout, "zsz", "g5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g5_0))}), THE_EOL);
+  print(stdout, "zsz", "g6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g6_0))}), THE_EOL);
+  print(stdout, "zsz", "g7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g7_0))}), THE_EOL);
+  print(stdout, "zsz", "g8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g8_0))}), THE_EOL);
+  print(stdout, "zsz", "g9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g9_0))}), THE_EOL);
+  print(stdout, "zsz", "h1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h1_0))}), THE_EOL);
+  print(stdout, "zsz", "h2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h2_0))}), THE_EOL);
+  print(stdout, "zsz", "h3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h3_0))}), THE_EOL);
+  print(stdout, "zsz", "h4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h4_0))}), THE_EOL);
+  print(stdout, "zsz", "h5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h5_0))}), THE_EOL);
+  print(stdout, "zsz", "h6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h6_0))}), THE_EOL);
+  print(stdout, "zsz", "h7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h7_0))}), THE_EOL);
+  print(stdout, "zsz", "h8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h8_0))}), THE_EOL);
+  print(stdout, "zsz", "h9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h9_0))}), THE_EOL);
+  print(stdout, "zsz", "m1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m1_0))}), THE_EOL);
+  print(stdout, "zsz", "m2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m2_0))}), THE_EOL);
+  print(stdout, "zsz", "m3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m3_0))}), THE_EOL);
+  print(stdout, "zsz", "m4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m4_0))}), THE_EOL);
+  print(stdout, "zsz", "m5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m5_0))}), THE_EOL);
+  print(stdout, "zsz", "m6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m6_0))}), THE_EOL);
+  print(stdout, "zsz", "m7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m7_0))}), THE_EOL);
+  print(stdout, "zsz", "m8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m8_0))}), THE_EOL);
+  print(stdout, "zsz", "m9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m9_0))}), THE_EOL);
+  print(stdout, "zsz", "n1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n1_0))}), THE_EOL);
+  print(stdout, "zsz", "n2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n2_0))}), THE_EOL);
+  print(stdout, "zsz", "n3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n3_0))}), THE_EOL);
+  print(stdout, "zsz", "n4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n4_0))}), THE_EOL);
+  print(stdout, "zsz", "n5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n5_0))}), THE_EOL);
+  print(stdout, "zsz", "n6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n6_0))}), THE_EOL);
+  print(stdout, "zsz", "n7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n7_0))}), THE_EOL);
+  print(stdout, "zsz", "n8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n8_0))}), THE_EOL);
+  print(stdout, "zsz", "n9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n9_0))}), THE_EOL);
+  print(stdout, "zsz", "o1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o1_0))}), THE_EOL);
+  print(stdout, "zsz", "o2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o2_0))}), THE_EOL);
+  print(stdout, "zsz", "o3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o3_0))}), THE_EOL);
+  print(stdout, "zsz", "o4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o4_0))}), THE_EOL);
+  print(stdout, "zsz", "o5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o5_0))}), THE_EOL);
+  print(stdout, "zsz", "o6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o6_0))}), THE_EOL);
+  print(stdout, "zsz", "o7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o7_0))}), THE_EOL);
+  print(stdout, "zsz", "o8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o8_0))}), THE_EOL);
+  print(stdout, "zsz", "o9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o9_0))}), THE_EOL);
+  print(stdout, "zsz", "p1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p1_0))}), THE_EOL);
+  print(stdout, "zsz", "p2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p2_0))}), THE_EOL);
+  print(stdout, "zsz", "p3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p3_0))}), THE_EOL);
+  print(stdout, "zsz", "p4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p4_0))}), THE_EOL);
+  print(stdout, "zsz", "p5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p5_0))}), THE_EOL);
+  print(stdout, "zsz", "p6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p6_0))}), THE_EOL);
+  print(stdout, "zsz", "p7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p7_0))}), THE_EOL);
+  print(stdout, "zsz", "p8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p8_0))}), THE_EOL);
+  print(stdout, "zsz", "p9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p9_0))}), THE_EOL);
+  str_free((struct str) __THE_0_p9_0);
+  str_free((struct str) __THE_0_p8_0);
+  str_free((struct str) __THE_0_p7_0);
+  str_free((struct str) __THE_0_p6_0);
+  str_free((struct str) __THE_0_p5_0);
+  str_free((struct str) __THE_0_p4_0);
+  str_free((struct str) __THE_0_p3_0);
+  str_free((struct str) __THE_0_p2_0);
+  str_free((struct str) __THE_0_p1_0);
+  str_free((struct str) __THE_0_o9_0);
+  str_free((struct str) __THE_0_o8_0);
+  str_free((struct str) __THE_0_o7_0);
+  str_free((struct str) __THE_0_o6_0);
+  str_free((struct str) __THE_0_o5_0);
+  str_free((struct str) __THE_0_o4_0);
+  str_free((struct str) __THE_0_o3_0);
+  str_free((struct str) __THE_0_o2_0);
+  str_free((struct str) __THE_0_o1_0);
+  str_free((struct str) __THE_0_n9_0);
+  str_free((struct str) __THE_0_n8_0);
+  str_free((struct str) __THE_0_n7_0);
+  str_free((struct str) __THE_0_n6_0);
+  str_free((struct str) __THE_0_n5_0);
+  str_free((struct str) __THE_0_n4_0);
+  str_free((struct str) __THE_0_n3_0);
+  str_free((struct str) __THE_0_n2_0);
+  str_free((struct str) __THE_0_n1_0);
+  str_free((struct str) __THE_0_m9_0);
+  str_free((struct str) __THE_0_m8_0);
+  str_free((struct str) __THE_0_m7_0);
+  str_free((struct str) __THE_0_m6_0);
+  str_free((struct str) __THE_0_m5_0);
+  str_free((struct str) __THE_0_m4_0);
+  str_free((struct str) __THE_0_m3_0);
+  str_free((struct str) __THE_0_m2_0);
+  str_free((struct str) __THE_0_m1_0);
+  str_free((struct str) __THE_0_h9_0);
+  str_free((struct str) __THE_0_h8_0);
+  str_free((struct str) __THE_0_h7_0);
+  str_free((struct str) __THE_0_h6_0);
+  str_free((struct str) __THE_0_h5_0);
+  str_free((struct str) __THE_0_h4_0);
+  str_free((struct str) __THE_0_h3_0);
+  str_free((struct str) __THE_0_h2_0);
+  str_free((struct str) __THE_0_h1_0);
+  str_free((struct str) __THE_0_g9_0);
+  str_free((struct str) __THE_0_g8_0);
+  str_free((struct str) __THE_0_g7_0);
+  str_free((struct str) __THE_0_g6_0);
+  str_free((struct str) __THE_0_g5_0);
+  str_free((struct str) __THE_0_g4_0);
+  str_free((struct str) __THE_0_g3_0);
+  str_free((struct str) __THE_0_g2_0);
+  str_free((struct str) __THE_0_g1_0);
+  str_free((struct str) __THE_0_f9_0);
+  str_free((struct str) __THE_0_f8_0);
+  str_free((struct str) __THE_0_f7_0);
+  str_free((struct str) __THE_0_f6_0);
+  str_free((struct str) __THE_0_f5_0);
+  str_free((struct str) __THE_0_f4_0);
+  str_free((struct str) __THE_0_f3_0);
+  str_free((struct str) __THE_0_f2_0);
+  str_free((struct str) __THE_0_f1_0);
+  str_free((struct str) __THE_0_e9_0);
+  str_free((struct str) __THE_0_e8_0);
+  str_free((struct str) __THE_0_e7_0);
+  str_free((struct str) __THE_0_e6_0);
+  str_free((struct str) __THE_0_e5_0);
+  str_free((struct str) __THE_0_e4_0);
+  str_free((struct str) __THE_0_e3_0);
+  str_free((struct str) __THE_0_e2_0);
+  str_free((struct str) __THE_0_e1_0);
   str_free((struct str) __THE_0_d9_0);
   str_free((struct str) __THE_0_d8_0);
   str_free((struct str) __THE_0_d7_0);
@@ -570,21 +773,6 @@ int main () {
   str_free((struct str) __THE_0_d3_0);
   str_free((struct str) __THE_0_d2_0);
   str_free((struct str) __THE_0_d1_0);
-  str_free((struct str) __THE_0_c24_0);
-  str_free((struct str) __THE_0_c23_0);
-  str_free((struct str) __THE_0_c22_0);
-  str_free((struct str) __THE_0_c21_0);
-  str_free((struct str) __THE_0_c20_0);
-  str_free((struct str) __THE_0_c19_0);
-  str_free((struct str) __THE_0_c18_0);
-  str_free((struct str) __THE_0_c17_0);
-  str_free((struct str) __THE_0_c16_0);
-  str_free((struct str) __THE_0_c15_0);
-  str_free((struct str) __THE_0_c14_0);
-  str_free((struct str) __THE_0_c13_0);
-  str_free((struct str) __THE_0_c12_0);
-  str_free((struct str) __THE_0_c11_0);
-  str_free((struct str) __THE_0_c10_0);
   str_free((struct str) __THE_0_c9_0);
   str_free((struct str) __THE_0_c8_0);
   str_free((struct str) __THE_0_c7_0);
@@ -594,23 +782,8 @@ int main () {
   str_free((struct str) __THE_0_c3_0);
   str_free((struct str) __THE_0_c2_0);
   str_free((struct str) __THE_0_c1_0);
-  str_free((struct str) __THE_0_b24_0);
-  str_free((struct str) __THE_0_b23_0);
-  str_free((struct str) __THE_0_b22_0);
-  str_free((struct str) __THE_0_b21_0);
-  str_free((struct str) __THE_0_b20_0);
-  str_free((struct str) __THE_0_b19_0);
-  str_free((struct str) __THE_0_b18_0);
-  str_free((struct str) __THE_0_b17_0);
-  str_free((struct str) __THE_0_b16_0);
-  str_free((struct str) __THE_0_b15_0);
-  str_free((struct str) __THE_0_b14_0);
-  str_free((struct str) __THE_0_b13_0);
-  str_free((struct str) __THE_0_b12_0);
-  str_free((struct str) __THE_0_b11_0);
-  str_free((struct str) __THE_0_b10_0);
-  str_free((struct str) __THE_0_b9_0);
-  str_free((struct str) __THE_0_b8_0);
+  str_free((struct str) __THE_0_b9_1);
+  str_free((struct str) __THE_0_b8_1);
   str_free((struct str) __THE_0_b7_0);
   str_free((struct str) __THE_0_b6_0);
   str_free((struct str) __THE_0_b5_0);
@@ -618,23 +791,8 @@ int main () {
   str_free((struct str) __THE_0_b3_0);
   str_free((struct str) __THE_0_b2_0);
   str_free((struct str) __THE_0_b1_0);
-  str_free((struct str) __THE_0_a24_0);
-  str_free((struct str) __THE_0_a23_0);
-  str_free((struct str) __THE_0_a22_0);
-  str_free((struct str) __THE_0_a21_0);
-  str_free((struct str) __THE_0_a20_0);
-  str_free((struct str) __THE_0_a19_0);
-  str_free((struct str) __THE_0_a18_0);
-  str_free((struct str) __THE_0_a17_0);
-  str_free((struct str) __THE_0_a16_0);
-  str_free((struct str) __THE_0_a15_0);
-  str_free((struct str) __THE_0_a14_0);
-  str_free((struct str) __THE_0_a13_0);
-  str_free((struct str) __THE_0_a12_0);
-  str_free((struct str) __THE_0_a11_0);
-  str_free((struct str) __THE_0_a10_0);
-  str_free((struct str) __THE_0_a9_0);
-  str_free((struct str) __THE_0_a8_0);
+  str_free((struct str) __THE_0_b9_0);
+  str_free((struct str) __THE_0_b8_0);
   str_free((struct str) __THE_0_a7_0);
   str_free((struct str) __THE_0_a6_0);
   str_free((struct str) __THE_0_a5_0);
@@ -652,71 +810,26 @@ a4:
 a5:
 a6:
 a7:
-a8:
-a9: t
-a10: ttt
-a11: testttest
-a12:
-a13: t
-a14: test
-a15: t
-a16: t
-a17: test in test
-a18: tttetsttt titnt tttetsttt
-a19: testttesteteststestttest testitestntest testttesteteststestttest
-a20: es in es
-a21:  in{{ [ ] }}
-a22: testestest in testestest
-a23: t in t
-a24: test in test
-b1:
-b2: t
-b3: test
-b4:
-b5:
-b6:
-b7:
-b8:
+b8: t
 b9: t
-b10: tt
-b11: testt
-b12:
-b13: t
-b14: test
-b15: t
-b16: t
-b17: test in test
-b18: ttest in test
-b19: testtest in test
-b20: est in test
-b21:  in test
-b22: testest in test
-b23: t in test
-b24: test in test
-c1:
-c2: t
-c3: test
-c4:
-c5:
-c6:
-c7:
-c8:
-c9: t
-c10: ttt
-c11: testttest
-c12:
-c13: t
-c14: test
-c15: t
-c16: t
-c17: test in test
-c18: tttest in test
-c19: testttestest in test
-c20: es in test
-c21:  in{{ [ ] }}
-c22: testestest in test
-c23: t in t
-c24: test in test
+b1: t
+b2: ttt
+b3: testttest
+b4:
+b5: t
+b6: t
+b7: test
+b8: t
+b9: t
+c1: test in test
+c2: tttetsttt titnt tttetsttt
+c3: testttesteteststestttest testitestntest testttesteteststestttest
+c4: es in es
+c5:  in
+c6: test in test
+c7: testestest in testestest
+c8: t in t
+c9: test in test
 d1:
 d2: t
 d3: test
@@ -725,19 +838,76 @@ d5:
 d6:
 d7:
 d8:
-d9: t
-d10: ttt
-d11: testttest
-d12:
-d13: t
-d14: test
-d15: t
-d16: t
-d17: test in test
-d18: tttetst in test
-d19: testttestetestst in test
-d20: es in est
-d21:  in{{ [ ] }}
-d22: testestest in testest
-d23: t in t
-d24: test in test
+d9:
+e1: t
+e2: tt
+e3: testt
+e4:
+e5: t
+e6: t
+e7: test
+e8: t
+e9: t
+f1: test in test
+f2: ttest in test
+f3: testtest in test
+f4: est in test
+f5:  in test
+f6: test in test
+f7: testest in test
+f8: t in test
+f9: test in test
+g1:
+g2: t
+g3: test
+g4:
+g5:
+g6:
+g7:
+g8:
+g9:
+h1: t
+h2: ttt
+h3: testttest
+h4:
+h5: t
+h6: t
+h7: test
+h8: t
+h9: t
+m1: test in test
+m2: tttest in test
+m3: testttestest in test
+m4: es in test
+m5:  in
+m6: test in test
+m7: testestest in test
+m8: t in t
+m9: test in test
+n1:
+n2: t
+n3: test
+n4:
+n5:
+n6:
+n7:
+n8:
+n9:
+o1: t
+o2: ttt
+o3: testttest
+o4:
+o5: t
+o6: t
+o7: test
+o8: t
+o9: t
+p1: test in test
+p2: tttetst in test
+p3: testttestetestst in test
+p4: es in est
+p5:  in
+p6: test in test
+p7: testestest in testest
+p8: t in t
+p9: test in test

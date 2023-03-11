@@ -129,12 +129,12 @@ const std::vector<std::string> codegenStr = {
   "}" EOL,
 
   "_{struct str} str_replace (_{struct str} self, _{struct str} n1, _{struct str} n2, unsigned char _o3, _{int32_t} n3) {" EOL
-  "  _{size_t} l = self.l;" EOL
-  "  char *d = _{alloc}(l);" EOL
+  "  _{size_t} l = 0;" EOL
+  "  char *d = _{NULL};" EOL
   "  _{int32_t} k = 0;" EOL
   "  if (n1.l == 0 && n2.l > 0) {" EOL
   "    l = self.l + (n3 > 0 && n3 <= self.l ? n3 : self.l + 1) * n2.l;" EOL
-  "    d = _{re_alloc}(d, l);" EOL
+  "    d = _{alloc}(l);" EOL
   "    _{memcpy}(d, n2.d, n2.l);" EOL
   "    _{size_t} j = n2.l;" EOL
   "    for (_{size_t} i = 0; i < self.l; i++) {" EOL
@@ -144,21 +144,37 @@ const std::vector<std::string> codegenStr = {
   "        j += n2.l;" EOL
   "      }" EOL
   "    }" EOL
-  "  } else if (n1.l > 0 && n2.l == 0) {" EOL
-  "    _{size_t} j = 0;" EOL
+  "  } else if (self.l == n1.l && n1.l > 0) {" EOL
+  "    if (_{memcmp}(self.d, n1.d, n1.l) != 0) {" EOL
+  "      l = self.l;" EOL
+  "      d = _{alloc}(l);" EOL
+  "      _{memcpy}(d, self.d, l);" EOL
+  "    } else if (n2.l > 0) {" EOL
+  "      l = n2.l;" EOL
+  "      d = _{alloc}(l);" EOL
+  "      _{memcpy}(d, n2.d, l);" EOL
+  "    }" EOL
+  "  } else if (self.l > n1.l && n1.l > 0 && n2.l == 0) {" EOL
+  "    d = _{alloc}(self.l);" EOL
   "    for (_{size_t} i = 0; i < self.l; i++) {" EOL
-  "      if (_{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {" EOL
-  "        l -= n1.l;" EOL
+  "      if (i <= self.l - n1.l && _{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {" EOL
   "        i += n1.l - 1;" EOL
   "      } else {" EOL
-  "        d[j++] = self.d[i];" EOL
+  "        d[l++] = self.d[i];" EOL
   "      }" EOL
   "    }" EOL
-  "    d = _{re_alloc}(d, l);" EOL
-  "  } else if (n1.l > 0) {" EOL
+  "    if (l == 0) {" EOL
+  "      _{free}(d);" EOL
+  "      d = _{NULL};" EOL
+  "    } else if (l != self.l) {" EOL
+  "      d = _{re_alloc}(d, l);" EOL
+  "    }" EOL
+  "  } else if (self.l > n1.l && n1.l > 0 && n2.l > 0) {" EOL
+  "    l = self.l;" EOL
+  "    d = _{alloc}(l);" EOL
   "    _{size_t} j = 0;" EOL
   "    for (_{size_t} i = 0; i < self.l; i++) {" EOL
-  "      if (_{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {" EOL
+  "      if (i <= self.l - n1.l && _{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {" EOL
   "        if (n1.l < n2.l) {" EOL
   "          l += n2.l - n1.l;" EOL
   "          if (l > self.l) {" EOL
@@ -175,7 +191,9 @@ const std::vector<std::string> codegenStr = {
   "      }" EOL
   "    }" EOL
   "    d = _{re_alloc}(d, l);" EOL
-  "  } else {" EOL
+  "  } else if (self.l > 0) {" EOL
+  "    l = self.l;" EOL
+  "    d = _{alloc}(l);" EOL
   "    _{memcpy}(d, self.d, l);" EOL
   "  }" EOL
   "  _{free}(n2.d);" EOL

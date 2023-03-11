@@ -115,12 +115,12 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct str str_replace (struct str self, struct str n1, struct str n2, unsigned char _o3, int32_t n3) {
-  size_t l = self.l;
-  char *d = alloc(l);
+  size_t l = 0;
+  char *d = NULL;
   int32_t k = 0;
   if (n1.l == 0 && n2.l > 0) {
     l = self.l + (n3 > 0 && n3 <= self.l ? n3 : self.l + 1) * n2.l;
-    d = re_alloc(d, l);
+    d = alloc(l);
     memcpy(d, n2.d, n2.l);
     size_t j = n2.l;
     for (size_t i = 0; i < self.l; i++) {
@@ -130,21 +130,37 @@ struct str str_replace (struct str self, struct str n1, struct str n2, unsigned 
         j += n2.l;
       }
     }
-  } else if (n1.l > 0 && n2.l == 0) {
-    size_t j = 0;
+  } else if (self.l == n1.l && n1.l > 0) {
+    if (memcmp(self.d, n1.d, n1.l) != 0) {
+      l = self.l;
+      d = alloc(l);
+      memcpy(d, self.d, l);
+    } else if (n2.l > 0) {
+      l = n2.l;
+      d = alloc(l);
+      memcpy(d, n2.d, l);
+    }
+  } else if (self.l > n1.l && n1.l > 0 && n2.l == 0) {
+    d = alloc(self.l);
     for (size_t i = 0; i < self.l; i++) {
-      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
-        l -= n1.l;
+      if (i <= self.l - n1.l && memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
         i += n1.l - 1;
       } else {
-        d[j++] = self.d[i];
+        d[l++] = self.d[i];
       }
     }
-    d = re_alloc(d, l);
-  } else if (n1.l > 0) {
+    if (l == 0) {
+      free(d);
+      d = NULL;
+    } else if (l != self.l) {
+      d = re_alloc(d, l);
+    }
+  } else if (self.l > n1.l && n1.l > 0 && n2.l > 0) {
+    l = self.l;
+    d = alloc(l);
     size_t j = 0;
     for (size_t i = 0; i < self.l; i++) {
-      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+      if (i <= self.l - n1.l && memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
         if (n1.l < n2.l) {
           l += n2.l - n1.l;
           if (l > self.l) {
@@ -161,7 +177,9 @@ struct str str_replace (struct str self, struct str n1, struct str n2, unsigned 
       }
     }
     d = re_alloc(d, l);
-  } else {
+  } else if (self.l > 0) {
+    l = self.l;
+    d = alloc(l);
     memcpy(d, self.d, l);
   }
   free(n2.d);
