@@ -34,8 +34,10 @@ const std::vector<std::string> codegenStr = {
 
   "_{bool} str_contains (_{struct str} self, _{struct str} n1) {" EOL
   "  _{bool} r = n1.l == 0;" EOL
-  "  if (!r) {" EOL
-  "    for (_{size_t} i = 0; i <= self.l; i++) {" EOL
+  "  if (!r && self.l == n1.l) {" EOL
+  "    r = _{memcmp}(self.d, n1.d, n1.l) == 0;" EOL
+  "  } else if (!r && self.l > n1.l) {" EOL
+  "    for (_{size_t} i = 0; i < self.l - n1.l; i++) {" EOL
   "      if (_{memcmp}(&self.d[i], n1.d, n1.l) == 0) {" EOL
   "        r = _{true};" EOL
   "        break;" EOL
@@ -205,9 +207,12 @@ const std::vector<std::string> codegenStr = {
   "    for (_{size_t} i = 0; i < l; i++) {" EOL
   R"(      r[i] = _{str_calloc}(&self.d[i], 1);)" EOL
   "    }" EOL
+  "  } else if (self.l < n1.l) {" EOL
+  "    r = _{re_alloc}(r, ++l * sizeof(_{struct str}));" EOL
+  "    r[0] = _{str_calloc}(self.d, self.l);" EOL
   "  } else if (n1.l > 0) {" EOL
   "    _{size_t} i = 0;" EOL
-  "    for (_{size_t} j = 0; j < self.l; j++) {" EOL
+  "    for (_{size_t} j = 0; j <= self.l - n1.l; j++) {" EOL
   "      if (_{memcmp}(&self.d[j], n1.d, n1.l) == 0) {" EOL
   "        r = _{re_alloc}(r, ++l * sizeof(_{struct str}));" EOL
   "        r[l - 1] = _{str_calloc}(&self.d[i], j - i);" EOL

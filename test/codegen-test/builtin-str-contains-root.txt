@@ -61,8 +61,10 @@ struct str str_alloc (const char *r) {
 }
 bool str_contains (struct str self, struct str n1) {
   bool r = n1.l == 0;
-  if (!r) {
-    for (size_t i = 0; i <= self.l; i++) {
+  if (!r && self.l == n1.l) {
+    r = memcmp(self.d, n1.d, n1.l) == 0;
+  } else if (!r && self.l > n1.l) {
+    for (size_t i = 0; i < self.l - n1.l; i++) {
       if (memcmp(&self.d[i], n1.d, n1.l) == 0) {
         r = true;
         break;

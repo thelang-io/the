@@ -170,9 +170,12 @@ struct __THE_1_array_str str_split (struct str self, unsigned char o1, struct st
     for (size_t i = 0; i < l; i++) {
       r[i] = str_calloc(&self.d[i], 1);
     }
+  } else if (self.l < n1.l) {
+    r = re_alloc(r, ++l * sizeof(struct str));
+    r[0] = str_calloc(self.d, self.l);
   } else if (n1.l > 0) {
     size_t i = 0;
-    for (size_t j = 0; j < self.l; j++) {
+    for (size_t j = 0; j <= self.l - n1.l; j++) {
       if (memcmp(&self.d[j], n1.d, n1.l) == 0) {
         r = re_alloc(r, ++l * sizeof(struct str));
         r[l - 1] = str_calloc(&self.d[i], j - i);
