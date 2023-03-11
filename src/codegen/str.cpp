@@ -270,6 +270,36 @@ const std::vector<std::string> codegenStr = {
   "  return (_{struct str}) {r, l};" EOL
   "}" EOL,
 
+  "_{struct str} str_trimEnd (_{struct str} s) {" EOL
+  "  if (s.l == 0) return s;" EOL
+  "  while (_{isspace}(s.d[s.l - 1])) {" EOL
+  "    s.l--;" EOL
+  "    if (s.l == 0) break;" EOL
+  "  }" EOL
+  "  if (s.l == 0) {" EOL
+  "    _{free}(s.d);" EOL
+  "    s.d = _{NULL};" EOL
+  "  } else {" EOL
+  "    s.d = _{re_alloc}(s.d, s.l);" EOL
+  "  }" EOL
+  "  return s;" EOL
+  "}" EOL,
+
+  "_{struct str} str_trimStart (_{struct str} s) {" EOL
+  "  if (s.l == 0) return s;" EOL
+  "  _{size_t} i = 0;" EOL
+  "  while (i < s.l && _{isspace}(s.d[i])) i++;" EOL
+  "  if (i >= s.l) {" EOL
+  "    _{free}(s.d);" EOL
+  "    s = (_{struct str}) {_{NULL}, 0};" EOL
+  "  } else {" EOL
+  "    _{memmove}(s.d, &s.d[i], s.l - i);" EOL
+  "    s.l -= i;" EOL
+  "    s.d = _{re_alloc}(s.d, s.l);" EOL
+  "  }" EOL
+  "  return s;" EOL
+  "}" EOL,
+
   "_{struct str} str_upper (_{struct str} s) {" EOL
   "  if (s.l != 0) {" EOL
   "    for (_{size_t} i = 0; i < s.l; i++) s.d[i] = (char) _{toupper}(s.d[i]);" EOL

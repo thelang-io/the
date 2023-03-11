@@ -1,14 +1,4 @@
 ======= stdin =======
-fn trimRight (s: str) str {
-  loop i := s.len - 1; i >= 0; i-- {
-    if !s[i].isWhitespace {
-      return s.slice(0, i + 1)
-    }
-  }
-
-  return ""
-}
-
 main {
   a1 := "".replace("", "")
   a2 := "".replace("", "t")
@@ -119,114 +109,114 @@ main {
   p8 := "test in test".replace("test", "t", count: 3)
   p9 := "test in test".replace("test", "test", count: 3)
 
-  print("a1:", trimRight((a1.empty ? "" : " ") + a1), separator: "")
-  print("a2:", trimRight((a2.empty ? "" : " ") + a2), separator: "")
-  print("a3:", trimRight((a3.empty ? "" : " ") + a3), separator: "")
-  print("a4:", trimRight((a4.empty ? "" : " ") + a4), separator: "")
-  print("a5:", trimRight((a5.empty ? "" : " ") + a5), separator: "")
-  print("a6:", trimRight((a6.empty ? "" : " ") + a6), separator: "")
-  print("a7:", trimRight((a7.empty ? "" : " ") + a7), separator: "")
-  print("b8:", trimRight((b8.empty ? "" : " ") + b8), separator: "")
-  print("b9:", trimRight((b9.empty ? "" : " ") + b9), separator: "")
-  print("b1:", trimRight((b1.empty ? "" : " ") + b1), separator: "")
-  print("b2:", trimRight((b2.empty ? "" : " ") + b2), separator: "")
-  print("b3:", trimRight((b3.empty ? "" : " ") + b3), separator: "")
-  print("b4:", trimRight((b4.empty ? "" : " ") + b4), separator: "")
-  print("b5:", trimRight((b5.empty ? "" : " ") + b5), separator: "")
-  print("b6:", trimRight((b6.empty ? "" : " ") + b6), separator: "")
-  print("b7:", trimRight((b7.empty ? "" : " ") + b7), separator: "")
-  print("b8:", trimRight((b8.empty ? "" : " ") + b8), separator: "")
-  print("b9:", trimRight((b9.empty ? "" : " ") + b9), separator: "")
-  print("c1:", trimRight((c1.empty ? "" : " ") + c1), separator: "")
-  print("c2:", trimRight((c2.empty ? "" : " ") + c2), separator: "")
-  print("c3:", trimRight((c3.empty ? "" : " ") + c3), separator: "")
-  print("c4:", trimRight((c4.empty ? "" : " ") + c4), separator: "")
-  print("c5:", trimRight((c5.empty ? "" : " ") + c5), separator: "")
-  print("c6:", trimRight((c6.empty ? "" : " ") + c6), separator: "")
-  print("c7:", trimRight((c7.empty ? "" : " ") + c7), separator: "")
-  print("c8:", trimRight((c8.empty ? "" : " ") + c8), separator: "")
-  print("c9:", trimRight((c9.empty ? "" : " ") + c9), separator: "")
-  print("d1:", trimRight((d1.empty ? "" : " ") + d1), separator: "")
-  print("d2:", trimRight((d2.empty ? "" : " ") + d2), separator: "")
-  print("d3:", trimRight((d3.empty ? "" : " ") + d3), separator: "")
-  print("d4:", trimRight((d4.empty ? "" : " ") + d4), separator: "")
-  print("d5:", trimRight((d5.empty ? "" : " ") + d5), separator: "")
-  print("d6:", trimRight((d6.empty ? "" : " ") + d6), separator: "")
-  print("d7:", trimRight((d7.empty ? "" : " ") + d7), separator: "")
-  print("d8:", trimRight((d8.empty ? "" : " ") + d8), separator: "")
-  print("d9:", trimRight((d9.empty ? "" : " ") + d9), separator: "")
-  print("e1:", trimRight((e1.empty ? "" : " ") + e1), separator: "")
-  print("e2:", trimRight((e2.empty ? "" : " ") + e2), separator: "")
-  print("e3:", trimRight((e3.empty ? "" : " ") + e3), separator: "")
-  print("e4:", trimRight((e4.empty ? "" : " ") + e4), separator: "")
-  print("e5:", trimRight((e5.empty ? "" : " ") + e5), separator: "")
-  print("e6:", trimRight((e6.empty ? "" : " ") + e6), separator: "")
-  print("e7:", trimRight((e7.empty ? "" : " ") + e7), separator: "")
-  print("e8:", trimRight((e8.empty ? "" : " ") + e8), separator: "")
-  print("e9:", trimRight((e9.empty ? "" : " ") + e9), separator: "")
-  print("f1:", trimRight((f1.empty ? "" : " ") + f1), separator: "")
-  print("f2:", trimRight((f2.empty ? "" : " ") + f2), separator: "")
-  print("f3:", trimRight((f3.empty ? "" : " ") + f3), separator: "")
-  print("f4:", trimRight((f4.empty ? "" : " ") + f4), separator: "")
-  print("f5:", trimRight((f5.empty ? "" : " ") + f5), separator: "")
-  print("f6:", trimRight((f6.empty ? "" : " ") + f6), separator: "")
-  print("f7:", trimRight((f7.empty ? "" : " ") + f7), separator: "")
-  print("f8:", trimRight((f8.empty ? "" : " ") + f8), separator: "")
-  print("f9:", trimRight((f9.empty ? "" : " ") + f9), separator: "")
-  print("g1:", trimRight((g1.empty ? "" : " ") + g1), separator: "")
-  print("g2:", trimRight((g2.empty ? "" : " ") + g2), separator: "")
-  print("g3:", trimRight((g3.empty ? "" : " ") + g3), separator: "")
-  print("g4:", trimRight((g4.empty ? "" : " ") + g4), separator: "")
-  print("g5:", trimRight((g5.empty ? "" : " ") + g5), separator: "")
-  print("g6:", trimRight((g6.empty ? "" : " ") + g6), separator: "")
-  print("g7:", trimRight((g7.empty ? "" : " ") + g7), separator: "")
-  print("g8:", trimRight((g8.empty ? "" : " ") + g8), separator: "")
-  print("g9:", trimRight((g9.empty ? "" : " ") + g9), separator: "")
-  print("h1:", trimRight((h1.empty ? "" : " ") + h1), separator: "")
-  print("h2:", trimRight((h2.empty ? "" : " ") + h2), separator: "")
-  print("h3:", trimRight((h3.empty ? "" : " ") + h3), separator: "")
-  print("h4:", trimRight((h4.empty ? "" : " ") + h4), separator: "")
-  print("h5:", trimRight((h5.empty ? "" : " ") + h5), separator: "")
-  print("h6:", trimRight((h6.empty ? "" : " ") + h6), separator: "")
-  print("h7:", trimRight((h7.empty ? "" : " ") + h7), separator: "")
-  print("h8:", trimRight((h8.empty ? "" : " ") + h8), separator: "")
-  print("h9:", trimRight((h9.empty ? "" : " ") + h9), separator: "")
-  print("m1:", trimRight((m1.empty ? "" : " ") + m1), separator: "")
-  print("m2:", trimRight((m2.empty ? "" : " ") + m2), separator: "")
-  print("m3:", trimRight((m3.empty ? "" : " ") + m3), separator: "")
-  print("m4:", trimRight((m4.empty ? "" : " ") + m4), separator: "")
-  print("m5:", trimRight((m5.empty ? "" : " ") + m5), separator: "")
-  print("m6:", trimRight((m6.empty ? "" : " ") + m6), separator: "")
-  print("m7:", trimRight((m7.empty ? "" : " ") + m7), separator: "")
-  print("m8:", trimRight((m8.empty ? "" : " ") + m8), separator: "")
-  print("m9:", trimRight((m9.empty ? "" : " ") + m9), separator: "")
-  print("n1:", trimRight((n1.empty ? "" : " ") + n1), separator: "")
-  print("n2:", trimRight((n2.empty ? "" : " ") + n2), separator: "")
-  print("n3:", trimRight((n3.empty ? "" : " ") + n3), separator: "")
-  print("n4:", trimRight((n4.empty ? "" : " ") + n4), separator: "")
-  print("n5:", trimRight((n5.empty ? "" : " ") + n5), separator: "")
-  print("n6:", trimRight((n6.empty ? "" : " ") + n6), separator: "")
-  print("n7:", trimRight((n7.empty ? "" : " ") + n7), separator: "")
-  print("n8:", trimRight((n8.empty ? "" : " ") + n8), separator: "")
-  print("n9:", trimRight((n9.empty ? "" : " ") + n9), separator: "")
-  print("o1:", trimRight((o1.empty ? "" : " ") + o1), separator: "")
-  print("o2:", trimRight((o2.empty ? "" : " ") + o2), separator: "")
-  print("o3:", trimRight((o3.empty ? "" : " ") + o3), separator: "")
-  print("o4:", trimRight((o4.empty ? "" : " ") + o4), separator: "")
-  print("o5:", trimRight((o5.empty ? "" : " ") + o5), separator: "")
-  print("o6:", trimRight((o6.empty ? "" : " ") + o6), separator: "")
-  print("o7:", trimRight((o7.empty ? "" : " ") + o7), separator: "")
-  print("o8:", trimRight((o8.empty ? "" : " ") + o8), separator: "")
-  print("o9:", trimRight((o9.empty ? "" : " ") + o9), separator: "")
-  print("p1:", trimRight((p1.empty ? "" : " ") + p1), separator: "")
-  print("p2:", trimRight((p2.empty ? "" : " ") + p2), separator: "")
-  print("p3:", trimRight((p3.empty ? "" : " ") + p3), separator: "")
-  print("p4:", trimRight((p4.empty ? "" : " ") + p4), separator: "")
-  print("p5:", trimRight((p5.empty ? "" : " ") + p5), separator: "")
-  print("p6:", trimRight((p6.empty ? "" : " ") + p6), separator: "")
-  print("p7:", trimRight((p7.empty ? "" : " ") + p7), separator: "")
-  print("p8:", trimRight((p8.empty ? "" : " ") + p8), separator: "")
-  print("p9:", trimRight((p9.empty ? "" : " ") + p9), separator: "")
+  print("a1:", ((a1.empty ? "" : " ") + a1).trimEnd(), separator: "")
+  print("a2:", ((a2.empty ? "" : " ") + a2).trimEnd(), separator: "")
+  print("a3:", ((a3.empty ? "" : " ") + a3).trimEnd(), separator: "")
+  print("a4:", ((a4.empty ? "" : " ") + a4).trimEnd(), separator: "")
+  print("a5:", ((a5.empty ? "" : " ") + a5).trimEnd(), separator: "")
+  print("a6:", ((a6.empty ? "" : " ") + a6).trimEnd(), separator: "")
+  print("a7:", ((a7.empty ? "" : " ") + a7).trimEnd(), separator: "")
+  print("b8:", ((b8.empty ? "" : " ") + b8).trimEnd(), separator: "")
+  print("b9:", ((b9.empty ? "" : " ") + b9).trimEnd(), separator: "")
+  print("b1:", ((b1.empty ? "" : " ") + b1).trimEnd(), separator: "")
+  print("b2:", ((b2.empty ? "" : " ") + b2).trimEnd(), separator: "")
+  print("b3:", ((b3.empty ? "" : " ") + b3).trimEnd(), separator: "")
+  print("b4:", ((b4.empty ? "" : " ") + b4).trimEnd(), separator: "")
+  print("b5:", ((b5.empty ? "" : " ") + b5).trimEnd(), separator: "")
+  print("b6:", ((b6.empty ? "" : " ") + b6).trimEnd(), separator: "")
+  print("b7:", ((b7.empty ? "" : " ") + b7).trimEnd(), separator: "")
+  print("b8:", ((b8.empty ? "" : " ") + b8).trimEnd(), separator: "")
+  print("b9:", ((b9.empty ? "" : " ") + b9).trimEnd(), separator: "")
+  print("c1:", ((c1.empty ? "" : " ") + c1).trimEnd(), separator: "")
+  print("c2:", ((c2.empty ? "" : " ") + c2).trimEnd(), separator: "")
+  print("c3:", ((c3.empty ? "" : " ") + c3).trimEnd(), separator: "")
+  print("c4:", ((c4.empty ? "" : " ") + c4).trimEnd(), separator: "")
+  print("c5:", ((c5.empty ? "" : " ") + c5).trimEnd(), separator: "")
+  print("c6:", ((c6.empty ? "" : " ") + c6).trimEnd(), separator: "")
+  print("c7:", ((c7.empty ? "" : " ") + c7).trimEnd(), separator: "")
+  print("c8:", ((c8.empty ? "" : " ") + c8).trimEnd(), separator: "")
+  print("c9:", ((c9.empty ? "" : " ") + c9).trimEnd(), separator: "")
+  print("d1:", ((d1.empty ? "" : " ") + d1).trimEnd(), separator: "")
+  print("d2:", ((d2.empty ? "" : " ") + d2).trimEnd(), separator: "")
+  print("d3:", ((d3.empty ? "" : " ") + d3).trimEnd(), separator: "")
+  print("d4:", ((d4.empty ? "" : " ") + d4).trimEnd(), separator: "")
+  print("d5:", ((d5.empty ? "" : " ") + d5).trimEnd(), separator: "")
+  print("d6:", ((d6.empty ? "" : " ") + d6).trimEnd(), separator: "")
+  print("d7:", ((d7.empty ? "" : " ") + d7).trimEnd(), separator: "")
+  print("d8:", ((d8.empty ? "" : " ") + d8).trimEnd(), separator: "")
+  print("d9:", ((d9.empty ? "" : " ") + d9).trimEnd(), separator: "")
+  print("e1:", ((e1.empty ? "" : " ") + e1).trimEnd(), separator: "")
+  print("e2:", ((e2.empty ? "" : " ") + e2).trimEnd(), separator: "")
+  print("e3:", ((e3.empty ? "" : " ") + e3).trimEnd(), separator: "")
+  print("e4:", ((e4.empty ? "" : " ") + e4).trimEnd(), separator: "")
+  print("e5:", ((e5.empty ? "" : " ") + e5).trimEnd(), separator: "")
+  print("e6:", ((e6.empty ? "" : " ") + e6).trimEnd(), separator: "")
+  print("e7:", ((e7.empty ? "" : " ") + e7).trimEnd(), separator: "")
+  print("e8:", ((e8.empty ? "" : " ") + e8).trimEnd(), separator: "")
+  print("e9:", ((e9.empty ? "" : " ") + e9).trimEnd(), separator: "")
+  print("f1:", ((f1.empty ? "" : " ") + f1).trimEnd(), separator: "")
+  print("f2:", ((f2.empty ? "" : " ") + f2).trimEnd(), separator: "")
+  print("f3:", ((f3.empty ? "" : " ") + f3).trimEnd(), separator: "")
+  print("f4:", ((f4.empty ? "" : " ") + f4).trimEnd(), separator: "")
+  print("f5:", ((f5.empty ? "" : " ") + f5).trimEnd(), separator: "")
+  print("f6:", ((f6.empty ? "" : " ") + f6).trimEnd(), separator: "")
+  print("f7:", ((f7.empty ? "" : " ") + f7).trimEnd(), separator: "")
+  print("f8:", ((f8.empty ? "" : " ") + f8).trimEnd(), separator: "")
+  print("f9:", ((f9.empty ? "" : " ") + f9).trimEnd(), separator: "")
+  print("g1:", ((g1.empty ? "" : " ") + g1).trimEnd(), separator: "")
+  print("g2:", ((g2.empty ? "" : " ") + g2).trimEnd(), separator: "")
+  print("g3:", ((g3.empty ? "" : " ") + g3).trimEnd(), separator: "")
+  print("g4:", ((g4.empty ? "" : " ") + g4).trimEnd(), separator: "")
+  print("g5:", ((g5.empty ? "" : " ") + g5).trimEnd(), separator: "")
+  print("g6:", ((g6.empty ? "" : " ") + g6).trimEnd(), separator: "")
+  print("g7:", ((g7.empty ? "" : " ") + g7).trimEnd(), separator: "")
+  print("g8:", ((g8.empty ? "" : " ") + g8).trimEnd(), separator: "")
+  print("g9:", ((g9.empty ? "" : " ") + g9).trimEnd(), separator: "")
+  print("h1:", ((h1.empty ? "" : " ") + h1).trimEnd(), separator: "")
+  print("h2:", ((h2.empty ? "" : " ") + h2).trimEnd(), separator: "")
+  print("h3:", ((h3.empty ? "" : " ") + h3).trimEnd(), separator: "")
+  print("h4:", ((h4.empty ? "" : " ") + h4).trimEnd(), separator: "")
+  print("h5:", ((h5.empty ? "" : " ") + h5).trimEnd(), separator: "")
+  print("h6:", ((h6.empty ? "" : " ") + h6).trimEnd(), separator: "")
+  print("h7:", ((h7.empty ? "" : " ") + h7).trimEnd(), separator: "")
+  print("h8:", ((h8.empty ? "" : " ") + h8).trimEnd(), separator: "")
+  print("h9:", ((h9.empty ? "" : " ") + h9).trimEnd(), separator: "")
+  print("m1:", ((m1.empty ? "" : " ") + m1).trimEnd(), separator: "")
+  print("m2:", ((m2.empty ? "" : " ") + m2).trimEnd(), separator: "")
+  print("m3:", ((m3.empty ? "" : " ") + m3).trimEnd(), separator: "")
+  print("m4:", ((m4.empty ? "" : " ") + m4).trimEnd(), separator: "")
+  print("m5:", ((m5.empty ? "" : " ") + m5).trimEnd(), separator: "")
+  print("m6:", ((m6.empty ? "" : " ") + m6).trimEnd(), separator: "")
+  print("m7:", ((m7.empty ? "" : " ") + m7).trimEnd(), separator: "")
+  print("m8:", ((m8.empty ? "" : " ") + m8).trimEnd(), separator: "")
+  print("m9:", ((m9.empty ? "" : " ") + m9).trimEnd(), separator: "")
+  print("n1:", ((n1.empty ? "" : " ") + n1).trimEnd(), separator: "")
+  print("n2:", ((n2.empty ? "" : " ") + n2).trimEnd(), separator: "")
+  print("n3:", ((n3.empty ? "" : " ") + n3).trimEnd(), separator: "")
+  print("n4:", ((n4.empty ? "" : " ") + n4).trimEnd(), separator: "")
+  print("n5:", ((n5.empty ? "" : " ") + n5).trimEnd(), separator: "")
+  print("n6:", ((n6.empty ? "" : " ") + n6).trimEnd(), separator: "")
+  print("n7:", ((n7.empty ? "" : " ") + n7).trimEnd(), separator: "")
+  print("n8:", ((n8.empty ? "" : " ") + n8).trimEnd(), separator: "")
+  print("n9:", ((n9.empty ? "" : " ") + n9).trimEnd(), separator: "")
+  print("o1:", ((o1.empty ? "" : " ") + o1).trimEnd(), separator: "")
+  print("o2:", ((o2.empty ? "" : " ") + o2).trimEnd(), separator: "")
+  print("o3:", ((o3.empty ? "" : " ") + o3).trimEnd(), separator: "")
+  print("o4:", ((o4.empty ? "" : " ") + o4).trimEnd(), separator: "")
+  print("o5:", ((o5.empty ? "" : " ") + o5).trimEnd(), separator: "")
+  print("o6:", ((o6.empty ? "" : " ") + o6).trimEnd(), separator: "")
+  print("o7:", ((o7.empty ? "" : " ") + o7).trimEnd(), separator: "")
+  print("o8:", ((o8.empty ? "" : " ") + o8).trimEnd(), separator: "")
+  print("o9:", ((o9.empty ? "" : " ") + o9).trimEnd(), separator: "")
+  print("p1:", ((p1.empty ? "" : " ") + p1).trimEnd(), separator: "")
+  print("p2:", ((p2.empty ? "" : " ") + p2).trimEnd(), separator: "")
+  print("p3:", ((p3.empty ? "" : " ") + p3).trimEnd(), separator: "")
+  print("p4:", ((p4.empty ? "" : " ") + p4).trimEnd(), separator: "")
+  print("p5:", ((p5.empty ? "" : " ") + p5).trimEnd(), separator: "")
+  print("p6:", ((p6.empty ? "" : " ") + p6).trimEnd(), separator: "")
+  print("p7:", ((p7.empty ? "" : " ") + p7).trimEnd(), separator: "")
+  print("p8:", ((p8.empty ? "" : " ") + p8).trimEnd(), separator: "")
+  print("p9:", ((p9.empty ? "" : " ") + p9).trimEnd(), separator: "")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -256,32 +246,16 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$0;
-struct __THE_1_fn$0P;
-
-struct __THE_1_fn$0 {
-  struct str (*f) (void *, struct __THE_1_fn$0P);
-  void *x;
-  size_t l;
-};
-struct __THE_1_fn$0P {
-  struct str n0;
-};
-
 void *alloc (size_t);
 void *re_alloc (void *, size_t);
-bool char_isWhitespace (char);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
-char *str_at (struct str, int32_t);
 bool str_empty (struct str);
-size_t str_len (struct str);
 struct str str_replace (struct str, struct str, struct str, unsigned char, int32_t);
-struct str str_slice (struct str, unsigned char, int32_t, unsigned char, int32_t);
-struct str __THE_1_trimRight_0 (void *, struct __THE_1_fn$0P);
+struct str str_trimEnd (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -298,9 +272,6 @@ void *re_alloc (void *d, size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
-}
-bool char_isWhitespace (char c) {
-  return isspace(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -354,22 +325,10 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-char *str_at (struct str s, int32_t i) {
-  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int32_t) s.l))) {
-    fprintf(stderr, "Error: index %" PRId32 " out of string bounds" THE_EOL, i);
-    exit(EXIT_FAILURE);
-  }
-  return i < 0 ? &s.d[s.l + i] : &s.d[i];
-}
 bool str_empty (struct str s) {
   bool r = s.l == 0;
   free(s.d);
   return r;
-}
-size_t str_len (struct str s) {
-  size_t l = s.l;
-  free(s.d);
-  return l;
 }
 struct str str_replace (struct str self, struct str n1, struct str n2, unsigned char _o3, int32_t n3) {
   size_t l = 0;
@@ -444,38 +403,22 @@ struct str str_replace (struct str self, struct str n1, struct str n2, unsigned 
   free(self.d);
   return (struct str) {d, l};
 }
-struct str str_slice (struct str s, unsigned char o1, int32_t n1, unsigned char o2, int32_t n2) {
-  int32_t i1 = o1 == 0 ? 0 : (int32_t) (n1 < 0 ? (n1 < -((int32_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));
-  int32_t i2 = o2 == 0 ? (int32_t) s.l : (int32_t) (n2 < 0 ? (n2 < -((int32_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));
-  if (i1 >= i2 || i1 >= s.l) {
+struct str str_trimEnd (struct str s) {
+  if (s.l == 0) return s;
+  while (isspace(s.d[s.l - 1])) {
+    s.l--;
+    if (s.l == 0) break;
+  }
+  if (s.l == 0) {
     free(s.d);
-    return str_alloc("");
+    s.d = NULL;
+  } else {
+    s.d = re_alloc(s.d, s.l);
   }
-  size_t l = i2 - i1;
-  char *d = alloc(l);
-  for (size_t i = 0; i1 < i2; i1++) d[i++] = s.d[i1];
-  free(s.d);
-  return (struct str) {d, l};
-}
-struct str __THE_1_trimRight_0 (void *px, struct __THE_1_fn$0P p) {
-  unsigned char r = 0;
-  struct str v;
-  const struct str __THE_0_s_0 = p.n0;
-  for (int32_t __THE_0_i_0 = str_len(str_copy(__THE_0_s_0)) - 1; __THE_0_i_0 >= 0; __THE_0_i_0--) {
-    if (!char_isWhitespace(*str_at(__THE_0_s_0, __THE_0_i_0))) {
-      r = 1;
-      v = str_slice(str_copy(__THE_0_s_0), 1, 0, 1, __THE_0_i_0 + 1);
-      goto L0;
-    }
-  }
-  v = str_alloc("");
-L0:
-  str_free((struct str) __THE_0_s_0);
-  return v;
+  return s;
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_trimRight_0 = (struct __THE_1_fn$0) {&__THE_1_trimRight_0, NULL, 0};
   const struct str __THE_0_a1_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 0, 0);
   const struct str __THE_0_a2_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 0, 0);
   const struct str __THE_0_a3_0 = str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 0, 0);
@@ -584,114 +527,114 @@ int main () {
   const struct str __THE_0_p7_0 = str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 3);
   const struct str __THE_0_p8_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 3);
   const struct str __THE_0_p9_0 = str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 3);
-  print(stdout, "zsz", "a1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a1_0))}), THE_EOL);
-  print(stdout, "zsz", "a2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a2_0))}), THE_EOL);
-  print(stdout, "zsz", "a3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a3_0))}), THE_EOL);
-  print(stdout, "zsz", "a4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a4_0))}), THE_EOL);
-  print(stdout, "zsz", "a5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a5_0))}), THE_EOL);
-  print(stdout, "zsz", "a6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a6_0))}), THE_EOL);
-  print(stdout, "zsz", "a7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_a7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a7_0))}), THE_EOL);
-  print(stdout, "zsz", "b8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b8_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b8_1))}), THE_EOL);
-  print(stdout, "zsz", "b9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b9_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b9_1))}), THE_EOL);
-  print(stdout, "zsz", "b1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b1_0))}), THE_EOL);
-  print(stdout, "zsz", "b2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b2_0))}), THE_EOL);
-  print(stdout, "zsz", "b3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b3_0))}), THE_EOL);
-  print(stdout, "zsz", "b4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b4_0))}), THE_EOL);
-  print(stdout, "zsz", "b5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b5_0))}), THE_EOL);
-  print(stdout, "zsz", "b6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b6_0))}), THE_EOL);
-  print(stdout, "zsz", "b7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b7_0))}), THE_EOL);
-  print(stdout, "zsz", "b8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b8_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b8_1))}), THE_EOL);
-  print(stdout, "zsz", "b9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_b9_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b9_1))}), THE_EOL);
-  print(stdout, "zsz", "c1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c1_0))}), THE_EOL);
-  print(stdout, "zsz", "c2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c2_0))}), THE_EOL);
-  print(stdout, "zsz", "c3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c3_0))}), THE_EOL);
-  print(stdout, "zsz", "c4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c4_0))}), THE_EOL);
-  print(stdout, "zsz", "c5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c5_0))}), THE_EOL);
-  print(stdout, "zsz", "c6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c6_0))}), THE_EOL);
-  print(stdout, "zsz", "c7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c7_0))}), THE_EOL);
-  print(stdout, "zsz", "c8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c8_0))}), THE_EOL);
-  print(stdout, "zsz", "c9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_c9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c9_0))}), THE_EOL);
-  print(stdout, "zsz", "d1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d1_0))}), THE_EOL);
-  print(stdout, "zsz", "d2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d2_0))}), THE_EOL);
-  print(stdout, "zsz", "d3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d3_0))}), THE_EOL);
-  print(stdout, "zsz", "d4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d4_0))}), THE_EOL);
-  print(stdout, "zsz", "d5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d5_0))}), THE_EOL);
-  print(stdout, "zsz", "d6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d6_0))}), THE_EOL);
-  print(stdout, "zsz", "d7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d7_0))}), THE_EOL);
-  print(stdout, "zsz", "d8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d8_0))}), THE_EOL);
-  print(stdout, "zsz", "d9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_d9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d9_0))}), THE_EOL);
-  print(stdout, "zsz", "e1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e1_0))}), THE_EOL);
-  print(stdout, "zsz", "e2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e2_0))}), THE_EOL);
-  print(stdout, "zsz", "e3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e3_0))}), THE_EOL);
-  print(stdout, "zsz", "e4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e4_0))}), THE_EOL);
-  print(stdout, "zsz", "e5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e5_0))}), THE_EOL);
-  print(stdout, "zsz", "e6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e6_0))}), THE_EOL);
-  print(stdout, "zsz", "e7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e7_0))}), THE_EOL);
-  print(stdout, "zsz", "e8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e8_0))}), THE_EOL);
-  print(stdout, "zsz", "e9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_e9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e9_0))}), THE_EOL);
-  print(stdout, "zsz", "f1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f1_0))}), THE_EOL);
-  print(stdout, "zsz", "f2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f2_0))}), THE_EOL);
-  print(stdout, "zsz", "f3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f3_0))}), THE_EOL);
-  print(stdout, "zsz", "f4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f4_0))}), THE_EOL);
-  print(stdout, "zsz", "f5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f5_0))}), THE_EOL);
-  print(stdout, "zsz", "f6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f6_0))}), THE_EOL);
-  print(stdout, "zsz", "f7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f7_0))}), THE_EOL);
-  print(stdout, "zsz", "f8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f8_0))}), THE_EOL);
-  print(stdout, "zsz", "f9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_f9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f9_0))}), THE_EOL);
-  print(stdout, "zsz", "g1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g1_0))}), THE_EOL);
-  print(stdout, "zsz", "g2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g2_0))}), THE_EOL);
-  print(stdout, "zsz", "g3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g3_0))}), THE_EOL);
-  print(stdout, "zsz", "g4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g4_0))}), THE_EOL);
-  print(stdout, "zsz", "g5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g5_0))}), THE_EOL);
-  print(stdout, "zsz", "g6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g6_0))}), THE_EOL);
-  print(stdout, "zsz", "g7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g7_0))}), THE_EOL);
-  print(stdout, "zsz", "g8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g8_0))}), THE_EOL);
-  print(stdout, "zsz", "g9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_g9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g9_0))}), THE_EOL);
-  print(stdout, "zsz", "h1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h1_0))}), THE_EOL);
-  print(stdout, "zsz", "h2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h2_0))}), THE_EOL);
-  print(stdout, "zsz", "h3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h3_0))}), THE_EOL);
-  print(stdout, "zsz", "h4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h4_0))}), THE_EOL);
-  print(stdout, "zsz", "h5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h5_0))}), THE_EOL);
-  print(stdout, "zsz", "h6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h6_0))}), THE_EOL);
-  print(stdout, "zsz", "h7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h7_0))}), THE_EOL);
-  print(stdout, "zsz", "h8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h8_0))}), THE_EOL);
-  print(stdout, "zsz", "h9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_h9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h9_0))}), THE_EOL);
-  print(stdout, "zsz", "m1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m1_0))}), THE_EOL);
-  print(stdout, "zsz", "m2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m2_0))}), THE_EOL);
-  print(stdout, "zsz", "m3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m3_0))}), THE_EOL);
-  print(stdout, "zsz", "m4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m4_0))}), THE_EOL);
-  print(stdout, "zsz", "m5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m5_0))}), THE_EOL);
-  print(stdout, "zsz", "m6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m6_0))}), THE_EOL);
-  print(stdout, "zsz", "m7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m7_0))}), THE_EOL);
-  print(stdout, "zsz", "m8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m8_0))}), THE_EOL);
-  print(stdout, "zsz", "m9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_m9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m9_0))}), THE_EOL);
-  print(stdout, "zsz", "n1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n1_0))}), THE_EOL);
-  print(stdout, "zsz", "n2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n2_0))}), THE_EOL);
-  print(stdout, "zsz", "n3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n3_0))}), THE_EOL);
-  print(stdout, "zsz", "n4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n4_0))}), THE_EOL);
-  print(stdout, "zsz", "n5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n5_0))}), THE_EOL);
-  print(stdout, "zsz", "n6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n6_0))}), THE_EOL);
-  print(stdout, "zsz", "n7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n7_0))}), THE_EOL);
-  print(stdout, "zsz", "n8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n8_0))}), THE_EOL);
-  print(stdout, "zsz", "n9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_n9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n9_0))}), THE_EOL);
-  print(stdout, "zsz", "o1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o1_0))}), THE_EOL);
-  print(stdout, "zsz", "o2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o2_0))}), THE_EOL);
-  print(stdout, "zsz", "o3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o3_0))}), THE_EOL);
-  print(stdout, "zsz", "o4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o4_0))}), THE_EOL);
-  print(stdout, "zsz", "o5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o5_0))}), THE_EOL);
-  print(stdout, "zsz", "o6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o6_0))}), THE_EOL);
-  print(stdout, "zsz", "o7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o7_0))}), THE_EOL);
-  print(stdout, "zsz", "o8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o8_0))}), THE_EOL);
-  print(stdout, "zsz", "o9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_o9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o9_0))}), THE_EOL);
-  print(stdout, "zsz", "p1:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p1_0))}), THE_EOL);
-  print(stdout, "zsz", "p2:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p2_0))}), THE_EOL);
-  print(stdout, "zsz", "p3:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p3_0))}), THE_EOL);
-  print(stdout, "zsz", "p4:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p4_0))}), THE_EOL);
-  print(stdout, "zsz", "p5:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p5_0))}), THE_EOL);
-  print(stdout, "zsz", "p6:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p6_0))}), THE_EOL);
-  print(stdout, "zsz", "p7:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p7_0))}), THE_EOL);
-  print(stdout, "zsz", "p8:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p8_0))}), THE_EOL);
-  print(stdout, "zsz", "p9:", __THE_0_trimRight_0.f(__THE_0_trimRight_0.x, (struct __THE_1_fn$0P) {str_concat_str((str_empty(str_copy(__THE_0_p9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p9_0))}), THE_EOL);
+  print(stdout, "zsz", "a1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_a1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a1_0))), THE_EOL);
+  print(stdout, "zsz", "a2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_a2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a2_0))), THE_EOL);
+  print(stdout, "zsz", "a3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_a3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a3_0))), THE_EOL);
+  print(stdout, "zsz", "a4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_a4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a4_0))), THE_EOL);
+  print(stdout, "zsz", "a5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_a5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a5_0))), THE_EOL);
+  print(stdout, "zsz", "a6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_a6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a6_0))), THE_EOL);
+  print(stdout, "zsz", "a7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_a7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_a7_0))), THE_EOL);
+  print(stdout, "zsz", "b8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b8_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b8_1))), THE_EOL);
+  print(stdout, "zsz", "b9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b9_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b9_1))), THE_EOL);
+  print(stdout, "zsz", "b1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b1_0))), THE_EOL);
+  print(stdout, "zsz", "b2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b2_0))), THE_EOL);
+  print(stdout, "zsz", "b3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b3_0))), THE_EOL);
+  print(stdout, "zsz", "b4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b4_0))), THE_EOL);
+  print(stdout, "zsz", "b5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b5_0))), THE_EOL);
+  print(stdout, "zsz", "b6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b6_0))), THE_EOL);
+  print(stdout, "zsz", "b7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b7_0))), THE_EOL);
+  print(stdout, "zsz", "b8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b8_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b8_1))), THE_EOL);
+  print(stdout, "zsz", "b9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_b9_1)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_b9_1))), THE_EOL);
+  print(stdout, "zsz", "c1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c1_0))), THE_EOL);
+  print(stdout, "zsz", "c2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c2_0))), THE_EOL);
+  print(stdout, "zsz", "c3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c3_0))), THE_EOL);
+  print(stdout, "zsz", "c4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c4_0))), THE_EOL);
+  print(stdout, "zsz", "c5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c5_0))), THE_EOL);
+  print(stdout, "zsz", "c6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c6_0))), THE_EOL);
+  print(stdout, "zsz", "c7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c7_0))), THE_EOL);
+  print(stdout, "zsz", "c8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c8_0))), THE_EOL);
+  print(stdout, "zsz", "c9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_c9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_c9_0))), THE_EOL);
+  print(stdout, "zsz", "d1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d1_0))), THE_EOL);
+  print(stdout, "zsz", "d2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d2_0))), THE_EOL);
+  print(stdout, "zsz", "d3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d3_0))), THE_EOL);
+  print(stdout, "zsz", "d4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d4_0))), THE_EOL);
+  print(stdout, "zsz", "d5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d5_0))), THE_EOL);
+  print(stdout, "zsz", "d6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d6_0))), THE_EOL);
+  print(stdout, "zsz", "d7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d7_0))), THE_EOL);
+  print(stdout, "zsz", "d8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d8_0))), THE_EOL);
+  print(stdout, "zsz", "d9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_d9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_d9_0))), THE_EOL);
+  print(stdout, "zsz", "e1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e1_0))), THE_EOL);
+  print(stdout, "zsz", "e2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e2_0))), THE_EOL);
+  print(stdout, "zsz", "e3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e3_0))), THE_EOL);
+  print(stdout, "zsz", "e4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e4_0))), THE_EOL);
+  print(stdout, "zsz", "e5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e5_0))), THE_EOL);
+  print(stdout, "zsz", "e6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e6_0))), THE_EOL);
+  print(stdout, "zsz", "e7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e7_0))), THE_EOL);
+  print(stdout, "zsz", "e8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e8_0))), THE_EOL);
+  print(stdout, "zsz", "e9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_e9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_e9_0))), THE_EOL);
+  print(stdout, "zsz", "f1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f1_0))), THE_EOL);
+  print(stdout, "zsz", "f2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f2_0))), THE_EOL);
+  print(stdout, "zsz", "f3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f3_0))), THE_EOL);
+  print(stdout, "zsz", "f4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f4_0))), THE_EOL);
+  print(stdout, "zsz", "f5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f5_0))), THE_EOL);
+  print(stdout, "zsz", "f6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f6_0))), THE_EOL);
+  print(stdout, "zsz", "f7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f7_0))), THE_EOL);
+  print(stdout, "zsz", "f8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f8_0))), THE_EOL);
+  print(stdout, "zsz", "f9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_f9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_f9_0))), THE_EOL);
+  print(stdout, "zsz", "g1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g1_0))), THE_EOL);
+  print(stdout, "zsz", "g2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g2_0))), THE_EOL);
+  print(stdout, "zsz", "g3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g3_0))), THE_EOL);
+  print(stdout, "zsz", "g4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g4_0))), THE_EOL);
+  print(stdout, "zsz", "g5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g5_0))), THE_EOL);
+  print(stdout, "zsz", "g6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g6_0))), THE_EOL);
+  print(stdout, "zsz", "g7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g7_0))), THE_EOL);
+  print(stdout, "zsz", "g8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g8_0))), THE_EOL);
+  print(stdout, "zsz", "g9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_g9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_g9_0))), THE_EOL);
+  print(stdout, "zsz", "h1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h1_0))), THE_EOL);
+  print(stdout, "zsz", "h2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h2_0))), THE_EOL);
+  print(stdout, "zsz", "h3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h3_0))), THE_EOL);
+  print(stdout, "zsz", "h4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h4_0))), THE_EOL);
+  print(stdout, "zsz", "h5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h5_0))), THE_EOL);
+  print(stdout, "zsz", "h6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h6_0))), THE_EOL);
+  print(stdout, "zsz", "h7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h7_0))), THE_EOL);
+  print(stdout, "zsz", "h8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h8_0))), THE_EOL);
+  print(stdout, "zsz", "h9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_h9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_h9_0))), THE_EOL);
+  print(stdout, "zsz", "m1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m1_0))), THE_EOL);
+  print(stdout, "zsz", "m2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m2_0))), THE_EOL);
+  print(stdout, "zsz", "m3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m3_0))), THE_EOL);
+  print(stdout, "zsz", "m4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m4_0))), THE_EOL);
+  print(stdout, "zsz", "m5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m5_0))), THE_EOL);
+  print(stdout, "zsz", "m6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m6_0))), THE_EOL);
+  print(stdout, "zsz", "m7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m7_0))), THE_EOL);
+  print(stdout, "zsz", "m8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m8_0))), THE_EOL);
+  print(stdout, "zsz", "m9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_m9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_m9_0))), THE_EOL);
+  print(stdout, "zsz", "n1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n1_0))), THE_EOL);
+  print(stdout, "zsz", "n2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n2_0))), THE_EOL);
+  print(stdout, "zsz", "n3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n3_0))), THE_EOL);
+  print(stdout, "zsz", "n4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n4_0))), THE_EOL);
+  print(stdout, "zsz", "n5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n5_0))), THE_EOL);
+  print(stdout, "zsz", "n6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n6_0))), THE_EOL);
+  print(stdout, "zsz", "n7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n7_0))), THE_EOL);
+  print(stdout, "zsz", "n8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n8_0))), THE_EOL);
+  print(stdout, "zsz", "n9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_n9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_n9_0))), THE_EOL);
+  print(stdout, "zsz", "o1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o1_0))), THE_EOL);
+  print(stdout, "zsz", "o2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o2_0))), THE_EOL);
+  print(stdout, "zsz", "o3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o3_0))), THE_EOL);
+  print(stdout, "zsz", "o4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o4_0))), THE_EOL);
+  print(stdout, "zsz", "o5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o5_0))), THE_EOL);
+  print(stdout, "zsz", "o6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o6_0))), THE_EOL);
+  print(stdout, "zsz", "o7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o7_0))), THE_EOL);
+  print(stdout, "zsz", "o8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o8_0))), THE_EOL);
+  print(stdout, "zsz", "o9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_o9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_o9_0))), THE_EOL);
+  print(stdout, "zsz", "p1:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p1_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p1_0))), THE_EOL);
+  print(stdout, "zsz", "p2:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p2_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p2_0))), THE_EOL);
+  print(stdout, "zsz", "p3:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p3_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p3_0))), THE_EOL);
+  print(stdout, "zsz", "p4:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p4_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p4_0))), THE_EOL);
+  print(stdout, "zsz", "p5:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p5_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p5_0))), THE_EOL);
+  print(stdout, "zsz", "p6:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p6_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p6_0))), THE_EOL);
+  print(stdout, "zsz", "p7:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p7_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p7_0))), THE_EOL);
+  print(stdout, "zsz", "p8:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p8_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p8_0))), THE_EOL);
+  print(stdout, "zsz", "p9:", str_trimEnd(str_concat_str((str_empty(str_copy(__THE_0_p9_0)) ? str_alloc("") : str_alloc(" ")), str_copy(__THE_0_p9_0))), THE_EOL);
   str_free((struct str) __THE_0_p9_0);
   str_free((struct str) __THE_0_p8_0);
   str_free((struct str) __THE_0_p7_0);

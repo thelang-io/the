@@ -115,4 +115,10 @@ obj Str {
 
   /* Returns a string with whitespaces removed from both ends. */
   fn trim (self: Self) Self
+
+  /* Returns a string with whitespaces removed from the end. */
+  fn trimEnd (self: Self) Self
+
+  /* Returns a string with whitespaces removed from the beginning. */
+  fn trimStart (self: Self) Self
 }

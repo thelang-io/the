@@ -677,6 +677,14 @@ void TypeMap::_strType (TypeMapPhase phase) {
     auto trimTypeFn = TypeFn{selfType, {}, true, trimCallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".trim", "@str.trim", trimTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"trim", this->_items.back().get(), false, true});
+    auto trimEndCallInfo = TypeCallInfo{selfType->name + "_trimEnd", true, "self_0", selfType, false};
+    auto trimEndTypeFn = TypeFn{selfType, {}, true, trimEndCallInfo};
+    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".trimEnd", "@str.trimEnd", trimEndTypeFn, {}, true}));
+    selfType->fields.push_back(TypeField{"trimEnd", this->_items.back().get(), false, true});
+    auto trimStartCallInfo = TypeCallInfo{selfType->name + "_trimStart", true, "self_0", selfType, false};
+    auto trimStartTypeFn = TypeFn{selfType, {}, true, trimStartCallInfo};
+    this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".trimStart", "@str.trimStart", trimStartTypeFn, {}, true}));
+    selfType->fields.push_back(TypeField{"trimStart", this->_items.back().get(), false, true});
   });
 }
 

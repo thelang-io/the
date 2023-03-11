@@ -1,0 +1,94 @@
+======= stdin =======
+main {
+  "".trimStart();
+  "\n".trimStart();
+  "\n\r".trimStart();
+  "\n\r\t".trimStart();
+  "test in test".trimStart();
+  "test in test ".trimStart();
+  " test in test".trimStart();
+  " test in test ".trimStart();
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct str str_trimStart (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_trimStart (struct str s) {
+  if (s.l == 0) return s;
+  size_t i = 0;
+  while (i < s.l && isspace(s.d[i])) i++;
+  if (i >= s.l) {
+    free(s.d);
+    s = (struct str) {NULL, 0};
+  } else {
+    memmove(s.d, &s.d[i], s.l - i);
+    s.l -= i;
+    s.d = re_alloc(s.d, s.l);
+  }
+  return s;
+}
+
+int main () {
+  str_free((struct str) str_trimStart(str_alloc("")));
+  str_free((struct str) str_trimStart(str_alloc("\n")));
+  str_free((struct str) str_trimStart(str_alloc("\n\r")));
+  str_free((struct str) str_trimStart(str_alloc("\n\r\t")));
+  str_free((struct str) str_trimStart(str_alloc("test in test")));
+  str_free((struct str) str_trimStart(str_alloc("test in test ")));
+  str_free((struct str) str_trimStart(str_alloc(" test in test")));
+  str_free((struct str) str_trimStart(str_alloc(" test in test ")));
+}
+======= flags =======
+======= stdout =======
