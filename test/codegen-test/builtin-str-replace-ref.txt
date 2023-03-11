@@ -3,7 +3,10 @@ main {
   arr := ["", "t", "test"]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].find("t"))
+    print(arr[i].replace("t", "b"))
+    print(arr[i].replace("t", "b", count: 1))
+    print(arr[i].replace("t", "b", count: 2))
+    print(arr[i].replace("t", "b", count: 3))
   }
 }
 ======= code =======
@@ -40,11 +43,12 @@ struct __THE_1_array_str {
 };
 
 void *alloc (size_t);
+void *re_alloc (void *, size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-int32_t str_find (struct str, struct str);
+struct str str_replace (struct str, struct str, struct str, unsigned char, int32_t);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
@@ -55,6 +59,14 @@ void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -102,17 +114,60 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-int32_t str_find (struct str s1, struct str s2) {
-  int32_t r = -1;
-  for (size_t i = 0; i < s1.l; i++) {
-    if (memcmp(&s1.d[i], s2.d, s2.l) == 0) {
-      r = (int32_t) i;
-      break;
+struct str str_replace (struct str self, struct str n1, struct str n2, unsigned char _o3, int32_t n3) {
+  size_t l = self.l;
+  char *d = alloc(l);
+  int32_t k = 0;
+  if (n1.l == 0 && n2.l > 0) {
+    l = self.l + (n3 > 0 && n3 <= self.l ? n3 : self.l + 1) * n2.l;
+    d = re_alloc(d, l);
+    memcpy(d, n2.d, n2.l);
+    size_t j = n2.l;
+    for (size_t i = 0; i < self.l; i++) {
+      d[j++] = self.d[i];
+      if (n3 <= 0 || ++k < n3) {
+        memcpy(&d[j], n2.d, n2.l);
+        j += n2.l;
+      }
     }
+  } else if (n1.l > 0 && n2.l == 0) {
+    size_t j = 0;
+    for (size_t i = 0; i < self.l; i++) {
+      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+        l -= n1.l;
+        i += n1.l - 1;
+      } else {
+        d[j++] = self.d[i];
+      }
+    }
+    d = re_alloc(d, l);
+  } else if (n1.l > 0) {
+    size_t j = 0;
+    for (size_t i = 0; i < self.l; i++) {
+      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+        if (n1.l < n2.l) {
+          l += n2.l - n1.l;
+          if (l > self.l) {
+            d = re_alloc(d, l);
+          }
+        } else if (n1.l > n2.l) {
+          l -= n1.l - n2.l;
+        }
+        memcpy(&d[j], n2.d, n2.l);
+        j += n2.l;
+        i += n1.l - 1;
+      } else {
+        d[j++] = self.d[i];
+      }
+    }
+    d = re_alloc(d, l);
+  } else {
+    memcpy(d, self.d, l);
   }
-  free(s1.d);
-  free(s2.d);
-  return r;
+  free(n2.d);
+  free(n1.d);
+  free(self.d);
+  return (struct str) {d, l};
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
@@ -149,12 +204,24 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
 int main () {
   const struct __THE_1_array_str __THE_0_arr_0 = __THE_1_array_str_alloc(3, str_alloc(""), str_alloc("t"), str_alloc("test"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "iz", str_find(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t")), THE_EOL);
+    print(stdout, "sz", str_replace(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t"), str_alloc("b"), 0, 0), THE_EOL);
+    print(stdout, "sz", str_replace(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t"), str_alloc("b"), 1, 1), THE_EOL);
+    print(stdout, "sz", str_replace(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t"), str_alloc("b"), 1, 2), THE_EOL);
+    print(stdout, "sz", str_replace(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t"), str_alloc("b"), 1, 3), THE_EOL);
   }
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
 }
 ======= flags =======
 ======= stdout =======
--1
-0
-0
+
+
+
+
+b
+b
+b
+b
+besb
+best
+besb
+besb

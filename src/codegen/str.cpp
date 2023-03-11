@@ -18,12 +18,33 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenStr = {
+  "_{struct str} str_calloc (const char *r, _{size_t} l) {" EOL
+  "  char *d = _{alloc}(l);" EOL
+  "  _{memcpy}(d, r, l);" EOL
+  "  return (_{struct str}) {d, l};" EOL
+  "}" EOL,
+
   "char *str_at (_{struct str} s, _{int32_t} i) {" EOL
   "  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((_{int32_t}) s.l))) {" EOL
   R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId32} " out of string bounds" _{THE_EOL}, i);)" EOL
   "    _{exit}(_{EXIT_FAILURE});" EOL
   "  }" EOL
   "  return i < 0 ? &s.d[s.l + i] : &s.d[i];" EOL
+  "}" EOL,
+
+  "_{bool} str_contains (_{struct str} self, _{struct str} n1) {" EOL
+  "  _{bool} r = n1.l == 0;" EOL
+  "  if (!r) {" EOL
+  "    for (_{size_t} i = 0; i <= self.l; i++) {" EOL
+  "      if (_{memcmp}(&self.d[i], n1.d, n1.l) == 0) {" EOL
+  "        r = _{true};" EOL
+  "        break;" EOL
+  "      }" EOL
+  "    }" EOL
+  "  }" EOL
+  "  _{free}(self.d);" EOL
+  "  _{free}(n1.d);" EOL
+  "  return r;" EOL
   "}" EOL,
 
   "_{bool} str_empty (_{struct str} s) {" EOL
@@ -34,14 +55,10 @@ const std::vector<std::string> codegenStr = {
 
   "_{int32_t} str_find (_{struct str} s1, _{struct str} s2) {" EOL
   "  _{int32_t} r = -1;" EOL
-  "  if (s1.l == s2.l) {" EOL
-  "    r = _{memcmp}(s1.d, s2.d, s1.l) == 0 ? 0 : -1;" EOL
-  "  } else if (s1.l > s2.l) {" EOL
-  "    for (_{size_t} i = 0; i <= s1.l - s2.l; i++) {" EOL
-  "      if (_{memcmp}(&s1.d[i], s2.d, s2.l) == 0) {" EOL
-  "        r = (_{int32_t}) i;" EOL
-  "        break;" EOL
-  "      }" EOL
+  "  for (_{size_t} i = 0; i < s1.l; i++) {" EOL
+  "    if (_{memcmp}(&s1.d[i], s2.d, s2.l) == 0) {" EOL
+  "      r = (_{int32_t}) i;" EOL
+  "      break;" EOL
   "    }" EOL
   "  }" EOL
   "  _{free}(s1.d);" EOL
@@ -109,6 +126,62 @@ const std::vector<std::string> codegenStr = {
   "  return r;" EOL
   "}" EOL,
 
+  "_{struct str} str_replace (_{struct str} self, _{struct str} n1, _{struct str} n2, unsigned char _o3, _{int32_t} n3) {" EOL
+  "  _{size_t} l = self.l;" EOL
+  "  char *d = _{alloc}(l);" EOL
+  "  _{int32_t} k = 0;" EOL
+  "  if (n1.l == 0 && n2.l > 0) {" EOL
+  "    l = self.l + (n3 > 0 && n3 <= self.l ? n3 : self.l + 1) * n2.l;" EOL
+  "    d = _{re_alloc}(d, l);" EOL
+  "    _{memcpy}(d, n2.d, n2.l);" EOL
+  "    _{size_t} j = n2.l;" EOL
+  "    for (_{size_t} i = 0; i < self.l; i++) {" EOL
+  "      d[j++] = self.d[i];" EOL
+  "      if (n3 <= 0 || ++k < n3) {" EOL
+  "        _{memcpy}(&d[j], n2.d, n2.l);" EOL
+  "        j += n2.l;" EOL
+  "      }" EOL
+  "    }" EOL
+  "  } else if (n1.l > 0 && n2.l == 0) {" EOL
+  "    _{size_t} j = 0;" EOL
+  "    for (_{size_t} i = 0; i < self.l; i++) {" EOL
+  "      if (_{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {" EOL
+  "        l -= n1.l;" EOL
+  "        i += n1.l - 1;" EOL
+  "      } else {" EOL
+  "        d[j++] = self.d[i];" EOL
+  "      }" EOL
+  "    }" EOL
+  "    d = _{re_alloc}(d, l);" EOL
+  "  } else if (n1.l > 0) {" EOL
+  "    _{size_t} j = 0;" EOL
+  "    for (_{size_t} i = 0; i < self.l; i++) {" EOL
+  "      if (_{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {" EOL
+  "        if (n1.l < n2.l) {" EOL
+  "          l += n2.l - n1.l;" EOL
+  "          if (l > self.l) {" EOL
+  "            d = _{re_alloc}(d, l);" EOL
+  "          }" EOL
+  "        } else if (n1.l > n2.l) {" EOL
+  "          l -= n1.l - n2.l;" EOL
+  "        }" EOL
+  "        _{memcpy}(&d[j], n2.d, n2.l);" EOL
+  "        j += n2.l;" EOL
+  "        i += n1.l - 1;" EOL
+  "      } else {" EOL
+  "        d[j++] = self.d[i];" EOL
+  "      }" EOL
+  "    }" EOL
+  "    d = _{re_alloc}(d, l);" EOL
+  "  } else {" EOL
+  "    _{memcpy}(d, self.d, l);" EOL
+  "  }" EOL
+  "  _{free}(n2.d);" EOL
+  "  _{free}(n1.d);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{struct str}) {d, l};" EOL
+  "}" EOL,
+
   "_{struct str} str_slice (_{struct str} s, unsigned char o1, _{int32_t} n1, unsigned char o2, _{int32_t} n2) {" EOL
   "  _{int32_t} i1 = o1 == 0 ? 0 : (_{int32_t}) (n1 < 0 ? (n1 < -((_{int32_t}) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));" EOL
   "  _{int32_t} i2 = o2 == 0 ? (_{int32_t}) s.l : (_{int32_t}) (n2 < 0 ? (n2 < -((_{int32_t}) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));" EOL
@@ -121,6 +194,33 @@ const std::vector<std::string> codegenStr = {
   "  for (_{size_t} i = 0; i1 < i2; i1++) d[i++] = s.d[i1];" EOL
   "  _{free}(s.d);" EOL
   "  return (_{struct str}) {d, l};" EOL
+  "}" EOL,
+
+  "struct _{array_str} str_split (_{struct str} self, unsigned char o1, _{struct str} n1) {" EOL
+  "  _{struct str} *r = _{NULL};" EOL
+  "  _{size_t} l = 0;" EOL
+  "  if (self.l > 0 && n1.l == 0) {" EOL
+  "    l = self.l;" EOL
+  "    r = _{alloc}(l * sizeof(_{struct str}));" EOL
+  "    for (_{size_t} i = 0; i < l; i++) {" EOL
+  R"(      r[i] = _{str_calloc}(&self.d[i], 1);)" EOL
+  "    }" EOL
+  "  } else if (n1.l > 0) {" EOL
+  "    _{size_t} i = 0;" EOL
+  "    for (_{size_t} j = 0; j < self.l; j++) {" EOL
+  "      if (_{memcmp}(&self.d[j], n1.d, n1.l) == 0) {" EOL
+  "        r = _{re_alloc}(r, ++l * sizeof(_{struct str}));" EOL
+  "        r[l - 1] = _{str_calloc}(&self.d[i], j - i);" EOL
+  "        j += n1.l;" EOL
+  "        i = j;" EOL
+  "      }" EOL
+  "    }" EOL
+  "    r = _{re_alloc}(r, ++l * sizeof(_{struct str}));" EOL
+  "    r[l - 1] = _{str_calloc}(&self.d[i], self.l - i);" EOL
+  "  }" EOL
+  "  _{free}(n1.d);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (struct _{array_str}) {r, l};" EOL
   "}" EOL,
 
   "struct buffer str_toBuffer (_{struct str} s) {" EOL

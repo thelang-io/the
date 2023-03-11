@@ -3,7 +3,7 @@ main {
   arr := ["", "t", "test"]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].find("t"))
+    print(arr[i].contains("t"))
   }
 }
 ======= code =======
@@ -23,6 +23,7 @@ main {
 
 #include <inttypes.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +45,7 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-int32_t str_find (struct str, struct str);
+bool str_contains (struct str, struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
@@ -102,16 +103,18 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-int32_t str_find (struct str s1, struct str s2) {
-  int32_t r = -1;
-  for (size_t i = 0; i < s1.l; i++) {
-    if (memcmp(&s1.d[i], s2.d, s2.l) == 0) {
-      r = (int32_t) i;
-      break;
+bool str_contains (struct str self, struct str n1) {
+  bool r = n1.l == 0;
+  if (!r) {
+    for (size_t i = 0; i <= self.l; i++) {
+      if (memcmp(&self.d[i], n1.d, n1.l) == 0) {
+        r = true;
+        break;
+      }
     }
   }
-  free(s1.d);
-  free(s2.d);
+  free(self.d);
+  free(n1.d);
   return r;
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
@@ -149,12 +152,12 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
 int main () {
   const struct __THE_1_array_str __THE_0_arr_0 = __THE_1_array_str_alloc(3, str_alloc(""), str_alloc("t"), str_alloc("test"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "iz", str_find(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t")), THE_EOL);
+    print(stdout, "tz", str_contains(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t")), THE_EOL);
   }
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
 }
 ======= flags =======
 ======= stdout =======
--1
-0
-0
+false
+true
+true

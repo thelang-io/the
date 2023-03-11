@@ -48,9 +48,9 @@ obj Str {
    *
    * @param search - Substring to search for.
    * @param replacement - Substring to replace with.
-   * @param all - Whether should replace all occurrences of `search`.
+   * @param count - Number of times `search` should be replaced. All occurrences are replaced when `count <= 0`.
    */
-  fn replace (self: Self, search: Self, replacement: Self, all := true) Self
+  fn replace (self: Self, search: Self, replacement: Self, count := 0) Self
 
   /**
    * Extracts string slice from `start` to `end` (`end` not included).

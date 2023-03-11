@@ -1,0 +1,311 @@
+======= stdin =======
+main {
+  "".replace("", "");
+  "".replace("", "t");
+  "".replace("", "test");
+  "".replace("t", "");
+  "".replace("test", "");
+  "".replace("t", "test");
+  "".replace("test", "t");
+  "".replace("test", "test");
+  "t".replace("", "");
+  "t".replace("", "t");
+  "t".replace("", "test");
+  "t".replace("t", "");
+  "t".replace("test", "");
+  "t".replace("t", "test");
+  "t".replace("test", "t");
+  "t".replace("test", "test");
+  "test in test".replace("", "");
+  "test in test".replace("", "t");
+  "test in test".replace("", "test");
+  "test in test".replace("t", "");
+  "test in test".replace("test", "");
+  "test in test".replace("t", "test");
+  "test in test".replace("test", "t");
+  "test in test".replace("test", "test");
+  "".replace("", "", 1);
+  "".replace("", "t", 1);
+  "".replace("", "test", 1);
+  "".replace("t", "", 1);
+  "".replace("test", "", 1);
+  "".replace("t", "test", 1);
+  "".replace("test", "t", 1);
+  "".replace("test", "test", 1);
+  "t".replace("", "", 1);
+  "t".replace("", "t", 1);
+  "t".replace("", "test", 1);
+  "t".replace("t", "", 1);
+  "t".replace("test", "", 1);
+  "t".replace("t", "test", 1);
+  "t".replace("test", "t", 1);
+  "t".replace("test", "test", 1);
+  "test in test".replace("", "", 1);
+  "test in test".replace("", "t", 1);
+  "test in test".replace("", "test", 1);
+  "test in test".replace("t", "", 1);
+  "test in test".replace("test", "", 1);
+  "test in test".replace("t", "test", 1);
+  "test in test".replace("test", "t", 1);
+  "test in test".replace("test", "test", 1);
+  "".replace("", "", count: 2);
+  "".replace("", "t", count: 2);
+  "".replace("", "test", count: 2);
+  "".replace("t", "", count: 2);
+  "".replace("test", "", count: 2);
+  "".replace("t", "test", count: 2);
+  "".replace("test", "t", count: 2);
+  "".replace("test", "test", count: 2);
+  "t".replace("", "", count: 2);
+  "t".replace("", "t", count: 2);
+  "t".replace("", "test", count: 2);
+  "t".replace("t", "", count: 2);
+  "t".replace("test", "", count: 2);
+  "t".replace("t", "test", count: 2);
+  "t".replace("test", "t", count: 2);
+  "t".replace("test", "test", count: 2);
+  "test in test".replace("", "", count: 2);
+  "test in test".replace("", "t", count: 2);
+  "test in test".replace("", "test", count: 2);
+  "test in test".replace("t", "", count: 2);
+  "test in test".replace("test", "", count: 2);
+  "test in test".replace("t", "test", count: 2);
+  "test in test".replace("test", "t", count: 2);
+  "test in test".replace("test", "test", count: 2);
+  "".replace("", "", count: 3);
+  "".replace("", "t", count: 3);
+  "".replace("", "test", count: 3);
+  "".replace("t", "", count: 3);
+  "".replace("test", "", count: 3);
+  "".replace("t", "test", count: 3);
+  "".replace("test", "t", count: 3);
+  "".replace("test", "test", count: 3);
+  "t".replace("", "", count: 3);
+  "t".replace("", "t", count: 3);
+  "t".replace("", "test", count: 3);
+  "t".replace("t", "", count: 3);
+  "t".replace("test", "", count: 3);
+  "t".replace("t", "test", count: 3);
+  "t".replace("test", "t", count: 3);
+  "t".replace("test", "test", count: 3);
+  "test in test".replace("", "", count: 3);
+  "test in test".replace("", "t", count: 3);
+  "test in test".replace("", "test", count: 3);
+  "test in test".replace("t", "", count: 3);
+  "test in test".replace("test", "", count: 3);
+  "test in test".replace("t", "test", count: 3);
+  "test in test".replace("test", "t", count: 3);
+  "test in test".replace("test", "test", count: 3);
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct str str_replace (struct str, struct str, struct str, unsigned char, int32_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_replace (struct str self, struct str n1, struct str n2, unsigned char _o3, int32_t n3) {
+  size_t l = self.l;
+  char *d = alloc(l);
+  int32_t k = 0;
+  if (n1.l == 0 && n2.l > 0) {
+    l = self.l + (n3 > 0 && n3 <= self.l ? n3 : self.l + 1) * n2.l;
+    d = re_alloc(d, l);
+    memcpy(d, n2.d, n2.l);
+    size_t j = n2.l;
+    for (size_t i = 0; i < self.l; i++) {
+      d[j++] = self.d[i];
+      if (n3 <= 0 || ++k < n3) {
+        memcpy(&d[j], n2.d, n2.l);
+        j += n2.l;
+      }
+    }
+  } else if (n1.l > 0 && n2.l == 0) {
+    size_t j = 0;
+    for (size_t i = 0; i < self.l; i++) {
+      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+        l -= n1.l;
+        i += n1.l - 1;
+      } else {
+        d[j++] = self.d[i];
+      }
+    }
+    d = re_alloc(d, l);
+  } else if (n1.l > 0) {
+    size_t j = 0;
+    for (size_t i = 0; i < self.l; i++) {
+      if (memcmp(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+        if (n1.l < n2.l) {
+          l += n2.l - n1.l;
+          if (l > self.l) {
+            d = re_alloc(d, l);
+          }
+        } else if (n1.l > n2.l) {
+          l -= n1.l - n2.l;
+        }
+        memcpy(&d[j], n2.d, n2.l);
+        j += n2.l;
+        i += n1.l - 1;
+      } else {
+        d[j++] = self.d[i];
+      }
+    }
+    d = re_alloc(d, l);
+  } else {
+    memcpy(d, self.d, l);
+  }
+  free(n2.d);
+  free(n1.d);
+  free(self.d);
+  return (struct str) {d, l};
+}
+
+int main () {
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 0, 0));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 0, 0));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 1));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 1));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 2));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 2));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("t"), 1, 3));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc(""), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("t"), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("t"), 1, 3));
+  str_free((struct str) str_replace(str_alloc(""), str_alloc("test"), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("t"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc(""), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("t"), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("t"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("t"), str_alloc("test"), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("t"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc(""), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc(""), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("t"), str_alloc("test"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("t"), 1, 3));
+  str_free((struct str) str_replace(str_alloc("test in test"), str_alloc("test"), str_alloc("test"), 1, 3));
+}
+======= flags =======
+======= stdout =======

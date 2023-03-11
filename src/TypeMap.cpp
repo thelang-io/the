@@ -604,7 +604,7 @@ void TypeMap::_strType (TypeMapPhase phase) {
     auto replaceTypeFn = TypeFn{selfType, {
       TypeFnParam{"search", selfType, false, true, false},
       TypeFnParam{"replacement", selfType, false, true, false},
-      TypeFnParam{"all", this->get("bool"), false, false, false}
+      TypeFnParam{"count", this->get("int"), false, false, false}
     }, true, replaceCallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".replace", "@str.replace", replaceTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"replace", this->_items.back().get(), false, true});

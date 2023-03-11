@@ -3,7 +3,9 @@ main {
   arr := ["", "t", "test"]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].find("t"))
+    print(arr[i].split())
+    print(arr[i].split(""))
+    print(arr[i].split("t"))
   }
 }
 ======= code =======
@@ -40,21 +42,35 @@ struct __THE_1_array_str {
 };
 
 void *alloc (size_t);
+void *re_alloc (void *, size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
+struct str str_escape (const struct str);
 void str_free (struct str);
-int32_t str_find (struct str, struct str);
+struct str str_calloc (const char *, size_t);
+struct __THE_1_array_str str_split (struct str, unsigned char, struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
+struct str __THE_1_array_str_str (struct __THE_1_array_str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -94,25 +110,82 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
 struct str str_copy (const struct str s) {
   char *d = alloc(s.l);
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
 }
+struct str str_escape (const struct str s) {
+  char *d = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) d = re_alloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) d = re_alloc(d, l + 1);
+    d[l++] = c;
+  }
+  return (struct str) {d, l};
+}
 void str_free (struct str s) {
   free(s.d);
 }
-int32_t str_find (struct str s1, struct str s2) {
-  int32_t r = -1;
-  for (size_t i = 0; i < s1.l; i++) {
-    if (memcmp(&s1.d[i], s2.d, s2.l) == 0) {
-      r = (int32_t) i;
-      break;
+struct str str_calloc (const char *r, size_t l) {
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct __THE_1_array_str str_split (struct str self, unsigned char o1, struct str n1) {
+  struct str *r = NULL;
+  size_t l = 0;
+  if (self.l > 0 && n1.l == 0) {
+    l = self.l;
+    r = alloc(l * sizeof(struct str));
+    for (size_t i = 0; i < l; i++) {
+      r[i] = str_calloc(&self.d[i], 1);
     }
+  } else if (n1.l > 0) {
+    size_t i = 0;
+    for (size_t j = 0; j < self.l; j++) {
+      if (memcmp(&self.d[j], n1.d, n1.l) == 0) {
+        r = re_alloc(r, ++l * sizeof(struct str));
+        r[l - 1] = str_calloc(&self.d[i], j - i);
+        j += n1.l;
+        i = j;
+      }
+    }
+    r = re_alloc(r, ++l * sizeof(struct str));
+    r[l - 1] = str_calloc(&self.d[i], self.l - i);
   }
-  free(s1.d);
-  free(s2.d);
-  return r;
+  free(n1.d);
+  free(self.d);
+  return (struct __THE_1_array_str) {r, l};
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
@@ -145,16 +218,35 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return l;
 }
+struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
+  struct str r = str_alloc("[");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_cstr(r, "\"");
+    r = str_concat_str(r, str_escape(n.d[i]));
+    r = str_concat_cstr(r, "\"");
+  }
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return str_concat_cstr(r, "]");
+}
 
 int main () {
   const struct __THE_1_array_str __THE_0_arr_0 = __THE_1_array_str_alloc(3, str_alloc(""), str_alloc("t"), str_alloc("test"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "iz", str_find(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), str_alloc("t")), THE_EOL);
+    print(stdout, "sz", __THE_1_array_str_str(str_split(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), 0, (struct str) {})), THE_EOL);
+    print(stdout, "sz", __THE_1_array_str_str(str_split(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), 1, str_alloc(""))), THE_EOL);
+    print(stdout, "sz", __THE_1_array_str_str(str_split(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0)), 1, str_alloc("t"))), THE_EOL);
   }
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
 }
 ======= flags =======
 ======= stdout =======
--1
-0
-0
+[]
+[]
+[""]
+["t"]
+["t"]
+["", ""]
+["t", "e", "s", "t"]
+["t", "e", "s", "t"]
+["", "es", ""]
