@@ -954,6 +954,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   fnDefCode += fnDefCode.empty() ? "" : EOL;
 
   auto headers = std::string(this->builtins.libCtype ? "#include <ctype.h>" EOL : "");
+  headers += std::string(this->builtins.libErrno ? "#include <errno.h>" EOL : "");
   headers += this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "";
   headers += this->builtins.libOpensslSsl ? "#include <openssl/ssl.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
@@ -1056,6 +1057,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libDirent") {
     this->builtins.libDirent = true;
     this->_activateBuiltin("definitions");
+  } else if (name == "libErrno") {
+    this->builtins.libErrno = true;
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
   } else if (name == "libNetdb") {

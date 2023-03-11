@@ -270,6 +270,23 @@ const std::vector<std::string> codegenStr = {
   "  return (_{struct str}) {r, l};" EOL
   "}" EOL,
 
+  "_{int32_t} str_toInt (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} != 0 || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{int32_t}) r;" EOL
+  "}" EOL,
+
   "_{struct str} str_trimEnd (_{struct str} s) {" EOL
   "  if (s.l == 0) return s;" EOL
   "  while (_{isspace}(s.d[s.l - 1])) {" EOL

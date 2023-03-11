@@ -106,6 +106,9 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"opendir", {"libDirent"}},
   std::pair<std::string, std::set<std::string>>{"readdir", {"libDirent"}},
 
+  std::pair<std::string, std::set<std::string>>{"ERANGE", {"libErrno"}},
+  std::pair<std::string, std::set<std::string>>{"errno", {"libErrno"}},
+
   std::pair<std::string, std::set<std::string>>{"PRId8", {"libInttypes"}},
   std::pair<std::string, std::set<std::string>>{"PRId16", {"libInttypes"}},
   std::pair<std::string, std::set<std::string>>{"PRId32", {"libInttypes"}},
@@ -144,6 +147,14 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"size_t", {"libStddef"}},
   std::pair<std::string, std::set<std::string>>{"NULL", {"libStddef"}},
 
+  std::pair<std::string, std::set<std::string>>{"INT8_MAX", {"libStdint"}},
+  std::pair<std::string, std::set<std::string>>{"INT8_MIN", {"libStdint"}},
+  std::pair<std::string, std::set<std::string>>{"INT16_MAX", {"libStdint"}},
+  std::pair<std::string, std::set<std::string>>{"INT16_MIN", {"libStdint"}},
+  std::pair<std::string, std::set<std::string>>{"INT32_MAX", {"libStdint"}},
+  std::pair<std::string, std::set<std::string>>{"INT32_MIN", {"libStdint"}},
+  std::pair<std::string, std::set<std::string>>{"INT64_MAX", {"libStdint"}},
+  std::pair<std::string, std::set<std::string>>{"INT64_MIN", {"libStdint"}},
   std::pair<std::string, std::set<std::string>>{"int8_t", {"libStdint"}},
   std::pair<std::string, std::set<std::string>>{"int16_t", {"libStdint"}},
   std::pair<std::string, std::set<std::string>>{"int32_t", {"libStdint"}},
@@ -173,7 +184,10 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"exit", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"free", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"realpath", {"libStdlib"}},
+  std::pair<std::string, std::set<std::string>>{"strtol", {"libStdlib"}},
+  std::pair<std::string, std::set<std::string>>{"strtoll", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"strtoul", {"libStdlib"}},
+  std::pair<std::string, std::set<std::string>>{"strtoull", {"libStdlib"}},
 
   std::pair<std::string, std::set<std::string>>{"memcmp", {"libString"}},
   std::pair<std::string, std::set<std::string>>{"memcpy", {"libString"}},
