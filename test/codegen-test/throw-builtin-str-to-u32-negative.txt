@@ -79,4 +79,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: value `-1` out of range
+Error: value `-1` {{ (out of range|has invalid syntax) }}
