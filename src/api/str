@@ -77,26 +77,14 @@ obj Str {
   /* Converts a string to `buffer_Buffer` object. */
   fn toBuffer (self: Self) buffer_Buffer
 
-  /**
-   * Converts a string to `float` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toFloat (self: Self, radix := 10) float
+  /* Converts a string to `float` representation. */
+  fn toFloat (self: Self) float
 
-  /**
-   * Converts a string to `f32` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toF32 (self: Self, radix := 10) f32
+  /* Converts a string to `f32` representation. */
+  fn toF32 (self: Self) f32
 
-  /**
-   * Converts a string to `f64` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toF64 (self: Self, radix := 10) f64
+  /* Converts a string to `f64` representation. */
+  fn toF64 (self: Self) f64
 
   /**
    * Converts a string to `int` representation.

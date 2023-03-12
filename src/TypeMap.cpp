@@ -626,21 +626,15 @@ void TypeMap::_strType (TypeMapPhase phase) {
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".toBuffer", "@str.toBuffer", toBufferTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"toBuffer", this->_items.back().get(), false, true});
     auto toFloatCallInfo = TypeCallInfo{selfType->name + "_toFloat", true, "self_0", selfType, false};
-    auto toFloatTypeFn = TypeFn{this->get("float"), {
-      TypeFnParam{"radix", this->get("int"), false, false, false}
-    }, true, toFloatCallInfo};
+    auto toFloatTypeFn = TypeFn{this->get("float"), {}, true, toFloatCallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".toFloat", "@str.toFloat", toFloatTypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"toFloat", this->_items.back().get(), false, true});
     auto toF32CallInfo = TypeCallInfo{selfType->name + "_toF32", true, "self_0", selfType, false};
-    auto toF32TypeFn = TypeFn{this->get("f32"), {
-      TypeFnParam{"radix", this->get("int"), false, false, false}
-    }, true, toF32CallInfo};
+    auto toF32TypeFn = TypeFn{this->get("f32"), {}, true, toF32CallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".toF32", "@str.toF32", toF32TypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"toF32", this->_items.back().get(), false, true});
     auto toF64CallInfo = TypeCallInfo{selfType->name + "_toF64", true, "self_0", selfType, false};
-    auto toF64TypeFn = TypeFn{this->get("f64"), {
-      TypeFnParam{"radix", this->get("int"), false, false, false}
-    }, true, toF64CallInfo};
+    auto toF64TypeFn = TypeFn{this->get("f64"), {}, true, toF64CallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".toF64", "@str.toF64", toF64TypeFn, {}, true}));
     selfType->fields.push_back(TypeField{"toF64", this->_items.back().get(), false, true});
     auto toIntCallInfo = TypeCallInfo{selfType->name + "_toInt", true, "self_0", selfType, false};

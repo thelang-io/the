@@ -271,6 +271,10 @@ const std::vector<std::string> codegenStr = {
   "}" EOL,
 
   "_{int32_t} str_toInt (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
   "  char *c = _{str_cstr}(self);" EOL
   "  char *e = _{NULL};" EOL
   "  _{errno} = 0;" EOL
@@ -278,7 +282,7 @@ const std::vector<std::string> codegenStr = {
   "  if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {" EOL
   R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
   "    _{exit}(_{EXIT_FAILURE});" EOL
-  "  } else if (_{errno} != 0 || self.l == 0 || e == c || *e != 0) {" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
   R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
   "    _{exit}(_{EXIT_FAILURE});" EOL
   "  }" EOL
