@@ -275,11 +275,11 @@ const std::vector<std::string> codegenStr = {
   "  char *e = _{NULL};" EOL
   "  _{errno} = 0;" EOL
   "  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);" EOL
-  "  if (_{errno} != 0 || *e != 0) {" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  "    _{exit}(_{EXIT_FAILURE});" EOL
-  "  } else if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {" EOL
+  "  if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {" EOL
   R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || self.l == 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
   "    _{exit}(_{EXIT_FAILURE});" EOL
   "  }" EOL
   "  _{free}(c);" EOL

@@ -116,11 +116,11 @@ int32_t str_toInt (struct str self, unsigned char o1, int32_t n1) {
   char *e = NULL;
   errno = 0;
   long r = strtol(c, &e, o1 == 0 ? 10 : n1);
-  if (errno != 0 || *e != 0) {
-    fprintf(stderr, "Error: value `%s` has invalid syntax" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  } else if (errno == ERANGE || r < INT32_MIN || INT32_MAX < r) {
+  if (errno == ERANGE || r < INT32_MIN || INT32_MAX < r) {
     fprintf(stderr, "Error: value `%s` out of range" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  } else if (errno != 0 || self.l == 0 || e == c || *e != 0) {
+    fprintf(stderr, "Error: value `%s` has invalid syntax" THE_EOL, c);
     exit(EXIT_FAILURE);
   }
   free(c);
