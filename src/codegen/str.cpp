@@ -250,24 +250,55 @@ const std::vector<std::string> codegenStr = {
   "  return (_{struct buffer}) {(unsigned char *) s.d, s.l};" EOL
   "}" EOL,
 
-  "_{struct str} str_trim (_{struct str} s) {" EOL
-  "  if (s.l == 0) return s;" EOL
-  "  _{size_t} i = 0;" EOL
-  "  _{size_t} j = s.l;" EOL
-  "  while (i < s.l && _{isspace}(s.d[i])) i++;" EOL
-  "  while (j >= 0 && _{isspace}(s.d[j - 1])) {" EOL
-  "    j--;" EOL
-  "    if (j == 0) break;" EOL
+  "double str_toFloat (_{struct str} self) {" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  double r = _{strtod}(c, &e);" EOL
+  "  if (_{errno} == _{ERANGE} || r < -_{DBL_MAX} || _{DBL_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
   "  }" EOL
-  "  if (i >= j) {" EOL
-  "    _{free}(s.d);" EOL
-  R"(    return _{str_alloc}("");)" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return r;" EOL
+  "}" EOL,
+
+  "float str_toF32 (_{struct str} self) {" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  float r = _{strtof}(c, &e);" EOL
+  "  if (_{errno} == _{ERANGE} || r < -_{FLT_MAX} || _{FLT_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
   "  }" EOL
-  "  _{size_t} l = j - i;" EOL
-  "  char *r = _{alloc}(l);" EOL
-  "  for (_{size_t} k = 0; k < l;) r[k++] = s.d[i++];" EOL
-  "  _{free}(s.d);" EOL
-  "  return (_{struct str}) {r, l};" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return r;" EOL
+  "}" EOL,
+
+  "double str_toF64 (_{struct str} self) {" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  double r = _{strtod}(c, &e);" EOL
+  "  if (_{errno} == _{ERANGE} || r < -_{DBL_MAX} || _{DBL_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return r;" EOL
   "}" EOL,
 
   "_{int32_t} str_toInt (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
@@ -289,6 +320,194 @@ const std::vector<std::string> codegenStr = {
   "  _{free}(c);" EOL
   "  _{free}(self.d);" EOL
   "  return (_{int32_t}) r;" EOL
+  "}" EOL,
+
+  "_{int8_t} str_toI8 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || r < _{INT8_MIN} || _{INT8_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{int8_t}) r;" EOL
+  "}" EOL,
+
+  "_{int16_t} str_toI16 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || r < _{INT16_MIN} || _{INT16_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{int16_t}) r;" EOL
+  "}" EOL,
+
+  "_{int32_t} str_toI32 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{int32_t}) r;" EOL
+  "}" EOL,
+
+  "_{int64_t} str_toI64 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  long long r = _{strtoll}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || r < _{INT64_MIN} || _{INT64_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{int64_t}) r;" EOL
+  "}" EOL,
+
+  "_{uint8_t} str_toU8 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || _{UINT8_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{uint8_t}) r;" EOL
+  "}" EOL,
+
+  "_{uint16_t} str_toU16 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || _{UINT16_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{uint16_t}) r;" EOL
+  "}" EOL,
+
+  "_{uint32_t} str_toU32 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || _{UINT32_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{uint32_t}) r;" EOL
+  "}" EOL,
+
+  "_{uint64_t} str_toU64 (_{struct str} self, unsigned char o1, _{int32_t} n1) {" EOL
+  "  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  char *c = _{str_cstr}(self);" EOL
+  "  char *e = _{NULL};" EOL
+  "  _{errno} = 0;" EOL
+  "  unsigned long long r = _{strtoull}(c, &e, o1 == 0 ? 10 : n1);" EOL
+  "  if (_{errno} == _{ERANGE} || _{UINT64_MAX} < r) {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
+  "    _{exit}(_{EXIT_FAILURE});" EOL
+  "  }" EOL
+  "  _{free}(c);" EOL
+  "  _{free}(self.d);" EOL
+  "  return (_{uint64_t}) r;" EOL
+  "}" EOL,
+
+  "_{struct str} str_trim (_{struct str} s) {" EOL
+  "  if (s.l == 0) return s;" EOL
+  "  _{size_t} i = 0;" EOL
+  "  _{size_t} j = s.l;" EOL
+  "  while (i < s.l && _{isspace}(s.d[i])) i++;" EOL
+  "  while (j >= 0 && _{isspace}(s.d[j - 1])) {" EOL
+  "    j--;" EOL
+  "    if (j == 0) break;" EOL
+  "  }" EOL
+  "  if (i >= j) {" EOL
+  "    _{free}(s.d);" EOL
+  R"(    return _{str_alloc}("");)" EOL
+  "  }" EOL
+  "  _{size_t} l = j - i;" EOL
+  "  char *r = _{alloc}(l);" EOL
+  "  for (_{size_t} k = 0; k < l;) r[k++] = s.d[i++];" EOL
+  "  _{free}(s.d);" EOL
+  "  return (_{struct str}) {r, l};" EOL
   "}" EOL,
 
   "_{struct str} str_trimEnd (_{struct str} s) {" EOL

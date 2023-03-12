@@ -106,6 +106,7 @@ struct CodegenBuiltins {
   bool libCtype = false;
   bool libDirent = false;
   bool libErrno = false;
+  bool libFloat = false;
   bool libInttypes = false;
   bool libNetdb = false;
   bool libNetinetIn = false;
