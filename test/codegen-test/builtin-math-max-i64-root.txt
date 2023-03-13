@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MaxI64
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  INT64_MAX;
+}
+======= flags =======
+======= stdout =======

@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MaxF64
+}
+======= code =======
+#include <float.h>
+
+int main () {
+  DBL_MAX;
+}
+======= flags =======
+======= stdout =======

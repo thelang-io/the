@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MinI32
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  INT32_MIN;
+}
+======= flags =======
+======= stdout =======

@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MinI64
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  INT64_MIN;
+}
+======= flags =======
+======= stdout =======

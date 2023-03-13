@@ -2679,7 +2679,46 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     if (exprAccess.expr != std::nullopt && std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
       auto objVar = std::get<std::shared_ptr<Var>>(*exprAccess.expr);
 
-      if (objVar->builtin && objVar->codeName == "@os_EOL") {
+      if (objVar->builtin && (objVar->codeName == "@math_MaxFloat" || objVar->codeName == "@math_MaxF64")) {
+        code = this->_apiEval("_{DBL_MAX}");
+      } else if (objVar->builtin && (objVar->codeName == "@math_MinFloat" || objVar->codeName == "@math_MinF64")) {
+        code = this->_apiEval("-_{DBL_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxF32") {
+        code = this->_apiEval("_{FLT_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MinF32") {
+        code = this->_apiEval("-_{FLT_MAX}");
+      } else if (objVar->builtin && (objVar->codeName == "@math_MaxInt" || objVar->codeName == "@math_MaxI32")) {
+        code = this->_apiEval("_{INT32_MAX}");
+      } else if (objVar->builtin && (objVar->codeName == "@math_MinInt" || objVar->codeName == "@math_MinI32")) {
+        code = this->_apiEval("_{INT32_MIN}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxI8") {
+        code = this->_apiEval("_{INT8_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MinI8") {
+        code = this->_apiEval("_{INT8_MIN}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxI16") {
+        code = this->_apiEval("_{INT16_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MinI16") {
+        code = this->_apiEval("_{INT16_MIN}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxI64") {
+        code = this->_apiEval("_{INT64_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MinI64") {
+        code = this->_apiEval("_{INT64_MIN}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxU8") {
+        code = this->_apiEval("_{UINT8_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxU16") {
+        code = this->_apiEval("_{UINT16_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxU32") {
+        code = this->_apiEval("_{UINT32_MAX}");
+      } else if (objVar->builtin && objVar->codeName == "@math_MaxU64") {
+        code = this->_apiEval("_{UINT64_MAX}");
+      } else if (objVar->builtin && (
+        objVar->codeName == "@math_MinU8" ||
+        objVar->codeName == "@math_MinU16" ||
+        objVar->codeName == "@math_MinU32" ||
+        objVar->codeName == "@math_MinU64"
+      )) {
+        code = "0";
+      } else if (objVar->builtin && objVar->codeName == "@os_EOL") {
         this->_activateBuiltin("definitions");
         this->_activateBuiltin("fnStrAlloc");
         code = "str_alloc(THE_EOL)";
