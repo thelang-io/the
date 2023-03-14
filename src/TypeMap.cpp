@@ -1037,6 +1037,12 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   auto clearTypeFn = TypeFn{refSelfType, {}, true, clearCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".clear", "@array.clear", clearTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"clear", this->_items.back().get(), false, true});
+  auto concatCallInfo = TypeCallInfo{typeName(selfType->name + "_concat"), true, "self_0", selfType, false};
+  auto concatTypeFn = TypeFn{selfType, {
+    TypeFnParam{"values", this->createArr(selfType), false, false, true}
+  }, true, concatCallInfo};
+  this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".concat", "@array.concat", concatTypeFn, {}, true}));
+  selfType->fields.push_back(TypeField{"concat", this->_items.back().get(), false, true});
   auto containsCallInfo = TypeCallInfo{typeName(selfType->name + "_contains"), true, "self_0", selfType, false};
   auto containsTypeFn = TypeFn{this->get("bool"), {
     TypeFnParam{"search", elementType, false, true, false}

@@ -25,6 +25,13 @@ obj Array {
   fn clear (mut self: ref Self) ref Self
 
   /**
+   * Merges two or more arrays and returns resulting array.
+   *
+   * @param values - Arrays to concatenate into resulting array.
+   */
+  fn concat (self: Self, values: Self...) Self
+
+  /**
    * Checks whether certain element exists.
    *
    * @param search - Element to check if exists.
