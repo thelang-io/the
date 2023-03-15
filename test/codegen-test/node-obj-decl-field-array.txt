@@ -38,16 +38,16 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_array_str;
 struct __THE_1_array_int;
+struct __THE_1_array_str;
 struct __THE_1_Test_0;
 
-struct __THE_1_array_str {
-  struct str *d;
-  size_t l;
-};
 struct __THE_1_array_int {
   int32_t *d;
+  size_t l;
+};
+struct __THE_1_array_str {
+  struct str *d;
   size_t l;
 };
 struct __THE_1_Test_0 {
@@ -65,14 +65,14 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
-struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
-struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
-void __THE_1_array_str_free (struct __THE_1_array_str);
-struct str __THE_1_array_str_str (struct __THE_1_array_str);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
 struct str __THE_1_array_int_str (struct __THE_1_array_int);
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+struct str __THE_1_array_str_str (struct __THE_1_array_str);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_array_int, struct __THE_1_array_str);
 struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
@@ -181,6 +181,33 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(x * sizeof(int32_t));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
+  va_end(args);
+  return (struct __THE_1_array_int) {d, x};
+}
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
+  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(n.l * sizeof(int32_t));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
+  return (struct __THE_1_array_int) {d, n.l};
+}
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
+  free(n.d);
+}
+struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
+  struct str r = str_alloc("[");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_str(r, int_str(n.d[i]));
+  }
+  __THE_1_array_int_free((struct __THE_1_array_int) n);
+  return str_concat_cstr(r, "]");
+}
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
   struct str *d = alloc(x * sizeof(struct str));
@@ -209,33 +236,6 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
     r = str_concat_cstr(r, "\"");
   }
   __THE_1_array_str_free((struct __THE_1_array_str) n);
-  return str_concat_cstr(r, "]");
-}
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
-  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(x * sizeof(int32_t));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
-  va_end(args);
-  return (struct __THE_1_array_int) {d, x};
-}
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
-  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(n.l * sizeof(int32_t));
-  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
-  return (struct __THE_1_array_int) {d, n.l};
-}
-void __THE_1_array_int_free (struct __THE_1_array_int n) {
-  free(n.d);
-}
-struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
-  struct str r = str_alloc("[");
-  for (size_t i = 0; i < n.l; i++) {
-    if (i != 0) r = str_concat_cstr(r, ", ");
-    r = str_concat_str(r, int_str(n.d[i]));
-  }
-  __THE_1_array_int_free((struct __THE_1_array_int) n);
   return str_concat_cstr(r, "]");
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_array_int __THE_0_a, struct __THE_1_array_str __THE_0_b) {

@@ -42,10 +42,14 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_array_int;
 struct __THE_1_pair$0;
 struct __THE_1_map$0;
-struct __THE_1_array_int;
 
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
 struct __THE_1_pair$0 {
   struct str f;
   int32_t s;
@@ -53,10 +57,6 @@ struct __THE_1_pair$0 {
 struct __THE_1_map$0 {
   struct __THE_1_pair$0 *d;
   size_t c;
-  size_t l;
-};
-struct __THE_1_array_int {
-  int32_t *d;
   size_t l;
 };
 
@@ -70,12 +70,12 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+struct str __THE_1_array_int_str (struct __THE_1_array_int);
 struct __THE_1_map$0 __THE_1_map$0_alloc (int, ...);
 struct __THE_1_map$0 __THE_1_map$0_copy (const struct __THE_1_map$0);
 void __THE_1_map$0_free (struct __THE_1_map$0);
 struct str __THE_1_map$0_str (struct __THE_1_map$0);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-struct str __THE_1_array_int_str (struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_map$0_values (struct __THE_1_map$0);
 
 void *alloc (size_t l) {
@@ -180,6 +180,18 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
+  free(n.d);
+}
+struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
+  struct str r = str_alloc("[");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_str(r, int_str(n.d[i]));
+  }
+  __THE_1_array_int_free((struct __THE_1_array_int) n);
+  return str_concat_cstr(r, "]");
+}
 struct __THE_1_map$0 __THE_1_map$0_alloc (int x, ...) {
   struct __THE_1_pair$0 *d = alloc(x * sizeof(struct __THE_1_pair$0));
   va_list args;
@@ -210,18 +222,6 @@ struct str __THE_1_map$0_str (struct __THE_1_map$0 n) {
   }
   __THE_1_map$0_free((struct __THE_1_map$0) n);
   return str_concat_cstr(r, "}");
-}
-void __THE_1_array_int_free (struct __THE_1_array_int n) {
-  free(n.d);
-}
-struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
-  struct str r = str_alloc("[");
-  for (size_t i = 0; i < n.l; i++) {
-    if (i != 0) r = str_concat_cstr(r, ", ");
-    r = str_concat_str(r, int_str(n.d[i]));
-  }
-  __THE_1_array_int_free((struct __THE_1_array_int) n);
-  return str_concat_cstr(r, "]");
 }
 struct __THE_1_array_int __THE_1_map$0_values (struct __THE_1_map$0 n) {
   int32_t *r = alloc(n.l * sizeof(int32_t));
