@@ -1027,9 +1027,9 @@ void TypeMap::_utilsModule (TypeMapPhase phase) {
 void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType, Type *refElementType) {
   auto emptyCallInfo = TypeCallInfo{typeName(selfType->name + "_empty"), true, "self_0", selfType, false};
   selfType->fields.push_back(TypeField{"empty", this->get("bool"), false, true, emptyCallInfo});
-  auto firstCallInfo = TypeCallInfo{typeName(selfType->name + "_first"), true, "self_0", selfType, false};
+  auto firstCallInfo = TypeCallInfo{typeName(selfType->name + "_first"), true, "self_0", refSelfType, true};
   selfType->fields.push_back(TypeField{"first", refElementType, false, true, firstCallInfo});
-  auto lastCallInfo = TypeCallInfo{typeName(selfType->name + "_last"), true, "self_0", selfType, false};
+  auto lastCallInfo = TypeCallInfo{typeName(selfType->name + "_last"), true, "self_0", refSelfType, true};
   selfType->fields.push_back(TypeField{"last", refElementType, false, true, lastCallInfo});
   auto lenCallInfo = TypeCallInfo{typeName(selfType->name + "_len"), true, "self_0", selfType, false};
   selfType->fields.push_back(TypeField{"len", this->get("int"), false, true, lenCallInfo});
@@ -1039,7 +1039,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   selfType->fields.push_back(TypeField{"clear", this->_items.back().get(), false, true});
   auto concatCallInfo = TypeCallInfo{typeName(selfType->name + "_concat"), true, "self_0", selfType, false};
   auto concatTypeFn = TypeFn{selfType, {
-    TypeFnParam{"values", this->createArr(selfType), false, false, true}
+    TypeFnParam{"other", selfType, false, true, false}
   }, true, concatCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".concat", "@array.concat", concatTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"concat", this->_items.back().get(), false, true});

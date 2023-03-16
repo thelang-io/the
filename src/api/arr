@@ -25,11 +25,11 @@ obj Array {
   fn clear (mut self: ref Self) ref Self
 
   /**
-   * Merges two or more arrays and returns resulting array.
+   * Merges two arrays and returns resulting array.
    *
-   * @param values - Arrays to concatenate into resulting array.
+   * @param other - Another arrays you want to concatenate.
    */
-  fn concat (self: Self, values: Self...) Self
+  fn concat (self: Self, other: Self) Self
 
   /**
    * Checks whether certain element exists.
@@ -63,7 +63,7 @@ obj Array {
   /**
    * Merges other array's data into calling array.
    *
-   * @param other - Other array you want to merge.
+   * @param other - Another array you want to merge.
    */
   fn merge (mut self: ref Self, other: Self) ref Self
 
