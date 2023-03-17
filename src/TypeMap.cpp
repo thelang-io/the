@@ -1089,7 +1089,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   selfType->fields.push_back(TypeField{"push", this->_items.back().get(), false, true});
   auto removeCallInfo = TypeCallInfo{typeName(selfType->name + "_remove"), true, "self_0", refSelfType, true};
   auto removeTypeFn = TypeFn{refSelfType, {
-    TypeFnParam{"indexes", this->createArr(this->get("int")), false, false, true}
+    TypeFnParam{"index", this->get("int"), false, true, false}
   }, true, removeCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".remove", "@array.remove", removeTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"remove", this->_items.back().get(), false, true});

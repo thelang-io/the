@@ -80,9 +80,9 @@ obj Array {
   /**
    * Removes elements corresponding to specific indexes from array.
    *
-   * @param indexes - Indexes of elements to remove.
+   * @param index - Element index to remove.
    */
-  fn remove (mut self: ref Self, indexes: int...) ref Self
+  fn remove (mut self: ref Self, index: int) ref Self
 
   /* Returns reversed array copy. */
   fn reverse (self: Self) Self

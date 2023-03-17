@@ -2780,7 +2780,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto objNodeExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
       auto objTypeInfo = this->_typeInfo(objNodeExpr.type);
       auto originalObjMemberType = nodeExpr.type;
-      auto fieldTypeShouldBeFreed = false;
+      auto fieldTypeHasCallInfo = false;
+      auto fieldType = static_cast<Type *>(nullptr);
 
       if (
         exprAccess.prop != std::nullopt &&
@@ -2791,14 +2792,15 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         auto typeField = objTypeInfo.realType->getField(*exprAccess.prop);
 
         if (typeField.callInfo.isSelfFirst) {
-          auto objCode = this->_nodeExpr(objNodeExpr, typeField.callInfo.selfType);
+          auto objCode = this->_nodeExpr(objNodeExpr, typeField.callInfo.selfType, typeField.callInfo.isSelfMut);
           code = objNodeExpr.parenthesized ? objCode : "(" + objCode + ")";
         } else {
           code = "()";
         }
 
         code = this->_apiEval("_{" + typeField.callInfo.codeName + "}" + code, 1);
-        fieldTypeShouldBeFreed = typeField.type->shouldBeFreed();
+        fieldTypeHasCallInfo = true;
+        fieldType = typeField.type;
       } else if (exprAccess.prop != std::nullopt && objTypeInfo.realType->isEnum()) {
         auto enumType = std::get<TypeEnum>(objTypeInfo.realType->body);
 
@@ -2848,14 +2850,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       auto isExprAccessEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
       auto isExprAccessRef = nodeExpr.type->isRef() && targetType->isRef();
-      auto isExprAccessMapField = objTypeInfo.realType->isMap() && exprAccess.prop != std::nullopt;
-      auto isExprAccessStrField = objTypeInfo.realType->isStr() && exprAccess.prop != std::nullopt;
 
-      if (!root && !isExprAccessEnumField && !isExprAccessMapField && !isExprAccessRef && !isExprAccessStrField) {
+      if (!root && !isExprAccessEnumField && !isExprAccessRef && !(fieldTypeHasCallInfo && !fieldType->isRef())) {
         code = this->_genCopyFn(Type::real(nodeExpr.type), code);
       }
 
-      if (root && nodeExpr.type->shouldBeFreed() && (exprAccess.prop == std::nullopt || fieldTypeShouldBeFreed)) {
+      if (
+        root &&
+        nodeExpr.type->shouldBeFreed() &&
+        (exprAccess.prop == std::nullopt || (fieldType != nullptr && fieldType->shouldBeFreed()))
+      ) {
         code = this->_genFreeFn(nodeExpr.type, code);
       }
     } else if (exprAccess.expr == std::nullopt && exprAccess.prop != std::nullopt) {
@@ -3873,6 +3877,70 @@ std::string Codegen::_typeNameArray (Type *type) {
     return freeFnEntityIdx;
   });
 
+  auto clearFnEntityIdx = this->_apiEntity(typeName + "_clear", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    decl += "struct _{" + typeName + "} *" + typeName + "_clear (struct _{" + typeName + "} *);";
+    def += "struct _{" + typeName + "} *" + typeName + "_clear (struct _{" + typeName + "} *self) {" EOL;
+    def += "  " + this->_genFreeFn(type, "*self") + ";" EOL;
+    def += "  self->d = _{NULL};" EOL;
+    def += "  self->l = 0;" EOL;
+    def += "  return self;" EOL;
+    def += "}";
+
+    return atFnEntityIdx + 1;
+  });
+
+  auto concatFnEntityIdx = this->_apiEntity(typeName + "_concat", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
+      return it.name == "concat";
+    });
+
+    auto fieldTypeFn = std::get<TypeFn>(field->type->body);
+    auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "struct _{" + typeName + "} " + typeName + "_concat (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} " + typeName + "_concat (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
+    def += "  _{size_t} l = self.l + n1.l;" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  _{size_t} k = 0;" EOL;
+    def += "  for (_{size_t} i = 0; i < self.l; i++) d[k++] = ";
+    def += this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + ";" EOL;
+    def += "  for (_{size_t} i = 0; i < n1.l; i++) d[k++] = ";
+    def += this->_genCopyFn(elementTypeInfo.type, "n1.d[i]") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, l};" EOL;
+    def += "}";
+
+    return clearFnEntityIdx + 1;
+  });
+
+  auto containsFnEntityIdx = this->_apiEntity(typeName + "_contains", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
+      return it.name == "contains";
+    });
+
+    auto fieldTypeFn = std::get<TypeFn>(field->type->body);
+    auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "_{bool} " + typeName + "_contains (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "_{bool} " + typeName + "_contains (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
+    def += "  _{bool} r = _{false};" EOL;
+    def += "  for (_{size_t} i = 0; i < self.l; i++) {";
+    def += "    if (" + this->_genEqFn(elementTypeInfo.type, "self.d[i]", "n1") + ") {" EOL;
+    def += "      r = _{true};" EOL;
+    def += "      break;" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(param1TypeInfo.type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return concatFnEntityIdx + 1;
+  });
+
   auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
@@ -3884,7 +3952,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += "  return (struct _{" + typeName + "}) {d, n.l};" EOL;
     def += "}";
 
-    return atFnEntityIdx + 1;
+    return containsFnEntityIdx + 1;
   });
 
   auto emptyFnEntityIdx = this->_apiEntity(typeName + "_empty", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
@@ -3920,6 +3988,56 @@ std::string Codegen::_typeNameArray (Type *type) {
     return emptyFnEntityIdx + 1;
   });
 
+  this->_apiEntity(typeName + "_filter", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
+      return it.name == "filter";
+    });
+
+    auto fieldTypeFn = std::get<TypeFn>(field->type->body);
+    auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+
+    decl += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
+    // todo
+    def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
+    def += "  return r;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_first", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *);";
+    def += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *self) {" EOL;
+    def += "  if (self->l == 0) {" EOL;
+    def += R"(    _{fprintf}(_{stderr}, "Error: tried getting first element of empty array" THE_EOL);)" EOL;
+    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
+    def += "  }" EOL;
+    def += "  return &self->d[0];" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_forEach", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
+      return it.name == "forEach";
+    });
+
+    auto fieldTypeFn = std::get<TypeFn>(field->type->body);
+    auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+
+    decl += "void " + typeName + "_forEach (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "void " + typeName + "_forEach (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
+    // todo
+    def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
+    def += "}";
+
+    return 0;
+  });
+
   this->_apiEntity(typeName + "_join", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
@@ -3939,12 +4057,49 @@ std::string Codegen::_typeNameArray (Type *type) {
     return 0;
   });
 
+  this->_apiEntity(typeName + "_last", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *);";
+    def += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *self) {" EOL;
+    def += "  if (self->l == 0) {" EOL;
+    def += R"(    _{fprintf}(_{stderr}, "Error: tried getting last element of empty array" THE_EOL);)" EOL;
+    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
+    def += "  }" EOL;
+    def += "  return &self->d[self->l - 1];" EOL;
+    def += "}";
+
+    return 0;
+  });
+
   this->_apiEntity(typeName + "_len", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     decl += "_{size_t} " + typeName + "_len (struct _{" + typeName + "});";
     def += "_{size_t} " + typeName + "_len (struct _{" + typeName + "} n) {" EOL;
     def += "  _{size_t} l = n.l;" EOL;
     def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
     def += "  return l;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_merge", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
+      return it.name == "merge";
+    });
+
+    auto fieldTypeFn = std::get<TypeFn>(field->type->body);
+    auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "struct _{" + typeName + "} *" + typeName + "_merge (struct _{" + typeName + "} *, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} *" + typeName + "_merge (struct _{" + typeName + "} *self, " + param1TypeInfo.typeCode + "n1) {" EOL;
+    def += "  _{size_t} k = self->l;" EOL;
+    def += "  self->l += n1.l;" EOL;
+    def += "  self->d = _{re_alloc}(self->d, self->l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  for (_{size_t} i = 0; i < n1.l; i++) self->d[k++] = " + this->_genCopyFn(elementTypeInfo.type, "n1.d[i]") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  return self;" EOL;
     def += "}";
 
     return 0;
@@ -4010,6 +4165,34 @@ std::string Codegen::_typeNameArray (Type *type) {
     return 0;
   });
 
+  this->_apiEntity(typeName + "_remove", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
+      return it.name == "remove";
+    });
+
+    auto fieldTypeFn = std::get<TypeFn>(field->type->body);
+    auto elementTypeInfo = this->_typeInfo(elementType);
+
+    decl += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *, _{int32_t});";
+    def += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *self, _{int32_t} n1) {" EOL;
+    def += "  if ((n1 >= 0 && n1 >= self->l) || (n1 < 0 && n1 < -((_{int32_t}) self->l))) {" EOL;
+    def += R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId32} " out of array bounds" _{THE_EOL}, n1);)" EOL;
+    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
+    def += "  }" EOL;
+
+    if (elementTypeInfo.type->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(elementTypeInfo.type, "self->d[n1]") + ";" EOL;
+    }
+
+    def += "  if (n1 != self->l - 1) {" EOL;
+    def += "    _{memmove}(&self->d[n1], &self->d[n1 + 1], (--self->l - n1) * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  }" EOL;
+    def += "  return self;" EOL;
+    def += "}";
+
+    return 0;
+  });
+
   this->_apiEntity(typeName + "_reverse", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
@@ -4048,6 +4231,23 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += "  for (_{size_t} i = 0; i1 < i2; i1++) d[i++] = " + this->_genCopyFn(elementTypeInfo.type, "n.d[i1]") + ";" EOL;
     def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
     def += "  return (struct _{" + typeName + "}) {d, l};" EOL;
+    def += "}";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_sort", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
+      return it.name == "sort";
+    });
+
+    auto fieldTypeFn = std::get<TypeFn>(field->type->body);
+    auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+
+    decl += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *self, " + param1TypeInfo.typeCode + "n1) {" EOL;
+    // todo
+    def += "  return self;" EOL;
     def += "}";
 
     return 0;
