@@ -34,13 +34,13 @@ class TypeMap {
   Type *createArr (Type *);
   Type *createEnum (const std::string &, const std::string &, const std::vector<Type *> &);
   Type *createEnumerator (const std::string &, const std::string &);
-  Type *createFn (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt, bool = false);
-  Type *createMap (Type *, Type *, bool = false);
-  Type *createMethod (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt, bool = false);
+  Type *createFn (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt);
+  Type *createMap (Type *, Type *);
+  Type *createMethod (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt);
   Type *createObj (const std::string &, const std::string &, const std::vector<TypeField> & = {}, bool = false);
   Type *createOpt (Type *);
   Type *createRef (Type *);
-  Type *createUnion (const std::vector<Type *> &, bool = false);
+  Type *createUnion (const std::vector<Type *> &);
   Type *get (const std::string &);
   bool has (const std::string &);
   void init ();
@@ -50,7 +50,6 @@ class TypeMap {
   Type *unionSub (const Type *, const Type *);
 
  private:
-  std::size_t _builtinIdx = 0;
   std::size_t _fnIdx = 0;
   std::vector<std::unique_ptr<Type>> _items;
   std::size_t _mapIdx = 0;

@@ -3550,8 +3550,7 @@ std::string Codegen::_type (Type *type) {
     }
 
     auto typeName = this->_typeNameFn(type);
-    this->_activateEntity(typeName);
-    return "struct " + typeName + " ";
+    return this->_apiEval("struct _{" + typeName + "} ", 1);
   } else if (type->isI8()) {
     this->_activateBuiltin("libStdint");
     return "int8_t ";
@@ -3995,12 +3994,21 @@ std::string Codegen::_typeNameArray (Type *type) {
 
     auto fieldTypeFn = std::get<TypeFn>(field->type->body);
     auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
     decl += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
     def += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
-    // todo
+    def += "  _{size_t} l = 0;" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d = alloc(self.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
+    def += "    if (n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) ";
+    def += "{" + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + "})) {" EOL;
+    def += "      d[l++] = " + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + ";" EOL;
+    def += "    }" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(param1TypeInfo.type, "n1") + ";" EOL;
     def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
-    def += "  return r;" EOL;
+    def += "  return (struct _{" + typeName + "}) {d, l};" EOL;
     def += "}";
 
     return 0;
@@ -4028,10 +4036,15 @@ std::string Codegen::_typeNameArray (Type *type) {
 
     auto fieldTypeFn = std::get<TypeFn>(field->type->body);
     auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
     decl += "void " + typeName + "_forEach (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
     def += "void " + typeName + "_forEach (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
-    // todo
+    def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
+    def += "    n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) ";
+    def += "{" + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + ", i});" EOL;
+    def += "  }" EOL;
+    def += "  " + this->_genFreeFn(param1TypeInfo.type, "n1") + ";" EOL;
     def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
     def += "}";
 
@@ -4293,7 +4306,7 @@ std::string Codegen::_typeNameFn (Type *type) {
   }
 
   auto fnType = std::get<TypeFn>(type->body);
-  auto paramsName = Codegen::typeName(type->name + "P");
+  auto paramsName = typeName + "P";
   auto paramsEntityIdx = 0;
 
   if (!fnType.params.empty()) {

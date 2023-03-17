@@ -51,7 +51,7 @@ obj Array {
    *
    * @param iterator - Function to execute on each element of the array.
    */
-  fn forEach (self: Self, iterator: (it: Element) -> void) void
+  fn forEach (self: Self, iterator: (it: Element, idx: int) -> void) void
 
   /**
    * Calls `str` method on every element and joins result with separator.

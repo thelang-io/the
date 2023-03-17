@@ -132,30 +132,26 @@ Type *TypeMap::createEnumerator (const std::string &enumeratorName, const std::s
 Type *TypeMap::createFn (
   const std::vector<TypeFnParam> &params,
   Type *returnType,
-  const std::optional<TypeCallInfo> &callInfo,
-  bool builtin
+  const std::optional<TypeCallInfo> &callInfo
 ) {
   auto typeBody = TypeFn{returnType, params, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
-  auto newType = Type{"", "", typeBody, {}, builtin};
+  auto newType = Type{"", "", typeBody, {}};
 
   for (const auto &item : this->_items) {
-    if (item->builtin == newType.builtin && item->isFn() && item->matchStrict(&newType, true)) {
+    if (item->isFn() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
 
   for (const auto &item : this->_items) {
-    if (item->builtin == newType.builtin && item->isFn() && item->matchStrict(&newType)) {
+    if (item->isFn() && item->matchStrict(&newType)) {
       newType.name = item->name;
       newType.codeName = item->codeName;
       break;
     }
   }
 
-  if (newType.builtin && newType.name.empty()) {
-    newType.name = "builtin$" + std::to_string(this->_builtinIdx++);
-    newType.codeName = "@" + newType.name;
-  } else if (newType.name.empty()) {
+  if (newType.name.empty()) {
     newType.name = "fn$" + std::to_string(this->_fnIdx++);
     newType.codeName = "@" + newType.name;
   }
@@ -168,24 +164,19 @@ Type *TypeMap::createFn (
   return selfType;
 }
 
-Type *TypeMap::createMap (Type *keyType, Type *valueType, bool builtin) {
+Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   auto actualKeyType = Type::actual(keyType);
   auto actualValueType = Type::actual(valueType);
-  auto newType = Type{"", "", TypeBodyMap{actualKeyType, actualValueType}, {}, builtin};
+  auto newType = Type{"", "", TypeBodyMap{actualKeyType, actualValueType}, {}};
 
   for (const auto &item : this->_items) {
-    if (item->builtin == newType.builtin && item->isMap() && item->matchStrict(&newType, true)) {
+    if (item->isMap() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
 
-  if (newType.builtin) {
-    newType.name = "builtin$" + std::to_string(this->_builtinIdx++);
-    newType.codeName = "@" + newType.name;
-  } else {
-    newType.name = "map$" + std::to_string(this->_mapIdx++);
-    newType.codeName = "@" + newType.name;
-  }
+  newType.name = "map$" + std::to_string(this->_mapIdx++);
+  newType.codeName = "@" + newType.name;
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
@@ -198,30 +189,26 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType, bool builtin) {
 Type *TypeMap::createMethod (
   const std::vector<TypeFnParam> &params,
   Type *returnType,
-  const std::optional<TypeCallInfo> &callInfo,
-  bool builtin
+  const std::optional<TypeCallInfo> &callInfo
 ) {
   auto typeBody = TypeFn{returnType, params, true, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
-  auto newType = Type{"", "", typeBody, {}, builtin};
+  auto newType = Type{"", "", typeBody, {}};
 
   for (const auto &item : this->_items) {
-    if (item->builtin == newType.builtin && item->isMethod() && item->matchStrict(&newType, true)) {
+    if (item->isMethod() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
 
   for (const auto &item : this->_items) {
-    if (item->builtin == newType.builtin && item->isMethod() && item->matchStrict(&newType)) {
+    if (item->isMethod() && item->matchStrict(&newType)) {
       newType.name = item->name;
       newType.codeName = item->codeName;
       break;
     }
   }
 
-  if (newType.builtin && newType.name.empty()) {
-    newType.name = "builtin$" + std::to_string(this->_builtinIdx++);
-    newType.codeName = "@" + newType.name;
-  } else if (newType.name.empty()) {
+  if (newType.name.empty()) {
     newType.name = "fn$" + std::to_string(this->_fnIdx++);
     newType.codeName = "@" + newType.name;
   }
@@ -297,28 +284,23 @@ Type *TypeMap::createRef (Type *refType) {
   return this->_items.back().get();
 }
 
-Type *TypeMap::createUnion (const std::vector<Type *> &subTypes, bool builtin) {
+Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   auto actualSubTypes = std::vector<Type *>{};
 
   for (const auto &subType : subTypes) {
     actualSubTypes.push_back(Type::actual(subType));
   }
 
-  auto newType = Type{"", "", TypeUnion{actualSubTypes}, {}, builtin};
+  auto newType = Type{"", "", TypeUnion{actualSubTypes}, {}};
 
   for (const auto &item : this->_items) {
-    if (item->builtin == newType.builtin && item->isUnion() && item->matchStrict(&newType, true)) {
+    if (item->isUnion() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
 
-  if (newType.builtin) {
-    newType.name = "builtin$" + std::to_string(this->_builtinIdx++);
-    newType.codeName = "@" + newType.name;
-  } else {
-    newType.name = "union$" + std::to_string(this->_unIdx++);
-    newType.codeName = "@" + newType.name;
-  }
+  newType.name = "union$" + std::to_string(this->_unIdx++);
+  newType.codeName = "@" + newType.name;
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
@@ -1053,15 +1035,16 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   auto filterTypeFn = TypeFn{selfType, {
     TypeFnParam{"predicate", this->createFn({
       TypeFnParam{"it", elementType, false, true, false}
-    }, this->get("bool"), std::nullopt, true), false, true, false}
+    }, this->get("bool"), std::nullopt), false, true, false}
   }, true, filterCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".filter", "@array.filter", filterTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"filter", this->_items.back().get(), false, true});
   auto forEachCallInfo = TypeCallInfo{typeName(selfType->name + "_forEach"), true, "self_0", selfType, false};
   auto forEachTypeFn = TypeFn{this->get("void"), {
     TypeFnParam{"iterator", this->createFn({
-      TypeFnParam{"it", elementType, false, true, false}
-    }, this->get("void"), std::nullopt, true), false, true, false}
+      TypeFnParam{"it", elementType, false, true, false},
+      TypeFnParam{"idx", this->get("int"), false, true, false}
+    }, this->get("void"), std::nullopt), false, true, false}
   }, true, forEachCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".forEach", "@array.forEach", forEachTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"forEach", this->_items.back().get(), false, true});
@@ -1109,7 +1092,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
     TypeFnParam{"comparator", this->createFn({
       TypeFnParam{"a", elementType, false, true, false},
       TypeFnParam{"b", elementType, false, true, false}
-    }, this->get("int"), std::nullopt, true), false, true, false}
+    }, this->get("int"), std::nullopt), false, true, false}
   }, true, sortCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".sort", "@array.sort", sortTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"sort", this->_items.back().get(), false, true});
