@@ -4256,10 +4256,26 @@ std::string Codegen::_typeNameArray (Type *type) {
 
     auto fieldTypeFn = std::get<TypeFn>(field->type->body);
     auto param1TypeInfo = this->_typeInfo(fieldTypeFn.params[0].type);
+    auto elementTypeInfo = this->_typeInfo(elementType);
 
     decl += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *, " + param1TypeInfo.typeCodeTrimmed + ");";
     def += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *self, " + param1TypeInfo.typeCode + "n1) {" EOL;
-    // todo
+    def += "  if (self->l < 2) return self;" EOL;
+    def += "  while (1) {" EOL;
+    def += "    unsigned char b = 0;" EOL;
+    def += "    for (_{size_t} i = 1; i < self->l; i++) {" EOL;
+    def += "      _{int32_t} c = n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) {";
+    def += this->_genCopyFn(elementTypeInfo.type, "self->d[i - 1]") + ", ";
+    def += this->_genCopyFn(elementTypeInfo.type, "self->d[i]") + "});" EOL;
+    def += "      if (c > 0) {" EOL;
+    def += "        b = 1;" EOL;
+    def += "        " + elementTypeInfo.typeCode + "t = self->d[i];" EOL;
+    def += "        self->d[i] = self->d[i - 1];" EOL;
+    def += "        self->d[i - 1] = t;" EOL;
+    def += "      }" EOL;
+    def += "    }" EOL;
+    def += "    if (b == 0) break;" EOL;
+    def += "  }" EOL;
     def += "  return self;" EOL;
     def += "}";
 
