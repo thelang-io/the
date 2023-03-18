@@ -65,6 +65,8 @@ void TypeMap::init () {
   this->_threadModule(TYPE_MAP_DEF);
   this->_urlModule(TYPE_MAP_DEF);
   this->_utilsModule(TYPE_MAP_DEF);
+
+  this->_fnIdx = 1000;
 }
 
 Type *TypeMap::createAlias (const std::string &name, Type *type) {
@@ -135,16 +137,16 @@ Type *TypeMap::createFn (
   const std::optional<TypeCallInfo> &callInfo
 ) {
   auto typeBody = TypeFn{returnType, params, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
-  auto newType = Type{"", "", typeBody, {}};
+  auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {
-    if (item->isFn() && item->matchStrict(&newType, true)) {
+    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
 
   for (const auto &item : this->_items) {
-    if (item->isFn() && item->matchStrict(&newType)) {
+    if (!item->builtin && item->isFn() && item->matchStrict(&newType)) {
       newType.name = item->name;
       newType.codeName = item->codeName;
       break;
@@ -167,16 +169,16 @@ Type *TypeMap::createFn (
 Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   auto actualKeyType = Type::actual(keyType);
   auto actualValueType = Type::actual(valueType);
-  auto newType = Type{"", "", TypeBodyMap{actualKeyType, actualValueType}, {}};
+
+  auto name = "map_" + actualKeyType->name + "MS" + actualValueType->name + "ME";
+  auto codeName = "@map_" + actualKeyType->codeName + "MS" + actualValueType->codeName + "ME";
+  auto newType = Type{name, codeName, TypeBodyMap{actualKeyType, actualValueType}};
 
   for (const auto &item : this->_items) {
-    if (item->isMap() && item->matchStrict(&newType, true)) {
+    if (item->codeName == newType.codeName) {
       return item.get();
     }
   }
-
-  newType.name = "map$" + std::to_string(this->_mapIdx++);
-  newType.codeName = "@" + newType.name;
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
@@ -192,16 +194,16 @@ Type *TypeMap::createMethod (
   const std::optional<TypeCallInfo> &callInfo
 ) {
   auto typeBody = TypeFn{returnType, params, true, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
-  auto newType = Type{"", "", typeBody, {}};
+  auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {
-    if (item->isMethod() && item->matchStrict(&newType, true)) {
+    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
       return item.get();
     }
   }
 
   for (const auto &item : this->_items) {
-    if (item->isMethod() && item->matchStrict(&newType)) {
+    if (!item->builtin && item->isFn() && item->matchStrict(&newType)) {
       newType.name = item->name;
       newType.codeName = item->codeName;
       break;
@@ -225,7 +227,7 @@ Type *TypeMap::createObj (const std::string &name, const std::string &codeName, 
   auto newType = Type{name, codeName, TypeObj{}, fields, builtin};
 
   for (const auto &item : this->_items) {
-    if (item->isObj() && item->codeName == newType.codeName) {
+    if (item->codeName == newType.codeName) {
       return item.get();
     }
   }
@@ -286,21 +288,24 @@ Type *TypeMap::createRef (Type *refType) {
 
 Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   auto actualSubTypes = std::vector<Type *>{};
+  auto name = std::string("union_");
+  auto codeName = std::string("@union_");
 
   for (const auto &subType : subTypes) {
     actualSubTypes.push_back(Type::actual(subType));
+    name += actualSubTypes.back()->name + "US";
+    codeName += actualSubTypes.back()->codeName + "US";
   }
 
-  auto newType = Type{"", "", TypeUnion{actualSubTypes}, {}};
+  name = name.substr(0, name.size() - 2) + "UE";
+  codeName = codeName.substr(0, codeName.size() - 2) + "UE";
+  auto newType = Type{name, codeName, TypeUnion{actualSubTypes}};
 
   for (const auto &item : this->_items) {
-    if (item->isUnion() && item->matchStrict(&newType, true)) {
+    if (item->codeName == newType.codeName) {
       return item.get();
     }
   }
-
-  newType.name = "union$" + std::to_string(this->_unIdx++);
-  newType.codeName = "@" + newType.name;
 
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();

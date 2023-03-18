@@ -26,7 +26,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <TypeObj codeName="Test_0" name="Test">
@@ -137,7 +137,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$1">
+      <TypeFn name="fn$1001">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <TypeObj codeName="Test_0" name="Test">
@@ -380,7 +380,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$0">
+              <TypeFn name="fn$1000">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <TypeObj codeName="Test_0" name="Test">
@@ -402,7 +402,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test1" codeName="test1_0" frame="1">
-                  <TypeFn name="fn$0">
+                  <TypeFn name="fn$1000">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <TypeObj codeName="Test_0" name="Test">
@@ -468,7 +468,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1">
+              <TypeFn name="fn$1001">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <TypeObj codeName="Test_0" name="Test">
@@ -497,7 +497,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$1">
+                  <TypeFn name="fn$1001">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <TypeObj codeName="Test_0" name="Test">

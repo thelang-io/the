@@ -55,7 +55,7 @@ main {
         <BuiltinType name="int" />
       </TypeField>
       <TypeField name="talk">
-        <TypeMethod name="fn$0">
+        <TypeMethod name="fn$1000">
           <TypeCallInfo codeName="AnimalSDtalk_0" />
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -63,7 +63,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="run">
-        <TypeMethod name="fn$1">
+        <TypeMethod name="fn$1001">
           <TypeCallInfo codeName="AnimalSDrun_0" selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Animal">
               <TypeObj codeName="Animal_0" name="Animal" />
@@ -80,7 +80,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Animal.talk" codeName="AnimalSDtalk_0" frame="1">
-          <TypeMethod name="fn$0">
+          <TypeMethod name="fn$1000">
             <TypeCallInfo codeName="AnimalSDtalk_0" />
             <TypeFnReturnType>
               <BuiltinType name="void" />
@@ -92,7 +92,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Animal.run" codeName="AnimalSDrun_0" frame="1">
-          <TypeMethod name="fn$1">
+          <TypeMethod name="fn$1001">
             <TypeCallInfo codeName="AnimalSDrun_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Animal">
                 <TypeObj codeName="Animal_0" name="Animal">
@@ -100,7 +100,7 @@ main {
                     <BuiltinType name="int" />
                   </TypeField>
                   <TypeField name="talk">
-                    <TypeMethod name="fn$0">
+                    <TypeMethod name="fn$1000">
                       <TypeCallInfo codeName="AnimalSDtalk_0" />
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
@@ -108,7 +108,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="run">
-                    <TypeMethod name="fn$1">
+                    <TypeMethod name="fn$1001">
                       <TypeCallInfo codeName="AnimalSDrun_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Animal">
                           <TypeObj codeName="Animal_0" name="Animal" />
@@ -138,7 +138,7 @@ main {
         <BuiltinType name="int" />
       </TypeField>
       <TypeField name="talk">
-        <TypeMethod name="fn$0">
+        <TypeMethod name="fn$1000">
           <TypeCallInfo codeName="HumanSDtalk_0" />
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -146,7 +146,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="walk">
-        <TypeMethod name="fn$2">
+        <TypeMethod name="fn$1002">
           <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Human">
               <TypeObj codeName="Human_0" name="Human" />
@@ -163,7 +163,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Human.talk" codeName="HumanSDtalk_0" frame="1">
-          <TypeMethod name="fn$0">
+          <TypeMethod name="fn$1000">
             <TypeCallInfo codeName="HumanSDtalk_0" />
             <TypeFnReturnType>
               <BuiltinType name="void" />
@@ -175,7 +175,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Human.walk" codeName="HumanSDwalk_0" frame="1">
-          <TypeMethod name="fn$2">
+          <TypeMethod name="fn$1002">
             <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Human">
                 <TypeObj codeName="Human_0" name="Human">
@@ -183,7 +183,7 @@ main {
                     <BuiltinType name="int" />
                   </TypeField>
                   <TypeField name="talk">
-                    <TypeMethod name="fn$0">
+                    <TypeMethod name="fn$1000">
                       <TypeCallInfo codeName="HumanSDtalk_0" />
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
@@ -191,7 +191,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="walk">
-                    <TypeMethod name="fn$2">
+                    <TypeMethod name="fn$1002">
                       <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Human">
                           <TypeObj codeName="Human_0" name="Human" />
@@ -215,7 +215,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Human.talk" codeName="HumanSDtalk_0" frame="1">
-          <TypeMethod name="fn$0">
+          <TypeMethod name="fn$1000">
             <TypeCallInfo codeName="HumanSDtalk_0" />
             <TypeFnReturnType>
               <BuiltinType name="void" />
@@ -262,7 +262,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Human.walk" codeName="HumanSDwalk_0" frame="1">
-          <TypeMethod name="fn$2">
+          <TypeMethod name="fn$1002">
             <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Human">
                 <TypeObj codeName="Human_0" name="Human">
@@ -270,7 +270,7 @@ main {
                     <BuiltinType name="int" />
                   </TypeField>
                   <TypeField name="talk">
-                    <TypeMethod name="fn$0">
+                    <TypeMethod name="fn$1000">
                       <TypeCallInfo codeName="HumanSDtalk_0" />
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
@@ -278,7 +278,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="walk">
-                    <TypeMethod name="fn$2">
+                    <TypeMethod name="fn$1002">
                       <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Human">
                           <TypeObj codeName="Human_0" name="Human" />
@@ -320,7 +320,7 @@ main {
                                 <BuiltinType name="int" />
                               </TypeField>
                               <TypeField name="talk">
-                                <TypeMethod name="fn$0">
+                                <TypeMethod name="fn$1000">
                                   <TypeCallInfo codeName="HumanSDtalk_0" />
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -328,7 +328,7 @@ main {
                                 </TypeMethod>
                               </TypeField>
                               <TypeField name="walk">
-                                <TypeMethod name="fn$2">
+                                <TypeMethod name="fn$1002">
                                   <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                     <TypeRef name="ref_Human">
                                       <TypeObj codeName="Human_0" name="Human" />
@@ -351,7 +351,7 @@ main {
                                     <BuiltinType name="int" />
                                   </TypeField>
                                   <TypeField name="talk">
-                                    <TypeMethod name="fn$0">
+                                    <TypeMethod name="fn$1000">
                                       <TypeCallInfo codeName="HumanSDtalk_0" />
                                       <TypeFnReturnType>
                                         <BuiltinType name="void" />
@@ -359,7 +359,7 @@ main {
                                     </TypeMethod>
                                   </TypeField>
                                   <TypeField name="walk">
-                                    <TypeMethod name="fn$2">
+                                    <TypeMethod name="fn$1002">
                                       <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                         <TypeRef name="ref_Human">
                                           <TypeObj codeName="Human_0" name="Human" />
@@ -404,7 +404,7 @@ main {
         <BuiltinType name="int" />
       </TypeField>
       <TypeField name="talk">
-        <TypeMethod name="fn$0">
+        <TypeMethod name="fn$1000">
           <TypeCallInfo codeName="AlienSDtalk_0" />
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -412,7 +412,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="travel">
-        <TypeMethod name="fn$3">
+        <TypeMethod name="fn$1003">
           <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Alien">
               <TypeObj codeName="Alien_0" name="Alien" />
@@ -429,7 +429,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Alien.talk" codeName="AlienSDtalk_0" frame="1">
-          <TypeMethod name="fn$0">
+          <TypeMethod name="fn$1000">
             <TypeCallInfo codeName="AlienSDtalk_0" />
             <TypeFnReturnType>
               <BuiltinType name="void" />
@@ -476,7 +476,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Alien.travel" codeName="AlienSDtravel_0" frame="1">
-          <TypeMethod name="fn$3">
+          <TypeMethod name="fn$1003">
             <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Alien">
                 <TypeObj codeName="Alien_0" name="Alien">
@@ -484,7 +484,7 @@ main {
                     <BuiltinType name="int" />
                   </TypeField>
                   <TypeField name="talk">
-                    <TypeMethod name="fn$0">
+                    <TypeMethod name="fn$1000">
                       <TypeCallInfo codeName="AlienSDtalk_0" />
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
@@ -492,7 +492,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="travel">
-                    <TypeMethod name="fn$3">
+                    <TypeMethod name="fn$1003">
                       <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Alien">
                           <TypeObj codeName="Alien_0" name="Alien" />
@@ -534,7 +534,7 @@ main {
                                 <BuiltinType name="int" />
                               </TypeField>
                               <TypeField name="talk">
-                                <TypeMethod name="fn$0">
+                                <TypeMethod name="fn$1000">
                                   <TypeCallInfo codeName="AlienSDtalk_0" />
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -542,7 +542,7 @@ main {
                                 </TypeMethod>
                               </TypeField>
                               <TypeField name="travel">
-                                <TypeMethod name="fn$3">
+                                <TypeMethod name="fn$1003">
                                   <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                     <TypeRef name="ref_Alien">
                                       <TypeObj codeName="Alien_0" name="Alien" />
@@ -565,7 +565,7 @@ main {
                                     <BuiltinType name="int" />
                                   </TypeField>
                                   <TypeField name="talk">
-                                    <TypeMethod name="fn$0">
+                                    <TypeMethod name="fn$1000">
                                       <TypeCallInfo codeName="AlienSDtalk_0" />
                                       <TypeFnReturnType>
                                         <BuiltinType name="void" />
@@ -573,7 +573,7 @@ main {
                                     </TypeMethod>
                                   </TypeField>
                                   <TypeField name="travel">
-                                    <TypeMethod name="fn$3">
+                                    <TypeMethod name="fn$1003">
                                       <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                         <TypeRef name="ref_Alien">
                                           <TypeObj codeName="Alien_0" name="Alien" />
@@ -612,7 +612,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Alien.talk" codeName="AlienSDtalk_0" frame="1">
-          <TypeMethod name="fn$0">
+          <TypeMethod name="fn$1000">
             <TypeCallInfo codeName="AlienSDtalk_0" />
             <TypeFnReturnType>
               <BuiltinType name="void" />
@@ -624,7 +624,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Alien.travel" codeName="AlienSDtravel_0" frame="1">
-          <TypeMethod name="fn$3">
+          <TypeMethod name="fn$1003">
             <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Alien">
                 <TypeObj codeName="Alien_0" name="Alien">
@@ -632,7 +632,7 @@ main {
                     <BuiltinType name="int" />
                   </TypeField>
                   <TypeField name="talk">
-                    <TypeMethod name="fn$0">
+                    <TypeMethod name="fn$1000">
                       <TypeCallInfo codeName="AlienSDtalk_0" />
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
@@ -640,7 +640,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="travel">
-                    <TypeMethod name="fn$3">
+                    <TypeMethod name="fn$1003">
                       <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Alien">
                           <TypeObj codeName="Alien_0" name="Alien" />
@@ -672,7 +672,7 @@ main {
             <BuiltinType name="int" />
           </TypeField>
           <TypeField name="talk">
-            <TypeMethod name="fn$0">
+            <TypeMethod name="fn$1000">
               <TypeCallInfo codeName="HumanSDtalk_0" />
               <TypeFnReturnType>
                 <BuiltinType name="void" />
@@ -680,7 +680,7 @@ main {
             </TypeMethod>
           </TypeField>
           <TypeField name="walk">
-            <TypeMethod name="fn$2">
+            <TypeMethod name="fn$1002">
               <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                 <TypeRef name="ref_Human">
                   <TypeObj codeName="Human_0" name="Human" />
@@ -702,7 +702,7 @@ main {
               <BuiltinType name="int" />
             </TypeField>
             <TypeField name="talk">
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1000">
                 <TypeCallInfo codeName="HumanSDtalk_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -710,7 +710,7 @@ main {
               </TypeMethod>
             </TypeField>
             <TypeField name="walk">
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1002">
                 <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Human">
                     <TypeObj codeName="Human_0" name="Human" />
@@ -738,7 +738,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1000">
                 <TypeCallInfo codeName="HumanSDtalk_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -754,7 +754,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="HumanSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -762,7 +762,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1002">
                           <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="Human_0" name="Human" />
@@ -783,7 +783,7 @@ main {
                             <BuiltinType name="int" />
                           </TypeField>
                           <TypeField name="talk">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1000">
                               <TypeCallInfo codeName="HumanSDtalk_0" />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
@@ -791,7 +791,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="walk">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1002">
                               <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Human">
                                   <TypeObj codeName="Human_0" name="Human" />
@@ -823,7 +823,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1002">
                 <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Human">
                     <TypeObj codeName="Human_0" name="Human">
@@ -831,7 +831,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="HumanSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -839,7 +839,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1002">
                           <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="Human_0" name="Human" />
@@ -867,7 +867,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="HumanSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -875,7 +875,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1002">
                           <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="Human_0" name="Human" />
@@ -896,7 +896,7 @@ main {
                             <BuiltinType name="int" />
                           </TypeField>
                           <TypeField name="talk">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1000">
                               <TypeCallInfo codeName="HumanSDtalk_0" />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
@@ -904,7 +904,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="walk">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1002">
                               <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Human">
                                   <TypeObj codeName="Human_0" name="Human" />
@@ -936,7 +936,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1000">
                 <TypeCallInfo codeName="HumanSDtalk_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -952,7 +952,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="HumanSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -960,7 +960,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1002">
                           <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="Human_0" name="Human" />
@@ -981,7 +981,7 @@ main {
                             <BuiltinType name="int" />
                           </TypeField>
                           <TypeField name="talk">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1000">
                               <TypeCallInfo codeName="HumanSDtalk_0" />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
@@ -989,7 +989,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="walk">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1002">
                               <TypeCallInfo codeName="HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Human">
                                   <TypeObj codeName="Human_0" name="Human" />
@@ -1020,7 +1020,7 @@ main {
             <BuiltinType name="int" />
           </TypeField>
           <TypeField name="talk">
-            <TypeMethod name="fn$0">
+            <TypeMethod name="fn$1000">
               <TypeCallInfo codeName="AlienSDtalk_0" />
               <TypeFnReturnType>
                 <BuiltinType name="void" />
@@ -1028,7 +1028,7 @@ main {
             </TypeMethod>
           </TypeField>
           <TypeField name="travel">
-            <TypeMethod name="fn$3">
+            <TypeMethod name="fn$1003">
               <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                 <TypeRef name="ref_Alien">
                   <TypeObj codeName="Alien_0" name="Alien" />
@@ -1050,7 +1050,7 @@ main {
               <BuiltinType name="int" />
             </TypeField>
             <TypeField name="talk">
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1000">
                 <TypeCallInfo codeName="AlienSDtalk_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -1058,7 +1058,7 @@ main {
               </TypeMethod>
             </TypeField>
             <TypeField name="travel">
-              <TypeMethod name="fn$3">
+              <TypeMethod name="fn$1003">
                 <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Alien">
                     <TypeObj codeName="Alien_0" name="Alien" />
@@ -1086,7 +1086,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1000">
                 <TypeCallInfo codeName="AlienSDtalk_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -1102,7 +1102,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="AlienSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -1110,7 +1110,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn$3">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="Alien_0" name="Alien" />
@@ -1131,7 +1131,7 @@ main {
                             <BuiltinType name="int" />
                           </TypeField>
                           <TypeField name="talk">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1000">
                               <TypeCallInfo codeName="AlienSDtalk_0" />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
@@ -1139,7 +1139,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="travel">
-                            <TypeMethod name="fn$3">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Alien">
                                   <TypeObj codeName="Alien_0" name="Alien" />
@@ -1171,7 +1171,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$3">
+              <TypeMethod name="fn$1003">
                 <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Alien">
                     <TypeObj codeName="Alien_0" name="Alien">
@@ -1179,7 +1179,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="AlienSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -1187,7 +1187,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn$3">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="Alien_0" name="Alien" />
@@ -1215,7 +1215,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="AlienSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -1223,7 +1223,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn$3">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="Alien_0" name="Alien" />
@@ -1244,7 +1244,7 @@ main {
                             <BuiltinType name="int" />
                           </TypeField>
                           <TypeField name="talk">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1000">
                               <TypeCallInfo codeName="AlienSDtalk_0" />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
@@ -1252,7 +1252,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="travel">
-                            <TypeMethod name="fn$3">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Alien">
                                   <TypeObj codeName="Alien_0" name="Alien" />
@@ -1284,7 +1284,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1000">
                 <TypeCallInfo codeName="AlienSDtalk_0" />
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
@@ -1300,7 +1300,7 @@ main {
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="talk">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1000">
                           <TypeCallInfo codeName="AlienSDtalk_0" />
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -1308,7 +1308,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn$3">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="Alien_0" name="Alien" />
@@ -1329,7 +1329,7 @@ main {
                             <BuiltinType name="int" />
                           </TypeField>
                           <TypeField name="talk">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1000">
                               <TypeCallInfo codeName="AlienSDtalk_0" />
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
@@ -1337,7 +1337,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="travel">
-                            <TypeMethod name="fn$3">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Alien">
                                   <TypeObj codeName="Alien_0" name="Alien" />

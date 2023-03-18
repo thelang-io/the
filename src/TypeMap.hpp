@@ -52,8 +52,6 @@ class TypeMap {
  private:
   std::size_t _fnIdx = 0;
   std::vector<std::unique_ptr<Type>> _items;
-  std::size_t _mapIdx = 0;
-  std::size_t _unIdx = 0;
 
   void _initType (const std::string &, TypeMapPhase, const std::optional<std::function<void (Type *, Type *)>> & = std::nullopt);
   void _anyType (TypeMapPhase);

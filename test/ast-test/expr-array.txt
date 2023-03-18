@@ -44,7 +44,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -55,7 +55,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -66,7 +66,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test3" codeName="test3_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -337,10 +337,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="v07" codeName="v07_0" frame="2">
-        <TypeArray name="array_array_array_fn$0">
-          <TypeArray name="array_array_fn$0">
-            <TypeArray name="array_fn$0">
-              <TypeFn name="fn$0">
+        <TypeArray name="array_array_array_fn$1000">
+          <TypeArray name="array_array_fn$1000">
+            <TypeArray name="array_fn$1000">
+              <TypeFn name="fn$1000">
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
@@ -353,10 +353,10 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeArray name="array_array_array_fn$0">
-            <TypeArray name="array_array_fn$0">
-              <TypeArray name="array_fn$0">
-                <TypeFn name="fn$0">
+          <TypeArray name="array_array_array_fn$1000">
+            <TypeArray name="array_array_fn$1000">
+              <TypeArray name="array_fn$1000">
+                <TypeFn name="fn$1000">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
                   </TypeFnReturnType>
@@ -369,9 +369,9 @@ main {
           <ExprArray>
             <NodeExpr>
               <NodeExprType>
-                <TypeArray name="array_array_fn$0">
-                  <TypeArray name="array_fn$0">
-                    <TypeFn name="fn$0">
+                <TypeArray name="array_array_fn$1000">
+                  <TypeArray name="array_fn$1000">
+                    <TypeFn name="fn$1000">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>
@@ -383,8 +383,8 @@ main {
                 <ExprArray>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeArray name="array_fn$0">
-                        <TypeFn name="fn$0">
+                      <TypeArray name="array_fn$1000">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -395,7 +395,7 @@ main {
                       <ExprArray>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -404,7 +404,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test1" codeName="test1_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -415,7 +415,7 @@ main {
                         </NodeExpr>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -424,7 +424,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test1" codeName="test1_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -438,8 +438,8 @@ main {
                   </NodeExpr>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeArray name="array_fn$0">
-                        <TypeFn name="fn$0">
+                      <TypeArray name="array_fn$1000">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -450,7 +450,7 @@ main {
                       <ExprArray>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -459,7 +459,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test1" codeName="test1_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -470,7 +470,7 @@ main {
                         </NodeExpr>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -479,7 +479,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test1" codeName="test1_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -496,9 +496,9 @@ main {
             </NodeExpr>
             <NodeExpr>
               <NodeExprType>
-                <TypeArray name="array_array_fn$0">
-                  <TypeArray name="array_fn$0">
-                    <TypeFn name="fn$0">
+                <TypeArray name="array_array_fn$1000">
+                  <TypeArray name="array_fn$1000">
+                    <TypeFn name="fn$1000">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>
@@ -510,8 +510,8 @@ main {
                 <ExprArray>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeArray name="array_fn$0">
-                        <TypeFn name="fn$0">
+                      <TypeArray name="array_fn$1000">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -522,7 +522,7 @@ main {
                       <ExprArray>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -531,7 +531,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test2" codeName="test2_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -542,7 +542,7 @@ main {
                         </NodeExpr>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -551,7 +551,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test2" codeName="test2_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -565,8 +565,8 @@ main {
                   </NodeExpr>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeArray name="array_fn$0">
-                        <TypeFn name="fn$0">
+                      <TypeArray name="array_fn$1000">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -577,7 +577,7 @@ main {
                       <ExprArray>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -586,7 +586,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test2" codeName="test2_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -597,7 +597,7 @@ main {
                         </NodeExpr>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -606,7 +606,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test2" codeName="test2_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -623,9 +623,9 @@ main {
             </NodeExpr>
             <NodeExpr>
               <NodeExprType>
-                <TypeArray name="array_array_fn$0">
-                  <TypeArray name="array_fn$0">
-                    <TypeFn name="fn$0">
+                <TypeArray name="array_array_fn$1000">
+                  <TypeArray name="array_fn$1000">
+                    <TypeFn name="fn$1000">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>
@@ -637,8 +637,8 @@ main {
                 <ExprArray>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeArray name="array_fn$0">
-                        <TypeFn name="fn$0">
+                      <TypeArray name="array_fn$1000">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -649,7 +649,7 @@ main {
                       <ExprArray>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -658,7 +658,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test3" codeName="test3_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -669,7 +669,7 @@ main {
                         </NodeExpr>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -678,7 +678,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test3" codeName="test3_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -692,8 +692,8 @@ main {
                   </NodeExpr>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeArray name="array_fn$0">
-                        <TypeFn name="fn$0">
+                      <TypeArray name="array_fn$1000">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -704,7 +704,7 @@ main {
                       <ExprArray>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -713,7 +713,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test3" codeName="test3_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>
@@ -724,7 +724,7 @@ main {
                         </NodeExpr>
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
@@ -733,7 +733,7 @@ main {
                           <NodeExprBody>
                             <ExprAccess>
                               <Var name="test3" codeName="test3_0" frame="1">
-                                <TypeFn name="fn$0">
+                                <TypeFn name="fn$1000">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
                                   </TypeFnReturnType>

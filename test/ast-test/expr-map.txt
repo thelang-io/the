@@ -12,7 +12,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a" codeName="a_0" frame="2">
-        <TypeMap name="map$0">
+        <TypeMap name="map_strMSfloatME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
@@ -25,7 +25,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSfloatME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -73,7 +73,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b" codeName="b_0" frame="2">
-        <TypeMap name="map$1">
+        <TypeMap name="map_strMSstrME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
@@ -86,7 +86,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$1">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -125,7 +125,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b2" codeName="b2_0" frame="2">
-        <TypeMap name="map$1">
+        <TypeMap name="map_strMSstrME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
@@ -138,7 +138,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$1">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -177,12 +177,12 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="c" codeName="c_0" frame="2">
-        <TypeMap name="map$2">
+        <TypeMap name="map_strMSunion_intUSstrUEME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
           <TypeMapValueType>
-            <TypeUnion name="union$0">
+            <TypeUnion name="union_intUSstrUE">
               <BuiltinType name="int" />
               <BuiltinType name="str" />
             </TypeUnion>
@@ -193,12 +193,12 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$2">
+          <TypeMap name="map_strMSunion_intUSstrUEME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
             <TypeMapValueType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSstrUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="str" />
               </TypeUnion>
@@ -235,12 +235,12 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="d" codeName="d_0" frame="2">
-        <TypeMap name="map$2">
+        <TypeMap name="map_strMSunion_intUSstrUEME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
           <TypeMapValueType>
-            <TypeUnion name="union$0">
+            <TypeUnion name="union_intUSstrUE">
               <BuiltinType name="int" />
               <BuiltinType name="str" />
             </TypeUnion>
@@ -251,12 +251,12 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$2">
+          <TypeMap name="map_strMSunion_intUSstrUEME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
             <TypeMapValueType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSstrUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="str" />
               </TypeUnion>
@@ -303,8 +303,8 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="e" codeName="e_0" frame="2">
-        <TypeOptional name="opt_map$1">
-          <TypeMap name="map$1">
+        <TypeOptional name="opt_map_strMSstrME">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -318,7 +318,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$1">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>

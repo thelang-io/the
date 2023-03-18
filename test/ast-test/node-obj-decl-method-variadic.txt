@@ -30,7 +30,7 @@ main {
   <NodeObjDeclType>
     <TypeObj codeName="Test_0" name="Test">
       <TypeField name="test1">
-        <TypeMethod name="fn$0">
+        <TypeMethod name="fn$1003">
           <TypeCallInfo codeName="TestSDtest1_0" />
           <TypeFnParams>
             <TypeFnParam name="a" variadic>
@@ -45,7 +45,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="test2">
-        <TypeMethod name="fn$1">
+        <TypeMethod name="fn$1004">
           <TypeCallInfo codeName="TestSDtest2_0" />
           <TypeFnParams>
             <TypeFnParam name="a" required>
@@ -63,7 +63,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="test3">
-        <TypeMethod name="fn$2">
+        <TypeMethod name="fn$1005">
           <TypeCallInfo codeName="TestSDtest3_0" />
           <TypeFnParams>
             <TypeFnParam name="a" required>
@@ -89,7 +89,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Test.test1" codeName="TestSDtest1_0" frame="1">
-          <TypeMethod name="fn$0">
+          <TypeMethod name="fn$1003">
             <TypeCallInfo codeName="TestSDtest1_0" />
             <TypeFnParams>
               <TypeFnParam name="a" variadic>
@@ -162,7 +162,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Test.test2" codeName="TestSDtest2_0" frame="1">
-          <TypeMethod name="fn$1">
+          <TypeMethod name="fn$1004">
             <TypeCallInfo codeName="TestSDtest2_0" />
             <TypeFnParams>
               <TypeFnParam name="a" required>
@@ -259,7 +259,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Test.test3" codeName="TestSDtest3_0" frame="1">
-          <TypeMethod name="fn$2">
+          <TypeMethod name="fn$1005">
             <TypeCallInfo codeName="TestSDtest3_0" />
             <TypeFnParams>
               <TypeFnParam name="a" required>
@@ -395,7 +395,7 @@ main {
       <Var name="test" codeName="test_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
           <TypeField name="test1">
-            <TypeMethod name="fn$0">
+            <TypeMethod name="fn$1003">
               <TypeCallInfo codeName="TestSDtest1_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" variadic>
@@ -410,7 +410,7 @@ main {
             </TypeMethod>
           </TypeField>
           <TypeField name="test2">
-            <TypeMethod name="fn$1">
+            <TypeMethod name="fn$1004">
               <TypeCallInfo codeName="TestSDtest2_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" required>
@@ -428,7 +428,7 @@ main {
             </TypeMethod>
           </TypeField>
           <TypeField name="test3">
-            <TypeMethod name="fn$2">
+            <TypeMethod name="fn$1005">
               <TypeCallInfo codeName="TestSDtest3_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" required>
@@ -456,7 +456,7 @@ main {
         <NodeExprType>
           <TypeObj codeName="Test_0" name="Test">
             <TypeField name="test1">
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1003">
                 <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
@@ -471,7 +471,7 @@ main {
               </TypeMethod>
             </TypeField>
             <TypeField name="test2">
-              <TypeMethod name="fn$1">
+              <TypeMethod name="fn$1004">
                 <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -489,7 +489,7 @@ main {
               </TypeMethod>
             </TypeField>
             <TypeField name="test3">
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1005">
                 <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -526,7 +526,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1003">
                 <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
@@ -546,7 +546,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -561,7 +561,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -579,7 +579,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -606,7 +606,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -621,7 +621,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -639,7 +639,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -680,7 +680,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1003">
                 <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
@@ -700,7 +700,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -715,7 +715,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -733,7 +733,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -760,7 +760,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -775,7 +775,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -793,7 +793,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -846,7 +846,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$0">
+              <TypeMethod name="fn$1003">
                 <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
@@ -866,7 +866,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -881,7 +881,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -899,7 +899,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -926,7 +926,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -941,7 +941,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -959,7 +959,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1022,7 +1022,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$1">
+              <TypeMethod name="fn$1004">
                 <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -1045,7 +1045,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -1060,7 +1060,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1078,7 +1078,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1105,7 +1105,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -1120,7 +1120,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1138,7 +1138,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1191,7 +1191,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$1">
+              <TypeMethod name="fn$1004">
                 <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -1214,7 +1214,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -1229,7 +1229,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1247,7 +1247,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1274,7 +1274,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -1289,7 +1289,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1307,7 +1307,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1370,7 +1370,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$1">
+              <TypeMethod name="fn$1004">
                 <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -1393,7 +1393,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -1408,7 +1408,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1426,7 +1426,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1453,7 +1453,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -1468,7 +1468,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1486,7 +1486,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1559,7 +1559,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1005">
                 <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -1585,7 +1585,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -1600,7 +1600,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1618,7 +1618,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1645,7 +1645,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -1660,7 +1660,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1678,7 +1678,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1731,7 +1731,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1005">
                 <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -1757,7 +1757,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -1772,7 +1772,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1790,7 +1790,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1817,7 +1817,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -1832,7 +1832,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1850,7 +1850,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -1913,7 +1913,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1005">
                 <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -1939,7 +1939,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -1954,7 +1954,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1972,7 +1972,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -1999,7 +1999,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -2014,7 +2014,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -2032,7 +2032,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -2105,7 +2105,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1005">
                 <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -2131,7 +2131,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -2146,7 +2146,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -2164,7 +2164,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -2191,7 +2191,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -2206,7 +2206,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -2224,7 +2224,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -2287,7 +2287,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1005">
                 <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -2313,7 +2313,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -2328,7 +2328,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -2346,7 +2346,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -2373,7 +2373,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -2388,7 +2388,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -2406,7 +2406,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -2479,7 +2479,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn$2">
+              <TypeMethod name="fn$1005">
                 <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
@@ -2505,7 +2505,7 @@ main {
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
                       <TypeField name="test1">
-                        <TypeMethod name="fn$0">
+                        <TypeMethod name="fn$1003">
                           <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
@@ -2520,7 +2520,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeMethod name="fn$1">
+                        <TypeMethod name="fn$1004">
                           <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -2538,7 +2538,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="test3">
-                        <TypeMethod name="fn$2">
+                        <TypeMethod name="fn$1005">
                           <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
@@ -2565,7 +2565,7 @@ main {
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
                           <TypeField name="test1">
-                            <TypeMethod name="fn$0">
+                            <TypeMethod name="fn$1003">
                               <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
@@ -2580,7 +2580,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test2">
-                            <TypeMethod name="fn$1">
+                            <TypeMethod name="fn$1004">
                               <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -2598,7 +2598,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="test3">
-                            <TypeMethod name="fn$2">
+                            <TypeMethod name="fn$1005">
                               <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
