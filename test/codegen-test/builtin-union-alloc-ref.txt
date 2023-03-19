@@ -36,9 +36,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_union$0;
+struct __THE_1_union_ref_intUSref_strUE;
 
-struct __THE_1_union$0 {
+struct __THE_1_union_ref_intUSref_strUE {
   int t;
   union {
     int32_t *v1;
@@ -49,7 +49,7 @@ struct __THE_1_union$0 {
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
+struct __THE_1_union_ref_intUSref_strUE __THE_1_union_ref_intUSref_strUE_alloc (int, ...);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -68,8 +68,8 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
-  struct __THE_1_union$0 r = {t};
+struct __THE_1_union_ref_intUSref_strUE __THE_1_union_ref_intUSref_strUE_alloc (int t, ...) {
+  struct __THE_1_union_ref_intUSref_strUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_ref_int) r.v1 = va_arg(args, int32_t *);
@@ -83,8 +83,8 @@ int main () {
   const struct str __THE_0_testStr_0 = str_alloc("test");
   const int32_t *__THE_0_testRefInt_0 = &__THE_0_testInt_0;
   const struct str *__THE_0_testRefStr_0 = &__THE_0_testStr_0;
-  const struct __THE_1_union$0 __THE_0_g1_0 = __THE_1_union$0_alloc(TYPE_ref_int, __THE_0_testRefInt_0);
-  const struct __THE_1_union$0 __THE_0_g2_0 = __THE_1_union$0_alloc(TYPE_ref_str, __THE_0_testRefStr_0);
+  const struct __THE_1_union_ref_intUSref_strUE __THE_0_g1_0 = __THE_1_union_ref_intUSref_strUE_alloc(TYPE_ref_int, __THE_0_testRefInt_0);
+  const struct __THE_1_union_ref_intUSref_strUE __THE_0_g2_0 = __THE_1_union_ref_intUSref_strUE_alloc(TYPE_ref_str, __THE_0_testRefStr_0);
   str_free((struct str) __THE_0_testStr_0);
 }
 ======= flags =======

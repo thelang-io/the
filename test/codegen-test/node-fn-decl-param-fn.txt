@@ -47,78 +47,78 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-struct __THE_1_fn$0;
-struct __THE_1_fn$1;
-struct __THE_1_fn$1P;
-struct __THE_1_fn$2;
-struct __THE_1_fn$2P;
-struct __THE_1_fn$3;
-struct __THE_1_fn$3P;
-struct __THE_1_fn$4;
-struct __THE_1_fn$4P;
-struct __THE_1_fn$5;
-struct __THE_1_fn$5P;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1001;
+struct __THE_1_fn$1001P;
+struct __THE_1_fn$1002;
+struct __THE_1_fn$1002P;
+struct __THE_1_fn$1003;
+struct __THE_1_fn$1003P;
+struct __THE_1_fn$1004;
+struct __THE_1_fn$1004P;
+struct __THE_1_fn$1005;
+struct __THE_1_fn$1005P;
 
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1 {
-  void (*f) (void *, struct __THE_1_fn$1P);
+struct __THE_1_fn$1001 {
+  void (*f) (void *, struct __THE_1_fn$1001P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1P {
-  struct __THE_1_fn$0 n0;
+struct __THE_1_fn$1001P {
+  struct __THE_1_fn$1000 n0;
 };
-struct __THE_1_fn$2 {
-  int32_t (*f) (void *, struct __THE_1_fn$2P);
+struct __THE_1_fn$1002 {
+  int32_t (*f) (void *, struct __THE_1_fn$1002P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$2P {
+struct __THE_1_fn$1002P {
   int32_t n0;
 };
-struct __THE_1_fn$3 {
-  int32_t (*f) (void *, struct __THE_1_fn$3P);
+struct __THE_1_fn$1003 {
+  int32_t (*f) (void *, struct __THE_1_fn$1003P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$3P {
-  struct __THE_1_fn$2 n0;
+struct __THE_1_fn$1003P {
+  struct __THE_1_fn$1002 n0;
 };
-struct __THE_1_fn$4 {
-  int32_t (*f) (void *, struct __THE_1_fn$4P);
+struct __THE_1_fn$1004 {
+  int32_t (*f) (void *, struct __THE_1_fn$1004P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$4P {
+struct __THE_1_fn$1004P {
   int32_t n0;
   int32_t n1;
 };
-struct __THE_1_fn$5 {
-  int32_t (*f) (void *, struct __THE_1_fn$5P);
+struct __THE_1_fn$1005 {
+  int32_t (*f) (void *, struct __THE_1_fn$1005P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$5P {
-  struct __THE_1_fn$4 n0;
+struct __THE_1_fn$1005P {
+  struct __THE_1_fn$1004 n0;
 };
 
 void *alloc (size_t);
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
-void __THE_1_test1_0 (void *, struct __THE_1_fn$1P);
-struct __THE_1_fn$2 __THE_1_fn$2_copy (const struct __THE_1_fn$2);
-void __THE_1_fn$2_free (struct __THE_1_fn$2);
-int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$3P);
-struct __THE_1_fn$4 __THE_1_fn$4_copy (const struct __THE_1_fn$4);
-void __THE_1_fn$4_free (struct __THE_1_fn$4);
-int32_t __THE_1_test3_0 (void *, struct __THE_1_fn$5P);
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_test1_0 (void *, struct __THE_1_fn$1001P);
+struct __THE_1_fn$1002 __THE_1_fn$1002_copy (const struct __THE_1_fn$1002);
+void __THE_1_fn$1002_free (struct __THE_1_fn$1002);
+int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$1003P);
+struct __THE_1_fn$1004 __THE_1_fn$1004_copy (const struct __THE_1_fn$1004);
+void __THE_1_fn$1004_free (struct __THE_1_fn$1004);
+int32_t __THE_1_test3_0 (void *, struct __THE_1_fn$1005P);
 void __THE_1_job1_0 (void *);
-int32_t __THE_1_job2_0 (void *, struct __THE_1_fn$2P);
-int32_t __THE_1_job3_0 (void *, struct __THE_1_fn$4P);
+int32_t __THE_1_job2_0 (void *, struct __THE_1_fn$1002P);
+int32_t __THE_1_job3_0 (void *, struct __THE_1_fn$1004P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -128,74 +128,74 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$0) {n.f, x, n.l};
+  return (struct __THE_1_fn$1000) {n.f, x, n.l};
 }
-void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_test1_0 (void *px, struct __THE_1_fn$1P p) {
-  const struct __THE_1_fn$0 __THE_0_job_0 = p.n0;
+void __THE_1_test1_0 (void *px, struct __THE_1_fn$1001P p) {
+  const struct __THE_1_fn$1000 __THE_0_job_0 = p.n0;
   __THE_0_job_0.f(__THE_0_job_0.x);
-  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_job_0);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_job_0);
 }
-struct __THE_1_fn$2 __THE_1_fn$2_copy (const struct __THE_1_fn$2 n) {
+struct __THE_1_fn$1002 __THE_1_fn$1002_copy (const struct __THE_1_fn$1002 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$2) {n.f, x, n.l};
+  return (struct __THE_1_fn$1002) {n.f, x, n.l};
 }
-void __THE_1_fn$2_free (struct __THE_1_fn$2 n) {
+void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
   if (n.x != NULL) free(n.x);
 }
-int32_t __THE_1_test2_0 (void *px, struct __THE_1_fn$3P p) {
+int32_t __THE_1_test2_0 (void *px, struct __THE_1_fn$1003P p) {
   int32_t v;
-  const struct __THE_1_fn$2 __THE_0_job_0 = p.n0;
-  v = __THE_0_job_0.f(__THE_0_job_0.x, (struct __THE_1_fn$2P) {1});
-  __THE_1_fn$2_free((struct __THE_1_fn$2) __THE_0_job_0);
+  const struct __THE_1_fn$1002 __THE_0_job_0 = p.n0;
+  v = __THE_0_job_0.f(__THE_0_job_0.x, (struct __THE_1_fn$1002P) {1});
+  __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_job_0);
   return v;
 }
-struct __THE_1_fn$4 __THE_1_fn$4_copy (const struct __THE_1_fn$4 n) {
+struct __THE_1_fn$1004 __THE_1_fn$1004_copy (const struct __THE_1_fn$1004 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$4) {n.f, x, n.l};
+  return (struct __THE_1_fn$1004) {n.f, x, n.l};
 }
-void __THE_1_fn$4_free (struct __THE_1_fn$4 n) {
+void __THE_1_fn$1004_free (struct __THE_1_fn$1004 n) {
   if (n.x != NULL) free(n.x);
 }
-int32_t __THE_1_test3_0 (void *px, struct __THE_1_fn$5P p) {
+int32_t __THE_1_test3_0 (void *px, struct __THE_1_fn$1005P p) {
   int32_t v;
-  const struct __THE_1_fn$4 __THE_0_job_0 = p.n0;
-  v = __THE_0_job_0.f(__THE_0_job_0.x, (struct __THE_1_fn$4P) {2, 3});
-  __THE_1_fn$4_free((struct __THE_1_fn$4) __THE_0_job_0);
+  const struct __THE_1_fn$1004 __THE_0_job_0 = p.n0;
+  v = __THE_0_job_0.f(__THE_0_job_0.x, (struct __THE_1_fn$1004P) {2, 3});
+  __THE_1_fn$1004_free((struct __THE_1_fn$1004) __THE_0_job_0);
   return v;
 }
 void __THE_1_job1_0 (void *px) {
 }
-int32_t __THE_1_job2_0 (void *px, struct __THE_1_fn$2P p) {
+int32_t __THE_1_job2_0 (void *px, struct __THE_1_fn$1002P p) {
   const int32_t __THE_0_a_0 = p.n0;
   return __THE_0_a_0 + 2;
 }
-int32_t __THE_1_job3_0 (void *px, struct __THE_1_fn$4P p) {
+int32_t __THE_1_job3_0 (void *px, struct __THE_1_fn$1004P p) {
   const int32_t __THE_0_a_0 = p.n0;
   const int32_t __THE_0_b_0 = p.n1;
   return __THE_0_a_0 * __THE_0_b_0;
 }
 
 int main () {
-  const struct __THE_1_fn$1 __THE_0_test1_0 = (struct __THE_1_fn$1) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$3 __THE_0_test2_0 = (struct __THE_1_fn$3) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn$5 __THE_0_test3_0 = (struct __THE_1_fn$5) {&__THE_1_test3_0, NULL, 0};
-  const struct __THE_1_fn$0 __THE_0_job1_0 = (struct __THE_1_fn$0) {&__THE_1_job1_0, NULL, 0};
-  const struct __THE_1_fn$2 __THE_0_job2_0 = (struct __THE_1_fn$2) {&__THE_1_job2_0, NULL, 0};
-  const struct __THE_1_fn$4 __THE_0_job3_0 = (struct __THE_1_fn$4) {&__THE_1_job3_0, NULL, 0};
-  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1P) {__THE_1_fn$0_copy(__THE_0_job1_0)});
-  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$3P) {__THE_1_fn$2_copy(__THE_0_job2_0)});
-  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$5P) {__THE_1_fn$4_copy(__THE_0_job3_0)});
+  const struct __THE_1_fn$1001 __THE_0_test1_0 = (struct __THE_1_fn$1001) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1003 __THE_0_test2_0 = (struct __THE_1_fn$1003) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$1005 __THE_0_test3_0 = (struct __THE_1_fn$1005) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_job1_0 = (struct __THE_1_fn$1000) {&__THE_1_job1_0, NULL, 0};
+  const struct __THE_1_fn$1002 __THE_0_job2_0 = (struct __THE_1_fn$1002) {&__THE_1_job2_0, NULL, 0};
+  const struct __THE_1_fn$1004 __THE_0_job3_0 = (struct __THE_1_fn$1004) {&__THE_1_job3_0, NULL, 0};
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_job1_0)});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1003P) {__THE_1_fn$1002_copy(__THE_0_job2_0)});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1005P) {__THE_1_fn$1004_copy(__THE_0_job3_0)});
 }
 ======= flags =======
 ======= stdout =======

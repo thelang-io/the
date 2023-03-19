@@ -21,29 +21,29 @@ enum __THE_1_Color_0 {
   __THE_0_ColorSDBlue_0
 };
 
-struct __THE_1_fn$0;
-struct __THE_1_fn$0P;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
 
-struct __THE_1_fn$0 {
-  void (*f) (void *, struct __THE_1_fn$0P);
+struct __THE_1_fn$1000 {
+  void (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$0P {
+struct __THE_1_fn$1000P {
   enum __THE_1_Color_0 n0;
 };
 
-void __THE_1_testCall_0 (void *, struct __THE_1_fn$0P);
+void __THE_1_testCall_0 (void *, struct __THE_1_fn$1000P);
 
-void __THE_1_testCall_0 (void *px, struct __THE_1_fn$0P p) {
+void __THE_1_testCall_0 (void *px, struct __THE_1_fn$1000P p) {
   const enum __THE_1_Color_0 __THE_0_t_0 = p.n0;
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_testCall_0 = (struct __THE_1_fn$0) {&__THE_1_testCall_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_testCall_0 = (struct __THE_1_fn$1000) {&__THE_1_testCall_0, NULL, 0};
   enum __THE_1_Color_0 __THE_0_test1_0 = __THE_0_ColorSDRed_0;
   __THE_0_test1_0 = __THE_0_ColorSDGreen_0;
-  __THE_0_testCall_0.f(__THE_0_testCall_0.x, (struct __THE_1_fn$0P) {__THE_0_ColorSDGreen_0});
+  __THE_0_testCall_0.f(__THE_0_testCall_0.x, (struct __THE_1_fn$1000P) {__THE_0_ColorSDGreen_0});
 }
 ======= flags =======
 ======= stdout =======

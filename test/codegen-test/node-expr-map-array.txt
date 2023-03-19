@@ -29,19 +29,19 @@ struct str {
 };
 
 struct __THE_1_array_int;
-struct __THE_1_pair$0;
-struct __THE_1_map$0;
+struct __THE_1_pair_strMSarray_intME;
+struct __THE_1_map_strMSarray_intME;
 
 struct __THE_1_array_int {
   int32_t *d;
   size_t l;
 };
-struct __THE_1_pair$0 {
+struct __THE_1_pair_strMSarray_intME {
   struct str f;
   struct __THE_1_array_int s;
 };
-struct __THE_1_map$0 {
-  struct __THE_1_pair$0 *d;
+struct __THE_1_map_strMSarray_intME {
+  struct __THE_1_pair_strMSarray_intME *d;
   size_t c;
   size_t l;
 };
@@ -51,8 +51,8 @@ struct str str_alloc (const char *);
 void str_free (struct str);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 void __THE_1_array_int_free (struct __THE_1_array_int);
-struct __THE_1_map$0 __THE_1_map$0_alloc (int, ...);
-void __THE_1_map$0_free (struct __THE_1_map$0);
+struct __THE_1_map_strMSarray_intME __THE_1_map_strMSarray_intME_alloc (int, ...);
+void __THE_1_map_strMSarray_intME_free (struct __THE_1_map_strMSarray_intME);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -83,15 +83,15 @@ struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
 void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
-struct __THE_1_map$0 __THE_1_map$0_alloc (int x, ...) {
-  struct __THE_1_pair$0 *d = alloc(x * sizeof(struct __THE_1_pair$0));
+struct __THE_1_map_strMSarray_intME __THE_1_map_strMSarray_intME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSarray_intME *d = alloc(x * sizeof(struct __THE_1_pair_strMSarray_intME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$0) {va_arg(args, struct str), va_arg(args, struct __THE_1_array_int)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSarray_intME) {va_arg(args, struct str), va_arg(args, struct __THE_1_array_int)};
   va_end(args);
-  return (struct __THE_1_map$0) {d, x, x};
+  return (struct __THE_1_map_strMSarray_intME) {d, x, x};
 }
-void __THE_1_map$0_free (struct __THE_1_map$0 n) {
+void __THE_1_map_strMSarray_intME_free (struct __THE_1_map_strMSarray_intME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
     __THE_1_array_int_free((struct __THE_1_array_int) n.d[i].s);
@@ -100,7 +100,7 @@ void __THE_1_map$0_free (struct __THE_1_map$0 n) {
 }
 
 int main () {
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_1_map$0_alloc(3, str_alloc("key1"), __THE_1_array_int_alloc(3, 1, 2, 3), str_alloc("key2"), __THE_1_array_int_alloc(3, 3, 4, 5), str_alloc("key3"), __THE_1_array_int_alloc(3, 5, 6, 7)));
+  __THE_1_map_strMSarray_intME_free((struct __THE_1_map_strMSarray_intME) __THE_1_map_strMSarray_intME_alloc(3, str_alloc("key1"), __THE_1_array_int_alloc(3, 1, 2, 3), str_alloc("key2"), __THE_1_array_int_alloc(3, 3, 4, 5), str_alloc("key3"), __THE_1_array_int_alloc(3, 5, 6, 7)));
 }
 ======= flags =======
 ======= stdout =======

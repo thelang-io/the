@@ -41,9 +41,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_union$0;
+struct __THE_1_union_intUSstrUE;
 
-struct __THE_1_union$0 {
+struct __THE_1_union_intUSstrUE {
   int t;
   union {
     int32_t v1;
@@ -55,8 +55,8 @@ void *alloc (size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-void __THE_1_union$0_free (struct __THE_1_union$0);
+struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int, ...);
+void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -80,8 +80,8 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
-  struct __THE_1_union$0 r = {t};
+struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int t, ...) {
+  struct __THE_1_union_intUSstrUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_int) r.v1 = va_arg(args, int32_t);
@@ -89,23 +89,23 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE n) {
   if (n.t == TYPE_str) str_free((struct str) n.v2);
 }
 
 int main () {
   const int32_t __THE_0_testInt_0 = 1;
   const struct str __THE_0_testStr_0 = str_alloc("test");
-  const struct __THE_1_union$0 __THE_0_v1_0 = __THE_1_union$0_alloc(TYPE_int, 1);
-  const struct __THE_1_union$0 __THE_0_v2_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc(""));
-  const struct __THE_1_union$0 __THE_0_v3_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc("test"));
-  const struct __THE_1_union$0 __THE_0_v3_1 = __THE_1_union$0_alloc(TYPE_int, __THE_0_testInt_0);
-  const struct __THE_1_union$0 __THE_0_v3_2 = __THE_1_union$0_alloc(TYPE_str, str_copy(__THE_0_testStr_0));
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_v3_2);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_v3_1);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_v3_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_v2_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_v1_0);
+  const struct __THE_1_union_intUSstrUE __THE_0_v1_0 = __THE_1_union_intUSstrUE_alloc(TYPE_int, 1);
+  const struct __THE_1_union_intUSstrUE __THE_0_v2_0 = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc(""));
+  const struct __THE_1_union_intUSstrUE __THE_0_v3_0 = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test"));
+  const struct __THE_1_union_intUSstrUE __THE_0_v3_1 = __THE_1_union_intUSstrUE_alloc(TYPE_int, __THE_0_testInt_0);
+  const struct __THE_1_union_intUSstrUE __THE_0_v3_2 = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_copy(__THE_0_testStr_0));
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_v3_2);
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_v3_1);
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_v3_0);
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_v2_0);
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_v1_0);
   str_free((struct str) __THE_0_testStr_0);
 }
 ======= flags =======

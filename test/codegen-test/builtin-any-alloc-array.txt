@@ -40,17 +40,17 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_array_int;
 struct __THE_1_array_str;
+struct __THE_1_array_int;
 struct __THE_1_any_array_str;
 struct __THE_1_any_array_int;
 
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
 struct __THE_1_array_str {
   struct str *d;
+  size_t l;
+};
+struct __THE_1_array_int {
+  int32_t *d;
   size_t l;
 };
 struct __THE_1_any_array_str {
@@ -65,12 +65,12 @@ void any_free (struct any);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
 struct any __THE_1_any_array_str_alloc (struct __THE_1_array_str);
 struct any __THE_1_any_array_str_copy (const struct any);
 void __THE_1_any_array_str_free (struct any);
@@ -103,24 +103,6 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
-  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(x * sizeof(int32_t));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
-  va_end(args);
-  return (struct __THE_1_array_int) {d, x};
-}
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
-  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(n.l * sizeof(int32_t));
-  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
-  return (struct __THE_1_array_int) {d, n.l};
-}
-void __THE_1_array_int_free (struct __THE_1_array_int n) {
-  free(n.d);
-}
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
   struct str *d = alloc(x * sizeof(struct str));
@@ -138,6 +120,24 @@ struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str 
 }
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(x * sizeof(int32_t));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
+  va_end(args);
+  return (struct __THE_1_array_int) {d, x};
+}
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
+  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(n.l * sizeof(int32_t));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
+  return (struct __THE_1_array_int) {d, n.l};
+}
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
 struct any __THE_1_any_array_str_alloc (struct __THE_1_array_str d) {

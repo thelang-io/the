@@ -59,7 +59,7 @@ struct str {
 
 struct __THE_1_Test1_0;
 struct __THE_1_Test2_0;
-struct __THE_1_fn$0;
+struct __THE_1_fn$1000;
 
 struct __THE_1_Test1_0 {
   const int32_t __THE_0_b;
@@ -68,7 +68,7 @@ struct __THE_1_Test1_0 {
 struct __THE_1_Test2_0 {
   const struct str __THE_0_c;
 };
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   struct str (*f) (void *);
   void *x;
   size_t l;
@@ -165,7 +165,7 @@ struct str __THE_1_test3_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_test3_0 = (struct __THE_1_fn$0) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
   const struct __THE_1_Test2_0 *__THE_0_test2_0 = __THE_1_Test2_0_alloc(str_alloc("test"));
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(8, __THE_1_Test2_0_copy(__THE_0_test2_0));
   int32_t __THE_0_a_0 = __THE_0_test1_0->__THE_0_b;

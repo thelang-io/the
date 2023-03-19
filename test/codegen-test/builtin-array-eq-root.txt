@@ -53,9 +53,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_array_int;
 struct __THE_1_array_str;
 struct __THE_1_TestObj_0;
+struct __THE_1_array_int;
 struct __THE_1_array_array_int;
 struct __THE_1_array_bool;
 struct __THE_1_array_char;
@@ -64,16 +64,16 @@ struct __THE_1_array_TestObj;
 struct __THE_1_array_opt_int;
 struct __THE_1_array_ref_int;
 
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
 struct __THE_1_TestObj_0 {
   const int32_t __THE_0_a;
+};
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
 };
 struct __THE_1_array_array_int {
   struct __THE_1_array_int *d;
@@ -109,11 +109,6 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-bool __THE_1_array_int_eq (struct __THE_1_array_int, struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
-bool __THE_1_array_int_ne (struct __THE_1_array_int, struct __THE_1_array_int);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 bool __THE_1_array_str_eq (struct __THE_1_array_str, struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
@@ -126,6 +121,11 @@ int32_t *__THE_1_opt_int_alloc (int32_t);
 int32_t *__THE_1_opt_int_copy (const int32_t *);
 void __THE_1_opt_int_free (int32_t *);
 bool __THE_1_opt_int_ne (int32_t *, int32_t *);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+bool __THE_1_array_int_eq (struct __THE_1_array_int, struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+bool __THE_1_array_int_ne (struct __THE_1_array_int, struct __THE_1_array_int);
 struct __THE_1_array_array_int __THE_1_array_array_int_alloc (size_t, ...);
 bool __THE_1_array_array_int_eq (struct __THE_1_array_array_int, struct __THE_1_array_array_int);
 void __THE_1_array_array_int_free (struct __THE_1_array_array_int);
@@ -181,52 +181,6 @@ bool str_ne_str (struct str s1, struct str s2) {
   bool r = s1.l != s2.l || memcmp(s1.d, s2.d, s1.l) != 0;
   free(s1.d);
   free(s2.d);
-  return r;
-}
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
-  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(x * sizeof(int32_t));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
-  va_end(args);
-  return (struct __THE_1_array_int) {d, x};
-}
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
-  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(n.l * sizeof(int32_t));
-  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
-  return (struct __THE_1_array_int) {d, n.l};
-}
-bool __THE_1_array_int_eq (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
-  bool r = n1.l == n2.l;
-  if (r) {
-    for (size_t i = 0; i < n1.l; i++) {
-      if (n1.d[i] != n2.d[i]) {
-        r = false;
-        break;
-      }
-    }
-  }
-  __THE_1_array_int_free((struct __THE_1_array_int) n1);
-  __THE_1_array_int_free((struct __THE_1_array_int) n2);
-  return r;
-}
-void __THE_1_array_int_free (struct __THE_1_array_int n) {
-  free(n.d);
-}
-bool __THE_1_array_int_ne (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
-  bool r = n1.l != n2.l;
-  if (!r) {
-    for (size_t i = 0; i < n1.l; i++) {
-      if (n1.d[i] != n2.d[i]) {
-        r = true;
-        break;
-      }
-    }
-  }
-  __THE_1_array_int_free((struct __THE_1_array_int) n1);
-  __THE_1_array_int_free((struct __THE_1_array_int) n2);
   return r;
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
@@ -310,6 +264,52 @@ bool __THE_1_opt_int_ne (int32_t *n1, int32_t *n2) {
   bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : *n1 != *n2;
   __THE_1_opt_int_free((int32_t *) n1);
   __THE_1_opt_int_free((int32_t *) n2);
+  return r;
+}
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(x * sizeof(int32_t));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
+  va_end(args);
+  return (struct __THE_1_array_int) {d, x};
+}
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
+  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(n.l * sizeof(int32_t));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
+  return (struct __THE_1_array_int) {d, n.l};
+}
+bool __THE_1_array_int_eq (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
+  bool r = n1.l == n2.l;
+  if (r) {
+    for (size_t i = 0; i < n1.l; i++) {
+      if (n1.d[i] != n2.d[i]) {
+        r = false;
+        break;
+      }
+    }
+  }
+  __THE_1_array_int_free((struct __THE_1_array_int) n1);
+  __THE_1_array_int_free((struct __THE_1_array_int) n2);
+  return r;
+}
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
+  free(n.d);
+}
+bool __THE_1_array_int_ne (struct __THE_1_array_int n1, struct __THE_1_array_int n2) {
+  bool r = n1.l != n2.l;
+  if (!r) {
+    for (size_t i = 0; i < n1.l; i++) {
+      if (n1.d[i] != n2.d[i]) {
+        r = true;
+        break;
+      }
+    }
+  }
+  __THE_1_array_int_free((struct __THE_1_array_int) n1);
+  __THE_1_array_int_free((struct __THE_1_array_int) n2);
   return r;
 }
 struct __THE_1_array_array_int __THE_1_array_array_int_alloc (size_t x, ...) {

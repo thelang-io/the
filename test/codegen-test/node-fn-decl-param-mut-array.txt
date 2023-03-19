@@ -33,29 +33,29 @@ main {
 #include <stdlib.h>
 
 struct __THE_1_array_int;
-struct __THE_1_fn$0;
-struct __THE_1_fn$0P;
-struct __THE_1_fn$1;
-struct __THE_1_fn$1P;
+struct __THE_1_fn$1003;
+struct __THE_1_fn$1003P;
+struct __THE_1_fn$1004;
+struct __THE_1_fn$1004P;
 
 struct __THE_1_array_int {
   int32_t *d;
   size_t l;
 };
-struct __THE_1_fn$0 {
-  struct __THE_1_array_int (*f) (void *, struct __THE_1_fn$0P);
+struct __THE_1_fn$1003 {
+  struct __THE_1_array_int (*f) (void *, struct __THE_1_fn$1003P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$0P {
+struct __THE_1_fn$1003P {
   struct __THE_1_array_int n0;
 };
-struct __THE_1_fn$1 {
-  struct __THE_1_array_int (*f) (void *, struct __THE_1_fn$1P);
+struct __THE_1_fn$1004 {
+  struct __THE_1_array_int (*f) (void *, struct __THE_1_fn$1004P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1P {
+struct __THE_1_fn$1004P {
   struct __THE_1_array_int n0;
   unsigned char o1;
   struct __THE_1_array_int n1;
@@ -69,8 +69,8 @@ void __THE_1_array_int_free (struct __THE_1_array_int);
 size_t __THE_1_array_int_len (struct __THE_1_array_int);
 void __THE_1_array_int_push (struct __THE_1_array_int *, struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
-struct __THE_1_array_int __THE_1_test1_0 (void *, struct __THE_1_fn$0P);
-struct __THE_1_array_int __THE_1_test2_0 (void *, struct __THE_1_fn$1P);
+struct __THE_1_array_int __THE_1_test1_0 (void *, struct __THE_1_fn$1003P);
+struct __THE_1_array_int __THE_1_test2_0 (void *, struct __THE_1_fn$1004P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -123,7 +123,7 @@ struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1,
   __THE_1_array_int_free((struct __THE_1_array_int) n1);
   return n2;
 }
-struct __THE_1_array_int __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
+struct __THE_1_array_int __THE_1_test1_0 (void *px, struct __THE_1_fn$1003P p) {
   struct __THE_1_array_int v;
   struct __THE_1_array_int __THE_0_a_0 = p.n0;
   __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, 2));
@@ -131,7 +131,7 @@ struct __THE_1_array_int __THE_1_test1_0 (void *px, struct __THE_1_fn$0P p) {
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
   return v;
 }
-struct __THE_1_array_int __THE_1_test2_0 (void *px, struct __THE_1_fn$1P p) {
+struct __THE_1_array_int __THE_1_test2_0 (void *px, struct __THE_1_fn$1004P p) {
   struct __THE_1_array_int v;
   struct __THE_1_array_int __THE_0_a_0 = p.n0;
   struct __THE_1_array_int __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_array_int_alloc(3, 4, 5, 6);
@@ -144,10 +144,10 @@ struct __THE_1_array_int __THE_1_test2_0 (void *px, struct __THE_1_fn$1P p) {
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1 __THE_0_test2_0 = (struct __THE_1_fn$1) {&__THE_1_test2_0, NULL, 0};
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$0P) {__THE_1_array_int_alloc(2, 0, 1)}));
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1P) {__THE_1_array_int_alloc(2, 2, 3), 0, (struct __THE_1_array_int) {}}));
+  const struct __THE_1_fn$1003 __THE_0_test1_0 = (struct __THE_1_fn$1003) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1004 __THE_0_test2_0 = (struct __THE_1_fn$1004) {&__THE_1_test2_0, NULL, 0};
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {__THE_1_array_int_alloc(2, 0, 1)}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(2, 2, 3), 0, (struct __THE_1_array_int) {}}));
 }
 ======= flags =======
 ======= stdout =======

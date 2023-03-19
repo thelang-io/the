@@ -46,18 +46,18 @@ struct str {
 };
 
 struct __THE_1_Human_0;
-struct __THE_1_fn$0;
-struct __THE_1_fn$1;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1001;
 
 struct __THE_1_Human_0 {
   int32_t __THE_0_distance;
 };
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1 {
+struct __THE_1_fn$1001 {
   void (*f) (void *, struct __THE_1_Human_0 **);
   void *x;
   size_t l;
@@ -128,8 +128,8 @@ void __THE_1_HumanSDwalk_0 (void *px, struct __THE_1_Human_0 **__THE_0_self_0) {
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_HumanSDtalk_0 = (struct __THE_1_fn$0) {&__THE_1_HumanSDtalk_0, NULL, 0};
-  const struct __THE_1_fn$1 __THE_0_HumanSDwalk_0 = (struct __THE_1_fn$1) {&__THE_1_HumanSDwalk_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_HumanSDtalk_0 = (struct __THE_1_fn$1000) {&__THE_1_HumanSDtalk_0, NULL, 0};
+  const struct __THE_1_fn$1001 __THE_0_HumanSDwalk_0 = (struct __THE_1_fn$1001) {&__THE_1_HumanSDwalk_0, NULL, 0};
   struct __THE_1_Human_0 *__THE_0_person_0 = __THE_1_Human_0_alloc(0);
   __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x);
   __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, &__THE_0_person_0);

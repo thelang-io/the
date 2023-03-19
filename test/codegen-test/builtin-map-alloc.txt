@@ -94,180 +94,180 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_pair$0;
-struct __THE_1_map$0;
-struct __THE_1_pair$1;
-struct __THE_1_map$1;
-struct __THE_1_pair$2;
-struct __THE_1_map$2;
-struct __THE_1_pair$3;
-struct __THE_1_map$3;
-struct __THE_1_pair$4;
-struct __THE_1_map$4;
-struct __THE_1_pair$5;
-struct __THE_1_map$5;
-struct __THE_1_pair$6;
-struct __THE_1_map$6;
-struct __THE_1_pair$7;
-struct __THE_1_map$7;
-struct __THE_1_pair$8;
-struct __THE_1_map$8;
-struct __THE_1_pair$9;
-struct __THE_1_map$9;
-struct __THE_1_pair$10;
-struct __THE_1_map$10;
-struct __THE_1_pair$11;
-struct __THE_1_map$11;
-struct __THE_1_pair$12;
-struct __THE_1_map$12;
-struct __THE_1_pair$13;
-struct __THE_1_map$13;
-struct __THE_1_pair$14;
-struct __THE_1_map$14;
-struct __THE_1_pair$15;
-struct __THE_1_map$15;
+struct __THE_1_pair_boolMSintME;
+struct __THE_1_map_boolMSintME;
+struct __THE_1_pair_byteMSintME;
+struct __THE_1_map_byteMSintME;
+struct __THE_1_pair_charMSintME;
+struct __THE_1_map_charMSintME;
+struct __THE_1_pair_f32MSintME;
+struct __THE_1_map_f32MSintME;
+struct __THE_1_pair_f64MSintME;
+struct __THE_1_map_f64MSintME;
+struct __THE_1_pair_floatMSintME;
+struct __THE_1_map_floatMSintME;
+struct __THE_1_pair_i8MSintME;
+struct __THE_1_map_i8MSintME;
+struct __THE_1_pair_i16MSintME;
+struct __THE_1_map_i16MSintME;
+struct __THE_1_pair_i32MSintME;
+struct __THE_1_map_i32MSintME;
+struct __THE_1_pair_i64MSintME;
+struct __THE_1_map_i64MSintME;
+struct __THE_1_pair_intMSintME;
+struct __THE_1_map_intMSintME;
+struct __THE_1_pair_strMSintME;
+struct __THE_1_map_strMSintME;
+struct __THE_1_pair_u8MSintME;
+struct __THE_1_map_u8MSintME;
+struct __THE_1_pair_u16MSintME;
+struct __THE_1_map_u16MSintME;
+struct __THE_1_pair_u32MSintME;
+struct __THE_1_map_u32MSintME;
+struct __THE_1_pair_u64MSintME;
+struct __THE_1_map_u64MSintME;
 
-struct __THE_1_pair$0 {
+struct __THE_1_pair_boolMSintME {
   bool f;
   int32_t s;
 };
-struct __THE_1_map$0 {
-  struct __THE_1_pair$0 *d;
+struct __THE_1_map_boolMSintME {
+  struct __THE_1_pair_boolMSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$1 {
+struct __THE_1_pair_byteMSintME {
   unsigned char f;
   int32_t s;
 };
-struct __THE_1_map$1 {
-  struct __THE_1_pair$1 *d;
+struct __THE_1_map_byteMSintME {
+  struct __THE_1_pair_byteMSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$2 {
+struct __THE_1_pair_charMSintME {
   char f;
   int32_t s;
 };
-struct __THE_1_map$2 {
-  struct __THE_1_pair$2 *d;
+struct __THE_1_map_charMSintME {
+  struct __THE_1_pair_charMSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$3 {
+struct __THE_1_pair_f32MSintME {
   float f;
   int32_t s;
 };
-struct __THE_1_map$3 {
-  struct __THE_1_pair$3 *d;
+struct __THE_1_map_f32MSintME {
+  struct __THE_1_pair_f32MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$4 {
+struct __THE_1_pair_f64MSintME {
   double f;
   int32_t s;
 };
-struct __THE_1_map$4 {
-  struct __THE_1_pair$4 *d;
+struct __THE_1_map_f64MSintME {
+  struct __THE_1_pair_f64MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$5 {
+struct __THE_1_pair_floatMSintME {
   double f;
   int32_t s;
 };
-struct __THE_1_map$5 {
-  struct __THE_1_pair$5 *d;
+struct __THE_1_map_floatMSintME {
+  struct __THE_1_pair_floatMSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$6 {
+struct __THE_1_pair_i8MSintME {
   int8_t f;
   int32_t s;
 };
-struct __THE_1_map$6 {
-  struct __THE_1_pair$6 *d;
+struct __THE_1_map_i8MSintME {
+  struct __THE_1_pair_i8MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$7 {
+struct __THE_1_pair_i16MSintME {
   int16_t f;
   int32_t s;
 };
-struct __THE_1_map$7 {
-  struct __THE_1_pair$7 *d;
+struct __THE_1_map_i16MSintME {
+  struct __THE_1_pair_i16MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$8 {
+struct __THE_1_pair_i32MSintME {
   int32_t f;
   int32_t s;
 };
-struct __THE_1_map$8 {
-  struct __THE_1_pair$8 *d;
+struct __THE_1_map_i32MSintME {
+  struct __THE_1_pair_i32MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$9 {
+struct __THE_1_pair_i64MSintME {
   int64_t f;
   int32_t s;
 };
-struct __THE_1_map$9 {
-  struct __THE_1_pair$9 *d;
+struct __THE_1_map_i64MSintME {
+  struct __THE_1_pair_i64MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$10 {
+struct __THE_1_pair_intMSintME {
   int32_t f;
   int32_t s;
 };
-struct __THE_1_map$10 {
-  struct __THE_1_pair$10 *d;
+struct __THE_1_map_intMSintME {
+  struct __THE_1_pair_intMSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$11 {
+struct __THE_1_pair_strMSintME {
   struct str f;
   int32_t s;
 };
-struct __THE_1_map$11 {
-  struct __THE_1_pair$11 *d;
+struct __THE_1_map_strMSintME {
+  struct __THE_1_pair_strMSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$12 {
+struct __THE_1_pair_u8MSintME {
   uint8_t f;
   int32_t s;
 };
-struct __THE_1_map$12 {
-  struct __THE_1_pair$12 *d;
+struct __THE_1_map_u8MSintME {
+  struct __THE_1_pair_u8MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$13 {
+struct __THE_1_pair_u16MSintME {
   uint16_t f;
   int32_t s;
 };
-struct __THE_1_map$13 {
-  struct __THE_1_pair$13 *d;
+struct __THE_1_map_u16MSintME {
+  struct __THE_1_pair_u16MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$14 {
+struct __THE_1_pair_u32MSintME {
   uint32_t f;
   int32_t s;
 };
-struct __THE_1_map$14 {
-  struct __THE_1_pair$14 *d;
+struct __THE_1_map_u32MSintME {
+  struct __THE_1_pair_u32MSintME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$15 {
+struct __THE_1_pair_u64MSintME {
   uint64_t f;
   int32_t s;
 };
-struct __THE_1_map$15 {
-  struct __THE_1_pair$15 *d;
+struct __THE_1_map_u64MSintME {
+  struct __THE_1_pair_u64MSintME *d;
   size_t c;
   size_t l;
 };
@@ -278,70 +278,70 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 bool str_eq_str (struct str, struct str);
 void str_free (struct str);
-struct __THE_1_map$0 __THE_1_map$0_alloc (int, ...);
-struct __THE_1_map$0 __THE_1_map$0_copy (const struct __THE_1_map$0);
-void __THE_1_map$0_free (struct __THE_1_map$0);
-struct __THE_1_map$0 *__THE_1_map$0_set (struct __THE_1_map$0 *, bool, int32_t);
-struct __THE_1_map$1 __THE_1_map$1_alloc (int, ...);
-struct __THE_1_map$1 __THE_1_map$1_copy (const struct __THE_1_map$1);
-void __THE_1_map$1_free (struct __THE_1_map$1);
-struct __THE_1_map$1 *__THE_1_map$1_set (struct __THE_1_map$1 *, unsigned char, int32_t);
-struct __THE_1_map$2 __THE_1_map$2_alloc (int, ...);
-struct __THE_1_map$2 __THE_1_map$2_copy (const struct __THE_1_map$2);
-void __THE_1_map$2_free (struct __THE_1_map$2);
-struct __THE_1_map$2 *__THE_1_map$2_set (struct __THE_1_map$2 *, char, int32_t);
-struct __THE_1_map$3 __THE_1_map$3_alloc (int, ...);
-struct __THE_1_map$3 __THE_1_map$3_copy (const struct __THE_1_map$3);
-void __THE_1_map$3_free (struct __THE_1_map$3);
-struct __THE_1_map$3 *__THE_1_map$3_set (struct __THE_1_map$3 *, float, int32_t);
-struct __THE_1_map$4 __THE_1_map$4_alloc (int, ...);
-struct __THE_1_map$4 __THE_1_map$4_copy (const struct __THE_1_map$4);
-void __THE_1_map$4_free (struct __THE_1_map$4);
-struct __THE_1_map$4 *__THE_1_map$4_set (struct __THE_1_map$4 *, double, int32_t);
-struct __THE_1_map$5 __THE_1_map$5_alloc (int, ...);
-struct __THE_1_map$5 __THE_1_map$5_copy (const struct __THE_1_map$5);
-void __THE_1_map$5_free (struct __THE_1_map$5);
-struct __THE_1_map$5 *__THE_1_map$5_set (struct __THE_1_map$5 *, double, int32_t);
-struct __THE_1_map$6 __THE_1_map$6_alloc (int, ...);
-struct __THE_1_map$6 __THE_1_map$6_copy (const struct __THE_1_map$6);
-void __THE_1_map$6_free (struct __THE_1_map$6);
-struct __THE_1_map$6 *__THE_1_map$6_set (struct __THE_1_map$6 *, int8_t, int32_t);
-struct __THE_1_map$7 __THE_1_map$7_alloc (int, ...);
-struct __THE_1_map$7 __THE_1_map$7_copy (const struct __THE_1_map$7);
-void __THE_1_map$7_free (struct __THE_1_map$7);
-struct __THE_1_map$7 *__THE_1_map$7_set (struct __THE_1_map$7 *, int16_t, int32_t);
-struct __THE_1_map$8 __THE_1_map$8_alloc (int, ...);
-struct __THE_1_map$8 __THE_1_map$8_copy (const struct __THE_1_map$8);
-void __THE_1_map$8_free (struct __THE_1_map$8);
-struct __THE_1_map$8 *__THE_1_map$8_set (struct __THE_1_map$8 *, int32_t, int32_t);
-struct __THE_1_map$9 __THE_1_map$9_alloc (int, ...);
-struct __THE_1_map$9 __THE_1_map$9_copy (const struct __THE_1_map$9);
-void __THE_1_map$9_free (struct __THE_1_map$9);
-struct __THE_1_map$9 *__THE_1_map$9_set (struct __THE_1_map$9 *, int64_t, int32_t);
-struct __THE_1_map$10 __THE_1_map$10_alloc (int, ...);
-struct __THE_1_map$10 __THE_1_map$10_copy (const struct __THE_1_map$10);
-void __THE_1_map$10_free (struct __THE_1_map$10);
-struct __THE_1_map$10 *__THE_1_map$10_set (struct __THE_1_map$10 *, int32_t, int32_t);
-struct __THE_1_map$11 __THE_1_map$11_alloc (int, ...);
-struct __THE_1_map$11 __THE_1_map$11_copy (const struct __THE_1_map$11);
-void __THE_1_map$11_free (struct __THE_1_map$11);
-struct __THE_1_map$11 *__THE_1_map$11_set (struct __THE_1_map$11 *, struct str, int32_t);
-struct __THE_1_map$12 __THE_1_map$12_alloc (int, ...);
-struct __THE_1_map$12 __THE_1_map$12_copy (const struct __THE_1_map$12);
-void __THE_1_map$12_free (struct __THE_1_map$12);
-struct __THE_1_map$12 *__THE_1_map$12_set (struct __THE_1_map$12 *, uint8_t, int32_t);
-struct __THE_1_map$13 __THE_1_map$13_alloc (int, ...);
-struct __THE_1_map$13 __THE_1_map$13_copy (const struct __THE_1_map$13);
-void __THE_1_map$13_free (struct __THE_1_map$13);
-struct __THE_1_map$13 *__THE_1_map$13_set (struct __THE_1_map$13 *, uint16_t, int32_t);
-struct __THE_1_map$14 __THE_1_map$14_alloc (int, ...);
-struct __THE_1_map$14 __THE_1_map$14_copy (const struct __THE_1_map$14);
-void __THE_1_map$14_free (struct __THE_1_map$14);
-struct __THE_1_map$14 *__THE_1_map$14_set (struct __THE_1_map$14 *, uint32_t, int32_t);
-struct __THE_1_map$15 __THE_1_map$15_alloc (int, ...);
-struct __THE_1_map$15 __THE_1_map$15_copy (const struct __THE_1_map$15);
-void __THE_1_map$15_free (struct __THE_1_map$15);
-struct __THE_1_map$15 *__THE_1_map$15_set (struct __THE_1_map$15 *, uint64_t, int32_t);
+struct __THE_1_map_boolMSintME __THE_1_map_boolMSintME_alloc (int, ...);
+struct __THE_1_map_boolMSintME __THE_1_map_boolMSintME_copy (const struct __THE_1_map_boolMSintME);
+void __THE_1_map_boolMSintME_free (struct __THE_1_map_boolMSintME);
+struct __THE_1_map_boolMSintME *__THE_1_map_boolMSintME_set (struct __THE_1_map_boolMSintME *, bool, int32_t);
+struct __THE_1_map_byteMSintME __THE_1_map_byteMSintME_alloc (int, ...);
+struct __THE_1_map_byteMSintME __THE_1_map_byteMSintME_copy (const struct __THE_1_map_byteMSintME);
+void __THE_1_map_byteMSintME_free (struct __THE_1_map_byteMSintME);
+struct __THE_1_map_byteMSintME *__THE_1_map_byteMSintME_set (struct __THE_1_map_byteMSintME *, unsigned char, int32_t);
+struct __THE_1_map_charMSintME __THE_1_map_charMSintME_alloc (int, ...);
+struct __THE_1_map_charMSintME __THE_1_map_charMSintME_copy (const struct __THE_1_map_charMSintME);
+void __THE_1_map_charMSintME_free (struct __THE_1_map_charMSintME);
+struct __THE_1_map_charMSintME *__THE_1_map_charMSintME_set (struct __THE_1_map_charMSintME *, char, int32_t);
+struct __THE_1_map_f32MSintME __THE_1_map_f32MSintME_alloc (int, ...);
+struct __THE_1_map_f32MSintME __THE_1_map_f32MSintME_copy (const struct __THE_1_map_f32MSintME);
+void __THE_1_map_f32MSintME_free (struct __THE_1_map_f32MSintME);
+struct __THE_1_map_f32MSintME *__THE_1_map_f32MSintME_set (struct __THE_1_map_f32MSintME *, float, int32_t);
+struct __THE_1_map_f64MSintME __THE_1_map_f64MSintME_alloc (int, ...);
+struct __THE_1_map_f64MSintME __THE_1_map_f64MSintME_copy (const struct __THE_1_map_f64MSintME);
+void __THE_1_map_f64MSintME_free (struct __THE_1_map_f64MSintME);
+struct __THE_1_map_f64MSintME *__THE_1_map_f64MSintME_set (struct __THE_1_map_f64MSintME *, double, int32_t);
+struct __THE_1_map_floatMSintME __THE_1_map_floatMSintME_alloc (int, ...);
+struct __THE_1_map_floatMSintME __THE_1_map_floatMSintME_copy (const struct __THE_1_map_floatMSintME);
+void __THE_1_map_floatMSintME_free (struct __THE_1_map_floatMSintME);
+struct __THE_1_map_floatMSintME *__THE_1_map_floatMSintME_set (struct __THE_1_map_floatMSintME *, double, int32_t);
+struct __THE_1_map_i8MSintME __THE_1_map_i8MSintME_alloc (int, ...);
+struct __THE_1_map_i8MSintME __THE_1_map_i8MSintME_copy (const struct __THE_1_map_i8MSintME);
+void __THE_1_map_i8MSintME_free (struct __THE_1_map_i8MSintME);
+struct __THE_1_map_i8MSintME *__THE_1_map_i8MSintME_set (struct __THE_1_map_i8MSintME *, int8_t, int32_t);
+struct __THE_1_map_i16MSintME __THE_1_map_i16MSintME_alloc (int, ...);
+struct __THE_1_map_i16MSintME __THE_1_map_i16MSintME_copy (const struct __THE_1_map_i16MSintME);
+void __THE_1_map_i16MSintME_free (struct __THE_1_map_i16MSintME);
+struct __THE_1_map_i16MSintME *__THE_1_map_i16MSintME_set (struct __THE_1_map_i16MSintME *, int16_t, int32_t);
+struct __THE_1_map_i32MSintME __THE_1_map_i32MSintME_alloc (int, ...);
+struct __THE_1_map_i32MSintME __THE_1_map_i32MSintME_copy (const struct __THE_1_map_i32MSintME);
+void __THE_1_map_i32MSintME_free (struct __THE_1_map_i32MSintME);
+struct __THE_1_map_i32MSintME *__THE_1_map_i32MSintME_set (struct __THE_1_map_i32MSintME *, int32_t, int32_t);
+struct __THE_1_map_i64MSintME __THE_1_map_i64MSintME_alloc (int, ...);
+struct __THE_1_map_i64MSintME __THE_1_map_i64MSintME_copy (const struct __THE_1_map_i64MSintME);
+void __THE_1_map_i64MSintME_free (struct __THE_1_map_i64MSintME);
+struct __THE_1_map_i64MSintME *__THE_1_map_i64MSintME_set (struct __THE_1_map_i64MSintME *, int64_t, int32_t);
+struct __THE_1_map_intMSintME __THE_1_map_intMSintME_alloc (int, ...);
+struct __THE_1_map_intMSintME __THE_1_map_intMSintME_copy (const struct __THE_1_map_intMSintME);
+void __THE_1_map_intMSintME_free (struct __THE_1_map_intMSintME);
+struct __THE_1_map_intMSintME *__THE_1_map_intMSintME_set (struct __THE_1_map_intMSintME *, int32_t, int32_t);
+struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int, ...);
+struct __THE_1_map_strMSintME __THE_1_map_strMSintME_copy (const struct __THE_1_map_strMSintME);
+void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
+struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_set (struct __THE_1_map_strMSintME *, struct str, int32_t);
+struct __THE_1_map_u8MSintME __THE_1_map_u8MSintME_alloc (int, ...);
+struct __THE_1_map_u8MSintME __THE_1_map_u8MSintME_copy (const struct __THE_1_map_u8MSintME);
+void __THE_1_map_u8MSintME_free (struct __THE_1_map_u8MSintME);
+struct __THE_1_map_u8MSintME *__THE_1_map_u8MSintME_set (struct __THE_1_map_u8MSintME *, uint8_t, int32_t);
+struct __THE_1_map_u16MSintME __THE_1_map_u16MSintME_alloc (int, ...);
+struct __THE_1_map_u16MSintME __THE_1_map_u16MSintME_copy (const struct __THE_1_map_u16MSintME);
+void __THE_1_map_u16MSintME_free (struct __THE_1_map_u16MSintME);
+struct __THE_1_map_u16MSintME *__THE_1_map_u16MSintME_set (struct __THE_1_map_u16MSintME *, uint16_t, int32_t);
+struct __THE_1_map_u32MSintME __THE_1_map_u32MSintME_alloc (int, ...);
+struct __THE_1_map_u32MSintME __THE_1_map_u32MSintME_copy (const struct __THE_1_map_u32MSintME);
+void __THE_1_map_u32MSintME_free (struct __THE_1_map_u32MSintME);
+struct __THE_1_map_u32MSintME *__THE_1_map_u32MSintME_set (struct __THE_1_map_u32MSintME *, uint32_t, int32_t);
+struct __THE_1_map_u64MSintME __THE_1_map_u64MSintME_alloc (int, ...);
+struct __THE_1_map_u64MSintME __THE_1_map_u64MSintME_copy (const struct __THE_1_map_u64MSintME);
+void __THE_1_map_u64MSintME_free (struct __THE_1_map_u64MSintME);
+struct __THE_1_map_u64MSintME *__THE_1_map_u64MSintME_set (struct __THE_1_map_u64MSintME *, uint64_t, int32_t);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -379,345 +379,345 @@ bool str_eq_str (struct str s1, struct str s2) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_map$0 __THE_1_map$0_alloc (int x, ...) {
-  struct __THE_1_pair$0 *d = alloc(x * sizeof(struct __THE_1_pair$0));
+struct __THE_1_map_boolMSintME __THE_1_map_boolMSintME_alloc (int x, ...) {
+  struct __THE_1_pair_boolMSintME *d = alloc(x * sizeof(struct __THE_1_pair_boolMSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$0) {va_arg(args, int), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_boolMSintME) {va_arg(args, int), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$0) {d, x, x};
+  return (struct __THE_1_map_boolMSintME) {d, x, x};
 }
-struct __THE_1_map$0 __THE_1_map$0_copy (const struct __THE_1_map$0 n) {
-  struct __THE_1_pair$0 *d = alloc(n.c * sizeof(struct __THE_1_pair$0));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$0) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$0) {d, n.c, n.l};
+struct __THE_1_map_boolMSintME __THE_1_map_boolMSintME_copy (const struct __THE_1_map_boolMSintME n) {
+  struct __THE_1_pair_boolMSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_boolMSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_boolMSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_boolMSintME) {d, n.c, n.l};
 }
-void __THE_1_map$0_free (struct __THE_1_map$0 n) {
+void __THE_1_map_boolMSintME_free (struct __THE_1_map_boolMSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$0 *__THE_1_map$0_set (struct __THE_1_map$0 *n, bool k, int32_t v) {
+struct __THE_1_map_boolMSintME *__THE_1_map_boolMSintME_set (struct __THE_1_map_boolMSintME *n, bool k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$0));
-  n->d[n->l++] = (struct __THE_1_pair$0) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_boolMSintME));
+  n->d[n->l++] = (struct __THE_1_pair_boolMSintME) {k, v};
   return n;
 }
-struct __THE_1_map$1 __THE_1_map$1_alloc (int x, ...) {
-  struct __THE_1_pair$1 *d = alloc(x * sizeof(struct __THE_1_pair$1));
+struct __THE_1_map_byteMSintME __THE_1_map_byteMSintME_alloc (int x, ...) {
+  struct __THE_1_pair_byteMSintME *d = alloc(x * sizeof(struct __THE_1_pair_byteMSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$1) {va_arg(args, int), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_byteMSintME) {va_arg(args, int), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$1) {d, x, x};
+  return (struct __THE_1_map_byteMSintME) {d, x, x};
 }
-struct __THE_1_map$1 __THE_1_map$1_copy (const struct __THE_1_map$1 n) {
-  struct __THE_1_pair$1 *d = alloc(n.c * sizeof(struct __THE_1_pair$1));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$1) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$1) {d, n.c, n.l};
+struct __THE_1_map_byteMSintME __THE_1_map_byteMSintME_copy (const struct __THE_1_map_byteMSintME n) {
+  struct __THE_1_pair_byteMSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_byteMSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_byteMSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_byteMSintME) {d, n.c, n.l};
 }
-void __THE_1_map$1_free (struct __THE_1_map$1 n) {
+void __THE_1_map_byteMSintME_free (struct __THE_1_map_byteMSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$1 *__THE_1_map$1_set (struct __THE_1_map$1 *n, unsigned char k, int32_t v) {
+struct __THE_1_map_byteMSintME *__THE_1_map_byteMSintME_set (struct __THE_1_map_byteMSintME *n, unsigned char k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$1));
-  n->d[n->l++] = (struct __THE_1_pair$1) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_byteMSintME));
+  n->d[n->l++] = (struct __THE_1_pair_byteMSintME) {k, v};
   return n;
 }
-struct __THE_1_map$2 __THE_1_map$2_alloc (int x, ...) {
-  struct __THE_1_pair$2 *d = alloc(x * sizeof(struct __THE_1_pair$2));
+struct __THE_1_map_charMSintME __THE_1_map_charMSintME_alloc (int x, ...) {
+  struct __THE_1_pair_charMSintME *d = alloc(x * sizeof(struct __THE_1_pair_charMSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$2) {va_arg(args, int), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_charMSintME) {va_arg(args, int), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$2) {d, x, x};
+  return (struct __THE_1_map_charMSintME) {d, x, x};
 }
-struct __THE_1_map$2 __THE_1_map$2_copy (const struct __THE_1_map$2 n) {
-  struct __THE_1_pair$2 *d = alloc(n.c * sizeof(struct __THE_1_pair$2));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$2) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$2) {d, n.c, n.l};
+struct __THE_1_map_charMSintME __THE_1_map_charMSintME_copy (const struct __THE_1_map_charMSintME n) {
+  struct __THE_1_pair_charMSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_charMSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_charMSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_charMSintME) {d, n.c, n.l};
 }
-void __THE_1_map$2_free (struct __THE_1_map$2 n) {
+void __THE_1_map_charMSintME_free (struct __THE_1_map_charMSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$2 *__THE_1_map$2_set (struct __THE_1_map$2 *n, char k, int32_t v) {
+struct __THE_1_map_charMSintME *__THE_1_map_charMSintME_set (struct __THE_1_map_charMSintME *n, char k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$2));
-  n->d[n->l++] = (struct __THE_1_pair$2) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_charMSintME));
+  n->d[n->l++] = (struct __THE_1_pair_charMSintME) {k, v};
   return n;
 }
-struct __THE_1_map$3 __THE_1_map$3_alloc (int x, ...) {
-  struct __THE_1_pair$3 *d = alloc(x * sizeof(struct __THE_1_pair$3));
+struct __THE_1_map_f32MSintME __THE_1_map_f32MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_f32MSintME *d = alloc(x * sizeof(struct __THE_1_pair_f32MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$3) {va_arg(args, double), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_f32MSintME) {va_arg(args, double), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$3) {d, x, x};
+  return (struct __THE_1_map_f32MSintME) {d, x, x};
 }
-struct __THE_1_map$3 __THE_1_map$3_copy (const struct __THE_1_map$3 n) {
-  struct __THE_1_pair$3 *d = alloc(n.c * sizeof(struct __THE_1_pair$3));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$3) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$3) {d, n.c, n.l};
+struct __THE_1_map_f32MSintME __THE_1_map_f32MSintME_copy (const struct __THE_1_map_f32MSintME n) {
+  struct __THE_1_pair_f32MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_f32MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_f32MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_f32MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$3_free (struct __THE_1_map$3 n) {
+void __THE_1_map_f32MSintME_free (struct __THE_1_map_f32MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$3 *__THE_1_map$3_set (struct __THE_1_map$3 *n, float k, int32_t v) {
+struct __THE_1_map_f32MSintME *__THE_1_map_f32MSintME_set (struct __THE_1_map_f32MSintME *n, float k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$3));
-  n->d[n->l++] = (struct __THE_1_pair$3) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_f32MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_f32MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$4 __THE_1_map$4_alloc (int x, ...) {
-  struct __THE_1_pair$4 *d = alloc(x * sizeof(struct __THE_1_pair$4));
+struct __THE_1_map_f64MSintME __THE_1_map_f64MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_f64MSintME *d = alloc(x * sizeof(struct __THE_1_pair_f64MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$4) {va_arg(args, double), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_f64MSintME) {va_arg(args, double), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$4) {d, x, x};
+  return (struct __THE_1_map_f64MSintME) {d, x, x};
 }
-struct __THE_1_map$4 __THE_1_map$4_copy (const struct __THE_1_map$4 n) {
-  struct __THE_1_pair$4 *d = alloc(n.c * sizeof(struct __THE_1_pair$4));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$4) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$4) {d, n.c, n.l};
+struct __THE_1_map_f64MSintME __THE_1_map_f64MSintME_copy (const struct __THE_1_map_f64MSintME n) {
+  struct __THE_1_pair_f64MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_f64MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_f64MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_f64MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$4_free (struct __THE_1_map$4 n) {
+void __THE_1_map_f64MSintME_free (struct __THE_1_map_f64MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$4 *__THE_1_map$4_set (struct __THE_1_map$4 *n, double k, int32_t v) {
+struct __THE_1_map_f64MSintME *__THE_1_map_f64MSintME_set (struct __THE_1_map_f64MSintME *n, double k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$4));
-  n->d[n->l++] = (struct __THE_1_pair$4) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_f64MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_f64MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$5 __THE_1_map$5_alloc (int x, ...) {
-  struct __THE_1_pair$5 *d = alloc(x * sizeof(struct __THE_1_pair$5));
+struct __THE_1_map_floatMSintME __THE_1_map_floatMSintME_alloc (int x, ...) {
+  struct __THE_1_pair_floatMSintME *d = alloc(x * sizeof(struct __THE_1_pair_floatMSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$5) {va_arg(args, double), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_floatMSintME) {va_arg(args, double), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$5) {d, x, x};
+  return (struct __THE_1_map_floatMSintME) {d, x, x};
 }
-struct __THE_1_map$5 __THE_1_map$5_copy (const struct __THE_1_map$5 n) {
-  struct __THE_1_pair$5 *d = alloc(n.c * sizeof(struct __THE_1_pair$5));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$5) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$5) {d, n.c, n.l};
+struct __THE_1_map_floatMSintME __THE_1_map_floatMSintME_copy (const struct __THE_1_map_floatMSintME n) {
+  struct __THE_1_pair_floatMSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_floatMSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_floatMSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_floatMSintME) {d, n.c, n.l};
 }
-void __THE_1_map$5_free (struct __THE_1_map$5 n) {
+void __THE_1_map_floatMSintME_free (struct __THE_1_map_floatMSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$5 *__THE_1_map$5_set (struct __THE_1_map$5 *n, double k, int32_t v) {
+struct __THE_1_map_floatMSintME *__THE_1_map_floatMSintME_set (struct __THE_1_map_floatMSintME *n, double k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$5));
-  n->d[n->l++] = (struct __THE_1_pair$5) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_floatMSintME));
+  n->d[n->l++] = (struct __THE_1_pair_floatMSintME) {k, v};
   return n;
 }
-struct __THE_1_map$6 __THE_1_map$6_alloc (int x, ...) {
-  struct __THE_1_pair$6 *d = alloc(x * sizeof(struct __THE_1_pair$6));
+struct __THE_1_map_i8MSintME __THE_1_map_i8MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_i8MSintME *d = alloc(x * sizeof(struct __THE_1_pair_i8MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$6) {va_arg(args, int), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_i8MSintME) {va_arg(args, int), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$6) {d, x, x};
+  return (struct __THE_1_map_i8MSintME) {d, x, x};
 }
-struct __THE_1_map$6 __THE_1_map$6_copy (const struct __THE_1_map$6 n) {
-  struct __THE_1_pair$6 *d = alloc(n.c * sizeof(struct __THE_1_pair$6));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$6) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$6) {d, n.c, n.l};
+struct __THE_1_map_i8MSintME __THE_1_map_i8MSintME_copy (const struct __THE_1_map_i8MSintME n) {
+  struct __THE_1_pair_i8MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_i8MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_i8MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_i8MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$6_free (struct __THE_1_map$6 n) {
+void __THE_1_map_i8MSintME_free (struct __THE_1_map_i8MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$6 *__THE_1_map$6_set (struct __THE_1_map$6 *n, int8_t k, int32_t v) {
+struct __THE_1_map_i8MSintME *__THE_1_map_i8MSintME_set (struct __THE_1_map_i8MSintME *n, int8_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$6));
-  n->d[n->l++] = (struct __THE_1_pair$6) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_i8MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_i8MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$7 __THE_1_map$7_alloc (int x, ...) {
-  struct __THE_1_pair$7 *d = alloc(x * sizeof(struct __THE_1_pair$7));
+struct __THE_1_map_i16MSintME __THE_1_map_i16MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_i16MSintME *d = alloc(x * sizeof(struct __THE_1_pair_i16MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$7) {va_arg(args, int), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_i16MSintME) {va_arg(args, int), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$7) {d, x, x};
+  return (struct __THE_1_map_i16MSintME) {d, x, x};
 }
-struct __THE_1_map$7 __THE_1_map$7_copy (const struct __THE_1_map$7 n) {
-  struct __THE_1_pair$7 *d = alloc(n.c * sizeof(struct __THE_1_pair$7));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$7) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$7) {d, n.c, n.l};
+struct __THE_1_map_i16MSintME __THE_1_map_i16MSintME_copy (const struct __THE_1_map_i16MSintME n) {
+  struct __THE_1_pair_i16MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_i16MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_i16MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_i16MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$7_free (struct __THE_1_map$7 n) {
+void __THE_1_map_i16MSintME_free (struct __THE_1_map_i16MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$7 *__THE_1_map$7_set (struct __THE_1_map$7 *n, int16_t k, int32_t v) {
+struct __THE_1_map_i16MSintME *__THE_1_map_i16MSintME_set (struct __THE_1_map_i16MSintME *n, int16_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$7));
-  n->d[n->l++] = (struct __THE_1_pair$7) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_i16MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_i16MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$8 __THE_1_map$8_alloc (int x, ...) {
-  struct __THE_1_pair$8 *d = alloc(x * sizeof(struct __THE_1_pair$8));
+struct __THE_1_map_i32MSintME __THE_1_map_i32MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_i32MSintME *d = alloc(x * sizeof(struct __THE_1_pair_i32MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$8) {va_arg(args, int32_t), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_i32MSintME) {va_arg(args, int32_t), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$8) {d, x, x};
+  return (struct __THE_1_map_i32MSintME) {d, x, x};
 }
-struct __THE_1_map$8 __THE_1_map$8_copy (const struct __THE_1_map$8 n) {
-  struct __THE_1_pair$8 *d = alloc(n.c * sizeof(struct __THE_1_pair$8));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$8) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$8) {d, n.c, n.l};
+struct __THE_1_map_i32MSintME __THE_1_map_i32MSintME_copy (const struct __THE_1_map_i32MSintME n) {
+  struct __THE_1_pair_i32MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_i32MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_i32MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_i32MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$8_free (struct __THE_1_map$8 n) {
+void __THE_1_map_i32MSintME_free (struct __THE_1_map_i32MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$8 *__THE_1_map$8_set (struct __THE_1_map$8 *n, int32_t k, int32_t v) {
+struct __THE_1_map_i32MSintME *__THE_1_map_i32MSintME_set (struct __THE_1_map_i32MSintME *n, int32_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$8));
-  n->d[n->l++] = (struct __THE_1_pair$8) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_i32MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_i32MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$9 __THE_1_map$9_alloc (int x, ...) {
-  struct __THE_1_pair$9 *d = alloc(x * sizeof(struct __THE_1_pair$9));
+struct __THE_1_map_i64MSintME __THE_1_map_i64MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_i64MSintME *d = alloc(x * sizeof(struct __THE_1_pair_i64MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$9) {va_arg(args, int64_t), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_i64MSintME) {va_arg(args, int64_t), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$9) {d, x, x};
+  return (struct __THE_1_map_i64MSintME) {d, x, x};
 }
-struct __THE_1_map$9 __THE_1_map$9_copy (const struct __THE_1_map$9 n) {
-  struct __THE_1_pair$9 *d = alloc(n.c * sizeof(struct __THE_1_pair$9));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$9) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$9) {d, n.c, n.l};
+struct __THE_1_map_i64MSintME __THE_1_map_i64MSintME_copy (const struct __THE_1_map_i64MSintME n) {
+  struct __THE_1_pair_i64MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_i64MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_i64MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_i64MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$9_free (struct __THE_1_map$9 n) {
+void __THE_1_map_i64MSintME_free (struct __THE_1_map_i64MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$9 *__THE_1_map$9_set (struct __THE_1_map$9 *n, int64_t k, int32_t v) {
+struct __THE_1_map_i64MSintME *__THE_1_map_i64MSintME_set (struct __THE_1_map_i64MSintME *n, int64_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$9));
-  n->d[n->l++] = (struct __THE_1_pair$9) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_i64MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_i64MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$10 __THE_1_map$10_alloc (int x, ...) {
-  struct __THE_1_pair$10 *d = alloc(x * sizeof(struct __THE_1_pair$10));
+struct __THE_1_map_intMSintME __THE_1_map_intMSintME_alloc (int x, ...) {
+  struct __THE_1_pair_intMSintME *d = alloc(x * sizeof(struct __THE_1_pair_intMSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$10) {va_arg(args, int32_t), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_intMSintME) {va_arg(args, int32_t), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$10) {d, x, x};
+  return (struct __THE_1_map_intMSintME) {d, x, x};
 }
-struct __THE_1_map$10 __THE_1_map$10_copy (const struct __THE_1_map$10 n) {
-  struct __THE_1_pair$10 *d = alloc(n.c * sizeof(struct __THE_1_pair$10));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$10) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$10) {d, n.c, n.l};
+struct __THE_1_map_intMSintME __THE_1_map_intMSintME_copy (const struct __THE_1_map_intMSintME n) {
+  struct __THE_1_pair_intMSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_intMSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_intMSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_intMSintME) {d, n.c, n.l};
 }
-void __THE_1_map$10_free (struct __THE_1_map$10 n) {
+void __THE_1_map_intMSintME_free (struct __THE_1_map_intMSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$10 *__THE_1_map$10_set (struct __THE_1_map$10 *n, int32_t k, int32_t v) {
+struct __THE_1_map_intMSintME *__THE_1_map_intMSintME_set (struct __THE_1_map_intMSintME *n, int32_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$10));
-  n->d[n->l++] = (struct __THE_1_pair$10) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_intMSintME));
+  n->d[n->l++] = (struct __THE_1_pair_intMSintME) {k, v};
   return n;
 }
-struct __THE_1_map$11 __THE_1_map$11_alloc (int x, ...) {
-  struct __THE_1_pair$11 *d = alloc(x * sizeof(struct __THE_1_pair$11));
+struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSintME *d = alloc(x * sizeof(struct __THE_1_pair_strMSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$11) {va_arg(args, struct str), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSintME) {va_arg(args, struct str), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$11) {d, x, x};
+  return (struct __THE_1_map_strMSintME) {d, x, x};
 }
-struct __THE_1_map$11 __THE_1_map$11_copy (const struct __THE_1_map$11 n) {
-  struct __THE_1_pair$11 *d = alloc(n.c * sizeof(struct __THE_1_pair$11));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$11) {str_copy(n.d[i].f), n.d[i].s};
-  return (struct __THE_1_map$11) {d, n.c, n.l};
+struct __THE_1_map_strMSintME __THE_1_map_strMSintME_copy (const struct __THE_1_map_strMSintME n) {
+  struct __THE_1_pair_strMSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_strMSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_strMSintME) {str_copy(n.d[i].f), n.d[i].s};
+  return (struct __THE_1_map_strMSintME) {d, n.c, n.l};
 }
-void __THE_1_map$11_free (struct __THE_1_map$11 n) {
+void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
   }
   free(n.d);
 }
-struct __THE_1_map$11 *__THE_1_map$11_set (struct __THE_1_map$11 *n, struct str k, int32_t v) {
+struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_set (struct __THE_1_map_strMSintME *n, struct str k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (str_eq_str(str_copy(n->d[i].f), str_copy(k))) {
       str_free((struct str) k);
@@ -725,240 +725,240 @@ struct __THE_1_map$11 *__THE_1_map$11_set (struct __THE_1_map$11 *n, struct str 
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$11));
-  n->d[n->l++] = (struct __THE_1_pair$11) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_strMSintME));
+  n->d[n->l++] = (struct __THE_1_pair_strMSintME) {k, v};
   return n;
 }
-struct __THE_1_map$12 __THE_1_map$12_alloc (int x, ...) {
-  struct __THE_1_pair$12 *d = alloc(x * sizeof(struct __THE_1_pair$12));
+struct __THE_1_map_u8MSintME __THE_1_map_u8MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_u8MSintME *d = alloc(x * sizeof(struct __THE_1_pair_u8MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$12) {va_arg(args, int), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_u8MSintME) {va_arg(args, int), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$12) {d, x, x};
+  return (struct __THE_1_map_u8MSintME) {d, x, x};
 }
-struct __THE_1_map$12 __THE_1_map$12_copy (const struct __THE_1_map$12 n) {
-  struct __THE_1_pair$12 *d = alloc(n.c * sizeof(struct __THE_1_pair$12));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$12) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$12) {d, n.c, n.l};
+struct __THE_1_map_u8MSintME __THE_1_map_u8MSintME_copy (const struct __THE_1_map_u8MSintME n) {
+  struct __THE_1_pair_u8MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_u8MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_u8MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_u8MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$12_free (struct __THE_1_map$12 n) {
+void __THE_1_map_u8MSintME_free (struct __THE_1_map_u8MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$12 *__THE_1_map$12_set (struct __THE_1_map$12 *n, uint8_t k, int32_t v) {
+struct __THE_1_map_u8MSintME *__THE_1_map_u8MSintME_set (struct __THE_1_map_u8MSintME *n, uint8_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$12));
-  n->d[n->l++] = (struct __THE_1_pair$12) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_u8MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_u8MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$13 __THE_1_map$13_alloc (int x, ...) {
-  struct __THE_1_pair$13 *d = alloc(x * sizeof(struct __THE_1_pair$13));
+struct __THE_1_map_u16MSintME __THE_1_map_u16MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_u16MSintME *d = alloc(x * sizeof(struct __THE_1_pair_u16MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$13) {va_arg(args, int), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_u16MSintME) {va_arg(args, int), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$13) {d, x, x};
+  return (struct __THE_1_map_u16MSintME) {d, x, x};
 }
-struct __THE_1_map$13 __THE_1_map$13_copy (const struct __THE_1_map$13 n) {
-  struct __THE_1_pair$13 *d = alloc(n.c * sizeof(struct __THE_1_pair$13));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$13) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$13) {d, n.c, n.l};
+struct __THE_1_map_u16MSintME __THE_1_map_u16MSintME_copy (const struct __THE_1_map_u16MSintME n) {
+  struct __THE_1_pair_u16MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_u16MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_u16MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_u16MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$13_free (struct __THE_1_map$13 n) {
+void __THE_1_map_u16MSintME_free (struct __THE_1_map_u16MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$13 *__THE_1_map$13_set (struct __THE_1_map$13 *n, uint16_t k, int32_t v) {
+struct __THE_1_map_u16MSintME *__THE_1_map_u16MSintME_set (struct __THE_1_map_u16MSintME *n, uint16_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$13));
-  n->d[n->l++] = (struct __THE_1_pair$13) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_u16MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_u16MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$14 __THE_1_map$14_alloc (int x, ...) {
-  struct __THE_1_pair$14 *d = alloc(x * sizeof(struct __THE_1_pair$14));
+struct __THE_1_map_u32MSintME __THE_1_map_u32MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_u32MSintME *d = alloc(x * sizeof(struct __THE_1_pair_u32MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$14) {va_arg(args, uint32_t), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_u32MSintME) {va_arg(args, uint32_t), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$14) {d, x, x};
+  return (struct __THE_1_map_u32MSintME) {d, x, x};
 }
-struct __THE_1_map$14 __THE_1_map$14_copy (const struct __THE_1_map$14 n) {
-  struct __THE_1_pair$14 *d = alloc(n.c * sizeof(struct __THE_1_pair$14));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$14) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$14) {d, n.c, n.l};
+struct __THE_1_map_u32MSintME __THE_1_map_u32MSintME_copy (const struct __THE_1_map_u32MSintME n) {
+  struct __THE_1_pair_u32MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_u32MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_u32MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_u32MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$14_free (struct __THE_1_map$14 n) {
+void __THE_1_map_u32MSintME_free (struct __THE_1_map_u32MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$14 *__THE_1_map$14_set (struct __THE_1_map$14 *n, uint32_t k, int32_t v) {
+struct __THE_1_map_u32MSintME *__THE_1_map_u32MSintME_set (struct __THE_1_map_u32MSintME *n, uint32_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$14));
-  n->d[n->l++] = (struct __THE_1_pair$14) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_u32MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_u32MSintME) {k, v};
   return n;
 }
-struct __THE_1_map$15 __THE_1_map$15_alloc (int x, ...) {
-  struct __THE_1_pair$15 *d = alloc(x * sizeof(struct __THE_1_pair$15));
+struct __THE_1_map_u64MSintME __THE_1_map_u64MSintME_alloc (int x, ...) {
+  struct __THE_1_pair_u64MSintME *d = alloc(x * sizeof(struct __THE_1_pair_u64MSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$15) {va_arg(args, uint64_t), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_u64MSintME) {va_arg(args, uint64_t), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$15) {d, x, x};
+  return (struct __THE_1_map_u64MSintME) {d, x, x};
 }
-struct __THE_1_map$15 __THE_1_map$15_copy (const struct __THE_1_map$15 n) {
-  struct __THE_1_pair$15 *d = alloc(n.c * sizeof(struct __THE_1_pair$15));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$15) {n.d[i].f, n.d[i].s};
-  return (struct __THE_1_map$15) {d, n.c, n.l};
+struct __THE_1_map_u64MSintME __THE_1_map_u64MSintME_copy (const struct __THE_1_map_u64MSintME n) {
+  struct __THE_1_pair_u64MSintME *d = alloc(n.c * sizeof(struct __THE_1_pair_u64MSintME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_u64MSintME) {n.d[i].f, n.d[i].s};
+  return (struct __THE_1_map_u64MSintME) {d, n.c, n.l};
 }
-void __THE_1_map$15_free (struct __THE_1_map$15 n) {
+void __THE_1_map_u64MSintME_free (struct __THE_1_map_u64MSintME n) {
   for (size_t i = 0; i < n.l; i++) {
   }
   free(n.d);
 }
-struct __THE_1_map$15 *__THE_1_map$15_set (struct __THE_1_map$15 *n, uint64_t k, int32_t v) {
+struct __THE_1_map_u64MSintME *__THE_1_map_u64MSintME_set (struct __THE_1_map_u64MSintME *n, uint64_t k, int32_t v) {
   for (size_t i = 0; i < n->l; i++) {
     if (n->d[i].f == k) {
       n->d[i].s = v;
       return n;
     }
   }
-  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair$15));
-  n->d[n->l++] = (struct __THE_1_pair$15) {k, v};
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_u64MSintME));
+  n->d[n->l++] = (struct __THE_1_pair_u64MSintME) {k, v};
   return n;
 }
 
 int main () {
-  const struct __THE_1_map$0 __THE_0_map1Bool_0 = __THE_1_map$0_alloc(0);
-  const struct __THE_1_map$1 __THE_0_map1Byte_0 = __THE_1_map$1_alloc(0);
-  const struct __THE_1_map$2 __THE_0_map1Char_0 = __THE_1_map$2_alloc(0);
-  const struct __THE_1_map$3 __THE_0_map1F32_0 = __THE_1_map$3_alloc(0);
-  const struct __THE_1_map$4 __THE_0_map1F64_0 = __THE_1_map$4_alloc(0);
-  const struct __THE_1_map$5 __THE_0_map1Float_0 = __THE_1_map$5_alloc(0);
-  const struct __THE_1_map$6 __THE_0_map1I8_0 = __THE_1_map$6_alloc(0);
-  const struct __THE_1_map$7 __THE_0_map1I16_0 = __THE_1_map$7_alloc(0);
-  const struct __THE_1_map$8 __THE_0_map1I32_0 = __THE_1_map$8_alloc(0);
-  const struct __THE_1_map$9 __THE_0_map1I64_0 = __THE_1_map$9_alloc(0);
-  const struct __THE_1_map$10 __THE_0_map1Int_0 = __THE_1_map$10_alloc(0);
-  const struct __THE_1_map$11 __THE_0_map1Str_0 = __THE_1_map$11_alloc(0);
-  const struct __THE_1_map$12 __THE_0_map1U8_0 = __THE_1_map$12_alloc(0);
-  const struct __THE_1_map$13 __THE_0_map1U16_0 = __THE_1_map$13_alloc(0);
-  const struct __THE_1_map$14 __THE_0_map1U32_0 = __THE_1_map$14_alloc(0);
-  const struct __THE_1_map$15 __THE_0_map1U64_0 = __THE_1_map$15_alloc(0);
-  struct __THE_1_map$0 __THE_0_map2Bool_0 = __THE_1_map$0_alloc(0);
-  __THE_1_map$0_set(&__THE_0_map2Bool_0, true, 1);
-  struct __THE_1_map$1 __THE_0_map2Byte_0 = __THE_1_map$1_alloc(0);
-  __THE_1_map$1_set(&__THE_0_map2Byte_0, 1, 1);
-  struct __THE_1_map$2 __THE_0_map2Char_0 = __THE_1_map$2_alloc(0);
-  __THE_1_map$2_set(&__THE_0_map2Char_0, 'a', 1);
-  struct __THE_1_map$3 __THE_0_map2F32_0 = __THE_1_map$3_alloc(0);
-  __THE_1_map$3_set(&__THE_0_map2F32_0, 3.14, 1);
-  struct __THE_1_map$4 __THE_0_map2F64_0 = __THE_1_map$4_alloc(0);
-  __THE_1_map$4_set(&__THE_0_map2F64_0, 3.14, 1);
-  struct __THE_1_map$5 __THE_0_map2Float_0 = __THE_1_map$5_alloc(0);
-  __THE_1_map$5_set(&__THE_0_map2Float_0, 3.14, 1);
-  struct __THE_1_map$6 __THE_0_map2I8_0 = __THE_1_map$6_alloc(0);
-  __THE_1_map$6_set(&__THE_0_map2I8_0, 1, 1);
-  struct __THE_1_map$7 __THE_0_map2I16_0 = __THE_1_map$7_alloc(0);
-  __THE_1_map$7_set(&__THE_0_map2I16_0, 1, 1);
-  struct __THE_1_map$8 __THE_0_map2I32_0 = __THE_1_map$8_alloc(0);
-  __THE_1_map$8_set(&__THE_0_map2I32_0, 1, 1);
-  struct __THE_1_map$9 __THE_0_map2I64_0 = __THE_1_map$9_alloc(0);
-  __THE_1_map$9_set(&__THE_0_map2I64_0, 1, 1);
-  struct __THE_1_map$10 __THE_0_map2Int_0 = __THE_1_map$10_alloc(0);
-  __THE_1_map$10_set(&__THE_0_map2Int_0, 1, 1);
-  struct __THE_1_map$11 __THE_0_map2Str_0 = __THE_1_map$11_alloc(0);
-  __THE_1_map$11_set(&__THE_0_map2Str_0, str_alloc("test"), 1);
-  struct __THE_1_map$12 __THE_0_map2U8_0 = __THE_1_map$12_alloc(0);
-  __THE_1_map$12_set(&__THE_0_map2U8_0, 1, 1);
-  struct __THE_1_map$13 __THE_0_map2U16_0 = __THE_1_map$13_alloc(0);
-  __THE_1_map$13_set(&__THE_0_map2U16_0, 1, 1);
-  struct __THE_1_map$14 __THE_0_map2U32_0 = __THE_1_map$14_alloc(0);
-  __THE_1_map$14_set(&__THE_0_map2U32_0, 1, 1);
-  struct __THE_1_map$15 __THE_0_map2U64_0 = __THE_1_map$15_alloc(0);
-  __THE_1_map$15_set(&__THE_0_map2U64_0, 1, 1);
-  const struct __THE_1_map$0 __THE_0_map3Bool_0 = __THE_1_map$0_copy(__THE_0_map2Bool_0);
-  const struct __THE_1_map$1 __THE_0_map3Byte_0 = __THE_1_map$1_copy(__THE_0_map2Byte_0);
-  const struct __THE_1_map$2 __THE_0_map3Char_0 = __THE_1_map$2_copy(__THE_0_map2Char_0);
-  const struct __THE_1_map$3 __THE_0_map3F32_0 = __THE_1_map$3_copy(__THE_0_map2F32_0);
-  const struct __THE_1_map$4 __THE_0_map3F64_0 = __THE_1_map$4_copy(__THE_0_map2F64_0);
-  const struct __THE_1_map$5 __THE_0_map3Float_0 = __THE_1_map$5_copy(__THE_0_map2Float_0);
-  const struct __THE_1_map$6 __THE_0_map3I8_0 = __THE_1_map$6_copy(__THE_0_map2I8_0);
-  const struct __THE_1_map$7 __THE_0_map3I16_0 = __THE_1_map$7_copy(__THE_0_map2I16_0);
-  const struct __THE_1_map$8 __THE_0_map3I32_0 = __THE_1_map$8_copy(__THE_0_map2I32_0);
-  const struct __THE_1_map$9 __THE_0_map3I64_0 = __THE_1_map$9_copy(__THE_0_map2I64_0);
-  const struct __THE_1_map$10 __THE_0_map3Int_0 = __THE_1_map$10_copy(__THE_0_map2Int_0);
-  const struct __THE_1_map$11 __THE_0_map3Str_0 = __THE_1_map$11_copy(__THE_0_map2Str_0);
-  const struct __THE_1_map$12 __THE_0_map3U8_0 = __THE_1_map$12_copy(__THE_0_map2U8_0);
-  const struct __THE_1_map$13 __THE_0_map3U16_0 = __THE_1_map$13_copy(__THE_0_map2U16_0);
-  const struct __THE_1_map$14 __THE_0_map3U32_0 = __THE_1_map$14_copy(__THE_0_map2U32_0);
-  const struct __THE_1_map$15 __THE_0_map3U64_0 = __THE_1_map$15_copy(__THE_0_map2U64_0);
-  __THE_1_map$15_free((struct __THE_1_map$15) __THE_0_map3U64_0);
-  __THE_1_map$14_free((struct __THE_1_map$14) __THE_0_map3U32_0);
-  __THE_1_map$13_free((struct __THE_1_map$13) __THE_0_map3U16_0);
-  __THE_1_map$12_free((struct __THE_1_map$12) __THE_0_map3U8_0);
-  __THE_1_map$11_free((struct __THE_1_map$11) __THE_0_map3Str_0);
-  __THE_1_map$10_free((struct __THE_1_map$10) __THE_0_map3Int_0);
-  __THE_1_map$9_free((struct __THE_1_map$9) __THE_0_map3I64_0);
-  __THE_1_map$8_free((struct __THE_1_map$8) __THE_0_map3I32_0);
-  __THE_1_map$7_free((struct __THE_1_map$7) __THE_0_map3I16_0);
-  __THE_1_map$6_free((struct __THE_1_map$6) __THE_0_map3I8_0);
-  __THE_1_map$5_free((struct __THE_1_map$5) __THE_0_map3Float_0);
-  __THE_1_map$4_free((struct __THE_1_map$4) __THE_0_map3F64_0);
-  __THE_1_map$3_free((struct __THE_1_map$3) __THE_0_map3F32_0);
-  __THE_1_map$2_free((struct __THE_1_map$2) __THE_0_map3Char_0);
-  __THE_1_map$1_free((struct __THE_1_map$1) __THE_0_map3Byte_0);
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_0_map3Bool_0);
-  __THE_1_map$15_free((struct __THE_1_map$15) __THE_0_map2U64_0);
-  __THE_1_map$14_free((struct __THE_1_map$14) __THE_0_map2U32_0);
-  __THE_1_map$13_free((struct __THE_1_map$13) __THE_0_map2U16_0);
-  __THE_1_map$12_free((struct __THE_1_map$12) __THE_0_map2U8_0);
-  __THE_1_map$11_free((struct __THE_1_map$11) __THE_0_map2Str_0);
-  __THE_1_map$10_free((struct __THE_1_map$10) __THE_0_map2Int_0);
-  __THE_1_map$9_free((struct __THE_1_map$9) __THE_0_map2I64_0);
-  __THE_1_map$8_free((struct __THE_1_map$8) __THE_0_map2I32_0);
-  __THE_1_map$7_free((struct __THE_1_map$7) __THE_0_map2I16_0);
-  __THE_1_map$6_free((struct __THE_1_map$6) __THE_0_map2I8_0);
-  __THE_1_map$5_free((struct __THE_1_map$5) __THE_0_map2Float_0);
-  __THE_1_map$4_free((struct __THE_1_map$4) __THE_0_map2F64_0);
-  __THE_1_map$3_free((struct __THE_1_map$3) __THE_0_map2F32_0);
-  __THE_1_map$2_free((struct __THE_1_map$2) __THE_0_map2Char_0);
-  __THE_1_map$1_free((struct __THE_1_map$1) __THE_0_map2Byte_0);
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_0_map2Bool_0);
-  __THE_1_map$15_free((struct __THE_1_map$15) __THE_0_map1U64_0);
-  __THE_1_map$14_free((struct __THE_1_map$14) __THE_0_map1U32_0);
-  __THE_1_map$13_free((struct __THE_1_map$13) __THE_0_map1U16_0);
-  __THE_1_map$12_free((struct __THE_1_map$12) __THE_0_map1U8_0);
-  __THE_1_map$11_free((struct __THE_1_map$11) __THE_0_map1Str_0);
-  __THE_1_map$10_free((struct __THE_1_map$10) __THE_0_map1Int_0);
-  __THE_1_map$9_free((struct __THE_1_map$9) __THE_0_map1I64_0);
-  __THE_1_map$8_free((struct __THE_1_map$8) __THE_0_map1I32_0);
-  __THE_1_map$7_free((struct __THE_1_map$7) __THE_0_map1I16_0);
-  __THE_1_map$6_free((struct __THE_1_map$6) __THE_0_map1I8_0);
-  __THE_1_map$5_free((struct __THE_1_map$5) __THE_0_map1Float_0);
-  __THE_1_map$4_free((struct __THE_1_map$4) __THE_0_map1F64_0);
-  __THE_1_map$3_free((struct __THE_1_map$3) __THE_0_map1F32_0);
-  __THE_1_map$2_free((struct __THE_1_map$2) __THE_0_map1Char_0);
-  __THE_1_map$1_free((struct __THE_1_map$1) __THE_0_map1Byte_0);
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_0_map1Bool_0);
+  const struct __THE_1_map_boolMSintME __THE_0_map1Bool_0 = __THE_1_map_boolMSintME_alloc(0);
+  const struct __THE_1_map_byteMSintME __THE_0_map1Byte_0 = __THE_1_map_byteMSintME_alloc(0);
+  const struct __THE_1_map_charMSintME __THE_0_map1Char_0 = __THE_1_map_charMSintME_alloc(0);
+  const struct __THE_1_map_f32MSintME __THE_0_map1F32_0 = __THE_1_map_f32MSintME_alloc(0);
+  const struct __THE_1_map_f64MSintME __THE_0_map1F64_0 = __THE_1_map_f64MSintME_alloc(0);
+  const struct __THE_1_map_floatMSintME __THE_0_map1Float_0 = __THE_1_map_floatMSintME_alloc(0);
+  const struct __THE_1_map_i8MSintME __THE_0_map1I8_0 = __THE_1_map_i8MSintME_alloc(0);
+  const struct __THE_1_map_i16MSintME __THE_0_map1I16_0 = __THE_1_map_i16MSintME_alloc(0);
+  const struct __THE_1_map_i32MSintME __THE_0_map1I32_0 = __THE_1_map_i32MSintME_alloc(0);
+  const struct __THE_1_map_i64MSintME __THE_0_map1I64_0 = __THE_1_map_i64MSintME_alloc(0);
+  const struct __THE_1_map_intMSintME __THE_0_map1Int_0 = __THE_1_map_intMSintME_alloc(0);
+  const struct __THE_1_map_strMSintME __THE_0_map1Str_0 = __THE_1_map_strMSintME_alloc(0);
+  const struct __THE_1_map_u8MSintME __THE_0_map1U8_0 = __THE_1_map_u8MSintME_alloc(0);
+  const struct __THE_1_map_u16MSintME __THE_0_map1U16_0 = __THE_1_map_u16MSintME_alloc(0);
+  const struct __THE_1_map_u32MSintME __THE_0_map1U32_0 = __THE_1_map_u32MSintME_alloc(0);
+  const struct __THE_1_map_u64MSintME __THE_0_map1U64_0 = __THE_1_map_u64MSintME_alloc(0);
+  struct __THE_1_map_boolMSintME __THE_0_map2Bool_0 = __THE_1_map_boolMSintME_alloc(0);
+  __THE_1_map_boolMSintME_set(&__THE_0_map2Bool_0, true, 1);
+  struct __THE_1_map_byteMSintME __THE_0_map2Byte_0 = __THE_1_map_byteMSintME_alloc(0);
+  __THE_1_map_byteMSintME_set(&__THE_0_map2Byte_0, 1, 1);
+  struct __THE_1_map_charMSintME __THE_0_map2Char_0 = __THE_1_map_charMSintME_alloc(0);
+  __THE_1_map_charMSintME_set(&__THE_0_map2Char_0, 'a', 1);
+  struct __THE_1_map_f32MSintME __THE_0_map2F32_0 = __THE_1_map_f32MSintME_alloc(0);
+  __THE_1_map_f32MSintME_set(&__THE_0_map2F32_0, 3.14, 1);
+  struct __THE_1_map_f64MSintME __THE_0_map2F64_0 = __THE_1_map_f64MSintME_alloc(0);
+  __THE_1_map_f64MSintME_set(&__THE_0_map2F64_0, 3.14, 1);
+  struct __THE_1_map_floatMSintME __THE_0_map2Float_0 = __THE_1_map_floatMSintME_alloc(0);
+  __THE_1_map_floatMSintME_set(&__THE_0_map2Float_0, 3.14, 1);
+  struct __THE_1_map_i8MSintME __THE_0_map2I8_0 = __THE_1_map_i8MSintME_alloc(0);
+  __THE_1_map_i8MSintME_set(&__THE_0_map2I8_0, 1, 1);
+  struct __THE_1_map_i16MSintME __THE_0_map2I16_0 = __THE_1_map_i16MSintME_alloc(0);
+  __THE_1_map_i16MSintME_set(&__THE_0_map2I16_0, 1, 1);
+  struct __THE_1_map_i32MSintME __THE_0_map2I32_0 = __THE_1_map_i32MSintME_alloc(0);
+  __THE_1_map_i32MSintME_set(&__THE_0_map2I32_0, 1, 1);
+  struct __THE_1_map_i64MSintME __THE_0_map2I64_0 = __THE_1_map_i64MSintME_alloc(0);
+  __THE_1_map_i64MSintME_set(&__THE_0_map2I64_0, 1, 1);
+  struct __THE_1_map_intMSintME __THE_0_map2Int_0 = __THE_1_map_intMSintME_alloc(0);
+  __THE_1_map_intMSintME_set(&__THE_0_map2Int_0, 1, 1);
+  struct __THE_1_map_strMSintME __THE_0_map2Str_0 = __THE_1_map_strMSintME_alloc(0);
+  __THE_1_map_strMSintME_set(&__THE_0_map2Str_0, str_alloc("test"), 1);
+  struct __THE_1_map_u8MSintME __THE_0_map2U8_0 = __THE_1_map_u8MSintME_alloc(0);
+  __THE_1_map_u8MSintME_set(&__THE_0_map2U8_0, 1, 1);
+  struct __THE_1_map_u16MSintME __THE_0_map2U16_0 = __THE_1_map_u16MSintME_alloc(0);
+  __THE_1_map_u16MSintME_set(&__THE_0_map2U16_0, 1, 1);
+  struct __THE_1_map_u32MSintME __THE_0_map2U32_0 = __THE_1_map_u32MSintME_alloc(0);
+  __THE_1_map_u32MSintME_set(&__THE_0_map2U32_0, 1, 1);
+  struct __THE_1_map_u64MSintME __THE_0_map2U64_0 = __THE_1_map_u64MSintME_alloc(0);
+  __THE_1_map_u64MSintME_set(&__THE_0_map2U64_0, 1, 1);
+  const struct __THE_1_map_boolMSintME __THE_0_map3Bool_0 = __THE_1_map_boolMSintME_copy(__THE_0_map2Bool_0);
+  const struct __THE_1_map_byteMSintME __THE_0_map3Byte_0 = __THE_1_map_byteMSintME_copy(__THE_0_map2Byte_0);
+  const struct __THE_1_map_charMSintME __THE_0_map3Char_0 = __THE_1_map_charMSintME_copy(__THE_0_map2Char_0);
+  const struct __THE_1_map_f32MSintME __THE_0_map3F32_0 = __THE_1_map_f32MSintME_copy(__THE_0_map2F32_0);
+  const struct __THE_1_map_f64MSintME __THE_0_map3F64_0 = __THE_1_map_f64MSintME_copy(__THE_0_map2F64_0);
+  const struct __THE_1_map_floatMSintME __THE_0_map3Float_0 = __THE_1_map_floatMSintME_copy(__THE_0_map2Float_0);
+  const struct __THE_1_map_i8MSintME __THE_0_map3I8_0 = __THE_1_map_i8MSintME_copy(__THE_0_map2I8_0);
+  const struct __THE_1_map_i16MSintME __THE_0_map3I16_0 = __THE_1_map_i16MSintME_copy(__THE_0_map2I16_0);
+  const struct __THE_1_map_i32MSintME __THE_0_map3I32_0 = __THE_1_map_i32MSintME_copy(__THE_0_map2I32_0);
+  const struct __THE_1_map_i64MSintME __THE_0_map3I64_0 = __THE_1_map_i64MSintME_copy(__THE_0_map2I64_0);
+  const struct __THE_1_map_intMSintME __THE_0_map3Int_0 = __THE_1_map_intMSintME_copy(__THE_0_map2Int_0);
+  const struct __THE_1_map_strMSintME __THE_0_map3Str_0 = __THE_1_map_strMSintME_copy(__THE_0_map2Str_0);
+  const struct __THE_1_map_u8MSintME __THE_0_map3U8_0 = __THE_1_map_u8MSintME_copy(__THE_0_map2U8_0);
+  const struct __THE_1_map_u16MSintME __THE_0_map3U16_0 = __THE_1_map_u16MSintME_copy(__THE_0_map2U16_0);
+  const struct __THE_1_map_u32MSintME __THE_0_map3U32_0 = __THE_1_map_u32MSintME_copy(__THE_0_map2U32_0);
+  const struct __THE_1_map_u64MSintME __THE_0_map3U64_0 = __THE_1_map_u64MSintME_copy(__THE_0_map2U64_0);
+  __THE_1_map_u64MSintME_free((struct __THE_1_map_u64MSintME) __THE_0_map3U64_0);
+  __THE_1_map_u32MSintME_free((struct __THE_1_map_u32MSintME) __THE_0_map3U32_0);
+  __THE_1_map_u16MSintME_free((struct __THE_1_map_u16MSintME) __THE_0_map3U16_0);
+  __THE_1_map_u8MSintME_free((struct __THE_1_map_u8MSintME) __THE_0_map3U8_0);
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_map3Str_0);
+  __THE_1_map_intMSintME_free((struct __THE_1_map_intMSintME) __THE_0_map3Int_0);
+  __THE_1_map_i64MSintME_free((struct __THE_1_map_i64MSintME) __THE_0_map3I64_0);
+  __THE_1_map_i32MSintME_free((struct __THE_1_map_i32MSintME) __THE_0_map3I32_0);
+  __THE_1_map_i16MSintME_free((struct __THE_1_map_i16MSintME) __THE_0_map3I16_0);
+  __THE_1_map_i8MSintME_free((struct __THE_1_map_i8MSintME) __THE_0_map3I8_0);
+  __THE_1_map_floatMSintME_free((struct __THE_1_map_floatMSintME) __THE_0_map3Float_0);
+  __THE_1_map_f64MSintME_free((struct __THE_1_map_f64MSintME) __THE_0_map3F64_0);
+  __THE_1_map_f32MSintME_free((struct __THE_1_map_f32MSintME) __THE_0_map3F32_0);
+  __THE_1_map_charMSintME_free((struct __THE_1_map_charMSintME) __THE_0_map3Char_0);
+  __THE_1_map_byteMSintME_free((struct __THE_1_map_byteMSintME) __THE_0_map3Byte_0);
+  __THE_1_map_boolMSintME_free((struct __THE_1_map_boolMSintME) __THE_0_map3Bool_0);
+  __THE_1_map_u64MSintME_free((struct __THE_1_map_u64MSintME) __THE_0_map2U64_0);
+  __THE_1_map_u32MSintME_free((struct __THE_1_map_u32MSintME) __THE_0_map2U32_0);
+  __THE_1_map_u16MSintME_free((struct __THE_1_map_u16MSintME) __THE_0_map2U16_0);
+  __THE_1_map_u8MSintME_free((struct __THE_1_map_u8MSintME) __THE_0_map2U8_0);
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_map2Str_0);
+  __THE_1_map_intMSintME_free((struct __THE_1_map_intMSintME) __THE_0_map2Int_0);
+  __THE_1_map_i64MSintME_free((struct __THE_1_map_i64MSintME) __THE_0_map2I64_0);
+  __THE_1_map_i32MSintME_free((struct __THE_1_map_i32MSintME) __THE_0_map2I32_0);
+  __THE_1_map_i16MSintME_free((struct __THE_1_map_i16MSintME) __THE_0_map2I16_0);
+  __THE_1_map_i8MSintME_free((struct __THE_1_map_i8MSintME) __THE_0_map2I8_0);
+  __THE_1_map_floatMSintME_free((struct __THE_1_map_floatMSintME) __THE_0_map2Float_0);
+  __THE_1_map_f64MSintME_free((struct __THE_1_map_f64MSintME) __THE_0_map2F64_0);
+  __THE_1_map_f32MSintME_free((struct __THE_1_map_f32MSintME) __THE_0_map2F32_0);
+  __THE_1_map_charMSintME_free((struct __THE_1_map_charMSintME) __THE_0_map2Char_0);
+  __THE_1_map_byteMSintME_free((struct __THE_1_map_byteMSintME) __THE_0_map2Byte_0);
+  __THE_1_map_boolMSintME_free((struct __THE_1_map_boolMSintME) __THE_0_map2Bool_0);
+  __THE_1_map_u64MSintME_free((struct __THE_1_map_u64MSintME) __THE_0_map1U64_0);
+  __THE_1_map_u32MSintME_free((struct __THE_1_map_u32MSintME) __THE_0_map1U32_0);
+  __THE_1_map_u16MSintME_free((struct __THE_1_map_u16MSintME) __THE_0_map1U16_0);
+  __THE_1_map_u8MSintME_free((struct __THE_1_map_u8MSintME) __THE_0_map1U8_0);
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_map1Str_0);
+  __THE_1_map_intMSintME_free((struct __THE_1_map_intMSintME) __THE_0_map1Int_0);
+  __THE_1_map_i64MSintME_free((struct __THE_1_map_i64MSintME) __THE_0_map1I64_0);
+  __THE_1_map_i32MSintME_free((struct __THE_1_map_i32MSintME) __THE_0_map1I32_0);
+  __THE_1_map_i16MSintME_free((struct __THE_1_map_i16MSintME) __THE_0_map1I16_0);
+  __THE_1_map_i8MSintME_free((struct __THE_1_map_i8MSintME) __THE_0_map1I8_0);
+  __THE_1_map_floatMSintME_free((struct __THE_1_map_floatMSintME) __THE_0_map1Float_0);
+  __THE_1_map_f64MSintME_free((struct __THE_1_map_f64MSintME) __THE_0_map1F64_0);
+  __THE_1_map_f32MSintME_free((struct __THE_1_map_f32MSintME) __THE_0_map1F32_0);
+  __THE_1_map_charMSintME_free((struct __THE_1_map_charMSintME) __THE_0_map1Char_0);
+  __THE_1_map_byteMSintME_free((struct __THE_1_map_byteMSintME) __THE_0_map1Byte_0);
+  __THE_1_map_boolMSintME_free((struct __THE_1_map_boolMSintME) __THE_0_map1Bool_0);
 }
 ======= flags =======
 ======= stdout =======

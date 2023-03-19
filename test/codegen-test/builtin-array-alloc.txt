@@ -133,7 +133,6 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
-struct __THE_1_array_int;
 struct __THE_1_array_bool;
 struct __THE_1_array_byte;
 struct __THE_1_array_char;
@@ -144,6 +143,7 @@ struct __THE_1_array_i8;
 struct __THE_1_array_i16;
 struct __THE_1_array_i32;
 struct __THE_1_array_i64;
+struct __THE_1_array_int;
 struct __THE_1_array_u8;
 struct __THE_1_array_u16;
 struct __THE_1_array_u32;
@@ -179,10 +179,6 @@ struct __THE_1_array_array_array_u16;
 struct __THE_1_array_array_array_u32;
 struct __THE_1_array_array_array_u64;
 
-struct __THE_1_array_int {
-  int32_t *d;
-  size_t l;
-};
 struct __THE_1_array_bool {
   bool *d;
   size_t l;
@@ -221,6 +217,10 @@ struct __THE_1_array_i32 {
 };
 struct __THE_1_array_i64 {
   int64_t *d;
+  size_t l;
+};
+struct __THE_1_array_int {
+  int32_t *d;
   size_t l;
 };
 struct __THE_1_array_u8 {
@@ -361,9 +361,6 @@ struct __THE_1_array_array_array_u64 {
 };
 
 void *alloc (size_t);
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
-void __THE_1_array_int_free (struct __THE_1_array_int);
 struct __THE_1_array_bool __THE_1_array_bool_alloc (size_t, ...);
 struct __THE_1_array_bool __THE_1_array_bool_copy (const struct __THE_1_array_bool);
 void __THE_1_array_bool_free (struct __THE_1_array_bool);
@@ -394,6 +391,9 @@ void __THE_1_array_i32_free (struct __THE_1_array_i32);
 struct __THE_1_array_i64 __THE_1_array_i64_alloc (size_t, ...);
 struct __THE_1_array_i64 __THE_1_array_i64_copy (const struct __THE_1_array_i64);
 void __THE_1_array_i64_free (struct __THE_1_array_i64);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
+void __THE_1_array_int_free (struct __THE_1_array_int);
 struct __THE_1_array_u8 __THE_1_array_u8_alloc (size_t, ...);
 struct __THE_1_array_u8 __THE_1_array_u8_copy (const struct __THE_1_array_u8);
 void __THE_1_array_u8_free (struct __THE_1_array_u8);
@@ -489,24 +489,6 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
-}
-struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
-  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(x * sizeof(int32_t));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
-  va_end(args);
-  return (struct __THE_1_array_int) {d, x};
-}
-struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
-  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
-  int32_t *d = alloc(n.l * sizeof(int32_t));
-  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
-  return (struct __THE_1_array_int) {d, n.l};
-}
-void __THE_1_array_int_free (struct __THE_1_array_int n) {
-  free(n.d);
 }
 struct __THE_1_array_bool __THE_1_array_bool_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_bool) {NULL, 0};
@@ -686,6 +668,24 @@ struct __THE_1_array_i64 __THE_1_array_i64_copy (const struct __THE_1_array_i64 
   return (struct __THE_1_array_i64) {d, n.l};
 }
 void __THE_1_array_i64_free (struct __THE_1_array_i64 n) {
+  free(n.d);
+}
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(x * sizeof(int32_t));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
+  va_end(args);
+  return (struct __THE_1_array_int) {d, x};
+}
+struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int n) {
+  if (n.l == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(n.l * sizeof(int32_t));
+  for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
+  return (struct __THE_1_array_int) {d, n.l};
+}
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
 struct __THE_1_array_u8 __THE_1_array_u8_alloc (size_t x, ...) {

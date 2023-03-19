@@ -36,7 +36,7 @@ struct str {
 
 struct __THE_1_Test1_0;
 struct __THE_1_Test2_0;
-struct __THE_1_union$0;
+struct __THE_1_union_Test1USTest2UE;
 
 struct __THE_1_Test1_0 {
   const int32_t __THE_0_a;
@@ -44,7 +44,7 @@ struct __THE_1_Test1_0 {
 struct __THE_1_Test2_0 {
   const struct str __THE_0_b;
 };
-struct __THE_1_union$0 {
+struct __THE_1_union_Test1USTest2UE {
   int t;
   union {
     struct __THE_1_Test1_0 *v1;
@@ -59,8 +59,8 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct str);
 void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
-struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-void __THE_1_union$0_free (struct __THE_1_union$0);
+struct __THE_1_union_Test1USTest2UE __THE_1_union_Test1USTest2UE_alloc (int, ...);
+void __THE_1_union_Test1USTest2UE_free (struct __THE_1_union_Test1USTest2UE);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -98,8 +98,8 @@ void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
   str_free((struct str) n->__THE_0_b);
   free(n);
 }
-struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
-  struct __THE_1_union$0 r = {t};
+struct __THE_1_union_Test1USTest2UE __THE_1_union_Test1USTest2UE_alloc (int t, ...) {
+  struct __THE_1_union_Test1USTest2UE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_Test1_0) r.v1 = va_arg(args, struct __THE_1_Test1_0 *);
@@ -107,16 +107,16 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+void __THE_1_union_Test1USTest2UE_free (struct __THE_1_union_Test1USTest2UE n) {
   if (n.t == TYPE_Test1_0) __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) n.v1);
   if (n.t == TYPE_Test2_0) __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) n.v2);
 }
 
 int main () {
-  const struct __THE_1_union$0 __THE_0_g1_0 = __THE_1_union$0_alloc(TYPE_Test1_0, __THE_1_Test1_0_alloc(0));
-  const struct __THE_1_union$0 __THE_0_g2_0 = __THE_1_union$0_alloc(TYPE_Test2_0, __THE_1_Test2_0_alloc(str_alloc("")));
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g2_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g1_0);
+  const struct __THE_1_union_Test1USTest2UE __THE_0_g1_0 = __THE_1_union_Test1USTest2UE_alloc(TYPE_Test1_0, __THE_1_Test1_0_alloc(0));
+  const struct __THE_1_union_Test1USTest2UE __THE_0_g2_0 = __THE_1_union_Test1USTest2UE_alloc(TYPE_Test2_0, __THE_1_Test2_0_alloc(str_alloc("")));
+  __THE_1_union_Test1USTest2UE_free((struct __THE_1_union_Test1USTest2UE) __THE_0_g2_0);
+  __THE_1_union_Test1USTest2UE_free((struct __THE_1_union_Test1USTest2UE) __THE_0_g1_0);
 }
 ======= flags =======
 ======= stdout =======

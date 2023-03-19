@@ -58,13 +58,13 @@ struct str {
 };
 
 struct __THE_1_Human_0;
-struct __THE_1_fn$0;
+struct __THE_1_fn$1000;
 
 struct __THE_1_Human_0 {
   const struct str __THE_0_name;
   const int32_t __THE_0_age;
 };
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   int32_t (*f) (void *);
   void *x;
   size_t l;
@@ -210,8 +210,8 @@ int32_t __THE_1_d_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_b_0 = (struct __THE_1_fn$0) {&__THE_1_b_0, NULL, 0};
-  const struct __THE_1_fn$0 __THE_0_d_0 = (struct __THE_1_fn$0) {&__THE_1_d_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_b_0 = (struct __THE_1_fn$1000) {&__THE_1_b_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_d_0 = (struct __THE_1_fn$1000) {&__THE_1_d_0, NULL, 0};
   print(stdout, "tz", true, THE_EOL);
   print(stdout, "iz", 3, THE_EOL);
   print(stdout, "zz", "Hello, World!", THE_EOL);

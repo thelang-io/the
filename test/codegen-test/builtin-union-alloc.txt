@@ -56,12 +56,12 @@ main {
 #define TYPE_u32 14
 #define TYPE_u64 15
 
-struct __THE_1_union$0;
-struct __THE_1_union$1;
-struct __THE_1_union$2;
-struct __THE_1_union$3;
+struct __THE_1_union_boolUSbyteUScharUE;
+struct __THE_1_union_f32USf64USfloatUE;
+struct __THE_1_union_i8USi16USi32USi64USintUE;
+struct __THE_1_union_u8USu16USu32USu64UE;
 
-struct __THE_1_union$0 {
+struct __THE_1_union_boolUSbyteUScharUE {
   int t;
   union {
     bool v1;
@@ -69,7 +69,7 @@ struct __THE_1_union$0 {
     char v3;
   };
 };
-struct __THE_1_union$1 {
+struct __THE_1_union_f32USf64USfloatUE {
   int t;
   union {
     float v4;
@@ -77,7 +77,7 @@ struct __THE_1_union$1 {
     double v6;
   };
 };
-struct __THE_1_union$2 {
+struct __THE_1_union_i8USi16USi32USi64USintUE {
   int t;
   union {
     int8_t v7;
@@ -87,7 +87,7 @@ struct __THE_1_union$2 {
     int32_t v11;
   };
 };
-struct __THE_1_union$3 {
+struct __THE_1_union_u8USu16USu32USu64UE {
   int t;
   union {
     uint8_t v12;
@@ -97,13 +97,13 @@ struct __THE_1_union$3 {
   };
 };
 
-struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-struct __THE_1_union$1 __THE_1_union$1_alloc (int, ...);
-struct __THE_1_union$2 __THE_1_union$2_alloc (int, ...);
-struct __THE_1_union$3 __THE_1_union$3_alloc (int, ...);
+struct __THE_1_union_boolUSbyteUScharUE __THE_1_union_boolUSbyteUScharUE_alloc (int, ...);
+struct __THE_1_union_f32USf64USfloatUE __THE_1_union_f32USf64USfloatUE_alloc (int, ...);
+struct __THE_1_union_i8USi16USi32USi64USintUE __THE_1_union_i8USi16USi32USi64USintUE_alloc (int, ...);
+struct __THE_1_union_u8USu16USu32USu64UE __THE_1_union_u8USu16USu32USu64UE_alloc (int, ...);
 
-struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
-  struct __THE_1_union$0 r = {t};
+struct __THE_1_union_boolUSbyteUScharUE __THE_1_union_boolUSbyteUScharUE_alloc (int t, ...) {
+  struct __THE_1_union_boolUSbyteUScharUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_bool) r.v1 = va_arg(args, int);
@@ -112,8 +112,8 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-struct __THE_1_union$1 __THE_1_union$1_alloc (int t, ...) {
-  struct __THE_1_union$1 r = {t};
+struct __THE_1_union_f32USf64USfloatUE __THE_1_union_f32USf64USfloatUE_alloc (int t, ...) {
+  struct __THE_1_union_f32USf64USfloatUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_f32) r.v4 = va_arg(args, double);
@@ -122,8 +122,8 @@ struct __THE_1_union$1 __THE_1_union$1_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-struct __THE_1_union$2 __THE_1_union$2_alloc (int t, ...) {
-  struct __THE_1_union$2 r = {t};
+struct __THE_1_union_i8USi16USi32USi64USintUE __THE_1_union_i8USi16USi32USi64USintUE_alloc (int t, ...) {
+  struct __THE_1_union_i8USi16USi32USi64USintUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_i8) r.v7 = va_arg(args, int);
@@ -134,8 +134,8 @@ struct __THE_1_union$2 __THE_1_union$2_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-struct __THE_1_union$3 __THE_1_union$3_alloc (int t, ...) {
-  struct __THE_1_union$3 r = {t};
+struct __THE_1_union_u8USu16USu32USu64UE __THE_1_union_u8USu16USu32USu64UE_alloc (int t, ...) {
+  struct __THE_1_union_u8USu16USu32USu64UE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_u8) r.v12 = va_arg(args, int);
@@ -159,24 +159,24 @@ int main () {
   const uint16_t __THE_0_testU16_0 = 2;
   const uint32_t __THE_0_testU32_0 = 3;
   const uint64_t __THE_0_testU64_0 = 4;
-  const struct __THE_1_union$0 __THE_0_g1_0 = __THE_1_union$0_alloc(TYPE_bool, true);
-  const struct __THE_1_union$0 __THE_0_g2_0 = __THE_1_union$0_alloc(TYPE_bool, false);
-  const struct __THE_1_union$0 __THE_0_g3_0 = __THE_1_union$0_alloc(TYPE_byte, __THE_0_testByte1_0);
-  const struct __THE_1_union$0 __THE_0_g4_0 = __THE_1_union$0_alloc(TYPE_byte, __THE_0_testByte2_0);
-  const struct __THE_1_union$0 __THE_0_g5_0 = __THE_1_union$0_alloc(TYPE_char, 'a');
-  const struct __THE_1_union$0 __THE_0_g6_0 = __THE_1_union$0_alloc(TYPE_char, 'z');
-  const struct __THE_1_union$1 __THE_0_f1_0 = __THE_1_union$1_alloc(TYPE_float, 3.14);
-  const struct __THE_1_union$1 __THE_0_f2_0 = __THE_1_union$1_alloc(TYPE_f32, __THE_0_testF32_0);
-  const struct __THE_1_union$1 __THE_0_f3_0 = __THE_1_union$1_alloc(TYPE_f64, __THE_0_testF64_0);
-  const struct __THE_1_union$2 __THE_0_i1_0 = __THE_1_union$2_alloc(TYPE_int, 0);
-  const struct __THE_1_union$2 __THE_0_i2_0 = __THE_1_union$2_alloc(TYPE_i8, __THE_0_testI8_0);
-  const struct __THE_1_union$2 __THE_0_i3_0 = __THE_1_union$2_alloc(TYPE_i16, __THE_0_testI16_0);
-  const struct __THE_1_union$2 __THE_0_i4_0 = __THE_1_union$2_alloc(TYPE_i32, __THE_0_testI32_0);
-  const struct __THE_1_union$2 __THE_0_i5_0 = __THE_1_union$2_alloc(TYPE_i64, __THE_0_testI64_0);
-  const struct __THE_1_union$3 __THE_0_u1_0 = __THE_1_union$3_alloc(TYPE_u8, __THE_0_testU8_0);
-  const struct __THE_1_union$3 __THE_0_u2_0 = __THE_1_union$3_alloc(TYPE_u16, __THE_0_testU16_0);
-  const struct __THE_1_union$3 __THE_0_u3_0 = __THE_1_union$3_alloc(TYPE_u32, __THE_0_testU32_0);
-  const struct __THE_1_union$3 __THE_0_u4_0 = __THE_1_union$3_alloc(TYPE_u64, __THE_0_testU64_0);
+  const struct __THE_1_union_boolUSbyteUScharUE __THE_0_g1_0 = __THE_1_union_boolUSbyteUScharUE_alloc(TYPE_bool, true);
+  const struct __THE_1_union_boolUSbyteUScharUE __THE_0_g2_0 = __THE_1_union_boolUSbyteUScharUE_alloc(TYPE_bool, false);
+  const struct __THE_1_union_boolUSbyteUScharUE __THE_0_g3_0 = __THE_1_union_boolUSbyteUScharUE_alloc(TYPE_byte, __THE_0_testByte1_0);
+  const struct __THE_1_union_boolUSbyteUScharUE __THE_0_g4_0 = __THE_1_union_boolUSbyteUScharUE_alloc(TYPE_byte, __THE_0_testByte2_0);
+  const struct __THE_1_union_boolUSbyteUScharUE __THE_0_g5_0 = __THE_1_union_boolUSbyteUScharUE_alloc(TYPE_char, 'a');
+  const struct __THE_1_union_boolUSbyteUScharUE __THE_0_g6_0 = __THE_1_union_boolUSbyteUScharUE_alloc(TYPE_char, 'z');
+  const struct __THE_1_union_f32USf64USfloatUE __THE_0_f1_0 = __THE_1_union_f32USf64USfloatUE_alloc(TYPE_float, 3.14);
+  const struct __THE_1_union_f32USf64USfloatUE __THE_0_f2_0 = __THE_1_union_f32USf64USfloatUE_alloc(TYPE_f32, __THE_0_testF32_0);
+  const struct __THE_1_union_f32USf64USfloatUE __THE_0_f3_0 = __THE_1_union_f32USf64USfloatUE_alloc(TYPE_f64, __THE_0_testF64_0);
+  const struct __THE_1_union_i8USi16USi32USi64USintUE __THE_0_i1_0 = __THE_1_union_i8USi16USi32USi64USintUE_alloc(TYPE_int, 0);
+  const struct __THE_1_union_i8USi16USi32USi64USintUE __THE_0_i2_0 = __THE_1_union_i8USi16USi32USi64USintUE_alloc(TYPE_i8, __THE_0_testI8_0);
+  const struct __THE_1_union_i8USi16USi32USi64USintUE __THE_0_i3_0 = __THE_1_union_i8USi16USi32USi64USintUE_alloc(TYPE_i16, __THE_0_testI16_0);
+  const struct __THE_1_union_i8USi16USi32USi64USintUE __THE_0_i4_0 = __THE_1_union_i8USi16USi32USi64USintUE_alloc(TYPE_i32, __THE_0_testI32_0);
+  const struct __THE_1_union_i8USi16USi32USi64USintUE __THE_0_i5_0 = __THE_1_union_i8USi16USi32USi64USintUE_alloc(TYPE_i64, __THE_0_testI64_0);
+  const struct __THE_1_union_u8USu16USu32USu64UE __THE_0_u1_0 = __THE_1_union_u8USu16USu32USu64UE_alloc(TYPE_u8, __THE_0_testU8_0);
+  const struct __THE_1_union_u8USu16USu32USu64UE __THE_0_u2_0 = __THE_1_union_u8USu16USu32USu64UE_alloc(TYPE_u16, __THE_0_testU16_0);
+  const struct __THE_1_union_u8USu16USu32USu64UE __THE_0_u3_0 = __THE_1_union_u8USu16USu32USu64UE_alloc(TYPE_u32, __THE_0_testU32_0);
+  const struct __THE_1_union_u8USu16USu32USu64UE __THE_0_u4_0 = __THE_1_union_u8USu16USu32USu64UE_alloc(TYPE_u64, __THE_0_testU64_0);
 }
 ======= flags =======
 ======= stdout =======

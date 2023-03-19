@@ -160,8 +160,8 @@ struct __THE_1_array_str;
 struct __THE_1_fn$0;
 struct __THE_1_fn$0P;
 struct __THE_1_ignoredHeadersIncludes_0X;
-struct __THE_1_fn$1;
-struct __THE_1_fn$1P;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
 struct __THE_1_requestWithPrint_0X;
 
 struct request_Header {
@@ -206,12 +206,12 @@ struct __THE_1_fn$0P {
 struct __THE_1_ignoredHeadersIncludes_0X {
   const struct __THE_1_array_str *__THE_0_IGNORED_HEADERS_0;
 };
-struct __THE_1_fn$1 {
-  void (*f) (void *, struct __THE_1_fn$1P);
+struct __THE_1_fn$1000 {
+  void (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1P {
+struct __THE_1_fn$1000P {
   struct str n0;
   struct str n1;
   struct buffer n2;
@@ -263,13 +263,13 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
-size_t __THE_1_array_str_len (struct __THE_1_array_str);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
+size_t __THE_1_array_str_len (struct __THE_1_array_str);
 bool __THE_1_ignoredHeadersIncludes_0 (void *, struct __THE_1_fn$0P);
 void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_ignoredHeadersIncludes_0X);
-void __THE_1_fn$1_free (struct __THE_1_fn$1);
-void __THE_1_requestWithPrint_0 (void *, struct __THE_1_fn$1P);
-void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1 *, struct __THE_1_requestWithPrint_0X);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_requestWithPrint_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_requestWithPrint_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -943,13 +943,13 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
+void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+  if (n.x != NULL) free(n.x);
+}
 size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
   size_t l = n.l;
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return l;
-}
-void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
-  if (n.x != NULL) free(n.x);
 }
 bool __THE_1_ignoredHeadersIncludes_0 (void *px, struct __THE_1_fn$0P p) {
   unsigned char r = 0;
@@ -977,10 +977,10 @@ void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *n, struct __TH
   n->x = r;
   n->l = l;
 }
-void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1P p) {
+void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1000P p) {
   struct __THE_1_requestWithPrint_0X *x = px;
   const struct __THE_1_fn$0 *__THE_0_ignoredHeadersIncludes_0 = x->__THE_0_ignoredHeadersIncludes_0;
   const struct str __THE_0_method_0 = p.n0;
@@ -1015,7 +1015,7 @@ void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1P p) {
   str_free((struct str) __THE_0_url_0);
   str_free((struct str) __THE_0_method_0);
 }
-void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_requestWithPrint_0X x) {
+void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_requestWithPrint_0X x) {
   size_t l = sizeof(struct __THE_1_requestWithPrint_0X);
   struct __THE_1_requestWithPrint_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -1027,21 +1027,21 @@ void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1 *n, struct __THE_1_re
 int main () {
   const struct __THE_1_array_str __THE_0_IGNORED_HEADERS_0 = __THE_1_array_str_alloc(5, str_alloc("date"), str_alloc("connection"), str_alloc("keep-alive"), str_alloc("content-length"), str_alloc("server"));
   const struct __THE_1_fn$0 __THE_0_ignoredHeadersIncludes_0;
-  const struct __THE_1_fn$1 __THE_0_requestWithPrint_0;
+  const struct __THE_1_fn$1000 __THE_0_requestWithPrint_0;
   __THE_1_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn$0 *) &__THE_0_ignoredHeadersIncludes_0, (struct __THE_1_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
-  __THE_1_requestWithPrint_0_alloc((struct __THE_1_fn$1 *) &__THE_0_requestWithPrint_0, (struct __THE_1_requestWithPrint_0X) {&__THE_0_ignoredHeadersIncludes_0});
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_1_requestWithPrint_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_requestWithPrint_0, (struct __THE_1_requestWithPrint_0X) {&__THE_0_ignoredHeadersIncludes_0});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}});
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))});
-  __THE_1_fn$1_free((struct __THE_1_fn$1) __THE_0_requestWithPrint_0);
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))});
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_requestWithPrint_0);
   __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_ignoredHeadersIncludes_0);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_IGNORED_HEADERS_0);
 }

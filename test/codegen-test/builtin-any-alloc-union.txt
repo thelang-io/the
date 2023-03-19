@@ -28,7 +28,7 @@ main {
 
 #define TYPE_int 1
 #define TYPE_str 2
-#define TYPE_union$0 3
+#define TYPE_union_intUSstrUE 3
 
 struct any {
   int t;
@@ -42,18 +42,18 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_union$0;
-struct __THE_1_any_union$0;
+struct __THE_1_union_intUSstrUE;
+struct __THE_1_any_union_intUSstrUE;
 
-struct __THE_1_union$0 {
+struct __THE_1_union_intUSstrUE {
   int t;
   union {
     int32_t v1;
     struct str v2;
   };
 };
-struct __THE_1_any_union$0 {
-  struct __THE_1_union$0 d;
+struct __THE_1_any_union_intUSstrUE {
+  struct __THE_1_union_intUSstrUE d;
 };
 
 void *alloc (size_t);
@@ -61,12 +61,12 @@ void any_free (struct any);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0);
-void __THE_1_union$0_free (struct __THE_1_union$0);
-struct any __THE_1_any_union$0_alloc (struct __THE_1_union$0);
-struct any __THE_1_any_union$0_copy (const struct any);
-void __THE_1_any_union$0_free (struct any);
+struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int, ...);
+struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_copy (const struct __THE_1_union_intUSstrUE);
+void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE);
+struct any __THE_1_any_union_intUSstrUE_alloc (struct __THE_1_union_intUSstrUE);
+struct any __THE_1_any_union_intUSstrUE_copy (const struct any);
+void __THE_1_any_union_intUSstrUE_free (struct any);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -93,8 +93,8 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
-  struct __THE_1_union$0 r = {t};
+struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int t, ...) {
+  struct __THE_1_union_intUSstrUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_int) r.v1 = va_arg(args, int32_t);
@@ -102,42 +102,42 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-struct __THE_1_union$0 __THE_1_union$0_copy (const struct __THE_1_union$0 n) {
-  struct __THE_1_union$0 r = {n.t};
+struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_copy (const struct __THE_1_union_intUSstrUE n) {
+  struct __THE_1_union_intUSstrUE r = {n.t};
   if (n.t == TYPE_int) r.v1 = n.v1;
   if (n.t == TYPE_str) r.v2 = str_copy(n.v2);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE n) {
   if (n.t == TYPE_str) str_free((struct str) n.v2);
 }
-struct any __THE_1_any_union$0_alloc (struct __THE_1_union$0 d) {
-  size_t l = sizeof(struct __THE_1_any_union$0);
-  struct __THE_1_any_union$0 *r = alloc(l);
+struct any __THE_1_any_union_intUSstrUE_alloc (struct __THE_1_union_intUSstrUE d) {
+  size_t l = sizeof(struct __THE_1_any_union_intUSstrUE);
+  struct __THE_1_any_union_intUSstrUE *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_union$0, r, l, &__THE_1_any_union$0_copy, &__THE_1_any_union$0_free};
+  return (struct any) {TYPE_union_intUSstrUE, r, l, &__THE_1_any_union_intUSstrUE_copy, &__THE_1_any_union_intUSstrUE_free};
 }
-struct any __THE_1_any_union$0_copy (const struct any n) {
-  struct __THE_1_any_union$0 *o = n.d;
-  struct __THE_1_any_union$0 *r = alloc(n.l);
-  r->d = __THE_1_union$0_copy(o->d);
+struct any __THE_1_any_union_intUSstrUE_copy (const struct any n) {
+  struct __THE_1_any_union_intUSstrUE *o = n.d;
+  struct __THE_1_any_union_intUSstrUE *r = alloc(n.l);
+  r->d = __THE_1_union_intUSstrUE_copy(o->d);
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void __THE_1_any_union$0_free (struct any _n) {
-  struct __THE_1_any_union$0 *n = _n.d;
-  __THE_1_union$0_free((struct __THE_1_union$0) n->d);
+void __THE_1_any_union_intUSstrUE_free (struct any _n) {
+  struct __THE_1_any_union_intUSstrUE *n = _n.d;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) n->d);
   free(n);
 }
 
 int main () {
-  const struct __THE_1_union$0 __THE_0_testUnion1_0 = __THE_1_union$0_alloc(TYPE_int, 3);
-  const struct __THE_1_union$0 __THE_0_testUnion2_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc("test"));
-  const struct any __THE_0_anyUnion1_0 = __THE_1_any_union$0_alloc(__THE_1_union$0_copy(__THE_0_testUnion1_0));
-  const struct any __THE_0_anyUnion2_0 = __THE_1_any_union$0_alloc(__THE_1_union$0_copy(__THE_0_testUnion2_0));
+  const struct __THE_1_union_intUSstrUE __THE_0_testUnion1_0 = __THE_1_union_intUSstrUE_alloc(TYPE_int, 3);
+  const struct __THE_1_union_intUSstrUE __THE_0_testUnion2_0 = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test"));
+  const struct any __THE_0_anyUnion1_0 = __THE_1_any_union_intUSstrUE_alloc(__THE_1_union_intUSstrUE_copy(__THE_0_testUnion1_0));
+  const struct any __THE_0_anyUnion2_0 = __THE_1_any_union_intUSstrUE_alloc(__THE_1_union_intUSstrUE_copy(__THE_0_testUnion2_0));
   any_free((struct any) __THE_0_anyUnion2_0);
   any_free((struct any) __THE_0_anyUnion1_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_testUnion2_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_testUnion1_0);
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_testUnion2_0);
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_testUnion1_0);
 }
 ======= flags =======
 ======= stdout =======

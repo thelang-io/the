@@ -36,48 +36,48 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_pair$0;
-struct __THE_1_map$0;
-struct __THE_1_pair$1;
-struct __THE_1_map$1;
-struct __THE_1_pair$2;
-struct __THE_1_map$2;
-struct __THE_1_pair$3;
-struct __THE_1_map$3;
+struct __THE_1_pair_strMSboolME;
+struct __THE_1_map_strMSboolME;
+struct __THE_1_pair_strMScharME;
+struct __THE_1_map_strMScharME;
+struct __THE_1_pair_strMSfloatME;
+struct __THE_1_map_strMSfloatME;
+struct __THE_1_pair_strMSintME;
+struct __THE_1_map_strMSintME;
 
-struct __THE_1_pair$0 {
+struct __THE_1_pair_strMSboolME {
   struct str f;
   bool s;
 };
-struct __THE_1_map$0 {
-  struct __THE_1_pair$0 *d;
+struct __THE_1_map_strMSboolME {
+  struct __THE_1_pair_strMSboolME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$1 {
+struct __THE_1_pair_strMScharME {
   struct str f;
   char s;
 };
-struct __THE_1_map$1 {
-  struct __THE_1_pair$1 *d;
+struct __THE_1_map_strMScharME {
+  struct __THE_1_pair_strMScharME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$2 {
+struct __THE_1_pair_strMSfloatME {
   struct str f;
   double s;
 };
-struct __THE_1_map$2 {
-  struct __THE_1_pair$2 *d;
+struct __THE_1_map_strMSfloatME {
+  struct __THE_1_pair_strMSfloatME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_pair$3 {
+struct __THE_1_pair_strMSintME {
   struct str f;
   int32_t s;
 };
-struct __THE_1_map$3 {
-  struct __THE_1_pair$3 *d;
+struct __THE_1_map_strMSintME {
+  struct __THE_1_pair_strMSintME *d;
   size_t c;
   size_t l;
 };
@@ -85,14 +85,14 @@ struct __THE_1_map$3 {
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct __THE_1_map$0 __THE_1_map$0_alloc (int, ...);
-void __THE_1_map$0_free (struct __THE_1_map$0);
-struct __THE_1_map$1 __THE_1_map$1_alloc (int, ...);
-void __THE_1_map$1_free (struct __THE_1_map$1);
-struct __THE_1_map$2 __THE_1_map$2_alloc (int, ...);
-void __THE_1_map$2_free (struct __THE_1_map$2);
-struct __THE_1_map$3 __THE_1_map$3_alloc (int, ...);
-void __THE_1_map$3_free (struct __THE_1_map$3);
+struct __THE_1_map_strMSboolME __THE_1_map_strMSboolME_alloc (int, ...);
+void __THE_1_map_strMSboolME_free (struct __THE_1_map_strMSboolME);
+struct __THE_1_map_strMScharME __THE_1_map_strMScharME_alloc (int, ...);
+void __THE_1_map_strMScharME_free (struct __THE_1_map_strMScharME);
+struct __THE_1_map_strMSfloatME __THE_1_map_strMSfloatME_alloc (int, ...);
+void __THE_1_map_strMSfloatME_free (struct __THE_1_map_strMSfloatME);
+struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int, ...);
+void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -111,57 +111,57 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_map$0 __THE_1_map$0_alloc (int x, ...) {
-  struct __THE_1_pair$0 *d = alloc(x * sizeof(struct __THE_1_pair$0));
+struct __THE_1_map_strMSboolME __THE_1_map_strMSboolME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSboolME *d = alloc(x * sizeof(struct __THE_1_pair_strMSboolME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$0) {va_arg(args, struct str), va_arg(args, int)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSboolME) {va_arg(args, struct str), va_arg(args, int)};
   va_end(args);
-  return (struct __THE_1_map$0) {d, x, x};
+  return (struct __THE_1_map_strMSboolME) {d, x, x};
 }
-void __THE_1_map$0_free (struct __THE_1_map$0 n) {
+void __THE_1_map_strMSboolME_free (struct __THE_1_map_strMSboolME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
   }
   free(n.d);
 }
-struct __THE_1_map$1 __THE_1_map$1_alloc (int x, ...) {
-  struct __THE_1_pair$1 *d = alloc(x * sizeof(struct __THE_1_pair$1));
+struct __THE_1_map_strMScharME __THE_1_map_strMScharME_alloc (int x, ...) {
+  struct __THE_1_pair_strMScharME *d = alloc(x * sizeof(struct __THE_1_pair_strMScharME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$1) {va_arg(args, struct str), va_arg(args, int)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMScharME) {va_arg(args, struct str), va_arg(args, int)};
   va_end(args);
-  return (struct __THE_1_map$1) {d, x, x};
+  return (struct __THE_1_map_strMScharME) {d, x, x};
 }
-void __THE_1_map$1_free (struct __THE_1_map$1 n) {
+void __THE_1_map_strMScharME_free (struct __THE_1_map_strMScharME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
   }
   free(n.d);
 }
-struct __THE_1_map$2 __THE_1_map$2_alloc (int x, ...) {
-  struct __THE_1_pair$2 *d = alloc(x * sizeof(struct __THE_1_pair$2));
+struct __THE_1_map_strMSfloatME __THE_1_map_strMSfloatME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSfloatME *d = alloc(x * sizeof(struct __THE_1_pair_strMSfloatME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$2) {va_arg(args, struct str), va_arg(args, double)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSfloatME) {va_arg(args, struct str), va_arg(args, double)};
   va_end(args);
-  return (struct __THE_1_map$2) {d, x, x};
+  return (struct __THE_1_map_strMSfloatME) {d, x, x};
 }
-void __THE_1_map$2_free (struct __THE_1_map$2 n) {
+void __THE_1_map_strMSfloatME_free (struct __THE_1_map_strMSfloatME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
   }
   free(n.d);
 }
-struct __THE_1_map$3 __THE_1_map$3_alloc (int x, ...) {
-  struct __THE_1_pair$3 *d = alloc(x * sizeof(struct __THE_1_pair$3));
+struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSintME *d = alloc(x * sizeof(struct __THE_1_pair_strMSintME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$3) {va_arg(args, struct str), va_arg(args, int32_t)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSintME) {va_arg(args, struct str), va_arg(args, int32_t)};
   va_end(args);
-  return (struct __THE_1_map$3) {d, x, x};
+  return (struct __THE_1_map_strMSintME) {d, x, x};
 }
-void __THE_1_map$3_free (struct __THE_1_map$3 n) {
+void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
   }
@@ -169,14 +169,14 @@ void __THE_1_map$3_free (struct __THE_1_map$3 n) {
 }
 
 int main () {
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_1_map$0_alloc(1, str_alloc("key"), true));
-  __THE_1_map$1_free((struct __THE_1_map$1) __THE_1_map$1_alloc(1, str_alloc("key"), 'a'));
-  __THE_1_map$2_free((struct __THE_1_map$2) __THE_1_map$2_alloc(1, str_alloc("key"), 4.12));
-  __THE_1_map$3_free((struct __THE_1_map$3) __THE_1_map$3_alloc(1, str_alloc("key"), 1));
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_1_map$0_alloc(2, str_alloc("key1"), true, str_alloc("key2"), false));
-  __THE_1_map$1_free((struct __THE_1_map$1) __THE_1_map$1_alloc(2, str_alloc("key1"), 'a', str_alloc("key2"), 'z'));
-  __THE_1_map$2_free((struct __THE_1_map$2) __THE_1_map$2_alloc(2, str_alloc("key1"), 4.12, str_alloc("key2"), 4.12));
-  __THE_1_map$3_free((struct __THE_1_map$3) __THE_1_map$3_alloc(2, str_alloc("key1"), 1, str_alloc("key2"), 1));
+  __THE_1_map_strMSboolME_free((struct __THE_1_map_strMSboolME) __THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true));
+  __THE_1_map_strMScharME_free((struct __THE_1_map_strMScharME) __THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a'));
+  __THE_1_map_strMSfloatME_free((struct __THE_1_map_strMSfloatME) __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 4.12));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1));
+  __THE_1_map_strMSboolME_free((struct __THE_1_map_strMSboolME) __THE_1_map_strMSboolME_alloc(2, str_alloc("key1"), true, str_alloc("key2"), false));
+  __THE_1_map_strMScharME_free((struct __THE_1_map_strMScharME) __THE_1_map_strMScharME_alloc(2, str_alloc("key1"), 'a', str_alloc("key2"), 'z'));
+  __THE_1_map_strMSfloatME_free((struct __THE_1_map_strMSfloatME) __THE_1_map_strMSfloatME_alloc(2, str_alloc("key1"), 4.12, str_alloc("key2"), 4.12));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 1, str_alloc("key2"), 1));
 }
 ======= flags =======
 ======= stdout =======

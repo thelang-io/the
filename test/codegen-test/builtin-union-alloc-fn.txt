@@ -30,40 +30,40 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_fn$0 1
-#define TYPE_fn$1 2
+#define TYPE_fn$1000 1
+#define TYPE_fn$1001 2
 
-struct __THE_1_fn$0;
-struct __THE_1_fn$1;
-struct __THE_1_union$0;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1001;
+struct __THE_1_union_fn$1000USfn$1001UE;
 
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1 {
+struct __THE_1_fn$1001 {
   int32_t (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_union$0 {
+struct __THE_1_union_fn$1000USfn$1001UE {
   int t;
   union {
-    struct __THE_1_fn$0 v1;
-    struct __THE_1_fn$1 v2;
+    struct __THE_1_fn$1000 v1;
+    struct __THE_1_fn$1001 v2;
   };
 };
 
 void *alloc (size_t);
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 void __THE_1_test1_0 (void *);
-struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1);
-void __THE_1_fn$1_free (struct __THE_1_fn$1);
+struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001);
+void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
 int32_t __THE_1_test2_0 (void *);
-struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-void __THE_1_union$0_free (struct __THE_1_union$0);
+struct __THE_1_union_fn$1000USfn$1001UE __THE_1_union_fn$1000USfn$1001UE_alloc (int, ...);
+void __THE_1_union_fn$1000USfn$1001UE_free (struct __THE_1_union_fn$1000USfn$1001UE);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -73,51 +73,51 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$0) {n.f, x, n.l};
+  return (struct __THE_1_fn$1000) {n.f, x, n.l};
 }
-void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_test1_0 (void *px) {
   return;
 }
-struct __THE_1_fn$1 __THE_1_fn$1_copy (const struct __THE_1_fn$1 n) {
+struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1) {n.f, x, n.l};
+  return (struct __THE_1_fn$1001) {n.f, x, n.l};
 }
-void __THE_1_fn$1_free (struct __THE_1_fn$1 n) {
+void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
 }
 int32_t __THE_1_test2_0 (void *px) {
   return 1;
 }
-struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
-  struct __THE_1_union$0 r = {t};
+struct __THE_1_union_fn$1000USfn$1001UE __THE_1_union_fn$1000USfn$1001UE_alloc (int t, ...) {
+  struct __THE_1_union_fn$1000USfn$1001UE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_fn$0) r.v1 = va_arg(args, struct __THE_1_fn$0);
-  if (t == TYPE_fn$1) r.v2 = va_arg(args, struct __THE_1_fn$1);
+  if (t == TYPE_fn$1000) r.v1 = va_arg(args, struct __THE_1_fn$1000);
+  if (t == TYPE_fn$1001) r.v2 = va_arg(args, struct __THE_1_fn$1001);
   va_end(args);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
-  if (n.t == TYPE_fn$0) __THE_1_fn$0_free((struct __THE_1_fn$0) n.v1);
-  if (n.t == TYPE_fn$1) __THE_1_fn$1_free((struct __THE_1_fn$1) n.v2);
+void __THE_1_union_fn$1000USfn$1001UE_free (struct __THE_1_union_fn$1000USfn$1001UE n) {
+  if (n.t == TYPE_fn$1000) __THE_1_fn$1000_free((struct __THE_1_fn$1000) n.v1);
+  if (n.t == TYPE_fn$1001) __THE_1_fn$1001_free((struct __THE_1_fn$1001) n.v2);
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1 __THE_0_test2_0 = (struct __THE_1_fn$1) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_union$0 __THE_0_g1_0 = __THE_1_union$0_alloc(TYPE_fn$0, __THE_1_fn$0_copy(__THE_0_test1_0));
-  const struct __THE_1_union$0 __THE_0_g2_0 = __THE_1_union$0_alloc(TYPE_fn$1, __THE_1_fn$1_copy(__THE_0_test2_0));
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g2_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g1_0);
+  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_union_fn$1000USfn$1001UE __THE_0_g1_0 = __THE_1_union_fn$1000USfn$1001UE_alloc(TYPE_fn$1000, __THE_1_fn$1000_copy(__THE_0_test1_0));
+  const struct __THE_1_union_fn$1000USfn$1001UE __THE_0_g2_0 = __THE_1_union_fn$1000USfn$1001UE_alloc(TYPE_fn$1001, __THE_1_fn$1001_copy(__THE_0_test2_0));
+  __THE_1_union_fn$1000USfn$1001UE_free((struct __THE_1_union_fn$1000USfn$1001UE) __THE_0_g2_0);
+  __THE_1_union_fn$1000USfn$1001UE_free((struct __THE_1_union_fn$1000USfn$1001UE) __THE_0_g1_0);
 }
 ======= flags =======
 ======= stdout =======

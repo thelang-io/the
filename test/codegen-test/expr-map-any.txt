@@ -45,8 +45,8 @@ struct str {
 
 struct __THE_1_any_int;
 struct __THE_1_any_str;
-struct __THE_1_pair$0;
-struct __THE_1_map$0;
+struct __THE_1_pair_strMSanyME;
+struct __THE_1_map_strMSanyME;
 
 struct __THE_1_any_int {
   int32_t d;
@@ -54,12 +54,12 @@ struct __THE_1_any_int {
 struct __THE_1_any_str {
   struct str d;
 };
-struct __THE_1_pair$0 {
+struct __THE_1_pair_strMSanyME {
   struct str f;
   struct any s;
 };
-struct __THE_1_map$0 {
-  struct __THE_1_pair$0 *d;
+struct __THE_1_map_strMSanyME {
+  struct __THE_1_pair_strMSanyME *d;
   size_t c;
   size_t l;
 };
@@ -76,8 +76,8 @@ void __THE_1_any_int_free (struct any);
 struct any __THE_1_any_str_alloc (struct str);
 struct any __THE_1_any_str_copy (const struct any);
 void __THE_1_any_str_free (struct any);
-struct __THE_1_map$0 __THE_1_map$0_alloc (int, ...);
-void __THE_1_map$0_free (struct __THE_1_map$0);
+struct __THE_1_map_strMSanyME __THE_1_map_strMSanyME_alloc (int, ...);
+void __THE_1_map_strMSanyME_free (struct __THE_1_map_strMSanyME);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -140,15 +140,15 @@ void __THE_1_any_str_free (struct any _n) {
   str_free((struct str) n->d);
   free(n);
 }
-struct __THE_1_map$0 __THE_1_map$0_alloc (int x, ...) {
-  struct __THE_1_pair$0 *d = alloc(x * sizeof(struct __THE_1_pair$0));
+struct __THE_1_map_strMSanyME __THE_1_map_strMSanyME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSanyME *d = alloc(x * sizeof(struct __THE_1_pair_strMSanyME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$0) {va_arg(args, struct str), va_arg(args, struct any)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSanyME) {va_arg(args, struct str), va_arg(args, struct any)};
   va_end(args);
-  return (struct __THE_1_map$0) {d, x, x};
+  return (struct __THE_1_map_strMSanyME) {d, x, x};
 }
-void __THE_1_map$0_free (struct __THE_1_map$0 n) {
+void __THE_1_map_strMSanyME_free (struct __THE_1_map_strMSanyME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
     any_free((struct any) n.d[i].s);
@@ -160,10 +160,10 @@ int main () {
   const struct any __THE_0_var1_0 = {0, NULL, 0, NULL, NULL};
   const struct any __THE_0_var2_0 = __THE_1_any_int_alloc(2);
   const struct any __THE_0_var3_0 = __THE_1_any_str_alloc(str_alloc("test"));
-  const struct __THE_1_map$0 __THE_0_a_0 = __THE_1_map$0_alloc(3, str_alloc("key1"), any_copy(__THE_0_var1_0), str_alloc("key2"), any_copy(__THE_0_var2_0), str_alloc("key3"), any_copy(__THE_0_var3_0));
-  const struct __THE_1_map$0 __THE_0_b_0 = __THE_1_map$0_alloc(3, str_alloc("key1"), any_copy(__THE_0_var1_0), str_alloc("key2"), any_copy(__THE_0_var2_0), str_alloc("key3"), any_copy(__THE_0_var3_0));
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_0_b_0);
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_0_a_0);
+  const struct __THE_1_map_strMSanyME __THE_0_a_0 = __THE_1_map_strMSanyME_alloc(3, str_alloc("key1"), any_copy(__THE_0_var1_0), str_alloc("key2"), any_copy(__THE_0_var2_0), str_alloc("key3"), any_copy(__THE_0_var3_0));
+  const struct __THE_1_map_strMSanyME __THE_0_b_0 = __THE_1_map_strMSanyME_alloc(3, str_alloc("key1"), any_copy(__THE_0_var1_0), str_alloc("key2"), any_copy(__THE_0_var2_0), str_alloc("key3"), any_copy(__THE_0_var3_0));
+  __THE_1_map_strMSanyME_free((struct __THE_1_map_strMSanyME) __THE_0_b_0);
+  __THE_1_map_strMSanyME_free((struct __THE_1_map_strMSanyME) __THE_0_a_0);
   any_free((struct any) __THE_0_var3_0);
   any_free((struct any) __THE_0_var2_0);
   any_free((struct any) __THE_0_var1_0);

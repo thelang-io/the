@@ -26,12 +26,12 @@ main {
 #include <string.h>
 
 struct __THE_1_Test_0;
-struct __THE_1_fn$0;
+struct __THE_1_fn$1000;
 
 struct __THE_1_Test_0 {
   void *_;
 };
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -63,7 +63,7 @@ void __THE_1_TestSDtest_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_TestSDtest_0 = (struct __THE_1_fn$0) {&__THE_1_TestSDtest_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_TestSDtest_0 = (struct __THE_1_fn$1000) {&__THE_1_TestSDtest_0, NULL, 0};
   const struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc();
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
 }

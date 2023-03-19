@@ -33,21 +33,21 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_pair$0;
-struct __THE_1_map$0;
-struct __THE_1_array_map$0;
+struct __THE_1_pair_strMSstrME;
+struct __THE_1_map_strMSstrME;
+struct __THE_1_array_map_strMSstrME;
 
-struct __THE_1_pair$0 {
+struct __THE_1_pair_strMSstrME {
   struct str f;
   struct str s;
 };
-struct __THE_1_map$0 {
-  struct __THE_1_pair$0 *d;
+struct __THE_1_map_strMSstrME {
+  struct __THE_1_pair_strMSstrME *d;
   size_t c;
   size_t l;
 };
-struct __THE_1_array_map$0 {
-  struct __THE_1_map$0 *d;
+struct __THE_1_array_map_strMSstrME {
+  struct __THE_1_map_strMSstrME *d;
   size_t l;
 };
 
@@ -56,15 +56,15 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct __THE_1_map$0 __THE_1_map$0_alloc (int, ...);
-size_t __THE_1_map$0_cap (struct __THE_1_map$0);
-struct __THE_1_map$0 __THE_1_map$0_copy (const struct __THE_1_map$0);
-void __THE_1_map$0_free (struct __THE_1_map$0);
-struct __THE_1_array_map$0 __THE_1_array_map$0_alloc (size_t, ...);
-struct __THE_1_map$0 *__THE_1_array_map$0_at (struct __THE_1_array_map$0, int32_t);
-struct __THE_1_array_map$0 __THE_1_array_map$0_copy (const struct __THE_1_array_map$0);
-void __THE_1_array_map$0_free (struct __THE_1_array_map$0);
-size_t __THE_1_array_map$0_len (struct __THE_1_array_map$0);
+struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_alloc (int, ...);
+size_t __THE_1_map_strMSstrME_cap (struct __THE_1_map_strMSstrME);
+struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME);
+void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME);
+struct __THE_1_array_map_strMSstrME __THE_1_array_map_strMSstrME_alloc (size_t, ...);
+struct __THE_1_map_strMSstrME *__THE_1_array_map_strMSstrME_at (struct __THE_1_array_map_strMSstrME, int32_t);
+struct __THE_1_array_map_strMSstrME __THE_1_array_map_strMSstrME_copy (const struct __THE_1_array_map_strMSstrME);
+void __THE_1_array_map_strMSstrME_free (struct __THE_1_array_map_strMSstrME);
+size_t __THE_1_array_map_strMSstrME_len (struct __THE_1_array_map_strMSstrME);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -117,71 +117,71 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_map$0 __THE_1_map$0_alloc (int x, ...) {
-  struct __THE_1_pair$0 *d = alloc(x * sizeof(struct __THE_1_pair$0));
+struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSstrME *d = alloc(x * sizeof(struct __THE_1_pair_strMSstrME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair$0) {va_arg(args, struct str), va_arg(args, struct str)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSstrME) {va_arg(args, struct str), va_arg(args, struct str)};
   va_end(args);
-  return (struct __THE_1_map$0) {d, x, x};
+  return (struct __THE_1_map_strMSstrME) {d, x, x};
 }
-size_t __THE_1_map$0_cap (struct __THE_1_map$0 n) {
+size_t __THE_1_map_strMSstrME_cap (struct __THE_1_map_strMSstrME n) {
   size_t c = n.c;
-  __THE_1_map$0_free((struct __THE_1_map$0) n);
+  __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n);
   return c;
 }
-struct __THE_1_map$0 __THE_1_map$0_copy (const struct __THE_1_map$0 n) {
-  struct __THE_1_pair$0 *d = alloc(n.c * sizeof(struct __THE_1_pair$0));
-  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair$0) {str_copy(n.d[i].f), str_copy(n.d[i].s)};
-  return (struct __THE_1_map$0) {d, n.c, n.l};
+struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME n) {
+  struct __THE_1_pair_strMSstrME *d = alloc(n.c * sizeof(struct __THE_1_pair_strMSstrME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_strMSstrME) {str_copy(n.d[i].f), str_copy(n.d[i].s)};
+  return (struct __THE_1_map_strMSstrME) {d, n.c, n.l};
 }
-void __THE_1_map$0_free (struct __THE_1_map$0 n) {
+void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
     str_free((struct str) n.d[i].s);
   }
   free(n.d);
 }
-struct __THE_1_array_map$0 __THE_1_array_map$0_alloc (size_t x, ...) {
-  if (x == 0) return (struct __THE_1_array_map$0) {NULL, 0};
-  struct __THE_1_map$0 *d = alloc(x * sizeof(struct __THE_1_map$0));
+struct __THE_1_array_map_strMSstrME __THE_1_array_map_strMSstrME_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_map_strMSstrME) {NULL, 0};
+  struct __THE_1_map_strMSstrME *d = alloc(x * sizeof(struct __THE_1_map_strMSstrME));
   va_list args;
   va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_map$0);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_map_strMSstrME);
   va_end(args);
-  return (struct __THE_1_array_map$0) {d, x};
+  return (struct __THE_1_array_map_strMSstrME) {d, x};
 }
-struct __THE_1_map$0 *__THE_1_array_map$0_at (struct __THE_1_array_map$0 n, int32_t i) {
+struct __THE_1_map_strMSstrME *__THE_1_array_map_strMSstrME_at (struct __THE_1_array_map_strMSstrME n, int32_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
 }
-struct __THE_1_array_map$0 __THE_1_array_map$0_copy (const struct __THE_1_array_map$0 n) {
-  if (n.l == 0) return (struct __THE_1_array_map$0) {NULL, 0};
-  struct __THE_1_map$0 *d = alloc(n.l * sizeof(struct __THE_1_map$0));
-  for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_map$0_copy(n.d[i]);
-  return (struct __THE_1_array_map$0) {d, n.l};
+struct __THE_1_array_map_strMSstrME __THE_1_array_map_strMSstrME_copy (const struct __THE_1_array_map_strMSstrME n) {
+  if (n.l == 0) return (struct __THE_1_array_map_strMSstrME) {NULL, 0};
+  struct __THE_1_map_strMSstrME *d = alloc(n.l * sizeof(struct __THE_1_map_strMSstrME));
+  for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_map_strMSstrME_copy(n.d[i]);
+  return (struct __THE_1_array_map_strMSstrME) {d, n.l};
 }
-void __THE_1_array_map$0_free (struct __THE_1_array_map$0 n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_map$0_free((struct __THE_1_map$0) n.d[i]);
+void __THE_1_array_map_strMSstrME_free (struct __THE_1_array_map_strMSstrME n) {
+  for (size_t i = 0; i < n.l; i++) __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n.d[i]);
   free(n.d);
 }
-size_t __THE_1_array_map$0_len (struct __THE_1_array_map$0 n) {
+size_t __THE_1_array_map_strMSstrME_len (struct __THE_1_array_map_strMSstrME n) {
   size_t l = n.l;
-  __THE_1_array_map$0_free((struct __THE_1_array_map$0) n);
+  __THE_1_array_map_strMSstrME_free((struct __THE_1_array_map_strMSstrME) n);
   return l;
 }
 
 int main () {
-  const struct __THE_1_map$0 __THE_0_emptyMap_0 = __THE_1_map$0_alloc(0);
-  const struct __THE_1_array_map$0 __THE_0_arr_0 = __THE_1_array_map$0_alloc(4, __THE_1_map$0_copy(__THE_0_emptyMap_0), __THE_1_map$0_alloc(1, str_alloc("key"), str_alloc("1")), __THE_1_map$0_alloc(2, str_alloc("key1"), str_alloc("2"), str_alloc("key2"), str_alloc("3")), __THE_1_map$0_alloc(3, str_alloc("key1"), str_alloc("6"), str_alloc("key2"), str_alloc("7"), str_alloc("key3"), str_alloc("8")));
-  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_map$0_len(__THE_1_array_map$0_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "iz", __THE_1_map$0_cap(__THE_1_map$0_copy(*__THE_1_array_map$0_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
+  const struct __THE_1_map_strMSstrME __THE_0_emptyMap_0 = __THE_1_map_strMSstrME_alloc(0);
+  const struct __THE_1_array_map_strMSstrME __THE_0_arr_0 = __THE_1_array_map_strMSstrME_alloc(4, __THE_1_map_strMSstrME_copy(__THE_0_emptyMap_0), __THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("1")), __THE_1_map_strMSstrME_alloc(2, str_alloc("key1"), str_alloc("2"), str_alloc("key2"), str_alloc("3")), __THE_1_map_strMSstrME_alloc(3, str_alloc("key1"), str_alloc("6"), str_alloc("key2"), str_alloc("7"), str_alloc("key3"), str_alloc("8")));
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_map_strMSstrME_len(__THE_1_array_map_strMSstrME_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+    print(stdout, "iz", __THE_1_map_strMSstrME_cap(__THE_1_map_strMSstrME_copy(*__THE_1_array_map_strMSstrME_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
   }
-  __THE_1_array_map$0_free((struct __THE_1_array_map$0) __THE_0_arr_0);
-  __THE_1_map$0_free((struct __THE_1_map$0) __THE_0_emptyMap_0);
+  __THE_1_array_map_strMSstrME_free((struct __THE_1_array_map_strMSstrME) __THE_0_arr_0);
+  __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_emptyMap_0);
 }
 ======= flags =======
 ======= stdout =======
