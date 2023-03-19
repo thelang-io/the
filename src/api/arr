@@ -61,7 +61,7 @@ obj Array {
   fn join (self: Self, separator := ",") str
 
   /**
-   * Merges other array's data into calling array.
+   * Merges other array's elements into calling array.
    *
    * @param other - Another array you want to merge.
    */

@@ -3330,8 +3330,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code += ")";
     }
 
-    if (nodeExpr.type->isRef() && !targetType->isRef()) {
-      code = "*" + code;
+    if (!root && nodeExpr.type->isRef() && !targetType->isRef()) {
+      code = this->_genCopyFn(targetType, "*" + code);
     }
 
     code = !root ? code : this->_genFreeFn(nodeExpr.type, code);
@@ -4192,13 +4192,16 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId32} " out of array bounds" _{THE_EOL}, n1);)" EOL;
     def += "    _{exit}(_{EXIT_FAILURE});" EOL;
     def += "  }" EOL;
+    def += "  _{size_t} i = n1 < 0 ? n1 + self->l : n1;" EOL;
 
     if (elementTypeInfo.type->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(elementTypeInfo.type, "self->d[n1]") + ";" EOL;
+      def += "  " + this->_genFreeFn(elementTypeInfo.type, "self->d[i]") + ";" EOL;
     }
 
-    def += "  if (n1 != self->l - 1) {" EOL;
-    def += "    _{memmove}(&self->d[n1], &self->d[n1 + 1], (--self->l - n1) * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  if (i != self->l - 1) {" EOL;
+    def += "    _{memmove}(&self->d[i], &self->d[i + 1], (--self->l - i) * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  } else {" EOL;
+    def += "    self->l--;" EOL;
     def += "  }" EOL;
     def += "  return self;" EOL;
     def += "}";

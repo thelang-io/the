@@ -1,0 +1,198 @@
+======= stdin =======
+fn filterOne (it: str) bool { return it != "1" }
+fn filterTwo (it: str) bool { return it != "2" }
+fn filterTwoOrOne (it: str) bool { return it != "1" && it != "2" }
+
+main {
+  test0: str[]
+  test1 := ["1"]
+  test2 := ["1", "2"]
+  test3 := ["1", "2", "3"]
+
+  test0.filter(filterOne);
+  test0.filter(filterTwo);
+  test0.filter(filterTwoOrOne);
+  test1.filter(filterOne);
+  test1.filter(filterTwo);
+  test0.filter(filterTwoOrOne);
+  test2.filter(filterOne);
+  test2.filter(filterTwo);
+  test2.filter(filterTwoOrOne);
+  test3.filter(filterOne);
+  test3.filter(filterTwo);
+  test3.filter(filterTwoOrOne);
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_array_str;
+struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
+
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
+struct __THE_1_fn$0 {
+  bool (*f) (void *, struct __THE_1_fn$0P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$0P {
+  struct str n0;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+bool str_ne_cstr (struct str, const char *);
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
+void __THE_1_fn$0_free (struct __THE_1_fn$0);
+struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str, struct __THE_1_fn$0);
+bool __THE_1_filterOne_0 (void *, struct __THE_1_fn$0P);
+bool __THE_1_filterTwo_0 (void *, struct __THE_1_fn$0P);
+bool __THE_1_filterTwoOrOne_0 (void *, struct __THE_1_fn$0P);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+bool str_ne_cstr (struct str s, const char *c) {
+  bool r = s.l != strlen(c) || memcmp(s.d, c, s.l) != 0;
+  free(s.d);
+  return r;
+}
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(x * sizeof(struct str));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct str);
+  va_end(args);
+  return (struct __THE_1_array_str) {d, x};
+}
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str n) {
+  if (n.l == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(n.l * sizeof(struct str));
+  for (size_t i = 0; i < n.l; i++) d[i] = str_copy(n.d[i]);
+  return (struct __THE_1_array_str) {d, n.l};
+}
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
+  if (n.x == NULL) return n;
+  void *x = alloc(n.l);
+  memcpy(x, n.x, n.l);
+  return (struct __THE_1_fn$0) {n.f, x, n.l};
+}
+void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+  if (n.x != NULL) free(n.x);
+}
+struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str self, struct __THE_1_fn$0 n1) {
+  size_t l = 0;
+  struct str *d = alloc(self.l * sizeof(struct str));
+  for (size_t i = 0; i < self.l; i++) {
+    if (n1.f(n1.x, (struct __THE_1_fn$0P) {str_copy(self.d[i])})) {
+      d[l++] = str_copy(self.d[i]);
+    }
+  }
+  __THE_1_fn$0_free((struct __THE_1_fn$0) n1);
+  __THE_1_array_str_free((struct __THE_1_array_str) self);
+  return (struct __THE_1_array_str) {d, l};
+}
+bool __THE_1_filterOne_0 (void *px, struct __THE_1_fn$0P p) {
+  bool v;
+  const struct str __THE_0_it_0 = p.n0;
+  v = str_ne_cstr(str_copy(__THE_0_it_0), "1");
+  str_free((struct str) __THE_0_it_0);
+  return v;
+}
+bool __THE_1_filterTwo_0 (void *px, struct __THE_1_fn$0P p) {
+  bool v;
+  const struct str __THE_0_it_0 = p.n0;
+  v = str_ne_cstr(str_copy(__THE_0_it_0), "2");
+  str_free((struct str) __THE_0_it_0);
+  return v;
+}
+bool __THE_1_filterTwoOrOne_0 (void *px, struct __THE_1_fn$0P p) {
+  bool v;
+  const struct str __THE_0_it_0 = p.n0;
+  v = str_ne_cstr(str_copy(__THE_0_it_0), "1") && str_ne_cstr(str_copy(__THE_0_it_0), "2");
+  str_free((struct str) __THE_0_it_0);
+  return v;
+}
+
+int main () {
+  const struct __THE_1_fn$0 __THE_0_filterOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterOne_0, NULL, 0};
+  const struct __THE_1_fn$0 __THE_0_filterTwo_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwo_0, NULL, 0};
+  const struct __THE_1_fn$0 __THE_0_filterTwoOrOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwoOrOne_0, NULL, 0};
+  const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
+  const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
+  const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
+  const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test0_0);
+}
+======= flags =======
+======= stdout =======
