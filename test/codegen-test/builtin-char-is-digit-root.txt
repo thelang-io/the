@@ -11,6 +11,7 @@ main {
   '-'.isDigit
 }
 ======= code =======
+#include <ctype.h>
 #include <stdbool.h>
 
 bool char_isDigit (char);

@@ -66,6 +66,7 @@ struct CodegenBuiltins {
   bool libSysStat = false;
   bool libSysTypes = false;
   bool libSysUtsname = false;
+  bool libTime = false;
   bool libUnistd = false;
   bool libWinDirect = false;
   bool libWinIo = false;
@@ -77,6 +78,7 @@ struct CodegenBuiltins {
   bool typeRequest = false;
   bool typeStr = false;
   bool typeWinReparseDataBuffer = false;
+  bool varEnviron = false;
   bool varLibOpensslInit = false;
   bool varLibWs2Init = false;
 };

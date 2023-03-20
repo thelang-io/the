@@ -4,7 +4,7 @@
 const process_args: str[]
 
 /* Process environment variables. */
-mut process_env: str[str]
+const process_env: str[str]
 
 /* Home directory for the current user. */
 const process_home: str

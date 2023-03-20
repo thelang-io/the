@@ -360,6 +360,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinVarCode += "char **argv = (void *) 0;" EOL;
   }
 
+  if (this->builtins.varEnviron) {
+    builtinVarCode += "extern char **environ;" EOL;
+  }
+
   if (this->builtins.varLibOpensslInit) {
     builtinVarCode += "bool lib_openssl_init = false;" EOL;
   }
@@ -406,6 +410,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   headers += this->builtins.libSysStat ? "#include <sys/stat.h>" EOL : "";
+  headers += this->builtins.libTime ? "#include <time.h>" EOL : "";
 
   if (
     this->builtins.libWinDirect ||
@@ -538,6 +543,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libSysUtsname") {
     this->builtins.libSysUtsname = true;
     this->_activateBuiltin("definitions");
+  } else if (name == "libTime") {
+    this->builtins.libTime = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libUnistd") {
     this->builtins.libUnistd = true;
     this->_activateBuiltin("definitions");
@@ -574,6 +582,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.typeWinReparseDataBuffer = true;
     this->_activateBuiltin("definitions");
     this->_activateBuiltin("libWindows");
+  } else if (name == "varEnviron") {
+    this->builtins.varEnviron = true;
+    this->_activateBuiltin("libUnistd");
   } else if (name == "varLibOpensslInit") {
     this->builtins.varLibOpensslInit = true;
     this->_activateBuiltin("libStdbool");
@@ -705,6 +716,23 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
         } else if (!(*dependencies)->contains(name)) {
           (*dependencies)->emplace(name);
         }
+      } else if (name.starts_with("map_") || name.starts_with("pair_")) {
+        auto isPair = name.starts_with("pair_");
+        auto nameSliced = isPair ? name.substr(5) : name.substr(4);
+        auto keyType = this->ast->typeMap.get(nameSliced.substr(0, nameSliced.find('_')));
+        auto valueType = this->ast->typeMap.get(nameSliced.substr(nameSliced.find('_') + 1));
+
+        name = this->_typeNameMap(this->ast->typeMap.createMap(keyType, valueType));
+
+        if (isPair) {
+          name = Codegen::typeName("pair_" + name.substr(Codegen::typeName("map_").size()));
+        }
+
+        if (dependencies == std::nullopt) {
+          this->_activateEntity(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
       } else {
         auto existsInEntities = false;
 
@@ -740,7 +768,6 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
   return result;
 }
 
-// todo varargs
 void Codegen::_apiDecl (const std::vector<std::string> &items) {
   for (const auto &item : items) {
     auto firstLine = std::string();
@@ -1814,16 +1841,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (objVar->builtin && objVar->codeName == "@os_NAME") {
         code = this->_apiEval("_{os_name}()");
         code = !root ? code : this->_genFreeFn(objVar->type, code);
-      } else if (objVar->builtin && objVar->codeName == "@os_env") {
-        code = this->_apiEval("_{os_env}()");
-        code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else if (objVar->builtin && objVar->codeName == "@path_SEP") {
         code = this->_apiEval("_{str_alloc}(_{THE_PATH_SEP})");
         code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else if (objVar->builtin && objVar->codeName == "@process_args") {
         this->needMainArgs = true;
         code = this->_apiEval("_{process_args}()");
-        code = !root ? code : this->_genFreeFn(this->ast->typeMap.createArr(this->ast->typeMap.get("str")), code);
+        code = !root ? code : this->_genFreeFn(objVar->type, code);
+      } else if (objVar->builtin && objVar->codeName == "@process_env") {
+        code = this->_apiEval("_{process_env}()");
+        code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else {
         auto objCode = Codegen::name(objVar->codeName);
         auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;

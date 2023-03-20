@@ -11,6 +11,7 @@ main {
   '-'.isWhitespace
 }
 ======= code =======
+#include <ctype.h>
 #include <stdbool.h>
 
 bool char_isWhitespace (char);

@@ -11,6 +11,7 @@ main {
   '-'.isLetterOrDigit
 }
 ======= code =======
+#include <ctype.h>
 #include <stdbool.h>
 
 bool char_isLetterOrDigit (char);
