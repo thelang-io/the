@@ -405,7 +405,12 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   headers += this->builtins.libStdlib ? "#include <stdlib.h>" EOL : "";
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
 
-  if (this->builtins.libSysTypes && !this->builtins.libSysSocket && !this->builtins.libSysStat && !this->builtins.libSysUtsname) {
+  if (
+    this->builtins.libSysTypes &&
+    !this->builtins.libSysSocket &&
+    !this->builtins.libSysStat &&
+    !this->builtins.libSysUtsname
+  ) {
     headers += this->builtins.libSysTypes ? "#include <sys/types.h>" EOL : "";
   }
 
@@ -433,6 +438,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     this->builtins.libDirent ||
     this->builtins.libNetdb ||
     this->builtins.libNetinetIn ||
+    this->builtins.libPwd ||
     this->builtins.libSysSocket ||
     this->builtins.libSysUtsname ||
     this->builtins.libUnistd
@@ -442,6 +448,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
     headers += this->builtins.libNetdb ? "  #include <netdb.h>" EOL : "";
     headers += this->builtins.libNetinetIn ? "  #include <netinet/in.h>" EOL : "";
+    headers += this->builtins.libPwd ? "  #include <pwd.h>" EOL : "";
     headers += this->builtins.libSysSocket ? "  #include <sys/socket.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
     headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
@@ -520,6 +527,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
       this->flags.emplace_back("W:-lcrypt32");
       this->flags.emplace_back("W:-luser32");
     }
+  } else if (name == "libPwd") {
+    this->builtins.libPwd = true;
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
@@ -1851,6 +1860,9 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (objVar->builtin && objVar->codeName == "@process_env") {
         code = this->_apiEval("_{process_env}()");
         code = !root ? code : this->_genFreeFn(objVar->type, code);
+      } else if (objVar->builtin && objVar->codeName == "@process_home") {
+        code = this->_apiEval("_{process_home}()");
+        code = !root ? code : this->_genFreeFn(objVar->type, code);
       } else {
         auto objCode = Codegen::name(objVar->codeName);
         auto objType = this->state.typeCasts.contains(objCode) ? this->state.typeCasts[objCode] : objVar->type;
@@ -2289,6 +2301,16 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       code += ")";
       code = this->_apiEval(code, 1);
+      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+    } else if (calleeTypeInfo.realType->builtin && calleeTypeInfo.realType->codeName == "@utils_swap") {
+      auto argTypeInfo = this->_typeInfo(exprCall.args[0].expr.type);
+
+      code = this->_apiEval(
+        "_{utils_swap}(" + this->_nodeExpr(exprCall.args[0].expr, argTypeInfo.type) +
+        ", " + this->_nodeExpr(exprCall.args[1].expr, argTypeInfo.type) + ", sizeof(" + argTypeInfo.realTypeCodeTrimmed + "))",
+        1
+      );
+
       return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
     }
 

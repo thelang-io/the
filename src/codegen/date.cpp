@@ -19,5 +19,8 @@
 
 const std::vector<std::string> codegenDate = {
   "_{uint64_t} date_now () {" EOL
+  "  _{struct timespec} ts;" EOL
+  "  _{clock_gettime}(_{CLOCK_REALTIME}, &ts);" EOL
+  "  return ts.tv_sec * 1000 + ts.tv_nsec / 1e6;" EOL
   "}" EOL
 };

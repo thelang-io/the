@@ -18,17 +18,17 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenOS = {
-  "_{struct str} os_name () {" EOL
-  "  #ifdef _{THE_OS_WINDOWS}" EOL
+  R"(_{struct str} os_name () {)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    return _{str_alloc}("Windows");)" EOL
-  "  #else" EOL
-  "    _{struct utsname} buf;" EOL
-  "    if (_{uname}(&buf) < 0) {" EOL
+  R"(  #else)" EOL
+  R"(    _{struct utsname} buf;)" EOL
+  R"(    if (_{uname}(&buf) < 0) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to retrieve uname information" _{THE_EOL});)" EOL
-  "      _{exit}(_{EXIT_FAILURE});" EOL
-  "    }" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
   R"(    if (_{strcmp}(buf.sysname, "Darwin") == 0) return _{str_alloc}("macOS");)" EOL
-  "    return _{str_alloc}(buf.sysname);" EOL
-  "  #endif" EOL
-  "}" EOL
+  R"(    return _{str_alloc}(buf.sysname);)" EOL
+  R"(  #endif)" EOL
+  R"(})" EOL
 };

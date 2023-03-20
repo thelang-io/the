@@ -18,7 +18,7 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenBool = {
-  "_{struct str} bool_str (_{bool} t) {" EOL
+  R"(_{struct str} bool_str (_{bool} t) {)" EOL
   R"(  return _{str_alloc}(t ? "true" : "false");)" EOL
-  "}" EOL
+  R"(})" EOL
 };

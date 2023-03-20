@@ -21,6 +21,8 @@
 #include <set>
 #include <string>
 
+// (?<!_\{|[a-zA-Z0-9_])(EXIT_FAILURE|EXIT_SUCCESS|FILE|NULL|PRId8|PRId16|PRId32|PRId64|PRIu8|PRIu16|PRIu32|PRIu64|THE_EOL|THE_OS_WINDOWS|THE_PATH_SEP|alloc|bool|exit|false|fprintf|fputc|fputs|fread|free|fwrite|int8_t|int16_t|int32_t|int64_t|malloc|memcmp|memcpy|printf|re_alloc|realloc|size_t|snprintf|sprintf|stderr|stdout|str_alloc|str_free|strlen|struct any|struct buffer|struct str|true|uin8_t|uint16_t|uint32_t|uint64_t|va_arg|va_end|va_list|va_start)(?!}|[a-zA-Z0-9_])
+
 extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"THE_EOL", {"definitions"}},
   std::pair<std::string, std::set<std::string>>{"THE_OS_LINUX", {"definitions"}},
@@ -34,13 +36,16 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"struct str", {"typeStr"}},
   std::pair<std::string, std::set<std::string>>{"struct win_reparse_data_buffer", {"typeWinReparseDataBuffer"}},
 
+  std::pair<std::string, std::set<std::string>>{"environ", {"varEnviron"}},
   std::pair<std::string, std::set<std::string>>{"lib_openssl_init", {"varLibOpensslInit"}},
   std::pair<std::string, std::set<std::string>>{"lib_ws2_init", {"varLibWs2Init"}},
 
   std::pair<std::string, std::set<std::string>>{"isalnum", {"libCtype"}},
   std::pair<std::string, std::set<std::string>>{"isalpha", {"libCtype"}},
   std::pair<std::string, std::set<std::string>>{"isdigit", {"libCtype"}},
+  std::pair<std::string, std::set<std::string>>{"islower", {"libCtype"}},
   std::pair<std::string, std::set<std::string>>{"isspace", {"libCtype"}},
+  std::pair<std::string, std::set<std::string>>{"isupper", {"libCtype"}},
   std::pair<std::string, std::set<std::string>>{"tolower", {"libCtype"}},
   std::pair<std::string, std::set<std::string>>{"toupper", {"libCtype"}},
 
@@ -87,6 +92,8 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"SSL_shutdown", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_write", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"TLS_client_method", {"libOpensslSsl"}},
+
+  std::pair<std::string, std::set<std::string>>{"getpwuid", {"libPwd"}},
 
   std::pair<std::string, std::set<std::string>>{"va_arg", {"libStdarg"}},
   std::pair<std::string, std::set<std::string>>{"va_end", {"libStdarg"}},
@@ -146,7 +153,10 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"EXIT_FAILURE", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"exit", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"free", {"libStdlib"}},
+  std::pair<std::string, std::set<std::string>>{"getenv", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"malloc", {"libStdlib"}},
+  std::pair<std::string, std::set<std::string>>{"mkdtemp", {"libStdlib", "libUnistd"}},
+  std::pair<std::string, std::set<std::string>>{"mkstemp", {"libStdlib", "libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"realloc", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"realpath", {"libStdlib"}},
   std::pair<std::string, std::set<std::string>>{"strtod", {"libStdlib"}},
@@ -160,6 +170,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"memcpy", {"libString"}},
   std::pair<std::string, std::set<std::string>>{"memmove", {"libString"}},
   std::pair<std::string, std::set<std::string>>{"memset", {"libString"}},
+  std::pair<std::string, std::set<std::string>>{"strchr", {"libString"}},
   std::pair<std::string, std::set<std::string>>{"strcmp", {"libString"}},
   std::pair<std::string, std::set<std::string>>{"strlen", {"libString"}},
 
@@ -190,6 +201,10 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
 
   std::pair<std::string, std::set<std::string>>{"struct utsname", {"libSysUtsname"}},
   std::pair<std::string, std::set<std::string>>{"uname", {"libSysUtsname"}},
+
+  std::pair<std::string, std::set<std::string>>{"struct timespec", {"libTime"}},
+  std::pair<std::string, std::set<std::string>>{"CLOCK_REALTIME", {"libTime"}},
+  std::pair<std::string, std::set<std::string>>{"clock_gettime", {"libTime"}},
 
   std::pair<std::string, std::set<std::string>>{"access", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"chown", {"libUnistd"}},

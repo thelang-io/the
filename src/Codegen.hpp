@@ -55,6 +55,7 @@ struct CodegenBuiltins {
   bool libNetdb = false;
   bool libNetinetIn = false;
   bool libOpensslSsl = false;
+  bool libPwd = false;
   bool libStdarg = false;
   bool libStdbool = false;
   bool libStddef = false;

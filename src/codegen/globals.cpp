@@ -18,51 +18,51 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenGlobals = {
-  "void *alloc (_{size_t} l) {" EOL
-  "  void *r = _{malloc}(l);" EOL
-  "  if (r == _{NULL}) {" EOL
+  R"(void *alloc (_{size_t} l) {)" EOL
+  R"(  void *r = _{malloc}(l);)" EOL
+  R"(  if (r == _{NULL}) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to allocate %zu bytes" _{THE_EOL}, l);)" EOL
-  "    _{exit}(_{EXIT_FAILURE});" EOL
-  "  }" EOL
-  "  return r;" EOL
-  "}" EOL,
+  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  })" EOL
+  R"(  return r;)" EOL
+  R"(})" EOL,
 
-  "void print (_{FILE} *stream, const char *fmt, ...) {" EOL
-  "  _{va_list} args;" EOL
-  "  _{va_start}(args, fmt);" EOL
-  "  char buf[512];" EOL
-  "  _{struct str} s;" EOL
-  "  while (*fmt) {" EOL
-  "    switch (*fmt++) {" EOL
+  R"(void print (_{FILE} *stream, const char *fmt, ...) {)" EOL
+  R"(  _{va_list} args;)" EOL
+  R"(  _{va_start}(args, fmt);)" EOL
+  R"(  char buf[512];)" EOL
+  R"(  _{struct str} s;)" EOL
+  R"(  while (*fmt) {)" EOL
+  R"(    switch (*fmt++) {)" EOL
   R"(      case 't': _{fputs}(_{va_arg}(args, int) ? "true" : "false", stream); break;)" EOL
   R"(      case 'b': _{sprintf}(buf, "%u", _{va_arg}(args, unsigned)); _{fputs}(buf, stream); break;)" EOL
-  "      case 'c': _{fputc}(_{va_arg}(args, int), stream); break;" EOL
-  "      case 'e':" EOL
-  "      case 'f':" EOL
+  R"(      case 'c': _{fputc}(_{va_arg}(args, int), stream); break;)" EOL
+  R"(      case 'e':)" EOL
+  R"(      case 'f':)" EOL
   R"(      case 'g': _{snprintf}(buf, 512, "%f", _{va_arg}(args, double)); _{fputs}(buf, stream); break;)" EOL
-  "      case 'h':" EOL
-  "      case 'j':" EOL
-  "      case 'v':" EOL
+  R"(      case 'h':)" EOL
+  R"(      case 'j':)" EOL
+  R"(      case 'v':)" EOL
   R"(      case 'w': _{sprintf}(buf, "%d", _{va_arg}(args, int)); _{fputs}(buf, stream); break;)" EOL
-  "      case 'i':" EOL
+  R"(      case 'i':)" EOL
   R"(      case 'k': _{sprintf}(buf, "%" _{PRId32}, _{va_arg}(args, _{int32_t})); _{fputs}(buf, stream); break;)" EOL
   R"(      case 'l': _{sprintf}(buf, "%" _{PRId64}, _{va_arg}(args, _{int64_t})); _{fputs}(buf, stream); break;)" EOL
   R"(      case 'p': _{sprintf}(buf, "%p", _{va_arg}(args, void *)); _{fputs}(buf, stream); break;)" EOL
-  "      case 's': s = _{va_arg}(args, _{struct str}); _{fwrite}(s.d, 1, s.l, stream); _{str_free}(s); break;" EOL
+  R"(      case 's': s = _{va_arg}(args, _{struct str}); _{fwrite}(s.d, 1, s.l, stream); _{str_free}(s); break;)" EOL
   R"(      case 'u': _{sprintf}(buf, "%" _{PRIu32}, _{va_arg}(args, _{uint32_t})); _{fputs}(buf, stream); break;)" EOL
   R"(      case 'y': _{sprintf}(buf, "%" _{PRIu64}, _{va_arg}(args, _{uint64_t})); _{fputs}(buf, stream); break;)" EOL
-  "      case 'z': _{fputs}(_{va_arg}(args, char *), stream); break;" EOL
-  "    }" EOL
-  "  }" EOL
-  "  _{va_end}(args);" EOL
-  "}" EOL,
+  R"(      case 'z': _{fputs}(_{va_arg}(args, char *), stream); break;)" EOL
+  R"(    })" EOL
+  R"(  })" EOL
+  R"(  _{va_end}(args);)" EOL
+  R"(})" EOL,
 
-  "void *re_alloc (void *d, _{size_t} l) {" EOL
-  "  void *r = _{realloc}(d, l);" EOL
-  "  if (r == _{NULL}) {" EOL
+  R"(void *re_alloc (void *d, _{size_t} l) {)" EOL
+  R"(  void *r = _{realloc}(d, l);)" EOL
+  R"(  if (r == _{NULL}) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to reallocate %zu bytes" _{THE_EOL}, l);)" EOL
-  "    _{exit}(_{EXIT_FAILURE});" EOL
-  "  }" EOL
-  "  return r;" EOL
-  "}" EOL
+  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  })" EOL
+  R"(  return r;)" EOL
+  R"(})" EOL
 };

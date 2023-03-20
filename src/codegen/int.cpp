@@ -18,57 +18,57 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenInt = {
-  "_{struct str} i8_str (_{int8_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} i8_str (_{int8_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRId8}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} i16_str (_{int16_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} i16_str (_{int16_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRId16}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} i32_str (_{int32_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} i32_str (_{int32_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRId32}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} i64_str (_{int64_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} i64_str (_{int64_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRId64}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} int_str (_{int32_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} int_str (_{int32_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRId32}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} u8_str (uint8_t d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} u8_str (uint8_t d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRIu8}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} u16_str (_{uint16_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} u16_str (_{uint16_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRIu16}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} u32_str (_{uint32_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} u32_str (_{uint32_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRIu32}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} u64_str (_{uint64_t} d) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} u64_str (_{uint64_t} d) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%" _{PRIu64}, d);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL
 };

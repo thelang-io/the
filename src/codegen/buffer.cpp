@@ -18,46 +18,46 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenBuffer = {
-  "_{struct buffer} buffer_copy (const _{struct buffer} o) {" EOL
-  "  unsigned char *d = _{alloc}(o.l);" EOL
-  "  _{memcpy}(d, o.d, o.l);" EOL
-  "  return (_{struct buffer}) {d, o.l};" EOL
-  "}" EOL,
+  R"(_{struct buffer} buffer_copy (const _{struct buffer} o) {)" EOL
+  R"(  unsigned char *d = _{alloc}(o.l);)" EOL
+  R"(  _{memcpy}(d, o.d, o.l);)" EOL
+  R"(  return (_{struct buffer}) {d, o.l};)" EOL
+  R"(})" EOL,
 
-  "_{bool} buffer_eq (_{struct buffer} o1, _{struct buffer} o2) {" EOL
-  "  _{bool} r = o1.l == o2.l && _{memcmp}(o1.d, o2.d, o1.l) == 0;" EOL
-  "  _{free}(o1.d);" EOL
-  "  _{free}(o2.d);" EOL
-  "  return r;" EOL
-  "}" EOL,
+  R"(_{bool} buffer_eq (_{struct buffer} o1, _{struct buffer} o2) {)" EOL
+  R"(  _{bool} r = o1.l == o2.l && _{memcmp}(o1.d, o2.d, o1.l) == 0;)" EOL
+  R"(  _{free}(o1.d);)" EOL
+  R"(  _{free}(o2.d);)" EOL
+  R"(  return r;)" EOL
+  R"(})" EOL,
 
-  "void buffer_free (_{struct buffer} o) {" EOL
-  "  _{free}(o.d);" EOL
-  "}" EOL,
+  R"(void buffer_free (_{struct buffer} o) {)" EOL
+  R"(  _{free}(o.d);)" EOL
+  R"(})" EOL,
 
-  "_{bool} buffer_ne (_{struct buffer} o1, _{struct buffer} o2) {" EOL
-  "  _{bool} r = o1.l != o2.l || _{memcmp}(o1.d, o2.d, o1.l) != 0;" EOL
-  "  _{free}(o1.d);" EOL
-  "  _{free}(o2.d);" EOL
-  "  return r;" EOL
-  "}" EOL,
+  R"(_{bool} buffer_ne (_{struct buffer} o1, _{struct buffer} o2) {)" EOL
+  R"(  _{bool} r = o1.l != o2.l || _{memcmp}(o1.d, o2.d, o1.l) != 0;)" EOL
+  R"(  _{free}(o1.d);)" EOL
+  R"(  _{free}(o2.d);)" EOL
+  R"(  return r;)" EOL
+  R"(})" EOL,
 
-  "_{struct buffer} buffer_realloc (_{struct buffer} o1, _{struct buffer} o2) {" EOL
-  "  _{free}(o1.d);" EOL
-  "  return o2;" EOL
-  "}" EOL,
+  R"(_{struct buffer} buffer_realloc (_{struct buffer} o1, _{struct buffer} o2) {)" EOL
+  R"(  _{free}(o1.d);)" EOL
+  R"(  return o2;)" EOL
+  R"(})" EOL,
 
-  "_{struct str} buffer_str (_{struct buffer} b) {" EOL
-  "  _{size_t} l = 8 + (b.l * 3);" EOL
-  "  char *d = _{alloc}(l);" EOL
+  R"(_{struct str} buffer_str (_{struct buffer} b) {)" EOL
+  R"(  _{size_t} l = 8 + (b.l * 3);)" EOL
+  R"(  char *d = _{alloc}(l);)" EOL
   R"(  _{memcpy}(d, "[Buffer", 7);)" EOL
   R"(  for (_{size_t} i = 0; i < b.l; i++) _{sprintf}(d + 7 + (i * 3), " %02x", b.d[i]);)" EOL
-  "  d[l - 1] = ']';" EOL
-  "  _{free}(b.d);" EOL
-  "  return (_{struct str}) {d, l};" EOL
-  "}" EOL,
+  R"(  d[l - 1] = ']';)" EOL
+  R"(  _{free}(b.d);)" EOL
+  R"(  return (_{struct str}) {d, l};)" EOL
+  R"(})" EOL,
 
-  "_{struct str} buffer_to_str (_{struct buffer} b) {" EOL
-  "  return (_{struct str}) {(char *) b.d, b.l};" EOL
-  "}" EOL
+  R"(_{struct str} buffer_to_str (_{struct buffer} b) {)" EOL
+  R"(  return (_{struct str}) {(char *) b.d, b.l};)" EOL
+  R"(})" EOL
 };

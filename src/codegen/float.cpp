@@ -18,21 +18,21 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenFloat = {
-  "_{struct str} f32_str (float f) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} f32_str (float f) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%f", f);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} f64_str (double f) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} f64_str (double f) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%f", f);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL,
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} float_str (double f) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} float_str (double f) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%f", f);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL
 };

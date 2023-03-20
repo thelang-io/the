@@ -18,33 +18,53 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenChar = {
-  "_{bool} char_isDigit (char c) {" EOL
-  "  return isdigit(c);" EOL
-  "}" EOL,
+  R"(unsigned char char_byte (char c) {)" EOL
+  R"(  return (unsigned char) c;)" EOL
+  R"(})" EOL,
 
-  "_{bool} char_isLetter (char c) {" EOL
-  "  return isalpha(c);" EOL
-  "}" EOL,
+  R"(_{bool} char_isDigit (char c) {)" EOL
+  R"(  return _{isdigit}(c);)" EOL
+  R"(})" EOL,
 
-  "_{bool} char_isLetterOrDigit (char c) {" EOL
-  "  return isalnum(c);" EOL
-  "}" EOL,
+  R"(_{bool} char_isLetter (char c) {)" EOL
+  R"(  return _{isalpha}(c);)" EOL
+  R"(})" EOL,
 
-  "_{bool} char_isWhitespace (char c) {" EOL
-  "  return isspace(c);" EOL
-  "}" EOL,
+  R"(_{bool} char_isLetterOrDigit (char c) {)" EOL
+  R"(  return _{isalnum}(c);)" EOL
+  R"(})" EOL,
 
-  "_{struct str} char_repeat (char c, _{int32_t} k) {" EOL
+  R"(_{bool} char_isLower (char c) {)" EOL
+  R"(  return _{islower}(c);)" EOL
+  R"(})" EOL,
+
+  R"(_{bool} char_isUpper (char c) {)" EOL
+  R"(  return _{isupper}(c);)" EOL
+  R"(})" EOL,
+
+  R"(_{bool} char_isWhitespace (char c) {)" EOL
+  R"(  return _{isspace}(c);)" EOL
+  R"(})" EOL,
+
+  R"(char char_lower (char c) {)" EOL
+  R"(  return _{tolower}(c);)" EOL
+  R"(})" EOL,
+
+  R"(_{struct str} char_repeat (char c, _{int32_t} k) {)" EOL
   R"(  if (k <= 0) return _{str_alloc}("");)" EOL
-  "  _{size_t} l = (_{size_t}) k;" EOL
-  "  char *d = _{alloc}(l);" EOL
-  "  _{size_t} i = 0;" EOL
-  "  while (i < l) d[i++] = c;" EOL
-  "  return (_{struct str}) {d, l};" EOL
-  "}" EOL,
+  R"(  _{size_t} l = (_{size_t}) k;)" EOL
+  R"(  char *d = _{alloc}(l);)" EOL
+  R"(  _{size_t} i = 0;)" EOL
+  R"(  while (i < l) d[i++] = c;)" EOL
+  R"(  return (_{struct str}) {d, l};)" EOL
+  R"(})" EOL,
 
-  "_{struct str} char_str (char c) {" EOL
-  "  char buf[2] = {c, '\\0'};" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL
+  R"(_{struct str} char_str (char c) {)" EOL
+  R"(  char buf[2] = {c, '\0'};)" EOL
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL,
+
+  R"(char char_upper (char c) {)" EOL
+  R"(  return _{toupper}(c);)" EOL
+  R"(})" EOL
 };

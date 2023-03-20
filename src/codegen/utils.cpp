@@ -18,6 +18,11 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenUtils = {
-  "void utils_swap () {" EOL
-  "}" EOL
+  R"(void utils_swap (void *a, void *b, _{size_t} l) {)" EOL
+  R"(  void *t = _{alloc}(l);)" EOL
+  R"(  _{memcpy}(t, a, l);)" EOL
+  R"(  _{memcpy}(a, b, l);)" EOL
+  R"(  _{memcpy}(b, t, l);)" EOL
+  R"(  _{free}(t);)" EOL
+  R"(})" EOL
 };

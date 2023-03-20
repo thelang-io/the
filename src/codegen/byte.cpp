@@ -18,9 +18,9 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenByte = {
-  "_{struct str} byte_str (unsigned char x) {" EOL
-  "  char buf[512];" EOL
+  R"(_{struct str} byte_str (unsigned char x) {)" EOL
+  R"(  char buf[512];)" EOL
   R"(  _{sprintf}(buf, "%u", x);)" EOL
-  "  return _{str_alloc}(buf);" EOL
-  "}" EOL
+  R"(  return _{str_alloc}(buf);)" EOL
+  R"(})" EOL
 };

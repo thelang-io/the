@@ -18,11 +18,11 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenThread = {
-  "void thread_sleep (_{int32_t} i) {" EOL
-  "  #ifdef _{THE_OS_WINDOWS}" EOL
-  "    _{Sleep}((unsigned int) i);" EOL
-  "  #else" EOL
-  "    _{usleep}((unsigned int) (i * 1000));" EOL
-  "  #endif" EOL
-  "}" EOL
+  R"(void thread_sleep (_{int32_t} i) {)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    _{Sleep}((unsigned int) i);)" EOL
+  R"(  #else)" EOL
+  R"(    _{usleep}((unsigned int) (i * 1000));)" EOL
+  R"(  #endif)" EOL
+  R"(})" EOL
 };

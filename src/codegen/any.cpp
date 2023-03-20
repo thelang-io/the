@@ -18,21 +18,21 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenAny = {
-  "_{struct any} any_copy (const _{struct any} n) {" EOL
-  "  return n.d == _{NULL} ? n : n._copy(n);" EOL
-  "}" EOL,
+  R"(_{struct any} any_copy (const _{struct any} n) {)" EOL
+  R"(  return n.d == _{NULL} ? n : n._copy(n);)" EOL
+  R"(})" EOL,
 
-  "void any_free (_{struct any} n) {" EOL
-  "  if (n.d != _{NULL}) n._free(n);" EOL
-  "}" EOL,
+  R"(void any_free (_{struct any} n) {)" EOL
+  R"(  if (n.d != _{NULL}) n._free(n);)" EOL
+  R"(})" EOL,
 
-  "_{struct any} any_realloc (_{struct any} n1, _{struct any} n2) {" EOL
-  "  if (n1.d != _{NULL}) n1._free(n1);" EOL
-  "  return n2;" EOL
-  "}" EOL,
+  R"(_{struct any} any_realloc (_{struct any} n1, _{struct any} n2) {)" EOL
+  R"(  if (n1.d != _{NULL}) n1._free(n1);)" EOL
+  R"(  return n2;)" EOL
+  R"(})" EOL,
 
-  "_{struct str} any_str (_{struct any} n) {" EOL
-  "  if (n.d != _{NULL}) n._free(n);" EOL
+  R"(_{struct str} any_str (_{struct any} n) {)" EOL
+  R"(  if (n.d != _{NULL}) n._free(n);)" EOL
   R"(  return _{str_alloc}("any");)" EOL
-  "}" EOL
+  R"(})" EOL
 };
