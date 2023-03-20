@@ -39,27 +39,19 @@ struct str {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
 struct str os_name ();
+struct buffer process_runSync (struct str);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
-struct buffer process_runSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -79,26 +71,6 @@ struct str os_name () {
     if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
     return str_alloc(buf.sysname);
   #endif
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-char *str_cstr (const struct str s) {
-  char *d = alloc(s.l + 1);
-  memcpy(d, s.d, s.l);
-  d[s.l] = '\0';
-  return d;
-}
-bool str_eq_cstr (struct str s, const char *r) {
-  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
-  free(s.d);
-  return d;
-}
-void str_free (struct str s) {
-  free(s.d);
 }
 struct buffer process_runSync (struct str s) {
   char *c = str_cstr(s);
@@ -132,6 +104,34 @@ struct buffer process_runSync (struct str s) {
   free(c);
   str_free((struct str) s);
   return (struct buffer) {d, l};
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 
 int main () {

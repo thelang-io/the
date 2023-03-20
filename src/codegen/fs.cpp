@@ -238,12 +238,12 @@ const std::vector<std::string> codegenFs = {
   R"(    })" EOL
   R"(    if (_{memcmp}(r, "\\\\?\\UNC\\", 8) == 0) {)" EOL
   R"(      l -= 6;)" EOL
-  R"(      d = alloc(l);)" EOL
+  R"(      d = _{alloc}(l);)" EOL
   R"(      _{memcpy}(d, &r[6], l);)" EOL
   R"(      d[0] = '\\';)" EOL
   R"(    } else if (_{memcmp}(r, "\\\\?\\", 4) == 0) {)" EOL
   R"(      l -= 4;)" EOL
-  R"(      d = alloc(l);)" EOL
+  R"(      d = _{alloc}(l);)" EOL
   R"(      _{memcpy}(d, &r[4], l);)" EOL
   R"(    })" EOL
   R"(    _{free}(r);)" EOL

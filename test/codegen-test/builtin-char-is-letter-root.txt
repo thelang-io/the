@@ -11,7 +11,6 @@ main {
   '-'.isLetter
 }
 ======= code =======
-#include <ctype.h>
 #include <stdbool.h>
 
 bool char_isLetter (char);

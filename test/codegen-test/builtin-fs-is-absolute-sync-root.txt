@@ -39,13 +39,13 @@ struct str {
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+bool fs_isAbsoluteSync (struct str);
 struct str os_name ();
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
-bool fs_isAbsoluteSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -62,6 +62,11 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
+}
+bool fs_isAbsoluteSync (struct str s) {
+  bool r = (s.l > 0 && s.d[0] == '/') || (s.l > 2 && isalpha(s.d[0]) && s.d[1] == ':' && s.d[2] == '\\');
+  str_free(s);
+  return r;
 }
 struct str os_name () {
   #ifdef THE_OS_WINDOWS
@@ -106,11 +111,6 @@ bool str_eq_cstr (struct str s, const char *r) {
 }
 void str_free (struct str s) {
   free(s.d);
-}
-bool fs_isAbsoluteSync (struct str s) {
-  bool r = (s.l > 0 && s.d[0] == '/') || (s.l > 2 && isalpha(s.d[0]) && s.d[1] == ':' && s.d[2] == '\\');
-  str_free(s);
-  return r;
 }
 
 int main () {

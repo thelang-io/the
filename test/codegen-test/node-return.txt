@@ -9,8 +9,8 @@ main {
   test3()
 }
 ======= code =======
+#include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 struct __THE_1_fn$1000;
 struct __THE_1_fn$1001;

@@ -13,7 +13,7 @@ main {
   testCall(.Green)
 }
 ======= code =======
-#include <stdlib.h>
+#include <stddef.h>
 
 enum __THE_1_Color_0 {
   __THE_0_ColorSDRed_0,

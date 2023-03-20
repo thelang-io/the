@@ -51,8 +51,8 @@ struct str {
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
-void str_free (struct str);
 bool str_contains (struct str, struct str);
+void str_free (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -97,9 +97,6 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-void str_free (struct str s) {
-  free(s.d);
-}
 bool str_contains (struct str self, struct str n1) {
   bool r = n1.l == 0;
   if (!r && self.l == n1.l) {
@@ -115,6 +112,9 @@ bool str_contains (struct str self, struct str n1) {
   free(self.d);
   free(n1.d);
   return r;
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 
 int main () {

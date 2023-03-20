@@ -44,7 +44,7 @@ main {
   }
 }
 ======= code =======
-#include <stdlib.h>
+#include <stddef.h>
 
 enum __THE_1_Test_0 {
   __THE_0_TestSDRed_0,

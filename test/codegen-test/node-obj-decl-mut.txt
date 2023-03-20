@@ -80,8 +80,8 @@ struct __THE_1_Human_0 {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 struct str int_str (int32_t);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -112,6 +112,11 @@ void *alloc (size_t l) {
   }
   return r;
 }
+struct str int_str (int32_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId32, d);
+  return str_alloc(buf);
+}
 void *re_alloc (void *d, size_t l) {
   void *r = realloc(d, l);
   if (r == NULL) {
@@ -119,11 +124,6 @@ void *re_alloc (void *d, size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
-}
-struct str int_str (int32_t d) {
-  char buf[512];
-  sprintf(buf, "%" PRId32, d);
-  return str_alloc(buf);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);

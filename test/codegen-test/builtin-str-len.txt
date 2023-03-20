@@ -104,8 +104,8 @@ struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct str str_realloc (struct str, struct str);
 size_t str_len (struct str);
+struct str str_realloc (struct str, struct str);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct str);
@@ -154,14 +154,14 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.d);
-  return s2;
-}
 size_t str_len (struct str s) {
   size_t l = s.l;
   free(s.d);
   return l;
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
 }
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_test2) {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));

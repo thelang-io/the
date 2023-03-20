@@ -6,7 +6,7 @@ main {
   test()
 }
 ======= code =======
-#include <stdlib.h>
+#include <stddef.h>
 
 struct __THE_1_fn$1000;
 

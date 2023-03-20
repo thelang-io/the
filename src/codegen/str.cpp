@@ -18,7 +18,39 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenStr = {
-  "_{struct str} str_calloc (const char *r, _{size_t} l) {" EOL
+  "_{struct str} cstr_concat_str (const char *r, _{struct str} s) {" EOL
+  "  _{size_t} l = s.l + _{strlen}(r);" EOL
+  "  char *d = _{alloc}(l);" EOL
+  "  _{memcpy}(d, r, l - s.l);" EOL
+  "  _{memcpy}(&d[l - s.l], s.d, s.l);" EOL
+  "  _{free}(s.d);" EOL
+  "  return (_{struct str}) {d, l};" EOL
+  "}" EOL,
+
+  "_{bool} cstr_eq_cstr (const char *c1, const char *c2) {" EOL
+  "  _{size_t} l = _{strlen}(c1);" EOL
+  "  return l == _{strlen}(c2) && _{memcmp}(c1, c2, l) == 0;" EOL
+  "}" EOL,
+
+  "_{bool} cstr_eq_str (const char *c, _{struct str} s) {" EOL
+  "  _{bool} r = s.l == _{strlen}(c) && _{memcmp}(s.d, c, s.l) == 0;" EOL
+  "  _{free}(s.d);" EOL
+  "  return r;" EOL
+  "}" EOL,
+
+  "_{bool} cstr_ne_cstr (const char *c1, const char *c2) {" EOL
+  "  _{size_t} l = _{strlen}(c1);" EOL
+  "  return l != _{strlen}(c2) || _{memcmp}(c1, c2, l) != 0;" EOL
+  "}" EOL,
+
+  "_{bool} cstr_ne_str (const char *d, _{struct str} s) {" EOL
+  "  _{bool} r = s.l != _{strlen}(d) || _{memcmp}(s.d, d, s.l) != 0;" EOL
+  "  _{free}(s.d);" EOL
+  "  return r;" EOL
+  "}" EOL,
+
+  "_{struct str} str_alloc (const char *r) {" EOL
+  "  _{size_t} l = _{strlen}(r);" EOL
   "  char *d = _{alloc}(l);" EOL
   "  _{memcpy}(d, r, l);" EOL
   "  return (_{struct str}) {d, l};" EOL
@@ -30,6 +62,31 @@ const std::vector<std::string> codegenStr = {
   "    _{exit}(_{EXIT_FAILURE});" EOL
   "  }" EOL
   "  return i < 0 ? &s.d[s.l + i] : &s.d[i];" EOL
+  "}" EOL,
+
+  "_{struct str} str_calloc (const char *r, _{size_t} l) {" EOL
+  "  char *d = _{alloc}(l);" EOL
+  "  _{memcpy}(d, r, l);" EOL
+  "  return (_{struct str}) {d, l};" EOL
+  "}" EOL,
+
+  "_{struct str} str_concat_cstr (_{struct str} s, const char *r) {" EOL
+  "  _{size_t} l = s.l + _{strlen}(r);" EOL
+  "  char *d = _{alloc}(l);" EOL
+  "  _{memcpy}(d, s.d, s.l);" EOL
+  "  _{memcpy}(&d[s.l], r, l - s.l);" EOL
+  "  _{free}(s.d);" EOL
+  "  return (_{struct str}) {d, l};" EOL
+  "}" EOL,
+
+  "_{struct str} str_concat_str (_{struct str} s1, _{struct str} s2) {" EOL
+  "  _{size_t} l = s1.l + s2.l;" EOL
+  "  char *d = _{alloc}(l);" EOL
+  "  _{memcpy}(d, s1.d, s1.l);" EOL
+  "  _{memcpy}(&d[s1.l], s2.d, s2.l);" EOL
+  "  _{free}(s1.d);" EOL
+  "  _{free}(s2.d);" EOL
+  "  return (_{struct str}) {d, l};" EOL
   "}" EOL,
 
   "_{bool} str_contains (_{struct str} self, _{struct str} n1) {" EOL
@@ -49,10 +106,58 @@ const std::vector<std::string> codegenStr = {
   "  return r;" EOL
   "}" EOL,
 
+  "_{struct str} str_copy (const _{struct str} s) {" EOL
+  "  char *d = _{alloc}(s.l);" EOL
+  "  _{memcpy}(d, s.d, s.l);" EOL
+  "  return (_{struct str}) {d, s.l};" EOL
+  "}" EOL,
+
+  "char *str_cstr (const _{struct str} s) {" EOL
+  "  char *d = _{alloc}(s.l + 1);" EOL
+  "  _{memcpy}(d, s.d, s.l);" EOL
+  "  d[s.l] = '\\0';" EOL
+  "  return d;" EOL
+  "}" EOL,
+
   "_{bool} str_empty (_{struct str} s) {" EOL
   "  _{bool} r = s.l == 0;" EOL
   "  _{free}(s.d);" EOL
   "  return r;" EOL
+  "}" EOL,
+
+  "_{bool} str_eq_cstr (_{struct str} s, const char *r) {" EOL
+  "  _{bool} d = s.l == _{strlen}(r) && _{memcmp}(s.d, r, s.l) == 0;" EOL
+  "  _{free}(s.d);" EOL
+  "  return d;" EOL
+  "}" EOL,
+
+  "_{bool} str_eq_str (_{struct str} s1, _{struct str} s2) {" EOL
+  "  _{bool} r = s1.l == s2.l && _{memcmp}(s1.d, s2.d, s1.l) == 0;" EOL
+  "  _{free}(s1.d);" EOL
+  "  _{free}(s2.d);" EOL
+  "  return r;" EOL
+  "}" EOL,
+
+  "_{struct str} str_escape (const _{struct str} s) {" EOL
+  "  char *d = _{alloc}(s.l);" EOL
+  "  _{size_t} l = 0;" EOL
+  "  for (_{size_t} i = 0; i < s.l; i++) {" EOL
+  "    char c = s.d[i];" EOL
+  R"(    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {)" EOL
+  "      if (l + 2 > s.l) d = _{re_alloc}(d, l + 2);" EOL
+  R"(      d[l++] = '\\';)" EOL
+  R"(      if (c == '\f') d[l++] = 'f';)" EOL
+  R"(      else if (c == '\n') d[l++] = 'n';)" EOL
+  R"(      else if (c == '\r') d[l++] = 'r';)" EOL
+  R"(      else if (c == '\t') d[l++] = 't';)" EOL
+  R"(      else if (c == '\v') d[l++] = 'v';)" EOL
+  R"(      else if (c == '"') d[l++] = '"';)" EOL
+  "      continue;" EOL
+  "    }" EOL
+  "    if (l + 1 > s.l) d = _{re_alloc}(d, l + 1);" EOL
+  "    d[l++] = c;" EOL
+  "  }" EOL
+  "  return (_{struct str}) {d, l};" EOL
   "}" EOL,
 
   "_{int32_t} str_find (_{struct str} s1, _{struct str} s2) {" EOL
@@ -68,10 +173,32 @@ const std::vector<std::string> codegenStr = {
   "  return r;" EOL
   "}" EOL,
 
+  "void str_free (_{struct str} s) {" EOL
+  "  _{free}(s.d);" EOL
+  "}" EOL,
+
   "_{size_t} str_len (_{struct str} s) {" EOL
   "  _{size_t} l = s.l;" EOL
   "  _{free}(s.d);" EOL
   "  return l;" EOL
+  "}" EOL,
+
+  "_{bool} str_ne_cstr (_{struct str} s, const char *c) {" EOL
+  "  _{bool} r = s.l != _{strlen}(c) || _{memcmp}(s.d, c, s.l) != 0;" EOL
+  "  _{free}(s.d);" EOL
+  "  return r;" EOL
+  "}" EOL,
+
+  "_{bool} str_ne_str (_{struct str} s1, _{struct str} s2) {" EOL
+  "  _{bool} r = s1.l != s2.l || _{memcmp}(s1.d, s2.d, s1.l) != 0;" EOL
+  "  _{free}(s1.d);" EOL
+  "  _{free}(s2.d);" EOL
+  "  return r;" EOL
+  "}" EOL,
+
+  "_{struct str} str_realloc (_{struct str} s1, _{struct str} s2) {" EOL
+  "  _{free}(s1.d);" EOL
+  "  return s2;" EOL
   "}" EOL,
 
   "struct _{array_str} str_lines (_{struct str} s, unsigned char o1, _{bool} n1) {" EOL
@@ -246,7 +373,7 @@ const std::vector<std::string> codegenStr = {
   "  return (struct _{array_str}) {r, l};" EOL
   "}" EOL,
 
-  "struct buffer str_toBuffer (_{struct str} s) {" EOL
+  "_{struct buffer} str_toBuffer (_{struct str} s) {" EOL
   "  return (_{struct buffer}) {(unsigned char *) s.d, s.l};" EOL
   "}" EOL,
 

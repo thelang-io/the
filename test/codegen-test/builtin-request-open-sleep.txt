@@ -106,16 +106,16 @@ struct url_URL {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
 void print (FILE *, const char *, ...);
-struct str str_alloc (const char *);
-char *str_cstr (const struct str);
-void str_free (struct str);
+void *re_alloc (void *, size_t);
 void request_close (struct request_Request **);
 struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
 struct request_Response *request_read (struct request_Request **);
 char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
+struct str str_alloc (const char *);
+char *str_cstr (const struct str);
+void str_free (struct str);
 struct url_URL *url_parse (struct str);
 struct request_Header *request_Header_alloc (struct str, struct str);
 void request_Header_free (struct request_Header *);
@@ -132,14 +132,6 @@ void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -176,20 +168,13 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-char *str_cstr (const struct str s) {
-  char *d = alloc(s.l + 1);
-  memcpy(d, s.d, s.l);
-  d[s.l] = '\0';
-  return d;
-}
-void str_free (struct str s) {
-  free(s.d);
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
 }
 void request_close (struct request_Request **r) {
   struct request *req = (void *) *r;
@@ -469,6 +454,21 @@ char *request_stringifyHeaders (struct __THE_1_array_request_Header headers, str
     l += z;
   }
   return d;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 struct url_URL *url_parse (struct str s) {
   if (s.l == 0) {

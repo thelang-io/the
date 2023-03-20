@@ -38,11 +38,27 @@ endif ()
 set(
   sources
 
+  src/codegen/any.cpp src/codegen/any.hpp
+  src/codegen/bool.cpp src/codegen/bool.hpp
+  src/codegen/buffer.cpp src/codegen/buffer.hpp
+  src/codegen/byte.cpp src/codegen/byte.hpp
+  src/codegen/char.cpp src/codegen/char.hpp
+  src/codegen/date.cpp src/codegen/date.hpp
+  src/codegen/enum.cpp src/codegen/enum.hpp
+  src/codegen/float.cpp src/codegen/float.hpp
   src/codegen/fs.cpp src/codegen/fs.hpp
+  src/codegen/globals.cpp src/codegen/globals.hpp
+  src/codegen/int.cpp src/codegen/int.hpp
+  src/codegen/metadata.hpp
+  src/codegen/os.cpp src/codegen/os.hpp
+  src/codegen/path.cpp src/codegen/path.hpp
   src/codegen/process.cpp src/codegen/process.hpp
   src/codegen/request.cpp src/codegen/request.hpp
   src/codegen/str.cpp src/codegen/str.hpp
+  src/codegen/thread.cpp src/codegen/thread.hpp
   src/codegen/url.cpp src/codegen/url.hpp
+  src/codegen/utils.cpp src/codegen/utils.hpp
+
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
   src/ASTExpr.cpp src/ASTExpr.hpp

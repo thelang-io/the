@@ -42,8 +42,10 @@ struct str {
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+void fs_chownSync (struct str, int32_t, int32_t);
 struct str os_name ();
 void print (FILE *, const char *, ...);
+void process_exit (unsigned char, int32_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -51,8 +53,6 @@ struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
-void fs_chownSync (struct str, int32_t, int32_t);
-void process_exit (unsigned char, int32_t);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -69,6 +69,19 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
+}
+void fs_chownSync (struct str s, int32_t u, int32_t g) {
+  #ifdef THE_OS_WINDOWS
+    str_free(s);
+    return;
+  #endif
+  char *c = str_cstr(s);
+  if (chown(c, u, g) != 0) {
+    fprintf(stderr, "Error: failed to change owner to %" PRId32 " and group to %" PRId32 " for file `%s`" THE_EOL, u, g, c);
+    exit(EXIT_FAILURE);
+  }
+  str_free(s);
+  free(c);
 }
 struct str os_name () {
   #ifdef THE_OS_WINDOWS
@@ -112,6 +125,9 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
+void process_exit (unsigned char o1, int32_t i) {
+  exit(o1 == 1 ? i : EXIT_SUCCESS);
+}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -153,22 +169,6 @@ bool str_eq_cstr (struct str s, const char *r) {
 }
 void str_free (struct str s) {
   free(s.d);
-}
-void fs_chownSync (struct str s, int32_t u, int32_t g) {
-  #ifdef THE_OS_WINDOWS
-    str_free(s);
-    return;
-  #endif
-  char *c = str_cstr(s);
-  if (chown(c, u, g) != 0) {
-    fprintf(stderr, "Error: failed to change owner to %" PRId32 " and group to %" PRId32 " for file `%s`" THE_EOL, u, g, c);
-    exit(EXIT_FAILURE);
-  }
-  str_free(s);
-  free(c);
-}
-void process_exit (unsigned char o1, int32_t i) {
-  exit(o1 == 1 ? i : EXIT_SUCCESS);
 }
 
 int main () {

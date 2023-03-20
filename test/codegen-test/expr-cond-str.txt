@@ -43,8 +43,8 @@ struct str cstr_concat_str (const char *, struct str);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct str str_realloc (struct str, struct str);
 bool str_not (struct str);
+struct str str_realloc (struct str, struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -76,14 +76,14 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.d);
-  return s2;
-}
 bool str_not (struct str s) {
   bool r = s.l == 0;
   free(s.d);
   return r;
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
 }
 
 int main () {

@@ -21,7 +21,6 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
-#include <ctype.h>
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdbool.h>
