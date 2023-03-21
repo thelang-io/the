@@ -97,4 +97,4 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-/Users/{{ \w+ }}
+{{ (/Users/\w+|/home/\w+) }}

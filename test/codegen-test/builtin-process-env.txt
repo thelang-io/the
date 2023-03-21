@@ -2,9 +2,9 @@
 main {
   env := process_env
 
-  print(env.keys, env.values)
+  print(env.keys.len, env.values.len)
   print(env.keys.len == env.values.len)
-  print(process_env.get("_"))
+  print(process_env.get(os_NAME == "Windows" ? "USERNAME" : "USER"))
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -28,6 +28,7 @@ main {
 #include <stdlib.h>
 #include <string.h>
 #ifndef THE_OS_WINDOWS
+  #include <sys/utsname.h>
   #include <unistd.h>
 #endif
 
@@ -57,20 +58,17 @@ struct __THE_1_map_strMSstrME {
 };
 
 void *alloc (size_t);
+struct str os_name ();
 void print (FILE *, const char *, ...);
 struct __THE_1_map_strMSstrME process_env ();
-void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_calloc (const char *, size_t);
-struct str str_concat_cstr (struct str, const char *);
-struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
+bool str_eq_cstr (struct str, const char *);
 bool str_eq_str (struct str, struct str);
-struct str str_escape (const struct str);
 void str_free (struct str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
-struct str __THE_1_array_str_str (struct __THE_1_array_str);
 struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME);
 void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME);
 struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME, struct str);
@@ -84,6 +82,19 @@ void *alloc (size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
+}
+struct str os_name () {
+  #ifdef THE_OS_WINDOWS
+    return str_alloc("Windows");
+  #else
+    struct utsname buf;
+    if (uname(&buf) < 0) {
+      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
+    return str_alloc(buf.sysname);
+  #endif
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -131,14 +142,6 @@ struct __THE_1_map_strMSstrME process_env () {
   }
   return (struct __THE_1_map_strMSstrME) {d, l, l};
 }
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -150,54 +153,21 @@ struct str str_calloc (const char *r, size_t l) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-struct str str_concat_cstr (struct str s, const char *r) {
-  size_t l = s.l + strlen(r);
-  char *d = alloc(l);
-  memcpy(d, s.d, s.l);
-  memcpy(&d[s.l], r, l - s.l);
-  free(s.d);
-  return (struct str) {d, l};
-}
-struct str str_concat_str (struct str s1, struct str s2) {
-  size_t l = s1.l + s2.l;
-  char *d = alloc(l);
-  memcpy(d, s1.d, s1.l);
-  memcpy(&d[s1.l], s2.d, s2.l);
-  free(s1.d);
-  free(s2.d);
-  return (struct str) {d, l};
-}
 struct str str_copy (const struct str s) {
   char *d = alloc(s.l);
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
+}
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
 }
 bool str_eq_str (struct str s1, struct str s2) {
   bool r = s1.l == s2.l && memcmp(s1.d, s2.d, s1.l) == 0;
   free(s1.d);
   free(s2.d);
   return r;
-}
-struct str str_escape (const struct str s) {
-  char *d = alloc(s.l);
-  size_t l = 0;
-  for (size_t i = 0; i < s.l; i++) {
-    char c = s.d[i];
-    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
-      if (l + 2 > s.l) d = re_alloc(d, l + 2);
-      d[l++] = '\\';
-      if (c == '\f') d[l++] = 'f';
-      else if (c == '\n') d[l++] = 'n';
-      else if (c == '\r') d[l++] = 'r';
-      else if (c == '\t') d[l++] = 't';
-      else if (c == '\v') d[l++] = 'v';
-      else if (c == '"') d[l++] = '"';
-      continue;
-    }
-    if (l + 1 > s.l) d = re_alloc(d, l + 1);
-    d[l++] = c;
-  }
-  return (struct str) {d, l};
 }
 void str_free (struct str s) {
   free(s.d);
@@ -210,17 +180,6 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
   size_t l = n.l;
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return l;
-}
-struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
-  struct str r = str_alloc("[");
-  for (size_t i = 0; i < n.l; i++) {
-    if (i != 0) r = str_concat_cstr(r, ", ");
-    r = str_concat_cstr(r, "\"");
-    r = str_concat_str(r, str_escape(n.d[i]));
-    r = str_concat_cstr(r, "\"");
-  }
-  __THE_1_array_str_free((struct __THE_1_array_str) n);
-  return str_concat_cstr(r, "]");
 }
 struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME n) {
   struct __THE_1_pair_strMSstrME *d = alloc(n.c * sizeof(struct __THE_1_pair_strMSstrME));
@@ -261,10 +220,13 @@ struct __THE_1_array_str __THE_1_map_strMSstrME_values (struct __THE_1_map_strMS
 
 int main () {
   const struct __THE_1_map_strMSstrME __THE_0_env_0 = process_env();
-  print(stdout, "szsz", __THE_1_array_str_str(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), " ", __THE_1_array_str_str(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
+  print(stdout, "iziz", __THE_1_array_str_len(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), " ", __THE_1_array_str_len(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
   print(stdout, "tz", __THE_1_array_str_len(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))) == __THE_1_array_str_len(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
-  print(stdout, "sz", __THE_1_map_strMSstrME_get(process_env(), str_alloc("_")), THE_EOL);
+  print(stdout, "sz", __THE_1_map_strMSstrME_get(process_env(), str_eq_cstr(os_name(), "Windows") ? str_alloc("USERNAME") : str_alloc("USER")), THE_EOL);
   __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_env_0);
 }
 ======= flags =======
 ======= stdout =======
+{{ \d+ }} {{ \d+ }}
+true
+{{ \w+ }}

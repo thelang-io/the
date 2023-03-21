@@ -160,3 +160,6 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
+{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+) }}
+{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+) }}
+false
