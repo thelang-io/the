@@ -1,0 +1,35 @@
+======= stdin =======
+main {
+  '\0'.isLower;
+  '\n'.isLower;
+  '\t'.isLower;
+  'A'.isLower;
+  'a'.isLower;
+  '0'.isLower;
+  '9'.isLower;
+  '_'.isLower;
+  '-'.isLower;
+}
+======= code =======
+#include <ctype.h>
+#include <stdbool.h>
+
+bool char_isLower (char);
+
+bool char_isLower (char c) {
+  return islower(c);
+}
+
+int main () {
+  char_isLower('\0');
+  char_isLower('\n');
+  char_isLower('\t');
+  char_isLower('A');
+  char_isLower('a');
+  char_isLower('0');
+  char_isLower('9');
+  char_isLower('_');
+  char_isLower('-');
+}
+======= flags =======
+======= stdout =======

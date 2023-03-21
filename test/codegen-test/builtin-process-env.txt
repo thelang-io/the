@@ -1,0 +1,263 @@
+======= stdin =======
+main {
+  print(process_env)
+
+  mut env := process_env
+  env.remove("PATH")
+  env.remove("HOME")
+  print(env)
+
+  print(process_env.get("_"))
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <unistd.h>
+#endif
+
+extern char **environ;
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_pair_strMSstrME;
+struct __THE_1_map_strMSstrME;
+
+struct __THE_1_pair_strMSstrME {
+  struct str f;
+  struct str s;
+};
+struct __THE_1_map_strMSstrME {
+  struct __THE_1_pair_strMSstrME *d;
+  size_t c;
+  size_t l;
+};
+
+void *alloc (size_t);
+void print (FILE *, const char *, ...);
+struct __THE_1_map_strMSstrME process_env ();
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+struct str str_calloc (const char *, size_t);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+bool str_eq_str (struct str, struct str);
+struct str str_escape (const struct str);
+void str_free (struct str);
+struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME);
+void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME);
+struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME, struct str);
+struct __THE_1_map_strMSstrME *__THE_1_map_strMSstrME_remove (struct __THE_1_map_strMSstrME *, struct str);
+struct str __THE_1_map_strMSstrME_str (struct __THE_1_map_strMSstrME);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct __THE_1_map_strMSstrME process_env () {
+  size_t l = 0;
+  while (environ[l] != NULL) l++;
+  struct __THE_1_pair_strMSstrME *d = alloc(l * sizeof(struct __THE_1_pair_strMSstrME));
+  for (size_t i = 0; i < l; i++) {
+    char *p = environ[i];
+    size_t pl = strlen(p);
+    char *e = strchr(p, '=');
+    if (e == NULL) {
+      d[i] = (struct __THE_1_pair_strMSstrME) {str_calloc(p, pl), str_alloc("")};
+    } else {
+      size_t ei = e - p;
+      d[i] = (struct __THE_1_pair_strMSstrME) {str_calloc(p, ei), (ei == pl - 1) ? str_alloc("") : str_calloc(&p[ei + 1], pl - ei - 1)};
+    }
+  }
+  return (struct __THE_1_map_strMSstrME) {d, l, l};
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_calloc (const char *r, size_t l) {
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+bool str_eq_str (struct str s1, struct str s2) {
+  bool r = s1.l == s2.l && memcmp(s1.d, s2.d, s1.l) == 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
+struct str str_escape (const struct str s) {
+  char *d = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) d = re_alloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) d = re_alloc(d, l + 1);
+    d[l++] = c;
+  }
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME n) {
+  struct __THE_1_pair_strMSstrME *d = alloc(n.c * sizeof(struct __THE_1_pair_strMSstrME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_strMSstrME) {str_copy(n.d[i].f), str_copy(n.d[i].s)};
+  return (struct __THE_1_map_strMSstrME) {d, n.c, n.l};
+}
+void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME n) {
+  for (size_t i = 0; i < n.l; i++) {
+    str_free((struct str) n.d[i].f);
+    str_free((struct str) n.d[i].s);
+  }
+  free(n.d);
+}
+struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME n, struct str k) {
+  for (size_t i = 0; i < n.l; i++) {
+    if (str_eq_str(str_copy(n.d[i].f), str_copy(k))) {
+      struct str r = str_copy(n.d[i].s);
+      __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n);
+      str_free((struct str) k);
+      return r;
+    }
+  }
+  fprintf(stderr, "Error: failed to get map value" THE_EOL);
+  exit(EXIT_FAILURE);
+}
+struct __THE_1_map_strMSstrME *__THE_1_map_strMSstrME_remove (struct __THE_1_map_strMSstrME *n, struct str k) {
+  for (size_t i = 0; i < n->l; i++) {
+    if (str_eq_str(str_copy(n->d[i].f), str_copy(k))) {
+      str_free((struct str) k);
+      str_free((struct str) n->d[i].f);
+      str_free((struct str) n->d[i].s);
+      memmove(&n->d[i], &n->d[i + 1], (--n->l - i) * sizeof(struct __THE_1_pair_strMSstrME));
+      return n;
+    }
+  }
+  fprintf(stderr, "Error: failed to remove map value" THE_EOL);
+  exit(EXIT_FAILURE);
+}
+struct str __THE_1_map_strMSstrME_str (struct __THE_1_map_strMSstrME n) {
+  struct str r = str_alloc("{");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_cstr(r, "\"");
+    r = str_concat_str(r, str_escape(n.d[i].f));
+    r = str_concat_cstr(r, "\": ");
+    r = str_concat_cstr(r, "\"");
+    r = str_concat_str(r, str_escape(n.d[i].s));
+    r = str_concat_cstr(r, "\"");
+  }
+  __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n);
+  return str_concat_cstr(r, "}");
+}
+
+int main () {
+  print(stdout, "sz", __THE_1_map_strMSstrME_str(process_env()), THE_EOL);
+  struct __THE_1_map_strMSstrME __THE_0_env_0 = process_env();
+  __THE_1_map_strMSstrME_remove(&__THE_0_env_0, str_alloc("PATH"));
+  __THE_1_map_strMSstrME_remove(&__THE_0_env_0, str_alloc("HOME"));
+  print(stdout, "sz", __THE_1_map_strMSstrME_str(__THE_1_map_strMSstrME_copy(__THE_0_env_0)), THE_EOL);
+  print(stdout, "sz", __THE_1_map_strMSstrME_get(process_env(), str_alloc("_")), THE_EOL);
+  __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_env_0);
+}
+======= flags =======
+======= stdout =======
+build/builtin-process-env.out

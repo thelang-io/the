@@ -1,0 +1,35 @@
+======= stdin =======
+main {
+  '\0'.isUpper;
+  '\n'.isUpper;
+  '\t'.isUpper;
+  'A'.isUpper;
+  'a'.isUpper;
+  '0'.isUpper;
+  '9'.isUpper;
+  '_'.isUpper;
+  '-'.isUpper;
+}
+======= code =======
+#include <ctype.h>
+#include <stdbool.h>
+
+bool char_isUpper (char);
+
+bool char_isUpper (char c) {
+  return isupper(c);
+}
+
+int main () {
+  char_isUpper('\0');
+  char_isUpper('\n');
+  char_isUpper('\t');
+  char_isUpper('A');
+  char_isUpper('a');
+  char_isUpper('0');
+  char_isUpper('9');
+  char_isUpper('_');
+  char_isUpper('-');
+}
+======= flags =======
+======= stdout =======

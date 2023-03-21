@@ -95,13 +95,14 @@ const std::vector<std::string> codegenPath = {
   R"(  _{size_t} l = _{snprintf}(_{NULL}, 0, fmt, f);)" EOL
   R"(  char *t = _{alloc}(l + 1);)" EOL
   R"(  _{sprintf}(t, fmt, f);)" EOL
-  R"(  char *r = _{mkdtemp}(t);)" EOL
-  R"(  _{free}(t);)" EOL
-  R"(  if (r == _{NULL}) {)" EOL
+  R"(  char *d = _{mkdtemp}(t);)" EOL
+  R"(  if (d == _{NULL}) {)" EOL
   R"(    _{fprintf}(_{stderr}, "Error: failed to create temporary directory" _{THE_EOL});)" EOL
   R"(    _{exit}(_{EXIT_FAILURE});)" EOL
   R"(  })" EOL
-  R"(  return _{str_alloc}(r);)" EOL
+  R"(  _{struct str} r = _{str_alloc}(t);)" EOL
+  R"(  _{free}(t);)" EOL
+  R"(  return r;)" EOL
   R"(})" EOL,
 
   R"(_{struct str} path_tempFile () {)" EOL

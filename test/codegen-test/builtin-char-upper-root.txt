@@ -1,0 +1,34 @@
+======= stdin =======
+main {
+  '\0'.upper;
+  '\n'.upper;
+  '\t'.upper;
+  'A'.upper;
+  'a'.upper;
+  '0'.upper;
+  '9'.upper;
+  '_'.upper;
+  '-'.upper;
+}
+======= code =======
+#include <ctype.h>
+
+char char_upper (char);
+
+char char_upper (char c) {
+  return toupper(c);
+}
+
+int main () {
+  char_upper('\0');
+  char_upper('\n');
+  char_upper('\t');
+  char_upper('A');
+  char_upper('a');
+  char_upper('0');
+  char_upper('9');
+  char_upper('_');
+  char_upper('-');
+}
+======= flags =======
+======= stdout =======

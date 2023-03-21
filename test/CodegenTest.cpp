@@ -201,7 +201,7 @@ INSTANTIATE_TEST_SUITE_P(General, CodegenPassTest, testing::Values(
   "empty"
 ));
 
-INSTANTIATE_TEST_SUITE_P(BuiltinGlobal, CodegenPassTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(BuiltinGlobals, CodegenPassTest, testing::Values(
   "builtin-print",
   "builtin-print-alias",
   "builtin-print-any",
@@ -322,6 +322,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinByte, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinChar, CodegenPassTest, testing::Values(
+  "builtin-char-byte",
+  "builtin-char-byte-ref",
+  "builtin-char-byte-root",
   "builtin-char-is-digit",
   "builtin-char-is-digit-ref",
   "builtin-char-is-digit-root",
@@ -331,15 +334,32 @@ INSTANTIATE_TEST_SUITE_P(BuiltinChar, CodegenPassTest, testing::Values(
   "builtin-char-is-letter-or-digit",
   "builtin-char-is-letter-or-digit-ref",
   "builtin-char-is-letter-or-digit-root",
+  "builtin-char-is-lower",
+  "builtin-char-is-lower-ref",
+  "builtin-char-is-lower-root",
+  "builtin-char-is-upper",
+  "builtin-char-is-upper-ref",
+  "builtin-char-is-upper-root",
   "builtin-char-is-whitespace",
   "builtin-char-is-whitespace-ref",
   "builtin-char-is-whitespace-root",
+  "builtin-char-lower",
+  "builtin-char-lower-ref",
+  "builtin-char-lower-root",
   "builtin-char-repeat",
   "builtin-char-repeat-ref",
   "builtin-char-repeat-root",
   "builtin-char-str",
   "builtin-char-str-ref",
-  "builtin-char-str-root"
+  "builtin-char-str-root",
+  "builtin-char-upper",
+  "builtin-char-upper-ref",
+  "builtin-char-upper-root"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinDate, CodegenPassTest, testing::Values(
+  "builtin-date-now",
+  "builtin-date-now-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinEnum, CodegenPassTest, testing::Values(
@@ -577,7 +597,11 @@ INSTANTIATE_TEST_SUITE_P(BuiltinPath, CodegenPassTest, testing::Values(
   "builtin-path-dirname",
   "builtin-path-dirname-root",
   "builtin-path-sep",
-  "builtin-path-sep-root"
+  "builtin-path-sep-root",
+  "builtin-path-temp-directory",
+  "builtin-path-temp-directory-root",
+  "builtin-path-temp-file",
+  "builtin-path-temp-file-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
@@ -586,6 +610,8 @@ INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
   "builtin-process-args-scoped",
   "builtin-process-cwd",
   "builtin-process-cwd-root",
+  "builtin-process-env",
+  "builtin-process-env-root",
   "builtin-process-exit-empty",
   "builtin-process-exit-one",
   "builtin-process-exit-zero",
@@ -593,6 +619,8 @@ INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
   "builtin-process-getgid-root",
   "builtin-process-getuid",
   "builtin-process-getuid-root",
+  "builtin-process-home",
+  "builtin-process-home-root",
   "builtin-process-run-sync",
   "builtin-process-run-sync-root"
 ));
@@ -742,6 +770,22 @@ INSTANTIATE_TEST_SUITE_P(BuiltinUnion, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(BuiltinURL, CodegenPassTest, testing::Values(
   "builtin-url-parse",
   "builtin-url-parse-root"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinUtils, CodegenPassTest, testing::Values(
+  "builtin-utils-swap",
+  "builtin-utils-swap-alias",
+  "builtin-utils-swap-any",
+  "builtin-utils-swap-array",
+  "builtin-utils-swap-buffer",
+  "builtin-utils-swap-enum",
+  "builtin-utils-swap-fn",
+  "builtin-utils-swap-map",
+  "builtin-utils-swap-obj",
+  "builtin-utils-swap-opt",
+  "builtin-utils-swap-ref",
+  "builtin-utils-swap-str",
+  "builtin-utils-swap-union"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(

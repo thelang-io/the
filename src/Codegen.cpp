@@ -2304,10 +2304,15 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
     } else if (calleeTypeInfo.realType->builtin && calleeTypeInfo.realType->codeName == "@utils_swap") {
       auto argTypeInfo = this->_typeInfo(exprCall.args[0].expr.type);
+      auto argRealTypeInfo = argTypeInfo;
+
+      if (argTypeInfo.type->isRef()) {
+        argRealTypeInfo = this->_typeInfo(std::get<TypeRef>(argTypeInfo.type->body).refType);
+      }
 
       code = this->_apiEval(
         "_{utils_swap}(" + this->_nodeExpr(exprCall.args[0].expr, argTypeInfo.type) +
-        ", " + this->_nodeExpr(exprCall.args[1].expr, argTypeInfo.type) + ", sizeof(" + argTypeInfo.realTypeCodeTrimmed + "))",
+        ", " + this->_nodeExpr(exprCall.args[1].expr, argTypeInfo.type) + ", sizeof(" + argRealTypeInfo.typeCodeTrimmed + "))",
         1
       );
 
