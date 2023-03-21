@@ -1,12 +1,9 @@
 ======= stdin =======
 main {
-  print(process_env)
+  env := process_env
 
-  mut env := process_env
-  env.remove("PATH")
-  env.remove("HOME")
-  print(env)
-
+  print(env.keys, env.values)
+  print(env.keys.len == env.values.len)
   print(process_env.get("_"))
 }
 ======= code =======
@@ -41,9 +38,14 @@ struct str {
   size_t l;
 };
 
+struct __THE_1_array_str;
 struct __THE_1_pair_strMSstrME;
 struct __THE_1_map_strMSstrME;
 
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
 struct __THE_1_pair_strMSstrME {
   struct str f;
   struct str s;
@@ -66,11 +68,14 @@ struct str str_copy (const struct str);
 bool str_eq_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+size_t __THE_1_array_str_len (struct __THE_1_array_str);
+struct str __THE_1_array_str_str (struct __THE_1_array_str);
 struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME);
 void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME);
 struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME, struct str);
-struct __THE_1_map_strMSstrME *__THE_1_map_strMSstrME_remove (struct __THE_1_map_strMSstrME *, struct str);
-struct str __THE_1_map_strMSstrME_str (struct __THE_1_map_strMSstrME);
+struct __THE_1_array_str __THE_1_map_strMSstrME_keys (struct __THE_1_map_strMSstrME);
+struct __THE_1_array_str __THE_1_map_strMSstrME_values (struct __THE_1_map_strMSstrME);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -197,6 +202,26 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
+  size_t l = n.l;
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return l;
+}
+struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
+  struct str r = str_alloc("[");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_cstr(r, "\"");
+    r = str_concat_str(r, str_escape(n.d[i]));
+    r = str_concat_cstr(r, "\"");
+  }
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return str_concat_cstr(r, "]");
+}
 struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME n) {
   struct __THE_1_pair_strMSstrME *d = alloc(n.c * sizeof(struct __THE_1_pair_strMSstrME));
   for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_strMSstrME) {str_copy(n.d[i].f), str_copy(n.d[i].s)};
@@ -221,43 +246,25 @@ struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME n, struct s
   fprintf(stderr, "Error: failed to get map value" THE_EOL);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_map_strMSstrME *__THE_1_map_strMSstrME_remove (struct __THE_1_map_strMSstrME *n, struct str k) {
-  for (size_t i = 0; i < n->l; i++) {
-    if (str_eq_str(str_copy(n->d[i].f), str_copy(k))) {
-      str_free((struct str) k);
-      str_free((struct str) n->d[i].f);
-      str_free((struct str) n->d[i].s);
-      memmove(&n->d[i], &n->d[i + 1], (--n->l - i) * sizeof(struct __THE_1_pair_strMSstrME));
-      return n;
-    }
-  }
-  fprintf(stderr, "Error: failed to remove map value" THE_EOL);
-  exit(EXIT_FAILURE);
-}
-struct str __THE_1_map_strMSstrME_str (struct __THE_1_map_strMSstrME n) {
-  struct str r = str_alloc("{");
-  for (size_t i = 0; i < n.l; i++) {
-    if (i != 0) r = str_concat_cstr(r, ", ");
-    r = str_concat_cstr(r, "\"");
-    r = str_concat_str(r, str_escape(n.d[i].f));
-    r = str_concat_cstr(r, "\": ");
-    r = str_concat_cstr(r, "\"");
-    r = str_concat_str(r, str_escape(n.d[i].s));
-    r = str_concat_cstr(r, "\"");
-  }
+struct __THE_1_array_str __THE_1_map_strMSstrME_keys (struct __THE_1_map_strMSstrME n) {
+  struct str *r = alloc(n.l * sizeof(struct str));
+  for (size_t i = 0; i < n.l; i++) r[i] = str_copy(n.d[i].f);
   __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n);
-  return str_concat_cstr(r, "}");
+  return (struct __THE_1_array_str) {r, n.l};
+}
+struct __THE_1_array_str __THE_1_map_strMSstrME_values (struct __THE_1_map_strMSstrME n) {
+  struct str *r = alloc(n.l * sizeof(struct str));
+  for (size_t i = 0; i < n.l; i++) r[i] = str_copy(n.d[i].s);
+  __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n);
+  return (struct __THE_1_array_str) {r, n.l};
 }
 
 int main () {
-  print(stdout, "sz", __THE_1_map_strMSstrME_str(process_env()), THE_EOL);
-  struct __THE_1_map_strMSstrME __THE_0_env_0 = process_env();
-  __THE_1_map_strMSstrME_remove(&__THE_0_env_0, str_alloc("PATH"));
-  __THE_1_map_strMSstrME_remove(&__THE_0_env_0, str_alloc("HOME"));
-  print(stdout, "sz", __THE_1_map_strMSstrME_str(__THE_1_map_strMSstrME_copy(__THE_0_env_0)), THE_EOL);
+  const struct __THE_1_map_strMSstrME __THE_0_env_0 = process_env();
+  print(stdout, "szsz", __THE_1_array_str_str(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), " ", __THE_1_array_str_str(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
+  print(stdout, "tz", __THE_1_array_str_len(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))) == __THE_1_array_str_len(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
   print(stdout, "sz", __THE_1_map_strMSstrME_get(process_env(), str_alloc("_")), THE_EOL);
   __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_env_0);
 }
 ======= flags =======
 ======= stdout =======
-build/builtin-process-env.out

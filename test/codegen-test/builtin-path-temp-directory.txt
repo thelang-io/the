@@ -167,6 +167,3 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-/var/folders/{{ \w+ }}/{{ \w+ }}/{{ \w+ }}/{{ \w+ }}
-/var/folders/{{ \w+ }}/{{ \w+ }}/{{ \w+ }}/{{ \w+ }}
-false

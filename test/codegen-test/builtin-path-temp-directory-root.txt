@@ -56,13 +56,14 @@ struct str path_tempDirectory () {
   size_t l = snprintf(NULL, 0, fmt, f);
   char *t = alloc(l + 1);
   sprintf(t, fmt, f);
-  char *r = mkdtemp(t);
-  if (r == NULL) {
+  char *d = mkdtemp(t);
+  if (d == NULL) {
     fprintf(stderr, "Error: failed to create temporary directory" THE_EOL);
     exit(EXIT_FAILURE);
   }
+  struct str r = str_alloc(t);
   free(t);
-  return str_alloc(r);
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
