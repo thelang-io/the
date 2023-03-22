@@ -20,8 +20,15 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <unistd.h>
+#endif
+
+#ifdef THE_OS_WINDOWS
+  extern unsigned char NTAPI SystemFunction036 (void *, unsigned long);
 #endif
 
 struct str {
@@ -30,7 +37,11 @@ struct str {
 };
 
 void *alloc (size_t);
+char *path_mktemp (unsigned char (*f) (char *));
 struct str path_tempFile ();
+unsigned char path_tempFileFunctor (char *);
+char *path_tmpdir ();
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
 
@@ -42,28 +53,104 @@ void *alloc (size_t l) {
   }
   return r;
 }
+char *path_mktemp (unsigned char (*f) (char *)) {
+  static const char *chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  static const size_t chars_len = 62;
+  static const size_t x = 6;
+  char *d = path_tmpdir();
+  size_t l = strlen(d) + x;
+  d = re_alloc(d, l + 1);
+  memcpy(&d[l - x], "XXXXXX", x + 1);
+  #ifdef THE_OS_WINDOWS
+    size_t j = TMP_MAX;
+    unsigned long long v;
+    do {
+      if (!SystemFunction036((void *) &v, sizeof(v))) {
+        fprintf(stderr, "Error: failed to generate random with `SystemFunction036`" THE_EOL);
+        exit(EXIT_FAILURE);
+      }
+      char *p = &d[len - x];
+      for (size_t i = 0; i < x; i++) {
+        *p++ = chars[v % chars_len];
+        v /= chars_len;
+      }
+      if (f(d) == 0) return d;
+    } while (--j);
+    free(d);
+    return NULL;
+  #else
+    if (f(d) == 1) {
+      free(d);
+      return NULL;
+    }
+    return d;
+  #endif
+}
 struct str path_tempFile () {
-  char *f;
-  if (
-    (f = getenv("TMPDIR")) == NULL &&
-    (f = getenv("TMP")) == NULL &&
-    (f = getenv("TEMP")) == NULL &&
-    (f = getenv("TEMPDIR")) == NULL
-  ) {
-    f = "/tmp";
-  }
-  char *fmt = f[strlen(f) - 1] == '/' ? "%sXXXXXX" : "%s/XXXXXX";
-  size_t l = snprintf(NULL, 0, fmt, f);
-  char *t = alloc(l + 1);
-  sprintf(t, fmt, f);
-  int fd = mkstemp(t);
-  if (fd == -1) {
+  char *d = path_mktemp(path_tempFileFunctor);
+  if (d == NULL) {
     fprintf(stderr, "Error: failed to create temporary file" THE_EOL);
     exit(EXIT_FAILURE);
   }
-  close(fd);
-  struct str r = str_alloc(t);
-  free(t);
+  struct str r = str_alloc(d);
+  free(d);
+  return r;
+}
+unsigned char path_tempFileFunctor (char *c) {
+  #ifdef THE_OS_WINDOWS
+    return INVALID_HANDLE_VALUE == CreateFile(c, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+  #else
+    int fd = mkstemp(c);
+    if (fd != -1) close(fd);
+    return fd == -1 ? 1 : 0;
+  #endif
+}
+char *path_tmpdir () {
+  char *d;
+  #ifdef THE_OS_WINDOWS
+    size_t l = GetTempPath(0, NULL);
+    if (l == 0) {
+      fprintf(stderr, "Error: failed to get temporary path" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    l -= 1;
+    d = alloc(l + 1);
+    if (GetTempPath(l + 1, d) == 0) {
+      fprintf(stderr, "Error: failed to get temporary path" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (d[l - 1] != '\\' && d[l - 1] != '/') {
+      d[l] = '\\';
+      d = re_alloc(d, ++l + 1);
+    }
+    d[l] = '\0';
+  #else
+    char *f;
+    if (
+      (f = getenv("TMPDIR")) == NULL &&
+      (f = getenv("TMP")) == NULL &&
+      (f = getenv("TEMP")) == NULL &&
+      (f = getenv("TEMPDIR")) == NULL
+    ) {
+      f = "/tmp/";
+    }
+    size_t l = strlen(f);
+    d = alloc(l + 1);
+    memcpy(d, f, l);
+    if (f[l - 1] != '/') {
+      d[l] = '/';
+      d = re_alloc(d, ++l + 1);
+    }
+    d[l] = '\0';
+  #endif
+  return d;
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
   return r;
 }
 struct str str_alloc (const char *r) {
@@ -80,4 +167,5 @@ int main () {
   str_free((struct str) path_tempFile());
 }
 ======= flags =======
+W:-ladvapi32
 ======= stdout =======

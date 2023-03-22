@@ -19,8 +19,14 @@
 
 const std::vector<std::string> codegenDate = {
   "_{uint64_t} date_now () {" EOL
-  "  _{struct timespec} ts;" EOL
-  "  _{clock_gettime}(_{CLOCK_REALTIME}, &ts);" EOL
-  "  return ts.tv_sec * 1000 + ts.tv_nsec / 1e6;" EOL
+  "  #ifdef _{THE_OS_WINDOWS}" EOL
+  "    _{FILETIME} ft;" EOL
+  "    _{GetSystemTimePreciseAsFileTime}(&ft);" EOL
+  "    return (((_{uint64_t}) ft.dwHighDateTime << 32) | ft.dwLowDateTime) / 1e4 - 116444736e5;" EOL
+  "  #else" EOL
+  "    _{struct timespec} ts;" EOL
+  "    _{clock_gettime}(_{CLOCK_REALTIME}, &ts);" EOL
+  "    return ts.tv_sec * 1e3 + ts.tv_nsec / 1e6;" EOL
+  "  #endif" EOL
   "}" EOL
 };

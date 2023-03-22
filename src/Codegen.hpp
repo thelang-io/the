@@ -46,6 +46,7 @@ struct CodegenApiItem {
 
 struct CodegenBuiltins {
   bool definitions = false;
+  bool externSystemFunction036 = false;
   bool libArpaInet = false;
   bool libCtype = false;
   bool libDirent = false;

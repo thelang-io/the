@@ -20,6 +20,9 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <pwd.h>
   #include <unistd.h>
@@ -44,10 +47,18 @@ void *alloc (size_t l) {
   return r;
 }
 struct str process_home () {
-  char *r = getenv("HOME");
-  if (r == NULL) {
-    r = getpwuid(getuid())->pw_dir;
-  }
+  #ifdef THE_OS_WINDOWS
+    char r[0xFFFF];
+    if (GetEnvironmentVariable("USERPROFILE", r, 0xFFFF) == 0) {
+      fprintf(stderr, "Error: environment variable `USERPROFILE` is not set" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+  #else
+    char *r = getenv("HOME");
+    if (r == NULL) {
+      r = getpwuid(getuid())->pw_dir;
+    }
+  #endif
   return str_alloc(r);
 }
 struct str str_alloc (const char *r) {

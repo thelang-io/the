@@ -30,6 +30,8 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"THE_OS_WINDOWS", {"definitions"}},
   std::pair<std::string, std::set<std::string>>{"THE_PATH_SEP", {"definitions"}},
 
+  std::pair<std::string, std::set<std::string>>{"SystemFunction036", {"externSystemFunction036"}},
+
   std::pair<std::string, std::set<std::string>>{"struct any", {"typeAny"}},
   std::pair<std::string, std::set<std::string>>{"struct buffer", {"typeBuffer"}},
   std::pair<std::string, std::set<std::string>>{"struct request", {"typeRequest"}},
@@ -129,6 +131,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"uint64_t", {"libStdint"}},
 
   std::pair<std::string, std::set<std::string>>{"FILE", {"libStdio"}},
+  std::pair<std::string, std::set<std::string>>{"TMP_MAX", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"fclose", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"fopen", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"fprintf", {"libStdio"}},
@@ -222,9 +225,11 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"_access", {"libWinIo"}},
   std::pair<std::string, std::set<std::string>>{"_chmod", {"libWinIo"}},
 
+  std::pair<std::string, std::set<std::string>>{"CREATE_NEW", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"DWORD", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"ERROR_FILE_NOT_FOUND", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"ERROR_NO_MORE_FILES", {"libWindows"}},
+  std::pair<std::string, std::set<std::string>>{"FILETIME", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"FILE_ATTRIBUTE_DIRECTORY", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"FILE_ATTRIBUTE_NORMAL", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"FILE_FLAG_BACKUP_SEMANTICS", {"libWindows"}},
@@ -256,9 +261,12 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"FindClose", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"FindFirstFile", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"FindNextFile", {"libWindows"}},
+  std::pair<std::string, std::set<std::string>>{"GetEnvironmentVariable", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"GetFileAttributes", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"GetFinalPathNameByHandle", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"GetLastError", {"libWindows"}},
+  std::pair<std::string, std::set<std::string>>{"GetSystemTimePreciseAsFileTime", {"libWindows"}},
+  std::pair<std::string, std::set<std::string>>{"GetTempPath", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"RemoveDirectory", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"Sleep", {"libWindows"}},
 

@@ -77,10 +77,18 @@ const std::vector<std::string> codegenProcess = {
   R"(})" EOL,
 
   R"(_{struct str} process_home () {)" EOL
-  R"(  char *r = _{getenv}("HOME");)" EOL
-  R"(  if (r == _{NULL}) {)" EOL
-  R"(    r = _{getpwuid}(_{getuid}())->pw_dir;)" EOL
-  R"(  })" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    char r[0xFFFF];)" EOL
+  R"(    if (_{GetEnvironmentVariable}("USERPROFILE", r, 0xFFFF) == 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: environment variable `USERPROFILE` is not set" _{THE_EOL});)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(  #else)" EOL
+  R"(    char *r = _{getenv}("HOME");)" EOL
+  R"(    if (r == _{NULL}) {)" EOL
+  R"(      r = _{getpwuid}(_{getuid}())->pw_dir;)" EOL
+  R"(    })" EOL
+  R"(  #endif)" EOL
   R"(  return _{str_alloc}(r);)" EOL
   R"(})" EOL,
 

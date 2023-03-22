@@ -39,6 +39,7 @@
 #include "codegen/url.hpp"
 #include "codegen/utils.hpp"
 #include "ASTChecker.hpp"
+#include "CParser.hpp"
 #include "config.hpp"
 
 const auto banner = std::string(
@@ -264,6 +265,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   auto builtinDefineCode = std::string();
+  auto builtinExternCode = std::string();
+  auto builtinWinExternCode = std::string();
   auto builtinFnDeclCode = std::string();
   auto builtinFnDefCode = std::string();
   auto builtinStructDefCode = std::string();
@@ -283,6 +286,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinDefineCode += R"(  #define THE_EOL "\n")" EOL;
     builtinDefineCode += R"(  #define THE_PATH_SEP "/")" EOL;
     builtinDefineCode += "#endif" EOL;
+  }
+
+  if (this->builtins.externSystemFunction036) {
+    builtinWinExternCode += "  extern unsigned char NTAPI SystemFunction036 (void *, unsigned long);" EOL;
   }
 
   if (this->builtins.typeAny) {
@@ -361,7 +368,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.varEnviron) {
-    builtinVarCode += "extern char **environ;" EOL;
+    builtinExternCode += "extern char **environ;" EOL;
   }
 
   if (this->builtins.varLibOpensslInit) {
@@ -384,6 +391,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
   builtinDefineCode += builtinDefineCode.empty() ? "" : EOL;
   defineCode += defineCode.empty() ? "" : EOL;
+  builtinExternCode += builtinExternCode.empty() ? "" : EOL;
   builtinVarCode += builtinVarCode.empty() ? "" : EOL;
   builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
   enumDeclCode += enumDeclCode.empty() ? "" : EOL;
@@ -461,6 +469,14 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   output += banner;
   output += builtinDefineCode;
   output += headers;
+  output += builtinExternCode;
+
+  if (!builtinWinExternCode.empty()) {
+    output += "#ifdef THE_OS_WINDOWS" EOL;
+    output += builtinWinExternCode;
+    output += "#endif" EOL EOL;
+  }
+
   output += defineCode;
   output += enumDeclCode;
   output += builtinVarCode;
@@ -498,6 +514,13 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
 
   if (name == "definitions") {
     this->builtins.definitions = true;
+  } else if (name == "externSystemFunction036") {
+    this->builtins.externSystemFunction036 = true;
+    this->_activateBuiltin("definitions");
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-ladvapi32") == this->flags.end()) {
+      this->flags.emplace_back("W:-ladvapi32");
+    }
   } else if (name == "libArpaInet") {
     this->builtins.libArpaInet = true;
   } else if (name == "libCtype") {
@@ -779,56 +802,8 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
 
 void Codegen::_apiDecl (const std::vector<std::string> &items) {
   for (const auto &item : items) {
-    auto firstLine = std::string();
-
-    for (auto i = static_cast<std::size_t>(0); i < item.size(); i++) {
-      auto ch = item[i];
-
-      if (ch == '\n' || (ch == '\r' && i + 1 < item.size() && item[i + 1] == '\n')) {
-        break;
-      } else {
-        firstLine += ch;
-      }
-    }
-
-    firstLine.erase(firstLine.size() - 2, 2);
-
-    auto apiItem = CodegenApiItem{};
-    auto isName = false;
-    auto isParamName = false;
-
-    for (auto i = firstLine.size() - 1;; i--) {
-      auto ch = firstLine[i];
-
-      if (ch == ')' || ch == ',') {
-        apiItem.decl.insert(0, 1, ch);
-
-        if (i != 0 && firstLine[i - 1] != '(') {
-          isParamName = true;
-        }
-      } else if (ch == ' ' && i + 1 < firstLine.size() && firstLine[i + 1] == '(') {
-        apiItem.decl.insert(0, 1, ch);
-        isParamName = false;
-        isName = true;
-      } else if (isParamName && ch == ' ') {
-        isParamName = false;
-      } else if (isParamName && (ch == '*' || ch == '&' || ch == '.')) {
-        isParamName = false;
-        apiItem.decl.insert(0, 1, ch);
-      } else if (isName && (ch == ' ' || ch == '*' || ch == '&')) {
-        apiItem.decl.insert(0, 1, ch);
-        isName = false;
-      } else if (isName) {
-        apiItem.name.insert(0, 1, ch);
-        apiItem.decl.insert(0, 1, ch);
-      } else if (!isParamName) {
-        apiItem.decl.insert(0, 1, ch);
-      }
-
-      if (i == 0) {
-        break;
-      }
-    }
+    auto cParser = cParse(item);
+    auto apiItem = CodegenApiItem{.name = cParser.name, .decl = cParser.decl()};
 
     apiItem.decl = this->_apiEval(apiItem.decl, 0, &apiItem.dependencies) + ";" EOL;
     this->api[apiItem.name] = apiItem;
@@ -837,48 +812,8 @@ void Codegen::_apiDecl (const std::vector<std::string> &items) {
 
 void Codegen::_apiDef (const std::vector<std::string> &items) {
   for (const auto &item : items) {
-    auto firstLine = std::string();
-
-    for (auto i = static_cast<std::size_t>(0); i < item.size(); i++) {
-      auto ch = item[i];
-
-      if (ch == '\n' || (ch == '\r' && i + 1 < item.size() && item[i + 1] == '\n')) {
-        break;
-      } else {
-        firstLine += ch;
-      }
-    }
-
-    firstLine.erase(firstLine.size() - 2, 2);
-
-    auto name = std::string();
-    auto isName = false;
-    auto isParamName = false;
-
-    for (auto i = firstLine.size() - 1;; i--) {
-      auto ch = firstLine[i];
-
-      if (ch == ')' || ch == ',') {
-        if (i != 0 && firstLine[i - 1] != '(') {
-          isParamName = true;
-        }
-      } else if (ch == ' ' && i + 1 < firstLine.size() && firstLine[i + 1] == '(') {
-        isParamName = false;
-        isName = true;
-      } else if (isParamName && (ch == '*' || ch == '&' || ch == ' ' || ch == '.')) {
-        isParamName = false;
-      } else if (isName && (ch == ' ' || ch == '*' || ch == '&')) {
-        isName = false;
-      } else if (isName) {
-        name.insert(0, 1, ch);
-      }
-
-      if (i == 0) {
-        break;
-      }
-    }
-
-    this->api[name].def = this->_apiEval(item, 0, &this->api[name].dependencies);
+    auto cParser = cParse(item);
+    this->api[cParser.name].def = this->_apiEval(item, 0, &this->api[cParser.name].dependencies);
   }
 }
 

@@ -65,6 +65,7 @@ set(
   src/ASTNode.cpp src/ASTNode.hpp
   src/Codegen.cpp src/Codegen.hpp
   src/CodegenCleanUp.cpp src/CodegenCleanUp.hpp
+  src/CParser.cpp src/CParser.hpp
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
@@ -125,6 +126,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/ASTExprTest.cpp
     test/CodegenTest.cpp
     test/CodegenCleanUpTest.cpp
+    test/CParserTest.cpp
     test/ErrorTest.cpp
     test/LexerTest.cpp
     test/MockAST.cpp test/MockAST.hpp

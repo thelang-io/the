@@ -22,6 +22,9 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 
 struct str {
   char *d;
@@ -33,9 +36,15 @@ void print (FILE *, const char *, ...);
 void str_free (struct str);
 
 uint64_t date_now () {
-  struct timespec ts;
-  clock_gettime(CLOCK_REALTIME, &ts);
-  return ts.tv_sec * 1000 + ts.tv_nsec / 1e6;
+  #ifdef THE_OS_WINDOWS
+    FILETIME ft;
+    GetSystemTimePreciseAsFileTime(&ft);
+    return (((uint64_t) ft.dwHighDateTime << 32) | ft.dwLowDateTime) / 1e4 - 116444736e5;
+  #else
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return ts.tv_sec * 1e3 + ts.tv_nsec / 1e6;
+  #endif
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
