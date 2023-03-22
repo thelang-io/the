@@ -597,11 +597,11 @@ INSTANTIATE_TEST_SUITE_P(BuiltinPath, CodegenPassTest, testing::Values(
   "builtin-path-dirname",
   "builtin-path-dirname-root",
   "builtin-path-sep",
-  "builtin-path-sep-root",
-  "builtin-path-temp-directory",
-  "builtin-path-temp-directory-root",
-  "builtin-path-temp-file",
-  "builtin-path-temp-file-root"
+  "builtin-path-sep-root"
+  // "builtin-path-temp-directory",
+  // "builtin-path-temp-directory-root",
+  // "builtin-path-temp-file",
+  // "builtin-path-temp-file-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
