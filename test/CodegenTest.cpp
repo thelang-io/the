@@ -322,9 +322,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinByte, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinChar, CodegenPassTest, testing::Values(
-  // "builtin-char-byte",
-  // "builtin-char-byte-ref",
-  // "builtin-char-byte-root",
+  "builtin-char-byte",
+  "builtin-char-byte-ref",
+  "builtin-char-byte-root",
   "builtin-char-is-digit",
   "builtin-char-is-digit-ref",
   "builtin-char-is-digit-root",
@@ -334,27 +334,27 @@ INSTANTIATE_TEST_SUITE_P(BuiltinChar, CodegenPassTest, testing::Values(
   "builtin-char-is-letter-or-digit",
   "builtin-char-is-letter-or-digit-ref",
   "builtin-char-is-letter-or-digit-root",
-  // "builtin-char-is-lower",
-  // "builtin-char-is-lower-ref",
-  // "builtin-char-is-lower-root",
-  // "builtin-char-is-upper",
-  // "builtin-char-is-upper-ref",
-  // "builtin-char-is-upper-root",
+  "builtin-char-is-lower",
+  "builtin-char-is-lower-ref",
+  "builtin-char-is-lower-root",
+  "builtin-char-is-upper",
+  "builtin-char-is-upper-ref",
+  "builtin-char-is-upper-root",
   "builtin-char-is-whitespace",
   "builtin-char-is-whitespace-ref",
   "builtin-char-is-whitespace-root",
-  // "builtin-char-lower",
-  // "builtin-char-lower-ref",
-  // "builtin-char-lower-root",
+  "builtin-char-lower",
+  "builtin-char-lower-ref",
+  "builtin-char-lower-root",
   "builtin-char-repeat",
   "builtin-char-repeat-ref",
   "builtin-char-repeat-root",
   "builtin-char-str",
   "builtin-char-str-ref",
   "builtin-char-str-root"
-  // "builtin-char-upper",
-  // "builtin-char-upper-ref",
-  // "builtin-char-upper-root"
+  "builtin-char-upper",
+  "builtin-char-upper-ref",
+  "builtin-char-upper-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinDate, CodegenPassTest, testing::Values(
