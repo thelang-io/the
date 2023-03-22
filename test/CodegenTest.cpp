@@ -351,7 +351,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinChar, CodegenPassTest, testing::Values(
   "builtin-char-repeat-root",
   "builtin-char-str",
   "builtin-char-str-ref",
-  "builtin-char-str-root"
+  "builtin-char-str-root",
   "builtin-char-upper",
   "builtin-char-upper-ref",
   "builtin-char-upper-root"
