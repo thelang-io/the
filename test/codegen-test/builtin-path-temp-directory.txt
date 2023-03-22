@@ -104,12 +104,12 @@ char *path_mktemp (unsigned char (*f) (char *)) {
         *p++ = chars[v % chars_len];
         v /= chars_len;
       }
-      if (f(d) == 0) return d;
+      if (f(d)) return d;
     } while (--j);
     free(d);
     return NULL;
   #else
-    if (f(d) == 1) {
+    if (!f(d)) {
       free(d);
       return NULL;
     }
@@ -128,9 +128,9 @@ struct str path_tempDirectory () {
 }
 unsigned char path_tempDirectoryFunctor (char *c) {
   #ifdef THE_OS_WINDOWS
-    return CreateDirectory(c, NULL) ? 0 : 1;
+    return CreateDirectory(c, NULL) == 0 ? 0 : 1;
   #else
-    return mkdtemp(c) == NULL ? 1 : 0;
+    return mkdtemp(c) == NULL ? 0 : 1;
   #endif
 }
 char *path_tmpdir () {

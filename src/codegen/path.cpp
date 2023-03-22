@@ -102,12 +102,12 @@ const std::vector<std::string> codegenPath = {
   R"(        *p++ = chars[v % chars_len];)" EOL
   R"(        v /= chars_len;)" EOL
   R"(      })" EOL
-  R"(      if (f(d) == 0) return d;)" EOL
+  R"(      if (f(d)) return d;)" EOL
   R"(    } while (--j);)" EOL
   R"(    _{free}(d);)" EOL
   R"(    return _{NULL};)" EOL
   R"(  #else)" EOL
-  R"(    if (f(d) == 1) {)" EOL
+  R"(    if (!f(d)) {)" EOL
   R"(      _{free}(d);)" EOL
   R"(      return _{NULL};)" EOL
   R"(    })" EOL
@@ -128,9 +128,9 @@ const std::vector<std::string> codegenPath = {
 
   R"(unsigned char path_tempDirectoryFunctor (char *c) {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    return _{CreateDirectory}(c, _{NULL}) ? 0 : 1;)" EOL
+  R"(    return _{CreateDirectory}(c, _{NULL}) == 0 ? 0 : 1;)" EOL
   R"(  #else)" EOL
-  R"(    return _{mkdtemp}(c) == _{NULL} ? 1 : 0;)" EOL
+  R"(    return _{mkdtemp}(c) == _{NULL} ? 0 : 1;)" EOL
   R"(  #endif)" EOL
   R"(})" EOL,
 
@@ -147,11 +147,11 @@ const std::vector<std::string> codegenPath = {
 
   R"(unsigned char path_tempFileFunctor (char *c) {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    return _{INVALID_HANDLE_VALUE} == _{CreateFile}(c, _{GENERIC_READ} | _{GENERIC_WRITE}, _{FILE_SHARE_READ} | _{FILE_SHARE_WRITE} | _{FILE_SHARE_DELETE}, _{NULL}, _{CREATE_NEW}, _{FILE_ATTRIBUTE_NORMAL}, _{NULL});)" EOL
+  R"(    return _{INVALID_HANDLE_VALUE} == _{CreateFile}(c, _{GENERIC_READ} | _{GENERIC_WRITE}, _{FILE_SHARE_READ} | _{FILE_SHARE_WRITE} | _{FILE_SHARE_DELETE}, _{NULL}, _{CREATE_NEW}, _{FILE_ATTRIBUTE_NORMAL}, _{NULL}) ? 0 : 1;)" EOL
   R"(  #else)" EOL
   R"(    int fd = _{mkstemp}(c);)" EOL
   R"(    if (fd != -1) _{close}(fd);)" EOL
-  R"(    return fd == -1 ? 1 : 0;)" EOL
+  R"(    return fd == -1 ? 0 : 1;)" EOL
   R"(  #endif)" EOL
   R"(})" EOL,
 

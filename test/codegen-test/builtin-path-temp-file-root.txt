@@ -74,12 +74,12 @@ char *path_mktemp (unsigned char (*f) (char *)) {
         *p++ = chars[v % chars_len];
         v /= chars_len;
       }
-      if (f(d) == 0) return d;
+      if (f(d)) return d;
     } while (--j);
     free(d);
     return NULL;
   #else
-    if (f(d) == 1) {
+    if (!f(d)) {
       free(d);
       return NULL;
     }
@@ -98,11 +98,11 @@ struct str path_tempFile () {
 }
 unsigned char path_tempFileFunctor (char *c) {
   #ifdef THE_OS_WINDOWS
-    return INVALID_HANDLE_VALUE == CreateFile(c, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    return INVALID_HANDLE_VALUE == CreateFile(c, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL) ? 0 : 1;
   #else
     int fd = mkstemp(c);
     if (fd != -1) close(fd);
-    return fd == -1 ? 1 : 0;
+    return fd == -1 ? 0 : 1;
   #endif
 }
 char *path_tmpdir () {
