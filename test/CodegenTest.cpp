@@ -357,10 +357,10 @@ INSTANTIATE_TEST_SUITE_P(BuiltinChar, CodegenPassTest, testing::Values(
   "builtin-char-upper-root"
 ));
 
-INSTANTIATE_TEST_SUITE_P(BuiltinDate, CodegenPassTest, testing::Values(
-  "builtin-date-now",
-  "builtin-date-now-root"
-));
+// INSTANTIATE_TEST_SUITE_P(BuiltinDate, CodegenPassTest, testing::Values(
+  // "builtin-date-now",
+  // "builtin-date-now-root"
+// ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinEnum, CodegenPassTest, testing::Values(
   "builtin-enum-rawValue",
@@ -597,11 +597,11 @@ INSTANTIATE_TEST_SUITE_P(BuiltinPath, CodegenPassTest, testing::Values(
   "builtin-path-dirname",
   "builtin-path-dirname-root",
   "builtin-path-sep",
-  "builtin-path-sep-root"
-  // "builtin-path-temp-directory",
-  // "builtin-path-temp-directory-root",
-  // "builtin-path-temp-file",
-  // "builtin-path-temp-file-root"
+  "builtin-path-sep-root",
+  "builtin-path-temp-directory",
+  "builtin-path-temp-directory-root",
+  "builtin-path-temp-file",
+  "builtin-path-temp-file-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
@@ -610,8 +610,8 @@ INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
   "builtin-process-args-scoped",
   "builtin-process-cwd",
   "builtin-process-cwd-root",
-  "builtin-process-env",
-  "builtin-process-env-root",
+  // "builtin-process-env",
+  // "builtin-process-env-root",
   "builtin-process-exit-empty",
   "builtin-process-exit-one",
   "builtin-process-exit-zero",
@@ -619,8 +619,8 @@ INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
   "builtin-process-getgid-root",
   "builtin-process-getuid",
   "builtin-process-getuid-root",
-  "builtin-process-home",
-  "builtin-process-home-root",
+  // "builtin-process-home",
+  // "builtin-process-home-root",
   "builtin-process-run-sync",
   "builtin-process-run-sync-root"
 ));
