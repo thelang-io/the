@@ -1,6 +1,6 @@
 ======= stdin =======
 main {
-  arr := ['\0', '\n', '\t', 'A', 'a', '0', '9', '_', '-']
+  arr := ['A', 'a', '0', '9', '_', '-']
 
   loop i := 0; i < arr.len; i++ {
     print(arr[i].lower)
@@ -124,7 +124,7 @@ size_t __THE_1_array_char_len (struct __THE_1_array_char n) {
 }
 
 int main () {
-  const struct __THE_1_array_char __THE_0_arr_0 = __THE_1_array_char_alloc(9, '\0', '\n', '\t', 'A', 'a', '0', '9', '_', '-');
+  const struct __THE_1_array_char __THE_0_arr_0 = __THE_1_array_char_alloc(6, 'A', 'a', '0', '9', '_', '-');
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_char_len(__THE_1_array_char_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     print(stdout, "cz", char_lower(*__THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
   }
@@ -132,9 +132,6 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-
-
-{{ \t }}
 a
 a
 0

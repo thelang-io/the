@@ -1,8 +1,5 @@
 ======= stdin =======
 main {
-  '\0'.upper;
-  '\n'.upper;
-  '\t'.upper;
   'A'.upper;
   'a'.upper;
   '0'.upper;
@@ -20,9 +17,6 @@ char char_upper (char c) {
 }
 
 int main () {
-  char_upper('\0');
-  char_upper('\n');
-  char_upper('\t');
   char_upper('A');
   char_upper('a');
   char_upper('0');

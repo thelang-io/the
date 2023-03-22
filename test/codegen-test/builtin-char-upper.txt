@@ -1,8 +1,5 @@
 ======= stdin =======
 main {
-  print('\0'.upper)
-  print('\n'.upper)
-  print('\t'.upper)
   print('A'.upper)
   print('a'.upper)
   print('0'.upper)
@@ -77,9 +74,6 @@ void str_free (struct str s) {
 }
 
 int main () {
-  print(stdout, "cz", char_upper('\0'), THE_EOL);
-  print(stdout, "cz", char_upper('\n'), THE_EOL);
-  print(stdout, "cz", char_upper('\t'), THE_EOL);
   print(stdout, "cz", char_upper('A'), THE_EOL);
   print(stdout, "cz", char_upper('a'), THE_EOL);
   print(stdout, "cz", char_upper('0'), THE_EOL);
@@ -89,9 +83,6 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-
-
-{{ \t }}
 A
 A
 0

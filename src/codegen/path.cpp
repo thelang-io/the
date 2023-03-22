@@ -97,7 +97,7 @@ const std::vector<std::string> codegenPath = {
   R"(        _{fprintf}(_{stderr}, "Error: failed to generate random with `SystemFunction036`" _{THE_EOL});)" EOL
   R"(        _{exit}(_{EXIT_FAILURE});)" EOL
   R"(      })" EOL
-  R"(      char *p = &d[len - x];)" EOL
+  R"(      char *p = &d[l - x];)" EOL
   R"(      for (_{size_t} i = 0; i < x; i++) {)" EOL
   R"(        *p++ = chars[v % chars_len];)" EOL
   R"(        v /= chars_len;)" EOL

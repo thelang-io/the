@@ -108,4 +108,4 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-{{ (/Users/\w+|/home/\w+) }}
+{{ (/Users/\w+|/home/\w+|C:\\\w+\\\w+) }}

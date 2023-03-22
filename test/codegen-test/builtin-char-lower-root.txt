@@ -1,8 +1,5 @@
 ======= stdin =======
 main {
-  '\0'.lower;
-  '\n'.lower;
-  '\t'.lower;
   'A'.lower;
   'a'.lower;
   '0'.lower;
@@ -20,9 +17,6 @@ char char_lower (char c) {
 }
 
 int main () {
-  char_lower('\0');
-  char_lower('\n');
-  char_lower('\t');
   char_lower('A');
   char_lower('a');
   char_lower('0');

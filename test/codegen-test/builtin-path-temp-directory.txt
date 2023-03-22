@@ -99,7 +99,7 @@ char *path_mktemp (unsigned char (*f) (char *)) {
         fprintf(stderr, "Error: failed to generate random with `SystemFunction036`" THE_EOL);
         exit(EXIT_FAILURE);
       }
-      char *p = &d[len - x];
+      char *p = &d[l - x];
       for (size_t i = 0; i < x; i++) {
         *p++ = chars[v % chars_len];
         v /= chars_len;
