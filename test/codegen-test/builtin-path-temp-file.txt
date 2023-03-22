@@ -248,6 +248,6 @@ int main () {
 ======= flags =======
 W:-ladvapi32
 ======= stdout =======
-{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+) }}
-{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+) }}
+{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+|C:\\\w+\\[\w~]+\\\w+\\\w+\\\w+\\\w+) }}
+{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+|C:\\\w+\\[\w~]+\\\w+\\\w+\\\w+\\\w+) }}
 false
