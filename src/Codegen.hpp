@@ -39,9 +39,9 @@ enum CodegenPhase {
 struct CodegenApiItem {
   bool enabled = false;
   std::string name;
-  std::string decl;
-  std::string def;
-  std::set<std::string> dependencies;
+  std::string decl = "";
+  std::string def = "";
+  std::set<std::string> dependencies = {};
 };
 
 struct CodegenBuiltins {
