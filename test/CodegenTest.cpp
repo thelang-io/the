@@ -121,6 +121,13 @@ TEST_P(CodegenPassTest, Passes) {
   auto [actualStdout, actualStderr, actualReturnCode] = execCmd(cmd, fileName);
   std::filesystem::remove(filePath);
 
+  #if defined(OS_MACOS)
+    std::filesystem::remove_all(filePath + ".dSYM");
+  #elif defined(OS_WINDOWS)
+    std::filesystem::remove(fileName + ".ilk");
+    std::filesystem::remove(fileName + ".pdb");
+  #endif
+
   while (expectedOutput.find("{{ ") != std::string::npos) {
     auto placeholderStart = expectedOutput.find("{{ ");
     auto placeholderEnd = expectedOutput.find(" }}") + 3;
@@ -772,21 +779,21 @@ INSTANTIATE_TEST_SUITE_P(BuiltinURL, CodegenPassTest, testing::Values(
   "builtin-url-parse-root"
 ));
 
-// INSTANTIATE_TEST_SUITE_P(BuiltinUtils, CodegenPassTest, testing::Values(
-//   "builtin-utils-swap",
-//   "builtin-utils-swap-alias",
-//   "builtin-utils-swap-any",
-//   "builtin-utils-swap-array",
-//   "builtin-utils-swap-buffer",
-//   "builtin-utils-swap-enum",
-//   "builtin-utils-swap-fn",
-//   "builtin-utils-swap-map",
-//   "builtin-utils-swap-obj",
-//   "builtin-utils-swap-opt",
-//   "builtin-utils-swap-ref",
-//   "builtin-utils-swap-str",
-//   "builtin-utils-swap-union"
-// ));
+INSTANTIATE_TEST_SUITE_P(BuiltinUtils, CodegenPassTest, testing::Values(
+  "builtin-utils-swap",
+  "builtin-utils-swap-alias",
+  "builtin-utils-swap-any",
+  "builtin-utils-swap-array",
+  "builtin-utils-swap-buffer",
+  "builtin-utils-swap-enum",
+  "builtin-utils-swap-fn",
+  "builtin-utils-swap-map",
+  "builtin-utils-swap-obj",
+  "builtin-utils-swap-opt",
+  "builtin-utils-swap-ref",
+  "builtin-utils-swap-str",
+  "builtin-utils-swap-union"
+));
 
 INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access",

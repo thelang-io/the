@@ -22,4 +22,4 @@ fn random_randomInt (min := 0, max := IntMax) int
  * @param characters - Characters to use when constructing value.
  * @param len - Resulting value length.
  */
-fn random_randomString (characters := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", len := 32) str
+fn random_randomStr (characters := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", len := 32) str

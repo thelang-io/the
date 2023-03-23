@@ -927,12 +927,12 @@ void TypeMap::_randomModule (TypeMapPhase phase) {
       TypeFnParam{"max", this->get("int"), false, false, false}
     }, false, random_randomIntCallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{"random_randomInt", "@random_randomInt", random_randomIntTypeFn, {}, true}));
-    auto random_randomStringCallInfo = TypeCallInfo{"random_randomString"};
-    auto random_randomStringTypeFn = TypeFn{this->get("str"), {
+    auto random_randomStrCallInfo = TypeCallInfo{"random_randomStr"};
+    auto random_randomStrTypeFn = TypeFn{this->get("str"), {
       TypeFnParam{"characters", this->get("str"), false, false, false},
       TypeFnParam{"len", this->get("int"), false, false, false}
-    }, false, random_randomStringCallInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{"random_randomString", "@random_randomString", random_randomStringTypeFn, {}, true}));
+    }, false, random_randomStrCallInfo};
+    this->_items.push_back(std::make_unique<Type>(Type{"random_randomStr", "@random_randomStr", random_randomStrTypeFn, {}, true}));
   }
 }
 
