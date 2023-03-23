@@ -51,11 +51,14 @@ struct CodegenBuiltins {
   bool libCtype = false;
   bool libDirent = false;
   bool libErrno = false;
+  bool libFcntl = false;
   bool libFloat = false;
   bool libInttypes = false;
+  bool libMath = false;
   bool libNetdb = false;
   bool libNetinetIn = false;
   bool libOpensslSsl = false;
+  bool libOpensslRand = false;
   bool libPwd = false;
   bool libStdarg = false;
   bool libStdbool = false;
@@ -173,7 +176,12 @@ class Codegen {
     CodegenEntityType,
     const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt
   );
-  std::string _apiEval (const std::string &, int = 0, const std::optional<std::set<std::string> *> & = std::nullopt);
+  std::string _apiEval (
+    const std::string &,
+    int = 0,
+    const std::string & = "",
+    const std::optional<std::set<std::string> *> & = std::nullopt
+  );
   void _apiDecl (const std::vector<std::string> &);
   void _apiDef (const std::vector<std::string> &);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);

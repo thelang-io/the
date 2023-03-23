@@ -53,6 +53,7 @@ set(
   src/codegen/os.cpp src/codegen/os.hpp
   src/codegen/path.cpp src/codegen/path.hpp
   src/codegen/process.cpp src/codegen/process.hpp
+  src/codegen/random.cpp src/codegen/random.hpp
   src/codegen/request.cpp src/codegen/request.hpp
   src/codegen/str.cpp src/codegen/str.hpp
   src/codegen/thread.cpp src/codegen/thread.hpp

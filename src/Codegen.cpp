@@ -33,6 +33,7 @@
 #include "codegen/os.hpp"
 #include "codegen/path.hpp"
 #include "codegen/process.hpp"
+#include "codegen/random.hpp"
 #include "codegen/request.hpp"
 #include "codegen/str.hpp"
 #include "codegen/thread.hpp"
@@ -199,6 +200,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_apiDecl(codegenOS);
   this->_apiDecl(codegenPath);
   this->_apiDecl(codegenProcess);
+  this->_apiDecl(codegenRandom);
   this->_apiDecl(codegenRequest);
   this->_apiDecl(codegenThread);
   this->_apiDecl(codegenURL);
@@ -228,6 +230,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_apiDef(codegenOS);
   this->_apiDef(codegenPath);
   this->_apiDef(codegenProcess);
+  this->_apiDef(codegenRandom);
   this->_apiDef(codegenRequest);
   this->_apiDef(codegenThread);
   this->_apiDef(codegenURL);
@@ -404,6 +407,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   headers += this->builtins.libErrno ? "#include <errno.h>" EOL : "";
   headers += this->builtins.libFloat ? "#include <float.h>" EOL : "";
   headers += this->builtins.libInttypes ? "#include <inttypes.h>" EOL : "";
+  headers += this->builtins.libMath ? "#include <math.h>" EOL : "";
+  headers += this->builtins.libOpensslRand ? "#include <openssl/rand.h>" EOL : "";
   headers += this->builtins.libOpensslSsl ? "#include <openssl/ssl.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
   headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
@@ -414,10 +419,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   headers += this->builtins.libString ? "#include <string.h>" EOL : "";
 
   if (
-    this->builtins.libSysTypes &&
-    !this->builtins.libSysSocket &&
-    !this->builtins.libSysStat &&
-    !this->builtins.libSysUtsname
+    this->builtins.libSysTypes ||
+    this->builtins.libSysSocket ||
+    this->builtins.libSysStat ||
+    this->builtins.libSysUtsname
   ) {
     headers += this->builtins.libSysTypes ? "#include <sys/types.h>" EOL : "";
   }
@@ -443,6 +448,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
   if (
     this->builtins.libArpaInet ||
+    this->builtins.libFcntl ||
     this->builtins.libDirent ||
     this->builtins.libNetdb ||
     this->builtins.libNetinetIn ||
@@ -453,6 +459,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   ) {
     headers += "#ifndef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libArpaInet ? "  #include <arpa/inet.h>" EOL : "";
+    headers += this->builtins.libFcntl ? "  #include <fcntl.h>" EOL : "";
     headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
     headers += this->builtins.libNetdb ? "  #include <netdb.h>" EOL : "";
     headers += this->builtins.libNetinetIn ? "  #include <netinet/in.h>" EOL : "";
@@ -530,24 +537,56 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("definitions");
   } else if (name == "libErrno") {
     this->builtins.libErrno = true;
+  } else if (name == "libFcntl") {
+    this->builtins.libFcntl = true;
   } else if (name == "libFloat") {
     this->builtins.libFloat = true;
   } else if (name == "libInttypes") {
     this->builtins.libInttypes = true;
+  } else if (name == "libMath") {
+    this->builtins.libMath = true;
   } else if (name == "libNetdb") {
     this->builtins.libNetdb = true;
   } else if (name == "libNetinetIn") {
     this->builtins.libNetinetIn = true;
+  } else if (name == "libOpensslRand") {
+    this->builtins.libOpensslRand = true;
+
+    if (std::find(this->flags.begin(), this->flags.end(), "A:-lssl") == this->flags.end()) {
+      this->flags.emplace_back("A:-lssl");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "A:-lcrypto") == this->flags.end()) {
+      this->flags.emplace_back("A:-lcrypto");
+    }
   } else if (name == "libOpensslSsl") {
     this->builtins.libOpensslSsl = true;
 
     if (std::find(this->flags.begin(), this->flags.end(), "A:-lssl") == this->flags.end()) {
       this->flags.emplace_back("A:-lssl");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "A:-lcrypto") == this->flags.end()) {
       this->flags.emplace_back("A:-lcrypto");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-lws2_32") == this->flags.end()) {
       this->flags.emplace_back("W:-lws2_32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-lgdi32") == this->flags.end()) {
       this->flags.emplace_back("W:-lgdi32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-ladvapi32") == this->flags.end()) {
       this->flags.emplace_back("W:-ladvapi32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-lcrypt32") == this->flags.end()) {
       this->flags.emplace_back("W:-lcrypt32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-luser32") == this->flags.end()) {
       this->flags.emplace_back("W:-luser32");
     }
   } else if (name == "libPwd") {
@@ -709,7 +748,12 @@ int Codegen::_apiEntity (
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-std::string Codegen::_apiEval (const std::string &code, int limit, const std::optional<std::set<std::string> *> &dependencies) {
+std::string Codegen::_apiEval (
+  const std::string &code,
+  int limit,
+  const std::string &selfName,
+  const std::optional<std::set<std::string> *> &dependencies
+) {
   auto name = std::string();
   auto isName = false;
   auto result = std::string();
@@ -722,7 +766,9 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
       isName = true;
       i += 1;
     } else if (isName && ch == '}') {
-      if (codegenMetadata.contains(name)) {
+      auto sameAsSelfName = selfName == name;
+
+      if (!sameAsSelfName && codegenMetadata.contains(name)) {
         for (const auto &dependency : codegenMetadata.at(name)) {
           if (dependencies == std::nullopt) {
             this->_activateBuiltin(dependency);
@@ -730,13 +776,13 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
             (*dependencies)->emplace(dependency);
           }
         }
-      } else if (this->api.contains(name)) {
+      } else if (!sameAsSelfName && this->api.contains(name)) {
         if (dependencies == std::nullopt) {
           this->_activateBuiltin(name);
         } else if (!(*dependencies)->contains(name)) {
           (*dependencies)->emplace(name);
         }
-      } else if (name.starts_with("array_")) {
+      } else if (!sameAsSelfName && name.starts_with("array_")) {
         if (name.ends_with("_free")) {
           name = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6, name.size() - 11)))) + "_free";
         } else {
@@ -748,7 +794,7 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
         } else if (!(*dependencies)->contains(name)) {
           (*dependencies)->emplace(name);
         }
-      } else if (name.starts_with("map_") || name.starts_with("pair_")) {
+      } else if (!sameAsSelfName && (name.starts_with("map_") || name.starts_with("pair_"))) {
         auto isPair = name.starts_with("pair_");
         auto nameSliced = isPair ? name.substr(5) : name.substr(4);
         auto keyType = this->ast->typeMap.get(nameSliced.substr(0, nameSliced.find('_')));
@@ -765,7 +811,7 @@ std::string Codegen::_apiEval (const std::string &code, int limit, const std::op
         } else if (!(*dependencies)->contains(name)) {
           (*dependencies)->emplace(name);
         }
-      } else {
+      } else if (!sameAsSelfName) {
         auto existsInEntities = false;
 
         for (const auto &entity : this->entities) {
@@ -805,7 +851,7 @@ void Codegen::_apiDecl (const std::vector<std::string> &items) {
     auto cParser = cParse(item);
     auto apiItem = CodegenApiItem{.name = cParser.name, .decl = cParser.decl()};
 
-    apiItem.decl = this->_apiEval(apiItem.decl, 0, &apiItem.dependencies) + ";" EOL;
+    apiItem.decl = this->_apiEval(apiItem.decl, 0, apiItem.name, &apiItem.dependencies) + ";" EOL;
     this->api[apiItem.name] = apiItem;
   }
 }
@@ -813,7 +859,7 @@ void Codegen::_apiDecl (const std::vector<std::string> &items) {
 void Codegen::_apiDef (const std::vector<std::string> &items) {
   for (const auto &item : items) {
     auto cParser = cParse(item);
-    this->api[cParser.name].def = this->_apiEval(item, 0, &this->api[cParser.name].dependencies);
+    this->api[cParser.name].def = this->_apiEval(item, 0, cParser.name, &this->api[cParser.name].dependencies);
   }
 }
 

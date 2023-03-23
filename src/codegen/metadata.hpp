@@ -60,6 +60,11 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"ERANGE", {"libErrno"}},
   std::pair<std::string, std::set<std::string>>{"errno", {"libErrno"}},
 
+  std::pair<std::string, std::set<std::string>>{"O_CREAT", {"libFcntl"}},
+  std::pair<std::string, std::set<std::string>>{"O_RDONLY", {"libFcntl"}},
+  std::pair<std::string, std::set<std::string>>{"O_WRONLY", {"libFcntl"}},
+  std::pair<std::string, std::set<std::string>>{"open", {"libFcntl"}},
+
   std::pair<std::string, std::set<std::string>>{"DBL_MAX", {"libFloat"}},
   std::pair<std::string, std::set<std::string>>{"DBL_MIN", {"libFloat"}},
   std::pair<std::string, std::set<std::string>>{"FLT_MAX", {"libFloat"}},
@@ -74,6 +79,10 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"PRIu32", {"libInttypes"}},
   std::pair<std::string, std::set<std::string>>{"PRIu64", {"libInttypes"}},
 
+  std::pair<std::string, std::set<std::string>>{"ceil", {"libMath"}},
+  std::pair<std::string, std::set<std::string>>{"floor", {"libMath"}},
+  std::pair<std::string, std::set<std::string>>{"round", {"libMath"}},
+
   std::pair<std::string, std::set<std::string>>{"struct addrinfo", {"libNetdb", "libWinWs2tcpip"}},
   std::pair<std::string, std::set<std::string>>{"freeaddrinfo", {"libNetdb", "libWinWs2tcpip"}},
   std::pair<std::string, std::set<std::string>>{"getaddrinfo", {"libNetdb", "libWinWs2tcpip"}},
@@ -81,6 +90,8 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"IPPROTO_TCP", {"libNetinetIn", "libWinsock2"}},
   std::pair<std::string, std::set<std::string>>{"WSADATA", {"libNetinetIn", "libWinsock2"}},
   std::pair<std::string, std::set<std::string>>{"WSAStartup", {"libNetinetIn", "libWinsock2"}},
+
+  std::pair<std::string, std::set<std::string>>{"RAND_bytes", {"libOpensslRand"}},
 
   std::pair<std::string, std::set<std::string>>{"SSL_CTX_free", {"libOpensslSsl"}},
   std::pair<std::string, std::set<std::string>>{"SSL_CTX_new", {"libOpensslSsl"}},
@@ -141,6 +152,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"fwrite", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"pclose", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"popen", {"libStdio"}},
+  std::pair<std::string, std::set<std::string>>{"rename", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"remove", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"snprintf", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"sprintf", {"libStdio"}},
@@ -187,6 +199,8 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"_S_IFMT", {"libSysStat"}},
   std::pair<std::string, std::set<std::string>>{"_S_IFREG", {"libSysStat"}},
   std::pair<std::string, std::set<std::string>>{"chmod", {"libSysStat"}},
+  std::pair<std::string, std::set<std::string>>{"fchmod", {"libSysStat"}},
+  std::pair<std::string, std::set<std::string>>{"fstat", {"libSysStat"}},
   std::pair<std::string, std::set<std::string>>{"lstat", {"libSysStat"}},
   std::pair<std::string, std::set<std::string>>{"mkdir", {"libSysStat"}},
   std::pair<std::string, std::set<std::string>>{"stat", {"libSysStat"}},
@@ -212,13 +226,16 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"access", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"chown", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"close", {"libUnistd"}},
+  std::pair<std::string, std::set<std::string>>{"ftruncate", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"getcwd", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"getgid", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"getuid", {"libUnistd"}},
+  std::pair<std::string, std::set<std::string>>{"read", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"rmdir", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"symlink", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"unlink", {"libUnistd"}},
   std::pair<std::string, std::set<std::string>>{"usleep", {"libUnistd"}},
+  std::pair<std::string, std::set<std::string>>{"write", {"libUnistd"}},
 
   std::pair<std::string, std::set<std::string>>{"_getcwd", {"libWinDirect"}},
 
@@ -254,6 +271,7 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"VOLUME_NAME_DOS", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"WIN32_FIND_DATA", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CloseHandle", {"libWindows"}},
+  std::pair<std::string, std::set<std::string>>{"CopyFile", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CreateDirectory", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CreateFile", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CreateSymbolicLink", {"libWindows"}},
