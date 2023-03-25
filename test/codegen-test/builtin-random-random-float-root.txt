@@ -42,5 +42,5 @@ int main () {
   random_randomFloat(1, -100, 1, 100);
 }
 ======= flags =======
-A:-lssl A:-lcrypto
+A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======

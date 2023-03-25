@@ -545,6 +545,10 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->builtins.libInttypes = true;
   } else if (name == "libMath") {
     this->builtins.libMath = true;
+
+    if (std::find(this->flags.begin(), this->flags.end(), "A:-lm") == this->flags.end()) {
+      this->flags.emplace_back("A:-lm");
+    }
   } else if (name == "libNetdb") {
     this->builtins.libNetdb = true;
   } else if (name == "libNetinetIn") {
@@ -558,6 +562,26 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
 
     if (std::find(this->flags.begin(), this->flags.end(), "A:-lcrypto") == this->flags.end()) {
       this->flags.emplace_back("A:-lcrypto");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-lws2_32") == this->flags.end()) {
+      this->flags.emplace_back("W:-lws2_32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-lgdi32") == this->flags.end()) {
+      this->flags.emplace_back("W:-lgdi32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-ladvapi32") == this->flags.end()) {
+      this->flags.emplace_back("W:-ladvapi32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-lcrypt32") == this->flags.end()) {
+      this->flags.emplace_back("W:-lcrypt32");
+    }
+
+    if (std::find(this->flags.begin(), this->flags.end(), "W:-luser32") == this->flags.end()) {
+      this->flags.emplace_back("W:-luser32");
     }
   } else if (name == "libOpensslSsl") {
     this->builtins.libOpensslSsl = true;

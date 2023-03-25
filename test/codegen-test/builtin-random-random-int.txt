@@ -120,7 +120,7 @@ int main () {
   }
 }
 ======= flags =======
-A:-lssl A:-lcrypto
+A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======
 {{ \-?\d{1,10} }}
 {{ \-?\d{1,10} }}
