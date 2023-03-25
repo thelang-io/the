@@ -53,6 +53,7 @@ const std::vector<std::string> codegenRandom = {
   R"(  for (_{size_t} i = 0; i < l; i++) d[i] = a.d[(_{size_t}) _{round}((double) d[i] / 0xFF * (double) (a.l - 1))];)" EOL
   R"(  _{struct str} r = _{str_calloc}((void *) d, l);)" EOL
   R"(  _{free}(d);)" EOL
+  R"(  _{str_free}(n1);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL
 };
