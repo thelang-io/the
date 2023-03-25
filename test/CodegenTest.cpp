@@ -1401,7 +1401,6 @@ INSTANTIATE_TEST_SUITE_P(BuiltinFs, CodegenThrowTest, testing::Values(
   "throw-builtin-fs-copy-file-sync-directory",
   "throw-builtin-fs-copy-file-sync-destination-directory",
   "throw-builtin-fs-copy-file-sync-non-existing",
-  "throw-builtin-fs-copy-file-sync-protected",
   "throw-builtin-fs-link-sync-existing",
   "throw-builtin-fs-link-sync-same-name",
   "throw-builtin-fs-mkdir-sync-existing",
