@@ -175,4 +175,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: can't copy same file
+Error: {{ (can't copy same file|failed to copy file from `test\\fixtures\\test\.txt` to `test\\fixtures\\test\.txt`) }}

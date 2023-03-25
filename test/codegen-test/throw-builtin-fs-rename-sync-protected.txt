@@ -147,4 +147,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to rename from `/etc/sudoers` to `test/fixtures/rename-protected`
+Error: failed to rename from `{{ (/etc/sudoers|C:\\Windows\\System32\\kernel32\.dll) }}` to `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}rename-protected`

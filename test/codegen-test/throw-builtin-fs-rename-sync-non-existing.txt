@@ -91,4 +91,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to rename from `test/non-existing` to `test/non-existing2`
+Error: failed to rename from `test{{ (\/|\\) }}non-existing` to `test{{ (\/|\\) }}non-existing2`

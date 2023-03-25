@@ -546,8 +546,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libMath") {
     this->builtins.libMath = true;
 
-    if (std::find(this->flags.begin(), this->flags.end(), "A:-lm") == this->flags.end()) {
-      this->flags.emplace_back("A:-lm");
+    if (std::find(this->flags.begin(), this->flags.end(), "U:-lm") == this->flags.end()) {
+      this->flags.emplace_back("U:-lm");
     }
   } else if (name == "libNetdb") {
     this->builtins.libNetdb = true;

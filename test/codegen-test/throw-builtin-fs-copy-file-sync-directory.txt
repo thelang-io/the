@@ -175,4 +175,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: cannot copy non-file `test/fixtures`
+Error: {{ (cannot copy non\-file `test/fixtures`|failed to copy file from `test\\fixtures` to `test\\fixtures\\test3\.txt`) }}

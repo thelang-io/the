@@ -2,12 +2,11 @@
 main {
   fromPath := "test" + path_SEP + "fixtures" + path_SEP + "test3.txt"
   toPath := "test" + path_SEP + "fixtures" + path_SEP + "test4.txt"
-  writeData := 'a'.repeat(1e8)
 
-  fs_writeFileSync(fromPath, writeData.toBuffer())
+  fs_writeFileSync(fromPath, 'a'.repeat(1e8).toBuffer())
   fs_copyFileSync(fromPath, toPath)
-  readData := fs_readFileSync(toPath).str()
-  print(writeData.len, readData.len)
+  sb := fs_statSync(toPath)
+  print(sb.size)
   fs_rmSync(toPath)
   fs_rmSync(fromPath)
 }
@@ -50,25 +49,47 @@ struct str {
   size_t l;
 };
 
+struct fs_Stats;
+
+struct fs_Stats {
+  const uint64_t __THE_0_dev;
+  const uint32_t __THE_0_mode;
+  const int64_t __THE_0_nlink;
+  const uint64_t __THE_0_ino;
+  const int32_t __THE_0_uid;
+  const int32_t __THE_0_gid;
+  const uint64_t __THE_0_rdev;
+  const int64_t __THE_0_atime;
+  const int64_t __THE_0_atimeNs;
+  const int64_t __THE_0_mtime;
+  const int64_t __THE_0_mtimeNs;
+  const int64_t __THE_0_ctime;
+  const int64_t __THE_0_ctimeNs;
+  const int64_t __THE_0_btime;
+  const int64_t __THE_0_btimeNs;
+  const int64_t __THE_0_size;
+  const int64_t __THE_0_blocks;
+  const int64_t __THE_0_blockSize;
+};
+
 void *alloc (size_t);
 void buffer_free (struct buffer);
-struct str buffer_to_str (struct buffer);
 struct str char_repeat (char, int32_t);
 struct str cstr_concat_str (const char *, struct str);
 void fs_copyFileSync (struct str, struct str);
-struct buffer fs_readFileSync (struct str);
 void fs_rmSync (struct str);
+struct fs_Stats *fs_statSync (struct str);
 void fs_writeFileSync (struct str, struct buffer);
 void print (FILE *, const char *, ...);
-void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-size_t str_len (struct str);
 struct buffer str_toBuffer (struct str);
+struct fs_Stats *fs_Stats_alloc (uint64_t, uint32_t, int64_t, uint64_t, int32_t, int32_t, uint64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t);
+void fs_Stats_free (struct fs_Stats *);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -80,9 +101,6 @@ void *alloc (size_t l) {
 }
 void buffer_free (struct buffer o) {
   free(o.d);
-}
-struct str buffer_to_str (struct buffer b) {
-  return (struct str) {(char *) b.d, b.l};
 }
 struct str char_repeat (char c, int32_t k) {
   if (k <= 0) return str_alloc("");
@@ -174,27 +192,6 @@ void fs_copyFileSync (struct str n1, struct str n2) {
   str_free(n2);
   str_free(n1);
 }
-struct buffer fs_readFileSync (struct str s) {
-  char *c = str_cstr(s);
-  FILE *f = fopen(c, "rb");
-  if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s` for reading" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  }
-  unsigned char *d = NULL;
-  unsigned char b[4096];
-  size_t l = 0;
-  size_t y;
-  while ((y = fread(b, 1, sizeof(b), f)) > 0) {
-    d = re_alloc(d, l + y);
-    memcpy(&d[l], b, y);
-    l += y;
-  }
-  fclose(f);
-  free(c);
-  str_free((struct str) s);
-  return (struct buffer) {d, l};
-}
 void fs_rmSync (struct str s) {
   char *c = str_cstr(s);
   if (remove(c) != 0) {
@@ -203,6 +200,32 @@ void fs_rmSync (struct str s) {
   }
   free(c);
   str_free(s);
+}
+struct fs_Stats *fs_statSync (struct str s) {
+  char *c = str_cstr(s);
+  struct fs_Stats *r;
+  #ifdef THE_OS_WINDOWS
+    struct _stat sb;
+    if (_stat(c, &sb) != 0) {
+      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, sb.st_size, 0, 4096);
+  #else
+    struct stat sb;
+    if (stat(c, &sb) != 0) {
+      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+    #ifdef THE_OS_MACOS
+      r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atimespec.tv_sec, sb.st_atimespec.tv_nsec, sb.st_mtimespec.tv_sec, sb.st_mtimespec.tv_nsec, sb.st_ctimespec.tv_sec, sb.st_ctimespec.tv_nsec, sb.st_birthtimespec.tv_sec, sb.st_birthtimespec.tv_nsec, sb.st_size, sb.st_blocks, sb.st_blksize);
+    #else
+      r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atim.tv_sec, sb.st_atim.tv_nsec, sb.st_mtim.tv_sec, sb.st_mtim.tv_nsec, sb.st_ctim.tv_sec, sb.st_ctim.tv_nsec, sb.st_ctim.tv_sec, sb.st_ctim.tv_nsec, sb.st_size, sb.st_blocks, sb.st_blksize);
+    #endif
+  #endif
+  free(c);
+  str_free(s);
+  return r;
 }
 void fs_writeFileSync (struct str s, struct buffer b) {
   char *c = str_cstr(s);
@@ -251,14 +274,6 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -296,30 +311,32 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-size_t str_len (struct str s) {
-  size_t l = s.l;
-  free(s.d);
-  return l;
-}
 struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
+}
+struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, int64_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, uint64_t __THE_0_rdev, int64_t __THE_0_atime, int64_t __THE_0_atimeNs, int64_t __THE_0_mtime, int64_t __THE_0_mtimeNs, int64_t __THE_0_ctime, int64_t __THE_0_ctimeNs, int64_t __THE_0_btime, int64_t __THE_0_btimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int64_t __THE_0_blockSize) {
+  struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
+  struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_btime, __THE_0_btimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blockSize};
+  memcpy(r, &s, sizeof(struct fs_Stats));
+  return r;
+}
+void fs_Stats_free (struct fs_Stats *n) {
+  free(n);
 }
 
 int main () {
   const struct str __THE_0_fromPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test3.txt");
   const struct str __THE_0_toPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test4.txt");
-  const struct str __THE_0_writeData_0 = char_repeat('a', 1e8);
-  fs_writeFileSync(str_copy(__THE_0_fromPath_0), str_toBuffer(str_copy(__THE_0_writeData_0)));
+  fs_writeFileSync(str_copy(__THE_0_fromPath_0), str_toBuffer(char_repeat('a', 1e8)));
   fs_copyFileSync(str_copy(__THE_0_fromPath_0), str_copy(__THE_0_toPath_0));
-  const struct str __THE_0_readData_0 = buffer_to_str(fs_readFileSync(str_copy(__THE_0_toPath_0)));
-  print(stdout, "iziz", str_len(str_copy(__THE_0_writeData_0)), " ", str_len(str_copy(__THE_0_readData_0)), THE_EOL);
+  const struct fs_Stats *__THE_0_sb_0 = fs_statSync(str_copy(__THE_0_toPath_0));
+  print(stdout, "lz", __THE_0_sb_0->__THE_0_size, THE_EOL);
   fs_rmSync(str_copy(__THE_0_toPath_0));
   fs_rmSync(str_copy(__THE_0_fromPath_0));
-  str_free((struct str) __THE_0_readData_0);
-  str_free((struct str) __THE_0_writeData_0);
+  fs_Stats_free((struct fs_Stats *) __THE_0_sb_0);
   str_free((struct str) __THE_0_toPath_0);
   str_free((struct str) __THE_0_fromPath_0);
 }
 ======= flags =======
 ======= stdout =======
-100000000 100000000
+100000000

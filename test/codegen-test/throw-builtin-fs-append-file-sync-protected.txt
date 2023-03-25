@@ -161,4 +161,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to open file `/etc/sudoers` for writing
+Error: failed to open file `{{ (/etc/sudoers|C:\\Windows\\System32\\kernel32\.dll) }}` for writing

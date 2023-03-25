@@ -172,4 +172,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to open file descriptor of `test/fixtures/dir1`
+Error: {{ (failed to open file descriptor of `test/fixtures/dir1`|failed to copy file from `test\\fixtures\\test\.txt` to `test\\fixtures\\dir1`) }}

@@ -110,6 +110,8 @@ void fs_copyDirectorySync (struct str n1, struct str n2) {
     }
   }
   __THE_1_array_str_free(files);
+  str_free(n2);
+  str_free(n1);
 }
 void fs_copyFileSync (struct str n1, struct str n2) {
   char *c1 = str_cstr(n1);
@@ -381,4 +383,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: directory `test/fixtures/fake/` doesn't exist
+Error: directory `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}fake{{ (\/|\\) }}` doesn't exist

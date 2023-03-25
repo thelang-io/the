@@ -93,6 +93,8 @@ const std::vector<std::string> codegenFs = {
   R"(    })" EOL
   R"(  })" EOL
   R"(  _{array_str_free}(files);)" EOL
+  R"(  _{str_free}(n2);)" EOL
+  R"(  _{str_free}(n1);)" EOL
   R"(})" EOL,
 
   R"(void fs_copyFileSync (_{struct str} n1, _{struct str} n2) {)" EOL

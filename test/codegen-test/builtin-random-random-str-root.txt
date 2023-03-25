@@ -81,5 +81,5 @@ int main () {
   str_free((struct str) random_randomStr(1, str_alloc("abcdef"), 1, 1));
 }
 ======= flags =======
-A:-lm A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
+U:-lm A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
 ======= stdout =======

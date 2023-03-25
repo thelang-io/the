@@ -109,4 +109,4 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
-Error: failed to open file `test/fixtures` for writing
+Error: failed to open file `test{{ (\/|\\) }}fixtures` for writing
