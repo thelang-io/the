@@ -1,0 +1,164 @@
+======= stdin =======
+main {
+  data := "test".toBuffer()
+
+  if os_NAME == "Windows" {
+    fs_appendFileSync("C:" + path_SEP + "Windows" + path_SEP + "System32" + path_SEP + "kernel32.dll", data)
+  } else {
+    fs_appendFileSync(path_SEP + "etc" + path_SEP + "sudoers", data)
+  }
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <sys/utsname.h>
+#endif
+
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct buffer buffer_copy (const struct buffer);
+void buffer_free (struct buffer);
+struct str cstr_concat_str (const char *, struct str);
+void fs_appendFileSync (struct str, struct buffer);
+struct str os_name ();
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+char *str_cstr (const struct str);
+bool str_eq_cstr (struct str, const char *);
+void str_free (struct str);
+struct buffer str_toBuffer (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct buffer buffer_copy (const struct buffer o) {
+  unsigned char *d = alloc(o.l);
+  memcpy(d, o.d, o.l);
+  return (struct buffer) {d, o.l};
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+void fs_appendFileSync (struct str s, struct buffer b) {
+  char *c = str_cstr(s);
+  FILE *f = fopen(c, "ab");
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  if (b.l != 0) {
+    if (fwrite(b.d, b.l, 1, f) != 1) {
+      fprintf(stderr, "Error: failed appending to file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+  }
+  fclose(f);
+  free(c);
+  str_free(s);
+  buffer_free(b);
+}
+struct str os_name () {
+  #ifdef THE_OS_WINDOWS
+    return str_alloc("Windows");
+  #else
+    struct utsname buf;
+    if (uname(&buf) < 0) {
+      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
+    return str_alloc(buf.sysname);
+  #endif
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct buffer str_toBuffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
+}
+
+int main () {
+  const struct buffer __THE_0_data_0 = str_toBuffer(str_alloc("test"));
+  if (str_eq_cstr(os_name(), "Windows")) {
+    fs_appendFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("C:", str_alloc(THE_PATH_SEP)), "Windows"), str_alloc(THE_PATH_SEP)), "System32"), str_alloc(THE_PATH_SEP)), "kernel32.dll"), buffer_copy(__THE_0_data_0));
+  } else {
+    fs_appendFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "etc"), str_alloc(THE_PATH_SEP)), "sudoers"), buffer_copy(__THE_0_data_0));
+  }
+  buffer_free((struct buffer) __THE_0_data_0);
+}
+======= flags =======
+======= stderr =======
+Error: failed to open file `/etc/sudoers` for writing

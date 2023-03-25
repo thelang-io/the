@@ -1,0 +1,252 @@
+======= stdin =======
+main {
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr())
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr(len: 64))
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr(len: 1))
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr("abcdef"))
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr("abcdef", len: 64))
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr("abcdef", len: 1))
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr("ab"))
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr("ab", len: 64))
+  }
+  loop i := 0; i < 10; i++ {
+    print(random_randomStr("ab", len: 1))
+  }
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <math.h>
+#include <openssl/rand.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void print (FILE *, const char *, ...);
+struct str random_randomStr (unsigned char, struct str, unsigned char, int32_t);
+struct str str_alloc (const char *);
+struct str str_calloc (const char *, size_t);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str random_randomStr (unsigned char o1, struct str n1, unsigned char o2, int32_t n2) {
+  struct str a = o1 == 0 ? str_alloc("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") : n1;
+  int32_t l = o2 == 0 ? 32 : n2;
+  unsigned char *d = alloc(l);
+  if (RAND_bytes(d, l) != 1) {
+    fprintf(stderr, "Error: failed to generate random bytes" THE_EOL);
+    exit(EXIT_FAILURE);
+  }
+  for (size_t i = 0; i < l; i++) d[i] = a.d[(size_t) round((double) d[i] / 0xFF * (double) (a.l - 1))];
+  struct str r = str_calloc((void *) d, l);
+  free(d);
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_calloc (const char *r, size_t l) {
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(0, (struct str) {}, 0, 0), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(0, (struct str) {}, 1, 64), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(0, (struct str) {}, 1, 1), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(1, str_alloc("abcdef"), 0, 0), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(1, str_alloc("abcdef"), 1, 64), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(1, str_alloc("abcdef"), 1, 1), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(1, str_alloc("ab"), 0, 0), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(1, str_alloc("ab"), 1, 64), THE_EOL);
+  }
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    print(stdout, "sz", random_randomStr(1, str_alloc("ab"), 1, 1), THE_EOL);
+  }
+}
+======= flags =======
+A:-lssl A:-lcrypto
+======= stdout =======
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{32} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w{64} }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ \w }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{32} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef]{64} }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [abcdef] }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{32} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab]{64} }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}
+{{ [ab] }}

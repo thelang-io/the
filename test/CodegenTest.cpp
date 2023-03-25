@@ -403,8 +403,19 @@ INSTANTIATE_TEST_SUITE_P(BuiltinFn, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinFS, CodegenPassTest, testing::Values(
+  "builtin-fs-append-file-sync",
+  "builtin-fs-append-file-sync-empty-data",
+  "builtin-fs-append-file-sync-existing",
   "builtin-fs-chmod-sync",
   "builtin-fs-chown-sync",
+  "builtin-fs-copy-directory-sync",
+  "builtin-fs-copy-directory-sync-existing-directory",
+  "builtin-fs-copy-directory-sync-existing-file",
+  "builtin-fs-copy-directory-sync-empty",
+  "builtin-fs-copy-file-sync",
+  "builtin-fs-copy-file-sync-empty",
+  "builtin-fs-copy-file-sync-big",
+  "builtin-fs-copy-file-sync-existing",
   "builtin-fs-exists-sync",
   "builtin-fs-exists-sync-root",
   "builtin-fs-is-absolute-sync",
@@ -421,6 +432,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinFS, CodegenPassTest, testing::Values(
   "builtin-fs-read-file-sync-root",
   "builtin-fs-realpath-sync",
   "builtin-fs-realpath-sync-root",
+  "builtin-fs-rename-sync-file",
+  "builtin-fs-rename-sync-empty-directory",
+  "builtin-fs-rename-sync-directory",
   "builtin-fs-rm-sync",
   "builtin-fs-rmdir-sync",
   "builtin-fs-scandir-sync",
@@ -630,6 +644,15 @@ INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenPassTest, testing::Values(
   "builtin-process-home-root",
   "builtin-process-run-sync",
   "builtin-process-run-sync-root"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinRandom, CodegenPassTest, testing::Values(
+  "builtin-random-random-float",
+  "builtin-random-random-float-root",
+  "builtin-random-random-int",
+  "builtin-random-random-int-root",
+  "builtin-random-random-str",
+  "builtin-random-random-str-root"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinRequest, CodegenPassTest, testing::Values(
@@ -1357,22 +1380,35 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
   "node-var-decl-union-mut-init"
 ));
 
-INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
+INSTANTIATE_TEST_SUITE_P(BuiltinArray, CodegenThrowTest, testing::Values(
   "throw-builtin-array-at-empty",
   "throw-builtin-array-at-high",
   "throw-builtin-array-at-low",
   "throw-builtin-array-first-on-empty",
   "throw-builtin-array-last-on-empty",
   "throw-builtin-array-remove-high",
-  "throw-builtin-array-remove-low",
-  "throw-builtin-fs-chmod-sync-not-existing",
-  "throw-builtin-fs-chown-sync-not-existing",
+  "throw-builtin-array-remove-low"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinFs, CodegenThrowTest, testing::Values(
+  "throw-builtin-fs-append-file-sync-directory",
+  "throw-builtin-fs-append-file-sync-protected",
+  "throw-builtin-fs-chmod-sync-non-existing",
+  "throw-builtin-fs-chown-sync-non-existing",
+  "throw-builtin-fs-copy-directory-sync-file",
+  "throw-builtin-fs-copy-directory-sync-non-existing",
+  "throw-builtin-fs-copy-file-sync-same",
+  "throw-builtin-fs-copy-file-sync-directory",
+  "throw-builtin-fs-copy-file-sync-destination-directory",
+  "throw-builtin-fs-copy-file-sync-non-existing",
+  "throw-builtin-fs-copy-file-sync-protected",
   "throw-builtin-fs-link-sync-existing",
   "throw-builtin-fs-link-sync-same-name",
   "throw-builtin-fs-mkdir-sync-existing",
   "throw-builtin-fs-read-file-sync-non-existing",
   "throw-builtin-fs-realpath-sync-non-existing",
-  "throw-builtin-process-run-sync-exit-code",
+  "throw-builtin-fs-rename-sync-non-existing",
+  "throw-builtin-fs-rename-sync-protected",
   "throw-builtin-fs-rm-sync-directory",
   "throw-builtin-fs-rm-sync-non-existing",
   "throw-builtin-fs-rmdir-sync-file",
@@ -1381,13 +1417,26 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
   "throw-builtin-fs-scandir-sync-non-existing",
   "throw-builtin-fs-stat-sync-non-existing",
   "throw-builtin-fs-unlink-sync-non-existing",
-  "throw-builtin-fs-write-file-sync-directory",
+  "throw-builtin-fs-write-file-sync-directory"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinMap, CodegenThrowTest, testing::Values(
   "throw-builtin-map-get-non-existing",
-  "throw-builtin-map-remove-non-existing",
+  "throw-builtin-map-remove-non-existing"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinProcess, CodegenThrowTest, testing::Values(
+  "throw-builtin-process-run-sync-exit-code"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinRequest, CodegenThrowTest, testing::Values(
   "throw-builtin-request-open-invalid-host",
   "throw-builtin-request-open-invalid-port",
   "throw-builtin-request-open-invalid-protocol",
-  "throw-builtin-request-open-long-port",
+  "throw-builtin-request-open-long-port"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinStr, CodegenThrowTest, testing::Values(
   "throw-builtin-str-at-empty",
   "throw-builtin-str-at-high",
   "throw-builtin-str-at-low",
@@ -1492,7 +1541,10 @@ INSTANTIATE_TEST_SUITE_P(Builtin, CodegenThrowTest, testing::Values(
   "throw-builtin-str-to-u64-invalid-10",
   "throw-builtin-str-to-u64-invalid-16",
   "throw-builtin-str-to-u64-high",
-  "throw-builtin-str-to-u64-wrong-base",
+  "throw-builtin-str-to-u64-wrong-base"
+));
+
+INSTANTIATE_TEST_SUITE_P(BuiltinURL, CodegenThrowTest, testing::Values(
   "throw-builtin-url-parse-auth",
   "throw-builtin-url-parse-empty",
   "throw-builtin-url-parse-empty-hostname",

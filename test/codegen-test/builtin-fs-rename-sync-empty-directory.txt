@@ -1,6 +1,14 @@
 ======= stdin =======
 main {
-  print(fs_scandirSync("test" + path_SEP + "fixtures"))
+  oldName := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-rename-sync"
+  newName := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-rename-sync-directory"
+
+  fs_mkdirSync(oldName)
+  print(fs_existsSync(oldName))
+  fs_renameSync(oldName, newName)
+  print(fs_existsSync(newName))
+  print(fs_scandirSync(newName))
+  fs_rmdirSync(newName)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -25,10 +33,12 @@ main {
 #include <string.h>
 #include <sys/stat.h>
 #ifdef THE_OS_WINDOWS
+  #include <io.h>
   #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
   #include <dirent.h>
+  #include <unistd.h>
 #endif
 
 struct str {
@@ -45,12 +55,17 @@ struct __THE_1_array_str {
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+bool fs_existsSync (struct str);
+void fs_mkdirSync (struct str);
+void fs_renameSync (struct str, struct str);
+void fs_rmdirSync (struct str);
 struct __THE_1_array_str fs_scandirSync (struct str);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
@@ -72,6 +87,57 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
+}
+bool fs_existsSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = _access(c, 0) == 0;
+  #else
+    bool r = access(c, 0) == 0;
+  #endif
+  str_free(s);
+  free(c);
+  return r;
+}
+void fs_mkdirSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = CreateDirectory(c, NULL);
+  #else
+    bool r = mkdir(c, 0777) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to create directory `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
+void fs_renameSync (struct str n1, struct str n2) {
+  char *c1 = str_cstr(n1);
+  char *c2 = str_cstr(n2);
+  if (rename(c1, c2) != 0) {
+    fprintf(stderr, "Error: failed to rename from `%s` to `%s`" THE_EOL, c1, c2);
+    exit(EXIT_FAILURE);
+  }
+  free(c2);
+  free(c1);
+  str_free(n2);
+  str_free(n1);
+}
+void fs_rmdirSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = RemoveDirectory(c);
+  #else
+    bool r = rmdir(c) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to remove directory `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
 }
 struct __THE_1_array_str fs_scandirSync (struct str s) {
   char *c = str_cstr(s);
@@ -208,6 +274,11 @@ struct str str_concat_str (struct str s1, struct str s2) {
   free(s2.d);
   return (struct str) {d, l};
 }
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
 char *str_cstr (const struct str s) {
   char *d = alloc(s.l + 1);
   memcpy(d, s.d, s.l);
@@ -255,8 +326,19 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 }
 
 int main () {
-  print(stdout, "sz", __THE_1_array_str_str(fs_scandirSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"))), THE_EOL);
+  const struct str __THE_0_oldName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-rename-sync");
+  const struct str __THE_0_newName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-rename-sync-directory");
+  fs_mkdirSync(str_copy(__THE_0_oldName_0));
+  print(stdout, "tz", fs_existsSync(str_copy(__THE_0_oldName_0)), THE_EOL);
+  fs_renameSync(str_copy(__THE_0_oldName_0), str_copy(__THE_0_newName_0));
+  print(stdout, "tz", fs_existsSync(str_copy(__THE_0_newName_0)), THE_EOL);
+  print(stdout, "sz", __THE_1_array_str_str(fs_scandirSync(str_copy(__THE_0_newName_0))), THE_EOL);
+  fs_rmdirSync(str_copy(__THE_0_newName_0));
+  str_free((struct str) __THE_0_newName_0);
+  str_free((struct str) __THE_0_oldName_0);
 }
 ======= flags =======
 ======= stdout =======
-["dir1", "test{{ 2? }}.txt", "test{{ 2? }}.txt"]
+true
+true
+[]

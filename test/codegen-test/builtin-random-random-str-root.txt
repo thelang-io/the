@@ -1,0 +1,85 @@
+======= stdin =======
+main {
+  random_randomStr()
+  random_randomStr(len: 64)
+  random_randomStr("abcdef")
+  random_randomStr("abcdef", len: 1)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <math.h>
+#include <openssl/rand.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str random_randomStr (unsigned char, struct str, unsigned char, int32_t);
+struct str str_alloc (const char *);
+struct str str_calloc (const char *, size_t);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str random_randomStr (unsigned char o1, struct str n1, unsigned char o2, int32_t n2) {
+  struct str a = o1 == 0 ? str_alloc("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") : n1;
+  int32_t l = o2 == 0 ? 32 : n2;
+  unsigned char *d = alloc(l);
+  if (RAND_bytes(d, l) != 1) {
+    fprintf(stderr, "Error: failed to generate random bytes" THE_EOL);
+    exit(EXIT_FAILURE);
+  }
+  for (size_t i = 0; i < l; i++) d[i] = a.d[(size_t) round((double) d[i] / 0xFF * (double) (a.l - 1))];
+  struct str r = str_calloc((void *) d, l);
+  free(d);
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_calloc (const char *r, size_t l) {
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  str_free((struct str) random_randomStr(0, (struct str) {}, 0, 0));
+  str_free((struct str) random_randomStr(0, (struct str) {}, 1, 64));
+  str_free((struct str) random_randomStr(1, str_alloc("abcdef"), 0, 0));
+  str_free((struct str) random_randomStr(1, str_alloc("abcdef"), 1, 1));
+}
+======= flags =======
+A:-lssl A:-lcrypto
+======= stdout =======

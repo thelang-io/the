@@ -7,7 +7,7 @@ main {
   print(fs_isSymbolicLinkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt"))
 
   // file
-  fs_linkSync("test/fixtures/test.txt", fileName)
+  fs_linkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt", fileName)
   print(fs_isSymbolicLinkSync(fileName))
 
   // link
@@ -29,7 +29,7 @@ main {
 
   // dir
   fileName = "test" + path_SEP + "fixtures-copy"
-  fs_linkSync("test/fixtures", fileName)
+  fs_linkSync("test" + path_SEP + "fixtures", fileName)
   print(fs_isSymbolicLinkSync(fileName))
   fs_unlinkSync(fileName)
 }
@@ -328,7 +328,7 @@ int main () {
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures")), THE_EOL);
   print(stdout, "tz", fs_isSymbolicLinkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")), THE_EOL);
-  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"), str_copy(__THE_0_fileName_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   struct str __THE_0_fileName2_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-symlink.txt");
   fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0));
@@ -343,7 +343,7 @@ int main () {
   fs_unlinkSync(str_copy(__THE_0_fileName2_0));
   fs_rmdirSync(str_copy(__THE_0_fileName_0));
   __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures-copy"));
-  fs_linkSync(str_alloc("test/fixtures"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_copy(__THE_0_fileName_0));
   print(stdout, "tz", fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0)), THE_EOL);
   fs_unlinkSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName2_0);

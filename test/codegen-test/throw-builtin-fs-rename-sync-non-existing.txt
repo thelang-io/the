@@ -1,0 +1,94 @@
+======= stdin =======
+main {
+  fs_renameSync("test" + path_SEP + "non-existing", "test" + path_SEP + "non-existing2")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
+void fs_renameSync (struct str, struct str);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+char *str_cstr (const struct str);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+void fs_renameSync (struct str n1, struct str n2) {
+  char *c1 = str_cstr(n1);
+  char *c2 = str_cstr(n2);
+  if (rename(c1, c2) != 0) {
+    fprintf(stderr, "Error: failed to rename from `%s` to `%s`" THE_EOL, c1, c2);
+    exit(EXIT_FAILURE);
+  }
+  free(c2);
+  free(c1);
+  str_free(n2);
+  str_free(n1);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  fs_renameSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "non-existing"), str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "non-existing2"));
+}
+======= flags =======
+======= stderr =======
+Error: failed to rename from `test/non-existing` to `test/non-existing2`

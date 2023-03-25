@@ -82,8 +82,8 @@ const std::vector<std::string> codegenFs = {
   R"(    n2.d = _{re_alloc}(n2.d, ++n2.l);)" EOL
   R"(    n2.d[n2.l - 1] = (_{THE_PATH_SEP})[0];)" EOL
   R"(  })" EOL
-  R"(  _{fs_mkdirSync}(_{str_copy}(n2));)" EOL
   R"(  struct _{array_str} files = _{fs_scandirSync}(_{str_copy}(n1));)" EOL
+  R"(  _{fs_mkdirSync}(_{str_copy}(n2));)" EOL
   R"(  for (_{size_t} i = 0; i < files.l; i++) {)" EOL
   R"(    _{struct str} file = _{str_concat_str}(_{str_copy}(n1), _{str_copy}(files.d[i]));)" EOL
   R"(    if (_{fs_isDirectorySync}(_{str_copy}(file))) {)" EOL
@@ -112,6 +112,10 @@ const std::vector<std::string> codegenFs = {
   R"(    _{struct stat} sb1;)" EOL
   R"(    if (_{fstat}(fd1, &sb1) != 0) {)" EOL
   R"(      _{fprintf}(_{stderr}, "Error: failed to stat file `%s`" _{THE_EOL}, c1);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    if ((sb1.st_mode & _{S_IFMT}) != _{S_IFREG}) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: cannot copy non-file `%s`" _{THE_EOL}, c1);)" EOL
   R"(      _{exit}(_{EXIT_FAILURE});)" EOL
   R"(    })" EOL
   R"(    int fd2 = _{open}(c2, _{O_WRONLY} | _{O_CREAT});)" EOL

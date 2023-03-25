@@ -1,7 +1,7 @@
 ======= stdin =======
 main {
   fileName := "test" + path_SEP + "fixtures" + path_SEP + "builtin-fs-link-sync.txt"
-  fs_linkSync("test/fixtures/test.txt", fileName)
+  fs_linkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt", fileName)
   fs_unlinkSync(fileName)
 }
 ======= code =======
@@ -142,7 +142,7 @@ void str_free (struct str s) {
 
 int main () {
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-link-sync.txt");
-  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"), str_copy(__THE_0_fileName_0));
   fs_unlinkSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName_0);
 }
