@@ -1,0 +1,299 @@
+======= stdin =======
+fn test1 (test: str?, a := 2) {
+  if test != nil {
+    print("test is str:", test)
+  } else {
+    print("test is str?:", test)
+  }
+}
+
+fn test2 (test: str?, a := 2) {
+  if a == 2 && test != nil {
+    print("test is str:", test)
+  } else {
+    print("test is str?:", test)
+  }
+}
+
+fn test3 (test: str?, a := 2) {
+  if (a == 2 && test != nil) || test != nil {
+    print("test is str:", test)
+  } else {
+    print("test is str?:", test)
+  }
+}
+
+main {
+  a := 2
+  mut test: str?
+
+  test1(test)
+  test = "test1"
+  test1(test)
+
+  test = nil
+  test2(test)
+  test = "test2"
+  test2(test)
+
+  test = nil
+  test3(test)
+  test = "test3"
+  test3(test)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
+
+struct __THE_1_fn$1000 {
+  void (*f) (void *, struct __THE_1_fn$1000P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1000P {
+  struct str *n0;
+  unsigned char o1;
+  int32_t n1;
+};
+
+void *alloc (size_t);
+void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+struct str str_escape (const struct str);
+void str_free (struct str);
+bool str_ne_str (struct str, struct str);
+struct str *__THE_1_opt_str_alloc (struct str);
+struct str *__THE_1_opt_str_copy (const struct str *);
+void __THE_1_opt_str_free (struct str *);
+bool __THE_1_opt_str_ne (struct str *, struct str *);
+struct str *__THE_1_opt_str_realloc (struct str *, struct str *);
+struct str __THE_1_opt_str_str (struct str *);
+void __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_test2_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_test3_0 (void *, struct __THE_1_fn$1000P);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+struct str str_escape (const struct str s) {
+  char *d = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) d = re_alloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) d = re_alloc(d, l + 1);
+    d[l++] = c;
+  }
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+bool str_ne_str (struct str s1, struct str s2) {
+  bool r = s1.l != s2.l || memcmp(s1.d, s2.d, s1.l) != 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
+struct str *__THE_1_opt_str_alloc (struct str n) {
+  struct str *r = alloc(sizeof(struct str));
+  *r = n;
+  return r;
+}
+struct str *__THE_1_opt_str_copy (const struct str *n) {
+  if (n == NULL) return NULL;
+  struct str *r = alloc(sizeof(struct str));
+  *r = str_copy(*n);
+  return r;
+}
+void __THE_1_opt_str_free (struct str *n) {
+  if (n == NULL) return;
+  str_free((struct str) *n);
+  free(n);
+}
+bool __THE_1_opt_str_ne (struct str *n1, struct str *n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : str_ne_str(str_copy(*n1), str_copy(*n2));
+  __THE_1_opt_str_free((struct str *) n1);
+  __THE_1_opt_str_free((struct str *) n2);
+  return r;
+}
+struct str *__THE_1_opt_str_realloc (struct str *n1, struct str *n2) {
+  __THE_1_opt_str_free((struct str *) n1);
+  return n2;
+}
+struct str __THE_1_opt_str_str (struct str *n) {
+  if (n == NULL) return str_alloc("nil");
+  struct str r = str_alloc("\"");
+  r = str_concat_str(r, str_escape(*n));
+  r = str_concat_cstr(r, "\"");
+  __THE_1_opt_str_free((struct str *) n);
+  return r;
+}
+void __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
+  const struct str *__THE_0_test_0 = p.n0;
+  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+  if (__THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
+    print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
+  } else {
+    print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
+  }
+  __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+}
+void __THE_1_test2_0 (void *px, struct __THE_1_fn$1000P p) {
+  const struct str *__THE_0_test_0 = p.n0;
+  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+  if (__THE_0_a_0 == 2 && __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
+    print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
+  } else {
+    print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
+  }
+  __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+}
+void __THE_1_test3_0 (void *px, struct __THE_1_fn$1000P p) {
+  const struct str *__THE_0_test_0 = p.n0;
+  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+  if ((__THE_0_a_0 == 2 && __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) || __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
+    print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
+  } else {
+    print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
+  }
+  __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+}
+
+int main () {
+  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
+  const int32_t __THE_0_a_0 = 2;
+  struct str *__THE_0_test_0 = NULL;
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test1")));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, NULL);
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test2")));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, NULL);
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test3")));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+}
+======= flags =======
+======= stdout =======
+test is str?: nil
+test is str: test1
+test is str?: nil
+test is str: test2
+test is str?: nil
+test is str: test3

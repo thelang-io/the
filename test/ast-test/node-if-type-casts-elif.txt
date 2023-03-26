@@ -1,0 +1,366 @@
+======= stdin =======
+main {
+  mut test: str | int | char | bool
+
+  if test is str {
+    print("test is str:", test)
+  } elif test is int {
+    print("test is int:", test)
+  } elif test is char {
+    print("test is char:", test)
+  } else {
+    print("test is bool:", test)
+  }
+}
+======= stdout =======
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test" codeName="test_0" mut frame="2">
+        <TypeUnion name="union_strUSintUScharUSboolUE">
+          <BuiltinType name="str" />
+          <BuiltinType name="int" />
+          <BuiltinType name="char" />
+          <BuiltinType name="bool" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeIf>
+    <NodeIfCond>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="bool" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprIs>
+            <ExprIsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union_strUSintUScharUSboolUE">
+                    <BuiltinType name="str" />
+                    <BuiltinType name="int" />
+                    <BuiltinType name="char" />
+                    <BuiltinType name="bool" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="test" codeName="test_0" mut frame="2">
+                      <TypeUnion name="union_strUSintUScharUSboolUE">
+                        <BuiltinType name="str" />
+                        <BuiltinType name="int" />
+                        <BuiltinType name="char" />
+                        <BuiltinType name="bool" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprIsExpr>
+            <ExprIsType>
+              <BuiltinType name="str" />
+            </ExprIsType>
+          </ExprIs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeIfCond>
+    <NodeIfBody>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="void" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="print" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="print" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"test is str:\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" mut frame="2">
+                        <TypeUnion name="union_strUSintUScharUSboolUE">
+                          <BuiltinType name="str" />
+                          <BuiltinType name="int" />
+                          <BuiltinType name="char" />
+                          <BuiltinType name="bool" />
+                        </TypeUnion>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeIfBody>
+    <NodeIfAlt>
+      <NodeIf>
+        <NodeIfCond>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="bool" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprIs>
+                <ExprIsExpr>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <TypeUnion name="union_intUScharUSboolUE">
+                        <BuiltinType name="int" />
+                        <BuiltinType name="char" />
+                        <BuiltinType name="bool" />
+                      </TypeUnion>
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <Var name="test" codeName="test_0" mut frame="2">
+                          <TypeUnion name="union_strUSintUScharUSboolUE">
+                            <BuiltinType name="str" />
+                            <BuiltinType name="int" />
+                            <BuiltinType name="char" />
+                            <BuiltinType name="bool" />
+                          </TypeUnion>
+                        </Var>
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprIsExpr>
+                <ExprIsType>
+                  <BuiltinType name="int" />
+                </ExprIsType>
+              </ExprIs>
+            </NodeExprBody>
+          </NodeExpr>
+        </NodeIfCond>
+        <NodeIfBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="void" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprCall>
+                <ExprCallCallee>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="print" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <BuiltinVar name="print" />
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallCallee>
+                <ExprCallArgs>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"test is int:\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="int" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="test" codeName="test_0" mut frame="2">
+                            <TypeUnion name="union_strUSintUScharUSboolUE">
+                              <BuiltinType name="str" />
+                              <BuiltinType name="int" />
+                              <BuiltinType name="char" />
+                              <BuiltinType name="bool" />
+                            </TypeUnion>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                </ExprCallArgs>
+              </ExprCall>
+            </NodeExprBody>
+          </NodeExpr>
+        </NodeIfBody>
+        <NodeIfAlt>
+          <NodeIf>
+            <NodeIfCond>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprIs>
+                    <ExprIsExpr>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <TypeUnion name="union_charUSboolUE">
+                            <BuiltinType name="char" />
+                            <BuiltinType name="bool" />
+                          </TypeUnion>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <Var name="test" codeName="test_0" mut frame="2">
+                              <TypeUnion name="union_strUSintUScharUSboolUE">
+                                <BuiltinType name="str" />
+                                <BuiltinType name="int" />
+                                <BuiltinType name="char" />
+                                <BuiltinType name="bool" />
+                              </TypeUnion>
+                            </Var>
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprIsExpr>
+                    <ExprIsType>
+                      <BuiltinType name="char" />
+                    </ExprIsType>
+                  </ExprIs>
+                </NodeExprBody>
+              </NodeExpr>
+            </NodeIfCond>
+            <NodeIfBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="void" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprCall>
+                    <ExprCallCallee>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="print" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <BuiltinVar name="print" />
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallCallee>
+                    <ExprCallArgs>
+                      <ExprCallArg id="items">
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="str" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprLit type="STR" value="\"test is char:\"" />
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallArg>
+                      <ExprCallArg id="items">
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="char" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess>
+                              <Var name="test" codeName="test_0" mut frame="2">
+                                <TypeUnion name="union_strUSintUScharUSboolUE">
+                                  <BuiltinType name="str" />
+                                  <BuiltinType name="int" />
+                                  <BuiltinType name="char" />
+                                  <BuiltinType name="bool" />
+                                </TypeUnion>
+                              </Var>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallArg>
+                    </ExprCallArgs>
+                  </ExprCall>
+                </NodeExprBody>
+              </NodeExpr>
+            </NodeIfBody>
+            <NodeIfAlt>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="void" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprCall>
+                    <ExprCallCallee>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="print" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <BuiltinVar name="print" />
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallCallee>
+                    <ExprCallArgs>
+                      <ExprCallArg id="items">
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="str" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprLit type="STR" value="\"test is bool:\"" />
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallArg>
+                      <ExprCallArg id="items">
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="bool" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess>
+                              <Var name="test" codeName="test_0" mut frame="2">
+                                <TypeUnion name="union_strUSintUScharUSboolUE">
+                                  <BuiltinType name="str" />
+                                  <BuiltinType name="int" />
+                                  <BuiltinType name="char" />
+                                  <BuiltinType name="bool" />
+                                </TypeUnion>
+                              </Var>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallArg>
+                    </ExprCallArgs>
+                  </ExprCall>
+                </NodeExprBody>
+              </NodeExpr>
+            </NodeIfAlt>
+          </NodeIf>
+        </NodeIfAlt>
+      </NodeIf>
+    </NodeIfAlt>
+  </NodeIf>
+</NodeMain>

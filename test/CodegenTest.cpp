@@ -183,6 +183,14 @@ TEST_P(CodegenThrowTest, Throws) {
 
   auto [actualStdout, actualStderr, actualReturnCode] = execCmd(filePath, fileName);
   std::filesystem::remove(filePath);
+
+  #if defined(OS_MACOS)
+    std::filesystem::remove_all(filePath + ".dSYM");
+  #elif defined(OS_WINDOWS)
+    std::filesystem::remove(fileName + ".ilk");
+    std::filesystem::remove(fileName + ".pdb");
+  #endif
+
   actualStderr.erase(actualStderr.find_last_not_of("\r\n") + 1);
 
   while (expectedStderr.find("{{ ") != std::string::npos) {
@@ -879,7 +887,8 @@ INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
   "expr-binary-ref",
   "expr-binary-str",
   "expr-binary-union",
-  "expr-binary-nested"
+  "expr-binary-nested",
+  "expr-binary-type-casts"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenPassTest, testing::Values(
@@ -1150,7 +1159,8 @@ INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if-cmp-ref",
   "node-if-cmp-str",
   "node-if-cmp-union",
-  "node-if-type-casts"
+  "node-if-type-casts",
+  "node-if-type-casts-elif"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
