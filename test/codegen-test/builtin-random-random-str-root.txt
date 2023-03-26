@@ -57,7 +57,7 @@ struct str random_randomStr (unsigned char o1, struct str n1, unsigned char o2, 
   for (size_t i = 0; i < l; i++) d[i] = a.d[(size_t) round((double) d[i] / 0xFF * (double) (a.l - 1))];
   struct str r = str_calloc((void *) d, l);
   free(d);
-  str_free(n1);
+  str_free(a);
   return r;
 }
 struct str str_alloc (const char *r) {
