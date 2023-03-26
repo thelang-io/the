@@ -30,9 +30,9 @@ for entity in "$api_path/"*; do
   result="$("$root_dir/build/the" doc "$entity")"
 
   if [ "$name" == "arr" ]; then
-    result="${result:80}"
+    result="${result:52}"
   elif [ "$name" == "map" ]; then
-    result="${result:136}"
+    result="${result:80}"
   fi
 
   titleRaw="$(head -n 1 "$entity")"

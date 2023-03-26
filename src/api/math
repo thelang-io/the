@@ -1,73 +1,73 @@
 // Math API
 
 /* Maximum possible value for `float` data type. */
-const math_FloatMax: float
+const math_MaxFloat: float
 
 /* Minimum possible value for `float` data type. */
-const math_FloatMin: float
+const math_MinFloat: float
 
 /* Maximum possible value for `f32` data type. */
-const math_F32Max: f32
+const math_MaxF32: f32
 
 /* Minimum possible value for `f32` data type. */
-const math_F32Min: f32
+const math_MinF32: f32
 
 /* Maximum possible value for `f64` data type. */
-const math_F64Max: f64
+const math_MaxF64: f64
 
 /* Minimum possible value for `f64` data type. */
-const math_F64Min: f64
+const math_MinF64: f64
 
 /* Maximum possible value for `int` data type. */
-const math_IntMax: int
+const math_MaxInt: int
 
 /* Minimum possible value for `int` data type. */
-const math_IntMin: int
+const math_MinInt: int
 
 /* Maximum possible value for `i8` data type. */
-const math_I8Max: i8
+const math_MaxI8: i8
 
 /* Minimum possible value for `i8` data type. */
-const math_I8Min: i8
+const math_MinI8: i8
 
 /* Maximum possible value for `i16` data type. */
-const math_I16Max: i16
+const math_MaxI16: i16
 
 /* Minimum possible value for `i16` data type. */
-const math_I16Min: i16
+const math_MinI16: i16
 
 /* Maximum possible value for `i32` data type. */
-const math_I32Max: i32
+const math_MaxI32: i32
 
 /* Minimum possible value for `i32` data type. */
-const math_I32Min: i32
+const math_MinI32: i32
 
 /* Maximum possible value for `i64` data type. */
-const math_I64Max: i64
+const math_MaxI64: i64
 
 /* Minimum possible value for `i64` data type. */
-const math_I64Min: i64
+const math_MinI64: i64
 
 /* Maximum possible value for `u8` data type. */
-const math_U8Max: u8
+const math_MaxU8: u8
 
 /* Minimum possible value for `u8` data type. */
-const math_U8Min: u8
+const math_MinU8: u8
 
 /* Maximum possible value for `u16` data type. */
-const math_U16Max: u16
+const math_MaxU16: u16
 
 /* Minimum possible value for `u16` data type. */
-const math_U16Min: u16
+const math_MinU16: u16
 
 /* Maximum possible value for `u32` data type. */
-const math_U32Max: u32
+const math_MaxU32: u32
 
 /* Minimum possible value for `u32` data type. */
-const math_U32Min: u32
+const math_MinU32: u32
 
 /* Maximum possible value for `u64` data type. */
-const math_U64Max: u64
+const math_MaxU64: u64
 
 /* Minimum possible value for `u64` data type. */
-const math_U64Min: u64
+const math_MinU64: u64

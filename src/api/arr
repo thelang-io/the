@@ -25,7 +25,7 @@ obj Array {
   fn clear (mut self: ref Self) ref Self
 
   /**
-   * Merges two arrays and returns resulting array.
+   * Concatenates two arrays and returns resulting array.
    *
    * @param other - Another arrays you want to concatenate.
    */

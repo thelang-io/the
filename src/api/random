@@ -14,7 +14,7 @@ fn random_randomFloat (min := 0.0, max := 1.0) float
  * @param min - Minimum possible random value.
  * @param max - Maximum possible random value.
  */
-fn random_randomInt (min := IntMin, max := IntMax) int
+fn random_randomInt (min := math_MinInt, max := math_MaxInt) int
 
 /**
  * Returns a random string constructed with specified characters set.
