@@ -954,13 +954,47 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
 }
 
 std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen::_evalTypeCasts (const ASTNodeExpr &nodeExpr) {
+  auto initialTypeCasts = this->state.typeCasts;
   auto bodyTypeCasts = std::map<std::string, Type *>{};
   auto altTypeCasts = std::map<std::string, Type *>{};
 
   if (std::holds_alternative<ASTExprBinary>(*nodeExpr.body)) {
     auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
 
-    if (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) {
+    if (exprBinary.op == AST_EXPR_BINARY_AND || exprBinary.op == AST_EXPR_BINARY_OR) {
+      auto [leftBodyTypeCasts, leftAltTypeCasts] = this->_evalTypeCasts(exprBinary.left);
+
+      if (exprBinary.op == AST_EXPR_BINARY_AND) {
+        auto copyLeftBodyTypeCasts = leftBodyTypeCasts;
+        copyLeftBodyTypeCasts.merge(this->state.typeCasts);
+        copyLeftBodyTypeCasts.swap(this->state.typeCasts);
+      } else {
+        auto copyLeftAltTypeCasts = leftAltTypeCasts;
+        copyLeftAltTypeCasts.merge(this->state.typeCasts);
+        copyLeftAltTypeCasts.swap(this->state.typeCasts);
+      }
+
+      auto [rightBodyTypeCasts, rightAltTypeCasts] = this->_evalTypeCasts(exprBinary.right);
+
+      if (exprBinary.op == AST_EXPR_BINARY_AND) {
+        bodyTypeCasts.merge(rightBodyTypeCasts);
+        bodyTypeCasts.merge(leftBodyTypeCasts);
+        altTypeCasts.merge(rightAltTypeCasts);
+        altTypeCasts.merge(leftAltTypeCasts);
+      } else {
+        for (const auto &[name, value] : rightBodyTypeCasts) {
+          if (leftBodyTypeCasts.contains(name)) {
+            bodyTypeCasts[name] = value;
+          }
+        }
+
+        for (const auto &[name, value] : rightAltTypeCasts) {
+          if (leftAltTypeCasts.contains(name)) {
+            altTypeCasts[name] = value;
+          }
+        }
+      }
+    } else if (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) {
       if (
         (std::holds_alternative<ASTExprAccess>(*exprBinary.left.body) && std::holds_alternative<ASTExprLit>(*exprBinary.right.body)) ||
         (std::holds_alternative<ASTExprAccess>(*exprBinary.right.body) && std::holds_alternative<ASTExprLit>(*exprBinary.left.body))
@@ -1033,6 +1067,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
     }
   }
 
+  this->state.typeCasts = initialTypeCasts;
   return std::make_tuple(bodyTypeCasts, altTypeCasts);
 }
 
@@ -1614,7 +1649,8 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
     code = std::string(this->indent, ' ') + "if (" + this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool")) + ") {" EOL;
 
-    this->state.typeCasts.merge(bodyTypeCasts);
+    bodyTypeCasts.merge(this->state.typeCasts);
+    bodyTypeCasts.swap(this->state.typeCasts);
     this->varMap.save();
     code += this->_block(nodeIf.body);
     this->varMap.restore();
@@ -1622,7 +1658,8 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 
     if (nodeIf.alt != std::nullopt) {
       code += std::string(this->indent, ' ') + "} else ";
-      this->state.typeCasts.merge(altTypeCasts);
+      altTypeCasts.merge(this->state.typeCasts);
+      altTypeCasts.swap(this->state.typeCasts);
 
       if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
         this->varMap.save();
@@ -2463,10 +2500,12 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(exprCond.cond);
     auto condCode = this->_nodeExpr(exprCond.cond, this->ast->typeMap.get("bool"));
 
-    this->state.typeCasts.merge(bodyTypeCasts);
+    bodyTypeCasts.merge(this->state.typeCasts);
+    bodyTypeCasts.swap(this->state.typeCasts);
     auto bodyCode = this->_nodeExpr(exprCond.body, nodeExpr.type);
     this->state.typeCasts = initialStateTypeCasts;
-    this->state.typeCasts.merge(altTypeCasts);
+    altTypeCasts.merge(this->state.typeCasts);
+    altTypeCasts.swap(this->state.typeCasts);
     auto altCode = this->_nodeExpr(exprCond.alt, nodeExpr.type);
     this->state.typeCasts = initialStateTypeCasts;
 
