@@ -1,0 +1,8 @@
+// Thread API
+
+/**
+ * Sleeps the thread for a given time interval.
+ *
+ * @param milliseconds - The duration of sleep.
+ */
+fn thread_sleep (milliseconds: int) void

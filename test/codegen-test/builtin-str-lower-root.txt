@@ -1,10 +1,10 @@
 ======= stdin =======
 main {
-  "".lower()
-  "a".lower()
-  "test".lower()
-  "A".lower()
-  "TEST_TEST09$/!".lower()
+  "".lower
+  "a".lower
+  "test".lower
+  "A".lower
+  "TEST_TEST09$/!".lower
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -55,7 +55,7 @@ void str_free (struct str s) {
 }
 struct str str_lower (struct str s) {
   if (s.l != 0) {
-    for (size_t i = 0; i < s.l; i++) s.d[i] = tolower(s.d[i]);
+    for (size_t i = 0; i < s.l; i++) s.d[i] = (char) tolower(s.d[i]);
   }
   return s;
 }

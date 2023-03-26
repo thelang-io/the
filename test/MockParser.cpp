@@ -19,8 +19,16 @@
 MockParser::MockParser (const std::string &content) : _l(content), Parser(&this->_l) {
   this->reader = this->_l.reader;
 
-  ON_CALL(*this, next).WillByDefault([this] (bool _1) {
-    return this->Parser::next(_1);
+  ON_CALL(*this, doc).WillByDefault([this] () {
+    return this->Parser::doc();
+  });
+
+  ON_CALL(*this, next).WillByDefault([this] (bool _1, bool _2) {
+    return this->Parser::next(_1, _2);
+  });
+
+  ON_CALL(*this, xml).WillByDefault([this] () {
+    return this->Parser::xml();
   });
 }
 

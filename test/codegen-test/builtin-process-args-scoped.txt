@@ -36,27 +36,27 @@ struct str {
 };
 
 struct __THE_1_array_str;
-struct __THE_1_fn$0;
+struct __THE_1_fn$1000;
 
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;
   size_t l;
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void print (FILE *, const char *, ...);
+struct __THE_1_array_str process_args ();
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
-struct __THE_1_array_str process_args ();
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
@@ -66,14 +66,6 @@ void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -106,6 +98,19 @@ void print (FILE *stream, const char *fmt, ...) {
     }
   }
   va_end(args);
+}
+struct __THE_1_array_str process_args () {
+  struct str *d = alloc(argc * sizeof(struct str));
+  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);
+  return (struct __THE_1_array_str) {d, (size_t) argc};
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -154,11 +159,6 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_array_str process_args () {
-  struct str *d = alloc(argc * sizeof(struct str));
-  for (int i = 0; i < argc; i++) d[i] = str_alloc(argv[i]);
-  return (struct __THE_1_array_str) {d, (size_t) argc};
-}
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
@@ -187,7 +187,7 @@ void __THE_1_test_0 (void *px) {
 int main (int _argc_, char *_argv_[]) {
   argc = _argc_;
   argv = _argv_;
-  const struct __THE_1_fn$0 __THE_0_test_0 = (struct __THE_1_fn$0) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
   __THE_0_test_0.f(__THE_0_test_0.x);
 }
 ======= flags =======

@@ -85,14 +85,14 @@ struct url_URL {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
+void *re_alloc (void *, size_t);
+void request_close (struct request_Request **);
+struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
+char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-void request_close (struct request_Request **);
-struct request_Request *request_open (struct str, struct str, struct buffer, struct __THE_1_array_request_Header);
-char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct url_URL *url_parse (struct str);
 void request_Header_free (struct request_Header *);
 void request_Request_free (struct request_Request *);
@@ -108,6 +108,9 @@ void *alloc (size_t l) {
   }
   return r;
 }
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
 void *re_alloc (void *d, size_t l) {
   void *r = realloc(d, l);
   if (r == NULL) {
@@ -115,24 +118,6 @@ void *re_alloc (void *d, size_t l) {
     exit(EXIT_FAILURE);
   }
   return r;
-}
-void buffer_free (struct buffer o) {
-  free(o.d);
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-char *str_cstr (const struct str s) {
-  char *d = alloc(s.l + 1);
-  memcpy(d, s.d, s.l);
-  d[s.l] = '\0';
-  return d;
-}
-void str_free (struct str s) {
-  free(s.d);
 }
 void request_close (struct request_Request **r) {
   struct request *req = (void *) *r;
@@ -150,7 +135,7 @@ void request_close (struct request_Request **r) {
   req->ctx = NULL;
   req->ssl = NULL;
 }
-struct request_Request *request_open (struct str method, struct str u, struct buffer data, struct __THE_1_array_request_Header headers) {
+struct request_Request *request_open (struct str method, struct str u, unsigned char o1, struct buffer data, unsigned char o2, struct __THE_1_array_request_Header headers) {
   struct url_URL *url = url_parse(u);
   if (
     !(url->__THE_0_protocol.l == 5 && memcmp(url->__THE_0_protocol.d, "http:", 5) == 0) &&
@@ -307,6 +292,21 @@ char *request_stringifyHeaders (struct __THE_1_array_request_Header headers, str
     l += z;
   }
   return d;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 struct url_URL *url_parse (struct str s) {
   if (s.l == 0) {
@@ -471,7 +471,7 @@ void url_URL_free (struct url_URL *n) {
 }
 
 int main () {
-  request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("http://the-lang-non-existing-domain.com"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  request_Request_free((struct request_Request *) request_open(str_alloc("GET"), str_alloc("http://the-lang-non-existing-domain.com"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
 }
 ======= flags =======
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32

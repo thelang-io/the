@@ -58,8 +58,8 @@ struct __THE_1_array_str {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -70,21 +70,13 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 struct str __THE_1_array_str_pop (struct __THE_1_array_str *);
-void __THE_1_array_str_push (struct __THE_1_array_str *, size_t, ...);
+void __THE_1_array_str_push (struct __THE_1_array_str *, struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -117,6 +109,14 @@ void print (FILE *stream, const char *fmt, ...) {
     }
   }
   va_end(args);
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -193,14 +193,13 @@ struct str __THE_1_array_str_pop (struct __THE_1_array_str *n) {
   n->l--;
   return n->d[n->l];
 }
-void __THE_1_array_str_push (struct __THE_1_array_str *n, size_t x, ...) {
-  if (x == 0) return;
-  n->l += x;
+void __THE_1_array_str_push (struct __THE_1_array_str *n, struct __THE_1_array_str m) {
+  if (m.l == 0) return;
+  n->l += m.l;
   n->d = re_alloc(n->d, n->l * sizeof(struct str));
-  va_list args;
-  va_start(args, x);
-  for (size_t i = n->l - x; i < n->l; i++) n->d[i] = va_arg(args, struct str);
-  va_end(args);
+  size_t k = 0;
+  for (size_t i = n->l - m.l; i < n->l; i++) n->d[i] = m.d[k++];
+  free(m.d);
 }
 struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   struct str r = str_alloc("[");
@@ -220,7 +219,7 @@ int main () {
   struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
   print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test1_0), THE_EOL);
-  __THE_1_array_str_push(&__THE_0_test1_0, 1, str_alloc("0"));
+  __THE_1_array_str_push(&__THE_0_test1_0, __THE_1_array_str_alloc(1, str_alloc("0")));
   print(stdout, "zzsz", "popped:", " ", __THE_1_array_str_pop(&__THE_0_test1_0), THE_EOL);
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);

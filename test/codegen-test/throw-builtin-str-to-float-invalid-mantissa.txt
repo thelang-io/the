@@ -1,0 +1,78 @@
+======= stdin =======
+main {
+  "0.test".toFloat()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <errno.h>
+#include <float.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+char *str_cstr (const struct str);
+double str_toFloat (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+double str_toFloat (struct str self) {
+  char *c = str_cstr(self);
+  char *e = NULL;
+  errno = 0;
+  double r = strtod(c, &e);
+  if (errno == ERANGE || r < -DBL_MAX || DBL_MAX < r) {
+    fprintf(stderr, "Error: value `%s` out of range" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  } else if (errno != 0 || e == c || *e != 0) {
+    fprintf(stderr, "Error: value `%s` has invalid syntax" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  free(self.d);
+  return r;
+}
+
+int main () {
+  str_toFloat(str_alloc("0.test"));
+}
+======= flags =======
+======= stderr =======
+Error: value `0.test` has invalid syntax

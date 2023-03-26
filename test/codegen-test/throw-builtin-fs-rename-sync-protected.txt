@@ -1,0 +1,150 @@
+======= stdin =======
+main {
+  mut fileName := path_SEP + "etc" + path_SEP + "sudoers"
+
+  if os_NAME == "Windows" {
+    fileName = "C:" + path_SEP + "Windows" + path_SEP + "System32" + path_SEP + "kernel32.dll"
+  }
+
+  fs_renameSync(fileName, "test" + path_SEP + "fixtures" + path_SEP + "rename-protected")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <sys/utsname.h>
+#endif
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str cstr_concat_str (const char *, struct str);
+void fs_renameSync (struct str, struct str);
+struct str os_name ();
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+char *str_cstr (const struct str);
+bool str_eq_cstr (struct str, const char *);
+void str_free (struct str);
+struct str str_realloc (struct str, struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+void fs_renameSync (struct str n1, struct str n2) {
+  char *c1 = str_cstr(n1);
+  char *c2 = str_cstr(n2);
+  if (rename(c1, c2) != 0) {
+    fprintf(stderr, "Error: failed to rename from `%s` to `%s`" THE_EOL, c1, c2);
+    exit(EXIT_FAILURE);
+  }
+  free(c2);
+  free(c1);
+  str_free(n2);
+  str_free(n1);
+}
+struct str os_name () {
+  #ifdef THE_OS_WINDOWS
+    return str_alloc("Windows");
+  #else
+    struct utsname buf;
+    if (uname(&buf) < 0) {
+      fprintf(stderr, "Error: failed to retrieve uname information" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
+    return str_alloc(buf.sysname);
+  #endif
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
+}
+
+int main () {
+  struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "etc"), str_alloc(THE_PATH_SEP)), "sudoers");
+  if (str_eq_cstr(os_name(), "Windows")) {
+    __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("C:", str_alloc(THE_PATH_SEP)), "Windows"), str_alloc(THE_PATH_SEP)), "System32"), str_alloc(THE_PATH_SEP)), "kernel32.dll"));
+  }
+  fs_renameSync(str_copy(__THE_0_fileName_0), str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "rename-protected"));
+  str_free((struct str) __THE_0_fileName_0);
+}
+======= flags =======
+======= stderr =======
+Error: failed to rename from `{{ (/etc/sudoers|C:\\Windows\\System32\\kernel32\.dll) }}` to `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}rename-protected`

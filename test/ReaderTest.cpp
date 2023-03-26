@@ -97,6 +97,12 @@ TEST_F(ReaderTest, EofOnNext) {
   EXPECT_TRUE(this->r2_->eof());
 }
 
+TEST_F(ReaderTest, Resets) {
+  this->r2_->seek(ReaderLocation{7, 1, 7});
+  this->r2_->reset();
+  EXPECT_EQ(this->r2_->loc, (ReaderLocation{0, 1, 0}));
+}
+
 TEST_F(ReaderTest, SeeksTo) {
   this->r2_->seek(ReaderLocation{7, 1, 7});
 

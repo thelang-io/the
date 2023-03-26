@@ -46,8 +46,8 @@ struct __THE_1_array_array_str {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -59,7 +59,7 @@ struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str)
 void __THE_1_array_str_free (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
 struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t, ...);
-struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str, int64_t);
+struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str, int32_t);
 struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_1_array_array_str);
 void __THE_1_array_array_str_free (struct __THE_1_array_array_str);
 size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str);
@@ -68,14 +68,6 @@ void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -108,6 +100,14 @@ void print (FILE *stream, const char *fmt, ...) {
     }
   }
   va_end(args);
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -200,9 +200,9 @@ struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_array_str) {d, x};
 }
-struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];

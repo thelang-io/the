@@ -106,9 +106,9 @@ void str_free (struct str s) {
 int main () {
   const enum __THE_1_Color_0 __THE_0_a_0 = 0;
   const enum __THE_1_Color_0 __THE_0_b_0 = __THE_0_ColorSDGreen_0;
-  print(stdout, "szsz", enum_str((int) __THE_0_a_0), " ", enum_str((int) __THE_0_b_0), THE_EOL);
-  print(stdout, "sz", enum_str((int) __THE_0_a_0), THE_EOL);
-  print(stdout, "sz", enum_str((int) __THE_0_b_0), THE_EOL);
+  print(stdout, "szsz", enum_str(__THE_0_a_0), " ", enum_str(__THE_0_b_0), THE_EOL);
+  print(stdout, "sz", enum_str(__THE_0_a_0), THE_EOL);
+  print(stdout, "sz", enum_str(__THE_0_b_0), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

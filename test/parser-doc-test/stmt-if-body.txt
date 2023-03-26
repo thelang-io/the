@@ -1,0 +1,24 @@
+======= stdin =======
+if true {
+  /* Test description 1. */
+  obj Test1 {}
+} else {
+  /* Test description 2. */
+  obj Test2 {}
+}
+======= stdout =======
+## `Test1`
+Test description 1.
+
+```the
+obj Test1 {
+}
+```
+
+## `Test2`
+Test description 2.
+
+```the
+obj Test2 {
+}
+```

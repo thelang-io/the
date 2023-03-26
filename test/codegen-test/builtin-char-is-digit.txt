@@ -1,14 +1,14 @@
 ======= stdin =======
 main {
-  print('\0'.isDigit())
-  print('\n'.isDigit())
-  print('\t'.isDigit())
-  print('A'.isDigit())
-  print('a'.isDigit())
-  print('0'.isDigit())
-  print('9'.isDigit())
-  print('_'.isDigit())
-  print('-'.isDigit())
+  print('\0'.isDigit)
+  print('\n'.isDigit)
+  print('\t'.isDigit)
+  print('A'.isDigit)
+  print('a'.isDigit)
+  print('0'.isDigit)
+  print('9'.isDigit)
+  print('_'.isDigit)
+  print('-'.isDigit)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -37,11 +37,11 @@ struct str {
   size_t l;
 };
 
-bool char_is_digit (char);
+bool char_isDigit (char);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 
-bool char_is_digit (char c) {
+bool char_isDigit (char c) {
   return isdigit(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
@@ -78,15 +78,15 @@ void str_free (struct str s) {
 }
 
 int main () {
-  print(stdout, "tz", char_is_digit('\0'), THE_EOL);
-  print(stdout, "tz", char_is_digit('\n'), THE_EOL);
-  print(stdout, "tz", char_is_digit('\t'), THE_EOL);
-  print(stdout, "tz", char_is_digit('A'), THE_EOL);
-  print(stdout, "tz", char_is_digit('a'), THE_EOL);
-  print(stdout, "tz", char_is_digit('0'), THE_EOL);
-  print(stdout, "tz", char_is_digit('9'), THE_EOL);
-  print(stdout, "tz", char_is_digit('_'), THE_EOL);
-  print(stdout, "tz", char_is_digit('-'), THE_EOL);
+  print(stdout, "tz", char_isDigit('\0'), THE_EOL);
+  print(stdout, "tz", char_isDigit('\n'), THE_EOL);
+  print(stdout, "tz", char_isDigit('\t'), THE_EOL);
+  print(stdout, "tz", char_isDigit('A'), THE_EOL);
+  print(stdout, "tz", char_isDigit('a'), THE_EOL);
+  print(stdout, "tz", char_isDigit('0'), THE_EOL);
+  print(stdout, "tz", char_isDigit('9'), THE_EOL);
+  print(stdout, "tz", char_isDigit('_'), THE_EOL);
+  print(stdout, "tz", char_isDigit('-'), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

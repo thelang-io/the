@@ -1,0 +1,307 @@
+======= stdin =======
+// description
+fn function1 () void
+
+/*
+description 2
+@param b - Test
+*/
+fn function2 (a: int) int
+/*
+ * Description 3
+ * @param a Test param
+ */
+fn function3 (mut a: int) int
+/*
+ * Description 4
+ * @param a - Test param
+ * @param b - Test another param
+ */
+fn function4 (a: int...) int
+/*
+ * Description
+ * @param a - Test param
+ * @param b - Test another param
+ */
+fn function5 (a: int, b: int) int
+/*
+ * Description
+ * @param a - Test param
+ *   - item 2
+ * @param b - Test another param
+ *   - item 1
+ *   - item 2
+ */
+fn function6 (mut a: int, mut b: int) int
+/*
+ * Description
+ * @param a - Test param
+ * @param b - Test another param
+ */
+fn function7 (a: int..., b: int...) int
+/*
+ * Description
+ * @param a - Test param
+ */
+fn function8 (a := 1) int
+/*
+ * Description
+ * @param a - Test param
+ * @param b - Test another param
+ */
+fn function9 (a := 1, b := 1) int
+/*
+ * Description
+ * @param a - Test param
+ */
+fn function10 (a: i64 = 1) int
+/*
+ * Description
+ * @param a - Test param
+ * @param b - Test another param
+ */
+fn function11 (a: i64 = 1, b: i64 = 1) int
+/*
+ * Description
+ */
+fn veryLongFunctionName (veryLongFirstParameterName: int, veryLongSecondParameterName := 2) int
+
+// @note Be careful
+fn functionNote (a: int, b: int) int
+
+/*
+Test description
+@note Be careful
+*/
+fn functionNoteWithDescription (a: int, b: int) int
+
+/*
+ * @note Something else \
+ *   or not
+ * @note But anyway \
+ *   it should be multiline
+ */
+fn functionNote2 (a: int, b: int) int
+
+/*
+ * Test description
+ *
+ * @note Something else \
+ *   or not
+ * @note But anyway \
+ *   it should be multiline
+ */
+fn functionNoteWithDescription2 (a: int, b: int) int
+
+// ![image](test.jpg)
+fn functionImage (a: int, b: int) int
+
+/*
+ * Test description
+ * ![image](test.jpg)
+ */
+fn functionImageWithDescription (a: int, b: int) int
+
+/**
+ * Test comment
+ *   - Item 1
+ *   - Item 2
+ */
+fn functionWithMultilineDescription (a: int, b: int) int
+======= stdout =======
+## `function1()`
+description
+
+```the
+fn function1 () void
+```
+
+## `function2()`
+description 2
+
+```the
+fn function2 (a: int) int
+```
+
+## `function3()`
+Description 3
+
+```the
+fn function3 (mut a: int) int
+```
+
+### Parameters
+**a** - Test param
+
+## `function4()`
+Description 4
+
+```the
+fn function4 (a: int...) int
+```
+
+### Parameters
+**a** - Test param
+
+## `function5()`
+Description
+
+```the
+fn function5 (a: int, b: int) int
+```
+
+### Parameters
+**a** - Test param \
+**b** - Test another param
+
+## `function6()`
+Description
+
+```the
+fn function6 (mut a: int, mut b: int) int
+```
+
+### Parameters
+**a** - Test param
+  - item 2
+
+**b** - Test another param
+  - item 1
+  - item 2
+
+## `function7()`
+Description
+
+```the
+fn function7 (a: int..., b: int...) int
+```
+
+### Parameters
+**a** - Test param \
+**b** - Test another param
+
+## `function8()`
+Description
+
+```the
+fn function8 (a := 1) int
+```
+
+### Parameters
+**a** - Test param
+
+## `function9()`
+Description
+
+```the
+fn function9 (a := 1, b := 1) int
+```
+
+### Parameters
+**a** - Test param \
+**b** - Test another param
+
+## `function10()`
+Description
+
+```the
+fn function10 (a: i64 = 1) int
+```
+
+### Parameters
+**a** - Test param
+
+## `function11()`
+Description
+
+```the
+fn function11 (a: i64 = 1, b: i64 = 1) int
+```
+
+### Parameters
+**a** - Test param \
+**b** - Test another param
+
+## `veryLongFunctionName()`
+Description
+
+```the
+fn veryLongFunctionName (
+  veryLongFirstParameterName: int,
+  veryLongSecondParameterName := 2
+) int
+```
+
+## `functionNote()`
+
+```the
+fn functionNote (a: int, b: int) int
+```
+
+> ### NOTE:
+  Be careful
+
+## `functionNoteWithDescription()`
+Test description
+
+```the
+fn functionNoteWithDescription (a: int, b: int) int
+```
+
+> ### NOTE:
+  Be careful
+
+## `functionNote2()`
+
+```the
+fn functionNote2 (a: int, b: int) int
+```
+
+> ### NOTE:
+  Something else \
+  or not
+
+> ### NOTE:
+  But anyway \
+  it should be multiline
+
+## `functionNoteWithDescription2()`
+Test description
+
+```the
+fn functionNoteWithDescription2 (a: int, b: int) int
+```
+
+> ### NOTE:
+  Something else \
+  or not
+
+> ### NOTE:
+  But anyway \
+  it should be multiline
+
+## `functionImage()`
+
+```the
+fn functionImage (a: int, b: int) int
+```
+
+![image](test.jpg)
+
+## `functionImageWithDescription()`
+Test description
+
+```the
+fn functionImageWithDescription (a: int, b: int) int
+```
+
+![image](test.jpg)
+
+## `functionWithMultilineDescription()`
+Test comment
+- Item 1
+- Item 2
+
+```the
+fn functionWithMultilineDescription (a: int, b: int) int
+```

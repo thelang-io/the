@@ -1,0 +1,13 @@
+======= stdin =======
+fn test () {
+  /* Test description. */
+  obj Test {}
+}
+======= stdout =======
+## `Test`
+Test description.
+
+```the
+obj Test {
+}
+```

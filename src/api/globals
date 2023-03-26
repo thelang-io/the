@@ -1,0 +1,11 @@
+// Globals API
+
+/**
+ * Writes the textual representations of the given items into the given output stream.
+ *
+ * @param items - Items to print.
+ * @param separator - String separating items. The default is empty string.
+ * @param terminator - String terminating items. The default is `os_EOL`.
+ * @param to - Output where to write items. Can be `stdout` or `stderr`. The default is `stdout`.
+ */
+fn print (items: any..., separator := " ", terminator := os_EOL, to := "stdout") void

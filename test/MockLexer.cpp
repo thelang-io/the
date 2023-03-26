@@ -17,8 +17,8 @@
 #include "MockLexer.hpp"
 
 MockLexer::MockLexer (const std::string &content) : _r(content), Lexer(&this->_r) {
-  ON_CALL(*this, next).WillByDefault([this] () {
-    return this->Lexer::next();
+  ON_CALL(*this, next).WillByDefault([this] (bool _1) {
+    return this->Lexer::next(_1);
   });
 
   ON_CALL(*this, seek).WillByDefault([this] (ReaderLocation l) {

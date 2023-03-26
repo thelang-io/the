@@ -1,10 +1,10 @@
 ======= stdin =======
 main {
-  "".empty()
-  '\0'.repeat(1).empty()
-  "t".empty()
-  "test".empty()
-  '\0'.repeat(0xFFFFFFF).empty()
+  "".empty
+  '\0'.repeat(1).empty
+  "t".empty
+  "test".empty
+  '\0'.repeat(0xFFFFFFF).empty
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

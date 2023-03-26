@@ -10,7 +10,7 @@ fn test (a: int) any {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test" codeName="test_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />

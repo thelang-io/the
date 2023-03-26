@@ -1,0 +1,146 @@
+======= stdin =======
+// Test description.
+const a: int
+
+// Test description.
+mut b: int = 10
+
+// Test description.
+const c := 10
+
+/**
+ * Test description.
+ *   - Multiline description
+ *   - Another line
+ */
+const d: int
+
+// ![image](test.jpg)
+const e: int
+
+/**
+ * Description
+ * ![image](test.jpg)
+ */
+const f: int
+
+// @note Be careful.
+const g: int
+
+/**
+ * Description
+ * @note Be careful.
+ */
+const h: int
+
+/**
+ * @note Be careful. \
+ * For sure.
+ * @note Be careful 2. \
+ * For sure.
+ */
+const g: int
+
+/**
+ * Description note.
+ * @note Be careful. \
+ * For sure.
+ * @note Be careful 2. \
+ * For sure.
+ */
+const h: int
+======= stdout =======
+## `a`
+Test description.
+
+```the
+const a: int
+```
+
+## `b`
+Test description.
+
+```the
+mut b: int = 10
+```
+
+## `c`
+Test description.
+
+```the
+const c := 10
+```
+
+## `d`
+Test description.
+- Multiline description
+- Another line
+
+```the
+const d: int
+```
+
+## `e`
+
+```the
+const e: int
+```
+
+![image](test.jpg)
+
+## `f`
+Description
+
+```the
+const f: int
+```
+
+![image](test.jpg)
+
+## `g`
+
+```the
+const g: int
+```
+
+> ### NOTE:
+  Be careful.
+
+## `h`
+Description
+
+```the
+const h: int
+```
+
+> ### NOTE:
+  Be careful.
+
+## `g`
+
+```the
+const g: int
+```
+
+> ### NOTE:
+  Be careful. \
+  For sure.
+
+> ### NOTE:
+  Be careful 2. \
+  For sure.
+
+## `h`
+Description note.
+
+```the
+const h: int
+```
+
+> ### NOTE:
+  Be careful. \
+  For sure.
+
+> ### NOTE:
+  Be careful 2. \
+  For sure.

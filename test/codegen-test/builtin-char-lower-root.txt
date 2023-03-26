@@ -1,0 +1,28 @@
+======= stdin =======
+main {
+  'A'.lower;
+  'a'.lower;
+  '0'.lower;
+  '9'.lower;
+  '_'.lower;
+  '-'.lower;
+}
+======= code =======
+#include <ctype.h>
+
+char char_lower (char);
+
+char char_lower (char c) {
+  return tolower(c);
+}
+
+int main () {
+  char_lower('A');
+  char_lower('a');
+  char_lower('0');
+  char_lower('9');
+  char_lower('_');
+  char_lower('-');
+}
+======= flags =======
+======= stdout =======

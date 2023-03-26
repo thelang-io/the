@@ -1,0 +1,796 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+fn panic (message: str) {
+  print("Error:", message, to: "stderr")
+  exit(1)
+}
+
+const ID_TOKEN_START := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"
+const ID_TOKEN := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"
+
+fn unescape (s: str) str {
+  clean := s.slice(1, -1)
+  cleanLen := clean.len
+  mut result := ""
+
+  loop i := 0; i < cleanLen; i++ {
+    ch := clean[i]
+
+    if ch != '\\' {
+      result += ch.str()
+    } else {
+      result += clean[++i].str()
+    }
+  }
+
+  return result
+}
+
+type ASTType =
+  ASTTypeArr |
+  ASTTypeFn |
+  ASTTypeId |
+  ASTTypeMap |
+  ASTTypeOpt |
+  ASTTypeRef |
+  ASTTypeUnion
+
+obj ASTTypeArr {
+  elementType: ASTType
+}
+
+obj ASTTypeFn {
+  params: ASTTypeFnParam[]
+  returnType: ASTType
+}
+
+obj ASTTypeFnParam {
+  id: str?
+  t: ASTType
+  mutable: bool
+  variadic: bool
+}
+
+obj ASTTypeId {
+  id: str
+}
+
+obj ASTTypeMap {
+  keyType: ASTType
+  valueType: ASTType
+}
+
+obj ASTTypeOpt {
+  underlyingType: ASTType
+}
+
+obj ASTTypeRef {
+  refType: ASTType
+}
+
+obj ASTTypeUnion {
+  subTypes: ASTType[]
+}
+
+type ASTNode = ASTFnDecl | ASTObjDecl | ASTVarDecl
+
+obj ASTFnParam {
+  id: str
+  t: ASTType
+  mutable: bool
+  variadic: bool
+  hasInit: bool
+}
+
+obj ASTFnDecl {
+  id: str
+  params: ASTFnParam[]
+  returnType: ASTType
+}
+
+obj ASTObjDecl {
+  id: str
+  members: ASTNode[]
+}
+
+obj ASTVarDecl {
+  id: str
+  t: ASTType
+  hasInit: bool
+  mutable: bool
+  constant: bool
+}
+
+enum TokenType {
+  Unknown,
+  Id,
+  LitStr,
+  OpEq,
+  OpLBrack,
+  OpRBrack,
+  OpSlash
+}
+
+obj Token {
+  t: TokenType
+  val: str
+}
+
+obj XMLNode {
+  id: str
+  params: XMLNodeParam[]
+  nodes: XMLNode[]
+
+  fn hasParam (self: ref Self, name: str) bool {
+    paramsLen := self.params.len
+
+    loop i := 0; i < paramsLen; i++ {
+      if self.params[i].name == name {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn getParam (self: ref Self, name: str) str {
+    paramsLen := self.params.len
+
+    loop i := 0; i < paramsLen; i++ {
+      param := self.params[i]
+
+      if param.name == name {
+        return param.value
+      }
+    }
+
+    return ""
+  }
+}
+
+obj XMLNodeParam {
+  name: str
+  value: str
+}
+
+obj Reader {
+  content: str
+  mut pos: int
+
+  fn hasNext (self: ref Self) bool {
+    return self.pos < self.content.len
+  }
+
+  fn lookahead (mut self: ref Self, check: char) bool {
+    if self.pos < self.content.len && self.content[self.pos] == check {
+      self.pos += 1
+      return true
+    }
+
+    return false
+  }
+
+  fn next (mut self: ref Self) char {
+    if !self.hasNext() {
+      panic("Tried next on Reader eof")
+    }
+
+    return self.content[self.pos++]
+  }
+
+  fn seek (mut self: ref Self, pos: int) {
+    self.pos = pos
+  }
+
+  fn slice (self: ref Self, start: int, end: int) str {
+    return self.content.slice(start, end)
+  }
+}
+
+obj Tokenizer {
+  tokens: Token[]
+  mut pos: int
+
+  fn hasNext (self: ref Self) bool {
+    return self.pos < self.tokens.len
+  }
+
+  fn lookahead (mut self: ref Self, check: TokenType) bool {
+    if self.pos < self.tokens.len && self.tokens[self.pos].t == check {
+      self.pos += 1
+      return true
+    }
+
+    return false
+  }
+
+  fn next (mut self: ref Self) Token {
+    if !self.hasNext() {
+      panic("Tried next on Tokenizer eof")
+    }
+
+    return self.tokens[self.pos++]
+  }
+
+  fn seek (mut self: ref Self, pos: int) {
+    self.pos = pos
+  }
+}
+
+fn getInputPath () str {
+  if process_args.len == 1 {
+    panic("Please provide input path as first argument")
+  }
+
+  args := process_args
+  fileNameOrPath: str = args[1]
+
+  filePath := fs_isAbsoluteSync(fileNameOrPath)
+    ? fileNameOrPath
+    : process_cwd() + "/" + fileNameOrPath
+
+  if !fs_isFileSync(filePath) {
+    panic("Please provide file path as first argument")
+  }
+
+  return fs_realpathSync(filePath)
+}
+
+fn tokenize (content: str) Token[] {
+  mut reader := Reader{content: content}
+  mut result: Token[]
+
+  loop reader.hasNext() {
+    pos := reader.pos
+    ch := reader.next()
+    mut t := TokenType.Unknown
+
+    if ch.isSpace() { continue }
+    if ch == '=' { t = .OpEq }
+    if ch == '<' { t = .OpLBrack }
+    if ch == '>' { t = .OpRBrack }
+    if ch == '/' { t = .OpSlash }
+
+    if ch == '"' {
+      mut prevCh := ch
+
+      loop reader.hasNext() {
+        pos2 := reader.pos
+        ch2 := reader.next()
+
+        if ch2 == '"' && prevCh != '\\' {
+          break
+        }
+
+        prevCh = ch2
+      }
+
+      t = .LitStr
+    } elif ID_TOKEN_START.find(ch.str()) != -1 {
+      loop reader.hasNext() {
+        pos2 := reader.pos
+        ch2 := reader.next()
+
+        if ID_TOKEN.find(ch2.str()) == -1 {
+          reader.seek(pos2)
+          break
+        }
+      }
+
+      t = .Id
+    }
+
+    if t == .Unknown {
+      panic("Unknown token `" + ch.str() + "`")
+    }
+
+    result.push(Token{t: t, val: reader.slice(pos, reader.pos)})
+  }
+
+  return result
+}
+
+fn parse (tokens: Token[]) XMLNode[] {
+  mut tokenizer := Tokenizer{tokens: tokens}
+  return parseNodes(ref tokenizer)
+}
+
+fn parseNode (mut tokenizer: ref Tokenizer) XMLNode {
+  tk1 := tokenizer.next()
+
+  if tk1.t != .OpLBrack {
+    panic("Expected left angle bracket, got: " + tk1.str())
+  }
+
+  tk2 := tokenizer.next()
+
+  if tk2.t != .Id {
+    panic("Expected identifier, got: " + tk2.str())
+  }
+
+  mut params: XMLNodeParam[]
+
+  loop tokenizer.hasNext() {
+    pos1 := tokenizer.pos
+    tk1 := tokenizer.next()
+
+    if tk1.t != .Id {
+      tokenizer.seek(pos1)
+      break
+    }
+
+    if !tokenizer.lookahead(.OpEq) {
+      params.push(XMLNodeParam{name: tk1.val})
+      continue
+    }
+
+    tk3 := tokenizer.next()
+
+    if tk3.t != .LitStr {
+      panic("Expected string literal, got: " + tk3.str())
+    }
+
+    params.push(XMLNodeParam{name: tk1.val, value: unescape(tk3.val)})
+  }
+
+  mut nodes: XMLNode[]
+  tk3 := tokenizer.next()
+
+  if tk3.t != .OpRBrack && tk3.t != .OpSlash {
+    panic("Expected right angle bracket, got: " + tk3.str())
+  } elif tk3.t == .OpRBrack {
+    nodes = parseNodes(ref tokenizer)
+    tk4 := tokenizer.next()
+
+    if tk4.t != .OpLBrack {
+      panic("Expected left angle bracket, got: " + tk4.str())
+    }
+
+    tk5 := tokenizer.next()
+
+    if tk5.t != .OpSlash {
+      panic("Expected slash, got: " + tk5.str())
+    }
+
+    tk6 := tokenizer.next()
+
+    if tk6.t != .Id {
+      panic("Expected identifier, got: " + tk6.str())
+    }
+  }
+
+  tk7 := tokenizer.next()
+
+  if tk7.t != .OpRBrack {
+    panic("Expected right angle bracket, got: " + tk7.str())
+  }
+
+  return XMLNode{id: tk2.val, params: params, nodes: nodes}
+}
+
+fn parseNodes (mut tokenizer: ref Tokenizer) XMLNode[] {
+  mut result: XMLNode[]
+
+  loop tokenizer.hasNext() {
+    pos := tokenizer.pos
+
+    if tokenizer.lookahead(.OpLBrack) && tokenizer.lookahead(.OpSlash) {
+      tokenizer.seek(pos)
+      break
+    }
+
+    tokenizer.seek(pos)
+    node := parseNode(ref tokenizer)
+    result.push(node)
+  }
+
+  return result
+}
+
+fn transform (nodes: XMLNode[]) ASTNode[] {
+  nodesLen := nodes.len
+  mut result: ASTNode[]
+
+  loop i := 0; i < nodesLen; i++ {
+    node := transformNode(nodes[i])
+    result.push(node)
+  }
+
+  return result
+}
+
+fn expectXMLNode (node: XMLNode, id: str, len := 0) {
+  if node.id != id {
+    panic("Expected " + id + ", got: " + node.str())
+  } elif len != 0 && node.nodes.len < len {
+    panic("Expected " + id + " nodes len " + len.str() + ", got: " + node.nodes.len.str())
+  }
+}
+
+fn expectXMLNodeToken (node: XMLNode) {
+  if node.id != "Token" {
+    panic("Expected Token, got: " + node.str())
+  } elif !node.hasParam("val") {
+    panic("Expected Token to have val param, got: " + node.str())
+  }
+}
+
+fn transformNode (node: XMLNode) ASTNode {
+  if node.id == "StmtFnDecl" {
+    expectXMLNode(node, "StmtFnDecl", 1)
+    nodeId := node.nodes[0]
+    expectXMLNode(nodeId, "StmtFnDeclId", 1)
+    nodeIdToken := nodeId.nodes[0]
+    expectXMLNodeToken(nodeIdToken)
+
+    mut params: ASTFnParam[]
+
+    if node.nodes.len >= 2 {
+      nodeBody := node.nodes[1]
+
+      if nodeBody.id == "StmtFnDeclParams" {
+        nodeBodyNodesLen := nodeBody.nodes.len
+
+        loop i := 0; i < nodeBodyNodesLen; i++ {
+          it := nodeBody.nodes[i]
+          expectXMLNode(it, "StmtFnDeclParam", 1)
+          itNodeId := it.nodes[0]
+          expectXMLNode(itNodeId, "StmtFnDeclParamId", 1)
+          itNodeIdToken := itNodeId.nodes[0]
+          expectXMLNodeToken(itNodeIdToken)
+
+          mut itType: ASTType = ASTTypeId{id: "unknown"}
+
+          if it.nodes.len > 1 && it.nodes[1].id == "StmtFnDeclParamType" {
+            itNodeType := it.nodes[1]
+            expectXMLNode(itNodeType, "StmtFnDeclParamType", 1)
+            itType = transformNodeType(itNodeType.nodes[0])
+          }
+
+          params.push(ASTFnParam{
+            id: itNodeIdToken.getParam("val"),
+            t: itType,
+            mutable: it.hasParam("mut"),
+            variadic: it.hasParam("variadic"),
+            hasInit: (it.nodes.len > 1 && it.nodes[1].id == "StmtFnDeclParamInit") ||
+              (it.nodes.len > 2 && it.nodes[2].id == "StmtFnDeclParamInit")
+          })
+        }
+      }
+    }
+
+    nodeReturnType := params.empty() ? node.nodes[1] : node.nodes[2]
+    expectXMLNode(nodeReturnType, "StmtFnDeclReturnType", 1)
+    returnType := transformNodeType(nodeReturnType.nodes[0])
+
+    return ASTFnDecl{
+      id: nodeIdToken.getParam("val"),
+      params: params,
+      returnType: returnType
+    }
+  } elif node.id == "StmtObjDecl" {
+    expectXMLNode(node, "StmtObjDecl", 1)
+    nodeId := node.nodes[0]
+    expectXMLNode(nodeId, "StmtObjDeclId", 1)
+    nodeIdToken := nodeId.nodes[0]
+    expectXMLNodeToken(nodeIdToken)
+    mut members: ASTNode[]
+
+    if node.nodes.len == 2 {
+      nodeMembers := node.nodes[1]
+      expectXMLNode(nodeMembers, "StmtObjDeclMembers")
+
+      members = transform(nodeMembers.nodes)
+    }
+
+    return ASTObjDecl{
+      id: nodeIdToken.getParam("val"),
+      members: members
+    }
+  } elif node.id == "StmtVarDecl" {
+    expectXMLNode(node, "StmtVarDecl", 2)
+    nodeId := node.nodes[0]
+    nodeType := node.nodes[1]
+    expectXMLNode(nodeId, "StmtVarDeclId", 1)
+    nodeIdToken := nodeId.nodes[0]
+    expectXMLNodeToken(nodeIdToken)
+
+    if nodeType.id != "StmtVarDeclType" {
+      panic("StmtVarDecl w/o type are not supported, got: " + nodeType.str())
+    }
+
+    expectXMLNode(nodeType, "StmtVarDeclType", 1)
+
+    return ASTVarDecl{
+      id: nodeIdToken.getParam("val"),
+      t: transformNodeType(nodeType.nodes[0]),
+      hasInit: node.nodes.len == 3,
+      mutable: node.hasParam("mut"),
+      constant: node.hasParam("const")
+    }
+  }
+
+  panic("Unexpected node: " + node.str())
+}
+
+fn transformNodeType (node: XMLNode) ASTType {
+  if node.id == "TypeArray" {
+    expectXMLNode(node, "TypeArray", 1)
+    return ASTTypeArr{elementType: transformNodeType(node.nodes[0])}
+  } elif node.id == "TypeFn" {
+    expectXMLNode(node, "TypeFn", 1)
+    nodeBody := node.nodes[0]
+
+    mut params: ASTTypeFnParam[]
+
+    if nodeBody.id == "TypeFnParams" {
+      nodeBodyNodesLen := nodeBody.nodes.len
+
+      loop i := 0; i < nodeBodyNodesLen; i++ {
+        it := nodeBody.nodes[i]
+        expectXMLNode(it, "TypeFnParam", 1)
+        itBody := it.nodes[0]
+
+        mut itId: str?
+
+        if itBody.id == "TypeFnParamId" {
+          expectXMLNode(itBody, "TypeFnParamId", 1)
+          itBodyId := itBody.nodes[0]
+          expectXMLNodeToken(itBodyId)
+          itId = itBodyId.getParam("val")
+        }
+
+        itNodeType := itId == nil ? it.nodes[0] : it.nodes[1]
+        expectXMLNode(itNodeType, "TypeFnParamType", 1)
+        itType := transformNodeType(itNodeType.nodes[0])
+
+        params.push(ASTTypeFnParam{
+          id: itId,
+          t: itType,
+          mutable: it.hasParam("mut"),
+          variadic: it.hasParam("variadic")
+        })
+      }
+    }
+
+    nodeReturnType := params.empty() ? node.nodes[0] : node.nodes[1]
+    expectXMLNode(nodeReturnType, "TypeFnReturnType", 1)
+    returnType := transformNodeType(nodeReturnType.nodes[0])
+    return ASTTypeFn{params: params, returnType: returnType}
+  } elif node.id == "TypeId" {
+    expectXMLNode(node, "TypeId", 1)
+    nodeBody := node.nodes[0]
+    expectXMLNodeToken(nodeBody)
+
+    return ASTTypeId{id: nodeBody.getParam("val")}
+  } elif node.id == "TypeMap" {
+    expectXMLNode(node, "TypeMap", 2)
+    nodeKey := node.nodes[0]
+    expectXMLNode(nodeKey, "TypeMapKeyType", 1)
+    nodeValue := node.nodes[1]
+    expectXMLNode(nodeValue, "TypeMapValueType", 1)
+
+    return ASTTypeMap{
+      keyType: transformNodeType(nodeKey.nodes[0]),
+      valueType: transformNodeType(nodeValue.nodes[0])
+    }
+  } elif node.id == "TypeOptional" {
+    expectXMLNode(node, "TypeOptional", 1)
+    return ASTTypeOpt{underlyingType: transformNodeType(node.nodes[0])}
+  } elif node.id == "TypeRef" {
+    expectXMLNode(node, "TypeRef", 1)
+    return ASTTypeRef{refType: transformNodeType(node.nodes[0])}
+  } elif node.id == "TypeUnion" {
+    expectXMLNode(node, "TypeUnion", 2)
+
+    nodesLen := node.nodes.len
+    mut subTypes: ASTType[]
+
+    loop i := 0; i < nodesLen; i++ {
+      subTypes.push(transformNodeType(node.nodes[i]))
+    }
+
+    return ASTTypeUnion{subTypes: subTypes}
+  }
+
+  panic("Unknown type: " + node.str())
+}
+
+fn generate (nodes: ASTNode[]) str {
+  nodesLen := nodes.len
+  mut result := ""
+
+  loop i := 0; i < nodesLen; i++ {
+    result += generateNode(nodes[i]) + os_EOL
+  }
+
+  return result
+}
+
+fn generateNode (node: ASTNode, prefix := "") str {
+  if node is ASTFnDecl {
+    returnType := generateType(node.returnType)
+    paramsLen := node.params.len
+    mut paramsCode := ""
+    mut paramIdx := 0
+    mut callInfo := ""
+
+    loop i := 0; i < paramsLen; i++ {
+      param := node.params[i]
+      mut paramType := generateType(param.t)
+      paramRequired := !param.hasInit && !param.variadic
+
+      if i == 0 && (paramType == "selfType" || paramType == "refSelfType") {
+        callInfo = ", true, \"" + param.id + "_0\", " +
+          paramType + ", " + param.mutable.str()
+        continue
+      }
+
+      if param.variadic {
+        paramType = "this->createArr(" + paramType + ")"
+      }
+
+      paramsCode += paramIdx == 0 ? "" : "," + os_EOL
+      paramsCode += "  TypeFnParam{\"" + param.id + "\", " +
+        paramType + ", " +
+        param.mutable.str() + ", " +
+        paramRequired.str() + ", " +
+        param.variadic.str() + "}"
+      paramIdx++
+    }
+
+    paramsCode = paramsCode.empty() ? "" : os_EOL + paramsCode + os_EOL
+    paramsCode = ", {" + paramsCode + "}"
+
+    callInfoName := node.id + "CallInfo"
+    typeFnName := node.id + "TypeFn"
+
+    if prefix.empty() {
+      return
+        "auto " + callInfoName + " = TypeCallInfo{\"" + node.id + "\"" + callInfo + "};" + os_EOL +
+        "auto " + typeFnName + " = TypeFn{" + returnType + paramsCode + ", false, " + callInfoName + "};" + os_EOL +
+        "this->_items.push_back(std::make_unique<Type>(Type{\"" + node.id + "\", \"@" + node.id + "\", " + typeFnName + ", {}, true}));"
+    } else {
+      return
+        "auto " + callInfoName + " = TypeCallInfo{selfType->name + \"_" + node.id + "\"" + callInfo + "};" + os_EOL +
+        "auto " + typeFnName + " = TypeFn{" + returnType + paramsCode + ", true, " + callInfoName + "};" + os_EOL +
+        "this->_items.push_back(std::make_unique<Type>(Type{selfType->name + \"." + node.id + "\", \"@" + prefix.lowerFirst() + "." + node.id + "\", " + typeFnName + ", {}, true}));" + os_EOL +
+        "selfType->fields.push_back(TypeField{\"" + node.id + "\", this->_items.back().get(), false, true});"
+    }
+  }
+
+  if node is ASTObjDecl {
+    nodeMembersLen := node.members.len
+    mut result := ""
+
+    loop i := 0; i < nodeMembersLen; i++ {
+      result += generateNode(node.members[i], node.id) + os_EOL
+    }
+
+    return result
+  }
+
+  if node is ASTVarDecl {
+    if prefix.empty() {
+      return ""
+    }
+
+    callInfoName := node.id + "CallInfo"
+
+    return
+      "auto " + callInfoName + " = TypeCallInfo{selfType->name + \"_" + node.id + "\", true, \"self_0\", refSelfType, false};" + os_EOL +
+      "selfType->fields.push_back(TypeField{\"" + node.id + "\", " + generateType(node.t) + ", " + node.mutable.str() + ", true, " + callInfoName + "});"
+  }
+
+  panic("Unknown node, got: " + node.str())
+}
+
+fn generateType (t: ASTType) str {
+  if t is ASTTypeRef {
+    r := t.refType
+
+    if r is ASTTypeId {
+      if r.id == "Self" {
+        return "refSelfType"
+      }
+    }
+  }
+
+  if t is ASTTypeId {
+    if t.id == "Self" {
+      return "selfType"
+    }
+  }
+
+  if t is ASTTypeArr {
+    return "this->createArr(" + generateType(t.elementType) + ")"
+  }
+
+  if t is ASTTypeFn {
+    paramsLen := t.params.len
+    mut paramsCode := ""
+
+    loop i := 0; i < paramsLen; i++ {
+      param := t.params[i]
+      paramName := param.id == nil ? "std::nullopt" : "\"" + param.id + "\""
+      mut paramType := generateType(param.t)
+      paramRequired := !param.variadic
+
+      if param.variadic {
+        paramType = "this->createArr(" + paramType + ")"
+      }
+
+      paramsCode += i == 0 ? "" : "," + os_EOL
+      paramsCode += "    TypeFnParam{" + paramName + ", " +
+        paramType + ", " +
+        param.mutable.str() + ", " +
+        paramRequired.str() + ", " +
+        param.variadic.str() + "}"
+    }
+
+    paramsCode = paramsCode.empty()
+      ? "{}"
+      : "{" + os_EOL + paramsCode + os_EOL + "  }"
+
+    return "this->createFn(" + paramsCode + ", " +
+      generateType(t.returnType) + ", std::nullopt, true)"
+  }
+
+  if t is ASTTypeId {
+    return "this->get(\"" + t.id + "\")"
+  }
+
+  if t is ASTTypeMap {
+    return "this->createMap(" + generateType(t.keyType) +
+      ", " + generateType(t.valueType) + ")"
+  }
+
+  if t is ASTTypeOpt {
+    return "this->createOpt(" + generateType(t.underlyingType) + ")"
+  }
+
+  if t is ASTTypeRef {
+    return "this->createRef(" + generateType(t.refType) + ")"
+  }
+
+  if t is ASTTypeUnion {
+    subTypesLen := t.subTypes.len
+    mut subTypes := ""
+
+    loop i := 0; i < subTypesLen; i++ {
+      subTypes += i == 0 ? "" : ", "
+      subTypes += generateType(t.subTypes[i])
+    }
+
+    return "this->createUnion(" + subTypes + ")"
+  }
+
+  panic("Unknown node type, got: " + t.str())
+}
+
+main {
+  inputPath := getInputPath()
+  content := process_runSync("build/the parse " + inputPath).str()
+  tokens := tokenize(content)
+  nodes := parse(tokens)
+  ast := transform(nodes)
+  result := generate(ast).trim()
+
+  if !result.empty() {
+    print(result)
+  }
+}

@@ -1,0 +1,8 @@
+======= stdin =======
+fn test1 () void
+fn test2 (a: int, b: int) int
+======= code =======
+int main () {
+}
+======= flags =======
+======= stdout =======

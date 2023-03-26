@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MaxU16
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  UINT16_MAX;
+}
+======= flags =======
+======= stdout =======

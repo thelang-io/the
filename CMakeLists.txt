@@ -38,19 +38,39 @@ endif ()
 set(
   sources
 
+  src/codegen/any.cpp src/codegen/any.hpp
+  src/codegen/bool.cpp src/codegen/bool.hpp
+  src/codegen/buffer.cpp src/codegen/buffer.hpp
+  src/codegen/byte.cpp src/codegen/byte.hpp
+  src/codegen/char.cpp src/codegen/char.hpp
+  src/codegen/date.cpp src/codegen/date.hpp
+  src/codegen/enum.cpp src/codegen/enum.hpp
+  src/codegen/float.cpp src/codegen/float.hpp
   src/codegen/fs.cpp src/codegen/fs.hpp
+  src/codegen/globals.cpp src/codegen/globals.hpp
+  src/codegen/int.cpp src/codegen/int.hpp
+  src/codegen/metadata.hpp
+  src/codegen/os.cpp src/codegen/os.hpp
+  src/codegen/path.cpp src/codegen/path.hpp
   src/codegen/process.cpp src/codegen/process.hpp
+  src/codegen/random.cpp src/codegen/random.hpp
   src/codegen/request.cpp src/codegen/request.hpp
+  src/codegen/str.cpp src/codegen/str.hpp
+  src/codegen/thread.cpp src/codegen/thread.hpp
   src/codegen/url.cpp src/codegen/url.hpp
+  src/codegen/utils.cpp src/codegen/utils.hpp
+
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
   src/ASTExpr.cpp src/ASTExpr.hpp
   src/ASTNode.cpp src/ASTNode.hpp
   src/Codegen.cpp src/Codegen.hpp
   src/CodegenCleanUp.cpp src/CodegenCleanUp.hpp
+  src/CParser.cpp src/CParser.hpp
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
+  src/ParserComment.cpp src/ParserComment.hpp
   src/ParserExpr.cpp src/ParserExpr.hpp
   src/ParserStmt.cpp src/ParserStmt.hpp
   src/ParserType.cpp src/ParserType.hpp
@@ -62,6 +82,7 @@ set(
   src/VarMap.cpp src/VarMap.hpp
   src/VarStack.cpp src/VarStack.hpp
   src/config.hpp
+  src/utils.hpp
 )
 
 function (the_target_add_flags target)
@@ -94,12 +115,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   include(FetchContent)
   include(GoogleTest)
 
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG release-1.12.1
-  )
-
+  FetchContent_Declare(googletest GIT_REPOSITORY https://github.com/google/googletest.git GIT_TAG v1.13.0)
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(googletest)
 
@@ -111,6 +127,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/ASTExprTest.cpp
     test/CodegenTest.cpp
     test/CodegenCleanUpTest.cpp
+    test/CParserTest.cpp
     test/ErrorTest.cpp
     test/LexerTest.cpp
     test/MockAST.cpp test/MockAST.hpp
@@ -118,11 +135,16 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/MockParser.cpp test/MockParser.hpp
     test/MockReader.cpp test/MockReader.hpp
     test/ParserTest.cpp
+    test/ParserCommentTest.cpp
+    test/ParserDocTest.cpp
+    test/ParserExprTest.cpp
+    test/ParserTypeTest.cpp
     test/ReaderTest.cpp
     test/TokenTest.cpp
     test/TypeTest.cpp
     test/TypeMatchTest.cpp
     test/TypeMapTest.cpp
+    test/UtilsTest.cpp
     test/VarMapTest.cpp
     test/VarStackTest.cpp
     test/utils.cpp test/utils.hpp

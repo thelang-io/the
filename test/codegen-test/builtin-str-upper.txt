@@ -1,10 +1,10 @@
 ======= stdin =======
 main {
-  print("".upper())
-  print("a".upper())
-  print("test".upper())
-  print("A".upper())
-  print("TEST_TEST09$/!".upper())
+  print("".upper)
+  print("a".upper)
+  print("test".upper)
+  print("A".upper)
+  print("TEST_TEST09$/!".upper)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)

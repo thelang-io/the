@@ -33,9 +33,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_union$0;
+struct __THE_1_union_strUScharUE;
 
-struct __THE_1_union$0 {
+struct __THE_1_union_strUScharUE {
   int t;
   union {
     struct str v1;
@@ -46,8 +46,8 @@ struct __THE_1_union$0 {
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct __THE_1_union$0 __THE_1_union$0_alloc (int, ...);
-void __THE_1_union$0_free (struct __THE_1_union$0);
+struct __THE_1_union_strUScharUE __THE_1_union_strUScharUE_alloc (int, ...);
+void __THE_1_union_strUScharUE_free (struct __THE_1_union_strUScharUE);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -66,8 +66,8 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
-  struct __THE_1_union$0 r = {t};
+struct __THE_1_union_strUScharUE __THE_1_union_strUScharUE_alloc (int t, ...) {
+  struct __THE_1_union_strUScharUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_str) r.v1 = va_arg(args, struct str);
@@ -75,19 +75,19 @@ struct __THE_1_union$0 __THE_1_union$0_alloc (int t, ...) {
   va_end(args);
   return r;
 }
-void __THE_1_union$0_free (struct __THE_1_union$0 n) {
+void __THE_1_union_strUScharUE_free (struct __THE_1_union_strUScharUE n) {
   if (n.t == TYPE_str) str_free((struct str) n.v1);
 }
 
 int main () {
-  const struct __THE_1_union$0 __THE_0_g1_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc(""));
-  const struct __THE_1_union$0 __THE_0_g2_0 = __THE_1_union$0_alloc(TYPE_str, str_alloc("test"));
-  const struct __THE_1_union$0 __THE_0_g3_0 = __THE_1_union$0_alloc(TYPE_char, 'a');
-  const struct __THE_1_union$0 __THE_0_g4_0 = __THE_1_union$0_alloc(TYPE_char, 'z');
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g4_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g3_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g2_0);
-  __THE_1_union$0_free((struct __THE_1_union$0) __THE_0_g1_0);
+  const struct __THE_1_union_strUScharUE __THE_0_g1_0 = __THE_1_union_strUScharUE_alloc(TYPE_str, str_alloc(""));
+  const struct __THE_1_union_strUScharUE __THE_0_g2_0 = __THE_1_union_strUScharUE_alloc(TYPE_str, str_alloc("test"));
+  const struct __THE_1_union_strUScharUE __THE_0_g3_0 = __THE_1_union_strUScharUE_alloc(TYPE_char, 'a');
+  const struct __THE_1_union_strUScharUE __THE_0_g4_0 = __THE_1_union_strUScharUE_alloc(TYPE_char, 'z');
+  __THE_1_union_strUScharUE_free((struct __THE_1_union_strUScharUE) __THE_0_g4_0);
+  __THE_1_union_strUScharUE_free((struct __THE_1_union_strUScharUE) __THE_0_g3_0);
+  __THE_1_union_strUScharUE_free((struct __THE_1_union_strUScharUE) __THE_0_g2_0);
+  __THE_1_union_strUScharUE_free((struct __THE_1_union_strUScharUE) __THE_0_g1_0);
 }
 ======= flags =======
 ======= stdout =======

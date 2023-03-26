@@ -1,0 +1,10 @@
+// Enumeration API
+
+/* Allows storing a group of related values under a single variable. */
+obj Enum {
+  /* Enumerator string representation. */
+  rawValue: str
+
+  /* Returns a string representation. */
+  fn str (self: Self) str
+}

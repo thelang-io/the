@@ -71,7 +71,7 @@ const std::vector<std::string> codegenRequest = {
   R"(  req->ssl = _{NULL};)" EOL
   R"(})" EOL,
 
-  R"(struct _{request_Request} *request_open (_{struct str} method, _{struct str} u, _{struct buffer} data, struct _{array_request_Header} headers) {)" EOL
+  R"(struct _{request_Request} *request_open (_{struct str} method, _{struct str} u, unsigned char o1, _{struct buffer} data, unsigned char o2, struct _{array_request_Header} headers) {)" EOL
   R"(  struct _{url_URL} *url = _{url_parse}(u);)" EOL
   R"(  if ()" EOL
   R"(    !(url->__THE_0_protocol.l == 5 && _{memcmp}(url->__THE_0_protocol.d, "http:", 5) == 0) &&)" EOL

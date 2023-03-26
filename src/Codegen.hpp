@@ -39,89 +39,27 @@ enum CodegenPhase {
 struct CodegenApiItem {
   bool enabled = false;
   std::string name;
-  std::string decl;
-  std::string def;
-  std::set<std::string> dependencies;
+  std::string decl = "";
+  std::string def = "";
+  std::set<std::string> dependencies = {};
 };
 
 struct CodegenBuiltins {
   bool definitions = false;
-  bool fnAlloc = false;
-  bool fnAnyCopy = false;
-  bool fnAnyFree = false;
-  bool fnAnyRealloc = false;
-  bool fnAnyStr = false;
-  bool fnBoolStr = false;
-  bool fnBufferCopy = false;
-  bool fnBufferEq = false;
-  bool fnBufferFree = false;
-  bool fnBufferNe = false;
-  bool fnBufferRealloc = false;
-  bool fnBufferStr = false;
-  bool fnBufferToStr = false;
-  bool fnByteStr = false;
-  bool fnCharIsAlpha = false;
-  bool fnCharIsAlphaNum = false;
-  bool fnCharIsDigit = false;
-  bool fnCharIsSpace = false;
-  bool fnCharRepeat = false;
-  bool fnCharStr = false;
-  bool fnCstrConcatStr = false;
-  bool fnCstrEqCstr = false;
-  bool fnCstrEqStr = false;
-  bool fnCstrNeCstr = false;
-  bool fnCstrNeStr = false;
-  bool fnEnumStr = false;
-  bool fnF32Str = false;
-  bool fnF64Str = false;
-  bool fnFloatStr = false;
-  bool fnI8Str = false;
-  bool fnI16Str = false;
-  bool fnI32Str = false;
-  bool fnI64Str = false;
-  bool fnIntStr = false;
-  bool fnOSName = false;
-  bool fnPathBasename = false;
-  bool fnPathDirname = false;
-  bool fnPrint = false;
-  bool fnReAlloc = false;
-  bool fnSleepSync = false;
-  bool fnStrAlloc = false;
-  bool fnStrAt = false;
-  bool fnStrConcatCstr = false;
-  bool fnStrConcatStr = false;
-  bool fnStrCopy = false;
-  bool fnStrCstr = false;
-  bool fnStrEmpty = false;
-  bool fnStrEqCstr = false;
-  bool fnStrEqStr = false;
-  bool fnStrEscape = false;
-  bool fnStrFind = false;
-  bool fnStrFree = false;
-  bool fnStrLen = false;
-  bool fnStrLines = false;
-  bool fnStrLower = false;
-  bool fnStrLowerFirst = false;
-  bool fnStrNeCstr = false;
-  bool fnStrNeStr = false;
-  bool fnStrNot = false;
-  bool fnStrRealloc = false;
-  bool fnStrSlice = false;
-  bool fnStrToBuffer = false;
-  bool fnStrTrim = false;
-  bool fnStrUpper = false;
-  bool fnStrUpperFirst = false;
-  bool fnU8Str = false;
-  bool fnU16Str = false;
-  bool fnU32Str = false;
-  bool fnU64Str = false;
+  bool externSystemFunction036 = false;
   bool libArpaInet = false;
   bool libCtype = false;
   bool libDirent = false;
+  bool libErrno = false;
+  bool libFcntl = false;
+  bool libFloat = false;
   bool libInttypes = false;
+  bool libMath = false;
   bool libNetdb = false;
   bool libNetinetIn = false;
   bool libOpensslSsl = false;
+  bool libOpensslRand = false;
+  bool libPwd = false;
   bool libStdarg = false;
   bool libStdbool = false;
   bool libStddef = false;
@@ -133,6 +71,7 @@ struct CodegenBuiltins {
   bool libSysStat = false;
   bool libSysTypes = false;
   bool libSysUtsname = false;
+  bool libTime = false;
   bool libUnistd = false;
   bool libWinDirect = false;
   bool libWinIo = false;
@@ -144,6 +83,7 @@ struct CodegenBuiltins {
   bool typeRequest = false;
   bool typeStr = false;
   bool typeWinReparseDataBuffer = false;
+  bool varEnviron = false;
   bool varLibOpensslInit = false;
   bool varLibWs2Init = false;
 };
@@ -236,9 +176,14 @@ class Codegen {
     CodegenEntityType,
     const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt
   );
-  std::string _apiEval (const std::string &, int = 0, const std::optional<std::set<std::string> *> & = std::nullopt);
-  void _apiLoad (const std::vector<std::string> &);
-  void _apiPreLoad (const std::vector<std::string> &);
+  std::string _apiEval (
+    const std::string &,
+    int = 0,
+    const std::string & = "",
+    const std::optional<std::set<std::string> *> & = std::nullopt
+  );
+  void _apiDecl (const std::vector<std::string> &);
+  void _apiDef (const std::vector<std::string> &);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
@@ -253,7 +198,7 @@ class Codegen {
     const std::string &,
     const std::vector<std::shared_ptr<Var>> &,
     const std::vector<ASTFnDeclParam> &,
-    const ASTBlock &,
+    const std::optional<ASTBlock> &,
     CodegenPhase
   );
   std::string _genCopyFn (Type *, const std::string &);
@@ -273,8 +218,8 @@ class Codegen {
   std::string _typeNameArray (Type *);
   std::string _typeNameFn (Type *);
   std::string _typeNameMap (Type *);
-  std::string _typeNameObj (Type *, bool = false);
-  std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {}, bool = false);
+  std::string _typeNameObj (Type *);
+  std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {});
   std::string _typeNameOpt (Type *);
   std::string _typeNameUnion (Type *);
   std::string _wrapNode (const ASTNode &, const std::string &);

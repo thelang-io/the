@@ -21,7 +21,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a1" codeName="a1_0" frame="2">
-        <TypeFn name="fn$0">
+        <TypeFn name="fn$1003">
           <TypeFnParams>
             <TypeFnParam variadic>
               <TypeArray name="array_int">
@@ -39,7 +39,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a2" codeName="a2_0" frame="2">
-        <TypeFn name="fn$0">
+        <TypeFn name="fn$1003">
           <TypeFnParams>
             <TypeFnParam variadic>
               <TypeArray name="array_int">
@@ -57,7 +57,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a3" codeName="a3_0" frame="2">
-        <TypeFn name="fn$1">
+        <TypeFn name="fn$1004">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -82,7 +82,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a4" codeName="a4_0" frame="2">
-        <TypeFn name="fn$1">
+        <TypeFn name="fn$1004">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -107,14 +107,14 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a5" codeName="a5_0" frame="2">
-        <TypeFn name="fn$2">
+        <TypeFn name="fn$1008">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
             </TypeFnParam>
             <TypeFnParam variadic>
-              <TypeArray name="array_fn$0">
-                <TypeFn name="fn$0">
+              <TypeArray name="array_fn$1003">
+                <TypeFn name="fn$1003">
                   <TypeFnParams>
                     <TypeFnParam variadic>
                       <TypeArray name="array_int">
@@ -139,14 +139,14 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a6" codeName="a6_0" frame="2">
-        <TypeFn name="fn$4">
+        <TypeFn name="fn$1013">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
             </TypeFnParam>
             <TypeFnParam variadic>
-              <TypeArray name="array_fn$3">
-                <TypeFn name="fn$3">
+              <TypeArray name="array_fn$1009">
+                <TypeFn name="fn$1009">
                   <TypeFnParams>
                     <TypeFnParam required>
                       <BuiltinType name="int" />

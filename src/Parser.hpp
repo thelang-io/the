@@ -26,14 +26,15 @@ class Parser {
 
   explicit Parser (Lexer *);
 
-  virtual ParserStmt next (bool = true);
+  virtual std::string doc ();
+  virtual ParserStmt next (bool = true, bool = false);
   virtual std::string xml ();
 
  private:
   Parser (const Parser &);
   Parser &operator= (const Parser &);
 
-  ParserBlock _block ();
+  ParserBlock _block (bool = false);
   std::optional<ParserStmtExpr> _stmtExpr (bool = true);
   std::optional<ParserType> _type ();
   std::tuple<ParserStmtExpr, bool> _wrapExpr (
@@ -53,7 +54,7 @@ class Parser {
   std::tuple<ParserStmtExpr, bool> _wrapExprUnary (const ParserStmtExpr &, ReaderLocation, const Token &);
   ParserStmt _wrapStmt (bool, const ParserStmtBody &, ReaderLocation) const;
   ParserStmtExpr _wrapStmtExpr (const ParserStmtExpr &);
-  ParserStmt _wrapStmtLoop (bool, const Token &, bool);
+  ParserStmt _wrapStmtLoop (bool, const Token &, bool, bool = false);
   ParserType _wrapType (const ParserType &);
 };
 

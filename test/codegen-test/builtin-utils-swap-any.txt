@@ -1,0 +1,230 @@
+======= stdin =======
+fn printAny (prefix: str, v: any) {
+  if v is int {
+    print(prefix, "is int:", v)
+  }
+
+  if v is str {
+    print(prefix, "is str:", v)
+  }
+}
+
+main {
+  mut a: any = 1
+  mut b: any = "test"
+
+  printAny("a", a)
+  printAny("b", b)
+  utils_swap(ref a, ref b)
+  printAny("a", a)
+  printAny("b", b)
+  utils_swap(ref a, ref b)
+  printAny("a", a)
+  printAny("b", b)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_int 1
+#define TYPE_str 2
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
+struct __THE_1_any_int;
+struct __THE_1_any_str;
+
+struct __THE_1_fn$1000 {
+  void (*f) (void *, struct __THE_1_fn$1000P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1000P {
+  struct str n0;
+  struct any n1;
+};
+struct __THE_1_any_int {
+  int32_t d;
+};
+struct __THE_1_any_str {
+  struct str d;
+};
+
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+void print (FILE *, const char *, ...);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+void utils_swap (void *, void *, size_t);
+struct any __THE_1_any_int_alloc (int32_t);
+struct any __THE_1_any_int_copy (const struct any);
+void __THE_1_any_int_free (struct any);
+struct any __THE_1_any_str_alloc (struct str);
+struct any __THE_1_any_str_copy (const struct any);
+void __THE_1_any_str_free (struct any);
+void __THE_1_printAny_0 (void *, struct __THE_1_fn$1000P);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct any any_copy (const struct any n) {
+  return n.d == NULL ? n : n._copy(n);
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+void utils_swap (void *a, void *b, size_t l) {
+  void *t = alloc(l);
+  memcpy(t, a, l);
+  memcpy(a, b, l);
+  memcpy(b, t, l);
+  free(t);
+}
+struct any __THE_1_any_int_alloc (int32_t d) {
+  size_t l = sizeof(struct __THE_1_any_int);
+  struct __THE_1_any_int *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_int, r, l, &__THE_1_any_int_copy, &__THE_1_any_int_free};
+}
+struct any __THE_1_any_int_copy (const struct any n) {
+  struct __THE_1_any_int *o = n.d;
+  struct __THE_1_any_int *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_int_free (struct any _n) {
+  struct __THE_1_any_int *n = _n.d;
+  free(n);
+}
+struct any __THE_1_any_str_alloc (struct str d) {
+  size_t l = sizeof(struct __THE_1_any_str);
+  struct __THE_1_any_str *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_str, r, l, &__THE_1_any_str_copy, &__THE_1_any_str_free};
+}
+struct any __THE_1_any_str_copy (const struct any n) {
+  struct __THE_1_any_str *o = n.d;
+  struct __THE_1_any_str *r = alloc(n.l);
+  r->d = str_copy(o->d);
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_str_free (struct any _n) {
+  struct __THE_1_any_str *n = _n.d;
+  str_free((struct str) n->d);
+  free(n);
+}
+void __THE_1_printAny_0 (void *px, struct __THE_1_fn$1000P p) {
+  const struct str __THE_0_prefix_0 = p.n0;
+  const struct any __THE_0_v_0 = p.n1;
+  if (__THE_0_v_0.t == TYPE_int) {
+    print(stdout, "szzziz", str_copy(__THE_0_prefix_0), " ", "is int:", " ", ((struct __THE_1_any_int *) __THE_0_v_0.d)->d, THE_EOL);
+  }
+  if (__THE_0_v_0.t == TYPE_str) {
+    print(stdout, "szzzsz", str_copy(__THE_0_prefix_0), " ", "is str:", " ", str_copy(((struct __THE_1_any_str *) __THE_0_v_0.d)->d), THE_EOL);
+  }
+  any_free((struct any) __THE_0_v_0);
+  str_free((struct str) __THE_0_prefix_0);
+}
+
+int main () {
+  const struct __THE_1_fn$1000 __THE_0_printAny_0 = (struct __THE_1_fn$1000) {&__THE_1_printAny_0, NULL, 0};
+  struct any __THE_0_a_0 = __THE_1_any_int_alloc(1);
+  struct any __THE_0_b_0 = __THE_1_any_str_alloc(str_alloc("test"));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
+  utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
+  utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======
+a is int: 1
+b is str: test
+a is str: test
+b is int: 1
+a is int: 1
+b is str: test

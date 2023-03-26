@@ -1,0 +1,9 @@
+======= stdin =======
+obj Test {}
+======= stdout =======
+## `Test`
+
+```the
+obj Test {
+}
+```

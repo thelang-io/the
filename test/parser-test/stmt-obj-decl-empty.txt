@@ -1,0 +1,8 @@
+======= stdin =======
+obj Test {}
+======= stdout =======
+<StmtObjDecl start="1:1" end="1:12">
+  <StmtObjDeclId>
+    <Token type="ID" val="Test" start="1:5" end="1:9" />
+  </StmtObjDeclId>
+</StmtObjDecl>

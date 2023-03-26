@@ -1,0 +1,7 @@
+// Object API
+
+/* Allows storing various keyed collections and more complex entities. */
+obj Obj {
+  /* Returns a string representation. */
+  fn str (self: Self) str
+}

@@ -98,20 +98,20 @@ struct str char_str (char);
 struct str f32_str (float);
 struct str f64_str (double);
 struct str float_str (double);
-struct str i8_str (int8_t);
 struct str i16_str (int16_t);
 struct str i32_str (int32_t);
 struct str i64_str (int64_t);
+struct str i8_str (int8_t);
 struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 void str_free (struct str);
-struct str u8_str (uint8_t);
 struct str u16_str (uint16_t);
 struct str u32_str (uint32_t);
 struct str u64_str (uint64_t);
+struct str u8_str (uint8_t);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, uint8_t, uint16_t, uint32_t, uint64_t);
 struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
@@ -152,11 +152,6 @@ struct str float_str (double f) {
   sprintf(buf, "%f", f);
   return str_alloc(buf);
 }
-struct str i8_str (int8_t d) {
-  char buf[512];
-  sprintf(buf, "%" PRId8, d);
-  return str_alloc(buf);
-}
 struct str i16_str (int16_t d) {
   char buf[512];
   sprintf(buf, "%" PRId16, d);
@@ -170,6 +165,11 @@ struct str i32_str (int32_t d) {
 struct str i64_str (int64_t d) {
   char buf[512];
   sprintf(buf, "%" PRId64, d);
+  return str_alloc(buf);
+}
+struct str i8_str (int8_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRId8, d);
   return str_alloc(buf);
 }
 struct str int_str (int32_t d) {
@@ -232,11 +232,6 @@ struct str str_concat_str (struct str s1, struct str s2) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str u8_str (uint8_t d) {
-  char buf[512];
-  sprintf(buf, "%" PRIu8, d);
-  return str_alloc(buf);
-}
 struct str u16_str (uint16_t d) {
   char buf[512];
   sprintf(buf, "%" PRIu16, d);
@@ -250,6 +245,11 @@ struct str u32_str (uint32_t d) {
 struct str u64_str (uint64_t d) {
   char buf[512];
   sprintf(buf, "%" PRIu64, d);
+  return str_alloc(buf);
+}
+struct str u8_str (uint8_t d) {
+  char buf[512];
+  sprintf(buf, "%" PRIu8, d);
   return str_alloc(buf);
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (bool __THE_0_t, unsigned char __THE_0_b, char __THE_0_c, float __THE_0_f1, double __THE_0_f2, double __THE_0_f, int8_t __THE_0_i1, int16_t __THE_0_i2, int32_t __THE_0_i3, int64_t __THE_0_i4, int32_t __THE_0_i, uint8_t __THE_0_u1, uint16_t __THE_0_u2, uint32_t __THE_0_u3, uint64_t __THE_0_u4) {

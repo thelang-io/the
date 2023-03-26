@@ -50,9 +50,9 @@ struct str {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 struct str cstr_concat_str (const char *, struct str);
 struct str path_dirname (struct str);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -62,14 +62,6 @@ void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -112,6 +104,14 @@ struct str path_dirname (struct str s) {
   memcpy(d, s.d, l);
   str_free(s);
   return (struct str) {d, l};
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);

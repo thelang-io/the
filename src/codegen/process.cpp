@@ -38,6 +38,28 @@ const std::vector<std::string> codegenProcess = {
   R"(  return _{str_alloc}(buf);)" EOL
   R"(})" EOL,
 
+  R"(struct _{map_str_str} process_env () {)" EOL
+  R"(  _{size_t} l = 0;)" EOL
+  R"(  while (_{environ}[l] != _{NULL}) l++;)" EOL
+  R"(  struct _{pair_str_str} *d = _{alloc}(l * sizeof(struct _{pair_str_str}));)" EOL
+  R"(  for (_{size_t} i = 0; i < l; i++) {)" EOL
+  R"(    char *p = _{environ}[i];)" EOL
+  R"(    _{size_t} pl = _{strlen}(p);)" EOL
+  R"(    char *e = _{strchr}(p, '=');)" EOL
+  R"(    if (e == _{NULL}) {)" EOL
+  R"(      d[i] = (struct _{pair_str_str}) {_{str_calloc}(p, pl), _{str_alloc}("")};)" EOL
+  R"(    } else {)" EOL
+  R"(      _{size_t} ei = e - p;)" EOL
+  R"(      d[i] = (struct _{pair_str_str}) {_{str_calloc}(p, ei), (ei == pl - 1) ? _{str_alloc}("") : _{str_calloc}(&p[ei + 1], pl - ei - 1)};)" EOL
+  R"(    })" EOL
+  R"(  })" EOL
+  R"(  return (struct _{map_str_str}) {d, l, l};)" EOL
+  R"(})" EOL,
+
+  R"(void process_exit (unsigned char o1, _{int32_t} i) {)" EOL
+  R"(  _{exit}(o1 == 1 ? i : _{EXIT_SUCCESS});)" EOL
+  R"(})" EOL,
+
   R"(_{int32_t} process_getgid () {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    return 0;)" EOL
@@ -52,6 +74,22 @@ const std::vector<std::string> codegenProcess = {
   R"(  #else)" EOL
   R"(    return _{getuid}();)" EOL
   R"(  #endif)" EOL
+  R"(})" EOL,
+
+  R"(_{struct str} process_home () {)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    char r[0xFFFF];)" EOL
+  R"(    if (_{GetEnvironmentVariable}("USERPROFILE", r, 0xFFFF) == 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: environment variable `USERPROFILE` is not set" _{THE_EOL});)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(  #else)" EOL
+  R"(    char *r = _{getenv}("HOME");)" EOL
+  R"(    if (r == _{NULL}) {)" EOL
+  R"(      r = _{getpwuid}(_{getuid}())->pw_dir;)" EOL
+  R"(    })" EOL
+  R"(  #endif)" EOL
+  R"(  return _{str_alloc}(r);)" EOL
   R"(})" EOL,
 
   R"(_{struct buffer} process_runSync (_{struct str} s) {)" EOL

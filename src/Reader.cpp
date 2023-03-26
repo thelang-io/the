@@ -90,6 +90,10 @@ std::tuple<ReaderLocation, char> Reader::next () {
   return {l, ch};
 }
 
+void Reader::reset () {
+  this->loc = ReaderLocation{};
+}
+
 void Reader::seek (ReaderLocation l) {
   this->loc = l;
 }

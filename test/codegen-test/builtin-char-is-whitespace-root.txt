@@ -1,0 +1,35 @@
+======= stdin =======
+main {
+  '\0'.isWhitespace
+  '\n'.isWhitespace
+  '\t'.isWhitespace
+  'A'.isWhitespace
+  'a'.isWhitespace
+  '0'.isWhitespace
+  '9'.isWhitespace
+  '_'.isWhitespace
+  '-'.isWhitespace
+}
+======= code =======
+#include <ctype.h>
+#include <stdbool.h>
+
+bool char_isWhitespace (char);
+
+bool char_isWhitespace (char c) {
+  return isspace(c);
+}
+
+int main () {
+  char_isWhitespace('\0');
+  char_isWhitespace('\n');
+  char_isWhitespace('\t');
+  char_isWhitespace('A');
+  char_isWhitespace('a');
+  char_isWhitespace('0');
+  char_isWhitespace('9');
+  char_isWhitespace('_');
+  char_isWhitespace('-');
+}
+======= flags =======
+======= stdout =======

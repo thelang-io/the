@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MaxI32
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  INT32_MAX;
+}
+======= flags =======
+======= stdout =======

@@ -82,7 +82,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job" codeName="job_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -93,7 +93,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$1">
+      <TypeFn name="fn$1001">
         <TypeFnParams>
           <TypeFnParam name="t" required>
             <BuiltinType name="bool" />
@@ -151,7 +151,7 @@ main {
             </TypeObj>
           </TypeFnParam>
           <TypeFnParam name="v2" required>
-            <TypeFn name="fn$0">
+            <TypeFn name="fn$1000">
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
@@ -291,7 +291,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="v2" codeName="v2_0" frame="2">
-          <TypeFn name="fn$0">
+          <TypeFn name="fn$1000">
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>
@@ -304,7 +304,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$2">
+      <TypeFn name="fn$1002">
         <TypeFnParams>
           <TypeFnParam name="t">
             <BuiltinType name="bool" />
@@ -362,7 +362,7 @@ main {
             </TypeObj>
           </TypeFnParam>
           <TypeFnParam name="v2">
-            <TypeFn name="fn$0">
+            <TypeFn name="fn$1000">
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
@@ -377,7 +377,7 @@ main {
   </NodeFnDeclVar>
   <NodeFnDeclCtx>
     <Var name="job" codeName="job_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -696,7 +696,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="v2" codeName="v2_0" frame="2">
-          <TypeFn name="fn$0">
+          <TypeFn name="fn$1000">
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>
@@ -706,7 +706,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <TypeFn name="fn$0">
+            <TypeFn name="fn$1000">
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
@@ -715,7 +715,7 @@ main {
           <NodeExprBody>
             <ExprAccess>
               <Var name="job" codeName="job_0" frame="1">
-                <TypeFn name="fn$0">
+                <TypeFn name="fn$1000">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
                   </TypeFnReturnType>
@@ -738,7 +738,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1">
+              <TypeFn name="fn$1001">
                 <TypeFnParams>
                   <TypeFnParam name="t" required>
                     <BuiltinType name="bool" />
@@ -796,7 +796,7 @@ main {
                     </TypeObj>
                   </TypeFnParam>
                   <TypeFnParam name="v2" required>
-                    <TypeFn name="fn$0">
+                    <TypeFn name="fn$1000">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>
@@ -811,7 +811,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test1" codeName="test1_0" frame="1">
-                  <TypeFn name="fn$1">
+                  <TypeFn name="fn$1001">
                     <TypeFnParams>
                       <TypeFnParam name="t" required>
                         <BuiltinType name="bool" />
@@ -869,7 +869,7 @@ main {
                         </TypeObj>
                       </TypeFnParam>
                       <TypeFnParam name="v2" required>
-                        <TypeFn name="fn$0">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -1074,7 +1074,7 @@ main {
           <ExprCallArg id="v2">
             <NodeExpr>
               <NodeExprType>
-                <TypeFn name="fn$0">
+                <TypeFn name="fn$1000">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
                   </TypeFnReturnType>
@@ -1083,7 +1083,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="job" codeName="job_0" frame="1">
-                    <TypeFn name="fn$0">
+                    <TypeFn name="fn$1000">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>
@@ -1106,7 +1106,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$2">
+              <TypeFn name="fn$1002">
                 <TypeFnParams>
                   <TypeFnParam name="t">
                     <BuiltinType name="bool" />
@@ -1164,7 +1164,7 @@ main {
                     </TypeObj>
                   </TypeFnParam>
                   <TypeFnParam name="v2">
-                    <TypeFn name="fn$0">
+                    <TypeFn name="fn$1000">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>
@@ -1179,7 +1179,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$2">
+                  <TypeFn name="fn$1002">
                     <TypeFnParams>
                       <TypeFnParam name="t">
                         <BuiltinType name="bool" />
@@ -1237,7 +1237,7 @@ main {
                         </TypeObj>
                       </TypeFnParam>
                       <TypeFnParam name="v2">
-                        <TypeFn name="fn$0">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>

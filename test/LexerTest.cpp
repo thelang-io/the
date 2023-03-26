@@ -48,6 +48,21 @@ TEST(LexerTest, LexMultipleWhitespaces) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(2:2-2:2)");
 }
 
+TEST(LexerTest, LexWhitespaceBeforeToken) {
+  auto reader = testing::NiceMock<MockReader>(" \t;");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "OP_SEMI(1:3-1:4): ;");
+}
+
+TEST(LexerTest, LexWhitespaceAfterToken) {
+  auto reader = testing::NiceMock<MockReader>("; \t");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "OP_SEMI(1:1-1:2): ;");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:4-1:4)");
+}
+
 TEST(LexerTest, LexEmptyBlockComment) {
   auto reader = testing::NiceMock<MockReader>("/**/");
   auto lexer = Lexer(&reader);
@@ -132,21 +147,6 @@ TEST(LexerTest, LexWhitespacesCombinedWithComments) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(2:16-2:16)");
 }
 
-TEST(LexerTest, LexWhitespaceBeforeToken) {
-  auto reader = testing::NiceMock<MockReader>(" \t;");
-  auto lexer = Lexer(&reader);
-
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "OP_SEMI(1:3-1:4): ;");
-}
-
-TEST(LexerTest, LexWhitespaceAfterToken) {
-  auto reader = testing::NiceMock<MockReader>("; \t");
-  auto lexer = Lexer(&reader);
-
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "OP_SEMI(1:1-1:2): ;");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:4-1:4)");
-}
-
 TEST(LexerTest, LexBlockCommentBeforeToken) {
   auto reader = testing::NiceMock<MockReader>("/*Hello Anna*/,");
   auto lexer = Lexer(&reader);
@@ -175,6 +175,103 @@ TEST(LexerTest, LexLineCommentAfterToken) {
 
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "OP_PLUS(1:1-1:2): +");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(2:1-2:1)");
+}
+
+TEST(LexerTest, LexActualBlockCommentEmpty) {
+  auto reader = testing::NiceMock<MockReader>("/**/");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:1-1:5): /**/");
+}
+
+TEST(LexerTest, LexActualBlockCommentAsterisk) {
+  auto reader = testing::NiceMock<MockReader>("/***/");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:1-1:6): /***/");
+}
+
+TEST(LexerTest, LexActualBlockCommentSingle) {
+  auto reader = testing::NiceMock<MockReader>("/*Hello Kendall*/");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:1-1:18): /*Hello Kendall*/");
+}
+
+TEST(LexerTest, LexActualBlockCommentsMultiple) {
+  auto reader = testing::NiceMock<MockReader>("/*Hello Kim*//*Hello Dream*//*Hello Stormi*/");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:1-1:14): /*Hello Kim*/");
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:14-1:29): /*Hello Dream*/");
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:29-1:45): /*Hello Stormi*/");
+}
+
+TEST(LexerTest, LexActualBlockCommentMultiline) {
+  auto reader = testing::NiceMock<MockReader>("/*Hello Bella" EOL "Hello Olivia" EOL "Hello Rosa*/");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:1-3:13): /*Hello Bella" ESC_EOL "Hello Olivia" ESC_EOL "Hello Rosa*/");
+}
+
+TEST(LexerTest, LexActualEmptyLineCommentNoNewLine) {
+  auto reader = testing::NiceMock<MockReader>("//");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_LINE(1:1-1:3): //");
+}
+
+TEST(LexerTest, LexActualEmptyLineComment) {
+  auto reader = testing::NiceMock<MockReader>("//" EOL);
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_LINE(1:1-1:3): //");
+}
+
+TEST(LexerTest, LexActualLineCommentNoNewLine) {
+  auto reader = testing::NiceMock<MockReader>("//Hello Ariana");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_LINE(1:1-1:15): //Hello Ariana");
+}
+
+TEST(LexerTest, LexActualLineComment) {
+  auto reader = testing::NiceMock<MockReader>("//Hello Hailey" EOL);
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_LINE(1:1-1:15): //Hello Hailey");
+}
+
+TEST(LexerTest, LexActualBlockCommentBeforeToken) {
+  auto reader = testing::NiceMock<MockReader>("/*Hello Anna*/,");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:1-1:15): /*Hello Anna*/");
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "OP_COMMA(1:15-1:16): ,");
+}
+
+TEST(LexerTest, LexActualBlockCommentAfterToken) {
+  auto reader = testing::NiceMock<MockReader>(",/*Hello Anna*/");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "OP_COMMA(1:1-1:2): ,");
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_BLOCK(1:2-1:16): /*Hello Anna*/");
+}
+
+TEST(LexerTest, LexActualLineCommentBeforeToken) {
+  auto reader = testing::NiceMock<MockReader>("//Hello Kylie" EOL "+");
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_LINE(1:1-1:14): //Hello Kylie");
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "OP_PLUS(2:1-2:2): +");
+}
+
+TEST(LexerTest, LexActualLineCommentAfterToken) {
+  auto reader = testing::NiceMock<MockReader>("+//Hello Kylie" EOL);
+  auto lexer = Lexer(&reader);
+
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "OP_PLUS(1:1-1:2): +");
+  EXPECT_EQ(std::get<1>(lexer.next(true)).str(), "COMMENT_LINE(1:2-1:15): //Hello Kylie");
 }
 
 TEST(LexerTest, LexOperations) {

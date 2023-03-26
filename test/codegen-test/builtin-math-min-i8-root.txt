@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MinI8
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  INT8_MIN;
+}
+======= flags =======
+======= stdout =======

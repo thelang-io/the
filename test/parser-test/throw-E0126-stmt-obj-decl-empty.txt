@@ -1,6 +1,0 @@
-======= stdin =======
-obj Test { }
-======= stderr =======
-/test:1:1: E0126 - Empty object declarations are not allowed
-  1 | obj Test { }
-    | ^~~~~~~~~~~~

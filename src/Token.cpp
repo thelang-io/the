@@ -23,6 +23,8 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_UNKNOWN: return "UNKNOWN";
     case TK_EOF: return "EOF";
     case TK_ID: return "ID";
+    case TK_COMMENT_BLOCK: return "COMMENT_BLOCK";
+    case TK_COMMENT_LINE: return "COMMENT_LINE";
     case TK_KW_ASYNC: return "KW_ASYNC";
     case TK_KW_AWAIT: return "KW_AWAIT";
     case TK_KW_BREAK: return "KW_BREAK";

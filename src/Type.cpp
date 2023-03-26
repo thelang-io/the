@@ -16,6 +16,7 @@
 
 #include "Type.hpp"
 #include <algorithm>
+#include <utility>
 #include "Error.hpp"
 #include "config.hpp"
 
@@ -30,6 +31,33 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     (lhs == "u64" && (rhs == "u64" || numberTypeMatch("u32", rhs))) ||
     (lhs == "f32" && (rhs == "f32" || numberTypeMatch("i32", rhs))) ||
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
+}
+
+bool TypeCallInfo::empty () const {
+  return this->codeName.empty() &&
+    !this->isSelfFirst &&
+    this->selfCodeName.empty() &&
+    this->selfType == nullptr &&
+    !this->isSelfMut;
+}
+
+std::string TypeCallInfo::xml (std::size_t indent, std::set<std::string> parentTypes) const {
+  auto result = std::string(indent, ' ') + "<TypeCallInfo";
+
+  result += this->codeName[0] != '@' ? R"( codeName=")" + this->codeName + R"(")" : "";
+  result += this->isSelfFirst ? R"( selfCodeName=")" + this->selfCodeName + R"(")" : "";
+  result += this->isSelfFirst ? " selfFirst" : "";
+  result += this->isSelfMut ? " selfMut" : "";
+
+  if (!this->isSelfFirst) {
+    return result + " />";
+  }
+
+  result += ">" EOL;
+  result += this->selfType->xml(indent + 2, std::move(parentTypes)) + EOL;
+  result += std::string(indent, ' ') + "</TypeCallInfo>";
+
+  return result;
 }
 
 Type *Type::actual (Type *type) {
@@ -123,6 +151,18 @@ Type *Type::getEnumerator (const std::string &memberName) const {
   return *typeMember;
 }
 
+TypeField Type::getField (const std::string &fieldName) const {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
+    return it.name == fieldName;
+  });
+
+  if (typeField == this->fields.end()) {
+    throw Error("tried to get non-existing field");
+  }
+
+  return *typeField;
+}
+
 Type *Type::getProp (const std::string &propName) const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->getProp(propName);
@@ -153,6 +193,14 @@ bool Type::hasEnumerator (const std::string &memberName) const {
   });
 
   return typeMember != enumType.members.end();
+}
+
+bool Type::hasField (const std::string &fieldName) const {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
+    return it.name == fieldName;
+  });
+
+  return typeField != this->fields.end();
 }
 
 bool Type::hasProp (const std::string &propName) const {
@@ -312,7 +360,7 @@ bool Type::isRefOf (const Type *type) const {
   }
 
   auto refType = Type::actual(std::get<TypeRef>(this->body).refType);
-  return refType->matchStrict(type, true) || refType->isRefOf(type);
+  return refType->matchStrict(type) || refType->isRefOf(type);
 }
 
 bool Type::isSafeForTernaryAlt () const {
@@ -441,9 +489,9 @@ bool Type::matchNice (const Type *type) const {
       !lhsFn.returnType->matchNice(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
       lhsFn.isMethod != rhsFn.isMethod ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchNice(rhsFn.methodInfo.selfType)) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfType->isRef() && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+      (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||
+      (lhsFn.callInfo.isSelfFirst && !lhsFn.callInfo.selfType->matchNice(rhsFn.callInfo.selfType)) ||
+      (lhsFn.callInfo.isSelfFirst && lhsFn.callInfo.selfType->isRef() && lhsFn.callInfo.isSelfMut != rhsFn.callInfo.isSelfMut)
     ) {
       return false;
     }
@@ -517,7 +565,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     auto lhsArray = std::get<TypeArray>(this->body);
     auto rhsArray = std::get<TypeArray>(type->body);
 
-    return lhsArray.elementType->matchStrict(rhsArray.elementType);
+    return lhsArray.elementType->matchStrict(rhsArray.elementType, exact);
   } else if (this->isFn() || type->isFn()) {
     if (!this->isFn() || !type->isFn()) {
       return false;
@@ -527,14 +575,14 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     auto rhsFn = std::get<TypeFn>(type->body);
 
     if (
-      !lhsFn.returnType->matchStrict(rhsFn.returnType) ||
+      !lhsFn.returnType->matchStrict(rhsFn.returnType, exact) ||
       lhsFn.params.size() != rhsFn.params.size() ||
       lhsFn.isMethod != rhsFn.isMethod ||
-      (exact && lhsFn.isMethod && lhsFn.methodInfo.codeName != rhsFn.methodInfo.codeName) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst != rhsFn.methodInfo.isSelfFirst) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.selfCodeName != rhsFn.methodInfo.selfCodeName) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && !lhsFn.methodInfo.selfType->matchStrict(rhsFn.methodInfo.selfType)) ||
-      (lhsFn.isMethod && lhsFn.methodInfo.isSelfFirst && lhsFn.methodInfo.isSelfMut != rhsFn.methodInfo.isSelfMut)
+      (exact && lhsFn.callInfo.codeName != rhsFn.callInfo.codeName) ||
+      (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||
+      (lhsFn.callInfo.isSelfFirst && lhsFn.callInfo.selfCodeName != rhsFn.callInfo.selfCodeName) ||
+      (lhsFn.callInfo.isSelfFirst && !lhsFn.callInfo.selfType->matchStrict(rhsFn.callInfo.selfType, exact)) ||
+      (lhsFn.callInfo.isSelfFirst && lhsFn.callInfo.isSelfMut != rhsFn.callInfo.isSelfMut)
     ) {
       return false;
     }
@@ -545,7 +593,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
 
       if (
         (exact && lhsFnParam.name != rhsFnParam.name) ||
-        !lhsFnParam.type->matchStrict(rhsFnParam.type) ||
+        !lhsFnParam.type->matchStrict(rhsFnParam.type, exact) ||
         lhsFnParam.mut != rhsFnParam.mut ||
         lhsFnParam.required != rhsFnParam.required ||
         lhsFnParam.variadic != rhsFnParam.variadic
@@ -563,7 +611,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     auto lhsMap = std::get<TypeBodyMap>(this->body);
     auto rhsMap = std::get<TypeBodyMap>(type->body);
 
-    return lhsMap.keyType->matchStrict(rhsMap.keyType) && lhsMap.valueType->matchStrict(rhsMap.valueType);
+    return lhsMap.keyType->matchStrict(rhsMap.keyType, exact) && lhsMap.valueType->matchStrict(rhsMap.valueType, exact);
   } else if (this->isOpt() || type->isOpt()) {
     if (!this->isOpt() || !type->isOpt()) {
       return false;
@@ -572,7 +620,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     auto lhsOptional = std::get<TypeOptional>(this->body);
     auto rhsOptional = std::get<TypeOptional>(type->body);
 
-    return lhsOptional.type->matchStrict(rhsOptional.type);
+    return lhsOptional.type->matchStrict(rhsOptional.type, exact);
   } else if (this->isRef() || type->isRef()) {
     if (!this->isRef() || !type->isRef()) {
       return false;
@@ -581,7 +629,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     auto lhsRef = std::get<TypeRef>(this->body);
     auto rhsRef = std::get<TypeRef>(type->body);
 
-    return lhsRef.refType->matchStrict(rhsRef.refType);
+    return lhsRef.refType->matchStrict(rhsRef.refType, exact);
   } else if (this->isUnion() || type->isUnion()) {
     if (!this->isUnion() || !type->isUnion()) {
       return false;
@@ -649,7 +697,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   } else if (this->isEnumerator()) {
     typeName += "Enumerator";
   } else if (this->isFn()) {
-    typeName += "Fn";
+    typeName += this->isMethod() ? "Method" : "Fn";
   } else if (this->isMap()) {
     typeName += "Map";
   } else if (this->isObj()) {
@@ -688,21 +736,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   } else if (this->isFn()) {
     auto fnType = std::get<TypeFn>(this->body);
 
-    if (fnType.isMethod) {
-      auto methodAttrs = std::string();
-
-      methodAttrs += fnType.methodInfo.codeName[0] != '@' ? R"( codeName=")" + fnType.methodInfo.codeName + R"(")" : "";
-      methodAttrs += fnType.methodInfo.isSelfFirst ? R"( selfCodeName=")" + fnType.methodInfo.selfCodeName + R"(")" : "";
-      methodAttrs += fnType.methodInfo.isSelfFirst ? " selfFirst" : "";
-      methodAttrs += fnType.methodInfo.isSelfMut ? " selfMut" : "";
-
-      if (fnType.methodInfo.isSelfFirst) {
-        result += std::string(indent + 2, ' ') + "<TypeFnMethodInfo" + methodAttrs + ">" EOL;
-        result += fnType.methodInfo.selfType->xml(indent + 4, parentTypes) + EOL;
-        result += std::string(indent + 2, ' ') + "</TypeFnMethodInfo>" EOL;
-      } else {
-        result += std::string(indent + 2, ' ') + "<TypeFnMethodInfo" + methodAttrs + " />" EOL;
-      }
+    if (!fnType.callInfo.empty()) {
+      result += fnType.callInfo.xml(indent + 2, parentTypes) + EOL;
     }
 
     if (!fnType.params.empty()) {
@@ -743,15 +778,19 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
         continue;
       }
 
-      auto tagName = std::string(field.method ? "TypeMethod" : "TypeField");
       auto fieldAttrs = std::string();
 
       fieldAttrs += field.mut ? " mut" : "";
       fieldAttrs += R"( name=")" + field.name + R"(")";
 
-      result += std::string(indent + 2, ' ') + "<" + tagName + fieldAttrs + ">" EOL;
+      result += std::string(indent + 2, ' ') + "<TypeField" + fieldAttrs + ">" EOL;
+
+      if (!field.callInfo.empty()) {
+        result += field.callInfo.xml(indent + 4, parentTypes) + EOL;
+      }
+
       result += field.type->xml(indent + 4, parentTypes) + EOL;
-      result += std::string(indent + 2, ' ') + "</" + tagName + ">" EOL;
+      result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
     }
   } else if (this->isOpt()) {
     auto optType = std::get<TypeOptional>(this->body);

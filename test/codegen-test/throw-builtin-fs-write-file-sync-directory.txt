@@ -33,12 +33,12 @@ struct str {
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str cstr_concat_str (const char *, struct str);
+void fs_writeFileSync (struct str, struct buffer);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct buffer str_to_buffer (struct str);
-void fs_writeFileSync (struct str, struct buffer);
+struct buffer str_toBuffer (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -58,6 +58,24 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
+}
+void fs_writeFileSync (struct str s, struct buffer b) {
+  char *c = str_cstr(s);
+  FILE *f = fopen(c, "wb");
+  if (f == NULL) {
+    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  if (b.l != 0) {
+    if (fwrite(b.d, b.l, 1, f) != 1) {
+      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
+      exit(EXIT_FAILURE);
+    }
+  }
+  fclose(f);
+  free(c);
+  str_free(s);
+  buffer_free(b);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -82,30 +100,12 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct buffer str_to_buffer (struct str s) {
+struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
-}
-void fs_writeFileSync (struct str s, struct buffer b) {
-  char *c = str_cstr(s);
-  FILE *f = fopen(c, "wb");
-  if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
-    exit(EXIT_FAILURE);
-  }
-  if (b.l != 0) {
-    if (fwrite(b.d, b.l, 1, f) != 1) {
-      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
-    }
-  }
-  fclose(f);
-  free(c);
-  str_free(s);
-  buffer_free(b);
 }
 
 int main () {
-  fs_writeFileSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_to_buffer(str_alloc("test")));
+  fs_writeFileSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_toBuffer(str_alloc("test")));
 }
 ======= flags =======
 ======= stderr =======

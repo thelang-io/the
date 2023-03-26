@@ -69,18 +69,18 @@ main {
     <StmtObjDeclId>
       <Token type="ID" val="Test" start="15:7" end="15:11" />
     </StmtObjDeclId>
-    <StmtObjDeclFields>
-      <StmtObjDeclField>
-        <StmtObjDeclFieldId>
+    <StmtObjDeclMembers>
+      <StmtVarDecl start="16:5" end="16:11">
+        <StmtVarDeclId>
           <Token type="ID" val="a" start="16:5" end="16:6" />
-        </StmtObjDeclFieldId>
-        <StmtObjDeclFieldType>
+        </StmtVarDeclId>
+        <StmtVarDeclType>
           <TypeId start="16:8" end="16:11">
             <Token type="ID" val="int" start="16:8" end="16:11" />
           </TypeId>
-        </StmtObjDeclFieldType>
-      </StmtObjDeclField>
-    </StmtObjDeclFields>
+        </StmtVarDeclType>
+      </StmtVarDecl>
+    </StmtObjDeclMembers>
   </StmtObjDecl>
   <ExprAccess start="19:3" end="19:4">
     <Token type="ID" val="a" start="19:3" end="19:4" />

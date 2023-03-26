@@ -39,6 +39,7 @@ class Reader {
 
   virtual bool eof () const;
   virtual std::tuple<ReaderLocation, char> next ();
+  virtual void reset ();
   virtual void seek (ReaderLocation);
 
  private:

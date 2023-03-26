@@ -29,6 +29,8 @@ enum TokenType {
   TK_UNKNOWN,
   TK_EOF,
   TK_ID,
+  TK_COMMENT_BLOCK,
+  TK_COMMENT_LINE,
 
   TK_KW_ASYNC,
   TK_KW_AWAIT,

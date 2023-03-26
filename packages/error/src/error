@@ -3,7 +3,47 @@
  * Licensed under the MIT License
  */
 
-fn RaiseError (message: str) {
+fn RaiseError (fmt: str, args: any...) {
+  argsLen := args.len
+  fmtLen := fmt.len
+  mut message := ""
+  mut k := 0
+
+  loop i := 0; i < fmtLen; i++ {
+    ch: char = fmt[i]
+
+    if ch != '%' || i + 1 >= fmtLen || k >= argsLen {
+      message += ch.str()
+      continue
+    }
+
+    mut replacement := ""
+    letter := fmt[i + 1]
+    arg: any = args[k]
+
+    if letter == 'c' {
+      if arg is char {
+        replacement = arg.str()
+      }
+    } elif letter == 'd' {
+      if arg is int {
+        replacement = arg.str()
+      }
+    } elif letter == 'f' {
+      if arg is float {
+        replacement = arg.str()
+      }
+    } elif letter == 's' {
+      if arg is str {
+        replacement = arg
+      }
+    }
+
+    i++
+    k++
+    message += replacement
+  }
+
   print("Error: " + message, to: "stderr")
   exit(1)
 }

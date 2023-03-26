@@ -16,10 +16,10 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
-            <TypeMap name="map$0">
+            <TypeMap name="map_strMSstrME">
               <TypeMapKeyType>
                 <BuiltinType name="str" />
               </TypeMapKeyType>
@@ -30,7 +30,7 @@ main {
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -46,7 +46,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="a" codeName="a_0" mut frame="2">
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -61,8 +61,8 @@ main {
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>
-        <TypeRef name="ref_map$0">
-          <TypeMap name="map$0">
+        <TypeRef name="ref_map_strMSstrME">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -77,13 +77,13 @@ main {
           <ExprCallCallee>
             <NodeExpr>
               <NodeExprType>
-                <BuiltinType name="map$0.set" />
+                <BuiltinType name="map_strMSstrME.set" />
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess prop="set">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeMap name="map$0">
+                      <TypeMap name="map_strMSstrME">
                         <TypeMapKeyType>
                           <BuiltinType name="str" />
                         </TypeMapKeyType>
@@ -95,7 +95,7 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="a" codeName="a_0" mut frame="2">
-                          <TypeMap name="map$0">
+                          <TypeMap name="map_strMSstrME">
                             <TypeMapKeyType>
                               <BuiltinType name="str" />
                             </TypeMapKeyType>
@@ -139,7 +139,7 @@ main {
     <NodeReturn>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -151,7 +151,7 @@ main {
         <NodeExprBody>
           <ExprAccess>
             <Var name="a" codeName="a_0" mut frame="2">
-              <TypeMap name="map$0">
+              <TypeMap name="map_strMSstrME">
                 <TypeMapKeyType>
                   <BuiltinType name="str" />
                 </TypeMapKeyType>
@@ -169,10 +169,10 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$1">
+      <TypeFn name="fn$1001">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
-            <TypeMap name="map$0">
+            <TypeMap name="map_strMSstrME">
               <TypeMapKeyType>
                 <BuiltinType name="str" />
               </TypeMapKeyType>
@@ -182,7 +182,7 @@ main {
             </TypeMap>
           </TypeFnParam>
           <TypeFnParam name="b" mut>
-            <TypeMap name="map$0">
+            <TypeMap name="map_strMSstrME">
               <TypeMapKeyType>
                 <BuiltinType name="str" />
               </TypeMapKeyType>
@@ -193,7 +193,7 @@ main {
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -209,7 +209,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="a" codeName="a_0" mut frame="2">
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -223,7 +223,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="b" codeName="b_0" mut frame="2">
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -236,7 +236,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <TypeMap name="map$0">
+            <TypeMap name="map_strMSstrME">
               <TypeMapKeyType>
                 <BuiltinType name="str" />
               </TypeMapKeyType>
@@ -266,7 +266,7 @@ main {
   <NodeFnDeclBody>
     <NodeExpr>
       <NodeExprType>
-        <TypeMap name="map$0">
+        <TypeMap name="map_strMSstrME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
@@ -280,7 +280,7 @@ main {
           <ExprAssignLeft>
             <NodeExpr>
               <NodeExprType>
-                <TypeMap name="map$0">
+                <TypeMap name="map_strMSstrME">
                   <TypeMapKeyType>
                     <BuiltinType name="str" />
                   </TypeMapKeyType>
@@ -292,7 +292,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="b" codeName="b_0" mut frame="2">
-                    <TypeMap name="map$0">
+                    <TypeMap name="map_strMSstrME">
                       <TypeMapKeyType>
                         <BuiltinType name="str" />
                       </TypeMapKeyType>
@@ -308,7 +308,7 @@ main {
           <ExprAssignRight>
             <NodeExpr>
               <NodeExprType>
-                <TypeMap name="map$0">
+                <TypeMap name="map_strMSstrME">
                   <TypeMapKeyType>
                     <BuiltinType name="str" />
                   </TypeMapKeyType>
@@ -320,7 +320,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="a" codeName="a_0" mut frame="2">
-                    <TypeMap name="map$0">
+                    <TypeMap name="map_strMSstrME">
                       <TypeMapKeyType>
                         <BuiltinType name="str" />
                       </TypeMapKeyType>
@@ -338,8 +338,8 @@ main {
     </NodeExpr>
     <NodeExpr>
       <NodeExprType>
-        <TypeRef name="ref_map$0">
-          <TypeMap name="map$0">
+        <TypeRef name="ref_map_strMSstrME">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -354,13 +354,13 @@ main {
           <ExprCallCallee>
             <NodeExpr>
               <NodeExprType>
-                <BuiltinType name="map$0.set" />
+                <BuiltinType name="map_strMSstrME.set" />
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess prop="set">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeMap name="map$0">
+                      <TypeMap name="map_strMSstrME">
                         <TypeMapKeyType>
                           <BuiltinType name="str" />
                         </TypeMapKeyType>
@@ -372,7 +372,7 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="a" codeName="a_0" mut frame="2">
-                          <TypeMap name="map$0">
+                          <TypeMap name="map_strMSstrME">
                             <TypeMapKeyType>
                               <BuiltinType name="str" />
                             </TypeMapKeyType>
@@ -416,13 +416,13 @@ main {
                             <ExprCallCallee>
                               <NodeExpr>
                                 <NodeExprType>
-                                  <BuiltinType name="map$0.get" />
+                                  <BuiltinType name="map_strMSstrME.get" />
                                 </NodeExprType>
                                 <NodeExprBody>
                                   <ExprAccess prop="get">
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeMap name="map$0">
+                                        <TypeMap name="map_strMSstrME">
                                           <TypeMapKeyType>
                                             <BuiltinType name="str" />
                                           </TypeMapKeyType>
@@ -434,7 +434,7 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="a" codeName="a_0" mut frame="2">
-                                            <TypeMap name="map$0">
+                                            <TypeMap name="map_strMSstrME">
                                               <TypeMapKeyType>
                                                 <BuiltinType name="str" />
                                               </TypeMapKeyType>
@@ -476,13 +476,13 @@ main {
                             <ExprCallCallee>
                               <NodeExpr>
                                 <NodeExprType>
-                                  <BuiltinType name="map$0.get" />
+                                  <BuiltinType name="map_strMSstrME.get" />
                                 </NodeExprType>
                                 <NodeExprBody>
                                   <ExprAccess prop="get">
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeMap name="map$0">
+                                        <TypeMap name="map_strMSstrME">
                                           <TypeMapKeyType>
                                             <BuiltinType name="str" />
                                           </TypeMapKeyType>
@@ -494,7 +494,7 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="b" codeName="b_0" mut frame="2">
-                                            <TypeMap name="map$0">
+                                            <TypeMap name="map_strMSstrME">
                                               <TypeMapKeyType>
                                                 <BuiltinType name="str" />
                                               </TypeMapKeyType>
@@ -537,7 +537,7 @@ main {
     <NodeReturn>
       <NodeExpr>
         <NodeExprType>
-          <TypeMap name="map$0">
+          <TypeMap name="map_strMSstrME">
             <TypeMapKeyType>
               <BuiltinType name="str" />
             </TypeMapKeyType>
@@ -549,7 +549,7 @@ main {
         <NodeExprBody>
           <ExprAccess>
             <Var name="a" codeName="a_0" mut frame="2">
-              <TypeMap name="map$0">
+              <TypeMap name="map_strMSstrME">
                 <TypeMapKeyType>
                   <BuiltinType name="str" />
                 </TypeMapKeyType>
@@ -567,7 +567,7 @@ main {
 <NodeMain>
   <NodeExpr>
     <NodeExprType>
-      <TypeMap name="map$0">
+      <TypeMap name="map_strMSstrME">
         <TypeMapKeyType>
           <BuiltinType name="str" />
         </TypeMapKeyType>
@@ -581,10 +581,10 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$0">
+              <TypeFn name="fn$1000">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
-                    <TypeMap name="map$0">
+                    <TypeMap name="map_strMSstrME">
                       <TypeMapKeyType>
                         <BuiltinType name="str" />
                       </TypeMapKeyType>
@@ -595,7 +595,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeMap name="map$0">
+                  <TypeMap name="map_strMSstrME">
                     <TypeMapKeyType>
                       <BuiltinType name="str" />
                     </TypeMapKeyType>
@@ -609,10 +609,10 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test1" codeName="test1_0" frame="1">
-                  <TypeFn name="fn$0">
+                  <TypeFn name="fn$1000">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
-                        <TypeMap name="map$0">
+                        <TypeMap name="map_strMSstrME">
                           <TypeMapKeyType>
                             <BuiltinType name="str" />
                           </TypeMapKeyType>
@@ -623,7 +623,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeMap name="map$0">
+                      <TypeMap name="map_strMSstrME">
                         <TypeMapKeyType>
                           <BuiltinType name="str" />
                         </TypeMapKeyType>
@@ -642,7 +642,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeMap name="map$0">
+                <TypeMap name="map_strMSstrME">
                   <TypeMapKeyType>
                     <BuiltinType name="str" />
                   </TypeMapKeyType>
@@ -673,7 +673,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeMap name="map$0">
+      <TypeMap name="map_strMSstrME">
         <TypeMapKeyType>
           <BuiltinType name="str" />
         </TypeMapKeyType>
@@ -687,10 +687,10 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1">
+              <TypeFn name="fn$1001">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
-                    <TypeMap name="map$0">
+                    <TypeMap name="map_strMSstrME">
                       <TypeMapKeyType>
                         <BuiltinType name="str" />
                       </TypeMapKeyType>
@@ -700,7 +700,7 @@ main {
                     </TypeMap>
                   </TypeFnParam>
                   <TypeFnParam name="b" mut>
-                    <TypeMap name="map$0">
+                    <TypeMap name="map_strMSstrME">
                       <TypeMapKeyType>
                         <BuiltinType name="str" />
                       </TypeMapKeyType>
@@ -711,7 +711,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeMap name="map$0">
+                  <TypeMap name="map_strMSstrME">
                     <TypeMapKeyType>
                       <BuiltinType name="str" />
                     </TypeMapKeyType>
@@ -725,10 +725,10 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$1">
+                  <TypeFn name="fn$1001">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
-                        <TypeMap name="map$0">
+                        <TypeMap name="map_strMSstrME">
                           <TypeMapKeyType>
                             <BuiltinType name="str" />
                           </TypeMapKeyType>
@@ -738,7 +738,7 @@ main {
                         </TypeMap>
                       </TypeFnParam>
                       <TypeFnParam name="b" mut>
-                        <TypeMap name="map$0">
+                        <TypeMap name="map_strMSstrME">
                           <TypeMapKeyType>
                             <BuiltinType name="str" />
                           </TypeMapKeyType>
@@ -749,7 +749,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeMap name="map$0">
+                      <TypeMap name="map_strMSstrME">
                         <TypeMapKeyType>
                           <BuiltinType name="str" />
                         </TypeMapKeyType>
@@ -768,7 +768,7 @@ main {
           <ExprCallArg id="a">
             <NodeExpr>
               <NodeExprType>
-                <TypeMap name="map$0">
+                <TypeMap name="map_strMSstrME">
                   <TypeMapKeyType>
                     <BuiltinType name="str" />
                   </TypeMapKeyType>

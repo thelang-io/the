@@ -29,9 +29,9 @@ main {
 <NodeObjDecl>
   <NodeObjDeclType>
     <TypeObj codeName="Test_0" name="Test">
-      <TypeMethod name="test1">
-        <TypeFn name="fn$0">
-          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+      <TypeField name="test1">
+        <TypeMethod name="fn$1003">
+          <TypeCallInfo codeName="TestSDtest1_0" />
           <TypeFnParams>
             <TypeFnParam name="a" variadic>
               <TypeArray name="array_int">
@@ -42,11 +42,11 @@ main {
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
-        </TypeFn>
-      </TypeMethod>
-      <TypeMethod name="test2">
-        <TypeFn name="fn$1">
-          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+        </TypeMethod>
+      </TypeField>
+      <TypeField name="test2">
+        <TypeMethod name="fn$1004">
+          <TypeCallInfo codeName="TestSDtest2_0" />
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -60,11 +60,11 @@ main {
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
-        </TypeFn>
-      </TypeMethod>
-      <TypeMethod name="test3">
-        <TypeFn name="fn$2">
-          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+        </TypeMethod>
+      </TypeField>
+      <TypeField name="test3">
+        <TypeMethod name="fn$1005">
+          <TypeCallInfo codeName="TestSDtest3_0" />
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -81,16 +81,16 @@ main {
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
-        </TypeFn>
-      </TypeMethod>
+        </TypeMethod>
+      </TypeField>
     </TypeObj>
   </NodeObjDeclType>
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Test.test1" codeName="TestSDtest1_0" frame="1">
-          <TypeFn name="fn$0">
-            <TypeFnMethodInfo codeName="TestSDtest1_0" />
+          <TypeMethod name="fn$1003">
+            <TypeCallInfo codeName="TestSDtest1_0" />
             <TypeFnParams>
               <TypeFnParam name="a" variadic>
                 <TypeArray name="array_int">
@@ -101,7 +101,7 @@ main {
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>
-          </TypeFn>
+          </TypeMethod>
         </Var>
       </NodeObjDeclMethodType>
       <FnDeclParams>
@@ -162,8 +162,8 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Test.test2" codeName="TestSDtest2_0" frame="1">
-          <TypeFn name="fn$1">
-            <TypeFnMethodInfo codeName="TestSDtest2_0" />
+          <TypeMethod name="fn$1004">
+            <TypeCallInfo codeName="TestSDtest2_0" />
             <TypeFnParams>
               <TypeFnParam name="a" required>
                 <BuiltinType name="int" />
@@ -177,7 +177,7 @@ main {
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>
-          </TypeFn>
+          </TypeMethod>
         </Var>
       </NodeObjDeclMethodType>
       <FnDeclParams>
@@ -259,8 +259,8 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Test.test3" codeName="TestSDtest3_0" frame="1">
-          <TypeFn name="fn$2">
-            <TypeFnMethodInfo codeName="TestSDtest3_0" />
+          <TypeMethod name="fn$1005">
+            <TypeCallInfo codeName="TestSDtest3_0" />
             <TypeFnParams>
               <TypeFnParam name="a" required>
                 <BuiltinType name="int" />
@@ -277,7 +277,7 @@ main {
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>
-          </TypeFn>
+          </TypeMethod>
         </Var>
       </NodeObjDeclMethodType>
       <FnDeclParams>
@@ -394,9 +394,9 @@ main {
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
         <TypeObj codeName="Test_0" name="Test">
-          <TypeMethod name="test1">
-            <TypeFn name="fn$0">
-              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+          <TypeField name="test1">
+            <TypeMethod name="fn$1003">
+              <TypeCallInfo codeName="TestSDtest1_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" variadic>
                   <TypeArray name="array_int">
@@ -407,11 +407,11 @@ main {
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
-            </TypeFn>
-          </TypeMethod>
-          <TypeMethod name="test2">
-            <TypeFn name="fn$1">
-              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+            </TypeMethod>
+          </TypeField>
+          <TypeField name="test2">
+            <TypeMethod name="fn$1004">
+              <TypeCallInfo codeName="TestSDtest2_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" required>
                   <BuiltinType name="int" />
@@ -425,11 +425,11 @@ main {
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
-            </TypeFn>
-          </TypeMethod>
-          <TypeMethod name="test3">
-            <TypeFn name="fn$2">
-              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+            </TypeMethod>
+          </TypeField>
+          <TypeField name="test3">
+            <TypeMethod name="fn$1005">
+              <TypeCallInfo codeName="TestSDtest3_0" />
               <TypeFnParams>
                 <TypeFnParam name="a" required>
                   <BuiltinType name="int" />
@@ -446,8 +446,8 @@ main {
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
-            </TypeFn>
-          </TypeMethod>
+            </TypeMethod>
+          </TypeField>
         </TypeObj>
       </Var>
     </NodeVarDeclVar>
@@ -455,9 +455,9 @@ main {
       <NodeExpr>
         <NodeExprType>
           <TypeObj codeName="Test_0" name="Test">
-            <TypeMethod name="test1">
-              <TypeFn name="fn$0">
-                <TypeFnMethodInfo codeName="TestSDtest1_0" />
+            <TypeField name="test1">
+              <TypeMethod name="fn$1003">
+                <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -468,11 +468,11 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
-            </TypeMethod>
-            <TypeMethod name="test2">
-              <TypeFn name="fn$1">
-                <TypeFnMethodInfo codeName="TestSDtest2_0" />
+              </TypeMethod>
+            </TypeField>
+            <TypeField name="test2">
+              <TypeMethod name="fn$1004">
+                <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -486,11 +486,11 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
-            </TypeMethod>
-            <TypeMethod name="test3">
-              <TypeFn name="fn$2">
-                <TypeFnMethodInfo codeName="TestSDtest3_0" />
+              </TypeMethod>
+            </TypeField>
+            <TypeField name="test3">
+              <TypeMethod name="fn$1005">
+                <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -507,8 +507,8 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
-            </TypeMethod>
+              </TypeMethod>
+            </TypeField>
           </TypeObj>
         </NodeExprType>
         <NodeExprBody>
@@ -526,8 +526,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$0">
-                <TypeFnMethodInfo codeName="TestSDtest1_0" />
+              <TypeMethod name="fn$1003">
+                <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -538,16 +538,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test1">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -558,11 +558,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -576,11 +576,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -597,17 +597,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -618,11 +618,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -636,11 +636,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -657,8 +657,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -680,8 +680,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$0">
-                <TypeFnMethodInfo codeName="TestSDtest1_0" />
+              <TypeMethod name="fn$1003">
+                <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -692,16 +692,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test1">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -712,11 +712,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -730,11 +730,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -751,17 +751,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -772,11 +772,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -790,11 +790,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -811,8 +811,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -846,8 +846,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$0">
-                <TypeFnMethodInfo codeName="TestSDtest1_0" />
+              <TypeMethod name="fn$1003">
+                <TypeCallInfo codeName="TestSDtest1_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" variadic>
                     <TypeArray name="array_int">
@@ -858,16 +858,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test1">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -878,11 +878,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -896,11 +896,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -917,17 +917,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -938,11 +938,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -956,11 +956,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -977,8 +977,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -1022,8 +1022,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1">
-                <TypeFnMethodInfo codeName="TestSDtest2_0" />
+              <TypeMethod name="fn$1004">
+                <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1037,16 +1037,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test2">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1057,11 +1057,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1075,11 +1075,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1096,17 +1096,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1117,11 +1117,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1135,11 +1135,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1156,8 +1156,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -1191,8 +1191,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1">
-                <TypeFnMethodInfo codeName="TestSDtest2_0" />
+              <TypeMethod name="fn$1004">
+                <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1206,16 +1206,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test2">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1226,11 +1226,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1244,11 +1244,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1265,17 +1265,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1286,11 +1286,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1304,11 +1304,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1325,8 +1325,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -1370,8 +1370,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1">
-                <TypeFnMethodInfo codeName="TestSDtest2_0" />
+              <TypeMethod name="fn$1004">
+                <TypeCallInfo codeName="TestSDtest2_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1385,16 +1385,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test2">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1405,11 +1405,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1423,11 +1423,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1444,17 +1444,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1465,11 +1465,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1483,11 +1483,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1504,8 +1504,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -1559,8 +1559,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$2">
-                <TypeFnMethodInfo codeName="TestSDtest3_0" />
+              <TypeMethod name="fn$1005">
+                <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1577,16 +1577,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test3">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1597,11 +1597,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1615,11 +1615,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1636,17 +1636,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1657,11 +1657,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1675,11 +1675,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1696,8 +1696,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -1731,8 +1731,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$2">
-                <TypeFnMethodInfo codeName="TestSDtest3_0" />
+              <TypeMethod name="fn$1005">
+                <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1749,16 +1749,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test3">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1769,11 +1769,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1787,11 +1787,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1808,17 +1808,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -1829,11 +1829,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1847,11 +1847,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -1868,8 +1868,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -1913,8 +1913,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$2">
-                <TypeFnMethodInfo codeName="TestSDtest3_0" />
+              <TypeMethod name="fn$1005">
+                <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -1931,16 +1931,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test3">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -1951,11 +1951,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1969,11 +1969,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1990,17 +1990,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2011,11 +2011,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2029,11 +2029,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2050,8 +2050,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -2105,8 +2105,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$2">
-                <TypeFnMethodInfo codeName="TestSDtest3_0" />
+              <TypeMethod name="fn$1005">
+                <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -2123,16 +2123,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test3">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -2143,11 +2143,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2161,11 +2161,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2182,17 +2182,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2203,11 +2203,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2221,11 +2221,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2242,8 +2242,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -2287,8 +2287,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$2">
-                <TypeFnMethodInfo codeName="TestSDtest3_0" />
+              <TypeMethod name="fn$1005">
+                <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -2305,16 +2305,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test3">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -2325,11 +2325,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2343,11 +2343,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2364,17 +2364,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2385,11 +2385,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2403,11 +2403,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2424,8 +2424,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>
@@ -2479,8 +2479,8 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$2">
-                <TypeFnMethodInfo codeName="TestSDtest3_0" />
+              <TypeMethod name="fn$1005">
+                <TypeCallInfo codeName="TestSDtest3_0" />
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -2497,16 +2497,16 @@ main {
                 <TypeFnReturnType>
                   <BuiltinType name="void" />
                 </TypeFnReturnType>
-              </TypeFn>
+              </TypeMethod>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="test3">
                 <NodeExpr>
                   <NodeExprType>
                     <TypeObj codeName="Test_0" name="Test">
-                      <TypeMethod name="test1">
-                        <TypeFn name="fn$0">
-                          <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                      <TypeField name="test1">
+                        <TypeMethod name="fn$1003">
+                          <TypeCallInfo codeName="TestSDtest1_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" variadic>
                               <TypeArray name="array_int">
@@ -2517,11 +2517,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test2">
-                        <TypeFn name="fn$1">
-                          <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test2">
+                        <TypeMethod name="fn$1004">
+                          <TypeCallInfo codeName="TestSDtest2_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2535,11 +2535,11 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
-                      <TypeMethod name="test3">
-                        <TypeFn name="fn$2">
-                          <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                        </TypeMethod>
+                      </TypeField>
+                      <TypeField name="test3">
+                        <TypeMethod name="fn$1005">
+                          <TypeCallInfo codeName="TestSDtest3_0" />
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -2556,17 +2556,17 @@ main {
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeMethod>
+                        </TypeMethod>
+                      </TypeField>
                     </TypeObj>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
                         <TypeObj codeName="Test_0" name="Test">
-                          <TypeMethod name="test1">
-                            <TypeFn name="fn$0">
-                              <TypeFnMethodInfo codeName="TestSDtest1_0" />
+                          <TypeField name="test1">
+                            <TypeMethod name="fn$1003">
+                              <TypeCallInfo codeName="TestSDtest1_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" variadic>
                                   <TypeArray name="array_int">
@@ -2577,11 +2577,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test2">
-                            <TypeFn name="fn$1">
-                              <TypeFnMethodInfo codeName="TestSDtest2_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test2">
+                            <TypeMethod name="fn$1004">
+                              <TypeCallInfo codeName="TestSDtest2_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2595,11 +2595,11 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
-                          <TypeMethod name="test3">
-                            <TypeFn name="fn$2">
-                              <TypeFnMethodInfo codeName="TestSDtest3_0" />
+                            </TypeMethod>
+                          </TypeField>
+                          <TypeField name="test3">
+                            <TypeMethod name="fn$1005">
+                              <TypeCallInfo codeName="TestSDtest3_0" />
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -2616,8 +2616,8 @@ main {
                               <TypeFnReturnType>
                                 <BuiltinType name="void" />
                               </TypeFnReturnType>
-                            </TypeFn>
-                          </TypeMethod>
+                            </TypeMethod>
+                          </TypeField>
                         </TypeObj>
                       </Var>
                     </ExprAccess>

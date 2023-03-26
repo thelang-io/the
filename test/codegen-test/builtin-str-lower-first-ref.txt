@@ -3,7 +3,7 @@ main {
   arr := ["", "t", "TEST"]
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].lowerFirst())
+    print(arr[i].lowerFirst)
   }
 }
 ======= code =======
@@ -45,9 +45,9 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
-struct str str_lower_first (struct str);
+struct str str_lowerFirst (struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
-struct str *__THE_1_array_str_at (struct __THE_1_array_str, int64_t);
+struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
@@ -103,8 +103,8 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str str_lower_first (struct str s) {
-  if (s.l != 0) s.d[0] = tolower(s.d[0]);
+struct str str_lowerFirst (struct str s) {
+  if (s.l != 0) s.d[0] = (char) tolower(s.d[0]);
   return s;
 }
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
@@ -116,9 +116,9 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_str) {d, x};
 }
-struct str *__THE_1_array_str_at (struct __THE_1_array_str n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+struct str *__THE_1_array_str_at (struct __THE_1_array_str n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
@@ -142,7 +142,7 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
 int main () {
   const struct __THE_1_array_str __THE_0_arr_0 = __THE_1_array_str_alloc(3, str_alloc(""), str_alloc("t"), str_alloc("TEST"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "sz", str_lower_first(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
+    print(stdout, "sz", str_lowerFirst(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
   }
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
 }

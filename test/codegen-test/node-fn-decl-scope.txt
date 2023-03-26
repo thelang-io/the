@@ -33,33 +33,33 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$0;
-struct __THE_1_fn$0P;
-struct __THE_1_fn$1;
-struct __THE_1_fn$1P;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
+struct __THE_1_fn$1001;
+struct __THE_1_fn$1001P;
 
-struct __THE_1_fn$0 {
-  void (*f) (void *, struct __THE_1_fn$0P);
+struct __THE_1_fn$1000 {
+  void (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$0P {
+struct __THE_1_fn$1000P {
   int32_t n0;
 };
-struct __THE_1_fn$1 {
-  void (*f) (void *, struct __THE_1_fn$1P);
+struct __THE_1_fn$1001 {
+  void (*f) (void *, struct __THE_1_fn$1001P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1P {
+struct __THE_1_fn$1001P {
   struct str n0;
 };
 
 void *alloc (size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
-void __THE_1_mainSDx_0 (void *, struct __THE_1_fn$0P);
-void __THE_1_mainSDx_1 (void *, struct __THE_1_fn$1P);
+void __THE_1_mainSDx_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_mainSDx_1 (void *, struct __THE_1_fn$1001P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -78,21 +78,21 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-void __THE_1_mainSDx_0 (void *px, struct __THE_1_fn$0P p) {
+void __THE_1_mainSDx_0 (void *px, struct __THE_1_fn$1000P p) {
   const int32_t __THE_0_a_0 = p.n0;
 }
-void __THE_1_mainSDx_1 (void *px, struct __THE_1_fn$1P p) {
+void __THE_1_mainSDx_1 (void *px, struct __THE_1_fn$1001P p) {
   const struct str __THE_0_b_0 = p.n0;
   str_free((struct str) __THE_0_b_0);
 }
 
 int main () {
   if (1 > 2) {
-    const struct __THE_1_fn$0 __THE_0_mainSDx_0 = (struct __THE_1_fn$0) {&__THE_1_mainSDx_0, NULL, 0};
-    __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.x, (struct __THE_1_fn$0P) {1});
+    const struct __THE_1_fn$1000 __THE_0_mainSDx_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSDx_0, NULL, 0};
+    __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.x, (struct __THE_1_fn$1000P) {1});
   } else {
-    const struct __THE_1_fn$1 __THE_0_mainSDx_1 = (struct __THE_1_fn$1) {&__THE_1_mainSDx_1, NULL, 0};
-    __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.x, (struct __THE_1_fn$1P) {str_alloc("test")});
+    const struct __THE_1_fn$1001 __THE_0_mainSDx_1 = (struct __THE_1_fn$1001) {&__THE_1_mainSDx_1, NULL, 0};
+    __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.x, (struct __THE_1_fn$1001P) {str_alloc("test")});
   }
 }
 ======= flags =======

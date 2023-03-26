@@ -1,0 +1,11 @@
+// Function API
+
+/**
+ * Object representation of function variable.
+ *
+ * @note In v1.0 `name` property is going to be added.
+ */
+obj Fn {
+  /* Returns a string representation. */
+  fn str (self: Self) str
+}

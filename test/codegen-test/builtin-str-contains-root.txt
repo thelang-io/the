@@ -1,0 +1,97 @@
+======= stdin =======
+main {
+  "".contains("");
+  "t".contains("");
+  "test on test".contains("");
+  "".contains("t");
+  "t".contains("t");
+  "test on test".contains("t");
+  "".contains("test");
+  "t".contains("test");
+  "test on test".contains("test");
+  "".contains("v");
+  "t".contains("v");
+  "test on test".contains("v");
+  "".contains("veto");
+  "t".contains("veto");
+  "test on test".contains("veto");
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct str str_alloc (const char *);
+bool str_contains (struct str, struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+bool str_contains (struct str self, struct str n1) {
+  bool r = n1.l == 0;
+  if (!r && self.l == n1.l) {
+    r = memcmp(self.d, n1.d, n1.l) == 0;
+  } else if (!r && self.l > n1.l) {
+    for (size_t i = 0; i < self.l - n1.l; i++) {
+      if (memcmp(&self.d[i], n1.d, n1.l) == 0) {
+        r = true;
+        break;
+      }
+    }
+  }
+  free(self.d);
+  free(n1.d);
+  return r;
+}
+
+int main () {
+  str_contains(str_alloc(""), str_alloc(""));
+  str_contains(str_alloc("t"), str_alloc(""));
+  str_contains(str_alloc("test on test"), str_alloc(""));
+  str_contains(str_alloc(""), str_alloc("t"));
+  str_contains(str_alloc("t"), str_alloc("t"));
+  str_contains(str_alloc("test on test"), str_alloc("t"));
+  str_contains(str_alloc(""), str_alloc("test"));
+  str_contains(str_alloc("t"), str_alloc("test"));
+  str_contains(str_alloc("test on test"), str_alloc("test"));
+  str_contains(str_alloc(""), str_alloc("v"));
+  str_contains(str_alloc("t"), str_alloc("v"));
+  str_contains(str_alloc("test on test"), str_alloc("v"));
+  str_contains(str_alloc(""), str_alloc("veto"));
+  str_contains(str_alloc("t"), str_alloc("veto"));
+  str_contains(str_alloc("test on test"), str_alloc("veto"));
+}
+======= flags =======
+======= stdout =======

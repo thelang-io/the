@@ -72,7 +72,7 @@ main {
 </NodeEnumDecl>
 <NodeTypeDecl>
   <TypeAlias codeName="Test3_0" name="Test3">
-    <TypeUnion name="union$0">
+    <TypeUnion name="union_strUSintUE">
       <BuiltinType name="str" />
       <BuiltinType name="int" />
     </TypeUnion>
@@ -82,7 +82,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="aa" codeName="aa_0" frame="2">
-        <TypeUnion name="union$1">
+        <TypeUnion name="union_Test1USTest2USunion_strUSintUEUE">
           <TypeObj codeName="Test1_0" name="Test1">
             <TypeField name="a">
               <BuiltinType name="int" />
@@ -92,12 +92,10 @@ main {
             <TypeEnumerator codeName="Test2SDRed_0" name="Red" />
             <TypeEnumerator codeName="Test2SDGreen_0" name="Green" />
           </TypeEnum>
-          <TypeAlias codeName="Test3_0" name="Test3">
-            <TypeUnion name="union$0">
-              <BuiltinType name="str" />
-              <BuiltinType name="int" />
-            </TypeUnion>
-          </TypeAlias>
+          <TypeUnion name="union_strUSintUE">
+            <BuiltinType name="str" />
+            <BuiltinType name="int" />
+          </TypeUnion>
         </TypeUnion>
       </Var>
     </NodeVarDeclVar>
@@ -105,9 +103,9 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ab" codeName="ab_0" frame="2">
-        <TypeUnion name="union$0">
-          <BuiltinType name="str" />
+        <TypeUnion name="union_intUSstrUE">
           <BuiltinType name="int" />
+          <BuiltinType name="str" />
         </TypeUnion>
       </Var>
     </NodeVarDeclVar>
@@ -115,9 +113,9 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ac" codeName="ac_0" frame="2">
-        <TypeUnion name="union$0">
-          <BuiltinType name="str" />
+        <TypeUnion name="union_intUSstrUE">
           <BuiltinType name="int" />
+          <BuiltinType name="str" />
         </TypeUnion>
       </Var>
     </NodeVarDeclVar>
@@ -125,9 +123,9 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ad" codeName="ad_0" frame="2">
-        <TypeUnion name="union$0">
-          <BuiltinType name="str" />
+        <TypeUnion name="union_intUSstrUE">
           <BuiltinType name="int" />
+          <BuiltinType name="str" />
         </TypeUnion>
       </Var>
     </NodeVarDeclVar>
@@ -135,7 +133,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ae" codeName="ae_0" frame="2">
-        <TypeUnion name="union$2">
+        <TypeUnion name="union_intUSstrUSboolUE">
           <BuiltinType name="int" />
           <BuiltinType name="str" />
           <BuiltinType name="bool" />
@@ -146,10 +144,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="af" codeName="af_0" frame="2">
-        <TypeUnion name="union$3">
-          <TypeUnion name="union$0">
-            <BuiltinType name="str" />
+        <TypeUnion name="union_union_intUSstrUEUSboolUE">
+          <TypeUnion name="union_intUSstrUE">
             <BuiltinType name="int" />
+            <BuiltinType name="str" />
           </TypeUnion>
           <BuiltinType name="bool" />
         </TypeUnion>
@@ -159,9 +157,9 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ag" codeName="ag_0" frame="2">
-        <TypeUnion name="union$5">
+        <TypeUnion name="union_intUSunion_strUSboolUEUE">
           <BuiltinType name="int" />
-          <TypeUnion name="union$4">
+          <TypeUnion name="union_strUSboolUE">
             <BuiltinType name="str" />
             <BuiltinType name="bool" />
           </TypeUnion>
@@ -172,7 +170,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ah" codeName="ah_0" frame="2">
-        <TypeUnion name="union$6">
+        <TypeUnion name="union_intUScharUSstrUSboolUE">
           <BuiltinType name="int" />
           <BuiltinType name="char" />
           <BuiltinType name="str" />
@@ -184,8 +182,8 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ai" codeName="ai_0" frame="2">
-        <TypeUnion name="union$8">
-          <TypeUnion name="union$7">
+        <TypeUnion name="union_union_intUScharUEUSstrUSboolUE">
+          <TypeUnion name="union_intUScharUE">
             <BuiltinType name="int" />
             <BuiltinType name="char" />
           </TypeUnion>
@@ -198,9 +196,9 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="aj" codeName="aj_0" frame="2">
-        <TypeUnion name="union$10">
+        <TypeUnion name="union_intUSunion_charUSstrUEUSboolUE">
           <BuiltinType name="int" />
-          <TypeUnion name="union$9">
+          <TypeUnion name="union_charUSstrUE">
             <BuiltinType name="char" />
             <BuiltinType name="str" />
           </TypeUnion>
@@ -212,10 +210,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ak" codeName="ak_0" frame="2">
-        <TypeUnion name="union$11">
+        <TypeUnion name="union_intUScharUSunion_strUSboolUEUE">
           <BuiltinType name="int" />
           <BuiltinType name="char" />
-          <TypeUnion name="union$4">
+          <TypeUnion name="union_strUSboolUE">
             <BuiltinType name="str" />
             <BuiltinType name="bool" />
           </TypeUnion>
@@ -226,7 +224,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="al" codeName="al_0" frame="2">
-        <TypeUnion name="union$12">
+        <TypeUnion name="union_array_intUSarray_strUE">
           <TypeArray name="array_int">
             <BuiltinType name="int" />
           </TypeArray>
@@ -240,7 +238,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="am" codeName="am_0" frame="2">
-        <TypeUnion name="union$13">
+        <TypeUnion name="union_array_intUSarray_strUSarray_charUE">
           <TypeArray name="array_int">
             <BuiltinType name="int" />
           </TypeArray>
@@ -257,7 +255,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="an" codeName="an_0" frame="2">
-        <TypeUnion name="union$14">
+        <TypeUnion name="union_array_intUSarray_strUSarray_charUSarray_boolUE">
           <TypeArray name="array_int">
             <BuiltinType name="int" />
           </TypeArray>
@@ -277,13 +275,13 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ao" codeName="ao_0" frame="2">
-        <TypeUnion name="union$15">
-          <TypeFn name="fn$0">
+        <TypeUnion name="union_fn$1009USfn$1010UE">
+          <TypeFn name="fn$1009">
             <TypeFnReturnType>
               <BuiltinType name="str" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1">
+          <TypeFn name="fn$1010">
             <TypeFnReturnType>
               <BuiltinType name="int" />
             </TypeFnReturnType>
@@ -295,11 +293,11 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ap" codeName="ap_0" frame="2">
-        <TypeFn name="fn$2">
+        <TypeFn name="fn$1011">
           <TypeFnReturnType>
-            <TypeUnion name="union$16">
+            <TypeUnion name="union_strUSfn$1010UE">
               <BuiltinType name="str" />
-              <TypeFn name="fn$1">
+              <TypeFn name="fn$1010">
                 <TypeFnReturnType>
                   <BuiltinType name="int" />
                 </TypeFnReturnType>
@@ -313,18 +311,18 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="aq" codeName="aq_0" frame="2">
-        <TypeUnion name="union$17">
-          <TypeFn name="fn$0">
+        <TypeUnion name="union_fn$1009USfn$1010USfn$1012UE">
+          <TypeFn name="fn$1009">
             <TypeFnReturnType>
               <BuiltinType name="str" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1">
+          <TypeFn name="fn$1010">
             <TypeFnReturnType>
               <BuiltinType name="int" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$3">
+          <TypeFn name="fn$1012">
             <TypeFnReturnType>
               <BuiltinType name="char" />
             </TypeFnReturnType>
@@ -336,15 +334,15 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ar" codeName="ar_0" frame="2">
-        <TypeFn name="fn$5">
+        <TypeFn name="fn$1014">
           <TypeFnReturnType>
-            <TypeUnion name="union$19">
+            <TypeUnion name="union_strUSfn$1013UE">
               <BuiltinType name="str" />
-              <TypeFn name="fn$4">
+              <TypeFn name="fn$1013">
                 <TypeFnReturnType>
-                  <TypeUnion name="union$18">
+                  <TypeUnion name="union_intUSfn$1012UE">
                     <BuiltinType name="int" />
-                    <TypeFn name="fn$3">
+                    <TypeFn name="fn$1012">
                       <TypeFnReturnType>
                         <BuiltinType name="char" />
                       </TypeFnReturnType>
@@ -361,23 +359,23 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="as" codeName="as_0" frame="2">
-        <TypeUnion name="union$20">
-          <TypeFn name="fn$0">
+        <TypeUnion name="union_fn$1009USfn$1010USfn$1012USfn$1015UE">
+          <TypeFn name="fn$1009">
             <TypeFnReturnType>
               <BuiltinType name="str" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1">
+          <TypeFn name="fn$1010">
             <TypeFnReturnType>
               <BuiltinType name="int" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$3">
+          <TypeFn name="fn$1012">
             <TypeFnReturnType>
               <BuiltinType name="char" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$6">
+          <TypeFn name="fn$1015">
             <TypeFnReturnType>
               <BuiltinType name="bool" />
             </TypeFnReturnType>
@@ -389,19 +387,19 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="at" codeName="at_0" frame="2">
-        <TypeFn name="fn$9">
+        <TypeFn name="fn$1018">
           <TypeFnReturnType>
-            <TypeUnion name="union$23">
+            <TypeUnion name="union_strUSfn$1017UE">
               <BuiltinType name="str" />
-              <TypeFn name="fn$8">
+              <TypeFn name="fn$1017">
                 <TypeFnReturnType>
-                  <TypeUnion name="union$22">
+                  <TypeUnion name="union_intUSfn$1016UE">
                     <BuiltinType name="int" />
-                    <TypeFn name="fn$7">
+                    <TypeFn name="fn$1016">
                       <TypeFnReturnType>
-                        <TypeUnion name="union$21">
+                        <TypeUnion name="union_charUSfn$1015UE">
                           <BuiltinType name="char" />
-                          <TypeFn name="fn$6">
+                          <TypeFn name="fn$1015">
                             <TypeFnReturnType>
                               <BuiltinType name="bool" />
                             </TypeFnReturnType>
@@ -421,7 +419,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="au" codeName="au_0" frame="2">
-        <TypeUnion name="union$24">
+        <TypeUnion name="union_opt_strUSopt_intUE">
           <TypeOptional name="opt_str">
             <BuiltinType name="str" />
           </TypeOptional>
@@ -435,7 +433,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="av" codeName="av_0" frame="2">
-        <TypeUnion name="union$25">
+        <TypeUnion name="union_opt_strUSopt_intUSopt_charUE">
           <TypeOptional name="opt_str">
             <BuiltinType name="str" />
           </TypeOptional>
@@ -452,7 +450,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="aw" codeName="aw_0" frame="2">
-        <TypeUnion name="union$26">
+        <TypeUnion name="union_opt_strUSopt_intUSopt_charUSopt_boolUE">
           <TypeOptional name="opt_str">
             <BuiltinType name="str" />
           </TypeOptional>
@@ -472,7 +470,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ax" codeName="ax_0" frame="2">
-        <TypeUnion name="union$27">
+        <TypeUnion name="union_ref_strUSref_intUE">
           <TypeRef name="ref_str">
             <BuiltinType name="str" />
           </TypeRef>
@@ -486,8 +484,8 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ay" codeName="ay_0" frame="2">
-        <TypeRef name="ref_union$28">
-          <TypeUnion name="union$28">
+        <TypeRef name="ref_union_strUSref_intUE">
+          <TypeUnion name="union_strUSref_intUE">
             <BuiltinType name="str" />
             <TypeRef name="ref_int">
               <BuiltinType name="int" />
@@ -500,7 +498,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="az" codeName="az_0" frame="2">
-        <TypeUnion name="union$29">
+        <TypeUnion name="union_ref_strUSref_intUSref_charUE">
           <TypeRef name="ref_str">
             <BuiltinType name="str" />
           </TypeRef>
@@ -517,11 +515,11 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ba" codeName="ba_0" frame="2">
-        <TypeRef name="ref_union$31">
-          <TypeUnion name="union$31">
+        <TypeRef name="ref_union_strUSref_union_intUSref_charUEUE">
+          <TypeUnion name="union_strUSref_union_intUSref_charUEUE">
             <BuiltinType name="str" />
-            <TypeRef name="ref_union$30">
-              <TypeUnion name="union$30">
+            <TypeRef name="ref_union_intUSref_charUE">
+              <TypeUnion name="union_intUSref_charUE">
                 <BuiltinType name="int" />
                 <TypeRef name="ref_char">
                   <BuiltinType name="char" />
@@ -536,7 +534,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="bb" codeName="bb_0" frame="2">
-        <TypeUnion name="union$32">
+        <TypeUnion name="union_ref_strUSref_intUSref_charUSref_boolUE">
           <TypeRef name="ref_str">
             <BuiltinType name="str" />
           </TypeRef>
@@ -556,14 +554,14 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="bc" codeName="bc_0" frame="2">
-        <TypeRef name="ref_union$35">
-          <TypeUnion name="union$35">
+        <TypeRef name="ref_union_strUSref_union_intUSref_union_charUSref_boolUEUEUE">
+          <TypeUnion name="union_strUSref_union_intUSref_union_charUSref_boolUEUEUE">
             <BuiltinType name="str" />
-            <TypeRef name="ref_union$34">
-              <TypeUnion name="union$34">
+            <TypeRef name="ref_union_intUSref_union_charUSref_boolUEUE">
+              <TypeUnion name="union_intUSref_union_charUSref_boolUEUE">
                 <BuiltinType name="int" />
-                <TypeRef name="ref_union$33">
-                  <TypeUnion name="union$33">
+                <TypeRef name="ref_union_charUSref_boolUE">
+                  <TypeUnion name="union_charUSref_boolUE">
                     <BuiltinType name="char" />
                     <TypeRef name="ref_bool">
                       <BuiltinType name="bool" />
@@ -580,12 +578,12 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="bd" codeName="bd_0" frame="2">
-        <TypeUnion name="union$37">
-          <TypeUnion name="union$9">
-            <BuiltinType name="char" />
+        <TypeUnion name="union_union_strUScharUEUSunion_intUSfloatUEUE">
+          <TypeUnion name="union_strUScharUE">
             <BuiltinType name="str" />
+            <BuiltinType name="char" />
           </TypeUnion>
-          <TypeUnion name="union$36">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -596,16 +594,16 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="be" codeName="be_0" frame="2">
-        <TypeUnion name="union$39">
-          <TypeUnion name="union$9">
-            <BuiltinType name="char" />
+        <TypeUnion name="union_union_strUScharUEUSunion_intUSfloatUEUSunion_boolUSbyteUEUE">
+          <TypeUnion name="union_strUScharUE">
             <BuiltinType name="str" />
+            <BuiltinType name="char" />
           </TypeUnion>
-          <TypeUnion name="union$36">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
-          <TypeUnion name="union$38">
+          <TypeUnion name="union_boolUSbyteUE">
             <BuiltinType name="bool" />
             <BuiltinType name="byte" />
           </TypeUnion>
@@ -616,20 +614,20 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="bf" codeName="bf_0" frame="2">
-        <TypeUnion name="union$41">
-          <TypeUnion name="union$9">
-            <BuiltinType name="char" />
+        <TypeUnion name="union_union_strUScharUEUSunion_intUSfloatUEUSunion_boolUSbyteUEUSunion_i8USi16UEUE">
+          <TypeUnion name="union_strUScharUE">
             <BuiltinType name="str" />
+            <BuiltinType name="char" />
           </TypeUnion>
-          <TypeUnion name="union$36">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
-          <TypeUnion name="union$38">
+          <TypeUnion name="union_boolUSbyteUE">
             <BuiltinType name="bool" />
             <BuiltinType name="byte" />
           </TypeUnion>
-          <TypeUnion name="union$40">
+          <TypeUnion name="union_i8USi16UE">
             <BuiltinType name="i8" />
             <BuiltinType name="i16" />
           </TypeUnion>

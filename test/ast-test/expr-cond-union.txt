@@ -40,7 +40,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -60,7 +60,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -80,7 +80,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a" codeName="a_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -131,7 +131,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b" codeName="b_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -167,7 +167,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -175,7 +175,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -192,7 +192,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="c" codeName="c_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -201,7 +201,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -221,7 +221,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -229,7 +229,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -256,7 +256,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="d" codeName="d_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -265,7 +265,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -285,7 +285,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -293,7 +293,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -305,7 +305,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -313,7 +313,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -330,7 +330,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="e" codeName="e_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -381,7 +381,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="f" codeName="f_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -417,7 +417,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -425,7 +425,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -442,7 +442,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="g" codeName="g_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -451,7 +451,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -471,7 +471,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -479,7 +479,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -506,7 +506,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="h" codeName="h_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -515,7 +515,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -535,7 +535,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -543,7 +543,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -555,7 +555,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -563,7 +563,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -580,7 +580,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="m" codeName="m_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -631,7 +631,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="n" codeName="n_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -682,7 +682,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="o" codeName="o_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -718,7 +718,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -726,7 +726,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -743,7 +743,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="p" codeName="p_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -752,7 +752,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -772,7 +772,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -780,7 +780,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -807,7 +807,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="q" codeName="q_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -843,7 +843,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -851,7 +851,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -868,7 +868,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="r" codeName="r_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -877,7 +877,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -897,7 +897,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -905,7 +905,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -932,7 +932,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="s" codeName="s_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -941,7 +941,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -961,7 +961,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -969,7 +969,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -981,7 +981,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -989,7 +989,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -1006,7 +1006,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="t" codeName="t_0" frame="2">
-        <TypeUnion name="union$0">
+        <TypeUnion name="union_intUSfloatUE">
           <BuiltinType name="int" />
           <BuiltinType name="float" />
         </TypeUnion>
@@ -1015,7 +1015,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeUnion name="union$0">
+          <TypeUnion name="union_intUSfloatUE">
             <BuiltinType name="int" />
             <BuiltinType name="float" />
           </TypeUnion>
@@ -1035,7 +1035,7 @@ main {
             <ExprCondBody>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1043,7 +1043,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -1055,7 +1055,7 @@ main {
             <ExprCondAlt>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1063,7 +1063,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                      <TypeUnion name="union$0">
+                      <TypeUnion name="union_intUSfloatUE">
                         <BuiltinType name="int" />
                         <BuiltinType name="float" />
                       </TypeUnion>
@@ -1106,7 +1106,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1114,7 +1114,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1128,7 +1128,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1148,7 +1148,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1156,7 +1156,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1180,7 +1180,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1200,7 +1200,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1208,7 +1208,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1220,7 +1220,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1228,7 +1228,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1269,7 +1269,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1277,7 +1277,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1291,7 +1291,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1311,7 +1311,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1319,7 +1319,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1343,7 +1343,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1363,7 +1363,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1371,7 +1371,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1383,7 +1383,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1391,7 +1391,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1432,7 +1432,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1440,7 +1440,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1454,7 +1454,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1474,7 +1474,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1482,7 +1482,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1533,7 +1533,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1541,7 +1541,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1555,7 +1555,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1575,7 +1575,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1583,7 +1583,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1607,7 +1607,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1627,7 +1627,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1635,7 +1635,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1647,7 +1647,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1655,7 +1655,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1669,7 +1669,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeUnion name="union$0">
+      <TypeUnion name="union_intUSfloatUE">
         <BuiltinType name="int" />
         <BuiltinType name="float" />
       </TypeUnion>
@@ -1689,7 +1689,7 @@ main {
         <ExprCondBody>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1697,7 +1697,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionFloat" codeName="testUnionFloat_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>
@@ -1709,7 +1709,7 @@ main {
         <ExprCondAlt>
           <NodeExpr>
             <NodeExprType>
-              <TypeUnion name="union$0">
+              <TypeUnion name="union_intUSfloatUE">
                 <BuiltinType name="int" />
                 <BuiltinType name="float" />
               </TypeUnion>
@@ -1717,7 +1717,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="testUnionInt" codeName="testUnionInt_0" frame="2">
-                  <TypeUnion name="union$0">
+                  <TypeUnion name="union_intUSfloatUE">
                     <BuiltinType name="int" />
                     <BuiltinType name="float" />
                   </TypeUnion>

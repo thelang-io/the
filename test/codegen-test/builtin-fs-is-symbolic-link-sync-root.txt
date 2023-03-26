@@ -7,7 +7,7 @@ main {
   fs_isSymbolicLinkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt")
 
   // file
-  fs_linkSync("test/fixtures/test.txt", fileName)
+  fs_linkSync("test" + path_SEP + "fixtures" + path_SEP + "test.txt", fileName)
   fs_isSymbolicLinkSync(fileName)
 
   // link
@@ -29,7 +29,7 @@ main {
 
   // dir
   fileName = "test" + path_SEP + "fixtures-copy"
-  fs_linkSync("test/fixtures", fileName)
+  fs_linkSync("test" + path_SEP + "fixtures", fileName)
   fs_isSymbolicLinkSync(fileName)
   fs_unlinkSync(fileName)
 }
@@ -98,6 +98,11 @@ struct str {
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+bool fs_isSymbolicLinkSync (struct str);
+void fs_linkSync (struct str, struct str);
+void fs_mkdirSync (struct str);
+void fs_rmdirSync (struct str);
+void fs_unlinkSync (struct str);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -105,11 +110,6 @@ struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
-bool fs_isSymbolicLinkSync (struct str);
-void fs_linkSync (struct str, struct str);
-void fs_mkdirSync (struct str);
-void fs_rmdirSync (struct str);
-void fs_unlinkSync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -126,47 +126,6 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-struct str str_concat_cstr (struct str s, const char *r) {
-  size_t l = s.l + strlen(r);
-  char *d = alloc(l);
-  memcpy(d, s.d, s.l);
-  memcpy(&d[s.l], r, l - s.l);
-  free(s.d);
-  return (struct str) {d, l};
-}
-struct str str_concat_str (struct str s1, struct str s2) {
-  size_t l = s1.l + s2.l;
-  char *d = alloc(l);
-  memcpy(d, s1.d, s1.l);
-  memcpy(&d[s1.l], s2.d, s2.l);
-  free(s1.d);
-  free(s2.d);
-  return (struct str) {d, l};
-}
-struct str str_copy (const struct str s) {
-  char *d = alloc(s.l);
-  memcpy(d, s.d, s.l);
-  return (struct str) {d, s.l};
-}
-char *str_cstr (const struct str s) {
-  char *d = alloc(s.l + 1);
-  memcpy(d, s.d, s.l);
-  d[s.l] = '\0';
-  return d;
-}
-void str_free (struct str s) {
-  free(s.d);
-}
-struct str str_realloc (struct str s1, struct str s2) {
-  free(s1.d);
-  return s2;
 }
 bool fs_isSymbolicLinkSync (struct str s) {
   char *c = str_cstr(s);
@@ -290,13 +249,54 @@ void fs_unlinkSync (struct str s) {
   free(c);
   str_free(s);
 }
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct str str_realloc (struct str s1, struct str s2) {
+  free(s1.d);
+  return s2;
+}
 
 int main () {
   struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-root.txt");
   fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0));
   fs_isSymbolicLinkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"));
   fs_isSymbolicLinkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"));
-  fs_linkSync(str_alloc("test/fixtures/test.txt"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"), str_copy(__THE_0_fileName_0));
   fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0));
   struct str __THE_0_fileName2_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-root-symlink.txt");
   fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0));
@@ -311,7 +311,7 @@ int main () {
   fs_unlinkSync(str_copy(__THE_0_fileName2_0));
   fs_rmdirSync(str_copy(__THE_0_fileName_0));
   __THE_0_fileName_0 = str_realloc(__THE_0_fileName_0, str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures-copy"));
-  fs_linkSync(str_alloc("test/fixtures"), str_copy(__THE_0_fileName_0));
+  fs_linkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_copy(__THE_0_fileName_0));
   fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0));
   fs_unlinkSync(str_copy(__THE_0_fileName_0));
   str_free((struct str) __THE_0_fileName2_0);

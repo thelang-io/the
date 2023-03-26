@@ -1,0 +1,249 @@
+======= stdin =======
+main {
+  emptyArr: str[]
+  mut arr: str[][] = [emptyArr, ["1"], ["2", "3"], ["4", "5", "6"]]
+
+  loop i := 0; i < arr.len; i++ {
+    arr[i].clear()
+    print(arr[i].str())
+  }
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_array_str;
+struct __THE_1_array_array_str;
+
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
+struct __THE_1_array_array_str {
+  struct __THE_1_array_str *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+struct str str_escape (const struct str);
+void str_free (struct str);
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
+struct __THE_1_array_str *__THE_1_array_str_clear (struct __THE_1_array_str *);
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+struct str __THE_1_array_str_str (struct __THE_1_array_str);
+struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t, ...);
+struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str, int32_t);
+struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_1_array_array_str);
+void __THE_1_array_array_str_free (struct __THE_1_array_array_str);
+size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+struct str str_escape (const struct str s) {
+  char *d = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) d = re_alloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) d = re_alloc(d, l + 1);
+    d[l++] = c;
+  }
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(x * sizeof(struct str));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct str);
+  va_end(args);
+  return (struct __THE_1_array_str) {d, x};
+}
+struct __THE_1_array_str *__THE_1_array_str_clear (struct __THE_1_array_str *self) {
+  __THE_1_array_str_free((struct __THE_1_array_str) *self);
+  self->d = NULL;
+  self->l = 0;
+  return self;
+}
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str n) {
+  if (n.l == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(n.l * sizeof(struct str));
+  for (size_t i = 0; i < n.l; i++) d[i] = str_copy(n.d[i]);
+  return (struct __THE_1_array_str) {d, n.l};
+}
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
+  struct str r = str_alloc("[");
+  for (size_t i = 0; i < n.l; i++) {
+    if (i != 0) r = str_concat_cstr(r, ", ");
+    r = str_concat_cstr(r, "\"");
+    r = str_concat_str(r, str_escape(n.d[i]));
+    r = str_concat_cstr(r, "\"");
+  }
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return str_concat_cstr(r, "]");
+}
+struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_array_str) {NULL, 0};
+  struct __THE_1_array_str *d = alloc(x * sizeof(struct __THE_1_array_str));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_array_str);
+  va_end(args);
+  return (struct __THE_1_array_array_str) {d, x};
+}
+struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array_str n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
+    exit(EXIT_FAILURE);
+  }
+  return i < 0 ? &n.d[n.l + i] : &n.d[i];
+}
+struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_1_array_array_str n) {
+  if (n.l == 0) return (struct __THE_1_array_array_str) {NULL, 0};
+  struct __THE_1_array_str *d = alloc(n.l * sizeof(struct __THE_1_array_str));
+  for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_array_str_copy(n.d[i]);
+  return (struct __THE_1_array_array_str) {d, n.l};
+}
+void __THE_1_array_array_str_free (struct __THE_1_array_array_str n) {
+  for (size_t i = 0; i < n.l; i++) __THE_1_array_str_free((struct __THE_1_array_str) n.d[i]);
+  free(n.d);
+}
+size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str n) {
+  size_t l = n.l;
+  __THE_1_array_array_str_free((struct __THE_1_array_array_str) n);
+  return l;
+}
+
+int main () {
+  const struct __THE_1_array_str __THE_0_emptyArr_0 = __THE_1_array_str_alloc(0);
+  struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(4, __THE_1_array_str_copy(__THE_0_emptyArr_0), __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("4"), str_alloc("5"), str_alloc("6")));
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+    __THE_1_array_str_clear(__THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0));
+    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(*__THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
+  }
+  __THE_1_array_array_str_free((struct __THE_1_array_array_str) __THE_0_arr_0);
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_emptyArr_0);
+}
+======= flags =======
+======= stdout =======
+[]
+[]
+[]
+[]

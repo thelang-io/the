@@ -1,0 +1,256 @@
+======= stdin =======
+main {
+  dir1 := path_tempDirectory()
+  dir2 := path_tempDirectory()
+
+  print(dir1)
+  print(dir2)
+  print(dir1 == dir2)
+
+  fs_rmdirSync(dir1)
+  fs_rmdirSync(dir2)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <unistd.h>
+#endif
+
+#ifdef THE_OS_WINDOWS
+  extern unsigned char NTAPI SystemFunction036 (void *, unsigned long);
+#endif
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+void fs_rmdirSync (struct str);
+char *path_mktemp (unsigned char (*f) (char *));
+struct str path_tempDirectory ();
+unsigned char path_tempDirectoryFunctor (char *);
+char *path_tmpdir ();
+void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+char *str_cstr (const struct str);
+bool str_eq_str (struct str, struct str);
+void str_free (struct str);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+void fs_rmdirSync (struct str s) {
+  char *c = str_cstr(s);
+  #ifdef THE_OS_WINDOWS
+    bool r = RemoveDirectory(c);
+  #else
+    bool r = rmdir(c) == 0;
+  #endif
+  if (!r) {
+    fprintf(stderr, "Error: failed to remove directory `%s`" THE_EOL, c);
+    exit(EXIT_FAILURE);
+  }
+  free(c);
+  str_free(s);
+}
+char *path_mktemp (unsigned char (*f) (char *)) {
+  static const char *chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  static const size_t chars_len = 62;
+  static const size_t x = 6;
+  char *d = path_tmpdir();
+  size_t l = strlen(d) + x;
+  d = re_alloc(d, l + 1);
+  memcpy(&d[l - x], "XXXXXX", x + 1);
+  #ifdef THE_OS_WINDOWS
+    size_t j = TMP_MAX;
+    unsigned long long v;
+    do {
+      if (!SystemFunction036((void *) &v, sizeof(v))) {
+        fprintf(stderr, "Error: failed to generate random with `SystemFunction036`" THE_EOL);
+        exit(EXIT_FAILURE);
+      }
+      char *p = &d[l - x];
+      for (size_t i = 0; i < x; i++) {
+        *p++ = chars[v % chars_len];
+        v /= chars_len;
+      }
+      if (f(d)) return d;
+    } while (--j);
+    free(d);
+    return NULL;
+  #else
+    if (!f(d)) {
+      free(d);
+      return NULL;
+    }
+    return d;
+  #endif
+}
+struct str path_tempDirectory () {
+  char *d = path_mktemp(path_tempDirectoryFunctor);
+  if (d == NULL) {
+    fprintf(stderr, "Error: failed to create temporary directory" THE_EOL);
+    exit(EXIT_FAILURE);
+  }
+  struct str r = str_alloc(d);
+  free(d);
+  return r;
+}
+unsigned char path_tempDirectoryFunctor (char *c) {
+  #ifdef THE_OS_WINDOWS
+    return CreateDirectory(c, NULL) == 0 ? 0 : 1;
+  #else
+    return mkdtemp(c) == NULL ? 0 : 1;
+  #endif
+}
+char *path_tmpdir () {
+  char *d;
+  #ifdef THE_OS_WINDOWS
+    size_t l = GetTempPath(0, NULL);
+    if (l == 0) {
+      fprintf(stderr, "Error: failed to get temporary path" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    l -= 1;
+    d = alloc(l + 1);
+    if (GetTempPath(l + 1, d) == 0) {
+      fprintf(stderr, "Error: failed to get temporary path" THE_EOL);
+      exit(EXIT_FAILURE);
+    }
+    if (d[l - 1] != '\\' && d[l - 1] != '/') {
+      d[l] = '\\';
+      d = re_alloc(d, ++l + 1);
+    }
+    d[l] = '\0';
+  #else
+    char *f;
+    if (
+      (f = getenv("TMPDIR")) == NULL &&
+      (f = getenv("TMP")) == NULL &&
+      (f = getenv("TEMP")) == NULL &&
+      (f = getenv("TEMPDIR")) == NULL
+    ) {
+      f = "/tmp/";
+    }
+    size_t l = strlen(f);
+    d = alloc(l + 1);
+    memcpy(d, f, l);
+    if (f[l - 1] != '/') {
+      d[l] = '/';
+      d = re_alloc(d, ++l + 1);
+    }
+    d[l] = '\0';
+  #endif
+  return d;
+}
+void print (FILE *stream, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buf[512];
+  struct str s;
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
+      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
+      case 'c': fputc(va_arg(args, int), stream); break;
+      case 'e':
+      case 'f':
+      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'i':
+      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
+      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
+      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
+      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
+      case 'z': fputs(va_arg(args, char *), stream); break;
+    }
+  }
+  va_end(args);
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+bool str_eq_str (struct str s1, struct str s2) {
+  bool r = s1.l == s2.l && memcmp(s1.d, s2.d, s1.l) == 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+
+int main () {
+  const struct str __THE_0_dir1_0 = path_tempDirectory();
+  const struct str __THE_0_dir2_0 = path_tempDirectory();
+  print(stdout, "sz", str_copy(__THE_0_dir1_0), THE_EOL);
+  print(stdout, "sz", str_copy(__THE_0_dir2_0), THE_EOL);
+  print(stdout, "tz", str_eq_str(str_copy(__THE_0_dir1_0), str_copy(__THE_0_dir2_0)), THE_EOL);
+  fs_rmdirSync(str_copy(__THE_0_dir1_0));
+  fs_rmdirSync(str_copy(__THE_0_dir2_0));
+  str_free((struct str) __THE_0_dir2_0);
+  str_free((struct str) __THE_0_dir1_0);
+}
+======= flags =======
+W:-ladvapi32
+======= stdout =======
+{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+|C:\\\w+\\[\w~]+\\\w+\\\w+\\\w+\\\w+) }}
+{{ (/var/folders/\w+/\w+/\w+/\w+|/tmp/\w+|C:\\\w+\\[\w~]+\\\w+\\\w+\\\w+\\\w+) }}
+false

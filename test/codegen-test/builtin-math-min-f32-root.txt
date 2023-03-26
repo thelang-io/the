@@ -1,0 +1,12 @@
+======= stdin =======
+main {
+  math_MinF32
+}
+======= code =======
+#include <float.h>
+
+int main () {
+  -FLT_MAX;
+}
+======= flags =======
+======= stdout =======

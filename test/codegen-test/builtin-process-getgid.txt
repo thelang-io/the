@@ -31,8 +31,8 @@ struct str {
 };
 
 void print (FILE *, const char *, ...);
-void str_free (struct str);
 int32_t process_getgid ();
+void str_free (struct str);
 
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -63,15 +63,15 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-void str_free (struct str s) {
-  free(s.d);
-}
 int32_t process_getgid () {
   #ifdef THE_OS_WINDOWS
     return 0;
   #else
     return getgid();
   #endif
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 
 int main () {

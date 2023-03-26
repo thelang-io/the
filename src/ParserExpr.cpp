@@ -17,6 +17,102 @@
 #include "ParserExpr.hpp"
 #include "config.hpp"
 
+std::string ParserStmtExpr::stringify () const {
+  auto code = std::string();
+
+  if (std::holds_alternative<ParserExprAccess>(*this->body)) {
+    auto exprBody = std::get<ParserExprAccess>(*this->body);
+
+    if (exprBody.expr != std::nullopt && std::holds_alternative<Token>(*exprBody.expr)) {
+      code += std::get<Token>(*exprBody.expr).val;
+    } else if (exprBody.expr != std::nullopt && std::holds_alternative<ParserStmtExpr>(*exprBody.expr)) {
+      code += std::get<ParserStmtExpr>(*exprBody.expr).stringify();
+    }
+
+    if (exprBody.elem != std::nullopt) {
+      code += "[" + exprBody.elem->stringify() + "]";
+    } else if (exprBody.prop != std::nullopt) {
+      code += "." + exprBody.prop->val;
+    }
+  } else if (std::holds_alternative<ParserExprArray>(*this->body)) {
+    auto exprBody = std::get<ParserExprArray>(*this->body);
+    code += "[";
+
+    for (auto i = static_cast<std::size_t>(0); i < exprBody.elements.size(); i++) {
+      code += i == 0 ? "" : ", ";
+      code += exprBody.elements[i].stringify();
+    }
+
+    code += "]";
+  } else if (std::holds_alternative<ParserExprAssign>(*this->body)) {
+    auto exprBody = std::get<ParserExprAssign>(*this->body);
+    code += exprBody.left.stringify() + " " + exprBody.op.val + " " + exprBody.right.stringify();
+  } else if (std::holds_alternative<ParserExprBinary>(*this->body)) {
+    auto exprBody = std::get<ParserExprBinary>(*this->body);
+    code += exprBody.left.stringify() + " " + exprBody.op.val + " " + exprBody.right.stringify();
+  } else if (std::holds_alternative<ParserExprCall>(*this->body)) {
+    auto exprBody = std::get<ParserExprCall>(*this->body);
+    code += exprBody.callee.stringify() + "(";
+
+    for (auto i = static_cast<std::size_t>(0); i < exprBody.args.size(); i++) {
+      auto arg = exprBody.args[i];
+
+      code += i == 0 ? "" : ", ";
+      code += arg.id == std::nullopt ? "" : arg.id->val + ": ";
+      code += arg.expr.stringify();
+    }
+
+    code += ")";
+  } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
+    auto exprBody = std::get<ParserExprCond>(*this->body);
+    code += exprBody.cond.stringify() + " ? " + exprBody.body.stringify() + " : " + exprBody.alt.stringify();
+  } else if (std::holds_alternative<ParserExprIs>(*this->body)) {
+    auto exprBody = std::get<ParserExprIs>(*this->body);
+    code += exprBody.expr.stringify() + " is " + exprBody.type.stringify();
+  } else if (std::holds_alternative<ParserExprLit>(*this->body)) {
+    auto exprBody = std::get<ParserExprLit>(*this->body);
+    code += exprBody.body.val;
+  } else if (std::holds_alternative<ParserExprMap>(*this->body)) {
+    auto exprBody = std::get<ParserExprMap>(*this->body);
+    code += "{";
+
+    for (auto i = static_cast<std::size_t>(0); i < exprBody.props.size(); i++) {
+      code += i == 0 ? "" : ", ";
+      code += exprBody.props[i].name.stringify() + ": " + exprBody.props[i].init.stringify();
+    }
+
+    code += "}";
+  } else if (std::holds_alternative<ParserExprObj>(*this->body)) {
+    auto exprBody = std::get<ParserExprObj>(*this->body);
+    code += exprBody.id.val + "{";
+
+    for (auto i = static_cast<std::size_t>(0); i < exprBody.props.size(); i++) {
+      auto prop = exprBody.props[i];
+      code += i == 0 ? "" : ", ";
+      code += prop.id.val + ": " + prop.init.stringify();
+    }
+
+    code += "}";
+  } else if (std::holds_alternative<ParserExprRef>(*this->body)) {
+    auto exprBody = std::get<ParserExprRef>(*this->body);
+    code += "ref " + exprBody.expr.stringify();
+  } else if (std::holds_alternative<ParserExprUnary>(*this->body)) {
+    auto exprBody = std::get<ParserExprUnary>(*this->body);
+
+    if (exprBody.prefix) {
+      code += exprBody.op.val;
+    }
+
+    code += exprBody.arg.stringify();
+
+    if (!exprBody.prefix) {
+      code += exprBody.op.val;
+    }
+  }
+
+  return this->parenthesized ? "(" + code + ")" : code;
+}
+
 std::string ParserStmtExpr::xml (std::size_t indent) const {
   auto result = std::string();
   auto attrs = std::string(this->parenthesized ? " parenthesized" : "");

@@ -49,12 +49,23 @@ using TypeBody = std::variant<
   TypeUnion
 >;
 
+struct TypeCallInfo {
+  std::string codeName;
+  bool isSelfFirst = false;
+  std::string selfCodeName = "";
+  Type *selfType = nullptr;
+  bool isSelfMut = false;
+
+  bool empty () const;
+  std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
+};
+
 struct TypeField {
   std::string name;
   Type *type;
   bool mut;
-  bool method;
-  bool builtin;
+  bool builtin = false;
+  TypeCallInfo callInfo = {};
 };
 
 struct TypeAlias {
@@ -80,19 +91,11 @@ struct TypeFnParam {
   bool variadic;
 };
 
-struct TypeFnMethodInfo {
-  std::string codeName;
-  bool isSelfFirst = false;
-  std::string selfCodeName = "";
-  Type *selfType = nullptr;
-  bool isSelfMut = false;
-};
-
 struct TypeFn {
   Type *returnType;
   std::vector<TypeFnParam> params = {};
   bool isMethod = false;
-  TypeFnMethodInfo methodInfo = {};
+  TypeCallInfo callInfo = {};
 };
 
 struct TypeBodyMap {
@@ -127,8 +130,10 @@ struct Type {
   static Type *largest (Type *, Type *);
 
   Type *getEnumerator (const std::string &) const;
+  TypeField getField (const std::string &) const;
   Type *getProp (const std::string &) const;
   bool hasEnumerator (const std::string &) const;
+  bool hasField (const std::string &) const;
   bool hasProp (const std::string &) const;
   bool hasSubType (const Type *) const;
   bool isAlias () const;

@@ -18,6 +18,25 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenFs = {
+  R"(void fs_appendFileSync (_{struct str} s, _{struct buffer} b) {)" EOL
+  R"(  char *c = _{str_cstr}(s);)" EOL
+  R"(  _{FILE} *f = _{fopen}(c, "ab");)" EOL
+  R"(  if (f == _{NULL}) {)" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: failed to open file `%s` for writing" _{THE_EOL}, c);)" EOL
+  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  })" EOL
+  R"(  if (b.l != 0) {)" EOL
+  R"(    if (_{fwrite}(b.d, b.l, 1, f) != 1) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed appending to file `%s`" _{THE_EOL}, c);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(  })" EOL
+  R"(  _{fclose}(f);)" EOL
+  R"(  _{free}(c);)" EOL
+  R"(  _{str_free}(s);)" EOL
+  R"(  _{buffer_free}(b);)" EOL
+  R"(})" EOL,
+
   R"(void fs_chmodSync (_{struct str} s, _{int32_t} m) {)" EOL
   R"(  char *c = _{str_cstr}(s);)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
@@ -45,6 +64,112 @@ const std::vector<std::string> codegenFs = {
   R"(  })" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{free}(c);)" EOL
+  R"(})" EOL,
+
+  R"(void fs_copyDirectorySync (_{struct str} n1, _{struct str} n2) {)" EOL
+  R"(  if (_{fs_existsSync}(_{str_copy}(n2))) {)" EOL
+  R"(    if (_{fs_isDirectorySync}(_{str_copy}(n2))) {)" EOL
+  R"(      _{fs_rmdirSync}(_{str_copy}(n2));)" EOL
+  R"(    } else {)" EOL
+  R"(      _{fs_rmSync}(_{str_copy}(n2));)" EOL
+  R"(    })" EOL
+  R"(  })" EOL
+  R"(  if (n1.l > 0 && n1.d[n1.l - 1] != (_{THE_PATH_SEP})[0] && n1.d[n1.l - 1] != '/') {)" EOL
+  R"(    n1.d = _{re_alloc}(n1.d, ++n1.l);)" EOL
+  R"(    n1.d[n1.l - 1] = (_{THE_PATH_SEP})[0];)" EOL
+  R"(  })" EOL
+  R"(  if (n2.l > 0 && n2.d[n2.l - 1] != (_{THE_PATH_SEP})[0] && n2.d[n2.l - 1] != '/') {)" EOL
+  R"(    n2.d = _{re_alloc}(n2.d, ++n2.l);)" EOL
+  R"(    n2.d[n2.l - 1] = (_{THE_PATH_SEP})[0];)" EOL
+  R"(  })" EOL
+  R"(  struct _{array_str} files = _{fs_scandirSync}(_{str_copy}(n1));)" EOL
+  R"(  _{fs_mkdirSync}(_{str_copy}(n2));)" EOL
+  R"(  for (_{size_t} i = 0; i < files.l; i++) {)" EOL
+  R"(    _{struct str} file = _{str_concat_str}(_{str_copy}(n1), _{str_copy}(files.d[i]));)" EOL
+  R"(    if (_{fs_isDirectorySync}(_{str_copy}(file))) {)" EOL
+  R"(      _{fs_copyDirectorySync}(file, _{str_concat_str}(_{str_copy}(n2), _{str_copy}(files.d[i])));)" EOL
+  R"(    } else {)" EOL
+  R"(      _{fs_copyFileSync}(file, _{str_concat_str}(_{str_copy}(n2), _{str_copy}(files.d[i])));)" EOL
+  R"(    })" EOL
+  R"(  })" EOL
+  R"(  _{array_str_free}(files);)" EOL
+  R"(  _{str_free}(n2);)" EOL
+  R"(  _{str_free}(n1);)" EOL
+  R"(})" EOL,
+
+  R"(void fs_copyFileSync (_{struct str} n1, _{struct str} n2) {)" EOL
+  R"(  char *c1 = _{str_cstr}(n1);)" EOL
+  R"(  char *c2 = _{str_cstr}(n2);)" EOL
+  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
+  R"(    if (_{CopyFile}(c1, c2, 0) == 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to copy file from `%s` to `%s`" _{THE_EOL}, c1, c2);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(  #else)" EOL
+  R"(    int fd1 = _{open}(c1, _{O_RDONLY});)" EOL
+  R"(    if (fd1 < 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to open file descriptor of `%s`" _{THE_EOL}, c1);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{struct stat} sb1;)" EOL
+  R"(    if (_{fstat}(fd1, &sb1) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to stat file `%s`" _{THE_EOL}, c1);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    if ((sb1.st_mode & _{S_IFMT}) != _{S_IFREG}) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: cannot copy non-file `%s`" _{THE_EOL}, c1);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    int fd2 = _{open}(c2, _{O_WRONLY} | _{O_CREAT});)" EOL
+  R"(    if (fd2 < 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to open file descriptor of `%s`" _{THE_EOL}, c2);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{struct stat} sb2;)" EOL
+  R"(    if (_{fstat}(fd2, &sb2) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to stat file `%s`" _{THE_EOL}, c2);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    if (sb1.st_dev == sb2.st_dev && sb1.st_ino == sb2.st_ino) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: can't copy same file" _{THE_EOL});)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    if (sb2.st_size > 0 && _{ftruncate}(fd2, 0) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to truncate file `%s`" _{THE_EOL}, c2);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    if (_{fchmod}(fd2, sb1.st_mode) != 0) {)" EOL
+  R"(      _{fprintf}(_{stderr}, "Error: failed to chmod file `%s`" _{THE_EOL}, c2);)" EOL
+  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    })" EOL
+  R"(    _{size_t} bytes = sb1.st_size;)" EOL
+  R"(    _{size_t} buf_len = 8192;)" EOL
+  R"(    char buf[buf_len];)" EOL
+  R"(    while (bytes != 0) {)" EOL
+  R"(      _{ssize_t} read_bytes_raw = _{read}(fd1, buf, bytes > buf_len ? buf_len : bytes);)" EOL
+  R"(      if (read_bytes_raw <= 0) {)" EOL
+  R"(        _{fprintf}(_{stderr}, "Error: failed to read data from file `%s`" _{THE_EOL}, c1);)" EOL
+  R"(        _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      })" EOL
+  R"(      _{size_t} read_bytes = read_bytes_raw;)" EOL
+  R"(      _{size_t} written_bytes = 0;)" EOL
+  R"(      while (written_bytes != read_bytes) {)" EOL
+  R"(        _{ssize_t} written_bytes_raw = _{write}(fd2, &buf[written_bytes], read_bytes - written_bytes);)" EOL
+  R"(        if (written_bytes_raw <= 0) {)" EOL
+  R"(          _{fprintf}(_{stderr}, "Error: failed to write data to file `%s`" _{THE_EOL}, c2);)" EOL
+  R"(          _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(        })" EOL
+  R"(        written_bytes += (_{size_t}) written_bytes_raw;)" EOL
+  R"(      })" EOL
+  R"(      bytes -= written_bytes;)" EOL
+  R"(    })" EOL
+  R"(    _{close}(fd2);)" EOL
+  R"(    _{close}(fd1);)" EOL
+  R"(  #endif)" EOL
+  R"(  _{free}(c2);)" EOL
+  R"(  _{free}(c1);)" EOL
+  R"(  _{str_free}(n2);)" EOL
+  R"(  _{str_free}(n1);)" EOL
   R"(})" EOL,
 
   R"(_{bool} fs_existsSync (_{struct str} s) {)" EOL
@@ -238,12 +363,12 @@ const std::vector<std::string> codegenFs = {
   R"(    })" EOL
   R"(    if (_{memcmp}(r, "\\\\?\\UNC\\", 8) == 0) {)" EOL
   R"(      l -= 6;)" EOL
-  R"(      d = alloc(l);)" EOL
+  R"(      d = _{alloc}(l);)" EOL
   R"(      _{memcpy}(d, &r[6], l);)" EOL
   R"(      d[0] = '\\';)" EOL
   R"(    } else if (_{memcmp}(r, "\\\\?\\", 4) == 0) {)" EOL
   R"(      l -= 4;)" EOL
-  R"(      d = alloc(l);)" EOL
+  R"(      d = _{alloc}(l);)" EOL
   R"(      _{memcpy}(d, &r[4], l);)" EOL
   R"(    })" EOL
   R"(    _{free}(r);)" EOL
@@ -259,6 +384,19 @@ const std::vector<std::string> codegenFs = {
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
   R"(  return (_{struct str}) {d, l};)" EOL
+  R"(})" EOL,
+
+  R"(void fs_renameSync (_{struct str} n1, _{struct str} n2) {)" EOL
+  R"(  char *c1 = _{str_cstr}(n1);)" EOL
+  R"(  char *c2 = _{str_cstr}(n2);)" EOL
+  R"(  if (_{rename}(c1, c2) != 0) {)" EOL
+  R"(    _{fprintf}(_{stderr}, "Error: failed to rename from `%s` to `%s`" _{THE_EOL}, c1, c2);)" EOL
+  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(  })" EOL
+  R"(  _{free}(c2);)" EOL
+  R"(  _{free}(c1);)" EOL
+  R"(  _{str_free}(n2);)" EOL
+  R"(  _{str_free}(n1);)" EOL
   R"(})" EOL,
 
   R"(void fs_rmSync (_{struct str} s) {)" EOL
@@ -353,9 +491,9 @@ const std::vector<std::string> codegenFs = {
   R"(  for (_{size_t} j = 0; j < l; j++) {)" EOL
   R"(    for (_{size_t} k = j + 1; k < l; k++) {)" EOL
   R"(      if (_{memcmp}(r[j].d, r[k].d, r[j].l > r[k].l ? r[k].l : r[j].l) > 0) {)" EOL
-  R"(        _{struct str} a = r[j];)" EOL
+  R"(        _{struct str} t = r[j];)" EOL
   R"(        r[j] = r[k];)" EOL
-  R"(        r[k] = a;)" EOL
+  R"(        r[k] = t;)" EOL
   R"(      })" EOL
   R"(    })" EOL
   R"(  })" EOL

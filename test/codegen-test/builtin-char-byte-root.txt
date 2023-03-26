@@ -1,0 +1,32 @@
+======= stdin =======
+main {
+  '\0'.byte;
+  '\n'.byte;
+  '\t'.byte;
+  'A'.byte;
+  'a'.byte;
+  '0'.byte;
+  '9'.byte;
+  '_'.byte;
+  '-'.byte;
+}
+======= code =======
+unsigned char char_byte (char);
+
+unsigned char char_byte (char c) {
+  return (unsigned char) c;
+}
+
+int main () {
+  char_byte('\0');
+  char_byte('\n');
+  char_byte('\t');
+  char_byte('A');
+  char_byte('a');
+  char_byte('0');
+  char_byte('9');
+  char_byte('_');
+  char_byte('-');
+}
+======= flags =======
+======= stdout =======

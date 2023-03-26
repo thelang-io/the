@@ -1,0 +1,7 @@
+======= stdin =======
+obj Test {}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+  </TypeObj>
+</NodeObjDecl>

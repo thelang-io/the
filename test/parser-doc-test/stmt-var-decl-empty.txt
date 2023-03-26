@@ -1,0 +1,22 @@
+======= stdin =======
+const a: int
+mut b: int = 10
+const c := 10
+======= stdout =======
+## `a`
+
+```the
+const a: int
+```
+
+## `b`
+
+```the
+mut b: int = 10
+```
+
+## `c`
+
+```the
+const c := 10
+```

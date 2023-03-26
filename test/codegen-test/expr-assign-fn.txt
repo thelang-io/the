@@ -34,18 +34,18 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-struct __THE_1_fn$0;
+struct __THE_1_fn$1000;
 
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;
   size_t l;
 };
 
 void *alloc (size_t);
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
-struct __THE_1_fn$0 __THE_1_fn$0_realloc (struct __THE_1_fn$0, struct __THE_1_fn$0);
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+struct __THE_1_fn$1000 __THE_1_fn$1000_realloc (struct __THE_1_fn$1000, struct __THE_1_fn$1000);
 void __THE_1_test1_0 (void *);
 void __THE_1_test2_0 (void *);
 void __THE_1_test3_0 (void *);
@@ -58,17 +58,17 @@ void *alloc (size_t l) {
   }
   return r;
 }
-struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$0) {n.f, x, n.l};
+  return (struct __THE_1_fn$1000) {n.f, x, n.l};
 }
-void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_fn$0 __THE_1_fn$0_realloc (struct __THE_1_fn$0 n1, struct __THE_1_fn$0 n2) {
-  __THE_1_fn$0_free((struct __THE_1_fn$0) n1);
+struct __THE_1_fn$1000 __THE_1_fn$1000_realloc (struct __THE_1_fn$1000 n1, struct __THE_1_fn$1000 n2) {
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) n1);
   return n2;
 }
 void __THE_1_test1_0 (void *px) {
@@ -79,23 +79,23 @@ void __THE_1_test3_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_test1_0 = (struct __THE_1_fn$0) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$0 __THE_0_test2_0 = (struct __THE_1_fn$0) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn$0 __THE_0_test3_0 = (struct __THE_1_fn$0) {&__THE_1_test3_0, NULL, 0};
-  const struct __THE_1_fn$0 __THE_0_a_0 = __THE_1_fn$0_copy(__THE_0_test1_0);
-  struct __THE_1_fn$0 __THE_0_b_0 = __THE_1_fn$0_copy(__THE_0_a_0);
-  __THE_0_b_0 = __THE_1_fn$0_realloc(__THE_0_b_0, __THE_1_fn$0_copy(__THE_0_a_0));
-  struct __THE_1_fn$0 __THE_0_c_0 = __THE_1_fn$0_copy(__THE_0_test2_0);
-  __THE_0_c_0 = __THE_1_fn$0_realloc(__THE_0_c_0, __THE_1_fn$0_copy(__THE_0_b_0 = __THE_1_fn$0_realloc(__THE_0_b_0, __THE_1_fn$0_copy(__THE_0_a_0))));
-  struct __THE_1_fn$0 __THE_0_d_0 = __THE_1_fn$0_copy(__THE_0_test3_0);
-  __THE_0_d_0 = __THE_1_fn$0_realloc(__THE_0_d_0, __THE_1_fn$0_copy(__THE_0_c_0 = __THE_1_fn$0_realloc(__THE_0_c_0, __THE_1_fn$0_copy(__THE_0_b_0 = __THE_1_fn$0_realloc(__THE_0_b_0, __THE_1_fn$0_copy(__THE_0_a_0))))));
-  __THE_0_d_0 = __THE_1_fn$0_realloc(__THE_0_d_0, true ? __THE_1_fn$0_copy(__THE_0_b_0) : __THE_1_fn$0_copy(__THE_0_a_0));
-  __THE_0_d_0 = __THE_1_fn$0_realloc(__THE_0_d_0, true ? __THE_1_fn$0_copy(__THE_0_b_0 = __THE_1_fn$0_realloc(__THE_0_b_0, __THE_1_fn$0_copy(__THE_0_c_0))) : __THE_1_fn$0_copy(__THE_0_a_0));
-  __THE_0_d_0 = __THE_1_fn$0_realloc(__THE_0_d_0, true ? __THE_1_fn$0_copy(__THE_0_c_0) : __THE_1_fn$0_copy(__THE_0_b_0 = __THE_1_fn$0_realloc(__THE_0_b_0, __THE_1_fn$0_copy(__THE_0_a_0))));
-  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_d_0);
-  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_c_0);
-  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_b_0);
-  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_a_0);
+  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_a_0 = __THE_1_fn$1000_copy(__THE_0_test1_0);
+  struct __THE_1_fn$1000 __THE_0_b_0 = __THE_1_fn$1000_copy(__THE_0_a_0);
+  __THE_0_b_0 = __THE_1_fn$1000_realloc(__THE_0_b_0, __THE_1_fn$1000_copy(__THE_0_a_0));
+  struct __THE_1_fn$1000 __THE_0_c_0 = __THE_1_fn$1000_copy(__THE_0_test2_0);
+  __THE_0_c_0 = __THE_1_fn$1000_realloc(__THE_0_c_0, __THE_1_fn$1000_copy(__THE_0_b_0 = __THE_1_fn$1000_realloc(__THE_0_b_0, __THE_1_fn$1000_copy(__THE_0_a_0))));
+  struct __THE_1_fn$1000 __THE_0_d_0 = __THE_1_fn$1000_copy(__THE_0_test3_0);
+  __THE_0_d_0 = __THE_1_fn$1000_realloc(__THE_0_d_0, __THE_1_fn$1000_copy(__THE_0_c_0 = __THE_1_fn$1000_realloc(__THE_0_c_0, __THE_1_fn$1000_copy(__THE_0_b_0 = __THE_1_fn$1000_realloc(__THE_0_b_0, __THE_1_fn$1000_copy(__THE_0_a_0))))));
+  __THE_0_d_0 = __THE_1_fn$1000_realloc(__THE_0_d_0, true ? __THE_1_fn$1000_copy(__THE_0_b_0) : __THE_1_fn$1000_copy(__THE_0_a_0));
+  __THE_0_d_0 = __THE_1_fn$1000_realloc(__THE_0_d_0, true ? __THE_1_fn$1000_copy(__THE_0_b_0 = __THE_1_fn$1000_realloc(__THE_0_b_0, __THE_1_fn$1000_copy(__THE_0_c_0))) : __THE_1_fn$1000_copy(__THE_0_a_0));
+  __THE_0_d_0 = __THE_1_fn$1000_realloc(__THE_0_d_0, true ? __THE_1_fn$1000_copy(__THE_0_c_0) : __THE_1_fn$1000_copy(__THE_0_b_0 = __THE_1_fn$1000_realloc(__THE_0_b_0, __THE_1_fn$1000_copy(__THE_0_a_0))));
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_d_0);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_c_0);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
 }
 ======= flags =======
 ======= stdout =======

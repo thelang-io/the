@@ -1,0 +1,33 @@
+// Char API
+
+/* Allows storing character as one byte. */
+obj Char {
+  /* Byte representation of character. */
+  byte: byte
+  /* Whether character is digit. */
+  isDigit: bool
+  /* Whether character is letter. */
+  isLetter: bool
+  /* Whether character is letter or digit. */
+  isLetterOrDigit: bool
+  /* Whether character is in lowercase. */
+  isLower: bool
+  /* Whether character is in uppercase. */
+  isUpper: bool
+  /* Whether character is whitespace. */
+  isWhitespace: bool
+  /* Lowercase representation of character. */
+  lower: char
+  /* Uppercase representation of character. */
+  upper: char
+
+  /**
+   * Repeats character specific number of times.
+   *
+   * @param times - Number of times to repeat.
+   */
+  fn repeat (self: Self, times: int) str
+
+  /* Returns a string representation. */
+  fn str (self: Self) str
+}

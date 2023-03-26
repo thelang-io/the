@@ -26,7 +26,9 @@ class MockParser : public Parser {
   explicit MockParser (const std::string &);
   virtual ~MockParser ();
 
-  MOCK_METHOD(ParserStmt, next, (bool), (override));
+  MOCK_METHOD(std::string, doc, (), (override));
+  MOCK_METHOD(ParserStmt, next, (bool, bool), (override));
+  MOCK_METHOD(std::string, xml, (), (override));
 
  private:
   testing::NiceMock<MockLexer> _l;

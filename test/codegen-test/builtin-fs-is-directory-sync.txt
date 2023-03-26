@@ -34,13 +34,13 @@ struct str {
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+bool fs_isDirectorySync (struct str);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-bool fs_isDirectorySync (struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -57,6 +57,24 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
+}
+bool fs_isDirectorySync (struct str s) {
+  char *c = str_cstr(s);
+  bool b = false;
+  #ifdef THE_OS_WINDOWS
+    struct _stat sb;
+    if (_stat(c, &sb) == 0) {
+      b = (sb.st_mode & _S_IFMT) == _S_IFDIR;
+    }
+  #else
+    struct stat sb;
+    if (stat(c, &sb) == 0) {
+      b = (sb.st_mode & S_IFMT) == S_IFDIR;
+    }
+  #endif
+  free(c);
+  str_free(s);
+  return b;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -118,24 +136,6 @@ char *str_cstr (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.d);
-}
-bool fs_isDirectorySync (struct str s) {
-  char *c = str_cstr(s);
-  bool b = false;
-  #ifdef THE_OS_WINDOWS
-    struct _stat sb;
-    if (_stat(c, &sb) == 0) {
-      b = (sb.st_mode & _S_IFMT) == _S_IFDIR;
-    }
-  #else
-    struct stat sb;
-    if (stat(c, &sb) == 0) {
-      b = (sb.st_mode & S_IFMT) == S_IFDIR;
-    }
-  #endif
-  free(c);
-  str_free(s);
-  return b;
 }
 
 int main () {

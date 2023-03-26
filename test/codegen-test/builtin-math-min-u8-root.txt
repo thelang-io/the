@@ -1,0 +1,10 @@
+======= stdin =======
+main {
+  math_MinU8
+}
+======= code =======
+int main () {
+  0;
+}
+======= flags =======
+======= stdout =======

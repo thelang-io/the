@@ -44,23 +44,23 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$0;
-struct __THE_1_fn$1;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1001;
 struct __THE_1_testGo_0X;
 struct __THE_1_Test_0;
 
-struct __THE_1_fn$0 {
+struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1 {
+struct __THE_1_fn$1001 {
   void (*f) (void *, struct __THE_1_Test_0 **);
   void *x;
   size_t l;
 };
 struct __THE_1_testGo_0X {
-  const struct __THE_1_fn$1 *__THE_0_TestSDgo_0;
+  const struct __THE_1_fn$1001 *__THE_0_TestSDgo_0;
 };
 struct __THE_1_Test_0 {
   int32_t __THE_0_a;
@@ -69,9 +69,9 @@ struct __THE_1_Test_0 {
 void *alloc (size_t);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 void __THE_1_testGo_0 (void *);
-void __THE_1_testGo_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_testGo_0X);
+void __THE_1_testGo_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_testGo_0X);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 void __THE_1_TestSDgo_0 (void *, struct __THE_1_Test_0 **);
@@ -116,19 +116,19 @@ void print (FILE *stream, const char *fmt, ...) {
 void str_free (struct str s) {
   free(s.d);
 }
-void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_testGo_0 (void *px) {
   struct __THE_1_testGo_0X *x = px;
-  const struct __THE_1_fn$1 *__THE_0_TestSDgo_0 = x->__THE_0_TestSDgo_0;
+  const struct __THE_1_fn$1001 *__THE_0_TestSDgo_0 = x->__THE_0_TestSDgo_0;
   struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(0);
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
   (*__THE_0_TestSDgo_0).f((*__THE_0_TestSDgo_0).x, &__THE_0_test_0);
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
 }
-void __THE_1_testGo_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_testGo_0X x) {
+void __THE_1_testGo_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_testGo_0X x) {
   size_t l = sizeof(struct __THE_1_testGo_0X);
   struct __THE_1_testGo_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -150,11 +150,11 @@ void __THE_1_TestSDgo_0 (void *px, struct __THE_1_Test_0 **__THE_0_self_0) {
 }
 
 int main () {
-  const struct __THE_1_fn$0 __THE_0_testGo_0;
-  const struct __THE_1_fn$1 __THE_0_TestSDgo_0 = (struct __THE_1_fn$1) {&__THE_1_TestSDgo_0, NULL, 0};
-  __THE_1_testGo_0_alloc((struct __THE_1_fn$0 *) &__THE_0_testGo_0, (struct __THE_1_testGo_0X) {&__THE_0_TestSDgo_0});
+  const struct __THE_1_fn$1000 __THE_0_testGo_0;
+  const struct __THE_1_fn$1001 __THE_0_TestSDgo_0 = (struct __THE_1_fn$1001) {&__THE_1_TestSDgo_0, NULL, 0};
+  __THE_1_testGo_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_testGo_0, (struct __THE_1_testGo_0X) {&__THE_0_TestSDgo_0});
   __THE_0_testGo_0.f(__THE_0_testGo_0.x);
-  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_testGo_0);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_testGo_0);
 }
 ======= flags =======
 ======= stdout =======

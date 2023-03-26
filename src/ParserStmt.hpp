@@ -20,6 +20,7 @@
 #include "ParserExpr.hpp"
 
 struct ParserStmtBreak;
+struct ParserStmtComment;
 struct ParserStmtContinue;
 struct ParserStmtEmpty;
 struct ParserStmtEnumDecl;
@@ -35,6 +36,7 @@ struct ParserStmtVarDecl;
 
 using ParserStmtBody = std::variant<
   ParserStmtBreak,
+  ParserStmtComment,
   ParserStmtContinue,
   ParserStmtEmpty,
   ParserStmtEnumDecl,
@@ -54,13 +56,20 @@ struct ParserStmt {
   std::shared_ptr<ParserStmtBody> body;
   ReaderLocation start;
   ReaderLocation end;
+  std::optional<ParserStmt *> nextSibling = std::nullopt;
+  std::optional<ParserStmt *> prevSibling = std::nullopt;
 
+  std::string doc (const std::string & = "") const;
   std::string xml (std::size_t = 0) const;
 };
 
 using ParserBlock = std::vector<ParserStmt>;
 
 struct ParserStmtBreak {
+};
+
+struct ParserStmtComment {
+  std::string content;
 };
 
 struct ParserStmtContinue {
@@ -94,7 +103,7 @@ struct ParserStmtFnDecl {
   Token id;
   std::vector<ParserStmtFnDeclParam> params;
   std::optional<ParserType> returnType;
-  ParserBlock body;
+  std::optional<ParserBlock> body;
 };
 
 struct ParserStmtIf {
@@ -115,16 +124,9 @@ struct ParserStmtMain {
   ParserBlock body;
 };
 
-struct ParserStmtObjDeclField {
-  Token id;
-  ParserType type;
-  bool mut;
-};
-
 struct ParserStmtObjDecl {
   Token id;
-  std::vector<ParserStmtObjDeclField> fields;
-  std::vector<ParserStmt> methods;
+  ParserBlock members;
 };
 
 struct ParserStmtReturn {

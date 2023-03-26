@@ -139,14 +139,14 @@ void str_free (struct str s) {
 
 int main () {
   if (true) {
-    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_0), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_0), THE_EOL);
   } else {
-    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_1), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_1), THE_EOL);
   }
   if (false) {
-    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_2), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_2), THE_EOL);
   } else {
-    print(stdout, "sz", enum_str((int) __THE_0_mainSDWeekdaySDMonday_3), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_3), THE_EOL);
   }
 }
 ======= flags =======

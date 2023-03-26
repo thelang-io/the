@@ -3,8 +3,8 @@
  * Licensed under the MIT License
  */
 
-ArgType_Command := 0
-ArgType_Option := 1
+const ArgType_Command := 0
+const ArgType_Option := 1
 
 obj Args {
   mut data: Arg[]
@@ -238,7 +238,7 @@ obj Args {
       return
     }
 
-    RaiseError("Unexpected argument `" + arg + "`")
+    RaiseError("Unexpected argument `%s`", arg)
   }
 
   fn _parseArgCommand (mut self: ref Self, name: str) {
@@ -263,7 +263,7 @@ obj Args {
       return
     }
 
-    RaiseError("Unexpected argument `" + name + "`")
+    RaiseError("Unexpected argument `%s`", name)
   }
 
   fn _parseArgOption (
@@ -295,7 +295,7 @@ obj Args {
       return
     }
 
-    RaiseError("Unexpected argument `" + arg + "`")
+    RaiseError("Unexpected argument `%s`", arg)
   }
 
   fn _setDataValue (mut self: ref Self, t: int, name: str, value: str) {

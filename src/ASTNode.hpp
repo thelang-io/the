@@ -81,7 +81,7 @@ struct ASTNodeFnDecl {
   std::shared_ptr<Var> var;
   std::vector<std::shared_ptr<Var>> stack;
   std::vector<ASTFnDeclParam> params;
-  ASTBlock body;
+  std::optional<ASTBlock> body;
 };
 
 struct ASTNodeIf {
@@ -105,7 +105,7 @@ struct ASTNodeObjDeclMethod {
   std::shared_ptr<Var> var;
   std::vector<std::shared_ptr<Var>> stack = {};
   std::vector<ASTFnDeclParam> params = {};
-  ASTBlock body = {};
+  std::optional<ASTBlock> body = {};
 };
 
 struct ASTNodeObjDecl {

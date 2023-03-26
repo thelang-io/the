@@ -1,0 +1,46 @@
+======= stdin =======
+main {
+  random_randomFloat()
+  random_randomFloat(-100, 100)
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <openssl/rand.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+double random_randomFloat (unsigned char, double, unsigned char, double);
+
+double random_randomFloat (unsigned char o1, double n1, unsigned char o2, double n2) {
+  double a = o1 == 0 ? 0 : n1;
+  double b = o2 == 0 ? 1 : n2;
+  unsigned char d[4];
+  if (RAND_bytes(d, 4) != 1) {
+    fprintf(stderr, "Error: failed to generate random bytes" THE_EOL);
+    exit(EXIT_FAILURE);
+  }
+  uint32_t r = (d[0] << 24) | (d[1] << 16) | (d[2] << 8) | d[3];
+  return a + r / ((double) UINT32_MAX / (b - a));
+}
+
+int main () {
+  random_randomFloat(0, 0, 0, 0);
+  random_randomFloat(1, -100, 1, 100);
+}
+======= flags =======
+A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
+======= stdout =======

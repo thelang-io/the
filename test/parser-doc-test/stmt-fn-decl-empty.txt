@@ -1,0 +1,88 @@
+======= stdin =======
+fn function1 () void
+fn function2 (a: int) int
+fn function3 (mut a: int) int
+fn function4 (a: int...) int
+fn function5 (a: int, b: int) int
+fn function6 (mut a: int, mut b: int) int
+fn function7 (a: int..., b: int...) int
+fn function8 (a := 1) int
+fn function9 (a := 1, b := 1) int
+fn function10 (a: i64 = 1) int
+fn function11 (a: i64 = 1, b: i64 = 1) int
+fn veryLongFunctionName (veryLongFirstParameterName: int, veryLongSecondParameterName := 2) int
+======= stdout =======
+## `function1()`
+
+```the
+fn function1 () void
+```
+
+## `function2()`
+
+```the
+fn function2 (a: int) int
+```
+
+## `function3()`
+
+```the
+fn function3 (mut a: int) int
+```
+
+## `function4()`
+
+```the
+fn function4 (a: int...) int
+```
+
+## `function5()`
+
+```the
+fn function5 (a: int, b: int) int
+```
+
+## `function6()`
+
+```the
+fn function6 (mut a: int, mut b: int) int
+```
+
+## `function7()`
+
+```the
+fn function7 (a: int..., b: int...) int
+```
+
+## `function8()`
+
+```the
+fn function8 (a := 1) int
+```
+
+## `function9()`
+
+```the
+fn function9 (a := 1, b := 1) int
+```
+
+## `function10()`
+
+```the
+fn function10 (a: i64 = 1) int
+```
+
+## `function11()`
+
+```the
+fn function11 (a: i64 = 1, b: i64 = 1) int
+```
+
+## `veryLongFunctionName()`
+
+```the
+fn veryLongFunctionName (
+  veryLongFirstParameterName: int,
+  veryLongSecondParameterName := 2
+) int
+```

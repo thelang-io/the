@@ -1,0 +1,25 @@
+// Random API
+
+/**
+ * Returns a random floating-point value within the specified range.
+ *
+ * @param min - Minimum possible random value.
+ * @param max - Maximum possible random value.
+ */
+fn random_randomFloat (min := 0.0, max := 1.0) float
+
+/**
+ * Returns a random value within the specified range.
+ *
+ * @param min - Minimum possible random value.
+ * @param max - Maximum possible random value.
+ */
+fn random_randomInt (min := IntMin, max := IntMax) int
+
+/**
+ * Returns a random string constructed with specified characters set.
+ *
+ * @param characters - Characters to use when constructing value.
+ * @param len - Resulting value length.
+ */
+fn random_randomStr (characters := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", len := 32) str

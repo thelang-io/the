@@ -1,20 +1,20 @@
 ======= stdin =======
 main {
   mut req := request_open("GET", "http://ci.thelang.io/echo?example")
-  res1 := request_read(ref req)
-  request_close(ref req)
+  res1 := req.read()
+  req.close()
 
   req = request_open("POST", "http://ci.thelang.io/echo?example")
-  res2 := request_read(ref req)
-  request_close(ref req)
+  res2 := req.read()
+  req.close()
 
   req = request_open("GET", "https://ci.thelang.io/echo?example")
-  res3 := request_read(ref req)
-  request_close(ref req)
+  res3 := req.read()
+  req.close()
 
   req = request_open("POST", "https://ci.thelang.io/echo?example")
-  res4 := request_read(ref req)
-  request_close(ref req)
+  res4 := req.read()
+  req.close()
 
   print("GET http://ci.thelang.io/echo?example:", res1.status)
   print("POST http://ci.thelang.io/echo?example:", res2.status)
@@ -112,16 +112,16 @@ struct url_URL {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 void buffer_free (struct buffer);
 void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
+void request_close (struct request_Request **);
+struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
+struct request_Response *request_read (struct request_Request **);
+char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-void request_close (struct request_Request **);
-struct request_Request *request_open (struct str, struct str, struct buffer, struct __THE_1_array_request_Header);
-struct request_Response *request_read (struct request_Request **);
-char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct url_URL *url_parse (struct str);
 struct request_Header *request_Header_alloc (struct str, struct str);
 void request_Header_free (struct request_Header *);
@@ -137,14 +137,6 @@ void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -181,20 +173,13 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-char *str_cstr (const struct str s) {
-  char *d = alloc(s.l + 1);
-  memcpy(d, s.d, s.l);
-  d[s.l] = '\0';
-  return d;
-}
-void str_free (struct str s) {
-  free(s.d);
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
 }
 void request_close (struct request_Request **r) {
   struct request *req = (void *) *r;
@@ -212,7 +197,7 @@ void request_close (struct request_Request **r) {
   req->ctx = NULL;
   req->ssl = NULL;
 }
-struct request_Request *request_open (struct str method, struct str u, struct buffer data, struct __THE_1_array_request_Header headers) {
+struct request_Request *request_open (struct str method, struct str u, unsigned char o1, struct buffer data, unsigned char o2, struct __THE_1_array_request_Header headers) {
   struct url_URL *url = url_parse(u);
   if (
     !(url->__THE_0_protocol.l == 5 && memcmp(url->__THE_0_protocol.d, "http:", 5) == 0) &&
@@ -475,6 +460,21 @@ char *request_stringifyHeaders (struct __THE_1_array_request_Header headers, str
   }
   return d;
 }
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
 struct url_URL *url_parse (struct str s) {
   if (s.l == 0) {
     fprintf(stderr, "Error: invalid URL" THE_EOL);
@@ -659,16 +659,16 @@ void url_URL_free (struct url_URL *n) {
 }
 
 int main () {
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0});
+  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {});
   const struct request_Response *__THE_0_res1_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("http://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("http://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
   const struct request_Response *__THE_0_res2_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
   const struct request_Response *__THE_0_res3_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("https://ci.thelang.io/echo?example"), (struct buffer) {NULL, 0}, (struct __THE_1_array_request_Header) {NULL, 0}));
+  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, request_open(str_alloc("POST"), str_alloc("https://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
   const struct request_Response *__THE_0_res4_0 = request_read(&__THE_0_req_0);
   request_close(&__THE_0_req_0);
   print(stdout, "zziz", "GET http://ci.thelang.io/echo?example:", " ", __THE_0_res1_0->__THE_0_status, THE_EOL);

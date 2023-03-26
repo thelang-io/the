@@ -54,7 +54,7 @@ struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
 bool __THE_1_Test_0_eq (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t, ...);
-struct __THE_1_Test_0 **__THE_1_array_Test_at (struct __THE_1_array_Test, int64_t);
+struct __THE_1_Test_0 **__THE_1_array_Test_at (struct __THE_1_array_Test, int32_t);
 struct __THE_1_array_Test __THE_1_array_Test_copy (const struct __THE_1_array_Test);
 void __THE_1_array_Test_free (struct __THE_1_array_Test);
 size_t __THE_1_array_Test_len (struct __THE_1_array_Test);
@@ -129,9 +129,9 @@ struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_Test) {d, x};
 }
-struct __THE_1_Test_0 **__THE_1_array_Test_at (struct __THE_1_array_Test n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+struct __THE_1_Test_0 **__THE_1_array_Test_at (struct __THE_1_array_Test n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];

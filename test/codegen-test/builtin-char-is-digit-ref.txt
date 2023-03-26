@@ -3,7 +3,7 @@ main {
   arr := ['\0', '1', 'Z']
 
   loop i := 0; i < arr.len; i++ {
-    print(arr[i].isDigit())
+    print(arr[i].isDigit)
   }
 }
 ======= code =======
@@ -41,11 +41,11 @@ struct __THE_1_array_char {
 };
 
 void *alloc (size_t);
-bool char_is_digit (char);
+bool char_isDigit (char);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 struct __THE_1_array_char __THE_1_array_char_alloc (size_t, ...);
-char *__THE_1_array_char_at (struct __THE_1_array_char, int64_t);
+char *__THE_1_array_char_at (struct __THE_1_array_char, int32_t);
 struct __THE_1_array_char __THE_1_array_char_copy (const struct __THE_1_array_char);
 void __THE_1_array_char_free (struct __THE_1_array_char);
 size_t __THE_1_array_char_len (struct __THE_1_array_char);
@@ -58,7 +58,7 @@ void *alloc (size_t l) {
   }
   return r;
 }
-bool char_is_digit (char c) {
+bool char_isDigit (char c) {
   return isdigit(c);
 }
 void print (FILE *stream, const char *fmt, ...) {
@@ -102,9 +102,9 @@ struct __THE_1_array_char __THE_1_array_char_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_char) {d, x};
 }
-char *__THE_1_array_char_at (struct __THE_1_array_char n, int64_t i) {
-  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int64_t) n.l))) {
-    fprintf(stderr, "Error: index %" PRId64 " out of array bounds" THE_EOL, i);
+char *__THE_1_array_char_at (struct __THE_1_array_char n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, i);
     exit(EXIT_FAILURE);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
@@ -127,7 +127,7 @@ size_t __THE_1_array_char_len (struct __THE_1_array_char n) {
 int main () {
   const struct __THE_1_array_char __THE_0_arr_0 = __THE_1_array_char_alloc(3, '\0', '1', 'Z');
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_char_len(__THE_1_array_char_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    print(stdout, "tz", char_is_digit(*__THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
+    print(stdout, "tz", char_isDigit(*__THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0)), THE_EOL);
   }
   __THE_1_array_char_free((struct __THE_1_array_char) __THE_0_arr_0);
 }

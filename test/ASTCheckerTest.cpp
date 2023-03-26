@@ -232,14 +232,19 @@ TEST(ASTCheckerTest, IsLastOnFnDecl) {
     "  }" EOL
     "  return" EOL
     "}" EOL
+    "fn test () void" EOL
   );
 
   auto nodes = ast.gen();
-  auto node = std::get<ASTNodeFnDecl>(*nodes[0].body);
+  auto node1 = std::get<ASTNodeFnDecl>(*nodes[0].body);
 
-  EXPECT_FALSE(ASTChecker(node.body[0]).isLast());
-  EXPECT_FALSE(ASTChecker(node.body[1]).isLast());
-  EXPECT_TRUE(ASTChecker(node.body[2]).isLast());
+  EXPECT_NE(node1.body, std::nullopt);
+  EXPECT_FALSE(ASTChecker((*node1.body)[0]).isLast());
+  EXPECT_FALSE(ASTChecker((*node1.body)[1]).isLast());
+  EXPECT_TRUE(ASTChecker((*node1.body)[2]).isLast());
+
+  auto node2 = std::get<ASTNodeFnDecl>(*nodes[1].body);
+  EXPECT_EQ(node2.body, std::nullopt);
 }
 
 TEST(ASTCheckerTest, IsLastOnIf) {
@@ -316,16 +321,25 @@ TEST(ASTCheckerTest, IsLastOnObjDecl) {
     "    }" EOL
     "    return" EOL
     "  }" EOL
+    "  fn test1 () void" EOL
+    "  fn test2 () void" EOL
     "}" EOL
   );
 
   auto nodes = ast.gen();
   auto node = std::get<ASTNodeObjDecl>(*nodes[0].body);
 
-  for (const auto &method : node.methods) {
-    EXPECT_FALSE(ASTChecker(method.body[0]).isLast());
-    EXPECT_FALSE(ASTChecker(method.body[1]).isLast());
-    EXPECT_TRUE(ASTChecker(method.body[2]).isLast());
+  for (auto i = static_cast<std::size_t>(0); i < node.methods.size(); i++) {
+    const auto &method = node.methods[i];
+
+    if (i < 2) {
+      EXPECT_NE(method.body, std::nullopt);
+      EXPECT_FALSE(ASTChecker((*method.body)[0]).isLast());
+      EXPECT_FALSE(ASTChecker((*method.body)[1]).isLast());
+      EXPECT_TRUE(ASTChecker((*method.body)[2]).isLast());
+    } else {
+      EXPECT_EQ(method.body, std::nullopt);
+    }
   }
 }
 

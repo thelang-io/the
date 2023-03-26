@@ -1,0 +1,80 @@
+======= stdin =======
+main {
+  test := [0, 1, 2];
+  test.remove(5);
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct __THE_1_array_int;
+
+struct __THE_1_array_int {
+  int32_t *d;
+  size_t l;
+};
+
+void *alloc (size_t);
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
+void __THE_1_array_int_free (struct __THE_1_array_int);
+struct __THE_1_array_int *__THE_1_array_int_remove (struct __THE_1_array_int *, int32_t);
+
+void *alloc (size_t l) {
+  void *r = malloc(l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
+  int32_t *d = alloc(x * sizeof(int32_t));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, int32_t);
+  va_end(args);
+  return (struct __THE_1_array_int) {d, x};
+}
+void __THE_1_array_int_free (struct __THE_1_array_int n) {
+  free(n.d);
+}
+struct __THE_1_array_int *__THE_1_array_int_remove (struct __THE_1_array_int *self, int32_t n1) {
+  if ((n1 >= 0 && n1 >= self->l) || (n1 < 0 && n1 < -((int32_t) self->l))) {
+    fprintf(stderr, "Error: index %" PRId32 " out of array bounds" THE_EOL, n1);
+    exit(EXIT_FAILURE);
+  }
+  size_t i = n1 < 0 ? n1 + self->l : n1;
+  if (i != self->l - 1) {
+    memmove(&self->d[i], &self->d[i + 1], (--self->l - i) * sizeof(int32_t));
+  } else {
+    self->l--;
+  }
+  return self;
+}
+
+int main () {
+  const struct __THE_1_array_int __THE_0_test_0 = __THE_1_array_int_alloc(3, 0, 1, 2);
+  __THE_1_array_int_remove(&__THE_0_test_0, 5);
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test_0);
+}
+======= flags =======
+======= stderr =======
+Error: index 5 out of array bounds

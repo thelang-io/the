@@ -56,7 +56,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test3" codeName="test3_0" frame="1">
-      <TypeFn name="fn$0">
+      <TypeFn name="fn$1000">
         <TypeFnReturnType>
           <BuiltinType name="str" />
         </TypeFnReturnType>
@@ -422,7 +422,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$0">
+                        <TypeFn name="fn$1000">
                           <TypeFnReturnType>
                             <BuiltinType name="str" />
                           </TypeFnReturnType>
@@ -431,7 +431,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test3" codeName="test3_0" frame="1">
-                            <TypeFn name="fn$0">
+                            <TypeFn name="fn$1000">
                               <TypeFnReturnType>
                                 <BuiltinType name="str" />
                               </TypeFnReturnType>

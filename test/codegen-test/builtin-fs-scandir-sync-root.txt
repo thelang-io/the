@@ -42,27 +42,19 @@ struct __THE_1_array_str {
 };
 
 void *alloc (size_t);
-void *re_alloc (void *, size_t);
 struct str cstr_concat_str (const char *, struct str);
+struct __THE_1_array_str fs_scandirSync (struct str);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-struct __THE_1_array_str fs_scandirSync (struct str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
     fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  return r;
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
     exit(EXIT_FAILURE);
   }
   return r;
@@ -74,29 +66,6 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
-}
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
-struct str str_concat_cstr (struct str s, const char *r) {
-  size_t l = s.l + strlen(r);
-  char *d = alloc(l);
-  memcpy(d, s.d, s.l);
-  memcpy(&d[s.l], r, l - s.l);
-  free(s.d);
-  return (struct str) {d, l};
-}
-char *str_cstr (const struct str s) {
-  char *d = alloc(s.l + 1);
-  memcpy(d, s.d, s.l);
-  d[s.l] = '\0';
-  return d;
-}
-void str_free (struct str s) {
-  free(s.d);
 }
 struct __THE_1_array_str fs_scandirSync (struct str s) {
   char *c = str_cstr(s);
@@ -165,13 +134,44 @@ fs_scandirSync_cleanup:
   for (size_t j = 0; j < l; j++) {
     for (size_t k = j + 1; k < l; k++) {
       if (memcmp(r[j].d, r[k].d, r[j].l > r[k].l ? r[k].l : r[j].l) > 0) {
-        struct str a = r[j];
+        struct str t = r[j];
         r[j] = r[k];
-        r[k] = a;
+        r[k] = t;
       }
     }
   }
   return (struct __THE_1_array_str) {r, l};
+}
+void *re_alloc (void *d, size_t l) {
+  void *r = realloc(d, l);
+  if (r == NULL) {
+    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
 }
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
