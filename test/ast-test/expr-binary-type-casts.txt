@@ -20,6 +20,12 @@ main {
   } else {
     print("test is str?:", test)
   }
+
+  if (a == 2 && test == nil) || test == nil {
+    print("test is str?:", test)
+  } else {
+    print("test is str:", test)
+  }
 }
 ======= stdout =======
 <NodeMain>
@@ -616,6 +622,251 @@ main {
                     <TypeOptional name="opt_str">
                       <BuiltinType name="str" />
                     </TypeOptional>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeOptional name="opt_str">
+                          <BuiltinType name="str" />
+                        </TypeOptional>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeIfAlt>
+  </NodeIf>
+  <NodeIf>
+    <NodeIfCond>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="bool" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprBinary op="OR">
+            <ExprBinaryLeft>
+              <NodeExpr parenthesized>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprBinary op="AND">
+                    <ExprBinaryLeft>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="bool" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprBinary op="EQ">
+                            <ExprBinaryLeft>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <BuiltinType name="int" />
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprAccess>
+                                    <Var name="a" codeName="a_0" frame="2">
+                                      <BuiltinType name="int" />
+                                    </Var>
+                                  </ExprAccess>
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprBinaryLeft>
+                            <ExprBinaryRight>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <BuiltinType name="int" />
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprLit type="INT_DEC" value="2" />
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprBinaryRight>
+                          </ExprBinary>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryLeft>
+                    <ExprBinaryRight>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="bool" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprBinary op="EQ">
+                            <ExprBinaryLeft>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <TypeOptional name="opt_str">
+                                    <BuiltinType name="str" />
+                                  </TypeOptional>
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprAccess>
+                                    <Var name="test" codeName="test_0" frame="2">
+                                      <TypeOptional name="opt_str">
+                                        <BuiltinType name="str" />
+                                      </TypeOptional>
+                                    </Var>
+                                  </ExprAccess>
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprBinaryLeft>
+                            <ExprBinaryRight>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <TypeOptional name="opt_str">
+                                    <BuiltinType name="str" />
+                                  </TypeOptional>
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprLit type="NIL" value="nil" />
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprBinaryRight>
+                          </ExprBinary>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryRight>
+                  </ExprBinary>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryLeft>
+            <ExprBinaryRight>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprBinary op="EQ">
+                    <ExprBinaryLeft>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <TypeOptional name="opt_str">
+                            <BuiltinType name="str" />
+                          </TypeOptional>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <Var name="test" codeName="test_0" frame="2">
+                              <TypeOptional name="opt_str">
+                                <BuiltinType name="str" />
+                              </TypeOptional>
+                            </Var>
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryLeft>
+                    <ExprBinaryRight>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <TypeOptional name="opt_str">
+                            <BuiltinType name="str" />
+                          </TypeOptional>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprLit type="NIL" value="nil" />
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryRight>
+                  </ExprBinary>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeIfCond>
+    <NodeIfBody>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="void" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="print" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="print" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"test is str?:\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeOptional name="opt_str">
+                      <BuiltinType name="str" />
+                    </TypeOptional>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test" codeName="test_0" frame="2">
+                        <TypeOptional name="opt_str">
+                          <BuiltinType name="str" />
+                        </TypeOptional>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeIfBody>
+    <NodeIfAlt>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="void" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="print" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="print" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"test is str:\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>

@@ -446,7 +446,7 @@ TEST_F(TypeMatchTest, MatchesNiceObject) {
 }
 
 TEST_F(TypeMatchTest, MatchesNiceObjectMethod) {
-  auto type1 = this->tm_.createMethod({}, this->tm_.get("void"));
+  auto type1 = this->tm_.createMethod({}, this->tm_.get("void"), TypeCallInfo{});
   auto type2CallInfo = TypeCallInfo{"", false, "", nullptr, false};
   auto type2 = this->tm_.createMethod({}, this->tm_.get("void"), type2CallInfo);
   auto type3CallInfo = TypeCallInfo{"self1_0", true, "a", this->obj_, false};
@@ -791,7 +791,7 @@ TEST_F(TypeMatchTest, MatchesStrictObject) {
 }
 
 TEST_F(TypeMatchTest, MatchesStrictObjectMethod) {
-  auto type1 = this->tm_.createMethod({}, this->tm_.get("void"));
+  auto type1 = this->tm_.createMethod({}, this->tm_.get("void"), TypeCallInfo{});
   auto type2CallInfo = TypeCallInfo{"", false, "", nullptr, false};
   auto type2 = this->tm_.createMethod({}, this->tm_.get("void"), type2CallInfo);
   auto type3CallInfo = TypeCallInfo{"self1_0", true, "a", this->obj_, false};

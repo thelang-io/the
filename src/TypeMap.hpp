@@ -36,7 +36,7 @@ class TypeMap {
   Type *createEnumerator (const std::string &, const std::string &);
   Type *createFn (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt);
   Type *createMap (Type *, Type *);
-  Type *createMethod (const std::vector<TypeFnParam> &, Type *, const std::optional<TypeCallInfo> & = std::nullopt);
+  Type *createMethod (const std::vector<TypeFnParam> &, Type *, TypeCallInfo);
   Type *createObj (const std::string &, const std::string &, const std::vector<TypeField> & = {}, bool = false);
   Type *createOpt (Type *);
   Type *createRef (Type *);

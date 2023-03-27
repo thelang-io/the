@@ -968,10 +968,6 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
         auto copyLeftBodyTypeCasts = leftBodyTypeCasts;
         copyLeftBodyTypeCasts.merge(this->state.typeCasts);
         copyLeftBodyTypeCasts.swap(this->state.typeCasts);
-      } else {
-        auto copyLeftAltTypeCasts = leftAltTypeCasts;
-        copyLeftAltTypeCasts.merge(this->state.typeCasts);
-        copyLeftAltTypeCasts.swap(this->state.typeCasts);
       }
 
       auto [rightBodyTypeCasts, rightAltTypeCasts] = this->_evalTypeCasts(exprBinary.right);
@@ -3575,7 +3571,7 @@ std::string Codegen::_typeNameFn (Type *type) {
 }
 
 std::string Codegen::_typeNameMap (Type *type) {
-  auto typeName = type->builtin ? type->name : Codegen::typeName(type->name);
+  auto typeName = Codegen::typeName(type->name);
   auto pairTypeName = Codegen::typeName("pair" + type->name.substr(3));
 
   for (const auto &entity : this->entities) {

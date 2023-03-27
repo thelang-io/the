@@ -171,15 +171,19 @@ TEST_F(TypeMapTest, FunctionInserts) {
     TypeFnParam{"b", this->tm_.get("str"), false, false, true}
   }, this->tm_.get("str"));
 
+  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), TypeCallInfo{"fn$4"});
+
   EXPECT_NE(this->tm_.get("fn$0"), nullptr);
   EXPECT_NE(this->tm_.get("fn$1"), nullptr);
   EXPECT_NE(this->tm_.get("fn$2"), nullptr);
+  EXPECT_NE(this->tm_.get("fn$3"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeFn>(type1->body));
 
   auto fn1Body = std::get<TypeFn>(type1->body);
   auto fn2Body = std::get<TypeFn>(type2->body);
   auto fn3Body = std::get<TypeFn>(type3->body);
+  auto fn4Body = std::get<TypeFn>(type4->body);
 
   EXPECT_TRUE(this->tm_.get("void")->matchStrict(fn1Body.returnType));
   EXPECT_TRUE(this->tm_.get("void")->matchStrict(fn2Body.returnType));
@@ -199,6 +203,7 @@ TEST_F(TypeMapTest, FunctionInserts) {
   EXPECT_FALSE(fn3Body.params[1].mut);
   EXPECT_FALSE(fn3Body.params[1].required);
   EXPECT_TRUE(fn3Body.params[1].variadic);
+  EXPECT_FALSE(fn4Body.callInfo.empty());
 }
 
 TEST_F(TypeMapTest, FunctionInsertsBetweenFunctionAndMethod) {
@@ -349,10 +354,12 @@ TEST_F(TypeMapTest, GetReturnsNull) {
 
 TEST_F(TypeMapTest, HasExisting) {
   this->tm_.createFn({}, this->tm_.get("void"));
-  this->tm_.createObj("Test", "Test");
+  auto type1 = this->tm_.createObj("Test", "Test");
+  auto type2 = this->tm_.createObj("Test", "Test");
 
   EXPECT_TRUE(this->tm_.has("fn$0"));
   EXPECT_TRUE(this->tm_.has("Test"));
+  EXPECT_EQ(type1, type2);
 }
 
 TEST_F(TypeMapTest, HasSelf) {

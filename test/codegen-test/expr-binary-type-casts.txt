@@ -23,6 +23,14 @@ fn test3 (test: str?, a := 2) {
   }
 }
 
+fn test4 (test: str?, a := 2) {
+  if (a == 2 && test == nil) || test == nil {
+    print("test is str?:", test)
+  } else {
+    print("test is str:", test)
+  }
+}
+
 main {
   a := 2
   mut test: str?
@@ -40,6 +48,11 @@ main {
   test3(test)
   test = "test3"
   test3(test)
+
+  test = nil
+  test4(test)
+  test = "test4"
+  test4(test)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -89,11 +102,13 @@ struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
+bool str_eq_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
 struct str *__THE_1_opt_str_alloc (struct str);
 struct str *__THE_1_opt_str_copy (const struct str *);
+bool __THE_1_opt_str_eq (struct str *, struct str *);
 void __THE_1_opt_str_free (struct str *);
 bool __THE_1_opt_str_ne (struct str *, struct str *);
 struct str *__THE_1_opt_str_realloc (struct str *, struct str *);
@@ -101,6 +116,7 @@ struct str __THE_1_opt_str_str (struct str *);
 void __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
 void __THE_1_test2_0 (void *, struct __THE_1_fn$1000P);
 void __THE_1_test3_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_test4_0 (void *, struct __THE_1_fn$1000P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -175,6 +191,12 @@ struct str str_copy (const struct str s) {
   memcpy(d, s.d, s.l);
   return (struct str) {d, s.l};
 }
+bool str_eq_str (struct str s1, struct str s2) {
+  bool r = s1.l == s2.l && memcmp(s1.d, s2.d, s1.l) == 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
 struct str str_escape (const struct str s) {
   char *d = alloc(s.l);
   size_t l = 0;
@@ -214,6 +236,12 @@ struct str *__THE_1_opt_str_copy (const struct str *n) {
   if (n == NULL) return NULL;
   struct str *r = alloc(sizeof(struct str));
   *r = str_copy(*n);
+  return r;
+}
+bool __THE_1_opt_str_eq (struct str *n1, struct str *n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : str_eq_str(str_copy(*n1), str_copy(*n2));
+  __THE_1_opt_str_free((struct str *) n1);
+  __THE_1_opt_str_free((struct str *) n2);
   return r;
 }
 void __THE_1_opt_str_free (struct str *n) {
@@ -269,11 +297,22 @@ void __THE_1_test3_0 (void *px, struct __THE_1_fn$1000P p) {
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
 }
+void __THE_1_test4_0 (void *px, struct __THE_1_fn$1000P p) {
+  const struct str *__THE_0_test_0 = p.n0;
+  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+  if ((__THE_0_a_0 == 2 && __THE_1_opt_str_eq(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) || __THE_1_opt_str_eq(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
+    print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
+  } else {
+    print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
+  }
+  __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+}
 
 int main () {
   const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
   const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test4_0 = (struct __THE_1_fn$1000) {&__THE_1_test4_0, NULL, 0};
   const int32_t __THE_0_a_0 = 2;
   struct str *__THE_0_test_0 = NULL;
   __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
@@ -287,6 +326,10 @@ int main () {
   __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test3")));
   __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, NULL);
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test4")));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
 }
 ======= flags =======
@@ -297,3 +340,5 @@ test is str?: nil
 test is str: test2
 test is str?: nil
 test is str: test3
+test is str?: nil
+test is str: test4

@@ -182,10 +182,6 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
         auto copyLeftBodyTypeCasts = leftBodyTypeCasts;
         copyLeftBodyTypeCasts.merge(this->typeCasts);
         copyLeftBodyTypeCasts.swap(this->typeCasts);
-      } else {
-        auto copyLeftAltTypeCasts = leftAltTypeCasts;
-        copyLeftAltTypeCasts.merge(this->typeCasts);
-        copyLeftAltTypeCasts.swap(this->typeCasts);
       }
 
       auto [rightBodyTypeCasts, rightAltTypeCasts] = this->_evalTypeCasts(exprBinary.right);
@@ -202,7 +198,6 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
           }
         }
 
-        // todo test
         for (const auto &[name, value] : rightAltTypeCasts) {
           if (leftAltTypeCasts.contains(name)) {
             altTypeCasts[name] = value;

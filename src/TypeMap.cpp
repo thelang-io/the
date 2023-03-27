@@ -17,6 +17,7 @@
 #include "TypeMap.hpp"
 #include <algorithm>
 #include <limits>
+#include <utility>
 
 std::string typeName (const std::string &name) {
   return "__THE_1_" + name;
@@ -136,7 +137,6 @@ Type *TypeMap::createFn (
   Type *returnType,
   const std::optional<TypeCallInfo> &callInfo
 ) {
-  // todo test
   auto typeBody = TypeFn{returnType, params, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
   auto newType = Type{"", "", typeBody};
 
@@ -189,13 +189,8 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   return selfType;
 }
 
-Type *TypeMap::createMethod (
-  const std::vector<TypeFnParam> &params,
-  Type *returnType,
-  const std::optional<TypeCallInfo> &callInfo
-) {
-  // todo test
-  auto typeBody = TypeFn{returnType, params, true, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
+Type *TypeMap::createMethod (const std::vector<TypeFnParam> &params, Type *returnType, TypeCallInfo callInfo) {
+  auto typeBody = TypeFn{returnType, params, true, std::move(callInfo)};
   auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {
@@ -229,7 +224,6 @@ Type *TypeMap::createObj (const std::string &name, const std::string &codeName, 
   auto newType = Type{name, codeName, TypeObj{}, fields, builtin};
 
   for (const auto &item : this->_items) {
-    // todo test
     if (item->codeName == newType.codeName) {
       return item.get();
     }
