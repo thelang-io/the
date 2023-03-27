@@ -151,6 +151,7 @@ Type *Type::getEnumerator (const std::string &memberName) const {
   return *typeMember;
 }
 
+// todo test
 TypeField Type::getField (const std::string &fieldName) const {
   auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
     return it.name == fieldName;
@@ -195,6 +196,7 @@ bool Type::hasEnumerator (const std::string &memberName) const {
   return typeMember != enumType.members.end();
 }
 
+// todo test
 bool Type::hasField (const std::string &fieldName) const {
   auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
     return it.name == fieldName;

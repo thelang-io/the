@@ -136,6 +136,7 @@ Type *TypeMap::createFn (
   Type *returnType,
   const std::optional<TypeCallInfo> &callInfo
 ) {
+  // todo test
   auto typeBody = TypeFn{returnType, params, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
   auto newType = Type{"", "", typeBody};
 
@@ -193,6 +194,7 @@ Type *TypeMap::createMethod (
   Type *returnType,
   const std::optional<TypeCallInfo> &callInfo
 ) {
+  // todo test
   auto typeBody = TypeFn{returnType, params, true, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
   auto newType = Type{"", "", typeBody};
 
@@ -227,6 +229,7 @@ Type *TypeMap::createObj (const std::string &name, const std::string &codeName, 
   auto newType = Type{name, codeName, TypeObj{}, fields, builtin};
 
   for (const auto &item : this->_items) {
+    // todo test
     if (item->codeName == newType.codeName) {
       return item.get();
     }

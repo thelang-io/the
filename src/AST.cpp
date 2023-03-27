@@ -202,6 +202,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
           }
         }
 
+        // todo test
         for (const auto &[name, value] : rightAltTypeCasts) {
           if (leftAltTypeCasts.contains(name)) {
             altTypeCasts[name] = value;

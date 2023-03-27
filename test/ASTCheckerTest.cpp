@@ -245,6 +245,10 @@ TEST(ASTCheckerTest, IsLastOnFnDecl) {
 
   auto node2 = std::get<ASTNodeFnDecl>(*nodes[1].body);
   EXPECT_EQ(node2.body, std::nullopt);
+
+  auto node3 = (*node1.body)[0];
+  node3.parent = &nodes[1];
+  EXPECT_FALSE(ASTChecker(node3).isLast());
 }
 
 TEST(ASTCheckerTest, IsLastOnIf) {
@@ -324,6 +328,7 @@ TEST(ASTCheckerTest, IsLastOnObjDecl) {
     "  fn test1 () void" EOL
     "  fn test2 () void" EOL
     "}" EOL
+    "obj Test2 {}" EOL
   );
 
   auto nodes = ast.gen();
@@ -341,6 +346,10 @@ TEST(ASTCheckerTest, IsLastOnObjDecl) {
       EXPECT_EQ(method.body, std::nullopt);
     }
   }
+
+  auto methodNode = (*node.methods[0].body)[0];
+  methodNode.parent = &nodes[1];
+  EXPECT_FALSE(ASTChecker(methodNode).isLast());
 }
 
 TEST(ASTCheckerTest, ThrowsOnManyIsLast) {

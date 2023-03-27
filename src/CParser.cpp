@@ -25,6 +25,7 @@ std::string extractDecl (const std::string &s) {
   for (auto i = static_cast<std::size_t>(0); i < s.size(); i++) {
     auto ch = s[i];
 
+    // todo test
     if (ch == '\n' || (ch == '\r' && i + 1 < s.size() && s[i + 1] == '\n')) {
       break;
     } else {
@@ -44,11 +45,12 @@ std::vector<CParserToken> tokenize (const std::string &s) {
       auto val = std::string(1, s[i]);
 
       while (i + 1 < s.size() && std::isspace(s[i + 1])) {
+        // todo test
         val += s[++i];
       }
 
       result.push_back(CParserToken{CPARSER_WHITESPACE, val});
-    } else if (s[i] == '_' && i + 1 < s.size() && s[i + 1] == '{') {
+    } else if (s[i] == '_' && i + 1 < s.size() && s[i + 1] == '{') {// todo test
       auto val = std::string(1, s[i]);
 
       while (i + 1 < s.size()) {
@@ -76,16 +78,20 @@ std::vector<CParserToken> tokenize (const std::string &s) {
     } else if (s[i] == ')') {
       result.push_back(CParserToken{CPARSER_OP_RPAR, std::string(1, s[i])});
     } else if (s[i] == '{') {
+      // todo test
       result.push_back(CParserToken{CPARSER_OP_LBRACE, std::string(1, s[i])});
     } else if (s[i] == '}') {
+      // todo test
       result.push_back(CParserToken{CPARSER_OP_RBRACE, std::string(1, s[i])});
     } else if (s[i] == '*') {
       result.push_back(CParserToken{CPARSER_OP_STAR, std::string(1, s[i])});
     } else if (s[i] == '&') {
+      // todo test
       result.push_back(CParserToken{CPARSER_OP_AMP, std::string(1, s[i])});
     } else if (s[i] == ',') {
       result.push_back(CParserToken{CPARSER_OP_COMMA, std::string(1, s[i])});
     } else {
+      // todo test
       throw Error("unexpected token `" + std::string(1, s[i]) + "` in C parser");
     }
   }
@@ -144,6 +150,7 @@ CParser cParse (const std::string &s) {
   }
 
   if (cParser.name.empty()) {
+    // todo test
     throw Error("position of name not found in `" + s + "`");
   }
 
@@ -165,6 +172,7 @@ CParser cParse (const std::string &s) {
         if (tokens[i - 1].type == CPARSER_ID) {
           cParser.params.push_back(CParserParam{tokens[i - 1].val, paramType.substr(0, paramType.size() - tokens[i - 1].val.size())});
         } else {
+          // todo test
           cParser.params.push_back(CParserParam{"", paramType});
         }
 
