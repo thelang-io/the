@@ -3075,13 +3075,17 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += "_{bool} " + typeName + "_contains (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
     def += "_{bool} " + typeName + "_contains (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
     def += "  _{bool} r = _{false};" EOL;
-    def += "  for (_{size_t} i = 0; i < self.l; i++) {";
+    def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
     def += "    if (" + this->_genEqFn(elementTypeInfo.type, "self.d[i]", "n1") + ") {" EOL;
     def += "      r = _{true};" EOL;
     def += "      break;" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(param1TypeInfo.type, "n1") + ";" EOL;
+
+    if (param1TypeInfo.type->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(param1TypeInfo.type, "n1") + ";" EOL;
+    }
+
     def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
@@ -3412,22 +3416,24 @@ std::string Codegen::_typeNameArray (Type *type) {
 
     decl += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *, " + param1TypeInfo.typeCodeTrimmed + ");";
     def += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *self, " + param1TypeInfo.typeCode + "n1) {" EOL;
-    def += "  if (self->l < 2) return self;" EOL;
-    def += "  while (1) {" EOL;
-    def += "    unsigned char b = 0;" EOL;
-    def += "    for (_{size_t} i = 1; i < self->l; i++) {" EOL;
-    def += "      _{int32_t} c = n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) {";
+    def += "  if (self->l > 1) {" EOL;
+    def += "    while (1) {" EOL;
+    def += "      unsigned char b = 0;" EOL;
+    def += "      for (_{size_t} i = 1; i < self->l; i++) {" EOL;
+    def += "        _{int32_t} c = n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) {";
     def += this->_genCopyFn(elementTypeInfo.type, "self->d[i - 1]") + ", ";
     def += this->_genCopyFn(elementTypeInfo.type, "self->d[i]") + "});" EOL;
-    def += "      if (c > 0) {" EOL;
-    def += "        b = 1;" EOL;
-    def += "        " + elementTypeInfo.typeCode + "t = self->d[i];" EOL;
-    def += "        self->d[i] = self->d[i - 1];" EOL;
-    def += "        self->d[i - 1] = t;" EOL;
+    def += "        if (c > 0) {" EOL;
+    def += "          b = 1;" EOL;
+    def += "          " + elementTypeInfo.typeCode + "t = self->d[i];" EOL;
+    def += "          self->d[i] = self->d[i - 1];" EOL;
+    def += "          self->d[i - 1] = t;" EOL;
+    def += "        }" EOL;
     def += "      }" EOL;
+    def += "      if (b == 0) break;" EOL;
     def += "    }" EOL;
-    def += "    if (b == 0) break;" EOL;
     def += "  }" EOL;
+    def += "  " + this->_genFreeFn(param1TypeInfo.type, "n1") + ";" EOL;
     def += "  return self;" EOL;
     def += "}";
 

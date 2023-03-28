@@ -70,6 +70,7 @@ struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 void str_free (struct str);
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 int32_t __THE_1_sortAsc_0 (void *, struct __THE_1_fn$1000P);
 int32_t __THE_1_sortDesc_0 (void *, struct __THE_1_fn$1000P);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
@@ -157,6 +158,9 @@ struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
   memcpy(x, n.x, n.l);
   return (struct __THE_1_fn$1000) {n.f, x, n.l};
 }
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+  if (n.x != NULL) free(n.x);
+}
 int32_t __THE_1_sortAsc_0 (void *px, struct __THE_1_fn$1000P p) {
   const int32_t __THE_0_a_0 = p.n0;
   const int32_t __THE_0_b_0 = p.n1;
@@ -186,20 +190,22 @@ void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
 struct __THE_1_array_int *__THE_1_array_int_sort (struct __THE_1_array_int *self, struct __THE_1_fn$1000 n1) {
-  if (self->l < 2) return self;
-  while (1) {
-    unsigned char b = 0;
-    for (size_t i = 1; i < self->l; i++) {
-      int32_t c = n1.f(n1.x, (struct __THE_1_fn$1000P) {self->d[i - 1], self->d[i]});
-      if (c > 0) {
-        b = 1;
-        int32_t t = self->d[i];
-        self->d[i] = self->d[i - 1];
-        self->d[i - 1] = t;
+  if (self->l > 1) {
+    while (1) {
+      unsigned char b = 0;
+      for (size_t i = 1; i < self->l; i++) {
+        int32_t c = n1.f(n1.x, (struct __THE_1_fn$1000P) {self->d[i - 1], self->d[i]});
+        if (c > 0) {
+          b = 1;
+          int32_t t = self->d[i];
+          self->d[i] = self->d[i - 1];
+          self->d[i - 1] = t;
+        }
       }
+      if (b == 0) break;
     }
-    if (b == 0) break;
   }
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) n1);
   return self;
 }
 struct str __THE_1_array_int_str (struct __THE_1_array_int n) {

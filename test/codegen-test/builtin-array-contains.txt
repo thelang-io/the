@@ -127,7 +127,8 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
 }
 bool __THE_1_array_str_contains (struct __THE_1_array_str self, struct str n1) {
   bool r = false;
-  for (size_t i = 0; i < self.l; i++) {    if (str_eq_str(str_copy(self.d[i]), str_copy(n1))) {
+  for (size_t i = 0; i < self.l; i++) {
+    if (str_eq_str(str_copy(self.d[i]), str_copy(n1))) {
       r = true;
       break;
     }
