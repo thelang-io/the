@@ -5,8 +5,8 @@ license: MIT
 main: src/args
 
 packages:
-  - the/error: 1.0.0
-  - the/testing: 0.1.0
+  the/error: 1.0.0
+  the/testing: 0.1.0
 
 scripts:
   test: the build && the run build/result

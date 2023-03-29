@@ -5,8 +5,8 @@ license: MIT
 main: src/parser
 
 packages:
-  - the/error: 1.0.0
-  - the/reader: 1.0.0
+  the/error: 1.0.0
+  the/reader: 1.0.0
 
 scripts:
   test: the build && the run build/result
