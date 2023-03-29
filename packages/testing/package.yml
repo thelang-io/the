@@ -1,8 +1,14 @@
 name: the/testing
-version: 0.1.0
+version: 0.1.2
 description: The Programming Language test framework
 license: MIT
 main: src/testing
+
+files:
+  - src/expect
+  - src/matchers
+  - src/state
+  - src/testing
 
 scripts:
   test: the build && the run build/result

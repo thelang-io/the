@@ -1,8 +1,11 @@
 name: the/error
-version: 1.0.0
+version: 1.1.1
 description: The Programming Language error
 license: MIT
 main: src/error
+
+files:
+  - src/error
 
 scripts:
   test: the build && the run build/result
