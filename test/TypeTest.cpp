@@ -251,8 +251,82 @@ TEST_F(TypeTest, RealOnRef) {
   EXPECT_EQ(Type::real(this->ref_), this->tm_.get("int"));
 }
 
+TEST_F(TypeTest, GetsField) {
+  EXPECT_EQ(this->alias_->getField("str").name, "str");
+  EXPECT_EQ(this->any_->getField("str").name, "str");
+  EXPECT_EQ(this->arr_->getField("len").name, "len");
+  EXPECT_EQ(this->enum_->getField("str").name, "str");
+  EXPECT_EQ(this->map_->getField("str").name, "str");
+  EXPECT_EQ(this->obj_->getField("a").name, "a");
+  EXPECT_EQ(this->opt_->getField("str").name, "str");
+  EXPECT_EQ(this->ref_->getField("str").name, "str");
+  EXPECT_EQ(this->union_->getField("str").name, "str");
+  EXPECT_EQ(this->tm_.get("int")->getField("str").name, "str");
+  EXPECT_EQ(this->tm_.get("str")->getField("len").name, "len");
+}
+
+TEST_F(TypeTest, GetsNonExistingField) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->alias_->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->any_->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->arr_->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->enum_->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->fn_->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->map_->getField("b");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->obj_->getField("b");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->opt_->getField("b");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->ref_->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->union_->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->tm_.get("int")->getField("a");
+  }, "tried to get non-existing field");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->tm_.get("str")->getField("a");
+  }, "tried to get non-existing field");
+}
+
 TEST_F(TypeTest, GetsEnumerator) {
   EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
+}
+
+TEST_F(TypeTest, GetsNonExistingEnumerator) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->any_->getEnumerator("a");
+  }, "tried to get a member of non-enum");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->enum_->getEnumerator("White");
+  }, "tried to get non-existing enum member");
 }
 
 TEST_F(TypeTest, GetsProp) {
@@ -267,16 +341,6 @@ TEST_F(TypeTest, GetsProp) {
   EXPECT_NE(this->union_->getProp("str"), nullptr);
   EXPECT_NE(this->tm_.get("int")->getProp("str"), nullptr);
   EXPECT_EQ(this->tm_.get("str")->getProp("len"), this->tm_.get("int"));
-}
-
-TEST_F(TypeTest, GetsNonExistingEnumerator) {
-  EXPECT_THROW_WITH_MESSAGE({
-    this->any_->getEnumerator("a");
-  }, "tried to get a member of non-enum");
-
-  EXPECT_THROW_WITH_MESSAGE({
-    this->enum_->getEnumerator("White");
-  }, "tried to get non-existing enum member");
 }
 
 TEST_F(TypeTest, GetsNonExistingProp) {
@@ -327,6 +391,35 @@ TEST_F(TypeTest, GetsNonExistingProp) {
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("str")->getProp("a");
   }, "tried to get non-existing prop type");
+}
+
+TEST_F(TypeTest, HasField) {
+  EXPECT_TRUE(this->alias_->hasField("str"));
+  EXPECT_TRUE(this->any_->hasField("str"));
+  EXPECT_TRUE(this->arr_->hasField("str"));
+  EXPECT_TRUE(this->enum_->hasField("str"));
+  EXPECT_TRUE(this->map_->hasField("str"));
+  EXPECT_TRUE(this->obj_->hasField("a"));
+  EXPECT_TRUE(this->opt_->hasField("str"));
+  EXPECT_TRUE(this->ref_->hasField("str"));
+  EXPECT_TRUE(this->union_->hasField("str"));
+  EXPECT_TRUE(this->tm_.get("int")->hasField("str"));
+  EXPECT_TRUE(this->tm_.get("str")->hasField("len"));
+}
+
+TEST_F(TypeTest, HasNonExistingField) {
+  EXPECT_FALSE(this->alias_->hasField("a"));
+  EXPECT_FALSE(this->any_->hasField("a"));
+  EXPECT_FALSE(this->arr_->hasField("a"));
+  EXPECT_FALSE(this->enum_->hasField("a"));
+  EXPECT_FALSE(this->fn_->hasField("a"));
+  EXPECT_FALSE(this->map_->hasField("b"));
+  EXPECT_FALSE(this->obj_->hasField("b"));
+  EXPECT_FALSE(this->opt_->hasField("b"));
+  EXPECT_FALSE(this->ref_->hasField("a"));
+  EXPECT_FALSE(this->union_->hasField("a"));
+  EXPECT_FALSE(this->tm_.get("int")->hasField("a"));
+  EXPECT_FALSE(this->tm_.get("str")->hasField("a"));
 }
 
 TEST_F(TypeTest, HasEnumerator) {

@@ -17,6 +17,15 @@
 #include <gtest/gtest.h>
 #include "../src/CParser.hpp"
 #include "../src/config.hpp"
+#include "utils.hpp"
+
+TEST(CParserTest, ThrowsOnEmptyName) {
+  EXPECT_THROW_WITH_MESSAGE(cParse("() {}"), "position of name not found in `() {}`");
+}
+
+TEST(CParserTest, ThrowsOnUnexpectedToken) {
+  EXPECT_THROW_WITH_MESSAGE(cParse("void @test () {}"), "unexpected token `@` in C parser");
+}
 
 TEST(CParserTest, ParsesEmpty) {
   auto cParser = cParse("void test () {" EOL "}");
@@ -25,6 +34,29 @@ TEST(CParserTest, ParsesEmpty) {
   EXPECT_EQ(cParser.returnType, "void ");
   EXPECT_EQ(cParser.name, "test");
   EXPECT_EQ(cParser.params.size(), 0);
+}
+
+TEST(CParserTest, ParsesMultipleWhitespaces) {
+  auto cParser = cParse("void \t\t test () {" EOL "}");
+
+  EXPECT_EQ(cParser.decl(), "void \t\t test ()");
+  EXPECT_EQ(cParser.returnType, "void \t\t ");
+  EXPECT_EQ(cParser.name, "test");
+  EXPECT_EQ(cParser.params.size(), 0);
+}
+
+TEST(CParserTest, ParsesEmptyDifferentLineBreaks) {
+  auto cParser1 = cParse("void test () {\n}");
+  auto cParser2 = cParse("void test () {\r\n}");
+
+  EXPECT_EQ(cParser1.decl(), "void test ()");
+  EXPECT_EQ(cParser1.returnType, "void ");
+  EXPECT_EQ(cParser1.name, "test");
+  EXPECT_EQ(cParser1.params.size(), 0);
+  EXPECT_EQ(cParser2.decl(), "void test ()");
+  EXPECT_EQ(cParser2.returnType, "void ");
+  EXPECT_EQ(cParser2.name, "test");
+  EXPECT_EQ(cParser2.params.size(), 0);
 }
 
 TEST(CParserTest, ParsesEmptyParams) {
@@ -36,7 +68,16 @@ TEST(CParserTest, ParsesEmptyParams) {
   EXPECT_EQ(cParser.params.size(), 0);
 }
 
-TEST(CParserTest, ParsesComplexReturnType) {
+TEST(CParserTest, ParsesReturnTypeReplacement) {
+  auto cParser = cParse("_{struct str} test () {" EOL "}");
+
+  EXPECT_EQ(cParser.decl(), "_{struct str} test ()");
+  EXPECT_EQ(cParser.returnType, "_{struct str} ");
+  EXPECT_EQ(cParser.name, "test");
+  EXPECT_EQ(cParser.params.size(), 0);
+}
+
+TEST(CParserTest, ParsesReturnTypeComplex) {
   auto cParser = cParse("__unused __stdcall void test () {" EOL "}");
 
   EXPECT_EQ(cParser.decl(), "__unused __stdcall void test ()");
@@ -45,7 +86,7 @@ TEST(CParserTest, ParsesComplexReturnType) {
   EXPECT_EQ(cParser.params.size(), 0);
 }
 
-TEST(CParserTest, ParsesComplexName) {
+TEST(CParserTest, ParsesNameComplex) {
   auto cParser = cParse("void test_$1 () {" EOL "}");
 
   EXPECT_EQ(cParser.decl(), "void test_$1 ()");
@@ -65,6 +106,28 @@ TEST(CParserTest, ParsesOneParam) {
   EXPECT_EQ(cParser.params[0].name, "x");
 }
 
+TEST(CParserTest, ParsesOneParamReplacement) {
+  auto cParser = cParse("void test (_{struct str} x) {" EOL "}");
+
+  EXPECT_EQ(cParser.decl(), "void test (_{struct str})");
+  EXPECT_EQ(cParser.returnType, "void ");
+  EXPECT_EQ(cParser.name, "test");
+  EXPECT_EQ(cParser.params.size(), 1);
+  EXPECT_EQ(cParser.params[0].type, "_{struct str} ");
+  EXPECT_EQ(cParser.params[0].name, "x");
+}
+
+TEST(CParserTest, ParsesOneParamWithoutName) {
+  auto cParser = cParse("void test (int) {" EOL "}");
+
+  EXPECT_EQ(cParser.decl(), "void test (int)");
+  EXPECT_EQ(cParser.returnType, "void ");
+  EXPECT_EQ(cParser.name, "test");
+  EXPECT_EQ(cParser.params.size(), 1);
+  EXPECT_EQ(cParser.params[0].type, "int");
+  EXPECT_EQ(cParser.params[0].name, "");
+}
+
 TEST(CParserTest, ParsesTwoParams) {
   auto cParser = cParse("void test (int x, char var) {" EOL "}");
 
@@ -76,6 +139,32 @@ TEST(CParserTest, ParsesTwoParams) {
   EXPECT_EQ(cParser.params[0].name, "x");
   EXPECT_EQ(cParser.params[1].type, "char ");
   EXPECT_EQ(cParser.params[1].name, "var");
+}
+
+TEST(CParserTest, ParsesTwoParamsReplacement) {
+  auto cParser = cParse("void test (_{struct str} x, _{struct str} var) {" EOL "}");
+
+  EXPECT_EQ(cParser.decl(), "void test (_{struct str}, _{struct str})");
+  EXPECT_EQ(cParser.returnType, "void ");
+  EXPECT_EQ(cParser.name, "test");
+  EXPECT_EQ(cParser.params.size(), 2);
+  EXPECT_EQ(cParser.params[0].type, "_{struct str} ");
+  EXPECT_EQ(cParser.params[0].name, "x");
+  EXPECT_EQ(cParser.params[1].type, "_{struct str} ");
+  EXPECT_EQ(cParser.params[1].name, "var");
+}
+
+TEST(CParserTest, ParsesTwoParamsWithoutName) {
+  auto cParser = cParse("void test (int, char) {" EOL "}");
+
+  EXPECT_EQ(cParser.decl(), "void test (int, char)");
+  EXPECT_EQ(cParser.returnType, "void ");
+  EXPECT_EQ(cParser.name, "test");
+  EXPECT_EQ(cParser.params.size(), 2);
+  EXPECT_EQ(cParser.params[0].type, "int");
+  EXPECT_EQ(cParser.params[0].name, "");
+  EXPECT_EQ(cParser.params[1].type, "char");
+  EXPECT_EQ(cParser.params[1].name, "");
 }
 
 TEST(CParserTest, ParsesThreeParams) {
