@@ -169,6 +169,7 @@ ASTBlock AST::_block (const ParserBlock &block, VarStack &varStack, bool root) {
 }
 
 std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_evalTypeCasts (const ParserStmtExpr &stmtExpr) {
+  auto initialTypeCasts = this->typeCasts;
   auto bodyTypeCasts = std::map<std::string, Type *>{};
   auto altTypeCasts = std::map<std::string, Type *>{};
 
@@ -279,6 +280,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> AST::_e
     }
   }
 
+  this->typeCasts = initialTypeCasts;
   return std::make_tuple(bodyTypeCasts, altTypeCasts);
 }
 
@@ -537,15 +539,15 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto stmtIf = std::get<ParserStmtIf>(*stmt.body);
     auto initialTypeCasts = this->typeCasts;
     auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(stmtIf.cond);
-    auto nodeLoopCond = this->_nodeExpr(stmtIf.cond, this->typeMap.get("bool"), varStack);
+    auto nodeIfCond = this->_nodeExpr(stmtIf.cond, this->typeMap.get("bool"), varStack);
 
     this->varMap.save();
 
     bodyTypeCasts.merge(this->typeCasts);
     bodyTypeCasts.swap(this->typeCasts);
-    auto nodeLoopBody = this->_block(stmtIf.body, varStack);
+    auto nodeIfBody = this->_block(stmtIf.body, varStack);
     this->typeCasts = initialTypeCasts;
-    auto nodeLoopAlt = std::optional<std::variant<ASTBlock, ASTNode>>{};
+    auto nodeIfAlt = std::optional<std::variant<ASTBlock, ASTNode>>{};
     this->varMap.restore();
 
     if (stmtIf.alt != std::nullopt) {
@@ -554,16 +556,16 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
       if (std::holds_alternative<ParserBlock>(*stmtIf.alt)) {
         this->varMap.save();
-        nodeLoopAlt = this->_block(std::get<ParserBlock>(*stmtIf.alt), varStack);
+        nodeIfAlt = this->_block(std::get<ParserBlock>(*stmtIf.alt), varStack);
         this->varMap.restore();
       } else if (std::holds_alternative<ParserStmt>(*stmtIf.alt)) {
-        nodeLoopAlt = this->_node(std::get<ParserStmt>(*stmtIf.alt), varStack);
+        nodeIfAlt = this->_node(std::get<ParserStmt>(*stmtIf.alt), varStack);
       }
 
       this->typeCasts = initialTypeCasts;
     }
 
-    return this->_wrapNode(stmt, ASTNodeIf{nodeLoopCond, nodeLoopBody, nodeLoopAlt});
+    return this->_wrapNode(stmt, ASTNodeIf{nodeIfCond, nodeIfBody, nodeIfAlt});
   } else if (std::holds_alternative<ParserStmtLoop>(*stmt.body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(*stmt.body);
     auto nodeLoopInit = std::optional<ASTNode>{};
