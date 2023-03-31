@@ -3,9 +3,9 @@ name: Cross Compile
 on:
   push:
     branches: [main]
-    paths-ignore: ['**.md', '**.yml', '!.github/workflows/cross-compile.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/cross-compile.yml']
   pull_request:
-    paths-ignore: ['**.md', '**.yml', '!.github/workflows/cross-compile.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/cross-compile.yml']
 
 concurrency:
   cancel-in-progress: true
