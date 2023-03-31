@@ -1,0 +1,8 @@
+======= stdin =======
+const a := a.len == 0 ? 1 : 0
+======= stdout =======
+## `a`
+
+```the
+const a := a.len == 0 ? 1 : 0
+```

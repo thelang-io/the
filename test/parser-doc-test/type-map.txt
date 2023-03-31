@@ -1,0 +1,8 @@
+======= stdin =======
+const a: int[str]
+======= stdout =======
+## `a`
+
+```the
+const a: int[str]
+```

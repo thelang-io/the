@@ -1,0 +1,92 @@
+======= stdin =======
+const a := 0
+const b := 1
+const c := 100
+const d := 0.0
+const e := 10.0
+const f := 3.14
+const g := "string"
+const h := "string \n test"
+const i := true
+const j := false
+const k := nil
+const l := 'a'
+const m := '\0'
+======= stdout =======
+## `a`
+
+```the
+const a := 0
+```
+
+## `b`
+
+```the
+const b := 1
+```
+
+## `c`
+
+```the
+const c := 100
+```
+
+## `d`
+
+```the
+const d := 0.0
+```
+
+## `e`
+
+```the
+const e := 10.0
+```
+
+## `f`
+
+```the
+const f := 3.14
+```
+
+## `g`
+
+```the
+const g := "string"
+```
+
+## `h`
+
+```the
+const h := "string \n test"
+```
+
+## `i`
+
+```the
+const i := true
+```
+
+## `j`
+
+```the
+const j := false
+```
+
+## `k`
+
+```the
+const k := nil
+```
+
+## `l`
+
+```the
+const l := 'a'
+```
+
+## `m`
+
+```the
+const m := '\0'
+```

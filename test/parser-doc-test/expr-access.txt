@@ -1,0 +1,29 @@
+======= stdin =======
+const a := test
+const b := test.test
+const c := test[1]
+const d := .test
+======= stdout =======
+## `a`
+
+```the
+const a := test
+```
+
+## `b`
+
+```the
+const b := test.test
+```
+
+## `c`
+
+```the
+const c := test[1]
+```
+
+## `d`
+
+```the
+const d := .test
+```

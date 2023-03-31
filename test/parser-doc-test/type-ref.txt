@@ -1,0 +1,8 @@
+======= stdin =======
+const a: ref int
+======= stdout =======
+## `a`
+
+```the
+const a: ref int
+```

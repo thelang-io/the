@@ -1,0 +1,71 @@
+======= stdin =======
+const a: () -> void
+const b: (int) -> int
+const c: (int...) -> str
+const d: (a: int) -> int
+const e: (mut b: str) -> str
+const f: (int, str) -> int
+const g: (a: int, mut b: str) -> int
+const h: (a: int, c: int...) -> str
+const i: (int, str, int...) -> int
+const j: (a: int, mut b: str, c: int...) -> int
+======= stdout =======
+## `a`
+
+```the
+const a: () -> void
+```
+
+## `b`
+
+```the
+const b: (int) -> int
+```
+
+## `c`
+
+```the
+const c: (int...) -> str
+```
+
+## `d`
+
+```the
+const d: (a: int) -> int
+```
+
+## `e`
+
+```the
+const e: (mut b: str) -> str
+```
+
+## `f`
+
+```the
+const f: (int, str) -> int
+```
+
+## `g`
+
+```the
+const g: (a: int, mut b: str) -> int
+```
+
+## `h`
+
+```the
+const h: (a: int, c: int...) -> str
+```
+
+## `i`
+
+```the
+const i: (int, str, int...) -> int
+```
+
+## `j`
+
+```the
+const j: (a: int, mut b: str, c: int...) -> int
+```

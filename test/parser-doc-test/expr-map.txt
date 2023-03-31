@@ -1,0 +1,22 @@
+======= stdin =======
+const a := {}
+const b := {"key": 1}
+const c := {"key1": "val1", "key2": "val2"}
+======= stdout =======
+## `a`
+
+```the
+const a := {}
+```
+
+## `b`
+
+```the
+const b := {"key": 1}
+```
+
+## `c`
+
+```the
+const c := {"key1": "val1", "key2": "val2"}
+```

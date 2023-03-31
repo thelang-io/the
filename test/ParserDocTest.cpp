@@ -34,6 +34,19 @@ TEST_P(ParserDocTest, Passes) {
 }
 
 INSTANTIATE_TEST_SUITE_P(General, ParserDocTest, testing::Values(
+  "expr-parenthesized",
+  "expr-access",
+  "expr-array",
+  "expr-assign",
+  "expr-binary",
+  "expr-call",
+  "expr-cond",
+  "expr-is",
+  "expr-lit",
+  "expr-map",
+  "expr-obj",
+  "expr-ref",
+  "expr-unary",
   "stmt-comment",
   "stmt-fn-decl",
   "stmt-fn-decl-empty",
@@ -46,5 +59,13 @@ INSTANTIATE_TEST_SUITE_P(General, ParserDocTest, testing::Values(
   "stmt-obj-decl-member",
   "stmt-obj-decl-member-empty",
   "stmt-var-decl",
-  "stmt-var-decl-empty"
+  "stmt-var-decl-empty",
+  "type-parenthesized",
+  "type-array",
+  "type-fn",
+  "type-id",
+  "type-map",
+  "type-optional",
+  "type-ref",
+  "type-union"
 ));

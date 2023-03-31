@@ -1,0 +1,29 @@
+======= stdin =======
+const a := !1
+const b := ~1
+const c := ++test
+const d := test--
+======= stdout =======
+## `a`
+
+```the
+const a := !1
+```
+
+## `b`
+
+```the
+const b := ~1
+```
+
+## `c`
+
+```the
+const c := ++test
+```
+
+## `d`
+
+```the
+const d := test--
+```

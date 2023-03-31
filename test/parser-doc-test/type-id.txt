@@ -1,0 +1,15 @@
+======= stdin =======
+const a: int
+const b: Test
+======= stdout =======
+## `a`
+
+```the
+const a: int
+```
+
+## `b`
+
+```the
+const b: Test
+```

@@ -17,7 +17,6 @@
 #include "ParserType.hpp"
 #include "config.hpp"
 
-// todo test
 std::string ParserType::stringify () const {
   auto code = std::string();
 

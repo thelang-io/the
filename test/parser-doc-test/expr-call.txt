@@ -1,0 +1,43 @@
+======= stdin =======
+const a := test()
+const b := test(1)
+const c := test(1, "2")
+const d := test(1, "2", true)
+const e := test(1, b: 2)
+const f := test(1, c: "3", b: 2)
+======= stdout =======
+## `a`
+
+```the
+const a := test()
+```
+
+## `b`
+
+```the
+const b := test(1)
+```
+
+## `c`
+
+```the
+const c := test(1, "2")
+```
+
+## `d`
+
+```the
+const d := test(1, "2", true)
+```
+
+## `e`
+
+```the
+const e := test(1, b: 2)
+```
+
+## `f`
+
+```the
+const f := test(1, c: "3", b: 2)
+```

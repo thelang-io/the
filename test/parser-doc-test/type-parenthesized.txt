@@ -1,0 +1,29 @@
+======= stdin =======
+const a: (ref int)[]
+const b: (ref int)[str]
+const c: (ref int)?
+const d: (ref int) | (ref str)
+======= stdout =======
+## `a`
+
+```the
+const a: (ref int)[]
+```
+
+## `b`
+
+```the
+const b: (ref int)[str]
+```
+
+## `c`
+
+```the
+const c: (ref int)?
+```
+
+## `d`
+
+```the
+const d: (ref int) | (ref str)
+```

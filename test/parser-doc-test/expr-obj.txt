@@ -1,0 +1,22 @@
+======= stdin =======
+const a := Test{}
+const b := Test{a: 1}
+const c := Test{a: 1, b: "2"}
+======= stdout =======
+## `a`
+
+```the
+const a := Test{}
+```
+
+## `b`
+
+```the
+const b := Test{a: 1}
+```
+
+## `c`
+
+```the
+const c := Test{a: 1, b: "2"}
+```

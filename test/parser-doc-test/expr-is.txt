@@ -1,0 +1,8 @@
+======= stdin =======
+const a := test is int
+======= stdout =======
+## `a`
+
+```the
+const a := test is int
+```

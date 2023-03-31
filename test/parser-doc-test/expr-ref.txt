@@ -1,0 +1,8 @@
+======= stdin =======
+const a := ref test
+======= stdout =======
+## `a`
+
+```the
+const a := ref test
+```

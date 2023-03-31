@@ -1,0 +1,8 @@
+======= stdin =======
+const a := b = 2
+======= stdout =======
+## `a`
+
+```the
+const a := b = 2
+```
