@@ -577,6 +577,7 @@ TEST(LexerTest, LexOperationsEof) {
 }
 
 TEST(LexerTest, LexKeywords) {
+  auto r1 = testing::NiceMock<MockReader>("as");
   auto r2 = testing::NiceMock<MockReader>("async");
   auto r3 = testing::NiceMock<MockReader>("await");
   auto r4 = testing::NiceMock<MockReader>("break");
@@ -602,7 +603,9 @@ TEST(LexerTest, LexKeywords) {
   auto r30 = testing::NiceMock<MockReader>("true");
   auto r31 = testing::NiceMock<MockReader>("try");
   auto r32 = testing::NiceMock<MockReader>("type");
+  auto r33 = testing::NiceMock<MockReader>("finally");
 
+  auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
   auto l4 = Lexer(&r4);
@@ -628,7 +631,9 @@ TEST(LexerTest, LexKeywords) {
   auto l30 = Lexer(&r30);
   auto l31 = Lexer(&r31);
   auto l32 = Lexer(&r32);
+  auto l33 = Lexer(&r33);
 
+  EXPECT_EQ(std::get<1>(l1.next()).str(), "KW_AS(1:1-1:3): as");
   EXPECT_EQ(std::get<1>(l2.next()).str(), "KW_ASYNC(1:1-1:6): async");
   EXPECT_EQ(std::get<1>(l3.next()).str(), "KW_AWAIT(1:1-1:6): await");
   EXPECT_EQ(std::get<1>(l4.next()).str(), "KW_BREAK(1:1-1:6): break");
@@ -654,17 +659,18 @@ TEST(LexerTest, LexKeywords) {
   EXPECT_EQ(std::get<1>(l30.next()).str(), "KW_TRUE(1:1-1:5): true");
   EXPECT_EQ(std::get<1>(l31.next()).str(), "KW_TRY(1:1-1:4): try");
   EXPECT_EQ(std::get<1>(l32.next()).str(), "KW_TYPE(1:1-1:5): type");
+  EXPECT_EQ(std::get<1>(l33.next()).str(), "KW_FINALLY(1:1-1:8): finally");
 }
 
 TEST(LexerTest, LexKeywordsWhitespace) {
   auto reader = testing::NiceMock<MockReader>(
     " as async await break catch const continue elif else enum false fn from"
-    " if is loop main mut nil obj ref return throw true try type "
+    " if is loop main mut nil obj ref return throw true try type finally "
   );
 
   auto lexer = Lexer(&reader);
-  lexer.next();
 
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_AS(1:2-1:4): as");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_ASYNC(1:5-1:10): async");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_AWAIT(1:11-1:16): await");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_BREAK(1:17-1:22): break");
@@ -690,7 +696,8 @@ TEST(LexerTest, LexKeywordsWhitespace) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRUE(1:118-1:122): true");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRY(1:123-1:126): try");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TYPE(1:127-1:131): type");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:132-1:132)");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_FINALLY(1:132-1:139): finally");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:140-1:140)");
 }
 
 TEST(LexerTest, LexKeywordsAsIdentifiers) {
@@ -722,6 +729,7 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   auto r30 = testing::NiceMock<MockReader>("trues");
   auto r31 = testing::NiceMock<MockReader>("tryout");
   auto r32 = testing::NiceMock<MockReader>("types");
+  auto r33 = testing::NiceMock<MockReader>("finallyzed");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -751,6 +759,7 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   auto l30 = Lexer(&r30);
   auto l31 = Lexer(&r31);
   auto l32 = Lexer(&r32);
+  auto l33 = Lexer(&r33);
 
   EXPECT_EQ(std::get<1>(l1.next()).str(), "ID(1:1-1:4): asm");
   EXPECT_EQ(std::get<1>(l2.next()).str(), "ID(1:1-1:15): asynchronously");
@@ -780,6 +789,7 @@ TEST(LexerTest, LexKeywordsAsIdentifiers) {
   EXPECT_EQ(std::get<1>(l30.next()).str(), "ID(1:1-1:6): trues");
   EXPECT_EQ(std::get<1>(l31.next()).str(), "ID(1:1-1:7): tryout");
   EXPECT_EQ(std::get<1>(l32.next()).str(), "ID(1:1-1:6): types");
+  EXPECT_EQ(std::get<1>(l33.next()).str(), "ID(1:1-1:11): finallyzed");
 }
 
 TEST(LexerTest, LexIdentifier) {

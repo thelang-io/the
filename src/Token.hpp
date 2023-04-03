@@ -32,6 +32,7 @@ enum TokenType {
   TK_COMMENT_BLOCK,
   TK_COMMENT_LINE,
 
+  TK_KW_AS,
   TK_KW_ASYNC,
   TK_KW_AWAIT,
   TK_KW_BREAK,
@@ -42,6 +43,7 @@ enum TokenType {
   TK_KW_ELSE,
   TK_KW_ENUM,
   TK_KW_FALSE,
+  TK_KW_FINALLY,
   TK_KW_FN,
   TK_KW_FROM,
   TK_KW_IF,

@@ -25,6 +25,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_ID: return "ID";
     case TK_COMMENT_BLOCK: return "COMMENT_BLOCK";
     case TK_COMMENT_LINE: return "COMMENT_LINE";
+    case TK_KW_AS: return "KW_AS";
     case TK_KW_ASYNC: return "KW_ASYNC";
     case TK_KW_AWAIT: return "KW_AWAIT";
     case TK_KW_BREAK: return "KW_BREAK";
@@ -35,6 +36,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_ELSE: return "KW_ELSE";
     case TK_KW_ENUM: return "KW_ENUM";
     case TK_KW_FALSE: return "KW_FALSE";
+    case TK_KW_FINALLY: return "KW_FINALLY";
     case TK_KW_FN: return "KW_FN";
     case TK_KW_FROM: return "KW_FROM";
     case TK_KW_IF: return "KW_IF";
