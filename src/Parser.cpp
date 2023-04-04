@@ -357,11 +357,11 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     auto [loc1, tok1] = this->lexer->next();
 
     if (tok1.type == TK_OP_LPAR) {
-      return _wrapStmtLoop(allowSemi, tok0, true, keepComments);
+      return this->_wrapStmtLoop(allowSemi, tok0, true, keepComments);
     }
 
     this->lexer->seek(loc1);
-    return _wrapStmtLoop(allowSemi, tok0, false, keepComments);
+    return this->_wrapStmtLoop(allowSemi, tok0, false, keepComments);
   }
 
   if (tok0.type == TK_KW_MUT) {
@@ -449,6 +449,54 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     }
 
     return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclMembers}, tok0.start);
+  }
+
+  if (tok0.type == TK_KW_THROW) {
+    auto throwArg = this->_stmtExpr();
+
+    if (throwArg == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0178);
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtThrow{*throwArg}, tok0.start);
+  }
+
+  if (tok0.type == TK_KW_TRY) {
+    auto tryBody = this->_block(keepComments);
+    auto tryCatchClauses = std::vector<ParserCatchClause>{};
+    auto tryFinalizer = std::optional<ParserBlock>{};
+
+    while (true) {
+      auto [loc2, tok2] = this->lexer->next();
+
+      if (tok2.type != TK_KW_CATCH && tok2.type != TK_KW_FINALLY) {
+        this->lexer->seek(loc2);
+        break;
+      } else if (tok2.type != TK_KW_FINALLY && tryFinalizer != std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0175);
+      }
+
+      if (tok2.type == TK_KW_CATCH) {
+        auto catchClauseParam = this->next(false);
+
+        if (!std::holds_alternative<ParserStmtVarDecl>(*catchClauseParam.body)) {
+          throw Error(this->reader, catchClauseParam.start, E0176);
+        } else if (std::holds_alternative<ParserStmtVarDecl>(*catchClauseParam.body) && std::get<ParserStmtVarDecl>(*catchClauseParam.body).mut) {
+          throw Error(this->reader, catchClauseParam.start, E0177);
+        }
+
+        auto catchClauseBody = this->_block(keepComments);
+        tryCatchClauses.push_back(ParserCatchClause{catchClauseParam, catchClauseBody});
+      } else {
+        tryFinalizer = this->_block(keepComments);
+      }
+    }
+
+    if (tryCatchClauses.empty() && tryFinalizer == std::nullopt) {
+      throw Error(this->reader, tok0.start, E0174);
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtTry{tryBody, tryCatchClauses, tryFinalizer}, tok0.start);
   }
 
   if (tok0.type == TK_KW_TYPE) {

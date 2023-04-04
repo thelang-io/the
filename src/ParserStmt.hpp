@@ -19,6 +19,7 @@
 
 #include "ParserExpr.hpp"
 
+struct ParserCatchClause;
 struct ParserStmtBreak;
 struct ParserStmtComment;
 struct ParserStmtContinue;
@@ -31,6 +32,8 @@ struct ParserStmtLoop;
 struct ParserStmtMain;
 struct ParserStmtObjDecl;
 struct ParserStmtReturn;
+struct ParserStmtThrow;
+struct ParserStmtTry;
 struct ParserStmtTypeDecl;
 struct ParserStmtVarDecl;
 
@@ -48,6 +51,8 @@ using ParserStmtBody = std::variant<
   ParserStmtMain,
   ParserStmtObjDecl,
   ParserStmtReturn,
+  ParserStmtThrow,
+  ParserStmtTry,
   ParserStmtTypeDecl,
   ParserStmtVarDecl
 >;
@@ -64,6 +69,13 @@ struct ParserStmt {
 };
 
 using ParserBlock = std::vector<ParserStmt>;
+
+struct ParserCatchClause {
+  ParserStmt param;
+  ParserBlock body;
+
+  std::string xml (std::size_t = 0) const;
+};
 
 struct ParserStmtBreak {
 };
@@ -131,6 +143,16 @@ struct ParserStmtObjDecl {
 
 struct ParserStmtReturn {
   std::optional<ParserStmtExpr> body;
+};
+
+struct ParserStmtThrow {
+  ParserStmtExpr arg;
+};
+
+struct ParserStmtTry {
+  ParserBlock body;
+  std::vector<ParserCatchClause> handlers;
+  std::optional<ParserBlock> finalizer;
 };
 
 struct ParserStmtTypeDecl {

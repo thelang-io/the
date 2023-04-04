@@ -79,6 +79,21 @@ std::string fnDeclDocParams (
   return code;
 }
 
+std::string ParserCatchClause::xml (std::size_t indent) const {
+  auto result = std::string();
+
+  result += std::string(indent, ' ') + "<CatchClause>" EOL;
+  result += std::string(indent + 2, ' ') + "<CatchClauseParam>" EOL;
+  result += this->param.xml(indent + 4) + EOL;
+  result += std::string(indent + 2, ' ') + "</CatchClauseParam>" EOL;
+  result += std::string(indent + 2, ' ') + "<CatchClauseBody>" EOL;
+  result += blockToXml(this->body, indent + 4);
+  result += std::string(indent + 2, ' ') + "</CatchClauseBody>" EOL;
+  result += std::string(indent, ' ') + "</CatchClause>";
+
+  return result;
+}
+
 std::string ParserStmt::doc (const std::string &prefix) const {
   auto nextSiblingCanBeDocumented = this->nextSibling != std::nullopt && (
     std::holds_alternative<ParserStmtFnDecl>(*(*this->nextSibling)->body) ||
@@ -513,6 +528,37 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += stmtReturn.body->xml(indent + 2) + EOL;
       result += std::string(indent, ' ') + "</StmtReturn>";
     }
+  } else if (std::holds_alternative<ParserStmtThrow>(*this->body)) {
+    auto stmtThrow = std::get<ParserStmtThrow>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtThrow" + attrs + ">" EOL;
+    result += stmtThrow.arg.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</StmtThrow>";
+  } else if (std::holds_alternative<ParserStmtTry>(*this->body)) {
+    auto stmtTry = std::get<ParserStmtTry>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtTry" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtTryBody>" EOL;
+    result += blockToXml(stmtTry.body, indent + 4);
+    result += std::string(indent + 2, ' ') + "</StmtTryBody>" EOL;
+
+    if (!stmtTry.handlers.empty()) {
+      result += std::string(indent + 2, ' ') + "<StmtTryHandlers>" EOL;
+
+      for (const auto &handler : stmtTry.handlers) {
+        result += handler.xml(indent + 4) + EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</StmtTryHandlers>" EOL;
+    }
+
+    if (stmtTry.finalizer != std::nullopt) {
+      result += std::string(indent + 2, ' ') + "<StmtTryFinalizer>" EOL;
+      result += blockToXml(*stmtTry.finalizer, indent + 4);
+      result += std::string(indent + 2, ' ') + "</StmtTryFinalizer>" EOL;
+    }
+
+    result += std::string(indent, ' ') + "</StmtTry>";
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*this->body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*this->body);
 

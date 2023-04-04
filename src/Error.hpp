@@ -112,6 +112,11 @@
 #define E0171 "E0171 - Only primitive types are allowed to be used as map key type"
 #define E0172 "E0172 - Expected right bracket after map key type"
 #define E0173 "E0173 - Object declaration field is not allowed to have initializer"
+#define E0174 "E0174 - Try statement requires catch clause or finally block to be present"
+#define E0175 "E0175 - Try statement can't have multiple finally blocks"
+#define E0176 "E0176 - Unexpected statement after catch keyword"
+#define E0177 "E0177 - Catch clause parameter can't be mutable"
+#define E0178 "E0178 - Expected throw condition argument"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
