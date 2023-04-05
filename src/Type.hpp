@@ -129,6 +129,7 @@ struct Type {
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
+  std::optional<TypeField> firstField () const;
   Type *getEnumerator (const std::string &) const;
   TypeField getField (const std::string &) const;
   Type *getProp (const std::string &) const;

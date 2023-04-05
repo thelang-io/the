@@ -251,6 +251,39 @@ TEST_F(TypeTest, RealOnRef) {
   EXPECT_EQ(Type::real(this->ref_), this->tm_.get("int"));
 }
 
+TEST_F(TypeTest, FirstFieldGets) {
+  auto type1 = this->tm_.createAlias("Test", this->obj_);
+  auto type2 = this->tm_.createRef(this->obj_);
+
+  EXPECT_EQ(this->obj_->firstField()->name, "a");
+  EXPECT_EQ(type1->firstField()->name, "a");
+  EXPECT_EQ(type2->firstField()->name, "a");
+}
+
+TEST_F(TypeTest, FirstFieldReturnsNull) {
+  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {});
+  auto type2 = this->tm_.createAlias("Test", type1);
+  auto type3 = this->tm_.createRef(type2);
+
+  EXPECT_EQ(type1->firstField(), std::nullopt);
+  EXPECT_EQ(type2->firstField(), std::nullopt);
+  EXPECT_EQ(type3->firstField(), std::nullopt);
+}
+
+TEST_F(TypeTest, GetsEnumerator) {
+  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
+}
+
+TEST_F(TypeTest, GetsNonExistingEnumerator) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->any_->getEnumerator("a");
+  }, "tried to get a member of non-enum");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->enum_->getEnumerator("White");
+  }, "tried to get non-existing enum member");
+}
+
 TEST_F(TypeTest, GetsField) {
   EXPECT_EQ(this->alias_->getField("str").name, "str");
   EXPECT_EQ(this->any_->getField("str").name, "str");
@@ -313,20 +346,6 @@ TEST_F(TypeTest, GetsNonExistingField) {
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("str")->getField("a");
   }, "tried to get non-existing field");
-}
-
-TEST_F(TypeTest, GetsEnumerator) {
-  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
-}
-
-TEST_F(TypeTest, GetsNonExistingEnumerator) {
-  EXPECT_THROW_WITH_MESSAGE({
-    this->any_->getEnumerator("a");
-  }, "tried to get a member of non-enum");
-
-  EXPECT_THROW_WITH_MESSAGE({
-    this->enum_->getEnumerator("White");
-  }, "tried to get non-existing enum member");
 }
 
 TEST_F(TypeTest, GetsProp) {

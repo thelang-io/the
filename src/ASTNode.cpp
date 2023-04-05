@@ -54,6 +54,21 @@ std::string fnDeclParamsToXml (const std::vector<ASTFnDeclParam> &params, std::s
   return result;
 }
 
+std::string ASTCatchClause::xml (std::size_t indent) const {
+  auto result = std::string();
+
+  result += std::string(indent, ' ') + "<CatchClause>";
+  result += std::string(indent + 2, ' ') + "<CatchClauseParam>" EOL;
+  result += this->param.xml(indent + 4) + EOL;
+  result += std::string(indent + 2, ' ') + "</CatchClauseParam>" EOL;
+  result += std::string(indent + 2, ' ') + "<CatchClauseBody>" EOL;
+  result += blockToXml(this->body, indent + 4);
+  result += std::string(indent + 2, ' ') + "</CatchClauseBody>" EOL;
+  result += std::string(indent, ' ') + "</CatchClause>";
+
+  return result;
+}
+
 std::string ASTNode::xml (std::size_t indent) const {
   auto result = std::string();
 
@@ -238,6 +253,37 @@ std::string ASTNode::xml (std::size_t indent) const {
       result += nodeReturn.body->xml(indent + 2) + EOL;
       result += std::string(indent, ' ') + "</NodeReturn>";
     }
+  } else if (std::holds_alternative<ASTNodeThrow>(*this->body)) {
+    auto nodeThrow = std::get<ASTNodeThrow>(*this->body);
+
+    result += std::string(indent, ' ') + "<NodeThrow>" EOL;
+    result += nodeThrow.arg.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</NodeThrow>";
+  } else if (std::holds_alternative<ASTNodeTry>(*this->body)) {
+    auto nodeTry = std::get<ASTNodeTry>(*this->body);
+
+    result += std::string(indent, ' ') + "<NodeTry>" EOL;
+    result += std::string(indent + 2, ' ') + "<NodeTryBody>" EOL;
+    result += blockToXml(nodeTry.body, indent + 4);
+    result += std::string(indent + 2, ' ') + "</NodeTryBody>" EOL;
+
+    if (!nodeTry.handlers.empty()) {
+      result += std::string(indent + 2, ' ') + "<NodeTryHandlers>" EOL;
+
+      for (const auto &handler : nodeTry.handlers) {
+        result += handler.xml(indent + 4) + EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</NodeTryHandlers>" EOL;
+    }
+
+    if (nodeTry.finalizer != std::nullopt) {
+      result += std::string(indent + 2, ' ') + "<NodeTryFinalizer>" EOL;
+      result += blockToXml(*nodeTry.finalizer, indent + 4);
+      result += std::string(indent + 2, ' ') + "</NodeTryFinalizer>" EOL;
+    }
+
+    result += std::string(indent, ' ') + "</NodeTry>";
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*this->body)) {
     auto nodeTypeDecl = std::get<ASTNodeTypeDecl>(*this->body);
 

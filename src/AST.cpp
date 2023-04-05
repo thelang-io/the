@@ -689,6 +689,52 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     auto nodeReturn = ASTNodeReturn{nodeReturnBody};
     return this->_wrapNode(stmt, nodeReturn);
+  } else if (std::holds_alternative<ParserStmtThrow>(*stmt.body)) {
+    auto stmtThrow = std::get<ParserStmtThrow>(*stmt.body);
+    auto nodeThrowArg = this->_nodeExpr(stmtThrow.arg, nullptr, varStack);
+
+    if (
+      !nodeThrowArg.type->isObj() ||
+      nodeThrowArg.type->firstField() == std::nullopt ||
+      nodeThrowArg.type->firstField()->name != "message" ||
+      !nodeThrowArg.type->firstField()->type->isStr()
+    ) {
+      throw Error(this->reader, stmtThrow.arg.start, stmtThrow.arg.end, E1028);
+    }
+
+    auto nodeThrow = ASTNodeThrow{nodeThrowArg};
+    return this->_wrapNode(stmt, nodeThrow);
+  } else if (std::holds_alternative<ParserStmtTry>(*stmt.body)) {
+    auto stmtTry = std::get<ParserStmtTry>(*stmt.body);
+    auto nodeTryBody = this->_block(stmtTry.body, varStack);
+    auto nodeTryHandlers = std::vector<ASTCatchClause>{};
+    auto nodeTryFinalizer = std::optional<ASTBlock>{};
+
+    for (const auto &stmtTryHandler : stmtTry.handlers) {
+      this->varMap.save();
+      auto handlerParam = this->_node(stmtTryHandler.param, varStack);
+      auto handlerParamVarDecl = std::get<ASTNodeVarDecl>(*handlerParam.body);
+      auto handlerBody = this->_block(stmtTryHandler.body, varStack);
+      this->varMap.restore();
+
+      if (
+        !handlerParamVarDecl.var->type->isObj() ||
+        handlerParamVarDecl.var->type->firstField() == std::nullopt ||
+        handlerParamVarDecl.var->type->firstField()->name != "message" ||
+        !handlerParamVarDecl.var->type->firstField()->type->isStr()
+      ) {
+        throw Error(this->reader, stmtTryHandler.param.start, stmtTryHandler.param.end, E1029);
+      }
+
+      nodeTryHandlers.push_back(ASTCatchClause{handlerParam, handlerBody});
+    }
+
+    if (stmtTry.finalizer != std::nullopt) {
+      nodeTryFinalizer = this->_block(*stmtTry.finalizer, varStack);
+    }
+
+    auto nodeTry = ASTNodeTry{nodeTryBody, nodeTryHandlers, nodeTryFinalizer};
+    return this->_wrapNode(stmt, nodeTry);
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*stmt.body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*stmt.body);
     auto type = this->typeMap.get(stmtTypeDecl.id.val);

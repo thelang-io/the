@@ -65,6 +65,7 @@ class TypeMap {
   void _bufferModule (TypeMapPhase);
 
   void _dateModule (TypeMapPhase);
+  void _errorModule (TypeMapPhase);
   void _fsModule (TypeMapPhase);
   void _globalsModule (TypeMapPhase);
   void _mathModule (TypeMapPhase);

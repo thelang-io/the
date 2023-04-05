@@ -145,6 +145,8 @@
 #define E1025 "E1025 - Constant are allowed only on top-level scope"
 #define E1026 "E1026 - Non-mutable variable declaration is now allowed on top-level scope"
 #define E1027 "E1027 - Unable to deduce map literal value type"
+#define E1028 "E1028 - Throw argument required to be object with first field of type string and name `message`"
+#define E1029 "E1029 - Catch block can only catch object with first field of type string and name `message`"
 
 class Error : public std::exception {
  public:

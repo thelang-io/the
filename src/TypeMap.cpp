@@ -35,6 +35,7 @@ void TypeMap::init () {
   this->_voidType(TYPE_MAP_DECL);
   this->_bufferModule(TYPE_MAP_DECL);
   this->_dateModule(TYPE_MAP_DECL);
+  this->_errorModule(TYPE_MAP_DECL);
   this->_fsModule(TYPE_MAP_DECL);
   this->_globalsModule(TYPE_MAP_DECL);
   this->_mathModule(TYPE_MAP_DECL);
@@ -56,6 +57,7 @@ void TypeMap::init () {
   this->_voidType(TYPE_MAP_DEF);
   this->_bufferModule(TYPE_MAP_DEF);
   this->_dateModule(TYPE_MAP_DEF);
+  this->_errorModule(TYPE_MAP_DEF);
   this->_fsModule(TYPE_MAP_DEF);
   this->_globalsModule(TYPE_MAP_DEF);
   this->_mathModule(TYPE_MAP_DEF);
@@ -708,6 +710,19 @@ void TypeMap::_dateModule (TypeMapPhase phase) {
     auto date_nowCallInfo = TypeCallInfo{"date_now"};
     auto date_nowTypeFn = TypeFn{this->get("u64"), {}, false, date_nowCallInfo};
     this->_items.push_back(std::make_unique<Type>(Type{"date_now", "@date_now", date_nowTypeFn, {}, true}));
+  }
+}
+
+void TypeMap::_errorModule (TypeMapPhase phase) {
+  if (phase == TYPE_MAP_DEF) {
+    this->createObj("Error", this->name("Error"), {
+      TypeField{"message", this->get("str"), false, false}
+    }, true);
+    auto NewErrorCallInfo = TypeCallInfo{"new_error"};
+    auto NewErrorTypeFn = TypeFn{this->get("Error"), {
+      TypeFnParam{"message", this->get("str"), false, true, false}
+    }, false, NewErrorCallInfo};
+    this->_items.push_back(std::make_unique<Type>(Type{"NewError", "@NewError", NewErrorTypeFn, {}, true}));
   }
 }
 
