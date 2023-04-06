@@ -1510,7 +1510,7 @@ Type *AST::_type (const ParserType &type) {
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 ASTNode AST::_wrapNode ([[maybe_unused]] const ParserStmt &stmt, const ASTNodeBody &body) {
-  return ASTNode{std::make_shared<ASTNodeBody>(body), nullptr};
+  return ASTNode{std::make_shared<ASTNodeBody>(body), nullptr, stmt.start, stmt.end};
 }
 
 ASTNodeExpr AST::_wrapNodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, const ASTExpr &expr) {

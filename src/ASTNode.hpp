@@ -18,6 +18,7 @@
 #define SRC_AST_NODE_HPP
 
 #include "ASTExpr.hpp"
+#include "Reader.hpp"
 
 struct ASTCatchClause;
 struct ASTFnDeclParam;
@@ -55,6 +56,8 @@ using ASTNodeBody = std::variant<
 struct ASTNode {
   std::shared_ptr<ASTNodeBody> body;
   ASTNode *parent;
+  ReaderLocation start;
+  ReaderLocation end;
 
   std::string xml (std::size_t = 0) const;
 };

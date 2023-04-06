@@ -1,7 +1,7 @@
 // Error API
 
 /* Used as base for error handling. */
-obj Error {
+obj error_Error {
   /* Message of the error. */
   message: str
 
@@ -14,4 +14,4 @@ obj Error {
  *
  * @param message - Message of the error.
  */
-fn NewError (message: str) Error
+fn error_NewError (message: str) Error

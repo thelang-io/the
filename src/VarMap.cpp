@@ -49,7 +49,7 @@ bool VarMap::has (const std::string &name) const {
 
 void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"date_now", "@date_now", typeMap.get("date_now"), false, false, true, false, this->_frame}));
-  this->_items.push_back(std::make_shared<Var>(Var{"NewError", "@NewError", typeMap.get("NewError"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"error_NewError", "@error_NewError", typeMap.get("error_NewError"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_appendFileSync", "@fs_appendFileSync", typeMap.get("fs_appendFileSync"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_chmodSync", "@fs_chmodSync", typeMap.get("fs_chmodSync"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"fs_chownSync", "@fs_chownSync", typeMap.get("fs_chownSync"), false, false, true, false, this->_frame}));

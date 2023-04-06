@@ -130,9 +130,6 @@ main {
   #include <unistd.h>
 #endif
 
-bool lib_openssl_init = false;
-bool lib_ws2_init = false;
-
 struct buffer {
   unsigned char *d;
   size_t l;
@@ -221,6 +218,9 @@ struct __THE_1_fn$1000P {
 struct __THE_1_requestWithPrint_0X {
   const struct __THE_1_fn$0 *__THE_0_ignoredHeadersIncludes_0;
 };
+
+bool lib_openssl_init = false;
+bool lib_ws2_init = false;
 
 void *alloc (size_t);
 struct buffer buffer_copy (const struct buffer);

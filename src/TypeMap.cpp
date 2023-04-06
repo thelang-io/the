@@ -715,14 +715,14 @@ void TypeMap::_dateModule (TypeMapPhase phase) {
 
 void TypeMap::_errorModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
-    this->createObj("Error", this->name("Error"), {
+    this->createObj("error_Error", this->name("error_Error"), {
       TypeField{"message", this->get("str"), false, false}
     }, true);
-    auto NewErrorCallInfo = TypeCallInfo{"new_error"};
-    auto NewErrorTypeFn = TypeFn{this->get("Error"), {
+    auto error_NewErrorCallInfo = TypeCallInfo{"new_error"};
+    auto error_NewErrorTypeFn = TypeFn{this->get("error_Error"), {
       TypeFnParam{"message", this->get("str"), false, true, false}
-    }, false, NewErrorCallInfo};
-    this->_items.push_back(std::make_unique<Type>(Type{"NewError", "@NewError", NewErrorTypeFn, {}, true}));
+    }, false, error_NewErrorCallInfo};
+    this->_items.push_back(std::make_unique<Type>(Type{"error_NewError", "@error_NewError", error_NewErrorTypeFn, {}, true}));
   }
 }
 

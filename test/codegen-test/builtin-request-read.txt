@@ -49,9 +49,6 @@ main {
   #include <unistd.h>
 #endif
 
-bool lib_openssl_init = false;
-bool lib_ws2_init = false;
-
 struct buffer {
   unsigned char *d;
   size_t l;
@@ -103,6 +100,9 @@ struct url_URL {
   const struct str __THE_0_search;
   const struct str __THE_0_hash;
 };
+
+bool lib_openssl_init = false;
+bool lib_ws2_init = false;
 
 void *alloc (size_t);
 struct buffer buffer_copy (const struct buffer);

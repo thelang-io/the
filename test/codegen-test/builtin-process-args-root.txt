@@ -21,9 +21,6 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-int argc = 0;
-char **argv = (void *) 0;
-
 struct str {
   char *d;
   size_t l;
@@ -35,6 +32,9 @@ struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
+
+int argc = 0;
+char **argv = (void *) 0;
 
 void *alloc (size_t);
 struct __THE_1_array_str process_args ();

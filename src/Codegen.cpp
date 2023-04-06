@@ -25,6 +25,7 @@
 #include "codegen/char.hpp"
 #include "codegen/date.hpp"
 #include "codegen/enum.hpp"
+#include "codegen/error.hpp"
 #include "codegen/float.hpp"
 #include "codegen/fs.hpp"
 #include "codegen/globals.hpp"
@@ -189,6 +190,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_apiDecl(codegenInt);
   this->_apiDecl(codegenStr);
 
+  this->_typeNameObj(this->ast->typeMap.get("error_Error"));
   this->_typeNameObj(this->ast->typeMap.get("fs_Stats"));
   this->_typeNameObj(this->ast->typeMap.get("request_Header"));
   this->_typeNameObj(this->ast->typeMap.get("request_Request"));
@@ -196,6 +198,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObj(this->ast->typeMap.get("url_URL"));
 
   this->_apiDecl(codegenDate);
+  this->_apiDecl(codegenError);
   this->_apiDecl(codegenFs);
   this->_apiDecl(codegenOS);
   this->_apiDecl(codegenPath);
@@ -217,6 +220,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_apiDef(codegenInt);
   this->_apiDef(codegenStr);
 
+  this->_typeNameObjDef(this->ast->typeMap.get("error_Error"));
   this->_typeNameObjDef(this->ast->typeMap.get("fs_Stats"));
   this->_typeNameObjDef(this->ast->typeMap.get("request_Header"));
   this->_typeNameObjDef(this->ast->typeMap.get("request_Request"), {
@@ -226,6 +230,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObjDef(this->ast->typeMap.get("url_URL"));
 
   this->_apiDef(codegenDate);
+  this->_apiDef(codegenError);
   this->_apiDef(codegenFs);
   this->_apiDef(codegenOS);
   this->_apiDef(codegenPath);
@@ -312,6 +317,26 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "};" EOL;
   }
 
+  if (this->builtins.typeErrStack) {
+    builtinStructDefCode += "typedef struct {" EOL;
+    builtinStructDefCode += "  char *file;" EOL;
+    builtinStructDefCode += "  char *name;" EOL;
+    builtinStructDefCode += "  int line;" EOL;
+    builtinStructDefCode += "  int col;" EOL;
+    builtinStructDefCode += "} err_stack_t;" EOL;
+  }
+
+  if (this->builtins.typeErrState) {
+    builtinStructDefCode += "typedef struct {" EOL;
+    builtinStructDefCode += "  int id;" EOL;
+    builtinStructDefCode += "  void *ctx;" EOL;
+    builtinStructDefCode += "  jmp_buf buf[10];" EOL;
+    builtinStructDefCode += "  int buf_idx;" EOL;
+    builtinStructDefCode += "  err_stack_t stack[10];" EOL;
+    builtinStructDefCode += "  int stack_idx;" EOL;
+    builtinStructDefCode += "} err_state_t;" EOL;
+  }
+
   if (this->builtins.typeRequest) {
     builtinStructDefCode += "struct request {" EOL;
     builtinStructDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
@@ -374,6 +399,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinExternCode += "extern char **environ;" EOL;
   }
 
+  if (this->builtins.varErrState) {
+    builtinVarCode += "err_state_t err_state;" EOL;
+  }
+
   if (this->builtins.varLibOpensslInit) {
     builtinVarCode += "bool lib_openssl_init = false;" EOL;
   }
@@ -393,13 +422,13 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   fnDefCode = builtinFnDefCode + fnDefCode;
 
   builtinDefineCode += builtinDefineCode.empty() ? "" : EOL;
-  defineCode += defineCode.empty() ? "" : EOL;
   builtinExternCode += builtinExternCode.empty() ? "" : EOL;
-  builtinVarCode += builtinVarCode.empty() ? "" : EOL;
-  builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
+  defineCode += defineCode.empty() ? "" : EOL;
   enumDeclCode += enumDeclCode.empty() ? "" : EOL;
+  builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
   structDeclCode += structDeclCode.empty() ? "" : EOL;
   structDefCode += structDefCode.empty() ? "" : EOL;
+  builtinVarCode += builtinVarCode.empty() ? "" : EOL;
   fnDeclCode += fnDeclCode.empty() ? "" : EOL;
   fnDefCode += fnDefCode.empty() ? "" : EOL;
 
@@ -410,6 +439,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   headers += this->builtins.libMath ? "#include <math.h>" EOL : "";
   headers += this->builtins.libOpensslRand ? "#include <openssl/rand.h>" EOL : "";
   headers += this->builtins.libOpensslSsl ? "#include <openssl/ssl.h>" EOL : "";
+  headers += this->builtins.libSetJmp ? "#include <setjmp.h>" EOL : "";
+  headers += this->builtins.libStdNoReturn ? "#include <stdnoreturn.h>" EOL : "";
   headers += this->builtins.libStdarg ? "#include <stdarg.h>" EOL : "";
   headers += this->builtins.libStdbool ? "#include <stdbool.h>" EOL : "";
   headers += this->builtins.libStddef && !this->builtins.libStdlib ? "#include <stddef.h>" EOL : "";
@@ -486,13 +517,15 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
   output += defineCode;
   output += enumDeclCode;
-  output += builtinVarCode;
   output += builtinStructDefCode;
   output += structDeclCode;
   output += structDefCode;
+  output += builtinVarCode;
   output += fnDeclCode;
   output += fnDefCode;
 
+  // todo catch error wrapper, store all used errors to be able to catch any error that is happening in main
+  // todo or just set first jump as main one and if it jump to it just display message of error.
   if (this->needMainArgs) {
     output += "int main (int _argc_, char *_argv_[]) {" EOL;
     output += "  argc = _argc_;" EOL;
@@ -615,6 +648,10 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     }
   } else if (name == "libPwd") {
     this->builtins.libPwd = true;
+  } else if (name == "libSetJmp") {
+    this->builtins.libSetJmp = true;
+  } else if (name == "libStdNoReturn") {
+    this->builtins.libStdNoReturn = true;
   } else if (name == "libStdarg") {
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
@@ -665,6 +702,12 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "typeBuffer") {
     this->builtins.typeBuffer = true;
     this->_activateBuiltin("libStdlib");
+  } else if (name == "typeErrStack") {
+    this->builtins.typeErrStack = true;
+  } else if (name == "typeErrState") {
+    this->builtins.typeErrState = true;
+    this->_activateBuiltin("libSetJmp");
+    this->_activateBuiltin("typeErrStack");
   } else if (name == "typeRequest") {
     this->builtins.typeRequest = true;
     this->_activateBuiltin("definitions");
@@ -680,6 +723,9 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "varEnviron") {
     this->builtins.varEnviron = true;
     this->_activateBuiltin("libUnistd");
+  } else if (name == "varErrState") {
+    this->builtins.varErrState = true;
+    this->_activateBuiltin("typeErrState");
   } else if (name == "varLibOpensslInit") {
     this->builtins.varLibOpensslInit = true;
     this->_activateBuiltin("libStdbool");
@@ -1807,6 +1853,17 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
       code = std::string(this->indent, ' ') + "return;" EOL;
     }
 
+    return this->_wrapNode(node, code);
+  } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
+    auto nodeThrow = std::get<ASTNodeThrow>(*node.body);
+    auto argNodeExpr = this->_nodeExpr(nodeThrow.arg, nodeThrow.arg.type);
+    auto argNodeExprDef = this->_typeDef(nodeThrow.arg.type);
+
+    code = std::string(this->indent, ' ') + "_{error_stack_pos}(&_{err_state}, " + std::to_string(node.start.line) + ", " + std::to_string(node.start.col + 1) + ");" EOL;
+    code += std::string(this->indent, ' ') + "_{error_throw}(&_{err_state}, _{" + argNodeExprDef + "}, (void *) " + argNodeExpr + ");" EOL;
+
+    return this->_wrapNode(node, code);
+  } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*node.body)) {
     return this->_wrapNode(node, code);

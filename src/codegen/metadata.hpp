@@ -34,11 +34,14 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
 
   std::pair<std::string, std::set<std::string>>{"struct any", {"typeAny"}},
   std::pair<std::string, std::set<std::string>>{"struct buffer", {"typeBuffer"}},
+  std::pair<std::string, std::set<std::string>>{"err_stack_t", {"typeErrStack"}},
+  std::pair<std::string, std::set<std::string>>{"err_state_t", {"typeErrState"}},
   std::pair<std::string, std::set<std::string>>{"struct request", {"typeRequest"}},
   std::pair<std::string, std::set<std::string>>{"struct str", {"typeStr"}},
   std::pair<std::string, std::set<std::string>>{"struct win_reparse_data_buffer", {"typeWinReparseDataBuffer"}},
 
   std::pair<std::string, std::set<std::string>>{"environ", {"varEnviron"}},
+  std::pair<std::string, std::set<std::string>>{"err_state", {"varErrState"}},
   std::pair<std::string, std::set<std::string>>{"lib_openssl_init", {"varLibOpensslInit"}},
   std::pair<std::string, std::set<std::string>>{"lib_ws2_init", {"varLibWs2Init"}},
 
@@ -107,6 +110,12 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"TLS_client_method", {"libOpensslSsl"}},
 
   std::pair<std::string, std::set<std::string>>{"getpwuid", {"libPwd"}},
+
+  std::pair<std::string, std::set<std::string>>{"struct jmp_buf", {"libSetJmp"}},
+  std::pair<std::string, std::set<std::string>>{"longjmp", {"libSetJmp"}},
+  std::pair<std::string, std::set<std::string>>{"setjmp", {"libSetJmp"}},
+
+  std::pair<std::string, std::set<std::string>>{"noreturn", {"libStdNoReturn"}},
 
   std::pair<std::string, std::set<std::string>>{"va_arg", {"libStdarg"}},
   std::pair<std::string, std::set<std::string>>{"va_end", {"libStdarg"}},

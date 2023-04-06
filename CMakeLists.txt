@@ -44,6 +44,7 @@ set(
   src/codegen/byte.cpp src/codegen/byte.hpp
   src/codegen/char.cpp src/codegen/char.hpp
   src/codegen/date.cpp src/codegen/date.hpp
+  src/codegen/error.cpp src/codegen/error.hpp
   src/codegen/enum.cpp src/codegen/enum.hpp
   src/codegen/float.cpp src/codegen/float.hpp
   src/codegen/fs.cpp src/codegen/fs.hpp

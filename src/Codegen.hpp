@@ -60,6 +60,8 @@ struct CodegenBuiltins {
   bool libOpensslSsl = false;
   bool libOpensslRand = false;
   bool libPwd = false;
+  bool libSetJmp = false;
+  bool libStdNoReturn = false;
   bool libStdarg = false;
   bool libStdbool = false;
   bool libStddef = false;
@@ -80,10 +82,13 @@ struct CodegenBuiltins {
   bool libWinsock2 = false;
   bool typeAny = false;
   bool typeBuffer = false;
+  bool typeErrStack = false;
+  bool typeErrState = false;
   bool typeRequest = false;
   bool typeStr = false;
   bool typeWinReparseDataBuffer = false;
   bool varEnviron = false;
+  bool varErrState = false;
   bool varLibOpensslInit = false;
   bool varLibWs2Init = false;
 };
