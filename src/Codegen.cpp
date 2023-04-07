@@ -242,10 +242,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_apiDef(codegenUtils);
 
   auto nodes = this->ast->gen();
-  auto mainCode = std::string();
-
-  mainCode += this->_block(nodes, false);
-  mainCode += this->state.cleanUp.gen(2);
+  auto mainCode = this->_block(nodes, false);
+  auto mainCleanUpCode = this->state.cleanUp.gen(2);
 
   auto defineCode = std::string();
   auto enumDeclCode = std::string();
@@ -524,19 +522,30 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   output += fnDeclCode;
   output += fnDefCode;
 
-  // todo catch error wrapper, store all used errors to be able to catch any error that is happening in main
-  // todo or just set first jump as main one and if it jump to it just display message of error.
+  output += "int main (" + std::string(this->needMainArgs ? "int _argc_, char *_argv_[]" : "") + ") {" EOL;
+
   if (this->needMainArgs) {
-    output += "int main (int _argc_, char *_argv_[]) {" EOL;
     output += "  argc = _argc_;" EOL;
     output += "  argv = _argv_;" EOL;
-    output += mainCode;
-    output += "}" EOL;
-  } else {
-    output += "int main () {" EOL;
-    output += mainCode;
-    output += "}" EOL;
   }
+
+  if (this->builtins.varErrState) {
+    output += R"(  error_stack_push(&err_state, ")" + this->reader->path +  R"(", "main");)" EOL;
+    output += R"(  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) {)" EOL;
+    output += R"(    struct error_Error *err = err_state.ctx;)" EOL;
+    output += R"(    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL;
+    output += R"(    exit(EXIT_FAILURE);)" EOL;
+    output += R"(  })" EOL;
+  }
+
+  output += mainCode;
+
+  if (this->builtins.varErrState) {
+    output += "  error_stack_pop(&err_state);" EOL;
+  }
+
+  output += mainCleanUpCode;
+  output += "}" EOL;
 
   return std::make_tuple(output, this->flags);
 }
@@ -725,7 +734,15 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libUnistd");
   } else if (name == "varErrState") {
     this->builtins.varErrState = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libSetJmp");
+    this->_activateBuiltin("libStdio");
+    this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeErrState");
+    this->_activateBuiltin("typeStr");
+    this->_activateEntity("error_Error");
+    this->_apiEval("_{error_stack_push}");
+    this->_apiEval("_{error_stack_pop}");
   } else if (name == "varLibOpensslInit") {
     this->builtins.varLibOpensslInit = true;
     this->_activateBuiltin("libStdbool");

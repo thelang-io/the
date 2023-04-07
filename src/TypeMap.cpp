@@ -716,7 +716,8 @@ void TypeMap::_dateModule (TypeMapPhase phase) {
 void TypeMap::_errorModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
     this->createObj("error_Error", this->name("error_Error"), {
-      TypeField{"message", this->get("str"), false, false}
+      TypeField{"message", this->get("str"), false, false},
+      TypeField{"stack", this->get("str"), false, false}
     }, true);
     auto error_NewErrorCallInfo = TypeCallInfo{"new_error"};
     auto error_NewErrorTypeFn = TypeFn{this->get("error_Error"), {

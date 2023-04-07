@@ -133,25 +133,23 @@ Type *Type::largest (Type *a, Type *b) {
   ) ? a : b;
 }
 
-std::optional<TypeField> Type::firstField () const {
+std::optional<TypeField> Type::fieldNth (std::size_t idx) const {
   if (this->isAlias()) {
-    return std::get<TypeAlias>(this->body).type->firstField();
+    return std::get<TypeAlias>(this->body).type->fieldNth(idx);
   } else if (this->isRef()) {
-    return std::get<TypeRef>(this->body).refType->firstField();
+    return std::get<TypeRef>(this->body).refType->fieldNth(idx);
   }
 
-  auto result = std::optional<TypeField>{};
+  auto result = std::vector<TypeField>{};
 
   for (const auto &field : this->fields) {
     if (field.builtin || field.type->isMethod()) {
       continue;
     }
-
-    result = field;
-    break;
+    result.push_back(field);
   }
 
-  return result;
+  return result.size() - 1 < idx ? std::optional<TypeField>{} : result[idx];
 }
 
 Type *Type::getEnumerator (const std::string &memberName) const {

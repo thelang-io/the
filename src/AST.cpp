@@ -695,9 +695,12 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     if (
       !nodeThrowArg.type->isObj() ||
-      nodeThrowArg.type->firstField() == std::nullopt ||
-      nodeThrowArg.type->firstField()->name != "message" ||
-      !nodeThrowArg.type->firstField()->type->isStr()
+      nodeThrowArg.type->fieldNth(0) == std::nullopt ||
+      nodeThrowArg.type->fieldNth(0)->name != "message" ||
+      !nodeThrowArg.type->fieldNth(0)->type->isStr() ||
+      nodeThrowArg.type->fieldNth(1) == std::nullopt ||
+      nodeThrowArg.type->fieldNth(1)->name != "stack" ||
+      !nodeThrowArg.type->fieldNth(1)->type->isStr()
     ) {
       throw Error(this->reader, stmtThrow.arg.start, stmtThrow.arg.end, E1028);
     }
@@ -719,9 +722,12 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
       if (
         !handlerParamVarDecl.var->type->isObj() ||
-        handlerParamVarDecl.var->type->firstField() == std::nullopt ||
-        handlerParamVarDecl.var->type->firstField()->name != "message" ||
-        !handlerParamVarDecl.var->type->firstField()->type->isStr()
+        handlerParamVarDecl.var->type->fieldNth(0) == std::nullopt ||
+        handlerParamVarDecl.var->type->fieldNth(0)->name != "message" ||
+        !handlerParamVarDecl.var->type->fieldNth(0)->type->isStr() ||
+        handlerParamVarDecl.var->type->fieldNth(1) == std::nullopt ||
+        handlerParamVarDecl.var->type->fieldNth(1)->name != "stack" ||
+        !handlerParamVarDecl.var->type->fieldNth(1)->type->isStr()
       ) {
         throw Error(this->reader, stmtTryHandler.param.start, stmtTryHandler.param.end, E1029);
       }

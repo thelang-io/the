@@ -170,7 +170,6 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"stdout", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"_pclose", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"_popen", {"libStdio"}},
-  std::pair<std::string, std::set<std::string>>{"_snprintf", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"_unlink", {"libStdio"}},
 
   std::pair<std::string, std::set<std::string>>{"EXIT_SUCCESS", {"libStdlib"}},

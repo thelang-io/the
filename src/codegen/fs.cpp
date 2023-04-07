@@ -438,7 +438,7 @@ const std::vector<std::string> codegenFs = {
   R"(    })" EOL
   R"(    const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");)" EOL
   R"(    char *b = _{alloc}(s.l + 4);)" EOL
-  R"(    _{_snprintf}(b, s.l + 3, fmt, c);)" EOL
+  R"(    _{snprintf}(b, s.l + 3, fmt, c);)" EOL
   R"(    _{WIN32_FIND_DATA} m;)" EOL
   R"(    _{HANDLE} h = _{FindFirstFile}(b, &m);)" EOL
   R"(    _{free}(b);)" EOL
