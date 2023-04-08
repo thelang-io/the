@@ -276,7 +276,7 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
     }
     const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");
     char *b = alloc(s.l + 4);
-    _snprintf(b, s.l + 3, fmt, c);
+    snprintf(b, s.l + 3, fmt, c);
     WIN32_FIND_DATA m;
     HANDLE h = FindFirstFile(b, &m);
     free(b);

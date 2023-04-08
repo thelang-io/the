@@ -251,23 +251,38 @@ TEST_F(TypeTest, RealOnRef) {
   EXPECT_EQ(Type::real(this->ref_), this->tm_.get("int"));
 }
 
-TEST_F(TypeTest, FirstFieldGets) {
+TEST_F(TypeTest, FieldNthGetsZero) {
   auto type1 = this->tm_.createAlias("Test", this->obj_);
   auto type2 = this->tm_.createRef(this->obj_);
 
-  EXPECT_EQ(this->obj_->firstField()->name, "a");
-  EXPECT_EQ(type1->firstField()->name, "a");
-  EXPECT_EQ(type2->firstField()->name, "a");
+  EXPECT_EQ(this->obj_->fieldNth(0)->name, "a");
+  EXPECT_EQ(type1->fieldNth(0)->name, "a");
+  EXPECT_EQ(type2->fieldNth(0)->name, "a");
 }
 
-TEST_F(TypeTest, FirstFieldReturnsNull) {
+TEST_F(TypeTest, FieldNthGetsOne) {
+  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("int"), false, false}
+  });
+
+  auto type2 = this->tm_.createAlias("Test", type1);
+  auto type3 = this->tm_.createRef(type1);
+
+  EXPECT_EQ(type1->fieldNth(1)->name, "b");
+  EXPECT_EQ(type2->fieldNth(1)->name, "b");
+  EXPECT_EQ(type3->fieldNth(1)->name, "b");
+}
+
+TEST_F(TypeTest, FieldNthReturnsNull) {
   auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {});
   auto type2 = this->tm_.createAlias("Test", type1);
   auto type3 = this->tm_.createRef(type2);
 
-  EXPECT_EQ(type1->firstField(), std::nullopt);
-  EXPECT_EQ(type2->firstField(), std::nullopt);
-  EXPECT_EQ(type3->firstField(), std::nullopt);
+  EXPECT_EQ(type1->fieldNth(0), std::nullopt);
+  EXPECT_EQ(type2->fieldNth(0), std::nullopt);
+  EXPECT_EQ(type3->fieldNth(0), std::nullopt);
+  EXPECT_EQ(this->obj_->fieldNth(1), std::nullopt);
 }
 
 TEST_F(TypeTest, GetsEnumerator) {

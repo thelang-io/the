@@ -149,7 +149,7 @@ std::optional<TypeField> Type::fieldNth (std::size_t idx) const {
     result.push_back(field);
   }
 
-  return result.size() - 1 < idx ? std::optional<TypeField>{} : result[idx];
+  return idx >= result.size() ? std::optional<TypeField>{} : result[idx];
 }
 
 Type *Type::getEnumerator (const std::string &memberName) const {
