@@ -539,14 +539,13 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   output += mainCode;
+  output += mainCleanUpCode;
 
   if (this->builtins.varErrState) {
     output += "  error_stack_pop(&err_state);" EOL;
   }
 
-  output += mainCleanUpCode;
   output += "}" EOL;
-
   return std::make_tuple(output, this->flags);
 }
 
@@ -1250,9 +1249,9 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
   }
 }
 
+// todo insert error_stack_pos before call expressions if they throw
 std::string Codegen::_fnDecl (
-  Type *type,
-  const std::string &codeName,
+  std::shared_ptr<Var> var,
   const std::vector<std::shared_ptr<Var>> &stack,
   const std::vector<ASTFnDeclParam> &params,
   const std::optional<ASTBlock> &body,
@@ -1262,11 +1261,15 @@ std::string Codegen::_fnDecl (
     return "";
   }
 
+  auto type = var->type;
+  auto codeName = var->codeName;
   auto typeName = Codegen::typeName(codeName);
   auto varTypeInfo = this->_typeInfo(type);
   auto fnType = std::get<TypeFn>(type->body);
   auto paramsName = varTypeInfo.typeName + "P";
   auto contextName = typeName + "X";
+  // todo inspect call expressions to see if they contain error throwing functions
+  auto throwsErrors = ASTChecker(*body).has<ASTNodeThrow>();
   auto code = std::string();
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
@@ -1354,15 +1357,26 @@ std::string Codegen::_fnDecl (
       this->varMap.restore();
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
-        bodyCode.insert(0, std::string(this->indent, ' ') + returnTypeInfo.typeCode + "v;" EOL);
+        bodyCode.insert(0, "  " + returnTypeInfo.typeCode + "v;" EOL);
         bodyCode += this->state.cleanUp.gen(this->indent);
-        bodyCode += std::string(this->indent, ' ') + "return v;" EOL;
       } else {
         bodyCode += this->state.cleanUp.gen(this->indent);
       }
 
+      if (throwsErrors) {
+        auto tmpBodyCode = bodyCode;
+
+        bodyCode = R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(");)" EOL;
+        bodyCode += tmpBodyCode;
+        bodyCode += "  _{error_stack_pop}(&_{err_state});" EOL;
+      }
+
+      if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
+        bodyCode += "  return v;" EOL;
+      }
+
       if (this->state.cleanUp.returnVarUsed) {
-        bodyCode.insert(0, std::string(this->indent, ' ') + "unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
+        bodyCode.insert(0, "  unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
       }
 
       decl += returnTypeInfo.typeCode + typeName + " (void *";
@@ -1692,8 +1706,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
 
     code += this->_fnDecl(
-      nodeFnDecl.var->type,
-      nodeFnDecl.var->codeName,
+      nodeFnDecl.var,
       nodeFnDecl.stack,
       nodeFnDecl.params,
       nodeFnDecl.body,
@@ -1819,8 +1832,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     if (phase == CODEGEN_PHASE_ALLOC_METHOD || phase == CODEGEN_PHASE_FULL) {
       for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
         code += this->_fnDecl(
-          nodeObjDeclMethod.var->type,
-          nodeObjDeclMethod.var->codeName,
+          nodeObjDeclMethod.var,
           nodeObjDeclMethod.stack,
           nodeObjDeclMethod.params,
           nodeObjDeclMethod.body,
@@ -1832,8 +1844,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     if (phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) {
       for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
         code += this->_fnDecl(
-          nodeObjDeclMethod.var->type,
-          nodeObjDeclMethod.var->codeName,
+          nodeObjDeclMethod.var,
           nodeObjDeclMethod.stack,
           nodeObjDeclMethod.params,
           nodeObjDeclMethod.body,

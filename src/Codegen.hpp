@@ -193,14 +193,12 @@ class Codegen {
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
-  std::string _exprAssign (const ASTExprAssign &);
   std::string _exprCallDefaultArg (const CodegenTypeInfo &);
   std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &);
   std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
   std::string _exprObjDefaultField (const CodegenTypeInfo &);
   std::string _fnDecl (
-    Type *,
-    const std::string &,
+    std::shared_ptr<Var>,
     const std::vector<std::shared_ptr<Var>> &,
     const std::vector<ASTFnDeclParam> &,
     const std::optional<ASTBlock> &,

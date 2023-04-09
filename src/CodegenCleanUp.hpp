@@ -40,6 +40,7 @@ class CodegenCleanUp {
   std::size_t labelIdx = 0;
   std::size_t breakVarIdx = 0;
   bool breakVarUsed = false;
+  bool errorVarUsed = false;
   bool returnVarUsed = false;
   bool valueVarUsed = false;
 
@@ -48,6 +49,8 @@ class CodegenCleanUp {
 
   void add (const std::string &);
   std::string currentBreakVar ();
+  // todo test
+  std::string currentErrorVar ();
   std::string currentLabel ();
   std::string currentReturnVar ();
   std::string currentValueVar ();
