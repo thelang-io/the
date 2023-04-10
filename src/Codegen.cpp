@@ -18,30 +18,8 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
-#include "codegen/any.hpp"
-#include "codegen/bool.hpp"
-#include "codegen/buffer.hpp"
-#include "codegen/byte.hpp"
-#include "codegen/char.hpp"
-#include "codegen/date.hpp"
-#include "codegen/enum.hpp"
-#include "codegen/error.hpp"
-#include "codegen/float.hpp"
-#include "codegen/fs.hpp"
-#include "codegen/globals.hpp"
-#include "codegen/int.hpp"
-#include "codegen/metadata.hpp"
-#include "codegen/os.hpp"
-#include "codegen/path.hpp"
-#include "codegen/process.hpp"
-#include "codegen/random.hpp"
-#include "codegen/request.hpp"
-#include "codegen/str.hpp"
-#include "codegen/thread.hpp"
-#include "codegen/url.hpp"
-#include "codegen/utils.hpp"
 #include "ASTChecker.hpp"
-#include "CParser.hpp"
+#include "codegen-metadata.hpp"
 #include "config.hpp"
 
 const auto banner = std::string(
@@ -179,17 +157,6 @@ Codegen::Codegen (AST *a) {
 }
 
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
-  this->_apiDecl(codegenGlobals);
-  this->_apiDecl(codegenAny);
-  this->_apiDecl(codegenBool);
-  this->_apiDecl(codegenBuffer);
-  this->_apiDecl(codegenByte);
-  this->_apiDecl(codegenChar);
-  this->_apiDecl(codegenEnum);
-  this->_apiDecl(codegenFloat);
-  this->_apiDecl(codegenInt);
-  this->_apiDecl(codegenStr);
-
   this->_typeNameObj(this->ast->typeMap.get("error_Error"));
   this->_typeNameObj(this->ast->typeMap.get("fs_Stats"));
   this->_typeNameObj(this->ast->typeMap.get("request_Header"));
@@ -197,28 +164,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObj(this->ast->typeMap.get("request_Response"));
   this->_typeNameObj(this->ast->typeMap.get("url_URL"));
 
-  this->_apiDecl(codegenDate);
-  this->_apiDecl(codegenError);
-  this->_apiDecl(codegenFs);
-  this->_apiDecl(codegenOS);
-  this->_apiDecl(codegenPath);
-  this->_apiDecl(codegenProcess);
-  this->_apiDecl(codegenRandom);
-  this->_apiDecl(codegenRequest);
-  this->_apiDecl(codegenThread);
-  this->_apiDecl(codegenURL);
-  this->_apiDecl(codegenUtils);
-
-  this->_apiDef(codegenGlobals);
-  this->_apiDef(codegenAny);
-  this->_apiDef(codegenBool);
-  this->_apiDef(codegenBuffer);
-  this->_apiDef(codegenByte);
-  this->_apiDef(codegenChar);
-  this->_apiDef(codegenEnum);
-  this->_apiDef(codegenFloat);
-  this->_apiDef(codegenInt);
-  this->_apiDef(codegenStr);
+  for (const auto &[name, item] : codegenAPI) {
+    for (const auto &entityDependency : item.entityDependencies) {
+      this->api[name] = item;
+    }
+  }
 
   this->_typeNameObjDef(this->ast->typeMap.get("error_Error"));
   this->_typeNameObjDef(this->ast->typeMap.get("fs_Stats"));
@@ -229,17 +179,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObjDef(this->ast->typeMap.get("request_Response"));
   this->_typeNameObjDef(this->ast->typeMap.get("url_URL"));
 
-  this->_apiDef(codegenDate);
-  this->_apiDef(codegenError);
-  this->_apiDef(codegenFs);
-  this->_apiDef(codegenOS);
-  this->_apiDef(codegenPath);
-  this->_apiDef(codegenProcess);
-  this->_apiDef(codegenRandom);
-  this->_apiDef(codegenRequest);
-  this->_apiDef(codegenThread);
-  this->_apiDef(codegenURL);
-  this->_apiDef(codegenUtils);
+  for (auto &[name, item] : this->api) {
+    for (const auto &entityDependency : item.entityDependencies) {
+      this->_apiEval("_{" + entityDependency + "}", 0, name, &item.dependencies);
+    }
+  }
 
   auto nodes = this->ast->gen();
   auto mainCode = this->_block(nodes, false);
@@ -932,23 +876,6 @@ std::string Codegen::_apiEval (
   return result;
 }
 
-void Codegen::_apiDecl (const std::vector<std::string> &items) {
-  for (const auto &item : items) {
-    auto cParser = cParse(item);
-    auto apiItem = CodegenApiItem{.name = cParser.name, .decl = cParser.decl()};
-
-    apiItem.decl = this->_apiEval(apiItem.decl, 0, apiItem.name, &apiItem.dependencies) + ";" EOL;
-    this->api[apiItem.name] = apiItem;
-  }
-}
-
-void Codegen::_apiDef (const std::vector<std::string> &items) {
-  for (const auto &item : items) {
-    auto cParser = cParse(item);
-    this->api[cParser.name].def = this->_apiEval(item, 0, cParser.name, &this->api[cParser.name].dependencies);
-  }
-}
-
 std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
   auto initialIndent = this->indent;
   auto initialCleanUp = this->state.cleanUp;
@@ -1250,6 +1177,10 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
 }
 
 // todo insert error_stack_pos before call expressions if they throw
+// todo then wrap all throwing calls with setjmp and if throws jump to CLEANUP section
+// todo if has cleanup then jump to cleanup, otherwise jump to upper function
+// todo test all
+
 std::string Codegen::_fnDecl (
   std::shared_ptr<Var> var,
   const std::vector<std::shared_ptr<Var>> &stack,
@@ -1268,8 +1199,6 @@ std::string Codegen::_fnDecl (
   auto fnType = std::get<TypeFn>(type->body);
   auto paramsName = varTypeInfo.typeName + "P";
   auto contextName = typeName + "X";
-  // todo inspect call expressions to see if they contain error throwing functions
-  auto throwsErrors = ASTChecker(*body).has<ASTNodeThrow>();
   auto code = std::string();
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
@@ -1363,7 +1292,7 @@ std::string Codegen::_fnDecl (
         bodyCode += this->state.cleanUp.gen(this->indent);
       }
 
-      if (throwsErrors) {
+      if (fnType.throws) {
         auto tmpBodyCode = bodyCode;
 
         bodyCode = R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(");)" EOL;

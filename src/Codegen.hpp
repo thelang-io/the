@@ -17,9 +17,8 @@
 #ifndef SRC_CODEGEN_HPP
 #define SRC_CODEGEN_HPP
 
-#include <map>
-#include <set>
 #include "AST.hpp"
+#include "codegen-api.hpp"
 #include "CodegenCleanUp.hpp"
 
 enum CodegenEntityType {
@@ -34,14 +33,6 @@ enum CodegenPhase {
   CODEGEN_PHASE_ALLOC_METHOD,
   CODEGEN_PHASE_INIT,
   CODEGEN_PHASE_FULL
-};
-
-struct CodegenApiItem {
-  bool enabled = false;
-  std::string name;
-  std::string decl = "";
-  std::string def = "";
-  std::set<std::string> dependencies = {};
 };
 
 struct CodegenBuiltins {
@@ -144,7 +135,7 @@ struct CodegenTypeInfoItem {
 
 class Codegen {
  public:
-  std::map<std::string, CodegenApiItem> api = {};
+  std::map<std::string, CodegenAPIItem> api = {};
   AST *ast;
   Reader *reader;
   CodegenState state;
@@ -187,8 +178,6 @@ class Codegen {
     const std::string & = "",
     const std::optional<std::set<std::string> *> & = std::nullopt
   );
-  void _apiDecl (const std::vector<std::string> &);
-  void _apiDef (const std::vector<std::string> &);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true);

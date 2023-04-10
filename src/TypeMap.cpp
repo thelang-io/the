@@ -137,9 +137,10 @@ Type *TypeMap::createEnumerator (const std::string &enumeratorName, const std::s
 Type *TypeMap::createFn (
   const std::vector<TypeFnParam> &params,
   Type *returnType,
+  bool throws,
   const std::optional<TypeCallInfo> &callInfo
 ) {
-  auto typeBody = TypeFn{returnType, params, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
+  auto typeBody = TypeFn{returnType, params, false, throws, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
   auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {
@@ -191,8 +192,8 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   return selfType;
 }
 
-Type *TypeMap::createMethod (const std::vector<TypeFnParam> &params, Type *returnType, TypeCallInfo callInfo) {
-  auto typeBody = TypeFn{returnType, params, true, std::move(callInfo)};
+Type *TypeMap::createMethod (const std::vector<TypeFnParam> &params, Type *returnType, bool throws, TypeCallInfo callInfo) {
+  auto typeBody = TypeFn{returnType, params, true, throws, std::move(callInfo)};
   auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {

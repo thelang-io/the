@@ -50,7 +50,6 @@ set(
   src/codegen/fs.cpp src/codegen/fs.hpp
   src/codegen/globals.cpp src/codegen/globals.hpp
   src/codegen/int.cpp src/codegen/int.hpp
-  src/codegen/metadata.hpp
   src/codegen/os.cpp src/codegen/os.hpp
   src/codegen/path.cpp src/codegen/path.hpp
   src/codegen/process.cpp src/codegen/process.hpp
@@ -66,6 +65,8 @@ set(
   src/ASTExpr.cpp src/ASTExpr.hpp
   src/ASTNode.cpp src/ASTNode.hpp
   src/Codegen.cpp src/Codegen.hpp
+  src/codegen-api.hpp
+  src/codegen-metadata.hpp
   src/CodegenCleanUp.cpp src/CodegenCleanUp.hpp
   src/CParser.cpp src/CParser.hpp
   src/Error.cpp src/Error.hpp

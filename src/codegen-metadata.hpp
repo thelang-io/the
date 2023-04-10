@@ -21,8 +21,6 @@
 #include <set>
 #include <string>
 
-// (?<!_\{|[a-zA-Z0-9_])(EXIT_FAILURE|EXIT_SUCCESS|FILE|NULL|PRId8|PRId16|PRId32|PRId64|PRIu8|PRIu16|PRIu32|PRIu64|THE_EOL|THE_OS_WINDOWS|THE_PATH_SEP|alloc|bool|exit|false|fprintf|fputc|fputs|fread|free|fwrite|int8_t|int16_t|int32_t|int64_t|malloc|memcmp|memcpy|printf|re_alloc|realloc|size_t|snprintf|sprintf|stderr|stdout|str_alloc|str_free|strlen|struct any|struct buffer|struct str|true|uin8_t|uint16_t|uint32_t|uint64_t|va_arg|va_end|va_list|va_start)(?!}|[a-zA-Z0-9_])
-
 extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"THE_EOL", {"definitions"}},
   std::pair<std::string, std::set<std::string>>{"THE_OS_LINUX", {"definitions"}},

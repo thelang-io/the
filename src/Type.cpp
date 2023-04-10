@@ -519,6 +519,7 @@ bool Type::matchNice (const Type *type) const {
     if (
       !lhsFn.returnType->matchNice(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.throws != rhsFn.throws || // todo test
       lhsFn.isMethod != rhsFn.isMethod ||
       (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||
       (lhsFn.callInfo.isSelfFirst && !lhsFn.callInfo.selfType->matchNice(rhsFn.callInfo.selfType)) ||
@@ -608,6 +609,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     if (
       !lhsFn.returnType->matchStrict(rhsFn.returnType, exact) ||
       lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.throws != rhsFn.throws || // todo test
       lhsFn.isMethod != rhsFn.isMethod ||
       (exact && lhsFn.callInfo.codeName != rhsFn.callInfo.codeName) ||
       (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||
@@ -745,6 +747,11 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
+
+  if (this->isFn()) {
+    auto fnType = std::get<TypeFn>(this->body);
+    result += fnType.throws ? " throws" : "";
+  }
 
   if (this->isEnumerator() || (this->isObj() && parentTypes.contains(this->codeName))) {
     return result + " />";

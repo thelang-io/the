@@ -72,6 +72,12 @@ class ASTChecker {
     return this->_isLastNode(this->_nodes);
   }
 
+  // todo test
+  bool throws () const {
+    this->_checkNode();
+    return this->_throwsNode(this->_nodes);
+  }
+
  private:
   bool _isNode = false;
   std::vector<ASTExpr> _exprs;
@@ -179,6 +185,47 @@ class ASTChecker {
     }
 
     throw Error("tried isLast on unknown node");
+  }
+
+  bool _throwsNode (const std::vector<ASTNode> &nodes) const {
+    for (const auto &node : nodes) {
+      if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
+        return true;
+      } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
+        auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
+
+        // todo expr access element always throws
+        // first, last on array always throws
+        // todo check if not wrapped in try/catch function
+        if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
+          auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
+
+          if (std::get<TypeFn>(exprCall.callee.type->body).throws) {
+            return true;
+          }
+        }
+      } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+        auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
+
+        if (nodeFnDecl.body != std::nullopt && this->_throwsNode(*nodeFnDecl.body)) {
+          return true;
+        }
+      } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
+        auto nodeIf = std::get<ASTNodeIf>(*node.body);
+
+        if (this->_throwsNode(nodeIf.body)) {
+          return true;
+        }
+      } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
+        auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
+
+        if (this->_throwsNode(nodeLoop.body)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 };
 
