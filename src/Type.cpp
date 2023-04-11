@@ -38,7 +38,8 @@ bool TypeCallInfo::empty () const {
     !this->isSelfFirst &&
     this->selfCodeName.empty() &&
     this->selfType == nullptr &&
-    !this->isSelfMut;
+    !this->isSelfMut &&
+    !this->throws;
 }
 
 std::string TypeCallInfo::xml (std::size_t indent, std::set<std::string> parentTypes) const {

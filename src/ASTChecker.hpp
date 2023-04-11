@@ -21,6 +21,105 @@
 #include <algorithm>
 #include "Error.hpp"
 
+// todo test each branch
+bool throwsNodeExpr (const ASTNodeExpr &nodeExpr) {
+  if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
+    auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
+
+    if (exprAccess.elem != std::nullopt) {
+      return true;
+    } else if (exprAccess.prop != std::nullopt) {
+      auto typeField = TypeField{};
+
+      if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
+        auto var = std::get<std::shared_ptr<Var>>(*exprAccess.expr);
+        typeField = var->type->getField(*exprAccess.prop);
+      } else {
+        auto exprAccessExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
+        typeField = exprAccessExpr.type->getField(*exprAccess.prop);
+      }
+
+      if (!typeField.callInfo.empty() && typeField.callInfo.throws) {
+        return true;
+      }
+    } else if (
+      exprAccess.expr != std::nullopt &&
+      std::holds_alternative<ASTNodeExpr>(*exprAccess.expr) &&
+      throwsNodeExpr(std::get<ASTNodeExpr>(*exprAccess.expr))
+    ) {
+      return true;
+    }
+  } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
+    auto exprArray = std::get<ASTExprArray>(*nodeExpr.body);
+
+    for (const auto &element : exprArray.elements) {
+      if (throwsNodeExpr(element)) {
+        return true;
+      }
+    }
+  } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
+    auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
+
+    if (throwsNodeExpr(exprAssign.left) || throwsNodeExpr(exprAssign.right)) {
+      return true;
+    }
+  } else if (std::holds_alternative<ASTExprBinary>(*nodeExpr.body)) {
+    auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
+
+    if (throwsNodeExpr(exprBinary.left) || throwsNodeExpr(exprBinary.right)) {
+      return true;
+    }
+  } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
+    auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
+
+    if (std::get<TypeFn>(exprCall.callee.type->body).throws) {
+      return true;
+    }
+  } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
+    auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
+
+    if (throwsNodeExpr(exprCond.cond) || throwsNodeExpr(exprCond.body) || throwsNodeExpr(exprCond.alt)) {
+      return true;
+    }
+  } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {
+    auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
+
+    if (throwsNodeExpr(exprIs.expr)) {
+      return true;
+    }
+  } else if (std::holds_alternative<ASTExprMap>(*nodeExpr.body)) {
+    auto exprMap = std::get<ASTExprMap>(*nodeExpr.body);
+
+    for (const auto &prop : exprMap.props) {
+      if (throwsNodeExpr(prop.init)) {
+        return true;
+      }
+    }
+  } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
+    auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
+
+    for (const auto &prop : exprObj.props) {
+      if (throwsNodeExpr(prop.init)) {
+        return true;
+      }
+    }
+  } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
+    auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
+
+    if (throwsNodeExpr(exprRef.expr)) {
+      return true;
+    }
+  } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.body)) {
+    auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
+
+    if (throwsNodeExpr(exprUnary.arg)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 class ASTChecker {
  public:
   explicit ASTChecker (const ASTExpr &expr) {
@@ -194,15 +293,8 @@ class ASTChecker {
       } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
         auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
 
-        // todo expr access element always throws
-        // first, last on array always throws
-        // todo check if not wrapped in try/catch function
-        if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
-          auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
-
-          if (std::get<TypeFn>(exprCall.callee.type->body).throws) {
-            return true;
-          }
+        if (throwsNodeExpr(std::get<ASTNodeExpr>(*node.body))) {
+          return true;
         }
       } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
         auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);

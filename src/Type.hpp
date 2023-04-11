@@ -55,6 +55,8 @@ struct TypeCallInfo {
   std::string selfCodeName = "";
   Type *selfType = nullptr;
   bool isSelfMut = false;
+  // todo test
+  bool throws = false;
 
   bool empty () const;
   std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
