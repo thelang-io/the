@@ -22,7 +22,7 @@
 #include "Error.hpp"
 
 // todo test each branch
-bool throwsNodeExpr (const ASTNodeExpr &nodeExpr) {
+inline bool throwsNodeExpr (const ASTNodeExpr &nodeExpr) {
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
     auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
 

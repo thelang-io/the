@@ -21,7 +21,7 @@
 #include <set>
 #include <string>
 
-extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
+extern inline const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"THE_EOL", {"definitions"}},
   std::pair<std::string, std::set<std::string>>{"THE_OS_LINUX", {"definitions"}},
   std::pair<std::string, std::set<std::string>>{"THE_OS_MACOS", {"definitions"}},

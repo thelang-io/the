@@ -747,7 +747,7 @@ fn generateType (t: ASTType) str {
       : "{" + os_EOL + paramsCode + os_EOL + "  }"
 
     return "this->createFn(" + paramsCode + ", " +
-      generateType(t.returnType) + ", std::nullopt, true)"
+      generateType(t.returnType) + ")"
   }
 
   if t is ASTTypeId {

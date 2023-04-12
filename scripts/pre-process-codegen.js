@@ -37,6 +37,27 @@ const banner = '/*!' + os.EOL +
   ' * limitations under the License.' + os.EOL +
   ' */' + os.EOL
 
+const ENTITIES_THROWS_METADATA = {
+  array_request_Header: true,
+  array_request_Header_free: false,
+  array_str: true,
+  array_str_free: false,
+  error_Error: false,
+  error_Error_alloc: true,
+  fs_Stats: false,
+  fs_Stats_alloc: true,
+  map_str_str: false,
+  pair_str_str: false,
+  request_Header: false,
+  request_Header_alloc: true,
+  request_Request: false,
+  request_Response: false,
+  request_Response_alloc: true,
+  url_URL: false,
+  url_URL_alloc: true,
+  url_URL_free: false
+}
+
 async function main () {
   const metadata = parseMetadata()
   const entries = fs.readdirSync(codegenDir).filter(it => it.slice(-4) === '.cpp')
@@ -77,8 +98,10 @@ async function main () {
         name: parsed.name,
         decl: cParseDecl(parsed),
         def: fnContent,
+        fileDependencies: [],
         dependencies: [],
         entityDependencies: [],
+        throws: false,
         usesAdvancedEscaping
       }
 
@@ -96,7 +119,7 @@ async function main () {
     const metadataDependencies = []
     const metadataEntityDependencies = []
 
-    for (const dependency of api[key].dependencies) {
+    for (const dependency of api[key].fileDependencies) {
       if (Object.prototype.hasOwnProperty.call(api, dependency)) {
         if (!metadataDependencies.includes(dependency)) {
           metadataDependencies.push(dependency)
@@ -118,6 +141,53 @@ async function main () {
     api[key].entityDependencies = metadataEntityDependencies
   }
 
+  while (true) {
+    let hasChanges = false
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+
+      if (api[key].throws) {
+        continue
+      }
+
+      let throws = api[key].fileDependencies.includes('error_throw')
+
+      if (!throws) {
+        for (const dependency of api[key].fileDependencies) {
+          if (Object.prototype.hasOwnProperty.call(metadata, dependency)) {
+            continue
+          }
+
+          if (Object.prototype.hasOwnProperty.call(api, dependency)) {
+            if (api[dependency].throws) {
+              throws = true
+              break
+            }
+          } else {
+            if (!Object.prototype.hasOwnProperty.call(ENTITIES_THROWS_METADATA, dependency)) {
+              throw new Error('Throw metadata does not exist for dependency `' + dependency + '`')
+            }
+
+            if (ENTITIES_THROWS_METADATA[dependency]) {
+              throws = true
+              break
+            }
+          }
+        }
+      }
+
+      if (throws) {
+        api[key].throws = throws
+        hasChanges = true
+      }
+    }
+
+    if (!hasChanges) {
+      break
+    }
+  }
+
   let output = banner + os.EOL
 
   output += '#ifndef SRC_CODEGEN_API_HPP' + os.EOL
@@ -133,8 +203,9 @@ async function main () {
   output += '  std::string def;' + os.EOL
   output += '  std::set<std::string> dependencies;' + os.EOL
   output += '  std::set<std::string> entityDependencies;' + os.EOL
+  output += '  bool throws;' + os.EOL
   output += '};' + os.EOL + os.EOL
-  output += 'extern const std::map<std::string, CodegenAPIItem> codegenAPI = {' + os.EOL
+  output += 'extern inline const std::map<std::string, CodegenAPIItem> codegenAPI = {' + os.EOL
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i]
@@ -155,7 +226,8 @@ async function main () {
     }
 
     output += `    {${item.dependencies.sort().map(it => '"' + it + '"').join(', ')}},` + os.EOL
-    output += `    {${item.entityDependencies.sort().map(it => '"' + it + '"').join(', ')}}` + os.EOL
+    output += `    {${item.entityDependencies.sort().map(it => '"' + it + '"').join(', ')}},` + os.EOL
+    output += '    ' + (item.throws ? 'true' : 'false') + os.EOL
 
     if (i !== keys.length - 1) {
       output += `  }},` + os.EOL + os.EOL
@@ -336,8 +408,8 @@ function apiItemEval (item, code) {
       isName = true
       i += 1
     } else if (isName && ch == '}') {
-      if (name !== item.name && !item.dependencies.includes(name)) {
-        item.dependencies.push(name)
+      if (name !== item.name && !item.fileDependencies.includes(name)) {
+        item.fileDependencies.push(name)
       }
 
       result += name

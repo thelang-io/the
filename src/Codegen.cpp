@@ -165,9 +165,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObj(this->ast->typeMap.get("url_URL"));
 
   for (const auto &[name, item] : codegenAPI) {
-    for (const auto &entityDependency : item.entityDependencies) {
-      this->api[name] = item;
-    }
+    this->api[name] = item;
   }
 
   this->_typeNameObjDef(this->ast->typeMap.get("error_Error"));
@@ -3166,7 +3164,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
     def += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
     def += "  _{size_t} l = 0;" EOL;
-    def += "  " + elementTypeInfo.typeRefCode + "d = alloc(self.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
+    def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(self.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
     def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
     def += "    if (n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) ";
     def += "{" + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + "})) {" EOL;
