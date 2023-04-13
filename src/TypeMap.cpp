@@ -193,7 +193,7 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
 }
 
 Type *TypeMap::createMethod (const std::vector<TypeFnParam> &params, Type *returnType, TypeCallInfo callInfo) {
-  auto typeBody = TypeFn{returnType, params, true, false, std::move(callInfo)};
+  auto typeBody = TypeFn{returnType, params, false, true, std::move(callInfo)};
   auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {

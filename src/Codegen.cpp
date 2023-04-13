@@ -157,6 +157,10 @@ Codegen::Codegen (AST *a) {
 }
 
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
+  for (const auto &[name, item] : codegenAPI) {
+    this->api[name] = item;
+  }
+
   this->_typeNameObj(this->ast->typeMap.get("error_Error"));
   this->_typeNameObj(this->ast->typeMap.get("fs_Stats"));
   this->_typeNameObj(this->ast->typeMap.get("request_Header"));
@@ -164,8 +168,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObj(this->ast->typeMap.get("request_Response"));
   this->_typeNameObj(this->ast->typeMap.get("url_URL"));
 
-  for (const auto &[name, item] : codegenAPI) {
-    this->api[name] = item;
+  for (auto &[name, item] : this->api) {
+    for (const auto &entityDependency : item.entityDependencies) {
+      this->_apiEval("_{" + entityDependency + "}", 0, name, &item.dependencies);
+    }
   }
 
   this->_typeNameObjDef(this->ast->typeMap.get("error_Error"));
@@ -176,12 +182,6 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   });
   this->_typeNameObjDef(this->ast->typeMap.get("request_Response"));
   this->_typeNameObjDef(this->ast->typeMap.get("url_URL"));
-
-  for (auto &[name, item] : this->api) {
-    for (const auto &entityDependency : item.entityDependencies) {
-      this->_apiEval("_{" + entityDependency + "}", 0, name, &item.dependencies);
-    }
-  }
 
   auto nodes = this->ast->gen();
   auto mainCode = this->_block(nodes, false);
@@ -2286,6 +2286,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
   } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
     auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
     auto calleeTypeInfo = this->_typeInfo(exprCall.callee.type);
+    auto fnType = std::get<TypeFn>(calleeTypeInfo.realType->body);
     auto code = std::string();
 
     if (calleeTypeInfo.realType->builtin && calleeTypeInfo.realType->codeName == "@print") {
@@ -2351,7 +2352,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       code += ")";
       code = this->_apiEval(code, 1);
-      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
     } else if (calleeTypeInfo.realType->builtin && calleeTypeInfo.realType->codeName == "@utils_swap") {
       auto argTypeInfo = this->_typeInfo(exprCall.args[0].expr.type);
       auto argRealTypeInfo = argTypeInfo;
@@ -2365,139 +2365,142 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         ", " + this->_nodeExpr(exprCall.args[1].expr, argTypeInfo.type) + ", sizeof(" + argRealTypeInfo.typeCodeTrimmed + "))",
         1
       );
+    } else {
+      auto bodyCode = std::string();
 
-      return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
-    }
-
-    auto fnType = std::get<TypeFn>(calleeTypeInfo.realType->body);
-    auto bodyCode = std::string();
-
-    if (!fnType.params.empty() && !calleeTypeInfo.realType->builtin) {
-      auto paramsName = calleeTypeInfo.realTypeName + "P";
-      bodyCode += this->_apiEval("(struct _{" + paramsName + "}) {");
-    }
-
-    for (auto i = static_cast<std::size_t>(0); i < fnType.params.size(); i++) {
-      auto param = fnType.params[i];
-      auto paramTypeInfo = this->_typeInfo(param.type);
-      auto foundArg = std::optional<ASTExprCallArg>{};
-      auto foundArgIdx = static_cast<std::size_t>(0);
-
-      if (param.name != std::nullopt) {
-        for (auto j = static_cast<std::size_t>(0); j < exprCall.args.size(); j++) {
-          if (exprCall.args[j].id == param.name) {
-            foundArgIdx = j;
-            foundArg = exprCall.args[foundArgIdx];
-            break;
-          }
-        }
-      } else if (i < exprCall.args.size()) {
-        foundArgIdx = i;
-        foundArg = exprCall.args[foundArgIdx];
+      if (!fnType.params.empty() && !calleeTypeInfo.realType->builtin) {
+        auto paramsName = calleeTypeInfo.realTypeName + "P";
+        bodyCode += this->_apiEval("(struct _{" + paramsName + "}) {");
       }
 
-      if (!param.required && !param.variadic) {
-        bodyCode += std::string(i == 0 ? "" : ", ") + (foundArg == std::nullopt ? "0" : "1");
-      }
+      for (auto i = static_cast<std::size_t>(0); i < fnType.params.size(); i++) {
+        auto param = fnType.params[i];
+        auto paramTypeInfo = this->_typeInfo(param.type);
+        auto foundArg = std::optional<ASTExprCallArg>{};
+        auto foundArgIdx = static_cast<std::size_t>(0);
 
-      bodyCode += i == 0 && (param.required || param.variadic) ? "" : ", ";
-
-      if (param.variadic) {
-        auto paramTypeElementType = std::get<TypeArray>(param.type->body).elementType;
-        auto variadicArgs = std::vector<ASTExprCallArg>{};
-
-        if (foundArg != std::nullopt) {
-          variadicArgs.push_back(*foundArg);
-
-          for (auto j = foundArgIdx + 1; j < exprCall.args.size(); j++) {
-            auto exprCallArg = exprCall.args[j];
-
-            if (exprCallArg.id != std::nullopt && *exprCallArg.id != param.name) {
+        if (param.name != std::nullopt) {
+          for (auto j = static_cast<std::size_t>(0); j < exprCall.args.size(); j++) {
+            if (exprCall.args[j].id == param.name) {
+              foundArgIdx = j;
+              foundArg = exprCall.args[foundArgIdx];
               break;
             }
-
-            variadicArgs.push_back(exprCallArg);
           }
+        } else if (i < exprCall.args.size()) {
+          foundArgIdx = i;
+          foundArg = exprCall.args[foundArgIdx];
         }
 
-        bodyCode += this->_apiEval("_{" + paramTypeInfo.typeName + "_alloc}(") + std::to_string(variadicArgs.size());
-
-        for (const auto &variadicArg : variadicArgs) {
-          bodyCode += ", " + this->_nodeExpr(variadicArg.expr, paramTypeElementType);
+        if (!param.required && !param.variadic) {
+          bodyCode += std::string(i == 0 ? "" : ", ") + (foundArg == std::nullopt ? "0" : "1");
         }
 
-        bodyCode += ")";
-      } else if (foundArg != std::nullopt) {
-        bodyCode += this->_nodeExpr(foundArg->expr, paramTypeInfo.type);
-      } else {
-        bodyCode += this->_exprCallDefaultArg(paramTypeInfo);
+        bodyCode += i == 0 && (param.required || param.variadic) ? "" : ", ";
+
+        if (param.variadic) {
+          auto paramTypeElementType = std::get<TypeArray>(param.type->body).elementType;
+          auto variadicArgs = std::vector<ASTExprCallArg>{};
+
+          if (foundArg != std::nullopt) {
+            variadicArgs.push_back(*foundArg);
+
+            for (auto j = foundArgIdx + 1; j < exprCall.args.size(); j++) {
+              auto exprCallArg = exprCall.args[j];
+
+              if (exprCallArg.id != std::nullopt && *exprCallArg.id != param.name) {
+                break;
+              }
+
+              variadicArgs.push_back(exprCallArg);
+            }
+          }
+
+          bodyCode += this->_apiEval("_{" + paramTypeInfo.typeName + "_alloc}(") + std::to_string(variadicArgs.size());
+
+          for (const auto &variadicArg : variadicArgs) {
+            bodyCode += ", " + this->_nodeExpr(variadicArg.expr, paramTypeElementType);
+          }
+
+          bodyCode += ")";
+        } else if (foundArg != std::nullopt) {
+          bodyCode += this->_nodeExpr(foundArg->expr, paramTypeInfo.type);
+        } else {
+          bodyCode += this->_exprCallDefaultArg(paramTypeInfo);
+        }
       }
-    }
 
-    if (!fnType.params.empty() && !calleeTypeInfo.realType->builtin) {
-      bodyCode += "}";
-    }
-
-    auto fnName = std::string();
-
-    if (calleeTypeInfo.realType->builtin && !fnType.callInfo.empty()) {
-      fnName = this->_apiEval("_{" + fnType.callInfo.codeName + "}");
-    } else if (fnType.callInfo.empty()) {
-      fnName = this->_nodeExpr(exprCall.callee, calleeTypeInfo.realType, true);
-    } else {
-      fnName = Codegen::name(fnType.callInfo.codeName);
-    }
-
-    if (
-      fnType.isMethod &&
-      this->state.contextVars.contains(fnName) &&
-      (nodeExpr.type->isRef() || !targetType->isRef())
-    ) {
-      fnName = "*" + fnName;
-    }
-
-    if (fnName.starts_with("*")) {
-      fnName = "(" + fnName + ")";
-    }
-
-    auto selfCode = std::string();
-    auto isSelfParenthesized = false;
-
-    if (fnType.isMethod && fnType.callInfo.isSelfFirst) {
-      auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
-      auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
-
-      selfCode += calleeTypeInfo.realType->builtin ? "" : ", ";
-      isSelfParenthesized = nodeExprAccess.parenthesized;
-
-      if (calleeTypeInfo.realType->builtin) {
-        selfCode += this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, fnType.callInfo.isSelfMut);
-      } else {
-        selfCode += this->_genCopyFn(fnType.callInfo.selfType, this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, true));
+      if (!fnType.params.empty() && !calleeTypeInfo.realType->builtin) {
+        bodyCode += "}";
       }
-    }
 
-    code = fnName;
+      auto fnName = std::string();
 
-    if (!calleeTypeInfo.realType->builtin || fnType.callInfo.empty()) {
-      code += ".f(" + code + ".x";
-    } else if (!isSelfParenthesized) {
-      code += "(";
-    }
+      if (calleeTypeInfo.realType->builtin && !fnType.callInfo.empty()) {
+        fnName = this->_apiEval("_{" + fnType.callInfo.codeName + "}");
+      } else if (fnType.callInfo.empty()) {
+        fnName = this->_nodeExpr(exprCall.callee, calleeTypeInfo.realType, true);
+      } else {
+        fnName = Codegen::name(fnType.callInfo.codeName);
+      }
 
-    code += selfCode;
+      if (
+        fnType.isMethod &&
+        this->state.contextVars.contains(fnName) &&
+        (nodeExpr.type->isRef() || !targetType->isRef())
+      ) {
+        fnName = "*" + fnName;
+      }
 
-    if (!bodyCode.empty()) {
-      code += !calleeTypeInfo.realType->builtin || !selfCode.empty() ? ", " : "";
-      code += bodyCode;
-    }
+      if (fnName.starts_with("*")) {
+        fnName = "(" + fnName + ")";
+      }
 
-    if (!isSelfParenthesized) {
-      code += ")";
+      auto selfCode = std::string();
+      auto isSelfParenthesized = false;
+
+      if (fnType.isMethod && fnType.callInfo.isSelfFirst) {
+        auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
+        auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
+
+        selfCode += calleeTypeInfo.realType->builtin ? "" : ", ";
+        isSelfParenthesized = nodeExprAccess.parenthesized;
+
+        if (calleeTypeInfo.realType->builtin) {
+          selfCode += this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, fnType.callInfo.isSelfMut);
+        } else {
+          selfCode += this->_genCopyFn(fnType.callInfo.selfType, this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, true));
+        }
+      }
+
+      code = fnName;
+
+      if (!calleeTypeInfo.realType->builtin || fnType.callInfo.empty()) {
+        code += ".f(" + code + ".x";
+      } else if (!isSelfParenthesized) {
+        code += "(";
+      }
+
+      code += selfCode;
+
+      if (!bodyCode.empty()) {
+        code += !calleeTypeInfo.realType->builtin || !selfCode.empty() ? ", " : "";
+        code += bodyCode;
+      }
+
+      if (!isSelfParenthesized) {
+        code += ")";
+      }
     }
 
     if (!root && nodeExpr.type->isRef() && !targetType->isRef()) {
       code = this->_genCopyFn(targetType, "*" + code);
+    }
+
+    if (fnType.throws) {
+      auto line = std::to_string(nodeExpr.start.line);
+      auto col = std::to_string(nodeExpr.start.col + 1);
+      code = this->_apiEval("(_{error_stack_pos}(&err_state, " + line + ", " + col + "), " + code + ")", 1);
     }
 
     code = !root ? code : this->_genFreeFn(nodeExpr.type, code);

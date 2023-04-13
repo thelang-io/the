@@ -18,7 +18,6 @@
 #define SRC_AST_NODE_HPP
 
 #include "ASTExpr.hpp"
-#include "Reader.hpp"
 
 struct ASTCatchClause;
 struct ASTFnDeclParam;

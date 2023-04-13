@@ -1531,7 +1531,7 @@ ASTNode AST::_wrapNode ([[maybe_unused]] const ParserStmt &stmt, const ASTNodeBo
 
 ASTNodeExpr AST::_wrapNodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, const ASTExpr &expr) {
   auto nodeExprType = this->_nodeExprType(stmtExpr, targetType);
-  return ASTNodeExpr{nodeExprType, std::make_shared<ASTExpr>(expr), stmtExpr.parenthesized};
+  return ASTNodeExpr{nodeExprType, std::make_shared<ASTExpr>(expr), stmtExpr.parenthesized, stmtExpr.start, stmtExpr.end};
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
