@@ -1177,7 +1177,6 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
 // todo insert error_stack_pos before call expressions if they throw
 // todo then wrap all throwing calls with setjmp and if throws jump to CLEANUP section
 // todo if has cleanup then jump to cleanup, otherwise jump to upper function
-// todo test all
 
 std::string Codegen::_fnDecl (
   std::shared_ptr<Var> var,
@@ -2500,7 +2499,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     if (fnType.throws) {
       auto line = std::to_string(nodeExpr.start.line);
       auto col = std::to_string(nodeExpr.start.col + 1);
-      code = this->_apiEval("(_{error_stack_pos}(&err_state, " + line + ", " + col + "), " + code + ")", 1);
+      code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), " + code + ")", 2);
     }
 
     code = !root ? code : this->_genFreeFn(nodeExpr.type, code);
