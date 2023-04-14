@@ -288,8 +288,16 @@ class ASTChecker {
 
   bool _throwsNode (const std::vector<ASTNode> &nodes) const {
     for (const auto &node : nodes) {
-      if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
+      if (std::holds_alternative<ASTNodeThrow>(*node.body) || std::holds_alternative<ASTNodeTry>(*node.body)) {
         return true;
+      } else if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
+        auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
+
+        for (const auto &member : nodeEnumDecl.members) {
+          if (member.init != std::nullopt && throwsNodeExpr(*member.init)) {
+            return true;
+          }
+        }
       } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
         auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
 
@@ -305,13 +313,43 @@ class ASTChecker {
       } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
         auto nodeIf = std::get<ASTNodeIf>(*node.body);
 
-        if (this->_throwsNode(nodeIf.body)) {
+        if (throwsNodeExpr(nodeIf.cond) || this->_throwsNode(nodeIf.body)) {
           return true;
+        } else if (nodeIf.alt != std::nullopt) {
+          if (std::holds_alternative<ASTBlock>(*nodeIf.alt) && this->_throwsNode(std::get<ASTBlock>(*nodeIf.alt))) {
+            return true;
+          } else if (std::holds_alternative<ASTNode>(*nodeIf.alt) && this->_throwsNode({ std::get<ASTNode>(*nodeIf.alt) })) {
+            return true;
+          }
         }
       } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
         auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
 
-        if (this->_throwsNode(nodeLoop.body)) {
+        if (nodeLoop.init != std::nullopt && this->_throwsNode({ *nodeLoop.init })) {
+          return true;
+        } else if (nodeLoop.cond != std::nullopt && throwsNodeExpr(*nodeLoop.cond)) {
+          return true;
+        } else if (nodeLoop.upd != std::nullopt && throwsNodeExpr(*nodeLoop.upd)) {
+          return true;
+        } else if (this->_throwsNode(nodeLoop.body)) {
+          return true;
+        }
+      } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
+        auto nodeMain = std::get<ASTNodeMain>(*node.body);
+
+        if (this->_throwsNode(nodeMain.body)) {
+          return true;
+        }
+      } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
+        auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
+
+        if (nodeReturn.body != std::nullopt && throwsNodeExpr(*nodeReturn.body)) {
+          return true;
+        }
+      } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
+        auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
+
+        if (nodeVarDecl.init != std::nullopt && throwsNodeExpr(*nodeVarDecl.init)) {
           return true;
         }
       }

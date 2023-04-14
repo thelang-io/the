@@ -138,9 +138,10 @@ Type *TypeMap::createEnumerator (const std::string &enumeratorName, const std::s
 Type *TypeMap::createFn (
   const std::vector<TypeFnParam> &params,
   Type *returnType,
+  bool throws,
   const std::optional<TypeCallInfo> &callInfo
 ) {
-  auto typeBody = TypeFn{returnType, params, false, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
+  auto typeBody = TypeFn{returnType, params, throws, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo};
   auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {
@@ -192,8 +193,8 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   return selfType;
 }
 
-Type *TypeMap::createMethod (const std::vector<TypeFnParam> &params, Type *returnType, TypeCallInfo callInfo) {
-  auto typeBody = TypeFn{returnType, params, false, true, std::move(callInfo)};
+Type *TypeMap::createMethod (const std::vector<TypeFnParam> &params, Type *returnType, bool throws, TypeCallInfo callInfo) {
+  auto typeBody = TypeFn{returnType, params, throws, true, std::move(callInfo)};
   auto newType = Type{"", "", typeBody};
 
   for (const auto &item : this->_items) {
@@ -1055,7 +1056,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   auto filterTypeFn = TypeFn{selfType, {
     TypeFnParam{"predicate", this->createFn({
       TypeFnParam{"it", elementType, false, true, false}
-    }, this->get("bool")), false, true, false}
+    }, this->get("bool"), false), false, true, false}
   }, filterCallInfo.throws, true, filterCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".filter", "@array.filter", filterTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"filter", this->_items.back().get(), false, true});
@@ -1064,7 +1065,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
     TypeFnParam{"iterator", this->createFn({
       TypeFnParam{"it", elementType, false, true, false},
       TypeFnParam{"idx", this->get("int"), false, true, false}
-    }, this->get("void")), false, true, false}
+    }, this->get("void"), false), false, true, false}
   }, forEachCallInfo.throws, true, forEachCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".forEach", "@array.forEach", forEachTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"forEach", this->_items.back().get(), false, true});
@@ -1112,7 +1113,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
     TypeFnParam{"comparator", this->createFn({
       TypeFnParam{"a", elementType, false, true, false},
       TypeFnParam{"b", elementType, false, true, false}
-    }, this->get("int")), false, true, false}
+    }, this->get("int"), false), false, true, false}
   }, sortCallInfo.throws, true, sortCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".sort", "@array.sort", sortTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"sort", this->_items.back().get(), false, true});
