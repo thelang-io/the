@@ -1143,8 +1143,7 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
     return this->_apiEval("(_{struct any}) {0, _{NULL}, 0, _{NULL}, _{NULL}}");
   } else if (typeInfo.type->isArray() || typeInfo.type->isMap()) {
-    this->_activateEntity(typeInfo.typeName + "_alloc");
-    return typeInfo.typeName + "_alloc(0)";
+    return this->_apiEval("_{" + typeInfo.typeName + "_alloc}(0)");
   } else if (typeInfo.type->isBool()) {
     return this->_apiEval("_{false}");
   } else if (typeInfo.type->isChar()) {
@@ -1165,10 +1164,9 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
       fieldsCode += ", " + this->_exprObjDefaultField(fieldTypeInfo);
     }
 
-    this->_activateEntity(typeInfo.typeName + "_alloc");
-    return typeInfo.typeName + "_alloc(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")";
+    return this->_apiEval("_{" + typeInfo.typeName + "_alloc}(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")", 1);
   } else if (typeInfo.type->isStr()) {
-    return this->_apiEval(R"(_{str_alloc}(""))", 1);
+    return this->_apiEval(R"(_{str_alloc}(""))");
   } else {
     return "0";
   }
