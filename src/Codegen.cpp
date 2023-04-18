@@ -877,6 +877,7 @@ std::string Codegen::_apiEval (
 std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
   auto initialIndent = this->indent;
   auto initialCleanUp = this->state.cleanUp;
+  auto jumpedBefore = false;
   auto code = std::string();
 
   if (saveCleanUp) {
@@ -912,6 +913,35 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
       code += this->_node(node, true, CODEGEN_PHASE_INIT);
+    } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
+      auto callExprs = ASTChecker(node).getExprOfType<ASTExprCall>();
+      auto hasThrowingCall = false;
+
+      for (const auto &callExpr : callExprs) {
+        if (ASTChecker(callExpr).throws()) {
+          hasThrowingCall = true;
+          break;
+        }
+      }
+
+      if (hasThrowingCall) {
+        if (!jumpedBefore) {
+          code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) {" EOL);
+        } else {
+          code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) {" EOL);
+        }
+
+        if (!this->state.cleanUp.empty()) {
+          code += std::string(this->indent + 2, ' ') + this->_apiEval("goto " + this->state.cleanUp.currentLabel() + ";" EOL);
+        } else {
+          code += std::string(this->indent + 2, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], 1);" EOL);
+        }
+
+        code += std::string(this->indent, ' ') + "}" EOL;
+        jumpedBefore = true;
+      }
+
+      code += this->_node(node);
     } else {
       code += this->_node(node);
     }
@@ -931,6 +961,16 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
 
     if (!this->state.cleanUp.empty() && this->state.cleanUp.returnVarUsed) {
       code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
+    }
+
+    if (this->builtins.varErrState) {
+      code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) ");
+
+      if (!this->state.cleanUp.empty()) {
+        code += this->_apiEval("goto " + initialCleanUp.currentLabel() + ";" EOL);
+      } else {
+        code += this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], 1);" EOL);
+      }
     }
 
     this->state.cleanUp = initialCleanUp;
@@ -1171,10 +1211,6 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
     return "0";
   }
 }
-
-// todo insert error_stack_pos before call expressions if they throw
-// todo then wrap all throwing calls with setjmp and if throws jump to CLEANUP section
-// todo if has cleanup then jump to cleanup, otherwise jump to upper function
 
 std::string Codegen::_fnDecl (
   std::shared_ptr<Var> var,
@@ -1814,8 +1850,45 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     code = std::string(this->indent, ' ') + "_{error_stack_pos}(&_{err_state}, " + std::to_string(node.start.line) + ", " + std::to_string(node.start.col + 1) + ");" EOL;
     code += std::string(this->indent, ' ') + "_{error_throw}(&_{err_state}, _{" + argNodeExprDef + "}, (void *) " + argNodeExpr + ");" EOL;
 
+    code = this->_apiEval(code);
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
+    // todo finally implementation
+    auto nodeTry = std::get<ASTNodeTry>(*node.body);
+
+    code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) == 0) {" EOL);
+    this->varMap.save();
+    code += this->_block(nodeTry.body);
+    this->varMap.restore();
+
+    for (const auto &handler : nodeTry.handlers) {
+      auto handlerVarDecl = std::get<ASTNodeVarDecl>(*handler.param.body);
+      auto handleTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
+      auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
+
+      auto paramCode = handleTypeInfo.typeCodeConst + Codegen::name(handlerVarDecl.var->codeName) + " = ";
+      paramCode += "(" + handleTypeInfo.typeCodeTrimmed + ") _{err_state}.ctx;";
+
+      code += std::string(this->indent, ' ') + this->_apiEval("} else if (_{err_state}.id == _{" + handlerDef + "}) {" EOL);
+      code += std::string(this->indent + 2, ' ') + this->_apiEval(paramCode) + EOL;
+
+      this->varMap.save();
+      code += this->_block(handler.body);
+      this->varMap.restore();
+    }
+
+    code += std::string(this->indent, ' ') + "} else {" EOL;
+    this->indent += 2;
+
+    if (!this->state.cleanUp.empty()) {
+      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+    } else {
+      code += std::string(this->indent, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], 1);" EOL);
+    }
+
+    this->indent -= 2;
+    code += std::string(this->indent, ' ') + "}" EOL;
+
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*node.body)) {
     return this->_wrapNode(node, code);

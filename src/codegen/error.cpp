@@ -59,11 +59,11 @@ const std::vector<std::string> codegenError = {
   R"~(    })~" EOL
   R"~(    d = _{re_alloc}(d, l + z);)~" EOL
   R"~(    if (it.col == 0 && it.line == 0) {)~" EOL
-  R"~(      z = _{sprintf}(&d[l], fmt, it.name, it.file);)~" EOL
+  R"~(      _{sprintf}(&d[l], fmt, it.name, it.file);)~" EOL
   R"~(    } else if (it.col == 0) {)~" EOL
-  R"~(      z = _{sprintf}(&d[l], fmt, it.name, it.file, it.line);)~" EOL
+  R"~(      _{sprintf}(&d[l], fmt, it.name, it.file, it.line);)~" EOL
   R"~(    } else {)~" EOL
-  R"~(      z = _{sprintf}(&d[l], fmt, it.name, it.file, it.line, it.col);)~" EOL
+  R"~(      _{sprintf}(&d[l], fmt, it.name, it.file, it.line, it.col);)~" EOL
   R"~(    })~" EOL
   R"~(    l += z;)~" EOL
   R"~(  })~" EOL
