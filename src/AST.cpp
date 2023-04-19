@@ -97,6 +97,17 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
         AST::populateParents(*method.body, &node);
       }
     }
+  } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
+    auto &nodeTry = std::get<ASTNodeTry>(*node.body);
+    AST::populateParents(nodeTry.body, &node);
+
+    for (auto &handler : nodeTry.handlers) {
+      AST::populateParents(handler.body, &node);
+    }
+
+    if (nodeTry.finalizer != std::nullopt) {
+      AST::populateParents(*nodeTry.finalizer, &node);
+    }
   }
 }
 

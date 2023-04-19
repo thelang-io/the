@@ -340,7 +340,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.varErrState) {
-    builtinVarCode += "err_state_t err_state;" EOL;
+    builtinVarCode += "err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};" EOL;
   }
 
   if (this->builtins.varLibOpensslInit) {
@@ -471,23 +471,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     output += "  argv = _argv_;" EOL;
   }
 
-  if (this->builtins.varErrState) {
-    output += R"(  error_stack_push(&err_state, ")" + this->reader->path +  R"(", "main");)" EOL;
-    output += R"(  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) {)" EOL;
-    output += R"(    struct error_Error *err = err_state.ctx;)" EOL;
-    output += R"(    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL;
-    output += R"(    exit(EXIT_FAILURE);)" EOL;
-    output += R"(  })" EOL;
-  }
-
   output += mainCode;
   output += mainCleanUpCode;
-
-  if (this->builtins.varErrState) {
-    output += "  error_stack_pop(&err_state);" EOL;
-  }
-
   output += "}" EOL;
+
   return std::make_tuple(output, this->flags);
 }
 
@@ -675,15 +662,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("libUnistd");
   } else if (name == "varErrState") {
     this->builtins.varErrState = true;
-    this->_activateBuiltin("definitions");
-    this->_activateBuiltin("libSetJmp");
-    this->_activateBuiltin("libStdio");
-    this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeErrState");
-    this->_activateBuiltin("typeStr");
-    this->_activateEntity("error_Error");
-    this->_apiEval("_{error_stack_push}");
-    this->_apiEval("_{error_stack_pop}");
   } else if (name == "varLibOpensslInit") {
     this->builtins.varLibOpensslInit = true;
     this->_activateBuiltin("libStdbool");
@@ -905,10 +884,24 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       i--;
     } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
       auto saveIndent = this->indent;
+      auto throws = ASTChecker(node).throws();
+
+      if (throws) {
+        code += this->_apiEval(R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", "main");)" EOL);
+      }
 
       this->indent = 0;
       code += this->_node(node);
       this->indent = saveIndent;
+
+      if (throws) {
+        code += this->_apiEval(R"(  _{error_stack_pop}(&_{err_state});)" EOL);
+        code += this->_apiEval(R"(  if (_{err_state}.id != -1) {)" EOL);
+        code += this->_apiEval(R"(    struct _{error_Error} *err = _{err_state}.ctx;)" EOL);
+        code += this->_apiEval(R"(    _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL);
+        code += this->_apiEval(R"(    _{exit}(_{EXIT_FAILURE});)" EOL);
+        code += this->_apiEval(R"(  })" EOL);
+      }
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
@@ -931,7 +924,10 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
           code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) {" EOL);
         }
 
+        code += std::string(this->indent + 2, ' ') + this->state.cleanUp.currentErrorVar() + " = 1;" EOL;
+
         if (!this->state.cleanUp.empty()) {
+          code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
           code += std::string(this->indent + 2, ' ') + this->_apiEval("goto " + this->state.cleanUp.currentLabel() + ";" EOL);
         } else {
           code += std::string(this->indent + 2, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], 1);" EOL);
@@ -956,6 +952,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       (!ASTChecker(nodes).endsWith<ASTNodeReturn>() || ASTChecker(nodes[0].parent).is<ASTNodeLoop>()) &&
       this->state.cleanUp.breakVarUsed
     ) {
+      // todo test if should be this->state.cleanUp.currentBreakVar
       code += std::string(this->indent, ' ') + "if (" + initialCleanUp.currentBreakVar() + " == 1) break;" EOL;
     }
 
@@ -963,8 +960,8 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
     }
 
-    if (this->builtins.varErrState) {
-      code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) ");
+    if (this->state.cleanUp.errorVarUsed) {
+      code += std::string(this->indent, ' ') + this->_apiEval("if (" + this->state.cleanUp.currentErrorVar() + " != 0) ");
 
       if (!this->state.cleanUp.empty()) {
         code += this->_apiEval("goto " + initialCleanUp.currentLabel() + ";" EOL);
@@ -1328,7 +1325,11 @@ std::string Codegen::_fnDecl (
 
         bodyCode = R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(");)" EOL;
         bodyCode += tmpBodyCode;
-        bodyCode += "  _{error_stack_pop}(&_{err_state});" EOL;
+        bodyCode += R"(  _{error_stack_pop}(&_{err_state});)" EOL;
+      }
+
+      if (this->state.cleanUp.errorVarUsed) {
+        bodyCode += "  if (" + this->state.cleanUp.currentErrorVar() + " != 0) _{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], 1);" EOL;
       }
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
@@ -1337,6 +1338,10 @@ std::string Codegen::_fnDecl (
 
       if (this->state.cleanUp.returnVarUsed) {
         bodyCode.insert(0, "  unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
+      }
+
+      if (this->state.cleanUp.errorVarUsed) {
+        bodyCode.insert(0, "  unsigned char " + this->state.cleanUp.currentErrorVar() + " = 0;" EOL);
       }
 
       decl += returnTypeInfo.typeCode + typeName + " (void *";
@@ -1870,6 +1875,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
       paramCode += "(" + handleTypeInfo.typeCodeTrimmed + ") _{err_state}.ctx;";
 
       code += std::string(this->indent, ' ') + this->_apiEval("} else if (_{err_state}.id == _{" + handlerDef + "}) {" EOL);
+      code += std::string(this->indent + 2, ' ') + this->_apiEval("_{error_unset}(&_{err_state});" EOL);
       code += std::string(this->indent + 2, ' ') + this->_apiEval(paramCode) + EOL;
 
       this->varMap.save();

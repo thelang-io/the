@@ -56,10 +56,8 @@ std::string CodegenCleanUp::currentBreakVar () {
 std::string CodegenCleanUp::currentErrorVar () {
   this->errorVarUsed = true;
 
-  if (this->type == CODEGEN_CLEANUP_FN) {
+  if (this->type == CODEGEN_CLEANUP_FN || this->parent->type == CODEGEN_CLEANUP_ROOT) {
     return "e";
-  } else if (this->parent == nullptr) {
-    throw Error("tried getting error var on nullptr in CodegenCleanUp");
   }
 
   return this->parent->currentErrorVar();

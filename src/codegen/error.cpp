@@ -70,6 +70,10 @@ const std::vector<std::string> codegenError = {
   R"~(  return (_{struct str}) {d, l};)~" EOL
   R"~(})~" EOL,
 
+  R"(void error_unset (_{err_state_t} *state) {)" EOL
+  R"(  state->id = -1;)" EOL
+  R"(})" EOL,
+
   R"(struct _{error_Error} *new_error (_{struct str} n1) {)" EOL
   R"(  return _{error_Error_alloc}(n1, _{str_alloc}(""));)" EOL
   R"(})" EOL
