@@ -72,6 +72,12 @@ class ASTChecker {
   }
 
   template <typename T>
+  bool insideOf () const {
+    this->_checkNode();
+    return this->_insideOfNode<T>(this->_nodes);
+  }
+
+  template <typename T>
   bool is () const {
     this->_checkNode();
     return this->_isNodeMethod<T>(this->_nodes);
@@ -376,6 +382,32 @@ class ASTChecker {
           return it.body != std::nullopt && this->_hasNode<T>(*it.body);
         });
       }
+    }
+
+    return false;
+  }
+
+  template <typename T>
+  bool _insideOfNode (const std::vector<ASTNode> &nodes) const {
+    if (nodes.empty()) {
+      return false;
+    }
+
+    auto parent = nodes[0].parent;
+
+    while (parent != nullptr) {
+      if (std::holds_alternative<T>(*parent->body)) {
+        return true;
+      } else if (
+        std::holds_alternative<ASTNodeEnumDecl>(*parent->body) ||
+        std::holds_alternative<ASTNodeFnDecl>(*parent->body) ||
+        std::holds_alternative<ASTNodeMain>(*parent->body) ||
+        std::holds_alternative<ASTNodeObjDecl>(*parent->body)
+      ) {
+        return false;
+      }
+
+      parent = parent->parent;
     }
 
     return false;

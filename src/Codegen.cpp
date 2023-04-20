@@ -156,6 +156,7 @@ Codegen::Codegen (AST *a) {
   this->reader = this->ast->reader;
 }
 
+// todo test throwing global variable initialization
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   for (const auto &[name, item] : codegenAPI) {
     this->api[name] = item;
@@ -184,7 +185,22 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObjDef(this->ast->typeMap.get("url_URL"));
 
   auto nodes = this->ast->gen();
-  auto mainCode = this->_block(nodes, false);
+  auto mainCode = std::string();
+
+  if (ASTChecker(nodes).throws()) {
+    mainCode += this->_apiEval(R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", "main");)" EOL);
+
+    auto mainCleanUpBoilerplate = std::string();
+    mainCleanUpBoilerplate += R"(_{error_stack_pop}(&_{err_state});)" EOL;
+    mainCleanUpBoilerplate += R"(if (_{err_state}.id != -1) {)" EOL;
+    mainCleanUpBoilerplate += R"(  struct _{error_Error} *err = _{err_state}.ctx;)" EOL;
+    mainCleanUpBoilerplate += R"(  _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL;
+    mainCleanUpBoilerplate += R"(  _{exit}(_{EXIT_FAILURE});)" EOL;
+    mainCleanUpBoilerplate += R"(})";
+    this->state.cleanUp.add(this->_apiEval(mainCleanUpBoilerplate));
+  }
+
+  mainCode += this->_block(nodes, false);
   auto mainCleanUpCode = this->state.cleanUp.gen(2);
 
   auto defineCode = std::string();
@@ -884,24 +900,10 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       i--;
     } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
       auto saveIndent = this->indent;
-      auto throws = ASTChecker(node).throws();
-
-      if (throws) {
-        code += this->_apiEval(R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", "main");)" EOL);
-      }
 
       this->indent = 0;
       code += this->_node(node);
       this->indent = saveIndent;
-
-      if (throws) {
-        code += this->_apiEval(R"(  _{error_stack_pop}(&_{err_state});)" EOL);
-        code += this->_apiEval(R"(  if (_{err_state}.id != -1) {)" EOL);
-        code += this->_apiEval(R"(    struct _{error_Error} *err = _{err_state}.ctx;)" EOL);
-        code += this->_apiEval(R"(    _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL);
-        code += this->_apiEval(R"(    _{exit}(_{EXIT_FAILURE});)" EOL);
-        code += this->_apiEval(R"(  })" EOL);
-      }
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
@@ -924,7 +926,9 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
           code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) {" EOL);
         }
 
-        code += std::string(this->indent + 2, ' ') + this->state.cleanUp.currentErrorVar() + " = 1;" EOL;
+        if (!ASTChecker(node).insideOf<ASTNodeMain>()) {
+          code += std::string(this->indent + 2, ' ') + this->state.cleanUp.currentErrorVar() + " = 1;" EOL;
+        }
 
         if (!this->state.cleanUp.empty()) {
           code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
@@ -960,8 +964,14 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
     }
 
-    if (this->state.cleanUp.errorVarUsed) {
-      code += std::string(this->indent, ' ') + this->_apiEval("if (" + this->state.cleanUp.currentErrorVar() + " != 0) ");
+    if (this->state.cleanUp.errorVarUsed && !ASTChecker(nodes[0].parent).is<ASTNodeMain>()) {
+      code += std::string(this->indent, ' ');
+
+      if (ASTChecker(nodes).insideOf<ASTNodeMain>()) {
+        code += this->_apiEval("if (_{err_state}.id != -1) ");
+      } else {
+        code += this->_apiEval("if (" + this->state.cleanUp.currentErrorVar() + " != 0) ");
+      }
 
       if (!this->state.cleanUp.empty()) {
         code += this->_apiEval("goto " + initialCleanUp.currentLabel() + ";" EOL);
@@ -1325,6 +1335,7 @@ std::string Codegen::_fnDecl (
 
         bodyCode = R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(");)" EOL;
         bodyCode += tmpBodyCode;
+        // todo should be placed in cleanup?
         bodyCode += R"(  _{error_stack_pop}(&_{err_state});)" EOL;
       }
 
@@ -1884,15 +1895,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     }
 
     code += std::string(this->indent, ' ') + "} else {" EOL;
-    this->indent += 2;
-
-    if (!this->state.cleanUp.empty()) {
-      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
-    } else {
-      code += std::string(this->indent, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], 1);" EOL);
-    }
-
-    this->indent -= 2;
+    code += std::string(this->indent + 2, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
     code += std::string(this->indent, ' ') + "}" EOL;
 
     return this->_wrapNode(node, code);
