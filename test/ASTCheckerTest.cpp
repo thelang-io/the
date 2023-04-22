@@ -31,7 +31,7 @@ ASTChecker astCheckerTestExprGen () {
   auto nodes = testing::NiceMock<MockAST>("main {a := 1 a + 1}" EOL).gen();
   auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
 
-  return ASTChecker(*std::get<ASTNodeExpr>(*nodeMain.body[1].body).body);
+  return ASTChecker(std::get<ASTNodeExpr>(*nodeMain.body[1].body));
 }
 
 TEST(ASTCheckerTest, CtorWithExprs) {
@@ -40,8 +40,8 @@ TEST(ASTCheckerTest, CtorWithExprs) {
 
   EXPECT_NO_THROW({
     ASTChecker({
-      *std::get<ASTNodeExpr>(*nodeMain.body[1].body).body,
-      *std::get<ASTNodeExpr>(*nodeMain.body[2].body).body
+      std::get<ASTNodeExpr>(*nodeMain.body[1].body),
+      std::get<ASTNodeExpr>(*nodeMain.body[2].body)
     });
   });
 }

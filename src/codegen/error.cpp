@@ -19,11 +19,10 @@
 
 // todo pack all long jumps into intuitive functions
 const std::vector<std::string> codegenError = {
-  R"(_{noreturn} void error_throw (_{err_state_t} *state, int id, void *ctx) {)" EOL
+  R"(void error_assign (_{err_state_t} *state, int id, void *ctx) {)" EOL
   R"(  state->id = id;)" EOL
   R"(  state->ctx = ctx;)" EOL
   R"(  *((_{struct str} *) &((struct _{error_Error} *) state->ctx)->__THE_0_stack) = _{error_stack_str}(state);)" EOL
-  R"(  _{longjmp}(state->buf[state->buf_idx - 1], 1);)" EOL
   R"(})" EOL,
 
   R"(void error_stack_pop (_{err_state_t} *state) {)" EOL
