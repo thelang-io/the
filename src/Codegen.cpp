@@ -926,10 +926,6 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
           code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) {" EOL);
         }
 
-        if (!ASTChecker(node).insideOf<ASTNodeMain>()) {
-          code += std::string(this->indent + 2, ' ') + this->state.cleanUp.currentErrorVar() + " = 1;" EOL;
-        }
-
         if (!this->state.cleanUp.empty()) {
           code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
           code += std::string(this->indent + 2, ' ') + this->_apiEval("goto " + this->state.cleanUp.currentLabel() + ";" EOL);

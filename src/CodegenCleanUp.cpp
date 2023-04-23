@@ -53,16 +53,6 @@ std::string CodegenCleanUp::currentBreakVar () {
   return this->parent->currentBreakVar();
 }
 
-std::string CodegenCleanUp::currentErrorVar () {
-  this->errorVarUsed = true;
-
-  if (this->type == CODEGEN_CLEANUP_FN || this->parent->type == CODEGEN_CLEANUP_ROOT) {
-    return "e";
-  }
-
-  return this->parent->currentErrorVar();
-}
-
 std::string CodegenCleanUp::currentLabel () {
   this->valueVarUsed = true;
 

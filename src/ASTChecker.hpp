@@ -55,7 +55,7 @@ class ASTChecker {
     return this->_endsWithNode<T>(this->_nodes);
   }
 
-  // todo
+  // todo test
   template <typename T>
   std::vector<ASTNodeExpr> getExprOfType () const {
     if (!this->_exprs.empty()) {
