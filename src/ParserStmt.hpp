@@ -153,7 +153,6 @@ struct ParserStmtThrow {
 struct ParserStmtTry {
   ParserBlock body;
   std::vector<ParserCatchClause> handlers;
-  std::optional<ParserBlock> finalizer;
 };
 
 struct ParserStmtTypeDecl {

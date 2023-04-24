@@ -325,11 +325,6 @@ class ASTChecker {
           auto nodeTryHandlerBodyResult = this->_getExprOfTypeFromNodes<T>(handler.body);
           result.insert(result.end(), nodeTryHandlerBodyResult.begin(), nodeTryHandlerBodyResult.end());
         }
-
-        if (nodeTry.finalizer != std::nullopt) {
-          auto nodeTryFinalizerResult = this->_getExprOfTypeFromNodes<T>(*nodeTry.finalizer);
-          result.insert(result.end(), nodeTryFinalizerResult.begin(), nodeTryFinalizerResult.end());
-        }
       } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
         auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
 

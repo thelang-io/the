@@ -277,12 +277,6 @@ std::string ASTNode::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "</NodeTryHandlers>" EOL;
     }
 
-    if (nodeTry.finalizer != std::nullopt) {
-      result += std::string(indent + 2, ' ') + "<NodeTryFinalizer>" EOL;
-      result += blockToXml(*nodeTry.finalizer, indent + 4);
-      result += std::string(indent + 2, ' ') + "</NodeTryFinalizer>" EOL;
-    }
-
     result += std::string(indent, ' ') + "</NodeTry>";
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*this->body)) {
     auto nodeTypeDecl = std::get<ASTNodeTypeDecl>(*this->body);

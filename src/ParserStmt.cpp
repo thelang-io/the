@@ -552,12 +552,6 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "</StmtTryHandlers>" EOL;
     }
 
-    if (stmtTry.finalizer != std::nullopt) {
-      result += std::string(indent + 2, ' ') + "<StmtTryFinalizer>" EOL;
-      result += blockToXml(*stmtTry.finalizer, indent + 4);
-      result += std::string(indent + 2, ' ') + "</StmtTryFinalizer>" EOL;
-    }
-
     result += std::string(indent, ' ') + "</StmtTry>";
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*this->body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*this->body);

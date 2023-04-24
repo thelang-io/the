@@ -104,10 +104,6 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
     for (auto &handler : nodeTry.handlers) {
       AST::populateParents(handler.body, &node);
     }
-
-    if (nodeTry.finalizer != std::nullopt) {
-      AST::populateParents(*nodeTry.finalizer, &node);
-    }
   }
 }
 
@@ -740,7 +736,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto stmtTry = std::get<ParserStmtTry>(*stmt.body);
     auto nodeTryBody = this->_block(stmtTry.body, varStack);
     auto nodeTryHandlers = std::vector<ASTCatchClause>{};
-    auto nodeTryFinalizer = std::optional<ASTBlock>{};
 
     for (const auto &stmtTryHandler : stmtTry.handlers) {
       this->varMap.save();
@@ -764,11 +759,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       nodeTryHandlers.push_back(ASTCatchClause{handlerParam, handlerBody});
     }
 
-    if (stmtTry.finalizer != std::nullopt) {
-      nodeTryFinalizer = this->_block(*stmtTry.finalizer, varStack);
-    }
-
-    auto nodeTry = ASTNodeTry{nodeTryBody, nodeTryHandlers, nodeTryFinalizer};
+    auto nodeTry = ASTNodeTry{nodeTryBody, nodeTryHandlers};
     return this->_wrapNode(stmt, nodeTry);
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*stmt.body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*stmt.body);

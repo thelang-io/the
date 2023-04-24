@@ -1856,7 +1856,6 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     code = this->_apiEval(code);
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
-    // todo finally implementation
     auto nodeTry = std::get<ASTNodeTry>(*node.body);
 
     code += std::string(this->indent, ' ') + this->_apiEval("switch (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++])) {" EOL);

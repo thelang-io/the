@@ -138,7 +138,6 @@ struct ASTNodeThrow {
 struct ASTNodeTry {
   ASTBlock body;
   std::vector<ASTCatchClause> handlers;
-  std::optional<ASTBlock> finalizer;
 };
 
 struct ASTNodeTypeDecl {
