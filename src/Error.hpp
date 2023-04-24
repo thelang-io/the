@@ -116,7 +116,7 @@
 // #define E0175 "E0175 - Try statement can't have multiple finally blocks"
 #define E0176 "E0176 - Unexpected statement after catch keyword"
 #define E0177 "E0177 - Catch clause parameter can't be mutable"
-#define E0178 "E0178 - Expected throw condition argument"
+#define E0178 "E0178 - Expected throw statement argument"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

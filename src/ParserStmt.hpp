@@ -145,7 +145,6 @@ struct ParserStmtReturn {
   std::optional<ParserStmtExpr> body;
 };
 
-// todo change the way throw is handled to expr
 struct ParserStmtThrow {
   ParserStmtExpr arg;
 };
