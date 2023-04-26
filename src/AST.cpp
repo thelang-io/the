@@ -643,7 +643,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
       auto methodDeclName = stmtFnDecl.id.val;
       auto methodDeclVar = this->varMap.get(type->name + "." + methodDeclName);
-      auto methodType = std::get<TypeFn>(methodDeclVar->type->body);
       auto methodDeclParams = std::vector<ASTFnDeclParam>{};
       auto methodDeclVarStack = this->varMap.varStack();
 
@@ -683,6 +682,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       this->typeMap.stack.pop_back();
 
       if (methodDeclBody != std::nullopt) {
+        auto methodType = std::get<TypeFn>(methodDeclVar->type->body);
         auto throws = ASTChecker(*methodDeclBody).throws();
 
         if (throws) {
