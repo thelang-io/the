@@ -883,6 +883,11 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
 
   for (auto i = static_cast<std::size_t>(0); i < nodes.size(); i++) {
     auto node = nodes[i];
+    auto nodeChecker = ASTChecker(node);
+
+    auto throwWrappableNode = std::holds_alternative<ASTNodeExpr>(*node.body) ||
+      std::holds_alternative<ASTNodeVarDecl>(*node.body) ||
+      std::holds_alternative<ASTNodeVarDecl>(*node.body);
 
     if (i < nodes.size() - 1 && isHoistingFriendlyNode(node) && isHoistingFriendlyNode(nodes[i + 1])) {
       for (auto j = i; j < nodes.size() && isHoistingFriendlyNode(nodes[j]); j++) {
@@ -908,36 +913,25 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
       code += this->_node(node, true, CODEGEN_PHASE_INIT);
-    } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-      auto callExprs = ASTChecker(node).getExprOfType<ASTExprCall>();
-      auto hasThrowingCall = false;
+    } else if (nodeChecker.throws() && throwWrappableNode) {
+      this->state.cleanUp.jumpUsed = true;
 
-      for (const auto &callExpr : callExprs) {
-        if (ASTChecker(callExpr).throws()) {
-          hasThrowingCall = true;
-          break;
-        }
+      if (!jumpedBefore) {
+        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) {" EOL);
+      } else {
+        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) {" EOL);
       }
 
-      if (hasThrowingCall) {
-        if (!jumpedBefore) {
-          code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) {" EOL);
-        } else {
-          code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) {" EOL);
-        }
-
-        if (!this->state.cleanUp.empty()) {
-          code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
-          code += std::string(this->indent + 2, ' ') + this->_apiEval("goto " + this->state.cleanUp.currentLabel() + ";" EOL);
-        } else {
-          code += std::string(this->indent + 2, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
-        }
-
-        code += std::string(this->indent, ' ') + "}" EOL;
-        jumpedBefore = true;
+      if (initialCleanUp.isClosestJump()) {
+        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
+      } else {
+        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
+        code += std::string(this->indent + 2, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
       }
 
+      code += std::string(this->indent, ' ') + "}" EOL;
       code += this->_node(node);
+      jumpedBefore = true;
     } else {
       code += this->_node(node);
     }
@@ -946,7 +940,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
   if (saveCleanUp) {
     code += this->state.cleanUp.gen(this->indent);
     auto nodesChecker = ASTChecker(nodes);
-    auto nodesParentChecker = ASTChecker(nodes.begin()->parent);
+    auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
 
     if (
       (!nodesChecker.endsWith<ASTNodeBreak>() || nodesParentChecker.is<ASTNodeLoop>()) &&
@@ -963,13 +957,16 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
     }
 
     if (nodesChecker.throws() && !nodesParentChecker.is<ASTNodeMain>() && !nodesChecker.has<ASTNodeThrow>()) {
-      code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) ");
+      code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) {" EOL);
 
-      if (!this->state.cleanUp.empty()) {
-        code += this->_apiEval("goto " + initialCleanUp.currentLabel() + ";" EOL);
+      if (initialCleanUp.isClosestJump()) {
+        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
       } else {
-        code += this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
+        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
+        code += std::string(this->indent + 2, ' ') + "goto " + initialCleanUp.currentLabel() + ";" EOL;
       }
+
+      code += std::string(this->indent, ' ') + "}" EOL;
     }
 
     this->state.cleanUp = initialCleanUp;
@@ -1109,7 +1106,7 @@ std::string Codegen::_exprCallDefaultArg (const CodegenTypeInfo &typeInfo) {
   } else if (typeInfo.type->isChar()) {
     return R"('\0')";
   } else if (typeInfo.type->isObj() && typeInfo.type->builtin && typeInfo.type->codeName == "@buffer_Buffer") {
-    return this->_apiEval("(struct buffer) {}");
+    return this->_apiEval("(_{struct buffer}) {}");
   } else if (typeInfo.type->isObj() || typeInfo.type->isOpt()) {
     return this->_apiEval("_{NULL}");
   } else if (typeInfo.type->isStr()) {
@@ -1191,6 +1188,8 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
     throw Error("tried object expression default field on invalid type");
   } else if (typeInfo.type->isOpt()) {
     return this->_apiEval("_{NULL}");
+  } else if (typeInfo.type->isObj() && typeInfo.type->builtin && typeInfo.type->codeName == "@buffer_Buffer") {
+    return this->_apiEval("(_{struct buffer}) {}");
   } else if (typeInfo.type->isObj()) {
     auto fieldsCode = std::string();
 
@@ -1847,17 +1846,20 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     code = std::string(this->indent, ' ') + "_{error_stack_pos}(&_{err_state}, " + std::to_string(node.start.line) + ", " + std::to_string(node.start.col + 1) + ");" EOL;
     code += std::string(this->indent, ' ') + "_{error_assign}(&_{err_state}, _{" + argNodeExprDef + "}, (void *) " + argNodeExpr + ");" EOL;
 
-    if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
-      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
-    } else {
+    if (this->state.cleanUp.isClosestJump()) {
       code += std::string(this->indent, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
+    } else {
+      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
     }
 
     code = this->_apiEval(code);
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
     auto nodeTry = std::get<ASTNodeTry>(*node.body);
+    auto initialStateCleanUp = this->state.cleanUp;
 
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
+    this->state.cleanUp.jumpUsed = true;
     code += std::string(this->indent, ' ') + this->_apiEval("switch (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++])) {" EOL);
     this->indent += 2;
     code += std::string(this->indent, ' ') + "case 0: {" EOL;
@@ -1896,6 +1898,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     this->indent -= 2;
     code += std::string(this->indent, ' ') + "}" EOL;
 
+    this->state.cleanUp = initialStateCleanUp;
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*node.body)) {
     return this->_wrapNode(node, code);

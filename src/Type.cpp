@@ -183,7 +183,7 @@ TypeField Type::getField (const std::string &fieldName) const {
   });
 
   if (typeField == this->fields.end()) {
-    throw Error("tried to get non-existing field");
+    throw Error("tried to get non-existing field `" + fieldName + "`");
   }
 
   return *typeField;
