@@ -316,51 +316,51 @@ TEST_F(TypeTest, GetsField) {
 TEST_F(TypeTest, GetsNonExistingField) {
   EXPECT_THROW_WITH_MESSAGE({
     this->alias_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->any_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->arr_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->enum_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->fn_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->map_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->obj_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->opt_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->ref_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->union_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("int")->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("str")->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 }
 
 TEST_F(TypeTest, GetsProp) {

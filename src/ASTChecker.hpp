@@ -429,7 +429,7 @@ class ASTChecker {
 
         if (exprAccess.elem != std::nullopt) {
           return true;
-        } else if (exprAccess.prop != std::nullopt) {
+        } else if (exprAccess.expr != std::nullopt && exprAccess.prop != std::nullopt) {
           auto typeField = TypeField{};
 
           if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
@@ -437,7 +437,10 @@ class ASTChecker {
             typeField = var->type->getField(*exprAccess.prop);
           } else {
             auto exprAccessExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
-            typeField = exprAccessExpr.type->getField(*exprAccess.prop);
+
+            if (!exprAccessExpr.type->isEnum()) {
+              typeField = exprAccessExpr.type->getField(*exprAccess.prop);
+            }
           }
 
           if (!typeField.callInfo.empty() && typeField.callInfo.throws) {
@@ -472,8 +475,9 @@ class ASTChecker {
         }
       } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
         auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
+        auto calleeRealType = Type::real(exprCall.callee.type);
 
-        if (std::get<TypeFn>(exprCall.callee.type->body).throws) {
+        if (std::get<TypeFn>(calleeRealType->body).throws) {
           return true;
         }
       } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
