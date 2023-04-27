@@ -20,8 +20,9 @@
 const std::vector<std::string> codegenURL = {
   R"(struct _{url_URL} *url_parse (_{struct str} s) {)" EOL
   R"(  if (s.l == 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: invalid URL" _{THE_EOL});)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    _{str_free}(s);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL"), _{str_alloc}("")));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{size_t} i = 0;)" EOL
   R"(  for (;; i++) {)" EOL
@@ -30,11 +31,13 @@ const std::vector<std::string> codegenURL = {
   R"(      i++;)" EOL
   R"(      break;)" EOL
   R"(    } else if (!_{isalnum}(ch) && ch != '.' && ch != '-' && ch != '+') {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: invalid URL protocol" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{str_free}(s);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL protocol"), _{str_alloc}("")));)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    } else if (i == s.l - 1) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: invalid URL" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{str_free}(s);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL"), _{str_alloc}("")));)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(  })" EOL
   R"(  _{struct str} protocol;)" EOL
@@ -59,11 +62,15 @@ const std::vector<std::string> codegenURL = {
   R"(  for (;; i++) {)" EOL
   R"(    char ch = s.d[i];)" EOL
   R"(    if (ch == '@' && hostname_start != 0 && pathname_start == 0) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: URL auth is not supported" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{str_free}(protocol);)" EOL
+  R"(      _{str_free}(s);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("URL auth is not supported"), _{str_alloc}("")));)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    } else if (ch == ':' && port_start != 0 && (pathname_start == 0 || search_start == 0 || hash_start == 0)) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: invalid URL port" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{str_free}(protocol);)" EOL
+  R"(      _{str_free}(s);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL port"), _{str_alloc}("")));)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(    if (ch == ':' && hostname_start != 0 && pathname_start == 0) port_start = i;)" EOL
   R"(    else if (ch == '/' && pathname_start == 0) pathname_start = i;)" EOL
@@ -74,8 +81,11 @@ const std::vector<std::string> codegenURL = {
   R"(  _{struct str} hostname = _{str_alloc}("");)" EOL
   R"(  _{size_t} hostname_end = port_start != 0 ? port_start : pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;)" EOL
   R"(  if (hostname_start != 0 && hostname_start == hostname_end) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: invalid URL hostname" _{THE_EOL});)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    _{str_free}(hostname);)" EOL
+  R"(    _{str_free}(protocol);)" EOL
+  R"(    _{str_free}(s);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL hostname"), _{str_alloc}("")));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (hostname_start != 0 && hostname_start != hostname_end) {)" EOL
   R"(    hostname.l = hostname_end - hostname_start;)" EOL
   R"(    hostname.d = _{re_alloc}(hostname.d, hostname.l);)" EOL
@@ -101,8 +111,14 @@ const std::vector<std::string> codegenURL = {
   R"(  _{struct str} origin = _{str_alloc}("");)" EOL
   R"(  if (_{memcmp}(protocol.d, "ftp:", 4) == 0 || _{memcmp}(protocol.d, "http:", 5) == 0 || _{memcmp}(protocol.d, "https:", 6) == 0 || _{memcmp}(protocol.d, "ws:", 3) == 0 || _{memcmp}(protocol.d, "wss:", 4) == 0) {)" EOL
   R"(    if (host.l == 0) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: URL origin is not present" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{str_free}(origin);)" EOL
+  R"(      _{str_free}(host);)" EOL
+  R"(      _{str_free}(port);)" EOL
+  R"(      _{str_free}(hostname);)" EOL
+  R"(      _{str_free}(protocol);)" EOL
+  R"(      _{str_free}(s);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("URL origin is not present"), _{str_alloc}("")));)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(    origin.l = protocol.l + 2 + host.l;)" EOL
   R"(    origin.d = _{re_alloc}(origin.d, origin.l);)" EOL

@@ -17,7 +17,6 @@
 #include "error.hpp"
 #include "../config.hpp"
 
-// todo pack all long jumps into intuitive functions
 const std::vector<std::string> codegenError = {
   R"(void error_assign (_{err_state_t} *state, int id, void *ctx) {)" EOL
   R"(  state->id = id;)" EOL

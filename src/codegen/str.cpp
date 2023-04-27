@@ -17,7 +17,6 @@
 #include "str.hpp"
 #include "../config.hpp"
 
-// todo errors
 const std::vector<std::string> codegenStr = {
   R"(_{struct str} cstr_concat_str (const char *r, _{struct str} s) {)" EOL
   R"(  _{size_t} l = s.l + _{strlen}(r);)" EOL
@@ -388,11 +387,23 @@ const std::vector<std::string> codegenStr = {
   R"(  _{errno} = 0;)" EOL
   R"(  double r = _{strtod}(c, &e);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < -_{DBL_MAX} || _{DBL_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -405,11 +416,23 @@ const std::vector<std::string> codegenStr = {
   R"(  _{errno} = 0;)" EOL
   R"(  float r = _{strtof}(c, &e);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < -_{FLT_MAX} || _{FLT_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -422,11 +445,23 @@ const std::vector<std::string> codegenStr = {
   R"(  _{errno} = 0;)" EOL
   R"(  double r = _{strtod}(c, &e);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < -_{DBL_MAX} || _{DBL_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -435,19 +470,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{int32_t} str_toInt (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -456,19 +508,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{int8_t} str_toI8 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < _{INT8_MIN} || _{INT8_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -477,19 +546,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{int16_t} str_toI16 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < _{INT16_MIN} || _{INT16_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -498,19 +584,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{int32_t} str_toI32 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -519,19 +622,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{int64_t} str_toI64 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  long long r = _{strtoll}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || r < _{INT64_MIN} || _{INT64_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -540,19 +660,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{uint8_t} str_toU8 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || _{UINT8_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -561,19 +698,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{uint16_t} str_toU16 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || _{UINT16_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -582,19 +736,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{uint32_t} str_toU32 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || _{UINT32_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -603,19 +774,36 @@ const std::vector<std::string> codegenStr = {
 
   R"(_{uint64_t} str_toU64 (_{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0" _{THE_EOL}, n1);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, n1);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
   R"(  unsigned long long r = _{strtoull}(c, &e, o1 == 0 ? 10 : n1);)" EOL
   R"(  if (_{errno} == _{ERANGE} || _{UINT64_MAX} < r) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` out of range" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` out of range";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: value `%s` has invalid syntax" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{free}(self.d);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL

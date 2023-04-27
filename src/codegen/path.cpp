@@ -94,8 +94,9 @@ const std::vector<std::string> codegenPath = {
   R"(    unsigned long long v;)" EOL
   R"(    do {)" EOL
   R"(      if (!_{SystemFunction036}((void *) &v, sizeof(v))) {)" EOL
-  R"(        _{fprintf}(_{stderr}, "Error: failed to generate random with `SystemFunction036`" _{THE_EOL});)" EOL
-  R"(        _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(        _{free}(d);)" EOL
+  R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random with `SystemFunction036`"), _{str_alloc}("")));)" EOL
+  R"(        _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(      })" EOL
   R"(      char *p = &d[l - x];)" EOL
   R"(      for (_{size_t} i = 0; i < x; i++) {)" EOL
@@ -118,8 +119,8 @@ const std::vector<std::string> codegenPath = {
   R"(_{struct str} path_tempDirectory () {)" EOL
   R"(  char *d = _{path_mktemp}(_{path_tempDirectoryFunctor});)" EOL
   R"(  if (d == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to create temporary directory" _{THE_EOL});)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create temporary directory"), _{str_alloc}("")));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{struct str} r = _{str_alloc}(d);)" EOL
   R"(  _{free}(d);)" EOL
@@ -137,8 +138,8 @@ const std::vector<std::string> codegenPath = {
   R"(_{struct str} path_tempFile () {)" EOL
   R"(  char *d = _{path_mktemp}(_{path_tempFileFunctor});)" EOL
   R"(  if (d == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to create temporary file" _{THE_EOL});)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create temporary file"), _{str_alloc}("")));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{struct str} r = _{str_alloc}(d);)" EOL
   R"(  _{free}(d);)" EOL
@@ -160,14 +161,15 @@ const std::vector<std::string> codegenPath = {
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{size_t} l = _{GetTempPath}(0, _{NULL});)" EOL
   R"(    if (l == 0) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: failed to get temporary path" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get temporary path"), _{str_alloc}("")));)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(    l -= 1;)" EOL
   R"(    d = _{alloc}(l + 1);)" EOL
   R"(    if (_{GetTempPath}(l + 1, d) == 0) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: failed to get temporary path" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{free}(d);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get temporary path"), _{str_alloc}("")));)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(    if (d[l - 1] != '\\' && d[l - 1] != '/') {)" EOL
   R"(      d[l] = '\\';)" EOL
