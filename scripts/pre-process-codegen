@@ -101,6 +101,15 @@ const ENTITIES_THROWS_METADATA := {
   "url_URL_free": false
 }
 
+const ENTITIES_TRANSFORMER := {
+  "array_request_Header": "__THE_1_array_request_Header",
+  "array_request_Header_free": "__THE_1_array_request_Header_free",
+  "array_str": "__THE_1_array_str",
+  "array_str_free": "__THE_1_array_str_free",
+  "map_str_str": "__THE_1_map_strMSstrME",
+  "pair_str_str": "__THE_1_pair_strMSstrME"
+}
+
 const ARGS := process_args
 const SCRIPT_PATH := fs_isAbsoluteSync(ARGS[0]) ? ARGS[0] : process_cwd() + path_SEP + ARGS[0]
 const SRC_DIR := fs_realpathSync(path_dirname(SCRIPT_PATH) + path_SEP + ".." + path_SEP + "src")
@@ -351,7 +360,12 @@ fn apiItemEval (mut item: ref APIItem, code: str) str {
         item.fileDependencies.push(name)
       }
 
-      result += name
+      if ENTITIES_TRANSFORMER.has(name) {
+        result += ENTITIES_TRANSFORMER.get(name)
+      } else {
+        result += name
+      }
+
       isName = false
       name = ""
     } elif isName {
