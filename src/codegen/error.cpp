@@ -41,7 +41,11 @@ const std::vector<std::string> codegenError = {
   R"~(_{struct str} error_stack_str (_{err_state_t} *state) {)~" EOL
   R"~(  _{struct str} message = ((struct _{error_Error} *) state->ctx)->__THE_0_message;)~" EOL
   R"~(  _{size_t} l = message.l;)~" EOL
-  R"~(  char *d = _{alloc}(l);)~" EOL
+  R"~(  char *d = _{malloc}(l);)~" EOL
+  R"~(  if (d == _{NULL}) {)~" EOL
+  R"~(    _{fprintf}(_{stderr}, "Fatal Error: failed to allocate %zu bytes" _{THE_EOL}, l);)~" EOL
+  R"~(    _{exit}(_{EXIT_FAILURE});)~" EOL
+  R"~(  })~" EOL
   R"~(  _{memcpy}(d, message.d, l);)~" EOL
   R"~(  for (int i = state->stack_idx - 1; i >= 0; i--) {)~" EOL
   R"~(    _{err_stack_t} it = state->stack[i];)~" EOL
@@ -57,7 +61,11 @@ const std::vector<std::string> codegenError = {
   R"~(      fmt = _{THE_EOL} "  at %s (%s:%d:%d)";)~" EOL
   R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file, it.line, it.col);)~" EOL
   R"~(    })~" EOL
-  R"~(    d = _{re_alloc}(d, l + z);)~" EOL
+  R"~(    d = _{realloc}(d, l + z);)~" EOL
+  R"~(    if (d == _{NULL}) {)~" EOL
+  R"~(      _{fprintf}(_{stderr}, "Fatal Error: failed to reallocate %zu bytes" _{THE_EOL}, l + z);)~" EOL
+  R"~(      _{exit}(_{EXIT_FAILURE});)~" EOL
+  R"~(    })~" EOL
   R"~(    if (it.col == 0 && it.line == 0) {)~" EOL
   R"~(      _{sprintf}(&d[l], fmt, it.name, it.file);)~" EOL
   R"~(    } else if (it.col == 0) {)~" EOL
@@ -75,6 +83,6 @@ const std::vector<std::string> codegenError = {
   R"(})" EOL,
 
   R"(struct _{error_Error} *new_error (_{struct str} n1) {)" EOL
-  R"(  return _{error_Error_alloc}(n1, _{str_alloc}(""));)" EOL
+  R"(  return _{error_Error_alloc}(n1, (_{struct str}) {_{NULL}, 0});)" EOL
   R"(})" EOL
 };

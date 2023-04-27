@@ -21,8 +21,12 @@ const std::vector<std::string> codegenGlobals = {
   R"(void *alloc (_{size_t} l) {)" EOL
   R"(  void *r = _{malloc}(l);)" EOL
   R"(  if (r == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to allocate %zu bytes" _{THE_EOL}, l);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "failed to allocate %zu bytes";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, l);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, l);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  return r;)" EOL
   R"(})" EOL,
@@ -60,8 +64,12 @@ const std::vector<std::string> codegenGlobals = {
   R"(void *re_alloc (void *d, _{size_t} l) {)" EOL
   R"(  void *r = _{realloc}(d, l);)" EOL
   R"(  if (r == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to reallocate %zu bytes" _{THE_EOL}, l);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "failed to reallocate %zu bytes";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, l);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, l);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  return r;)" EOL
   R"(})" EOL

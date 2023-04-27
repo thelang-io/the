@@ -805,6 +805,14 @@ std::string Codegen::_apiEval (
         } else if (!(*dependencies)->contains(name)) {
           (*dependencies)->emplace(name);
         }
+      } else if (!sameAsSelfName && name.starts_with("TYPE_") && this->ast->typeMap.has(name.substr(5))) {
+        name = this->_typeDef(this->ast->typeMap.get(name.substr(5)));
+
+        if (dependencies == std::nullopt) {
+          this->_activateEntity(name);
+        } else if (!(*dependencies)->contains(name)) {
+          (*dependencies)->emplace(name);
+        }
       } else if (!sameAsSelfName && name.starts_with("array_")) {
         if (name.ends_with("_free")) {
           name = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6, name.size() - 11)))) + "_free";
@@ -914,23 +922,21 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
       code += this->_node(node, true, CODEGEN_PHASE_INIT);
     } else if (nodeChecker.throws() && throwWrappableNode) {
-      this->state.cleanUp.jumpUsed = true;
-
       if (!jumpedBefore) {
-        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) {" EOL);
+        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) ");
+        this->state.cleanUp.add(this->_apiEval("_{err_state}.buf_idx--;"));
       } else {
-        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) {" EOL);
+        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx]) != 0) ");
       }
 
-      if (initialCleanUp.isClosestJump()) {
-        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
-      } else {
-        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
-        code += std::string(this->indent + 2, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
-      }
+      code += "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+      auto saveStateCleanUp = this->state.cleanUp;
 
-      code += std::string(this->indent, ' ') + "}" EOL;
+      this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &saveStateCleanUp);
+      this->state.cleanUp.jumpUsed = true;
       code += this->_node(node);
+      this->state.cleanUp = saveStateCleanUp;
+
       jumpedBefore = true;
     } else {
       code += this->_node(node);
@@ -956,17 +962,14 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
     }
 
-    if (nodesChecker.throws() && !nodesParentChecker.is<ASTNodeMain>() && !nodesChecker.has<ASTNodeThrow>()) {
-      code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) {" EOL);
+    if (!this->state.cleanUp.empty() && nodesChecker.throws() && !nodesParentChecker.is<ASTNodeMain>()) {
+      code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) ");
 
       if (initialCleanUp.isClosestJump()) {
-        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
+        code += this->_apiEval("_{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);" EOL);
       } else {
-        code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
-        code += std::string(this->indent + 2, ' ') + "goto " + initialCleanUp.currentLabel() + ";" EOL;
+        code += "goto " + initialCleanUp.currentLabel() + ";" EOL;
       }
-
-      code += std::string(this->indent, ' ') + "}" EOL;
     }
 
     this->state.cleanUp = initialCleanUp;
@@ -1264,7 +1267,7 @@ std::string Codegen::_fnDecl (
 
       if (fnType.throws) {
         bodyCode += R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(");)" EOL;
-        this->state.cleanUp.add(this->_apiEval("if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);"));
+        this->state.cleanUp.add(this->_apiEval("if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);"));
         this->state.cleanUp.add("_{error_stack_pop}(&_{err_state});");
       }
 
@@ -1847,7 +1850,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     code += std::string(this->indent, ' ') + "_{error_assign}(&_{err_state}, _{" + argNodeExprDef + "}, (void *) " + argNodeExpr + ");" EOL;
 
     if (this->state.cleanUp.isClosestJump()) {
-      code += std::string(this->indent, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[--_{err_state}.buf_idx], _{err_state}.id);" EOL);
+      code += std::string(this->indent, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);" EOL);
     } else {
       code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
     }
@@ -2086,12 +2089,18 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (exprAccess.elem != std::nullopt) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
         auto objElemCode = this->_nodeExpr(*exprAccess.elem, this->ast->typeMap.get("int"));
+        auto line = std::to_string(nodeExpr.start.line);
+        auto col = std::to_string(nodeExpr.start.col + 1);
+
+        code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), ", 2);
 
         if (objTypeInfo.realType->isArray()) {
-          code = this->_apiEval("_{" + objTypeInfo.realTypeName + "_at}(" + objCode + ", " + objElemCode + ")", 1);
+          code += this->_apiEval("_{" + objTypeInfo.realTypeName + "_at}(" + objCode + ", " + objElemCode + ")", 1);
         } else if (objTypeInfo.realType->isStr()) {
-          code = this->_apiEval("_{str_at}(" + objCode + ", " + objElemCode + ")", 1);
+          code += this->_apiEval("_{str_at}(" + objCode + ", " + objElemCode + ")", 1);
         }
+
+        code += ")";
       }
 
       auto objMemberType = this->state.typeCasts.contains(code) ? this->state.typeCasts[code] : originalObjMemberType;
@@ -3110,12 +3119,16 @@ std::string Codegen::_typeNameArray (Type *type) {
 
     decl += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "}, _{int32_t});";
     def += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "} n, _{int32_t} i) {" EOL;
-    def += "  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((_{int32_t}) n.l))) {" EOL;
-    def += R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId32} " out of array bounds" _{THE_EOL}, i);)" EOL;
-    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
-    def += "  }" EOL;
-    def += "  return i < 0 ? &n.d[n.l + i] : &n.d[i];" EOL;
-    def += "}";
+    def += R"(  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((_{int32_t}) n.l))) {)" EOL;
+    def += R"(    const char *fmt = "index %" _{PRId32} " out of array bounds";)" EOL;
+    def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL;
+    def += R"(    char *d = _{alloc}(z);)" EOL;
+    def += R"(    _{sprintf}(d, fmt, i);)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, _{str_alloc}("")));)" EOL;
+    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(  })" EOL;
+    def += R"(  return i < 0 ? &n.d[n.l + i] : &n.d[i];)" EOL;
+    def += R"(})";
 
     return freeFnEntityIdx;
   });

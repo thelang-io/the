@@ -17,6 +17,7 @@
 #include "str.hpp"
 #include "../config.hpp"
 
+// todo errors
 const std::vector<std::string> codegenStr = {
   R"(_{struct str} cstr_concat_str (const char *r, _{struct str} s) {)" EOL
   R"(  _{size_t} l = s.l + _{strlen}(r);)" EOL
@@ -58,8 +59,12 @@ const std::vector<std::string> codegenStr = {
 
   R"(char *str_at (_{struct str} s, _{int32_t} i) {)" EOL
   R"(  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((_{int32_t}) s.l))) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId32} " out of string bounds" _{THE_EOL}, i);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "index %" _{PRId32} " out of string bounds";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL
+  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    _{sprintf}(d, fmt, i);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, _{str_alloc}("")));)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  return i < 0 ? &s.d[s.l + i] : &s.d[i];)" EOL
   R"(})" EOL,
