@@ -42,7 +42,7 @@ const std::vector<std::string> codegenError = {
   R"~(  _{size_t} l = message.l;)~" EOL
   R"~(  char *d = _{malloc}(l);)~" EOL
   R"~(  if (d == _{NULL}) {)~" EOL
-  R"~(    _{fprintf}(_{stderr}, "Fatal Error: failed to allocate %zu bytes" _{THE_EOL}, l);)~" EOL
+  R"~(    _{fprintf}(_{stderr}, "Fatal Error: failed to allocate %zu bytes in stack generation" _{THE_EOL}, l);)~" EOL
   R"~(    _{exit}(_{EXIT_FAILURE});)~" EOL
   R"~(  })~" EOL
   R"~(  _{memcpy}(d, message.d, l);)~" EOL
@@ -62,7 +62,7 @@ const std::vector<std::string> codegenError = {
   R"~(    })~" EOL
   R"~(    d = _{realloc}(d, l + z);)~" EOL
   R"~(    if (d == _{NULL}) {)~" EOL
-  R"~(      _{fprintf}(_{stderr}, "Fatal Error: failed to reallocate %zu bytes" _{THE_EOL}, l + z);)~" EOL
+  R"~(      _{fprintf}(_{stderr}, "Fatal Error: failed to reallocate %zu bytes in stack generation" _{THE_EOL}, l + z);)~" EOL
   R"~(      _{exit}(_{EXIT_FAILURE});)~" EOL
   R"~(    })~" EOL
   R"~(    if (it.col == 0 && it.line == 0) {)~" EOL

@@ -84,7 +84,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{sprintf}(d, fmt, protocol);)" EOL
   R"(    _{free}(protocol);)" EOL
   R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
-  R"(    goto request_open_l1;)" EOL
+  R"(    goto request_open_cleanup1;)" EOL
   R"(  } else if (url->__THE_0_port.l >= 6) {)" EOL
   R"(    char *port = _{str_cstr}(url->__THE_0_port);)" EOL
   R"(    const char *fmt = "invalid port `%s`";)" EOL
@@ -93,7 +93,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{sprintf}(d, fmt, port);)" EOL
   R"(    _{free}(port);)" EOL
   R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
-  R"(    goto request_open_l1;)" EOL
+  R"(    goto request_open_cleanup1;)" EOL
   R"(  })" EOL
   R"(  char port[6];)" EOL
   R"(  if (url->__THE_0_port.l != 0) {)" EOL
@@ -106,7 +106,7 @@ const std::vector<std::string> codegenRequest = {
   R"(      char *d = _{alloc}(z);)" EOL
   R"(      _{sprintf}(d, fmt, port);)" EOL
   R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
-  R"(      goto request_open_l1;)" EOL
+  R"(      goto request_open_cleanup1;)" EOL
   R"(    })" EOL
   R"(  } else {)" EOL
   R"(    _{memcpy}(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);)" EOL
@@ -117,7 +117,7 @@ const std::vector<std::string> codegenRequest = {
   R"(      _{WSADATA} w;)" EOL
   R"(      if (_{WSAStartup}(_{MAKEWORD}(2, 2), &w) != 0) {)" EOL
   R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to initialize use of Windows Sockets DLL"), _{str_alloc}("")));)" EOL
-  R"(        goto request_open_l1;)" EOL
+  R"(        goto request_open_cleanup1;)" EOL
   R"(      })" EOL
   R"(      _{lib_ws2_init} = _{true};)" EOL
   R"(    })" EOL
@@ -131,7 +131,7 @@ const std::vector<std::string> codegenRequest = {
   R"(  hints.ai_protocol = _{IPPROTO_TCP};)" EOL
   R"(  if (_{getaddrinfo}(hostname, port, &hints, &addr) != 0) {)" EOL
   R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to resolve hostname address"), _{str_alloc}("")));)" EOL
-  R"(    goto request_open_l2;)" EOL
+  R"(    goto request_open_cleanup2;)" EOL
   R"(  })" EOL
   R"(  unsigned char req_free = 0;)" EOL
   R"(  _{struct request} *req = _{alloc}(sizeof(_{struct request}));)" EOL
@@ -146,7 +146,7 @@ const std::vector<std::string> codegenRequest = {
   R"(  if (!socket_res) {)" EOL
   R"(    req_free = 1;)" EOL
   R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create socket"), _{str_alloc}("")));)" EOL
-  R"(    goto request_open_l3;)" EOL
+  R"(    goto request_open_cleanup3;)" EOL
   R"(  })" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, (int) addr->ai_addrlen) != _{SOCKET_ERROR};)" EOL
@@ -163,7 +163,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{free}(origin);)" EOL
   R"(    req_free = 1;)" EOL
   R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
-  R"(    goto request_open_l4;)" EOL
+  R"(    goto request_open_cleanup4;)" EOL
   R"(  })" EOL
   R"(  if (_{strcmp}(port, "443") == 0) {)" EOL
   R"(    if (!_{lib_openssl_init}) {)" EOL
@@ -174,7 +174,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    if (req->ctx == _{NULL}) {)" EOL
   R"(      req_free = 1;)" EOL
   R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create SSL context"), _{str_alloc}("")));)" EOL
-  R"(      goto request_open_l4;)" EOL
+  R"(      goto request_open_cleanup4;)" EOL
   R"(    })" EOL
   R"(    req->ssl = _{SSL_new}(req->ctx);)" EOL
   R"(    _{SSL_set_fd}(req->ssl, (int) req->fd);)" EOL
@@ -183,7 +183,7 @@ const std::vector<std::string> codegenRequest = {
   // todo possible to test with null.badssl.com
   R"(      req_free = 1;)" EOL
   R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to connect to socket with SSL"), _{str_alloc}("")));)" EOL
-  R"(      goto request_open_l5;)" EOL
+  R"(      goto request_open_cleanup5;)" EOL
   R"(    })" EOL
   R"(  })" EOL
   R"(  char *req_headers = _{request_stringifyHeaders}(headers, url, data);)" EOL
@@ -205,33 +205,33 @@ const std::vector<std::string> codegenRequest = {
   R"(    if (z < 0) {)" EOL
   R"(      req_free = 1;)" EOL
   R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to write to socket"), _{str_alloc}("")));)" EOL
-  R"(      goto request_open_l6;)" EOL
+  R"(      goto request_open_cleanup6;)" EOL
   R"(    })" EOL
   R"(    y += (_{size_t}) z;)" EOL
   R"(  })" EOL
-  R"(request_open_l6:)" EOL
+  R"(request_open_cleanup6:)" EOL
   R"(  _{free}(request);)" EOL
   R"(  _{free}(req_path);)" EOL
   R"(  _{free}(req_method);)" EOL
   R"(  _{free}(req_headers);)" EOL
-  R"(request_open_l5:)" EOL
+  R"(request_open_cleanup5:)" EOL
   R"(  if (req_free == 1 && req->ssl != _{NULL}) {)" EOL
   R"(    _{SSL_free}(req->ssl);)" EOL
   R"(    _{SSL_CTX_free}(req->ctx);)" EOL
-  R"(    goto request_open_l3;)" EOL
+  R"(    goto request_open_cleanup3;)" EOL
   R"(  })" EOL
-  R"(request_open_l4:)" EOL
+  R"(request_open_cleanup4:)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    if (req_free == 1) _{closesocket}(req->fd);)" EOL
   R"(  #else)" EOL
   R"(    if (req_free == 1) _{close}(req->fd);)" EOL
   R"(  #endif)" EOL
-  R"(request_open_l3:)" EOL
+  R"(request_open_cleanup3:)" EOL
   R"(  if (req_free == 1) _{free}(req);)" EOL
   R"(  _{freeaddrinfo}(addr);)" EOL
-  R"(request_open_l2:)" EOL
+  R"(request_open_cleanup2:)" EOL
   R"(  _{free}(hostname);)" EOL
-  R"(request_open_l1:)" EOL
+  R"(request_open_cleanup1:)" EOL
   R"(  _{url_URL_free}(url);)" EOL
   R"(  _{array_request_Header_free}(headers);)" EOL
   R"(  _{buffer_free}(data);)" EOL
