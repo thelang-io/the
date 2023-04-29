@@ -133,6 +133,8 @@ const std::vector<std::string> codegenFs = {
   R"(      goto fs_copyFileSync_cleanup1;)" EOL
   R"(    })" EOL
   R"(  #else)" EOL
+  R"(    _{size_t} buf_len = 8192;)" EOL
+  R"(    char buf[buf_len];)" EOL
   R"(    int fd1 = _{open}(c1, _{O_RDONLY});)" EOL
   R"(    if (fd1 < 0) {)" EOL
   R"(      const char *fmt = "failed to open file descriptor of `%s`";)" EOL
@@ -202,8 +204,6 @@ const std::vector<std::string> codegenFs = {
   R"(      goto fs_copyFileSync_cleanup3;)" EOL
   R"(    })" EOL
   R"(    _{size_t} bytes = sb1.st_size;)" EOL
-  R"(    _{size_t} buf_len = 8192;)" EOL
-  R"(    char buf[buf_len];)" EOL
   R"(    while (bytes != 0) {)" EOL
   R"(      _{ssize_t} read_bytes_raw = _{read}(fd1, buf, bytes > buf_len ? buf_len : bytes);)" EOL
   R"(      if (read_bytes_raw <= 0) {)" EOL
