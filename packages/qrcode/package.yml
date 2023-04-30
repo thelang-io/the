@@ -1,0 +1,11 @@
+name: the/qrcode
+version: 0.1.0
+description: QR Code Generator
+license: MIT
+main: src/qrcode
+
+files:
+  - src/qrcode
+
+scripts:
+  test: the build && the run build/result
