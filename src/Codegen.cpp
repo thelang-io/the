@@ -3280,12 +3280,12 @@ std::string Codegen::_typeNameArray (Type *type) {
 
     decl += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *);";
     def += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *self) {" EOL;
-    def += "  if (self->l == 0) {" EOL;
-    def += R"(    _{fprintf}(_{stderr}, "Error: tried getting first element of empty array" THE_EOL);)" EOL;
-    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
-    def += "  }" EOL;
-    def += "  return &self->d[0];" EOL;
-    def += "}";
+    def += R"(  if (self->l == 0) {)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), _{str_alloc}("")));)" EOL;
+    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(  })" EOL;
+    def += R"(  return &self->d[0];)" EOL;
+    def += R"(})";
 
     return 0;
   });
@@ -3337,8 +3337,8 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *);";
     def += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *self) {" EOL;
     def += "  if (self->l == 0) {" EOL;
-    def += R"(    _{fprintf}(_{stderr}, "Error: tried getting last element of empty array" THE_EOL);)" EOL;
-    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), _{str_alloc}("")));)" EOL;
+    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += "  }" EOL;
     def += "  return &self->d[self->l - 1];" EOL;
     def += "}";
@@ -3449,11 +3449,15 @@ std::string Codegen::_typeNameArray (Type *type) {
 
     decl += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *, _{int32_t});";
     def += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *self, _{int32_t} n1) {" EOL;
-    def += "  if ((n1 >= 0 && n1 >= self->l) || (n1 < 0 && n1 < -((_{int32_t}) self->l))) {" EOL;
-    def += R"(    _{fprintf}(_{stderr}, "Error: index %" _{PRId32} " out of array bounds" _{THE_EOL}, n1);)" EOL;
-    def += "    _{exit}(_{EXIT_FAILURE});" EOL;
-    def += "  }" EOL;
-    def += "  _{size_t} i = n1 < 0 ? n1 + self->l : n1;" EOL;
+    def += R"(  if ((n1 >= 0 && n1 >= self->l) || (n1 < 0 && n1 < -((_{int32_t}) self->l))) {)" EOL;
+    def += R"(    const char *fmt = "index %" _{PRId32} " out of array bounds";)" EOL;
+    def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL;
+    def += R"(    char *d = _{alloc}(z);)" EOL;
+    def += R"(    _{sprintf}(d, fmt, n1);)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, _{str_alloc}("")));)" EOL;
+    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(  })" EOL;
+    def += R"(  _{size_t} i = n1 < 0 ? n1 + self->l : n1;)" EOL;
 
     if (elementTypeInfo.type->shouldBeFreed()) {
       def += "  " + this->_genFreeFn(elementTypeInfo.type, "self->d[i]") + ";" EOL;
@@ -3842,12 +3846,12 @@ std::string Codegen::_typeNameMap (Type *type) {
       def += "      " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
     }
 
-    def += "      return r;" EOL;
-    def += "    }" EOL;
-    def += "  }" EOL;
-    def += R"(  _{fprintf}(_{stderr}, "Error: failed to get map value" _{THE_EOL});)" EOL;
-    def += "  _{exit}(_{EXIT_FAILURE});" EOL;
-    def += "}";
+    def += R"(      return r;)" EOL;
+    def += R"(    })" EOL;
+    def += R"(  })" EOL;
+    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), _{str_alloc}("")));)" EOL;
+    def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(})";
 
     return 0;
   });
@@ -3981,12 +3985,12 @@ std::string Codegen::_typeNameMap (Type *type) {
     }
 
     def += "      _{memmove}(&n->d[i], &n->d[i + 1], (--n->l - i) * sizeof(struct _{" + pairTypeName + "}));" EOL;
-    def += "      return n;" EOL;
-    def += "    }" EOL;
-    def += "  }" EOL;
-    def += R"(  _{fprintf}(_{stderr}, "Error: failed to remove map value" _{THE_EOL});)" EOL;
-    def += "  _{exit}(_{EXIT_FAILURE});" EOL;
-    def += "}";
+    def += R"(      return n;)" EOL;
+    def += R"(    })" EOL;
+    def += R"(  })" EOL;
+    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), _{str_alloc}("")));)" EOL;
+    def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(})";
 
     return 0;
   });
