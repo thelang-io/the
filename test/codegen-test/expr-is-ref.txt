@@ -60,13 +60,15 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_ref_int 1
-#define TYPE_float 2
+#define TYPE_error_Error 1
+#define TYPE_ref_int 2
+#define TYPE_float 3
 
 struct any {
   int t;
@@ -75,15 +77,34 @@ struct any {
   struct any (*_copy) (const struct any);
   void (*_free) (struct any);
 };
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_any_ref_int;
 struct __THE_1_any_float;
 struct __THE_1_union_ref_intUSfloatUE;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_any_ref_int {
   int32_t *d;
 };
@@ -93,20 +114,26 @@ struct __THE_1_any_float {
 struct __THE_1_union_ref_intUSfloatUE {
   int t;
   union {
-    int32_t *v1;
-    double v2;
+    int32_t *v2;
+    double v3;
   };
 };
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void any_free (struct any);
 struct any any_realloc (struct any, struct any);
 struct str cstr_concat_str (const char *, struct str);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pos (err_state_t *, int, int);
+struct str error_stack_str (err_state_t *);
 struct str float_str (double);
 struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 struct any __THE_1_any_ref_int_alloc (int32_t *);
 struct any __THE_1_any_ref_int_copy (const struct any);
 void __THE_1_any_ref_int_free (struct any);
@@ -120,8 +147,12 @@ struct __THE_1_union_ref_intUSfloatUE __THE_1_union_ref_intUSfloatUE_realloc (st
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -138,6 +169,54 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(d, r, l - s.l);
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
+  return (struct str) {d, l};
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
   return (struct str) {d, l};
 }
 struct str float_str (double f) {
@@ -188,6 +267,12 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 struct any __THE_1_any_ref_int_alloc (int32_t *d) {
   size_t l = sizeof(struct __THE_1_any_ref_int);
   struct __THE_1_any_ref_int *r = alloc(l);
@@ -224,8 +309,8 @@ struct __THE_1_union_ref_intUSfloatUE __THE_1_union_ref_intUSfloatUE_alloc (int 
   struct __THE_1_union_ref_intUSfloatUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_ref_int) r.v1 = va_arg(args, int32_t *);
-  if (t == TYPE_float) r.v2 = va_arg(args, double);
+  if (t == TYPE_ref_int) r.v2 = va_arg(args, int32_t *);
+  if (t == TYPE_float) r.v3 = va_arg(args, double);
   va_end(args);
   return r;
 }
@@ -241,60 +326,60 @@ int main () {
   const int32_t *__THE_0_testRefInt_0 = &__THE_0_testInt_0;
   const struct any __THE_0_a_0 = __THE_1_any_ref_int_alloc(__THE_0_testRefInt_0);
   if (__THE_0_a_0.t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_a_0.d)->d)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 6, 40), int_str(*((struct __THE_1_any_ref_int *) __THE_0_a_0.d)->d))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_b_0.d)->d)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 10, 40), int_str(*((struct __THE_1_any_ref_int *) __THE_0_b_0.d)->d))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   const struct __THE_1_union_ref_intUSfloatUE __THE_0_c_0 = __THE_1_union_ref_intUSfloatUE_alloc(TYPE_ref_int, __THE_0_testRefInt_0);
   if (__THE_0_c_0.t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*__THE_0_c_0.v1)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 14, 40), int_str(*__THE_0_c_0.v2))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_c_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 15, 27), float_str(__THE_0_c_0.v3))), THE_EOL);
   }
   const struct __THE_1_union_ref_intUSfloatUE __THE_0_d_0 = __THE_1_union_ref_intUSfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*__THE_0_d_0.v1)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 18, 40), int_str(*__THE_0_d_0.v2))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 19, 27), float_str(__THE_0_d_0.v3))), THE_EOL);
   }
   struct any __THE_0_e_0 = __THE_1_any_ref_int_alloc(__THE_0_testRefInt_0);
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_ref_int_alloc(__THE_0_testRefInt_0))).t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_e_0.d)->d)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 22, 55), int_str(*((struct __THE_1_any_ref_int *) __THE_0_e_0.d)->d))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_f_0.d)->d)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 26, 49), int_str(*((struct __THE_1_any_ref_int *) __THE_0_f_0.d)->d))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   struct __THE_1_union_ref_intUSfloatUE __THE_0_g_0 = __THE_1_union_ref_intUSfloatUE_alloc(TYPE_ref_int, __THE_0_testRefInt_0);
   if ((__THE_0_g_0 = __THE_1_union_ref_intUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ref_intUSfloatUE_alloc(TYPE_ref_int, __THE_0_testRefInt_0))).t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*__THE_0_g_0.v1)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 30, 55), int_str(*__THE_0_g_0.v2))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_g_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 31, 27), float_str(__THE_0_g_0.v3))), THE_EOL);
   }
   struct __THE_1_union_ref_intUSfloatUE __THE_0_h_0 = __THE_1_union_ref_intUSfloatUE_alloc(TYPE_float, 3.14);
   if ((__THE_0_h_0 = __THE_1_union_ref_intUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ref_intUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_ref_int) {
-    print(stdout, "sz", cstr_concat_str("ref int ", int_str(*__THE_0_h_0.v1)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("ref int ", (error_stack_pos(&err_state, 34, 49), int_str(*__THE_0_h_0.v2))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 35, 27), float_str(__THE_0_h_0.v3))), THE_EOL);
   }
-  print(stdout, "sz", (__THE_0_a_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_a_0.d)->d)) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", (__THE_0_b_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_b_0.d)->d)) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", (__THE_0_c_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*__THE_0_c_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_c_0.v2)), THE_EOL);
-  print(stdout, "sz", (__THE_0_d_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*__THE_0_d_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_ref_int_alloc(__THE_0_testRefInt_0))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_e_0.d)->d)) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*((struct __THE_1_any_ref_int *) __THE_0_f_0.d)->d)) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_ref_intUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ref_intUSfloatUE_alloc(TYPE_ref_int, __THE_0_testRefInt_0))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*__THE_0_g_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_g_0.v2)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_ref_intUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ref_intUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", int_str(*__THE_0_h_0.v1)) : cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
+  print(stdout, "sz", (__THE_0_a_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 37, 39), int_str(*((struct __THE_1_any_ref_int *) __THE_0_a_0.d)->d))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_b_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 38, 39), int_str(*((struct __THE_1_any_ref_int *) __THE_0_b_0.d)->d))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_c_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 39, 39), int_str(*__THE_0_c_0.v2))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 39, 60), float_str(__THE_0_c_0.v3))), THE_EOL);
+  print(stdout, "sz", (__THE_0_d_0.t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 40, 39), int_str(*__THE_0_d_0.v2))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 40, 60), float_str(__THE_0_d_0.v3))), THE_EOL);
+  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_ref_int_alloc(__THE_0_testRefInt_0))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 41, 54), int_str(*((struct __THE_1_any_ref_int *) __THE_0_e_0.d)->d))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 42, 48), int_str(*((struct __THE_1_any_ref_int *) __THE_0_f_0.d)->d))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_ref_intUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ref_intUSfloatUE_alloc(TYPE_ref_int, __THE_0_testRefInt_0))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 43, 54), int_str(*__THE_0_g_0.v2))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 43, 75), float_str(__THE_0_g_0.v3))), THE_EOL);
+  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_ref_intUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ref_intUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_ref_int) ? cstr_concat_str("ref int ", (error_stack_pos(&err_state, 44, 48), int_str(*__THE_0_h_0.v2))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 44, 69), float_str(__THE_0_h_0.v3))), THE_EOL);
   any_free((struct any) __THE_0_f_0);
   any_free((struct any) __THE_0_e_0);
   any_free((struct any) __THE_0_b_0);

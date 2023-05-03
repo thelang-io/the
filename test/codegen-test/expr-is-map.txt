@@ -57,13 +57,15 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_map_strMSintME 1
-#define TYPE_float 2
+#define TYPE_error_Error 1
+#define TYPE_map_strMSintME 2
+#define TYPE_float 3
 
 struct any {
   int t;
@@ -72,17 +74,36 @@ struct any {
   struct any (*_copy) (const struct any);
   void (*_free) (struct any);
 };
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_pair_strMSintME;
 struct __THE_1_map_strMSintME;
 struct __THE_1_any_map_strMSintME;
 struct __THE_1_any_float;
 struct __THE_1_union_map_strMSintMEUSfloatUE;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_pair_strMSintME {
   struct str f;
   int32_t s;
@@ -101,15 +122,20 @@ struct __THE_1_any_float {
 struct __THE_1_union_map_strMSintMEUSfloatUE {
   int t;
   union {
-    struct __THE_1_map_strMSintME v1;
-    double v2;
+    struct __THE_1_map_strMSintME v2;
+    double v3;
   };
 };
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void any_free (struct any);
 struct any any_realloc (struct any, struct any);
 struct str cstr_concat_str (const char *, struct str);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pos (err_state_t *, int, int);
+struct str error_stack_str (err_state_t *);
 struct str float_str (double);
 struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
@@ -120,6 +146,7 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int, ...);
 struct __THE_1_map_strMSintME __THE_1_map_strMSintME_copy (const struct __THE_1_map_strMSintME);
 void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
@@ -137,8 +164,12 @@ struct __THE_1_union_map_strMSintMEUSfloatUE __THE_1_union_map_strMSintMEUSfloat
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -155,6 +186,54 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(d, r, l - s.l);
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
+  return (struct str) {d, l};
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
   return (struct str) {d, l};
 }
 struct str float_str (double f) {
@@ -199,8 +278,12 @@ void print (FILE *stream, const char *fmt, ...) {
 void *re_alloc (void *d, size_t l) {
   void *r = realloc(d, l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to reallocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -255,6 +338,12 @@ struct str str_escape (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.d);
+}
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
 }
 struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int x, ...) {
   struct __THE_1_pair_strMSintME *d = alloc(x * sizeof(struct __THE_1_pair_strMSintME));
@@ -324,13 +413,13 @@ struct __THE_1_union_map_strMSintMEUSfloatUE __THE_1_union_map_strMSintMEUSfloat
   struct __THE_1_union_map_strMSintMEUSfloatUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_map_strMSintME) r.v1 = va_arg(args, struct __THE_1_map_strMSintME);
-  if (t == TYPE_float) r.v2 = va_arg(args, double);
+  if (t == TYPE_map_strMSintME) r.v2 = va_arg(args, struct __THE_1_map_strMSintME);
+  if (t == TYPE_float) r.v3 = va_arg(args, double);
   va_end(args);
   return r;
 }
 void __THE_1_union_map_strMSintMEUSfloatUE_free (struct __THE_1_union_map_strMSintMEUSfloatUE n) {
-  if (n.t == TYPE_map_strMSintME) __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n.v1);
+  if (n.t == TYPE_map_strMSintME) __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n.v2);
 }
 struct __THE_1_union_map_strMSintMEUSfloatUE __THE_1_union_map_strMSintMEUSfloatUE_realloc (struct __THE_1_union_map_strMSintMEUSfloatUE n1, struct __THE_1_union_map_strMSintMEUSfloatUE n2) {
   __THE_1_union_map_strMSintMEUSfloatUE_free((struct __THE_1_union_map_strMSintMEUSfloatUE) n1);
@@ -340,60 +429,60 @@ struct __THE_1_union_map_strMSintMEUSfloatUE __THE_1_union_map_strMSintMEUSfloat
 int main () {
   const struct any __THE_0_a_0 = __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if (__THE_0_a_0.t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 3, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 7, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   const struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_c_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if (__THE_0_c_0.t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v1))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 11, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v2)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_c_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 12, 27), float_str(__THE_0_c_0.v3))), THE_EOL);
   }
   const struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_d_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v1))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 15, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v2)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 16, 27), float_str(__THE_0_d_0.v3))), THE_EOL);
   }
   struct any __THE_0_e_0 = __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 19, 82), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 23, 51), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if ((__THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v1))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 27, 82), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v2)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_g_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 28, 27), float_str(__THE_0_g_0.v3))), THE_EOL);
   }
   struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14);
   if ((__THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_map_strMSintME) {
-    print(stdout, "sz", cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v1))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 31, 51), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v2)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 32, 27), float_str(__THE_0_h_0.v3))), THE_EOL);
   }
-  print(stdout, "sz", (__THE_0_a_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", (__THE_0_b_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", (__THE_0_c_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v1))) : cstr_concat_str("float ", float_str(__THE_0_c_0.v2)), THE_EOL);
-  print(stdout, "sz", (__THE_0_d_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v1))) : cstr_concat_str("float ", float_str(__THE_0_d_0.v2)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v1))) : cstr_concat_str("float ", float_str(__THE_0_g_0.v2)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v1))) : cstr_concat_str("float ", float_str(__THE_0_h_0.v2)), THE_EOL);
+  print(stdout, "sz", (__THE_0_a_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 34, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_b_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 35, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_c_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 36, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 36, 62), float_str(__THE_0_c_0.v3))), THE_EOL);
+  print(stdout, "sz", (__THE_0_d_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 37, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 37, 62), float_str(__THE_0_d_0.v3))), THE_EOL);
+  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 38, 81), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 39, 50), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 40, 81), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 40, 102), float_str(__THE_0_g_0.v3))), THE_EOL);
+  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 41, 50), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 41, 71), float_str(__THE_0_h_0.v3))), THE_EOL);
   __THE_1_union_map_strMSintMEUSfloatUE_free((struct __THE_1_union_map_strMSintMEUSfloatUE) __THE_0_h_0);
   __THE_1_union_map_strMSintMEUSfloatUE_free((struct __THE_1_union_map_strMSintMEUSfloatUE) __THE_0_g_0);
   any_free((struct any) __THE_0_f_0);

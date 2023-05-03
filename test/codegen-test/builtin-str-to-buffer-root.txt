@@ -21,31 +21,64 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define TYPE_error_Error 1
 
 struct buffer {
   unsigned char *d;
   size_t l;
 };
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str cstr_concat_str (const char *, struct str);
+void error_assign (err_state_t *, int, void *);
+struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct buffer str_toBuffer (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -58,6 +91,50 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(d, r, l - s.l);
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
+  return (struct str) {d, l};
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
   return (struct str) {d, l};
 }
 struct str str_alloc (const char *r) {
@@ -76,6 +153,12 @@ struct str str_concat_cstr (struct str s, const char *r) {
 }
 struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
+}
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
 }
 
 int main () {

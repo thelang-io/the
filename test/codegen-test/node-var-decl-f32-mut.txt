@@ -5,6 +5,20 @@ main {
   a = 3.14
 }
 ======= code =======
+#include <stdlib.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
 int main () {
   float __THE_0_r_0 = 0;
   float __THE_0_a_0 = 0;

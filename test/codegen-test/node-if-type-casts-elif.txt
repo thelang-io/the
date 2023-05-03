@@ -46,33 +46,54 @@ main {
 
 #include <ctype.h>
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_str 1
-#define TYPE_int 2
-#define TYPE_char 3
-#define TYPE_bool 4
+#define TYPE_error_Error 1
+#define TYPE_str 2
+#define TYPE_int 3
+#define TYPE_char 4
+#define TYPE_bool 5
 
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_union_strUSintUScharUSboolUE;
 struct __THE_1_fn$1000;
 struct __THE_1_fn$1000P;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_union_strUSintUScharUSboolUE {
   int t;
   union {
-    struct str v1;
-    int32_t v2;
-    char v3;
-    bool v4;
+    struct str v2;
+    int32_t v3;
+    char v4;
+    bool v5;
   };
 };
 struct __THE_1_fn$1000 {
@@ -84,8 +105,13 @@ struct __THE_1_fn$1000P {
   struct __THE_1_union_strUSintUScharUSboolUE n0;
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+
 void *alloc (size_t);
 unsigned char char_byte (char);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pos (err_state_t *, int, int);
+struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
@@ -93,6 +119,7 @@ struct str str_concat_cstr (struct str, const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_trimStart (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE_alloc (int, ...);
 struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE_copy (const struct __THE_1_union_strUSintUScharUSboolUE);
 void __THE_1_union_strUSintUScharUSboolUE_free (struct __THE_1_union_strUSintUScharUSboolUE);
@@ -102,13 +129,65 @@ void __THE_1_printTest_0 (void *, struct __THE_1_fn$1000P);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
 unsigned char char_byte (char c) {
   return (unsigned char) c;
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
+  return (struct str) {d, l};
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -142,8 +221,12 @@ void print (FILE *stream, const char *fmt, ...) {
 void *re_alloc (void *d, size_t l) {
   void *r = realloc(d, l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to reallocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -183,27 +266,33 @@ struct str str_trimStart (struct str s) {
   }
   return s;
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE_alloc (int t, ...) {
   struct __THE_1_union_strUSintUScharUSboolUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_str) r.v1 = va_arg(args, struct str);
-  if (t == TYPE_int) r.v2 = va_arg(args, int32_t);
-  if (t == TYPE_char) r.v3 = va_arg(args, int);
-  if (t == TYPE_bool) r.v4 = va_arg(args, int);
+  if (t == TYPE_str) r.v2 = va_arg(args, struct str);
+  if (t == TYPE_int) r.v3 = va_arg(args, int32_t);
+  if (t == TYPE_char) r.v4 = va_arg(args, int);
+  if (t == TYPE_bool) r.v5 = va_arg(args, int);
   va_end(args);
   return r;
 }
 struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE_copy (const struct __THE_1_union_strUSintUScharUSboolUE n) {
   struct __THE_1_union_strUSintUScharUSboolUE r = {n.t};
-  if (n.t == TYPE_str) r.v1 = str_copy(n.v1);
-  if (n.t == TYPE_int) r.v2 = n.v2;
-  if (n.t == TYPE_char) r.v3 = n.v3;
-  if (n.t == TYPE_bool) r.v4 = n.v4;
+  if (n.t == TYPE_str) r.v2 = str_copy(n.v2);
+  if (n.t == TYPE_int) r.v3 = n.v3;
+  if (n.t == TYPE_char) r.v4 = n.v4;
+  if (n.t == TYPE_bool) r.v5 = n.v5;
   return r;
 }
 void __THE_1_union_strUSintUScharUSboolUE_free (struct __THE_1_union_strUSintUScharUSboolUE n) {
-  if (n.t == TYPE_str) str_free((struct str) n.v1);
+  if (n.t == TYPE_str) str_free((struct str) n.v2);
 }
 struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE_realloc (struct __THE_1_union_strUSintUScharUSboolUE n1, struct __THE_1_union_strUSintUScharUSboolUE n2) {
   __THE_1_union_strUSintUScharUSboolUE_free((struct __THE_1_union_strUSintUScharUSboolUE) n1);
@@ -212,13 +301,13 @@ struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE
 void __THE_1_printTest_0 (void *px, struct __THE_1_fn$1000P p) {
   const struct __THE_1_union_strUSintUScharUSboolUE __THE_0_test_0 = p.n0;
   if (__THE_0_test_0.t == TYPE_str) {
-    print(stdout, "zzsz", "test is str:", " ", str_trimStart(str_concat_cstr(str_copy(__THE_0_test_0.v1), " test")), THE_EOL);
+    print(stdout, "zzsz", "test is str:", " ", (error_stack_pos(&err_state, 3, 27), str_trimStart(str_concat_cstr(str_copy(__THE_0_test_0.v2), " test"))), THE_EOL);
   } else if (__THE_0_test_0.t == TYPE_int) {
-    print(stdout, "zziz", "test is int:", " ", __THE_0_test_0.v2 + 1, THE_EOL);
+    print(stdout, "zziz", "test is int:", " ", __THE_0_test_0.v3 + 1, THE_EOL);
   } else if (__THE_0_test_0.t == TYPE_char) {
-    print(stdout, "zzbz", "test is char:", " ", char_byte(__THE_0_test_0.v3), THE_EOL);
+    print(stdout, "zzbz", "test is char:", " ", char_byte(__THE_0_test_0.v4), THE_EOL);
   } else {
-    print(stdout, "zzsz", "test is bool:", " ", __THE_0_test_0.v4 == false ? str_alloc("false") : str_alloc("true"), THE_EOL);
+    print(stdout, "zzsz", "test is bool:", " ", __THE_0_test_0.v5 == false ? str_alloc("false") : str_alloc("true"), THE_EOL);
   }
   __THE_1_union_strUSintUScharUSboolUE_free((struct __THE_1_union_strUSintUScharUSboolUE) __THE_0_test_0);
 }

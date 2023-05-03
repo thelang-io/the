@@ -3,6 +3,19 @@ const a: i64
 const b: i64 = 9223372036854775807
 ======= code =======
 #include <stdint.h>
+#include <stdlib.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 
 int main () {
   const int64_t __THE_0_a_0 = 0;

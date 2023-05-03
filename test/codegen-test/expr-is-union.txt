@@ -59,15 +59,17 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_char 1
-#define TYPE_str 2
-#define TYPE_union_charUSstrUE 3
-#define TYPE_float 4
+#define TYPE_error_Error 1
+#define TYPE_char 2
+#define TYPE_str 3
+#define TYPE_union_charUSstrUE 4
+#define TYPE_float 5
 
 struct any {
   int t;
@@ -76,21 +78,40 @@ struct any {
   struct any (*_copy) (const struct any);
   void (*_free) (struct any);
 };
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_union_charUSstrUE;
 struct __THE_1_any_union_charUSstrUE;
 struct __THE_1_any_float;
 struct __THE_1_union_union_charUSstrUEUSfloatUE;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_union_charUSstrUE {
   int t;
   union {
-    char v1;
-    struct str v2;
+    char v2;
+    struct str v3;
   };
 };
 struct __THE_1_any_union_charUSstrUE {
@@ -102,21 +123,27 @@ struct __THE_1_any_float {
 struct __THE_1_union_union_charUSstrUEUSfloatUE {
   int t;
   union {
-    struct __THE_1_union_charUSstrUE v3;
-    double v4;
+    struct __THE_1_union_charUSstrUE v4;
+    double v5;
   };
 };
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void any_free (struct any);
 struct any any_realloc (struct any, struct any);
 struct str char_str (char);
 struct str cstr_concat_str (const char *, struct str);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pos (err_state_t *, int, int);
+struct str error_stack_str (err_state_t *);
 struct str float_str (double);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_alloc (int, ...);
 struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_copy (const struct __THE_1_union_charUSstrUE);
 void __THE_1_union_charUSstrUE_free (struct __THE_1_union_charUSstrUE);
@@ -134,8 +161,12 @@ struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEU
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -156,6 +187,54 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(d, r, l - s.l);
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
+  return (struct str) {d, l};
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
   return (struct str) {d, l};
 }
 struct str float_str (double f) {
@@ -206,28 +285,34 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_alloc (int t, ...) {
   struct __THE_1_union_charUSstrUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_char) r.v1 = va_arg(args, int);
-  if (t == TYPE_str) r.v2 = va_arg(args, struct str);
+  if (t == TYPE_char) r.v2 = va_arg(args, int);
+  if (t == TYPE_str) r.v3 = va_arg(args, struct str);
   va_end(args);
   return r;
 }
 struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_copy (const struct __THE_1_union_charUSstrUE n) {
   struct __THE_1_union_charUSstrUE r = {n.t};
-  if (n.t == TYPE_char) r.v1 = n.v1;
-  if (n.t == TYPE_str) r.v2 = str_copy(n.v2);
+  if (n.t == TYPE_char) r.v2 = n.v2;
+  if (n.t == TYPE_str) r.v3 = str_copy(n.v3);
   return r;
 }
 void __THE_1_union_charUSstrUE_free (struct __THE_1_union_charUSstrUE n) {
-  if (n.t == TYPE_str) str_free((struct str) n.v2);
+  if (n.t == TYPE_str) str_free((struct str) n.v3);
 }
 struct str __THE_1_union_charUSstrUE_str (struct __THE_1_union_charUSstrUE n) {
   struct str r;
-  if (n.t == TYPE_char) r = char_str(n.v1);
-  if (n.t == TYPE_str) r = str_copy(n.v2);
+  if (n.t == TYPE_char) r = char_str(n.v2);
+  if (n.t == TYPE_str) r = str_copy(n.v3);
   __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) n);
   return r;
 }
@@ -268,13 +353,13 @@ struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEU
   struct __THE_1_union_union_charUSstrUEUSfloatUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_union_charUSstrUE) r.v3 = va_arg(args, struct __THE_1_union_charUSstrUE);
-  if (t == TYPE_float) r.v4 = va_arg(args, double);
+  if (t == TYPE_union_charUSstrUE) r.v4 = va_arg(args, struct __THE_1_union_charUSstrUE);
+  if (t == TYPE_float) r.v5 = va_arg(args, double);
   va_end(args);
   return r;
 }
 void __THE_1_union_union_charUSstrUEUSfloatUE_free (struct __THE_1_union_union_charUSstrUEUSfloatUE n) {
-  if (n.t == TYPE_union_charUSstrUE) __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) n.v3);
+  if (n.t == TYPE_union_charUSstrUE) __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) n.v4);
 }
 struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEUSfloatUE_realloc (struct __THE_1_union_union_charUSstrUEUSfloatUE n1, struct __THE_1_union_union_charUSstrUEUSfloatUE n2) {
   __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) n1);
@@ -285,60 +370,60 @@ int main () {
   const struct __THE_1_union_charUSstrUE __THE_0_testUnion_0 = __THE_1_union_charUSstrUE_alloc(TYPE_char, 'a');
   const struct any __THE_0_a_0 = __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if (__THE_0_a_0.t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 5, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 9, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   const struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_c_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if (__THE_0_c_0.t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v3))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 13, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v4)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_c_0.v4)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 14, 27), float_str(__THE_0_c_0.v5))), THE_EOL);
   }
   const struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_d_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v3))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 17, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v4)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_d_0.v4)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 18, 27), float_str(__THE_0_d_0.v5))), THE_EOL);
   }
   struct any __THE_0_e_0 = __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 21, 64), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 25, 59), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d)))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
   struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if ((__THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v3))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 29, 64), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v4)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_g_0.v4)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 30, 27), float_str(__THE_0_g_0.v5))), THE_EOL);
   }
   struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14);
   if ((__THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_union_charUSstrUE) {
-    print(stdout, "sz", cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v3))), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 33, 59), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v4)))), THE_EOL);
   } else {
-    print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_h_0.v4)), THE_EOL);
+    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 34, 27), float_str(__THE_0_h_0.v5))), THE_EOL);
   }
-  print(stdout, "sz", (__THE_0_a_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", (__THE_0_b_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", (__THE_0_c_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v3))) : cstr_concat_str("float ", float_str(__THE_0_c_0.v4)), THE_EOL);
-  print(stdout, "sz", (__THE_0_d_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v3))) : cstr_concat_str("float ", float_str(__THE_0_d_0.v4)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v3))) : cstr_concat_str("float ", float_str(__THE_0_g_0.v4)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v3))) : cstr_concat_str("float ", float_str(__THE_0_h_0.v4)), THE_EOL);
+  print(stdout, "sz", (__THE_0_a_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 36, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_b_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 37, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", (__THE_0_c_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 38, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 38, 70), float_str(__THE_0_c_0.v5))), THE_EOL);
+  print(stdout, "sz", (__THE_0_d_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 39, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 39, 70), float_str(__THE_0_d_0.v5))), THE_EOL);
+  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 40, 63), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 41, 58), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 42, 63), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 42, 84), float_str(__THE_0_g_0.v5))), THE_EOL);
+  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 43, 58), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 43, 79), float_str(__THE_0_h_0.v5))), THE_EOL);
   __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_h_0);
   __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_g_0);
   any_free((struct any) __THE_0_f_0);

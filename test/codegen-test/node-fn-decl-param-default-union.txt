@@ -49,47 +49,56 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_int 1
-#define TYPE_str 2
+#define TYPE_error_Error 1
+#define TYPE_int 2
+#define TYPE_str 3
 
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_union_intUSstrUE;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1001;
 struct __THE_1_fn$1001P;
+struct __THE_1_fn$1003;
+struct __THE_1_fn$1003P;
 struct __THE_1_mainSDtest2_0X;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_union_intUSstrUE {
   int t;
   union {
-    int32_t v1;
-    struct str v2;
+    int32_t v2;
+    struct str v3;
   };
 };
-struct __THE_1_fn$1000 {
-  struct __THE_1_union_intUSstrUE (*f) (void *, struct __THE_1_fn$1000P);
-  void *x;
-  size_t l;
-};
-struct __THE_1_fn$1000P {
-  struct __THE_1_union_intUSstrUE n0;
-  unsigned char o1;
-  struct __THE_1_union_intUSstrUE n1;
-  unsigned char o2;
-  struct __THE_1_union_intUSstrUE n2;
-};
 struct __THE_1_fn$1001 {
-  void (*f) (void *, struct __THE_1_fn$1001P);
+  struct __THE_1_union_intUSstrUE (*f) (void *, struct __THE_1_fn$1001P);
   void *x;
   size_t l;
 };
@@ -100,34 +109,112 @@ struct __THE_1_fn$1001P {
   unsigned char o2;
   struct __THE_1_union_intUSstrUE n2;
 };
+struct __THE_1_fn$1003 {
+  void (*f) (void *, struct __THE_1_fn$1003P);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1003P {
+  struct __THE_1_union_intUSstrUE n0;
+  unsigned char o1;
+  struct __THE_1_union_intUSstrUE n1;
+  unsigned char o2;
+  struct __THE_1_union_intUSstrUE n2;
+};
 struct __THE_1_mainSDtest2_0X {
   struct __THE_1_union_intUSstrUE *__THE_0_a_0;
-  const struct __THE_1_fn$1000 *__THE_0_test1_0;
+  const struct __THE_1_fn$1001 *__THE_0_test1_0;
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+
 void *alloc (size_t);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
+struct str error_stack_str (err_state_t *);
 struct str int_str (int32_t);
 struct str str_alloc (const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int, ...);
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_copy (const struct __THE_1_union_intUSstrUE);
 void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE);
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_realloc (struct __THE_1_union_intUSstrUE, struct __THE_1_union_intUSstrUE);
-struct __THE_1_union_intUSstrUE __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
-void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1001P);
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSDtest2_0X);
+struct __THE_1_union_intUSstrUE __THE_1_test1_0 (void *, struct __THE_1_fn$1001P);
+void __THE_1_fn$1003_free (struct __THE_1_fn$1003);
+void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1003P);
+void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1003 *, struct __THE_1_mainSDtest2_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
+  return (struct str) {d, l};
 }
 struct str int_str (int32_t d) {
   char buf[512];
@@ -161,72 +248,100 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int t, ...) {
   struct __THE_1_union_intUSstrUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_int) r.v1 = va_arg(args, int32_t);
-  if (t == TYPE_str) r.v2 = va_arg(args, struct str);
+  if (t == TYPE_int) r.v2 = va_arg(args, int32_t);
+  if (t == TYPE_str) r.v3 = va_arg(args, struct str);
   va_end(args);
   return r;
 }
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_copy (const struct __THE_1_union_intUSstrUE n) {
   struct __THE_1_union_intUSstrUE r = {n.t};
-  if (n.t == TYPE_int) r.v1 = n.v1;
-  if (n.t == TYPE_str) r.v2 = str_copy(n.v2);
+  if (n.t == TYPE_int) r.v2 = n.v2;
+  if (n.t == TYPE_str) r.v3 = str_copy(n.v3);
   return r;
 }
 void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE n) {
-  if (n.t == TYPE_str) str_free((struct str) n.v2);
+  if (n.t == TYPE_str) str_free((struct str) n.v3);
 }
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_realloc (struct __THE_1_union_intUSstrUE n1, struct __THE_1_union_intUSstrUE n2) {
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) n1);
   return n2;
 }
-struct __THE_1_union_intUSstrUE __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
+struct __THE_1_union_intUSstrUE __THE_1_test1_0 (void *px, struct __THE_1_fn$1001P p) {
   struct __THE_1_union_intUSstrUE v;
+  error_stack_push(&err_state, "/test", "test1");
   const struct __THE_1_union_intUSstrUE __THE_0_a_0 = p.n0;
   const struct __THE_1_union_intUSstrUE __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_union_intUSstrUE_alloc(TYPE_int, 3);
   const struct __THE_1_union_intUSstrUE __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test4"));
   struct str __THE_0_r_0 = str_alloc("");
   if (__THE_0_a_0.t == TYPE_int) {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_a_0.v1)));
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), (error_stack_pos(&err_state, 3, 22), int_str(__THE_0_a_0.v2))));
+L2:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_a_0.v2)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_a_0.v3)));
   }
   if (__THE_0_b_0.t == TYPE_int) {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_b_0.v1)));
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), (error_stack_pos(&err_state, 5, 22), int_str(__THE_0_b_0.v2))));
+L3:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_b_0.v2)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_b_0.v3)));
   }
   if (__THE_0_c_0.t == TYPE_int) {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), int_str(__THE_0_c_0.v1)));
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), (error_stack_pos(&err_state, 7, 22), int_str(__THE_0_c_0.v2))));
+L4:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
-    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_c_0.v2)));
+    __THE_0_r_0 = str_realloc(__THE_0_r_0, str_concat_str(str_copy(__THE_0_r_0), str_copy(__THE_0_c_0.v3)));
   }
   v = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_copy(__THE_0_r_0));
+L1:
   str_free((struct str) __THE_0_r_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_c_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_b_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_a_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1001P p) {
+void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1003P p) {
+  error_stack_push(&err_state, "/test", "test2");
   struct __THE_1_mainSDtest2_0X *x = px;
   struct __THE_1_union_intUSstrUE *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn$1000 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct __THE_1_fn$1001 *__THE_0_test1_0 = x->__THE_0_test1_0;
   const struct __THE_1_union_intUSstrUE __THE_0_a2_0 = p.n0;
   const struct __THE_1_union_intUSstrUE __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_union_intUSstrUE_alloc(TYPE_int, 5);
   const struct __THE_1_union_intUSstrUE __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test6"));
-  *__THE_0_a_0 = __THE_1_union_intUSstrUE_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_copy(__THE_0_a2_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_b_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_c_0)}));
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
+  *__THE_0_a_0 = __THE_1_union_intUSstrUE_realloc(*__THE_0_a_0, (error_stack_pos(&err_state, 24, 9), (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_copy(__THE_0_a2_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_b_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_c_0)})));
+L7:
+  err_state.buf_idx--;
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_c_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_b_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_a2_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtest2_0X x) {
+void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_mainSDtest2_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
   struct __THE_1_mainSDtest2_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -236,26 +351,50 @@ void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_main
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}}));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}}));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}}));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}));
+  error_stack_push(&err_state, "/test", "main");
+  const struct __THE_1_fn$1001 __THE_0_test1_0 = (struct __THE_1_fn$1001) {&__THE_1_test1_0, NULL, 0};
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) (error_stack_pos(&err_state, 13, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}})));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) (error_stack_pos(&err_state, 14, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}})));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) (error_stack_pos(&err_state, 15, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))})));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) (error_stack_pos(&err_state, 16, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}})));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) (error_stack_pos(&err_state, 17, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))})));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) (error_stack_pos(&err_state, 18, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))})));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) (error_stack_pos(&err_state, 19, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))})));
   struct __THE_1_union_intUSstrUE __THE_0_a_0 = __THE_1_union_intUSstrUE_alloc(TYPE_int, 1);
-  const struct __THE_1_fn$1001 __THE_0_mainSDtest2_0;
-  __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1001P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))});
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtest2_0);
+  const struct __THE_1_fn$1003 __THE_0_mainSDtest2_0;
+  __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  (error_stack_pos(&err_state, 27, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1003P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}}));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  (error_stack_pos(&err_state, 28, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1003P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}}));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  (error_stack_pos(&err_state, 29, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1003P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  (error_stack_pos(&err_state, 30, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1003P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}}));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  (error_stack_pos(&err_state, 31, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1003P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  (error_stack_pos(&err_state, 32, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1003P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  (error_stack_pos(&err_state, 33, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1003P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}));
+L6:
+  __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_mainSDtest2_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_a_0);
+L5:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

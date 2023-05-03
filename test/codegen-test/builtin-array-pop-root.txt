@@ -40,24 +40,53 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#define TYPE_error_Error 1
+
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_array_str;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+
 void *alloc (size_t);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
+struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
@@ -66,6 +95,7 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
@@ -76,10 +106,68 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
+  return (struct str) {d, l};
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -113,8 +201,12 @@ void print (FILE *stream, const char *fmt, ...) {
 void *re_alloc (void *d, size_t l) {
   void *r = realloc(d, l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to reallocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -170,6 +262,12 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
   struct str *d = alloc(x * sizeof(struct str));
@@ -214,12 +312,14 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
   struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
   struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
   str_free((struct str) __THE_1_array_str_pop(&__THE_0_test1_0));
-  __THE_1_array_str_push(&__THE_0_test1_0, __THE_1_array_str_alloc(1, str_alloc("0")));
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  (error_stack_pos(&err_state, 8, 3), __THE_1_array_str_push(&__THE_0_test1_0, __THE_1_array_str_alloc(1, str_alloc("0"))));
   str_free((struct str) __THE_1_array_str_pop(&__THE_0_test1_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test1_0)), THE_EOL);
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
@@ -234,9 +334,17 @@ int main () {
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
   str_free((struct str) __THE_1_array_str_pop(&__THE_0_test3_0));
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
+L1:
+  err_state.buf_idx--;
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

@@ -19,19 +19,41 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
+#define TYPE_error_Error 1
+
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct fs_Stats;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct fs_Stats {
   const uint64_t __THE_0_dev;
   const uint32_t __THE_0_mode;
@@ -53,8 +75,13 @@ struct fs_Stats {
   const int64_t __THE_0_blockSize;
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pos (err_state_t *, int, int);
+struct str error_stack_str (err_state_t *);
 struct fs_Stats *fs_statSync (struct str);
 struct str i32_str (int32_t);
 struct str i64_str (int64_t);
@@ -66,6 +93,7 @@ char *str_cstr (const struct str);
 void str_free (struct str);
 struct str u32_str (uint32_t);
 struct str u64_str (uint64_t);
+struct error_Error *error_Error_alloc (struct str, struct str);
 struct fs_Stats *fs_Stats_alloc (uint64_t, uint32_t, int64_t, uint64_t, int32_t, int32_t, uint64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t);
 void fs_Stats_free (struct fs_Stats *);
 struct str fs_Stats_str (struct fs_Stats *);
@@ -73,8 +101,12 @@ struct str fs_Stats_str (struct fs_Stats *);
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -86,21 +118,77 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
+  return (struct str) {d, l};
+}
 struct fs_Stats *fs_statSync (struct str s) {
   char *c = str_cstr(s);
   struct fs_Stats *r;
   #ifdef THE_OS_WINDOWS
     struct _stat sb;
     if (_stat(c, &sb) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_statSync_cleanup;
     }
     r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, sb.st_size, 0, 4096);
   #else
     struct stat sb;
     if (stat(c, &sb) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_statSync_cleanup;
     }
     #ifdef THE_OS_MACOS
       r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atimespec.tv_sec, sb.st_atimespec.tv_nsec, sb.st_mtimespec.tv_sec, sb.st_mtimespec.tv_nsec, sb.st_ctimespec.tv_sec, sb.st_ctimespec.tv_nsec, sb.st_birthtimespec.tv_sec, sb.st_birthtimespec.tv_nsec, sb.st_size, sb.st_blocks, sb.st_blksize);
@@ -108,8 +196,10 @@ struct fs_Stats *fs_statSync (struct str s) {
       r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atim.tv_sec, sb.st_atim.tv_nsec, sb.st_mtim.tv_sec, sb.st_mtim.tv_nsec, sb.st_ctim.tv_sec, sb.st_ctim.tv_nsec, sb.st_ctim.tv_sec, sb.st_ctim.tv_nsec, sb.st_size, sb.st_blocks, sb.st_blksize);
     #endif
   #endif
+fs_statSync_cleanup:
   free(c);
   str_free(s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return r;
 }
 struct str i32_str (int32_t d) {
@@ -193,6 +283,12 @@ struct str u64_str (uint64_t d) {
   sprintf(buf, "%" PRIu64, d);
   return str_alloc(buf);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, int64_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, uint64_t __THE_0_rdev, int64_t __THE_0_atime, int64_t __THE_0_atimeNs, int64_t __THE_0_mtime, int64_t __THE_0_mtimeNs, int64_t __THE_0_ctime, int64_t __THE_0_ctimeNs, int64_t __THE_0_btime, int64_t __THE_0_btimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int64_t __THE_0_blockSize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
   struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_btime, __THE_0_btimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blockSize};
@@ -245,8 +341,8 @@ struct str fs_Stats_str (struct fs_Stats *n) {
 }
 
 int main () {
-  print(stdout, "sz", fs_Stats_str(fs_statSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"))), THE_EOL);
-  print(stdout, "sz", fs_Stats_str(fs_statSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"))), THE_EOL);
+  print(stdout, "sz", fs_Stats_str((error_stack_pos(&err_state, 2, 9), fs_statSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures")))), THE_EOL);
+  print(stdout, "sz", fs_Stats_str((error_stack_pos(&err_state, 3, 9), fs_statSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")))), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

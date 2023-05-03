@@ -2,6 +2,20 @@
 fn test1 () void
 fn test2 (a: int, b: int) int
 ======= code =======
+#include <stdlib.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
 int main () {
 }
 ======= flags =======

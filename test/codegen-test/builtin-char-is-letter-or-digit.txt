@@ -37,6 +37,13 @@ struct str {
   size_t l;
 };
 
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
 bool char_isLetterOrDigit (char);
 void print (FILE *, const char *, ...);
 void str_free (struct str);

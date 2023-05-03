@@ -16,11 +16,24 @@ main {
 }
 ======= code =======
 #include <stdbool.h>
+#include <stdlib.h>
 
 enum __THE_1_Test_0 {
   __THE_0_TestSDRed_0,
   __THE_0_TestSDGreen_0,
   __THE_0_TestSDBlue_0
+};
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
 };
 
 int main () {

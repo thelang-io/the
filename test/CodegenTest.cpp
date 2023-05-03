@@ -77,13 +77,16 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
  protected:
   bool isPlatformDefault_ = true;
   bool testCompile_ = false;
+  bool testMemcheck_ = false;
   std::string testPlatform_ = "default";
 
   void SetUp () override {
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
+    auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
     auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
 
     this->testCompile_ = testCompile != std::nullopt && testCompile == "ON";
+    this->testMemcheck_ = testMemcheck != std::nullopt && testMemcheck == "ON";
 
     if (testPlatform != std::nullopt) {
       this->testPlatform_ = *testPlatform;
@@ -181,7 +184,8 @@ TEST_P(CodegenThrowTest, Throws) {
     return;
   }
 
-  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(filePath, fileName);
+  auto cmd = (this->testMemcheck_ ? "valgrind " + valgrindArguments + " " : "") + filePath;
+  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(cmd, fileName);
   std::filesystem::remove(filePath);
 
   #if defined(OS_MACOS)

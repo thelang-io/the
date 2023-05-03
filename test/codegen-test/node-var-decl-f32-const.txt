@@ -2,6 +2,20 @@
 const a: f32
 const b: f32 = 3.14
 ======= code =======
+#include <stdlib.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
 int main () {
   const float __THE_0_a_0 = 0;
   const float __THE_0_b_0 = 3.14;

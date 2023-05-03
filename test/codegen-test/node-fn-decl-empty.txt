@@ -6,10 +6,20 @@ main {
   test()
 }
 ======= code =======
-#include <stddef.h>
+#include <stdlib.h>
 
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
 struct __THE_1_fn$1000;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_fn$1000 {
   void (*f) (void *);
   void *x;

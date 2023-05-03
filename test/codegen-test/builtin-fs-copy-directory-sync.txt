@@ -55,6 +55,7 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -72,25 +73,53 @@ main {
   #include <unistd.h>
 #endif
 
+#define TYPE_error_Error 1
+
 struct buffer {
   unsigned char *d;
   size_t l;
 };
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_array_str;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str cstr_concat_str (const char *, struct str);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
+struct str error_stack_str (err_state_t *);
 void fs_copyDirectorySync (struct str, struct str);
 void fs_copyFileSync (struct str, struct str);
 bool fs_existsSync (struct str);
@@ -110,14 +139,19 @@ char *str_cstr (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 struct buffer str_toBuffer (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -130,6 +164,60 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(d, r, l - s.l);
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
+  return (struct str) {d, l};
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
   return (struct str) {d, l};
 }
 void fs_copyDirectorySync (struct str n1, struct str n2) {
@@ -167,74 +255,122 @@ void fs_copyFileSync (struct str n1, struct str n2) {
   char *c2 = str_cstr(n2);
   #ifdef THE_OS_WINDOWS
     if (CopyFile(c1, c2, 0) == 0) {
-      fprintf(stderr, "Error: failed to copy file from `%s` to `%s`" THE_EOL, c1, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to copy file from `%s` to `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1, c2);
+      char *d = alloc(z);
+      sprintf(d, fmt, c1, c2);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup1;
     }
   #else
+    size_t buf_len = 8192;
+    char buf[buf_len];
     int fd1 = open(c1, O_RDONLY);
     if (fd1 < 0) {
-      fprintf(stderr, "Error: failed to open file descriptor of `%s`" THE_EOL, c1);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open file descriptor of `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1);
+      char *d = alloc(z);
+      sprintf(d, fmt, c1);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup1;
     }
     struct stat sb1;
     if (fstat(fd1, &sb1) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c1);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1);
+      char *d = alloc(z);
+      sprintf(d, fmt, c1);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup2;
     }
     if ((sb1.st_mode & S_IFMT) != S_IFREG) {
-      fprintf(stderr, "Error: cannot copy non-file `%s`" THE_EOL, c1);
-      exit(EXIT_FAILURE);
+      const char *fmt = "cannot copy non-file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1);
+      char *d = alloc(z);
+      sprintf(d, fmt, c1);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup2;
     }
     int fd2 = open(c2, O_WRONLY | O_CREAT);
     if (fd2 < 0) {
-      fprintf(stderr, "Error: failed to open file descriptor of `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open file descriptor of `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z);
+      sprintf(d, fmt, c2);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup2;
     }
     struct stat sb2;
     if (fstat(fd2, &sb2) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z);
+      sprintf(d, fmt, c2);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup3;
     }
     if (sb1.st_dev == sb2.st_dev && sb1.st_ino == sb2.st_ino) {
-      fprintf(stderr, "Error: can't copy same file" THE_EOL);
-      exit(EXIT_FAILURE);
+      const char *fmt = "can't copy same file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z);
+      sprintf(d, fmt, c2);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup3;
     }
     if (sb2.st_size > 0 && ftruncate(fd2, 0) != 0) {
-      fprintf(stderr, "Error: failed to truncate file `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to truncate file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z);
+      sprintf(d, fmt, c2);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup3;
     }
     if (fchmod(fd2, sb1.st_mode) != 0) {
-      fprintf(stderr, "Error: failed to chmod file `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to chmod file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z);
+      sprintf(d, fmt, c2);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_copyFileSync_cleanup3;
     }
     size_t bytes = sb1.st_size;
-    size_t buf_len = 8192;
-    char buf[buf_len];
     while (bytes != 0) {
       ssize_t read_bytes_raw = read(fd1, buf, bytes > buf_len ? buf_len : bytes);
       if (read_bytes_raw <= 0) {
-        fprintf(stderr, "Error: failed to read data from file `%s`" THE_EOL, c1);
-        exit(EXIT_FAILURE);
+        const char *fmt = "failed to read data from file `%s`";
+        size_t z = snprintf(NULL, 0, fmt, c1);
+        char *d = alloc(z);
+        sprintf(d, fmt, c1);
+        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+        goto fs_copyFileSync_cleanup3;
       }
       size_t read_bytes = read_bytes_raw;
       size_t written_bytes = 0;
       while (written_bytes != read_bytes) {
         ssize_t written_bytes_raw = write(fd2, &buf[written_bytes], read_bytes - written_bytes);
         if (written_bytes_raw <= 0) {
-          fprintf(stderr, "Error: failed to write data to file `%s`" THE_EOL, c2);
-          exit(EXIT_FAILURE);
+          const char *fmt = "failed to write data to file `%s`";
+          size_t z = snprintf(NULL, 0, fmt, c2);
+          char *d = alloc(z);
+          sprintf(d, fmt, c2);
+          error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+          goto fs_copyFileSync_cleanup3;
         }
         written_bytes += (size_t) written_bytes_raw;
       }
       bytes -= written_bytes;
     }
+fs_copyFileSync_cleanup3:
     close(fd2);
+fs_copyFileSync_cleanup2:
     close(fd1);
   #endif
+fs_copyFileSync_cleanup1:
   free(c2);
   free(c1);
   str_free(n2);
   str_free(n1);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 bool fs_existsSync (struct str s) {
   char *c = str_cstr(s);
@@ -273,20 +409,32 @@ void fs_mkdirSync (struct str s) {
     bool r = mkdir(c, 0777) == 0;
   #endif
   if (!r) {
-    fprintf(stderr, "Error: failed to create directory `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to create directory `%s`";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z);
+    sprintf(d, fmt, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    goto fs_mkdirSync_cleanup;
   }
+fs_mkdirSync_cleanup:
   free(c);
   str_free(s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void fs_rmSync (struct str s) {
   char *c = str_cstr(s);
   if (remove(c) != 0) {
-    fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to remove file `%s`";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z);
+    sprintf(d, fmt, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    goto fs_rmSync_cleanup;
   }
+fs_rmSync_cleanup:
   free(c);
   str_free(s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void fs_rmdirSync (struct str s) {
   char *c = str_cstr(s);
@@ -296,11 +444,17 @@ void fs_rmdirSync (struct str s) {
     bool r = rmdir(c) == 0;
   #endif
   if (!r) {
-    fprintf(stderr, "Error: failed to remove directory `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to remove directory `%s`";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z);
+    sprintf(d, fmt, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    goto fs_rmdirSync_cleanup;
   }
+fs_rmdirSync_cleanup:
   free(c);
   str_free(s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 struct __THE_1_array_str fs_scandirSync (struct str s) {
   char *c = str_cstr(s);
@@ -308,11 +462,19 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
   size_t l = 0;
   #ifdef THE_OS_WINDOWS
     if (GetFileAttributes(c) == INVALID_FILE_ATTRIBUTES) {
-      fprintf(stderr, "Error: directory `%s` doesn't exist" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "directory `%s` doesn't exist";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_scandirSync_cleanup1;
     } else if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
-      fprintf(stderr, "Error: failed to scan non-directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to scan non-directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_scandirSync_cleanup1;
     }
     const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");
     char *b = alloc(s.l + 4);
@@ -321,10 +483,14 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
     HANDLE h = FindFirstFile(b, &m);
     free(b);
     if (h == INVALID_HANDLE_VALUE && GetLastError() != ERROR_FILE_NOT_FOUND) {
-      fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_scandirSync_cleanup1;
     } else if (h == INVALID_HANDLE_VALUE) {
-      goto fs_scandirSync_cleanup;
+      goto fs_scandirSync_cleanup1;
     }
     WIN32_FIND_DATA *n = &m;
     while (true) {
@@ -336,24 +502,41 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
       if (!g && GetLastError() == ERROR_NO_MORE_FILES) {
         break;
       } else if (!g) {
-        fprintf(stderr, "Error: failed to scan next file of directory `%s`" THE_EOL, c);
-        exit(EXIT_FAILURE);
+        const char *fmt = "failed to scan next file of directory `%s`";
+        size_t z = snprintf(NULL, 0, fmt, c);
+        char *d = alloc(z);
+        sprintf(d, fmt, c);
+        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+        goto fs_scandirSync_cleanup2;
       }
     }
+fs_scandirSync_cleanup2:
     FindClose(h);
   #else
     struct stat sb;
     if (stat(c, &sb) != 0) {
-      fprintf(stderr, "Error: directory `%s` doesn't exist" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "directory `%s` doesn't exist";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_scandirSync_cleanup1;
     } else if ((sb.st_mode & S_IFMT) != S_IFDIR) {
-      fprintf(stderr, "Error: failed to scan non-directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to scan non-directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_scandirSync_cleanup1;
     }
     DIR *f = opendir(c);
     if (f == NULL) {
-      fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_scandirSync_cleanup1;
     }
     struct dirent *a;
     while ((a = readdir(f)) != NULL) {
@@ -363,9 +546,6 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
     }
     closedir(f);
   #endif
-fs_scandirSync_cleanup:
-  free(c);
-  str_free(s);
   for (size_t j = 0; j < l; j++) {
     for (size_t k = j + 1; k < l; k++) {
       if (memcmp(r[j].d, r[k].d, r[j].l > r[k].l ? r[k].l : r[j].l) > 0) {
@@ -375,25 +555,40 @@ fs_scandirSync_cleanup:
       }
     }
   }
+fs_scandirSync_cleanup1:
+  free(c);
+  str_free(s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return (struct __THE_1_array_str) {r, l};
 }
 void fs_writeFileSync (struct str s, struct buffer b) {
   char *c = str_cstr(s);
   FILE *f = fopen(c, "wb");
   if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to open file `%s` for writing";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z);
+    sprintf(d, fmt, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    goto fs_writeFileSync_cleanup1;
   }
   if (b.l != 0) {
     if (fwrite(b.d, b.l, 1, f) != 1) {
-      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to write file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      goto fs_writeFileSync_cleanup2;
     }
   }
+fs_writeFileSync_cleanup2:
   fclose(f);
+fs_writeFileSync_cleanup1:
   free(c);
   str_free(s);
   buffer_free(b);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -427,8 +622,12 @@ void print (FILE *stream, const char *fmt, ...) {
 void *re_alloc (void *d, size_t l) {
   void *r = realloc(d, l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to reallocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
 }
@@ -493,6 +692,12 @@ void str_free (struct str s) {
 struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
@@ -510,42 +715,82 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   const struct str __THE_0_fromPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-copy-dir1");
   const struct str __THE_0_toPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-copy-dir2");
-  fs_mkdirSync(str_copy(__THE_0_fromPath_0));
-  fs_writeFileSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test1.txt"), str_toBuffer(str_alloc("test1")));
-  fs_writeFileSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test2.txt"), str_toBuffer(str_alloc("test2")));
-  fs_writeFileSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test3.txt"), str_toBuffer(str_alloc("test3")));
-  fs_mkdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test4"));
-  fs_mkdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5"));
-  fs_writeFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5"), str_alloc(THE_PATH_SEP)), "test6.txt"), str_toBuffer(str_alloc("test6")));
-  fs_mkdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"));
-  fs_writeFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test8.txt"), str_toBuffer(str_alloc("test8")));
-  fs_writeFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt"), str_toBuffer(str_alloc("test9")));
-  fs_copyDirectorySync(str_copy(__THE_0_fromPath_0), str_copy(__THE_0_toPath_0));
-  print(stdout, "sz", __THE_1_array_str_str(fs_scandirSync(str_copy(__THE_0_toPath_0))), THE_EOL);
-  fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test8.txt"));
-  fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5"), str_alloc(THE_PATH_SEP)), "test6.txt"));
-  fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5"));
-  fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test4"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test3.txt"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test2.txt"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test1.txt"));
-  fs_rmdirSync(str_copy(__THE_0_fromPath_0));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test8.txt"));
-  fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test7"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test5"), str_alloc(THE_PATH_SEP)), "test6.txt"));
-  fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test5"));
-  fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test4"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test3.txt"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test2.txt"));
-  fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test1.txt"));
-  fs_rmdirSync(str_copy(__THE_0_toPath_0));
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  (error_stack_pos(&err_state, 5, 3), fs_mkdirSync(str_copy(__THE_0_fromPath_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 6, 3), fs_writeFileSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test1.txt"), str_toBuffer(str_alloc("test1"))));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 7, 3), fs_writeFileSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test2.txt"), str_toBuffer(str_alloc("test2"))));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 8, 3), fs_writeFileSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test3.txt"), str_toBuffer(str_alloc("test3"))));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 9, 3), fs_mkdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test4")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 10, 3), fs_mkdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 11, 3), fs_writeFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5"), str_alloc(THE_PATH_SEP)), "test6.txt"), str_toBuffer(str_alloc("test6"))));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 12, 3), fs_mkdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 13, 3), fs_writeFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test8.txt"), str_toBuffer(str_alloc("test8"))));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 14, 3), fs_writeFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt"), str_toBuffer(str_alloc("test9"))));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 16, 3), fs_copyDirectorySync(str_copy(__THE_0_fromPath_0), str_copy(__THE_0_toPath_0)));
+  print(stdout, "sz", __THE_1_array_str_str((error_stack_pos(&err_state, 17, 9), fs_scandirSync(str_copy(__THE_0_toPath_0)))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 19, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 20, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test8.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 21, 3), fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 22, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5"), str_alloc(THE_PATH_SEP)), "test6.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 23, 3), fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test5")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 24, 3), fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test4")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 25, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test3.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 26, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test2.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 27, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test1.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 28, 3), fs_rmdirSync(str_copy(__THE_0_fromPath_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 30, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 31, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test8.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 32, 3), fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test7")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 33, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test5"), str_alloc(THE_PATH_SEP)), "test6.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 34, 3), fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test5")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 35, 3), fs_rmdirSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test4")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 36, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test3.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 37, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test2.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 38, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_copy(__THE_0_toPath_0), str_alloc(THE_PATH_SEP)), "test1.txt")));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  (error_stack_pos(&err_state, 39, 3), fs_rmdirSync(str_copy(__THE_0_toPath_0)));
+L1:
+  err_state.buf_idx--;
   str_free((struct str) __THE_0_toPath_0);
   str_free((struct str) __THE_0_fromPath_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

@@ -46,30 +46,112 @@ main {
 #include <inttypes.h>
 #include <math.h>
 #include <openssl/rand.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#define TYPE_error_Error 1
+
+typedef struct {
+  char *file;
+  char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+
 void *alloc (size_t);
+void error_assign (err_state_t *, int, void *);
+void error_stack_pos (err_state_t *, int, int);
+struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 struct str random_randomStr (unsigned char, struct str, unsigned char, int32_t);
 struct str str_alloc (const char *);
 struct str str_calloc (const char *, size_t);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
   if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to allocate %zu bytes";
+    size_t z = snprintf(NULL, 0, fmt, l);
+    char *d = alloc(z);
+    sprintf(d, fmt, l);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return r;
+}
+void error_assign (err_state_t *state, int id, void *ctx) {
+  state->id = id;
+  state->ctx = ctx;
+  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
+}
+struct str error_stack_str (err_state_t *state) {
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  size_t l = message.l;
+  char *d = malloc(l);
+  if (d == NULL) {
+    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
+    exit(EXIT_FAILURE);
+  }
+  memcpy(d, message.d, l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    d = realloc(d, l + z);
+    if (d == NULL) {
+      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
+      exit(EXIT_FAILURE);
+    }
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&d[l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&d[l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
+    }
+    l += z;
+  }
+  return (struct str) {d, l};
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -105,8 +187,10 @@ struct str random_randomStr (unsigned char o1, struct str n1, unsigned char o2, 
   int32_t l = o2 == 0 ? 32 : n2;
   unsigned char *d = alloc(l);
   if (RAND_bytes(d, l) != 1) {
-    fprintf(stderr, "Error: failed to generate random bytes" THE_EOL);
-    exit(EXIT_FAILURE);
+    free(d);
+    str_free(a);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random bytes"), str_alloc("")));
+    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   for (size_t i = 0; i < l; i++) d[i] = a.d[(size_t) round((double) d[i] / 0xFF * (double) (a.l - 1))];
   struct str r = str_calloc((void *) d, l);
@@ -128,34 +212,40 @@ struct str str_calloc (const char *r, size_t l) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
 
 int main () {
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(0, (struct str) {}, 0, 0), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 3, 11), random_randomStr(0, (struct str) {}, 0, 0)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(0, (struct str) {}, 1, 64), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 6, 11), random_randomStr(0, (struct str) {}, 1, 64)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(0, (struct str) {}, 1, 1), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 9, 11), random_randomStr(0, (struct str) {}, 1, 1)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(1, str_alloc("abcdef"), 0, 0), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 12, 11), random_randomStr(1, str_alloc("abcdef"), 0, 0)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(1, str_alloc("abcdef"), 1, 64), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 15, 11), random_randomStr(1, str_alloc("abcdef"), 1, 64)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(1, str_alloc("abcdef"), 1, 1), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 18, 11), random_randomStr(1, str_alloc("abcdef"), 1, 1)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(1, str_alloc("ab"), 0, 0), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 21, 11), random_randomStr(1, str_alloc("ab"), 0, 0)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(1, str_alloc("ab"), 1, 64), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 24, 11), random_randomStr(1, str_alloc("ab"), 1, 64)), THE_EOL);
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "sz", random_randomStr(1, str_alloc("ab"), 1, 1), THE_EOL);
+    print(stdout, "sz", (error_stack_pos(&err_state, 27, 11), random_randomStr(1, str_alloc("ab"), 1, 1)), THE_EOL);
   }
 }
 ======= flags =======

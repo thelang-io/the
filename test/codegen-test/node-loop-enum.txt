@@ -44,7 +44,7 @@ main {
   }
 }
 ======= code =======
-#include <stddef.h>
+#include <stdlib.h>
 
 enum __THE_1_Test_0 {
   __THE_0_TestSDRed_0,
@@ -52,9 +52,19 @@ enum __THE_1_Test_0 {
   __THE_0_TestSDBlue_0
 };
 
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
 struct __THE_1_fn$1000;
 struct __THE_1_fn$1000P;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_fn$1000 {
   enum __THE_1_Test_0 (*f) (void *, struct __THE_1_fn$1000P);
   void *x;

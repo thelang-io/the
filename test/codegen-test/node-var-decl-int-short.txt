@@ -7,6 +7,19 @@ main {
 }
 ======= code =======
 #include <stdint.h>
+#include <stdlib.h>
+
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 
 int main () {
   const int32_t __THE_0_a_0 = 1;
