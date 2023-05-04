@@ -22,7 +22,7 @@ By participating in this project you agree to abide by its terms.
 
 ```shell
 curl -fsSL https://cdn.thelang.io/cli | bash
-the run pre-process-codegen -o scripts/a.out
+the run scripts/pre-process-codegen -o scripts/a.out
 ```
 
 ### On Windows
