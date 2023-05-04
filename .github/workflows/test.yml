@@ -46,6 +46,14 @@ jobs:
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
+      - if: runner.os != 'Windows'
+        run: |
+          curl -fsSL https://cdn.thelang.io/cli | bash
+          the run pre-process-codegen -o scripts/a.out
+      - if: runner.os == 'Windows'
+        run: |
+          (New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
+          the run pre-process-codegen -o scripts/a.exe
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
       - run: tar -xzf deps.tar.gz the/native/${{ matrix.config.platform }}
       - if: runner.os != 'Windows'

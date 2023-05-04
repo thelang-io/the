@@ -17,6 +17,21 @@ By participating in this project you agree to abide by its terms.
 - [Search][the-prs] for duplicates
 - Use the same coding style as the rest of the codebase
 
+## First of all, generate `codegen-api.hpp`
+### On Unix
+
+```shell
+curl -fsSL https://cdn.thelang.io/cli | bash
+the run pre-process-codegen -o scripts/a.out
+```
+
+### On Windows
+
+```powershell
+(New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
+the run pre-process-codegen -o scripts/a.exe
+```
+
 ## Testing
 
 ```shell
