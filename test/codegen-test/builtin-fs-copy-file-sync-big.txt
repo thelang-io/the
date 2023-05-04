@@ -495,14 +495,17 @@ void fs_Stats_free (struct fs_Stats *n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const struct str __THE_0_fromPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test3.txt");
-  const struct str __THE_0_toPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test4.txt");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const struct str __THE_0_fromPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test3.txt");
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct str __THE_0_toPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test4.txt");
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 5, 3), fs_writeFileSync(str_copy(__THE_0_fromPath_0), str_toBuffer((error_stack_pos(&err_state, 5, 30), char_repeat('a', 1e8)))));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 6, 3), fs_copyFileSync(str_copy(__THE_0_fromPath_0), str_copy(__THE_0_toPath_0)));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct fs_Stats *__THE_0_sb_0 = (error_stack_pos(&err_state, 7, 9), fs_statSync(str_copy(__THE_0_toPath_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "lz", __THE_0_sb_0->__THE_0_size, THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 9, 3), fs_rmSync(str_copy(__THE_0_toPath_0)));
@@ -510,8 +513,6 @@ int main () {
   (error_stack_pos(&err_state, 10, 3), fs_rmSync(str_copy(__THE_0_fromPath_0)));
 L1:
   err_state.buf_idx--;
-  str_free((struct str) __THE_0_toPath_0);
-  str_free((struct str) __THE_0_fromPath_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

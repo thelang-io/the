@@ -8,24 +8,10 @@ main {
   c: AliasColor = .Green
 }
 ======= code =======
-#include <stdlib.h>
-
 enum __THE_1_Color_0 {
   __THE_0_ColorSDRed_0,
   __THE_0_ColorSDGreen_0,
   __THE_0_ColorSDBlue_0
-};
-
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
-
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
 };
 
 int main () {

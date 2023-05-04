@@ -269,17 +269,19 @@ size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(3, __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("4"), str_alloc("5"), str_alloc("6")));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     const struct str __THE_0_it_0 = str_copy(*__THE_1_array_str_last((error_stack_pos(&err_state, 5, 15), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
     print(stdout, "sz", str_copy(__THE_0_it_0), THE_EOL);
-L2:
+L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   }
 L1:
-  __THE_1_array_array_str_free((struct __THE_1_array_array_str) __THE_0_arr_0);
+  err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

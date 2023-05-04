@@ -229,6 +229,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
@@ -275,6 +277,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -388,7 +396,10 @@ int32_t __THE_1_add_0 (void *px, struct __THE_1_fn$1001P p) {
   return __THE_0_i_0 + __THE_0_amount_0;
 }
 void __THE_1_StaticTestSDstaticMethod_0 (void *px) {
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "zz", "Static method", THE_EOL);
+L1:
+  err_state.buf_idx--;
 }
 int32_t __THE_1_CounterSDget_0 (void *px, const struct __THE_1_Counter_0 *__THE_0_self_0) {
   int32_t v;
@@ -438,23 +449,31 @@ void __THE_1_CounterSDridiculousStuff_0 (void *px, struct __THE_1_Counter_0 **__
   const struct __THE_1_fn$1002 *__THE_0_CounterSDget_0 = x->__THE_0_CounterSDget_0;
   const struct __THE_1_fn$1001 *__THE_0_sub_0 = x->__THE_0_sub_0;
   struct __THE_1_Counter_0 **__THE_0_self2_0 = __THE_0_self_0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   print(stdout, "zziz", "For testing:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, __THE_1_Counter_0_copy(*__THE_0_self2_0)), THE_EOL);
   const struct __THE_1_fn$1005 __THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0;
   const struct __THE_1_fn$1005 __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0;
   const struct __THE_1_fn$1006 __THE_0_CounterSDridiculousStuffSDCounter2SDget_0 = (struct __THE_1_fn$1006) {&__THE_1_CounterSDridiculousStuffSDCounter2SDget_0, NULL, 0};
   __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc((struct __THE_1_fn$1005 *) &__THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0, (struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X) {&__THE_0_self2_0, &__THE_0_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_CounterSDget_0, __THE_0_sub_0});
   __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc((struct __THE_1_fn$1005 *) &__THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0, (struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X) {&__THE_0_self2_0, &__THE_0_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_add_0, __THE_0_CounterSDget_0});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *__THE_0_counter_0 = __THE_1_CounterSDridiculousStuffSDCounter2_0_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, __THE_1_Counter_0_copy(*__THE_0_self_0)), THE_EOL);
   __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.x, &__THE_0_counter_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, __THE_1_Counter_0_copy(*__THE_0_self_0)), THE_EOL);
   __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0.x, &__THE_0_counter_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, __THE_1_Counter_0_copy(*__THE_0_self_0)), THE_EOL);
   __THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0.x, &__THE_0_counter_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziziz", "Counter2:", " ", __THE_0_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_CounterSDridiculousStuffSDCounter2SDget_0.x, &__THE_0_counter_0), " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, __THE_1_Counter_0_copy(*__THE_0_self_0)), THE_EOL);
-  __THE_1_CounterSDridiculousStuffSDCounter2_0_free((struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *) __THE_0_counter_0);
+L6:
   __THE_1_fn$1005_free((struct __THE_1_fn$1005) __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0);
   __THE_1_fn$1005_free((struct __THE_1_fn$1005) __THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0);
+L3:
+  err_state.buf_idx--;
 }
 struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *__THE_1_CounterSDridiculousStuffSDCounter2_0_alloc (int32_t __THE_0__i) {
   struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *r = alloc(sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2_0));
@@ -475,8 +494,12 @@ void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0 (void *px, struct __
   const struct __THE_1_fn$1002 *__THE_0_CounterSDget_0 = x->__THE_0_CounterSDget_0;
   const struct __THE_1_fn$1001 *__THE_0_sub_0 = x->__THE_0_sub_0;
   (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_sub_0).f((*__THE_0_sub_0).x, (struct __THE_1_fn$1001P) {(*__THE_0_self_1)->__THE_0__i, 0, 0});
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, __THE_1_Counter_0_copy(**__THE_0_self2_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   print(stdout, "zziz", "Current scope:", " ", (*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).x, __THE_0_self_1), THE_EOL);
+L4:
+  err_state.buf_idx--;
 }
 void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn$1005 *n, struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X);
@@ -493,8 +516,12 @@ void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0 (void *px, struct __
   const struct __THE_1_fn$1001 *__THE_0_add_0 = x->__THE_0_add_0;
   const struct __THE_1_fn$1002 *__THE_0_CounterSDget_0 = x->__THE_0_CounterSDget_0;
   (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_add_0).f((*__THE_0_add_0).x, (struct __THE_1_fn$1001P) {(*__THE_0_self_1)->__THE_0__i, 0, 0});
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
   print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, __THE_1_Counter_0_copy(**__THE_0_self2_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "zziz", "Current scope", " ", (*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).x, __THE_0_self_1), THE_EOL);
+L5:
+  err_state.buf_idx--;
 }
 void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn$1005 *n, struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X);
@@ -517,6 +544,7 @@ void __THE_1_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn$1004 *n, struct
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1001 __THE_0_sub_0 = (struct __THE_1_fn$1001) {&__THE_1_sub_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_add_0 = (struct __THE_1_fn$1001) {&__THE_1_add_0, NULL, 0};
   const struct __THE_1_fn$1000 __THE_0_StaticTestSDstaticMethod_0 = (struct __THE_1_fn$1000) {&__THE_1_StaticTestSDstaticMethod_0, NULL, 0};
@@ -527,23 +555,36 @@ int main () {
   __THE_1_CounterSDdecrease_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_CounterSDdecrease_0, (struct __THE_1_CounterSDdecrease_0X) {&__THE_0_sub_0});
   __THE_1_CounterSDincrease_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_CounterSDincrease_0, (struct __THE_1_CounterSDincrease_0X) {&__THE_0_add_0});
   __THE_1_CounterSDridiculousStuff_0_alloc((struct __THE_1_fn$1004 *) &__THE_0_CounterSDridiculousStuff_0, (struct __THE_1_CounterSDridiculousStuff_0X) {&__THE_0_add_0, &__THE_0_CounterSDget_0, &__THE_0_sub_0});
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
   const struct __THE_1_StaticTest_0 *__THE_0_staticTest_0 = __THE_1_StaticTest_0_alloc();
   __THE_0_StaticTestSDstaticMethod_0.f(__THE_0_StaticTestSDstaticMethod_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   struct __THE_1_Counter_0 *__THE_0_counter_0 = __THE_1_Counter_0_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_1_Counter_0_copy(__THE_0_counter_0)), THE_EOL);
   __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, &__THE_0_counter_0, (struct __THE_1_fn$1003P) {0, 0});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_1_Counter_0_copy(__THE_0_counter_0)), THE_EOL);
   __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, __THE_0_CounterSDincrease_0.f(__THE_0_CounterSDincrease_0.x, &__THE_0_counter_0, (struct __THE_1_fn$1003P) {0, 0}), (struct __THE_1_fn$1003P) {0, 0}), (struct __THE_1_fn$1003P) {0, 0}), (struct __THE_1_fn$1003P) {0, 0});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_1_Counter_0_copy(__THE_0_counter_0)), THE_EOL);
   __THE_0_CounterSDdecrease_0.f(__THE_0_CounterSDdecrease_0.x, __THE_0_CounterSDdecrease_0.f(__THE_0_CounterSDdecrease_0.x, &__THE_0_counter_0, (struct __THE_1_fn$1003P) {0, 0}), (struct __THE_1_fn$1003P) {0, 0});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "zziz", "Counter:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_1_Counter_0_copy(__THE_0_counter_0)), THE_EOL);
   __THE_0_CounterSDridiculousStuff_0.f(__THE_0_CounterSDridiculousStuff_0.x, &__THE_0_counter_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "zziz", "Counter Again:", " ", __THE_0_CounterSDget_0.f(__THE_0_CounterSDget_0.x, __THE_1_Counter_0_copy(__THE_0_counter_0)), THE_EOL);
-  __THE_1_Counter_0_free((struct __THE_1_Counter_0 *) __THE_0_counter_0);
-  __THE_1_StaticTest_0_free((struct __THE_1_StaticTest_0 *) __THE_0_staticTest_0);
+L8:
+  err_state.buf_idx--;
   __THE_1_fn$1004_free((struct __THE_1_fn$1004) __THE_0_CounterSDridiculousStuff_0);
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_CounterSDincrease_0);
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_CounterSDdecrease_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

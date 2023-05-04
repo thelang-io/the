@@ -268,11 +268,15 @@ int main () {
   const struct __THE_1_fn$0 __THE_0_filterOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterOne_0, NULL, 0};
   const struct __THE_1_fn$0 __THE_0_filterTwo_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwo_0, NULL, 0};
   const struct __THE_1_fn$0 __THE_0_filterTwoOrOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwoOrOne_0, NULL, 0};
-  const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
-  const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
-  const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
-  const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
+  const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_1_array_str_free((struct __THE_1_array_str) (error_stack_pos(&err_state, 11, 3), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterOne_0))));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_1_array_str_free((struct __THE_1_array_str) (error_stack_pos(&err_state, 12, 3), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0))));
@@ -298,10 +302,6 @@ int main () {
   __THE_1_array_str_free((struct __THE_1_array_str) (error_stack_pos(&err_state, 22, 3), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0))));
 L4:
   err_state.buf_idx--;
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test0_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

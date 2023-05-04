@@ -3,20 +3,6 @@ const a: char
 const b: char = '~'
 const c := '\0'
 ======= code =======
-#include <stdlib.h>
-
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
-
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
-
 int main () {
   const char __THE_0_a_0 = '\0';
   const char __THE_0_b_0 = '~';

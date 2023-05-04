@@ -133,6 +133,11 @@ struct CodegenTypeInfoItem {
   std::string typeRefCodeConst;
 };
 
+struct CodegenStateBuiltinsEntities {
+  std::optional<std::vector<std::string> *> builtins = std::nullopt;
+  std::optional<std::vector<std::string> *> entities = std::nullopt;
+};
+
 class Codegen {
  public:
   std::map<std::string, CodegenAPIItem> api = {};
@@ -147,6 +152,9 @@ class Codegen {
   std::size_t indent = 0;
   std::size_t lastTypeIdx = 1;
   bool needMainArgs = false;
+  std::vector<CodegenStateBuiltinsEntities> builtinsEntitiesBuffer = {};
+  std::vector<std::string> bufferBuiltins = {};
+  std::vector<std::string> bufferEntities = {};
 
   static void compile (
     const std::string &,
@@ -201,6 +209,8 @@ class Codegen {
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _nodeVarDeclInit (const CodegenTypeInfo &);
+  void _restoreStateBuiltinsEntities ();
+  void _saveStateBuiltinsEntities ();
   std::string _type (Type *);
   std::string _typeDef (Type *);
   std::string _typeDefIdx (Type *);

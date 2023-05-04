@@ -136,7 +136,9 @@ struct any any_realloc (struct any, struct any);
 struct str char_str (char);
 struct str cstr_concat_str (const char *, struct str);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str float_str (double);
 void print (FILE *, const char *, ...);
@@ -194,9 +196,15 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
 void error_stack_pos (err_state_t *state, int line, int col) {
   state->stack[state->stack_idx - 1].line = line;
   state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -367,72 +375,153 @@ struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEU
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_union_charUSstrUE __THE_0_testUnion_0 = __THE_1_union_charUSstrUE_alloc(TYPE_char, 'a');
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct any __THE_0_a_0 = __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if (__THE_0_a_0.t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 5, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d)))), THE_EOL);
+L4:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     print(stdout, "zz", "any", THE_EOL);
+L5:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 9, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d)))), THE_EOL);
+L7:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
     print(stdout, "zz", "any", THE_EOL);
+L8:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_c_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if (__THE_0_c_0.t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 13, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v4)))), THE_EOL);
+L10:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L11;
     print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 14, 27), float_str(__THE_0_c_0.v5))), THE_EOL);
+L11:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_d_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 17, 50), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v4)))), THE_EOL);
+L13:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L14;
     print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 18, 27), float_str(__THE_0_d_0.v5))), THE_EOL);
+L14:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   struct any __THE_0_e_0 = __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L16;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 21, 64), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d)))), THE_EOL);
+L16:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L17;
     print(stdout, "zz", "any", THE_EOL);
+L17:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L19;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 25, 59), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d)))), THE_EOL);
+L19:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L20;
     print(stdout, "zz", "any", THE_EOL);
+L20:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
   if ((__THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L22;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 29, 64), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v4)))), THE_EOL);
+L22:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L23;
     print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 30, 27), float_str(__THE_0_g_0.v5))), THE_EOL);
+L23:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14);
   if ((__THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_union_charUSstrUE) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L25;
     print(stdout, "sz", cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 33, 59), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v4)))), THE_EOL);
+L25:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L26;
     print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 34, 27), float_str(__THE_0_h_0.v5))), THE_EOL);
+L26:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (__THE_0_a_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 36, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (__THE_0_b_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 37, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (__THE_0_c_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 38, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 38, 70), float_str(__THE_0_c_0.v5))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (__THE_0_d_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 39, 49), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 39, 70), float_str(__THE_0_d_0.v5))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 40, 63), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 41, 58), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 42, 63), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 42, 84), float_str(__THE_0_g_0.v5))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", (error_stack_pos(&err_state, 43, 58), __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v4)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 43, 79), float_str(__THE_0_h_0.v5))), THE_EOL);
-  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_h_0);
-  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_g_0);
-  any_free((struct any) __THE_0_f_0);
-  any_free((struct any) __THE_0_e_0);
-  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_d_0);
-  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_c_0);
-  any_free((struct any) __THE_0_b_0);
-  any_free((struct any) __THE_0_a_0);
-  __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) __THE_0_testUnion_0);
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

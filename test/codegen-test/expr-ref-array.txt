@@ -197,23 +197,25 @@ void __THE_1_array_int_push (struct __THE_1_array_int *n, struct __THE_1_array_i
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
-  struct __THE_1_array_int __THE_0_b_0 = __THE_1_array_int_alloc(3, 4, 5, 6);
-  struct __THE_1_array_int *__THE_0_ref1_0 = &__THE_0_a_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  struct __THE_1_array_int __THE_0_b_0 = __THE_1_array_int_alloc(3, 4, 5, 6);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  struct __THE_1_array_int *__THE_0_ref1_0 = &__THE_0_a_0;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 7, 3), __THE_1_array_int_push(__THE_0_ref1_0, __THE_1_array_int_alloc(1, 7)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   __THE_0_ref1_0 = &__THE_0_b_0;
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 9, 3), __THE_1_array_int_push(__THE_0_ref1_0, __THE_1_array_int_alloc(2, 8, 9)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_array_int __THE_0_v4_0 = true ? __THE_1_array_int_copy(__THE_0_a_0) : __THE_1_array_int_copy(*__THE_0_ref1_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_array_int __THE_0_v5_0 = false ? __THE_1_array_int_copy(*__THE_0_ref1_0) : __THE_1_array_int_copy(__THE_0_b_0);
   const struct __THE_1_array_int *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_v5_0);
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_v4_0);
 L1:
   err_state.buf_idx--;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

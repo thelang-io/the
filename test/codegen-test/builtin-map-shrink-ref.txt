@@ -350,7 +350,10 @@ struct str __THE_1_map_strMSintME_str (struct __THE_1_map_strMSintME n) {
 }
 void __THE_1_printMap_0 (void *px, struct __THE_1_fn$1003P p) {
   const struct __THE_1_map_strMSintME __THE_0_m_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "szsz", str_concat_str(str_concat_cstr((error_stack_pos(&err_state, 2, 9), int_str(__THE_1_map_strMSintME_cap(__THE_1_map_strMSintME_copy(__THE_0_m_0)))), "|"), (error_stack_pos(&err_state, 2, 29), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_m_0))))), " ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_m_0)), THE_EOL);
+L1:
+  err_state.buf_idx--;
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_m_0);
 }
 struct __THE_1_array_map_strMSintME __THE_1_array_map_strMSintME_alloc (size_t x, ...) {
@@ -392,22 +395,25 @@ size_t __THE_1_array_map_strMSintME_len (struct __THE_1_array_map_strMSintME n) 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1003 __THE_0_printMap_0 = (struct __THE_1_fn$1003) {&__THE_1_printMap_0, NULL, 0};
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   const struct __THE_1_map_strMSintME __THE_0_emptyMap_0 = __THE_1_map_strMSintME_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   struct __THE_1_array_map_strMSintME __THE_0_arr_0 = __THE_1_array_map_strMSintME_alloc(4, __THE_1_map_strMSintME_copy(__THE_0_emptyMap_0), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 2, str_alloc("key2"), 3), __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 6, str_alloc("key2"), 7, str_alloc("key3"), 8));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_map_strMSintME_len(__THE_1_array_map_strMSintME_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     (error_stack_pos(&err_state, 10, 5), __THE_1_map_strMSintME_reserve((error_stack_pos(&err_state, 10, 5), __THE_1_array_map_strMSintME_at(__THE_0_arr_0, __THE_0_i_0)), 100));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
     __THE_0_printMap_0.f(__THE_0_printMap_0.x, (struct __THE_1_fn$1003P) {__THE_1_map_strMSintME_copy(*(error_stack_pos(&err_state, 11, 14), __THE_1_array_map_strMSintME_at(__THE_0_arr_0, __THE_0_i_0)))});
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
     (error_stack_pos(&err_state, 12, 5), __THE_1_map_strMSintME_shrink((error_stack_pos(&err_state, 12, 5), __THE_1_array_map_strMSintME_at(__THE_0_arr_0, __THE_0_i_0))));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
     __THE_0_printMap_0.f(__THE_0_printMap_0.x, (struct __THE_1_fn$1003P) {__THE_1_map_strMSintME_copy(*(error_stack_pos(&err_state, 13, 14), __THE_1_array_map_strMSintME_at(__THE_0_arr_0, __THE_0_i_0)))});
-L3:
+L5:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;
   }
 L2:
-  __THE_1_array_map_strMSintME_free((struct __THE_1_array_map_strMSintME) __THE_0_arr_0);
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_emptyMap_0);
+  err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

@@ -68,6 +68,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 bool fs_isAbsoluteSync (struct str);
 struct str os_name ();
@@ -103,6 +105,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -229,11 +237,29 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "tz", fs_isAbsoluteSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-absolute-sync.txt")), THE_EOL);
   if (str_eq_cstr(os_name(), "Windows")) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
     print(stdout, "tz", fs_isAbsoluteSync(str_alloc("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync.txt")), THE_EOL);
+L2:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     print(stdout, "tz", fs_isAbsoluteSync(str_alloc("/test/fixtures/builtin-fs-is-absolute-sync.txt")), THE_EOL);
+L3:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
+  }
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
   }
 }
 ======= flags =======

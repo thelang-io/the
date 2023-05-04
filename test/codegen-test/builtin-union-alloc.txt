@@ -39,7 +39,6 @@ main {
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 #define TYPE_bool 2
 #define TYPE_byte 3
@@ -57,21 +56,11 @@ main {
 #define TYPE_u32 15
 #define TYPE_u64 16
 
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
 struct __THE_1_union_boolUSbyteUScharUE;
 struct __THE_1_union_f32USf64USfloatUE;
 struct __THE_1_union_i8USi16USi32USi64USintUE;
 struct __THE_1_union_u8USu16USu32USu64UE;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_union_boolUSbyteUScharUE {
   int t;
   union {

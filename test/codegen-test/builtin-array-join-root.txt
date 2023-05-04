@@ -523,13 +523,19 @@ int main () {
   const int32_t *__THE_0_refInt1_0 = &__THE_0_int1_0;
   const int32_t *__THE_0_refInt2_0 = &__THE_0_int2_0;
   const int32_t *__THE_0_refInt3_0 = &__THE_0_int3_0;
-  const struct __THE_1_array_array_int __THE_0_testArrayInt_0 = __THE_1_array_array_int_alloc(3, __THE_1_array_int_alloc(3, 0, 1, 2), __THE_1_array_int_alloc(3, 3, 4, 5), __THE_1_array_int_alloc(3, 6, 7, 8));
-  const struct __THE_1_array_fn$1000 __THE_0_testFn_0 = __THE_1_array_fn$1000_alloc(3, __THE_1_fn$1000_copy(__THE_0_fn1_0), __THE_1_fn$1000_copy(__THE_0_fn2_0), __THE_1_fn$1000_copy(__THE_0_fn3_0));
-  const struct __THE_1_array_TestObj __THE_0_testObj_0 = __THE_1_array_TestObj_alloc(3, __THE_1_TestObj_0_alloc(1), __THE_1_TestObj_0_alloc(2), __THE_1_TestObj_0_alloc(3));
-  const struct __THE_1_array_str __THE_0_testStr_0 = __THE_1_array_str_alloc(3, str_alloc("test1"), str_alloc("test2"), str_alloc("test3"));
-  const struct __THE_1_array_ref_int __THE_0_testRefInt_0 = __THE_1_array_ref_int_alloc(3, __THE_0_refInt1_0, __THE_0_refInt2_0, __THE_0_refInt3_0);
-  const struct __THE_1_array_int __THE_0_testInt_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const struct __THE_1_array_array_int __THE_0_testArrayInt_0 = __THE_1_array_array_int_alloc(3, __THE_1_array_int_alloc(3, 0, 1, 2), __THE_1_array_int_alloc(3, 3, 4, 5), __THE_1_array_int_alloc(3, 6, 7, 8));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_fn$1000 __THE_0_testFn_0 = __THE_1_array_fn$1000_alloc(3, __THE_1_fn$1000_copy(__THE_0_fn1_0), __THE_1_fn$1000_copy(__THE_0_fn2_0), __THE_1_fn$1000_copy(__THE_0_fn3_0));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_TestObj __THE_0_testObj_0 = __THE_1_array_TestObj_alloc(3, __THE_1_TestObj_0_alloc(1), __THE_1_TestObj_0_alloc(2), __THE_1_TestObj_0_alloc(3));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_str __THE_0_testStr_0 = __THE_1_array_str_alloc(3, str_alloc("test1"), str_alloc("test2"), str_alloc("test3"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_ref_int __THE_0_testRefInt_0 = __THE_1_array_ref_int_alloc(3, __THE_0_refInt1_0, __THE_0_refInt2_0, __THE_0_refInt3_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_int __THE_0_testInt_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 22, 3), __THE_1_array_array_int_join(__THE_1_array_array_int_copy(__THE_0_testArrayInt_0), 0, (struct str) {})));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 23, 3), __THE_1_array_fn$1000_join(__THE_1_array_fn$1000_copy(__THE_0_testFn_0), 0, (struct str) {})));
@@ -555,12 +561,6 @@ int main () {
   str_free((struct str) (error_stack_pos(&err_state, 34, 3), __THE_1_array_int_join(__THE_1_array_int_copy(__THE_0_testInt_0), 1, str_alloc("_"))));
 L1:
   err_state.buf_idx--;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_testInt_0);
-  __THE_1_array_ref_int_free((struct __THE_1_array_ref_int) __THE_0_testRefInt_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_testStr_0);
-  __THE_1_array_TestObj_free((struct __THE_1_array_TestObj) __THE_0_testObj_0);
-  __THE_1_array_fn$1000_free((struct __THE_1_array_fn$1000) __THE_0_testFn_0);
-  __THE_1_array_array_int_free((struct __THE_1_array_array_int) __THE_0_testArrayInt_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

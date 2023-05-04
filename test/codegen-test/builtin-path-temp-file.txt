@@ -348,8 +348,11 @@ int main () {
   const struct str __THE_0_file1_0 = (error_stack_pos(&err_state, 2, 12), path_tempFile());
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct str __THE_0_file2_0 = (error_stack_pos(&err_state, 3, 12), path_tempFile());
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", str_copy(__THE_0_file1_0), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", str_copy(__THE_0_file2_0), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "tz", str_eq_str(str_copy(__THE_0_file1_0), str_copy(__THE_0_file2_0)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 9, 3), fs_rmSync(str_copy(__THE_0_file1_0)));

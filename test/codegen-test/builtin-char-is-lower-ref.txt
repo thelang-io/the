@@ -68,7 +68,9 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 bool char_isLower (char);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
@@ -100,9 +102,15 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
 void error_stack_pos (err_state_t *state, int line, int col) {
   state->stack[state->stack_idx - 1].line = line;
   state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -223,11 +231,24 @@ size_t __THE_1_array_char_len (struct __THE_1_array_char n) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_array_char __THE_0_arr_0 = __THE_1_array_char_alloc(9, '\0', '\n', '\t', 'A', 'a', '0', '9', '_', '-');
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_char_len(__THE_1_array_char_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     print(stdout, "tz", char_isLower(*(error_stack_pos(&err_state, 5, 11), __THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
+L3:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
-  __THE_1_array_char_free((struct __THE_1_array_char) __THE_0_arr_0);
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

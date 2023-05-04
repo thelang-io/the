@@ -82,6 +82,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -107,6 +109,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -193,7 +201,17 @@ void __THE_1_map_strMSmap_strMSintMEME_free (struct __THE_1_map_strMSmap_strMSin
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   __THE_1_map_strMSmap_strMSintMEME_free((struct __THE_1_map_strMSmap_strMSintMEME) __THE_1_map_strMSmap_strMSintMEME_alloc(3, str_alloc("key1"), __THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6), str_alloc("key2"), __THE_1_map_strMSintME_alloc(3, str_alloc("key7"), 7, str_alloc("key8"), 8, str_alloc("key9"), 9), str_alloc("key3"), __THE_1_map_strMSintME_alloc(3, str_alloc("key10"), 10, str_alloc("key11"), 11, str_alloc("key12"), 12)));
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

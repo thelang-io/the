@@ -82,7 +82,9 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
@@ -117,9 +119,15 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
 void error_stack_pos (err_state_t *state, int line, int col) {
   state->stack[state->stack_idx - 1].line = line;
   state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -313,29 +321,51 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct __THE_1_array_str __THE_0_test_0 = __THE_1_array_str_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_array_str __THE_0_test4_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_array_str __THE_0_test5_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test2_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 9, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test2_0, 0)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test3_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 12, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test3_0, 0)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 13, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test3_0, 0)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test4_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 16, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test4_0, 2)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 17, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test4_0, 1)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 18, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test4_0, 0)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test5_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 21, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test5_0, -2)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 22, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test5_0, -1)))))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_copy(__THE_0_test_0 = __THE_1_array_str_realloc(__THE_0_test_0, (error_stack_pos(&err_state, 23, 16), __THE_1_array_str_copy(*__THE_1_array_str_remove(&__THE_0_test5_0, 0)))))), THE_EOL);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test5_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test4_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test_0);
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

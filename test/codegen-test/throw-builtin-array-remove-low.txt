@@ -182,12 +182,12 @@ struct __THE_1_array_int *__THE_1_array_int_remove (struct __THE_1_array_int *se
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const struct __THE_1_array_int __THE_0_test_0 = __THE_1_array_int_alloc(3, 0, 1, 2);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const struct __THE_1_array_int __THE_0_test_0 = __THE_1_array_int_alloc(3, 0, 1, 2);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 3, 3), __THE_1_array_int_remove(&__THE_0_test_0, -5));
 L1:
   err_state.buf_idx--;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

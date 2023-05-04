@@ -85,6 +85,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
@@ -111,6 +113,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -195,31 +203,48 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   {
     struct str __THE_0_i_0 = str_alloc("");
     for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
     }
     str_free((struct str) __THE_0_i_0);
   }
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct str __THE_0_a_0 = str_alloc("");
   for (; str_ne_cstr(str_copy(__THE_0_a_0), "aaa"); __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "a"))) {
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   struct str __THE_0_b_0 = str_alloc("");
   while (str_ne_cstr(str_copy(__THE_0_b_0), "aaa")) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     __THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_cstr(str_copy(__THE_0_b_0), "a"));
+L5:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   struct str __THE_0_c_0 = str_alloc("");
   while (1) {
     if (str_eq_cstr(str_copy(__THE_0_c_0), "aaa")) {
       break;
     }
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
     __THE_0_c_0 = str_realloc(__THE_0_c_0, str_concat_cstr(str_copy(__THE_0_c_0), "a"));
+L7:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   {
     struct str __THE_0_d_0 = str_alloc("");
     for (; str_ne_cstr(str_copy(__THE_0_d_0), "aaa");) {
+      if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
       __THE_0_d_0 = str_realloc(__THE_0_d_0, str_concat_cstr(str_copy(__THE_0_d_0), "a"));
+L9:
+      err_state.buf_idx--;
+      if (err_state.id != -1) goto L8;
     }
+L8:
     str_free((struct str) __THE_0_d_0);
   }
   {
@@ -231,9 +256,14 @@ int main () {
     }
     str_free((struct str) __THE_0_e_0);
   }
-  str_free((struct str) __THE_0_c_0);
-  str_free((struct str) __THE_0_b_0);
-  str_free((struct str) __THE_0_a_0);
+L2:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

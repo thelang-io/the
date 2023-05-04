@@ -63,6 +63,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
@@ -94,6 +96,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -259,16 +267,29 @@ struct str __THE_1_opt_str_str (struct str *n) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str *__THE_0_a_0 = NULL;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct str *__THE_0_b_0 = NULL;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct str *__THE_0_c_0 = __THE_1_opt_str_alloc(str_alloc("test"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "szszsz", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_a_0)), " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_b_0)), " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_c_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_a_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_b_0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_c_0)), THE_EOL);
-  __THE_1_opt_str_free((struct str *) __THE_0_c_0);
-  __THE_1_opt_str_free((struct str *) __THE_0_b_0);
-  __THE_1_opt_str_free((struct str *) __THE_0_a_0);
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

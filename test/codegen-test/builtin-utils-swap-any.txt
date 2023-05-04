@@ -289,11 +289,20 @@ void __THE_1_printAny_0 (void *px, struct __THE_1_fn$1000P p) {
   const struct str __THE_0_prefix_0 = p.n0;
   const struct any __THE_0_v_0 = p.n1;
   if (__THE_0_v_0.t == TYPE_int) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
     print(stdout, "szzziz", str_copy(__THE_0_prefix_0), " ", "is int:", " ", ((struct __THE_1_any_int *) __THE_0_v_0.d)->d, THE_EOL);
+L2:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
   if (__THE_0_v_0.t == TYPE_str) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     print(stdout, "szzzsz", str_copy(__THE_0_prefix_0), " ", "is str:", " ", str_copy(((struct __THE_1_any_str *) __THE_0_v_0.d)->d), THE_EOL);
+L3:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+L1:
   any_free((struct any) __THE_0_v_0);
   str_free((struct str) __THE_0_prefix_0);
 }
@@ -301,22 +310,28 @@ void __THE_1_printAny_0 (void *px, struct __THE_1_fn$1000P p) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_printAny_0 = (struct __THE_1_fn$1000) {&__THE_1_printAny_0, NULL, 0};
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   struct any __THE_0_a_0 = __THE_1_any_int_alloc(1);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   struct any __THE_0_b_0 = __THE_1_any_str_alloc(str_alloc("test"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   (error_stack_pos(&err_state, 17, 3), utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   (error_stack_pos(&err_state, 20, 3), utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
-L2:
+L4:
   err_state.buf_idx--;
-  any_free((struct any) __THE_0_b_0);
-  any_free((struct any) __THE_0_a_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

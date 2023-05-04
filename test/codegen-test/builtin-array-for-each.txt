@@ -252,18 +252,25 @@ void __THE_1_array_str_forEach (struct __THE_1_array_str self, struct __THE_1_fn
 void __THE_1_forEachPrint_0 (void *px, struct __THE_1_fn$1P p) {
   const struct str __THE_0_it_0 = p.n0;
   const int32_t __THE_0_idx_0 = p.n1;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sziz", str_copy(__THE_0_it_0), " ", __THE_0_idx_0, THE_EOL);
+L1:
+  err_state.buf_idx--;
   str_free((struct str) __THE_0_it_0);
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1 __THE_0_forEachPrint_0 = (struct __THE_1_fn$1) {&__THE_1_forEachPrint_0, NULL, 0};
-  const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
-  const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
-  const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
-  const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+  const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   (error_stack_pos(&err_state, 9, 3), __THE_1_array_str_forEach(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$1_copy(__THE_0_forEachPrint_0)));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   (error_stack_pos(&err_state, 10, 3), __THE_1_array_str_forEach(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$1_copy(__THE_0_forEachPrint_0)));
@@ -273,10 +280,6 @@ int main () {
   (error_stack_pos(&err_state, 12, 3), __THE_1_array_str_forEach(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$1_copy(__THE_0_forEachPrint_0)));
 L2:
   err_state.buf_idx--;
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test0_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

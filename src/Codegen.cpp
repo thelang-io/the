@@ -65,6 +65,10 @@ std::string getOSFromPlatform (const std::string &platform) {
   #endif
 }
 
+// todo every _alloc should have prefix of error pos
+// todo fix all cleanup from main is gone (probably other scopes too)
+// todo example that has global variable array_str has wrong generation
+
 void Codegen::compile (
   const std::string &path,
   const std::tuple<std::string, std::vector<std::string>> &result,
@@ -748,18 +752,14 @@ int Codegen::_apiEntity (
   CodegenEntityType type,
   const std::optional<std::function<int (std::string &, std::string &)>> &fn
 ) {
-  auto initialStateBuiltins = this->state.builtins;
-  auto initialStateEntities = this->state.entities;
-
+  this->_saveStateBuiltinsEntities();
   auto entity = CodegenEntity{name, type};
   this->state.builtins = &entity.builtins;
   this->state.entities = &entity.entities;
   auto newPos = fn == std::nullopt ? 0 : (*fn)(entity.decl, entity.def);
   entity.decl = entity.decl.empty() ? entity.decl : this->_apiEval(entity.decl);
   entity.def = entity.def.empty() ? entity.def : this->_apiEval(entity.def);
-
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
+  this->_restoreStateBuiltinsEntities();
 
   if (newPos == 0) {
     this->entities.push_back(entity);
@@ -954,7 +954,6 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       (!nodesChecker.endsWith<ASTNodeReturn>() || nodesParentChecker.is<ASTNodeLoop>()) &&
       this->state.cleanUp.breakVarUsed
     ) {
-      // todo test if should be this->state.cleanUp.currentBreakVar
       code += std::string(this->indent, ' ') + "if (" + initialCleanUp.currentBreakVar() + " == 1) break;" EOL;
     }
 
@@ -1384,6 +1383,7 @@ std::string Codegen::_fnDecl (
   auto fnName = Codegen::name(codeName);
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
+    // todo remove
     this->_activateEntity(varTypeInfo.typeName);
     code += std::string(this->indent, ' ') + "const " + varTypeInfo.typeCode + fnName;
   }
@@ -2628,7 +2628,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
     auto exprIsExprCode = this->_nodeExpr(exprIs.expr, exprIs.expr.type, true);
     auto exprIsTypeDef = this->_typeDef(exprIs.type);
-
     this->_activateEntity(exprIsTypeDef);
     auto code = exprIsExprCode + ".t == " + exprIsTypeDef;
 
@@ -2668,7 +2667,6 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
     this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
     auto code = nodeTypeInfo.typeName + "_alloc(" + fieldsCode + ")";
     code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
-
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
     auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
@@ -2774,6 +2772,27 @@ std::string Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
   }
 }
 
+void Codegen::_restoreStateBuiltinsEntities () {
+  this->state.builtins = this->builtinsEntitiesBuffer.back().builtins;
+  this->state.entities = this->builtinsEntitiesBuffer.back().entities;
+  this->builtinsEntitiesBuffer.pop_back();
+}
+
+void Codegen::_saveStateBuiltinsEntities () {
+  this->builtinsEntitiesBuffer.push_back(CodegenStateBuiltinsEntities{
+    this->state.builtins,
+    this->state.entities
+  });
+
+  if (this->state.builtins == std::nullopt) {
+    this->state.builtins = &this->bufferBuiltins;
+  }
+
+  if (this->state.entities == std::nullopt) {
+    this->state.entities = &this->bufferEntities;
+  }
+}
+
 std::string Codegen::_type (Type *type) {
   if (type->isAny()) {
     this->_activateBuiltin("typeAny");
@@ -2861,11 +2880,9 @@ std::string Codegen::_type (Type *type) {
 }
 
 std::string Codegen::_typeDef (Type *type) {
-  auto initialStateBuiltins = this->state.builtins;
-  auto initialStateEntities = this->state.entities;
+  this->_saveStateBuiltinsEntities();
   auto typeInfo = this->_typeInfo(type);
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
+  this->_restoreStateBuiltinsEntities();
 
   auto typeName = "TYPE_" + std::string(typeInfo.typeName.starts_with("__THE_1_") ? typeInfo.typeName.substr(8) : typeInfo.typeName);
 
@@ -2982,11 +2999,9 @@ CodegenTypeInfoItem Codegen::_typeInfoItem (Type *type) {
 }
 
 std::string Codegen::_typeNameAny (Type *type) {
-  auto initialStateBuiltins = this->state.builtins;
-  auto initialStateEntities = this->state.entities;
+  this->_saveStateBuiltinsEntities();
   auto typeInfoTypeName = this->_typeInfo(type).typeName;
-  this->state.builtins = initialStateBuiltins;
-  this->state.entities = initialStateEntities;
+  this->_restoreStateBuiltinsEntities();
 
   auto typeName = Codegen::typeName("any_" + (typeInfoTypeName.starts_with("__THE_1_") ? typeInfoTypeName.substr(8) : typeInfoTypeName));
 
@@ -4147,8 +4162,7 @@ std::string Codegen::_typeNameObj (Type *type) {
 }
 
 std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, std::string> &extra) {
-  auto saveStateBuiltins = this->state.builtins;
-  auto saveStateEntities = this->state.entities;
+  this->_saveStateBuiltinsEntities();
   auto typeName = type->builtin ? type->name : Codegen::typeName(type->codeName);
 
   for (auto &entity : this->entities) {
@@ -4326,9 +4340,7 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
     }
   }
 
-  this->state.builtins = saveStateBuiltins;
-  this->state.entities = saveStateEntities;
-
+  this->_restoreStateBuiltinsEntities();
   return typeName;
 }
 
@@ -4628,27 +4640,21 @@ std::string Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetTyp
 
   if (!root && targetType->isAny() && !realNodeExprType->isAny()) {
     auto typeName = this->_typeNameAny(nodeExpr.type);
-    this->_activateEntity(typeName + "_alloc");
-    result = typeName + "_alloc(" + result + ")";
+    result = this->_apiEval("_{" + typeName + "_alloc}(" + result + ")", 1);
   } else if (!root && realTargetType->isOpt() && (!realNodeExprType->isOpt() || !realTargetType->matchStrict(realNodeExprType))) {
     auto targetTypeInfo = this->_typeInfo(realTargetType);
     auto optionalType = std::get<TypeOptional>(targetTypeInfo.type->body);
 
     if (Type::real(optionalType.type)->isAny() && !realNodeExprType->isAny()) {
       auto typeName = this->_typeNameAny(realNodeExprType);
-      this->_activateEntity(typeName + "_alloc");
-      result = typeName + "_alloc(" + result + ")";
+      result = this->_apiEval("_{" + typeName + "_alloc}(" + result + ")", 1);
     }
 
-    this->_activateEntity(targetTypeInfo.typeName + "_alloc");
-    result = targetTypeInfo.typeName + "_alloc(" + result + ")";
+    result = this->_apiEval("_{" + targetTypeInfo.typeName + "_alloc}(" + result + ")", 1);
   } else if (!root && realTargetType->isUnion() && (!realNodeExprType->isUnion() || !realTargetType->matchStrict(realNodeExprType))) {
     auto typeName = this->_typeNameUnion(realTargetType);
     auto defName = this->_typeDef(nodeExpr.type);
-
-    this->_activateEntity(defName);
-    this->_activateEntity(typeName + "_alloc");
-    result = typeName + "_alloc(" + defName + ", " + result + ")";
+    result = this->_apiEval("_{" + typeName + "_alloc}(_{" + defName + "}, " + result + ")", 2);
   }
 
   if (nodeExpr.parenthesized) {

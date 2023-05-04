@@ -211,11 +211,15 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
-  const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
-  const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
-  const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   __THE_1_array_str_free((struct __THE_1_array_str) (error_stack_pos(&err_state, 7, 3), __THE_1_array_str_concat(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_array_str_alloc(0))));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   __THE_1_array_str_free((struct __THE_1_array_str) (error_stack_pos(&err_state, 8, 3), __THE_1_array_str_concat(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_array_str_alloc(1, str_alloc("4")))));
@@ -249,10 +253,6 @@ int main () {
   __THE_1_array_str_free((struct __THE_1_array_str) (error_stack_pos(&err_state, 22, 3), __THE_1_array_str_concat(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_array_str_alloc(3, str_alloc("4"), str_alloc("5"), str_alloc("6")))));
 L1:
   err_state.buf_idx--;
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test0_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

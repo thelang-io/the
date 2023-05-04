@@ -20,25 +20,12 @@ main {
 #endif
 
 #include <stdint.h>
-#include <stdlib.h>
 #ifdef THE_OS_WINDOWS
   #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
   #include <unistd.h>
 #endif
-
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
-
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 
 void thread_sleep (int32_t);
 

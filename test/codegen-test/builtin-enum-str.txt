@@ -85,7 +85,7 @@ struct str {
 struct error_Error;
 struct __THE_1_Test1_0;
 struct __THE_1_fn$1000;
-struct __THE_1_fn$1002;
+struct __THE_1_fn$1001;
 struct __THE_1_mainSDtestCtx_0X;
 
 struct error_Error {
@@ -100,7 +100,7 @@ struct __THE_1_fn$1000 {
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1002 {
+struct __THE_1_fn$1001 {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -128,9 +128,9 @@ struct error_Error *error_Error_alloc (struct str, struct str);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (enum __THE_1_Color_0);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 enum __THE_1_Color_0 __THE_1_testCall_0 (void *);
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002);
+void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
 void __THE_1_mainSDtestCtx_0 (void *);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1002 *, struct __THE_1_mainSDtestCtx_0X);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSDtestCtx_0X);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -230,35 +230,32 @@ void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
 enum __THE_1_Color_0 __THE_1_testCall_0 (void *px) {
   return __THE_0_ColorSDRed_0;
 }
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
+void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtestCtx_0 (void *px) {
-  error_stack_push(&err_state, "/test", "testCtx");
   struct __THE_1_mainSDtestCtx_0X *x = px;
   enum __THE_1_Color_0 *__THE_0_test2_0 = x->__THE_0_test2_0;
   const struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
   const enum __THE_1_Color_0 **__THE_0_refTest_0 = x->__THE_0_refTest_0;
   const enum __THE_1_Color_0 *__THE_0_test_0 = x->__THE_0_test_0;
   const struct __THE_1_fn$1000 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
   const struct str __THE_0_v11_0 = (error_stack_pos(&err_state, 29, 12), enum_str(*__THE_0_test_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   const struct str __THE_0_v12_0 = (error_stack_pos(&err_state, 30, 12), enum_str((*__THE_0_test1_0)->__THE_0_e));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   const struct str __THE_0_v13_0 = (error_stack_pos(&err_state, 31, 12), enum_str(*__THE_0_test2_0 = __THE_0_ColorSDBlue_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   const struct str __THE_0_v14_0 = (error_stack_pos(&err_state, 32, 12), enum_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   const struct str __THE_0_v15_0 = (error_stack_pos(&err_state, 33, 12), enum_str(*__THE_0_test_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   const struct str __THE_0_v16_0 = (error_stack_pos(&err_state, 34, 12), enum_str(**__THE_0_refTest_0));
-L8:
+L9:
   err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_mainSDtestCtx_0X x) {
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtestCtx_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
   struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -272,9 +269,10 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_testCall_0 = (struct __THE_1_fn$1000) {&__THE_1_testCall_0, NULL, 0};
   const enum __THE_1_Color_0 __THE_0_test_0 = __THE_0_ColorSDGreen_0;
   const enum __THE_1_Color_0 *__THE_0_refTest_0 = &__THE_0_test_0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_0_ColorSDBlue_0);
   enum __THE_1_Color_0 __THE_0_test2_0 = __THE_0_ColorSDRed_0;
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct str __THE_0_v1_0 = (error_stack_pos(&err_state, 21, 9), enum_str(__THE_0_test_0));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct str __THE_0_v2_0 = (error_stack_pos(&err_state, 22, 9), enum_str(__THE_0_test1_0->__THE_0_e));
@@ -286,12 +284,11 @@ int main () {
   const struct str __THE_0_v5_0 = (error_stack_pos(&err_state, 25, 9), enum_str(__THE_0_test_0));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct str __THE_0_v6_0 = (error_stack_pos(&err_state, 26, 9), enum_str(*__THE_0_refTest_0));
-  const struct __THE_1_fn$1002 __THE_0_mainSDtestCtx_0;
-  __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1002 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
-  __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_mainSDtestCtx_0);
+  const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
+  __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
+  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtestCtx_0);
 L1:
   err_state.buf_idx--;
-  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

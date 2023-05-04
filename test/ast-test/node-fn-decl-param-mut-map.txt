@@ -16,7 +16,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$1002" throws>
+      <TypeFn name="fn$1000">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <TypeMap name="map_strMSstrME">
@@ -169,7 +169,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$1003" throws>
+      <TypeFn name="fn$1001">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
             <TypeMap name="map_strMSstrME">
@@ -581,7 +581,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1002" throws>
+              <TypeFn name="fn$1000">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <TypeMap name="map_strMSstrME">
@@ -609,7 +609,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test1" codeName="test1_0" frame="1">
-                  <TypeFn name="fn$1002" throws>
+                  <TypeFn name="fn$1000">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <TypeMap name="map_strMSstrME">
@@ -687,7 +687,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1003" throws>
+              <TypeFn name="fn$1001">
                 <TypeFnParams>
                   <TypeFnParam name="a" mut required>
                     <TypeMap name="map_strMSstrME">
@@ -725,7 +725,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$1003" throws>
+                  <TypeFn name="fn$1001">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
                         <TypeMap name="map_strMSstrME">

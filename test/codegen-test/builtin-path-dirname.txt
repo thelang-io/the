@@ -80,7 +80,9 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str path_dirname (struct str);
 void print (FILE *, const char *, ...);
@@ -116,9 +118,15 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
 void error_stack_pos (err_state_t *state, int line, int col) {
   state->stack[state->stack_idx - 1].line = line;
   state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -265,30 +273,63 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 2, 9), path_dirname(str_alloc(""))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 3, 9), path_dirname(str_alloc("t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 4, 9), path_dirname(str_alloc("test"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 5, 9), path_dirname(str_alloc(THE_PATH_SEP))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 6, 9), path_dirname(cstr_concat_str("t", str_alloc(THE_PATH_SEP)))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 7, 9), path_dirname(cstr_concat_str("test", str_alloc(THE_PATH_SEP)))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 8, 9), path_dirname(str_concat_cstr(str_alloc(THE_PATH_SEP), "t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 9, 9), path_dirname(str_concat_cstr(str_alloc(THE_PATH_SEP), "test"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 10, 9), path_dirname(str_concat_cstr(cstr_concat_str("t", str_alloc(THE_PATH_SEP)), "t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 11, 9), path_dirname(str_concat_cstr(cstr_concat_str("t", str_alloc(THE_PATH_SEP)), "test"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 12, 9), path_dirname(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 13, 9), path_dirname(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "test"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 14, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "t"), str_alloc(THE_PATH_SEP)), "t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 15, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "t"), str_alloc(THE_PATH_SEP)), "test"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 16, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "test"), str_alloc(THE_PATH_SEP)), "t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 17, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "test"), str_alloc(THE_PATH_SEP)), "test"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 18, 9), path_dirname(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "t"), str_alloc(THE_PATH_SEP)), "t"), str_alloc(THE_PATH_SEP)))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 19, 9), path_dirname(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "t"), str_alloc(THE_PATH_SEP)), "test"), str_alloc(THE_PATH_SEP)))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 20, 9), path_dirname(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "test"), str_alloc(THE_PATH_SEP)), "t"), str_alloc(THE_PATH_SEP)))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 21, 9), path_dirname(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "test"), str_alloc(THE_PATH_SEP)), "test"), str_alloc(THE_PATH_SEP)))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 22, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "t"), str_alloc(THE_PATH_SEP)), "t"), str_alloc(THE_PATH_SEP)), "t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 23, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "t"), str_alloc(THE_PATH_SEP)), "test"), str_alloc(THE_PATH_SEP)), "test"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 24, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "test"), str_alloc(THE_PATH_SEP)), "t"), str_alloc(THE_PATH_SEP)), "t"))), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 25, 9), path_dirname(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(str_alloc(THE_PATH_SEP), "test"), str_alloc(THE_PATH_SEP)), "test"), str_alloc(THE_PATH_SEP)), "test"))), THE_EOL);
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

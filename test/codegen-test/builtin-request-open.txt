@@ -841,9 +841,13 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct request_Response *__THE_0_res4_0 = (error_stack_pos(&err_state, 15, 11), request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "zziz", "GET http://ci.thelang.io/echo?example:", " ", __THE_0_res1_0->__THE_0_status, THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "zziz", "POST http://ci.thelang.io/echo?example:", " ", __THE_0_res2_0->__THE_0_status, THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "zziz", "GET https://ci.thelang.io/echo?example:", " ", __THE_0_res3_0->__THE_0_status, THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "zziz", "POST https://ci.thelang.io/echo?example:", " ", __THE_0_res4_0->__THE_0_status, THE_EOL);
 L1:
   err_state.buf_idx--;

@@ -232,23 +232,25 @@ struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_set (struct __THE_1_map_st
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3);
-  struct __THE_1_map_strMSintME __THE_0_b_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6);
-  struct __THE_1_map_strMSintME *__THE_0_ref1_0 = &__THE_0_a_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  struct __THE_1_map_strMSintME __THE_0_b_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  struct __THE_1_map_strMSintME *__THE_0_ref1_0 = &__THE_0_a_0;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 7, 3), __THE_1_map_strMSintME_set(__THE_0_ref1_0, str_alloc("key4"), 7));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   __THE_0_ref1_0 = &__THE_0_b_0;
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 9, 3), __THE_1_map_strMSintME_set(__THE_0_ref1_0, str_alloc("key4"), 8));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_map_strMSintME __THE_0_v4_0 = true ? __THE_1_map_strMSintME_copy(__THE_0_a_0) : __THE_1_map_strMSintME_copy(*__THE_0_ref1_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct __THE_1_map_strMSintME __THE_0_v5_0 = false ? __THE_1_map_strMSintME_copy(*__THE_0_ref1_0) : __THE_1_map_strMSintME_copy(__THE_0_b_0);
   const struct __THE_1_map_strMSintME *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_v5_0);
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_v4_0);
 L1:
   err_state.buf_idx--;
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_b_0);
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

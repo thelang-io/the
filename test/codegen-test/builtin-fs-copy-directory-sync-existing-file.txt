@@ -717,9 +717,11 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const struct str __THE_0_fromPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-copy-dir1");
-  const struct str __THE_0_toPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-copy-dir2");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const struct str __THE_0_fromPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-copy-dir1");
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  const struct str __THE_0_toPath_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-copy-dir2");
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 5, 3), fs_mkdirSync(str_copy(__THE_0_fromPath_0)));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 6, 3), fs_writeFileSync(str_copy(__THE_0_toPath_0), str_toBuffer(str_alloc("test"))));
@@ -743,6 +745,7 @@ int main () {
   (error_stack_pos(&err_state, 15, 3), fs_writeFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt"), str_toBuffer(str_alloc("test9"))));
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 17, 3), fs_copyDirectorySync(str_copy(__THE_0_fromPath_0), str_copy(__THE_0_toPath_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str((error_stack_pos(&err_state, 18, 9), fs_scandirSync(str_copy(__THE_0_toPath_0)))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 20, 3), fs_rmSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_copy(__THE_0_fromPath_0), str_alloc(THE_PATH_SEP)), "test7"), str_alloc(THE_PATH_SEP)), "test9.txt")));
@@ -786,8 +789,6 @@ int main () {
   (error_stack_pos(&err_state, 40, 3), fs_rmdirSync(str_copy(__THE_0_toPath_0)));
 L1:
   err_state.buf_idx--;
-  str_free((struct str) __THE_0_toPath_0);
-  str_free((struct str) __THE_0_fromPath_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

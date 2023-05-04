@@ -144,6 +144,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 struct str enum_str (int);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
@@ -180,6 +182,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -296,32 +304,56 @@ struct str __THE_1_IncomeType_0_rawValue (enum __THE_1_IncomeType_0 n) {
 }
 void __THE_1_printIncomeType_0 (void *px, struct __THE_1_fn$1000P p) {
   const enum __THE_1_IncomeType_0 __THE_0_n_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0), THE_EOL);
+L1:
+  err_state.buf_idx--;
 }
 void __THE_1_printColor_0 (void *px, struct __THE_1_fn$1001P p) {
   const enum __THE_1_Color_0 __THE_0_n_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_Color_0_rawValue(__THE_0_n_0), THE_EOL);
+L2:
+  err_state.buf_idx--;
 }
 void __THE_1_printHuman_0 (void *px, struct __THE_1_fn$1002P p) {
   const struct __THE_1_Human_0 *__THE_0_n_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   print(stdout, "zzszzzszzzsz", "Name:", " ", str_copy(__THE_0_n_0->__THE_0_name), " ", "Hair:", " ", __THE_1_Color_0_rawValue(__THE_0_n_0->__THE_0_hairColor), " ", "Income Type:", " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0->__THE_0_incomeType), THE_EOL);
+L3:
+  err_state.buf_idx--;
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_n_0);
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_printIncomeType_0 = (struct __THE_1_fn$1000) {&__THE_1_printIncomeType_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_printColor_0 = (struct __THE_1_fn$1001) {&__THE_1_printColor_0, NULL, 0};
   const struct __THE_1_fn$1002 __THE_0_printHuman_0 = (struct __THE_1_fn$1002) {&__THE_1_printHuman_0, NULL, 0};
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   const struct __THE_1_Human_0 *__THE_0_danny_0 = __THE_1_Human_0_alloc(str_alloc("Danny"), __THE_0_ColorSDBlue_0, __THE_0_IncomeTypeSDPassive_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_Human_0 *__THE_0_tricia_0 = __THE_1_Human_0_alloc(str_alloc("Tricia"), __THE_0_ColorSDRed_0, __THE_0_IncomeTypeSDActive_0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, (struct __THE_1_fn$1002P) {__THE_1_Human_0_copy(__THE_0_danny_0)});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, (struct __THE_1_fn$1002P) {__THE_1_Human_0_copy(__THE_0_tricia_0)});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printColor_0.f(__THE_0_printColor_0.x, (struct __THE_1_fn$1001P) {__THE_0_danny_0->__THE_0_hairColor});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printColor_0.f(__THE_0_printColor_0.x, (struct __THE_1_fn$1001P) {__THE_0_tricia_0->__THE_0_hairColor});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, (struct __THE_1_fn$1000P) {__THE_0_danny_0->__THE_0_incomeType});
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, (struct __THE_1_fn$1000P) {__THE_0_tricia_0->__THE_0_incomeType});
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_tricia_0);
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_danny_0);
+L4:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

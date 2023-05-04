@@ -151,7 +151,9 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
@@ -194,9 +196,15 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
 void error_stack_pos (err_state_t *state, int line, int col) {
   state->stack[state->stack_idx - 1].line = line;
   state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -361,6 +369,7 @@ void __THE_1_test2_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_test2_0X x
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_factorial_0;
   const struct __THE_1_fn$1001 __THE_0_test1_0;
   const struct __THE_1_fn$1002 __THE_0_test2_0;
@@ -368,35 +377,72 @@ int main () {
   __THE_1_test1_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
   __THE_1_test2_0_alloc((struct __THE_1_fn$1002 *) &__THE_0_test2_0, (struct __THE_1_test2_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
   for (int32_t __THE_0_i_0 = -1; __THE_0_i_0 < 10; __THE_0_i_0++) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
     print(stdout, "szlz", str_concat_cstr(cstr_concat_str("factorial(", (error_stack_pos(&err_state, 26, 26), int_str(__THE_0_i_0))), "):"), " ", __THE_0_factorial_0.f(__THE_0_factorial_0.x, (struct __THE_1_fn$1000P) {__THE_0_i_0}), THE_EOL);
+L1:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L0;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   print(stdout, "zziz", "test1(0):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {0}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(1):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {1}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(2):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {2}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(10):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {10}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(11):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {11}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(12):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {12}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(20):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {20}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(21):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {21}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(22):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {22}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(100):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {100}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(101):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {101}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test1(102):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {102}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(0):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {0}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(1):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {1}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(2):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {2}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(10):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {10}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(11):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {11}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(12):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {12}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(20):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {20}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(21):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {21}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(22):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {22}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(100):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {100}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(101):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {101}), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   print(stdout, "zziz", "test2(102):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1002P) {102}), THE_EOL);
+L2:
+  err_state.buf_idx--;
+L0:
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_test2_0);
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_test1_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_factorial_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

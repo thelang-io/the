@@ -344,29 +344,35 @@ size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_array_str __THE_0_emptyArr_0 = __THE_1_array_str_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(4, __THE_1_array_str_copy(__THE_0_emptyArr_0), __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("4"), str_alloc("5"), str_alloc("6")));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     print(stdout, "sz", (error_stack_pos(&err_state, 6, 11), __THE_1_array_str_str(__THE_1_array_str_copy(*(error_stack_pos(&err_state, 6, 11), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     (error_stack_pos(&err_state, 7, 5), __THE_1_array_str_merge((error_stack_pos(&err_state, 7, 5), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0)), __THE_1_array_str_alloc(0)));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     print(stdout, "sz", (error_stack_pos(&err_state, 8, 11), __THE_1_array_str_str(__THE_1_array_str_copy(*(error_stack_pos(&err_state, 8, 11), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     (error_stack_pos(&err_state, 9, 5), __THE_1_array_str_merge((error_stack_pos(&err_state, 9, 5), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0)), __THE_1_array_str_alloc(1, str_alloc("10"))));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     print(stdout, "sz", (error_stack_pos(&err_state, 10, 11), __THE_1_array_str_str(__THE_1_array_str_copy(*(error_stack_pos(&err_state, 10, 11), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     (error_stack_pos(&err_state, 11, 5), __THE_1_array_str_merge((error_stack_pos(&err_state, 11, 5), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0)), __THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("11"))));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     print(stdout, "sz", (error_stack_pos(&err_state, 12, 11), __THE_1_array_str_str(__THE_1_array_str_copy(*(error_stack_pos(&err_state, 12, 11), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     (error_stack_pos(&err_state, 13, 5), __THE_1_array_str_merge((error_stack_pos(&err_state, 13, 5), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0)), __THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("11"), str_alloc("12"))));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     print(stdout, "sz", (error_stack_pos(&err_state, 14, 11), __THE_1_array_str_str(__THE_1_array_str_copy(*(error_stack_pos(&err_state, 14, 11), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-L2:
+L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   }
 L1:
-  __THE_1_array_array_str_free((struct __THE_1_array_array_str) __THE_0_arr_0);
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_emptyArr_0);
+  err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

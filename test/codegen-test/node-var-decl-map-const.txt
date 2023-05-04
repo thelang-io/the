@@ -67,6 +67,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -90,6 +92,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -161,12 +169,21 @@ void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME n) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L0;
   const struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L0;
   const struct __THE_1_map_strMSintME __THE_0_b_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L0;
   const struct __THE_1_map_strMSintME __THE_0_c_0 = __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1);
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_c_0);
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_b_0);
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
+L0:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

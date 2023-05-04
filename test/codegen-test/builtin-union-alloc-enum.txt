@@ -16,7 +16,6 @@ main {
 }
 ======= code =======
 #include <stdarg.h>
-#include <stdlib.h>
 
 #define TYPE_HairColor_0 2
 #define TYPE_EyeColor_0 3
@@ -32,18 +31,8 @@ enum __THE_1_EyeColor_0 {
   __THE_0_EyeColorSDGreen_0
 };
 
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
 struct __THE_1_union_HairColorUSEyeColorUE;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_union_HairColorUSEyeColorUE {
   int t;
   union {

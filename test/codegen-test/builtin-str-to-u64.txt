@@ -91,7 +91,9 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
@@ -117,9 +119,15 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
 void error_stack_pos (err_state_t *state, int line, int col) {
   state->stack[state->stack_idx - 1].line = line;
   state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -249,36 +257,75 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 2, 9), str_toU64(str_alloc("0"), 0, 0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 3, 9), str_toU64(str_alloc("1"), 0, 0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 4, 9), str_toU64(str_alloc("10"), 0, 0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 5, 9), str_toU64(str_alloc("100"), 0, 0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 6, 9), str_toU64(str_alloc("18446744073709551615"), 0, 0)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 8, 9), str_toU64(str_alloc("0000"), 1, 2)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 9, 9), str_toU64(str_alloc("0001"), 1, 2)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 10, 9), str_toU64(str_alloc("1010"), 1, 2)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 11, 9), str_toU64(str_alloc("01100100"), 1, 2)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 12, 9), str_toU64(str_alloc("1111111111111111111111111111111111111111111111111111111111111111"), 1, 2)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 14, 9), str_toU64(str_alloc("0"), 1, 8)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 15, 9), str_toU64(str_alloc("1"), 1, 8)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 16, 9), str_toU64(str_alloc("12"), 1, 8)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 17, 9), str_toU64(str_alloc("144"), 1, 8)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 18, 9), str_toU64(str_alloc("1777777777777777777777"), 1, 8)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 20, 9), str_toU64(str_alloc("0"), 1, 10)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 21, 9), str_toU64(str_alloc("1"), 1, 10)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 22, 9), str_toU64(str_alloc("10"), 1, 10)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 23, 9), str_toU64(str_alloc("100"), 1, 10)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 24, 9), str_toU64(str_alloc("18446744073709551615"), 1, 10)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 26, 9), str_toU64(str_alloc("0"), 1, 16)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 27, 9), str_toU64(str_alloc("1"), 1, 16)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 28, 9), str_toU64(str_alloc("A"), 1, 16)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 29, 9), str_toU64(str_alloc("64"), 1, 16)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 30, 9), str_toU64(str_alloc("FFFFFFFFFFFFFFFF"), 1, 16)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 32, 9), str_toU64(str_alloc("0"), 1, 36)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 33, 9), str_toU64(str_alloc("1"), 1, 36)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 34, 9), str_toU64(str_alloc("A"), 1, 36)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 35, 9), str_toU64(str_alloc("2S"), 1, 36)), THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "yz", (error_stack_pos(&err_state, 36, 9), str_toU64(str_alloc("3W5E11264SGSF"), 1, 36)), THE_EOL);
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

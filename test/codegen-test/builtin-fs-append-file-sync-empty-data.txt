@@ -332,15 +332,16 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-append-empty.txt");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-append-empty.txt");
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 4, 3), fs_appendFileSync(str_copy(__THE_0_fileName_0), str_toBuffer(str_alloc(""))));
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "sz", buffer_str((error_stack_pos(&err_state, 5, 9), fs_readFileSync(str_copy(__THE_0_fileName_0)))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   (error_stack_pos(&err_state, 6, 3), fs_rmSync(str_copy(__THE_0_fileName_0)));
 L1:
   err_state.buf_idx--;
-  str_free((struct str) __THE_0_fileName_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

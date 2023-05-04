@@ -520,7 +520,6 @@ bool Type::matchNice (const Type *type) const {
     if (
       !lhsFn.returnType->matchNice(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
-      lhsFn.throws != rhsFn.throws || // todo test
       lhsFn.isMethod != rhsFn.isMethod ||
       (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||
       (lhsFn.callInfo.isSelfFirst && !lhsFn.callInfo.selfType->matchNice(rhsFn.callInfo.selfType)) ||
@@ -610,7 +609,6 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     if (
       !lhsFn.returnType->matchStrict(rhsFn.returnType, exact) ||
       lhsFn.params.size() != rhsFn.params.size() ||
-      lhsFn.throws != rhsFn.throws || // todo test
       lhsFn.isMethod != rhsFn.isMethod ||
       (exact && lhsFn.callInfo.codeName != rhsFn.callInfo.codeName) ||
       (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||

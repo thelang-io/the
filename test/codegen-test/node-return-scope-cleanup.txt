@@ -165,8 +165,8 @@ struct str {
 
 struct error_Error;
 struct __THE_1_array_str;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
 
 struct error_Error {
   const struct str __THE_0_message;
@@ -176,12 +176,12 @@ struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_fn$1001 {
-  void (*f) (void *, struct __THE_1_fn$1001P);
+struct __THE_1_fn$1000 {
+  void (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn$1000P {
   struct __THE_1_array_str n0;
 };
 
@@ -209,10 +209,10 @@ struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str)
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 struct __THE_1_array_str __THE_1_array_str_slice (struct __THE_1_array_str, unsigned int, int32_t, unsigned int, int32_t);
-void __THE_1_test1_0 (void *, struct __THE_1_fn$1001P);
-void __THE_1_test2_0 (void *, struct __THE_1_fn$1001P);
-void __THE_1_test3_0 (void *, struct __THE_1_fn$1001P);
-void __THE_1_test4_0 (void *, struct __THE_1_fn$1001P);
+void __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_test2_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_test3_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_test4_0 (void *, struct __THE_1_fn$1000P);
 
 void *alloc (size_t l) {
   void *r = malloc(l);
@@ -416,14 +416,15 @@ struct __THE_1_array_str __THE_1_array_str_slice (struct __THE_1_array_str n, un
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return (struct __THE_1_array_str) {d, l};
 }
-void __THE_1_test1_0 (void *px, struct __THE_1_fn$1001P p) {
+void __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
   unsigned char r = 0;
-  error_stack_push(&err_state, "/test", "test1");
   const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "z", "test1: ");
   if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 1) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
     const struct __THE_1_array_str __THE_0_name_0 = (error_stack_pos(&err_state, 5, 13), __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 2, 0, 0));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
     print(stdout, "zz", "return 1", THE_EOL);
     r = 1;
 L2:
@@ -433,6 +434,7 @@ L2:
   } else if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 0) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     const struct __THE_1_array_str __THE_0_name_0 = (error_stack_pos(&err_state, 9, 13), __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 1, 0, 0));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
     print(stdout, "zz", "return 2", THE_EOL);
     r = 1;
 L4:
@@ -440,24 +442,26 @@ L4:
     if (r == 1) goto L1;
     if (err_state.id != -1) goto L1;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   print(stdout, "zz", "return 3", THE_EOL);
 L1:
+  err_state.buf_idx--;
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-void __THE_1_test2_0 (void *px, struct __THE_1_fn$1001P p) {
+void __THE_1_test2_0 (void *px, struct __THE_1_fn$1000P p) {
   unsigned char r = 0;
-  error_stack_push(&err_state, "/test", "test2");
   const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
   print(stdout, "z", "test2: ");
   for (int32_t __THE_0_i_0 = 1; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
     const struct str *__THE_0_item_0 = (error_stack_pos(&err_state, 21, 13), __THE_1_array_str_at(__THE_0_items_0, __THE_0_i_0));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
     print(stdout, "s", str_concat_cstr(cstr_concat_str("loop", (error_stack_pos(&err_state, 22, 20), int_str(__THE_0_i_0))), ": "));
     if (str_len(str_copy(*__THE_0_item_0)) > 1) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
       const struct str __THE_0_name_0 = (error_stack_pos(&err_state, 25, 15), str_slice(str_copy(*__THE_0_item_0), 1, 2, 0, 0));
+      if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
       print(stdout, "zz", "return 1", THE_EOL);
       r = 1;
 L8:
@@ -467,6 +471,7 @@ L8:
     } else if (str_len(str_copy(*__THE_0_item_0)) > 0) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
       const struct str __THE_0_name_0 = (error_stack_pos(&err_state, 29, 15), str_slice(str_copy(*__THE_0_item_0), 1, 1, 0, 0));
+      if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L10;
       print(stdout, "zz", "return 2", THE_EOL);
       r = 1;
 L10:
@@ -474,31 +479,34 @@ L10:
       if (r == 1) goto L7;
       if (err_state.id != -1) goto L7;
     }
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
     const struct str __THE_0_value_0 = str_alloc("");
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
     print(stdout, "z", "continue, ");
-    str_free((struct str) __THE_0_value_0);
 L7:
     err_state.buf_idx--;
     if (r == 1) goto L6;
     if (err_state.id != -1) goto L6;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zz", "return 3", THE_EOL);
 L6:
+  err_state.buf_idx--;
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-void __THE_1_test3_0 (void *px, struct __THE_1_fn$1001P p) {
+void __THE_1_test3_0 (void *px, struct __THE_1_fn$1000P p) {
   unsigned char r = 0;
-  error_stack_push(&err_state, "/test", "test3");
   const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
   print(stdout, "z", "test3: ");
   if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 1) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L14;
     const struct __THE_1_array_str __THE_0_name_0 = (error_stack_pos(&err_state, 45, 13), __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 2, 0, 0));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L14;
     print(stdout, "zz", "return 1", THE_EOL);
     r = 1;
     goto L14;
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L14;
     print(stdout, "zz", "return 5", THE_EOL);
 L14:
     err_state.buf_idx--;
@@ -507,38 +515,44 @@ L14:
   } else if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 0) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L16;
     const struct __THE_1_array_str __THE_0_name_0 = (error_stack_pos(&err_state, 50, 13), __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 1, 0, 0));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L16;
     print(stdout, "zz", "return 2", THE_EOL);
     r = 1;
     goto L16;
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L16;
     print(stdout, "zz", "return 6", THE_EOL);
 L16:
     err_state.buf_idx--;
     if (r == 1) goto L13;
     if (err_state.id != -1) goto L13;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
   print(stdout, "zz", "return 4", THE_EOL);
   goto L13;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
   print(stdout, "zz", "return 3", THE_EOL);
 L13:
+  err_state.buf_idx--;
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-void __THE_1_test4_0 (void *px, struct __THE_1_fn$1001P p) {
+void __THE_1_test4_0 (void *px, struct __THE_1_fn$1000P p) {
   unsigned char r = 0;
-  error_stack_push(&err_state, "/test", "test4");
   const struct __THE_1_array_str __THE_0_items_0 = p.n0;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L18;
   print(stdout, "z", "test4: ");
   for (int32_t __THE_0_i_0 = 1; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L19;
     const struct str *__THE_0_item_0 = (error_stack_pos(&err_state, 65, 13), __THE_1_array_str_at(__THE_0_items_0, __THE_0_i_0));
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
     print(stdout, "s", str_concat_cstr(cstr_concat_str("loop", (error_stack_pos(&err_state, 66, 20), int_str(__THE_0_i_0))), ": "));
     if (str_len(str_copy(*__THE_0_item_0)) > 1) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L20;
       const struct str __THE_0_name_0 = (error_stack_pos(&err_state, 69, 15), str_slice(str_copy(*__THE_0_item_0), 1, 2, 0, 0));
+      if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L20;
       print(stdout, "zz", "return 1", THE_EOL);
       r = 1;
       goto L20;
+      if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L20;
       print(stdout, "zz", "return 5", THE_EOL);
 L20:
       err_state.buf_idx--;
@@ -547,94 +561,98 @@ L20:
     } else if (str_len(str_copy(*__THE_0_item_0)) > 0) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L22;
       const struct str __THE_0_name_0 = (error_stack_pos(&err_state, 74, 15), str_slice(str_copy(*__THE_0_item_0), 1, 1, 0, 0));
+      if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L22;
       print(stdout, "zz", "return 2", THE_EOL);
       r = 1;
       goto L22;
+      if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L22;
       print(stdout, "zz", "return 6", THE_EOL);
 L22:
       err_state.buf_idx--;
       if (r == 1) goto L19;
       if (err_state.id != -1) goto L19;
     }
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
     const struct str __THE_0_value_0 = str_alloc("");
+    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
     print(stdout, "z", "continue, ");
-    str_free((struct str) __THE_0_value_0);
 L19:
     err_state.buf_idx--;
     if (r == 1) goto L18;
     if (err_state.id != -1) goto L18;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L18;
   print(stdout, "zz", "return 4", THE_EOL);
   goto L18;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L18;
   print(stdout, "zz", "return 3", THE_EOL);
 L18:
+  err_state.buf_idx--;
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_items_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const struct __THE_1_fn$1001 __THE_0_test1_0 = (struct __THE_1_fn$1001) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test3_0 = (struct __THE_1_fn$1001) {&__THE_1_test3_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test4_0 = (struct __THE_1_fn$1001) {&__THE_1_test4_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test4_0 = (struct __THE_1_fn$1000) {&__THE_1_test4_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L25;
-  (error_stack_pos(&err_state, 90, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(0)}));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(0)});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 91, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("1"))}));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 92, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("10"))}));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 93, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))}));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 94, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))}));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 95, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))}));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 96, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))}));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 98, 3), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(0)}));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(0)});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 99, 3), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("1"))}));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 100, 3), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("10"))}));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 101, 3), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))}));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 102, 3), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))}));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 103, 3), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))}));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 104, 3), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))}));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 106, 3), __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(0)}));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(0)});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 107, 3), __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("1"))}));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 108, 3), __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("10"))}));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 109, 3), __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))}));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 110, 3), __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))}));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 111, 3), __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))}));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 112, 3), __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))}));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 114, 3), __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(0)}));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(0)});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 115, 3), __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("1"))}));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("1"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 116, 3), __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(1, str_alloc("10"))}));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(1, str_alloc("10"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 117, 3), __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))}));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 118, 3), __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))}));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(2, str_alloc("10"), str_alloc("20"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 119, 3), __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))}));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"))});
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
-  (error_stack_pos(&err_state, 120, 3), __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1001P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))}));
+  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_array_str_alloc(3, str_alloc("10"), str_alloc("20"), str_alloc("30"))});
 L25:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

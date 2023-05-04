@@ -81,6 +81,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -104,6 +106,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -168,12 +176,24 @@ void __THE_1_mainSDx_1 (void *px, struct __THE_1_fn$1001P p) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   if (1 > 2) {
     const struct __THE_1_fn$1000 __THE_0_mainSDx_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSDx_0, NULL, 0};
     __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.x, (struct __THE_1_fn$1000P) {1});
   } else {
     const struct __THE_1_fn$1001 __THE_0_mainSDx_1 = (struct __THE_1_fn$1001) {&__THE_1_mainSDx_1, NULL, 0};
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
     __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.x, (struct __THE_1_fn$1001P) {str_alloc("test")});
+L2:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L0;
+  }
+L0:
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    exit(EXIT_FAILURE);
   }
 }
 ======= flags =======

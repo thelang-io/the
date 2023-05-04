@@ -21,20 +21,6 @@ main {
   v := 18446744073709551615.18446744073709551615E-308
 }
 ======= code =======
-#include <stdlib.h>
-
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
-
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
-
 int main () {
   const double __THE_0_a_0 = 0E0;
   const double __THE_0_b_0 = 0e1;

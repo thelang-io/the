@@ -160,12 +160,12 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  struct str __THE_0_test_0 = str_alloc("zest");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  struct str __THE_0_test_0 = str_alloc("zest");
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   *(error_stack_pos(&err_state, 3, 3), str_at(__THE_0_test_0, 0)) = 't';
 L1:
   err_state.buf_idx--;
-  str_free((struct str) __THE_0_test_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

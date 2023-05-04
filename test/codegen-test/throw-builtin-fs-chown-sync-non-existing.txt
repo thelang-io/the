@@ -275,19 +275,24 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "throw-builtin-fs-chown-sync-not-existing.txt");
   if (str_eq_cstr(os_name(), "Windows")) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     print(stderr, "sz", str_concat_cstr(cstr_concat_str("Error: failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`"), THE_EOL);
     process_exit(1, 1);
+L3:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     (error_stack_pos(&err_state, 8, 5), fs_chownSync(str_copy(__THE_0_fileName_0), 0, 0));
-L2:
+L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   }
 L1:
-  str_free((struct str) __THE_0_fileName_0);
+  err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
