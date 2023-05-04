@@ -110,9 +110,7 @@ const ENTITIES_TRANSFORMER := {
   "pair_str_str": "__THE_1_pair_strMSstrME"
 }
 
-const ARGS := process_args
-const SCRIPT_PATH := fs_isAbsoluteSync(ARGS[0]) ? ARGS[0] : process_cwd() + path_SEP + ARGS[0]
-const SRC_DIR := fs_realpathSync(path_dirname(SCRIPT_PATH) + path_SEP + ".." + path_SEP + "src")
+const SRC_DIR := fs_realpathSync(process_cwd() + path_SEP + "src")
 const CODEGEN_DIR := SRC_DIR + path_SEP + "codegen"
 
 fn filterStrEmpty (it: str) bool {

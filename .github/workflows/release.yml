@@ -7,11 +7,11 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - run: curl -fsSL https://cdn.thelang.io/cli | bash
-      - run: the run scripts/pre-process-codegen -o scripts/a.out
+      - run: the run scripts/pre-process-codegen
       - run: cmake -B ./build -D CMAKE_BUILD_TYPE=Release
       - run: cmake --build build
       - uses: aws-actions/configure-aws-credentials@v1

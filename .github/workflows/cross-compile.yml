@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   cross-compile:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +30,7 @@ jobs:
       - run: echo "/usr/local/the/osxcross/bin" >> $GITHUB_PATH
       - run: sudo sed -i 's/#define _WIN32_WINNT .*/#define _WIN32_WINNT 0x0A00/' /usr/share/mingw-w64/include/_mingw.h
       - run: curl -fsSL https://cdn.thelang.io/cli | bash
-      - run: the run scripts/pre-process-codegen -o scripts/a.out
+      - run: the run scripts/pre-process-codegen
       - run: cmake . -B ./build -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_PLATFORM=${{ matrix.config.platform }}
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build

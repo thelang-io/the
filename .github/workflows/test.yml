@@ -47,13 +47,10 @@ jobs:
       - if: runner.os == 'macOS'
         run: brew install ninja
       - if: runner.os != 'Windows'
-        run: |
-          curl -fsSL https://cdn.thelang.io/cli | bash
-          the run scripts/pre-process-codegen -o scripts/a.out
+        run: curl -fsSL https://cdn.thelang.io/cli | bash
       - if: runner.os == 'Windows'
-        run: |
-          (New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
-          the run scripts/pre-process-codegen -o scripts/a.exe
+        run: (New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
+      - run: the run scripts/pre-process-codegen
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
       - run: tar -xzf deps.tar.gz the/native/${{ matrix.config.platform }}
       - if: runner.os != 'Windows'
