@@ -160,7 +160,6 @@ Codegen::Codegen (AST *a) {
   this->reader = this->ast->reader;
 }
 
-// todo test throwing global variable initialization
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   for (const auto &[name, item] : codegenAPI) {
     this->api[name] = item;
