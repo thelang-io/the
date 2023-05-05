@@ -50,6 +50,14 @@ jobs:
         run: curl -fsSL https://cdn.thelang.io/cli | bash
       - if: runner.os == 'Windows'
         run: (New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
+
+      - if: runner.os == 'Windows'
+        run: Get-ChildItem -Path "C:\"
+      - if: runner.os == 'Windows'
+        run: Get-ChildItem -Path "C:\Program Files\"
+      - if: runner.os == 'Windows'
+        run: Get-ChildItem -Path "C:\Program Files\The\"
+
       - run: the run scripts/pre-process-codegen
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
       - run: tar -xzf deps.tar.gz the/native/${{ matrix.config.platform }}
