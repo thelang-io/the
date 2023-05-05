@@ -49,7 +49,7 @@ jobs:
       - if: runner.os != 'Windows'
         run: curl -fsSL https://cdn.thelang.io/cli | bash
       - if: runner.os == 'Windows'
-        run: (New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
+        run: Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win'))
 
       - if: runner.os == 'Windows'
         run: Get-ChildItem -Path "C:\"
