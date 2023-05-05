@@ -49,14 +49,10 @@ jobs:
       - if: runner.os != 'Windows'
         run: curl -fsSL https://cdn.thelang.io/cli | bash
       - if: runner.os == 'Windows'
-        run: Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win'))
+        run: (New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
 
       - if: runner.os == 'Windows'
-        run: Get-ChildItem -Path "C:\"
-      - if: runner.os == 'Windows'
-        run: Get-ChildItem -Path "C:\Program Files\"
-      - if: runner.os == 'Windows'
-        run: Get-ChildItem -Path "C:\Program Files\The\"
+        run: $Env:Path.Split(';')
 
       - run: the run scripts/pre-process-codegen
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
