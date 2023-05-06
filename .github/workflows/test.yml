@@ -2,7 +2,7 @@ name: Test
 
 on:
   push:
-    branches: [main]
+    branches: ['main']
     paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/test.yml']
   pull_request:
     paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/test.yml']
@@ -40,20 +40,13 @@ jobs:
             generator: Visual Studio 17 2022
     steps:
       - uses: actions/checkout@v3
+      - uses: thelang-io/setup-the@v1
       - if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
-      - if: runner.os != 'Windows'
-        run: curl -fsSL https://cdn.thelang.io/cli | bash
-      - if: runner.os == 'Windows'
-        run: (New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
-
-      - if: runner.os == 'Windows'
-        run: $Env:Path.Split(';')
-
       - run: the run scripts/pre-process-codegen
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
       - run: tar -xzf deps.tar.gz the/native/${{ matrix.config.platform }}
