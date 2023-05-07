@@ -77,7 +77,7 @@ void Codegen::compile (
 ) {
   auto code = std::get<0>(result);
   auto flags = std::get<1>(result);
-  auto f = std::ofstream("build/output.c");
+  auto f = std::ofstream(path + ".c");
 
   f << code;
   f.close();
@@ -106,10 +106,10 @@ void Codegen::compile (
     }
   }
 
-  auto cmd = compiler + " build/output.c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g" : "");
+  auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g" : "");
   auto returnCode = std::system(cmd.c_str());
 
-  std::filesystem::remove("build/output.c");
+  std::filesystem::remove(path + ".c");
 
   if (returnCode != 0) {
     throw Error("failed to compile generated code");

@@ -31,6 +31,7 @@ int main (int argc, char *argv[]) {
     auto isLex = false;
     auto isParse = false;
     auto fileName = std::optional<std::string>{};
+    auto output = std::string("build/a.out");
     auto platform = std::string("default");
 
     for (auto i = 1; i < argc; i++) {
@@ -57,7 +58,9 @@ int main (int argc, char *argv[]) {
         auto optName = arg.substr(2, arg.find('=') - 2);
         auto optVal = arg.substr(arg.find('=') + 1);
 
-        if (optName == "platform") {
+        if (optName == "output") {
+          output = optVal;
+        } else if (optName == "platform") {
           if (std::set<std::string>{"linux", "macos", "windows"}.contains(optVal)) {
             platform = optVal;
           } else {
@@ -122,7 +125,7 @@ int main (int argc, char *argv[]) {
       return EXIT_SUCCESS;
     }
 
-    Codegen::compile("build/a.out", result, platform);
+    Codegen::compile(output, result, platform);
     return EXIT_SUCCESS;
   } catch (const Error &err) {
     std::cerr << "Error: " << err.what() << std::endl;
