@@ -3,8 +3,7 @@ main {
   fileName := "test" + path_SEP + "fixtures" + path_SEP + "throw-builtin-fs-chown-sync-not-existing.txt"
 
   if os_NAME == "Windows" {
-    print("Error: failed to change owner to 0 and group to 0 for file `" + fileName + "`", to: "stderr")
-    process_exit(1)
+    throw error_NewError("failed to change owner to 0 and group to 0 for file `" + fileName + "`")
   } else {
     fs_chownSync(fileName, 0, 0)
   }
@@ -26,7 +25,6 @@ main {
 
 #include <inttypes.h>
 #include <setjmp.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,9 +72,8 @@ void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void fs_chownSync (struct str, int32_t, int32_t);
+struct error_Error *new_error (struct str);
 struct str os_name ();
-void print (FILE *, const char *, ...);
-void process_exit (unsigned char, int32_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -179,6 +176,9 @@ fs_chownSync_cleanup:
   free(c);
   if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
+struct error_Error *new_error (struct str n1) {
+  return error_Error_alloc(n1, (struct str) {NULL, 0});
+}
 struct str os_name () {
   #ifdef THE_OS_WINDOWS
     return str_alloc("Windows");
@@ -191,38 +191,6 @@ struct str os_name () {
     if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
     return str_alloc(buf.sysname);
   #endif
-}
-void print (FILE *stream, const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  char buf[512];
-  struct str s;
-  while (*fmt) {
-    switch (*fmt++) {
-      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
-      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
-      case 'c': fputc(va_arg(args, int), stream); break;
-      case 'e':
-      case 'f':
-      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
-      case 'h':
-      case 'j':
-      case 'v':
-      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
-      case 'i':
-      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
-      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
-      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
-      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
-      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
-      case 'z': fputs(va_arg(args, char *), stream); break;
-    }
-  }
-  va_end(args);
-}
-void process_exit (unsigned char o1, int32_t i) {
-  exit(o1 == 1 ? i : EXIT_SUCCESS);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -278,16 +246,13 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "throw-builtin-fs-chown-sync-not-existing.txt");
   if (str_eq_cstr(os_name(), "Windows")) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stderr, "sz", str_concat_cstr(cstr_concat_str("Error: failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`"), THE_EOL);
-    process_exit(1, 1);
-L3:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    error_stack_pos(&err_state, 5, 5);
+    error_assign(&err_state, TYPE_error_Error, (void *) (error_stack_pos(&err_state, 5, 11), new_error(str_concat_cstr(cstr_concat_str("failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`"))));
+    goto L1;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    (error_stack_pos(&err_state, 8, 5), fs_chownSync(str_copy(__THE_0_fileName_0), 0, 0));
-L4:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
+    (error_stack_pos(&err_state, 7, 5), fs_chownSync(str_copy(__THE_0_fileName_0), 0, 0));
+L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   }
@@ -303,4 +268,4 @@ L1:
 ======= flags =======
 ======= stderr =======
 Uncaught Error: failed to change owner to 0 and group to 0 for file `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}throw-builtin-fs-chown-sync-not-existing.txt`
-  at main (/test:8:5)
+  at main (/test:{{ 5|7 }}:5)

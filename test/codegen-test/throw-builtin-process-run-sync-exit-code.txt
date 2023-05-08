@@ -272,4 +272,4 @@ L0:
 ======= flags =======
 ======= stderr =======
 Uncaught Error: process `{{ (exit 1|exit \/b 1) }}` exited with exit code 1
-  at main (/test:5:5)
+  at main (/test:{{ 3|5 }}:5)
