@@ -210,7 +210,7 @@ struct str error_stack_str (err_state_t *state) {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
       z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
     }
-    d = realloc(d, l + z);
+    d = realloc(d, l + z + 1);
     if (d == NULL) {
       fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
       exit(EXIT_FAILURE);
@@ -392,7 +392,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     SSL_set_fd(req->ssl, (int) req->fd);
     SSL_set_tlsext_host_name(req->ssl, hostname);
     if (SSL_connect(req->ssl) != 1) {
-// todo possible to test with null.badssl.com
+// todo possible to test with nil.ci.thelang.io
       req_free = 1;
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to connect to socket with SSL"), str_alloc("")));
       goto request_open_cleanup5;

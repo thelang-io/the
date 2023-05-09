@@ -180,7 +180,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{SSL_set_fd}(req->ssl, (int) req->fd);)" EOL
   R"(    _{SSL_set_tlsext_host_name}(req->ssl, hostname);)" EOL
   R"(    if (_{SSL_connect}(req->ssl) != 1) {)" EOL
-  // todo possible to test with null.badssl.com
+  // todo possible to test with nil.ci.thelang.io
   R"(      req_free = 1;)" EOL
   R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to connect to socket with SSL"), _{str_alloc}("")));)" EOL
   R"(      goto request_open_cleanup5;)" EOL

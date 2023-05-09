@@ -60,7 +60,7 @@ const std::vector<std::string> codegenError = {
   R"~(      fmt = _{THE_EOL} "  at %s (%s:%d:%d)";)~" EOL
   R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file, it.line, it.col);)~" EOL
   R"~(    })~" EOL
-  R"~(    d = _{realloc}(d, l + z);)~" EOL
+  R"~(    d = _{realloc}(d, l + z + 1);)~" EOL
   R"~(    if (d == _{NULL}) {)~" EOL
   R"~(      _{fprintf}(_{stderr}, "Fatal Error: failed to reallocate %zu bytes in stack generation" _{THE_EOL}, l + z);)~" EOL
   R"~(      _{exit}(_{EXIT_FAILURE});)~" EOL

@@ -153,7 +153,7 @@ struct str error_stack_str (err_state_t *state) {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
       z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
     }
-    d = realloc(d, l + z);
+    d = realloc(d, l + z + 1);
     if (d == NULL) {
       fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
       exit(EXIT_FAILURE);
