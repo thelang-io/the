@@ -120,6 +120,7 @@ char *str_cstr (const struct str);
 void str_free (struct str);
 struct buffer str_toBuffer (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 struct fs_Stats *fs_Stats_alloc (uint64_t, uint32_t, int64_t, uint64_t, int32_t, int32_t, uint64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t);
 void fs_Stats_free (struct fs_Stats *);
 
@@ -375,6 +376,11 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
   memcpy(r, &s, sizeof(struct error_Error));
   return r;
 }
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
 struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, int64_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, uint64_t __THE_0_rdev, int64_t __THE_0_atime, int64_t __THE_0_atimeNs, int64_t __THE_0_mtime, int64_t __THE_0_mtimeNs, int64_t __THE_0_ctime, int64_t __THE_0_ctimeNs, int64_t __THE_0_btime, int64_t __THE_0_btimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int64_t __THE_0_blockSize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
   struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_btime, __THE_0_btimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blockSize};
@@ -425,6 +431,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    error_Error_free(err);
     exit(EXIT_FAILURE);
   }
 }

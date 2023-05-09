@@ -133,6 +133,7 @@ char *str_cstr (const struct str);
 void str_free (struct str);
 struct url_URL *url_parse (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 struct request_Header *request_Header_alloc (struct str, struct str);
 void request_Header_free (struct request_Header *);
 void request_Request_free (struct request_Request *);
@@ -717,6 +718,11 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
   memcpy(r, &s, sizeof(struct error_Error));
   return r;
 }
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
 struct request_Header *request_Header_alloc (struct str __THE_0_name, struct str __THE_0_value) {
   struct request_Header *r = alloc(sizeof(struct request_Header));
   struct request_Header s = {__THE_0_name, __THE_0_value};
@@ -781,6 +787,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    error_Error_free(err);
     exit(EXIT_FAILURE);
   }
 }

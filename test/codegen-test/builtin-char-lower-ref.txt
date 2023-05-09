@@ -75,6 +75,7 @@ void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 struct __THE_1_array_char __THE_1_array_char_alloc (size_t, ...);
 char *__THE_1_array_char_at (struct __THE_1_array_char, int32_t);
 struct __THE_1_array_char __THE_1_array_char_copy (const struct __THE_1_array_char);
@@ -194,6 +195,11 @@ struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __
   memcpy(r, &s, sizeof(struct error_Error));
   return r;
 }
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
 struct __THE_1_array_char __THE_1_array_char_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_char) {NULL, 0};
   char *d = alloc(x * sizeof(char));
@@ -248,6 +254,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    error_Error_free(err);
     exit(EXIT_FAILURE);
   }
 }

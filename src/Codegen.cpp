@@ -197,6 +197,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     mainCleanUpBoilerplate += R"(if (_{err_state}.id != -1) {)" EOL;
     mainCleanUpBoilerplate += R"(  struct _{error_Error} *err = _{err_state}.ctx;)" EOL;
     mainCleanUpBoilerplate += R"(  _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL;
+    mainCleanUpBoilerplate += R"(  _{error_Error_free}(err);)" EOL;
     mainCleanUpBoilerplate += R"(  _{exit}(_{EXIT_FAILURE});)" EOL;
     mainCleanUpBoilerplate += R"(})";
     this->state.cleanUp.add(this->_apiEval(mainCleanUpBoilerplate));

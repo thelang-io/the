@@ -59,6 +59,8 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void any_free (struct any);
 void error_stack_pop (err_state_t *);
 void error_stack_push (err_state_t *, char *, char *);
+void str_free (struct str);
+void error_Error_free (struct error_Error *);
 
 void any_free (struct any n) {
   if (n.d != NULL) n._free(n);
@@ -68,6 +70,14 @@ void error_stack_pop (err_state_t *state) {
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
 }
 
 int main () {
@@ -81,6 +91,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    error_Error_free(err);
     exit(EXIT_FAILURE);
   }
 }
