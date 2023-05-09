@@ -247,7 +247,7 @@ int main () {
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "throw-builtin-fs-chown-sync-not-existing.txt");
   if (str_eq_cstr(os_name(), "Windows")) {
     error_stack_pos(&err_state, 5, 5);
-    error_assign(&err_state, TYPE_error_Error, (void *) (error_stack_pos(&err_state, 5, 11), new_error(str_concat_cstr(cstr_concat_str("failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`"))));
+    error_assign(&err_state, TYPE_error_Error, (void *) new_error(str_concat_cstr(cstr_concat_str("failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`")));
     goto L1;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;

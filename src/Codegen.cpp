@@ -2585,7 +2585,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code = this->_genCopyFn(targetType, "*" + code);
     }
 
-    if (fnType.throws) {
+    if (fnType.throws && fnType.callInfo.codeName != "new_error") {
       auto line = std::to_string(nodeExpr.start.line);
       auto col = std::to_string(nodeExpr.start.col + 1);
       code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), " + code + ")", 2);
