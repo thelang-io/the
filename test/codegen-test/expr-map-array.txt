@@ -193,8 +193,11 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSarray_intME __THE_0_a_0 = __THE_1_map_strMSarray_intME_alloc(3, str_alloc("key1"), __THE_1_array_int_alloc(3, 1, 2, 3), str_alloc("key2"), __THE_1_array_int_alloc(3, 3, 4, 5), str_alloc("key3"), __THE_1_array_int_alloc(3, 5, 6, 7));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_map_strMSarray_intME __THE_0_b_0 = __THE_1_map_strMSarray_intME_alloc(3, str_alloc("key1"), __THE_1_array_int_alloc(3, 8, 9, 10), str_alloc("key2"), __THE_1_array_int_alloc(3, 10, 11, 12), str_alloc("key3"), __THE_1_array_int_alloc(3, 12, 13, 14));
+  __THE_1_map_strMSarray_intME_free((struct __THE_1_map_strMSarray_intME) __THE_0_b_0);
+L2:
+  __THE_1_map_strMSarray_intME_free((struct __THE_1_map_strMSarray_intME) __THE_0_a_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

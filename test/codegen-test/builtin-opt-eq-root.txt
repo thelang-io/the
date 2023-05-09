@@ -556,72 +556,108 @@ int main () {
   const int32_t __THE_0_intA_0 = 1;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const int32_t *__THE_0_optIntA_0 = __THE_1_opt_int_alloc(1);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const int32_t **__THE_0_optRefIntA_0 = __THE_1_opt_ref_int_alloc(&__THE_0_intA_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct __THE_1_array_int *__THE_0_optArrInt1_0 = __THE_1_opt_array_int_alloc(__THE_1_array_int_alloc(1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_array_int *__THE_0_optArrInt2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const bool *__THE_0_optBool1_0 = __THE_1_opt_bool_alloc(true);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   const bool *__THE_0_optBool2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   const char *__THE_0_optChar1_0 = __THE_1_opt_char_alloc('a');
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   const char *__THE_0_optChar2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   const double *__THE_0_optFloat1_0 = __THE_1_opt_float_alloc(3.14);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L10;
   const double *__THE_0_optFloat2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L11;
   const int32_t *__THE_0_optInt1_0 = __THE_1_opt_int_alloc(1);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   const int32_t *__THE_0_optInt2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
   const struct __THE_1_TestObj_0 **__THE_0_optObj1_0 = __THE_1_opt_TestObj_alloc(__THE_1_TestObj_0_alloc(1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L14;
   const struct __THE_1_TestObj_0 **__THE_0_optObj2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L15;
   const int32_t **__THE_0_optRefInt1_0 = __THE_1_opt_ref_int_alloc(&__THE_0_intA_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L16;
   const int32_t **__THE_0_optRefInt2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L17;
   const struct str *__THE_0_optStr1_0 = __THE_1_opt_str_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L18;
   const struct str *__THE_0_optStr2_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_array_int_eq(__THE_1_opt_array_int_copy(__THE_0_optArrInt1_0), __THE_1_opt_array_int_copy(__THE_0_optArrInt1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_array_int_ne(__THE_1_opt_array_int_copy(__THE_0_optArrInt1_0), __THE_1_opt_array_int_copy(__THE_0_optArrInt2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_bool_eq(__THE_1_opt_bool_copy(__THE_0_optBool1_0), __THE_1_opt_bool_copy(__THE_0_optBool1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_bool_ne(__THE_1_opt_bool_copy(__THE_0_optBool1_0), __THE_1_opt_bool_copy(__THE_0_optBool2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_char_eq(__THE_1_opt_char_copy(__THE_0_optChar1_0), __THE_1_opt_char_copy(__THE_0_optChar1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_char_ne(__THE_1_opt_char_copy(__THE_0_optChar1_0), __THE_1_opt_char_copy(__THE_0_optChar2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_float_eq(__THE_1_opt_float_copy(__THE_0_optFloat1_0), __THE_1_opt_float_copy(__THE_0_optFloat1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_float_ne(__THE_1_opt_float_copy(__THE_0_optFloat1_0), __THE_1_opt_float_copy(__THE_0_optFloat2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_optInt1_0), __THE_1_opt_int_copy(__THE_0_optInt1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_optInt1_0), __THE_1_opt_int_copy(__THE_0_optInt2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_TestObj_eq(__THE_1_opt_TestObj_copy(__THE_0_optObj1_0), __THE_1_opt_TestObj_copy(__THE_0_optObj1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_TestObj_ne(__THE_1_opt_TestObj_copy(__THE_0_optObj1_0), __THE_1_opt_TestObj_copy(__THE_0_optObj2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_ref_int_eq(__THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0), __THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_ref_int_ne(__THE_1_opt_ref_int_copy(__THE_0_optRefInt1_0), __THE_1_opt_ref_int_copy(__THE_0_optRefInt2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_str_eq(__THE_1_opt_str_copy(__THE_0_optStr1_0), __THE_1_opt_str_copy(__THE_0_optStr1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_optStr1_0), __THE_1_opt_str_copy(__THE_0_optStr2_0));
+L19:
+  __THE_1_opt_str_free((struct str *) __THE_0_optStr2_0);
+L18:
+  __THE_1_opt_str_free((struct str *) __THE_0_optStr1_0);
+L17:
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefInt2_0);
+L16:
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefInt1_0);
+L15:
+  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObj2_0);
+L14:
+  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObj1_0);
+L13:
+  __THE_1_opt_int_free((int32_t *) __THE_0_optInt2_0);
+L12:
+  __THE_1_opt_int_free((int32_t *) __THE_0_optInt1_0);
+L11:
+  __THE_1_opt_float_free((double *) __THE_0_optFloat2_0);
+L10:
+  __THE_1_opt_float_free((double *) __THE_0_optFloat1_0);
+L9:
+  __THE_1_opt_char_free((char *) __THE_0_optChar2_0);
+L8:
+  __THE_1_opt_char_free((char *) __THE_0_optChar1_0);
+L7:
+  __THE_1_opt_bool_free((bool *) __THE_0_optBool2_0);
+L6:
+  __THE_1_opt_bool_free((bool *) __THE_0_optBool1_0);
+L5:
+  __THE_1_opt_array_int_free((struct __THE_1_array_int *) __THE_0_optArrInt2_0);
+L4:
+  __THE_1_opt_array_int_free((struct __THE_1_array_int *) __THE_0_optArrInt1_0);
+L3:
+  __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntA_0);
+L2:
+  __THE_1_opt_int_free((int32_t *) __THE_0_optIntA_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

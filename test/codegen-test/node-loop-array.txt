@@ -230,16 +230,16 @@ int main () {
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(0);
   for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)) < 3; (error_stack_pos(&err_state, 6, 21), __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, 0)))) {
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   struct __THE_1_array_int __THE_0_b_0 = __THE_1_array_int_alloc(0);
   while (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)) < 3) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     (error_stack_pos(&err_state, 11, 5), __THE_1_array_int_push(&__THE_0_b_0, __THE_1_array_int_alloc(1, 0)));
 L5:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
+    if (err_state.id != -1) goto L4;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   struct __THE_1_array_int __THE_0_c_0 = __THE_1_array_int_alloc(0);
   while (1) {
     if (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0)) == 3) {
@@ -249,7 +249,7 @@ L5:
     (error_stack_pos(&err_state, 20, 5), __THE_1_array_int_push(&__THE_0_c_0, __THE_1_array_int_alloc(1, 0)));
 L7:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
+    if (err_state.id != -1) goto L6;
   }
   {
     struct __THE_1_array_int __THE_0_d_0 = __THE_1_array_int_alloc(0);
@@ -272,6 +272,12 @@ L8:
     }
     __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_e_0);
   }
+L6:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_c_0);
+L4:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
+L3:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
 L2:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

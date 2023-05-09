@@ -204,8 +204,11 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_union_Test1USTest2UE __THE_0_g1_0 = __THE_1_union_Test1USTest2UE_alloc(TYPE_Test1_0, __THE_1_Test1_0_alloc(0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_union_Test1USTest2UE __THE_0_g2_0 = __THE_1_union_Test1USTest2UE_alloc(TYPE_Test2_0, __THE_1_Test2_0_alloc(str_alloc("")));
+  __THE_1_union_Test1USTest2UE_free((struct __THE_1_union_Test1USTest2UE) __THE_0_g2_0);
+L2:
+  __THE_1_union_Test1USTest2UE_free((struct __THE_1_union_Test1USTest2UE) __THE_0_g1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

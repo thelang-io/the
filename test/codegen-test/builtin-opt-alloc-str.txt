@@ -165,14 +165,23 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_testStr_0 = str_alloc("test");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct str *__THE_0_optStr_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct str *__THE_0_optStrNilInit_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct str *__THE_0_optStrValInit_0 = __THE_1_opt_str_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct str *__THE_0_optStrValCopy_0 = __THE_1_opt_str_alloc(str_copy(__THE_0_testStr_0));
+  __THE_1_opt_str_free((struct str *) __THE_0_optStrValCopy_0);
+L5:
+  __THE_1_opt_str_free((struct str *) __THE_0_optStrValInit_0);
+L4:
+  __THE_1_opt_str_free((struct str *) __THE_0_optStrNilInit_0);
+L3:
+  __THE_1_opt_str_free((struct str *) __THE_0_optStr_0);
+L2:
+  str_free((struct str) __THE_0_testStr_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

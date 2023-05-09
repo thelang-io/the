@@ -299,23 +299,25 @@ struct __THE_1_array_int __THE_1_test1_0 (void *px, struct __THE_1_fn$1003P p) {
     (error_stack_pos(&err_state, 5, 5), __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *(error_stack_pos(&err_state, 5, 12), __THE_1_array_int_at(__THE_0_a_0, __THE_0_i_0)))));
 L3:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L2;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     (error_stack_pos(&err_state, 9, 5), __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *(error_stack_pos(&err_state, 9, 12), __THE_1_array_int_at(__THE_0_b_0, __THE_0_i_0)))));
 L4:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L2;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     (error_stack_pos(&err_state, 13, 5), __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *(error_stack_pos(&err_state, 13, 12), __THE_1_array_int_at(__THE_0_c_0, __THE_0_i_0)))));
 L5:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L2;
   }
   v = __THE_1_array_int_copy(__THE_0_d_0);
+L2:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_d_0);
 L1:
   err_state.buf_idx--;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_c_0);
@@ -371,22 +373,23 @@ int main () {
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 10, 11, 12);
   const struct __THE_1_fn$1004 __THE_0_mainSDtest2_0;
   __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1004 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 0, (struct __THE_1_array_int) {}});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {__THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
-L9:
+L7:
   __THE_1_fn$1004_free((struct __THE_1_fn$1004) __THE_0_mainSDtest2_0);
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
 L6:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

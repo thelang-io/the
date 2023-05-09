@@ -74,6 +74,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_a_0 = {0, NULL, 0, NULL, NULL};
+  any_free((struct any) __THE_0_a_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -193,6 +193,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Items_0 *__THE_0_items_0 = __THE_1_Items_0_alloc(__THE_1_Item_0_alloc(__THE_1_array_int_alloc(0)));
+  __THE_1_Items_0_free((struct __THE_1_Items_0 *) __THE_0_items_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

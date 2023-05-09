@@ -349,18 +349,22 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_dir1_0 = (error_stack_pos(&err_state, 2, 11), path_tempDirectory());
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct str __THE_0_dir2_0 = (error_stack_pos(&err_state, 3, 11), path_tempDirectory());
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "sz", str_copy(__THE_0_dir1_0), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "sz", str_copy(__THE_0_dir2_0), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "tz", str_eq_str(str_copy(__THE_0_dir1_0), str_copy(__THE_0_dir2_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   (error_stack_pos(&err_state, 9, 3), fs_rmdirSync(str_copy(__THE_0_dir1_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   (error_stack_pos(&err_state, 10, 3), fs_rmdirSync(str_copy(__THE_0_dir2_0)));
+L3:
+  str_free((struct str) __THE_0_dir2_0);
+L2:
+  str_free((struct str) __THE_0_dir1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

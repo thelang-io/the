@@ -240,14 +240,20 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_var1_0 = {0, NULL, 0, NULL, NULL};
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct any __THE_0_var2_0 = __THE_1_any_int_alloc(2);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct any __THE_0_var3_0 = __THE_1_any_str_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_1_array_any_free((struct __THE_1_array_any) __THE_1_array_any_alloc(3, any_copy(__THE_0_var1_0), any_copy(__THE_0_var2_0), any_copy(__THE_0_var3_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_1_array_any_free((struct __THE_1_array_any) __THE_1_array_any_alloc(3, any_copy(__THE_0_var1_0), any_copy(__THE_0_var2_0), any_copy(__THE_0_var3_0)));
+L4:
+  any_free((struct any) __THE_0_var3_0);
+L3:
+  any_free((struct any) __THE_0_var2_0);
+L2:
+  any_free((struct any) __THE_0_var1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

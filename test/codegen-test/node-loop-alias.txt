@@ -214,16 +214,16 @@ int main () {
   struct str __THE_0_a_0 = str_alloc("");
   for (; str_ne_cstr(str_copy(__THE_0_a_0), "aaa"); __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "a"))) {
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   struct str __THE_0_b_0 = str_alloc("");
   while (str_ne_cstr(str_copy(__THE_0_b_0), "aaa")) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     __THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_cstr(str_copy(__THE_0_b_0), "a"));
 L5:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
+    if (err_state.id != -1) goto L4;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   struct str __THE_0_c_0 = str_alloc("");
   while (1) {
     if (str_eq_cstr(str_copy(__THE_0_c_0), "aaa")) {
@@ -233,7 +233,7 @@ L5:
     __THE_0_c_0 = str_realloc(__THE_0_c_0, str_concat_cstr(str_copy(__THE_0_c_0), "a"));
 L7:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
+    if (err_state.id != -1) goto L6;
   }
   {
     struct str __THE_0_d_0 = str_alloc("");
@@ -256,6 +256,12 @@ L8:
     }
     str_free((struct str) __THE_0_e_0);
   }
+L6:
+  str_free((struct str) __THE_0_c_0);
+L4:
+  str_free((struct str) __THE_0_b_0);
+L3:
+  str_free((struct str) __THE_0_a_0);
 L2:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

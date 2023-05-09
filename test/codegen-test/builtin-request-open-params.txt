@@ -1158,12 +1158,12 @@ void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1000P p) {
   const struct __THE_1_array_request_Header __THE_0_headers_0 = p.o3 == 1 ? p.n3 : __THE_1_array_request_Header_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   struct request_Request *__THE_0_req_0 = (error_stack_pos(&err_state, 19, 14), request_open(str_copy(__THE_0_method_0), str_copy(__THE_0_url_0), 1, buffer_copy(__THE_0_data_0), 1, __THE_1_array_request_Header_copy(__THE_0_headers_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct request_Response *__THE_0_res_0 = (error_stack_pos(&err_state, 20, 10), request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct str __THE_0_actualData_0 = buffer_to_str(buffer_copy(__THE_0_res_0->__THE_0_data));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   struct __THE_1_array_request_Header __THE_0_actualHeaders_0 = __THE_1_array_request_Header_alloc(0);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
@@ -1177,26 +1177,34 @@ L9:
     }
 L8:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L7;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   print(stdout, "szsz", str_copy(__THE_0_method_0), " ", str_copy(__THE_0_url_0), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   print(stdout, "zziz", "status:", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
   if (__THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_actualHeaders_0)) > 0) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
     print(stdout, "zzsz", "headers:", " ", __THE_1_array_request_Header_str(__THE_1_array_request_Header_copy(__THE_0_actualHeaders_0)), THE_EOL);
 L10:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L7;
   }
   if (str_len(str_copy(__THE_0_actualData_0)) > 0) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L11;
     print(stdout, "zzsz", "data:", " ", str_copy(__THE_0_actualData_0), THE_EOL);
 L11:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L7;
   }
+L7:
+  __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) __THE_0_actualHeaders_0);
+L6:
+  str_free((struct str) __THE_0_actualData_0);
+L5:
+  request_Response_free((struct request_Response *) __THE_0_res_0);
+L4:
+  request_Request_free((struct request_Request *) __THE_0_req_0);
 L3:
   err_state.buf_idx--;
   __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) __THE_0_headers_0);
@@ -1221,27 +1229,28 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_requestWithPrint_0;
   __THE_1_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn$0 *) &__THE_0_ignoredHeadersIncludes_0, (struct __THE_1_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
   __THE_1_requestWithPrint_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_requestWithPrint_0, (struct __THE_1_requestWithPrint_0X) {&__THE_0_ignoredHeadersIncludes_0});
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L12;
   __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}});
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, (struct __THE_1_fn$1000P) {str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))});
-L13:
+L12:
   err_state.buf_idx--;
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_requestWithPrint_0);
   __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_ignoredHeadersIncludes_0);
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_IGNORED_HEADERS_0);
 L0:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

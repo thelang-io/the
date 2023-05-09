@@ -278,12 +278,16 @@ int main () {
   const struct __THE_1_fn$1001 __THE_0_Test2SDtest_0 = (struct __THE_1_fn$1001) {&__THE_1_Test2SDtest_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc();
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_Test2_0 *__THE_0_test2_0 = __THE_1_Test2_0_alloc();
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "szsz", __THE_1_Test1_0_str(__THE_1_Test1_0_copy(__THE_0_test1_0)), " ", __THE_1_Test2_0_str(__THE_0_Test1SDtest_0.f(__THE_0_Test1SDtest_0.x)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "szsz", __THE_1_Test2_0_str(__THE_1_Test2_0_copy(__THE_0_test2_0)), " ", __THE_1_Test1_0_str(__THE_0_Test2SDtest_0.f(__THE_0_Test2SDtest_0.x)), THE_EOL);
+L3:
+  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) __THE_0_test2_0);
+L2:
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -912,10 +912,10 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct request_Request *__THE_0_req_0 = (error_stack_pos(&err_state, 2, 14), request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct request_Response *__THE_0_res_0 = (error_stack_pos(&err_state, 3, 10), request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?ip", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
   print(stdout, "z", THE_EOL);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
@@ -923,11 +923,15 @@ int main () {
     print(stdout, "sz", (error_stack_pos(&err_state, 10, 11), request_Header_str(request_Header_copy(*(error_stack_pos(&err_state, 10, 11), __THE_1_array_request_Header_at(__THE_0_res_0->__THE_0_headers, __THE_0_i_0))))), THE_EOL);
 L4:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "sz", buffer_to_str(buffer_copy(__THE_0_res_0->__THE_0_data)), THE_EOL);
+L3:
+  request_Response_free((struct request_Response *) __THE_0_res_0);
+L2:
+  request_Request_free((struct request_Request *) __THE_0_req_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

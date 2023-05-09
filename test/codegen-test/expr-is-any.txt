@@ -241,74 +241,84 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_testAny_0 = {0, NULL, 0, NULL, NULL};
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct any __THE_0_a_0 = __THE_1_any_int_alloc(1);
   if (__THE_0_a_0.t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     print(stdout, "zz", "any", THE_EOL);
 L4:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     print(stdout, "zz", "any", THE_EOL);
 L5:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct any __THE_0_b_0 = any_copy(__THE_0_testAny_0);
   if (__THE_0_b_0.t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
     print(stdout, "zz", "any", THE_EOL);
 L7:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L6;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
     print(stdout, "zz", "any", THE_EOL);
 L8:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L6;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   struct any __THE_0_e_0 = __THE_1_any_int_alloc(1);
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_int_alloc(1))).t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
     print(stdout, "zz", "any", THE_EOL);
 L10:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L9;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L11;
     print(stdout, "zz", "any", THE_EOL);
 L11:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L9;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   struct any __THE_0_f_0 = any_copy(__THE_0_testAny_0);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_copy(__THE_0_testAny_0))).t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
     print(stdout, "zz", "any", THE_EOL);
 L13:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L12;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L14;
     print(stdout, "zz", "any", THE_EOL);
 L14:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L12;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   print(stdout, "sz", (__THE_0_a_0.t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   print(stdout, "sz", (__THE_0_b_0.t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_int_alloc(1))).t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_copy(__THE_0_testAny_0))).t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
+L12:
+  any_free((struct any) __THE_0_f_0);
+L9:
+  any_free((struct any) __THE_0_e_0);
+L6:
+  any_free((struct any) __THE_0_b_0);
+L3:
+  any_free((struct any) __THE_0_a_0);
+L2:
+  any_free((struct any) __THE_0_testAny_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

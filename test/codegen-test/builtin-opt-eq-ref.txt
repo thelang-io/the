@@ -275,23 +275,35 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str *__THE_0_a_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct str *__THE_0_b_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct str *__THE_0_c_0 = __THE_1_opt_str_alloc(str_alloc(""));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct str *__THE_0_d_0 = __THE_1_opt_str_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct __THE_1_array_opt_str __THE_0_arr_0 = __THE_1_array_opt_str_alloc(4, __THE_1_opt_str_copy(__THE_0_a_0), __THE_1_opt_str_copy(__THE_0_b_0), __THE_1_opt_str_copy(__THE_0_c_0), __THE_1_opt_str_copy(__THE_0_d_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   const struct str *__THE_0_e_0 = __THE_1_opt_str_alloc(str_alloc("test"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_opt_str_len(__THE_1_array_opt_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
     print(stdout, "tz", __THE_1_opt_str_eq(__THE_1_opt_str_copy(*(error_stack_pos(&err_state, 11, 11), __THE_1_array_opt_str_at(__THE_0_arr_0, __THE_0_i_0))), __THE_1_opt_str_copy(__THE_0_e_0)), THE_EOL);
 L8:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L7;
   }
+L7:
+  __THE_1_opt_str_free((struct str *) __THE_0_e_0);
+L6:
+  __THE_1_array_opt_str_free((struct __THE_1_array_opt_str) __THE_0_arr_0);
+L5:
+  __THE_1_opt_str_free((struct str *) __THE_0_d_0);
+L4:
+  __THE_1_opt_str_free((struct str *) __THE_0_c_0);
+L3:
+  __THE_1_opt_str_free((struct str *) __THE_0_b_0);
+L2:
+  __THE_1_opt_str_free((struct str *) __THE_0_a_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

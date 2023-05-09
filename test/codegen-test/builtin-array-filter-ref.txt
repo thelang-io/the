@@ -403,7 +403,7 @@ int main () {
   const struct __THE_1_fn$0 __THE_0_filterTwoOrOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwoOrOne_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   const struct __THE_1_array_str __THE_0_emptyArr_0 = __THE_1_array_str_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(4, __THE_1_array_str_copy(__THE_0_emptyArr_0), __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("4"), str_alloc("5"), str_alloc("6")));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
@@ -414,8 +414,12 @@ int main () {
     print(stdout, "sz", __THE_1_array_str_str((error_stack_pos(&err_state, 12, 11), __THE_1_array_str_filter(__THE_1_array_str_copy(*(error_stack_pos(&err_state, 12, 11), __THE_1_array_array_str_at(__THE_0_arr_0, __THE_0_i_0))), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)))), THE_EOL);
 L7:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L4;
+    if (err_state.id != -1) goto L6;
   }
+L6:
+  __THE_1_array_array_str_free((struct __THE_1_array_array_str) __THE_0_arr_0);
+L5:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_emptyArr_0);
 L4:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

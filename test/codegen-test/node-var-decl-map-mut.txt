@@ -168,8 +168,10 @@ int main () {
   struct __THE_1_map_strMSintME __THE_0_r_0 = __THE_1_map_strMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(0);
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
 L2:
   err_state.buf_idx--;
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_r_0);
 L0:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

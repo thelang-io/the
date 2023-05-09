@@ -948,132 +948,227 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_boolMSintME __THE_0_map1Bool_0 = __THE_1_map_boolMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_map_byteMSintME __THE_0_map1Byte_0 = __THE_1_map_byteMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct __THE_1_map_charMSintME __THE_0_map1Char_0 = __THE_1_map_charMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_map_f32MSintME __THE_0_map1F32_0 = __THE_1_map_f32MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct __THE_1_map_f64MSintME __THE_0_map1F64_0 = __THE_1_map_f64MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   const struct __THE_1_map_floatMSintME __THE_0_map1Float_0 = __THE_1_map_floatMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   const struct __THE_1_map_i8MSintME __THE_0_map1I8_0 = __THE_1_map_i8MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   const struct __THE_1_map_i16MSintME __THE_0_map1I16_0 = __THE_1_map_i16MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
   const struct __THE_1_map_i32MSintME __THE_0_map1I32_0 = __THE_1_map_i32MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L10;
   const struct __THE_1_map_i64MSintME __THE_0_map1I64_0 = __THE_1_map_i64MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L11;
   const struct __THE_1_map_intMSintME __THE_0_map1Int_0 = __THE_1_map_intMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
   const struct __THE_1_map_strMSintME __THE_0_map1Str_0 = __THE_1_map_strMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L13;
   const struct __THE_1_map_u8MSintME __THE_0_map1U8_0 = __THE_1_map_u8MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L14;
   const struct __THE_1_map_u16MSintME __THE_0_map1U16_0 = __THE_1_map_u16MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L15;
   const struct __THE_1_map_u32MSintME __THE_0_map1U32_0 = __THE_1_map_u32MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L16;
   const struct __THE_1_map_u64MSintME __THE_0_map1U64_0 = __THE_1_map_u64MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L17;
   struct __THE_1_map_boolMSintME __THE_0_map2Bool_0 = __THE_1_map_boolMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L18;
   (error_stack_pos(&err_state, 20, 3), __THE_1_map_boolMSintME_set(&__THE_0_map2Bool_0, true, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L18;
   struct __THE_1_map_byteMSintME __THE_0_map2Byte_0 = __THE_1_map_byteMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   (error_stack_pos(&err_state, 22, 3), __THE_1_map_byteMSintME_set(&__THE_0_map2Byte_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L19;
   struct __THE_1_map_charMSintME __THE_0_map2Char_0 = __THE_1_map_charMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L20;
   (error_stack_pos(&err_state, 24, 3), __THE_1_map_charMSintME_set(&__THE_0_map2Char_0, 'a', 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L20;
   struct __THE_1_map_f32MSintME __THE_0_map2F32_0 = __THE_1_map_f32MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L21;
   (error_stack_pos(&err_state, 26, 3), __THE_1_map_f32MSintME_set(&__THE_0_map2F32_0, 3.14, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L21;
   struct __THE_1_map_f64MSintME __THE_0_map2F64_0 = __THE_1_map_f64MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L22;
   (error_stack_pos(&err_state, 28, 3), __THE_1_map_f64MSintME_set(&__THE_0_map2F64_0, 3.14, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L22;
   struct __THE_1_map_floatMSintME __THE_0_map2Float_0 = __THE_1_map_floatMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
   (error_stack_pos(&err_state, 30, 3), __THE_1_map_floatMSintME_set(&__THE_0_map2Float_0, 3.14, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
   struct __THE_1_map_i8MSintME __THE_0_map2I8_0 = __THE_1_map_i8MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L24;
   (error_stack_pos(&err_state, 32, 3), __THE_1_map_i8MSintME_set(&__THE_0_map2I8_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L24;
   struct __THE_1_map_i16MSintME __THE_0_map2I16_0 = __THE_1_map_i16MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
   (error_stack_pos(&err_state, 34, 3), __THE_1_map_i16MSintME_set(&__THE_0_map2I16_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L25;
   struct __THE_1_map_i32MSintME __THE_0_map2I32_0 = __THE_1_map_i32MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L26;
   (error_stack_pos(&err_state, 36, 3), __THE_1_map_i32MSintME_set(&__THE_0_map2I32_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L26;
   struct __THE_1_map_i64MSintME __THE_0_map2I64_0 = __THE_1_map_i64MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L27;
   (error_stack_pos(&err_state, 38, 3), __THE_1_map_i64MSintME_set(&__THE_0_map2I64_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L27;
   struct __THE_1_map_intMSintME __THE_0_map2Int_0 = __THE_1_map_intMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L28;
   (error_stack_pos(&err_state, 40, 3), __THE_1_map_intMSintME_set(&__THE_0_map2Int_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L28;
   struct __THE_1_map_strMSintME __THE_0_map2Str_0 = __THE_1_map_strMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L29;
   (error_stack_pos(&err_state, 42, 3), __THE_1_map_strMSintME_set(&__THE_0_map2Str_0, str_alloc("test"), 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L29;
   struct __THE_1_map_u8MSintME __THE_0_map2U8_0 = __THE_1_map_u8MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L30;
   (error_stack_pos(&err_state, 44, 3), __THE_1_map_u8MSintME_set(&__THE_0_map2U8_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L30;
   struct __THE_1_map_u16MSintME __THE_0_map2U16_0 = __THE_1_map_u16MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L31;
   (error_stack_pos(&err_state, 46, 3), __THE_1_map_u16MSintME_set(&__THE_0_map2U16_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L31;
   struct __THE_1_map_u32MSintME __THE_0_map2U32_0 = __THE_1_map_u32MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L32;
   (error_stack_pos(&err_state, 48, 3), __THE_1_map_u32MSintME_set(&__THE_0_map2U32_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L32;
   struct __THE_1_map_u64MSintME __THE_0_map2U64_0 = __THE_1_map_u64MSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L33;
   (error_stack_pos(&err_state, 50, 3), __THE_1_map_u64MSintME_set(&__THE_0_map2U64_0, 1, 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L33;
   const struct __THE_1_map_boolMSintME __THE_0_map3Bool_0 = __THE_1_map_boolMSintME_copy(__THE_0_map2Bool_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L34;
   const struct __THE_1_map_byteMSintME __THE_0_map3Byte_0 = __THE_1_map_byteMSintME_copy(__THE_0_map2Byte_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L35;
   const struct __THE_1_map_charMSintME __THE_0_map3Char_0 = __THE_1_map_charMSintME_copy(__THE_0_map2Char_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L36;
   const struct __THE_1_map_f32MSintME __THE_0_map3F32_0 = __THE_1_map_f32MSintME_copy(__THE_0_map2F32_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L37;
   const struct __THE_1_map_f64MSintME __THE_0_map3F64_0 = __THE_1_map_f64MSintME_copy(__THE_0_map2F64_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L38;
   const struct __THE_1_map_floatMSintME __THE_0_map3Float_0 = __THE_1_map_floatMSintME_copy(__THE_0_map2Float_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L39;
   const struct __THE_1_map_i8MSintME __THE_0_map3I8_0 = __THE_1_map_i8MSintME_copy(__THE_0_map2I8_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L40;
   const struct __THE_1_map_i16MSintME __THE_0_map3I16_0 = __THE_1_map_i16MSintME_copy(__THE_0_map2I16_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L41;
   const struct __THE_1_map_i32MSintME __THE_0_map3I32_0 = __THE_1_map_i32MSintME_copy(__THE_0_map2I32_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L42;
   const struct __THE_1_map_i64MSintME __THE_0_map3I64_0 = __THE_1_map_i64MSintME_copy(__THE_0_map2I64_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L43;
   const struct __THE_1_map_intMSintME __THE_0_map3Int_0 = __THE_1_map_intMSintME_copy(__THE_0_map2Int_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L44;
   const struct __THE_1_map_strMSintME __THE_0_map3Str_0 = __THE_1_map_strMSintME_copy(__THE_0_map2Str_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L45;
   const struct __THE_1_map_u8MSintME __THE_0_map3U8_0 = __THE_1_map_u8MSintME_copy(__THE_0_map2U8_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L46;
   const struct __THE_1_map_u16MSintME __THE_0_map3U16_0 = __THE_1_map_u16MSintME_copy(__THE_0_map2U16_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L47;
   const struct __THE_1_map_u32MSintME __THE_0_map3U32_0 = __THE_1_map_u32MSintME_copy(__THE_0_map2U32_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L48;
   const struct __THE_1_map_u64MSintME __THE_0_map3U64_0 = __THE_1_map_u64MSintME_copy(__THE_0_map2U64_0);
+  __THE_1_map_u64MSintME_free((struct __THE_1_map_u64MSintME) __THE_0_map3U64_0);
+L48:
+  __THE_1_map_u32MSintME_free((struct __THE_1_map_u32MSintME) __THE_0_map3U32_0);
+L47:
+  __THE_1_map_u16MSintME_free((struct __THE_1_map_u16MSintME) __THE_0_map3U16_0);
+L46:
+  __THE_1_map_u8MSintME_free((struct __THE_1_map_u8MSintME) __THE_0_map3U8_0);
+L45:
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_map3Str_0);
+L44:
+  __THE_1_map_intMSintME_free((struct __THE_1_map_intMSintME) __THE_0_map3Int_0);
+L43:
+  __THE_1_map_i64MSintME_free((struct __THE_1_map_i64MSintME) __THE_0_map3I64_0);
+L42:
+  __THE_1_map_i32MSintME_free((struct __THE_1_map_i32MSintME) __THE_0_map3I32_0);
+L41:
+  __THE_1_map_i16MSintME_free((struct __THE_1_map_i16MSintME) __THE_0_map3I16_0);
+L40:
+  __THE_1_map_i8MSintME_free((struct __THE_1_map_i8MSintME) __THE_0_map3I8_0);
+L39:
+  __THE_1_map_floatMSintME_free((struct __THE_1_map_floatMSintME) __THE_0_map3Float_0);
+L38:
+  __THE_1_map_f64MSintME_free((struct __THE_1_map_f64MSintME) __THE_0_map3F64_0);
+L37:
+  __THE_1_map_f32MSintME_free((struct __THE_1_map_f32MSintME) __THE_0_map3F32_0);
+L36:
+  __THE_1_map_charMSintME_free((struct __THE_1_map_charMSintME) __THE_0_map3Char_0);
+L35:
+  __THE_1_map_byteMSintME_free((struct __THE_1_map_byteMSintME) __THE_0_map3Byte_0);
+L34:
+  __THE_1_map_boolMSintME_free((struct __THE_1_map_boolMSintME) __THE_0_map3Bool_0);
+L33:
+  __THE_1_map_u64MSintME_free((struct __THE_1_map_u64MSintME) __THE_0_map2U64_0);
+L32:
+  __THE_1_map_u32MSintME_free((struct __THE_1_map_u32MSintME) __THE_0_map2U32_0);
+L31:
+  __THE_1_map_u16MSintME_free((struct __THE_1_map_u16MSintME) __THE_0_map2U16_0);
+L30:
+  __THE_1_map_u8MSintME_free((struct __THE_1_map_u8MSintME) __THE_0_map2U8_0);
+L29:
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_map2Str_0);
+L28:
+  __THE_1_map_intMSintME_free((struct __THE_1_map_intMSintME) __THE_0_map2Int_0);
+L27:
+  __THE_1_map_i64MSintME_free((struct __THE_1_map_i64MSintME) __THE_0_map2I64_0);
+L26:
+  __THE_1_map_i32MSintME_free((struct __THE_1_map_i32MSintME) __THE_0_map2I32_0);
+L25:
+  __THE_1_map_i16MSintME_free((struct __THE_1_map_i16MSintME) __THE_0_map2I16_0);
+L24:
+  __THE_1_map_i8MSintME_free((struct __THE_1_map_i8MSintME) __THE_0_map2I8_0);
+L23:
+  __THE_1_map_floatMSintME_free((struct __THE_1_map_floatMSintME) __THE_0_map2Float_0);
+L22:
+  __THE_1_map_f64MSintME_free((struct __THE_1_map_f64MSintME) __THE_0_map2F64_0);
+L21:
+  __THE_1_map_f32MSintME_free((struct __THE_1_map_f32MSintME) __THE_0_map2F32_0);
+L20:
+  __THE_1_map_charMSintME_free((struct __THE_1_map_charMSintME) __THE_0_map2Char_0);
+L19:
+  __THE_1_map_byteMSintME_free((struct __THE_1_map_byteMSintME) __THE_0_map2Byte_0);
+L18:
+  __THE_1_map_boolMSintME_free((struct __THE_1_map_boolMSintME) __THE_0_map2Bool_0);
+L17:
+  __THE_1_map_u64MSintME_free((struct __THE_1_map_u64MSintME) __THE_0_map1U64_0);
+L16:
+  __THE_1_map_u32MSintME_free((struct __THE_1_map_u32MSintME) __THE_0_map1U32_0);
+L15:
+  __THE_1_map_u16MSintME_free((struct __THE_1_map_u16MSintME) __THE_0_map1U16_0);
+L14:
+  __THE_1_map_u8MSintME_free((struct __THE_1_map_u8MSintME) __THE_0_map1U8_0);
+L13:
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_map1Str_0);
+L12:
+  __THE_1_map_intMSintME_free((struct __THE_1_map_intMSintME) __THE_0_map1Int_0);
+L11:
+  __THE_1_map_i64MSintME_free((struct __THE_1_map_i64MSintME) __THE_0_map1I64_0);
+L10:
+  __THE_1_map_i32MSintME_free((struct __THE_1_map_i32MSintME) __THE_0_map1I32_0);
+L9:
+  __THE_1_map_i16MSintME_free((struct __THE_1_map_i16MSintME) __THE_0_map1I16_0);
+L8:
+  __THE_1_map_i8MSintME_free((struct __THE_1_map_i8MSintME) __THE_0_map1I8_0);
+L7:
+  __THE_1_map_floatMSintME_free((struct __THE_1_map_floatMSintME) __THE_0_map1Float_0);
+L6:
+  __THE_1_map_f64MSintME_free((struct __THE_1_map_f64MSintME) __THE_0_map1F64_0);
+L5:
+  __THE_1_map_f32MSintME_free((struct __THE_1_map_f32MSintME) __THE_0_map1F32_0);
+L4:
+  __THE_1_map_charMSintME_free((struct __THE_1_map_charMSintME) __THE_0_map1Char_0);
+L3:
+  __THE_1_map_byteMSintME_free((struct __THE_1_map_byteMSintME) __THE_0_map1Byte_0);
+L2:
+  __THE_1_map_boolMSintME_free((struct __THE_1_map_boolMSintME) __THE_0_map1Bool_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

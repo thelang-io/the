@@ -248,14 +248,16 @@ int main () {
   if (str_eq_cstr(os_name(), "Windows")) {
     error_stack_pos(&err_state, 5, 5);
     error_assign(&err_state, TYPE_error_Error, (void *) new_error(str_concat_cstr(cstr_concat_str("failed to change owner to 0 and group to 0 for file `", str_copy(__THE_0_fileName_0)), "`")));
-    goto L1;
+    goto L2;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     (error_stack_pos(&err_state, 7, 5), fs_chownSync(str_copy(__THE_0_fileName_0), 0, 0));
 L3:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L2;
   }
+L2:
+  str_free((struct str) __THE_0_fileName_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

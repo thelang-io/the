@@ -263,26 +263,28 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc('b');
   char __THE_0_test2_0 = 'c';
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 15, 3), char_str(__THE_0_test_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 16, 3), char_str(__THE_0_test1_0->__THE_0_c)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 17, 4), char_str(__THE_0_test2_0 = 'e')));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 18, 3), char_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 19, 4), char_str(1 > 2 ? 'f' : 'g')));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 20, 3), char_str('h')));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 21, 4), char_str(__THE_0_test_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   str_free((struct str) (error_stack_pos(&err_state, 22, 3), char_str(*__THE_0_refTest_0)));
   const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
   __THE_0_mainSDtestCtx_0.f(__THE_0_mainSDtestCtx_0.x);
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtestCtx_0);
+L2:
+  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

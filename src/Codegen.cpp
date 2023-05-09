@@ -66,8 +66,7 @@ std::string getOSFromPlatform (const std::string &platform) {
 }
 
 // todo every _alloc should have prefix of error pos
-// todo fix all cleanup from main is gone (probably other scopes too)
-// todo example that has global variable array_str has wrong generation
+// todo test "builtin-request-open-params" has wrong cleanUp generation
 
 void Codegen::compile (
   const std::string &path,
@@ -929,12 +928,11 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       }
 
       code += "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
-      auto saveStateCleanUp = this->state.cleanUp;
+      auto saveStateCleanUpJumpUsed = this->state.cleanUp.jumpUsed;
 
-      this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &saveStateCleanUp);
       this->state.cleanUp.jumpUsed = true;
       code += this->_node(node);
-      this->state.cleanUp = saveStateCleanUp;
+      this->state.cleanUp.jumpUsed = saveStateCleanUpJumpUsed;
 
       jumpedBefore = true;
     } else {
@@ -1382,8 +1380,6 @@ std::string Codegen::_fnDecl (
   auto fnName = Codegen::name(codeName);
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
-    // todo remove
-    this->_activateEntity(varTypeInfo.typeName);
     code += std::string(this->indent, ' ') + "const " + varTypeInfo.typeCode + fnName;
   }
 

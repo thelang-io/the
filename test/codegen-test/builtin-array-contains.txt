@@ -246,28 +246,36 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 7, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test0_0), str_alloc("0"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 8, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test0_0), str_alloc("1"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 9, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test1_0), str_alloc("0"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 10, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test1_0), str_alloc("1"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 11, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test2_0), str_alloc("0"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 12, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test2_0), str_alloc("1"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 13, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test3_0), str_alloc("0"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   print(stdout, "tz", (error_stack_pos(&err_state, 14, 9), __THE_1_array_str_contains(__THE_1_array_str_copy(__THE_0_test3_0), str_alloc("1"))), THE_EOL);
+L5:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
+L4:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
+L3:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
+L2:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test0_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -175,14 +175,23 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_var1_0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct str __THE_0_var2_0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct str __THE_0_var3_0 = str_alloc("test");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_array_str __THE_0_a_0 = __THE_1_array_str_alloc(3, str_copy(__THE_0_var1_0), str_copy(__THE_0_var2_0), str_copy(__THE_0_var3_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct __THE_1_array_str __THE_0_b_0 = __THE_1_array_str_alloc(2, str_alloc(""), str_alloc("test"));
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_b_0);
+L5:
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_a_0);
+L4:
+  str_free((struct str) __THE_0_var3_0);
+L3:
+  str_free((struct str) __THE_0_var2_0);
+L2:
+  str_free((struct str) __THE_0_var1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

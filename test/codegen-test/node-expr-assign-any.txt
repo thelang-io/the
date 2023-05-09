@@ -176,12 +176,16 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct any __THE_0_test1_0 = {0, NULL, 0, NULL, NULL};
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   __THE_0_test1_0 = any_realloc(__THE_0_test1_0, __THE_1_any_int_alloc(3));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   struct any __THE_0_test2_0 = __THE_1_any_int_alloc(2);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   __THE_0_test2_0 = any_realloc(__THE_0_test2_0, __THE_1_any_int_alloc(4));
+L3:
+  any_free((struct any) __THE_0_test2_0);
+L2:
+  any_free((struct any) __THE_0_test1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

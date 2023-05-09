@@ -179,23 +179,23 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_a1_0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   struct str __THE_0_b1_0 = str_copy(__THE_0_a1_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   __THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   struct str __THE_0_c1_0 = str_alloc("test1");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_c1_0 = str_realloc(__THE_0_c1_0, str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   struct str __THE_0_d1_0 = str_alloc("test2");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   __THE_0_d1_0 = str_realloc(__THE_0_d1_0, str_copy(__THE_0_c1_0 = str_realloc(__THE_0_c1_0, str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0))))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_b1_0) : str_copy(__THE_0_a1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_c1_0))) : str_copy(__THE_0_a1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_c1_0) : str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0))));
   const int32_t __THE_0_a2_0 = 0;
   int32_t __THE_0_b2_0 = __THE_0_a2_0;
@@ -207,6 +207,14 @@ int main () {
   __THE_0_d2_0 = true ? __THE_0_b2_0 : __THE_0_a2_0;
   __THE_0_d2_0 = true ? __THE_0_b2_0 = __THE_0_c2_0 : __THE_0_a2_0;
   __THE_0_d2_0 = true ? __THE_0_c2_0 : (__THE_0_b2_0 = __THE_0_a2_0);
+L5:
+  str_free((struct str) __THE_0_d1_0);
+L4:
+  str_free((struct str) __THE_0_c1_0);
+L3:
+  str_free((struct str) __THE_0_b1_0);
+L2:
+  str_free((struct str) __THE_0_a1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

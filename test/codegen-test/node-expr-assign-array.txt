@@ -159,8 +159,10 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct __THE_1_array_int __THE_0_test1_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   __THE_0_test1_0 = __THE_1_array_int_realloc(__THE_0_test1_0, __THE_1_array_int_alloc(3, 2, 3, 4));
+L2:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

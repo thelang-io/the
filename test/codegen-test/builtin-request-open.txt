@@ -823,32 +823,42 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct request_Request *__THE_0_req_0 = (error_stack_pos(&err_state, 2, 14), request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct request_Response *__THE_0_res1_0 = (error_stack_pos(&err_state, 3, 11), request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, (error_stack_pos(&err_state, 6, 9), request_open(str_alloc("POST"), str_alloc("http://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct request_Response *__THE_0_res2_0 = (error_stack_pos(&err_state, 7, 11), request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, (error_stack_pos(&err_state, 10, 9), request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct request_Response *__THE_0_res3_0 = (error_stack_pos(&err_state, 11, 11), request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, (error_stack_pos(&err_state, 14, 9), request_open(str_alloc("POST"), str_alloc("https://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct request_Response *__THE_0_res4_0 = (error_stack_pos(&err_state, 15, 11), request_read(&__THE_0_req_0));
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziz", "GET http://ci.thelang.io/echo?example:", " ", __THE_0_res1_0->__THE_0_status, THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziz", "POST http://ci.thelang.io/echo?example:", " ", __THE_0_res2_0->__THE_0_status, THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziz", "GET https://ci.thelang.io/echo?example:", " ", __THE_0_res3_0->__THE_0_status, THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   print(stdout, "zziz", "POST https://ci.thelang.io/echo?example:", " ", __THE_0_res4_0->__THE_0_status, THE_EOL);
+L6:
+  request_Response_free((struct request_Response *) __THE_0_res4_0);
+L5:
+  request_Response_free((struct request_Response *) __THE_0_res3_0);
+L4:
+  request_Response_free((struct request_Response *) __THE_0_res2_0);
+L3:
+  request_Response_free((struct request_Response *) __THE_0_res1_0);
+L2:
+  request_Request_free((struct request_Request *) __THE_0_req_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

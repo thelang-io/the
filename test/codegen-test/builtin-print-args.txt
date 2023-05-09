@@ -189,11 +189,15 @@ int main () {
   print(stdout, "zzzzzz", "Tony", ", ", "Andrew", ", ", "Dan", "--\n");
   if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
   const struct str __THE_0_separator_0 = str_alloc(",");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct str __THE_0_terminator_0 = str_alloc(",");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "zszszs", "Max", str_copy(__THE_0_separator_0), "Lester", str_copy(__THE_0_separator_0), "Bonny", str_copy(__THE_0_terminator_0));
   print(stdout, "z", THE_EOL);
+L3:
+  str_free((struct str) __THE_0_terminator_0);
+L2:
+  str_free((struct str) __THE_0_separator_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

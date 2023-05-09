@@ -221,12 +221,19 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_union_intUSstrUE __THE_0_testUnion1_0 = __THE_1_union_intUSstrUE_alloc(TYPE_int, 3);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_union_intUSstrUE __THE_0_testUnion2_0 = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct any __THE_0_anyUnion1_0 = __THE_1_any_union_intUSstrUE_alloc(__THE_1_union_intUSstrUE_copy(__THE_0_testUnion1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct any __THE_0_anyUnion2_0 = __THE_1_any_union_intUSstrUE_alloc(__THE_1_union_intUSstrUE_copy(__THE_0_testUnion2_0));
+  any_free((struct any) __THE_0_anyUnion2_0);
+L4:
+  any_free((struct any) __THE_0_anyUnion1_0);
+L3:
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_testUnion2_0);
+L2:
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_testUnion1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

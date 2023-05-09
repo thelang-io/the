@@ -235,10 +235,11 @@ int main () {
   struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3);
   const struct __THE_1_fn$1003 __THE_0_mainSDtest_0;
   __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$1003P) {__THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6)});
-L4:
+L2:
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_mainSDtest_0);
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

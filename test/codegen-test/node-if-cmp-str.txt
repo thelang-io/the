@@ -239,7 +239,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_s1_0 = str_alloc("str1");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct str __THE_0_s2_0 = str_alloc("str2");
   if (cstr_eq_cstr("", "hello")) {
   }
@@ -273,6 +273,9 @@ int main () {
   }
   if (str_ne_str(str_copy(__THE_0_s1_0), str_copy(__THE_0_s2_0))) {
   }
+  str_free((struct str) __THE_0_s2_0);
+L2:
+  str_free((struct str) __THE_0_s1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -72,8 +72,10 @@ int main () {
   int32_t *__THE_0_r_0 = NULL;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   int32_t *__THE_0_a_0 = NULL;
+  __THE_1_opt_int_free((int32_t *) __THE_0_a_0);
 L2:
   err_state.buf_idx--;
+  __THE_1_opt_int_free((int32_t *) __THE_0_r_0);
 L0:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

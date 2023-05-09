@@ -200,14 +200,23 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSintME __THE_0_testMapInt_0 = __THE_1_map_strMSintME_alloc(1, str_alloc("key1"), 1);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_map_strMSintME *__THE_0_optMapInt_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct __THE_1_map_strMSintME *__THE_0_optMapIntNilInit_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_map_strMSintME *__THE_0_optMapIntValInit_0 = __THE_1_opt_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(1, str_alloc("key1"), 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct __THE_1_map_strMSintME *__THE_0_optMapIntValCopy_0 = __THE_1_opt_map_strMSintME_alloc(__THE_1_map_strMSintME_copy(__THE_0_testMapInt_0));
+  __THE_1_opt_map_strMSintME_free((struct __THE_1_map_strMSintME *) __THE_0_optMapIntValCopy_0);
+L5:
+  __THE_1_opt_map_strMSintME_free((struct __THE_1_map_strMSintME *) __THE_0_optMapIntValInit_0);
+L4:
+  __THE_1_opt_map_strMSintME_free((struct __THE_1_map_strMSintME *) __THE_0_optMapIntNilInit_0);
+L3:
+  __THE_1_opt_map_strMSintME_free((struct __THE_1_map_strMSintME *) __THE_0_optMapInt_0);
+L2:
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_testMapInt_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

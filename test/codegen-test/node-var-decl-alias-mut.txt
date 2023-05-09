@@ -147,8 +147,10 @@ int main () {
   struct str __THE_0_r_0 = str_alloc("");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct str __THE_0_a_0 = str_alloc("");
+  str_free((struct str) __THE_0_a_0);
 L2:
   err_state.buf_idx--;
+  str_free((struct str) __THE_0_r_0);
 L0:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -209,8 +209,11 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSmap_strMSintMEME __THE_0_a_0 = __THE_1_map_strMSmap_strMSintMEME_alloc(3, str_alloc("key1"), __THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6), str_alloc("key2"), __THE_1_map_strMSintME_alloc(3, str_alloc("key7"), 7, str_alloc("key8"), 8, str_alloc("key9"), 9), str_alloc("key3"), __THE_1_map_strMSintME_alloc(3, str_alloc("key10"), 10, str_alloc("key11"), 11, str_alloc("key12"), 12));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_map_strMSmap_strMSintMEME __THE_0_b_0 = __THE_1_map_strMSmap_strMSintMEME_alloc(3, str_alloc("key1"), __THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6), str_alloc("key2"), __THE_1_map_strMSintME_alloc(3, str_alloc("key7"), 7, str_alloc("key8"), 8, str_alloc("key9"), 9), str_alloc("key3"), __THE_1_map_strMSintME_alloc(3, str_alloc("key10"), 10, str_alloc("key11"), 11, str_alloc("key12"), 12));
+  __THE_1_map_strMSmap_strMSintMEME_free((struct __THE_1_map_strMSmap_strMSintMEME) __THE_0_b_0);
+L2:
+  __THE_1_map_strMSmap_strMSintMEME_free((struct __THE_1_map_strMSmap_strMSintMEME) __THE_0_a_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -245,8 +245,10 @@ int main () {
     print(stdout, "sz", (error_stack_pos(&err_state, 8, 11), u64_str(*(error_stack_pos(&err_state, 8, 11), __THE_1_array_u64_at(__THE_0_arr_0, __THE_0_i_0)))), THE_EOL);
 L3:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L2;
   }
+L2:
+  __THE_1_array_u64_free((struct __THE_1_array_u64) __THE_0_arr_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

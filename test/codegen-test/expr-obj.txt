@@ -244,20 +244,30 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct __THE_1_Point_0 *__THE_0_a1_0 = __THE_1_Point_0_alloc(37.7681251, -122.5138329);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   struct __THE_1_Point_0 *__THE_0_a2_0 = __THE_1_Point_0_alloc(37.7681251, -122.5138329);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   __THE_0_a1_0->__THE_0_x += 2;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   __THE_0_a2_0->__THE_0_y /= 0.2;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(2);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_Human_0 *__THE_0_tina_0 = __THE_1_Human_0_alloc(str_alloc("Tina"), 45);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   struct __THE_1_Human_0 *__THE_0_nina_0 = __THE_1_Human_0_alloc(str_alloc("Nina"), 33);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   __THE_0_nina_0->__THE_0_name = str_realloc(__THE_0_nina_0->__THE_0_name, str_concat_cstr(str_copy(__THE_0_nina_0->__THE_0_name), "Test"));
+L6:
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_nina_0);
+L5:
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_tina_0);
+L4:
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_b_0);
+L3:
+  __THE_1_Point_0_free((struct __THE_1_Point_0 *) __THE_0_a2_0);
+L2:
+  __THE_1_Point_0_free((struct __THE_1_Point_0 *) __THE_0_a1_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -325,54 +325,68 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_sortDesc_0 = (struct __THE_1_fn$1000) {&__THE_1_sortDesc_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct __THE_1_array_int __THE_0_test_0 = __THE_1_array_int_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_array_int __THE_0_test0_0 = __THE_1_array_int_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct __THE_1_array_int __THE_0_test1_0 = __THE_1_array_int_alloc(1, 1);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
   const struct __THE_1_array_int __THE_0_test2_0 = __THE_1_array_int_alloc(2, 1, 2);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct __THE_1_array_int __THE_0_test3_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   const struct __THE_1_array_int __THE_0_test4_0 = __THE_1_array_int_alloc(15, 24, 78, 85, 9, 13, 92, 95, 98, 40, 22, 89, 18, 14, 92, 19);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
   const struct __THE_1_array_int __THE_0_test5_0 = __THE_1_array_int_alloc(15, 21, 70, 11, 54, 96, 14, 14, 15, 35, 54, 67, 81, 34, 37, 10);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   __THE_1_array_int_sort(&__THE_0_test0_0, __THE_1_fn$1000_copy(__THE_0_sortAsc_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   __THE_1_array_int_sort(&__THE_0_test1_0, __THE_1_fn$1000_copy(__THE_0_sortAsc_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   __THE_1_array_int_sort(&__THE_0_test2_0, __THE_1_fn$1000_copy(__THE_0_sortAsc_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   __THE_1_array_int_sort(&__THE_0_test3_0, __THE_1_fn$1000_copy(__THE_0_sortAsc_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test4_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   __THE_1_array_int_sort(&__THE_0_test4_0, __THE_1_fn$1000_copy(__THE_0_sortAsc_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test4_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test5_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   __THE_1_array_int_sort(&__THE_0_test5_0, __THE_1_fn$1000_copy(__THE_0_sortDesc_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test5_0)), THE_EOL);
+L8:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test5_0);
+L7:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test4_0);
+L6:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test3_0);
+L5:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test2_0);
+L4:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0);
+L3:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test0_0);
+L2:
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -332,20 +332,24 @@ int main () {
   const struct __THE_1_fn$1002 __THE_0_printHuman_0 = (struct __THE_1_fn$1002) {&__THE_1_printHuman_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   const struct __THE_1_Human_0 *__THE_0_danny_0 = __THE_1_Human_0_alloc(str_alloc("Danny"), __THE_0_ColorSDBlue_0, __THE_0_IncomeTypeSDPassive_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
   const struct __THE_1_Human_0 *__THE_0_tricia_0 = __THE_1_Human_0_alloc(str_alloc("Tricia"), __THE_0_ColorSDRed_0, __THE_0_IncomeTypeSDActive_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, (struct __THE_1_fn$1002P) {__THE_1_Human_0_copy(__THE_0_danny_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, (struct __THE_1_fn$1002P) {__THE_1_Human_0_copy(__THE_0_tricia_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   __THE_0_printColor_0.f(__THE_0_printColor_0.x, (struct __THE_1_fn$1001P) {__THE_0_danny_0->__THE_0_hairColor});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   __THE_0_printColor_0.f(__THE_0_printColor_0.x, (struct __THE_1_fn$1001P) {__THE_0_tricia_0->__THE_0_hairColor});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, (struct __THE_1_fn$1000P) {__THE_0_danny_0->__THE_0_incomeType});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
   __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, (struct __THE_1_fn$1000P) {__THE_0_tricia_0->__THE_0_incomeType});
+L6:
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_tricia_0);
+L5:
+  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_danny_0);
 L4:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

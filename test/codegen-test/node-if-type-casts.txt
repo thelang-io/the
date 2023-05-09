@@ -316,7 +316,7 @@ int main () {
   } else {
     8;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_alloc(NULL);
   if (__THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a), NULL)) {
     print(stdout, "iz", 1, THE_EOL);
@@ -325,14 +325,14 @@ int main () {
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L4:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
   if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a), NULL)) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L5:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   } else {
     print(stdout, "iz", 2, THE_EOL);
   }
@@ -343,14 +343,14 @@ L5:
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L6:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
   if (__THE_1_opt_int_ne(NULL, __THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a))) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L7:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   } else {
     print(stdout, "iz", 4, THE_EOL);
   }
@@ -361,7 +361,7 @@ L7:
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L8:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
   if (__THE_1_opt_int_eq((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL))), NULL)) {
     print(stdout, "iz", 5, THE_EOL);
@@ -370,14 +370,14 @@ L8:
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L9:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
   if (__THE_1_opt_int_ne((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL))), NULL)) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L10:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   } else {
     print(stdout, "iz", 6, THE_EOL);
   }
@@ -386,7 +386,7 @@ L10:
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L11:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   } else {
     print(stdout, "iz", 6, THE_EOL);
   }
@@ -397,7 +397,7 @@ L11:
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L12:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
   if (__THE_1_opt_int_eq(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(7)))))) {
     print(stdout, "iz", 7, THE_EOL);
@@ -406,14 +406,14 @@ L12:
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L13:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   }
   if (__THE_1_opt_int_ne(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(8)))))) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L14;
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L14:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   } else {
     print(stdout, "iz", 8, THE_EOL);
   }
@@ -422,10 +422,14 @@ L14:
     print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
 L15:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
+    if (err_state.id != -1) goto L3;
   } else {
     print(stdout, "iz", 8, THE_EOL);
   }
+L3:
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);
+L2:
+  __THE_1_opt_int_free((int32_t *) __THE_0_test_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

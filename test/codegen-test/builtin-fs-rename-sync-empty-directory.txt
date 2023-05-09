@@ -475,20 +475,24 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_oldName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-rename-sync");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct str __THE_0_newName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-rename-sync-directory");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   (error_stack_pos(&err_state, 5, 3), fs_mkdirSync(str_copy(__THE_0_oldName_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "tz", (error_stack_pos(&err_state, 6, 9), fs_existsSync(str_copy(__THE_0_oldName_0))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   (error_stack_pos(&err_state, 7, 3), fs_renameSync(str_copy(__THE_0_oldName_0), str_copy(__THE_0_newName_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "tz", (error_stack_pos(&err_state, 8, 9), fs_existsSync(str_copy(__THE_0_newName_0))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   print(stdout, "sz", __THE_1_array_str_str((error_stack_pos(&err_state, 9, 9), fs_scandirSync(str_copy(__THE_0_newName_0)))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   (error_stack_pos(&err_state, 10, 3), fs_rmdirSync(str_copy(__THE_0_newName_0)));
+L3:
+  str_free((struct str) __THE_0_newName_0);
+L2:
+  str_free((struct str) __THE_0_oldName_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

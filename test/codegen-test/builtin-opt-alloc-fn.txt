@@ -169,10 +169,15 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_testFn_0 = (struct __THE_1_fn$1000) {&__THE_1_testFn_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_fn$1000 *__THE_0_optFn_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
   const struct __THE_1_fn$1000 *__THE_0_optFnNilInit_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
   const struct __THE_1_fn$1000 *__THE_0_optFnValCopy_0 = __THE_1_opt_fn$1000_alloc(__THE_1_fn$1000_copy(__THE_0_testFn_0));
+  __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFnValCopy_0);
+L3:
+  __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFnNilInit_0);
+L2:
+  __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFn_0);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
