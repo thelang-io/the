@@ -184,7 +184,7 @@ void str_free (struct str s) {
 struct url_URL *url_parse (struct str s) {
   if (s.l == 0) {
     str_free(s);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   size_t i = 0;
@@ -195,11 +195,11 @@ struct url_URL *url_parse (struct str s) {
       break;
     } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL protocol"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL protocol"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     } else if (i == s.l - 1) {
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
   }
@@ -227,12 +227,12 @@ struct url_URL *url_parse (struct str s) {
     if (ch == '@' && hostname_start != 0 && pathname_start == 0) {
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL auth is not supported"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL auth is not supported"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     } else if (ch == ':' && port_start != 0 && (pathname_start == 0 || search_start == 0 || hash_start == 0)) {
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL port"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL port"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
     if (ch == ':' && hostname_start != 0 && pathname_start == 0) port_start = i;
@@ -247,7 +247,7 @@ struct url_URL *url_parse (struct str s) {
     str_free(hostname);
     str_free(protocol);
     str_free(s);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL hostname"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL hostname"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   } else if (hostname_start != 0 && hostname_start != hostname_end) {
     hostname.l = hostname_end - hostname_start;
@@ -280,7 +280,7 @@ struct url_URL *url_parse (struct str s) {
       str_free(hostname);
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL origin is not present"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL origin is not present"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
     origin.l = protocol.l + 2 + host.l;

@@ -232,7 +232,7 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
 }
 struct str *__THE_1_array_str_last (struct __THE_1_array_str *self) {
   if (self->l == 0) {
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("tried getting last element of empty array"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("tried getting last element of empty array"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return &self->d[self->l - 1];
@@ -252,7 +252,7 @@ struct __THE_1_array_str *__THE_1_array_array_str_at (struct __THE_1_array_array
     size_t z = snprintf(NULL, 0, fmt, i);
     char *d = alloc(z);
     sprintf(d, fmt, i);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];

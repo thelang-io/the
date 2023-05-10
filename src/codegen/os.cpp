@@ -24,7 +24,7 @@ const std::vector<std::string> codegenOS = {
   R"(  #else)" EOL
   R"(    _{struct utsname} buf;)" EOL
   R"(    if (_{uname}(&buf) < 0) {)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve uname information"), _{str_alloc}("")));)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve uname information"), (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(    if (_{strcmp}(buf.sysname, "Darwin") == 0) return _{str_alloc}("macOS");)" EOL

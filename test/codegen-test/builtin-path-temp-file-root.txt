@@ -158,7 +158,7 @@ char *path_mktemp (unsigned char (*f) (char *)) {
     do {
       if (!SystemFunction036((void *) &v, sizeof(v))) {
         free(d);
-        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random with `SystemFunction036`"), str_alloc("")));
+        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random with `SystemFunction036`"), (struct str) {NULL, 0}));
         longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
       }
       char *p = &d[l - x];
@@ -181,7 +181,7 @@ char *path_mktemp (unsigned char (*f) (char *)) {
 struct str path_tempFile () {
   char *d = path_mktemp(path_tempFileFunctor);
   if (d == NULL) {
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create temporary file"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create temporary file"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   struct str r = str_alloc(d);
@@ -202,14 +202,14 @@ char *path_tmpdir () {
   #ifdef THE_OS_WINDOWS
     size_t l = GetTempPath(0, NULL);
     if (l == 0) {
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
     l -= 1;
     d = alloc(l + 1);
     if (GetTempPath(l + 1, d) == 0) {
       free(d);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
     if (d[l - 1] != '\\' && d[l - 1] != '/') {

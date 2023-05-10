@@ -73,7 +73,6 @@ void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
-struct str str_alloc (const char *);
 void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
@@ -181,12 +180,6 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-struct str str_alloc (const char *r) {
-  size_t l = strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l);
-  return (struct str) {d, l};
-}
 void str_free (struct str s) {
   free(s.d);
 }
@@ -216,7 +209,7 @@ char *__THE_1_array_char_at (struct __THE_1_array_char n, int32_t i) {
     size_t z = snprintf(NULL, 0, fmt, i);
     char *d = alloc(z);
     sprintf(d, fmt, i);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];

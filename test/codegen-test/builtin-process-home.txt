@@ -168,7 +168,7 @@ struct str process_home () {
   #ifdef THE_OS_WINDOWS
     char r[0xFFFF];
     if (GetEnvironmentVariable("USERPROFILE", r, 0xFFFF) == 0) {
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("environment variable `USERPROFILE` is not set"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("environment variable `USERPROFILE` is not set"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
   #else

@@ -144,7 +144,7 @@ struct str random_randomStr (unsigned char o1, struct str n1, unsigned char o2, 
   if (RAND_bytes(d, l) != 1) {
     free(d);
     str_free(a);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random bytes"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random bytes"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   for (size_t i = 0; i < l; i++) d[i] = a.d[(size_t) round((double) d[i] / 0xFF * (double) (a.l - 1))];

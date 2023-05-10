@@ -62,7 +62,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL
   R"(    char *d = _{alloc}(z);)" EOL
   R"(    _{sprintf}(d, fmt, i);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, _{str_alloc}("")));)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  return i < 0 ? &s.d[s.l + i] : &s.d[i];)" EOL

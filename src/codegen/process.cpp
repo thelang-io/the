@@ -32,7 +32,7 @@ const std::vector<std::string> codegenProcess = {
   R"(    char *p = _{getcwd}(buf, 256);)" EOL
   R"(  #endif)" EOL
   R"(  if (p == _{NULL}) {)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve current working directory information"), _{str_alloc}("")));)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve current working directory information"), (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  return _{str_alloc}(buf);)" EOL
@@ -80,7 +80,7 @@ const std::vector<std::string> codegenProcess = {
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    char r[0xFFFF];)" EOL
   R"(    if (_{GetEnvironmentVariable}("USERPROFILE", r, 0xFFFF) == 0) {)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("environment variable `USERPROFILE` is not set"), _{str_alloc}("")));)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("environment variable `USERPROFILE` is not set"), (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(  #else)" EOL
@@ -102,7 +102,7 @@ const std::vector<std::string> codegenProcess = {
   R"(  if (f == _{NULL}) {)" EOL
   R"(    const char *fmt = "failed to run process `%s`";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
-  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{str_free}((_{struct str}) s);)" EOL
@@ -126,7 +126,7 @@ const std::vector<std::string> codegenProcess = {
   R"(  if (e != 0) {)" EOL
   R"(    const char *fmt = "process `%s` exited with exit code %d";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c, e);)" EOL
-  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c, e);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{str_free}((_{struct str}) s);)" EOL

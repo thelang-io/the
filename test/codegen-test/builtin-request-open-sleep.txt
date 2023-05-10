@@ -329,7 +329,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     if (!lib_ws2_init) {
       WSADATA w;
       if (WSAStartup(MAKEWORD(2, 2), &w) != 0) {
-        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to initialize use of Windows Sockets DLL"), str_alloc("")));
+        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to initialize use of Windows Sockets DLL"), (struct str) {NULL, 0}));
         goto request_open_cleanup1;
       }
       lib_ws2_init = true;
@@ -343,7 +343,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_protocol = IPPROTO_TCP;
   if (getaddrinfo(hostname, port, &hints, &addr) != 0) {
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to resolve hostname address"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to resolve hostname address"), (struct str) {NULL, 0}));
     goto request_open_cleanup2;
   }
   unsigned char req_free = 0;
@@ -358,7 +358,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
   #endif
   if (!socket_res) {
     req_free = 1;
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create socket"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create socket"), (struct str) {NULL, 0}));
     goto request_open_cleanup3;
   }
   #ifdef THE_OS_WINDOWS
@@ -386,7 +386,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     req->ctx = SSL_CTX_new(TLS_client_method());
     if (req->ctx == NULL) {
       req_free = 1;
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create SSL context"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create SSL context"), (struct str) {NULL, 0}));
       goto request_open_cleanup4;
     }
     req->ssl = SSL_new(req->ctx);
@@ -395,7 +395,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     if (SSL_connect(req->ssl) != 1) {
 // todo possible to test with nil.ci.thelang.io
       req_free = 1;
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to connect to socket with SSL"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to connect to socket with SSL"), (struct str) {NULL, 0}));
       goto request_open_cleanup5;
     }
   }
@@ -417,7 +417,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     int z = req->ssl == NULL ? (int) send(req->fd, &request[y], req_len - y, 0) : SSL_write(req->ssl, &request[y], (int) (req_len - y));
     if (z < 0) {
       req_free = 1;
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to write to socket"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to write to socket"), (struct str) {NULL, 0}));
       goto request_open_cleanup6;
     }
     y += (size_t) z;
@@ -460,7 +460,7 @@ struct request_Response *request_read (struct request_Request **r) {
     int y = req->ssl == NULL ? (int) recv(req->fd, b, sizeof(b), 0) : SSL_read(req->ssl, b, sizeof(b));
     if (y < 0) {
       free(data.d);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to read from socket"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to read from socket"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     } else if (y == 0 && data.l != 0) {
       break;
@@ -480,14 +480,14 @@ struct request_Response *request_read (struct request_Request **r) {
     i = 7;
   } else {
     free(data.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP version"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP version"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   size_t status_start = i;
   while (i < data.l && isdigit(data.d[i])) i++;
   if (status_start == i) {
     free(data.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP status code"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP status code"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   size_t status_len = i - status_start;
@@ -613,7 +613,7 @@ void str_free (struct str s) {
 struct url_URL *url_parse (struct str s) {
   if (s.l == 0) {
     str_free(s);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   size_t i = 0;
@@ -624,11 +624,11 @@ struct url_URL *url_parse (struct str s) {
       break;
     } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL protocol"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL protocol"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     } else if (i == s.l - 1) {
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
   }
@@ -656,12 +656,12 @@ struct url_URL *url_parse (struct str s) {
     if (ch == '@' && hostname_start != 0 && pathname_start == 0) {
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL auth is not supported"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL auth is not supported"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     } else if (ch == ':' && port_start != 0 && (pathname_start == 0 || search_start == 0 || hash_start == 0)) {
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL port"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL port"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
     if (ch == ':' && hostname_start != 0 && pathname_start == 0) port_start = i;
@@ -676,7 +676,7 @@ struct url_URL *url_parse (struct str s) {
     str_free(hostname);
     str_free(protocol);
     str_free(s);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL hostname"), str_alloc("")));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL hostname"), (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   } else if (hostname_start != 0 && hostname_start != hostname_end) {
     hostname.l = hostname_end - hostname_start;
@@ -709,7 +709,7 @@ struct url_URL *url_parse (struct str s) {
       str_free(hostname);
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL origin is not present"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL origin is not present"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
     origin.l = protocol.l + 2 + host.l;

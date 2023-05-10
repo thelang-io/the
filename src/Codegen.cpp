@@ -3135,7 +3135,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL;
     def += R"(    char *d = _{alloc}(z);)" EOL;
     def += R"(    _{sprintf}(d, fmt, i);)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, _{str_alloc}("")));)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return i < 0 ? &n.d[n.l + i] : &n.d[i];)" EOL;
@@ -3292,7 +3292,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *);";
     def += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *self) {" EOL;
     def += R"(  if (self->l == 0) {)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), _{str_alloc}("")));)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return &self->d[0];)" EOL;
@@ -3348,7 +3348,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *);";
     def += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *self) {" EOL;
     def += "  if (self->l == 0) {" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), _{str_alloc}("")));)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += "  }" EOL;
     def += "  return &self->d[self->l - 1];" EOL;
@@ -3465,7 +3465,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL;
     def += R"(    char *d = _{alloc}(z);)" EOL;
     def += R"(    _{sprintf}(d, fmt, n1);)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, _{str_alloc}("")));)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  _{size_t} i = n1 < 0 ? n1 + self->l : n1;)" EOL;
@@ -3860,7 +3860,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += R"(      return r;)" EOL;
     def += R"(    })" EOL;
     def += R"(  })" EOL;
-    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), _{str_alloc}("")));)" EOL;
+    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(})";
 
@@ -3999,7 +3999,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += R"(      return n;)" EOL;
     def += R"(    })" EOL;
     def += R"(  })" EOL;
-    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), _{str_alloc}("")));)" EOL;
+    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(})";
 

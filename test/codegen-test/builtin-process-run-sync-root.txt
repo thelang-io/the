@@ -150,7 +150,7 @@ struct buffer process_runSync (struct str s) {
   if (f == NULL) {
     const char *fmt = "failed to run process `%s`";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     free(c);
     str_free((struct str) s);
@@ -174,7 +174,7 @@ struct buffer process_runSync (struct str s) {
   if (e != 0) {
     const char *fmt = "process `%s` exited with exit code %d";
     size_t z = snprintf(NULL, 0, fmt, c, e);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c, e);
     free(c);
     str_free((struct str) s);

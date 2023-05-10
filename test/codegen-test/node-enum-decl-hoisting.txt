@@ -175,7 +175,7 @@ void *alloc (size_t l) {
   return r;
 }
 struct str enum_str (int d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%d", d);
   return str_alloc(buf);
 }

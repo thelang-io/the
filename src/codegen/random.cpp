@@ -23,7 +23,7 @@ const std::vector<std::string> codegenRandom = {
   R"(  double b = o2 == 0 ? 1 : n2;)" EOL
   R"(  unsigned char d[4];)" EOL
   R"(  if (_{RAND_bytes}(d, 4) != 1) {)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), _{str_alloc}("")));)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{uint32_t} r = (d[0] << 24) | (d[1] << 16) | (d[2] << 8) | d[3];)" EOL
@@ -35,7 +35,7 @@ const std::vector<std::string> codegenRandom = {
   R"(  _{int64_t} b = o2 == 0 ? _{INT32_MAX} : n2;)" EOL
   R"(  unsigned char d[4];)" EOL
   R"(  if (_{RAND_bytes}(d, 4) != 1) {)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), _{str_alloc}("")));)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{uint32_t} r = (d[0] << 24) | (d[1] << 16) | (d[2] << 8) | d[3];)" EOL
@@ -49,7 +49,7 @@ const std::vector<std::string> codegenRandom = {
   R"(  if (_{RAND_bytes}(d, l) != 1) {)" EOL
   R"(    _{free}(d);)" EOL
   R"(    _{str_free}(a);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), _{str_alloc}("")));)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  for (_{size_t} i = 0; i < l; i++) d[i] = a.d[(_{size_t}) _{round}((double) d[i] / 0xFF * (double) (a.l - 1))];)" EOL

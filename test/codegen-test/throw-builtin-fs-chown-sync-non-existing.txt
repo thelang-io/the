@@ -186,7 +186,7 @@ struct str os_name () {
   #else
     struct utsname buf;
     if (uname(&buf) < 0) {
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to retrieve uname information"), str_alloc("")));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to retrieve uname information"), (struct str) {NULL, 0}));
       longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
     }
     if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
