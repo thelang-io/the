@@ -149,7 +149,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -287,7 +287,7 @@ void fs_linkSync (struct str s1, struct str s2) {
   if (!r) {
     const char *fmt = "failed to create symbolic link from `%s` to `%s`";
     size_t z = snprintf(NULL, 0, fmt, c1, c2);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c1, c2);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_linkSync_cleanup;
@@ -309,7 +309,7 @@ void fs_mkdirSync (struct str s) {
   if (!r) {
     const char *fmt = "failed to create directory `%s`";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_mkdirSync_cleanup;
@@ -329,7 +329,7 @@ void fs_rmdirSync (struct str s) {
   if (!r) {
     const char *fmt = "failed to remove directory `%s`";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_rmdirSync_cleanup;
@@ -354,7 +354,7 @@ void fs_unlinkSync (struct str s) {
   if (!r) {
     const char *fmt = "failed to unlink path `%s`";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_unlinkSync_cleanup;

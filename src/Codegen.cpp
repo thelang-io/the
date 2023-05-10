@@ -3133,7 +3133,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((_{int32_t}) n.l))) {)" EOL;
     def += R"(    const char *fmt = "index %" _{PRId32} " out of array bounds";)" EOL;
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL;
-    def += R"(    char *d = _{alloc}(z);)" EOL;
+    def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, i);)" EOL;
     def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
@@ -3463,7 +3463,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(  if ((n1 >= 0 && n1 >= self->l) || (n1 < 0 && n1 < -((_{int32_t}) self->l))) {)" EOL;
     def += R"(    const char *fmt = "index %" _{PRId32} " out of array bounds";)" EOL;
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL;
-    def += R"(    char *d = _{alloc}(z);)" EOL;
+    def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, n1);)" EOL;
     def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;

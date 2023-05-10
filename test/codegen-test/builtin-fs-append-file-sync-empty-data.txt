@@ -91,7 +91,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -178,7 +178,7 @@ void fs_appendFileSync (struct str s, struct buffer b) {
   if (f == NULL) {
     const char *fmt = "failed to open file `%s` for writing";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_appendFileSync_cleanup1;
@@ -187,7 +187,7 @@ void fs_appendFileSync (struct str s, struct buffer b) {
     if (fwrite(b.d, b.l, 1, f) != 1) {
       const char *fmt = "failed appending to file `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_appendFileSync_cleanup2;
@@ -207,7 +207,7 @@ struct buffer fs_readFileSync (struct str s) {
   if (f == NULL) {
     const char *fmt = "failed to open file `%s` for reading";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_readFileSync_cleanup;
@@ -233,7 +233,7 @@ void fs_rmSync (struct str s) {
   if (remove(c) != 0) {
     const char *fmt = "failed to remove file `%s`";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_rmSync_cleanup;
@@ -277,7 +277,7 @@ void *re_alloc (void *d, size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to reallocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);

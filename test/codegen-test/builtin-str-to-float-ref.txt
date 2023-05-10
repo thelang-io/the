@@ -90,7 +90,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -208,7 +208,7 @@ double str_toFloat (struct str self) {
   if (errno == ERANGE || r < -DBL_MAX || DBL_MAX < r) {
     const char *fmt = "value `%s` out of range";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
@@ -217,7 +217,7 @@ double str_toFloat (struct str self) {
   } else if (errno != 0 || e == c || *e != 0) {
     const char *fmt = "value `%s` has invalid syntax";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
@@ -252,7 +252,7 @@ struct str *__THE_1_array_str_at (struct __THE_1_array_str n, int32_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     const char *fmt = "index %" PRId32 " out of array bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, i);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);

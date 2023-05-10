@@ -87,7 +87,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -164,14 +164,14 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
     if (GetFileAttributes(c) == INVALID_FILE_ATTRIBUTES) {
       const char *fmt = "directory `%s` doesn't exist";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_scandirSync_cleanup1;
     } else if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
       const char *fmt = "failed to scan non-directory `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_scandirSync_cleanup1;
@@ -185,7 +185,7 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
     if (h == INVALID_HANDLE_VALUE && GetLastError() != ERROR_FILE_NOT_FOUND) {
       const char *fmt = "failed to open directory `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_scandirSync_cleanup1;
@@ -204,7 +204,7 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
       } else if (!g) {
         const char *fmt = "failed to scan next file of directory `%s`";
         size_t z = snprintf(NULL, 0, fmt, c);
-        char *d = alloc(z);
+        char *d = alloc(z + 1);
         sprintf(d, fmt, c);
         error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
         goto fs_scandirSync_cleanup2;
@@ -217,14 +217,14 @@ fs_scandirSync_cleanup2:
     if (stat(c, &sb) != 0) {
       const char *fmt = "directory `%s` doesn't exist";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_scandirSync_cleanup1;
     } else if ((sb.st_mode & S_IFMT) != S_IFDIR) {
       const char *fmt = "failed to scan non-directory `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_scandirSync_cleanup1;
@@ -233,7 +233,7 @@ fs_scandirSync_cleanup2:
     if (f == NULL) {
       const char *fmt = "failed to open directory `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_scandirSync_cleanup1;
@@ -266,7 +266,7 @@ void *re_alloc (void *d, size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to reallocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);

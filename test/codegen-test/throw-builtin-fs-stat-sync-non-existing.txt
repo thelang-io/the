@@ -98,7 +98,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -175,7 +175,7 @@ struct fs_Stats *fs_statSync (struct str s) {
     if (_stat(c, &sb) != 0) {
       const char *fmt = "failed to stat file `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_statSync_cleanup;
@@ -186,7 +186,7 @@ struct fs_Stats *fs_statSync (struct str s) {
     if (stat(c, &sb) != 0) {
       const char *fmt = "failed to stat file `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_statSync_cleanup;

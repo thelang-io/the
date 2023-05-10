@@ -138,7 +138,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -207,7 +207,7 @@ void *re_alloc (void *d, size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to reallocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -239,7 +239,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     char *protocol = str_cstr(url->__THE_0_protocol);
     const char *fmt = "can't perform request with protocol `%s`";
     size_t z = snprintf(NULL, 0, fmt, protocol);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, protocol);
     free(protocol);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
@@ -248,7 +248,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     char *port = str_cstr(url->__THE_0_port);
     const char *fmt = "invalid port `%s`";
     size_t z = snprintf(NULL, 0, fmt, port);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, port);
     free(port);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
@@ -262,7 +262,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     if (p > 65535) {
       const char *fmt = "invalid port `%s`";
       size_t z = snprintf(NULL, 0, fmt, port);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, port);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto request_open_cleanup1;
@@ -317,7 +317,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     char *origin = str_cstr(url->__THE_0_origin);
     const char *fmt = "failed to connect to `%s`";
     size_t z = snprintf(NULL, 0, fmt, origin);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, origin);
     free(origin);
     req_free = 1;

@@ -80,7 +80,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    char *protocol = _{str_cstr}(url->__THE_0_protocol);)" EOL
   R"(    const char *fmt = "can't perform request with protocol `%s`";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, protocol);)" EOL
-  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, protocol);)" EOL
   R"(    _{free}(protocol);)" EOL
   R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
@@ -89,7 +89,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    char *port = _{str_cstr}(url->__THE_0_port);)" EOL
   R"(    const char *fmt = "invalid port `%s`";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, port);)" EOL
-  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, port);)" EOL
   R"(    _{free}(port);)" EOL
   R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
@@ -103,7 +103,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    if (p > 65535) {)" EOL
   R"(      const char *fmt = "invalid port `%s`";)" EOL
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, port);)" EOL
-  R"(      char *d = _{alloc}(z);)" EOL
+  R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, port);)" EOL
   R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(      goto request_open_cleanup1;)" EOL
@@ -158,7 +158,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    char *origin = _{str_cstr}(url->__THE_0_origin);)" EOL
   R"(    const char *fmt = "failed to connect to `%s`";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, origin);)" EOL
-  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, origin);)" EOL
   R"(    _{free}(origin);)" EOL
   R"(    req_free = 1;)" EOL

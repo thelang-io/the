@@ -129,7 +129,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -211,7 +211,7 @@ void fs_chmodSync (struct str s, int32_t m) {
   if (!r) {
     const char *fmt = "failed to change mode to %" PRId32 " for file `%s`";
     size_t z = snprintf(NULL, 0, fmt, m, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, m, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_chmodSync_cleanup;
@@ -226,7 +226,7 @@ void fs_rmSync (struct str s) {
   if (remove(c) != 0) {
     const char *fmt = "failed to remove file `%s`";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_rmSync_cleanup;
@@ -244,7 +244,7 @@ struct fs_Stats *fs_statSync (struct str s) {
     if (_stat(c, &sb) != 0) {
       const char *fmt = "failed to stat file `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_statSync_cleanup;
@@ -255,7 +255,7 @@ struct fs_Stats *fs_statSync (struct str s) {
     if (stat(c, &sb) != 0) {
       const char *fmt = "failed to stat file `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_statSync_cleanup;
@@ -278,7 +278,7 @@ void fs_writeFileSync (struct str s, struct buffer b) {
   if (f == NULL) {
     const char *fmt = "failed to open file `%s` for writing";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     goto fs_writeFileSync_cleanup1;
@@ -287,7 +287,7 @@ void fs_writeFileSync (struct str s, struct buffer b) {
     if (fwrite(b.d, b.l, 1, f) != 1) {
       const char *fmt = "failed to write file `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
-      char *d = alloc(z);
+      char *d = alloc(z + 1);
       sprintf(d, fmt, c);
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
       goto fs_writeFileSync_cleanup2;

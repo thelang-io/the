@@ -19,7 +19,7 @@
 
 const std::vector<std::string> codegenByte = {
   R"(_{struct str} byte_str (unsigned char x) {)" EOL
-  R"(  char buf[512];)" EOL
+  R"(  char buf[8];)" EOL
   R"(  _{sprintf}(buf, "%u", x);)" EOL
   R"(  return _{str_alloc}(buf);)" EOL
   R"(})" EOL

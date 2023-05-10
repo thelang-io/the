@@ -152,7 +152,7 @@ void *alloc (size_t l) {
   if (r == NULL) {
     const char *fmt = "failed to allocate %zu bytes";
     size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, l);
     error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
@@ -163,7 +163,7 @@ struct str bool_str (bool t) {
   return str_alloc(t ? "true" : "false");
 }
 struct str byte_str (unsigned char x) {
-  char buf[512];
+  char buf[8];
   sprintf(buf, "%u", x);
   return str_alloc(buf);
 }
@@ -237,27 +237,27 @@ struct str float_str (double f) {
   return str_alloc(buf);
 }
 struct str i16_str (int16_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRId16, d);
   return str_alloc(buf);
 }
 struct str i32_str (int32_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRId32, d);
   return str_alloc(buf);
 }
 struct str i64_str (int64_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRId64, d);
   return str_alloc(buf);
 }
 struct str i8_str (int8_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRId8, d);
   return str_alloc(buf);
 }
 struct str int_str (int32_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRId32, d);
   return str_alloc(buf);
 }
@@ -317,22 +317,22 @@ void str_free (struct str s) {
   free(s.d);
 }
 struct str u16_str (uint16_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRIu16, d);
   return str_alloc(buf);
 }
 struct str u32_str (uint32_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRIu32, d);
   return str_alloc(buf);
 }
 struct str u64_str (uint64_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRIu64, d);
   return str_alloc(buf);
 }
 struct str u8_str (uint8_t d) {
-  char buf[512];
+  char buf[24];
   sprintf(buf, "%" PRIu8, d);
   return str_alloc(buf);
 }
