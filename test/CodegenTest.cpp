@@ -24,8 +24,10 @@
 #include "utils.hpp"
 
 const auto valgrindArguments = std::string(
-  "--error-exitcode=1 "
+  "--error-exitcode=255 "
+  "--errors-for-leak-kinds=all "
   "--leak-check=full "
+  "--quiet "
   "--show-leak-kinds=all "
   "--track-origins=yes"
 );

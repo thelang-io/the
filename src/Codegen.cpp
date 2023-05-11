@@ -105,9 +105,15 @@ void Codegen::compile (
     }
   }
 
-  auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g -gdwarf-4" : "");
-  auto returnCode = std::system(cmd.c_str());
+  auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr;
 
+  if (targetOS == "linux" && debug) {
+    cmd += " -gdwarf-4 -O0";
+  } else if (debug) {
+    cmd += " -g -O0";
+  }
+
+  auto returnCode = std::system(cmd.c_str());
   std::filesystem::remove(path + ".c");
 
   if (returnCode != 0) {
