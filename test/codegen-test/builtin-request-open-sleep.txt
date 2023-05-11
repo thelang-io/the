@@ -367,7 +367,6 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     bool connect_res = connect(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;
   #endif
   if (!connect_res) {
-// todo test by adding entry to /etc/hosts
     char *origin = str_cstr(url->__THE_0_origin);
     const char *fmt = "failed to connect to `%s`";
     size_t z = snprintf(NULL, 0, fmt, origin);
@@ -393,7 +392,6 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     SSL_set_fd(req->ssl, (int) req->fd);
     SSL_set_tlsext_host_name(req->ssl, hostname);
     if (SSL_connect(req->ssl) != 1) {
-// todo possible to test with nil.ci.thelang.io
       req_free = 1;
       error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to connect to socket with SSL"), (struct str) {NULL, 0}));
       goto request_open_cleanup5;

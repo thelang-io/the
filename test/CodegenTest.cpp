@@ -1446,7 +1446,8 @@ INSTANTIATE_TEST_SUITE_P(BuiltinRequest, CodegenThrowTest, testing::Values(
   "throw-builtin-request-open-invalid-host",
   "throw-builtin-request-open-invalid-port",
   "throw-builtin-request-open-invalid-protocol",
-  "throw-builtin-request-open-long-port"
+  "throw-builtin-request-open-long-port",
+  "throw-builtin-request-open-invalid-cert-cipher"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinStr, CodegenThrowTest, testing::Values(

@@ -154,7 +154,6 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{bool} connect_res = _{connect}(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;)" EOL
   R"(  #endif)" EOL
   R"(  if (!connect_res) {)" EOL
-  // todo test by adding entry to /etc/hosts
   R"(    char *origin = _{str_cstr}(url->__THE_0_origin);)" EOL
   R"(    const char *fmt = "failed to connect to `%s`";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, origin);)" EOL
@@ -180,7 +179,6 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{SSL_set_fd}(req->ssl, (int) req->fd);)" EOL
   R"(    _{SSL_set_tlsext_host_name}(req->ssl, hostname);)" EOL
   R"(    if (_{SSL_connect}(req->ssl) != 1) {)" EOL
-  // todo possible to test with nil.ci.thelang.io
   R"(      req_free = 1;)" EOL
   R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to connect to socket with SSL"), (_{struct str}) {_{NULL}, 0}));)" EOL
   R"(      goto request_open_cleanup5;)" EOL

@@ -1,25 +1,6 @@
 ======= stdin =======
 main {
-  mut req := request_open("GET", "http://ci.thelang.io/echo?example")
-  res1 := req.read()
-  req.close()
-
-  req = request_open("POST", "http://ci.thelang.io/echo?example")
-  res2 := req.read()
-  req.close()
-
-  req = request_open("GET", "https://ci.thelang.io/echo?example")
-  res3 := req.read()
-  req.close()
-
-  req = request_open("POST", "https://ci.thelang.io/echo?example")
-  res4 := req.read()
-  req.close()
-
-  print("GET http://ci.thelang.io/echo?example:", res1.status)
-  print("POST http://ci.thelang.io/echo?example:", res2.status)
-  print("GET https://ci.thelang.io/echo?example:", res3.status)
-  print("POST https://ci.thelang.io/echo?example:", res4.status)
+  request_open("GET", "https://null.badssl.com")
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -37,10 +18,8 @@ main {
 #endif
 
 #include <ctype.h>
-#include <inttypes.h>
 #include <openssl/ssl.h>
 #include <setjmp.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,7 +74,6 @@ struct error_Error;
 struct request_Header;
 struct request_Request;
 struct __THE_1_array_request_Header;
-struct request_Response;
 struct url_URL;
 
 struct error_Error {
@@ -112,11 +90,6 @@ struct request_Request {
 struct __THE_1_array_request_Header {
   struct request_Header **d;
   size_t l;
-};
-struct request_Response {
-  const struct buffer __THE_0_data;
-  const int32_t __THE_0_status;
-  const struct __THE_1_array_request_Header __THE_0_headers;
 };
 struct url_URL {
   const struct str __THE_0_origin;
@@ -141,11 +114,9 @@ void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
-void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 void request_close (struct request_Request **);
 struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
-struct request_Response *request_read (struct request_Request **);
 char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
@@ -153,13 +124,9 @@ void str_free (struct str);
 struct url_URL *url_parse (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
-struct request_Header *request_Header_alloc (struct str, struct str);
 void request_Header_free (struct request_Header *);
 void request_Request_free (struct request_Request *);
-struct request_Request *request_Request_realloc (struct request_Request *, struct request_Request *);
 void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header);
-struct request_Response *request_Response_alloc (struct buffer, int32_t, struct __THE_1_array_request_Header);
-void request_Response_free (struct request_Response *);
 struct url_URL *url_URL_alloc (struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str);
 void url_URL_free (struct url_URL *);
 
@@ -231,35 +198,6 @@ struct str error_stack_str (err_state_t *state) {
     l += z;
   }
   return (struct str) {d, l};
-}
-void print (FILE *stream, const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  char buf[512];
-  struct str s;
-  while (*fmt) {
-    switch (*fmt++) {
-      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
-      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
-      case 'c': fputc(va_arg(args, int), stream); break;
-      case 'e':
-      case 'f':
-      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
-      case 'h':
-      case 'j':
-      case 'v':
-      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
-      case 'i':
-      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
-      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
-      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
-      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
-      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
-      case 'z': fputs(va_arg(args, char *), stream); break;
-    }
-  }
-  va_end(args);
 }
 void *re_alloc (void *d, size_t l) {
   void *r = realloc(d, l);
@@ -454,114 +392,6 @@ request_open_cleanup1:
   str_free(method);
   if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return (struct request_Request *) req;
-}
-struct request_Response *request_read (struct request_Request **r) {
-  struct request *req = (void *) *r;
-  unsigned char b[1024];
-  struct buffer data = {NULL, 0};
-  while (1) {
-    int y = req->ssl == NULL ? (int) recv(req->fd, b, sizeof(b), 0) : SSL_read(req->ssl, b, sizeof(b));
-    if (y < 0) {
-      free(data.d);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to read from socket"), (struct str) {NULL, 0}));
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-    } else if (y == 0 && data.l != 0) {
-      break;
-    } else if (y == 0) {
-      continue;
-    } else if (data.l == 0) {
-      (req->ssl == NULL ? shutdown(req->fd, 1) : SSL_shutdown(req->ssl));
-    }
-    data.d = re_alloc(data.d, data.l + y);
-    memcpy(&data.d[data.l], b, y);
-    data.l += y;
-  }
-  size_t i;
-  if (data.l > 8 && (memcmp(data.d, "HTTP/1.0 ", 9) == 0 || memcmp(data.d, "HTTP/1.1 ", 9) == 0)) {
-    i = 9;
-  } else if (data.l > 6 && (memcmp(data.d, "HTTP/2 ", 7) == 0 || memcmp(data.d, "HTTP/3 ", 7) == 0)) {
-    i = 7;
-  } else {
-    free(data.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP version"), (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
-  size_t status_start = i;
-  while (i < data.l && isdigit(data.d[i])) i++;
-  if (status_start == i) {
-    free(data.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP status code"), (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
-  size_t status_len = i - status_start;
-  char *status = alloc(status_len + 1);
-  memcpy(status, &data.d[status_start], status_len);
-  status[status_len] = '\0';
-  int32_t status_code = (int32_t) strtoul(status, NULL, 10);
-  free(status);
-  while (i < data.l) {
-    if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {
-      i += 2;
-      break;
-    }
-    i++;
-  }
-  struct __THE_1_array_request_Header headers = {NULL, 0};
-  while (true) {
-    if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {
-      i += 2;
-      break;
-    }
-    size_t header_name_start = i;
-    size_t header_name_end = 0;
-    size_t header_value_start = 0;
-    size_t header_value_end = 0;
-    while (i < data.l) {
-      if (data.d[i] == '\r' && i + 1 < data.l && data.d[i + 1] == '\n') {
-        header_value_end = i;
-        i += 2;
-        break;
-      } else if (data.d[i] == ':' && header_name_end == 0) {
-        header_name_end = i;
-        i++;
-        while (i < data.l && data.d[i] == ' ') i++;
-        header_value_start = i;
-      }
-      i++;
-    }
-    struct str header_name;
-    header_name.l = header_name_end - header_name_start;
-    header_name.d = alloc(header_name.l);
-    memcpy(header_name.d, &data.d[header_name_start], header_name.l);
-    for (size_t j = 0; j < header_name.l; j++) header_name.d[j] = (char) tolower(header_name.d[j]);
-    struct str header_value;
-    header_value.l = header_value_end - header_value_start;
-    header_value.d = alloc(header_value.l);
-    memcpy(header_value.d, &data.d[header_value_start], header_value.l);
-    headers.d = re_alloc(headers.d, (headers.l + 1) * sizeof(struct request_Header *));
-    headers.d[headers.l] = request_Header_alloc(header_name, header_value);
-    headers.l++;
-  }
-  for (size_t j = 0; j < headers.l; j++) {
-    for (size_t k = j + 1; k < headers.l; k++) {
-      size_t count = headers.d[j]->__THE_0_name.l > headers.d[k]->__THE_0_name.l ? headers.d[k]->__THE_0_name.l : headers.d[j]->__THE_0_name.l;
-      if (memcmp(headers.d[j]->__THE_0_name.d, headers.d[k]->__THE_0_name.d, count) > 0) {
-        struct request_Header *a = headers.d[j];
-        headers.d[j] = headers.d[k];
-        headers.d[k] = a;
-      }
-    }
-  }
-  if (data.l - i > 0) {
-    data.l = data.l - i;
-    memmove(data.d, &data.d[i], data.l);
-    data.d = re_alloc(data.d, data.l);
-  } else {
-    free(data.d);
-    data.d = NULL;
-    data.l = 0;
-  }
-  return request_Response_alloc(data, status_code, headers);
 }
 char *request_stringifyHeaders (struct __THE_1_array_request_Header headers, struct url_URL *url, struct buffer data) {
   bool has_content_length = false;
@@ -770,12 +600,6 @@ void error_Error_free (struct error_Error *n) {
   str_free((struct str) n->__THE_0_stack);
   free(n);
 }
-struct request_Header *request_Header_alloc (struct str __THE_0_name, struct str __THE_0_value) {
-  struct request_Header *r = alloc(sizeof(struct request_Header));
-  struct request_Header s = {__THE_0_name, __THE_0_value};
-  memcpy(r, &s, sizeof(struct request_Header));
-  return r;
-}
 void request_Header_free (struct request_Header *n) {
   str_free((struct str) n->__THE_0_name);
   str_free((struct str) n->__THE_0_value);
@@ -785,24 +609,9 @@ void request_Request_free (struct request_Request *n) {
   request_close(&n);
   free(n);
 }
-struct request_Request *request_Request_realloc (struct request_Request *n1, struct request_Request *n2) {
-  request_Request_free((struct request_Request *) n1);
-  return n2;
-}
 void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header n) {
   for (size_t i = 0; i < n.l; i++) request_Header_free((struct request_Header *) n.d[i]);
   free(n.d);
-}
-struct request_Response *request_Response_alloc (struct buffer __THE_0_data, int32_t __THE_0_status, struct __THE_1_array_request_Header __THE_0_headers) {
-  struct request_Response *r = alloc(sizeof(struct request_Response));
-  struct request_Response s = {__THE_0_data, __THE_0_status, __THE_0_headers};
-  memcpy(r, &s, sizeof(struct request_Response));
-  return r;
-}
-void request_Response_free (struct request_Response *n) {
-  buffer_free((struct buffer) n->__THE_0_data);
-  __THE_1_array_request_Header_free((struct __THE_1_array_request_Header) n->__THE_0_headers);
-  free(n);
 }
 struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_protocol, struct str __THE_0_host, struct str __THE_0_hostname, struct str __THE_0_port, struct str __THE_0_path, struct str __THE_0_pathname, struct str __THE_0_search, struct str __THE_0_hash) {
   struct url_URL *r = alloc(sizeof(struct url_URL));
@@ -826,43 +635,7 @@ void url_URL_free (struct url_URL *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  struct request_Request *__THE_0_req_0 = (error_stack_pos(&err_state, 2, 14), request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
-  const struct request_Response *__THE_0_res1_0 = (error_stack_pos(&err_state, 3, 11), request_read(&__THE_0_req_0));
-  request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, (error_stack_pos(&err_state, 6, 9), request_open(str_alloc("POST"), str_alloc("http://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
-  const struct request_Response *__THE_0_res2_0 = (error_stack_pos(&err_state, 7, 11), request_read(&__THE_0_req_0));
-  request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, (error_stack_pos(&err_state, 10, 9), request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
-  const struct request_Response *__THE_0_res3_0 = (error_stack_pos(&err_state, 11, 11), request_read(&__THE_0_req_0));
-  request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
-  __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, (error_stack_pos(&err_state, 14, 9), request_open(str_alloc("POST"), str_alloc("https://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
-  const struct request_Response *__THE_0_res4_0 = (error_stack_pos(&err_state, 15, 11), request_read(&__THE_0_req_0));
-  request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
-  print(stdout, "zziz", "GET http://ci.thelang.io/echo?example:", " ", __THE_0_res1_0->__THE_0_status, THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
-  print(stdout, "zziz", "POST http://ci.thelang.io/echo?example:", " ", __THE_0_res2_0->__THE_0_status, THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
-  print(stdout, "zziz", "GET https://ci.thelang.io/echo?example:", " ", __THE_0_res3_0->__THE_0_status, THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
-  print(stdout, "zziz", "POST https://ci.thelang.io/echo?example:", " ", __THE_0_res4_0->__THE_0_status, THE_EOL);
-L6:
-  request_Response_free((struct request_Response *) __THE_0_res4_0);
-L5:
-  request_Response_free((struct request_Response *) __THE_0_res3_0);
-L4:
-  request_Response_free((struct request_Response *) __THE_0_res2_0);
-L3:
-  request_Response_free((struct request_Response *) __THE_0_res1_0);
-L2:
-  request_Request_free((struct request_Request *) __THE_0_req_0);
+  request_Request_free((struct request_Request *) (error_stack_pos(&err_state, 2, 3), request_open(str_alloc("GET"), str_alloc("https://null.badssl.com"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
@@ -875,8 +648,6 @@ L1:
 }
 ======= flags =======
 A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
-======= stdout =======
-GET http://ci.thelang.io/echo?example: 200
-POST http://ci.thelang.io/echo?example: 200
-GET https://ci.thelang.io/echo?example: 200
-POST https://ci.thelang.io/echo?example: 200
+======= stderr =======
+Uncaught Error: failed to connect to socket with SSL
+  at main (/test:2:3)
