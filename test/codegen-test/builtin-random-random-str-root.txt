@@ -183,11 +183,11 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 2, 3), random_randomStr(0, (struct str) {}, 0, 0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 3, 3), random_randomStr(0, (struct str) {}, 1, 64)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 4, 3), random_randomStr(1, str_alloc("abcdef"), 0, 0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 5, 3), random_randomStr(1, str_alloc("abcdef"), 1, 1)));
 L1:
   err_state.buf_idx--;

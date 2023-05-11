@@ -375,12 +375,12 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSintME __THE_0_emptyMap_0 = __THE_1_map_strMSintME_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_array_map_strMSintME __THE_0_arr_0 = __THE_1_array_map_strMSintME_alloc(4, __THE_1_map_strMSintME_copy(__THE_0_emptyMap_0), __THE_1_map_strMSintME_alloc(1, str_alloc("key1"), 1), __THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 2, str_alloc("key2"), 3), __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 6, str_alloc("key2"), 7, str_alloc("key3"), 8));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_map_strMSintME_len(__THE_1_array_map_strMSintME_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     print(stdout, "sz", __THE_1_array_int_str(__THE_1_map_strMSintME_values(__THE_1_map_strMSintME_copy(*(error_stack_pos(&err_state, 6, 11), __THE_1_array_map_strMSintME_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+    if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
     print(stdout, "sz", (error_stack_pos(&err_state, 7, 11), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(*(error_stack_pos(&err_state, 7, 11), __THE_1_array_map_strMSintME_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
 L4:
     err_state.buf_idx--;

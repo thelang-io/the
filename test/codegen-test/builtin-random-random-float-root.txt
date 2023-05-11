@@ -169,7 +169,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   (error_stack_pos(&err_state, 2, 3), random_randomFloat(0, 0, 0, 0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   (error_stack_pos(&err_state, 3, 3), random_randomFloat(1, -100, 1, 100));
 L1:
   err_state.buf_idx--;

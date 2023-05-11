@@ -159,13 +159,13 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   str_free((struct str) str_upperFirst(str_alloc("")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) str_upperFirst(str_alloc("a")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) str_upperFirst(str_alloc("test")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) str_upperFirst(str_alloc("A")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) str_upperFirst(str_alloc("TEST_TEST09$/!")));
 L1:
   err_state.buf_idx--;

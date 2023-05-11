@@ -201,13 +201,13 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_test1_0 = str_alloc(THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str __THE_0_test2_0 = str_concat_str(str_alloc(THE_EOL), str_alloc(THE_EOL));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct str __THE_0_test3_0 = str_concat_str(cstr_concat_str("test", str_alloc(THE_EOL)), str_alloc(THE_EOL));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct str __THE_0_test4_0 = str_concat_str(str_concat_cstr(str_alloc(THE_EOL), "test"), str_alloc(THE_EOL));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct str __THE_0_test5_0 = (error_stack_pos(&err_state, 6, 12), str_slice(str_alloc(THE_EOL), 0, 0, 0, 0));
   str_free((struct str) __THE_0_test5_0);
 L5:

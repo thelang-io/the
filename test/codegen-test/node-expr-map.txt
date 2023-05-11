@@ -267,19 +267,19 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   __THE_1_map_strMSboolME_free((struct __THE_1_map_strMSboolME) __THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_map_strMScharME_free((struct __THE_1_map_strMScharME) __THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a'));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_map_strMSfloatME_free((struct __THE_1_map_strMSfloatME) __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 4.12));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_map_strMSboolME_free((struct __THE_1_map_strMSboolME) __THE_1_map_strMSboolME_alloc(2, str_alloc("key1"), true, str_alloc("key2"), false));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_map_strMScharME_free((struct __THE_1_map_strMScharME) __THE_1_map_strMScharME_alloc(2, str_alloc("key1"), 'a', str_alloc("key2"), 'z'));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_map_strMSfloatME_free((struct __THE_1_map_strMSfloatME) __THE_1_map_strMSfloatME_alloc(2, str_alloc("key1"), 4.12, str_alloc("key2"), 4.12));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 1, str_alloc("key2"), 1));
 L1:
   err_state.buf_idx--;

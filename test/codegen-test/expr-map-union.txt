@@ -221,15 +221,15 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_union_intUSstrUE __THE_0_var1_0 = __THE_1_union_intUSstrUE_alloc(TYPE_int, 1);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_union_intUSstrUE __THE_0_var2_0 = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc(""));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct __THE_1_union_intUSstrUE __THE_0_var3_0 = __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_map_strMSunion_intUSstrUEME __THE_0_a_0 = __THE_1_map_strMSunion_intUSstrUEME_alloc(3, str_alloc("key1"), __THE_1_union_intUSstrUE_copy(__THE_0_var1_0), str_alloc("key2"), __THE_1_union_intUSstrUE_copy(__THE_0_var2_0), str_alloc("key3"), __THE_1_union_intUSstrUE_copy(__THE_0_var3_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_map_strMSunion_intUSstrUEME __THE_0_b_0 = __THE_1_map_strMSunion_intUSstrUEME_alloc(3, str_alloc("key1"), __THE_1_union_intUSstrUE_alloc(TYPE_int, 1), str_alloc("key2"), __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("")), str_alloc("key3"), __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct __THE_1_map_strMSunion_intUSstrUEME __THE_0_c_0 = __THE_1_map_strMSunion_intUSstrUEME_alloc(3, str_alloc("key1"), __THE_1_union_intUSstrUE_alloc(TYPE_int, 1), str_alloc("key2"), __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("")), str_alloc("key3"), __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test")));
   __THE_1_map_strMSunion_intUSstrUEME_free((struct __THE_1_map_strMSunion_intUSstrUEME) __THE_0_c_0);
 L6:

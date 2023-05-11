@@ -149,7 +149,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L0;
   const struct str __THE_0_a_0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const struct str __THE_0_b_0 = str_alloc("string");
   str_free((struct str) __THE_0_b_0);
 L1:

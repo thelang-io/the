@@ -338,11 +338,11 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_i_0 = __THE_1_any_int_alloc(1);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_c_0 = __THE_1_any_char_alloc('a');
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct any __THE_0_s_0 = __THE_1_any_str_alloc(str_alloc("string"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_array_any __THE_0_arr_0 = __THE_1_array_any_alloc(3, any_copy(__THE_0_i_0), any_copy(__THE_0_c_0), any_copy(__THE_0_s_0));
   for (int32_t __THE_0_i_1 = 0; __THE_0_i_1 < __THE_1_array_any_len(__THE_1_array_any_copy(__THE_0_arr_0)); __THE_0_i_1++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;

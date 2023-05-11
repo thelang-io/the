@@ -931,7 +931,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
         code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) ");
         this->state.cleanUp.add(this->_apiEval("_{err_state}.buf_idx--;"));
       } else {
-        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx]) != 0) ");
+        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) ");
       }
 
       code += "goto " + this->state.cleanUp.currentLabel() + ";" EOL;

@@ -316,10 +316,10 @@ int main () {
   print(stdout, "iz", 3, THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "zz", "Hello, World!", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "zzzzz", "Spider", ",", "Snake", ",", "Wolf");
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), THE_EOL);
   int32_t __THE_0_a_0 = 0;
   int32_t __THE_0_c_0 = 0;

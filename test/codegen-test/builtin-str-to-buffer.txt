@@ -221,13 +221,13 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sz", buffer_str(str_toBuffer(str_alloc(""))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", buffer_str(str_toBuffer(str_alloc("0"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", buffer_str(str_toBuffer(str_alloc("test"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", buffer_str(str_toBuffer(str_alloc("test in test"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", buffer_str(str_toBuffer(str_concat_cstr(cstr_concat_str("multiline ", str_alloc(THE_EOL)), " test"))), THE_EOL);
 L1:
   err_state.buf_idx--;

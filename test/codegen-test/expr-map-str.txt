@@ -179,7 +179,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSstrME __THE_0_a_0 = __THE_1_map_strMSstrME_alloc(3, str_alloc("key1"), str_alloc("value1"), str_alloc("key2"), str_alloc("value2"), str_alloc("key3"), str_alloc("value3"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_map_strMSstrME __THE_0_b_0 = __THE_1_map_strMSstrME_alloc(3, str_alloc("key1"), str_alloc("value1"), str_alloc("key2"), str_alloc("value2"), str_alloc("key3"), str_alloc("value3"));
   __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_b_0);
 L2:

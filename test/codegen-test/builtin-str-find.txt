@@ -199,13 +199,13 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const int32_t __THE_0_result1_0 = str_find(str_alloc("test1"), str_alloc(""));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t __THE_0_result2_0 = str_find(str_alloc("test2"), str_alloc("2"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t __THE_0_result3_0 = str_find(str_alloc("test3"), str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t __THE_0_result4_0 = str_find(str_alloc("test4"), str_alloc("test4"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t __THE_0_result5_0 = str_find(str_alloc("test5"), str_alloc("6"));
   print(stdout, "iziziziziz", __THE_0_result1_0, " ", __THE_0_result2_0, " ", __THE_0_result3_0, " ", __THE_0_result4_0, " ", __THE_0_result5_0, THE_EOL);
 L1:

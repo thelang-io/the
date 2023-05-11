@@ -230,9 +230,9 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const bool __THE_0_b_0 = __THE_1_map_strMSintME_eq(__THE_1_map_strMSintME_copy(__THE_0_a_0), __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 2, str_alloc("key2"), 3, str_alloc("key3"), 4));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const bool __THE_0_c_0 = __THE_1_map_strMSintME_ne(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), __THE_1_map_strMSintME_copy(__THE_0_a_0));
 L2:
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);

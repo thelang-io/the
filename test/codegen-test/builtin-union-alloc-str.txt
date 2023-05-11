@@ -177,11 +177,11 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_union_strUScharUE __THE_0_g1_0 = __THE_1_union_strUScharUE_alloc(TYPE_str, str_alloc(""));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_union_strUScharUE __THE_0_g2_0 = __THE_1_union_strUScharUE_alloc(TYPE_str, str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct __THE_1_union_strUScharUE __THE_0_g3_0 = __THE_1_union_strUScharUE_alloc(TYPE_char, 'a');
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_union_strUScharUE __THE_0_g4_0 = __THE_1_union_strUScharUE_alloc(TYPE_char, 'z');
   __THE_1_union_strUScharUE_free((struct __THE_1_union_strUScharUE) __THE_0_g4_0);
 L4:

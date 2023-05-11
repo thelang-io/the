@@ -221,7 +221,7 @@ int main () {
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
   const struct __THE_1_fn$1003 __THE_0_mainSDtest_0;
   __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$1003P) {__THE_1_array_int_alloc(3, 4, 5, 6)});
 L2:
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_mainSDtest_0);

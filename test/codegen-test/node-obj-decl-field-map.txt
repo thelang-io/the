@@ -392,13 +392,13 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Test_0 *__THE_0_test1_0 = __THE_1_Test_0_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), __THE_1_map_strMSstrME_alloc(2, str_alloc("key1"), str_alloc("string1"), str_alloc("key2"), str_alloc("string2")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_copy(__THE_0_test1_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_0_test2_0 = __THE_1_Test_0_realloc(__THE_0_test2_0, __THE_1_Test_0_alloc(__THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 4, str_alloc("key2"), 5), __THE_1_map_strMSstrME_alloc(2, str_alloc("key1"), str_alloc("string3"), str_alloc("key2"), str_alloc("string4"))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_test1_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_test2_0)), THE_EOL);
 L3:
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);

@@ -170,11 +170,11 @@ int main () {
   const enum __THE_1_Color_0 __THE_0_testEnum_0 = __THE_0_ColorSDRed_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const enum __THE_1_Color_0 *__THE_0_optEnum_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const enum __THE_1_Color_0 *__THE_0_optEnumNilInit_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const enum __THE_1_Color_0 *__THE_0_optEnumValInit_0 = __THE_1_opt_Color_alloc(__THE_0_ColorSDRed_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const enum __THE_1_Color_0 *__THE_0_optEnumValCopy_0 = __THE_1_opt_Color_alloc(__THE_0_testEnum_0);
   __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnumValCopy_0);
 L4:

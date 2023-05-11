@@ -173,13 +173,13 @@ int main () {
   const int32_t *__THE_0_testRefInt_0 = &__THE_0_testInt_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const int32_t **__THE_0_optRefInt_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const int32_t **__THE_0_optRefIntNilInit_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const int32_t *__THE_0_optIntFromRefValInit_0 = __THE_1_opt_int_alloc(__THE_0_testInt_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const int32_t **__THE_0_optRefIntValInit_0 = __THE_1_opt_ref_int_alloc(&__THE_0_testInt_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const int32_t **__THE_0_optRefIntValCopy_0 = __THE_1_opt_ref_int_alloc(__THE_0_testRefInt_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefIntValCopy_0);
 L5:

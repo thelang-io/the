@@ -523,7 +523,7 @@ const std::vector<std::string> codegenStr = {
   R"(  if (_{errno} == _{ERANGE} || r < _{INT8_MIN} || _{INT8_MAX} < r) {)" EOL
   R"(    const char *fmt = "value `%s` out of range";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
-  R"(    char *d = _{alloc}(z);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL

@@ -198,7 +198,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   (error_stack_pos(&err_state, 6, 3), utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(int32_t)));
   print(stdout, "iziz", __THE_0_a_0, " ", __THE_0_b_0, THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   (error_stack_pos(&err_state, 8, 3), utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(int32_t)));
   print(stdout, "iziz", __THE_0_a_0, " ", __THE_0_b_0, THE_EOL);
 L1:

@@ -194,7 +194,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_Test_0 *__THE_0_b_0 = __THE_1_Test_0_alloc(1);
   if (__THE_1_Test_0_eq(__THE_1_Test_0_copy(__THE_0_a_0), __THE_1_Test_0_alloc(0))) {
   }

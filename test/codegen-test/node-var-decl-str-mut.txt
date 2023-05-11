@@ -158,7 +158,7 @@ int main () {
   struct str __THE_0_r_0 = str_alloc("");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct str __THE_0_a_0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc("test"));
 L3:
   str_free((struct str) __THE_0_a_0);

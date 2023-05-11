@@ -281,15 +281,15 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str *__THE_0_a_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str *__THE_0_b_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct str *__THE_0_c_0 = __THE_1_opt_str_alloc(str_alloc(""));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct str *__THE_0_d_0 = __THE_1_opt_str_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_array_opt_str __THE_0_arr_0 = __THE_1_array_opt_str_alloc(4, __THE_1_opt_str_copy(__THE_0_a_0), __THE_1_opt_str_copy(__THE_0_b_0), __THE_1_opt_str_copy(__THE_0_c_0), __THE_1_opt_str_copy(__THE_0_d_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct str *__THE_0_e_0 = __THE_1_opt_str_alloc(str_alloc("test"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_opt_str_len(__THE_1_array_opt_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;

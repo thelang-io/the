@@ -175,7 +175,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(str_alloc(""), str_alloc("test")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(str_alloc(""), str_alloc("test")));
 L1:
   err_state.buf_idx--;

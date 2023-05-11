@@ -322,11 +322,11 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSstrME __THE_0_env_0 = process_env();
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "iziz", __THE_1_array_str_len(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), " ", __THE_1_array_str_len(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "tz", __THE_1_array_str_len(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))) == __THE_1_array_str_len(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "sz", (error_stack_pos(&err_state, 6, 9), __THE_1_map_strMSstrME_get(process_env(), str_eq_cstr(os_name(), "Windows") ? str_alloc("USERNAME") : str_alloc("USER"))), THE_EOL);
 L2:
   __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_env_0);

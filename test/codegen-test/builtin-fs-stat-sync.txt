@@ -358,7 +358,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sz", fs_Stats_str((error_stack_pos(&err_state, 2, 9), fs_statSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures")))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", fs_Stats_str((error_stack_pos(&err_state, 3, 9), fs_statSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")))), THE_EOL);
 L1:
   err_state.buf_idx--;

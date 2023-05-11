@@ -219,7 +219,7 @@ int main () {
   struct str __THE_0_a_0 = str_alloc("");
   for (; str_ne_cstr(str_copy(__THE_0_a_0), "aaa"); __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "a"))) {
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   struct str __THE_0_b_0 = str_alloc("");
   while (str_ne_cstr(str_copy(__THE_0_b_0), "aaa")) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
@@ -228,7 +228,7 @@ L5:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L4;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   struct str __THE_0_c_0 = str_alloc("");
   while (1) {
     if (str_eq_cstr(str_copy(__THE_0_c_0), "aaa")) {

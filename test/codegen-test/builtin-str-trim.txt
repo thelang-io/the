@@ -214,19 +214,19 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 2, 9), str_trim(str_alloc(""))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 3, 9), str_trim(str_alloc("test"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 4, 9), str_trim(str_alloc("\n"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 5, 9), str_trim(str_alloc("test "))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 6, 9), str_trim(str_alloc("\n\r"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 7, 9), str_trim(str_alloc(" test"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 8, 9), str_trim(str_alloc("\n\r\t"))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", (error_stack_pos(&err_state, 9, 9), str_trim(str_alloc(" test "))), THE_EOL);
 L1:
   err_state.buf_idx--;

@@ -247,7 +247,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_testAny_0 = {0, NULL, 0, NULL, NULL};
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_a_0 = __THE_1_any_int_alloc(1);
   if (__THE_0_a_0.t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
@@ -262,7 +262,7 @@ L5:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L3;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct any __THE_0_b_0 = any_copy(__THE_0_testAny_0);
   if (__THE_0_b_0.t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
@@ -277,7 +277,7 @@ L8:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L6;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   struct any __THE_0_e_0 = __THE_1_any_int_alloc(1);
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_int_alloc(1))).t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
@@ -292,7 +292,7 @@ L11:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L9;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L9;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   struct any __THE_0_f_0 = any_copy(__THE_0_testAny_0);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_copy(__THE_0_testAny_0))).t == TYPE_any) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
@@ -307,13 +307,13 @@ L14:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L12;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L12;
   print(stdout, "sz", (__THE_0_a_0.t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L12;
   print(stdout, "sz", (__THE_0_b_0.t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L12;
   print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_int_alloc(1))).t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L12;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L12;
   print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, any_copy(__THE_0_testAny_0))).t == TYPE_any) ? str_alloc("any") : str_alloc("any"), THE_EOL);
 L12:
   any_free((struct any) __THE_0_f_0);

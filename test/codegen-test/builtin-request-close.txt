@@ -645,7 +645,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct request_Request *__THE_0_req_0 = (error_stack_pos(&err_state, 2, 14), request_open(str_alloc("GET"), str_alloc("http://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   __THE_0_req_0 = request_Request_realloc(__THE_0_req_0, (error_stack_pos(&err_state, 4, 9), request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?example"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {})));
   request_close(&__THE_0_req_0);
 L2:

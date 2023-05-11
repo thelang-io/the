@@ -256,7 +256,7 @@ L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   (error_stack_pos(&err_state, 8, 3), fs_renameSync(str_copy(__THE_0_fileName_0), str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "rename-protected")));
 L2:
   str_free((struct str) __THE_0_fileName_0);

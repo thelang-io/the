@@ -361,15 +361,15 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_oldName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-rename-sync.txt");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str __THE_0_newName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-rename-sync-file.txt");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 5, 3), fs_writeFileSync(str_copy(__THE_0_oldName_0), str_toBuffer(str_alloc("test"))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 6, 3), fs_renameSync(str_copy(__THE_0_oldName_0), str_copy(__THE_0_newName_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   print(stdout, "sz", buffer_str((error_stack_pos(&err_state, 7, 9), fs_readFileSync(str_copy(__THE_0_newName_0)))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 8, 3), fs_rmSync(str_copy(__THE_0_newName_0)));
 L3:
   str_free((struct str) __THE_0_newName_0);

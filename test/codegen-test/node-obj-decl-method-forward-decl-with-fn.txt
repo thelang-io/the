@@ -219,10 +219,10 @@ void __THE_1_testGo_0 (void *px) {
   const struct __THE_1_fn$1001 *__THE_0_TestSDgo_0 = x->__THE_0_TestSDgo_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
   (*__THE_0_TestSDgo_0).f((*__THE_0_TestSDgo_0).x, &__THE_0_test_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
 L2:
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);

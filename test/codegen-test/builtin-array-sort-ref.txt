@@ -362,13 +362,13 @@ int main () {
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_int_len(__THE_1_array_array_int_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     print(stdout, "sz", (error_stack_pos(&err_state, 8, 11), __THE_1_array_int_str(__THE_1_array_int_copy(*(error_stack_pos(&err_state, 8, 11), __THE_1_array_array_int_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+    if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
     __THE_1_array_int_sort((error_stack_pos(&err_state, 9, 5), __THE_1_array_array_int_at(__THE_0_arr_0, __THE_0_i_0)), __THE_1_fn$1000_copy(__THE_0_sortAsc_0));
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+    if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
     print(stdout, "sz", (error_stack_pos(&err_state, 10, 11), __THE_1_array_int_str(__THE_1_array_int_copy(*(error_stack_pos(&err_state, 10, 11), __THE_1_array_array_int_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+    if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
     __THE_1_array_int_sort((error_stack_pos(&err_state, 11, 5), __THE_1_array_array_int_at(__THE_0_arr_0, __THE_0_i_0)), __THE_1_fn$1000_copy(__THE_0_sortDesc_0));
-    if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+    if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
     print(stdout, "sz", (error_stack_pos(&err_state, 12, 11), __THE_1_array_int_str(__THE_1_array_int_copy(*(error_stack_pos(&err_state, 12, 11), __THE_1_array_array_int_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL);
 L3:
     err_state.buf_idx--;

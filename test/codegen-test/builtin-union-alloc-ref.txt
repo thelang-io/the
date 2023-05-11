@@ -178,7 +178,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_testStr_0 = str_alloc("test");
   const int32_t *__THE_0_testRefInt_0 = &__THE_0_testInt_0;
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str *__THE_0_testRefStr_0 = &__THE_0_testStr_0;
   const struct __THE_1_union_ref_intUSref_strUE __THE_0_g1_0 = __THE_1_union_ref_intUSref_strUE_alloc(TYPE_ref_int, __THE_0_testRefInt_0);
   const struct __THE_1_union_ref_intUSref_strUE __THE_0_g2_0 = __THE_1_union_ref_intUSref_strUE_alloc(TYPE_ref_str, __THE_0_testRefStr_0);

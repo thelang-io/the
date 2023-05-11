@@ -190,19 +190,19 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 2, 3), str_trimEnd(str_alloc(""))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 3, 3), str_trimEnd(str_alloc("\n"))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 4, 3), str_trimEnd(str_alloc("\n\r"))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 5, 3), str_trimEnd(str_alloc("\n\r\t"))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 6, 3), str_trimEnd(str_alloc("test in test"))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 7, 3), str_trimEnd(str_alloc("test in test "))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 8, 3), str_trimEnd(str_alloc(" test in test"))));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 9, 3), str_trimEnd(str_alloc(" test in test "))));
 L1:
   err_state.buf_idx--;

@@ -365,19 +365,19 @@ int main () {
   const struct __THE_1_fn$0 __THE_0_filterTwoOrOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwoOrOne_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L7;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   print(stdout, "szszsz", __THE_1_array_str_str((error_stack_pos(&err_state, 11, 9), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 11, 34), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 11, 59), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   print(stdout, "szszsz", __THE_1_array_str_str((error_stack_pos(&err_state, 12, 9), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 12, 34), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 12, 59), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   print(stdout, "szszsz", __THE_1_array_str_str((error_stack_pos(&err_state, 13, 9), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 13, 34), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 13, 59), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   print(stdout, "szszsz", __THE_1_array_str_str((error_stack_pos(&err_state, 14, 9), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 14, 34), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)))), " ", __THE_1_array_str_str((error_stack_pos(&err_state, 14, 59), __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)))), THE_EOL);
 L8:
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);

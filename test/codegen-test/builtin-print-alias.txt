@@ -195,17 +195,17 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_a_0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str __THE_0_b_0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct str __THE_0_c_0 = str_alloc("test");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   print(stdout, "szszsz", str_copy(__THE_0_a_0), " ", str_copy(__THE_0_b_0), " ", str_copy(__THE_0_c_0), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   print(stdout, "sz", str_copy(__THE_0_a_0), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   print(stdout, "sz", str_copy(__THE_0_b_0), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   print(stdout, "sz", str_copy(__THE_0_c_0), THE_EOL);
 L4:
   str_free((struct str) __THE_0_c_0);

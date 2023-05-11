@@ -173,15 +173,15 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Object_0 *__THE_0_a_0 = __THE_1_Object_0_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_Object_0 *__THE_0_b_0 = __THE_1_Object_0_alloc(1);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct __THE_1_Object_0 *__THE_0_c_0 = true ? __THE_1_Object_0_copy(__THE_0_a_0) : __THE_1_Object_0_copy(__THE_0_b_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L4;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_Object_0 *__THE_0_d_0 = false ? __THE_1_Object_0_copy(__THE_0_b_0) : __THE_1_Object_0_copy(__THE_0_a_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_Object_0 *__THE_0_f_0 = false ? __THE_1_Object_0_copy(__THE_0_a_0) : __THE_1_Object_0_alloc(2);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L6;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct __THE_1_Object_0 *__THE_0_e_0 = false ? __THE_1_Object_0_alloc(3) : __THE_1_Object_0_copy(__THE_0_b_0);
   __THE_1_Object_0_free((struct __THE_1_Object_0 *) __THE_0_e_0);
 L6:

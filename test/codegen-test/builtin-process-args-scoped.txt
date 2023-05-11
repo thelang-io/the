@@ -280,7 +280,7 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 void __THE_1_test_0 (void *px) {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(process_args()), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "iz", __THE_1_array_str_len(process_args()), THE_EOL);
 L1:
   err_state.buf_idx--;

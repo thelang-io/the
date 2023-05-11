@@ -274,7 +274,7 @@ int main (int _argc_, char *_argv_[]) {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sz", __THE_1_array_str_str(process_args()), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "iz", __THE_1_array_str_len(process_args()), THE_EOL);
 L1:
   err_state.buf_idx--;

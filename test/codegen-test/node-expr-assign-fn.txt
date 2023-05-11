@@ -184,7 +184,7 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct __THE_1_fn$1000 __THE_0_test1_1 = __THE_1_fn$1000_copy(__THE_0_test1_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   __THE_0_test1_1 = __THE_1_fn$1000_realloc(__THE_0_test1_1, __THE_1_fn$1000_copy(__THE_0_test2_0));
 L2:
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_1);

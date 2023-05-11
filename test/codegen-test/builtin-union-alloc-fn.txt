@@ -220,7 +220,7 @@ int main () {
   const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_union_fn$1000USfn$1001UE __THE_0_g1_0 = __THE_1_union_fn$1000USfn$1001UE_alloc(TYPE_fn$1000, __THE_1_fn$1000_copy(__THE_0_test1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_union_fn$1000USfn$1001UE __THE_0_g2_0 = __THE_1_union_fn$1000USfn$1001UE_alloc(TYPE_fn$1001, __THE_1_fn$1001_copy(__THE_0_test2_0));
   __THE_1_union_fn$1000USfn$1001UE_free((struct __THE_1_union_fn$1000USfn$1001UE) __THE_0_g2_0);
 L2:

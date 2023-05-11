@@ -192,7 +192,7 @@ int main () {
   const enum __THE_1_Color_0 __THE_0_testEnum_0 = __THE_0_ColorSDGreen_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_anyRawEnum_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDRed_0);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_anyEnum_0 = __THE_1_any_Color_0_alloc(__THE_0_testEnum_0);
   any_free((struct any) __THE_0_anyEnum_0);
 L2:

@@ -166,9 +166,9 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 2, 3), char_repeat('a', 0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 3, 3), char_repeat('z', 1)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 4, 3), char_repeat('0', 29)));
 L1:
   err_state.buf_idx--;

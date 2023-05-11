@@ -162,15 +162,15 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_a_0 = str_alloc("str1");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str __THE_0_b_0 = str_alloc("str2");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   str_free((struct str) (true ? str_alloc("str3") : str_alloc("str4")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   str_free((struct str) (true ? str_alloc("str5") : str_copy(__THE_0_a_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   str_free((struct str) (true ? str_copy(__THE_0_b_0) : str_alloc("str6")));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   str_free((struct str) (true ? str_copy(__THE_0_a_0) : str_copy(__THE_0_b_0)));
 L3:
   str_free((struct str) __THE_0_b_0);

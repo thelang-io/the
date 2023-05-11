@@ -206,7 +206,7 @@ int main () {
   struct str __THE_0_a_0 = str_alloc("test1");
   const struct __THE_1_fn$1000 __THE_0_mainSDtest_0;
   __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$1000P) {str_alloc("test2")});
 L2:
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest_0);

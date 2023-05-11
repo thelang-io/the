@@ -223,7 +223,7 @@ int main () {
   __THE_0_color_0 = __THE_0_RGBSDGreen_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "szszsz", enum_str(__THE_0_color_0), " ", (error_stack_pos(&err_state, 15, 16), enum_str(__THE_0_color_0)), " ", __THE_1_RGB_0_rawValue(__THE_0_color_0), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szszsz", enum_str(__THE_0_RGBSDRed_0), " ", (error_stack_pos(&err_state, 16, 18), enum_str(__THE_0_RGBSDRed_0)), " ", __THE_1_RGB_0_rawValue(__THE_0_RGBSDRed_0), THE_EOL);
 L1:
   err_state.buf_idx--;

@@ -286,7 +286,7 @@ struct __THE_1_map_strMSintME __THE_1_test2_0 (void *px, struct __THE_1_fn$1004P
   struct __THE_1_map_strMSintME __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   __THE_0_b_0 = __THE_1_map_strMSintME_realloc(__THE_0_b_0, __THE_1_map_strMSintME_copy(__THE_0_a_0));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   (error_stack_pos(&err_state, 7, 3), __THE_1_map_strMSintME_set(&__THE_0_a_0, str_alloc("key4"), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0))));
   v = __THE_1_map_strMSintME_copy(__THE_0_a_0);
 L2:
@@ -302,7 +302,7 @@ int main () {
   const struct __THE_1_fn$1004 __THE_0_test2_0 = (struct __THE_1_fn$1004) {&__THE_1_test2_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {__THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 0, str_alloc("key2"), 1)}));
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1004P) {__THE_1_map_strMSintME_alloc(2, str_alloc("key3"), 2, str_alloc("key4"), 3), 0, (struct __THE_1_map_strMSintME) {}}));
 L3:
   err_state.buf_idx--;

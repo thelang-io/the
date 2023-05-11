@@ -259,11 +259,11 @@ int main () {
   __THE_1_testAnon_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_testAnon_0, (struct __THE_1_testAnon_0X) {&__THE_0_test_0});
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "szszsz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_test_0)), " ", __THE_1_fn$1001_str(__THE_1_fn$1001_copy(__THE_0_testAnon_0)), " ", __THE_1_fn$1000_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_test_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", __THE_1_fn$1001_str(__THE_1_fn$1001_copy(__THE_0_testAnon_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "sz", __THE_1_fn$1000_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
 L1:
   err_state.buf_idx--;

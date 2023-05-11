@@ -322,7 +322,7 @@ int main () {
   } else {
     8;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_alloc(NULL);
   if (__THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a), NULL)) {
     print(stdout, "iz", 1, THE_EOL);

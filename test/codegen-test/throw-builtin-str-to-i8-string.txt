@@ -165,7 +165,7 @@ int8_t str_toI8 (struct str self, unsigned char o1, int32_t n1) {
   if (errno == ERANGE || r < INT8_MIN || INT8_MAX < r) {
     const char *fmt = "value `%s` out of range";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z);
+    char *d = alloc(z + 1);
     sprintf(d, fmt, c);
     free(c);
     free(self.d);

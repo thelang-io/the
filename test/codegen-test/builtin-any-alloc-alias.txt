@@ -194,7 +194,7 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_testAlias_0 = str_alloc("test");
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_anyAlias_0 = __THE_1_any_str_alloc(str_copy(__THE_0_testAlias_0));
   any_free((struct any) __THE_0_anyAlias_0);
 L2:

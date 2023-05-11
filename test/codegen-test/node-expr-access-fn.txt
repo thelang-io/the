@@ -91,7 +91,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   __THE_0_test1_0;
   const struct __THE_1_fn$1000 __THE_0_mainSDtest2_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSDtest2_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_0_mainSDtest2_0;
 L1:
   err_state.buf_idx--;

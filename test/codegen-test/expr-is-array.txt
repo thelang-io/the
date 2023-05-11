@@ -406,7 +406,7 @@ L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_array_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
@@ -421,7 +421,7 @@ L7:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L5;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L5;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_union_array_intUSfloatUE __THE_0_c_0 = __THE_1_union_array_intUSfloatUE_alloc(TYPE_array_int, __THE_1_array_int_alloc(3, 1, 2, 3));
   if (__THE_0_c_0.t == TYPE_array_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
@@ -436,7 +436,7 @@ L10:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L8;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L8;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   const struct __THE_1_union_array_intUSfloatUE __THE_0_d_0 = __THE_1_union_array_intUSfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_array_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L12;
@@ -451,7 +451,7 @@ L13:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L11;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L11;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L11;
   struct any __THE_0_e_0 = __THE_1_any_array_int_alloc(__THE_1_array_int_alloc(3, 1, 2, 3));
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_array_int_alloc(__THE_1_array_int_alloc(3, 1, 2, 3)))).t == TYPE_array_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L15;
@@ -466,7 +466,7 @@ L16:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L14;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L14;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L14;
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_array_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L18;
@@ -481,7 +481,7 @@ L19:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L17;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L17;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L17;
   struct __THE_1_union_array_intUSfloatUE __THE_0_g_0 = __THE_1_union_array_intUSfloatUE_alloc(TYPE_array_int, __THE_1_array_int_alloc(3, 1, 2, 3));
   if ((__THE_0_g_0 = __THE_1_union_array_intUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_array_intUSfloatUE_alloc(TYPE_array_int, __THE_1_array_int_alloc(3, 1, 2, 3)))).t == TYPE_array_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L21;
@@ -496,7 +496,7 @@ L22:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L20;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L20;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L20;
   struct __THE_1_union_array_intUSfloatUE __THE_0_h_0 = __THE_1_union_array_intUSfloatUE_alloc(TYPE_float, 3.14);
   if ((__THE_0_h_0 = __THE_1_union_array_intUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_array_intUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_array_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L24;
@@ -511,21 +511,21 @@ L25:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L23;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", (__THE_0_a_0.t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 34, 35), __THE_1_array_int_str(__THE_1_array_int_copy(((struct __THE_1_any_array_int *) __THE_0_a_0.d)->d)))) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", (__THE_0_b_0.t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 35, 35), __THE_1_array_int_str(__THE_1_array_int_copy(((struct __THE_1_any_array_int *) __THE_0_b_0.d)->d)))) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", (__THE_0_c_0.t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 36, 35), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_c_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 36, 56), float_str(__THE_0_c_0.v3))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", (__THE_0_d_0.t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 37, 35), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_d_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 37, 56), float_str(__THE_0_d_0.v3))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_array_int_alloc(__THE_1_array_int_alloc(3, 1, 2, 3)))).t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 38, 49), __THE_1_array_int_str(__THE_1_array_int_copy(((struct __THE_1_any_array_int *) __THE_0_e_0.d)->d)))) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 39, 44), __THE_1_array_int_str(__THE_1_array_int_copy(((struct __THE_1_any_array_int *) __THE_0_f_0.d)->d)))) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_array_intUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_array_intUSfloatUE_alloc(TYPE_array_int, __THE_1_array_int_alloc(3, 1, 2, 3)))).t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 40, 49), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_g_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 40, 70), float_str(__THE_0_g_0.v3))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx]) != 0) goto L23;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_array_intUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_array_intUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_array_int) ? cstr_concat_str("int[] ", (error_stack_pos(&err_state, 41, 44), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_h_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 41, 65), float_str(__THE_0_h_0.v3))), THE_EOL);
 L23:
   __THE_1_union_array_intUSfloatUE_free((struct __THE_1_union_array_intUSfloatUE) __THE_0_h_0);
