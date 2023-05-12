@@ -223,6 +223,7 @@ struct str error_stack_str (err_state_t *state) {
   return (struct str) {d, l};
 }
 void fs_copyDirectorySync (struct str n1, struct str n2) {
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto fs_copyDirectorySync_cleanup1;
   if (fs_existsSync(str_copy(n2))) {
     if (fs_isDirectorySync(str_copy(n2))) {
       fs_rmdirSync(str_copy(n2));
@@ -239,6 +240,7 @@ void fs_copyDirectorySync (struct str n1, struct str n2) {
     n2.d[n2.l - 1] = (THE_PATH_SEP)[0];
   }
   struct __THE_1_array_str files = fs_scandirSync(str_copy(n1));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto fs_copyDirectorySync_cleanup2;
   fs_mkdirSync(str_copy(n2));
   for (size_t i = 0; i < files.l; i++) {
     struct str file = str_concat_str(str_copy(n1), str_copy(files.d[i]));
@@ -248,9 +250,13 @@ void fs_copyDirectorySync (struct str n1, struct str n2) {
       fs_copyFileSync(file, str_concat_str(str_copy(n2), str_copy(files.d[i])));
     }
   }
+fs_copyDirectorySync_cleanup2:
   __THE_1_array_str_free(files);
+fs_copyDirectorySync_cleanup1:
+  err_state.buf_idx--;
   str_free(n2);
   str_free(n1);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void fs_copyFileSync (struct str n1, struct str n2) {
   char *c1 = str_cstr(n1);

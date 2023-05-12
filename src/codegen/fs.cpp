@@ -90,6 +90,7 @@ const std::vector<std::string> codegenFs = {
   R"(})" EOL,
 
   R"(void fs_copyDirectorySync (_{struct str} n1, _{struct str} n2) {)" EOL
+  R"(  if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) goto fs_copyDirectorySync_cleanup1;)" EOL
   R"(  if (_{fs_existsSync}(_{str_copy}(n2))) {)" EOL
   R"(    if (_{fs_isDirectorySync}(_{str_copy}(n2))) {)" EOL
   R"(      _{fs_rmdirSync}(_{str_copy}(n2));)" EOL
@@ -106,6 +107,7 @@ const std::vector<std::string> codegenFs = {
   R"(    n2.d[n2.l - 1] = (_{THE_PATH_SEP})[0];)" EOL
   R"(  })" EOL
   R"(  struct _{array_str} files = _{fs_scandirSync}(_{str_copy}(n1));)" EOL
+  R"(  if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) goto fs_copyDirectorySync_cleanup2;)" EOL
   R"(  _{fs_mkdirSync}(_{str_copy}(n2));)" EOL
   R"(  for (_{size_t} i = 0; i < files.l; i++) {)" EOL
   R"(    _{struct str} file = _{str_concat_str}(_{str_copy}(n1), _{str_copy}(files.d[i]));)" EOL
@@ -115,9 +117,13 @@ const std::vector<std::string> codegenFs = {
   R"(      _{fs_copyFileSync}(file, _{str_concat_str}(_{str_copy}(n2), _{str_copy}(files.d[i])));)" EOL
   R"(    })" EOL
   R"(  })" EOL
+  R"(fs_copyDirectorySync_cleanup2:)" EOL
   R"(  _{array_str_free}(files);)" EOL
+  R"(fs_copyDirectorySync_cleanup1:)" EOL
+  R"(  _{err_state}.buf_idx--;)" EOL
   R"(  _{str_free}(n2);)" EOL
   R"(  _{str_free}(n1);)" EOL
+  R"(  if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(})" EOL,
 
   R"(void fs_copyFileSync (_{struct str} n1, _{struct str} n2) {)" EOL

@@ -3866,6 +3866,12 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += R"(      return r;)" EOL;
     def += R"(    })" EOL;
     def += R"(  })" EOL;
+    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
     def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(})";
@@ -4005,6 +4011,11 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += R"(      return n;)" EOL;
     def += R"(    })" EOL;
     def += R"(  })" EOL;
+
+    if (mapType.keyType->shouldBeFreed()) {
+      def += "  " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
+    }
+
     def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}));)" EOL;
     def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(})";

@@ -309,6 +309,8 @@ int32_t __THE_1_map_strMSintME_get (struct __THE_1_map_strMSintME n, struct str 
       return r;
     }
   }
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n);
+  str_free((struct str) k);
   error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get map value"), (struct str) {NULL, 0}));
   longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
