@@ -78,6 +78,20 @@ obj IByteArray {
     return self.len <= idx ? 0 : self.data[idx]
   }
 
+  fn compare (self: ref Self, other: Self) bool {
+    if self.len != other.len {
+      return false
+    }
+
+    loop i := 0; i < self.len; i++ {
+      if self.data[i] != other.data[i] {
+        return false
+      }
+    }
+
+    return true
+  }
+
   fn merge (mut self: ref Self, other: Self) {
     offset := self.len
     self.reserve(offset + other.len)
@@ -108,6 +122,11 @@ obj IByteArray {
     }
     self.data.merge(tmp)
     self.len = length
+  }
+
+  fn push (mut self: ref Self, item: byte) {
+    self.data.push(item)
+    self.len++
   }
 
   fn reserve (mut self: ref Self, length: int) {
@@ -158,6 +177,10 @@ fn ByteArray_fromInt (mut num: int, padding := 0) IByteArray {
     result.padStart(padding)
   }
   return result
+}
+
+fn Math_abs (x: float) float {
+  return x < 0 ? -x : x
 }
 
 fn raise (message: str) {
@@ -450,14 +473,14 @@ fn alignmentPatternLocations (version: int) int[] {
   else { raise("QRCode input is too long for alignment pattern locations") }
 }
 
-fn mask0 (x: int, y: int) bool { return (y + x) % 2 == 0 }
+fn mask0 (x: int, y: int) bool { return (x + y) % 2 == 0 }
 fn mask1 (x: int, y: int) bool { return y % 2 == 0 }
 fn mask2 (x: int, y: int) bool { return x % 3 == 0 }
-fn mask3 (x: int, y: int) bool { return (y + x) % 3 == 0 }
-fn mask4 (x: int, y: int) bool { v1: int = (y / 2); v2: int = (x / 3); return (v1 + v2) % 2 == 0 }
-fn mask5 (x: int, y: int) bool { return y * x % 2 + y * x % 3 == 0 }
-fn mask6 (x: int, y: int) bool { return ((y * x) % 2 + y * x % 3) % 2 == 0 }
-fn mask7 (x: int, y: int) bool { return ((y + x) % 2 + y * x % 3) % 2 == 0 }
+fn mask3 (x: int, y: int) bool { return (x + y) % 3 == 0 }
+fn mask4 (x: int, y: int) bool { _x: float = x; _y: float = y; v1: int = (_y / 2); v2: int = (_x / 3); return (v1 + v2) % 2 == 0 }
+fn mask5 (x: int, y: int) bool { return ((x * y) % 2) + ((x * y) % 3) == 0 }
+fn mask6 (x: int, y: int) bool { return (((x * y) % 2) + ((x * y) % 3)) % 2 == 0 }
+fn mask7 (x: int, y: int) bool { return (((x + y) % 2) + ((x * y) % 3)) % 2 == 0 }
 
 const MASKS := {
   "0": mask0,
@@ -490,10 +513,9 @@ obj IPolynomial {
     return result
   }
 
-  fn errorDataCorrection (self: ref Self, mut data: IByteArray, codewords: int) IByteArray {
-    degree := codewords - data.len
-    data.padEnd(codewords)
-    return self.div(data, self.generateSequence(degree))
+  fn errorDataCorrection (self: ref Self, mut data: IByteArray, eccCodewords: int) IByteArray {
+    data.padEnd(data.len + eccCodewords)
+    return self.div(data, self.generateSequence(eccCodewords))
   }
 
   fn generateSequence (self: ref Self, degree: int) IByteArray {
@@ -545,10 +567,108 @@ obj IQRCode {
   mut _m: Mode
   mut _o: IByteArray
   _p: IPolynomial
+  mut _q: int[][]
   _s: str
   mut _v: int
+  mut _w: IByteArray
   mut _x: int
   mut _z: int
+
+  fn calcPenaltyScore (mut self: ref Self) int {
+    return self.calcPenalty1() + self.calcPenalty2() + self.calcPenalty3() + self.calcPenalty4()
+  }
+
+  fn calcPenalty1 (mut self: ref Self) int {
+    mut count := 0
+    mut module: byte = 0
+    mut penalty := 0
+
+    loop k := 0; k < 2; k++ {
+      loop i := 0; i < self._z; i++ {
+        loop j := 0; j < self._z; j++ {
+          currentModule := self._d[i][j]
+
+          if module != currentModule {
+            module = currentModule
+            count = 1
+          } else {
+            count++
+
+            if count == 5 {
+              penalty += 3
+            } elif count > 5 {
+              penalty++
+            }
+          }
+        }
+
+        count = 0
+      }
+
+      self.transposeData()
+    }
+
+    return penalty
+  }
+
+  fn calcPenalty2 (mut self: ref Self) int {
+    mut count := 0
+
+    loop i := 0; i < self._z - 1; i++ {
+      loop j := 0; j < self._z - 1; j++ {
+        currentModule := self._d[i][j]
+
+        if (
+          self._d[i][j + 1] == currentModule &&
+          self._d[i + 1][j] == currentModule &&
+          self._d[i + 1][j + 1] == currentModule
+        ) {
+          count++
+        }
+      }
+    }
+
+    return count * 3
+  }
+
+  fn calcPenalty3 (mut self: ref Self) int {
+    byteArray1 := ByteArray_fromPlain([2, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1])
+    byteArray2 := ByteArray_fromPlain(byteArray1.data.reverse())
+    sliceLen := byteArray1.len
+    mut count := 0
+
+    loop k := 0; k < 2; k++ {
+      loop i := 0; i < self._z; i++ {
+        loop j := 0; j < self._z - sliceLen + 1; j++ {
+          modulesSlice := ByteArray_fromPlain(self._d[i].slice(j, j + sliceLen))
+
+          if modulesSlice.compare(byteArray1) || modulesSlice.compare(byteArray2) {
+            count++
+          }
+        }
+      }
+
+      self.transposeData()
+    }
+
+    return count * 40
+  }
+
+  fn calcPenalty4 (mut self: ref Self) int {
+    mut dark := 0.0
+
+    loop i := 0; i < self._z; i++ {
+      loop j := 0; j < self._z; j++ {
+        if self._d[i][j] == 2 {
+          dark++
+        }
+      }
+    }
+
+    total: float = self._z * self._z
+    delta: int = (Math_abs(dark * 20 - total * 10) + total - 1) / total - 1
+    return delta * 10
+  }
 
   fn drawAlignmentPattern (mut self: ref Self, x: int, y: int) {
     b1: byte = 1
@@ -627,21 +747,21 @@ obj IQRCode {
     return false
   }
 
-  fn drawData (mut self: ref Self) {
-    b1: byte = 1
-    b2: byte = 2
-    seq := self.drawModuleSequence()
-
-    loop i := 0; i < self._o.len; i++ {
-      x: int = seq[i][0]
-      y: int = seq[i][1]
-      self._d[x][y] = self._o.at(i) == 0 ? b1 : b2
-    }
-  }
-
   fn drawDarkModule (mut self: ref Self) {
     b2: byte = 2
     self._d[8][self._z - 8] = b2
+  }
+
+  fn drawData (mut self: ref Self) {
+    b1: byte = 1
+    b2: byte = 2
+    seqLen := self._q.len
+
+    loop i := 0; i < seqLen; i++ {
+      x: int = self._q[i][0]
+      y: int = self._q[i][1]
+      self._d[x][y] = self._o.at(i) == 0 ? b1 : b2
+    }
   }
 
   fn drawFinderPattern (mut self: ref Self, x: int, y: int) {
@@ -793,64 +913,24 @@ obj IQRCode {
     self._d[8][0] = self._f.at(14) == 0 ? b1 : b2
   }
 
-  fn drawMaskData (mut self: ref Self, f: (x: int, y: int) -> bool) {
+  fn drawMaskData (mut self: ref Self) {
     b1: byte = 1
     b2: byte = 2
-    seq := self.drawModuleSequence()
+    mask := MASKS.get(self._a.str())
+    seqLen := self._q.len
 
-    loop i := 0; i < self._o.len; i++ {
-      x: int = seq[i][0]
-      y: int = seq[i][1]
-      if f(x, y) {
-        self._d[x][y] = self._o.at(i) == 0 ? b2 : b1
-      } else {
-        self._d[x][y] = self._o.at(i) == 0 ? b1 : b2
+    loop i := 0; i < seqLen; i++ {
+      x: int = self._q[i][0]
+      y: int = self._q[i][1]
+      if mask(x, y) {
+        self._d[x][y] = self._d[x][y] == 1 ? b2 : b1
       }
     }
-  }
 
-  fn drawModuleSequence (mut self: ref Self) int[][] {
-    mut result: int[][]
-    mut next := 1
-    mut x := self._z - 2
-    mut y := self._z
-
-    loop i := 0; i < self._o.len; {
-      if next == 1 {
-        x += 1
-        y -= 1
-        next = 2
-      } elif next == 2 {
-        x -= 1
-        next = 1
-      } elif next == 3 {
-        x += 1
-        y += 1
-        next = 4
-      } elif next == 4 {
-        x -= 1
-        next = 3
-      }
-
-      shouldChangeDirection := y < 0 || y == self._z
-
-      if shouldChangeDirection && next < 3 {
-        x -= x == 8 ? 4 : 3
-        next = 3
-        continue
-      } elif shouldChangeDirection && next > 2 {
-        x -= x == 8 ? 4 : 3
-        next = 1
-        continue
-      } elif self.drawCollidesPoint(x, y) {
-        continue
-      }
-
-      result.push([x, y])
-      i++
-    }
-
-    return result
+    self.updateFormatModules()
+    self.drawFormatModule()
+    self.updateVersionModules()
+    self.drawVersionModule()
   }
 
   fn drawReserveFormatInformationArea (mut self: ref Self) {
@@ -949,8 +1029,55 @@ obj IQRCode {
     }
   }
 
-  fn encode (mut self: ref Self, errorCorrectionLevel := ErrorCorrectionLevel.M) byte[][] {
-    self._e = errorCorrectionLevel
+  fn drawVersionModule (mut self: ref Self) {
+    if self._v < 7 {
+      return
+    }
+
+    b1: byte = 1
+    b2: byte = 2
+
+    self._d[self._z - 11][0] = self._w.at(0) == 0 ? b1 : b2
+    self._d[self._z - 10][0] = self._w.at(1) == 0 ? b1 : b2
+    self._d[self._z - 9][0] = self._w.at(2) == 0 ? b1 : b2
+    self._d[self._z - 11][1] = self._w.at(3) == 0 ? b1 : b2
+    self._d[self._z - 10][1] = self._w.at(4) == 0 ? b1 : b2
+    self._d[self._z - 9][1] = self._w.at(5) == 0 ? b1 : b2
+    self._d[self._z - 11][2] = self._w.at(6) == 0 ? b1 : b2
+    self._d[self._z - 10][2] = self._w.at(7) == 0 ? b1 : b2
+    self._d[self._z - 9][2] = self._w.at(8) == 0 ? b1 : b2
+    self._d[self._z - 11][3] = self._w.at(9) == 0 ? b1 : b2
+    self._d[self._z - 10][3] = self._w.at(10) == 0 ? b1 : b2
+    self._d[self._z - 9][3] = self._w.at(11) == 0 ? b1 : b2
+    self._d[self._z - 11][4] = self._w.at(12) == 0 ? b1 : b2
+    self._d[self._z - 10][4] = self._w.at(13) == 0 ? b1 : b2
+    self._d[self._z - 9][4] = self._w.at(14) == 0 ? b1 : b2
+    self._d[self._z - 11][5] = self._w.at(15) == 0 ? b1 : b2
+    self._d[self._z - 10][5] = self._w.at(16) == 0 ? b1 : b2
+    self._d[self._z - 9][5] = self._w.at(17) == 0 ? b1 : b2
+
+    self._d[0][self._z - 11] = self._w.at(0) == 0 ? b1 : b2
+    self._d[0][self._z - 10] = self._w.at(1) == 0 ? b1 : b2
+    self._d[0][self._z - 9] = self._w.at(2) == 0 ? b1 : b2
+    self._d[1][self._z - 11] = self._w.at(3) == 0 ? b1 : b2
+    self._d[1][self._z - 10] = self._w.at(4) == 0 ? b1 : b2
+    self._d[1][self._z - 9] = self._w.at(5) == 0 ? b1 : b2
+    self._d[2][self._z - 11] = self._w.at(6) == 0 ? b1 : b2
+    self._d[2][self._z - 10] = self._w.at(7) == 0 ? b1 : b2
+    self._d[2][self._z - 9] = self._w.at(8) == 0 ? b1 : b2
+    self._d[3][self._z - 11] = self._w.at(9) == 0 ? b1 : b2
+    self._d[3][self._z - 10] = self._w.at(10) == 0 ? b1 : b2
+    self._d[3][self._z - 9] = self._w.at(11) == 0 ? b1 : b2
+    self._d[4][self._z - 11] = self._w.at(12) == 0 ? b1 : b2
+    self._d[4][self._z - 10] = self._w.at(13) == 0 ? b1 : b2
+    self._d[4][self._z - 9] = self._w.at(14) == 0 ? b1 : b2
+    self._d[5][self._z - 11] = self._w.at(15) == 0 ? b1 : b2
+    self._d[5][self._z - 10] = self._w.at(16) == 0 ? b1 : b2
+    self._d[5][self._z - 9] = self._w.at(17) == 0 ? b1 : b2
+  }
+
+  fn encode (mut self: ref Self, ecc := ErrorCorrectionLevel.Q, mask: int? = nil) byte[][] {
+    self._e = ecc
 
     self.updateMode()
     self.updateVersion()
@@ -999,7 +1126,6 @@ obj IQRCode {
 
     self.transformOutputToBytes()
     self.updateErrorDataCorrection()
-    self._o.merge(self._g)
     self.transformOutputToBits()
     self._o.padEnd(self._o.len + requiredRemainderBits(self._v))
 
@@ -1012,11 +1138,15 @@ obj IQRCode {
     self.drawDarkModule()
     self.drawReserveFormatInformationArea()
     self.drawReserveVersionInformationArea()
+    self.updateModuleSequence()
 
-    self._a = 0
-    self.drawMaskData(MASKS.get(self._a.str()))
-    self.updateFormatModules()
-    self.drawFormatModule()
+    if mask == nil {
+      self.maskData()
+    } else {
+      self._a = mask
+      self.drawData()
+      self.drawMaskData()
+    }
 
     return self._d
   }
@@ -1027,14 +1157,9 @@ obj IQRCode {
     loop i := 0; i < self._l; i += 3 {
       group := self._s.slice(i, i + 3)
       groupLen := group.len
+      arrLen := i < self._l - 3 ? 10 : groupLen == 1 ? 4 : groupLen == 2 ? 7 : 10
 
-      if (groupLen == 3 && group[0] == '0' && group[1] == '0') || (groupLen == 2 && group[0] == '0') || groupLen == 1 {
-        result.merge(ByteArray_fromInt(group.toInt(), 4))
-      } elif (groupLen == 3 && group[0] == '0') || groupLen == 2 {
-        result.merge(ByteArray_fromInt(group.toInt(), 7))
-      } else {
-        result.merge(ByteArray_fromInt(group.toInt(), 10))
-      }
+      result.merge(ByteArray_fromInt(group.toInt(), arrLen))
     }
 
     return result
@@ -1084,6 +1209,27 @@ obj IQRCode {
     }
   }
 
+  fn maskData (mut self: ref Self) {
+    mut lowestPenalty := math_MaxInt
+    mut lowestPenaltyIndex := 0
+
+    loop i := 0; i < 8; i++ {
+      self._a = i
+      self.drawData()
+      self.drawMaskData()
+      penalty := self.calcPenaltyScore()
+
+      if penalty < lowestPenalty {
+        lowestPenalty = penalty
+        lowestPenaltyIndex = i
+      }
+    }
+
+    self._a = lowestPenaltyIndex
+    self.drawData()
+    self.drawMaskData()
+  }
+
   fn transformOutputToBits (mut self: ref Self) {
     mut result := ByteArray()
 
@@ -1104,24 +1250,31 @@ obj IQRCode {
     self._o = result
   }
 
+  fn transposeData (mut self: ref Self) {
+    mut result := self._d
+
+    loop i := 0; i < self._z; i++ {
+      loop j := 0; j < self._z; j++ {
+        it: byte = self._d[j][i]
+        result[i][j] = it
+      }
+    }
+
+    self._d = result
+  }
+
   fn updateFormatModules (mut self: ref Self) {
     errorCorrectionLevelIndex: int = self._e
-
-    FORMAT_DIVISOR := ByteArray_fromPlain([1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1])
-    FORMAT_MASK := ByteArray_fromPlain([1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0])
+    data := errorCorrectionLevelIndex << 3 | self._a
+    mut rem := data
+    loop i := 0; i < 10; i++ {
+      rem = (rem << 1) ^ ((rem >> 9) * 0x537)
+    }
+    bits := (data << 10 | rem) ^ 0x5412
 
     self._f = ByteArray(15)
-    self._f.data[0] = errorCorrectionLevelIndex >> 1
-    self._f.data[1] = errorCorrectionLevelIndex & 1
-    self._f.data[2] = self._a >> 2
-    self._f.data[3] = (self._a >> 1) & 1
-    self._f.data[4] = self._a & 1
-
-    formatDiv := self._p.div(self._f, FORMAT_DIVISOR)
-    self._f.set(formatDiv, 5)
-
     loop i := 0; i < self._f.len; i++ {
-      self._f.data[i] ^= FORMAT_MASK.at(i)
+      self._f.data[self._f.len - i - 1] = ((bits >> i) & 1) != 0
     }
   }
 
@@ -1140,7 +1293,44 @@ obj IQRCode {
   }
 
   fn updateErrorDataCorrection (mut self: ref Self) {
-    self._g = self._p.errorDataCorrection(self._o, self._b.totalDataCodewords + self._b.errorCorrectionCodewordsPerBlock)
+    eccPerBlock := self._b.errorCorrectionCodewordsPerBlock
+    mut dataCodewordsBlocks: IByteArray[]
+    mut eccCodewordsBlocks: IByteArray[]
+    mut offset := 0
+
+    loop i := 0; i < self._b.group1Blocks; i++ {
+      dataCodewordsBlocks.push(self._o.slice(offset, offset + self._b.group1Codewords))
+      eccCodewordsBlocks.push(self._p.errorDataCorrection(dataCodewordsBlocks.last, eccPerBlock))
+      offset += self._b.group1Codewords
+    }
+
+    loop i := 0; i < self._b.group2Blocks; i++ {
+      dataCodewordsBlocks.push(self._o.slice(offset, offset + self._b.group2Codewords))
+      eccCodewordsBlocks.push(self._p.errorDataCorrection(dataCodewordsBlocks.last, eccPerBlock))
+      offset += self._b.group2Codewords
+    }
+
+    maxCodewords := self._b.group1Codewords > self._b.group2Codewords
+      ? self._b.group1Codewords
+      : self._b.group2Codewords
+
+    dataCodewordsBlocksLen := dataCodewordsBlocks.len
+    eccCodewordsBlocksLen := eccCodewordsBlocks.len
+    self._o = ByteArray(0)
+
+    loop i := 0; i < maxCodewords; i++ {
+      loop j := 0; j < dataCodewordsBlocksLen; j++ {
+        if i < dataCodewordsBlocks[j].len {
+          self._o.push(dataCodewordsBlocks[j].at(i))
+        }
+      }
+    }
+
+    loop i := 0; i < eccPerBlock; i++ {
+      loop j := 0; j < eccCodewordsBlocksLen; j++ {
+        self._o.push(eccCodewordsBlocks[j].at(i))
+      }
+    }
   }
 
   fn updateCharacterCountIndicator (mut self: ref Self) {
@@ -1187,12 +1377,73 @@ obj IQRCode {
     }
   }
 
+  fn updateModuleSequence (mut self: ref Self) {
+    mut result: int[][]
+    mut next := 1
+    mut x := self._z - 2
+    mut y := self._z
+
+    loop i := 0; i < self._o.len; {
+      if next == 1 {
+        x += 1
+        y -= 1
+        next = 2
+      } elif next == 2 {
+        x -= 1
+        next = 1
+      } elif next == 3 {
+        x += 1
+        y += 1
+        next = 4
+      } elif next == 4 {
+        x -= 1
+        next = 3
+      }
+
+      shouldChangeDirection := y < 0 || y == self._z
+
+      if shouldChangeDirection && next < 3 {
+        x -= x == 8 ? 4 : 3
+        next = 3
+        continue
+      } elif shouldChangeDirection && next > 2 {
+        x -= x == 8 ? 4 : 3
+        next = 1
+        continue
+      } elif self.drawCollidesPoint(x, y) {
+        continue
+      }
+
+      result.push([x, y])
+      i++
+    }
+
+    self._q = result
+  }
+
   fn updateModulesSize (mut self: ref Self) {
     self._z = self._v * 4 + 17
   }
 
   fn updateVersion (mut self: ref Self) {
     self._v = characterCapacityTable(self._e, self._m, self._l)
+  }
+
+  fn updateVersionModules (mut self: ref Self) {
+    if self._v < 7 {
+      return
+    }
+
+    mut rem := self._v
+    loop i := 0; i < 12; i++ {
+      rem = (rem << 1) ^ ((rem >> 11) * 0x1F25)
+    }
+    bits: i64 = (self._v << 12) | rem
+
+    self._w = ByteArray(18)
+    loop i := 0; i < self._w.len; i++ {
+      self._w.data[i] = ((bits >> i) & 1) != 0
+    }
   }
 }
 
@@ -1225,14 +1476,4 @@ fn QRCode_toTerminal (qrcode: IQRCode) {
   }
 
   print(result, terminator: "")
-}
-
-main {
-  qrcodes := ["HELLO WORLD"]
-
-  loop i := 0; i < qrcodes.len; i++ {
-    mut qrcode := QRCode(qrcodes[i].toBuffer())
-    qrcode.encode()
-    QRCode_toTerminal(qrcode)
-  }
 }
