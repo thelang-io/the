@@ -65,9 +65,6 @@ std::string getOSFromPlatform (const std::string &platform) {
   #endif
 }
 
-// todo every _alloc should have prefix of error pos
-// todo test "builtin-request-open-params" has wrong cleanUp generation
-
 void Codegen::compile (
   const std::string &path,
   const std::tuple<std::string, std::vector<std::string>> &result,
@@ -105,14 +102,8 @@ void Codegen::compile (
     }
   }
 
-  auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr;
-
-  if (targetOS == "linux" && debug) {
-    cmd += " -gdwarf-4 -O0";
-  } else if (debug) {
-    cmd += " -g -O0";
-  }
-
+  auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr + " -O0 -g";
+  cmd += targetOS == "linux" && debug ? "dwarf-4" : "";
   auto returnCode = std::system(cmd.c_str());
   std::filesystem::remove(path + ".c");
 
@@ -899,7 +890,6 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
     auto nodeChecker = ASTChecker(node);
 
     auto throwWrappableNode = std::holds_alternative<ASTNodeExpr>(*node.body) ||
-      std::holds_alternative<ASTNodeVarDecl>(*node.body) ||
       std::holds_alternative<ASTNodeVarDecl>(*node.body);
 
     if (i < nodes.size() - 1 && isHoistingFriendlyNode(node) && isHoistingFriendlyNode(nodes[i + 1])) {
@@ -1397,9 +1387,7 @@ std::string Codegen::_fnDecl (
   }
 
   if ((phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) && !stack.empty()) {
-    this->_activateEntity(typeName + "_alloc");
-    code += std::string(this->indent, ' ') + typeName + "_alloc((" + varTypeInfo.typeRefCode + ") &" + fnName + ", ";
-
+    code += std::string(this->indent, ' ') + this->_apiEval("_{" + typeName + "_alloc}((" + varTypeInfo.typeRefCode + ") &" + fnName + ", ", 1);
     this->_activateEntity(contextName);
     code += "(struct " + contextName + ") {";
 
@@ -2159,8 +2147,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       fieldsCode += ", " + this->_nodeExpr(element, arrayType.elementType);
     }
 
-    this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
-    auto code = nodeTypeInfo.typeName + "_alloc(" + fieldsCode + ")";
+    auto code = this->_apiEval("_{" + nodeTypeInfo.typeName + "_alloc}(" + fieldsCode + ")", 1);
     code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
 
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
@@ -2666,8 +2653,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       fieldsCode += this->_apiEval(R"(, _{str_alloc}(")" + prop.name + R"("), )" + this->_nodeExpr(prop.init, mapType.valueType), 1);
     }
 
-    this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
-    auto code = nodeTypeInfo.typeName + "_alloc(" + fieldsCode + ")";
+    auto code = this->_apiEval("_{" + nodeTypeInfo.typeName + "_alloc}(" + fieldsCode + ")", 1);
     code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
     return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
@@ -2746,8 +2732,7 @@ std::string Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
     return this->_apiEval("{0, _{NULL}, 0, _{NULL}, _{NULL}}");
   } else if (typeInfo.type->isArray() || typeInfo.type->isMap()) {
-    this->_activateEntity(typeInfo.typeName + "_alloc");
-    return typeInfo.typeName + "_alloc(0)";
+    return this->_apiEval("_{" + typeInfo.typeName + "_alloc}(0)", 1);
   } else if (typeInfo.type->isBool()) {
     return this->_apiEval("_{false}");
   } else if (typeInfo.type->isChar()) {
