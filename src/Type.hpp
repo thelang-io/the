@@ -55,7 +55,6 @@ struct TypeCallInfo {
   std::string selfCodeName = "";
   Type *selfType = nullptr;
   bool isSelfMut = false;
-  // todo test
   bool throws = false;
 
   bool empty () const;
@@ -96,7 +95,6 @@ struct TypeFnParam {
 struct TypeFn {
   Type *returnType;
   std::vector<TypeFnParam> params = {};
-  // todo test
   bool throws = false;
   bool isMethod = false;
   TypeCallInfo callInfo = {};
