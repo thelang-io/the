@@ -53,7 +53,7 @@ enum ErrorCorrectionLevel {
   H = 2, // ~30%
 }
 
-/* todo Kanji is not supported */
+/* note Kanji is not supported */
 enum Mode {
   Numeric = 1,
   Alphanumeric = 2,

@@ -292,3 +292,42 @@ TEST(CodegenCleanUpTest, HasCleanUpOnType) {
   EXPECT_FALSE(n2.hasCleanUp(CODEGEN_CLEANUP_FN));
   EXPECT_TRUE(n2.hasCleanUp(CODEGEN_CLEANUP_LOOP));
 }
+
+TEST(CodegenCleanUpTest, IsClosestJumpOnEmptyDataJumpUnused) {
+  auto n0 = CodegenCleanUp();
+  EXPECT_FALSE(n0.isClosestJump());
+}
+
+TEST(CodegenCleanUpTest, IsClosestJumpOnEmptyDataJumpUsed) {
+  auto n0 = CodegenCleanUp();
+  n0.jumpUsed = true;
+  EXPECT_TRUE(n0.isClosestJump());
+}
+
+TEST(CodegenCleanUpTest, IsClosestJumpOnNonEmptyDataJumpUnused) {
+  auto n0 = CodegenCleanUp();
+  n0.add("test;");
+  EXPECT_FALSE(n0.isClosestJump());
+}
+
+TEST(CodegenCleanUpTest, IsClosestJumpOnNonEmptyDataJumpUsed) {
+  auto n0 = CodegenCleanUp();
+  n0.add("test;");
+  n0.jumpUsed = true;
+  EXPECT_FALSE(n0.isClosestJump());
+}
+
+TEST(CodegenCleanUpTest, IsClosestJumpOnParentOnNonEmpty) {
+  auto n0 = CodegenCleanUp();
+  n0.jumpUsed = true;
+  n0.add("test;");
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
+  EXPECT_FALSE(n1.isClosestJump());
+}
+
+TEST(CodegenCleanUpTest, IsClosestJumpOnParentOnEmpty) {
+  auto n0 = CodegenCleanUp();
+  n0.jumpUsed = true;
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
+  EXPECT_TRUE(n1.isClosestJump());
+}

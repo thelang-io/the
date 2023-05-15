@@ -40,7 +40,6 @@ class CodegenCleanUp {
   std::size_t labelIdx = 0;
   std::size_t breakVarIdx = 0;
   bool breakVarUsed = false;
-  // todo test
   bool jumpUsed = false;
   bool returnVarUsed = false;
   bool valueVarUsed = false;
@@ -56,7 +55,6 @@ class CodegenCleanUp {
   bool empty () const;
   std::string gen (std::size_t) const;
   bool hasCleanUp (CodegenCleanUpType) const;
-  // todo test
   bool isClosestJump () const;
 
  private:
