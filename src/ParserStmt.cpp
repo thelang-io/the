@@ -538,9 +538,12 @@ std::string ParserStmt::xml (std::size_t indent) const {
     auto stmtTry = std::get<ParserStmtTry>(*this->body);
 
     result += std::string(indent, ' ') + "<StmtTry" + attrs + ">" EOL;
-    result += std::string(indent + 2, ' ') + "<StmtTryBody>" EOL;
-    result += blockToXml(stmtTry.body, indent + 4);
-    result += std::string(indent + 2, ' ') + "</StmtTryBody>" EOL;
+
+    if (!stmtTry.body.empty()) {
+      result += std::string(indent + 2, ' ') + "<StmtTryBody>" EOL;
+      result += blockToXml(stmtTry.body, indent + 4);
+      result += std::string(indent + 2, ' ') + "</StmtTryBody>" EOL;
+    }
 
     if (!stmtTry.handlers.empty()) {
       result += std::string(indent + 2, ' ') + "<StmtTryHandlers>" EOL;

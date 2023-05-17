@@ -117,6 +117,14 @@ INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return-no-arg"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtThrow, ParserPassTest, testing::Values(
+  "stmt-throw"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtTry, ParserPassTest, testing::Values(
+  "stmt-try"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserPassTest, testing::Values(
   "stmt-type-decl"
 ));
