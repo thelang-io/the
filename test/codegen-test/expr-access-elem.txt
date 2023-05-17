@@ -225,7 +225,9 @@ int main () {
   const struct str __THE_0_test2_0 = cstr_concat_str("string", (error_stack_pos(&err_state, 3, 23), char_str(*(error_stack_pos(&err_state, 3, 23), str_at(__THE_0_test1_0, 6)))));
   const struct __THE_1_fn$1000 __THE_0_mainSDtest3_0;
   __THE_1_mainSDtest3_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest3_0, (struct __THE_1_mainSDtest3_0X) {&__THE_0_test1_0});
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_0_mainSDtest3_0.f(__THE_0_mainSDtest3_0.x);
+L3:
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest3_0);
   str_free((struct str) __THE_0_test2_0);
 L2:

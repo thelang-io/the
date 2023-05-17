@@ -433,16 +433,21 @@ int main () {
   const struct __THE_1_fn$1003 __THE_0_job4_0 = (struct __THE_1_fn$1003) {&__THE_1_job4_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_A_0 *__THE_0_a_0 = __THE_1_A_0_alloc(__THE_1_fn$1000_copy(__THE_0_job1_0));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   __THE_0_a_0->__THE_0_b.f(__THE_0_a_0->__THE_0_b.x);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(__THE_1_fn$1001_copy(__THE_0_job2_0));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_0_test_0->__THE_0_game.f(__THE_0_test_0->__THE_0_game.x, (struct __THE_1_fn$1001P) {3});
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_1_Test2_0_alloc(__THE_1_fn$1002_copy(__THE_0_job3_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   __THE_0_test1_0->__THE_0_test2->__THE_0_test3.f(__THE_0_test1_0->__THE_0_test2->__THE_0_test3.x, (struct __THE_1_fn$1002P) {5, 6});
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_B_0 *__THE_0_b_0 = __THE_1_B_0_alloc(__THE_1_C_0_alloc(__THE_1_D_0_alloc(__THE_1_E_0_alloc(__THE_1_fn$1003_copy(__THE_0_job4_0)))));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.f(__THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.x, (struct __THE_1_fn$1003P) {7, 8, 9});
+L5:
   __THE_1_B_0_free((struct __THE_1_B_0 *) __THE_0_b_0);
 L4:
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);

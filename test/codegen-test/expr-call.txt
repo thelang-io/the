@@ -323,11 +323,17 @@ int main () {
   print(stdout, "sz", __THE_1_Human_0_str(__THE_1_Human_0_alloc(str_alloc("Bruce\nWayne"), 32)), THE_EOL);
   int32_t __THE_0_a_0 = 0;
   int32_t __THE_0_c_0 = 0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_0_a_0 = __THE_0_b_0.f(__THE_0_b_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_0_a_0 = __THE_0_c_0 = __THE_0_d_0.f(__THE_0_d_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_0_a_0 + __THE_0_b_0.f(__THE_0_b_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_0_a_0 + __THE_0_b_0.f(__THE_0_b_0.x) + __THE_0_d_0.f(__THE_0_d_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   false ? 1 : __THE_0_b_0.f(__THE_0_b_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   !__THE_0_d_0.f(__THE_0_d_0.x);
 L1:
   err_state.buf_idx--;

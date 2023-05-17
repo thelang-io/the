@@ -1164,6 +1164,7 @@ void __THE_1_requestWithPrint_0 (void *px, struct __THE_1_fn$1000P p) {
   struct request_Request *__THE_0_req_0 = (error_stack_pos(&err_state, 19, 14), request_open(str_copy(__THE_0_method_0), str_copy(__THE_0_url_0), 1, buffer_copy(__THE_0_data_0), 1, __THE_1_array_request_Header_copy(__THE_0_headers_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct request_Response *__THE_0_res_0 = (error_stack_pos(&err_state, 20, 10), request_read(&__THE_0_req_0));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   request_close(&__THE_0_req_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct str __THE_0_actualData_0 = buffer_to_str(buffer_copy(__THE_0_res_0->__THE_0_data));

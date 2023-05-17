@@ -231,8 +231,11 @@ int main () {
   const struct __THE_1_fn$1001 __THE_0_HumanSDwalk_0 = (struct __THE_1_fn$1001) {&__THE_1_HumanSDwalk_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct __THE_1_Human_0 *__THE_0_person_0 = __THE_1_Human_0_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, &__THE_0_person_0);
+L3:
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person_0);
 L2:
   err_state.buf_idx--;

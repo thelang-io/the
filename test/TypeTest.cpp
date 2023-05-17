@@ -1255,6 +1255,7 @@ TEST_F(TypeTest, ShouldBeFreed) {
   EXPECT_TRUE(this->arr_->shouldBeFreed());
   EXPECT_FALSE(this->enum_->shouldBeFreed());
   EXPECT_TRUE(this->fn_->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("request_open")->shouldBeFreed());
   EXPECT_TRUE(this->map_->shouldBeFreed());
   EXPECT_TRUE(this->obj_->shouldBeFreed());
   EXPECT_TRUE(this->opt_->shouldBeFreed());

@@ -71,8 +71,12 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
+void error_stack_pop (err_state_t *);
+void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
+void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 int32_t __THE_1_mainSDtest_0 (void *);
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest_0X);
@@ -93,6 +97,12 @@ void error_assign (err_state_t *state, int id, void *ctx) {
   state->id = id;
   state->ctx = ctx;
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_push (err_state_t *state, char *file, char *name) {
+  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
@@ -133,11 +143,19 @@ struct str error_stack_str (err_state_t *state) {
   }
   return (struct str) {d, l};
 }
+void str_free (struct str s) {
+  free(s.d);
+}
 struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
   struct error_Error *r = alloc(sizeof(struct error_Error));
   struct error_Error s = {__THE_0_message, __THE_0_stack};
   memcpy(r, &s, sizeof(struct error_Error));
   return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
 }
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
@@ -157,11 +175,22 @@ void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainS
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main");
   int32_t __THE_0_a_0 = 0;
   const struct __THE_1_fn$1000 __THE_0_mainSDtest_0;
   __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x);
+L1:
+  err_state.buf_idx--;
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    error_Error_free(err);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

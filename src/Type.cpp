@@ -702,7 +702,7 @@ bool Type::shouldBeFreed () const {
   return
     this->isAny() ||
     this->isArray() ||
-    this->isFn() ||
+    (this->isFn() && !this->builtin) ||
     this->isMap() ||
     this->isObj() ||
     this->isOpt() ||

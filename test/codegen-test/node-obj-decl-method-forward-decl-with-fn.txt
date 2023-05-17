@@ -221,6 +221,7 @@ void __THE_1_testGo_0 (void *px) {
   struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   (*__THE_0_TestSDgo_0).f((*__THE_0_TestSDgo_0).x, &__THE_0_test_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
@@ -255,7 +256,10 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_testGo_0;
   const struct __THE_1_fn$1001 __THE_0_TestSDgo_0 = (struct __THE_1_fn$1001) {&__THE_1_TestSDgo_0, NULL, 0};
   __THE_1_testGo_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_testGo_0, (struct __THE_1_testGo_0X) {&__THE_0_TestSDgo_0});
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   __THE_0_testGo_0.f(__THE_0_testGo_0.x);
+L3:
+  err_state.buf_idx--;
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_testGo_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

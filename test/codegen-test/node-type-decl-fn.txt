@@ -292,6 +292,7 @@ void __THE_1_test_0 (void *px, struct __THE_1_fn$1002P p) {
   const struct __THE_1_fn$1000 __THE_0_cb_0 = p.n0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   print(stdout, "zz", "before callback", THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   __THE_0_cb_0.f(__THE_0_cb_0.x);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   print(stdout, "zz", "after callback", THE_EOL);

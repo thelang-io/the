@@ -292,7 +292,9 @@ int main () {
   str_free((struct str) (error_stack_pos(&err_state, 23, 4), i64_str(-__THE_0_test_0)));
   const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   __THE_0_mainSDtestCtx_0.f(__THE_0_mainSDtestCtx_0.x);
+L4:
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtestCtx_0);
 L2:
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);

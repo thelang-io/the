@@ -368,7 +368,10 @@ L6:
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L17;
   __THE_0_test_0.f(__THE_0_test_0.x);
+L17:
+  err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
