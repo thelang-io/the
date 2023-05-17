@@ -57,13 +57,17 @@ std::string fnDeclParamsToXml (const std::vector<ASTFnDeclParam> &params, std::s
 std::string ASTCatchClause::xml (std::size_t indent) const {
   auto result = std::string();
 
-  result += std::string(indent, ' ') + "<CatchClause>";
+  result += std::string(indent, ' ') + "<CatchClause>" EOL;
   result += std::string(indent + 2, ' ') + "<CatchClauseParam>" EOL;
   result += this->param.xml(indent + 4) + EOL;
   result += std::string(indent + 2, ' ') + "</CatchClauseParam>" EOL;
-  result += std::string(indent + 2, ' ') + "<CatchClauseBody>" EOL;
-  result += blockToXml(this->body, indent + 4);
-  result += std::string(indent + 2, ' ') + "</CatchClauseBody>" EOL;
+
+  if (!this->body.empty()) {
+    result += std::string(indent + 2, ' ') + "<CatchClauseBody>" EOL;
+    result += blockToXml(this->body, indent + 4);
+    result += std::string(indent + 2, ' ') + "</CatchClauseBody>" EOL;
+  }
+
   result += std::string(indent, ' ') + "</CatchClause>";
 
   return result;
@@ -261,22 +265,21 @@ std::string ASTNode::xml (std::size_t indent) const {
     result += std::string(indent, ' ') + "</NodeThrow>";
   } else if (std::holds_alternative<ASTNodeTry>(*this->body)) {
     auto nodeTry = std::get<ASTNodeTry>(*this->body);
-
     result += std::string(indent, ' ') + "<NodeTry>" EOL;
-    result += std::string(indent + 2, ' ') + "<NodeTryBody>" EOL;
-    result += blockToXml(nodeTry.body, indent + 4);
-    result += std::string(indent + 2, ' ') + "</NodeTryBody>" EOL;
 
-    if (!nodeTry.handlers.empty()) {
-      result += std::string(indent + 2, ' ') + "<NodeTryHandlers>" EOL;
-
-      for (const auto &handler : nodeTry.handlers) {
-        result += handler.xml(indent + 4) + EOL;
-      }
-
-      result += std::string(indent + 2, ' ') + "</NodeTryHandlers>" EOL;
+    if (!nodeTry.body.empty()) {
+      result += std::string(indent + 2, ' ') + "<NodeTryBody>" EOL;
+      result += blockToXml(nodeTry.body, indent + 4);
+      result += std::string(indent + 2, ' ') + "</NodeTryBody>" EOL;
     }
 
+    result += std::string(indent + 2, ' ') + "<NodeTryHandlers>" EOL;
+
+    for (const auto &handler : nodeTry.handlers) {
+      result += handler.xml(indent + 4) + EOL;
+    }
+
+    result += std::string(indent + 2, ' ') + "</NodeTryHandlers>" EOL;
     result += std::string(indent, ' ') + "</NodeTry>";
   } else if (std::holds_alternative<ASTNodeTypeDecl>(*this->body)) {
     auto nodeTypeDecl = std::get<ASTNodeTypeDecl>(*this->body);

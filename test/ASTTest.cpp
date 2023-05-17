@@ -76,6 +76,8 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-obj-decl-method-body",
   "node-obj-decl-method-variadic",
   "node-return",
+  "node-throw",
+  "node-try",
   "node-type-decl",
   "node-var-decl",
   "node-var-decl-const",
@@ -174,5 +176,11 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1024-expr-access-enum-not-existing-member",
   "throw-E1026-node-var-decl-root",
   "throw-E1025-node-var-decl-const-non-root",
-  "throw-E1027-expr-map-unknown-type"
+  "throw-E1027-expr-map-unknown-type",
+  "throw-E1028-node-throw-invalid-order-type",
+  "throw-E1028-node-throw-invalid-type",
+  "throw-E1028-node-throw-partial-type",
+  "throw-E1029-node-try-handler-invalid-order-type",
+  "throw-E1029-node-try-handler-invalid-type",
+  "throw-E1029-node-try-handler-partial-type"
 ));

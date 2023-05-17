@@ -1,0 +1,14 @@
+======= stdin =======
+obj MyError {
+  message: str
+}
+
+main {
+  try {
+  } catch err: MyError {
+  }
+}
+======= stderr =======
+/test:7:11: E1029 - Catch block can only catch object with first field string `message` and second field string `stack`
+  7 |   } catch err: MyError {
+    |           ^~~~~~~~~~~~

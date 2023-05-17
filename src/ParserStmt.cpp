@@ -545,16 +545,13 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += std::string(indent + 2, ' ') + "</StmtTryBody>" EOL;
     }
 
-    if (!stmtTry.handlers.empty()) {
-      result += std::string(indent + 2, ' ') + "<StmtTryHandlers>" EOL;
+    result += std::string(indent + 2, ' ') + "<StmtTryHandlers>" EOL;
 
-      for (const auto &handler : stmtTry.handlers) {
-        result += handler.xml(indent + 4) + EOL;
-      }
-
-      result += std::string(indent + 2, ' ') + "</StmtTryHandlers>" EOL;
+    for (const auto &handler : stmtTry.handlers) {
+      result += handler.xml(indent + 4) + EOL;
     }
 
+    result += std::string(indent + 2, ' ') + "</StmtTryHandlers>" EOL;
     result += std::string(indent, ' ') + "</StmtTry>";
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*this->body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*this->body);
