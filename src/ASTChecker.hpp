@@ -109,7 +109,6 @@ class ASTChecker {
     return std::holds_alternative<T>(*nodes.back().body);
   }
 
-  // todo test
   template <typename T>
   std::vector<ASTNodeExpr> _getExprOfType (const std::vector<ASTNodeExpr> &exprs) const {
     auto result = std::vector<ASTNodeExpr>{};
@@ -207,7 +206,6 @@ class ASTChecker {
     return result;
   }
 
-  // todo test
   template <typename T>
   std::vector<ASTNodeExpr> _getExprOfTypeFromNodes (const std::vector<ASTNode> &nodes) const {
     auto result = std::vector<ASTNodeExpr>{};
@@ -422,7 +420,6 @@ class ASTChecker {
     throw Error("tried isLast on unknown node");
   }
 
-  // todo test
   bool _throwsExpr (const std::vector<ASTNodeExpr> &exprs) const {
     for (const auto &nodeExpr : exprs) {
       if (nodeExpr.type->shouldBeFreed()) {
@@ -434,39 +431,19 @@ class ASTChecker {
 
         if (exprAccess.elem != std::nullopt) {
           return true;
-        } else if (exprAccess.expr != std::nullopt && exprAccess.prop != std::nullopt) {
-          auto typeField = TypeField{};
+        } else if (exprAccess.expr != std::nullopt && std::holds_alternative<ASTNodeExpr>(*exprAccess.expr)) {
+          auto exprAccessExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
 
-          if (std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
-            auto var = std::get<std::shared_ptr<Var>>(*exprAccess.expr);
-
-            if (var->type->shouldBeFreed()) {
-              return true;
-            }
-
-            typeField = var->type->getField(*exprAccess.prop);
-          } else {
-            auto exprAccessExpr = std::get<ASTNodeExpr>(*exprAccess.expr);
-
-            if (this->_throwsExpr({ exprAccessExpr })) {
-              return true;
-            } else if (!exprAccessExpr.type->isEnum()) {
-              typeField = exprAccessExpr.type->getField(*exprAccess.prop);
-            }
-          }
-
-          if (!typeField.callInfo.empty() && typeField.callInfo.throws) {
+          if (this->_throwsExpr({ exprAccessExpr })) {
             return true;
+          } else if (!exprAccessExpr.type->isEnum() && exprAccess.prop != std::nullopt) {
+            auto typeField = exprAccessExpr.type->getField(*exprAccess.prop);
+
+            if (!typeField.callInfo.empty() && typeField.callInfo.throws) {
+              return true;
+            }
           }
-        } else if (
-          exprAccess.expr != std::nullopt &&
-          std::holds_alternative<ASTNodeExpr>(*exprAccess.expr) &&
-          this->_throwsExpr({ std::get<ASTNodeExpr>(*exprAccess.expr) })
-        ) {
-          return true;
         }
-      } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
-        return true;
       } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
         auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
 
@@ -483,7 +460,7 @@ class ASTChecker {
         auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
         auto calleeRealType = Type::real(exprCall.callee.type);
 
-        if (std::get<TypeFn>(calleeRealType->body).throws) {
+        if (std::get<TypeFn>(calleeRealType->body).throws || this->_throwsExpr({ exprCall.callee })) {
           return true;
         }
 
@@ -508,10 +485,6 @@ class ASTChecker {
         if (this->_throwsExpr({ exprIs.expr }) || exprIs.type->shouldBeFreed()) {
           return true;
         }
-      } else if (std::holds_alternative<ASTExprMap>(*nodeExpr.body)) {
-        return true;
-      } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
-        return true;
       } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
         auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
 
@@ -530,7 +503,6 @@ class ASTChecker {
     return false;
   }
 
-  // todo test
   bool _throwsNode (const std::vector<ASTNode> &nodes) const {
     for (const auto &node : nodes) {
       if (std::holds_alternative<ASTNodeThrow>(*node.body) || std::holds_alternative<ASTNodeTry>(*node.body)) {
