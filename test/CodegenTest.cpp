@@ -1228,6 +1228,19 @@ INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return-scope-cleanup"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenPassTest, testing::Values(
+  "node-throw",
+  "node-throw-custom",
+  "node-throw-custom-extended",
+  "node-throw-inside-fn-decl",
+  "node-throw-inside-if",
+  "node-throw-inside-loop",
+  "node-throw-inside-obj-decl",
+  "node-throw-inside-obj-decl-method",
+  "node-throw-inside-try",
+  "node-throw-raw"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeTypeDecl, CodegenPassTest, testing::Values(
   "node-type-decl",
   "node-type-decl-alias",
@@ -1568,4 +1581,17 @@ INSTANTIATE_TEST_SUITE_P(BuiltinURL, CodegenThrowTest, testing::Values(
   "throw-builtin-url-parse-invalid-port",
   "throw-builtin-url-parse-invalid-protocol",
   "throw-builtin-url-parse-string"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenThrowTest, testing::Values(
+  "throw-node-throw",
+  "throw-node-throw-custom",
+  "throw-node-throw-custom-extended",
+  "throw-node-throw-inside-fn-decl",
+  "throw-node-throw-inside-if",
+  "throw-node-throw-inside-loop",
+  "throw-node-throw-inside-obj-decl",
+  "throw-node-throw-inside-obj-decl-method",
+  "throw-node-throw-inside-try",
+  "throw-node-throw-raw"
 ));
